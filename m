@@ -2,104 +2,144 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F284BC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC06C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CBA024850
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3F3F24855
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:02:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEp7k2WY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CBA024850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zlhs8oLH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F3F24855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934518AbeFVUCG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 16:02:06 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41396 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934393AbeFVUCE (ORCPT
+        id S933574AbeFVUC2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 16:02:28 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55232 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754260AbeFVUC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 16:02:04 -0400
-Received: by mail-pg0-f67.google.com with SMTP id l65-v6so3411859pgl.8;
-        Fri, 22 Jun 2018 13:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ZarrWeOtfLOvtpADNHhMMYBFW0YiDE+qy2ObmHNx7M0=;
-        b=ZEp7k2WYbxCFqK8VU0uc24LMKAAphO7lttaA34xKvsQ/rqGYRzP885Pj6O8Z8EqM/M
-         YnMKP3NjB4Q153c+6HhWWXVRZm3gOE4OHtazqIV1pWPdCE2BhEQ+ZWXuSHbHIVINB2n5
-         15sVD1evtOo+R1ImBfd4Ho3rmKiALGjmsh/BrtsLt+otMvIWqOzr6v1bCIW2N+MyNJip
-         krYwsZOkNPBaSKke+nln8it5nePBIJIPAT2W2xxsR87in7542buInZC7jg/wp99/j8Qn
-         jL8NfCe0orIixEUYxuK6NBPiYMHfM6zRGWSZveR+DtTB8GmDoJ3OhVtSMVYimlhGC/Hm
-         Kncg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZarrWeOtfLOvtpADNHhMMYBFW0YiDE+qy2ObmHNx7M0=;
-        b=MNOiA7lWcm38jnX73M5g1ebaAc1qz62AWlJACY/fFTcP2MgYNeiSu4YF9LNqn6WWQO
-         NoUd06ZbVnsFouKQpgcNtBdhYxvf5N8Abcyv+x7hrCMFmtBnjvzCjcvmfUZI4zMDo5mK
-         LeCgvDK4+FN8DWBYXYRdkx/nAIHhYld+3QCujkswWHYpRe7Pri6HgTb5E2Nt5lwu4wVj
-         4qZ+JiuqsZVYwCWgs883OPmojwXA7E2QU29Wgv4GqhBeFW+ZeUBhIPVIrvC+zT7dpH+5
-         36qxVV5NJt6iWogj6iiaZ3C7/2ucL3bsdD/RJhnrYvt2A7WlpjDy7grIW9oUwAYFO9vh
-         yO/g==
-X-Gm-Message-State: APt69E1h4Znp0UcDFiUtOmr5+sLqKykUgqpu9qbzH48zeUN9spOK5OQJ
-        Tws/dG9GoLrLalTPGI450PHBtdR2
-X-Google-Smtp-Source: ADUXVKLqWBc6ZytmTcsrWhruzv+zlM0GEGzEvpui40r76Bqhp7kQ7sER2mw3DuQDTkGx/al3g9CVJw==
-X-Received: by 2002:a63:41c1:: with SMTP id o184-v6mr2651038pga.323.1529697724350;
-        Fri, 22 Jun 2018 13:02:04 -0700 (PDT)
-Received: from localhost.localdomain ([122.174.152.149])
-        by smtp.gmail.com with ESMTPSA id m21-v6sm10352370pgv.27.2018.06.22.13.02.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 13:02:03 -0700 (PDT)
-From:   Jeffrin Jose T <ahiliation@gmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Jeffrin Jose T <ahiliation@gmail.com>
-Subject: [PATCH] selftests: bpf: notification about privilege required to run test_lwt_seg6local.sh testing script
-Date:   Sat, 23 Jun 2018 01:30:53 +0530
-Message-Id: <20180622200053.4957-1-ahiliation@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 22 Jun 2018 16:02:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=n9I959nvzkJt0kCo15WLliKX+8fZh2FoGpTlHK3boAM=; b=zlhs8oLHkhFvCfqo9S2SIsgdtr
+        XEKKh/nuJ0duc7BniCAXn6O8Hdmt2zPgavQ/cF+j3s8jcMxyWvsJNkuiR+qu359SpJEtCBxnBBWcW
+        h2CMRHC+Ijl03WtCNCqHjl4pJ6p0iLC4k/zv9+KvqyDHLpJX2YfjGgrMd5Q2Lrf0cE+VhQvWMbZh8
+        k4ubaqfev4OHM7QU6W4ki/5tvmdGg7/VHzWPKZDeJuhnJ0bRWgyXNRknISl5gegwupCH/k+ClwU29
+        pENGsxnV9ybsL7AxL59P16mAcrcHZGlqLXeYkjUjRQSadGereRgYoq6SHjrLbfIbb8zOd0rWKCUus
+        eCU1dvog==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fWSFk-0003Kf-9Q; Fri, 22 Jun 2018 20:01:52 +0000
+Subject: Re: [PATCH v4 2/3] PCI: Allow specifying devices using a base bus and
+ path of devfns
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>
+References: <20180622194315.10475-1-logang@deltatee.com>
+ <20180622194315.10475-3-logang@deltatee.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c1278ab2-63a8-19b6-9c8d-fed0b4f94c11@infradead.org>
+Date:   Fri, 22 Jun 2018 13:01:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180622194315.10475-3-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This test_lwt_seg6local.sh will execute with root privilege.
+Hi,
 
-This patch is atleast used to notify the user about the privilege
-required related to smooth execution of the script.
+On 06/22/2018 12:43 PM, Logan Gunthorpe wrote:
+> When specifying PCI devices on the kernel command line using a
+> BDF, the bus numbers can change when adding or replacing a device,
+> changing motherboard firmware, or applying kernel parameters like
+> pci=assign-buses. When this happens, it is usually undesirable to
+> apply whatever command line tweak to the wrong device.
+> 
+> Therefore, it is useful to be able to specify devices with a base
+> bus number and the path of devfns needed to get to it. (Similar to
+> the "device scope" structure in the Intel VT-d spec, Section 8.3.1.)
+> 
+> Thus, we add an option to specify devices in the following format:
+> 
+> [<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
 
-Signed-off-by: Jeffrin Jose T (Rajagiri SET) <ahiliation@gmail.com>
----
- tools/testing/selftests/bpf/test_lwt_seg6local.sh | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Please explain the trailing '*'.  I looked thru the code and it doesn't
+seem to look for it or care.
 
-diff --git a/tools/testing/selftests/bpf/test_lwt_seg6local.sh b/tools/testing/selftests/bpf/test_lwt_seg6local.sh
-index 1c77994b5e71..30575577a8b2 100755
---- a/tools/testing/selftests/bpf/test_lwt_seg6local.sh
-+++ b/tools/testing/selftests/bpf/test_lwt_seg6local.sh
-@@ -21,6 +21,15 @@
- # An UDP datagram is sent from fb00::1 to fb00::6. The test succeeds if this
- # datagram can be read on NS6 when binding to fb00::6.
- 
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+msg="skip all tests:"
-+if [ $UID != 0 ]; then
-+    echo $msg please run this as root >&2
-+    exit $ksft_skip
-+fi
-+
- TMP_FILE="/tmp/selftest_lwt_seg6local.txt"
- 
- cleanup()
+> 
+> The path can be any segment within the PCI hierarchy of any length and
+> determined through the use of 'lspci -t'. When specified this way, it is
+> less likely that a renumbered bus will result in a valid device specification
+> and the tweak won't be applied to the wrong device.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Stephen Bates <sbates@raithlin.com>
+> Acked-by: Christian König <christian.koenig@amd.com>
+> Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |   8 +-
+>  drivers/pci/pci.c                               | 117 ++++++++++++++++++++----
+>  2 files changed, 103 insertions(+), 22 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index e783bcefadac..a69947d9e14e 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3000,7 +3000,7 @@
+>  				or a set of devices (<pci_dev>). These are
+>  				specified in one of the following formats:
+>  
+> -				[<domain>:]<bus>:<slot>.<func>
+> +				[<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
+>  				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+>  
+>  				Note: the first format specifies a PCI
+> @@ -3009,7 +3009,11 @@
+>  				firmware changes, or due to changes caused
+>  				by other kernel parameters. If the
+>  				domain is left unspecified, it is
+> -				taken to be zero. The second format
+> +				taken to be zero. Optionally, a path
+> +				to a device through multiple slot/function
+> +				addresses can be specified after the base
+> +				address (this is more robust against
+> +				renumbering issues). The second format
+>  				selects devices using IDs from the
+>  				configuration space which may match multiple
+>  				devices in the system.
+
+
+thanks,
 -- 
-2.17.0
-
+~Randy
