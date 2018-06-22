@@ -2,106 +2,400 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89C6C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B14F8C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:30:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A400245CA
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:28:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A400245CA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D91E245CA
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:30:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D91E245CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934420AbeFVQ2u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:28:50 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43167 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934164AbeFVQ2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:28:49 -0400
-Received: by mail-wr0-f196.google.com with SMTP id d2-v6so7248062wrm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:28:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FW1DIyGep9jzNGj98n5+2iAPwhw+YUsx3qRxJWpnxFg=;
-        b=kIj+f77J3P29sD9e76LEWSSKYrlq7XDpmziVS1vpgOWJmGH/q7k1SV5a1+PczoDy8B
-         aBB7qjE0ZCDuxmgRRfBRQjgPFyXGWTOV6/GVCdBQm0vNh+klgqsO8xUnQO/pnraeVr8E
-         OZvr6Wk2O0hVC/I/BNEaJffMH97jfrUaS9UJhqJuMNWJMEZ+vCoXdmvyWbywOu66Tbdl
-         z02T4GMHCVAJ0S8bHD2+UszU5cSAta7kUwFmA4rZO9ZFB3ivJ1FV32IszlGydrbfE4O2
-         PvOO8K3XPJ2AOxQ8XmVuMnxv0Q3WTya5KFbHFWfDiKuyyrJx7SHEehY48Zd4bi4ovcv7
-         Gvwg==
-X-Gm-Message-State: APt69E1f6Mt97/ygudfwJ213qD3IZrQEH5uwD5d/TyMYMQ72BS1fUAIc
-        ge7285T3YfaE/V9/116YN3I=
-X-Google-Smtp-Source: AAOMgpfEQogbLwAcE8rKN7lTg7tcr7+54Cg8dHgH6UqYe/HR4itdkQQ26i83aOw7IIF8MpDspn4QYQ==
-X-Received: by 2002:adf:a0c2:: with SMTP id n2-v6mr2055475wrn.23.1529684928402;
-        Fri, 22 Jun 2018 09:28:48 -0700 (PDT)
-Received: from tiehlicka.suse.cz (ip-37-188-179-217.eurotel.cz. [37.188.179.217])
-        by smtp.gmail.com with ESMTPSA id h77-v6sm3520193wmd.9.2018.06.22.09.28.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 09:28:47 -0700 (PDT)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     JianKang Chen <chenjiankang1@huawei.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, xieyisheng1@huawei.com,
-        guohanjun@huawei.com, wangkefeng.wang@huawei.com,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] mm: drop VM_BUG_ON from __get_free_pages
-Date:   Fri, 22 Jun 2018 18:28:41 +0200
-Message-Id: <20180622162841.25114-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S934424AbeFVQaI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:30:08 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:35373 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934203AbeFVQaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 12:30:06 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 8A9E8630E0;
+        Fri, 22 Jun 2018 16:29:37 +0000 (UTC)
+Message-ID: <a7011fe78d171658742406bf01d50b7e3d7eaf1d.camel@aosc.io>
+Subject: Re: [PATCHv2 5/5] arm64: allwinner: a64: Add support for TERES-I
+ laptop
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Harald Geyer <harald@ccbib.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Kalle Valo <kvalo@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>, info@olimex.com,
+        linux-wireless@vger.kernel.org
+Date:   Sat, 23 Jun 2018 00:27:21 +0800
+In-Reply-To: <20180315162510.11669-6-harald@ccbib.org>
+References: <20180315162510.11669-1-harald@ccbib.org>
+         <20180315162510.11669-6-harald@ccbib.org>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+在 2018-03-15四的 16:25 +0000，Harald Geyer写道：
+> The TERES-I is an open hardware laptop built by Olimex using the
+> Allwinner A64 SoC.
+> 
+> Add the board specific .dts file, which includes the A64 .dtsi and
+> enables the peripherals that we support so far.
+> 
+> Signed-off-by: Harald Geyer <harald@ccbib.org>
+> ---
+> changes since v1:
+>  * use SPDX header instead of license text
+>  * change model string to match compatible string
+>  * removed node labes from leds
+>  * added label properties ot led nodes
+>  * add a comment about the purpose of i2c0
+> 
+>  arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+>  .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 279
+> +++++++++++++++++++++
+>  2 files changed, 280 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-teres-
+> i.dts
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile
+> b/arch/arm64/boot/dts/allwinner/Makefile
+> index f505227b0250..5f073f7423b7 100644
+> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -5,6 +5,7 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-olinuxino.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-orangepi-win.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-
+> pine64.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-sopine-baseboard.dtb
+> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-teres-i.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> new file mode 100644
+> index 000000000000..b105430e0368
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> @@ -0,0 +1,279 @@
+> +/*
+> + * Copyright (C) Harald Geyer <harald@ccbib.org>
+> + * based on sun50i-a64-olinuxino.dts by Jagan Teki <jteki@openedev.c
+> om>
+> + *
+> + * SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sun50i-a64.dtsi"
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/pwm/pwm.h>
+> +
+> +/ {
+> +	model = "Olimex A64 Teres-I";
+> +	compatible = "olimex,a64-teres-i", "allwinner,sun50i-a64";
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +	};
+> +
+> +	backlight: backlight {
+> +		compatible = "pwm-backlight";
+> +		pwms = <&pwm 0 50000 0>;
+> +		brightness-levels = <0 10 20 30 40 50 60 70 100>;
+> +		default-brightness-level = <3>;
+> +		enable-gpios = <&pio 3 23 GPIO_ACTIVE_HIGH>; /* PD23
+> */
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +
+> +		framebuffer-lcd {
+> +			eDP25-supply = <&reg_dldo2>;
+> +			eDP12-supply = <&reg_dldo3>;
+> +		};
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		lid-switch {
+> +			label = "Lid Switch";
+> +			gpios = <&r_pio 0 8 GPIO_ACTIVE_LOW>; /* PL8
+> */
+> +			linux,input-type = <EV_SW>;
+> +			linux,code = <SW_LID>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		capslock {
+> +			label = "leds:green:capslock";
+> +			gpios = <&pio 2 7 GPIO_ACTIVE_HIGH>; /* PC7
+> */
+> +		};
+> +
+> +		numlock {
+> +			label = "leds:green:numlock";
+> +			gpios = <&pio 2 4 GPIO_ACTIVE_HIGH>; /* PC4
+> */
+> +		};
+> +	};
+> +
+> +	reg_usb1_vbus: usb1-vbus {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "usb1-vbus";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		enable-active-high;
+> +		gpio = <&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
+> +		status = "okay";
+> +	};
+> +
+> +	wifi_pwrseq: wifi_pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2
+> */
+> +	};
+> +};
+> +
+> +&ehci1 {
+> +	status = "okay";
+> +};
+> +
+> +
+> +/* The ANX6345 eDP-bridge is on i2c0. There is no linux (mainline)
+> + * driver for this chip at the moment, the bootloader initializes
+> it.
+> + * However it can be accessed with the i2c-dev driver from user
+> space.
+> + */
+> +&i2c0 {
+> +	clock-frequency = <100000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c0_pins>;
+> +	status = "okay";
+> +};
+> +
+> +&mmc0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mmc0_pins>;
+> +	vmmc-supply = <&reg_dcdc1>;
+> +	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +	bus-width = <4>;
+> +	status = "okay";
+> +};
+> +
+> +&mmc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mmc1_pins>;
+> +	vmmc-supply = <&reg_aldo2>;
+> +	vqmmc-supply = <&reg_dldo4>;
+> +	mmc-pwrseq = <&wifi_pwrseq>;
+> +	bus-width = <4>;
+> +	non-removable;
+> +	status = "okay";
+> +
+> +	rtl8723bs: wifi@1 {
+> +		reg = <1>;
+> +		interrupt-parent = <&r_pio>;
+> +		interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>; /* PL3 */
+> +		interrupt-names = "host-wake";
+> +	};
 
-There is no real reason to blow up just because the caller doesn't know
-that __get_free_pages cannot return highmem pages. Simply fix that up
-silently. Even if we have some confused users such a fixup will not be
-harmful.
+I think this node has some problem:
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
-Hi Andrew,
-previously posted [1] but it fell through cracks. Can we merge it now?
+- This device node has no binding. The "host-wake" interrupt is part of
+ Broadcom SDIO Wi-Fi binding, rather than a generic one.
+- Without the interrupt this device node isn't needed, as RTL8723BS has
+MAC eFUSE and doesn't need a MAC in device tree.
 
-[1] http://lkml.kernel.org/r/20171129160446.jluzpv3n6mjc3fwv@dhcp22.suse.cz
+In order to solve the problems. I suggest either drop this device node
+or make a generic "sdio-wifi" device tree binding. Personally I prefer
+the latter, as it's more accurate device representation.
 
- mm/page_alloc.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+If such a device tree binding is added, I think it should contain the
+"host-wake" interrupt and a "local-mac-address" property. Both can be
+ignored by the driver. (This interrupt can be needed if a more card-
+ventor-neutral name is found.)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 1521100f1e63..5f56f662a52d 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4402,18 +4402,14 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- EXPORT_SYMBOL(__alloc_pages_nodemask);
- 
- /*
-- * Common helper functions.
-+ * Common helper functions. Never use with __GFP_HIGHMEM because the returned
-+ * address cannot represent highmem pages. Use alloc_pages and then kmap if
-+ * you need to access high mem.
-  */
- unsigned long __get_free_pages(gfp_t gfp_mask, unsigned int order)
- {
- 	struct page *page;
- 
--	/*
--	 * __get_free_pages() returns a virtual address, which cannot represent
--	 * a highmem page
--	 */
--	VM_BUG_ON((gfp_mask & __GFP_HIGHMEM) != 0);
--
- 	page = alloc_pages(gfp_mask, order);
- 	if (!page)
- 		return 0;
--- 
-2.17.1
-
+> +};
+> +
+> +&mmc2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mmc2_pins>;
+> +	vmmc-supply = <&reg_dcdc1>;
+> +	vqmmc-supply = <&reg_dcdc1>;
+> +	bus-width = <8>;
+> +	non-removable;
+> +	cap-mmc-hw-reset;
+> +	status = "okay";
+> +};
+> +
+> +&pwm {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pwm_pin>;
+> +	status = "okay";
+> +};
+> +
+> +&ohci1 {
+> +	status = "okay";
+> +};
+> +
+> +&r_rsb {
+> +	status = "okay";
+> +
+> +	axp803: pmic@3a3 {
+> +		compatible = "x-powers,axp803";
+> +		reg = <0x3a3>;
+> +		interrupt-parent = <&r_intc>;
+> +		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> +		wakeup-source;
+> +	};
+> +};
+> +
+> +#include "axp803.dtsi"
+> +
+> +&reg_aldo1 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <2800000>;
+> +	regulator-max-microvolt = <2800000>;
+> +	regulator-name = "vcc-pe";
+> +};
+> +
+> +&reg_aldo2 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <3300000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-pl";
+> +};
+> +
+> +&reg_aldo3 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <3000000>;
+> +	regulator-max-microvolt = <3000000>;
+> +	regulator-name = "vcc-pll-avcc";
+> +};
+> +
+> +&reg_dcdc1 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <3300000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-3v3";
+> +};
+> +
+> +&reg_dcdc2 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1040000>;
+> +	regulator-max-microvolt = <1300000>;
+> +	regulator-name = "vdd-cpux";
+> +};
+> +
+> +/* DCDC3 is polyphased with DCDC2 */
+> +
+> +&reg_dcdc5 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1500000>;
+> +	regulator-max-microvolt = <1500000>;
+> +	regulator-name = "vcc-ddr3";
+> +};
+> +
+> +&reg_dcdc6 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1100000>;
+> +	regulator-max-microvolt = <1100000>;
+> +	regulator-name = "vdd-sys";
+> +};
+> +
+> +&reg_dldo1 {
+> +	regulator-min-microvolt = <3300000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-hdmi";
+> +};
+> +
+> +&reg_dldo2 {
+> +	regulator-min-microvolt = <2500000>;
+> +	regulator-max-microvolt = <2500000>;
+> +	regulator-name = "vcc-pd";
+> +};
+> +
+> +&reg_dldo3 {
+> +	regulator-min-microvolt = <1200000>;
+> +	regulator-max-microvolt = <1200000>;
+> +	regulator-name = "eDP12";
+> +};
+> +
+> +&reg_dldo4 {
+> +	regulator-min-microvolt = <3300000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-wifi-io";
+> +};
+> +
+> +&reg_eldo1 {
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <1800000>;
+> +	regulator-name = "cpvdd";
+> +};
+> +
+> +&reg_eldo2 {
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <1800000>;
+> +	regulator-name = "vcc-dvdd-csi";
+> +};
+> +
+> +&reg_fldo1 {
+> +	regulator-min-microvolt = <1200000>;
+> +	regulator-max-microvolt = <1200000>;
+> +	regulator-name = "vcc-1v2-hsic";
+> +};
+> +
+> +/*
+> + * The A64 chip cannot work without this regulator off, although
+> + * it seems to be only driving the AR100 core.
+> + * Maybe we don't still know well about CPUs domain.
+> + */
+> +&reg_fldo2 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1100000>;
+> +	regulator-max-microvolt = <1100000>;
+> +	regulator-name = "vdd-cpus";
+> +};
+> +
+> +&reg_rtc_ldo {
+> +	regulator-name = "vcc-rtc";
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart0_pins_a>;
+> +	status = "okay";
+> +};
+> +
+> +&usbphy {
+> +	usb1_vbus-supply = <&reg_usb1_vbus>;
+> +	status = "okay";
+> +};
