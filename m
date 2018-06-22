@@ -2,75 +2,61 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F6FC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CEFC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED1F723E42
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:37:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED1F723E42
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id C039E23E42
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:38:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C039E23E42
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751250AbeFVHhc (ORCPT
+        id S1751341AbeFVHh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 03:37:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48477 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750913AbeFVHha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 03:37:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7C407AE6D;
-        Fri, 22 Jun 2018 07:37:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9C7AF1E34BE; Fri, 22 Jun 2018 09:37:28 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 09:37:28 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.com>, y2038@lists.linaro.org,
-        linux-ext4@vger.kernel.org,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] ext4: use timespec64 for all inode times
-Message-ID: <20180622073728.76imgamp3u4ivhf3@quack2.suse.cz>
-References: <20180620153322.54221-1-arnd@arndb.de>
- <20180620153322.54221-4-arnd@arndb.de>
+        Fri, 22 Jun 2018 03:37:58 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8721 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750934AbeFVHh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 03:37:58 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B73297771A6A2;
+        Fri, 22 Jun 2018 15:37:43 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.382.0; Fri, 22 Jun 2018
+ 15:37:40 +0800
+Subject: Re: [PATCH] f2fs: don't issue discard commands in online discard is
+ on
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180621180518.76856-1-jaegeuk@kernel.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <b3bc3eb3-476b-b402-1fa9-fd03f5cfdcd5@huawei.com>
+Date:   Fri, 22 Jun 2018 15:37:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180620153322.54221-4-arnd@arndb.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180621180518.76856-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 20-06-18 17:33:01, Arnd Bergmann wrote:
-> -static inline __le32 ext4_encode_extra_time(struct timespec *time)
-> +static inline __le32 ext4_encode_extra_time(struct timespec64 *time)
->  {
->  	u32 extra = sizeof(time->tv_sec) > 4 ?
+On 2018/6/22 2:05, Jaegeuk Kim wrote:
+> Actually, we don't need to issue discard commands, if discard is on, as
+> mentioned in the comment.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-I suppose this condition can be removed now.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
->  		((time->tv_sec - (s32)time->tv_sec) >> 32) & EXT4_EPOCH_MASK : 0;
->  	return cpu_to_le32(extra | (time->tv_nsec << EXT4_EPOCH_BITS));
->  }
->  
-> -static inline void ext4_decode_extra_time(struct timespec *time, __le32 extra)
-> +static inline void ext4_decode_extra_time(struct timespec64 *time, __le32 extra)
+Thanks,
 
-Wrap?
-
-Otherwise the patch looks good.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
