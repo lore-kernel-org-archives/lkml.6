@@ -2,159 +2,139 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495A2C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0562FC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EADDB242A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1332242A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:25:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzwsL/rs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADDB242A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="AKnHJCtG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1332242A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751441AbeFVNYy (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:24:54 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35616 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeFVNYv (ORCPT
+        id S932734AbeFVNZp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 09:25:45 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:46214 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751103AbeFVNZm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:24:51 -0400
-Received: by mail-lf0-f66.google.com with SMTP id i15-v6so8867462lfc.2;
-        Fri, 22 Jun 2018 06:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=c6RFhdx24gHjaHZ+lf0qUUpUPEvHeiAwmAcU+tUxyBo=;
-        b=YzwsL/rsqos6nQ0xUVw3Qxn5ECJo7wfEQsFhcZ2lAnJ+FWoTqdjnaOvxsMEd18UVnp
-         1+35IrY913G8kuiveZ6xWnZ3OpNdQBDpIcVC0Iqj1+LIBl1QPIkG9LOhbhreD8DHxsz3
-         qv5hg/a97of7T3wfjFU9Rtl/+FgIjJZo+0CZSl/g71FIWx8pUTZEIOIf+uUxGiOlfo34
-         35+2sqZ8dnCgQAKuxKyBIhlEUXOI3v4vhxYToeakqW722K8U+5CE0r/2wRzJFXNEgU3a
-         hexM/76C5CUg2c60MdWWW1rTSbqKWwz1oxzG6MHLSyvn8UtAsRMpnc+5uXfV1U0U9ora
-         965g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=c6RFhdx24gHjaHZ+lf0qUUpUPEvHeiAwmAcU+tUxyBo=;
-        b=qYxgAhizZLgTiuGmF00LdPLDBGoNNTaMDAwAMhXLeqt4XHDWsuVRulo/sVJNgi0RAe
-         XMev9EPS0vM8Se2rhXKkvpgIkn3j7kIs83EA66b12/W8FP7YXFiRR9OqT+wfxCv7q1b0
-         bBksFeQ8LentD/FhSo3TzvCmBP9FYQ+MizI+aGWxk3S3ljbB+iosG4NUD2x8WKzmC8jp
-         qppzGtQEE6haxD3AYQo5ejNo57GzpPI9dxWRJHbX1NDHRyjX+j5jGRbwwa70tuTs3HbI
-         Sa7YaRGPm/ujlBx6Ja8ubbP7emNPmBjCTfjiDo0IqWf2+nC3TaWdXbewqyC5sMYCD+9m
-         Zd7Q==
-X-Gm-Message-State: APt69E0U/WX9/riu4jTTQ54tJHkMKK11R7/4YXq5UZafySPygXM0pZhp
-        gx17nP7cn+Is2znh+2obCZsnLAk1YDcaO8MjA4U=
-X-Google-Smtp-Source: ADUXVKJUCOEAwgLkTFTWnWO1SH3/dkA9kejRAuJpWbujpBNV43E8Wqaz2hRZPtshd0o5PmFcIw3rPQiwInCBbyH9XIo=
-X-Received: by 2002:a2e:804c:: with SMTP id p12-v6mr1255181ljg.22.1529673890091;
- Fri, 22 Jun 2018 06:24:50 -0700 (PDT)
+        Fri, 22 Jun 2018 09:25:42 -0400
+Received: from mail-vk0-f47.google.com (mail-vk0-f47.google.com [209.85.213.47]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w5MDPbQf011218;
+        Fri, 22 Jun 2018 22:25:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w5MDPbQf011218
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1529673938;
+        bh=G71pbK2quiWimsDtN051nuMZycdXb18xVVYshsVl/+k=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=AKnHJCtGtFoJNIojOu+KCnSN1kJ8cW19AHN2OeUxBnusHCOyc1Srr4SP5QpqjiPYg
+         SXonc9/M5XrBSo+361GJfuhCQRPTzniQdvm0ZfAWIwF5NVMvcc0FsrhLkWC/5mqiKo
+         X8cM2xM0WuwOZWTwfvLi1rq7RzsTs7UvUqKMdper5OSY3yrnwIMvyGRdypdlCyDQVH
+         Q4Tp/lOh5lEvIA4MSfRziUA9Peqizb8GIivUi2GvHSeuBjYdxhBSGBx3vZzhjFwxUY
+         0YAMaPOKHuovy12inpoeQ1Aov7BHWfwUVC056yrlO6Hr7Gv5epqkz6hmSis/rRnoV2
+         feIqxIGux8DJw==
+X-Nifty-SrcIP: [209.85.213.47]
+Received: by mail-vk0-f47.google.com with SMTP id b77-v6so3900939vkb.5;
+        Fri, 22 Jun 2018 06:25:38 -0700 (PDT)
+X-Gm-Message-State: APt69E2Sk2gm3bxbT0Wgx35PHEUgddW+8jufthMwYfcdAs93+/IqacYT
+        IHCqD5xIJtsamrZ9iPkWRdb7AVlNUb5jt7s4pOg=
+X-Google-Smtp-Source: ADUXVKKPWrg7DRmNMEn/o9or4dOjDLbRZFS2FZoASk5CkOW9EKQ3RC7R9wUvrLxv7ut/7p1w9xKrxhtlOB6OTsyhGAM=
+X-Received: by 2002:a1f:a945:: with SMTP id s66-v6mr1007835vke.54.1529673937233;
+ Fri, 22 Jun 2018 06:25:37 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 06:24:48
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 06:24:56
  -0700 (PDT)
-In-Reply-To: <20180621202339.GC13748@dastard>
-References: <20180620150138.49380-1-arnd@arndb.de> <20180621202339.GC13748@dastard>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 22 Jun 2018 15:24:48 +0200
-X-Google-Sender-Auth: RMDJeYxh2Yes9zjhh1Y-BGUHxbA
-Message-ID: <CAK8P3a0C4hgu9apX8vE6BrqnrU76dHhafY8J-ppPBdhPbxq26Q@mail.gmail.com>
-Subject: Re: [PATCH] vfs: replace current_kernel_time64 with ktime equivalent
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Andi Kleen <andi.kleen@intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jeff Layton <jlayton@redhat.com>, Jan Kara <jack@suse.cz>,
-        Brian Foster <bfoster@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180622134235.5ab76325@bbrezillon>
+References: <1529025532-22087-1-git-send-email-yamada.masahiro@socionext.com>
+ <1529025532-22087-2-git-send-email-yamada.masahiro@socionext.com>
+ <20180619132811.45bf6454@bbrezillon> <20180622134235.5ab76325@bbrezillon>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 22 Jun 2018 22:24:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQdfEF3j69DnmpwTMnuBQJ+f4x-1Di9TZ1f5hvVmPDwmw@mail.gmail.com>
+Message-ID: <CAK7LNAQdfEF3j69DnmpwTMnuBQJ+f4x-1Di9TZ1f5hvVmPDwmw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] mtd: rawnand: denali_dt: add more clocks based on
+ IP datasheet
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-stable #4 . 14+" <stable@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 10:23 PM, Dave Chinner <david@fromorbit.com> wrote:
-> On Wed, Jun 20, 2018 at 05:01:24PM +0200, Arnd Bergmann wrote:
-
->> diff --git a/fs/inode.c b/fs/inode.c
->> index 2c300e981796..e27bd9334939 100644
->> --- a/fs/inode.c
->> +++ b/fs/inode.c
->> @@ -2133,7 +2133,9 @@ EXPORT_SYMBOL(timespec64_trunc);
->>   */
->>  struct timespec64 current_time(struct inode *inode)
->>  {
->> -     struct timespec64 now = current_kernel_time64();
->> +     struct timespec64 now;
->> +
->> +     ktime_get_coarse_real_ts64(&now);
+2018-06-22 20:42 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+> Hi Masahiro,
 >
-> Can I just say as a filesystem dev who has no idea at all about
-> kernel timer implementations: this is an awful API change.  There
-> are hundreds of callers of current_time(), so I'm not going to be
-> the only person looking at this function who has no clue about WTF
-> "ktime_get_coarse_real" actually means or does. Further, this
-> function is not documented, and jumps straight into internal time
-> implementation stuff, so I'm lost straight away if somebody asks me
-> "what does that function do"?. i.e. I have *no clue* what this
-> function returns or why this code uses it.
-
-You definitely have a point about the documentation. I meant to
-fix that as part of the recent rework of the timekeeping.h header
-but haven't finished it, partly because the header is still being
-changed as we get rid of the older interfaces.
-
-> i.e. the function goes from an obvious self documenting name that
-> has been blessed as the current kernel timestamp to something that
-> only people who work on the time subsystem understand and know when
-> to use. It might make sense to you, but it sucks for everyone
-> else....
+> On Tue, 19 Jun 2018 13:28:11 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 >
-> Keep the wrapper, please. Change it to ktime_get_current(), if you
-> really must change the function namespace...
+>> Hi Masahiro,
+>>
+>> On Fri, 15 Jun 2018 10:18:50 +0900
+>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>>
+>> > According to the Denali User's Guide, this IP needs three clocks:
+>> >
+>> >  - clk: controller core clock
+>> >
+>> >  - clk_x: bus interface clock
+>> >
+>> >  - ecc_clk: clock at which ECC circuitry is run
+>> >
+>> > Currently, denali_dt.c requires a single anonymous clock and its
+>> > frequency.  However, the driver needs to get the frequency of "clk_x"
+>> > not "clk".  This is confusing because people tend to assume the
+>> > anonymous clock means the core clock.  In fact, I got a report of
+>> > SOCFPGA breakage because the timing parameters are calculated based
+>> > on a wrong frequency.
+>> >
+>> > Instead of the cheesy implementation, the clocks in the real hardware
+>> > should be represented in the driver and the DT-binding.
+>> >
+>> > However, adding new clocks would break the existing platforms.  For the
+>> > backward compatibility, the driver still accepts a single clock just as
+>> > before.  If clk_x is missing, clk_x_rate is set to a hardcoded value.
+>> > This is fine for existing DT of Socionext UniPhier, and also fixes the
+>> > issue of Altera (Intel) SOCFPGA because both platforms use 200 MHz for
+>> > the bus interface clock.
+>> >
+>> > Fixes: 1bb88666775e ("mtd: nand: denali: handle timing parameters by setup_data_interface()")
+>>
+>> Sorry for changing my mind, but I think this patch is doing more than
+>> just fixing a bug. The bugfix should IMO be limited to unconditionally
+>> setting ->clk_x_rate to 200000000 since this is what was done before
+>> commit 1bb88666775e. And the remaining changes should go in nand/next.
+>
+> Do you want me to write this patch? Note that I can't really take this
+> patch since Rob asked for a new version with DT bindings changes placed
+> in a separate patch.
 
-The thing about current_kernel_time/current_kernel_time64/
-ktime_get_coarse_real_ts64 is that it hasn't been a good choice
-as a default time accessor for a long time, pretty much everything
-outside of current_time() has a better option:
 
-- For measuring time intervals, you want a monotonic time source,
-  not a 'real' one, to prevent time from going backwards during leap
-  seconds or settimeofday() adjustments.
-- For getting a timestamp as fast as possible, using a timespec64
-  based interface adds extra overhead compared to 'jiffies' or
-  ktime_t (64-bit nanoseconds), especially when passing the
-  struct as the return value.
-- As mentioned before, almost all machines these days have a
-  fast clocksource device, so getting a 'coarse' timestamp is
-  barely faster than an accurate one.
-- Having an interface with (at best) millisecond precsision but
-  nanosecond resolution can be confusing, as it suggests a much
-  more precision than we can give (the 'coarse' in the name is
-  meant to clarify that).
+Sorry for the delay.  I was traveling.
 
-While changing over all device drivers from the old-style interfaces
-with 32-bit time_t (current_kernel_time, get_seconds,
-do_getimeofday and getnstimeofday, getrawmonotonic,
-get_monotonic_coarse, get_monotonic_boottime), we tried to
-also address those problems, using ktime_get() as the preferred
-interface, or an interface with a longer name where we had
-specific reasons.
+Now I am back home, and started to flush my TODO queue.
 
-Outside of file system timestamps, there are only two other
-files left that ask for a timestamp that is both 'coarse' and
-'realtime', and both only do that when user space specifically
-asks for that combination.
+V4 will be soon.
 
-       Arnd
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
