@@ -2,203 +2,201 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06557C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 638DAC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABE52246AE
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:25:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pj7Q+7oQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE52246AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 28CF6246AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28CF6246AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934050AbeFVRZD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:25:03 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35968 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933979AbeFVRYg (ORCPT
+        id S934326AbeFVRZU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 13:25:20 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:11295 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933285AbeFVRWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:24:36 -0400
-Received: by mail-it0-f65.google.com with SMTP id j135-v6so3939634itj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 10:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r2pbTTGVtVHz3MZXmhHrp7r6kaglmCc0RGbnId53dWQ=;
-        b=Pj7Q+7oQZzSTH64JGvDuKs43vgE/AcmaC6A6kM9/B8P/oDfCTTnNfx6adG8+Ys0Psf
-         1evOeJWpfSvAYpP6b5MojoXMu3CgkwsWc/Zn6iY9LzK0MgzQQeWSlmEownWuactTwOd/
-         ZHRalfPaGdUtWq4WhFuKoV8FZrv8Nm7y1TJNY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r2pbTTGVtVHz3MZXmhHrp7r6kaglmCc0RGbnId53dWQ=;
-        b=efUg4bjDvMgMvrUZaT6e9L+ojsUPsuYyWWmlE0sGSEOaabkHPaUJSumix5KvIM0ZQQ
-         Sgkm4Lrf9WXtH+1esoH84OKTWepdQjoeXsQ+NJt4Q1iJSlmwRbl/nAFRqETP6744qClQ
-         D8UzrWGkSu5JHInEkJgk9rGBornPzrfbzMUIzL5rJkIWXQ/gX4cYqjr1OVLXDAowCSHy
-         MaID+cdR2EHWLedIgp3mdCCxI0CflAvSq5ujzSJpYbonZK/AOsG1sxCxMNDurdUW9GKX
-         G6Qla3DGKU8zJ64rEu0WuI/lRXFldui1Y80z0nDMFBFbC1c/nUubGvI7pMJiqhCXaJxc
-         zc6g==
-X-Gm-Message-State: APt69E3x0oreMIhOahzKwSEwZUh+vzBv8ql1nofIlEGozWwPwr8QlLza
-        A/nuGEMHFLdi8BuiBkJFpK22FIhqlg7/CYvN1sPW4Q==
-X-Google-Smtp-Source: ADUXVKLsztP9VlxGxqevnZeYU4COmjXZd2p+TnzLupel451eFCUTLy1KIsphNEoMTuvtKxXw0Glmx+WPA+xrMzFm0Rg=
-X-Received: by 2002:a02:8604:: with SMTP id e4-v6mr2156386jai.12.1529688275554;
- Fri, 22 Jun 2018 10:24:35 -0700 (PDT)
+        Fri, 22 Jun 2018 13:22:43 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Fri, 22 Jun 2018 10:22:34 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 191A24061B;
+        Fri, 22 Jun 2018 10:22:42 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC:     Nadav Amit <namit@vmware.com>, Alok Kataria <akataria@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        <virtualization@lists.linux-foundation.org>
+Subject: [PATCH v6 6/9] x86: prevent inline distortion by paravirt ops
+Date:   Fri, 22 Jun 2018 10:22:09 -0700
+Message-ID: <20180622172212.199633-7-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180622172212.199633-1-namit@vmware.com>
+References: <20180622172212.199633-1-namit@vmware.com>
 MIME-Version: 1.0
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-5-git-send-email-vincent.guittot@linaro.org>
- <20180621184524.GB27616@hirez.programming.kicks-ass.net> <20180622075853.GC23168@e108498-lin.cambridge.arm.com>
- <20180622113713.GJ2494@hirez.programming.kicks-ass.net> <20180622152258.GF2512@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180622152258.GF2512@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 22 Jun 2018 19:24:24 +0200
-Message-ID: <CAKfTPtDSuvX5_GEYQ9HgqdEn-EwiCx7MGHtY73GysQh6m9kZFA@mail.gmail.com>
-Subject: Re: [PATCH v6 04/11] cpufreq/schedutil: use rt utilization tracking
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Quentin Perret <quentin.perret@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Jun 2018 at 17:23, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Fri, Jun 22, 2018 at 01:37:13PM +0200, Peter Zijlstra wrote:
-> > That is true.. So we could limit the scaling to the case where there is
-> > no idle time, something like:
-> >
-> >       util = sg_cpu->util_cfs;
-> >
-> >       cap_cfs = (1024 - (sg_cpu->util_rt + ...));
-> >       if (util == cap_cfs)
-> >               util = sg_cpu->max;
-> >
->
-> OK, it appears this is more or less what the patches do. And I think
-> there's a small risk/hole with this where util ~= cap_cfs but very close
-> due to some unaccounted time.
->
-> FWIW, when looking, I saw no reason why sugov_get_util() and
-> sugov_aggregate_util() were in fact separate functions.
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-good point
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
 
->
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -53,11 +53,7 @@ struct sugov_cpu {
->         unsigned int            iowait_boost_max;
->         u64                     last_update;
->
-> -       /* The fields below are only needed when sharing a policy: */
-> -       unsigned long           util_cfs;
->         unsigned long           util_dl;
-> -       unsigned long           bw_dl;
-> -       unsigned long           util_rt;
->         unsigned long           max;
->
->         /* The field below is for single-CPU policies only: */
-> @@ -181,44 +177,38 @@ static unsigned int get_next_freq(struct
->         return cpufreq_driver_resolve_freq(policy, freq);
->  }
->
-> -static void sugov_get_util(struct sugov_cpu *sg_cpu)
-> +static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
->  {
->         struct rq *rq = cpu_rq(sg_cpu->cpu);
-> +       unsigned long util, max;
->
-> -       sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
-> -       sg_cpu->util_cfs = cpu_util_cfs(rq);
-> -       sg_cpu->util_dl  = cpu_util_dl(rq);
-> -       sg_cpu->bw_dl    = cpu_bw_dl(rq);
-> -       sg_cpu->util_rt  = cpu_util_rt(rq);
-> -}
-> -
-> -static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> -{
-> -       struct rq *rq = cpu_rq(sg_cpu->cpu);
-> -       unsigned long util;
-> +       sg_cpu->max = max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
-> +       sg_cpu->util_dl   = cpu_util_dl(rq);
->
->         if (rq->rt.rt_nr_running)
-> -               return sg_cpu->max;
-> +               return max;
->
-> -       util = sg_cpu->util_cfs;
-> -       util += sg_cpu->util_rt;
-> +       util  = cpu_util_cfs(rq);
-> +       util += cpu_util_rt(rq);
->
-> -       if ((util + sg_cpu->util_dl) >= sg_cpu->max)
-> -               return sg_cpu->max;
-> +       /*
-> +        * If there is no idle time, we should run at max frequency.
-> +        */
-> +       if ((util + cpu_util_dl(rq)) >= max)
-> +               return max;
->
->         /*
-> -        * As there is still idle time on the CPU, we need to compute the
-> -        * utilization level of the CPU.
->          * Bandwidth required by DEADLINE must always be granted while, for
->          * FAIR and RT, we use blocked utilization of IDLE CPUs as a mechanism
->          * to gracefully reduce the frequency when no tasks show up for longer
->          * periods of time.
-> +        *
-> +        * Ideally we would like to set bw_dl as min/guaranteed freq and bw_dl
-> +        * + util as requested freq. However, cpufreq is not yet ready for such
-> +        * an interface. So, we only do the latter for now.
->          */
->
-> -       /* Add DL bandwidth requirement */
-> -       util += sg_cpu->bw_dl;
-> -
-> -       return min(sg_cpu->max, util);
-> +       return min(max, cpu_bw_dl(rq) + util);
->  }
->
->  /**
-> @@ -396,9 +386,8 @@ static void sugov_update_single(struct u
->
->         busy = sugov_cpu_is_busy(sg_cpu);
->
-> -       sugov_get_util(sg_cpu);
-> +       util = sugov_get_util(sg_cpu);
->         max = sg_cpu->max;
-> -       util = sugov_aggregate_util(sg_cpu);
->         sugov_iowait_apply(sg_cpu, time, &util, &max);
->         next_f = get_next_freq(sg_policy, util, max);
->         /*
-> @@ -437,9 +426,8 @@ static unsigned int sugov_next_freq_shar
->                 struct sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
->                 unsigned long j_util, j_max;
->
-> -               sugov_get_util(j_sg_cpu);
-> +               j_util = sugov_get_util(j_sg_cpu);
->                 j_max = j_sg_cpu->max;
-> -               j_util = sugov_aggregate_util(j_sg_cpu);
->                 sugov_iowait_apply(j_sg_cpu, time, &j_util, &j_max);
->
->                 if (j_util * max > j_max * util) {
->
+The effect of the patch is a more aggressive inlining, which also
+causes a size increase of kernel.
+
+   text	   data	    bss	    dec	    hex	filename
+18147336 10226688 2957312 31331336 1de1408 ./vmlinux before
+18162555 10226288 2957312 31346155 1de4deb ./vmlinux after (+14819)
+
+Static text symbols:
+Before:	40053
+After:	39942	(-111)
+
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: virtualization@lists.linux-foundation.org
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/paravirt_types.h | 56 +++++++++++++--------------
+ arch/x86/kernel/macros.S              |  1 +
+ 2 files changed, 28 insertions(+), 29 deletions(-)
+
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..dd55d3d1c32a 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -343,23 +343,11 @@ extern struct pv_lock_ops pv_lock_ops;
+ #define paravirt_clobber(clobber)		\
+ 	[paravirt_clobber] "i" (clobber)
+ 
+-/*
+- * Generate some code, and mark it as patchable by the
+- * apply_paravirt() alternate instruction patcher.
+- */
+-#define _paravirt_alt(insn_string, type, clobber)	\
+-	"771:\n\t" insn_string "\n" "772:\n"		\
+-	".pushsection .parainstructions,\"a\"\n"	\
+-	_ASM_ALIGN "\n"					\
+-	_ASM_PTR " 771b\n"				\
+-	"  .byte " type "\n"				\
+-	"  .byte 772b-771b\n"				\
+-	"  .short " clobber "\n"			\
+-	".popsection\n"
+-
+ /* Generate patchable code, with the default asm parameters. */
+-#define paravirt_alt(insn_string)					\
+-	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
++#define paravirt_call							\
++	"PARAVIRT_CALL type=\"%c[paravirt_typenum]\""			\
++	" clobber=\"%c[paravirt_clobber]\""				\
++	" pv_opptr=\"%c[paravirt_opptr]\";"
+ 
+ /* Simple instruction patching code. */
+ #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
+@@ -387,16 +375,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
+ 
+ int paravirt_disable_iospace(void);
+ 
+-/*
+- * This generates an indirect call based on the operation type number.
+- * The type number, computed in PARAVIRT_PATCH, is derived from the
+- * offset into the paravirt_patch_template structure, and can therefore be
+- * freely converted back into a structure offset.
+- */
+-#define PARAVIRT_CALL					\
+-	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
+-
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
+  * ops structs, so that they can be later identified and patched at
+@@ -534,7 +512,7 @@ int paravirt_disable_iospace(void);
+ 		/* since this condition will never hold */		\
+ 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_call			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -544,7 +522,7 @@ int paravirt_disable_iospace(void);
+ 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
+ 		} else {						\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_call			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -571,7 +549,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_VCALL_ARGS;					\
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(pre					\
+-			     paravirt_alt(PARAVIRT_CALL)		\
++			     paravirt_call				\
+ 			     post					\
+ 			     : call_clbr, ASM_CALL_CONSTRAINT		\
+ 			     : paravirt_type(op),			\
+@@ -691,6 +669,26 @@ struct paravirt_patch_site {
+ extern struct paravirt_patch_site __parainstructions[],
+ 	__parainstructions_end[];
+ 
++#else	/* __ASSEMBLY__ */
++
++/*
++ * This generates an indirect call based on the operation type number.
++ * The type number, computed in PARAVIRT_PATCH, is derived from the
++ * offset into the paravirt_patch_template structure, and can therefore be
++ * freely converted back into a structure offset.
++ */
++.macro PARAVIRT_CALL type:req clobber:req pv_opptr:req
++771:	ANNOTATE_RETPOLINE_SAFE
++	call *\pv_opptr
++772:	.pushsection .parainstructions,"a"
++	_ASM_ALIGN
++	_ASM_PTR 771b
++	.byte \type
++	.byte 772b-771b
++	.short \clobber
++	.popsection
++.endm
++
+ #endif	/* __ASSEMBLY__ */
+ 
+ #endif	/* _ASM_X86_PARAVIRT_TYPES_H */
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index 66ccb8e823b1..71d8b716b111 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -10,3 +10,4 @@
+ #include <asm/refcount.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/bug.h>
++#include <asm/paravirt.h>
+-- 
+2.17.1
+
