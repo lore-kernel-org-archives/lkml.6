@@ -2,169 +2,120 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B35C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E18C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:23:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4756923F7E
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:22:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4756923F7E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 85E8323F83
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:23:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="STdbxpQ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E8323F83
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751411AbeFVJW5 (ORCPT
+        id S1751916AbeFVJXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:22:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:60450 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751210AbeFVJWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:22:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EAE21435;
-        Fri, 22 Jun 2018 02:22:55 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D1E223F89F;
-        Fri, 22 Jun 2018 02:22:54 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 440DF1AE13D0; Fri, 22 Jun 2018 10:23:31 +0100 (BST)
-Date:   Fri, 22 Jun 2018 10:23:31 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Wei Xu <xuwei5@hisilicon.com>
-Cc:     James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
-        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>, xiexiuqi@huawei.com,
-        huangdaode <huangdaode@hisilicon.com>,
-        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
-        "Xiongfanggou (James)" <james.xiong@huawei.com>,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
-        Zhangyi ac <zhangyi.ac@huawei.com>,
-        jonathan.cameron@huawei.com,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
-        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
-        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
-        libeijian@hisilicon.com, zhangbin011@hisilicon.com
-Subject: Re: KVM guest sometimes failed to boot because of kernel stack
- overflow if KPTI is enabled on a hisilicon ARM64 platform.
-Message-ID: <20180622092330.GD7601@arm.com>
-References: <5B2A6218.3030201@hisilicon.com>
- <20180620144257.GB27776@arm.com>
- <5B2A7832.4010502@hisilicon.com>
- <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
- <5B2A7FE1.5040607@hisilicon.com>
- <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
- <20180621091850.GA22505@arm.com>
- <5B2B7A84.8090309@hisilicon.com>
- <20180621105404.GB22505@arm.com>
- <5B2CB440.8040705@hisilicon.com>
+        Fri, 22 Jun 2018 05:23:38 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:39186 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751235AbeFVJXg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 05:23:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aHbubk1ywRvwkjiwlVwgUCWNTRXNHPTNOmD4iCImC2U=; b=STdbxpQ6PYInAvtfDnI6oqG+C
+        lvT80hq6U9R3J+3q7E8HRqUYMDAzbhS+FAQpEMfEi5Jwv+XTqY10x6gvw/2t0SCvu6q4TsUUGRM+j
+        wuzAgy2dMwWMF/G3Jnan1lHPCUuqkgoeDnlNzAK/jqzBdBP0roIwnvaO73x0rM5F2mSEU=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:37945)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1fWIHk-0000hH-EH; Fri, 22 Jun 2018 10:23:16 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1fWIHd-0000qw-Tg; Fri, 22 Jun 2018 10:23:11 +0100
+Date:   Fri, 22 Jun 2018 10:23:05 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Greg Ungerer <gerg@linux-m68k.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] [RFC] arm: Replace "multiple platforms" by "common
+ platform"
+Message-ID: <20180622092305.GS17671@n2100.armlinux.org.uk>
+References: <20180621155906.12821-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <5B2CB440.8040705@hisilicon.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180621155906.12821-1-geert+renesas@glider.be>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wei,
-
-On Fri, Jun 22, 2018 at 09:33:04AM +0100, Wei Xu wrote:
-> On 2018/6/21 11:54, Will Deacon wrote:
-> > On Thu, Jun 21, 2018 at 11:14:28AM +0100, Wei Xu wrote:
-> >> On 2018/6/21 10:18, Will Deacon wrote:
-> >>> Wei -- does the diff below help at all? Make sure you disable CONFIG_KASAN,
-> >>> otherwise your kernel will take an age to boot.
-> >>
-> >> Yes, amazing! This patch resolved the issue.
-> > 
-> > Great...
-> > 
-> >> I have tested 50 times and can not reproduce the issue any more.
-> >> Could you please tell more why this patch works?
-> > 
-> > You might need to ask your CPU design team ;)
-> > 
-> > Without this patch, the code in idmap_kpti_install_ng_mappings() sets
-> > bit 11 in table descriptors so that we can keep track of which parts of
-> > the page table we've visited. With this patch, we don't bother tracking
-> > and potentially rewalk parts of the page table (which takes a very long
-> > time if KASAN is enabled).
+On Thu, Jun 21, 2018 at 05:59:06PM +0200, Geert Uytterhoeven wrote:
+> "ARM multiplatform" has actually two meanings:
+>   1. It groups platforms that follow the "ARM multiplatform" software
+>      framework,
+>   2. It allows to build a single kernel that can be booted on multiple
+>      platforms.
 > 
-> Got it. Thanks!
-> 
-> > 
-> > The architecture documents I've looked at are clear that bit 11 is IGNORED
-> > by the CPU, which:
-> > 
-> >   "Indicates that the architecture guarantees that the bit or field is not
-> >    interpreted or modified by hardware."
-> > 
-> > Please can you double-check that your CPU is indeed ignoring bit 11 in
-> > non-leaf (table) descriptors?
-> 
-> Do the non-leaf(table) descriptors mean the table descriptors
-> of the section D4.3.1 "VMSAv8-64 translation table level 0, level 1, and level 2 descriptor formats"
-> in the ARM Architecture Reference Manual ARMv8 for ARMv8-A(DDI0487C_a_armv8_arm.pdf)?
-> 
-> If yes, our hardware does ignore it(not interpret or modify).
+> Currently support for XIP and/or NOMMU cannot be enabled on platforms
+> that follow the "ARM multiplatform" framework, without duplicating their
+> machine selection logic under a new Kconfig symbol.  As (in theory) all
+> platforms can be used with XIP and/or NOMMU, this is not sustainable.
 
-Ok, thanks for checking.
+The reason for that has nothing to do with the way this option is named,
+and even after reading your commit message, I can't come up with any
+reason for this change other than "personally don't like the existing
+wording" which IMHO is not a good enough reason to randomly go around
+rewording stuff in the kernel.
 
-> Is there any other possible reason cause this?
+The reason that XIP and NOMMU can't be enabled with a multi-platform
+kernel is that there are often issues with different layouts of the
+physical memory space which can not be taken into account.
 
-Perhaps just writing back the table entries is enough to cause the issue,
-although I really can't understand why that would be the case. Can you try
-the diff below (without my previous change), please?
+Multi-platform works around that by (a) using the MMU to abstract
+away the differences on RAM, and (b) modifying the kernel text to
+adjust the virtual to physical translations.  The latter is not
+possible with XIP, and the former should not be used with NOMMU.
+That means the kernel must be built to accomodate the physical
+layout on the target platform, and so building a kernel supporting
+multiple platforms with differing memory layouts makes no sense.
 
-Will
+This is exactly why I really don't like the idea of ARCH_MULTIPLATFORM
+being hijacked for NOMMU/XIP support.
 
---->8
+We've worked around the issues with "multi-platform" XIP/NOMMU by
+using things such as "ARM_SINGLE_V7M" to cover all V7M platforms
+(which must, by definition) have compatible physical layouts.
+Exactly the same approach should be adopted for other XIP/NOMMU
+platforms, and _not_ reusing ARCH_MULTIPLATFORM, which will lead
+to lots of non-bootable kernels.
 
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index 5f9a73a4452c..e2a8e88f95a0 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -216,7 +216,7 @@ ENDPROC(idmap_cpu_replace_ttbr1)
- 	.endm
- 
- 	.macro __idmap_kpti_put_pgtable_ent_ng, type
--	orr	\type, \type, #PTE_NG		// Same bit for blocks and pages
-+	eor	\type, \type, #PTE_NG		// Same bit for blocks and pages
- 	str	\type, [cur_\()\type\()p]	// Update the entry and ensure it
- 	dc	civac, cur_\()\type\()p		// is visible to all CPUs.
- 	.endm
-@@ -298,6 +298,7 @@ skip_pgd:
- 	/* PUD */
- walk_puds:
- 	.if CONFIG_PGTABLE_LEVELS > 3
-+	eor	pgd, pgd, #PTE_NG
- 	pte_to_phys	cur_pudp, pgd
- 	add	end_pudp, cur_pudp, #(PTRS_PER_PUD * 8)
- do_pud:	__idmap_kpti_get_pgtable_ent	pud
-@@ -319,6 +320,7 @@ next_pud:
- 	/* PMD */
- walk_pmds:
- 	.if CONFIG_PGTABLE_LEVELS > 2
-+	eor	pud, pud, #PTE_NG
- 	pte_to_phys	cur_pmdp, pud
- 	add	end_pmdp, cur_pmdp, #(PTRS_PER_PMD * 8)
- do_pmd:	__idmap_kpti_get_pgtable_ent	pmd
-@@ -339,6 +341,7 @@ next_pmd:
- 
- 	/* PTE */
- walk_ptes:
-+	eor	pmd, pmd, #PTE_NG
- 	pte_to_phys	cur_ptep, pmd
- 	add	end_ptep, cur_ptep, #(PTRS_PER_PTE * 8)
- do_pte:	__idmap_kpti_get_pgtable_ent	pte
+Another problems for NOMMU is that the kernel has to be linked for
+a specific _physical_ address.  When you have ARCH_MULTIPLATFORM
+enabled, there is no facility to select that address.
+
+Sorry, but reusing ARCH_MULTIPLATFORM is really a non-starter and
+is confusing.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
