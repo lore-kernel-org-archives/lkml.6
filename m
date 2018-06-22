@@ -2,93 +2,116 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE020C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CEEC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 951B0245EA
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:44:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 951B0245EA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F05AC245F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:44:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F05AC245F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934384AbeFVQoN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:44:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:48514 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934164AbeFVQoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:44:11 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 09:44:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,257,1526367600"; 
-   d="asc'?scan'208";a="239769296"
-Received: from jtkirshe-nuc.jf.intel.com ([134.134.177.59])
-  by fmsmga006.fm.intel.com with ESMTP; 22 Jun 2018 09:44:01 -0700
-Message-ID: <5718d34758dd55090dbc73441c3b12c6c5c02ff8.camel@intel.com>
-Subject: Re: [PATCH 0/4] docs: e100[0] fix build errors
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To:     "Tobin C. Harding" <me@tobin.cc>, Jonathan Corbet <corbet@lwn.net>
-Cc:     "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 22 Jun 2018 09:44:00 -0700
-In-Reply-To: <20180622003708.31848-1-me@tobin.cc>
-References: <20180622003708.31848-1-me@tobin.cc>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-saeb+Ae6JKlcEeHrnlq9"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
+        id S934415AbeFVQok (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:44:40 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:36766 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934385AbeFVQoj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 12:44:39 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R661e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0T3Ac.rU_1529685868;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3Ac.rU_1529685868)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 23 Jun 2018 00:44:30 +0800
+Subject: Re: [v2 PATCH 1/2] mm: thp: register mm for khugepaged when merging
+ vma for shmem
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     hughd@google.com, vbabka@suse.cz, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1529622949-75504-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180622075958.mzagr2ayufiuokea@black.fi.intel.com>
+ <cce4aa50-f8b7-8626-31ae-12464a30f884@linux.alibaba.com>
+ <20180622161912.sq32cnhfxo5ctgdp@black.fi.intel.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <6e59a56d-7bb3-76d3-201a-8a4ad4638602@linux.alibaba.com>
+Date:   Fri, 22 Jun 2018 09:44:27 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180622161912.sq32cnhfxo5ctgdp@black.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-saeb+Ae6JKlcEeHrnlq9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2018-06-22 at 10:37 +1000, Tobin C. Harding wrote:
-> I may be a little confused here, I'm getting docs build failure on
-> Linus' mainline, linux-next, and your docs-next but different errors.
-> There seems to be patches to the first two trees that are not in your
-> docs-next tree?
->=20
-> Do networking docs typically go through your tree?  Looks like
-> networking has done some conversion to rst that hasn't gone through
-> your
-> tree.  Or else my git skills are failing.
+On 6/22/18 9:19 AM, Kirill A. Shutemov wrote:
+> On Fri, Jun 22, 2018 at 04:04:12PM +0000, yang.shi@linux.alibaba.com wrote:
+>>
+>> On 6/22/18 12:59 AM, Kirill A. Shutemov wrote:
+>>> On Thu, Jun 21, 2018 at 11:15:48PM +0000, yang.shi@linux.alibaba.com wrote:
+>>>> When merging anonymous page vma, if the size of vma can fit in at least
+>>>> one hugepage, the mm will be registered for khugepaged for collapsing
+>>>> THP in the future.
+>>>>
+>>>> But, it skips shmem vma. Doing so for shmem too, but not file-private
+>>>> mapping, when merging vma in order to increase the odd to collapse
+>>>> hugepage by khugepaged.
+>>>>
+>>>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>>>> Cc: Hugh Dickins <hughd@google.com>
+>>>> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>>>> ---
+>>>> v1 --> 2:
+>>>> * Exclude file-private mapping per Kirill's comment
+>>>>
+>>>>    mm/khugepaged.c | 8 ++++++--
+>>>>    1 file changed, 6 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>>> index d7b2a4b..9b0ec30 100644
+>>>> --- a/mm/khugepaged.c
+>>>> +++ b/mm/khugepaged.c
+>>>> @@ -440,8 +440,12 @@ int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
+>>>>    		 * page fault if needed.
+>>>>    		 */
+>>>>    		return 0;
+>>>> -	if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+>>>> -		/* khugepaged not yet working on file or special mappings */
+>>>> +	if ((vma->vm_ops && (!shmem_file(vma->vm_file) || vma->anon_vma)) ||
+>>>> +	    (vm_flags & VM_NO_KHUGEPAGED))
+>>>> +		/*
+>>>> +		 * khugepaged not yet working on non-shmem file or special
+>>>> +		 * mappings. And, file-private shmem THP is not supported.
+>>>> +		 */
+>>>>    		return 0;
+>>> My point was that vma->anon_vma check above this one should not prevent
+>>> collapse for shmem.
+>>>
+>>> Looking into this more, I think we should just replace all these checks
+>>> with hugepage_vma_check() call.
+>> I got a little bit confused here. I thought the condition to *not* collapse
+>> file-private shmem mapping should be:
+>>
+>> shmem_file(vma->vm_file) && vma->anon_vma
+>>
+>> Is this right?
+> No, if shmem_file(vma->vm_file) is true, vma->anon_vma doesn't matter.
+> We don't care about anon_vma in such VMA as we don't touch file-private
+> pages.
 
-Networking documentation changes went through David Miller's networking
-tree because he maintains changes under Documentation/networking/
---=-saeb+Ae6JKlcEeHrnlq9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Thanks, I misunderstood that. hugepage_vma_check() sounds reasonable. 
+Will fix in v3 soon.
 
------BEGIN PGP SIGNATURE-----
+Yang
 
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlstJ1AACgkQ5W/vlVpL
-7c4g3Q//UT7WA9IeTyE07BIZ3JwQk/0uSosowJHOGMXYEyil0K76/q17U7XwHigK
-SO7DPtDtSj0nU9v15OW+pNkZarFCndJ6pUCG/vyHYQnLFV8AMYSho/iGJGpH5WTq
-GHn25uj1oLz7nMu3W+bVDZ17j0p6luMTXb90bRUNufVrmdpVRdGhvW9OKMoT2lIs
-48Un1akbX3OA6w9PZj9fzrlXRzp0XoJiRBiVrck/HkdNGsMdsiXSv7zndYMpkRBb
-Roe4Y9TGdHRIpvqK3Lb+WFjPU2sU9s+kJIb1y5AQd0JPpt7DPffoFPNOuAeSXR77
-GpeEkf8bzERQz7HqDSCOE180owpEbXAaxuu0YN5d6+5mlU1YVYCgQ82zQJmynftB
-OG23bP87dJZL/xh3ZPKsEIGaQgOxzkYNUQT8hXAajd+Ap0yQLvOuhYvvteMSYLhO
-7p1FpDi7tMmq+1yWcMq0joOGLBw9t8kyXi2dXN5oJCKA/l6gyOqLTgrW4Y0OD2bk
-Pcq1CcekRDa2n7xmhR40kCFcPrDxBO69PdVkGiDEonwXi29Qzcjw7ur2sQSKTmzM
-qHTEiowvfomh81LIhzlKZUq5kd8AYWyyn6R2TJA7DYPm1IRgwl7H7qJEb+Ushsxr
-zl/B/f8gd6/pQTnK6VnwTEcZBiD+ZvTwtLNv10NGz9Xedb4Hc6c=
-=cIYU
------END PGP SIGNATURE-----
-
---=-saeb+Ae6JKlcEeHrnlq9--
+>
 
