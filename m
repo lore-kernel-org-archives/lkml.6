@@ -2,56 +2,101 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A6CC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1DDC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AEFD2439A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:53:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AEFD2439A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id D67CA24423
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:54:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67CA24423
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933714AbeFVOx0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:53:26 -0400
-Received: from verein.lst.de ([213.95.11.211]:56974 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932973AbeFVOxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:53:25 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 2CA2168E45; Fri, 22 Jun 2018 17:02:51 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 17:02:51 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     kernel test robot <xiaolong.ye@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [lkp-robot] [fs]  3deb642f0d:  will-it-scale.per_process_ops
-        -8.8% regression
-Message-ID: <20180622150251.GA12802@lst.de>
-References: <20180622082752.GX11011@yexl-desktop>
+        id S933628AbeFVOyQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:54:16 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:38340 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751806AbeFVOyO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:54:14 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fWNRy-0007Yw-38; Fri, 22 Jun 2018 22:54:10 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fWNRr-0003UR-5F; Fri, 22 Jun 2018 22:54:03 +0800
+Date:   Fri, 22 Jun 2018 22:54:03 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Crypto Fixes for 4.18
+Message-ID: <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
+References: <20161119102748.GA4277@gondor.apana.org.au>
+ <20161213132414.GA7898@gondor.apana.org.au>
+ <20170223125141.GA17400@gondor.apana.org.au>
+ <20170714141855.GA29426@gondor.apana.org.au>
+ <20170922084401.GA15541@gondor.apana.org.au>
+ <20171128230929.GA17783@gondor.apana.org.au>
+ <20171222064931.GA27068@gondor.apana.org.au>
+ <20180105073808.GA14405@gondor.apana.org.au>
+ <20180212031702.GA26153@gondor.apana.org.au>
+ <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180622082752.GX11011@yexl-desktop>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiaolong,
+Hi Linus: 
 
-can you retest this workload on the following branch:
+This push fixes the following issues:
 
-    git://git.infradead.org/users/hch/vfs.git remove-get-poll-head
+- Fix use after free in chtls.
+- Fix RBP breakage in sha3.
+- Fix use after free in hwrng_unregister.
+- Fix overread in morus640.
+- Move sleep out of kernel_neon in arm64/aes-blk.
 
-Gitweb:
 
-    http://git.infradead.org/users/hch/vfs.git/shortlog/refs/heads/remove-get-poll-head
+Please pull from
+
+git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+
+
+Dan Carpenter (1):
+      crypto: chtls - use after free in chtls_pt_recvmsg()
+
+Dmitry Vyukov (1):
+      crypto: don't optimize keccakf()
+
+Jia He (1):
+      crypto: arm64/aes-blk - fix and move skcipher_walk_done out of kernel_neon_begin, _end
+
+Michael Büsch (1):
+      hwrng: core - Always drop the RNG in hwrng_unregister()
+
+Ondrej Mosnáček (1):
+      crypto: morus640 - Fix out-of-bounds access
+
+ arch/arm64/crypto/aes-glue.c            |    2 +-
+ crypto/morus640.c                       |    3 ++-
+ crypto/sha3_generic.c                   |    2 +-
+ drivers/char/hw_random/core.c           |   11 +++++++++--
+ drivers/crypto/chelsio/chtls/chtls_io.c |    5 ++---
+ 5 files changed, 15 insertions(+), 8 deletions(-)
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
