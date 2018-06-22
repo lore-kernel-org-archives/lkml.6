@@ -6,105 +6,94 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E05AC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8236C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5282241C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:26:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5282241C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9739B241C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:26:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9739B241C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932965AbeFVM0C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 08:26:02 -0400
-Received: from foss.arm.com ([217.140.101.70]:34074 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753275AbeFVM0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:26:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B4D914;
-        Fri, 22 Jun 2018 05:26:00 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDD053F819;
-        Fri, 22 Jun 2018 05:25:57 -0700 (PDT)
-Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <e90e0670-3cf5-4430-3b4a-8f7ad520938d@arm.com>
-Date:   Fri, 22 Jun 2018 13:25:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933200AbeFVM0R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 08:26:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47837 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeFVM0P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 08:26:15 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5MCQ2MR066526
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 22 Jun 2018 05:26:02 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5MCQ2Xv066523;
+        Fri, 22 Jun 2018 05:26:02 -0700
+Date:   Fri, 22 Jun 2018 05:26:02 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Marc Zyngier <tipbot@zytor.com>
+Message-ID: <tip-cbaf45a6be497c272e80500e4fd9bccdf20d5050@git.kernel.org>
+Cc:     yangyingliang@huawei.com, alexandre.belloni@bootlin.com,
+        sumit.garg@linaro.org, mingo@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+        jason@lakedaemon.net, hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com,
+          jason@lakedaemon.net, marc.zyngier@arm.com,
+          yangyingliang@huawei.com, tglx@linutronix.de, mingo@kernel.org,
+          sumit.garg@linaro.org, alexandre.belloni@bootlin.com
+In-Reply-To: <20180622095254.5906-4-marc.zyngier@arm.com>
+References: <20180622095254.5906-4-marc.zyngier@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/urgent] irqchip/gic-v2m: Fix SPI release on error path
+Git-Commit-ID: cbaf45a6be497c272e80500e4fd9bccdf20d5050
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/06/18 13:14, Geert Uytterhoeven wrote:
-> Hi Michel,
-> 
-> CC MarcZ
-> 
-> On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
->> This adds the Renesas R9A06G032 bare bone support.
->>
->> This currently only handles the SYSCTRL block note,
->> generic parts (gic, architected timer) and a UART.
->>
->> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> 
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> 
->> +       timer {
->> +               compatible = "arm,cortex-a7-timer",
-> 
-> Checkpatch says:
-> WARNING: DT compatible string "arm,cortex-a7-timer" appears
-> un-documented -- check ./Documentation/devicetree/bindings/
-> 
->> +                            "arm,armv7-timer";
-> 
-> Documentation/devicetree/bindings/arm/arch_timer.txt says:
-> 
->     compatible should at least contain "arm,armv7-timer"
-> 
-> but fails to list other possible values?
+Commit-ID:  cbaf45a6be497c272e80500e4fd9bccdf20d5050
+Gitweb:     https://git.kernel.org/tip/cbaf45a6be497c272e80500e4fd9bccdf20d5050
+Author:     Marc Zyngier <marc.zyngier@arm.com>
+AuthorDate: Fri, 22 Jun 2018 10:52:50 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 22 Jun 2018 14:22:00 +0200
 
-The idea is that you could add something useful that matches your CPU.
-Adding new CPU types in the binding seems to be a never ending battle...
+irqchip/gic-v2m: Fix SPI release on error path
 
-> 
->> +               interrupt-parent = <&gic>;
->> +               arm,cpu-registers-not-fw-configured;
+On failing to allocate the required SPIs, the actual number of interrupts
+should be freed and not its log2 value.
 
-Really? :-(
+Fixes: de337ee30142 ("irqchip/gic-v2m: Add PCI Multi-MSI support")
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Yang Yingliang <yangyingliang@huawei.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Link: https://lkml.kernel.org/r/20180622095254.5906-4-marc.zyngier@arm.com
 
-Thanks,
+---
+ drivers/irqchip/irq-gic-v2m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+index 0f52d44b3f69..f5fe0100f9ff 100644
+--- a/drivers/irqchip/irq-gic-v2m.c
++++ b/drivers/irqchip/irq-gic-v2m.c
+@@ -199,7 +199,7 @@ static int gicv2m_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+ 
+ fail:
+ 	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
+-	gicv2m_unalloc_msi(v2m, hwirq, get_count_order(nr_irqs));
++	gicv2m_unalloc_msi(v2m, hwirq, nr_irqs);
+ 	return err;
+ }
+ 
