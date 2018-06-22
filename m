@@ -2,100 +2,94 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E685C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F56EC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43EEE24728
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:24:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43EEE24728
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id EAEB92472E
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:27:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAEB92472E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934095AbeFVSYZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 14:24:25 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60094 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933691AbeFVSYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 14:24:24 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id JvFXaafhXKlL; Fri, 22 Jun 2018 20:24:22 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCF3400329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:3400:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B9AC61EC038F;
-        Fri, 22 Jun 2018 20:24:22 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 20:24:19 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     KVM <kvm@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] x86/kvm: Handle all MCA banks
-Message-ID: <20180622182419.GE1882@zn.tnic>
-References: <20180622095101.32587-1-bp@alien8.de>
- <20180622095101.32587-4-bp@alien8.de>
- <20180622181603.GB5549@flask>
+        id S934119AbeFVS1N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:27:13 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33071 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933878AbeFVS1L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 14:27:11 -0400
+Received: by mail-ed1-f67.google.com with SMTP id q21-v6so1735099eds.0;
+        Fri, 22 Jun 2018 11:27:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4Z3WmfflDUKu2E5/aNPifecm97kDg6a0E8R/qwHLugc=;
+        b=oNF+x+aJ5KFDFP/lvfCOVZslDKe28JNUtRfQGbxH3DsMw6Ot26qkMPg5UP9OkrDElj
+         N756R+Rjvyz7jZjZUzIzCzS3j+VB30Qz/JEWO+/AiaSPPqlu+F6vdSsu/PD8wXGGXwOS
+         //iUSAM3qFQ5pyVuWkFLFxqivWqt+h+jO6mL+qGeY3u923M0qiU/vlNkQIg0aF2/dYxY
+         Xn4qDq3HZYf53rkr61T2Q2JCFSset1AJ0cm/dbwg6yB6/HiWKC+32W3HglXRWCzQPiPL
+         ByCwxtjRINQyWPSQp5whE1LWjmXFoQnnhr+TCmDxXxRk1hd5i6VKG+bR8jDuSinywgxP
+         rwXg==
+X-Gm-Message-State: APt69E2uRSya7KuqPsZT0chKBE7exhtQkLieKYL/5ApaKzrMbdSM/oNo
+        skE6luUaqeWKxMkgdcl99QI=
+X-Google-Smtp-Source: ADUXVKKqMrRmlCzhniPcdk0yhtPLcGeeIY7KOqD6fLOHM/TMRUUHvNRFMn/Ryo4PobRw8ZQPt6QV0g==
+X-Received: by 2002:aa7:c808:: with SMTP id a8-v6mr2663406edt.124.1529692029771;
+        Fri, 22 Jun 2018 11:27:09 -0700 (PDT)
+Received: from kozik-lap (adsl-84-227-236-43.adslplus.ch. [84.227.236.43])
+        by smtp.googlemail.com with ESMTPSA id f11-v6sm4254440edb.54.2018.06.22.11.27.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 11:27:08 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 20:27:07 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: exynos: remove no longer needed samsung
+ thermal properties
+Message-ID: <20180622182707.i52l3z4yq2ozmqkw@kozik-lap>
+References: <CGME20180621103531eucas1p15ccaf3a2069fe5a188daaeb8e2a29a93@eucas1p1.samsung.com>
+ <8551504.8D13YNfR1X@amdc3058>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180622181603.GB5549@flask>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <8551504.8D13YNfR1X@amdc3058>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 08:16:04PM +0200, Radim Krčmář wrote:
-> 2018-06-22 11:51+0200, Borislav Petkov:
-> > From: Borislav Petkov <bp@suse.de>
-> > 
-> > Extend the range of MCA banks which get passed to set/get_msr_mce() to
-> > include all the MSRs of the last bank too.
-> > 
-> > Signed-off-by: Borislav Petkov <bp@suse.de>
-> > ---
-> >  arch/x86/kvm/x86.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 80452b0f0e8c..a7d344823356 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -2466,7 +2466,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> >  
-> >  	case MSR_IA32_MCG_CTL:
-> >  	case MSR_IA32_MCG_STATUS:
-> > -	case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_CTL(KVM_MAX_MCE_BANKS) - 1:
-> > +	case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS) - 1:
+On Thu, Jun 21, 2018 at 12:35:30PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Remove no longer needed samsung thermal properties.
 > 
-> It was correct before.  We have 32 banks (KVM_MAX_MCE_BANKS), so the
-> last useable has index 31 and the "- 1" is going to roll over from first
-> MSR of bank 32 to the last MSR of the last bank.
+> There should be no functional changes caused by this patch.
 > 
-> Another way of writing it would be:
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> v2:
+> - rebased against current -next kernel
 > 
->  case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS - 1):
+>  arch/arm/boot/dts/exynos3250.dtsi                 |    2 +-
+>  arch/arm/boot/dts/exynos4.dtsi                    |    2 +-
+>  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi |   20 --------------------
+>  arch/arm/boot/dts/exynos5250.dtsi                 |    2 +-
+>  arch/arm/boot/dts/exynos5410.dtsi                 |    8 ++++----
+>  arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi |   21 ---------------------
+>  arch/arm/boot/dts/exynos5420.dtsi                 |   10 +++++-----
+>  7 files changed, 12 insertions(+), 53 deletions(-)
+> 
 
-Huh?
+Thanks, applied.
 
-This is what I did:
+Best regards,
+Krzysztof
 
-+   case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS) - 1:
-
-It needs to be MISC because it is the last MSR in the MCA bank and thus
-the highest.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
