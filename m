@@ -6,51 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7372C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1901CC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C0C7244A5
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:22:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C0C7244A5
+	by mail.kernel.org (Postfix) with ESMTP id CE874244AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:22:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE874244AF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933876AbeFVPWd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:22:33 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:38368 "EHLO
+        id S933879AbeFVPW5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:22:57 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:38378 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933822AbeFVPWa (ORCPT
+        with ESMTP id S933827AbeFVPWr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:22:30 -0400
+        Fri, 22 Jun 2018 11:22:47 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fWNtK-00082a-0G; Fri, 22 Jun 2018 23:22:26 +0800
+        id 1fWNtX-00082j-FS; Fri, 22 Jun 2018 23:22:39 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fWNtJ-0003XG-9s; Fri, 22 Jun 2018 23:22:25 +0800
-Date:   Fri, 22 Jun 2018 23:22:25 +0800
+        id 1fWNtW-0003Xh-MF; Fri, 22 Jun 2018 23:22:38 +0800
+Date:   Fri, 22 Jun 2018 23:22:38 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
 To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
+Cc:     George Cherian <george.cherian@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
         linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] crypto: aegis: fix indentation of a statement
-Message-ID: <20180622152225.66jv264eagcf52ad@gondor.apana.org.au>
-References: <20180530105005.13116-1-colin.king@canonical.com>
+Subject: Re: [PATCH] crypto: cavium: make structure algs static
+Message-ID: <20180622152238.5zw77nwffqyj7a4j@gondor.apana.org.au>
+References: <20180601131227.1340-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180530105005.13116-1-colin.king@canonical.com>
+In-Reply-To: <20180601131227.1340-1-colin.king@canonical.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:50:05AM +0100, Colin King wrote:
+On Fri, Jun 01, 2018 at 02:12:27PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Trival fix to correct the indentation of a single statement
+> The structure algs is local to the source and does not need to be in
+> global scope, so make it static.
+> 
+> Cleans up sparse warning:
+> drivers/crypto/cavium/cpt/cptvf_algs.c:354:19: warning: symbol 'algs'
+> was not declared. Should it be static?
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
