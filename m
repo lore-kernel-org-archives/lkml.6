@@ -2,96 +2,150 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA64C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419F3C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1EED23D83
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:48:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1EED23D83
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id DF79B23D87
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:51:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YnaOG88c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF79B23D87
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751097AbeFVFsL (ORCPT
+        id S1751164AbeFVFvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 01:48:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41330 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750779AbeFVFsK (ORCPT
+        Fri, 22 Jun 2018 01:51:44 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33309 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750801AbeFVFvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 01:48:10 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5M5iHk9002399
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:48:09 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jrpg5rf00-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:48:09 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.vnet.ibm.com>;
-        Fri, 22 Jun 2018 06:48:06 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 22 Jun 2018 06:48:02 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5M5m1qG30605442
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 22 Jun 2018 05:48:01 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15C854C044;
-        Fri, 22 Jun 2018 06:48:01 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B92C4C040;
-        Fri, 22 Jun 2018 06:47:59 +0100 (BST)
-Received: from skywalker (unknown [9.124.31.51])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Fri, 22 Jun 2018 06:47:59 +0100 (BST)
-Received: (nullmailer pid 3241 invoked by uid 1000);
-        Fri, 22 Jun 2018 05:47:59 -0000
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 13/26] ppc: Convert mmu context allocation to new IDA API
-In-Reply-To: <20180622043815.GA31255@bombadil.infradead.org>
-References: <20180621212835.5636-1-willy@infradead.org> <20180621212835.5636-14-willy@infradead.org> <20180622121511.00ae9d00@roar.ozlabs.ibm.com> <20180622043815.GA31255@bombadil.infradead.org>
-Date:   Fri, 22 Jun 2018 11:17:59 +0530
+        Fri, 22 Jun 2018 01:51:42 -0400
+Received: by mail-oi0-f67.google.com with SMTP id c6-v6so5145505oiy.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 22:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=c139qY0q8XcM2IeRgAq0SoTavOxJCmJupmSjVI+vKC8=;
+        b=YnaOG88cTG5HyC9HfireVqvL6RHarkbty7ye4xry5MaLlFds1AAg+PLr2MfVEuj35T
+         AC+ly/eBQpvpX0nZNv0IvyOEEvjyhpkFwH6plSFnM8A5T5PrnhwpUduJKswse48EOf3s
+         EDAEx/kaTHzbCGD3TVvNx7sbnetTRN5qoLzkQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=c139qY0q8XcM2IeRgAq0SoTavOxJCmJupmSjVI+vKC8=;
+        b=p2EVDNXPJzCMGqPtCe9Z9AKbW6IX5E7dtRbamXGpLHSe0BxJ722rfrw9muxgkgVuAw
+         iXFMA2rNA/xHSfDiX6D5XQtrJJju6Zo8ZHM0dLTN1QKhSR0fKr4TuDLjkZ9ImBhQjW2F
+         hb2CvaRB/ozjBD9+dFXoQyp29A+3jSlDEO2DXrxbGornniY6+GtEMTzahZJNQiXMa9ti
+         Y6Fuw6rfXGX/cRN4bEugYf4UU35yYQMAGhJ9Y09psck1WLEAIlcrmrUX1vx+xypV6XPB
+         3iXXVHZOjFZuk04LVZ3q85lLyesMDDBywSxPTILRabb/P+NgBB50XmGEzI334jj4vK5C
+         YZQQ==
+X-Gm-Message-State: APt69E2pfMLXPnRtn7k5kBg0rwyR2KIKXQfQLpUtsir8w7RvXJjI6VkF
+        aCBdlGds+wH1LS+RXzwpUsZ54NT+V/NRXBIGQ29dfw==
+X-Google-Smtp-Source: ADUXVKKemTY9Io6ufNsAvSwVFv3C5UntEp52NRU8OPyHLl6XScYEFhpj0nu0ujSdiVaK7BLGUi+DvBSzQOOGfgqU7m8=
+X-Received: by 2002:aca:3f57:: with SMTP id m84-v6mr107425oia.280.1529646701759;
+ Thu, 21 Jun 2018 22:51:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18062205-0016-0000-0000-000001DECA4D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062205-0017-0000-0000-00003232E9C3
-Message-Id: <87tvpvbcds.fsf@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=477 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806220063
+Received: by 2002:a9d:4044:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 22:51:41
+ -0700 (PDT)
+In-Reply-To: <20180620195214.GA10436@rob-hp-laptop>
+References: <1529310679-13482-1-git-send-email-srinath.mannam@broadcom.com>
+ <1529310679-13482-2-git-send-email-srinath.mannam@broadcom.com> <20180620195214.GA10436@rob-hp-laptop>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Fri, 22 Jun 2018 11:21:41 +0530
+Message-ID: <CABe79T74ycjqCAo5gnKkdMKZfcVGSuOX-EiUuhiwZ-iMtacPzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: Add binding document for SR thermal
+To:     Rob Herring <robh@kernel.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Pramod Kumar <pramod.kumar@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> writes:
+Hi Rob,
 
+Please find my comments for the reason to have multiple DT nodes.
 
-
-> this situation from occurring (like, oh i don't know, this function only
-> being called on process exit, so implicitly only called once per context).
+On Thu, Jun 21, 2018 at 1:22 AM, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Jun 18, 2018 at 02:01:17PM +0530, Srinath Mannam wrote:
+>> From: Pramod Kumar <pramod.kumar@broadcom.com>
+>>
+>> Add binding document for supported thermal implementation
+>> in Stingray.
+>>
+>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>> Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
+>> ---
+>>  .../bindings/thermal/brcm,sr-thermal.txt           | 45 ++++++++++++++++++++++
+>>  1 file changed, 45 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+>> new file mode 100644
+>> index 0000000..33f9e11
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+>> @@ -0,0 +1,45 @@
+>> +* Broadcom Stingray Thermal
+>> +
+>> +This binding describes thermal sensors that is part of Stingray SoCs.
+>> +
+>> +Required properties:
+>> +- compatible : Must be "brcm,sr-thermal"
+>> +- reg : memory where tmon data will be available.
+>> +
+>> +Example:
+>> +     tmons {
+>> +             compatible = "simple-bus";
+>> +             #address-cells = <1>;
+>> +             #size-cells = <1>;
+>> +             ranges;
+>> +
+>> +             tmon_ihost0: thermal@8f100000 {
+>> +                     compatible = "brcm,sr-thermal";
+>> +                     reg = <0x8f100000 0x4>;
+>> +             };
+>
+> You still haven't given me a compelling reason why you need a node per
+> register.
+>
+> You have a single range of registers. Make this 1 node.
 >
 
-That is correct.
+We Have two reasons to have multiple nodes..
+1. Our chip has multiple functional blocks. Each functional block has
+its own thermal zone.
+Functional blocks and their thermal zones enabled/disabled based on end product.
+Few functional blocks need to disabled for few products so thermal
+zones also need to disable.
+In that case, nodes of specific thermal zones are removed from DTS
+file of corresponding product.
 
+2. Thermal framework provides sysfs interface to configure thermal
+zones and read temperature of thermal zone.
+To configure individual thermal zone, we need to have separate DT node.
+Same to read temperature of individual thermal zone.
+Ex: To read temperature of thermal zone 0.
+         cat /sys/class/thermal/thermal_zone0/temp
+     To configure trip temperature of thermal zone 0.
+          echo 110000 > /sys/class/thermal/thermal_zone0/trip_point_0_temp
+
+Also to avoid driver source change for the multiple products it is
+clean to have multiple DT nodes.
+
+> Rob
