@@ -2,106 +2,121 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9EAC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBEEC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A5123FAD
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A5123FAD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by mail.kernel.org (Postfix) with ESMTP id A2ECD23FB2
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:50:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2ECD23FB2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752652AbeFVJuC convert rfc822-to-8bit (ORCPT
+        id S1754172AbeFVJuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:50:02 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33466 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751242AbeFVJuB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:50:01 -0400
-Received: by mail-ot0-f196.google.com with SMTP id h6-v6so6872338otj.0;
-        Fri, 22 Jun 2018 02:50:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4z78ZTinj+MQvYO0TTtI/xZWXHuutMfmsU/LTy1MT9w=;
-        b=VR/IwjjW0kw5LXlDuU7dL3WXGV1blB9GDrBpjTXki5uD9CUofJcE12dYVo8SmkwvpD
-         MZ+tc3dP2cf4Qccq23WWTMiFBtuLcLAHOlLu+LrlV2fiPFfFkeoJUs/SypfHHcYBhcGx
-         KoEQymcXc53aG7uRxC1lrJCVY5zhua7ExzNH78wnB4p2vkonkiPqEv+5I4xpAm0d06B3
-         GMa2AObAIArU0sf6YILB/WS8SC7fRUXMl3K/r0rZiHn4rR3QG72QwTaBc7eg15vhGgyr
-         H9L1dDMzefJgTWxM95SPjrJuCCZ/UCjp0vPpoW2y327IOKNDmbSWOqGk6D5SNl07sOud
-         hAHg==
-X-Gm-Message-State: APt69E0Rk+8A6118o2uZvovIaBkl7OrgTtBr40E1u+lPDQeCTangsjkA
-        nU4T77Wr0mth4pRtKqiknAce23t3sepp2Z4VMHs=
-X-Google-Smtp-Source: ADUXVKJkuXFzq5R4T/AjJUDDkedzUTp08l/Frz2ey2irMrCoi+Oi2b0bm6YpfbM8N5msdJQMHJj7zanWEtcWa4ujl0U=
-X-Received: by 2002:a9d:56ec:: with SMTP id b41-v6mr442505otj.339.1529661000396;
- Fri, 22 Jun 2018 02:50:00 -0700 (PDT)
+        Fri, 22 Jun 2018 05:50:51 -0400
+Received: from verein.lst.de ([213.95.11.211]:55640 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751242AbeFVJuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 05:50:50 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id D8C9668E45; Fri, 22 Jun 2018 12:00:14 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 12:00:14 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     kernel test robot <xiaolong.ye@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LKP <lkp@01.org>
+Subject: Re: [lkp-robot] [fs] 3deb642f0d: will-it-scale.per_process_ops
+        -8.8% regression
+Message-ID: <20180622100014.GA12425@lst.de>
+References: <20180622082752.GX11011@yexl-desktop> <CA+55aFw5ghByk_zCN25G6rPPSAQma3Mh0t4s18CtLg=h6U9+Zg@mail.gmail.com> <20180622095608.GA12263@lst.de>
 MIME-Version: 1.0
-References: <20180322202007.23088-1-malat@debian.org> <20180322202007.23088-17-malat@debian.org>
-In-Reply-To: <20180322202007.23088-17-malat@debian.org>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Fri, 22 Jun 2018 11:49:49 +0200
-Message-ID: <CA+7wUsxFJqjnygdg0a84QYktFGMUYeSiGD6=Ld3O06QsZkgG9g@mail.gmail.com>
-Subject: Re: [PATCH 16/19] powerpc/powermac: Add missing include of header pmac.h
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm-ppc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622095608.GA12263@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This one is also ok.
+And a version with select() also covered:
 
-On Thu, Mar 22, 2018 at 9:21 PM Mathieu Malaterre <malat@debian.org> wrote:
->
-> The header `pmac.h` was not included, leading to the following warnings,
-> treated as error with W=1:
->
->   arch/powerpc/platforms/powermac/time.c:69:13: error: no previous prototype for ‘pmac_time_init’ [-Werror=missing-prototypes]
->   arch/powerpc/platforms/powermac/time.c:207:15: error: no previous prototype for ‘pmac_get_boot_time’ [-Werror=missing-prototypes]
->   arch/powerpc/platforms/powermac/time.c:222:6: error: no previous prototype for ‘pmac_get_rtc_time’ [-Werror=missing-prototypes]
->   arch/powerpc/platforms/powermac/time.c:240:5: error: no previous prototype for ‘pmac_set_rtc_time’ [-Werror=missing-prototypes]
->   arch/powerpc/platforms/powermac/time.c:259:12: error: no previous prototype for ‘via_calibrate_decr’ [-Werror=missing-prototypes]
->   arch/powerpc/platforms/powermac/time.c:311:13: error: no previous prototype for ‘pmac_calibrate_decr’ [-Werror=missing-prototypes]
->
-> The function `via_calibrate_decr` was made static to silence a warning.
->
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  arch/powerpc/platforms/powermac/time.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-> index 274af6fa388e..5cc6fa40fcc4 100644
-> --- a/arch/powerpc/platforms/powermac/time.c
-> +++ b/arch/powerpc/platforms/powermac/time.c
-> @@ -34,6 +34,8 @@
->  #include <asm/nvram.h>
->  #include <asm/smu.h>
->
-> +#include "pmac.h"
-> +
->  #undef DEBUG
->
->  #ifdef DEBUG
-> @@ -256,7 +258,7 @@ int pmac_set_rtc_time(struct rtc_time *tm)
->   * Calibrate the decrementer register using VIA timer 1.
->   * This is used both on powermacs and CHRP machines.
->   */
-> -int __init via_calibrate_decr(void)
-> +static int __init via_calibrate_decr(void)
->  {
->         struct device_node *vias;
->         volatile unsigned char __iomem *via;
-> --
-> 2.11.0
->
+---
+From 317159003ae28113cf759c632b161fb39192fe3c Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Fri, 22 Jun 2018 11:36:26 +0200
+Subject: fs: optimize away ->_qproc indirection for poll_mask based polling
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/select.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/fs/select.c b/fs/select.c
+index bc3cc0f98896..2c9d81892509 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -528,6 +528,24 @@ static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time)
+ 					wait_key_set(wait, in, out, bit,
+ 						     busy_flag);
+ 					mask = vfs_poll(f.file, wait);
++					if (f.file->f_op->poll) {
++						mask = f.file->f_op->poll(f.file, wait);
++					} else if (file_has_poll_mask(f.file)) {
++						struct wait_queue_head *head;
++
++						head = f.file->f_op->get_poll_head(f.file, wait->_key);
++						if (!head) {
++							mask = DEFAULT_POLLMASK;
++						} else if (IS_ERR(head)) {
++							mask = EPOLLERR;
++						} else {
++							if (wait->_qproc)
++								__pollwait(f.file, head, wait);
++							mask = f.file->f_op->poll_mask(f.file, wait->_key);
++						}
++					} else {
++						mask = DEFAULT_POLLMASK;
++					}
+ 
+ 					fdput(f);
+ 					if ((mask & POLLIN_SET) && (in & bit)) {
+@@ -845,7 +863,25 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
+ 	/* userland u16 ->events contains POLL... bitmap */
+ 	filter = demangle_poll(pollfd->events) | EPOLLERR | EPOLLHUP;
+ 	pwait->_key = filter | busy_flag;
+-	mask = vfs_poll(f.file, pwait);
++	if (f.file->f_op->poll) {
++		mask = f.file->f_op->poll(f.file, pwait);
++	} else if (file_has_poll_mask(f.file)) {
++		struct wait_queue_head *head;
++
++		head = f.file->f_op->get_poll_head(f.file, pwait->_key);
++		if (!head) {
++			mask = DEFAULT_POLLMASK;
++		} else if (IS_ERR(head)) {
++			mask = EPOLLERR;
++		} else {
++			if (pwait->_qproc)
++				__pollwait(f.file, head, pwait);
++			mask = f.file->f_op->poll_mask(f.file, pwait->_key);
++		}
++	} else {
++		mask = DEFAULT_POLLMASK;
++	}
++
+ 	if (mask & busy_flag)
+ 		*can_busy_poll = true;
+ 	mask &= filter;		/* Mask out unneeded events. */
+-- 
+2.17.1
+
