@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDD1C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2B9C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05C3C240DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:03:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C3C240DD
+	by mail.kernel.org (Postfix) with ESMTP id 33A51240DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:03:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A51240DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754454AbeFVLDN (ORCPT
+        id S1754505AbeFVLD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 07:03:13 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:38222 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751348AbeFVLDK (ORCPT
+        Fri, 22 Jun 2018 07:03:57 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:42898 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754178AbeFVLDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 07:03:10 -0400
+        Fri, 22 Jun 2018 07:03:55 -0400
 Received: from ayla.of.borg ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 1n391y00m3XaVaC01n39CX; Fri, 22 Jun 2018 13:03:09 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id 1n3u1y00d3XaVaC01n3uh2; Fri, 22 Jun 2018 13:03:54 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ayla.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fWJqP-0002Kr-No; Fri, 22 Jun 2018 13:03:09 +0200
+        id 1fWJr8-0002LK-78; Fri, 22 Jun 2018 13:03:54 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fWJqP-0008DC-Lu; Fri, 22 Jun 2018 13:03:09 +0200
+        id 1fWJr8-0008ET-5a; Fri, 22 Jun 2018 13:03:54 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v4] ata: Remove depends on HAS_DMA in case of platform dependency
-Date:   Fri, 22 Jun 2018 13:03:07 +0200
-Message-Id: <20180622110307.31523-1-geert@linux-m68k.org>
+Subject: [PATCH v4] fbdev: Remove depends on HAS_DMA in case of platform dependency
+Date:   Fri, 22 Jun 2018 13:03:51 +0200
+Message-Id: <20180622110351.31602-1-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,11 +61,13 @@ This simplifies the dependencies, and allows to improve compile-testing.
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Reviewed-by: Mark Brown <broonie@kernel.org>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
 v4:
   - Rebase to v4.18-rc1 (applies to next-20180622, too),
 
 v3:
+  - Add Acked-by,
   - Rebase to v4.17-rc1,
 
 v2:
@@ -72,29 +75,23 @@ v2:
   - Drop RFC state,
   - Split per subsystem.
 ---
- drivers/ata/Kconfig | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/video/fbdev/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 2b16e7c8fff35764..39b181d6bd0d8cf2 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -398,7 +398,6 @@ config SATA_DWC_VDEBUG
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 591a13a597874ec0..c6f9023aede4adbc 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -2074,7 +2074,8 @@ config FB_XILINX
  
- config SATA_HIGHBANK
- 	tristate "Calxeda Highbank SATA support"
--	depends on HAS_DMA
- 	depends on ARCH_HIGHBANK || COMPILE_TEST
- 	help
- 	  This option enables support for the Calxeda Highbank SoC's
-@@ -408,7 +407,6 @@ config SATA_HIGHBANK
- 
- config SATA_MV
- 	tristate "Marvell SATA support"
--	depends on HAS_DMA
- 	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
- 		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
- 	select GENERIC_PHY
+ config FB_GOLDFISH
+ 	tristate "Goldfish Framebuffer"
+-	depends on FB && HAS_DMA && (GOLDFISH || COMPILE_TEST)
++	depends on FB
++	depends on GOLDFISH || COMPILE_TEST
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
 -- 
 2.17.1
 
