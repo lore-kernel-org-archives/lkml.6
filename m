@@ -2,145 +2,155 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4772C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11209C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6378E23C15
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B70B523C1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:35:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k6j8P7sm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6378E23C15
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a07IDHhs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70B523C1C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934189AbeFVBd3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 21:33:29 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34978 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934081AbeFVBd2 (ORCPT
+        id S934224AbeFVBfE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 21:35:04 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33061 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934042AbeFVBfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 21:33:28 -0400
-Received: by mail-pg0-f66.google.com with SMTP id i7-v6so2218488pgp.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 18:33:27 -0700 (PDT)
+        Thu, 21 Jun 2018 21:35:03 -0400
+Received: by mail-wr0-f193.google.com with SMTP id k16-v6so5031718wro.0;
+        Thu, 21 Jun 2018 18:35:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=irLhuR+gYNbzEmXvn9Y6sxsUhZxiykGNuQHi+6OXkHg=;
-        b=k6j8P7smC0SnGZc8PpdCj069ls6GwaAR5XYmPQr4TN2xFwjglZRwJzHO5JFVUbfvzT
-         8+C4w4YzxxNxB4ZocqDZ3c1g8MIiFl0K/B5lbs6vhDvIHuSaRsKN0qlPSJKql/kFA9qw
-         hn8fmfG6jysfkyin93/7LTdL8dYg/8vMNJ5B0=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=z9WdIwsQQqSoR1DSIKFcwKJcczbg37LVTH/HmIp2few=;
+        b=a07IDHhsNAvwguMuXuyScuyhMAHaixN/JV1SsWjsYcFdyHX5XDVoRei/NoKk2Xh1Um
+         uhKQdP1ytpkSNvghKtTYuaykXfvI17jKhDz/06JWg+IfU4kd8OFNwfvKiklVknmpQUnm
+         5bLS7svjoTfNvJ7vv7Lx3JNVk+thrt/LyYGecmhxDhUvTls4HQFW0QAQCWJEi6/vpOAo
+         lMXzpVzezv4eZyLGgL2IpfRu2zUj7BDsU+70lFsh09ZpHIxE2J/eR7PB4/ZZly8req6Q
+         Slmj+teUVVFNu4Y+HSfrNGsljkrVqfw/r65Oln39eExedpD+0/RoXCXH8RAa1Pri810L
+         H9QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=irLhuR+gYNbzEmXvn9Y6sxsUhZxiykGNuQHi+6OXkHg=;
-        b=GZ1cIbnQjBZIvIl49Yd1oq5aWq5k/rtJfiErwuJJQ5Ys/cOG/YsI+KII1NdX4SYuSd
-         kiDecpTxqieDqhcAk9eHW+Q/PPznmusy3bECSfcLySsB/OAHcvyGzdY0A9EgZsop61+/
-         /yMdIregmG9zfqX9kewjUAZpplJU7cnjFPh+2hDSugB62yvK35UATZ4RPNS5nqn/FLuz
-         asZKLTQuX+A4KbmjRn6I3mGsQ12TvKFJi1wWI1PwO1HCmFcFg5oYygy42t7mPCSUB9vJ
-         R9fdLAtp2AYVGgdR/unVL6xHRpL9I83Wd2cQfx5hQYkbyKGaAbOZKt1b3dRSZK1yz6lv
-         1hTQ==
-X-Gm-Message-State: APt69E3y9FgYSsBptWXImDVYK3UrS+2e4WQ3O0ryrrwxSNeDKQCKSK8n
-        eXt7+/71hWQOz2lQxyMh7LIC0Q==
-X-Google-Smtp-Source: ADUXVKJ7pObbV0/dRG0jf+E1+nOEYRwQ2DQ0LjNehrfjiruBA2MvNrEtesm9Bd28azwUnUEIBXRG0Q==
-X-Received: by 2002:a65:5306:: with SMTP id m6-v6mr24262397pgq.250.1529631207555;
-        Thu, 21 Jun 2018 18:33:27 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
-        by smtp.gmail.com with ESMTPSA id r79-v6sm13573702pfe.115.2018.06.21.18.33.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 18:33:27 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=z9WdIwsQQqSoR1DSIKFcwKJcczbg37LVTH/HmIp2few=;
+        b=qewHIisHb1P6A73zu14+oWT4xZSWdxv5TACDOZef5ZNkrLXULI7zgEZxPs5xShcUbM
+         QZk9tTnrCeqmiEZqqhfdIXSYcYI7BwHzyokXv4BKVXOsNRqkYyyb55prtw+4bdU2lVty
+         Ka/j2xTlf9EAeXV7MTEW2K8d5yP8+9qKSxUSqDA6zA//vN8EExBudJAKgEEHJGFwC6RL
+         U/GLbPjClVIwtUIa93uDyBTsVfJgd1/umOjDCA2gKBMKoIUGg5nbC9ARC/niHcZq4Mv/
+         IxmIf4iy5r8tk+iH8vHMxBZOlHzaOQGD8krmZQ5dMNJdis3nn4nhQLcJoBcYFbXk71GC
+         11Eg==
+X-Gm-Message-State: APt69E0esICf6tBr75qS3wjZkO6X1+yhUn4M0I36SbjTBCEHwz1dtIWG
+        weTWGkxmiyLz0SrtF5lYtv0r9NA8INq+y1u8wI8=
+X-Google-Smtp-Source: ADUXVKLKPzMW+kfOc4oIZt3s2yNv7FOVNlbfjtXNTH7LSGNaxcbWJLvzbSSdVbVOMtMuZnecNkuZwk+O6QbsPLAd2Ig=
+X-Received: by 2002:adf:f391:: with SMTP id m17-v6mr22726388wro.279.1529631301697;
+ Thu, 21 Jun 2018 18:35:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Dmitry Torokhov <dtor@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <CAE_wzQ8YKUF1U4MKBfi9GQpFz=971j57w-1n-ggZHidMA4HEzQ@mail.gmail.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        andriy.shevchenko@linux.intel.com,
-        Doug Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org
-References: <20180621234138.30537-1-swboyd@chromium.org>
- <CAE_wzQ8YKUF1U4MKBfi9GQpFz=971j57w-1n-ggZHidMA4HEzQ@mail.gmail.com>
-Message-ID: <152963120631.16708.8144626801244854977@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] HID: i2c-hid: Add vddl regulator control
-Date:   Thu, 21 Jun 2018 18:33:26 -0700
+Received: by 2002:adf:a288:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 18:34:21
+ -0700 (PDT)
+In-Reply-To: <55337e35-a4f7-e543-6384-e1f523d3f463@posteo.de>
+References: <d3cdb3fef8434663c95b7b2f799c5ee4446a5231.1528397238.git.leonard.crestez@nxp.com>
+ <55337e35-a4f7-e543-6384-e1f523d3f463@posteo.de>
+From:   harinath Nampally <harinath922@gmail.com>
+Date:   Thu, 21 Jun 2018 21:34:21 -0400
+Message-ID: <CAAGUq_ppBDi0N-SrjKpZvhhfA0tay32gTLBtmXwMb=n4_rUjxQ@mail.gmail.com>
+Subject: Re: [PATCH] iio: mma8452: Fix ignoring MMA8452_INT_DRDY
+To:     Martin Kepplinger <martink@posteo.de>
+Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Dmitry Torokhov (2018-06-21 16:58:31)
-> On Thu, Jun 21, 2018 at 4:41 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Some wacom w9013 devices have a vddl supply for "low valtage"
-> > requirements. Add support in this driver to turn on this low voltage
-> > supply. We can also drop a handful of error messages because the
-> > regulator core is already printing an error when bulk regulators fail to
-> > enable or disable.
-> >
-> > Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Cc: Dmitry Torokhov <dtor@chromium.org>
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Cc: <devicetree@vger.kernel.org>
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > ---
-> >
-> > Changes from v1:
-> >  * Use the bulk regulator APIs instead of open coding it (Dmitry)
-> >
-> >  .../bindings/input/hid-over-i2c.txt           |  3 +-
-> >  drivers/hid/i2c-hid/i2c-hid.c                 | 62 +++++++++----------
-> >  include/linux/platform_data/i2c-hid.h         |  7 +--
-> >  3 files changed, 36 insertions(+), 36 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/input/hid-over-i2c.txt b=
-/Documentation/devicetree/bindings/input/hid-over-i2c.txt
-> > index 4d3da9d91de4..89e6ab89ba38 100644
-> > --- a/Documentation/devicetree/bindings/input/hid-over-i2c.txt
-> > +++ b/Documentation/devicetree/bindings/input/hid-over-i2c.txt
-> > @@ -26,7 +26,8 @@ device-specific compatible properties, which should b=
-e used in addition to the
-> >
-> >  - compatible:
-> >    * "wacom,w9013" (Wacom W9013 digitizer). Supports:
-> > -    - vdd-supply
-> > +    - vdd-supply (3.3V)
-> > +    - vddl-supply (1.8V)
-> >      - post-power-on-delay-ms
-> >
-> >  - vdd-supply: phandle of the regulator that provides the supply voltag=
-e.
-> > diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hi=
-d.c
-> > index c1652bb7bd15..1d83531454c5 100644
-> > --- a/drivers/hid/i2c-hid/i2c-hid.c
-> > +++ b/drivers/hid/i2c-hid/i2c-hid.c
-> > @@ -1002,18 +1002,21 @@ static int i2c_hid_probe(struct i2c_client *cli=
-ent,
-> >                 return client->irq;
-> >         }
-> >
-> > -       ihid =3D kzalloc(sizeof(struct i2c_hid), GFP_KERNEL);
-> > +       ihid =3D devm_kzalloc(&client->dev, sizeof(*ihid), GFP_KERNEL);
-> =
+On 2018-06-07 20:52, Leonard Crestez wrote:
+> Interrupts are ignored if no event bit is set in the status status
+> register and this breaks the buffer interface. No data is shown when
+> running "iio_generic_buffer -n mma8451 -a" and interrupt counts go
+> crazy.
+>
+> Fix by not returning IRQ_NONE if DRDY is set.
+>
+> Fixes: 605f72de137a ("iio: accel: mma8452: improvements to handle
+> multiple events")
+>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Thanks for catching it. Looks good to me.
+Acked-by: Harinath Nampally <harinath922@gmail.com>
 
-> The patch looks good, but I think this chunk needs to be split out.
-> =
+Thanks,
+Harinath
 
 
-Ok. It needs to be done otherwise the regulator put with devm blows up
-when the containing structure is freed underneath it.
-
+On Wed, Jun 20, 2018 at 5:15 AM, Martin Kepplinger <martink@posteo.de> wrote:
+> On 2018-06-07 20:52, Leonard Crestez wrote:
+>> Interrupts are ignored if no event bit is set in the status status
+>> register and this breaks the buffer interface. No data is shown when
+>> running "iio_generic_buffer -n mma8451 -a" and interrupt counts go
+>> crazy.
+>>
+>> Fix by not returning IRQ_NONE if DRDY is set.
+>>
+>> Fixes: 605f72de137a ("iio: accel: mma8452: improvements to handle
+>> multiple events")
+>>
+>> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+>
+> At least this does no harm to events. So if this solves your problem:
+>
+> Acked-by: Martin Kepplinger <martink@posteo.de>
+>
+> thanks,
+>
+>                             martin
+>
+>>
+>> ---
+>>  drivers/iio/accel/mma8452.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> Perhaps this whole early-exit check could be dropped? It is not clear
+>> how it helps.
+>>
+>> If for some models we want to ignore unsupported events then maybe this
+>> should be checked for each individual bit. Instead of
+>>
+>> if (src & MMA8452_INT_FF_MT) {
+>>
+>> Check for:
+>>
+>> if ((src & MMA8452_INT_FF_MT) && (data->chip_info->enabled_events & MMA8452_INT_FF_MT))
+>>
+>> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
+>> index 7a2da7f9d4dc..5485b35fe553 100644
+>> --- a/drivers/iio/accel/mma8452.c
+>> +++ b/drivers/iio/accel/mma8452.c
+>> @@ -1032,11 +1032,11 @@ static irqreturn_t mma8452_interrupt(int irq, void *p)
+>>
+>>       src = i2c_smbus_read_byte_data(data->client, MMA8452_INT_SRC);
+>>       if (src < 0)
+>>               return IRQ_NONE;
+>>
+>> -     if (!(src & data->chip_info->enabled_events))
+>> +     if (!(src & (data->chip_info->enabled_events | MMA8452_INT_DRDY)))
+>>               return IRQ_NONE;
+>>
+>>       if (src & MMA8452_INT_DRDY) {
+>>               iio_trigger_poll_chained(indio_dev->trig);
+>>               ret = IRQ_HANDLED;
+>>
+>
