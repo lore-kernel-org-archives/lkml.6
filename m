@@ -1,186 +1,142 @@
 Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9873C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DFBC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5623723C40
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BB4723C40
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:16:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mpe+EJ7f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5623723C40
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rszLokPw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB4723C40
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933972AbeFVCPY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 22:15:24 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:43411 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932875AbeFVCPX (ORCPT
+        id S934084AbeFVCQp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:16:45 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37795 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932875AbeFVCQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 22:15:23 -0400
-Received: by mail-pf0-f195.google.com with SMTP id y8-v6so2427100pfm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 19:15:22 -0700 (PDT)
+        Thu, 21 Jun 2018 22:16:40 -0400
+Received: by mail-wm0-f67.google.com with SMTP id r125-v6so650021wmg.2;
+        Thu, 21 Jun 2018 19:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=B0M8i5k1DqiL6hanBImyyWKZU8OCOQojZq7QNR0yujs=;
-        b=Mpe+EJ7fRyj6U0mvMuW86eYdonue/sl1U69GpE9Xzyjj69tOdpgvhM1qCIgTnvKvRQ
-         ePNzzH8apbiXpCZ3X8oGJ9jVCO5K7AV+UlkGUrHcV443tdNvhmsPLRuJ/6UTO2AkkoTq
-         jAXglwbKBpDmrWX/YGZPQJ1tjAE2Nn7ZmIn8sz7wpWbfxChiHUc3kxRLSGg3rFSQEUG2
-         ge6CRpAkk/+DnrPVky1DWMKyD0dp8oaVjVp9NWv/SgBufdRXsd7vNOPIsPEQ8Bx9564j
-         fR43ApGVOYl7J5mA4EQDBSjL9KY78pp7adEj/dGnOpfgQYrtCP9YIbjitivxbNVvIlXU
-         uI/g==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1JbndTnYc3Q3Dqvmu4J4c1v+h6gLXYgoIfJasBccAGE=;
+        b=rszLokPwx2q7OqPtTz1xpnXWeEchjLFuIMsh46y1VBO8Y4oO/HhLmGPMwXs9Cz4VYS
+         xqbNA1UxHVoKChH4IcwMoWz7eFUk+HwFNrLZTs/A/IKYNtzzAiFS9Ve0FL6qNweoI+r3
+         dWsrhgQe706eyJxGqzMIOZnEu/mnY+S8g9Ad1fGqRB5kJXevx8ICKWRblZpor3+kRUqo
+         7V2kdfz/v1eItRDF9cOown8+DACmPHP7o9s28N9ZpgRbd8HQVgXvFY2P/MW8xfG24eRW
+         7NHm9zljzUgpj9JH46eIoLaXkkjKcoK3rAAk9YFTNQaXS+JcqcAXGrV8Iwp3TMZ8LVOg
+         ZkZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=B0M8i5k1DqiL6hanBImyyWKZU8OCOQojZq7QNR0yujs=;
-        b=sNVq/qgrHkBIlDsJnpdn5MfNXjVqo6g4ArYghEGIF/UEiWlZ90mYAjyVISA+Hff6lB
-         wyM1+9DoQIyFOJc5DDHTpEfuYj9KH9tYDDb6YKrhlYLHcooWptUd1e/WyYzqeccb0iBe
-         pgJe6Pm2mRl9mekN4kZvi9jn/gKxy75MI9dEbvWf2AAHkZSJWmEeYPZdzgOaI87W2TPp
-         0ak8Hd13z5AqePfoy237QQZt+MnTOi6TLSPyyGXfRXavBEX/oAp3yjdBQx/zTKo77NPY
-         +WvDyGvQ63UBOUbFNmzl2crvgTvNH68j5d/waJa05oHYQLnMK0Okj5+hEOHrUDseGR+n
-         oaZg==
-X-Gm-Message-State: APt69E08WPV0Lz630hZokKA3N8Je6MzHF/UVnPhPcii81NfuHE8du6Un
-        3rz6a8iAax2jGiidAt8CuxI60A==
-X-Google-Smtp-Source: ADUXVKKgGQCpuoNY0sd/Ek6Q4yBOtenNFURND5YH9Eg5tx5pyBPIBeqeVz1nhpV40lOjsM2sgy9uIg==
-X-Received: by 2002:a63:62c4:: with SMTP id w187-v6mr3829555pgb.55.1529633722613;
-        Thu, 21 Jun 2018 19:15:22 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com (s169.156.222.122.fls.vectant.ne.jp. [122.222.156.169])
-        by smtp.gmail.com with ESMTPSA id q207-v6sm7409500pgq.11.2018.06.21.19.15.19
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1JbndTnYc3Q3Dqvmu4J4c1v+h6gLXYgoIfJasBccAGE=;
+        b=nsjj8cj1tWJKTyjTGAxb77Hu4EYEaVZMAC2XqIvOwsiIVanzzQ+K/i8xJXv6ms/nGI
+         sYvX67f1NH4TIWVKSwzWUSYUCI3rA9SGvWmUodKpV/RlfmkfHIJnIikxAZd8pRcG7uZQ
+         2gvsuBc7Hl6ka2EpR563rnbvk0mvXKiEdNV7HumovpEUCQ5IAEZCHWpRLoE/DPDhQYSk
+         PbEEE3qzXffJ7t39yCDXIfKX7e27uxAD6y91QZTL0fyTlHY016SIAAwiG8eDw+OGt8ft
+         7bDDseJo+U+1utmkEaQ2PyOplzSJC6A6KPKOJ/SVCsy1DGI06cHY9NdpGSK6VMglGKYF
+         aj1A==
+X-Gm-Message-State: APt69E3yhNC1Ik+cqr7Zv+j7I5Xv56ZXyYM9EvbVFzk9lIak6SDc3mRE
+        CMdN9gzYqPPFpazxOaURC0A=
+X-Google-Smtp-Source: ADUXVKIaiQOoqMx0ZntTCUoE2bOwmbhfSxMFsogX9d2OrKfTd9nHTu4Fbs5HJslUVDo27w0ve5R+Aw==
+X-Received: by 2002:a1c:b49:: with SMTP id 70-v6mr45052wml.5.1529633799251;
+        Thu, 21 Jun 2018 19:16:39 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id o13-v6sm388305wmc.8.2018.06.21.19.16.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 19:15:21 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 12:15:11 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 13/26] ppc: Convert mmu context allocation to new IDA
- API
-Message-ID: <20180622121511.00ae9d00@roar.ozlabs.ibm.com>
-In-Reply-To: <20180621212835.5636-14-willy@infradead.org>
-References: <20180621212835.5636-1-willy@infradead.org>
-        <20180621212835.5636-14-willy@infradead.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 21 Jun 2018 19:16:38 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 04:16:36 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Paul Eggert <eggert@cs.ucla.edu>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Subject: Re: [PATCH v2 2/2] rusage: allow 64-bit times ru_utime/ru_stime
+Message-ID: <20180622021636.GA11266@gmail.com>
+References: <20180420120605.1612248-1-arnd@arndb.de>
+ <20180420120605.1612248-2-arnd@arndb.de>
+ <20180621154915.GA31947@gmail.com>
+ <CAK8P3a1QYTfRNQt2+a29BpvgYM_pnSFrO=NBvVo=BdUa2q9ngQ@mail.gmail.com>
+ <20180621161121.GB7222@gmail.com>
+ <CAK8P3a1mx16S+DhEMQA6WBJ7efdhN5YaKKVHU6n+E6kfifM-Qg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1mx16S+DhEMQA6WBJ7efdhN5YaKKVHU6n+E6kfifM-Qg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Jun 2018 14:28:22 -0700
-Matthew Wilcox <willy@infradead.org> wrote:
 
-> ida_alloc_range is the perfect fit for this use case.  Eliminates
-> a custom spinlock, a call to ida_pre_get and a local check for the
-> allocated ID exceeding a maximum.
-> 
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
-> ---
->  arch/powerpc/mm/mmu_context_book3s64.c | 44 +++-----------------------
->  1 file changed, 4 insertions(+), 40 deletions(-)
-> 
-> diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
-> index f3d4b4a0e561..5a0cf2cc8ba0 100644
-> --- a/arch/powerpc/mm/mmu_context_book3s64.c
-> +++ b/arch/powerpc/mm/mmu_context_book3s64.c
-> @@ -26,48 +26,16 @@
->  #include <asm/mmu_context.h>
->  #include <asm/pgalloc.h>
->  
-> -static DEFINE_SPINLOCK(mmu_context_lock);
->  static DEFINE_IDA(mmu_context_ida);
->  
->  static int alloc_context_id(int min_id, int max_id)
->  {
-> -	int index, err;
-> -
-> -again:
-> -	if (!ida_pre_get(&mmu_context_ida, GFP_KERNEL))
-> -		return -ENOMEM;
-> -
-> -	spin_lock(&mmu_context_lock);
-> -	err = ida_get_new_above(&mmu_context_ida, min_id, &index);
-> -	spin_unlock(&mmu_context_lock);
-> -
-> -	if (err == -EAGAIN)
-> -		goto again;
-> -	else if (err)
-> -		return err;
-> -
-> -	if (index > max_id) {
-> -		spin_lock(&mmu_context_lock);
-> -		ida_remove(&mmu_context_ida, index);
-> -		spin_unlock(&mmu_context_lock);
-> -		return -ENOMEM;
-> -	}
-> -
-> -	return index;
-> +	return ida_alloc_range(&mmu_context_ida, min_id, max_id, GFP_KERNEL);
->  }
->  
->  void hash__reserve_context_id(int id)
->  {
-> -	int rc, result = 0;
-> -
-> -	do {
-> -		if (!ida_pre_get(&mmu_context_ida, GFP_KERNEL))
-> -			break;
-> -
-> -		spin_lock(&mmu_context_lock);
-> -		rc = ida_get_new_above(&mmu_context_ida, id, &result);
-> -		spin_unlock(&mmu_context_lock);
-> -	} while (rc == -EAGAIN);
-> +	int result = ida_alloc_range(&mmu_context_ida, id, id, GFP_KERNEL);
->  
->  	WARN(result != id, "mmu: Failed to reserve context id %d (rc %d)\n", id, result);
->  }
-> @@ -172,9 +140,7 @@ int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
->  
->  void __destroy_context(int context_id)
->  {
-> -	spin_lock(&mmu_context_lock);
-> -	ida_remove(&mmu_context_ida, context_id);
-> -	spin_unlock(&mmu_context_lock);
-> +	ida_free(&mmu_context_ida, context_id);
->  }
->  EXPORT_SYMBOL_GPL(__destroy_context);
->  
-> @@ -182,13 +148,11 @@ static void destroy_contexts(mm_context_t *ctx)
->  {
->  	int index, context_id;
->  
-> -	spin_lock(&mmu_context_lock);
->  	for (index = 0; index < ARRAY_SIZE(ctx->extended_id); index++) {
->  		context_id = ctx->extended_id[index];
->  		if (context_id)
-> -			ida_remove(&mmu_context_ida, context_id);
-> +			ida_free(&mmu_context_ida, context_id);
->  	}
-> -	spin_unlock(&mmu_context_lock);
->  }
->  
->  static void pte_frag_destroy(void *pte_frag)
+* Arnd Bergmann <arnd@arndb.de> wrote:
 
-This hunk should be okay because the mmu_context_lock does not protect
-the extended_id array, right Aneesh?
+> However, the other question that has to be asked then is whether
+> there is anything wrong with wait4()/waitid() and getrusuage() that
+> we want to change beyond the time value passing. We have
+> answered a similar question with 'yes' for stat(), which has led
+> to the introduction of statx(),
 
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+So we are thinking about adding wait5() in essence, right?
+
+One thing we might want to look into whether the wait4() and waitid() ABIs could 
+be 'merged', by making wait4() essentially a natural special case of waitid().
+
+This would mean that the only new system call we'd have to add is waitid2() in 
+essence, which would solve both the rusage layout problem and would offer a 
+unified ABI.
+
+If that makes sense (it might not!!), then I'd also modernize waitid2() by making 
+it attribute structure based, have a length field and make the ABI extensible from 
+now on going forward without having to introduce a new syscall variant every time 
+we come up with something new...
+
+I.e. how the perf syscall does ABI extensions: we've had dozens of ABI extensions, 
+some of them pretty complex, and not a single time did we have to modify glibc and 
+tooling was able to adapt quickly yet in a both backwards and forwards compatible 
+fashion.
+
+Another, simpler example is the new sys_sched_setattr() syscall, that too is using 
+the perf_copy_attr() ABI method, via sched_copy_attr(). (With a minor 
+compatibility quirk of SCHED_ATTR_SIZE_VER0 that a new wait ABI wouldn't have to 
+do - i.e. it could be made even simpler.)
+
+This way we only have:
+
+SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr, unsigned int, flags)
+
+But even 'pid' and 'flags' could have been part of the attribute, i.e. one we pick 
+up an attribute structure from user-space we can have really low argument count 
+system calls. This also concentrates all the compat concerns into handling the 
+attribute structure properly - no weird per-arch artifacts and quirks with 4-5-6 
+system call arguments.
 
 Thanks,
-Nick
+
+	Ingo
