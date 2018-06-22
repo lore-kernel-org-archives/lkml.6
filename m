@@ -2,79 +2,105 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 694BCC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D612C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16D324553
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:59:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16D324553
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 168F024568
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:01:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVr+Zv76"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 168F024568
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934157AbeFVP7u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:59:50 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:60328 "EHLO fuzix.org"
+        id S934060AbeFVQBU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:01:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933853AbeFVP7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:59:48 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w5MFxSrn000784;
-        Fri, 22 Jun 2018 16:59:28 +0100
-Date:   Fri, 22 Jun 2018 16:59:27 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     Dave Mielke <Dave@mielke.cc>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] have the vt console preserve unicode characters
-Message-ID: <20180622165927.68679862@alans-desktop>
-In-Reply-To: <20180622015445.7r5u5nn6ofhd4k57@angband.pl>
-References: <20180617190706.14614-1-nicolas.pitre@linaro.org>
-        <20180619130953.bxil552igfkckjmr@angband.pl>
-        <nycvar.YSQ.7.76.1806191047070.16670@knanqh.ubzr>
-        <20180621014317.ebslk3gwvpq3k6sq@angband.pl>
-        <20180621022137.GB18453@beta.private.mielke.cc>
-        <20180622015445.7r5u5nn6ofhd4k57@angband.pl>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S933853AbeFVQBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 12:01:18 -0400
+Received: from mail-wr0-f169.google.com (mail-wr0-f169.google.com [209.85.128.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1810324570
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 16:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529683278;
+        bh=qg39sZCuTUHjdt474ebG5Px8rjFDzInqtB8YrPqqhns=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SVr+Zv76Zjyd3t71huEmtgkX96oi7N/6tjXHJa7XaHCc9X2ElT3R/fbuZ6Fe1ZZvN
+         Aaz+FcLNCbZ3F48vuejHubdYs6cSenUss6KOB8zD4WtxEJMNBvXXKMlUQVSMID+UUv
+         cXrh0jBgtEUoKCEG8zlIqHTmJiiVKty+Co77l3pg=
+Received: by mail-wr0-f169.google.com with SMTP id g18-v6so7198504wro.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:01:18 -0700 (PDT)
+X-Gm-Message-State: APt69E0FbvkBNnyW0iKxJ7DqT+JnvaXq/GJpq8AKF+WW1rbeEWgamiUo
+        vqVyeqLaQTrViCSC9Fu2gaYaFCulXED+JOO5mQpqHw==
+X-Google-Smtp-Source: AAOMgpdUPIO3uw/p06/lanuhtwMwBTOXnV6V8dhSPFpQPHc87zgUmx+J/4wpZzkL5LAfnjcvsJlDeqsB5uLLZmGIc7s=
+X-Received: by 2002:adf:fe4c:: with SMTP id m12-v6mr2021658wrs.171.1529683276546;
+ Fri, 22 Jun 2018 09:01:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180620195652.27251-1-riel@surriel.com> <20180620195652.27251-8-riel@surriel.com>
+ <CALCETrXfHhPNe9J0NEabxdtKGRV+XOX=n6vtL7rbOY6e2GXMqA@mail.gmail.com> <1529682813.7898.195.camel@surriel.com>
+In-Reply-To: <1529682813.7898.195.camel@surriel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 22 Jun 2018 09:01:04 -0700
+X-Gmail-Original-Message-ID: <CALCETrXJzhwXkEi5oC9XY58B8fYT26WhMT+KBt-8m2M+foQvsw@mail.gmail.com>
+Message-ID: <CALCETrXJzhwXkEi5oC9XY58B8fYT26WhMT+KBt-8m2M+foQvsw@mail.gmail.com>
+Subject: Re: [PATCH 7/7] x86,idle: do not leave mm in idle state
+To:     Rik van Riel <riel@surriel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Galbraith <efault@gmx.de>, songliubraving@fb.com,
+        kernel-team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The other point is a quite pointless assumption that existing scrollback is
-> "optimized".  Even vgacon mostly uses software scrollback these days, as the
-> amount of VGA display memory is really small.
-
-All of our console driver code is horribly unoptimized for most of
-todays hardware. Long ago I did look at what was needed but it's a
-seriously non-trivial change. In particular
-
-- Console I/O occurs under enough locks to keep fort knox safe. That
-  means it's very very hard to accelerate
-
-- The logic is plain wrong for a lot of modern video. We shouldn't be
-  scrolling, we should be rendering the current backing text buffer at
-  video refresh rate or similar and if the source of the updates outruns
-  us it doesn't matter - we don't have to draw all the glyphs as if we
-  were fast enough they would have been a blur anyway.
- 
-> I don't know much about console display drivers in general, though, and it
-> looks like most of them are unmaintained (just noticed that sisusb for
-> example hasn't seen a maintainer action for 13 years, and that person's
-> domain expired in 2006).
-
-There has been some work on them but they are not in a good state, and as
-a result we have problems like these as well as the inability to nicely
-support multi-console systems except in Wayland/X.
-
-Alan
-
+Hmm, fair enough.  I think a better heuristic would be if the
+estimated idle duration is more than, say, 10ms.  I *think* the code
+has been cleaned up enough that this is easy now.  (Using time instead
+of C6 will make it a lot less dependent on which idle driver is in
+use.)
+On Fri, Jun 22, 2018 at 8:53 AM Rik van Riel <riel@surriel.com> wrote:
+>
+> On Fri, 2018-06-22 at 08:36 -0700, Andy Lutomirski wrote:
+> > On Wed, Jun 20, 2018 at 12:57 PM Rik van Riel <riel@surriel.com>
+> > wrote:
+> > >
+> > > Do not call leave_mm when going into a cstate. Now that mprotect
+> > > and
+> > > madvise no longer send IPIs for TLB shootdowns to idle CPUs, there
+> > > is
+> > > no real reason to disable lazy TLB mode in idle states.
+> > >
+> > > This seems to help performance on Broadwell systems. Haswell
+> > > performance
+> > > numbers are inconclusive.
+> >
+> > I'm skeptical.  The code you're removing is more about power
+> > consumption than about performance.  If a task migrates from one cpu
+> > to another, runs for awhile, and exits, we don't want to IPI the old
+> > CPU if the old CPU is deeply asleep.  The logic you're removing is a
+> > bit awkwardly written, but the intent is to only do the leave_mm() in
+> > deep sleep.  We should arguably change the condition to check the
+> > expected sleep duration instead of the microarchitectural properties
+> > of the target state, though.
+>
+> That is fair.
+>
+> A quick hack could be to just remove the tlb flush
+> from C3 state (which gets called a lot), but keep
+> it for C6 state and deeper (which get called more
+> when a CPU is really idle).
+>
+> --
+> All Rights Reversed.
