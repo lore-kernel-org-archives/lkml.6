@@ -2,157 +2,90 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B2CC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B42C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B6D23C73
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:57:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B6D23C73
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F33AB23C78
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:58:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IQgz2NFx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33AB23C78
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934255AbeFVC5c (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 22:57:32 -0400
-Received: from mga07.intel.com ([134.134.136.100]:51301 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934071AbeFVC5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 22:57:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 19:57:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,255,1526367600"; 
-   d="scan'208";a="66240339"
-Received: from dpdk-haiyue-s2600wfp.sh.intel.com ([10.67.111.114])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Jun 2018 19:57:28 -0700
-From:   Haiyue Wang <haiyue.wang@linux.intel.com>
-To:     minyard@acm.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Cc:     Haiyue Wang <haiyue.wang@linux.intel.com>, luis.a.silva@dell.com,
-        avi.fishman@nuvoton.com, openbmc@lists.ozlabs.org
-Subject: [PATCH ] ipmi: kcs_bmc: fix IRQ exception if the channel is not open
-Date:   Fri, 22 Jun 2018 10:56:58 +0800
-Message-Id: <1529636218-280096-1-git-send-email-haiyue.wang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S934304AbeFVC65 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:58:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38838 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934071AbeFVC6z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 22:58:55 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5M2sNx9092533;
+        Fri, 22 Jun 2018 02:58:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2017-10-26;
+ bh=cYEa9uv7lMq/uoYV9Ul5EItBteRTTFO0jNg7zGW83LY=;
+ b=IQgz2NFxKF5qyYczpCir8dFlkE9qLGx+c4aT2XCsttA/zb1NJi3jwCK1dPTIePJb/g29
+ KSMSEFl/Vh5AZqfU/L9lF2nFhtOTH4Jd4YyGU5SKsjyOc2cbxAz/qbahbK4FJ/mzV1O1
+ C4ypVVLjYMsYEVG5jW1Owp5vcbfE3FFfC5TPH3Ed4FeUXyX5ezlxOadKLrtupq4kuNfk
+ jtSDaeTIz1V2Lfe94ET3x26PyPwEHPP3vr8FQhgZ52OPrqjZ9KRazgaDnYKAFC/SOQcN
+ hY4uHpjSPeSSj65CPar53jNDJ4ixJBC5r7t86vVsN9BftzDlO2slCzLbNHM/UGbg2g/E Gw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2jrp8hr7sg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Jun 2018 02:58:32 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5M2wWJx031726
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Jun 2018 02:58:32 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5M2wVY7008271;
+        Fri, 22 Jun 2018 02:58:31 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Jun 2018 19:58:31 -0700
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     willy@infradead.org, manoj@linux.vnet.ibm.com,
+        mrochs@linux.vnet.ibm.com, ukrishn@linux.vnet.ibm.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: cxlflash: Change return type for fault handler
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180620182507.GA21775@jordon-HP-15-Notebook-PC>
+Date:   Thu, 21 Jun 2018 22:58:28 -0400
+In-Reply-To: <20180620182507.GA21775@jordon-HP-15-Notebook-PC> (Souptick
+        Joarder's message of "Wed, 20 Jun 2018 23:55:07 +0530")
+Message-ID: <yq1o9g3a5nv.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8931 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=647
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806220028
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original core KCS IRQ handling function 'kcs_bmc_handle_event' had
-a wrong logical desgin, it should force abort the KCS transaction only
-if the IBF flag is set, because multiple KCS channels share the same
-handle function; and it should return 0, which indicates that event of
-current channel is handled. An negative value -ENODATA will cause the
-IRQ handler of BMC KCS controller return IRQ_NONE, then IRQ moudle will
-treat this IRQ 'nobody cared', it will trigger IRQ exception.
 
-   irq 30: nobody cared (try booting with the "irqpoll" option)
-   CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.10.15-npcm750 #1
-   Hardware name: NPCMX50 Chip family
-   [<c010b264>] (unwind_backtrace) from [<c0106930>] (show_stack+0x20/0x24)
-   [<c0106930>] (show_stack) from [<c03dad38>] (dump_stack+0x8c/0xa0)
-   [<c03dad38>] (dump_stack) from [<c0168810>] (__report_bad_irq+0x3c/0xdc)
-   [<c0168810>] (__report_bad_irq) from [<c0168c34>] (note_interrupt+0x29c/0x2ec)
-   [<c0168c34>] (note_interrupt) from [<c0165c80>] (handle_irq_event_percpu+0x5c/0x68)
-   [<c0165c80>] (handle_irq_event_percpu) from [<c0165cd4>] (handle_irq_event+0x48/0x6c)
-   [<c0165cd4>] (handle_irq_event) from [<c0169664>] (handle_fasteoi_irq+0xc8/0x198)
-   [<c0169664>] (handle_fasteoi_irq) from [<c016529c>] (__handle_domain_irq+0x90/0xe8)
-   [<c016529c>] (__handle_domain_irq) from [<c01014bc>] (gic_handle_irq+0x58/0x9c)
-   [<c01014bc>] (gic_handle_irq) from [<c010752c>] (__irq_svc+0x6c/0x90)
-   Exception stack(0xc0a01de8 to 0xc0a01e30)
-   1de0:                   00002080 c0a6fbc0 00000000 00000000 00000000 c096d294
-   1e00: 00000000 00000001 dc406400 f03ff100 00000082 c0a01e94 c0a6fbc0 c0a01e38
-   1e20: 00200102 c01015bc 60000113 ffffffff
-   [<c010752c>] (__irq_svc) from [<c01015bc>] (__do_softirq+0xbc/0x358)
-   [<c01015bc>] (__do_softirq) from [<c011c798>] (irq_exit+0xb8/0xec)
-   [<c011c798>] (irq_exit) from [<c01652a0>] (__handle_domain_irq+0x94/0xe8)
-   [<c01652a0>] (__handle_domain_irq) from [<c01014bc>] (gic_handle_irq+0x58/0x9c)
-   [<c01014bc>] (gic_handle_irq) from [<c010752c>] (__irq_svc+0x6c/0x90)
-   Exception stack(0xc0a01ef8 to 0xc0a01f40)
-   1ee0:                                                       00000000 000003ae
-   1f00: dcc0f338 c0111060 c0a00000 c0a0cc44 c0a0cbe4 c0a1c22b c07bc218 00000001
-   1f20: dcffca40 c0a01f54 c0a01f58 c0a01f48 c0103524 c0103528 60000013 ffffffff
-   [<c010752c>] (__irq_svc) from [<c0103528>] (arch_cpu_idle+0x48/0x4c)
-   [<c0103528>] (arch_cpu_idle) from [<c0681390>] (default_idle_call+0x30/0x3c)
-   [<c0681390>] (default_idle_call) from [<c0156f24>] (do_idle+0xc8/0x134)
-   [<c0156f24>] (do_idle) from [<c015722c>] (cpu_startup_entry+0x28/0x2c)
-   [<c015722c>] (cpu_startup_entry) from [<c067ad74>] (rest_init+0x84/0x88)
-   [<c067ad74>] (rest_init) from [<c0900d44>] (start_kernel+0x388/0x394)
-   [<c0900d44>] (start_kernel) from [<0000807c>] (0x807c)
-   handlers:
-   [<c041c5dc>] npcm7xx_kcs_irq
-   Disabling IRQ #30
+Souptick,
 
-Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
----
-Hi Corey,
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
 
-This patch looks introducing BIG modification, it should be easily
-understandable, and makes code clean & fix an error design, which
-is introduced by misunderstanding the IRQ return value.
+Applied to 4.19/scsi-queue, thanks.
 
-BR,
-Haiyue 
----
- drivers/char/ipmi/kcs_bmc.c | 31 ++++++++++---------------------
- 1 file changed, 10 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
-index fbfc05e..bb882ab1 100644
---- a/drivers/char/ipmi/kcs_bmc.c
-+++ b/drivers/char/ipmi/kcs_bmc.c
-@@ -210,34 +210,23 @@ static void kcs_bmc_handle_cmd(struct kcs_bmc *kcs_bmc)
- int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc)
- {
- 	unsigned long flags;
--	int ret = 0;
-+	int ret = -ENODATA;
- 	u8 status;
- 
- 	spin_lock_irqsave(&kcs_bmc->lock, flags);
- 
--	if (!kcs_bmc->running) {
--		kcs_force_abort(kcs_bmc);
--		ret = -ENODEV;
--		goto out_unlock;
--	}
--
--	status = read_status(kcs_bmc) & (KCS_STATUS_IBF | KCS_STATUS_CMD_DAT);
--
--	switch (status) {
--	case KCS_STATUS_IBF | KCS_STATUS_CMD_DAT:
--		kcs_bmc_handle_cmd(kcs_bmc);
--		break;
--
--	case KCS_STATUS_IBF:
--		kcs_bmc_handle_data(kcs_bmc);
--		break;
-+	status = read_status(kcs_bmc);
-+	if (status & KCS_STATUS_IBF) {
-+		if (!kcs_bmc->running)
-+			kcs_force_abort(kcs_bmc);
-+		else if (status & KCS_STATUS_CMD_DAT)
-+			kcs_bmc_handle_cmd(kcs_bmc);
-+		else
-+			kcs_bmc_handle_data(kcs_bmc);
- 
--	default:
--		ret = -ENODATA;
--		break;
-+		ret = 0;
- 	}
- 
--out_unlock:
- 	spin_unlock_irqrestore(&kcs_bmc->lock, flags);
- 
- 	return ret;
 -- 
-2.7.4
-
+Martin K. Petersen	Oracle Linux Engineering
