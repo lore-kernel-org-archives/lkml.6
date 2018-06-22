@@ -2,138 +2,220 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 871C3C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3127C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9C423F0A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:34:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fCfsrTDv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9C423F0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 7738523F0D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7738523F0D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754129AbeFVIe4 (ORCPT
+        id S1754245AbeFVIfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:34:56 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43819 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeFVIew (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:34:52 -0400
-Received: by mail-ed1-f68.google.com with SMTP id d16-v6so766561edp.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:34:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xaDWqX895g71QcxGX/1yFpjjxxuVEn5blDe7CIiOWvg=;
-        b=fCfsrTDv5Bk9VCU4DUBeM4ZlaQPt+KnwnTwuXeipwjtRuM6zhAQOXasDgsT6OmNId7
-         HuMT0SGxCs0tfCPhe3BvvPZ96ghhiSpsnB63K7VCyxei5/ALAHa1DlsGWEloT20/ueeU
-         GM/qzhfcBvjTFK0cHNNMB6buMnHOfQxT84mEQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=xaDWqX895g71QcxGX/1yFpjjxxuVEn5blDe7CIiOWvg=;
-        b=CJs9TicoLcnqum9S7/AKJP0QpfvdZiBvYjb0LvNUUKFZdYMwq+2AdMzxrayuAG7btO
-         0m/d/rDOP/653chkTuD1h+Qf+tiZvOUGfBLMC8LIvlBOPOTCirXU924bcfPY9el0uGVg
-         BBMDP2fjROreClPP5zBxPS5qkqqc5T1TzjVkanWnSpnqshLr29vAKEYz+EV3j2hVOxY7
-         jlx/KTE87G0NhAEKCKFKHAx43smmldUj5LQk85FB+ywlLUNWQjNTvK7el4sQfxwimZMe
-         3DnSeFofM8B3XNx6FYrO8AbYklJI5DXlO5W8YCksbtD5TxT6gLLii29pC5idBmjDtOgY
-         GGtQ==
-X-Gm-Message-State: APt69E0jxWQlvAPlA8qCm8Ek7ZGJkNnII3cdCpyogltg5BJf20siH5Ou
-        FF6gi4KvNk9B6NOJ3e9JqCxUiDvY
-X-Google-Smtp-Source: ADUXVKKnbqPprTIYkXv3Ia8uLKA7PeQBrhlfDPTGN2m75rdctCOT8hN/NZoJenCOT5b7TAozFMOrPA==
-X-Received: by 2002:a50:b942:: with SMTP id m60-v6mr1029250ede.20.1529656491638;
-        Fri, 22 Jun 2018 01:34:51 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
-        by smtp.gmail.com with ESMTPSA id c46-v6sm3658374edc.34.2018.06.22.01.34.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 01:34:50 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 10:34:48 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [RFC][PATCH] drm: kirin: Remove useless "Scale not support"
- error message
-Message-ID: <20180622083448.GH2958@phenom.ffwll.local>
-Mail-Followup-To: John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        David Airlie <airlied@linux.ie>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        dri-devel@lists.freedesktop.org
-References: <1529622076-20386-1-git-send-email-john.stultz@linaro.org>
+        Fri, 22 Jun 2018 04:35:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45768 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751198AbeFVIfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 04:35:00 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id AB9CE207EB; Fri, 22 Jun 2018 10:34:57 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 65E0F20794;
+        Fri, 22 Jun 2018 10:34:57 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 10:34:57 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH v5 5/6] mtd: rawnand: micron: support 8/512 on-die ECC
+Message-ID: <20180622103457.187b0aec@bbrezillon>
+In-Reply-To: <20180622012835.17874-6-chris.packham@alliedtelesis.co.nz>
+References: <20180622012835.17874-1-chris.packham@alliedtelesis.co.nz>
+        <20180622012835.17874-6-chris.packham@alliedtelesis.co.nz>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529622076-20386-1-git-send-email-john.stultz@linaro.org>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 04:01:16PM -0700, John Stultz wrote:
-> The driver doesn't support scaling, but when an atomic test is done
-> it repeatedly spits out this warning which isn't particularly useful.
-> 
-> So just remove the error message.
-> 
-> Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
-> Cc: Rongrong Zou <zourongrong@gmail.com>
-> Cc: Xinwei Kong <kong.kongxinwei@hisilicon.com>
-> Cc: Chen Feng <puck.chen@hisilicon.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Peter Griffin <peter.griffin@linaro.org>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+On Fri, 22 Jun 2018 13:28:34 +1200
+Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-Makes sense, applied to drm-misc-next. This code should probably use
-drm_atomic_helper_check_plane_state() anyway, which also comes with a
-useful set of opt-in debug output to replace this.
--Daniel
+> Micron MT29F1G08ABAFAWP-ITE:F supports an on-die ECC with 8 bits
+> per 512 bytes. Add support for this combination.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
 > ---
->  drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 1 -
->  1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-> index 2269be9..bb77420 100644
-> --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-> +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-> @@ -859,7 +859,6 @@ static int ade_plane_atomic_check(struct drm_plane *plane,
->  		return PTR_ERR(crtc_state);
->  
->  	if (src_w != crtc_w || src_h != crtc_h) {
-> -		DRM_ERROR("Scale not support!!!\n");
->  		return -EINVAL;
->  	}
->  
-> -- 
-> 2.7.4
+> Notes:
+>     Changes in v2:
+>     - New
+>     Changes in v3:
+>     - Handle reporting of corrected errors that don't require a rewrite, expand
+>       comment for the ECC status bits.
+>     Changes in v4:
+>     - Use a switch statement for handling ECC status
+>     - Update ecc_stats.corrected
+>     Changes in v5:
+>     - Move status checking to different routines for 4/512 and 8/512 assume
+>       the highest number of bit flips for a given status value.
 > 
+>  drivers/mtd/nand/raw/nand_micron.c | 100 +++++++++++++++++++++++------
+>  1 file changed, 79 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
+> index d30bd4df9b12..f83053562925 100644
+> --- a/drivers/mtd/nand/raw/nand_micron.c
+> +++ b/drivers/mtd/nand/raw/nand_micron.c
+> @@ -18,10 +18,30 @@
+>  #include <linux/mtd/rawnand.h>
+>  
+>  /*
+> - * Special Micron status bit that indicates when the block has been
+> - * corrected by on-die ECC and should be rewritten
+> + * Special Micron status bit 3 indicates that the block has been
+> + * corrected by on-die ECC and should be rewritten.
+>   */
+> -#define NAND_STATUS_WRITE_RECOMMENDED	BIT(3)
+> +#define NAND_ECC_STATUS_WRITE_RECOMMENDED	BIT(3)
+> +
+> +/*
+> + * On chips with 8-bit ECC and additional bit can be used to distinguish
+> + * cases where a errors were corrected without needing a rewrite
+> + *
+> + * Bit 4 Bit 3 Bit 0 Description
+> + * ----- ----- ----- -----------
+> + * 0     0     0     No Errors
+> + * 0     0     1     Multiple uncorrected errors
+> + * 0     1     0     4 - 6 errors corrected, recommend rewrite
+> + * 0     1     1     Reserved
+> + * 1     0     0     1 - 3 errors corrected
+> + * 1     0     1     Reserved
+> + * 1     1     0     7 - 8 errors corrected, recommend rewrite
+> + */
+> +#define NAND_ECC_STATUS_MASK		(BIT(4) | BIT(3) | BIT(0))
+> +#define NAND_ECC_STATUS_UNCORRECTABLE	BIT(0)
+> +#define NAND_ECC_STATUS_4_6_CORRECTED	BIT(3)
+> +#define NAND_ECC_STATUS_1_3_CORRECTED	BIT(4)
+> +#define NAND_ECC_STATUS_7_8_CORRECTED	(BIT(4) | BIT(3))
+>  
+>  struct nand_onfi_vendor_micron {
+>  	u8 two_plane_read;
+> @@ -113,6 +133,54 @@ static int micron_nand_on_die_ecc_setup(struct nand_chip *chip, bool enable)
+>  	return nand_set_features(chip, ONFI_FEATURE_ON_DIE_ECC, feature);
+>  }
+>  
+> +
+> +static int micron_nand_on_die_ecc_status_4(struct mtd_info *mtd,
+> +					   struct nand_chip *chip, u8 status)
+> +{
+> +	/*
+> +	 * The internal ECC doesn't tell us the number of bitflips
+> +	 * that have been corrected, but tells us if it recommends to
+> +	 * rewrite the block. If it's the case, then we pretend we had
+> +	 * a number of bitflips equal to the ECC strength, which will
+> +	 * hint the NAND core to rewrite the block.
+> +	 */
+> +	if (status & NAND_STATUS_FAIL) {
+> +		mtd->ecc_stats.failed++;
+> +	} else if (status & NAND_ECC_STATUS_WRITE_RECOMMENDED) {
+> +		mtd->ecc_stats.corrected += chip->ecc.strength;
+> +		return chip->ecc.strength;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int micron_nand_on_die_ecc_status_8(struct mtd_info *mtd,
+> +					   struct nand_chip *chip, u8 status)
+> +{
+> +	/*
+> +	 * With 8/512 we have more information but still don't know precisely
+> +	 * how many bit-flips were seen.
+> +	 */
+> +	switch (status & NAND_ECC_STATUS_MASK) {
+> +	case NAND_ECC_STATUS_UNCORRECTABLE:
+> +		mtd->ecc_stats.failed++;
+> +		return 0;
+> +	case NAND_ECC_STATUS_1_3_CORRECTED:
+> +		mtd->ecc_stats.corrected += 3;
+> +		return 3;
+> +	case NAND_ECC_STATUS_4_6_CORRECTED:
+> +		mtd->ecc_stats.corrected += 6;
+> +		/* rewrite recommended */
+> +		return 6;
+> +	case NAND_ECC_STATUS_7_8_CORRECTED:
+> +		mtd->ecc_stats.corrected += 8;
+> +		/* rewrite recommended */
+> +		return 8;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+>  static int
+>  micron_nand_read_page_on_die_ecc(struct mtd_info *mtd, struct nand_chip *chip,
+>  				 uint8_t *buf, int oob_required,
+> @@ -137,19 +205,10 @@ micron_nand_read_page_on_die_ecc(struct mtd_info *mtd, struct nand_chip *chip,
+>  	if (ret)
+>  		goto out;
+>  
+> -	if (status & NAND_STATUS_FAIL) {
+> -		mtd->ecc_stats.failed++;
+> -	} else if (status & NAND_STATUS_WRITE_RECOMMENDED) {
+> -		/*
+> -		 * The internal ECC doesn't tell us the number of bitflips
+> -		 * that have been corrected, but tells us if it recommends to
+> -		 * rewrite the block. If it's the case, then we pretend we had
+> -		 * a number of bitflips equal to the ECC strength, which will
+> -		 * hint the NAND core to rewrite the block.
+> -		 */
+> -		mtd->ecc_stats.corrected += chip->ecc.strength;
+> -		max_bitflips = chip->ecc.strength;
+> -	}
+> +	if (chip->ecc.strength == 4)
+> +		max_bitflips = micron_nand_on_die_ecc_status_4(mtd, chip, status);
+> +	else
+> +		max_bitflips = micron_nand_on_die_ecc_status_8(mtd, chip, status);
+>  
+>  	ret = nand_read_data_op(chip, buf, mtd->writesize, false);
+>  	if (!ret && oob_required)
+> @@ -240,10 +299,9 @@ static int micron_supports_on_die_ecc(struct nand_chip *chip)
+>  		return MICRON_ON_DIE_MANDATORY;
+>  
+>  	/*
+> -	 * Some Micron NANDs have an on-die ECC of 4/512, some other
+> -	 * 8/512. We only support the former.
+> +	 * We only support on-die ECC of 4/512 or 8/512
+>  	 */
+> -	if (chip->ecc_strength_ds != 4)
+> +	if  (chip->ecc_strength_ds != 4 && chip->ecc_strength_ds != 8)
+>  		return MICRON_ON_DIE_UNSUPPORTED;
+>  
+>  	return MICRON_ON_DIE_SUPPORTED;
+> @@ -275,9 +333,9 @@ static int micron_nand_init(struct nand_chip *chip)
+>  			return -EINVAL;
+>  		}
+>  
+> -		chip->ecc.bytes = 8;
+> +		chip->ecc.bytes = chip->ecc_strength_ds * 2;
+>  		chip->ecc.size = 512;
+> -		chip->ecc.strength = 4;
+> +		chip->ecc.strength = chip->ecc_strength_ds;
+>  		chip->ecc.algo = NAND_ECC_BCH;
+>  		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+>  		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
