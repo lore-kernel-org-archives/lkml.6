@@ -2,75 +2,150 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB64C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 058D1C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21B4124048
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:57:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21B4124048
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BD02124048
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:57:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD02124048
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934026AbeFVP5R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:57:17 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42144 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933853AbeFVP5P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:57:15 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fWOQu-000852-9p; Fri, 22 Jun 2018 17:57:08 +0200
-Date:   Fri, 22 Jun 2018 17:57:07 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4] MAINTAINERS: Add file patterns for x86 device tree
- bindings
-In-Reply-To: <20180622100820.29616-1-geert@linux-m68k.org>
-Message-ID: <alpine.DEB.2.21.1806221753560.2402@nanos.tec.linutronix.de>
-References: <20180622100820.29616-1-geert@linux-m68k.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S934065AbeFVP5Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:57:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57630 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933853AbeFVP5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:57:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2DA27AD5C;
+        Fri, 22 Jun 2018 15:57:19 +0000 (UTC)
+Date:   Fri, 22 Jun 2018 17:57:16 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko
+         =?utf-8?B?PG1ob2Nrb0BzdXNlLmNvbT4sIGt2bUB2Z2VyLmtlcm5l?=
+         =?utf-8?B?bC5vcmcsICAiIFJhZGltIEtyxI1tw6HFmSA8cmtyY21hckByZWRoYXQuY29t?=
+         =?utf-8?B?Piw=?= David Airlie <airlied@linux.ie>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
+        =?iso-8859-1?B?IiBK6XL0bWU=?= Glisse <jglisse@redhat.com>,
+        Rodrigo@kvack.org, Vivi@kvack.org, Boris@kvack.org,
+        Ostrovsky@kvack.org, Juergen@kvack.org, Gross@kvack.org,
+        Mike@kvack.org, Marciniszyn@kvack.org, Dennis@kvack.org,
+        Dalessandro@kvack.org, Ashutosh@kvack.org, Dixit@kvack.org,
+        Alex@kvack.org, Deucher@kvack.org, Paolo@kvack.org,
+        Bonzini@kvack.org
+Subject: Re: [Intel-gfx] [RFC PATCH] mm, oom: distinguish blockable mode for
+ mmu notifiers
+Message-ID: <20180622155716.GE10465@dhcp22.suse.cz>
+References: <20180622150242.16558-1-mhocko@kernel.org>
+ <152968180950.11773.3374981930722769733@mail.alporthouse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152968180950.11773.3374981930722769733@mail.alporthouse.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Jun 2018, Geert Uytterhoeven wrote:
-
-> Submitters of device tree binding documentation may forget to CC
-> the subsystem maintainer if this is missing.
+On Fri 22-06-18 16:36:49, Chris Wilson wrote:
+> Quoting Michal Hocko (2018-06-22 16:02:42)
+> > Hi,
+> > this is an RFC and not tested at all. I am not very familiar with the
+> > mmu notifiers semantics very much so this is a crude attempt to achieve
+> > what I need basically. It might be completely wrong but I would like
+> > to discuss what would be a better way if that is the case.
+> > 
+> > get_maintainers gave me quite large list of people to CC so I had to trim
+> > it down. If you think I have forgot somebody, please let me know
 > 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> v3:
->   - Update for next-20180622,
+> > diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > index 854bd51b9478..5285df9331fa 100644
+> > --- a/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > +++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > @@ -112,10 +112,11 @@ static void del_object(struct i915_mmu_object *mo)
+> >         mo->attached = false;
+> >  }
+> >  
+> > -static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> > +static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> >                                                        struct mm_struct *mm,
+> >                                                        unsigned long start,
+> > -                                                      unsigned long end)
+> > +                                                      unsigned long end,
+> > +                                                      bool blockable)
+> >  {
+> >         struct i915_mmu_notifier *mn =
+> >                 container_of(_mn, struct i915_mmu_notifier, mn);
+> > @@ -124,7 +125,7 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> >         LIST_HEAD(cancelled);
+> >  
+> >         if (RB_EMPTY_ROOT(&mn->objects.rb_root))
+> > -               return;
+> > +               return 0;
 > 
-> v2:
->   - No changes.
-> 
-> Impact on "scripts/get_maintainer.pl -f Documentation/devicetree/bindings/x86/":
-> 
-> -Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS,commit_signer:1/1=100%)
-> +Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+> The principle wait here is for the HW (even after fixing all the locks
+> to be not so coarse, we still have to wait for the HW to finish its
+> access).
 
-I assume there is no way to make sure that Rob and the device tree folks
-are on top of that list? While it's somehow x86 related most of the
-devicetree details are way over my head. :)
+Is this wait bound or it can take basically arbitrary amount of time?
 
-I'll pick it up nevertheless
+> The first pass would be then to not do anything here if
+> !blockable.
 
-Thanks,
+something like this? (incremental diff)
 
-	tglx
+diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
+index 5285df9331fa..e9ed0d2cfabc 100644
+--- a/drivers/gpu/drm/i915/i915_gem_userptr.c
++++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
+@@ -122,6 +122,7 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+ 		container_of(_mn, struct i915_mmu_notifier, mn);
+ 	struct i915_mmu_object *mo;
+ 	struct interval_tree_node *it;
++	int ret = 0;
+ 	LIST_HEAD(cancelled);
+ 
+ 	if (RB_EMPTY_ROOT(&mn->objects.rb_root))
+@@ -133,6 +134,10 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+ 	spin_lock(&mn->lock);
+ 	it = interval_tree_iter_first(&mn->objects, start, end);
+ 	while (it) {
++		if (!blockable) {
++			ret = -EAGAIN;
++			goto out_unlock;
++		}
+ 		/* The mmu_object is released late when destroying the
+ 		 * GEM object so it is entirely possible to gain a
+ 		 * reference on an object in the process of being freed
+@@ -154,8 +159,10 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+ 	spin_unlock(&mn->lock);
+ 
+ 	/* TODO: can we skip waiting here? */
+-	if (!list_empty(&cancelled) && blockable)
++	if (!list_empty(&cancelled))
+ 		flush_workqueue(mn->wq);
++
++	return ret;
+ }
+ 
+ static const struct mmu_notifier_ops i915_gem_userptr_notifier = {
+-- 
+Michal Hocko
+SUSE Labs
