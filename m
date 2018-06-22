@@ -6,69 +6,73 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C45BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAEEC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE2C9247D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867D7247D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:27:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcmoqPi/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE2C9247D4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcT415it"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867D7247D7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934349AbeFVT1F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:27:05 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36753 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933382AbeFVT1E (ORCPT
+        id S934427AbeFVT1d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:27:33 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51840 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933382AbeFVT1c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:27:04 -0400
-Received: by mail-wm0-f67.google.com with SMTP id v131-v6so3786989wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:27:04 -0700 (PDT)
+        Fri, 22 Jun 2018 15:27:32 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r15-v6so3224101wmc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yvvvSbx0/lqHcUeMeexa3pxT0FD18SDoSNhBteFCioY=;
-        b=ZcmoqPi/rI4ofXERWdmKiDA/gzM5r/ZYRs7t6Uxcufo4HRmB5mX3Q0N5uBEsl78Arb
-         /KjMUKSkzVN1Wb1I4+c6GVx7cUC6Ovrxr0i029vZu7oTCORlL1yslDq92usxSKVv3C01
-         ab++T2A+kvoR7PbdipM3OJ6bIAC2S3ErPylThvllnOPv6OjvPcW3vKUIaL6ifzxWyqN4
-         554vUkcLUR2L7kO2kq0io++7KGX45AtA41HLjBTm1xhxZz1O2pYU+TxcFbfJKLUfotcb
-         QLdz3HrovlkEeelm/AaX/K4WEygbJcLhp9CXojk1wsgcZhI4+RvsCr8b1A/0yt0Q2vn0
-         Guvg==
+        bh=BuNiJYXU55yPBiJ1qJb1TWqB/sJK+368JoJKHB6Tbg4=;
+        b=LcT415it8xUOYXZP4EKMm7heKLOFfvEhEmwih1s5OKujT5SjiomQazif9fJdLRtEiS
+         2DbzzDdlMgSIcHE5xM6rvSMb4lZfcmDEqgU5wlnLd9FgXpx/ivWLqdOC+X/093qMYQzG
+         Q0BFQjuU0TA6v5DdBbYw6bBqrzgxJPgonff0JTLSWvi18EOaA9W27ARipsYYZ9us2Apj
+         wKx2bJn8ps2LAqggCg/DbHNDrXIWWGT0nYEb45Bpcg5bIFgIBrBdvDjEch29RJVTRv8T
+         cHtKV0V78n3M8LBh9OvwSvZLmkCIj00e0dLbW6kQa9lC7pZYH+mRCB0ng+OZ9y9gdG88
+         w2Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :mime-version:content-transfer-encoding;
-        bh=yvvvSbx0/lqHcUeMeexa3pxT0FD18SDoSNhBteFCioY=;
-        b=YjuwHF1pPaBreg4WTqI54ufpimsvsV2KYqLKhfyunaKZjzHL9Wuz50Iw5aLZnVJSLH
-         5/fZQj06OWCLoE+2AK5Yu/rs0xrjxdv7GuyltMp8Ix0z1Uc5bkKSIsscM8zbrUl3T7eY
-         J2PCm9lPUGO/cNj966k/mQ6Eto98Tqxd7sKJG7/a0tfJD/RibJoG7k9+m9o/IiO2G2TB
-         XmSGPTndwJx0Euq6nOZ2XjUBUdtxvjlB5j5MxPr5yGizH2x02a1Y1yg1FcGdXcpYPSrC
-         Aaoibi+fLdXjqEGXrid4ohJEKzbC9UJZQ2YM1LyuPr0KPz1i5ny1e8HE659pB4dK/TiZ
-         XlTw==
-X-Gm-Message-State: APt69E0vrSJu5c4m0Th787Zus0B5jxAzKV/70VS3CdsBUrI+QdeusGmi
-        DCeONJk4RJfS/6iG0vqazAE=
-X-Google-Smtp-Source: ADUXVKL4pjRuQcKqnjRtFnVytuPvAoxyx8Hn6YuNOxDLkUP8L1JArh3Hocsx6mRCNJyxkFvfLwyBXw==
-X-Received: by 2002:a1c:b5c7:: with SMTP id e190-v6mr760792wmf.118.1529695623348;
-        Fri, 22 Jun 2018 12:27:03 -0700 (PDT)
+        bh=BuNiJYXU55yPBiJ1qJb1TWqB/sJK+368JoJKHB6Tbg4=;
+        b=Tnsvct64GFJ8CxBxIwc5s6VcUfZnh4q1PXIUBBBq665rxIMft/VttHdJafjWLjrqVU
+         Mr2WPX7za3I9BCGi7gzHEImKj6xyIjqOKxcVvq9q4ypsbnJahsXUCAp45PzJXHZRDG0h
+         ocoTcA+Pv50BId5Vj5RqZcYm3Rxwo26sqxdHcWSovAif9lyxT+WzEoZ3pF4O8mhh/Dmr
+         yq7U+9RW06w/2JGWsbLqKMjeq4ou42gG2fh82MbbDg8414/Gd3EnmNapqEDmL+FjTGqk
+         pyC3hIS1Hnf2RjFrxNUA/gZ3OUqVfagjZV9+neg19ZvGGx+ERsvLQ9rLtV9mBrOrP28g
+         Lr+w==
+X-Gm-Message-State: APt69E1/HXZMKN9ODOYOZ39Vk5yZ5IgloTtyt7APxKlZMAzXma5PAq/h
+        brvLRPYfBzdvDck65kwK6Ps=
+X-Google-Smtp-Source: ADUXVKJqaUwUNhMA5lDBpiOAh5trTRIE5EG0vSe4KAOHj9L3rTvBlrXHtxoE0JNmzBoGM5rN75LoTQ==
+X-Received: by 2002:a1c:3607:: with SMTP id d7-v6mr2801210wma.39.1529695650868;
+        Fri, 22 Jun 2018 12:27:30 -0700 (PDT)
 Received: from macbookpro.malat.net (bru31-1-78-225-226-121.fbx.proxad.net. [78.225.226.121])
-        by smtp.gmail.com with ESMTPSA id s17-v6sm1628939wmc.34.2018.06.22.12.27.01
+        by smtp.gmail.com with ESMTPSA id s191-v6sm4063478wmd.27.2018.06.22.12.27.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 12:27:01 -0700 (PDT)
+        Fri, 22 Jun 2018 12:27:30 -0700 (PDT)
 Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 718F810C0452; Fri, 22 Jun 2018 21:27:00 +0200 (CEST)
+        id 4D12810C0452; Fri, 22 Jun 2018 21:27:29 +0200 (CEST)
 From:   Mathieu Malaterre <malat@debian.org>
 To:     Michael Ellerman <mpe@ellerman.id.au>
 Cc:     Mathieu Malaterre <malat@debian.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Breno Leitao <leitao@debian.org>,
+        Yisheng Xie <xieyisheng1@huawei.com>,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: include setup.h header file to fix warnings
-Date:   Fri, 22 Jun 2018 21:26:53 +0200
-Message-Id: <20180622192655.23464-1-malat@debian.org>
+Subject: [PATCH] =?UTF-8?q?powerpc/xmon:=20avoid=20warnings=20about=20vari?= =?UTF-8?q?ables=20that=20might=20be=20clobbered=20by=20=E2=80=98longjmp?= =?UTF-8?q?=E2=80=99?=
+Date:   Fri, 22 Jun 2018 21:27:17 +0200
+Message-Id: <20180622192718.24242-1-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -78,36 +82,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure to include setup.h to provide the following prototypes:
+Move initialization of variables after data definitions. This silence
+warnings treated as error with W=1:
 
-- irqstack_early_init
-- setup_power_save
-- initialize_cache_info
-
-Fix the following warnings (treated as error in W=1):
-
-  arch/powerpc/kernel/setup_32.c:198:13: error: no previous prototype for ‘irqstack_early_init’ [-Werror=missing-prototypes]
-  arch/powerpc/kernel/setup_32.c:238:13: error: no previous prototype for ‘setup_power_save’ [-Werror=missing-prototypes]
-  arch/powerpc/kernel/setup_32.c:253:13: error: no previous prototype for ‘initialize_cache_info’ [-Werror=missing-prototypes]
+  arch/powerpc/xmon/xmon.c:3389:14: error: variable ‘name’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Werror=clobbered]
+  arch/powerpc/xmon/xmon.c:3100:22: error: variable ‘tsk’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Werror=clobbered]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/powerpc/kernel/setup_32.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/xmon/xmon.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-index 74457485574b..9827b6b3aaaa 100644
---- a/arch/powerpc/kernel/setup_32.c
-+++ b/arch/powerpc/kernel/setup_32.c
-@@ -41,6 +41,8 @@
- #include <asm/cpu_has_feature.h>
- #include <asm/asm-prototypes.h>
+diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+index 47166ad2a669..982848c784ff 100644
+--- a/arch/powerpc/xmon/xmon.c
++++ b/arch/powerpc/xmon/xmon.c
+@@ -3097,10 +3097,11 @@ static void show_pte(unsigned long addr)
+ static void show_tasks(void)
+ {
+ 	unsigned long tskv;
+-	struct task_struct *tsk = NULL;
++	struct task_struct *tsk;
  
-+#include "setup.h"
-+
- #define DBG(fmt...)
+ 	printf("     task_struct     ->thread.ksp    PID   PPID S  P CMD\n");
  
- extern void bootx_init(unsigned long r4, unsigned long phys);
++	tsk = NULL;
+ 	if (scanhex(&tskv))
+ 		tsk = (struct task_struct *)tskv;
+ 
+@@ -3386,10 +3387,11 @@ static void xmon_print_symbol(unsigned long address, const char *mid,
+ 			      const char *after)
+ {
+ 	char *modname;
+-	const char *name = NULL;
++	const char *name;
+ 	unsigned long offset, size;
+ 
+ 	printf(REG, address);
++	name = NULL;
+ 	if (setjmp(bus_error_jmp) == 0) {
+ 		catch_memory_errors = 1;
+ 		sync();
 -- 
 2.11.0
 
