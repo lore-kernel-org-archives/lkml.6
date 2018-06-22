@@ -2,98 +2,76 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2717C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2001DC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8577E21722
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:19:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITlEtCQq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8577E21722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E900B21CE8
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:20:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E900B21CE8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753987AbeFVIT4 (ORCPT
+        id S1754226AbeFVIUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:19:56 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45004 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbeFVITy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:19:54 -0400
-Received: by mail-lj1-f193.google.com with SMTP id t12-v6so934927ljc.11
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=Njt7jcepfDhoRsfWskcm1WgxpOAtqsJvlnQTNa2O78s=;
-        b=ITlEtCQqpRZvwpasoLGjIVrk7puOKKMLNafkFJr5BH55UH46PoRmfvLNFRI1vg4gz1
-         HxblcodhgwSj0V9lL4jb7sllSbu6kAo+pM8lIoHZScyJd0tWSluM+AGwjvywwN9Ys2yW
-         4IfPF52F+ILHrcFOK/nMLtM5WmLrx9RNtPT4lL67HL4tq1CVkVJWm4jMSEvbCo5hOC3y
-         V+orfOEUgmddai0QkN8LTvdhunpibkWQ/aj+ZlNmN0Lt/iyoc02PU1r+FP6d1xveAZEu
-         r292InRRb6n6VpIpSJPIG2IQXybdR00Rrtn/wmBBR46gBK4+0USHTSYzXT83VqBO1VOX
-         9XYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=Njt7jcepfDhoRsfWskcm1WgxpOAtqsJvlnQTNa2O78s=;
-        b=ToPW3/Ma0nhRZbrjMmhWWCfBeo2uSeAmS8yxXEK3vXWXNHQzbvbIk1+gdF1GInr2EF
-         hOmL2PEtgmi1KTtSbUgQQzUnzZnVndxSzlzR0/m+UERTbA2WQXnI7/tiL542jhGINNJH
-         /Qs6kmo77rHJUJBQhnK3oRxB5OIbqZgtPZ9A/KAMzATSW98wc5Nrmn+xckqfHRLr8aTu
-         uuULC71/bnqyqmlvr613NVe/WDyAFHvIPIYGROyL3M8INOUXxHMW7nllxizHRqa/zIrt
-         G5BfLCnhTkfQuGBPK7cV+UEN2YPMV7a/AJa+MrmJYhwDB+p2nqGjR2QXdfIWefSA0MFu
-         onOg==
-X-Gm-Message-State: APt69E20/ne0dYmdci4uh6gsDDoxoFjLc3aMopDypXmGmAyLiaYD/VAB
-        FB/+r/8hWAqT6V4ZUVMdyibMnSLk+dtAIwTSWIpsaA==
-X-Google-Smtp-Source: ADUXVKLFq/ojvRo2hgOATo6fWL1v5Nl4AAdg6KvLnf6QK1BIJAZnL0n8Dz2VtLJN7rRhE+vfpnz17of0xQB6JhaBbZw=
-X-Received: by 2002:a2e:804c:: with SMTP id p12-v6mr551477ljg.22.1529655592718;
- Fri, 22 Jun 2018 01:19:52 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 01:19:51
- -0700 (PDT)
-In-Reply-To: <20180622075421.16001-1-geert@linux-m68k.org>
-References: <20180622075421.16001-1-geert@linux-m68k.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 22 Jun 2018 10:19:51 +0200
-X-Google-Sender-Auth: ap4f3oXu6pDEMpgueVKRGDH2jWM
-Message-ID: <CAK8P3a3OHT-tEHoh7MbGMU5m-L3mNkBVf=L5YgwgP4jQVV9SCA@mail.gmail.com>
-Subject: Re: [PATCH v2] time: Make sure jiffies_to_msecs() preserves non-zero
- time periods
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 22 Jun 2018 04:20:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45211 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751317AbeFVIUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 04:20:03 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BF962207EB; Fri, 22 Jun 2018 10:20:00 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8BD1D20794;
+        Fri, 22 Jun 2018 10:20:00 +0200 (CEST)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     davem@davemloft.net, gregory.clement@bootlin.com, mw@semihalf.com
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com
+Subject: [PATCH net] net: mvneta: fix the Rx desc DMA address in the Rx path
+Date:   Fri, 22 Jun 2018 10:15:39 +0200
+Message-Id: <20180622081539.16584-1-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 9:54 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> For the common cases where 1000 is a multiple of HZ, or HZ is a multiple
-> of 1000, jiffies_to_msecs() never returns zero when passed a non-zero
-> time period.
->
-> However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 1024 or
-> 1200, as used on alpha and DECstation), jiffies_to_msecs() may return
-> zero for small non-zero time periods.  This may break code that relies
-> on receiving back a non-zero value.
->
-> jiffies_to_usecs() does not need such a fix, as <linux/jiffies.h> does
-> not support values of HZ larger than 12287, thus rejecting any
-> problematic huge values of HZ.
->
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
+When using s/w buffer management, buffers are allocated and DMA mapped.
+When doing so on an arm64 platform, an offset correction is applied on
+the DMA address, before storing it in an Rx descriptor. The issue is
+this DMA address is then used later in the Rx path without removing the
+offset correction. Thus the DMA address is wrong, which can led to
+various issues.
 
-Looks good to me,
+This patch fixes this by removing the offset correction from the DMA
+address retrieved from the Rx descriptor before using it in the Rx path.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 8d5047cf9ca2 ("net: mvneta: Convert to be 64 bits compatible")
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+---
+ drivers/net/ethernet/marvell/mvneta.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 17a904cc6a5e..0ad2f3f7da85 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -1932,7 +1932,7 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
+ 		rx_bytes = rx_desc->data_size - (ETH_FCS_LEN + MVNETA_MH_SIZE);
+ 		index = rx_desc - rxq->descs;
+ 		data = rxq->buf_virt_addr[index];
+-		phys_addr = rx_desc->buf_phys_addr;
++		phys_addr = rx_desc->buf_phys_addr - pp->rx_offset_correction;
+ 
+ 		if (!mvneta_rxq_desc_is_first_last(rx_status) ||
+ 		    (rx_status & MVNETA_RXD_ERR_SUMMARY)) {
+-- 
+2.17.1
+
