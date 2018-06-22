@@ -3,118 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEA1C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D866C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C47123F4A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:01:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C47123F4A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CFC8F23F4B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:01:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC8F23F4B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751345AbeFVJBa (ORCPT
+        id S1751400AbeFVJBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:01:30 -0400
-Received: from foss.arm.com ([217.140.101.70]:60194 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751086AbeFVJB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:01:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5CDF1435;
-        Fri, 22 Jun 2018 02:01:27 -0700 (PDT)
-Received: from localhost.localdomain (unknown [10.1.207.82])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C14503F819;
-        Fri, 22 Jun 2018 02:01:26 -0700 (PDT)
-Subject: Re: [PATCH 5/6] coresight: catu: Add support for scatter gather
- tables
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1529319379-17895-1-git-send-email-suzuki.poulose@arm.com>
- <1529319379-17895-6-git-send-email-suzuki.poulose@arm.com>
- <20180621171337.GA10307@xps15>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <d5bbff9b-2730-f708-8a4e-f16241f6f5ce@arm.com>
-Date:   Fri, 22 Jun 2018 10:01:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Fri, 22 Jun 2018 05:01:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40731 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751235AbeFVJBf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 05:01:35 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5M90sKu013631
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 22 Jun 2018 02:00:54 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5M90sFP013628;
+        Fri, 22 Jun 2018 02:00:54 -0700
+Date:   Fri, 22 Jun 2018 02:00:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Hans de Goede <tipbot@zytor.com>
+Message-ID: <tip-52e1cf2d19c2e62e6a81b8de3f7320d033917dd5@git.kernel.org>
+Cc:     peterz@infradead.org, hdegoede@redhat.com, hpa@zytor.com,
+        mingo@kernel.org, ard.biesheuvel@linaro.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, hdegoede@redhat.com, hpa@zytor.com,
+          peterz@infradead.org, torvalds@linux-foundation.org,
+          ard.biesheuvel@linaro.org
+In-Reply-To: <20180622064222.11633-2-ard.biesheuvel@linaro.org>
+References: <20180622064222.11633-2-ard.biesheuvel@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/urgent] efi/libstub/tpm: Initialize efi_physical_addr_t
+ vars to zero for mixed mode
+Git-Commit-ID: 52e1cf2d19c2e62e6a81b8de3f7320d033917dd5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180621171337.GA10307@xps15>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
+Commit-ID:  52e1cf2d19c2e62e6a81b8de3f7320d033917dd5
+Gitweb:     https://git.kernel.org/tip/52e1cf2d19c2e62e6a81b8de3f7320d033917dd5
+Author:     Hans de Goede <hdegoede@redhat.com>
+AuthorDate: Fri, 22 Jun 2018 08:42:22 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 22 Jun 2018 10:58:27 +0200
 
-On 21/06/18 18:13, Mathieu Poirier wrote:
+efi/libstub/tpm: Initialize efi_physical_addr_t vars to zero for mixed mode
 
->> +
->> +/*
->> + * catu_populate_table : Populate the given CATU table.
->> + * The table is always populated as a circular table.
->> + * i.e, the "prev" link of the "first" table points to the "last"
->> + * table and the "next" link of the "last" table points to the
->> + * "first" table. The buffer should be made linear by calling
->> + * catu_set_table().
->> + */
->> +static void
->> +catu_populate_table(struct tmc_sg_table *catu_table)
->> +{
->> +	int i, dpidx, s_dpidx;
->> +	unsigned long offset, buf_size, last_offset;
->> +	dma_addr_t data_daddr;
->> +	dma_addr_t prev_taddr, next_taddr, cur_taddr;
->> +	cate_t *table_ptr, *next_table;
->> +
->> +	buf_size = tmc_sg_table_buf_size(catu_table);
->> +	dpidx = s_dpidx = 0;
-> 
->  From the reading the code below variable s_dpidx stands for "small" data page
-> index, which isn't obvious from the get go and could easily be mistaken for
-> "system" data page index.  Please add a comment to make your intentions clear.
+Commit:
 
-Sure, I will add comments. They are supposed to mean :
+  79832f0b5f71 ("efi/libstub/tpm: Initialize pointer variables to zero for mixed mode")
 
-dpidx => Data page index
-s_dpidx => Sub-page index within the System page.
+fixes a problem with the tpm code on mixed mode (64-bit kernel on 32-bit UEFI),
+where 64-bit pointer variables are not fully initialized by the 32-bit EFI code.
 
-May be I can rename the variables to =>
+A similar problem applies to the efi_physical_addr_t variables which
+are written by the ->get_event_log() EFI call. Even though efi_physical_addr_t
+is 64-bit everywhere, it seems that some 32-bit UEFI implementations only
+fill in the lower 32 bits when passed a pointer to an efi_physical_addr_t
+to fill.
 
-sys_pidx and catu_pidx
+This commit initializes these to 0 to, to ensure the upper 32 bits are
+0 in mixed mode. This fixes recent kernels sometimes hanging during
+early boot on mixed mode UEFI systems.
 
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: <stable@vger.kernel.org> # v4.16+
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180622064222.11633-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ drivers/firmware/efi/libstub/tpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->> +	offset = 0;
->> +
->> +	table_ptr = catu_get_table(catu_table, 0, &cur_taddr);
->> +	prev_taddr = 0;	/* Prev link for the first table */
->> +
->> +	while (offset < buf_size) {
->> +		/*
->> +		 * The @offset is always 1M aligned here and we have an
->> +		 * empty table @table_ptr to fill. Each table can address
->> +		 * upto 1MB data buffer. The last table may have fewer
->> +		 * entries if the buffer size is not aligned.
->> +		 */
->> +		last_offset = (offset + SZ_1M) < buf_size ?
->> +			      (offset + SZ_1M) : buf_size;
->> +		for (i = 0; offset < last_offset;
->> +		     i++, offset += CATU_PAGE_SIZE) {
-> 
-> I really like the choice of "table_end" in function catu_dump_table().  I think
-> using the same denomination here would make it easier to understand the code.
-> 
-> I wouldn't bother with such details if you weren't respinning this set.  But now
-> that you are and these are extremely simple I think it's worth it, and it will
-> help slowing the prolifiration of gray hair around my head when I look back at
-> this a year or two down the road.
-
-Sure, I can make those changes in the next revision. Thanks for the review.
-
-Cheers
-Suzuki
+diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+index caa37a6dd9d4..a90b0b8fc69a 100644
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -64,7 +64,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+ 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+ 	efi_status_t status;
+-	efi_physical_addr_t log_location, log_last_entry;
++	efi_physical_addr_t log_location = 0, log_last_entry = 0;
+ 	struct linux_efi_tpm_eventlog *log_tbl = NULL;
+ 	unsigned long first_entry_addr, last_entry_addr;
+ 	size_t log_size, last_entry_size;
