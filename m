@@ -2,111 +2,269 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8EEC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3960C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E469423D70
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:16:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iCyhOiUL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E469423D70
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 4274D23D76
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:26:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4274D23D76
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751326AbeFVFQ3 (ORCPT
+        id S1751295AbeFVF0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 01:16:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:35349 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750937AbeFVFQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 01:16:28 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Bmy26Rhkz9s3C;
-        Fri, 22 Jun 2018 15:16:26 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529644587;
-        bh=cpLWM423sWqE/WImzW/4Xo7LEt9E4z1oK8qn/XiUq3c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iCyhOiULtPC91wPwvR8g8jCNm7ajuXmlnpA7ILrN3OCvdLK/6oSUA0Hb4P0dmQh8Y
-         SsEz5HhsosDYeSSvgUjAmxQngzWLOTDnVu1iGI4AEb0Xdq7EdeNE7w5qqrrYKRdunN
-         qfgmWhTrXawOL4TU1kMzRZ1Aj8vm8505OvJ3y0ssjG2Sf3r+mvfP7QnQQydXjf63Be
-         wMXjEPmKG4HJhGN//BvhWRGXQXv/s/gfb2xCKuqjOHZQs+fsuLpLPRmuYYsVJmmu3K
-         fsl1u/znMVmur4zv06u3c30HFmdKfD6/AVoYlpuPCJTTquAA02811RcyplIcJzMMB2
-         LFVp6sSBb+jdg==
-Date:   Fri, 22 Jun 2018 15:16:26 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: new location for the drm-fixes tree.
-Message-ID: <20180622151626.2964fe9a@canb.auug.org.au>
-In-Reply-To: <CAPM=9ty1xJiPH+TyQSWC2NXYVSEmHF_=3pMVoHoSHXbkwiBPmQ@mail.gmail.com>
-References: <CAPM=9ty1xJiPH+TyQSWC2NXYVSEmHF_=3pMVoHoSHXbkwiBPmQ@mail.gmail.com>
+        Fri, 22 Jun 2018 01:26:08 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:51610 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeFVF0G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 01:26:06 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 398672359B;
+        Fri, 22 Jun 2018 01:26:02 -0400 (EDT)
+Date:   Fri, 22 Jun 2018 15:26:52 +1000 (AEST)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
+        Meelis Roos <mroos@linux.ee>,
+        Andreas Schwab <schwab@linux-m68k.org>
+Subject: Re: [PATCH 2/3] [v2] m68k: mac: use time64_t in RTC handling
+In-Reply-To: <20180619140229.3615110-2-arnd@arndb.de>
+Message-ID: <alpine.LNX.2.21.1806221455570.14@nippy.intranet>
+References: <20180619140229.3615110-1-arnd@arndb.de> <20180619140229.3615110-2-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8hALKPrQ7bmoaUcP1IYsSTK"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/8hALKPrQ7bmoaUcP1IYsSTK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 19 Jun 2018, Arnd Bergmann wrote:
 
-Hi Dave,
+> The real-time clock on m68k (and powerpc) mac systems uses an unsigned 
+> 32-bit value starting in 1904, which overflows in 2040, about two years 
+> later than everyone else, but this gets wrapped around in the Linux code 
+> in 2038 already because of the deprecated usage of time_t and/or long in 
+> the conversion.
+> 
+> Getting rid of the deprecated interfaces makes it work until 2040 as 
+> documented, and it could be easily extended by reinterpreting the 
+> resulting time64_t as a positive number. For the moment, I'm adding a 
+> WARN_ON() that triggers if we encounter a time before 1970 or after 2040 
+> (the two are indistinguishable).
+> 
 
-On Fri, 22 Jun 2018 13:14:07 +1000 Dave Airlie <airlied@gmail.com> wrote:
->
-> drm-fixes is now in the same tree as drm-next
->=20
-> git://git.freedesktop.org/git/drm/drm drm-fixes.
+I really don't like the WARN_ON(), but I'd prefer to address that in a 
+separate patch rather than impede the progress of this patch (or of this 
+series, since 3/3 seems to be unrelated).
 
-Hmmm, I have never had a drm-fixes tree ... but I have added it now, thanks.
+BTW, have you considered using the same wrap-around test (i.e. YY < 70) 
+that we use for the year register in the other RTC chips?
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+> This brings it in line with the corresponding code that we have on 
+> powerpc macintosh.
+> 
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+Your recent patches to the Mac RTC routines (which are duplicated under 
+arch/m68k and arch/powerpc) conflict with my recent patch that 
+deduplicates the same code. So I will rebase and resubmit after someone 
+merges these fixes.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+Apparently the PowerMac routines work now, which is sufficient testing for 
+me; the PowerMac routines will get tested on m68k Macs when that code gets 
+deduplicated again.
 
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+BTW, Joshua tells me that he is not doing code review. We should probably 
+drop the "M68K ON APPLE MACINTOSH" entry from the MAINTAINERS file, like 
+the Amiga and Atari ports...
 
---Sig_/8hALKPrQ7bmoaUcP1IYsSTK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsshioACgkQAVBC80lX
-0Gzg8gf+OAR46MyqJlU+IEozUGHeqpO6ySlpnuQwqVrKkSkXJiGy/4cRaf7MaYr4
-IYhJuotOBnz/0i9FjuWjAZI0KwGkGw8GYlpUZn/ZXGBgIDqLt6u48gLPohjGSATi
-xGuR5908IiN+qrTIjuRlfZYwF72Zew/qt3cZ+JosB0oFUtVU34XTywTYDxH5IfXD
-PUu2VT/NkNIsU1jGqubHu2j/nH0aYDlTWZihHX/293sVElYqJSVs1tNXNhDXCs52
-PPjVRYuj2yl9ozhDWrvkZwPKRDSJ+VrqwXagUS2DMJjsk+WTBZ24wD4QD1jvDL5e
-0z4iRq2i17yh38ug7iH9wTnaZueW6g==
-=DptT
------END PGP SIGNATURE-----
-
---Sig_/8hALKPrQ7bmoaUcP1IYsSTK--
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v2: Fix varargs passing bug pointed out by Andreas Schwab
+>     Fix a typo that caused a build regression
+> ---
+>  arch/m68k/mac/misc.c | 62 +++++++++++++++++++++++++++++++++-------------------
+>  1 file changed, 39 insertions(+), 23 deletions(-)
+> 
+> diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+> index c68054361615..0a2572a6bfe5 100644
+> --- a/arch/m68k/mac/misc.c
+> +++ b/arch/m68k/mac/misc.c
+> @@ -26,33 +26,39 @@
+>  
+>  #include <asm/machdep.h>
+>  
+> -/* Offset between Unix time (1970-based) and Mac time (1904-based) */
+> +/* Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
+> + * times wrap in 2040. If we need to handle later times, the read_time functions
+> + * need to be changed to interpret wrapped times as post-2040. */
+>  
+>  #define RTC_OFFSET 2082844800
+>  
+>  static void (*rom_reset)(void);
+>  
+>  #ifdef CONFIG_ADB_CUDA
+> -static long cuda_read_time(void)
+> +static time64_t cuda_read_time(void)
+>  {
+>  	struct adb_request req;
+> -	long time;
+> +	time64_t time;
+>  
+>  	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
+>  		return 0;
+>  	while (!req.complete)
+>  		cuda_poll();
+>  
+> -	time = (req.reply[3] << 24) | (req.reply[4] << 16) |
+> -	       (req.reply[5] << 8) | req.reply[6];
+> +	time = (u32)((req.reply[3] << 24) | (req.reply[4] << 16) |
+> +		     (req.reply[5] << 8) | req.reply[6]);
+> +
+> +	/* it's either after year 2040, or the RTC has gone backwards */
+> +	WARN_ON(time < RTC_OFFSET);
+> +
+>  	return time - RTC_OFFSET;
+>  }
+>  
+> -static void cuda_write_time(long data)
+> +static void cuda_write_time(time64_t time)
+>  {
+>  	struct adb_request req;
+> +	u32 data = lower_32_bits(time + RTC_OFFSET);
+>  
+> -	data += RTC_OFFSET;
+>  	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
+>  			 (data >> 24) & 0xFF, (data >> 16) & 0xFF,
+>  			 (data >> 8) & 0xFF, data & 0xFF) < 0)
+> @@ -86,26 +92,30 @@ static void cuda_write_pram(int offset, __u8 data)
+>  #endif /* CONFIG_ADB_CUDA */
+>  
+>  #ifdef CONFIG_ADB_PMU68K
+> -static long pmu_read_time(void)
+> +static time64_t pmu_read_time(void)
+>  {
+>  	struct adb_request req;
+> -	long time;
+> +	time64_t time;
+>  
+>  	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
+>  		return 0;
+>  	while (!req.complete)
+>  		pmu_poll();
+>  
+> -	time = (req.reply[1] << 24) | (req.reply[2] << 16) |
+> -	       (req.reply[3] << 8) | req.reply[4];
+> +	time = (u32)((req.reply[1] << 24) | (req.reply[2] << 16) |
+> +		     (req.reply[3] << 8) | req.reply[4]);
+> +
+> +	/* it's either after year 2040, or the RTC has gone backwards */
+> +	WARN_ON(time < RTC_OFFSET);
+> +
+>  	return time - RTC_OFFSET;
+>  }
+>  
+> -static void pmu_write_time(long data)
+> +static void pmu_write_time(time64_t time)
+>  {
+>  	struct adb_request req;
+> +	u32 data = lower_32_bits(time + RTC_OFFSET);
+>  
+> -	data += RTC_OFFSET;
+>  	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
+>  			(data >> 24) & 0xFF, (data >> 16) & 0xFF,
+>  			(data >> 8) & 0xFF, data & 0xFF) < 0)
+> @@ -269,8 +279,12 @@ static long via_read_time(void)
+>  		via_pram_command(0x89, &result.cdata[1]);
+>  		via_pram_command(0x8D, &result.cdata[0]);
+>  
+> -		if (result.idata == last_result.idata)
+> +		if (result.idata == last_result.idata) {
+> +			if (result.idata < RTC_OFFSET)
+> +				result.idata += 0x100000000ull;
+> +
+>  			return result.idata - RTC_OFFSET;
+> +		}
+>  
+>  		if (++count > 10)
+>  			break;
+> @@ -291,11 +305,11 @@ static long via_read_time(void)
+>   * is basically any machine with Mac II-style ADB.
+>   */
+>  
+> -static void via_write_time(long time)
+> +static void via_write_time(time64_t time)
+>  {
+>  	union {
+>  		__u8 cdata[4];
+> -		long idata;
+> +		__u32 idata;
+>  	} data;
+>  	__u8 temp;
+>  
+> @@ -585,12 +599,15 @@ void mac_reset(void)
+>   * This function translates seconds since 1970 into a proper date.
+>   *
+>   * Algorithm cribbed from glibc2.1, __offtime().
+> + *
+> + * This is roughly same as rtc_time64_to_tm(), which we should probably
+> + * use here, but it's only available when CONFIG_RTC_LIB is enabled.
+>   */
+>  #define SECS_PER_MINUTE (60)
+>  #define SECS_PER_HOUR  (SECS_PER_MINUTE * 60)
+>  #define SECS_PER_DAY   (SECS_PER_HOUR * 24)
+>  
+> -static void unmktime(unsigned long time, long offset,
+> +static void unmktime(time64_t time, long offset,
+>  		     int *yearp, int *monp, int *dayp,
+>  		     int *hourp, int *minp, int *secp)
+>  {
+> @@ -602,11 +619,10 @@ static void unmktime(unsigned long time, long offset,
+>  		/* Leap years.  */
+>  		{ 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 }
+>  	};
+> -	long int days, rem, y, wday, yday;
+> +	int days, rem, y, wday, yday;
+>  	const unsigned short int *ip;
+>  
+> -	days = time / SECS_PER_DAY;
+> -	rem = time % SECS_PER_DAY;
+> +	days = div_u64_rem(time, SECS_PER_DAY, &rem);
+>  	rem += offset;
+>  	while (rem < 0) {
+>  		rem += SECS_PER_DAY;
+> @@ -657,7 +673,7 @@ static void unmktime(unsigned long time, long offset,
+>  
+>  int mac_hwclk(int op, struct rtc_time *t)
+>  {
+> -	unsigned long now;
+> +	time64_t now;
+>  
+>  	if (!op) { /* read */
+>  		switch (macintosh_config->adb_type) {
+> @@ -693,8 +709,8 @@ int mac_hwclk(int op, struct rtc_time *t)
+>  		         __func__, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+>  		         t->tm_hour, t->tm_min, t->tm_sec);
+>  
+> -		now = mktime(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+> -			     t->tm_hour, t->tm_min, t->tm_sec);
+> +		now = mktime64(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+> +			       t->tm_hour, t->tm_min, t->tm_sec);
+>  
+>  		switch (macintosh_config->adb_type) {
+>  		case MAC_ADB_IOP:
+> 
