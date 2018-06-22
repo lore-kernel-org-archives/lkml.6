@@ -2,222 +2,135 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3A9C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3CAC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3C682495A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C682495A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id 6E25F2496B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:33:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="cJrS7WlF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E25F2496B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933883AbeFVWd2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:33:28 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:50348 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754530AbeFVWd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 18:33:27 -0400
-Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1fWUcO-00065I-Ul; Sat, 23 Jun 2018 00:33:24 +0200
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [PATCH 2/2] x86/microcode/AMD: Check patch size for all known CPU
- families
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1529424596.git.mail@maciej.szmigiero.name>
- <39d0efb50538e4a1a06da693559bb13b060ad676.1529424596.git.mail@maciej.szmigiero.name>
- <20180621083649.GC12742@zn.tnic>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a2275167-f650-b73f-0de8-1aa78b3281ed@maciej.szmigiero.name>
-Date:   Sat, 23 Jun 2018 00:33:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933938AbeFVWdm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 18:33:42 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:49205 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754543AbeFVWdi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 18:33:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=160drf+B7jT6BEooEkusqVguTDR3RdBDfnLOHw6kRxA=; b=cJrS7WlFwgUb+0C+gT72KjPNmX
+        mO7goiX7T6sX931slqjpoMk1JfEVX9js0dziNlfvp6czJfEd+GNwVp9vRFJn0lWwpEX97USGgSe0M
+        dx6dCVuVgU8uPuzsG4hBEBKrsL3Z9RqRDUk91f7xAryxIJTxIlQoHJS85W4Suozmqq0zhi2CWvoKp
+        z+6Ll6HtwpGpcCcKYx6bIPN0NN9X3dCG911KuPRMTfFxLmYiqPTiStmVPoZwt+baXAJrAkekojHLv
+        /fbfwTLYjjU+GX5YqCgxODzhl9Doy5d+ehUHVsX29xrBCAJCh5i0j7ZKzHVKdrkCQ0QVE/FVm6c3K
+        xv/jscow==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:44970 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fWUca-00Elg4-TR; Fri, 22 Jun 2018 22:33:37 +0000
+Date:   Fri, 22 Jun 2018 15:33:35 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Josef Bacik <jbacik@fb.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: Re: m68k boot failure in -next bisected to 'xarray: Replace
+ exceptional entries'
+Message-ID: <20180622223335.GA12581@roeck-us.net>
+References: <20180622184246.GA21226@roeck-us.net>
+ <20180622210519.GA18630@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180621083649.GC12742@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622210519.GA18630@bombadil.infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously, the AMD microcode update driver has only checked the indicated
-microcode patch size for patches for the currently running CPU family.
-Patches for other families had their size trusted without further
-verification.
+On Fri, Jun 22, 2018 at 02:05:19PM -0700, Matthew Wilcox wrote:
+> On Fri, Jun 22, 2018 at 11:42:46AM -0700, Guenter Roeck wrote:
+> > Hi,
+> > 
+> > a few days ago, m68k boot tests in linux-next started to crash.
+> > I bisected the problem to commit 'xarray: Replace exceptional entries'.
+> > Bisect and crash logs are attached below.
+> 
+> Thank you!  I was afraid something like this might happen.  
+> 
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 1 at lib/idr.c:42 idr_alloc_u32+0x44/0xe8
+> 
+> Line 42 is:
+> 
+>         if (WARN_ON_ONCE(radix_tree_is_internal_node(ptr)))
+>                 return -EINVAL;
+> 
+> The pointer passed in to idr_alloc() is not 4-byte aligned; it's aligned
+> to a 2 byte boundary.  I'm having a little trouble seeing who it is that's
+> passing in what pointer ...
+> 
+> > Call Trace: [<000180d6>] __warn+0xc0/0xc2
+> >  [<000020e8>] do_one_initcall+0x0/0x140
+> >  [<0001816a>] warn_slowpath_null+0x26/0x2c
+> >  [<002b50e4>] idr_alloc_u32+0x44/0xe8
+> >  [<002b50e4>] idr_alloc_u32+0x44/0xe8
+> >  [<002b51e4>] idr_alloc+0x5c/0x76
+> >  [<00247160>] genl_register_family+0x14c/0x54c
+> 
+> It makes sense to here (other than idr_alloc being listed twice)
+> 
+> >  [<000020e8>] do_one_initcall+0x0/0x140
+> >  [<003f0f02>] genl_init+0x0/0x34
+> 
+> Assuming this is right, that would imply that genl_ctrl is not 4-byte
+> aligned.  Is that true?  I'm not familiar with the m68k alignment rules,
+> but it has a lot of 4-byte sized quantities in the struct, so I would
+> assume it's 4-byte aligned.
+> 
+> >  [<003f0ce6>] bpf_lwt_init+0x10/0x14
+> 
+> I don't think this is the caller.
+> 
 
-Introduce such check for all CPU families known to the driver so if we spot
-a patch that is longer than expected for its family we'll carefully skip
-over only the expected length to make sure we don't miss good patches in
-case the indicated patch size was something nonsensically huge.
+Here is the culprit:
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
----
-This is part 2/2 of a replacement for
-"[PATCH v7 3/9] x86/microcode/AMD: Integrate verify_patch_size() into verify_patch()".
+genl_register_family(0x36dd7a) registering VFS_DQUOT
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at lib/idr.c:42 idr_alloc_u32+0x44/0xe8
 
- arch/x86/kernel/cpu/microcode/amd.c | 67 ++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 30 deletions(-)
+It may be odd that fs/quota/netlink.c:quota_genl_family is not word
+aligned, but on the other side I don't think there is a rule that
+the function parameter to genl_register_family() - or the second
+parameter of idr_alloc() - must be word aligned. Am I missing
+something ? After all, it could be a pointer to the nth element
+of a string, or the caller could on purpose allocate IDRs for
+(ptr), (ptr + 1), and so on.
 
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 53820b92aabb..04a298da4c21 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -201,43 +201,31 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
- 	hdr = (const u32 *)buf;
- 	patch_size = hdr[1];
- 
--	if (buf_size - SECTION_HDR_SIZE < patch_size) {
-+	if (buf_size - SECTION_HDR_SIZE < sizeof(*mc_hdr)) {
- 		if (!early)
--			pr_err("Patch of size %u truncated.\n", patch_size);
-+			pr_err("Truncated patch header.\n");
- 
- 		*crnt_size = buf_size;
- 		return false;
- 	}
- 
--	/*
--	 * Set a patch length limit of slightly less than U32_MAX to
--	 * prevent overflowing 32-bit variables holding the whole
--	 * patch section size.
--	 */
--	if (patch_size > U32_MAX - SECTION_HDR_SIZE) {
--		if (!early)
--			pr_err("Patch of size %u too large.\n", patch_size);
--
--		*crnt_size = SECTION_HDR_SIZE + PATCH_MAX_SIZE;
--		return false;
--	}
--
--	*crnt_size = SECTION_HDR_SIZE + patch_size;
--
- 	mc_hdr = (const struct microcode_header_amd *)(buf + SECTION_HDR_SIZE);
- 	patch_fam = 0xf + (mc_hdr->processor_rev_id >> 12);
- 
--	/* Is the patch for the proper CPU family? */
--	if (family != patch_fam)
--		return false;
--
-+	/*
-+	 * Check whether patch_size isn't something nonsensically huge so
-+	 * we don't skip over good patches by mistake.
-+	 */
- #define F1XH_MPB_MAX_SIZE 2048
- #define F14H_MPB_MAX_SIZE 1824
- #define F15H_MPB_MAX_SIZE 4096
- #define F16H_MPB_MAX_SIZE 3458
- #define F17H_MPB_MAX_SIZE 3200
- 
--	switch (family) {
-+	switch (patch_fam) {
-+	case 0x10 ... 0x13:
-+		max_size = F1XH_MPB_MAX_SIZE;
-+		break;
- 	case 0x14:
- 		max_size = F14H_MPB_MAX_SIZE;
- 		break;
-@@ -251,22 +239,41 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
- 		max_size = F17H_MPB_MAX_SIZE;
- 		break;
- 	default:
--		max_size = F1XH_MPB_MAX_SIZE;
-+		/*
-+		 * Don't know the max size for future families...
-+		 * Set a patch length limit of slightly less than U32_MAX to
-+		 * prevent overflowing 32-bit variables holding the whole
-+		 * patch section size.
-+		 */
-+		max_size = U32_MAX - SECTION_HDR_SIZE;
- 		break;
- 	}
- 
--	/*
--	 * The section header length is not included in this indicated size
--	 * but is present in the leftover file length so we need to subtract
--	 * it from the leftover file length.
--	 */
--	if (patch_size > min_t(u32, buf_size - SECTION_HDR_SIZE, max_size)) {
-+	if (patch_size > max_size) {
-+		if (!early)
-+			pr_err("Patch of size %u exceeds family %u maximum.\n",
-+			       patch_size, (unsigned int)patch_fam);
-+
-+		*crnt_size = min_t(unsigned int,
-+				   SECTION_HDR_SIZE + max_size,
-+				   buf_size);
-+		return false;
-+	}
-+
-+	if (buf_size - SECTION_HDR_SIZE < patch_size) {
- 		if (!early)
--			pr_err("Patch of size %u too large.\n", patch_size);
-+			pr_err("Patch of size %u truncated.\n", patch_size);
- 
-+		*crnt_size = buf_size;
- 		return false;
- 	}
- 
-+	*crnt_size = SECTION_HDR_SIZE + patch_size;
-+
-+	/* Is the patch for the proper CPU family? */
-+	if (family != patch_fam)
-+		return false;
-+
- 	return true;
- }
- 
--- 
-2.17.0
-
+Thanks,
+Guenter
