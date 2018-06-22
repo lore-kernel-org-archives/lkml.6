@@ -6,44 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE12C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2A5C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D25924979
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:49:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D25924979
+	by mail.kernel.org (Postfix) with ESMTP id AC2FD24979
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:49:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2FD24979
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754830AbeFVWt3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:49:29 -0400
-Received: from mga17.intel.com ([192.55.52.151]:52514 "EHLO mga17.intel.com"
+        id S933994AbeFVWt2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 18:49:28 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22311 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754644AbeFVWmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754646AbeFVWmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 18:42:50 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:49 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
-   d="scan'208";a="234843472"
+   d="scan'208";a="234843387"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:48 -0700
+  by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:47 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
 Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH V7 41/41] x86/intel_rdt: Simplify index type
-Date:   Fri, 22 Jun 2018 15:42:32 -0700
-Message-Id: <933af72ace7599129832d85e44ff62b8ad35446b.1529706536.git.reinette.chatre@intel.com>
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V7 13/41] x86/intel_rdt: Ensure requested schemata respects mode
+Date:   Fri, 22 Jun 2018 15:42:04 -0700
+Message-Id: <b0c05b21110d3040fff45f4c1d2cfda8dba3f207.1529706536.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1529706536.git.reinette.chatre@intel.com>
 References: <cover.1529706536.git.reinette.chatre@intel.com>
@@ -54,79 +50,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ingo Molnar <mingo@kernel.org>
+When the administrator requests a change in a resource group's schemata
+we have to ensure that the new schemata respects the current resource
+group as well as the other active resource groups' schemata.
 
-Simplify this pattern:
+The new schemata is not allowed to overlap with the schemata of any
+exclusive resource groups. Similarly, if the resource group being
+changed is exclusive then its new schemata is not allowed to overlap
+with any schemata of any other active resource group.
 
- #ifdef CONFIG_X86_64
-	u64 i;
- #else
-	u32 i;
- #endif
-
-... to the more natural and shorter one:
-
-	unsigned long i;
-
-No change in functionality.
-
-Acked-by Thomas Gleixner <tglx@linutronix.de>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: fenghua.yu@intel.com
-Cc: hpa@zytor.com
 Cc: tony.luck@intel.com
-Fixes: 0438fb1aebf4 ("x86/intel_rdt: Pseudo-lock region creation/removal core")
-Link: https://lkml.kernel.org/r/5773274f9947c4d8becbabd2655bd1628f060147.1529474468.git.reinette.chatre@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com
+Cc: jithu.joseph@intel.com
+Cc: dave.hansen@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/cbe23984ec51299f63aba3b4b07f90d1cb5a3d24.1527593970.git.reinette.chatre@intel.com
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h             |  2 +
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 49 ++++++++++++++++-----
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    |  4 +-
+ 3 files changed, 41 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index a1670e50d6ce..df68972d5e3e 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -415,11 +415,7 @@ static int pseudo_lock_fn(void *_rdtgrp)
- 	struct rdtgroup *rdtgrp = _rdtgrp;
- 	struct pseudo_lock_region *plr = rdtgrp->plr;
- 	u32 rmid_p, closid_p;
--#ifdef CONFIG_X86_64
--	u64 i;
--#else
--	u32 i;
--#endif
-+	unsigned long i;
- #ifdef CONFIG_KASAN
- 	/*
- 	 * The registers used for local register variables are also used
-@@ -874,11 +870,7 @@ static int measure_cycles_lat_fn(void *_plr)
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index c0c0ef817f11..68d398bc2942 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -465,6 +465,8 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 				char *buf, size_t nbytes, loff_t off);
+ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			   struct seq_file *s, void *v);
++bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
++			   u32 _cbm, int closid, bool exclusive);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int update_domains(struct rdt_resource *r, int closid);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index ab4bb8731825..0e6210a043f0 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -123,13 +123,19 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+ 	return true;
+ }
+ 
++struct rdt_cbm_parse_data {
++	struct rdtgroup		*rdtgrp;
++	char			*buf;
++};
++
+ /*
+  * Read one cache bit mask (hex). Check that it is valid for the current
+  * resource type.
+  */
+ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
  {
- 	struct pseudo_lock_region *plr = _plr;
- 	u64 start, end;
--#ifdef CONFIG_X86_64
--	u64 i;
--#else
--	u32 i;
--#endif
-+	unsigned long i;
- #ifdef CONFIG_KASAN
- 	/*
- 	 * The registers used for local register variables are also used
-@@ -932,11 +924,7 @@ static int measure_cycles_perf_fn(void *_plr)
- 	struct pseudo_lock_region *plr = _plr;
- 	unsigned long long l2_hits, l2_miss;
- 	u64 l2_hit_bits, l2_miss_bits;
--#ifdef CONFIG_X86_64
--	u64 i;
--#else
--	u32 i;
--#endif
-+	unsigned long i;
- #ifdef CONFIG_KASAN
- 	/*
- 	 * The registers used for local register variables are also used
+-	char *buf = _data;
++	struct rdt_cbm_parse_data *data = _data;
++	struct rdtgroup *rdtgrp = data->rdtgrp;
+ 	u32 cbm_val;
+ 
+ 	if (d->have_new_ctrl) {
+@@ -137,8 +143,24 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (!cbm_validate(buf, &cbm_val, r))
++	if (!cbm_validate(data->buf, &cbm_val, r))
++		return -EINVAL;
++
++	/*
++	 * The CBM may not overlap with the CBM of another closid if
++	 * either is exclusive.
++	 */
++	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true)) {
++		rdt_last_cmd_printf("overlaps with exclusive group\n");
+ 		return -EINVAL;
++	}
++
++	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
++		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE) {
++			rdt_last_cmd_printf("overlaps with other group\n");
++			return -EINVAL;
++		}
++	}
+ 
+ 	d->new_ctrl = cbm_val;
+ 	d->have_new_ctrl = true;
+@@ -152,8 +174,10 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+  * separated by ";". The "id" is in decimal, and must match one of
+  * the "id"s for this resource.
+  */
+-static int parse_line(char *line, struct rdt_resource *r)
++static int parse_line(char *line, struct rdt_resource *r,
++		      struct rdtgroup *rdtgrp)
+ {
++	struct rdt_cbm_parse_data data;
+ 	char *dom = NULL, *id;
+ 	struct rdt_domain *d;
+ 	unsigned long dom_id;
+@@ -170,7 +194,9 @@ static int parse_line(char *line, struct rdt_resource *r)
+ 	dom = strim(dom);
+ 	list_for_each_entry(d, &r->domains, list) {
+ 		if (d->id == dom_id) {
+-			if (r->parse_ctrlval(dom, r, d))
++			data.buf = dom;
++			data.rdtgrp = rdtgrp;
++			if (r->parse_ctrlval(&data, r, d))
+ 				return -EINVAL;
+ 			goto next;
+ 		}
+@@ -223,13 +249,14 @@ int update_domains(struct rdt_resource *r, int closid)
+ 	return 0;
+ }
+ 
+-static int rdtgroup_parse_resource(char *resname, char *tok, int closid)
++static int rdtgroup_parse_resource(char *resname, char *tok,
++				   struct rdtgroup *rdtgrp)
+ {
+ 	struct rdt_resource *r;
+ 
+ 	for_each_alloc_enabled_rdt_resource(r) {
+-		if (!strcmp(resname, r->name) && closid < r->num_closid)
+-			return parse_line(tok, r);
++		if (!strcmp(resname, r->name) && rdtgrp->closid < r->num_closid)
++			return parse_line(tok, r, rdtgrp);
+ 	}
+ 	rdt_last_cmd_printf("unknown/unsupported resource name '%s'\n", resname);
+ 	return -EINVAL;
+@@ -242,7 +269,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	struct rdt_domain *dom;
+ 	struct rdt_resource *r;
+ 	char *tok, *resname;
+-	int closid, ret = 0;
++	int ret = 0;
+ 
+ 	/* Valid input requires a trailing newline */
+ 	if (nbytes == 0 || buf[nbytes - 1] != '\n')
+@@ -256,8 +283,6 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	}
+ 	rdt_last_cmd_clear();
+ 
+-	closid = rdtgrp->closid;
+-
+ 	for_each_alloc_enabled_rdt_resource(r) {
+ 		list_for_each_entry(dom, &r->domains, list)
+ 			dom->have_new_ctrl = false;
+@@ -275,13 +300,13 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-		ret = rdtgroup_parse_resource(resname, tok, closid);
++		ret = rdtgroup_parse_resource(resname, tok, rdtgrp);
+ 		if (ret)
+ 			goto out;
+ 	}
+ 
+ 	for_each_alloc_enabled_rdt_resource(r) {
+-		ret = update_domains(r, closid);
++		ret = update_domains(r, rdtgrp->closid);
+ 		if (ret)
+ 			goto out;
+ 	}
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 7f24e0808eef..c51d99bfa300 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -829,8 +829,8 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
+  *
+  * Return: false if CBM does not overlap, true if it does.
+  */
+-static bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+-				  u32 _cbm, int closid, bool exclusive)
++bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
++			   u32 _cbm, int closid, bool exclusive)
+ {
+ 	unsigned long *cbm = (unsigned long *)&_cbm;
+ 	unsigned long *ctrl_b;
 -- 
 2.17.0
 
