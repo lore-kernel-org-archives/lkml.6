@@ -2,117 +2,114 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EB5C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5F4C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD69124884
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:22:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GmE8Za6P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD69124884
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 72F4B2488E
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:26:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F4B2488E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754417AbeFVUWo (ORCPT
+        id S1754264AbeFVU00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 16:22:44 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55484 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeFVUWm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 16:22:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=P/2zcIGvOya58GBqTiymPO95qTaF2o8vN2bi00SLNmY=; b=GmE8Za6PLRh1DB+G4Yysdb8LUc
-        ZufcsGkzPDCNrsSaGJQqKthOScoMuxEPxQCOPfD1c9Fa+vesLYpTXJEZ5es/nrB4U+jhcfkfkm5s2
-        oUr7Lz8QTzAxdL+n64vMr4GxWY/doGQzfD44FUWs/7bhPyEWCqSxp3ycS8RLBI6+4rbi3K4dMR85h
-        NnQdxYOxhVzHfmD8Z48X64B7COC3K9Vz4Rz3wdm5N7Tot3p79VmPd6ZKLfasWWPBjhJ4jRI4HwOGq
-        Y6XuLLw3olxQmm6hN1swzm3DYB6Sd/Ib1dbaogrlY/w9WiLXl2Tfb7QltGBKa4E4oOzAN4TBclREI
-        aGQu9hQw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWSZq-0003QZ-Nh; Fri, 22 Jun 2018 20:22:39 +0000
-Subject: Re: [PATCH 0/4] docs: e100[0] fix build errors
-To:     "Tobin C. Harding" <me@tobin.cc>, Jonathan Corbet <corbet@lwn.net>
-Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180622003708.31848-1-me@tobin.cc>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ba768d6c-dd21-3600-5cba-151b5d6185f1@infradead.org>
-Date:   Fri, 22 Jun 2018 13:22:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 16:26:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42930 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751624AbeFVU0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 16:26:25 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 20845401EF2B;
+        Fri, 22 Jun 2018 20:26:25 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-43.rdu2.redhat.com [10.10.112.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1EF862026D6C;
+        Fri, 22 Jun 2018 20:26:22 +0000 (UTC)
+Date:   Fri, 22 Jun 2018 16:24:36 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] audit: use ktime_get_coarse_ts64() for time access
+Message-ID: <20180622202436.tlowdotb2xo4pc6l@madcap2.tricolour.ca>
+References: <20180618145954.785509-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20180622003708.31848-1-me@tobin.cc>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180618145954.785509-1-arnd@arndb.de>
+User-Agent: NeoMutt/20180512
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 22 Jun 2018 20:26:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 22 Jun 2018 20:26:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tobin,
-
-On 06/21/2018 05:37 PM, Tobin C. Harding wrote:
-> Hi Jonathan,
+On 2018-06-18 16:58, Arnd Bergmann wrote:
+> The API got renamed for consistency with the other time accessors,
+> this changes the audit caller as well.
 > 
-> This patch set fixes current docs build failure on Linus' mainline
-> 
-> commit: (ba4dbdedd3ed Merge tag 'jfs-4.18' of git://github.com/kleikamp/linux-shaggy)
-> 
-> (FYI this is 8 commits after Linux 4.18-rc1).
-> 
-> And also same build errors on today's linux-next
-> 
-> 8439c34f07a3 (tag: next-20180621, linux-next/master, linux-next) Add linux-next specific files for 20180621
-> 
-> 
-> I split the patches in between the two drivers to enable use of the
-> 'Fixes:' tag.
-> 
-> Tobin C. Harding (4):
->   Documentation: e100: Use correct heading adornment
->   Documentation: e1000: Use correct heading adornment
->   Documentation: e100: Fix docs build error
->   Documentation: e1000: Fix docs build error
-> 
->  Documentation/networking/e100.rst  | 112 +++++++++++++++--------------
->  Documentation/networking/e1000.rst |  76 ++++++++++----------
->  2 files changed, 96 insertions(+), 92 deletions(-)
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I am still seeing a few warnings (your 4 patches applied to
-linux-next-20180622):
+This looks reasonable to me.
+Not that I think it matters, but any reason it was swapped in a
+different code location other than aesthetics?  Time and serial are
+usually used together in our code.
 
-linux-next-20180622/Documentation/networking/e100.rst:57: WARNING: Literal block expected; none found.
-linux-next-20180622/Documentation/networking/e100.rst:68: WARNING: Literal block expected; none found.
-linux-next-20180622/Documentation/networking/e100.rst:75: WARNING: Literal block expected; none found.
-linux-next-20180622/Documentation/networking/e100.rst:84: WARNING: Literal block expected; none found.
-linux-next-20180622/Documentation/networking/e100.rst:93: WARNING: Inline emphasis start-string without end-string.
-linux-next-20180622/Documentation/networking/e1000.rst:83: ERROR: Unexpected indentation.
-linux-next-20180622/Documentation/networking/e1000.rst:84: WARNING: Block quote ends without a blank line; unexpected unindent.
-linux-next-20180622/Documentation/networking/e1000.rst:173: WARNING: Definition list ends without a blank line; unexpected unindent.
-linux-next-20180622/Documentation/networking/e1000.rst:236: WARNING: Definition list ends without a blank line; unexpected unindent.
+Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
 
+> ---
+>  kernel/audit.c   | 2 +-
+>  kernel/auditsc.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index e7478cb58079..3e34b9f03cfe 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -1724,7 +1724,7 @@ static inline void audit_get_stamp(struct audit_context *ctx,
+>  				   struct timespec64 *t, unsigned int *serial)
+>  {
+>  	if (!ctx || !auditsc_get_stamp(ctx, t, serial)) {
+> -		*t = current_kernel_time64();
+> +		ktime_get_coarse_ts64(t);
+>  		*serial = audit_serial();
+>  	}
+>  }
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index ceb1c4596c51..dbbf02f513a8 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -1540,10 +1540,10 @@ void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
+>  	context->argv[2]    = a3;
+>  	context->argv[3]    = a4;
+>  	context->serial     = 0;
+> -	context->ctime = current_kernel_time64();
+>  	context->in_syscall = 1;
+>  	context->current_state  = state;
+>  	context->ppid       = 0;
+> +	ktime_get_coarse_ts64(&context->ctime);
+>  }
+>  
+>  /**
+> -- 
+> 2.9.0
+> 
 
-You didn't get these warnings?  or they weren't important?
-or "perfect" was not your primary goal?   :)   [which is fine]
+- RGB
 
-[I see around 50 similar doc formatting warnings/errors in the entire
-Documentation build.]
-
-Anyway, much better than it was.  Thanks.
-
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
--- 
-~Randy
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
