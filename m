@@ -2,74 +2,66 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37267C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AA8C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8A7A241B3
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:17:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8A7A241B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 984F2241B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:19:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 984F2241B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932747AbeFVMRa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 08:17:30 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60850 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751163AbeFVMR3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:17:29 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fWL0E-0007wm-CC; Fri, 22 Jun 2018 12:17:22 +0000
-Date:   Fri, 22 Jun 2018 13:17:22 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel test robot <xiaolong.ye@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LKP <lkp@01.org>
-Subject: Re: [lkp-robot] [fs] 3deb642f0d: will-it-scale.per_process_ops -8.8%
- regression
-Message-ID: <20180622121722.GW30522@ZenIV.linux.org.uk>
-References: <20180622082752.GX11011@yexl-desktop>
- <CA+55aFw5ghByk_zCN25G6rPPSAQma3Mh0t4s18CtLg=h6U9+Zg@mail.gmail.com>
- <20180622095608.GA12263@lst.de>
- <20180622100014.GA12425@lst.de>
- <20180622110117.GU30522@ZenIV.linux.org.uk>
- <20180622115300.GA14654@lst.de>
- <20180622115613.GV30522@ZenIV.linux.org.uk>
- <20180622120739.GA15351@lst.de>
+        id S932944AbeFVMTl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 08:19:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44492 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751163AbeFVMTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 08:19:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D4842ADD5;
+        Fri, 22 Jun 2018 12:19:38 +0000 (UTC)
+Date:   Fri, 22 Jun 2018 14:19:36 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Cc:     akpm@linux-foundation.org, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
+Subject: Re: [PATCH v9] Refactor part of the oom report in dump_header
+Message-ID: <20180622121936.GX10465@dhcp22.suse.cz>
+References: <1529056341-16182-1-git-send-email-ufo19890607@gmail.com>
+ <20180622083949.GR10465@dhcp22.suse.cz>
+ <CAHCio2jkE2FGc2g48jm+ddvEbN3hEOoohBM+-871v32N2i2gew@mail.gmail.com>
+ <20180622104217.GV10465@dhcp22.suse.cz>
+ <CAHCio2j-z5y8sQrZ9ENLH2sOzuoH=vsC+q9Nj5DbSXUnQK-uPw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180622120739.GA15351@lst.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCio2j-z5y8sQrZ9ENLH2sOzuoH=vsC+q9Nj5DbSXUnQK-uPw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 02:07:39PM +0200, Christoph Hellwig wrote:
-> On Fri, Jun 22, 2018 at 12:56:13PM +0100, Al Viro wrote:
-> > 	So mark that in ->f_mode - I strongly suspect that
-> > sk_can_busy_loop(sock->sk) can't change while an opened file is there.
-> > And lift that (conditional on new FMODE_BUSY_LOOP) into do_poll()
-> > and do_select() - we *already* have bits of pieces of that logics in
-> > there and that way they'd at least be gathered in one place.
+On Fri 22-06-18 19:40:54, 禹舟键 wrote:
+> Hi Michal
+> > You misunderstood my suggestion. Let me be more specific. Please
+> > separate the whole new oom_constraint including its _usage_.
 > 
-> The problem is that call to sk_busy_loop(), which is going to be indirect
-> no matter what.
+> Sorry for misunderstanding your words. I think you want me to separate
+> enum oom_constraint and static const char * const
+> oom_constraint_text[] to two parts, am I right ?
 
-	if ->f_poll_head is NULL {
-		use ->poll
-	} else {
-		if can ll_poll (checked in ->f_mode)
-			call ->ll_poll(), if it returns what we want - we are done
-		add to ->f_poll_head
-		call ->poll_mask()
-	}
+Just split the patch into two parts. The first to add oom_constraint*
+and use it. And the second which adds the missing memcg information to
+the oom report.
+-- 
+Michal Hocko
+SUSE Labs
