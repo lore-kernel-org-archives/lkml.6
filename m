@@ -3,129 +3,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1ACC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BE2C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F383A23F78
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:16:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F383A23F78
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id F35E823F7B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:18:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35E823F7B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751526AbeFVJQU (ORCPT
+        id S1751328AbeFVJSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:16:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39539 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751086AbeFVJQR (ORCPT
+        Fri, 22 Jun 2018 05:18:50 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:40949 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751210AbeFVJSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:16:17 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5M9Fp2q018691
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 22 Jun 2018 02:15:51 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5M9FoSd018688;
-        Fri, 22 Jun 2018 02:15:50 -0700
-Date:   Fri, 22 Jun 2018 02:15:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Masami Hiramatsu <tipbot@zytor.com>
-Message-ID: <tip-01bdee64f9cf8e15f998bf52789ed9d0ebdfa621@git.kernel.org>
-Cc:     corbet@lwn.net, torvalds@linux-foundation.org, hpa@zytor.com,
-        rdunlap@infradead.org, mhiramat@kernel.org, peterz@infradead.org,
-        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
-        ananth@linux.vnet.ibm.com
-Reply-To: peterz@infradead.org, rdunlap@infradead.org, mhiramat@kernel.org,
-          corbet@lwn.net, hpa@zytor.com, torvalds@linux-foundation.org,
-          tglx@linutronix.de, akpm@linux-foundation.org,
-          ananth@linux.vnet.ibm.com, mingo@kernel.org, rostedt@goodmis.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20180622150740.bd26241032c972d86e23bf73@kernel.org>
-References: <20180622150740.bd26241032c972d86e23bf73@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] kprobes/Documentation: Fix various typos
-Git-Commit-ID: 01bdee64f9cf8e15f998bf52789ed9d0ebdfa621
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 22 Jun 2018 05:18:48 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fWID0-0002UO-Fw; Fri, 22 Jun 2018 11:18:22 +0200
+Date:   Fri, 22 Jun 2018 11:18:18 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 00/16] x86/split_lock: Enable #AC exception for split
+ locked accesses
+In-Reply-To: <20180621220003.GD114883@romley-ivt3.sc.intel.com>
+Message-ID: <alpine.DEB.2.21.1806221058580.2402@nanos.tec.linutronix.de>
+References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com> <20180621193738.GA13636@worktop.programming.kicks-ass.net> <20180621201851.GC114883@romley-ivt3.sc.intel.com> <alpine.DEB.2.21.1806212223480.1591@nanos.tec.linutronix.de>
+ <20180621220003.GD114883@romley-ivt3.sc.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  01bdee64f9cf8e15f998bf52789ed9d0ebdfa621
-Gitweb:     https://git.kernel.org/tip/01bdee64f9cf8e15f998bf52789ed9d0ebdfa621
-Author:     Masami Hiramatsu <mhiramat@kernel.org>
-AuthorDate: Fri, 22 Jun 2018 15:07:40 +0900
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 22 Jun 2018 11:10:55 +0200
+On Thu, 21 Jun 2018, Fenghua Yu wrote:
+> Right. Code won't cover the early boot process. It only covers boot process
+> after the feature is enabled.
 
-kprobes/Documentation: Fix various typos
+That's broken. #AC wants to be enabled early as any other exception. The
+reason why you cannot enable it is because your exception handler is a
+total trainwreck, but it's even a trainwreck later on.
 
-Fix typos and clean up the wording, with the help of Randy Dunlap.
+> After disabling #AC split lock after catching #AC once, any future split
+> lock will not generate #AC any more.
 
-Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180622150740.bd26241032c972d86e23bf73@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- Documentation/kprobes.txt | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+That's perfectly fine for the kernel. Issue a prominent warning and stuff
+gets fixed.
 
-diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
-index 13d8efdb9718..10f4499e677c 100644
---- a/Documentation/kprobes.txt
-+++ b/Documentation/kprobes.txt
-@@ -83,22 +83,22 @@ Execution then continues with the instruction following the probepoint.
- Changing Execution Path
- -----------------------
- 
--Since the kprobes can probe into a running kernel code, it can change
--the register set, including instruction pointer. This operation
--requires maximum attention, such as keeping the stack frame, recovering
--execution path etc. Since it is operated on running kernel and need deep
--knowladge of the archtecture and concurrent computing, you can easily
--shot your foot.
-+Since kprobes can probe into a running kernel code, it can change the
-+register set, including instruction pointer. This operation requires
-+maximum care, such as keeping the stack frame, recovering the execution
-+path etc. Since it operates on a running kernel and needs deep knowledge
-+of computer architecture and concurrent computing, you can easily shoot
-+your foot.
- 
- If you change the instruction pointer (and set up other related
--registers) in pre_handler, you must return !0 so that the kprobes
--stops single stepping and just returns to given address.
-+registers) in pre_handler, you must return !0 so that kprobes stops
-+single stepping and just returns to the given address.
- This also means post_handler should not be called anymore.
- 
--Note that this operation may be harder on some architectures which
--use TOC (Table of Contents) for function call, since you have to
--setup new TOC for your function in your module, and recover old
--one after back from it.
-+Note that this operation may be harder on some architectures which use
-+TOC (Table of Contents) for function call, since you have to setup a new
-+TOC for your function in your module, and recover the old one after
-+returning from it.
- 
- Return Probes
- -------------
+Thanks,
+
+	tglx
