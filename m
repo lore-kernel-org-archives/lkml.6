@@ -2,106 +2,102 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3778C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF54C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E512476C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:47:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E512476C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 496CF24769
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:49:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PqjTAFy9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 496CF24769
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934419AbeFVSrz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 14:47:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33916 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933878AbeFVSrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 14:47:53 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A6B6B7B4A7;
-        Fri, 22 Jun 2018 18:47:52 +0000 (UTC)
-Received: from flask (unknown [10.43.2.80])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2A24C2026D6C;
-        Fri, 22 Jun 2018 18:47:49 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Fri, 22 Jun 2018 20:47:48 +0200
-Date:   Fri, 22 Jun 2018 20:47:48 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     KVM <kvm@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] x86/kvm: Handle all MCA banks
-Message-ID: <20180622184748.GB2377@flask>
-References: <20180622095101.32587-1-bp@alien8.de>
- <20180622095101.32587-4-bp@alien8.de>
- <20180622181603.GB5549@flask>
- <20180622182419.GE1882@zn.tnic>
+        id S934359AbeFVStS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:49:18 -0400
+Received: from mail-pg0-f47.google.com ([74.125.83.47]:39639 "EHLO
+        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933878AbeFVStR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 14:49:17 -0400
+Received: by mail-pg0-f47.google.com with SMTP id w12-v6so3337688pgc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 11:49:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=BFIXmd+g4ihjCcgYZskwn6CUGTlTH6dJv1Qnkq946qc=;
+        b=PqjTAFy92x3CvSsLK13B1bqxnOsDT4s7BEgEhhf178HPWAOMK4v1eIB6wI2N2tQ4jj
+         p682eO8K9rhQhru08KMYc/huVIay+6lgd9YMfSt+WjGkot64ICEz81dC1dweve9sp3G7
+         kgc+Ta3cR/lYBeSJiBu1F5ue0EwA232exqpVKi90/4K8chKlo3Msa0RdxDEnY4gSm7Fo
+         aVRu8iPE65IWl3My6nJXSGs1wsDfiWmzJp+7RVzz79UGVkoyA9fjV/R3EVlWQIwfVJk+
+         ELVcbBHCCooTEdVXND8XSmk9wq1IQA3H0BsA/PGxEeLErUepMZf3M9PxcPoXdnCpsS7E
+         +kKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=BFIXmd+g4ihjCcgYZskwn6CUGTlTH6dJv1Qnkq946qc=;
+        b=aGs9OfTs74TnwELedCOiCxwfkQiURF3PndvjgDff0+xf6lrZh/21dduOhez2hO7cvD
+         lOHaYu8kxJv+PPsh41ChNaQJVJtMEmYb3BPd79NyPA/5L17aJdgDb2eFzcozQW5hUIKr
+         KD0HTmSUBdzUUXzJ3svGO8lRrQnw88u9eGCcXsd5/kndLsRIpY5ZsoYZVDQC8/JFqmPI
+         t6nyNSh+EPWHdgLewWXqlgF/iNfk/kZDum+0PaZd1evGRmoTiokckl1z6hnOLcjDXx4k
+         MBZAs2q7ojfaufaZEKYl8diZZtrnpukPGrz+ABCzzG6/rvNYnaV6I0bOkfkyPY3IcwdR
+         4dFQ==
+X-Gm-Message-State: APt69E0Lu8/sDxFJpOio/VnJtbdNFriD0zMo2QfWR8MsTfnqr4LWayrH
+        6m9E1pxI8Rioyim+qBG+OhCMTg==
+X-Google-Smtp-Source: ADUXVKJnDf0Yv8b5Ec6GfxPl9FEpeZ2r0B3o+lnIa9+Y1z0Ht58jojHxNZdCgNQBHEA195NgWBosdw==
+X-Received: by 2002:a65:5c89:: with SMTP id a9-v6mr2527021pgt.104.1529693356331;
+        Fri, 22 Jun 2018 11:49:16 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id q4-v6sm10498983pgt.64.2018.06.22.11.49.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 11:49:15 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 11:49:14 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: fix unnecessary killing of additional
+ processes
+In-Reply-To: <20180622142917.GB10465@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1806221147090.110785@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com> <alpine.DEB.2.21.1806141339580.4543@chino.kir.corp.google.com> <20180615065541.GA24039@dhcp22.suse.cz> <alpine.DEB.2.21.1806151559360.49038@chino.kir.corp.google.com>
+ <20180619083316.GB13685@dhcp22.suse.cz> <20180620130311.GM13685@dhcp22.suse.cz> <alpine.DEB.2.21.1806201325330.158126@chino.kir.corp.google.com> <20180621074537.GC10465@dhcp22.suse.cz> <alpine.DEB.2.21.1806211347050.213939@chino.kir.corp.google.com>
+ <20180622074257.GQ10465@dhcp22.suse.cz> <20180622142917.GB10465@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180622182419.GE1882@zn.tnic>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 22 Jun 2018 18:47:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 22 Jun 2018 18:47:52 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-22 20:24+0200, Borislav Petkov:
-> On Fri, Jun 22, 2018 at 08:16:04PM +0200, Radim Krčmář wrote:
-> > 2018-06-22 11:51+0200, Borislav Petkov:
-> > > From: Borislav Petkov <bp@suse.de>
-> > > 
-> > > Extend the range of MCA banks which get passed to set/get_msr_mce() to
-> > > include all the MSRs of the last bank too.
-> > > 
-> > > Signed-off-by: Borislav Petkov <bp@suse.de>
-> > > ---
-> > >  arch/x86/kvm/x86.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > index 80452b0f0e8c..a7d344823356 100644
-> > > --- a/arch/x86/kvm/x86.c
-> > > +++ b/arch/x86/kvm/x86.c
-> > > @@ -2466,7 +2466,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> > >  
-> > >  	case MSR_IA32_MCG_CTL:
-> > >  	case MSR_IA32_MCG_STATUS:
-> > > -	case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_CTL(KVM_MAX_MCE_BANKS) - 1:
-> > > +	case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS) - 1:
+On Fri, 22 Jun 2018, Michal Hocko wrote:
+
+> > > preempt_disable() is required because it calls kvm_kick_many_cpus() with 
+> > > wait == true because KVM_REQ_APIC_PAGE_RELOAD sets KVM_REQUEST_WAIT and 
+> > > thus the smp_call_function_many() is going to block until all cpus can run 
+> > > ack_flush().
 > > 
-> > It was correct before.  We have 32 banks (KVM_MAX_MCE_BANKS), so the
-> > last useable has index 31 and the "- 1" is going to roll over from first
-> > MSR of bank 32 to the last MSR of the last bank.
-> > 
-> > Another way of writing it would be:
-> > 
-> >  case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS - 1):
+> > I will make sure to talk to the maintainer of the respective code to
+> > do the nonblock case correctly.
 > 
-> Huh?
-> 
-> This is what I did:
-> 
-> +   case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS) - 1:
-> 
-> It needs to be MISC because it is the last MSR in the MCA bank and thus
-> the highest.
+> I've just double checked this particular code and the wait path and this
+> one is not a sleep. It is a busy wait for IPI to get handled. So this
+> one should be OK AFAICS. Anyway I will send an RFC and involve
+> respective maintainers to make sure I am not making any incorrect
+> assumptions.
 
-The last MSR is the original "MSR_IA32_MCx_CTL(KVM_MAX_MCE_BANKS) - 1".
-
-"MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS) - 1" also covers
-
-  MSR_IA32_MC32_CTL, MSR_IA32_MC32_STATUS, and MSR_IA32_MC32_ADDR
-
-but the maximal valid MSR is MSR_IA32_MC31_MISC.
+Do you believe that having the only potential source of memory freeing 
+busy waiting for all other cpus on the system to run ack_flush() is 
+particularly dangerous given the fact that they may be allocating 
+themselves?
