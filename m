@@ -2,298 +2,508 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF8FC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C69C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6475824652
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:03:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Mk28X74Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6475824652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id BC20A24653
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:04:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC20A24653
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754729AbeFVRDx (ORCPT
+        id S1754746AbeFVREB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:03:53 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43447 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754462AbeFVRB7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:01:59 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y8-v6so3491032pfm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 10:01:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:date:message-id:in-reply-to:references:cc:from:to;
-        bh=ry/LfwLi/tYV4OOfEp0qv4lu5uRtthBo0ccjreY/0zs=;
-        b=Mk28X74QdQzUf+QCR/5QizeytRH/g6oZ1sUJ9gGFnI+dUxuZXz2RUYL8B6NXcjdZJo
-         EZExZZi47h8Z2KlouCS1AY6O1Wp9Nkr+owB4THW2DUBiBgPbFRG5uc1ZPNyO/JTStQZZ
-         LL/zpLdqveKytGO4hoJEvdpBZBVG2lktKiqO7Z403S/8Kk+uPFhgnNLXgiM6VuiKJ81Z
-         qbPujp1+srpGGRMh0hV1wl4QnTNoGrTCd9vUjs4MXZ6i2OTDIZv6LwuXf9kCKbTcytm9
-         wf4/ipBMKut8LSDgsBU7qaYQn160IrzD9zJZctO8Oo4jX3OeBkXtIna6QSbX0uoMvxYQ
-         41TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
-         :cc:from:to;
-        bh=ry/LfwLi/tYV4OOfEp0qv4lu5uRtthBo0ccjreY/0zs=;
-        b=bG2yLWPqYFfDvZUYlPhF5YDAOfR56DQ4L5hZoi3hKWGm7Tbu4f0RodBqsYfun6A9zd
-         m3PZ1GYr0Pe7vUhCPdpvBIUhHgc5zq7x8UH1QhnpxDstJIHJhUmBf851ngJeMdJ5Selk
-         ZRl0kcIv+ZtGzBN+Tr2zLZYBfoFw44MTXnolFr+VxXwWfOK06REez7xzIDJIv8yv6z/R
-         cP6CZDpCF0mt9wHiX3mx/n4mq2VnUXq8RmBAwFbcRdkKGVpk8nu8+T4zP3g35vfmTWSz
-         t57n/G9q8Ma8yFIuCc4rRcVWyYG8qx5aDvU2bFyD1AUYBALZkVeLrxn7cYunD4Iir+zI
-         RSGg==
-X-Gm-Message-State: APt69E2FWtYV294KDvJM/0NiWV5jR8DkSZwetTb8Nek9zx1kmvEvU04I
-        RKpZiq28xZMmoruTePwICV2JyQ==
-X-Google-Smtp-Source: ADUXVKLkYRjtSH1KWICvH/V2Hl+5Kb1bIfrX01UObi+PJHcdFtf7X+aP+AFkbONN/L7N1SKpf9jfvg==
-X-Received: by 2002:a63:b407:: with SMTP id s7-v6mr2198856pgf.334.1529686918909;
-        Fri, 22 Jun 2018 10:01:58 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id 10-v6sm19144223pfs.111.2018.06.22.10.01.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 10:01:58 -0700 (PDT)
-Subject: [PATCH 2/5] arm: Convert to GENERIC_IRQ_MULTI_HANDLER
-Date:   Fri, 22 Jun 2018 10:01:23 -0700
-Message-Id: <20180622170126.6308-3-palmer@sifive.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180622170126.6308-1-palmer@sifive.com>
-References: <20180621181756.12493-1-palmer@sifive.com>
- <20180622170126.6308-1-palmer@sifive.com>
-Cc:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        Will Deacon <will.deacon@arm.com>, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        Arnd Bergmann <arnd@arndb.de>, nicolas.pitre@linaro.org,
-        vladimir.murzin@arm.com, keescook@chromium.org,
-        jinb.park7@gmail.com, yamada.masahiro@socionext.com,
-        alexandre.belloni@bootlin.com, Palmer Dabbelt <palmer@sifive.com>,
-        pombredanne@nexb.com, Greg KH <gregkh@linuxfoundation.org>,
-        kstewart@linuxfoundation.org, jhogan@kernel.org,
-        mark.rutland@arm.com, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, openrisc@lists.librecores.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     tglx@linutronix.de
+        Fri, 22 Jun 2018 13:04:01 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48627 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751445AbeFVRD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 13:03:58 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2E6B5EB4AB742;
+        Sat, 23 Jun 2018 01:03:54 +0800 (CST)
+Received: from localhost (10.47.144.153) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.382.0; Sat, 23 Jun 2018
+ 01:03:48 +0800
+Date:   Fri, 22 Jun 2018 18:03:33 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     William Breathitt Gray <vilhelm.gray@gmail.com>
+CC:     <gregkh@linuxfoundation.org>, <jic23@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <fabrice.gasnier@st.com>,
+        <benjamin.gaignard@st.com>, <robh+dt@kernel.org>,
+        <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <mark.rutland@arm.com>
+Subject: Re: [PATCH v7 06/10] counter: Add STM32 Timer quadrature encoder
+Message-ID: <20180622180333.00007ab8@huawei.com>
+In-Reply-To: <3bcbc5d2c4dd644f81e3ab35a836c7648bfd0454.1529607879.git.vilhelm.gray@gmail.com>
+References: <cover.1529607879.git.vilhelm.gray@gmail.com>
+        <3bcbc5d2c4dd644f81e3ab35a836c7648bfd0454.1529607879.git.vilhelm.gray@gmail.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.47.144.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts the ARM port to use the recently added
-GENERIC_IRQ_MULTI_HANDLER, which is essentially just a copy of ARM's
-existhing MULTI_IRQ_HANDLER.  The only changes are:
+On Thu, 21 Jun 2018 17:08:20 -0400
+William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 
-* handle_arch_irq is now defined in a generic C file instead of an
-  arm-specific assembly file.
-* handle_arch_irq is now marked as __ro_after_init.
+> From: Benjamin Gaignard <benjamin.gaignard@st.com>
+> 
+> Implement counter part of the STM32 timer hardware block by using
+> counter API. Hardware only supports X2 and X4 quadrature modes. A
+> ceiling value can be set to define the maximum value reachable by the
+> counter.
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Co-authored-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- arch/arm/Kconfig                 | 19 +++++++------------
- arch/arm/include/asm/irq.h       |  5 -----
- arch/arm/include/asm/mach/arch.h |  2 +-
- arch/arm/kernel/entry-armv.S     | 10 ++--------
- arch/arm/kernel/irq.c            | 10 ----------
- arch/arm/kernel/setup.c          |  2 +-
- 6 files changed, 11 insertions(+), 37 deletions(-)
+> ---
+>  drivers/counter/Kconfig           |  10 +
+>  drivers/counter/Makefile          |   1 +
+>  drivers/counter/stm32-timer-cnt.c | 390 ++++++++++++++++++++++++++++++
+>  3 files changed, 401 insertions(+)
+>  create mode 100644 drivers/counter/stm32-timer-cnt.c
+> 
+> diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+> index 7646f5df76f3..fcfbaa935122 100644
+> --- a/drivers/counter/Kconfig
+> +++ b/drivers/counter/Kconfig
+> @@ -36,4 +36,14 @@ config 104_QUAD_8
+>  	  The base port addresses for the devices may be configured via the base
+>  	  array module parameter.
+>  
+> +config STM32_TIMER_CNT
+> +	tristate "STM32 Timer encoder counter driver"
+> +	depends on MFD_STM32_TIMERS || COMPILE_TEST
+> +	help
+> +	  Select this option to enable STM32 Timer quadrature encoder
+> +	  and counter driver.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called stm32-timer-cnt.
+> +
+>  endif # COUNTER
+> diff --git a/drivers/counter/Makefile b/drivers/counter/Makefile
+> index 23a4f6263e45..ff024259fb46 100644
+> --- a/drivers/counter/Makefile
+> +++ b/drivers/counter/Makefile
+> @@ -8,3 +8,4 @@ obj-$(CONFIG_COUNTER) += counter.o
+>  counter-y := generic-counter.o
+>  
+>  obj-$(CONFIG_104_QUAD_8)	+= 104-quad-8.o
+> +obj-$(CONFIG_STM32_TIMER_CNT)	+= stm32-timer-cnt.o
+> diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
+> new file mode 100644
+> index 000000000000..0b15e729798b
+> --- /dev/null
+> +++ b/drivers/counter/stm32-timer-cnt.c
+> @@ -0,0 +1,390 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * STM32 Timer Encoder and Counter driver
+> + *
+> + * Copyright (C) STMicroelectronics 2018
+> + *
+> + * Author: Benjamin Gaignard <benjamin.gaignard@st.com>
+> + *
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 54eeb8d00bc6..b6be2b1be75d 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -337,8 +337,8 @@ config ARCH_MULTIPLATFORM
- 	select TIMER_OF
- 	select COMMON_CLK
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select MIGHT_HAVE_PCI
--	select MULTI_IRQ_HANDLER
- 	select PCI_DOMAINS if PCI
- 	select SPARSE_IRQ
- 	select USE_OF
-@@ -465,9 +465,9 @@ config ARCH_DOVE
- 	bool "Marvell Dove"
- 	select CPU_PJ4
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
- 	select MIGHT_HAVE_PCI
--	select MULTI_IRQ_HANDLER
- 	select MVEBU_MBUS
- 	select PINCTRL
- 	select PINCTRL_DOVE
-@@ -512,8 +512,8 @@ config ARCH_LPC32XX
- 	select COMMON_CLK
- 	select CPU_ARM926T
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
--	select MULTI_IRQ_HANDLER
- 	select SPARSE_IRQ
- 	select USE_OF
- 	help
-@@ -532,11 +532,11 @@ config ARCH_PXA
- 	select TIMER_OF
- 	select CPU_XSCALE if !CPU_XSC3
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIO_PXA
- 	select GPIOLIB
- 	select HAVE_IDE
- 	select IRQ_DOMAIN
--	select MULTI_IRQ_HANDLER
- 	select PLAT_PXA
- 	select SPARSE_IRQ
- 	help
-@@ -572,11 +572,11 @@ config ARCH_SA1100
- 	select CPU_FREQ
- 	select CPU_SA1100
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
- 	select HAVE_IDE
- 	select IRQ_DOMAIN
- 	select ISA
--	select MULTI_IRQ_HANDLER
- 	select NEED_MACH_MEMORY_H
- 	select SPARSE_IRQ
- 	help
-@@ -590,10 +590,10 @@ config ARCH_S3C24XX
- 	select GENERIC_CLOCKEVENTS
- 	select GPIO_SAMSUNG
- 	select GPIOLIB
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
--	select MULTI_IRQ_HANDLER
- 	select NEED_MACH_IO_H
- 	select SAMSUNG_ATAGS
- 	select USE_OF
-@@ -627,10 +627,10 @@ config ARCH_OMAP1
- 	select CLKSRC_MMIO
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_IRQ_CHIP
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
- 	select HAVE_IDE
- 	select IRQ_DOMAIN
--	select MULTI_IRQ_HANDLER
- 	select NEED_MACH_IO_H if PCCARD
- 	select NEED_MACH_MEMORY_H
- 	select SPARSE_IRQ
-@@ -921,11 +921,6 @@ config IWMMXT
- 	  Enable support for iWMMXt context switching at run time if
- 	  running on a CPU that supports it.
- 
--config MULTI_IRQ_HANDLER
--	bool
--	help
--	  Allow each machine to specify it's own IRQ handler at run time.
--
- if !MMU
- source "arch/arm/Kconfig-nommu"
- endif
-diff --git a/arch/arm/include/asm/irq.h b/arch/arm/include/asm/irq.h
-index b6f319606e30..c883fcbe93b6 100644
---- a/arch/arm/include/asm/irq.h
-+++ b/arch/arm/include/asm/irq.h
-@@ -31,11 +31,6 @@ extern void asm_do_IRQ(unsigned int, struct pt_regs *);
- void handle_IRQ(unsigned int, struct pt_regs *);
- void init_IRQ(void);
- 
--#ifdef CONFIG_MULTI_IRQ_HANDLER
--extern void (*handle_arch_irq)(struct pt_regs *);
--extern void set_handle_irq(void (*handle_irq)(struct pt_regs *));
--#endif
--
- #ifdef CONFIG_SMP
- extern void arch_trigger_cpumask_backtrace(const cpumask_t *mask,
- 					   bool exclude_self);
-diff --git a/arch/arm/include/asm/mach/arch.h b/arch/arm/include/asm/mach/arch.h
-index 5c1ad11aa392..bb8851208e17 100644
---- a/arch/arm/include/asm/mach/arch.h
-+++ b/arch/arm/include/asm/mach/arch.h
-@@ -59,7 +59,7 @@ struct machine_desc {
- 	void			(*init_time)(void);
- 	void			(*init_machine)(void);
- 	void			(*init_late)(void);
--#ifdef CONFIG_MULTI_IRQ_HANDLER
-+#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
- 	void			(*handle_irq)(struct pt_regs *);
- #endif
- 	void			(*restart)(enum reboot_mode, const char *);
-diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
-index 179a9f6bd1e3..e85a3af9ddeb 100644
---- a/arch/arm/kernel/entry-armv.S
-+++ b/arch/arm/kernel/entry-armv.S
-@@ -22,7 +22,7 @@
- #include <asm/glue-df.h>
- #include <asm/glue-pf.h>
- #include <asm/vfpmacros.h>
--#ifndef CONFIG_MULTI_IRQ_HANDLER
-+#ifndef CONFIG_GENERIC_IRQ_MULTI_HANDLER
- #include <mach/entry-macro.S>
- #endif
- #include <asm/thread_notify.h>
-@@ -39,7 +39,7 @@
-  * Interrupt handling.
-  */
- 	.macro	irq_handler
--#ifdef CONFIG_MULTI_IRQ_HANDLER
-+#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
- 	ldr	r1, =handle_arch_irq
- 	mov	r0, sp
- 	badr	lr, 9997f
-@@ -1226,9 +1226,3 @@ vector_addrexcptn:
- 	.globl	cr_alignment
- cr_alignment:
- 	.space	4
--
--#ifdef CONFIG_MULTI_IRQ_HANDLER
--	.globl	handle_arch_irq
--handle_arch_irq:
--	.space	4
--#endif
-diff --git a/arch/arm/kernel/irq.c b/arch/arm/kernel/irq.c
-index ece04a457486..9908dacf9229 100644
---- a/arch/arm/kernel/irq.c
-+++ b/arch/arm/kernel/irq.c
-@@ -102,16 +102,6 @@ void __init init_IRQ(void)
- 	uniphier_cache_init();
- }
- 
--#ifdef CONFIG_MULTI_IRQ_HANDLER
--void __init set_handle_irq(void (*handle_irq)(struct pt_regs *))
--{
--	if (handle_arch_irq)
--		return;
--
--	handle_arch_irq = handle_irq;
--}
--#endif
--
- #ifdef CONFIG_SPARSE_IRQ
- int __init arch_probe_nr_irqs(void)
- {
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 35ca494c028c..4c249cb261f3 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -1145,7 +1145,7 @@ void __init setup_arch(char **cmdline_p)
- 
- 	reserve_crashkernel();
- 
--#ifdef CONFIG_MULTI_IRQ_HANDLER
-+#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
- 	handle_arch_irq = mdesc->handle_irq;
- #endif
- 
--- 
-2.16.4
+If I was being really really fussy - this blank line doesn't add
+anything ;)
+
+> + */
+> +#include <linux/counter.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/types.h>
+> +#include <linux/mfd/stm32-timers.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define TIM_CCMR_CCXS	(BIT(8) | BIT(0))
+> +#define TIM_CCMR_MASK	(TIM_CCMR_CC1S | TIM_CCMR_CC2S | \
+> +			 TIM_CCMR_IC1F | TIM_CCMR_IC2F)
+> +#define TIM_CCER_MASK	(TIM_CCER_CC1P | TIM_CCER_CC1NP | \
+> +			 TIM_CCER_CC2P | TIM_CCER_CC2NP)
+> +
+> +struct stm32_timer_cnt {
+> +	struct counter_device counter;
+> +	struct regmap *regmap;
+> +	struct clk *clk;
+> +	u32 ceiling;
+> +};
+> +
+> +/**
+> + * stm32_count_function - enumerates stm32 timer counter encoder modes
+> + * @STM32_COUNT_SLAVE_MODE_DISABLED: counts on internal clock when CEN=1
+> + * @STM32_COUNT_ENCODER_MODE_1: counts TI1FP1 edges, depending on TI2FP2 level
+> + * @STM32_COUNT_ENCODER_MODE_2: counts TI2FP2 edges, depending on TI1FP1 level
+> + * @STM32_COUNT_ENCODER_MODE_3: counts on both TI1FP1 and TI2FP2 edges
+> + */
+> +enum stm32_count_function {
+> +	STM32_COUNT_SLAVE_MODE_DISABLED = -1,
+> +	STM32_COUNT_ENCODER_MODE_1,
+> +	STM32_COUNT_ENCODER_MODE_2,
+> +	STM32_COUNT_ENCODER_MODE_3,
+> +};
+> +
+> +static enum count_function stm32_count_functions[] = {
+> +	[STM32_COUNT_ENCODER_MODE_1] = COUNT_FUNCTION_QUADRATURE_X2_A,
+> +	[STM32_COUNT_ENCODER_MODE_2] = COUNT_FUNCTION_QUADRATURE_X2_B,
+> +	[STM32_COUNT_ENCODER_MODE_3] = COUNT_FUNCTION_QUADRATURE_X4,
+> +};
+> +
+> +static int stm32_count_read(struct counter_device *counter,
+> +			    struct counter_count *count,
+> +			    struct count_read_value *val)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	u32 cnt;
+> +
+> +	regmap_read(priv->regmap, TIM_CNT, &cnt);
+> +	count_read_value_set(val, COUNT_POSITION, &cnt);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_count_write(struct counter_device *counter,
+> +			     struct counter_count *count,
+> +			     struct count_write_value *val)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	u32 cnt;
+> +	int err;
+> +
+> +	err = count_write_value_get(&cnt, COUNT_POSITION, val);
+> +	if (err)
+> +		return err;
+> +
+> +	if (cnt > priv->ceiling)
+> +		return -EINVAL;
+> +
+> +	return regmap_write(priv->regmap, TIM_CNT, cnt);
+> +}
+> +
+> +static int stm32_count_function_get(struct counter_device *counter,
+> +				    struct counter_count *count,
+> +				    size_t *function)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	u32 smcr;
+> +
+> +	regmap_read(priv->regmap, TIM_SMCR, &smcr);
+> +
+> +	switch (smcr & TIM_SMCR_SMS) {
+> +	case 1:
+> +		*function = STM32_COUNT_ENCODER_MODE_1;
+> +		return 0;
+> +	case 2:
+> +		*function = STM32_COUNT_ENCODER_MODE_2;
+> +		return 0;
+> +	case 3:
+> +		*function = STM32_COUNT_ENCODER_MODE_3;
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int stm32_count_function_set(struct counter_device *counter,
+> +				    struct counter_count *count,
+> +				    size_t function)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	u32 cr1, sms;
+> +
+> +	switch (function) {
+> +	case STM32_COUNT_ENCODER_MODE_1:
+> +		sms = 1;
+> +		break;
+> +	case STM32_COUNT_ENCODER_MODE_2:
+> +		sms = 2;
+> +		break;
+> +	case STM32_COUNT_ENCODER_MODE_3:
+> +		sms = 3;
+> +		break;
+> +	default:
+> +		sms = 0;
+> +		break;
+> +	}
+> +
+> +	/* Store enable status */
+> +	regmap_read(priv->regmap, TIM_CR1, &cr1);
+> +
+> +	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN, 0);
+> +
+> +	/* TIMx_ARR register shouldn't be buffered (ARPE=0) */
+> +	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_ARPE, 0);
+> +	regmap_write(priv->regmap, TIM_ARR, priv->ceiling);
+> +
+> +	regmap_update_bits(priv->regmap, TIM_SMCR, TIM_SMCR_SMS, sms);
+> +
+> +	/* Make sure that registers are updated */
+> +	regmap_update_bits(priv->regmap, TIM_EGR, TIM_EGR_UG, TIM_EGR_UG);
+> +
+> +	/* Restore the enable status */
+> +	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN, cr1);
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t stm32_count_direction_read(struct counter_device *counter,
+> +				      struct counter_count *count,
+> +				      void *private, char *buf)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	const char *direction;
+> +	u32 cr1;
+> +
+> +	regmap_read(priv->regmap, TIM_CR1, &cr1);
+> +	direction = (cr1 & TIM_CR1_DIR) ? "backward" : "forward";
+> +
+> +	return scnprintf(buf, PAGE_SIZE, "%s\n", direction);
+> +}
+> +
+> +static ssize_t stm32_count_ceiling_read(struct counter_device *counter,
+> +					struct counter_count *count,
+> +					void *private, char *buf)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	u32 arr;
+> +
+> +	regmap_read(priv->regmap, TIM_ARR, &arr);
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%u\n", arr);
+> +}
+> +
+> +static ssize_t stm32_count_ceiling_write(struct counter_device *counter,
+> +					 struct counter_count *count,
+> +					 void *private,
+> +					 const char *buf, size_t len)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	unsigned int ceiling;
+> +	int ret;
+> +
+> +	ret = kstrtouint(buf, 0, &ceiling);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* TIMx_ARR register shouldn't be buffered (ARPE=0) */
+> +	regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_ARPE, 0);
+> +	regmap_write(priv->regmap, TIM_ARR, ceiling);
+> +
+> +	priv->ceiling = ceiling;
+> +	return len;
+> +}
+> +
+> +static ssize_t stm32_count_enable_read(struct counter_device *counter,
+> +				       struct counter_count *count,
+> +				       void *private, char *buf)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	u32 cr1;
+> +
+> +	regmap_read(priv->regmap, TIM_CR1, &cr1);
+> +
+> +	return scnprintf(buf, PAGE_SIZE, "%d\n", (bool)(cr1 & TIM_CR1_CEN));
+> +}
+> +
+> +static ssize_t stm32_count_enable_write(struct counter_device *counter,
+> +					struct counter_count *count,
+> +					void *private,
+> +					const char *buf, size_t len)
+> +{
+> +	struct stm32_timer_cnt *const priv = counter->priv;
+> +	int err;
+> +	u32 cr1;
+> +	bool enable;
+> +
+> +	err = kstrtobool(buf, &enable);
+> +	if (err)
+> +		return err;
+> +
+> +	if (enable) {
+> +		regmap_read(priv->regmap, TIM_CR1, &cr1);
+> +			if (!(cr1 & TIM_CR1_CEN))
+> +				clk_enable(priv->clk);
+> +
+> +		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
+> +				   TIM_CR1_CEN);
+> +	} else {
+> +		regmap_read(priv->regmap, TIM_CR1, &cr1);
+> +		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN, 0);
+> +		if (cr1 & TIM_CR1_CEN)
+> +			clk_disable(priv->clk);
+> +	}
+> +
+> +	return len;
+> +}
+> +
+> +static const struct counter_count_ext stm32_count_ext[] = {
+> +	{
+> +		.name = "direction",
+> +		.read = stm32_count_direction_read,
+> +	},
+> +	{
+> +		.name = "enable",
+> +		.read = stm32_count_enable_read,
+> +		.write = stm32_count_enable_write
+> +	},
+> +	{
+> +		.name = "ceiling",
+> +		.read = stm32_count_ceiling_read,
+> +		.write = stm32_count_ceiling_write
+> +	},
+> +};
+> +
+> +enum stm32_synapse_action {
+> +	STM32_SYNAPSE_ACTION_NONE,
+> +	STM32_SYNAPSE_ACTION_BOTH_EDGES
+> +};
+> +
+> +static enum synapse_action stm32_synapse_actions[] = {
+> +	[STM32_SYNAPSE_ACTION_NONE] = SYNAPSE_ACTION_NONE,
+> +	[STM32_SYNAPSE_ACTION_BOTH_EDGES] = SYNAPSE_ACTION_BOTH_EDGES
+> +};
+> +
+> +static int stm32_action_get(struct counter_device *counter,
+> +			    struct counter_count *count,
+> +			    struct counter_synapse *synapse,
+> +			    size_t *action)
+> +{
+> +	size_t function;
+> +	int err;
+> +
+> +	/* Default action mode (e.g. STM32_COUNT_SLAVE_MODE_DISABLED) */
+> +	*action = STM32_SYNAPSE_ACTION_NONE;
+> +
+> +	err = stm32_count_function_get(counter, count, &function);
+> +	if (err)
+> +		return 0;
+> +
+> +	switch (function) {
+> +	case STM32_COUNT_ENCODER_MODE_1:
+> +		/* counts up/down on TI1FP1 edge depending on TI2FP2 level */
+> +		if (synapse->signal->id == count->synapses[0].signal->id)
+> +			*action = STM32_SYNAPSE_ACTION_BOTH_EDGES;
+> +		break;
+> +	case STM32_COUNT_ENCODER_MODE_2:
+> +		/* counts up/down on TI2FP2 edge depending on TI1FP1 level */
+> +		if (synapse->signal->id == count->synapses[1].signal->id)
+> +			*action = STM32_SYNAPSE_ACTION_BOTH_EDGES;
+> +		break;
+> +	case STM32_COUNT_ENCODER_MODE_3:
+> +		/* counts up/down on both TI1FP1 and TI2FP2 edges */
+> +		*action = STM32_SYNAPSE_ACTION_BOTH_EDGES;
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct counter_ops stm32_timer_cnt_ops = {
+> +	.count_read = stm32_count_read,
+> +	.count_write = stm32_count_write,
+> +	.function_get = stm32_count_function_get,
+> +	.function_set = stm32_count_function_set,
+> +	.action_get = stm32_action_get,
+> +};
+> +
+> +static struct counter_signal stm32_signals[] = {
+> +	{
+> +		.id = 0,
+> +		.name = "Channel 1 Quadrature A"
+> +	},
+> +	{
+> +		.id = 1,
+> +		.name = "Channel 1 Quadrature B"
+> +	}
+> +};
+> +
+> +static struct counter_synapse stm32_count_synapses[] = {
+> +	{
+> +		.actions_list = stm32_synapse_actions,
+> +		.num_actions = ARRAY_SIZE(stm32_synapse_actions),
+> +		.signal = &stm32_signals[0]
+> +	},
+> +	{
+> +		.actions_list = stm32_synapse_actions,
+> +		.num_actions = ARRAY_SIZE(stm32_synapse_actions),
+> +		.signal = &stm32_signals[1]
+> +	}
+> +};
+> +
+> +static struct counter_count stm32_counts = {
+> +	.id = 0,
+> +	.name = "Channel 1 Count",
+> +	.functions_list = stm32_count_functions,
+> +	.num_functions = ARRAY_SIZE(stm32_count_functions),
+> +	.synapses = stm32_count_synapses,
+> +	.num_synapses = ARRAY_SIZE(stm32_count_synapses),
+> +	.ext = stm32_count_ext,
+> +	.num_ext = ARRAY_SIZE(stm32_count_ext)
+> +};
+> +
+> +static int stm32_timer_cnt_probe(struct platform_device *pdev)
+> +{
+> +	struct stm32_timers *ddata = dev_get_drvdata(pdev->dev.parent);
+> +	struct device *dev = &pdev->dev;
+> +	struct stm32_timer_cnt *priv;
+> +
+> +	if (IS_ERR_OR_NULL(ddata))
+> +		return -EINVAL;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->regmap = ddata->regmap;
+> +	priv->clk = ddata->clk;
+> +	priv->ceiling = ddata->max_arr;
+> +
+> +	priv->counter.name = dev_name(dev);
+> +	priv->counter.parent = dev;
+> +	priv->counter.ops = &stm32_timer_cnt_ops;
+> +	priv->counter.counts = &stm32_counts;
+> +	priv->counter.num_counts = 1;
+> +	priv->counter.signals = stm32_signals;
+> +	priv->counter.num_signals = ARRAY_SIZE(stm32_signals);
+> +	priv->counter.priv = priv;
+> +
+> +	/* Register Counter device */
+> +	return devm_counter_register(dev, &priv->counter);
+> +}
+> +
+> +static const struct of_device_id stm32_timer_cnt_of_match[] = {
+> +	{ .compatible = "st,stm32-timer-counter", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, stm32_timer_cnt_of_match);
+> +
+> +static struct platform_driver stm32_timer_cnt_driver = {
+> +	.probe = stm32_timer_cnt_probe,
+> +	.driver = {
+> +		.name = "stm32-timer-counter",
+> +		.of_match_table = stm32_timer_cnt_of_match,
+> +	},
+> +};
+> +module_platform_driver(stm32_timer_cnt_driver);
+> +
+> +MODULE_AUTHOR("Benjamin Gaignard <benjamin.gaignard@st.com>");
+> +MODULE_ALIAS("platform:stm32-timer-counter");
+> +MODULE_DESCRIPTION("STMicroelectronics STM32 TIMER counter driver");
+> +MODULE_LICENSE("GPL v2");
+
 
