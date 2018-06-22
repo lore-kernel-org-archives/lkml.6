@@ -2,148 +2,141 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7585C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67441C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97FDF245CA
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:31:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97FDF245CA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B83C245DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:36:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hUF9qbic"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B83C245DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934333AbeFVQbw convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:31:52 -0400
-Received: from lhrrgout.huawei.com ([194.213.3.17]:39111 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934061AbeFVQbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:31:51 -0400
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 28DE9C97D054A;
-        Fri, 22 Jun 2018 17:31:47 +0100 (IST)
-Received: from FRAEMA708-CHM.china.huawei.com (10.206.14.57) by
- LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
- (TLS) id 14.3.382.0; Fri, 22 Jun 2018 17:31:48 +0100
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.176]) by
- FRAEMA708-CHM.china.huawei.com ([169.254.8.193]) with mapi id 14.03.0382.000;
- Fri, 22 Jun 2018 18:31:41 +0200
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Lei Zhang <zhang.lei@jp.fujitsu.com>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH 6/7] irqchip/gic-v3-its: Honor hypervisor enforced LPI
- range
-Thread-Topic: [PATCH 6/7] irqchip/gic-v3-its: Honor hypervisor enforced LPI
- range
-Thread-Index: AQHUCJ4hzL+MVAKZUUSRAob8n9It1KRseE1Q
-Date:   Fri, 22 Jun 2018 16:31:40 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA838706A1B@FRAEML521-MBX.china.huawei.com>
-References: <20180620135234.32101-1-marc.zyngier@arm.com>
- <20180620135234.32101-7-marc.zyngier@arm.com>
-In-Reply-To: <20180620135234.32101-7-marc.zyngier@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S934312AbeFVQg5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:36:57 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51874 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934119AbeFVQgz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 12:36:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IkJ+MlMnfgQLbR3ylk0md3pCcZ0B9p8NMOxXP6J33Hw=; b=hUF9qbicshOdOO9nhO+fdXQvs
+        4P2zhO7E+wKrqBTMy3DqElHdaSVGNpBZNTsez7ykkNu2wBX/DEJfSmaQd0G8ey3qAcW3ieFAfUPbC
+        dFS+iAqaqgW6MWOu5nJVTU+ar6Wpo2GbupjgfjRGp+c0rLI0Uf2dNI7Mv3nAMiXGBoD0QLHA1nV1j
+        VaBFzgfGSBl5MYllQLaxON98tWSooIbPtvYjui1az0oBuooY7TVnbdkTGl9DgDgRR71Q6nKWxKGhp
+        v5Io8Y5IApyloaZf2HC5guCSOK3DRAFRn77sqkVfn6ssMu9lEG2zOJCODybJzu7v4oYI9Nxo/ej8k
+        GuI4rSB/A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fWP3D-00021z-Fl; Fri, 22 Jun 2018 16:36:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1623F2029F1D9; Fri, 22 Jun 2018 18:36:35 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 18:36:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH REBASED RESEND] x86/cpu: Move early cpu initialization
+ into a separate translation unit
+Message-ID: <20180622163635.GO2494@hirez.programming.kicks-ass.net>
+References: <20180612103657.18041-1-kirill.shutemov@linux.intel.com>
+ <alpine.DEB.2.21.1806221603150.2402@nanos.tec.linutronix.de>
+ <20180622151446.lqqmk6nkzzkb6lew@black.fi.intel.com>
+ <alpine.DEB.2.21.1806221720500.2402@nanos.tec.linutronix.de>
+ <20180622155824.npfinfnpidplufad@black.fi.intel.com>
+ <alpine.DEB.2.21.1806221809070.2402@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1806221809070.2402@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Fri, Jun 22, 2018 at 06:16:05PM +0200, Thomas Gleixner wrote:
+> On Fri, 22 Jun 2018, Kirill A. Shutemov wrote:
+> > On Fri, Jun 22, 2018 at 03:35:18PM +0000, Thomas Gleixner wrote:
 
-> -----Original Message-----
-> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
-> Sent: 20 June 2018 14:53
-> To: linux-kernel@vger.kernel.org
-> Cc: Thomas Gleixner <tglx@linutronix.de>; Ard Biesheuvel
-> <ard.biesheuvel@linaro.org>; Shanker Donthineni
-> <shankerd@codeaurora.org>; Shameerali Kolothum Thodi
-> <shameerali.kolothum.thodi@huawei.com>; MaJun <majun258@huawei.com>;
-> Laurentiu Tudor <laurentiu.tudor@nxp.com>; Lei Zhang
-> <zhang.lei@jp.fujitsu.com>
-> Subject: [PATCH 6/7] irqchip/gic-v3-its: Honor hypervisor enforced LPI range
+> > > How is that supposed to work correctly?
+> > > 
+> > > start_kernel()
+> > >   ....
+> > >   trap_init()
+> > >     cpu_init()
+> > > 
+> > >   ....
+> > >   check_bugs()
+> > >     alternative_instructions()
+> > > 
+> > > So the first invocation of cpu_init() on the boot CPU will then use
+> > > static_cpu_has() which is not yet initialized proper.
+> > 
+> > Ouch.
+> > 
+> > Is there a way to catch such improper static_cpu_has() users?
+> > Silent misbehaviour is risky.
 > 
-> A recent extension to the GIC architecture allows a hypervisor to
-> arbitrarily reduce the number of LPIs available to a guest, no
-> matter what the GIC says about the valid range of IntIDs.
-> 
-> Let's factor in this information when computing the number of
-> available LPIs
+> Yes, it is. I don't think we have something in place right now, but we
+> should add it definitely. PeterZ ????
 
-On our D05 board, this limits the lpis to 2 and results in MSI irq alloc fails:
+So static_cpu_has() _should_ work. That thing is mightily convoluted,
+but behold:
 
-[    0.000000] ITS: Using hypervisor restricted LPI range [2]
-....
-[   10.543889] ixgbe 000a:11:00.1: Failed to allocate MSI interrupt, falling back to legacy. Error: -12
- 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c   | 9 +++++++++
->  include/linux/irqchip/arm-gic-v3.h | 1 +
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 8c7e8c235faf..903ca1c19553 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -1525,8 +1525,17 @@ static int free_lpi_range(u32 base, u32 nr_lpis)
->  static int __init its_lpi_init(u32 id_bits)
->  {
->  	u32 lpis = (1UL << id_bits) - 8192;
-> +	u32 numlpis;
->  	int err;
-> 
-> +	numlpis = 1UL << GICD_TYPER_NUM_LPIS(gic_rdists->gicd_typer);
-> +
-> +	if (numlpis > 1 && !WARN_ON(numlpis > lpis)) {
-> +		lpis = numlpis;
-> +		pr_info("ITS: Using hypervisor restricted LPI range [%u]\n",
-> +			lpis);
-> +	}
+| static __always_inline __pure bool _static_cpu_has(u16 bit)
+| {
+|         asm_volatile_goto("1: jmp 6f\n"
+|                  "2:\n"
+|                  ".skip -(((5f-4f) - (2b-1b)) > 0) * "
+|                          "((5f-4f) - (2b-1b)),0x90\n"
 
-I don't have the GICv3 extension doc, but did you intent to check for,
+<snip magic shite>
 
- if (numlpis > 2 && !WARN_ON(numlpis > lpis)) {
+|                  ".section .altinstr_aux,\"ax\"\n"
+|                  "6:\n"
+|                  " testb %[bitnum],%[cap_byte]\n"
+|                  " jnz %l[t_yes]\n"
+|                  " jmp %l[t_no]\n"
+|                  ".previous\n"
+|                  : : [feature]  "i" (bit),
+|                      [always]   "i" (X86_FEATURE_ALWAYS),
+|                      [bitnum]   "i" (1 << (bit & 7)),
+|                      [cap_byte] "m" (((const char *)boot_cpu_data.x86_capability)[bit >> 3])
+|                  : : t_yes, t_no);
+| t_yes:
+|         return true;
+| t_no:
+|         return false;
+| }
 
-as it looks like D05 returns 0 for bits 11-15 and that makes numlpis=2.
+So by default that emits, before patching:
 
-Please let me know.
+	jmp 6f
+	'however many single byte NOPs are needed'
 
-Thanks,
-Shameer
+	.section.altinstr_aux
+	6: testb %[bitnum],%[cap_byte]
+	   jnz %l[t_yes]
+	   jmp %l[t_no]
+	.previous
 
-> +
->  	/*
->  	 * Initializing the allocator is just the same as freeing the
->  	 * full range of LPIs.
-> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-
-> v3.h
-> index 396cd99af02f..9d2ea3e907d0 100644
-> --- a/include/linux/irqchip/arm-gic-v3.h
-> +++ b/include/linux/irqchip/arm-gic-v3.h
-> @@ -73,6 +73,7 @@
->  #define GICD_TYPER_MBIS			(1U << 16)
-> 
->  #define GICD_TYPER_ID_BITS(typer)	((((typer) >> 19) & 0x1f) + 1)
-> +#define GICD_TYPER_NUM_LPIS(typer)	((((typer) >> 11) & 0x1f) + 1)
->  #define GICD_TYPER_IRQS(typer)		((((typer) & 0x1f) + 1) * 32)
-> 
->  #define GICD_IROUTER_SPI_MODE_ONE	(0U << 31)
-> --
-> 2.17.1
+Which is a dynamic test for the bit in the bitmask. Which always works,
+irrespective of the alternative patching.
 
+The magic, which I cut out, will rewrite the "jmp 6f, nops" thing to
+"jmp %l[y_{yes,no}]" at the alternative patching and we'll loose the
+dynamic test, pinning the condition forever more.
