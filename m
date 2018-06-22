@@ -2,108 +2,154 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEEB0C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F9AC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6459F23EDB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8712323EDB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:15:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOatos6O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6459F23EDB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pav+RG8v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8712323EDB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754067AbeFVIPX (ORCPT
+        id S1754218AbeFVIPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:15:23 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43400 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750934AbeFVIPT (ORCPT
+        Fri, 22 Jun 2018 04:15:41 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:45596 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeFVIPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:15:19 -0400
-Received: by mail-lf0-f68.google.com with SMTP id l15-v6so1137848lfc.10;
-        Fri, 22 Jun 2018 01:15:18 -0700 (PDT)
+        Fri, 22 Jun 2018 04:15:21 -0400
+Received: by mail-pg0-f68.google.com with SMTP id z1-v6so2629934pgv.12
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:15:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=EaoIhG985TfY4Gm1IjoesmKweWeETm5i/s641HIthjY=;
-        b=HOatos6OIY7IiHHcCyaJY1ZupRNS+QZUvBtiKg6/iRDHi5nkUAG9OB0Rx4vl+Z8Zyh
-         e5Mb5yxMlYq14cLN4QYBvFgN/Gcc2uEV7jGSYQ2UjGU8fEsCCRXa9en/5hS3W8t446RK
-         Y3cJUt5y0yyArkRf0hrutixcNMHdC1jNB4Gzbai19moTWW0mgdYk2hnKkl1Xi7UXLQfp
-         jH1vNIJFimq+XiMglwvLSrgW6OUtxeBkfL6o1FH6/HSxkiyKVfitT3Br81K2CXbCgomT
-         4NTBTnKXiK0jZWYKtmzZfmsX/uWuJszdhylJTDfcoL4Vn86v6cpWp/eU7U0Xz6GpJRWo
-         tQmA==
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XdGGzmNFwMQTK1h99xVYphZ/gyRnzF4BbgNbujmEW7w=;
+        b=pav+RG8veXvk3rONzV36rcE8/C6MQm20+eNJ1dOXB++c6KW8JDEP4mLYz9fus+KZs7
+         B0Ra61UlpljIslpKxWMDUoHy1RVHSjzQu22ZzokG6gEuAO0I06fhh3xPG4011qln8XeD
+         SJpeGx7J/LcI58uBofoGYENZVYFQU51ckZKnudbCAWw6QSHq16klOG01QiqkZCAYV8jA
+         acviJnetcP9v0DOxGZ7CPX4XI0tuYMN48L1VwDW6bjHW40inCuUvLOb6GVJGl7L7nhHF
+         2bsFJAMaUuuEmRjwg2yu0OU6yT6ZdUYTGVrr0dg2yCLfOvJaNl21DBYqxaUfrB/O2IFC
+         Fk3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=EaoIhG985TfY4Gm1IjoesmKweWeETm5i/s641HIthjY=;
-        b=gu6J9QnBe8G7hbhQ8Yn9rxytRPge1bb1JXdrSh3nMhvC8UNnypMUMnerKrU6bW79+G
-         Ec43YP0tIRqJ6dzhtoKlzAAxQOlpWPrY5vRECCPq/ZEHy6p2cN7sSEQP33VlGfVhVL1i
-         l1rEASqkhLkPV6zZ81B9Uza+S0hyuLQ0jX08kaz11Td0b/T2owX0CoxRXqPGtiLC8wx/
-         ENW2nyoqR+e1YgUs4+FNp3vd6P4Fi1X1dOlDR/wGImz92nKKMoSGD5upzXnW0tkGyl9T
-         c2c/ImjevszmeETZ6ZwmOnlOGbfM+jV/hHf3UUkYNrqkXSq4CWYp5TxxqpQ3vDDRp3eD
-         S8Mw==
-X-Gm-Message-State: APt69E2CO1YfnD+5LTuPUUWKydEkDsDYbnBFfa1H6LWpVrFNsi0M9xQ9
-        cx37fUDsPti9XHLAcKuCIEHI9RrsbQf3hh/XkAvaSA==
-X-Google-Smtp-Source: ADUXVKK3JVMl2A1suTKUQzMalNR+jCdcjOC32zHL+tYBuebVzeiX2K6bJOIbQoaJKxRdsQlAH7sX3qrVbDJfwfVjh/c=
-X-Received: by 2002:a19:c203:: with SMTP id l3-v6mr585524lfc.55.1529655317858;
- Fri, 22 Jun 2018 01:15:17 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=XdGGzmNFwMQTK1h99xVYphZ/gyRnzF4BbgNbujmEW7w=;
+        b=RU5Vrk12XLreZeW+XsiqOGdZjsiNgm3BapjlATqk2YF3hYpYA7WePn7bH7MslouTGH
+         Xz3Gb8F1vdJYBctRGKblN3dIYSCsVZFujUp+6ClE1sBB7vEoHxRnEofxH8Ar57K2hMwR
+         C8rKdhZvr1LfDcRwepQdOxKyK21ZgGulP8iADWWd50OuXarc72wEgIkqdX2XF2U4O692
+         tllGZOsphEzZtl3vFls+aI/wJJv1ctxPhVt7gj7AGHluLc6QuxfXgnYrO377WjqWarOq
+         grpCoUSVI2Yg5TgyDeQkgzzC90o7eA6iqKNJ/ycndCRGgudGzrhpjSFNUxM3mjAJmeKM
+         QxUA==
+X-Gm-Message-State: APt69E3eKvXKBx3RZyPJNGGcuqPbaWM5xjkBVSVUQj9UY9YrvkDOtK4u
+        5WSyfGo7f8Hd5dFKmDAcQMc=
+X-Google-Smtp-Source: ADUXVKKmmF3YB0BnpjIfK2MAihW3VKvLoJP5S8ihbZVZZKKJL7FogYikKkpCQkmbTW0b03Mfkr8zDA==
+X-Received: by 2002:a62:e117:: with SMTP id q23-v6mr662929pfh.75.1529655320885;
+        Fri, 22 Jun 2018 01:15:20 -0700 (PDT)
+Received: from toy ([104.192.108.10])
+        by smtp.gmail.com with ESMTPSA id v26-v6sm10516004pfn.105.2018.06.22.01.15.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 01:15:20 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 16:15:11 +0800
+From:   Jun Yao <yaojun8558363@gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH 1/1] arm64/mm: move
+ {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata section
+Message-ID: <20180622081511.GA11076@toy>
+Mail-Followup-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <20180620085755.20045-1-yaojun8558363@gmail.com>
+ <20180620085755.20045-2-yaojun8558363@gmail.com>
+ <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
+ <20180621025141.GB11276@toy>
+ <CAKv+Gu_3Cfuq-qQuRHkYCB2uTPOK=KVeVh4OKmtu2MDYwfOtTA@mail.gmail.com>
+ <70ebe6d7-0745-5606-ae89-8a7b2fb62008@arm.com>
+ <CAKv+Gu-t5ErL89J=sxeVRYzDNrB1Ejdj+XOggAMWk-gY7ewsOg@mail.gmail.com>
+ <67a238a8-e4db-6bf1-6da5-62ca9536191f@arm.com>
+ <CAKv+Gu8=jxY0qfMk53L8p5+x8HoE1DRy7W_p42ji9omGBc6QSA@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 01:15:16
- -0700 (PDT)
-In-Reply-To: <20180622073728.76imgamp3u4ivhf3@quack2.suse.cz>
-References: <20180620153322.54221-1-arnd@arndb.de> <20180620153322.54221-4-arnd@arndb.de>
- <20180622073728.76imgamp3u4ivhf3@quack2.suse.cz>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 22 Jun 2018 10:15:16 +0200
-X-Google-Sender-Auth: 3vMJvqiYRc3vn8-c3wvFQZQttgM
-Message-ID: <CAK8P3a2cjQugQYcqBN0RLhgG2kX+Pr0S=vWvWNFyFN7ruE-t+Q@mail.gmail.com>
-Subject: Re: [PATCH 4/6] ext4: use timespec64 for all inode times
-To:     Jan Kara <jack@suse.cz>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu8=jxY0qfMk53L8p5+x8HoE1DRy7W_p42ji9omGBc6QSA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 9:37 AM, Jan Kara <jack@suse.cz> wrote:
-> On Wed 20-06-18 17:33:01, Arnd Bergmann wrote:
->> -static inline __le32 ext4_encode_extra_time(struct timespec *time)
->> +static inline __le32 ext4_encode_extra_time(struct timespec64 *time)
->>  {
->>       u32 extra = sizeof(time->tv_sec) > 4 ?
->
-> I suppose this condition can be removed now.
+Hi Ard,
 
-Right, good point. I also verified that we have no other similar
-constructs in the kernel any more now.
+On Thu, Jun 21, 2018 at 07:27:01PM +0200, Ard Biesheuvel wrote:
+> On 21 June 2018 at 19:04, James Morse <james.morse@arm.com> wrote:
+> > On 21/06/18 10:29, Ard Biesheuvel wrote:
+> >> On 21 June 2018 at 10:59, James Morse <james.morse@arm.com> wrote:
+> >>> On 21/06/18 07:39, Ard Biesheuvel wrote:
+> >>>> On 21 June 2018 at 04:51, Jun Yao <yaojun8558363@gmail.com> wrote:
+> >>>>> On Wed, Jun 20, 2018 at 12:09:49PM +0200, Ard Biesheuvel wrote:
+> >>>>>> As for swapper_pg_dir, it would indeed be nice if we could keep those
+> >>>>>> mappings read-only most of the time, but I'm not sure how useful this
+> >>>>>> is if we apply it to the root level only.
+> >>>>>
+> >>>>> The purpose of it is to make 'KSMA' harder, where an single arbitrary
+> >>>>> write is used to add a block mapping to the page-tables, giving the
+> >>>>> attacker full access to kernel memory. That's why we just apply it to
+> >>>>> the root level only. If the attacker can arbitrary write multiple times,
+> >>>>> I think it's hard to defend.
+> >>>>
+> >>>> So the assumption is that the root level is more easy to find?
+> >>>> Otherwise, I'm not sure I understand why being able to write a level 0
+> >>>> entry is so harmful, given that we don't have block mappings at that
+> >>>> level.
+> >>>
+> >>> I think this thing assumes 3-level page tables with 39bit VA.
+> >
+> >> The attack, you mean? Because this code is unlikely to build with that
+> >> configuration, given that __pgd_populate() BUILD_BUG()s in that case.
+> >
+> > Yes, the attack. (I struggle to think of it as an 'attack' because you already
+> > have arbitrary write...)
+> >
+> 
+> OK, so in that case, you can abuse your single arbitrary write to map
+> an entire 1 GB block of memory with arbitrary permissions, allowing
+> userland to take control of the contents, right? And if you know the
+> virtual and physical addresses of swapper_pg_dir, you can make sure
+> this block covers the entire kernel, allowing the attacker to
+> manipulate all core kernel code and statically allocated data
+> structures.
+> 
+> What I don't understand about this patch is how it is sufficient to
+> only remap swapper_pg_dir r/w for updates on kernels that use 4 level
+> paging.
+> 
 
->>               ((time->tv_sec - (s32)time->tv_sec) >> 32) & EXT4_EPOCH_MASK : 0;
->>       return cpu_to_le32(extra | (time->tv_nsec << EXT4_EPOCH_BITS));
->>  }
->>
->> -static inline void ext4_decode_extra_time(struct timespec *time, __le32 extra)
->> +static inline void ext4_decode_extra_time(struct timespec64 *time, __le32 extra)
->
-> Wrap?
+Sorry, It's my mistake.
 
-Ok, done.
+To my best knowledge, to defend 'KSMA', we need to handle these
+configurations:
 
-> Otherwise the patch looks good.
+1. ARM64_4K_PAGES && ARM64_VA_BITS_39 (PGTABLE_LEVELS = 3, 1GB block)
+2. ARM64_16K_PAGES && ARM64_VA_BITS_36 (PGTABLE_LEVELS = 2, 32MB block)
+3. ARM64_64K_PAGES && ARM64_VA_BITS_42 (PGTABLE_LEVELS = 2, 512MB block)
 
-Thanks!
+If these configurations are selected, we move {idmap_pg_dir,
+tramp_pg_dir, reserved_ttbr0, swapper_pg_dir} to .rodata section(avoid
+modifying tramp_(un)map_kernel), and remap swapper_pg_dir r/w for updates.
+If these configurations are not selected, we just keep them as they are.
 
-      Arnd
+Do you think this is okay?
