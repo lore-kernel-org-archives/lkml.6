@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B307C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C987C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A19D24580
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:45:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A19D24580
+	by mail.kernel.org (Postfix) with ESMTP id 5A64C245A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:45:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A64C245A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754885AbeFVWpX (ORCPT
+        id S1754845AbeFVWpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:45:23 -0400
-Received: from mga02.intel.com ([134.134.136.20]:22311 "EHLO mga02.intel.com"
+        Fri, 22 Jun 2018 18:45:21 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22310 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754694AbeFVWmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754696AbeFVWmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 18:42:54 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +28,7 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
-   d="scan'208";a="234843436"
+   d="scan'208";a="234843442"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:48 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -38,9 +38,9 @@ Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V7 29/41] x86/intel_rdt: Discover supported platforms via prefetch disable bits
-Date:   Fri, 22 Jun 2018 15:42:20 -0700
-Message-Id: <3eef559aa9fd693a104ff99ff909cfee450c1695.1529706536.git.reinette.chatre@intel.com>
+Subject: [PATCH V7 31/41] x86/intel_rdt: Support creation/removal of pseudo-locked region
+Date:   Fri, 22 Jun 2018 15:42:22 -0700
+Message-Id: <8929c3a9e2ba600e79649abe584aa28b8d0ff639.1529706536.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1529706536.git.reinette.chatre@intel.com>
 References: <cover.1529706536.git.reinette.chatre@intel.com>
@@ -51,13 +51,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Knowing the model specific prefetch disable bits is required to support
-cache pseudo-locking because the hardware prefetchers need to be disabled
-when the kernel memory is pseudo-locked to cache. We add these bits only
-for platforms known to support cache pseudo-locking.
+The user triggers the creation of a pseudo-locked region when writing a
+valid schemata to the schemata file of a resource group in the
+pseudo-locksetup mode.
 
-When the user requests locksetup mode to be entered it will fail if the
-prefetch disabling bits are not known for the platform.
+A valid schemata is one that: (1) does not overlap with any other resource
+group, (2) does not involve a cache that already contains a pseudo-locked
+region within its hierarchy.
+
+After a valid schemata is parsed the system is programmed to associate the
+to be pseudo-lock bitmask with the closid associated with the resource
+group. With the system set up the pseudo-locked region can be created.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -68,106 +72,141 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/a87d0ae287964753841c6cc628715a05be6c0e7a.1527593971.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/80dc404e8011c96476dcd046b0d03fdcc6a893f2.1527593971.git.reinette.chatre@intel.com
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 75 +++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 42 +++++++++++++++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 25 +++++++++---
+ 2 files changed, 62 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index b145a7386b10..cbba4bc17522 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -12,8 +12,73 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <linux/slab.h>
-+#include <asm/intel-family.h>
- #include "intel_rdt.h"
- 
-+/*
-+ * MSR_MISC_FEATURE_CONTROL register enables the modification of hardware
-+ * prefetcher state. Details about this register can be found in the MSR
-+ * tables for specific platforms found in Intel's SDM.
-+ */
-+#define MSR_MISC_FEATURE_CONTROL	0x000001a4
-+
-+/*
-+ * The bits needed to disable hardware prefetching varies based on the
-+ * platform. During initialization we will discover which bits to use.
-+ */
-+static u64 prefetch_disable_bits;
-+
-+/**
-+ * get_prefetch_disable_bits - prefetch disable bits of supported platforms
-+ *
-+ * Capture the list of platforms that have been validated to support
-+ * pseudo-locking. This includes testing to ensure pseudo-locked regions
-+ * with low cache miss rates can be created under variety of load conditions
-+ * as well as that these pseudo-locked regions can maintain their low cache
-+ * miss rates under variety of load conditions for significant lengths of time.
-+ *
-+ * After a platform has been validated to support pseudo-locking its
-+ * hardware prefetch disable bits are included here as they are documented
-+ * in the SDM.
-+ *
-+ * Return:
-+ * If platform is supported, the bits to disable hardware prefetchers, 0
-+ * if platform is not supported.
-+ */
-+static u64 get_prefetch_disable_bits(void)
-+{
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL ||
-+	    boot_cpu_data.x86 != 6)
-+		return 0;
-+
-+	switch (boot_cpu_data.x86_model) {
-+	case INTEL_FAM6_BROADWELL_X:
-+		/*
-+		 * SDM defines bits of MSR_MISC_FEATURE_CONTROL register
-+		 * as:
-+		 * 0    L2 Hardware Prefetcher Disable (R/W)
-+		 * 1    L2 Adjacent Cache Line Prefetcher Disable (R/W)
-+		 * 2    DCU Hardware Prefetcher Disable (R/W)
-+		 * 3    DCU IP Prefetcher Disable (R/W)
-+		 * 63:4 Reserved
-+		 */
-+		return 0xF;
-+	case INTEL_FAM6_ATOM_GOLDMONT:
-+	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+		/*
-+		 * SDM defines bits of MSR_MISC_FEATURE_CONTROL register
-+		 * as:
-+		 * 0     L2 Hardware Prefetcher Disable (R/W)
-+		 * 1     Reserved
-+		 * 2     DCU Hardware Prefetcher Disable (R/W)
-+		 * 63:3  Reserved
-+		 */
-+		return 0x5;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * pseudo_lock_init - Initialize a pseudo-lock region
-  * @rdtgrp: resource group to which new pseudo-locked region will belong
-@@ -225,6 +290,16 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 1ed273220ffa..6f4c0002b2c1 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -143,9 +143,26 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
  		return -EINVAL;
  	}
  
 +	/*
-+	 * Not knowing the bits to disable prefetching implies that this
-+	 * platform does not support Cache Pseudo-Locking.
++	 * Cannot set up more than one pseudo-locked region in a cache
++	 * hierarchy.
 +	 */
-+	prefetch_disable_bits = get_prefetch_disable_bits();
-+	if (prefetch_disable_bits == 0) {
-+		rdt_last_cmd_puts("pseudo-locking not supported\n");
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
++	    rdtgroup_pseudo_locked_in_hierarchy(d)) {
++		rdt_last_cmd_printf("pseudo-locked region in hierarchy\n");
 +		return -EINVAL;
 +	}
 +
- 	if (rdtgroup_monitor_in_progress(rdtgrp)) {
- 		rdt_last_cmd_puts("monitoring in progress\n");
+ 	if (!cbm_validate(data->buf, &cbm_val, r))
  		return -EINVAL;
+ 
++	if ((rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
++	     rdtgrp->mode == RDT_MODE_SHAREABLE) &&
++	    rdtgroup_cbm_overlaps_pseudo_locked(d, cbm_val)) {
++		rdt_last_cmd_printf("CBM overlaps with pseudo-locked region\n");
++		return -EINVAL;
++	}
++
+ 	/*
+ 	 * The CBM may not overlap with the CBM of another closid if
+ 	 * either is exclusive.
+@@ -199,6 +216,21 @@ static int parse_line(char *line, struct rdt_resource *r,
+ 			data.rdtgrp = rdtgrp;
+ 			if (r->parse_ctrlval(&data, r, d))
+ 				return -EINVAL;
++			if (rdtgrp->mode ==  RDT_MODE_PSEUDO_LOCKSETUP) {
++				/*
++				 * In pseudo-locking setup mode and just
++				 * parsed a valid CBM that should be
++				 * pseudo-locked. Only one locked region per
++				 * resource group and domain so just do
++				 * the required initialization for single
++				 * region and return.
++				 */
++				rdtgrp->plr->r = r;
++				rdtgrp->plr->d = d;
++				rdtgrp->plr->cbm = d->new_ctrl;
++				d->plr = rdtgrp->plr;
++				return 0;
++			}
+ 			goto next;
+ 		}
+ 	}
+@@ -322,6 +354,16 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 			goto out;
+ 	}
+ 
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++		/*
++		 * If pseudo-locking fails we keep the resource group in
++		 * mode RDT_MODE_PSEUDO_LOCKSETUP with its class of service
++		 * active and updated for just the domain the pseudo-locked
++		 * region was requested for.
++		 */
++		ret = rdtgroup_pseudo_lock_create(rdtgrp);
++	}
++
+ out:
+ 	rdtgroup_kn_unlock(of->kn);
+ 	return ret ?: nbytes;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 5c2b05d39b48..1069d08a35cd 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -1771,6 +1771,9 @@ void rdtgroup_kn_unlock(struct kernfs_node *kn)
+ 
+ 	if (atomic_dec_and_test(&rdtgrp->waitcount) &&
+ 	    (rdtgrp->flags & RDT_DELETED)) {
++		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
++		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)
++			rdtgroup_pseudo_lock_remove(rdtgrp);
+ 		kernfs_unbreak_active_protection(kn);
+ 		kernfs_put(rdtgrp->kn);
+ 		kfree(rdtgrp);
+@@ -2011,6 +2014,10 @@ static void rmdir_all_sub(void)
+ 		if (rdtgrp == &rdtgroup_default)
+ 			continue;
+ 
++		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
++		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)
++			rdtgroup_pseudo_lock_remove(rdtgrp);
++
+ 		/*
+ 		 * Give any CPUs back to the default group. We cannot copy
+ 		 * cpu_online_mask because a CPU might have executed the
+@@ -2322,6 +2329,8 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 						d->new_ctrl |= *ctrl;
+ 				}
+ 			}
++			if (d->plr && d->plr->cbm > 0)
++				used_b |= d->plr->cbm;
+ 			unused_b = used_b ^ (BIT_MASK(r->cache.cbm_len) - 1);
+ 			unused_b &= BIT_MASK(r->cache.cbm_len) - 1;
+ 			d->new_ctrl |= unused_b;
+@@ -2705,13 +2714,19 @@ static int rdtgroup_rmdir(struct kernfs_node *kn)
+ 	 * If the rdtgroup is a mon group and parent directory
+ 	 * is a valid "mon_groups" directory, remove the mon group.
+ 	 */
+-	if (rdtgrp->type == RDTCTRL_GROUP && parent_kn == rdtgroup_default.kn)
+-		ret = rdtgroup_rmdir_ctrl(kn, rdtgrp, tmpmask);
+-	else if (rdtgrp->type == RDTMON_GROUP &&
+-		 is_mon_groups(parent_kn, kn->name))
++	if (rdtgrp->type == RDTCTRL_GROUP && parent_kn == rdtgroup_default.kn) {
++		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
++		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
++			ret = rdtgroup_ctrl_remove(kn, rdtgrp);
++		} else {
++			ret = rdtgroup_rmdir_ctrl(kn, rdtgrp, tmpmask);
++		}
++	} else if (rdtgrp->type == RDTMON_GROUP &&
++		 is_mon_groups(parent_kn, kn->name)) {
+ 		ret = rdtgroup_rmdir_mon(kn, rdtgrp, tmpmask);
+-	else
++	} else {
+ 		ret = -EPERM;
++	}
+ 
+ out:
+ 	rdtgroup_kn_unlock(kn);
 -- 
 2.17.0
 
