@@ -2,95 +2,107 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0514DC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B331C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98CB02445E
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:09:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p3ulnrRn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CB02445E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EF9C524465
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9C524465
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754206AbeFVPJ0 (ORCPT
+        id S1754296AbeFVPJd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:09:26 -0400
-Received: from mail-ot0-f178.google.com ([74.125.82.178]:38228 "EHLO
-        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeFVPJY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:09:24 -0400
-Received: by mail-ot0-f178.google.com with SMTP id p95-v6so7854365ota.5
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 08:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=KumSvhZYiuaHlNNy8cCnbApkYxDl9lrTkEw/2sTTXTU=;
-        b=p3ulnrRnpVDZWh/cRckaUWf76yq1eS35IQMT+xGVTLof1kv+idbyCLWk4xdUNk6ylu
-         xwWhWgcljxzgFPq1GAFE7qEbzx4qYfmnMwSJGZf8hwZxJFB4OoQB7PRoUDzsWNTyQopS
-         Ybegpu6SNzcr7UskR/UC62h9NYEEd2t3Tbf8irC0kYpMgcbQZMD8Hd0xnDD2EncqCasF
-         zRC1n2hB8sB0qULOUMaQZieStU/9k8JsF8z4uvZCIfohslevd9tv2cm5EwNpfAbNiwK4
-         LXOZuxFIEEebcvsBmAnbENJKxgTvfbJd4Js+sDH/tpLrxHCf3tdzjue9EEYOlOnJJU3+
-         SIEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=KumSvhZYiuaHlNNy8cCnbApkYxDl9lrTkEw/2sTTXTU=;
-        b=LXc+lIp9FUc9zaSXQSUX64vxtxGdR3JbHodbxk6iJt5L9TbA7wJEimjSkDqeJxoiTY
-         CL1T6NLmMMMis9gnhCSCeixAvk62kq04+BofM3eAmVKW39EKYvShDdhNc0OP94jZgsj+
-         Br9KpFmFZYOm9XbIFE1Spg0WmPttpxjcO+/S4ueWR5cXJkc5O+KA1OzhLzZAyg+tvYcV
-         XxPK3R8Xjl3FgoKjqfPKGvzd+5pzjibAbZB6PBXEpAk6tDDFhK5n+8wqBZknNjeTeyZF
-         xsD6sg4y7IIGQ3RQKhL9GHQDqGWD84sD9XQvaIwx1ZlO2ZICKC5nC5Ezf5jNfBg4AQBz
-         rmTQ==
-X-Gm-Message-State: APt69E2MmXKAQGYrgdd/qI5+nt28hSLC4wuHp0lhV/4+dYuyyuM6vrQ5
-        Kt95N7lcpu+h3LXik3N68IJt3z31LjxfBY5FiRdO7g==
-X-Google-Smtp-Source: AAOMgpcqolYd2kNUtqnP8wOl1+4EsNg6xo9R1RXPf9mWon1jrVBvIuj4sLIp8MCyAWnJqigRLkzAaNeML0Lwk77MrRY=
-X-Received: by 2002:a9d:fba:: with SMTP id d55-v6mr1222836otd.53.1529680163848;
- Fri, 22 Jun 2018 08:09:23 -0700 (PDT)
+        Fri, 22 Jun 2018 11:09:33 -0400
+Received: from mga02.intel.com ([134.134.136.20]:41579 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754236AbeFVPJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:09:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 08:09:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,257,1526367600"; 
+   d="scan'208";a="66382474"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.254.80.177]) ([10.254.80.177])
+  by fmsmga001.fm.intel.com with ESMTP; 22 Jun 2018 08:09:21 -0700
+Subject: Re: linux-next: manual merge of the tip tree with the vfs tree
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     David Howells <dhowells@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <e6a26908-67b2-e32e-06b5-d2e62acce305@intel.com>
+ <20180622115346.1e9cc433@canb.auug.org.au>
+ <29411.1529671523@warthog.procyon.org.uk>
+ <20180622130600.GY30522@ZenIV.linux.org.uk>
+ <alpine.DEB.2.21.1806221537570.2402@nanos.tec.linutronix.de>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <5462d90a-0cac-ca10-1633-275a9836ad41@intel.com>
+Date:   Fri, 22 Jun 2018 08:09:21 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-From:   Thommy Jakobsson <thommyj@gmail.com>
-Date:   Fri, 22 Jun 2018 17:09:12 +0200
-Message-ID: <CAOTQ16LL_W+RqDWQLzsvnRaYGT_9E9EMN_9hdr-vie8hp83gAA@mail.gmail.com>
-Subject: BUG? DOC: Really jiffies in /proc/schedstat?
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1806221537570.2402@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Thomas,
 
-I am measuring cpu runtime for a couple of processes, and is using
-/proc/schedstat and /proc/[pid]/schedstat to do so. According to the
-schedstat doc
-(https://www.kernel.org/doc/Documentation/scheduler/sched-stats.txt) the last
-three values are in jiffies. Doing something like
+On 6/22/2018 6:39 AM, Thomas Gleixner wrote:
+> On Fri, 22 Jun 2018, Al Viro wrote:
+>> On Fri, Jun 22, 2018 at 01:45:23PM +0100, David Howells wrote:
+>>> Reinette Chatre <reinette.chatre@intel.com> wrote:
+>>>
+>>>> Thomas and David, please let me know what I can do from my side to help
+>>>> with this.
+>>>
+>>> You could try basing on Al Viro's for-next tree which has the mount API
+>>> changes in it.
+>>
+>> Umm...  That would be a massive headache for everyone involved; the changes
+>> in there have very little in common with what you are doing in rdt_mount(),
+>> so it might make sense to start with a minimal never-rebased branch that
+>> would
+>> 	* define rdt_pseudo_lock_init as 0
+>> 	* define rdt_pseudo_lock_release as empty
+>> 	* do the rdt_mount() part of a3dbd01e6c9d
+>> 	* have commit message along the lines of
+>> "hooks in rdt_mount() for rdt_pseudo_lock to use
+>>
+>> Functionally a no-op right now; the only reason for having that
+>> as a never-rebased branch to get rdt_pseudo_lock and mount series
+>> out of each other's hair"
+>>
+>> Base that on -rc1, then pull it into your rdt branch and David could pull the
+>> same into his.
+> 
+> Yes, that works.
+> 
+> Reinette, can you please look into creating that ordering. Then we just zap
+> the existing branch and redo it with this scheme.
 
-root@gvp4-base-pd-b-rev1:~#  cat /proc/schedstat  | grep cpu3; sleep
-2; cat /proc/schedstat  | grep cpu3;
-cpu3 0 0 0 0 0 0 41155818663320 17173365985560 1011370906
-cpu3 0 0 0 0 0 0 41157858979020 17176095339120 1011430425
+Will do. How would you prefer to consume this to make the branches
+simple to create? Is it ok if I create a new patch series with Al's
+suggestion above as the first commit?
 
-on a heavy loaded system seems to suggest that at least the sum of running tasks
-is in nanoseconds, not jiffies. Which I also think looks correct when
-checking the
-code.
+The original pseudo-locking patch series consisted out of two sections
+with the pseudo-locking specific parts starting in the middle. If I
+create a new series with the above change then it will not be cleanly
+separate anymore. Is that ok?
 
-For /proc/[pid]/schedstat the documentation is a bit vague on unit,
-but I interpret it
-to be the same as the corresponding global values. Which would mean jiffies.
-Also here it looks to be in nanoseconds on my system though.
+Reinette
 
-Am I just confused? is it configuration/system dependent? or is the
-doc just plain
-wrong?
-
-Thanks,
-Thommy Jakobsson
