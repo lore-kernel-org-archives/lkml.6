@@ -2,106 +2,92 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD53C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD6DC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A36242B9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:31:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A36242B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 77E3F242C5
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E3F242C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754071AbeFVNa7 (ORCPT
+        id S1751402AbeFVNdk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:30:59 -0400
-Received: from foss.arm.com ([217.140.101.70]:35172 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750853AbeFVNa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:30:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D3712F;
-        Fri, 22 Jun 2018 06:30:58 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0BF9C3F2EA;
-        Fri, 22 Jun 2018 06:30:58 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 7AA621AE3719; Fri, 22 Jun 2018 14:31:34 +0100 (BST)
-Date:   Fri, 22 Jun 2018 14:31:34 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Wei Xu <xuwei5@hisilicon.com>
-Cc:     James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
-        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>, xiexiuqi@huawei.com,
-        huangdaode <huangdaode@hisilicon.com>,
-        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
-        "Xiongfanggou (James)" <james.xiong@huawei.com>,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
-        Zhangyi ac <zhangyi.ac@huawei.com>,
-        jonathan.cameron@huawei.com,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
-        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
-        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
-        libeijian@hisilicon.com, zhangbin011@hisilicon.com
-Subject: Re: KVM guest sometimes failed to boot because of kernel stack
- overflow if KPTI is enabled on a hisilicon ARM64 platform.
-Message-ID: <20180622133133.GA1802@arm.com>
-References: <5B2A7FE1.5040607@hisilicon.com>
- <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
- <20180621091850.GA22505@arm.com>
- <5B2B7A84.8090309@hisilicon.com>
- <20180621105404.GB22505@arm.com>
- <5B2CB440.8040705@hisilicon.com>
- <20180622092330.GD7601@arm.com>
- <5B2CD33B.9020702@hisilicon.com>
- <20180622111614.GA1150@arm.com>
- <5B2CF723.7010600@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B2CF723.7010600@hisilicon.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 22 Jun 2018 09:33:40 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:42723 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750853AbeFVNdj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 09:33:39 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LvBGU-1gEf2I19W6-010KtA; Fri, 22 Jun 2018 15:33:20 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Jan Kara <jack@suse.cz>, Jeff Mahoney <jeffm@suse.com>,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [v3] reiserfs: change j_timestamp type to time64_t
+Date:   Fri, 22 Jun 2018 15:32:58 +0200
+Message-Id: <20180622133315.221210-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:ZIohq4OfRwTj8RksFWJsgr0fkXc6EAwpyjrEy9nhctZCVB2zq2y
+ 0NlaK/O0DCE5T8K52Je+T3RuSHoyeh1t9qhajPJhzpP6rNTn7IUE943gVncT7tMfCuSDZhM
+ WGrmzrLotNo8BF6tBKCKh88L9v03xeh6lOLZz+ZPEjW9+WkM41FFmZ9n+Bq3jxvCRZdBGsD
+ zJLLAyNEJHn7Y2Fp/v7cw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:vzaDHnzi2L4=:t+iZsVVDMX78uXk6uTXZK3
+ Q2l+iyd2f5Y9DGAa+CZbZxU2ndBNzDsrJxkcbHAZpN87iRq3e3sjsoaQnA0llpRudXHvYFp1I
+ HuDTWd+iVZj5XLOd83rUKidr9aZDfsDHZvDaIeI2utuhZz7JSw68phrzFmyOEc1cNN9ihiQER
+ SDwAMb/kSBvQiDK96soUWAa3YK7xsC+234jcMFHpCOCzljFaZcVcIry3Nng+adlAGx9FTwSRG
+ oaOjMV4CTUj+vyp5O3xFrT/W39mHWzcOk+0xjux7cINHmk43u2FuWSg891WAW7iwI/Z1K4OQz
+ dtUG4c5h4XO/UYT9OlsJZ4UbUynssCSIzHx+zIIqzKNKxpCMY08A7DQ6qaeSLwJLwyyL3/6ib
+ P4lP7I6N9LoWY/DjrxAaZjqEjFfhyF5pqdKp7V55lY/4fkL14rWIdTylefsJOk0TOGfqPlyy1
+ FbByyFhsdRklszSu3glDL4o8Sd/dEP2UpajCkS9tR3NzkcmnXlxjsFT1ByhkuHB/MepyHjs1U
+ 7SFuMyiDnSP1c22c063qXj57IrROpUFBrSDaMqCm9bCb6HQJqk/5xsyTl8ozgpZSc/o2Vu97A
+ qbwL6GPvkf23uQN2JJez4gobbQH+3FGwDQYu3+am9oEZjbIELOtfKAEg1RYRFGVQOZtpkJFc+
+ WYaw9IKhqJITIaWVnHLEufJwdTt/QDp5aI+hNW4r0VmVHJn4giqWzR5vjLnXLNbByjpY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi again, Wei,
+This uses the deprecated time_t type but is write-only, and could be
+removed, but as Jeff explains, having a timestamp can be usefule for
+post-mortem analysis in crash dumps.
 
-On Fri, Jun 22, 2018 at 09:18:27PM +0800, Wei Xu wrote:
-> On 2018/6/22 19:16, Will Deacon wrote:
-> >On Fri, Jun 22, 2018 at 06:45:15PM +0800, Wei Xu wrote:
-> >>On 2018/6/22 17:23, Will Deacon wrote:
-> >>>Perhaps just writing back the table entries is enough to cause the issue,
-> >>>although I really can't understand why that would be the case. Can you try
-> >>>the diff below (without my previous change), please?
-> >>Thanks!
-> >>But it does not resolve the issue(only apply this patch based on 4.17.0).
-> >Thanks, that's a useful data point. It means that it still crashes even if
-> >we write back the same table entries, so it's the fact that we're writing
-> >them at all which causes the problem, not the value that we write.
-> >
-> >Whilst looking at the code, we noticed a missing DMB. On the off-chance
-> >that it helps, can you try this instead please?
-> Thanks!
-> Only apply below patch based on 4.17.0, we still got the crash.
+In order to remove one of the last instances of time_t, this changes
+the type to time64_t, same as j_trans_start_time.
 
-Oh well, it was worth a shot (and that's still a fix worth having). Please
-can you provide the complete disassembly for kpti_install_ng_mappings()
-(I'm referring to the C function in cpufeature.c) along with a corresponding
-crash log so that we can correlate the instruction stream with the crash?
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jeff Mahoney <jeffm@suse.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+This could replace "reiserfs: remove unused j_timestamp" if we decide
+that we want to keep that variable.
 
-Thanks,
+Posting this patch as an alternative now, while waiting for Jeff to
+reply on how important this really is.
+---
+ fs/reiserfs/reiserfs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Will
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 621b9a07080a..e5ca9ed79e54 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -271,7 +271,7 @@ struct reiserfs_journal_list {
+ 
+ 	struct mutex j_commit_mutex;
+ 	unsigned int j_trans_id;
+-	time_t j_timestamp;
++	time64_t j_timestamp; /* write-only but useful for crash dump analysis */
+ 	struct reiserfs_list_bitmap *j_list_bitmap;
+ 	struct buffer_head *j_commit_bh;	/* commit buffer head */
+ 	struct reiserfs_journal_cnode *j_realblock;
+-- 
+2.9.0
+
