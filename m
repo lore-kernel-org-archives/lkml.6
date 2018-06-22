@@ -2,96 +2,171 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF20C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB68EC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E135245BB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DF8D20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:23:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e2jfAp6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E135245BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p+cFGlK1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF8D20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934191AbeFVQVi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:21:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54742 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934049AbeFVQVg (ORCPT
+        id S934253AbeFVQXc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:23:32 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:46834 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934049AbeFVQXb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:21:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DxGmMZZRMPH6CM8VicfGWQPSlifXQVyBx3Yhs8sqx18=; b=e2jfAp6UGkmfShbSZ9n4s+5bB
-        r7mYBKvWBcZwk8WV/vyb4XuUsooaZ/wP0X+Wx6ZMEV/xJ74gLs71+vPc0xlkDDCdwutWTgQ7U0xTG
-        CsKUvonM8gkSqN04A5i9QBeq53wC3tZKKMoI20kWyb9MuBj1l3qOR1MvZkmPQCrJ/2W6AnQWCHsSz
-        NoQKmhLDvJfhYPHJvgRkiEJAFUmDR9DZqrFGKHc7/ZMfm5K8pU/pqo+WYMdC/jypdmmFjs06IqEDg
-        cd64A2E4ulcuXa0iIxhf0R/daY2nD0jeI1W+++O6iBXYL8fDaVcZCgzV12a0UOu0rdnSajiiJ21JI
-        vwQPwc6Eg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWOoY-0005cB-9V; Fri, 22 Jun 2018 16:21:34 +0000
-Subject: Re: [PATCH v9 4/4] vsprintf: Add command line option
- debug_boot_weak_hash
-To:     "Tobin C. Harding" <me@tobin.cc>, Theodore Ts'o <tytso@mit.edu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel@vger.kernel.org
-References: <20180621231534.32278-1-me@tobin.cc>
- <20180621231534.32278-5-me@tobin.cc>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7ce4d6ec-ef1b-1372-56bf-30ac1feabc9f@infradead.org>
-Date:   Fri, 22 Jun 2018 09:21:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 12:23:31 -0400
+Received: by mail-ot0-f194.google.com with SMTP id v24-v6so8091357otk.13
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sjxr7u3UlYrFd+tViUUNivvN3H62Z5Pj0i9pej6qsF4=;
+        b=p+cFGlK1M7jCN2Le91aqyr3n7HCysOpP3DN/6goQY/6wNaRB6zFBFcxq0IRfo35hrt
+         XQME5b53aLeTZhMqjAvwmcczQW4Fr6gMvmHmeBERtfbk2nLM+E0Whv5AkM0Dps4jCLdK
+         8Gmp/Kbo5PDNP/TasF0mH5x4vZE0Thbk1K0tgk6ZCkMot0Z6KuUG1s25vD6qQV0O0WL5
+         jmWiqBOIRyfr1ck1r6PJtxDH6oqxS4Rjl8FWGaL7SnQB+7gVcCOUe29cZxv+TVEFReW7
+         gPIZ+gQ6fd4d2jX7hrCd09cBpgPwS6XD4o0R6ANHa+VHdoOT63fHHsZlSRxCGY3falAB
+         zFPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sjxr7u3UlYrFd+tViUUNivvN3H62Z5Pj0i9pej6qsF4=;
+        b=h90cOl+rf20pRl6wXySi9Os++Ql+LSCcYvPhaXj3lh7cefW4Vo0CI5rToP+fdkKDqu
+         w38KnowyZEh3v3D3bBxyc/1HvRLJwY1zWa3KWo6Nh5Mrv0A4Er56fjAmWKiuj+q6p+6p
+         X89bOtGXtxTyo7Y/cpYc0+mQStsx4pxNvHfowX9uq7j5zaF7A+j9iWULmgBhnKQA2s2B
+         5W0sd/IsqSKXzLESXPXbrt/be9BGqDDSvroqClkVFIaBUdSYts/svJPLNqPNzTnjmIqz
+         B1Ido0N9VIRsmpIMBegbW/VdbQId2e4Vg3pvfe3+MTXUM53XWxIJGoTC0sk/9Yg4TzXz
+         r7sQ==
+X-Gm-Message-State: APt69E2W8eI7m6OJl+K7oC0YT++mTlSwLVvY3vrA7X9nqMp1JpXnXycV
+        UMTEeBkikVy2x+tAIIMynv9Dt25nnresDb53QuJPqQ==
+X-Google-Smtp-Source: AAOMgpe7E9x1jDJX/eTZ/Oa+q4BEit0dHj6Wy11RyC9sBMn417RqGgC8N9NTFwoLTSAbmHIpBQSeoTcI2pPaI6u8zB8=
+X-Received: by 2002:a9d:5206:: with SMTP id e6-v6mr530845oth.216.1529684610102;
+ Fri, 22 Jun 2018 09:23:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180621231534.32278-5-me@tobin.cc>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180621220416.5412-1-tycho@tycho.ws> <20180621220416.5412-5-tycho@tycho.ws>
+In-Reply-To: <20180621220416.5412-5-tycho@tycho.ws>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 22 Jun 2018 18:23:18 +0200
+Message-ID: <CAG48ez0HW-nScxn4G5p8UHtYy=T435ZkF3Tb1ARTyyijt_cNEg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] seccomp: add support for passing fds via USER_NOTIF
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        suda.akihiro@lab.ntt.co.jp, "Tobin C. Harding" <me@tobin.cc>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21/2018 04:15 PM, Tobin C. Harding wrote:
-> Currently printing [hashed] pointers requires enough entropy to be
-> available.  Early in the boot sequence this may not be the case
-> resulting in a dummy string '(____ptrval____)' being printed.  This
-> makes debugging the early boot sequence difficult.  We can relax the
-> requirement to use cryptographically secure hashing during debugging.
-> This enables debugging while keeping development/production kernel
-> behaviour the same.
-> 
-> If new command line option debug_boot_weak_hash is enabled use
-> cryptographically insecure hashing and hash pointer value immediately.
-> 
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+On Fri, Jun 22, 2018 at 12:05 AM Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> The idea here is that the userspace handler should be able to pass an fd
+> back to the trapped task, for example so it can be returned from socket().
+>
+> I've proposed one API here, but I'm open to other options. In particular,
+> this only lets you return an fd from a syscall, which may not be enough in
+> all cases. For example, if an fd is written to an output parameter instead
+> of returned, the current API can't handle this. Another case is that
+> netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
+> ever decides to install an fd and output it, we wouldn't be able to handle
+> this either.
+>
+> Still, the vast majority of interesting cases are covered by this API, so
+> perhaps it is Enough.
+>
+> I've left it as a separate commit for two reasons:
+>   * It illustrates the way in which we would grow struct seccomp_notif and
+>     struct seccomp_notif_resp without using netlink
+>   * It shows just how little code is needed to accomplish this :)
+>
+[...]
+> @@ -1669,10 +1706,20 @@ static ssize_t seccomp_notify_write(struct file *file, const char __user *buf,
+>                 goto out;
+>         }
+>
+> +       if (resp.return_fd) {
+> +               knotif->flags = resp.fd_flags;
+> +               knotif->file = fget(resp.fd);
+> +               if (!knotif->file) {
+> +                       ret = -EBADF;
+> +                       goto out;
+> +               }
+> +       }
+> +
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+I think this is a security bug. Imagine the following scenario:
 
-Thanks.
+ - attacker creates processes A and B
+ - process A installs a seccomp filter and sends the notification fd
+to process B
+ - process A starts a syscall for which the filter returns
+SECCOMP_RET_USER_NOTIF
+ - process B reads the notification from the notification fd
+ - process B uses dup2() to copy the notification fd to file
+descriptor 1 (stdout)
+ - process B executes a setuid root binary
+ - the setuid root binary opens some privileged file descriptor
+(something like open("/etc/shadow", O_RDWR))
+ - the setuid root binary tries to write some attacker-controlled data to stdout
+ - seccomp_notify_write() interprets the start of the written data as
+a struct seccomp_notif_resp
+ - seccomp_notify_write() grabs the privileged file descriptor and
+installs a copy in process A
+ - process A now has access to the privileged file (e.g. /etc/shadow)
 
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
->  lib/vsprintf.c                                  | 17 +++++++++++++++++
->  2 files changed, 25 insertions(+)
+It isn't clear whether it would actually be exploitable - you'd need a
+setuid binary that performs the right actions - but it's still bad.
 
+Unless I'm missing something, can you please turn the ->read and
+->write handlers into an ->unlocked_ioctl handler? Something like
+this:
 
--- 
-~Randy
+struct seccomp_user_notif_args {
+        u64 buf;
+        u64 size;
+};
+
+static long unlocked_ioctl(struct file *file, unsigned int cmd,
+unsigned long arg)
+{
+        struct seccomp_user_notif_args args;
+        struct seccomp_user_notif_args __user *uargs;
+
+        if (cmd != SECCOMP_USER_NOTIF_READ && cmd != SECCOMP_USER_NOTIF_WRITE)
+                return -EINVAL;
+
+        if (copy_from_user(&args, uargs, sizeof(args)))
+                return -EFAULT;
+
+        switch (cmd) {
+        case SECCOMP_USER_NOTIF_READ:
+                return seccomp_notify_read(file, (char __user
+*)args.buf, (size_t)args.size);
+        case SECCOMP_USER_NOTIF_WRITE:
+                return seccomp_notify_write(file, (char __user
+*)args.buf, (size_t)args.size);
+        default:
+                return -EINVAL;
+        }
+}
