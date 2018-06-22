@@ -1,146 +1,387 @@
 Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B60C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70386C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3756823E19
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:16:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3756823E19
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F6F623E1A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F6F623E1A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751355AbeFVHQc (ORCPT
+        id S1751398AbeFVHQn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 03:16:32 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:44647 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751250AbeFVHQ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 03:16:29 -0400
-Received: by mail-qt0-f196.google.com with SMTP id 92-v6so703960qta.11
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 00:16:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZS+ojZXaIS2zHSZSG2Anfn1I2+pJOO2cuA45SekaGFo=;
-        b=SlGIFfMaJfAoGAsxk5dYfaBEiKZbv8Bzs1+KP60VKSbKqSaKqf4nRLVAM2Kg0j/9RK
-         wCszCCZByto2PeZ+LgIALSGOI2sW1npl7I+blK6lqzMTQS41OPJr4VxpBHQlLs2w6zdE
-         C9SGrjwIh1n7f7Ge4lAMzn6CvdWTBM4WIw6jwckFGq+aah3oP7HTax6hIvQGnbEHl+/N
-         JPLXTS1FeIvu5GkzYzumX4TskllHXSGb6fAwxdUIYcdz/Q0LQjRyabtOqz+QGh8OxM/C
-         PcyOB0DgN+23fepKqsCcBgrTgSOTuYYVxNyafHh3iQkGs6zhvPRAjHg4td7OuJLjo4uw
-         efoA==
-X-Gm-Message-State: APt69E1jWsOlb/TIXGTKQB8xInSdy4nmlINloadbG008Kttb/qdWfPMo
-        +PgRcBJrLikH+SmRCoW3aJiYC09KCISd20XlfoQGYg==
-X-Google-Smtp-Source: AAOMgpcjaUdwY6EOJGEvZya0LDAlXl+pAdEUw82V0foBYm8Z4ktsUE4Cc5LcucF/C8rxxXcvxE80S+jpQynUM9yMOYc=
-X-Received: by 2002:a0c:d0eb:: with SMTP id b40-v6mr358012qvh.236.1529651788738;
- Fri, 22 Jun 2018 00:16:28 -0700 (PDT)
+        Fri, 22 Jun 2018 03:16:43 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8680 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750866AbeFVHQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 03:16:30 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EB17BA0D44222;
+        Fri, 22 Jun 2018 15:16:14 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Fri, 22 Jun 2018
+ 15:16:13 +0800
+Subject: Re: [PATCH RESEND] f2fs: introduce and spread verify_blkaddr
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180605094411.16002-1-yuchao0@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <70d82277-f530-aff3-05b7-82bb0f288bb6@huawei.com>
+Date:   Fri, 22 Jun 2018 15:15:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:aed:2bc7:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 00:16:28
- -0700 (PDT)
-In-Reply-To: <20180622022717.134300-2-swboyd@chromium.org>
-References: <20180622022717.134300-1-swboyd@chromium.org> <20180622022717.134300-2-swboyd@chromium.org>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Fri, 22 Jun 2018 09:16:28 +0200
-Message-ID: <CAO-hwJJxSHqwEcypc-PVSDUoOSM4OHcOP18QJpoxq6OqKcbq-w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] HID: i2c-hid: Use devm to allocate i2c_hid struct
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Doug Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180605094411.16002-1-yuchao0@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 4:27 AM, Stephen Boyd <swboyd@chromium.org> wrote:
-> Use devm here to save some lines and prepare for bulk regulator usage in
-> this driver. Otherwise, when we devm bulk get regulators we'll free the
-> containing i2c_hid structure and try to put regulator pointers from
-> freed memory.
->
-> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Dmitry Torokhov <dtor@chromium.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Ping,
+
+On 2018/6/5 17:44, Chao Yu wrote:
+> This patch introduces verify_blkaddr to check meta/data block address
+> with valid range to detect bug earlier.
+> 
+> In addition, once we encounter an invalid blkaddr, notice user to run
+> fsck to fix, and let the kernel panic.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > ---
->  drivers/hid/i2c-hid/i2c-hid.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-> index c1652bb7bd15..c7d6738dc524 100644
-> --- a/drivers/hid/i2c-hid/i2c-hid.c
-> +++ b/drivers/hid/i2c-hid/i2c-hid.c
-> @@ -1002,18 +1002,18 @@ static int i2c_hid_probe(struct i2c_client *client,
->                 return client->irq;
->         }
->
-> -       ihid = kzalloc(sizeof(struct i2c_hid), GFP_KERNEL);
-> +       ihid = devm_kzalloc(&client->dev, sizeof(*ihid), GFP_KERNEL);
-
-IIRC, I never made the switch towards devm for i2c_hid because at the
-time there was a "all or nothing" rule regarding devm.
-But given that the regulator already has a devm inside, I think we are
-screwed here and we should probably try to devm-ize the module.
-
-I seem to remember that someone posted a devm version of
-hid_allocate_device/hid-add_device, but I don't think this ever went
-upstream (because no use).
-
-Otherwise, for the series:
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-
-Cheers,
-Benjamin
-
-
-
->         if (!ihid)
->                 return -ENOMEM;
->
->         if (client->dev.of_node) {
->                 ret = i2c_hid_of_probe(client, &ihid->pdata);
->                 if (ret)
-> -                       goto err;
-> +                       return ret;
->         } else if (!platform_data) {
->                 ret = i2c_hid_acpi_pdata(client, &ihid->pdata);
->                 if (ret)
-> -                       goto err;
-> +                       return ret;
->         } else {
->                 ihid->pdata = *platform_data;
->         }
-> @@ -1126,7 +1126,6 @@ static int i2c_hid_probe(struct i2c_client *client,
->
->  err:
->         i2c_hid_free_buffers(ihid);
-> -       kfree(ihid);
->         return ret;
+>  fs/f2fs/checkpoint.c | 10 ++++++++--
+>  fs/f2fs/data.c       |  8 ++++----
+>  fs/f2fs/f2fs.h       | 33 +++++++++++++++++++++++++++++----
+>  fs/f2fs/file.c       |  9 +++++----
+>  fs/f2fs/inode.c      |  7 ++++---
+>  fs/f2fs/node.c       |  4 ++--
+>  fs/f2fs/recovery.c   |  6 +++---
+>  fs/f2fs/segment.c    |  4 ++--
+>  fs/f2fs/segment.h    |  8 +++-----
+>  9 files changed, 60 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 9624a8f7254b..9910a1ad3c68 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -119,7 +119,7 @@ struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index)
+>  	return __get_meta_page(sbi, index, false);
 >  }
->
-> @@ -1150,8 +1149,6 @@ static int i2c_hid_remove(struct i2c_client *client)
->
->         regulator_disable(ihid->pdata.supply);
->
-> -       kfree(ihid);
-> -
->         return 0;
+>  
+> -bool f2fs_is_valid_meta_blkaddr(struct f2fs_sb_info *sbi,
+> +bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+>  					block_t blkaddr, int type)
+>  {
+>  	switch (type) {
+> @@ -140,10 +140,16 @@ bool f2fs_is_valid_meta_blkaddr(struct f2fs_sb_info *sbi,
+>  			return false;
+>  		break;
+>  	case META_POR:
+> +	case DATA_GENERIC:
+>  		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
+>  			blkaddr < MAIN_BLKADDR(sbi)))
+>  			return false;
+>  		break;
+> +	case META_GENERIC:
+> +		if (unlikely(blkaddr < SEG0_BLKADDR(sbi) ||
+> +			blkaddr >= MAIN_BLKADDR(sbi)))
+> +			return false;
+> +		break;
+>  	default:
+>  		BUG();
+>  	}
+> @@ -176,7 +182,7 @@ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+>  	blk_start_plug(&plug);
+>  	for (; nrpages-- > 0; blkno++) {
+>  
+> -		if (!f2fs_is_valid_meta_blkaddr(sbi, blkno, type))
+> +		if (!f2fs_is_valid_blkaddr(sbi, blkno, type))
+>  			goto out;
+>  
+>  		switch (type) {
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 8f931d699287..71ab85193403 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -485,7 +485,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>  		spin_unlock(&io->io_lock);
+>  	}
+>  
+> -	if (is_valid_blkaddr(fio->old_blkaddr))
+> +	if (__is_valid_data_blkaddr(fio->old_blkaddr))
+>  		verify_block_addr(fio, fio->old_blkaddr);
+>  	verify_block_addr(fio, fio->new_blkaddr);
+>  
+> @@ -1045,7 +1045,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  next_block:
+>  	blkaddr = datablock_addr(dn.inode, dn.node_page, dn.ofs_in_node);
+>  
+> -	if (!is_valid_blkaddr(blkaddr)) {
+> +	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
+>  		if (create) {
+>  			if (unlikely(f2fs_cp_error(sbi))) {
+>  				err = -EIO;
+> @@ -1694,7 +1694,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+>  			f2fs_lookup_extent_cache(inode, page->index, &ei)) {
+>  		fio->old_blkaddr = ei.blk + page->index - ei.fofs;
+>  
+> -		if (is_valid_blkaddr(fio->old_blkaddr)) {
+> +		if (is_valid_data_blkaddr(fio->sbi, fio->old_blkaddr)) {
+>  			ipu_force = true;
+>  			fio->need_lock = LOCK_DONE;
+>  			goto got_it;
+> @@ -1721,7 +1721,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+>  	 * If current allocation needs SSR,
+>  	 * it had better in-place writes for updated data.
+>  	 */
+> -	if (ipu_force || (is_valid_blkaddr(fio->old_blkaddr) &&
+> +	if (ipu_force || (is_valid_data_blkaddr(fio->sbi, fio->old_blkaddr) &&
+>  					need_inplace_update(fio))) {
+>  		err = encrypt_one_page(fio);
+>  		if (err)
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 656fe4bd16d5..6b7facf8d93e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -194,7 +194,7 @@ struct cp_control {
+>  };
+>  
+>  /*
+> - * For CP/NAT/SIT/SSA readahead
+> + * indicate meta/data type
+>   */
+>  enum {
+>  	META_CP,
+> @@ -202,6 +202,8 @@ enum {
+>  	META_SIT,
+>  	META_SSA,
+>  	META_POR,
+> +	DATA_GENERIC,
+> +	META_GENERIC,
+>  };
+>  
+>  /* for the list of ino */
+> @@ -2668,13 +2670,36 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
+>  	spin_unlock(&sbi->iostat_lock);
 >  }
->
-> --
-> Sent by a computer through tubes
->
+>  
+> -static inline bool is_valid_blkaddr(block_t blkaddr)
+> +bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+> +					block_t blkaddr, int type);
+> +void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
+> +static inline void verify_blkaddr(struct f2fs_sb_info *sbi,
+> +					block_t blkaddr, int type)
+> +{
+> +	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, type)) {
+> +		f2fs_msg(sbi->sb, KERN_ERR,
+> +			"invalid blkaddr: %u, type: %d, run fsck to fix.",
+> +			blkaddr, type);
+> +		f2fs_bug_on(sbi, 1);
+> +	}
+> +}
+> +
+> +static inline bool __is_valid_data_blkaddr(block_t blkaddr)
+>  {
+>  	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR)
+>  		return false;
+>  	return true;
+>  }
+>  
+> +static inline bool is_valid_data_blkaddr(struct f2fs_sb_info *sbi,
+> +						block_t blkaddr)
+> +{
+> +	if (!__is_valid_data_blkaddr(blkaddr))
+> +		return false;
+> +	verify_blkaddr(sbi, blkaddr, DATA_GENERIC);
+> +	return true;
+> +}
+> +
+>  /*
+>   * file.c
+>   */
+> @@ -2898,8 +2923,8 @@ void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io);
+>  struct page *f2fs_grab_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
+>  struct page *f2fs_get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
+>  struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index);
+> -bool f2fs_is_valid_meta_blkaddr(struct f2fs_sb_info *sbi,
+> -			block_t blkaddr, int type);
+> +bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+> +					block_t blkaddr, int type);
+>  int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+>  			int type, bool sync);
+>  void f2fs_ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 13f2f6845e87..f3166c9663a3 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -350,13 +350,13 @@ static pgoff_t __get_first_dirty_index(struct address_space *mapping,
+>  	return pgofs;
+>  }
+>  
+> -static bool __found_offset(block_t blkaddr, pgoff_t dirty, pgoff_t pgofs,
+> -							int whence)
+> +static bool __found_offset(struct f2fs_sb_info *sbi, block_t blkaddr,
+> +				pgoff_t dirty, pgoff_t pgofs, int whence)
+>  {
+>  	switch (whence) {
+>  	case SEEK_DATA:
+>  		if ((blkaddr == NEW_ADDR && dirty == pgofs) ||
+> -			is_valid_blkaddr(blkaddr))
+> +			is_valid_data_blkaddr(sbi, blkaddr))
+>  			return true;
+>  		break;
+>  	case SEEK_HOLE:
+> @@ -420,7 +420,8 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+>  			blkaddr = datablock_addr(dn.inode,
+>  					dn.node_page, dn.ofs_in_node);
+>  
+> -			if (__found_offset(blkaddr, dirty, pgofs, whence)) {
+> +			if (__found_offset(F2FS_I_SB(inode), blkaddr, dirty,
+> +							pgofs, whence)) {
+>  				f2fs_put_dnode(&dn);
+>  				goto found;
+>  			}
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 30a777369d2b..e2f7d8581037 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -68,11 +68,12 @@ static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+>  	}
+>  }
+>  
+> -static bool __written_first_block(struct f2fs_inode *ri)
+> +static bool __written_first_block(struct f2fs_sb_info *sbi,
+> +					struct f2fs_inode *ri)
+>  {
+>  	block_t addr = le32_to_cpu(ri->i_addr[offset_in_addr(ri)]);
+>  
+> -	if (is_valid_blkaddr(addr))
+> +	if (is_valid_data_blkaddr(sbi, addr))
+>  		return true;
+>  	return false;
+>  }
+> @@ -275,7 +276,7 @@ static int do_read_inode(struct inode *inode)
+>  	/* get rdev by using inline_info */
+>  	__get_inode_rdev(inode, ri);
+>  
+> -	if (__written_first_block(ri))
+> +	if (__written_first_block(sbi, ri))
+>  		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
+>  
+>  	if (!f2fs_need_inode_block_update(sbi, inode->i_ino))
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 47d0e64a95a8..4a3311be4003 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -371,7 +371,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>  			new_blkaddr == NULL_ADDR);
+>  	f2fs_bug_on(sbi, nat_get_blkaddr(e) == NEW_ADDR &&
+>  			new_blkaddr == NEW_ADDR);
+> -	f2fs_bug_on(sbi, is_valid_blkaddr(nat_get_blkaddr(e)) &&
+> +	f2fs_bug_on(sbi, is_valid_data_blkaddr(sbi, nat_get_blkaddr(e)) &&
+>  			new_blkaddr == NEW_ADDR);
+>  
+>  	/* increment version no as node is removed */
+> @@ -382,7 +382,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>  
+>  	/* change address */
+>  	nat_set_blkaddr(e, new_blkaddr);
+> -	if (!is_valid_blkaddr(new_blkaddr))
+> +	if (!is_valid_data_blkaddr(sbi, new_blkaddr))
+>  		set_nat_flag(e, IS_CHECKPOINTED, false);
+>  	__set_nat_cache_dirty(nm_i, e);
+>  
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index 38f25f0b193a..3051a5e5dfc7 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -252,7 +252,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>  	while (1) {
+>  		struct fsync_inode_entry *entry;
+>  
+> -		if (!f2fs_is_valid_meta_blkaddr(sbi, blkaddr, META_POR))
+> +		if (!f2fs_is_valid_blkaddr(sbi, blkaddr, META_POR))
+>  			return 0;
+>  
+>  		page = f2fs_get_tmp_page(sbi, blkaddr);
+> @@ -507,7 +507,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+>  		}
+>  
+>  		/* dest is valid block, try to recover from src to dest */
+> -		if (f2fs_is_valid_meta_blkaddr(sbi, dest, META_POR)) {
+> +		if (f2fs_is_valid_blkaddr(sbi, dest, META_POR)) {
+>  
+>  			if (src == NULL_ADDR) {
+>  				err = f2fs_reserve_new_block(&dn);
+> @@ -568,7 +568,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+>  	while (1) {
+>  		struct fsync_inode_entry *entry;
+>  
+> -		if (!f2fs_is_valid_meta_blkaddr(sbi, blkaddr, META_POR))
+> +		if (!f2fs_is_valid_blkaddr(sbi, blkaddr, META_POR))
+>  			break;
+>  
+>  		f2fs_ra_meta_pages_cond(sbi, blkaddr);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 97a471e9782a..957226707cb2 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1931,7 +1931,7 @@ bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  	struct seg_entry *se;
+>  	bool is_cp = false;
+>  
+> -	if (!is_valid_blkaddr(blkaddr))
+> +	if (!is_valid_data_blkaddr(sbi, blkaddr))
+>  		return true;
+>  
+>  	down_read(&sit_i->sentry_lock);
+> @@ -3004,7 +3004,7 @@ void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  {
+>  	struct page *cpage;
+>  
+> -	if (!is_valid_blkaddr(blkaddr))
+> +	if (!is_valid_data_blkaddr(sbi, blkaddr))
+>  		return;
+>  
+>  	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index f18fc82fbe99..a7460da9af43 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -85,7 +85,7 @@
+>  	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) & ((sbi)->blocks_per_seg - 1))
+>  
+>  #define GET_SEGNO(sbi, blk_addr)					\
+> -	((!is_valid_blkaddr(blk_addr)) ?			\
+> +	((!is_valid_data_blkaddr(sbi, blk_addr)) ?			\
+>  	NULL_SEGNO : GET_L2R_SEGNO(FREE_I(sbi),			\
+>  		GET_SEGNO_FROM_SEG0(sbi, blk_addr)))
+>  #define BLKS_PER_SEC(sbi)					\
+> @@ -647,11 +647,9 @@ static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
+>  
+>  	if (PAGE_TYPE_OF_BIO(fio->type) == META &&
+>  				(!is_read_io(fio->op) || fio->is_meta))
+> -		BUG_ON(blk_addr < SEG0_BLKADDR(sbi) ||
+> -				blk_addr >= MAIN_BLKADDR(sbi));
+> +		verify_blkaddr(sbi, blk_addr, META_GENERIC);
+>  	else
+> -		BUG_ON(blk_addr < MAIN_BLKADDR(sbi) ||
+> -				blk_addr >= MAX_BLKADDR(sbi));
+> +		verify_blkaddr(sbi, blk_addr, DATA_GENERIC);
+>  }
+>  
+>  /*
+> 
+
