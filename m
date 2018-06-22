@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3108BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48070C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D91E024814
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1BD824816
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:46:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DTgGbelB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HcbKKGhw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D91E024814
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lMEeVjSk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B0AfbZx7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1BD824816
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934476AbeFVTqs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:46:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55934 "EHLO
+        id S934560AbeFVTqx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:46:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56086 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934111AbeFVTqq (ORCPT
+        with ESMTP id S934111AbeFVTqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:46:46 -0400
+        Fri, 22 Jun 2018 15:46:50 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2723560AD8; Fri, 22 Jun 2018 19:46:46 +0000 (UTC)
+        id 10C1860B23; Fri, 22 Jun 2018 19:46:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529696806;
-        bh=ie3qOV/kB96ch4FSlSY+/4tgePh/2EzqtwCJN1suZJQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DTgGbelBY1o74BZQ3Pntn29v1eBp7uxKIRxGwsSM6N/37JsGfXBV/HKaZdZG929Cu
-         ihNCH/2a5+UaPSXBd76BGHT5tl8P33iIUeetmWD4i3+TAIxvxva+J/SrvDuGhta/ky
-         SgvSTzr9ZTyoeVDXIGNj+kd1WaAjSJGD9oh9cbT4=
+        s=default; t=1529696809;
+        bh=AH8T3jo+B+L+PGietlvIy1LRfolwVcoS5IPo5cxCCY8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lMEeVjSknXSXzmX+zWn4hPmm5X8zWtT+lQ2AGz30R22KAo4xsZHpzdmu0fB5bTUJ4
+         gFMbAnL17AX8JJjy6I+s68twrfpjxFYzgM0Yj54iSRDugeNHwSNEFefVYKX7M4DoFK
+         C2wri6gJwzE2FPkG+gT2Za9LBWPWk8r6n0rDO1K8=
 Received: from azshara.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: agustinv@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0418560588;
-        Fri, 22 Jun 2018 19:46:43 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3D97160B15;
+        Fri, 22 Jun 2018 19:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529696805;
-        bh=ie3qOV/kB96ch4FSlSY+/4tgePh/2EzqtwCJN1suZJQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HcbKKGhw+HbcS2/Lno598gNYEEQexITISaGhtwxAAtna/AJybtW+baFlUiXjve0EQ
-         H8Ff5b5ksHdw9rP5qCO5XIi9VsL2Y8C5Cd4YpDKf6Akwqqd3mXC8iPHzN7T8vu7TVB
-         bw3Y6fKttozOJv1CrWv4hScPvKLLVMZZubjEpyss=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0418560588
+        s=default; t=1529696808;
+        bh=AH8T3jo+B+L+PGietlvIy1LRfolwVcoS5IPo5cxCCY8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=B0AfbZx7hrFDbWwsrTdyp1jwlQZN1QXVxECE8O1cajyCa3EdhnA8x2PGbPpF+ntom
+         hNp+nypCC6jim0PKwuN36NdElYcbHlfiaY90ahPvZTU4QvXQGIjTSHixDVvxdm36m2
+         DjnO8hQgywzlkeZN7MV0Jo27Wc4KOFtkn86crheM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D97160B15
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=agustinv@codeaurora.org
 From:   Agustin Vega-Frias <agustinv@codeaurora.org>
@@ -60,54 +60,165 @@ To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         "Rafael J. Wysocki" <rafael@kernel.org>
 Cc:     timur@codeaurora.org, agustinv@codeaurora.org
-Subject: [RFC V3 0/3] arm_pmu: acpi: variant support and QCOM Falkor extensions
-Date:   Fri, 22 Jun 2018 15:46:29 -0400
-Message-Id: <1529696792-16903-1-git-send-email-agustinv@codeaurora.org>
+Subject: [RFC V2 2/3] arm_pmu: acpi: add support for CPU PMU variant detection
+Date:   Fri, 22 Jun 2018 15:46:31 -0400
+Message-Id: <1529696792-16903-3-git-send-email-agustinv@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529696792-16903-1-git-send-email-agustinv@codeaurora.org>
+References: <1529696792-16903-1-git-send-email-agustinv@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is a complete re-design of V1 of the QCOM Falkor extensions [1],
-it introduces a probe table based on the HID of a device nested under the CPU
-device to allow variant detection and arm_pmu customization.
+DT allows CPU PMU variant detection via the PMU device compatible
+property. ACPI does not have an equivalent mechanism so we introduce
+a probe table to allow this via a device nested inside the CPU device
+in the DSDT:
 
-The first patch adds an additional section at the end of each ACPI probe table.
-This allows probe tables to be sentinel-delimited and better accommodate some
-APIs that require such tables.
+Device (CPU0)
+{
+    Name (_HID, "ACPI0007" /* Processor Device */)
+    ...
+    Device (PMU0)
+    {
+        Name (_HID, "QCOM8150") /* Qualcomm Falkor PMU device */
 
-The second patch adds the PMUv3 ACPI probe table and plumbing to allow drivers
-to plug into the ACPI PMUv3 probe sequence.
+        /*
+         * The device might also contain _DSD properties to indicate other
+         * IMPLEMENTATION DEFINED PMU features.
+         */
+        Name (_DSD, Package ()
+        {
+            ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+            Package ()
+            {
+                ...
+            }
+        })
+    }
+}
 
-The third patch adds the QCOM Falkor extensions using the new probe table.
+With this in place we can declare the variant:
 
-If this found to be a reasonable extension approach other patches will be
-added to the series to build on the base QCOM extensions.
+    ACPI_DECLARE_PMU_VARIANT(qcom_falkor, "QCOM8150", falkor_pmu_init);
 
-[1] https://lkml.org/lkml/2017/3/1/540
+The init function is called after the default PMU initialization and is
+passed a pointer to the arm_pmu structure and a pointer to the PMU device.
+The init function can then override arm_pmu callbacks and attributes and
+query more properties from the PMU device.
 
-Changes since V2:
-- Address V2 comments, which resulted in removing all uses of the PMU lock.
+Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
+---
+ drivers/perf/arm_pmu_acpi.c       | 27 +++++++++++++++++++++++++++
+ include/asm-generic/vmlinux.lds.h |  1 +
+ include/linux/acpi.h              | 11 +++++++++++
+ include/linux/perf/arm_pmu.h      |  1 +
+ 4 files changed, 40 insertions(+)
 
-Changes since V1:
-- Redesign as a separate module by adding variant detection support.
-
-Agustin Vega-Frias (3):
-  ACPI: add support for sentinel-delimited probe tables
-  arm_pmu: acpi: add support for CPU PMU variant detection
-  perf: qcom: Add Falkor CPU PMU IMPLEMENTATION DEFINED event support
-
- drivers/perf/Makefile             |   2 +-
- drivers/perf/arm_pmu_acpi.c       |  27 ++++
- drivers/perf/qcom_arm_pmu.c       | 310 ++++++++++++++++++++++++++++++++++++++
- include/asm-generic/vmlinux.lds.h |   4 +-
- include/linux/acpi.h              |  11 ++
- include/linux/perf/arm_pmu.h      |   1 +
- 6 files changed, 353 insertions(+), 2 deletions(-)
- create mode 100644 drivers/perf/qcom_arm_pmu.c
-
---
+diff --git a/drivers/perf/arm_pmu_acpi.c b/drivers/perf/arm_pmu_acpi.c
+index 0f19751..6b0ca71 100644
+--- a/drivers/perf/arm_pmu_acpi.c
++++ b/drivers/perf/arm_pmu_acpi.c
+@@ -220,6 +220,26 @@ static int arm_pmu_acpi_cpu_starting(unsigned int cpu)
+ 	return 0;
+ }
+ 
++/*
++ * Check if the given child device of the CPU device matches a PMU variant
++ * device declared with ACPI_DECLARE_PMU_VARIANT, if so, pass the arm_pmu
++ * structure and the matching device for further initialization.
++ */
++static int arm_pmu_variant_init(struct device *dev, void *data)
++{
++	extern struct acpi_device_id ACPI_PROBE_TABLE(pmu);
++	unsigned int cpu = *((unsigned int *)data);
++	const struct acpi_device_id *id;
++
++	id = acpi_match_device(&ACPI_PROBE_TABLE(pmu), dev);
++	if (id) {
++		armpmu_acpi_init_fn fn = (armpmu_acpi_init_fn)id->driver_data;
++
++		return fn(per_cpu(probed_pmus, cpu), dev);
++	}
++	return 0;
++}
++
+ int arm_pmu_acpi_probe(armpmu_init_fn init_fn)
+ {
+ 	int pmu_idx = 0;
+@@ -240,6 +260,7 @@ int arm_pmu_acpi_probe(armpmu_init_fn init_fn)
+ 	 */
+ 	for_each_possible_cpu(cpu) {
+ 		struct arm_pmu *pmu = per_cpu(probed_pmus, cpu);
++		struct device *dev = get_cpu_device(cpu);
+ 		char *base_name;
+ 
+ 		if (!pmu || pmu->name)
+@@ -254,6 +275,10 @@ int arm_pmu_acpi_probe(armpmu_init_fn init_fn)
+ 			return ret;
+ 		}
+ 
++		ret = device_for_each_child(dev, &cpu, arm_pmu_variant_init);
++		if (ret == -ENODEV)
++			pr_warn("Failed PMU re-init, fallback to plain PMUv3");
++
+ 		base_name = pmu->name;
+ 		pmu->name = kasprintf(GFP_KERNEL, "%s_%d", base_name, pmu_idx++);
+ 		if (!pmu->name) {
+@@ -290,3 +315,5 @@ static int arm_pmu_acpi_init(void)
+ 	return ret;
+ }
+ subsys_initcall(arm_pmu_acpi_init)
++
++ACPI_DECLARE_PMU_SENTINEL();
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 5894049..f1be62a 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -600,6 +600,7 @@
+ 	IRQCHIP_OF_MATCH_TABLE()					\
+ 	ACPI_PROBE_TABLE(irqchip)					\
+ 	ACPI_PROBE_TABLE(timer)						\
++	ACPI_PROBE_TABLE(pmu)						\
+ 	EARLYCON_TABLE()
+ 
+ #define INIT_TEXT							\
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 15bfb15..9c410cf 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -1153,6 +1153,17 @@ struct acpi_probe_entry {
+ 					  (&ACPI_PROBE_TABLE_END(t) -	\
+ 					   &ACPI_PROBE_TABLE(t)));	\
+ 	})
++
++#define ACPI_DECLARE_PMU_VARIANT(name, hid, init_fn)			\
++	static const struct acpi_device_id __acpi_probe_##name		\
++		__used __section(__pmu_acpi_probe_table)		\
++		= { .id = hid, .driver_data = (kernel_ulong_t)init_fn }
++
++#define ACPI_DECLARE_PMU_SENTINEL()					\
++	static const struct acpi_device_id __acpi_probe_sentinel	\
++		__used __section(__pmu_acpi_probe_table_end)		\
++		= { .id = "", .driver_data = 0 }
++
+ #else
+ static inline int acpi_dev_get_property(struct acpi_device *adev,
+ 					const char *name, acpi_object_type type,
+diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+index 40036a5..ff43d65 100644
+--- a/include/linux/perf/arm_pmu.h
++++ b/include/linux/perf/arm_pmu.h
+@@ -123,6 +123,7 @@ int armpmu_map_event(struct perf_event *event,
+ 		     u32 raw_event_mask);
+ 
+ typedef int (*armpmu_init_fn)(struct arm_pmu *);
++typedef int (*armpmu_acpi_init_fn)(struct arm_pmu *, struct device *);
+ 
+ struct pmu_probe_info {
+ 	unsigned int cpuid;
+-- 
 Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
 Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
 
