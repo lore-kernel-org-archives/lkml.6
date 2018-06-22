@@ -2,90 +2,104 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E239C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E36FC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54A1F224E8
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:41:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A1F224E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id DF56023E55
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:43:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF56023E55
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751357AbeFVHly (ORCPT
+        id S1751406AbeFVHnC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 03:41:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44078 "EHLO mail.bootlin.com"
+        Fri, 22 Jun 2018 03:43:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48742 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751209AbeFVHlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 03:41:45 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3E790207EB; Fri, 22 Jun 2018 09:41:43 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0F1B820794;
-        Fri, 22 Jun 2018 09:41:43 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 09:41:43 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Emmanuel Vadot <manu@freebsd.org>
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: allwinner: a64-sopine: Add cd-gpios to mmc0 node
-Message-ID: <20180622074143.kaobrlvqplq25gry@flea>
-References: <20180620093055.10928-1-manu@freebsd.org>
+        id S1751097AbeFVHm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 03:42:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 01E28ADCC;
+        Fri, 22 Jun 2018 07:42:57 +0000 (UTC)
+Date:   Fri, 22 Jun 2018 09:42:57 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: fix unnecessary killing of additional processes
+Message-ID: <20180622074257.GQ10465@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1806141339580.4543@chino.kir.corp.google.com>
+ <20180615065541.GA24039@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1806151559360.49038@chino.kir.corp.google.com>
+ <20180619083316.GB13685@dhcp22.suse.cz>
+ <20180620130311.GM13685@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1806201325330.158126@chino.kir.corp.google.com>
+ <20180621074537.GC10465@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1806211347050.213939@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="shrrj3he6isqmzjs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180620093055.10928-1-manu@freebsd.org>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <alpine.DEB.2.21.1806211347050.213939@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 21-06-18 13:50:53, David Rientjes wrote:
+> On Thu, 21 Jun 2018, Michal Hocko wrote:
+> 
+> > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > > index 6bcecc325e7e..ac08f5d711be 100644
+> > > > --- a/arch/x86/kvm/x86.c
+> > > > +++ b/arch/x86/kvm/x86.c
+> > > > @@ -7203,8 +7203,9 @@ static void vcpu_load_eoi_exitmap(struct kvm_vcpu *vcpu)
+> > > >  	kvm_x86_ops->load_eoi_exitmap(vcpu, eoi_exit_bitmap);
+> > > >  }
+> > > >  
+> > > > -void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+> > > > -		unsigned long start, unsigned long end)
+> > > > +int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+> > > > +		unsigned long start, unsigned long end,
+> > > > +		bool blockable)
+> > > >  {
+> > > >  	unsigned long apic_address;
+> > > >  
+> > > > @@ -7215,6 +7216,8 @@ void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+> > > >  	apic_address = gfn_to_hva(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
+> > > >  	if (start <= apic_address && apic_address < end)
+> > > >  		kvm_make_all_cpus_request(kvm, KVM_REQ_APIC_PAGE_RELOAD);
+> > > > +
+> > > > +	return 0;
+> > > >  }
+> > > >  
+> > > >  void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu)
+> > > 
+> > > Auditing the first change in the patch, this is incorrect because 
+> > > kvm_make_all_cpus_request() for KVM_REQ_APIC_PAGE_RELOAD can block in 
+> > > kvm_kick_many_cpus() and that is after kvm_make_request() has been done.
+> > 
+> > I would have to check the code closer. But doesn't
+> > kvm_make_all_cpus_request call get_cpu which is preempt_disable? I
+> > definitely plan to talk to respective maintainers about these changes of
+> > course.
+> > 
+> 
+> preempt_disable() is required because it calls kvm_kick_many_cpus() with 
+> wait == true because KVM_REQ_APIC_PAGE_RELOAD sets KVM_REQUEST_WAIT and 
+> thus the smp_call_function_many() is going to block until all cpus can run 
+> ack_flush().
 
---shrrj3he6isqmzjs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I will make sure to talk to the maintainer of the respective code to
+do the nonblock case correctly.
 
-On Wed, Jun 20, 2018 at 11:30:55AM +0200, Emmanuel Vadot wrote:
-> The card detect GPIO for Sopine and Pine64-LTS is PF6.
-> Add this to the dts.
->=20
-> Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---shrrj3he6isqmzjs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlssqDYACgkQ0rTAlCFN
-r3QH+BAAhZchcfL4tkTEe5+AitB50zpXGUyOSiQ1s7Mr86YDSliI8eNS+R3/KKUT
-XumhwGexwJUAq47Mh3tNhT2yurVb52wDl4x5h5yNcWChYcG0zi9NvfImjxKprqd6
-8dTJ9v3xnIQdgwRllaOgonNVCaVUdXp+7LA1yeb0yes5EcpJ8vk7lMCUMZIotMEk
-fCVSJcCLMIBeqggH9QzDSvIefO4VuVyWVyWzav7ZhD89Il8fSvxa3209D05xLsTH
-XMQyHnRFn2gFMSxYIVIq1G+/iQF24et2tjKoXAOQavLdqw4BMl/qZJVyWLDgwWOo
-hzXl3qZNWadiakd+cmYalZkuzD8aUKyb0Nrg9y5uRl19yC1HapqaUePrO06AFh5M
-dGWSPXiCtycXvLgiGYK3ju1O7XBMID6Ndl2dXS+qHjMpTkfRiHS5rXhFSyj/ctYR
-x6wa+p8/e/jEB8UTIbGKYdMJDzFfsbePX72laCa3ScAYfqdeFP7KfHtTXclNjCUC
-j25XzWxHeMUrpXbIBWYh1P1GKu6dm9wQJBGUcPM5MuXNp61o2SVZuAVfRU8atFtO
-VUvoTdVtw10Y3dH15Nz4TA4H8EwQNK4Doww6cdYNWlvrDx/hWgFY0/QhyLwNFIFG
-R6JJTTw/3wfW2Cwc2LrDP1VmIWELRQMYOefIRKq/f45+3ZY59bw=
-=RgX7
------END PGP SIGNATURE-----
-
---shrrj3he6isqmzjs--
+-- 
+Michal Hocko
+SUSE Labs
