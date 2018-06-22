@@ -2,92 +2,143 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC90C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDFCC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D543241DC
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D543241DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 835BD241DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835BD241DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751478AbeFVMaF (ORCPT
+        id S1752416AbeFVMa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 08:30:05 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:32930 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeFVMaE (ORCPT
+        Fri, 22 Jun 2018 08:30:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51971 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751209AbeFVMay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:30:04 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fWLCO-0008Bj-P8; Fri, 22 Jun 2018 12:29:56 +0000
-Date:   Fri, 22 Jun 2018 13:29:56 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel test robot <xiaolong.ye@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LKP <lkp@01.org>
-Subject: Re: [lkp-robot] [fs] 3deb642f0d: will-it-scale.per_process_ops -8.8%
- regression
-Message-ID: <20180622122956.GX30522@ZenIV.linux.org.uk>
-References: <20180622082752.GX11011@yexl-desktop>
- <CA+55aFw5ghByk_zCN25G6rPPSAQma3Mh0t4s18CtLg=h6U9+Zg@mail.gmail.com>
- <20180622095608.GA12263@lst.de>
- <20180622100014.GA12425@lst.de>
- <20180622110117.GU30522@ZenIV.linux.org.uk>
- <20180622115300.GA14654@lst.de>
- <20180622115613.GV30522@ZenIV.linux.org.uk>
- <20180622120739.GA15351@lst.de>
- <20180622121722.GW30522@ZenIV.linux.org.uk>
- <20180622123307.GA16699@lst.de>
+        Fri, 22 Jun 2018 08:30:54 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5MCUldJ067521
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 22 Jun 2018 05:30:47 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5MCUlEA067518;
+        Fri, 22 Jun 2018 05:30:47 -0700
+Date:   Fri, 22 Jun 2018 05:30:47 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Eric Dumazet <tipbot@zytor.com>
+Message-ID: <tip-74bdf7815dfb3805a37b0bba615814063a227bf5@git.kernel.org>
+Cc:     mingo@kernel.org, edumazet@google.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, eric.dumazet@gmail.com, hpa@zytor.com
+Reply-To: edumazet@google.com, tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com,
+          eric.dumazet@gmail.com
+In-Reply-To: <20180620150332.163320-1-edumazet@google.com>
+References: <20180620150332.163320-1-edumazet@google.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/core] genirq: Speedup show_interrupts()
+Git-Commit-ID: 74bdf7815dfb3805a37b0bba615814063a227bf5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180622123307.GA16699@lst.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 02:33:07PM +0200, Christoph Hellwig wrote:
-> On Fri, Jun 22, 2018 at 01:17:22PM +0100, Al Viro wrote:
-> > > The problem is that call to sk_busy_loop(), which is going to be indirect
-> > > no matter what.
-> > 
-> > 	if ->f_poll_head is NULL {
-> > 		use ->poll
-> > 	} else {
-> > 		if can ll_poll (checked in ->f_mode)
-> > 			call ->ll_poll(), if it returns what we want - we are done
-> > 		add to ->f_poll_head
-> > 		call ->poll_mask()
-> 
-> What I have for now is slightly different:
-> 
-> 	if ((events & POLL_BUSY_LOOP) && file->f_op->poll_busy_loop)
-> 		file->f_op->poll_busy_loop(file, events);
-> 
-> 	if (file->f_op->poll) {
-> 		return file->f_op->poll(file, pt);
-> 	} else if (file_has_poll_mask(file)) {
-> 		...
-> 	}
-> 
-> returns whatever we want part is something I want to look into
-> once the basics are done as it probably is non entirely trivial due to
-> structure of polling in the low-level network protocol.
+Commit-ID:  74bdf7815dfb3805a37b0bba615814063a227bf5
+Gitweb:     https://git.kernel.org/tip/74bdf7815dfb3805a37b0bba615814063a227bf5
+Author:     Eric Dumazet <edumazet@google.com>
+AuthorDate: Wed, 20 Jun 2018 08:03:32 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 22 Jun 2018 14:22:58 +0200
 
-First of all, you'll get the same ->f_op for *all* sockets.  So you'll be
-hitting that path regardless of sk_can_busy_loop(sock->sk).  What's more,
-that way you get (on fast path) even more indirect calls, AFAICS.
+genirq: Speedup show_interrupts()
 
-And I don't see any point in separate file_has_poll_mask() - just check
-->f_poll_head and that's it.
+Since commit 425a5072dcd1 ("genirq: Free irq_desc with rcu"),
+show_interrupts() can be switched to rcu locking, which removes possible
+contention on sparse_irq_lock.
+
+The per_cpu count scan and print can be done without holding desc spinlock.
+
+And there is no need to call kstat_irqs_cpu() and abuse irq_to_desc() while
+holding rcu read lock, since desc and desc->kstat_irqs wont disappear or
+change.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Link: https://lkml.kernel.org/r/20180620150332.163320-1-edumazet@google.com
+
+---
+ kernel/irq/proc.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+index 37eda10f5c36..da9addb8d655 100644
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -475,22 +475,24 @@ int show_interrupts(struct seq_file *p, void *v)
+ 		seq_putc(p, '\n');
+ 	}
+ 
+-	irq_lock_sparse();
++	rcu_read_lock();
+ 	desc = irq_to_desc(i);
+ 	if (!desc)
+ 		goto outsparse;
+ 
+-	raw_spin_lock_irqsave(&desc->lock, flags);
+-	for_each_online_cpu(j)
+-		any_count |= kstat_irqs_cpu(i, j);
+-	action = desc->action;
+-	if ((!action || irq_desc_is_chained(desc)) && !any_count)
+-		goto out;
++	if (desc->kstat_irqs)
++		for_each_online_cpu(j)
++			any_count |= *per_cpu_ptr(desc->kstat_irqs, j);
++
++	if ((!desc->action || irq_desc_is_chained(desc)) && !any_count)
++		goto outsparse;
+ 
+ 	seq_printf(p, "%*d: ", prec, i);
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", kstat_irqs_cpu(i, j));
++		seq_printf(p, "%10u ", desc->kstat_irqs ?
++					*per_cpu_ptr(desc->kstat_irqs, j) : 0);
+ 
++	raw_spin_lock_irqsave(&desc->lock, flags);
+ 	if (desc->irq_data.chip) {
+ 		if (desc->irq_data.chip->irq_print_chip)
+ 			desc->irq_data.chip->irq_print_chip(&desc->irq_data, p);
+@@ -511,6 +513,7 @@ int show_interrupts(struct seq_file *p, void *v)
+ 	if (desc->name)
+ 		seq_printf(p, "-%-8s", desc->name);
+ 
++	action = desc->action;
+ 	if (action) {
+ 		seq_printf(p, "  %s", action->name);
+ 		while ((action = action->next) != NULL)
+@@ -518,10 +521,9 @@ int show_interrupts(struct seq_file *p, void *v)
+ 	}
+ 
+ 	seq_putc(p, '\n');
+-out:
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
+ outsparse:
+-	irq_unlock_sparse();
++	rcu_read_unlock();
+ 	return 0;
+ }
+ #endif
