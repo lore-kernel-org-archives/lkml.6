@@ -2,118 +2,111 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15754C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FF7C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3A7424805
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:44:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A7424805
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E6E9C2480E
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:44:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E9C2480E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934526AbeFVToa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:44:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934264AbeFVTo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:44:29 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC9C1402345E;
-        Fri, 22 Jun 2018 19:44:28 +0000 (UTC)
-Received: from flask (unknown [10.43.2.80])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3FB9821565E1;
-        Fri, 22 Jun 2018 19:44:27 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Fri, 22 Jun 2018 21:44:26 +0200
-Date:   Fri, 22 Jun 2018 21:44:26 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 4.18-rc2
-Message-ID: <20180622194426.GE2377@flask>
+        id S934546AbeFVTov (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:44:51 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42706 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934111AbeFVTot (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 15:44:49 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fWRzA-0002Lh-Pr; Fri, 22 Jun 2018 21:44:45 +0200
+Date:   Fri, 22 Jun 2018 21:44:44 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Lukas Wunner <lukas@wunner.de>
+cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] genirq: Synchronize only with single thread on
+ free_irq()
+In-Reply-To: <20180622080125.GA13709@wunner.de>
+Message-ID: <alpine.DEB.2.21.1806222144160.1589@nanos.tec.linutronix.de>
+References: <8f770886632640321592873e4c902218d42c436b.1527194314.git.lukas@wunner.de> <alpine.DEB.2.21.1806212217571.1591@nanos.tec.linutronix.de> <20180622080125.GA13709@wunner.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 22 Jun 2018 19:44:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 22 Jun 2018 19:44:28 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Fri, 22 Jun 2018, Lukas Wunner wrote:
+> On Thu, Jun 21, 2018 at 10:21:44PM +0200, Thomas Gleixner wrote:
+> > On Thu, 24 May 2018, Lukas Wunner wrote:
+> > >  static int irq_wait_for_interrupt(struct irqaction *action)
+> > >  {
+> > > -	set_current_state(TASK_INTERRUPTIBLE);
+> > > +	for (;;) {
+> > > +		set_current_state(TASK_INTERRUPTIBLE);
+> > >  
+> > > -	while (!kthread_should_stop()) {
+> > > +		if (kthread_should_stop()) {
+> > > +			/* may need to run one last time. */
+> > > +			if (test_and_clear_bit(IRQTF_RUNTHREAD,
+> > > +					       &action->thread_flags)) {
+> > > +				__set_current_state(TASK_RUNNING);
+> > > +				return 0;
+> > > +			}
+> > > +			__set_current_state(TASK_RUNNING);
+> > > +			return -1;
+> > > +		}
+> > >  
+> > >  		if (test_and_clear_bit(IRQTF_RUNTHREAD,
+> > >  				       &action->thread_flags)) {
+> > > @@ -766,10 +776,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
+> > >  			return 0;
+> > >  		}
+> > >  		schedule();
+> > > -		set_current_state(TASK_INTERRUPTIBLE);
+> > >  	}
+> > > -	__set_current_state(TASK_RUNNING);
+> > > -	return -1;
+> > >  }
+> > >  
+> > >  /*
+> > > @@ -990,7 +997,7 @@ static int irq_thread(void *data)
+> > >  	/*
+> > >  	 * This is the regular exit path. __free_irq() is stopping the
+> > >  	 * thread via kthread_stop() after calling
+> > > -	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
+> > > +	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
+> > >  	 * oneshot mask bit can be set. We cannot verify that as we
+> > >  	 * cannot touch the oneshot mask at this point anymore as
+> > >  	 * __setup_irq() might have given out currents thread_mask
+> > > @@ -1595,7 +1602,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
+> > >  	unregister_handler_proc(irq, action);
+> > >  
+> > >  	/* Make sure it's not being used on another CPU: */
+> > > -	synchronize_irq(irq);
+> > > +	synchronize_hardirq(irq);
+> > 
+> > So after that, action can be freed and when the thread above tries to
+> > access it. Nice Use After Free. That needs more thought.
+> 
+> No, after that, kthread_stop() is called which blocks until the IRQ
+> thread has completed.  Only then is the action freed.
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+Missed that. Fair enough.
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+Thanks,
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
-
-for you to fetch changes up to 2ddc649810133fcf8e5282eea898ee7ececf161e:
-
-  KVM: fix KVM_CAP_HYPERV_TLBFLUSH paragraph number (2018-06-22 17:30:20 +0200)
-
-----------------------------------------------------------------
-KVM fixes for 4.18-rc2
-
-ARM:
- - Lazy FPSIMD switching fixes
- - Really disable compat ioctls on architectures that don't want it
- - Disable compat on arm64 (it was never implemented...)
- - Rely on architectural requirements for GICV on GICv3
- - Detect bad alignments in unmap_stage2_range
-
-x86:
- - Add nested VM entry checks to avoid broken error recovery path
- - Minor documentation fix
-
-----------------------------------------------------------------
-Ard Biesheuvel (1):
-      KVM: arm/arm64: Drop resource size check for GICV window
-
-Dave Martin (3):
-      KVM: arm64: Don't mask softirq with IRQs disabled in vcpu_put()
-      KVM: arm64/sve: Fix SVE trap restoration for non-current tasks
-      KVM: arm64: Avoid mistaken attempts to save SVE state for vcpus
-
-Jia He (1):
-      KVM: arm/arm64: add WARN_ON if size is not PAGE_SIZE aligned in unmap_stage2_range
-
-Marc Orr (1):
-      kvm: vmx: Nested VM-entry prereqs for event inj.
-
-Marc Zyngier (2):
-      KVM: Enforce error in ioctl for compat tasks when !KVM_COMPAT
-      KVM: arm64: Prevent KVM_COMPAT from being selected
-
-Mark Rutland (1):
-      arm64: Introduce sysreg_clear_set()
-
-Radim Krčmář (1):
-      Merge tag 'kvmarm-fixes-for-4.18-1' of git://git.kernel.org/.../kvmarm/kvmarm
-
-Vitaly Kuznetsov (1):
-      KVM: fix KVM_CAP_HYPERV_TLBFLUSH paragraph number
-
- Documentation/virtual/kvm/api.txt |  2 +-
- arch/arm64/include/asm/kvm_host.h |  1 +
- arch/arm64/include/asm/sysreg.h   | 11 +++++++
- arch/arm64/kvm/fpsimd.c           | 36 +++++++++++++++------
- arch/x86/include/asm/vmx.h        |  3 ++
- arch/x86/kvm/vmx.c                | 67 +++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/x86.h                |  9 ++++++
- virt/kvm/Kconfig                  |  2 +-
- virt/kvm/arm/mmu.c                |  2 ++
- virt/kvm/arm/vgic/vgic-v3.c       |  5 ---
- virt/kvm/kvm_main.c               | 19 ++++++-----
- 11 files changed, 131 insertions(+), 26 deletions(-)
+	tglx
