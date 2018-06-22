@@ -2,120 +2,120 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 353EDC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8008C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F7222502
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:25:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F7222502
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F0E0245C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:26:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mna60d3w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0E0245C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934357AbeFVQZI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:25:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53716 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934341AbeFVQZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:25:04 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B70081A4EBA;
-        Fri, 22 Jun 2018 16:25:03 +0000 (UTC)
-Received: from redhat.com (ovpn-120-43.rdu2.redhat.com [10.10.120.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 248551C71D;
-        Fri, 22 Jun 2018 16:25:03 +0000 (UTC)
-Date:   Fri, 22 Jun 2018 12:25:01 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [Intel-gfx] [RFC PATCH] mm, oom: distinguish blockable mode for
- mmu notifiers
-Message-ID: <20180622162501.GB3497@redhat.com>
-References: <20180622150242.16558-1-mhocko@kernel.org>
- <152968180950.11773.3374981930722769733@mail.alporthouse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <152968180950.11773.3374981930722769733@mail.alporthouse.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 22 Jun 2018 16:25:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 22 Jun 2018 16:25:03 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+        id S934369AbeFVQ0B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:26:01 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33194 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934062AbeFVQZ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 12:25:59 -0400
+Received: by mail-qt0-f194.google.com with SMTP id l10-v6so6426981qtj.0;
+        Fri, 22 Jun 2018 09:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4ry5i/t+vR1U8hwk0eEgnMo6/kvdXWyzFtn5ixrKPb0=;
+        b=mna60d3wTqmdA06HTtjN1baBX6nBEmLOz5frZbTpMqDa+pBmo0PMkxKEwmPA1LLqa9
+         RFamTpRPyT2d6UX5zFCdrl0vsX2oyr91RNvCxlVvHVMOx+NNHLJK8PwQC+9uyJu5Eo0n
+         6SVOAwPJlpWbITNaDnCaZEu5PK2QbBC7zwHsaDRDMsimPP8yvp6CHTsb5WWLqroWcKP9
+         e6y1h8IG6Skog7Uniqm6UreeerDStCd3GO7c28Mtg559RsH3o0fUi9DOSYXuCXb0V92v
+         FzaMf6WIcP9Cf2/a5GXNiBMzYzHimadGxHR+5yJyS3MMb9YKB34J4KODqV+sF6xkgRaT
+         vwaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4ry5i/t+vR1U8hwk0eEgnMo6/kvdXWyzFtn5ixrKPb0=;
+        b=WQOhIKv1WJDkqzXsxvGGGUdbZEZY+o43klOXsXAsRYAlD7FCMTJ2DxuPCdTSUowv/Y
+         JI9k5vKZAh6D33U0z1vkQXlLqp0I0yxxM3Jrmf4ZzJMBEnIRkT5B7pvMa89U4S0p1UWK
+         vHFNeAf2xnRT0S9TE5MwnJa/usaayvcKG6mcST0mCo7GC7dGPcSk1+ykqlWjKtxLgCsY
+         YtFa7uqsvYaIh4cSLzFXlZBLd66tRJPKU+CAwinpolWH9ChI4jrHuMsWh9P1BsGXkoVy
+         yOqTWAfr7xJ4yUD//uFAieWHTyj0Ke7M4cwNDt0VXVpgieFKYdAam0lwG1EGdARqNDGD
+         YFBA==
+X-Gm-Message-State: APt69E0aCIYCa5Ftr6EJnqKIaYTxCbqkMZ/c2Ol3MzFYDmB/TC+kEr9q
+        aXm26lOyshDtoKs26Zked6/HSuSb
+X-Google-Smtp-Source: AAOMgpe64NbtSOmGis4XjBr+7HqE9odqjEligBrFupoHD9q4S1Zoa4ggTUYVeTukUUCvzAjZLOYE6Q==
+X-Received: by 2002:ac8:3426:: with SMTP id u35-v6mr2031876qtb.288.1529684758378;
+        Fri, 22 Jun 2018 09:25:58 -0700 (PDT)
+Received: from pm2-ws13.praxislan02.com ([2001:470:8:67e:ba27:ebff:fee8:ce27])
+        by smtp.gmail.com with ESMTPSA id g57-v6sm6072873qte.52.2018.06.22.09.25.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 09:25:57 -0700 (PDT)
+From:   Jason Andryuk <jandryuk@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     john-s-84@gmx.net, Jason Andryuk <jandryuk@gmail.com>,
+        stable@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
+Subject: [PATCH] i2c-hid: Fix "incomplete report" noise
+Date:   Fri, 22 Jun 2018 12:25:49 -0400
+Message-Id: <20180622162549.9563-1-jandryuk@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 04:36:49PM +0100, Chris Wilson wrote:
-> Quoting Michal Hocko (2018-06-22 16:02:42)
-> > Hi,
-> > this is an RFC and not tested at all. I am not very familiar with the
-> > mmu notifiers semantics very much so this is a crude attempt to achieve
-> > what I need basically. It might be completely wrong but I would like
-> > to discuss what would be a better way if that is the case.
-> > 
-> > get_maintainers gave me quite large list of people to CC so I had to trim
-> > it down. If you think I have forgot somebody, please let me know
-> 
-> > diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
-> > index 854bd51b9478..5285df9331fa 100644
-> > --- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-> > +++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-> > @@ -112,10 +112,11 @@ static void del_object(struct i915_mmu_object *mo)
-> >         mo->attached = false;
-> >  }
-> >  
-> > -static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
-> > +static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
-> >                                                        struct mm_struct *mm,
-> >                                                        unsigned long start,
-> > -                                                      unsigned long end)
-> > +                                                      unsigned long end,
-> > +                                                      bool blockable)
-> >  {
-> >         struct i915_mmu_notifier *mn =
-> >                 container_of(_mn, struct i915_mmu_notifier, mn);
-> > @@ -124,7 +125,7 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
-> >         LIST_HEAD(cancelled);
-> >  
-> >         if (RB_EMPTY_ROOT(&mn->objects.rb_root))
-> > -               return;
-> > +               return 0;
-> 
-> The principle wait here is for the HW (even after fixing all the locks
-> to be not so coarse, we still have to wait for the HW to finish its
-> access). The first pass would be then to not do anything here if
-> !blockable.
-> 
-> Jerome keeps on shaking his head and telling us we're doing it all
-> wrong, so maybe it'll all fall out of HMM before we have to figure out
-> how to differentiate between objects that can be invalidated immediately
-> and those that need to acquire locks and/or wait.
+Commit ac75a041048b ("HID: i2c-hid: fix size check and type usage")
+started writing messages when the ret_size is <= 2 from i2c_master_recv.
+However, my device i2c-DLL07D1 returns 2 for a short period of time
+(~0.5s) after I stop moving the pointing stick or touchpad.  It varies,
+but you get ~50 messages each time which spams the log hard.
+[  95.925055] i2c_hid i2c-DLL07D1:01: i2c_hid_get_input: incomplete report (83/2)
 
-Intel and AMD are doing it right nowadays (IIRC AMD had a bug a while
-back). What i want is to replace GUP and notifier with HMM, with the
-intention that we can mitigate in more clever way thing like OOM or
-other mm aspect inside HMM and thus isolating mm folks from ever having
-to decipher GPU or other weird drivers :)
+This has also been observed with a i2c-ALP0017.
+[ 1781.266353] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
 
-I also want to do that for optimization purposes to allow to share
-more thing accross multiple GPU that mirror same range of address.
+Only print the message when ret_size is totally invalid and less than 2
+to cut down on the log spam.
 
-Finaly another motiviation is to avoid the pin GUP implies and only
-rely on mmu notification. This would unlock some memory migration
-from ever backing of early when they see the pin.
+Reported-by: John Smith <john-s-84@gmx.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+John Smith originally reported this, but his post did not include a git
+formatted patch nor a Signed-off-by.
+https://www.spinics.net/lists/linux-input/msg56171.html
+https://patchwork.kernel.org/patch/10374383/
 
-I intend to post patches sometime before XDC this year and discuss
-them at XDC see how people on driver side feel about that. I also
-want to use that as an excuse to gather features request and other
-Santa wishlist for HMM ;)
+When ret_size is 2, hid_input_report is passed 0 and returns early.  ret_size
+== 2 seems to be a header size saying there is no content.  Should
+i2c_hid_get_input just return early in that case?
 
-Cheers,
-Jérôme
+Also, should this condition be noted to stop an interrupt from firing to
+avoid the ~50 bogus messages?
+
+ drivers/hid/i2c-hid/i2c-hid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+index c1652bb7bd15..eae0cb3ddec6 100644
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -484,7 +484,7 @@ static void i2c_hid_get_input(struct i2c_hid *ihid)
+ 		return;
+ 	}
+ 
+-	if ((ret_size > size) || (ret_size <= 2)) {
++	if ((ret_size > size) || (ret_size < 2)) {
+ 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
+ 			__func__, size, ret_size);
+ 		return;
+-- 
+2.17.1
+
