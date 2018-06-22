@@ -2,116 +2,131 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0474C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74D4C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F6BD24584
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:09:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80D4824585
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:09:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="AQczH5FQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F6BD24584
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="P6a+NFQH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D4824585
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934188AbeFVQIh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:08:37 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:30612 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934044AbeFVQIQ (ORCPT
+        id S934278AbeFVQJF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:09:05 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38020 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933961AbeFVQJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:08:16 -0400
-Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id w5MG6m5d022587;
-        Sat, 23 Jun 2018 01:06:51 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w5MG6m5d022587
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529683612;
-        bh=bDbRzl/Y7hMBUMFMuM7lmIwqpkfuICtect6xSmzsPQQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AQczH5FQ4yZ551ASNksC9ntV1Bq1IQh5c+idQ6JtH7GaylyRdYblxD/DSmUgicjUS
-         xBkh3tjVhpP/M3YRkNOqeRzq6TyI6+TKMcKO0ntlDW4B1CrTWIqGUJdyppPU4+/mmh
-         a+hOj19SoPk8dLCo9RP0CRQKqMT6XI3BjkvaMnFOeZPGc0jweYG8QAtPXSUufZDFoh
-         fDYrvRF2R/JfBD3sHd5oUfMzRBfwxuHgEiUmw9B/eeoeWaWraIPGCaqQS3wbgR0h/B
-         A/IBUGSs04uD/bK0zhWAmMQPesy9L+XfEZ/XuoWQBxWTpnrNI3df5/zIIEzoPy3GJR
-         +80n0625x/4Vw==
-X-Nifty-SrcIP: [125.199.20.195]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v4 3/5] dt-binding: mtd: denali_dt: document clock property
-Date:   Sat, 23 Jun 2018 01:06:36 +0900
-Message-Id: <1529683598-25783-4-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529683598-25783-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1529683598-25783-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 22 Jun 2018 12:09:02 -0400
+Received: by mail-pl0-f68.google.com with SMTP id d10-v6so3712984plo.5
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:09:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Aknf5KSP5rADVcwENSz++BxmASuDrwPngcyq5/7MLCc=;
+        b=P6a+NFQHWSWEMsb/nWCmMQ+uomVmEKhpMBk0w77cJVHrYULtB5SjZ8O+rLcrvdlgZ6
+         3BK4ZgWLm2dW+qVhjPVz9WEYq6M0wBN/OoCr2C0O7Uo/X0q/dadX7U5pml/Q2zkftAhq
+         9qMNRlYy8RRiKsRfZ0Vj6tcccpnrCa9QaHxT/ZhYKdLFJCfJNd+PYzWVPVGy2TbJyEJU
+         S4WsXtI4prGmOn2XIzrl0cjdZrAy4dwNTaznpjBeUojjlT1UgPZEVACza1lboiqGoxHI
+         2m8Nzbt8MjVYvI42wrRMZujdImHLGfZJhY9P/Omvb8+haSo0XWpatGko9C0AA5wANT/H
+         grFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Aknf5KSP5rADVcwENSz++BxmASuDrwPngcyq5/7MLCc=;
+        b=AYD5vOheoEvGe59w3WA/XL/PoXQzsAQY913MmT7p7SdUg27Kw0gMhY6jii8xw/Lzj0
+         9Z3xgq4sbSH+EexZR68H+vRvRtG5sjmDzGsPhbHAjdYe53ctnIqK8i522h57llZiecoz
+         izjAnXWcSR+UV2gGPvbmFw7hRq9cfW3fsqtmmaLpbDMn+tlbVraigRmlVlidOSsU0MP6
+         7s+/VNADqev0lzptD0BWHmXRFmG59+sqjX+xKeZdZNyuEASqbIJVDKmy+h3zy0NhUYLC
+         YdMg8XnDgSbFuRlZI/UmviABcOKaiq6cmGod9HrW0JZvwqECN0LTZBsJsfTlIScRjX8b
+         7sfA==
+X-Gm-Message-State: APt69E2gYQdDdv3DHJ7ero/MvVQM1UVy74UexTFFbJfgGnP0qotDF5vb
+        ju4/wrKPHZxqkGYyrNu+YNCqaw==
+X-Google-Smtp-Source: ADUXVKLiVTww/WXj/RKEm0hWhVo49WeT21Y/MxMZTVeQSoYMBB8YNxRPPz/wMTZwJsS2Dk795/KUqg==
+X-Received: by 2002:a17:902:b48f:: with SMTP id y15-v6mr2320063plr.261.1529683741866;
+        Fri, 22 Jun 2018 09:09:01 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b065:2cd9:e530:8535:a508:f820? ([2600:1010:b065:2cd9:e530:8535:a508:f820])
+        by smtp.gmail.com with ESMTPSA id p16-v6sm14943709pfd.47.2018.06.22.09.09.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 09:09:00 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v4 1/7] x86/fsgsbase/64: Introduce FS/GS base helper functions
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <alpine.DEB.2.21.1806221735400.2402@nanos.tec.linutronix.de>
+Date:   Fri, 22 Jun 2018 09:08:59 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <851713FF-90E1-434A-BC31-5DE437AB530E@amacapital.net>
+References: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com> <1529536506-26237-2-git-send-email-chang.seok.bae@intel.com> <alpine.DEB.2.21.1806221610500.2402@nanos.tec.linutronix.de> <CALCETrVzLT0AwUFxZGjuREaontqzJe0DEccNFwLTKdLcLxcARA@mail.gmail.com> <alpine.DEB.2.21.1806221735400.2402@nanos.tec.linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 30f9f2fb7ba0 ("mtd: denali: add a DT driver") supported the
-clock enablement, but did not document it in the DT binding.
-
-In addition to the existing clock, this commit adds more clocks based
-on the IP specification.
-
-According to the Denali User's Guide, this IP needs three clocks:
-
- - clk: controller core clock
-
- - clk_x: bus interface clock
-
- - ecc_clk: clock at which ECC circuitry is run
-
-The driver should accept the current single clock for the backward
-compatibility, but the DT binding should represent the real hardware,
-and future platforms must follow this.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v4:
-  - split into a separate patch
 
 
- Documentation/devicetree/bindings/mtd/denali-nand.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+> On Jun 22, 2018, at 8:39 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>=20
+>> On Fri, 22 Jun 2018, Andy Lutomirski wrote:
+>> On Fri, Jun 22, 2018 at 7:28 AM Thomas Gleixner <tglx@linutronix.de> wrot=
+e:
+>>>> +unsigned long read_task_fsbase(struct task_struct *task)
+>>>> +{
+>>>> +     unsigned long fsbase;
+>>>> +
+>>>> +     if (task =3D=3D current) {
+>>>> +             fsbase =3D read_fsbase();
+>>>> +     } else {
+>>>> +             /*
+>>>> +              * XXX: This will not behave as expected if called
+>>>> +              * if fsindex !=3D 0. This preserves an existing bug
+>>>> +              * that will be fixed.
+>>>=20
+>>> I'm late to this party, but let me ask the obvious question:
+>>>=20
+>>>    Why is the existing bug not fixed as the first patch in the series?
+>>=20
+>> IIRC that was how I did it in the old version of this code.  I think
+>> it did it because it was less messy to fix the bug after cleaning up
+>> the code, but I could be remembering wrong.
+>=20
+> Fair enough. Though the general rule is: Fix bugs first and then do
+> features, unless you really need the extra step to fix it proper.
+>=20
+> Now in that case the real question is whether this is a bug or just a
+> slight incorrectness which has no practical impact. If it's the latter,
+> then introduce the new function which does the right thing first and make
+> the new fs/gs base functions use it without having a blurb about preservin=
+g
+> bugs.
 
-diff --git a/Documentation/devicetree/bindings/mtd/denali-nand.txt b/Documentation/devicetree/bindings/mtd/denali-nand.txt
-index 0ee8edb..f33da87 100644
---- a/Documentation/devicetree/bindings/mtd/denali-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/denali-nand.txt
-@@ -8,6 +8,9 @@ Required properties:
-   - reg : should contain registers location and length for data and reg.
-   - reg-names: Should contain the reg names "nand_data" and "denali_reg"
-   - interrupts : The interrupt number.
-+  - clocks: should contain phandle of the controller core clock, the bus
-+    interface clock, and the ECC circuit clock.
-+  - clock-names: should contain "nand", "nand_x", "ecc"
- 
- Optional properties:
-   - nand-ecc-step-size: see nand.txt for details.  If present, the value must be
-@@ -31,5 +34,7 @@ nand: nand@ff900000 {
- 	compatible = "altr,socfpga-denali-nand";
- 	reg = <0xff900000 0x20>, <0xffb80000 0x1000>;
- 	reg-names = "nand_data", "denali_reg";
-+	clocks = <&nand_clk>, <&nand_x_clk>, <&nand_ecc_clk>;
-+	clock-names = "nand", "nand_x", "ecc";
- 	interrupts = <0 144 4>;
- };
--- 
-2.7.4
+The idea was to have one patch that was intended to have no observable effec=
+t (pure refactor) and another to change behavior in an easily reviewable way=
+.  I should probably not have used the word bug :)
 
+>=20
+> Thanks,
+>=20
+>    tglx
+>=20
+>=20
+>=20
