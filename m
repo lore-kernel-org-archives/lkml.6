@@ -2,107 +2,103 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E4FC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBA7C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A593B24639
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:02:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="CNvudrRK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A593B24639
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 92E182463A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:02:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E182463A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754454AbeFVRB6 (ORCPT
+        id S1754558AbeFVRCB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 13:02:01 -0400
+Received: from mga01.intel.com ([192.55.52.88]:31100 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754448AbeFVRB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 13:01:58 -0400
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:43545 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753072AbeFVRB4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:01:56 -0400
-Received: by mail-pg0-f54.google.com with SMTP id a14-v6so3224194pgw.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 10:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:date:message-id:in-reply-to:references:cc:from:to;
-        bh=Xy4ncE9MGddoD2sMPgMz8TjmzwXSTPtcf1vLb4HmQbs=;
-        b=CNvudrRKyEQ83GN811SiTqZmfAGaWtRZol+RjiNCtCBcnU3XxJ/aDvVQgux1IMeQUY
-         4RS6RHfhftj9bNYQeXh4ny92Wictfm3M6xmVBSwK/u9ZUeGucW8Y1HDY3HnnNsOhJ9G6
-         Nkzbqq8jAhc2mh1YymjA+tslUGNCEnIVHkp13O+Qcot4Jaj070IcMma678U7GcJhlc0Z
-         W5Jx3QfE13MboxHvPgfQ7pS7ozZ7L8ZthwcWWuqUnU0ocu7Kq7FYf3YIO+4Sv98K+kIv
-         BxgiJdRIl0MK0H1gR/BQDRiNnWEnm3caz+KGV1shXC9Fmk4y7bamgrxZsMnz9pGCSU6q
-         WMHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
-         :cc:from:to;
-        bh=Xy4ncE9MGddoD2sMPgMz8TjmzwXSTPtcf1vLb4HmQbs=;
-        b=hNUxDPejogh6ePZOoglUw4tjHwpD0c5ez8i5el8Pl8A8/9wJZtsrD+PO3BUv5nXQGJ
-         +PnFeZJMbUEucy+bXUYHiWCKvwKRDn+DV3L9VzS+lk36J0GZeU9WtV5L0kcafi/xt6z/
-         R0k9fpmQDPL87tPE/gmTKT8rVXi5R2HadrKi/H/MCChmEop28AMr49B2FABU31123ePV
-         lFE202hvTY9t/0HftDTdwi/6r5v1Ua4kOOR19b1c/onAiF3XJzYUkvYAYMB8FnBVQZ+Z
-         iCF4FvKWjYTAQ03irFfs/WH9CTTRvDmYpKJOyMWqTpxDIUqbg1n0UsraBJth74Cob2Ub
-         Sddw==
-X-Gm-Message-State: APt69E20ecPTELsIpxA3ZoB+dVb2Yh3YMhdb8tz0HH3ustTTTOz0KZll
-        XSjQKvOTA5hP5+ra9opp5wN2EQ==
-X-Google-Smtp-Source: ADUXVKJ7Rhm4ujwaQidR/9oKv4eihZLB6qaEfE6RjveVjL/j7GdMUlZ7bccyag5E4WsypsvUsuzcjw==
-X-Received: by 2002:a65:4a10:: with SMTP id s16-v6mr2162120pgq.57.1529686916101;
-        Fri, 22 Jun 2018 10:01:56 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id u1-v6sm11318126pgc.80.2018.06.22.10.01.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 10:01:55 -0700 (PDT)
-Subject: Re: Finish the GENERIC_IRQ_MULTI_HANDLER conversion
-Date:   Fri, 22 Jun 2018 10:01:21 -0700
-Message-Id: <20180622170126.6308-1-palmer@sifive.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180621181756.12493-1-palmer@sifive.com>
-References: <20180621181756.12493-1-palmer@sifive.com>
-Cc:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        Will Deacon <will.deacon@arm.com>, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        Arnd Bergmann <arnd@arndb.de>, nicolas.pitre@linaro.org,
-        vladimir.murzin@arm.com, keescook@chromium.org,
-        jinb.park7@gmail.com, yamada.masahiro@socionext.com,
-        alexandre.belloni@bootlin.com, Palmer Dabbelt <palmer@sifive.com>,
-        pombredanne@nexb.com, Greg KH <gregkh@linuxfoundation.org>,
-        kstewart@linuxfoundation.org, jhogan@kernel.org,
-        mark.rutland@arm.com, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, openrisc@lists.librecores.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     tglx@linutronix.de
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 10:01:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,257,1526367600"; 
+   d="scan'208";a="66853010"
+Received: from asotoma-mobl1.amr.corp.intel.com (HELO [10.7.201.147]) ([10.7.201.147])
+  by orsmga001.jf.intel.com with ESMTP; 22 Jun 2018 10:01:57 -0700
+Subject: Re: [PATCH 3/7] x86,tlb: change tlbstate.is_lazy to tlbstate.state
+To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
+References: <20180620195652.27251-1-riel@surriel.com>
+ <20180620195652.27251-4-riel@surriel.com>
+Cc:     86@vger.kernel.org, luto@kernel.org, mingo@kernel.org,
+        tglx@linutronix.de, efault@gmx.de, songliubraving@fb.com,
+        kernel-team@fb.com
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
+ 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
+ K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
+ VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
+ e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
+ ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
+ kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
+ rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
+ f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
+ mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
+ UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
+ sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
+ 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
+ cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
+ UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
+ db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
+ lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
+ kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
+ gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
+ AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
+ XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
+ e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
+ pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
+ YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
+ lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
+ M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
+ 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
+ 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
+ OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
+ ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
+ z5cecg==
+Message-ID: <57de88af-b7a7-2214-95c3-26917e00a175@linux.intel.com>
+Date:   Fri, 22 Jun 2018 10:01:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180620195652.27251-4-riel@surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 11:17 AM, Palmer Dabbelt <palmer@sifive.com> wrote:
-> A while ago I sent a patch set that adds a GENERIC_IRQ_MULTI_HANDLER,
-> which is an exact copy of the existing IRQ_MULTI_HANDLER support in the
-> arm port, which is being used unconditionally by arm64 and openrisc.
-> GENERIC_IRQ_MULTI_HANDLER is currently being used by the RISC-V port.  I
-> managed to make a few mistakes in my original patch set and as a result
-> my conversion of the other architectures of GENERIC_IRQ_MULTI_HANDLER
-> was dropped.
-> 
-> This patch set finishes up my original patch set by converting arm,
-> arm64, and openrisc over to the new GENERIC_IRQ_MULTI_HANDLER support
-> and then removing MULTI_IRQ_HANDLER as it's obselete.
-> 
-> At the time I wrote this I gave it fairly extensive build testing, but
-> went I recently rebased it I just tested the full patch set on arm,
-> arm64, and openrisc defconfigs.
-> 
-> Various flavors of this patch set have bounced around a few times
-> before, but I'm calling this a whole new patch set as it builds on top
-> of what was merged.
+On 06/20/2018 12:56 PM, Rik van Riel wrote:
+> +#define TLBSTATE_OK	0
+> +#define TLBSTATE_LAZY	1
 
-Looks like I managed to lose the patches.  They should be threaded under
-this message...
+Could we spell out a bit more about what "OK" means in comments?  It
+obviously means "not lazy", but anything else?
