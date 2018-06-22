@@ -2,190 +2,172 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3AEC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8517C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38C2924442
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:57:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="KQbNoz9R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C2924442
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9ACA624443
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ACA624443
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933626AbeFVO52 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:57:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44536 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933310AbeFVO51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:57:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=SrvmSt5d4b5wKDZoJ+2BnyoVMzwkaE6AxH5cMqpScA8=; b=KQbNoz9RiLRa
-        khvwmEIQjWuKK8vyxjbGOrZsRQ3cjzk5RnHhIGaFr7ztgukX7CEnXMk5Opivk0rs0u7wzxq1Sl/C9
-        p77PpruuMSJtcz8psU3061TBP0+WExKdVUMOFMTJcl9I0+wdsvVvUZZqtMVj3KbPszSbiecUKOccv
-        RqzeA=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fWNV0-0003w5-8V; Fri, 22 Jun 2018 14:57:18 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fWNUz-0003N1-F3; Fri, 22 Jun 2018 15:57:17 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        jiada_wang@mentor.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: soc-pcm: DPCM cares BE channel constraint" to the asoc tree
-In-Reply-To:  <20180620092520.14101-1-jiada_wang@mentor.com>
-Message-Id: <E1fWNUz-0003N1-F3@debutante>
-Date:   Fri, 22 Jun 2018 15:57:17 +0100
+        id S933787AbeFVO5w convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:57:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56560 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933556AbeFVO5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:57:50 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8759820799; Fri, 22 Jun 2018 16:57:48 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0CD5120775;
+        Fri, 22 Jun 2018 16:57:38 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 16:57:38 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Rob Herring <robh@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Haim Boot <hayim@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/16] dt-bindings/interrupt-controller: add
+ documentation for Marvell SEI controller
+Message-ID: <20180622165738.6aa18de8@xps13>
+In-Reply-To: <20180608164623.0175fc05@xps13>
+References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
+        <20180522094042.24770-14-miquel.raynal@bootlin.com>
+        <20180605205121.GA19249@rob-hp-laptop>
+        <20180608164623.0175fc05@xps13>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi Rob, Marc,
 
-   ASoC: soc-pcm: DPCM cares BE channel constraint
+On Fri, 8 Jun 2018 16:46:23 +0200, Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
 
-has been applied to the asoc tree at
+> Hi Rob, Marc,
+> 
+> On Tue, 5 Jun 2018 14:51:21 -0600, Rob Herring <robh@kernel.org> wrote:
+> 
+> > On Tue, May 22, 2018 at 11:40:39AM +0200, Miquel Raynal wrote:  
+> > > Describe the System Error Interrupt (SEI) controller. It aggregates two
+> > > types of interrupts, wired and MSIs from respectively the AP and the
+> > > CPs, into a single SPI interrupt.
+> > > 
+> > > Suggested-by: Haim Boot <hayim@marvell.com>
+> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > > ---
+> > >  .../bindings/interrupt-controller/marvell,sei.txt  | 50 ++++++++++++++++++++++
+> > >  1 file changed, 50 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt b/Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt
+> > > new file mode 100644
+> > > index 000000000000..689981036c30
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/marvell,sei.txt
+> > > @@ -0,0 +1,50 @@
+> > > +Marvell SEI (System Error Interrupt) Controller
+> > > +-----------------------------------------------
+> > > +
+> > > +Marvell SEI (System Error Interrupt) controller is an interrupt
+> > > +aggregator. It receives interrupts from several sources and aggregates
+> > > +them to a single interrupt line (an SPI) on the parent interrupt
+> > > +controller.
+> > > +
+> > > +This interrupt controller can handle up to 64 SEIs, a set comes from the
+> > > +AP and is wired while a second set comes from the CPs by the mean of
+> > > +MSIs. Each 'domain' is represented as a subnode.
+> > > +
+> > > +Required properties:
+> > > +
+> > > +- compatible: should be "marvell,armada-8k-sei".
+> > > +- reg: SEI registers location and length.
+> > > +- interrupts: identifies the parent IRQ that will be triggered.
+> > > +
+> > > +Child node 'sei-wired-controller' required properties:
+> > > +
+> > > +- marvell,sei-ranges: ranges of wired interrupts.
+> > > +- #interrupt-cells: number of cells to define an SEI wired interrupt
+> > > +                    coming from the AP, should be 1. The cell is the IRQ
+> > > +                    number.
+> > > +- interrupt-controller: identifies the node as an interrupt controller.
+> > > +
+> > > +Child node 'sei-msi-controller' required properties:
+> > > +
+> > > +- marvell,sei-ranges: ranges of non-wired interrupts triggered by way of
+> > > +                      MSIs.
+> > > +- msi-controller: identifies the node as an MSI controller.
+> > > +
+> > > +Example:
+> > > +
+> > > +        sei: sei@3f0200 {
+> > > +               compatible = "marvell,armada-8k-sei";
+> > > +               reg = <0x3f0200 0x40>;
+> > > +               interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+> > > +
+> > > +               sei_wired_controller: sei-wired-controller@0 {
+> > > +                       marvell,sei-ranges = <0 21>;
+> > > +                       #interrupt-cells = <1>;
+> > > +                       interrupt-controller;
+> > > +               };
+> > > +
+> > > +               sei_msi_controller: sei-msi-controller@21 {
+> > > +                       marvell,sei-ranges = <21 43>;
+> > > +                       msi-controller;
+> > > +               };    
+> > 
+> > I still think this should just be all one node. There's several examples 
+> > in the tree of nodes which are both interrupt-controller and 
+> > msi-controller. Marvell MPIC is one example.  
+> 
+> I checked Marvell MPIC example (armada 370 XP), it does not use
+> hierarchy domains, so I totally understand your point but I'm not sure
+> how I could get inspired by this driver (I'm looking for others).
+> 
+> Here I'm stuck. I know from a pure DT point of view the following is
+> not a valid argument. But from Linux, there is no easy way to handle
+> this situation without two different device nodes due to the internals
+> of the irqchip subsystem. There is simply no easy solution and having
+> only one node would require consequent changes in the core.
+> 
+> Maybe Marc will have an idea, but I think we already gave up on this
+> topic :/
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+I double checked the MPIC driver and I still don't understand how we
+can allocate both MSIs and wired interrupts with the current driver.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Anyway, I finally managed to merge 'sei_wired_controller' and
+'sei_msi_controller' and have only one 'sei' node.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I had to do not use the fwnode of the 'sei' node in at least one IRQ
+domain (I choose the wired one) and instead implement for that domain
+the ->match() hook. I hope this is the right way to do it.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Please have a look at the v3 coming soon.
 
 Thanks,
-Mark
-
-From f4c277b817cc9489fffabffb4e15d2f3b686056c Mon Sep 17 00:00:00 2001
-From: Jiada Wang <jiada_wang@mentor.com>
-Date: Wed, 20 Jun 2018 18:25:20 +0900
-Subject: [PATCH] ASoC: soc-pcm: DPCM cares BE channel constraint
-
-Current DPCM is caring only FE channel configuration. Sometimes
-it will be trouble if user selects channel which isn't supported
-by BE.
-
-This patch adds new .dpcm_merged_chan on struct snd_soc_dai_link.
-DPCM will use FE / BE merged channel if struct snd_soc_dai_link
-has it.
-
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/sound/soc.h |  2 ++
- sound/soc/soc-pcm.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
-
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 1378dcd2128a..f7579f82cc00 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -957,6 +957,8 @@ struct snd_soc_dai_link {
- 
- 	/* DPCM used FE & BE merged format */
- 	unsigned int dpcm_merged_format:1;
-+	/* DPCM used FE & BE merged channel */
-+	unsigned int dpcm_merged_chan:1;
- 
- 	/* pmdown_time is ignored at stop */
- 	unsigned int ignore_pmdown_time:1;
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 45b52f7b9690..19ebfc958b9d 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1715,6 +1715,46 @@ static u64 dpcm_runtime_base_format(struct snd_pcm_substream *substream)
- 	return formats;
- }
- 
-+static void dpcm_runtime_base_chan(struct snd_pcm_substream *substream,
-+				   unsigned int *channels_min,
-+				   unsigned int *channels_max)
-+{
-+	struct snd_soc_pcm_runtime *fe = substream->private_data;
-+	struct snd_soc_dpcm *dpcm;
-+	int stream = substream->stream;
-+
-+	if (!fe->dai_link->dpcm_merged_chan)
-+		return;
-+
-+	*channels_min = 0;
-+	*channels_max = UINT_MAX;
-+
-+	/*
-+	 * It returns merged BE codec channel;
-+	 * if FE want to use it (= dpcm_merged_chan)
-+	 */
-+
-+	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
-+		struct snd_soc_pcm_runtime *be = dpcm->be;
-+		struct snd_soc_dai_driver *codec_dai_drv;
-+		struct snd_soc_pcm_stream *codec_stream;
-+		int i;
-+
-+		for (i = 0; i < be->num_codecs; i++) {
-+			codec_dai_drv = be->codec_dais[i]->driver;
-+			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
-+				codec_stream = &codec_dai_drv->playback;
-+			else
-+				codec_stream = &codec_dai_drv->capture;
-+
-+			*channels_min = max(*channels_min,
-+					    codec_stream->channels_min);
-+			*channels_max = min(*channels_max,
-+					    codec_stream->channels_max);
-+		}
-+	}
-+}
-+
- static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
-@@ -1722,11 +1762,17 @@ static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
- 	struct snd_soc_dai_driver *cpu_dai_drv = cpu_dai->driver;
- 	u64 format = dpcm_runtime_base_format(substream);
-+	unsigned int channels_min = 0, channels_max = UINT_MAX;
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
- 		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->playback, format);
- 	else
- 		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->capture, format);
-+
-+	dpcm_runtime_base_chan(substream, &channels_min, &channels_max);
-+
-+	runtime->hw.channels_min = max(channels_min, runtime->hw.channels_min);
-+	runtime->hw.channels_max = min(channels_max, runtime->hw.channels_max);
- }
- 
- static int dpcm_fe_dai_do_trigger(struct snd_pcm_substream *substream, int cmd);
--- 
-2.18.0.rc2
-
+Miquèl
