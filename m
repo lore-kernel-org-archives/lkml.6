@@ -2,100 +2,88 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 376D4C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A098C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E218723C14
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E218723C14
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owl.eu.com
+	by mail.kernel.org (Postfix) with ESMTP id D192F23C79
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:49:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D192F23C79
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934161AbeFVCru (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 22:47:50 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:52167 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933932AbeFVCrt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 22:47:49 -0400
-X-Originating-IP: 70.80.172.8
-Received: from localhost (modemcable008.172-80-70.mc.videotron.ca [70.80.172.8])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 04A24E0005;
-        Fri, 22 Jun 2018 02:47:45 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 22:47:41 -0400
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Marcus Wolf <linux@wolf-entwicklungen.de>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: pi433: initialization of tx config in pi433_open()
-Message-ID: <20180622024741.GB1914@hle-laptop.local>
+        id S934248AbeFVCsw convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:48:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39084 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933932AbeFVCsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 22:48:50 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DF3C37EEA;
+        Fri, 22 Jun 2018 02:48:50 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-116-153.phx2.redhat.com [10.3.116.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 276CF16C0F;
+        Fri, 22 Jun 2018 02:48:41 +0000 (UTC)
+Subject: Re: [PATCH v10 2/9] cpuset: Add new v2 cpuset.sched.domain_root flag
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1529295249-5207-1-git-send-email-longman@redhat.com>
+ <1529295249-5207-3-git-send-email-longman@redhat.com>
+ <20180620142735.GM2494@hirez.programming.kicks-ass.net>
+ <b44b0748-9fec-6bb0-7665-435487e5d8b3@redhat.com>
+ <20180621092728.GV2494@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <92c4aa24-4d52-dabd-5132-2153eacf44d2@redhat.com>
+Date:   Fri, 22 Jun 2018 10:48:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180621092728.GV2494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 22 Jun 2018 02:48:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/21/2018 05:27 PM, Peter Zijlstra wrote:
+> On Thu, Jun 21, 2018 at 03:58:06PM +0800, Waiman Long wrote:
+>> On 06/20/2018 10:27 PM, Peter Zijlstra wrote:
+>>> On Mon, Jun 18, 2018 at 12:14:01PM +0800, Waiman Long wrote:
+>>>> +  cpuset.sched.domain_root
+>>> Why are we calling this a domain_root and not a partition?
+>> A partition can consist of several cgroups in a tree structure. That
+>> flag should only be set at the root of a partition. I will change the
+>> name to partition_root if you think this name is acceptable.
+> The flag indicates the 'effective_cpus' things of the current group is a
+> partition. The fact that it can have sub-partitions doesn't really
+> matter does it.
+>
+> Just call it 'partition', leave out the whole root stuff, all of cgroup
+> is hierarchical and you can have sub-groups we don't go arounOd calling
+> everything a root.
 
---oLBj+sq0vYjzfsbl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, will name it "cpuset.sched.partition" in the next version of the
+patchset.
 
-Hi Marcus,
+Cheers,
+Longman
 
-I'm currently working on the following TODO:
 
- 966         /* setup instance data*/
- 967         instance->device =3D device;
- 968         instance->tx_cfg.bit_rate =3D 4711;
- 969         // TODO: fill instance->tx_cfg;
-
-If a user calls write() right after open()-ing an instance, the driver
-might try to setup the device with uninitialized garbage. In fact
-nothing really bad will happen because the rf69 interface abstraction
-will filter out wrong values, but this might be a confusing behavior
-for the user.
-
-What do you think about initializing instance->tx_cfg with the default
-values of the rf69 datasheet[0] ?
-
-Also, is there a specific reason why you chose 4711 as a default value
-for the bit rate ? I couldn't find it anywhere in the datasheet nor on
-the internet.
-
-Thanks !
-
-Regards,
- Hugo
-
-[0] http://www.hoperf.com/upload/rf/RFM69CW-V1.1.pdf
-
---=20
-             Hugo Lefeuvre (hle)    |    www.owl.eu.com
-4096/ 9C4F C8BF A4B0 8FC5 48EB 56B8 1962 765B B9A8 BACA
-
---oLBj+sq0vYjzfsbl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEE5LpPtQuYJzvmooL3LVy48vb3khkFAlssY0cACgkQLVy48vb3
-khm7Vwf+Kq3+2rXk6LJz+9KnDUqd7dlskzi1rAiQ4d07hch8gBPtUEZARQaOLDsF
-B+M6kvxTOAIUnv+wflQnny4V4GEliyiWeBtKsFkVJHU/cCCDBKUuIVVzi+c4zvuR
-YNixHHZpPNU0s2IFflJSNdfaL6XbrbRofGY5qjw4/jS+re0SACHxafjjeXEId0PM
-GGvmpJu4axQ8zv1iglBmLmPalmC4SLZ8V+9HqVC0cq8UtuZXKwBuoVn+i0uzId9P
-43bgeOs5GK6jqi0XD9+SJw0c4zox/F5ovjFVwbrKXYQg74jP18xHtFk1r8KDH0tK
-txEBnoMTDpGBUWPQoU7H8HVsArwPww==
-=bhA0
------END PGP SIGNATURE-----
-
---oLBj+sq0vYjzfsbl--
