@@ -6,67 +6,77 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAE2C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECABC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5BB23FDB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:55:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC5BB23FDB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6542E23FCE
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:55:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6542E23FCE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933576AbeFVJza (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:55:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47501 "EHLO mail.bootlin.com"
+        id S933599AbeFVJz6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 05:55:58 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:41296 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753219AbeFVJzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:55:12 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B7894206FF; Fri, 22 Jun 2018 11:55:10 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8015920A4A;
-        Fri, 22 Jun 2018 11:55:00 +0200 (CEST)
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, f.fainelli@gmail.com,
-        andrew@lunn.ch, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, quentin.schulz@bootlin.com,
-        allan.nielsen@microsemi.com
-Subject: [PATCH net] net: mscc: make sparse happy
-Date:   Fri, 22 Jun 2018 11:50:52 +0200
-Message-Id: <20180622095052.26726-1-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.17.1
+        id S1754654AbeFVJyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 05:54:35 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id t9GtUYqzTMlk; Fri, 22 Jun 2018 11:54:33 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCF3400329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:3400:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B89471EC0236;
+        Fri, 22 Jun 2018 11:54:33 +0200 (CEST)
+From:   Borislav Petkov <bp@alien8.de>
+To:     X86 ML <x86@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 4/7] x86/mce: Remove !banks check
+Date:   Fri, 22 Jun 2018 11:54:25 +0200
+Message-Id: <20180622095428.626-5-bp@alien8.de>
+X-Mailer: git-send-email 2.17.0.582.gccdcbd54c
+In-Reply-To: <20180622095428.626-1-bp@alien8.de>
+References: <20180622095428.626-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a sparse warning about using an incorrect type in
-argument 2 of ocelot_write_rix(), as an u32 was expected but a __be32
-was given. The conversion to u32 is forced, which is safe as the value
-will be written as-is in the hardware without any modification.
+From: Borislav Petkov <bp@suse.de>
 
-Fixes: 08d02364b12f ("net: mscc: fix the injection header")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+If we don't have MCA banks, we won't see machine checks anyway. Drop the
+check.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- drivers/net/ethernet/mscc/ocelot.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/mcheck/mce.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
-index 52c57e0ff617..776a8a9be8e3 100644
---- a/drivers/net/ethernet/mscc/ocelot.c
-+++ b/drivers/net/ethernet/mscc/ocelot.c
-@@ -374,7 +374,8 @@ static int ocelot_port_xmit(struct sk_buff *skb, struct net_device *dev)
- 	ocelot_gen_ifh(ifh, &info);
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index ea1521ec7e5b..05d2d15a95bd 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1185,9 +1185,6 @@ void do_machine_check(struct pt_regs *regs, long error_code)
  
- 	for (i = 0; i < IFH_LEN; i++)
--		ocelot_write_rix(ocelot, cpu_to_be32(ifh[i]), QS_INJ_WR, grp);
-+		ocelot_write_rix(ocelot, (__force u32)cpu_to_be32(ifh[i]),
-+				 QS_INJ_WR, grp);
+ 	this_cpu_inc(mce_exception_count);
  
- 	count = (skb->len + 3) / 4;
- 	last = skb->len % 4;
+-	if (!cfg->banks)
+-		goto out;
+-
+ 	mce_gather_info(&m, regs);
+ 	m.tsc = rdtsc();
+ 
+@@ -1327,7 +1324,7 @@ void do_machine_check(struct pt_regs *regs, long error_code)
+ 	if (worst > 0)
+ 		mce_report_event(regs);
+ 	mce_wrmsrl(MSR_IA32_MCG_STATUS, 0);
+-out:
++
+ 	sync_core();
+ 
+ 	if (worst != MCE_AR_SEVERITY && !kill_it)
 -- 
-2.17.1
+2.17.0.582.gccdcbd54c
 
