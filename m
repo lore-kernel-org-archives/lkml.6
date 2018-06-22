@@ -2,116 +2,140 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AFAC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6B3C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6421223EAB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6421223EAB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A8CD23EAC
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:08:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8CD23EAC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeFVIIW (ORCPT
+        id S1753131AbeFVIIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:08:22 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9116 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751351AbeFVIIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:08:05 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0EB49EB0CB5CA;
-        Fri, 22 Jun 2018 16:07:52 +0800 (CST)
-Received: from SZV1000284525.huawei.com (10.120.216.130) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.382.0; Fri, 22 Jun 2018 16:07:43 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>, Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: disable f2fs_check_rb_tree_consistence
-Date:   Fri, 22 Jun 2018 16:06:59 +0800
-Message-ID: <20180622080659.10469-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Fri, 22 Jun 2018 04:08:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59422 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751198AbeFVIIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 04:08:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 527CB1435;
+        Fri, 22 Jun 2018 01:08:52 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 23EA83F557;
+        Fri, 22 Jun 2018 01:08:52 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 866DE1AE2E48; Fri, 22 Jun 2018 09:09:28 +0100 (BST)
+Date:   Fri, 22 Jun 2018 09:09:28 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
+ release-acquire and by locks
+Message-ID: <20180622080928.GB7601@arm.com>
+References: <Pine.LNX.4.44L0.1806211322160.2381-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1806211322160.2381-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there is millions of discard entries cached in rb tree, each
-sanity check of it can cause very long latency as held cmd_lock
-blocking other lock grabbers.
+Hi Alan,
 
-In other aspect, we have enabled the check very long time, as
-we see, there is no such inconsistent condition caused by bugs.
+On Thu, Jun 21, 2018 at 01:27:12PM -0400, Alan Stern wrote:
+> More than one kernel developer has expressed the opinion that the LKMM
+> should enforce ordering of writes by release-acquire chains and by
+> locking.  In other words, given the following code:
+> 
+> 	WRITE_ONCE(x, 1);
+> 	spin_unlock(&s):
+> 	spin_lock(&s);
+> 	WRITE_ONCE(y, 1);
+> 
+> or the following:
+> 
+> 	smp_store_release(&x, 1);
+> 	r1 = smp_load_acquire(&x);	// r1 = 1
+> 	WRITE_ONCE(y, 1);
+> 
+> the stores to x and y should be propagated in order to all other CPUs,
+> even though those other CPUs might not access the lock s or be part of
+> the release-acquire chain.  In terms of the memory model, this means
+> that rel-rf-acq-po should be part of the cumul-fence relation.
+> 
+> All the architectures supported by the Linux kernel (including RISC-V)
+> do behave this way, albeit for varying reasons.  Therefore this patch
+> changes the model in accordance with the developers' wishes.
 
-But still we do not choose to kill it directly, instead, adding
-an flag to disable the check now, if there is related code change,
-we can reuse it to detect bugs.
+Interesting...
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2: use unlikely suggested by Jaegeuk.
- fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/segment.c | 10 +++++++---
- 2 files changed, 8 insertions(+), 3 deletions(-)
+I think the second example would preclude us using LDAPR for load-acquire,
+so I'm surprised that RISC-V is ok with this. For example, the first test
+below is allowed on arm64.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 99ad25513b4c..5302bad1566b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -309,6 +309,7 @@ struct discard_cmd_control {
- 	atomic_t issing_discard;		/* # of issing discard */
- 	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
- 	struct rb_root root;			/* root of discard rb-tree */
-+	bool rbtree_check;			/* config for consistence check */
- };
- 
- /* for the list of fsync inodes, used only during recovery */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 553075973be4..f7eaefe8b1d1 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1199,8 +1199,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 		mutex_lock(&dcc->cmd_lock);
- 		if (list_empty(pend_list))
- 			goto next;
--		f2fs_bug_on(sbi,
--			!f2fs_check_rb_tree_consistence(sbi, &dcc->root));
-+		if (unlikely(dcc->rbtree_check))
-+			f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
-+								&dcc->root));
- 		blk_start_plug(&plug);
- 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
- 			f2fs_bug_on(sbi, dc->state != D_PREP);
-@@ -1752,6 +1753,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
- 	dcc->undiscard_blks = 0;
- 	dcc->root = RB_ROOT;
-+	dcc->rbtree_check = false;
- 
- 	init_waitqueue_head(&dcc->discard_wait_queue);
- 	SM_I(sbi)->dcc_info = dcc;
-@@ -2381,7 +2383,9 @@ static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
- 	issued = 0;
- 
- 	mutex_lock(&dcc->cmd_lock);
--	f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi, &dcc->root));
-+	if (unlikely(dcc->rbtree_check))
-+		f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
-+								&dcc->root));
- 
- 	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
- 					NULL, start,
--- 
-2.18.0.rc1
+I also think this would break if we used DMB LD to implement load-acquire
+(second test below).
 
+So I'm not a big fan of this change, and I'm surprised this works on all
+architectures. What's the justification?
+
+Will
+
+--->8
+
+AArch64 MP+poslq-poqp+poap
+"PosWRLQ PodRWQP RfePA PodRRAP FrePL"
+Generator=diyone7 (version 7.46+3)
+Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
+Com=Rf Fr
+Orig=PosWRLQ PodRWQP RfePA PodRRAP FrePL
+{
+0:X1=x; 0:X4=y;
+1:X1=y; 1:X3=x;
+}
+ P0            | P1           ;
+ MOV W0,#1     | LDAR W0,[X1] ;
+ STLR W0,[X1]  | LDR W2,[X3]  ;
+ LDAPR W2,[X1] |              ;
+ MOV W3,#1     |              ;
+ STR W3,[X4]   |              ;
+exists
+(1:X0=1 /\ 1:X2=0)
+
+
+AArch64 MP+pos-dmb.ld+poap
+"PosWR DMB.LDdRW RfePA PodRRAP Fre"
+Generator=diyone7 (version 7.46+3)
+Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
+Com=Rf Fr
+Orig=PosWR DMB.LDdRW RfePA PodRRAP Fre
+{
+0:X1=x; 0:X4=y;
+1:X1=y; 1:X3=x;
+}
+ P0          | P1           ;
+ MOV W0,#1   | LDAR W0,[X1] ;
+ STR W0,[X1] | LDR W2,[X3]  ;
+ LDR W2,[X1] |              ;
+ DMB LD      |              ;
+ MOV W3,#1   |              ;
+ STR W3,[X4] |              ;
+exists
+(1:X0=1 /\ 1:X2=0)
