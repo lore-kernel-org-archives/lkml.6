@@ -2,98 +2,123 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B5DC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62603C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC3224568
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:58:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC3224568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 19ECF24553
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:59:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19ECF24553
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934122AbeFVP6o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:58:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57715 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933853AbeFVP6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:58:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6F752AD5C;
-        Fri, 22 Jun 2018 15:58:41 +0000 (UTC)
-Date:   Fri, 22 Jun 2018 17:58:39 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Shakeel Butt <shakeelb@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        stable@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kasan: depend on CONFIG_SLUB_DEBUG
-Message-ID: <20180622155839.GF10465@dhcp22.suse.cz>
-References: <CALvZod7Rf0FZHqYBPd1OTkVuvA5QRrkYQku40QJtS2--g6PrQQ@mail.gmail.com>
- <20180622154623.25388-1-Jason@zx2c4.com>
+        id S934149AbeFVP66 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:58:58 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:46592 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933853AbeFVP64 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:58:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 9C76C60A04A1;
+        Fri, 22 Jun 2018 17:58:54 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id G8T62eDZgH1K; Fri, 22 Jun 2018 17:58:54 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 3E14E609B29C;
+        Fri, 22 Jun 2018 17:58:54 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 1B7r3tT6uhxy; Fri, 22 Jun 2018 17:58:54 +0200 (CEST)
+Received: from blindfold.localnet (unknown [82.150.214.1])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id 148076093352;
+        Fri, 22 Jun 2018 17:58:54 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek =?utf-8?B?VmHFoXV0?= <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH] arm: dts: socfpga: denali needs nand_x_clk too
+Date:   Fri, 22 Jun 2018 17:58:46 +0200
+Message-ID: <3320422.EJ8D6C0VHL@blindfold>
+In-Reply-To: <CAK7LNASgPa4D0Siyo3mvK_AJ2zaECDXGaMEn-iNzQ9PFXFir+w@mail.gmail.com>
+References: <20180619120719.26921-1-richard@nod.at> <CAK7LNASgPa4D0Siyo3mvK_AJ2zaECDXGaMEn-iNzQ9PFXFir+w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622154623.25388-1-Jason@zx2c4.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 22-06-18 17:46:23, Jason A. Donenfeld wrote:
-> KASAN depends on having access to some of the accounting that SLUB_DEBUG
-> does; without it, there are immediate crashes [1]. So, the natural thing
-> to do is to make KASAN select SLUB_DEBUG.
+Masahiro,
+
+Am Freitag, 22. Juni 2018, 16:37:21 CEST schrieb Masahiro Yamada:
+> Hi Richard,
 > 
-> [1] http://lkml.kernel.org/r/CAHmME9rtoPwxUSnktxzKso14iuVCWT7BE_-_8PAC=pGw1iJnQg@mail.gmail.com
 > 
-> Fixes: f9e13c0a5a33 ("slab, slub: skip unnecessary kasan_cache_shutdown()")
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: <stable@vger.kernel.org>
-> Cc: <linux-mm@kvack.org>
-> Cc: <linux-kernel@vger.kernel.org>
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-
-This is the simplest way to do but I strongly suspect that the whole
-SLUB_DEBUG is not really necessary
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  lib/Kconfig.kasan | 1 +
->  1 file changed, 1 insertion(+)
+> 2018-06-19 21:07 GMT+09:00 Richard Weinberger <richard@nod.at>:
+> > The denali NAND flash controller needs at least two clocks to operate,
+> > nand_clk and nand_x_clk.
+> > Since 1bb88666775e ("mtd: nand: denali: handle timing parameters by
+> > setup_data_interface()") nand_x_clk is used to derive timing settings.
+> >
+> > Signed-off-by: Richard Weinberger <richard@nod.at>
+> > ---
+> > Strictly speaking denali needs a ecc_clk too, but AFAIK such a clock
+> > is not present on this SoC.
+> > But my SoCFPGA knowledge is very limited.
+> >
+> > Thanks,
+> > //richard
+> > ---
+> >  arch/arm/boot/dts/socfpga.dtsi | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+> > index 486d4e7433ed..562f7b375bbd 100644
+> > --- a/arch/arm/boot/dts/socfpga.dtsi
+> > +++ b/arch/arm/boot/dts/socfpga.dtsi
+> > @@ -754,7 +754,8 @@
+> >                         reg-names = "nand_data", "denali_reg";
+> >                         interrupts = <0x0 0x90 0x4>;
+> >                         dma-mask = <0xffffffff>;
+> > -                       clocks = <&nand_clk>;
+> > +                       clocks = <&nand_clk>, <&nand_x_clk>;
+> > +                       clock-names = "nand", "nand_x";
 > 
-> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-> index 3d35d062970d..c253c1b46c6b 100644
-> --- a/lib/Kconfig.kasan
-> +++ b/lib/Kconfig.kasan
-> @@ -6,6 +6,7 @@ if HAVE_ARCH_KASAN
->  config KASAN
->  	bool "KASan: runtime memory debugger"
->  	depends on SLUB || (SLAB && !DEBUG_SLAB)
-> +	select SLUB_DEBUG if SLUB
->  	select CONSTRUCTORS
->  	select STACKDEPOT
->  	help
-> -- 
-> 2.17.1
+> 
+> IMHO, this should be
+> 
+>                           clocks = <&nand_clk>, <&nand_x_clk>, <&nand_x_clk>;
+>                           clock-names = "nand", "nand_x", "ecc";
+> 
+> 
+> 
+> A clock consumer (Denali in this case) should generally
+> take the same number of clocks across SoCs.
+> 
+> It is just some SoCs tie clocks together.
+> 
+> It is the case for my UniPhier platform;
+> "nand_x" and "ecc" are tied up because they are both 200MHz.
+> 
+> 
+> SOCFPGA supports HW ECC correction, thus it surely needs ecc clock.
 
--- 
-Michal Hocko
-SUSE Labs
+Good point!
+
+Thanks,
+//richard
