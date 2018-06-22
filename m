@@ -2,124 +2,126 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AA0C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99614C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0465247F8
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:41:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0465247F8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5986D247FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:43:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5986D247FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934371AbeFVTl5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:41:57 -0400
-Received: from mga14.intel.com ([192.55.52.115]:60673 "EHLO mga14.intel.com"
+        id S934467AbeFVTn1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:43:27 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:46818 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934096AbeFVTl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:41:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 12:41:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,258,1526367600"; 
-   d="scan'208";a="49173058"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
-  by fmsmga007.fm.intel.com with ESMTP; 22 Jun 2018 12:41:39 -0700
-Subject: Re: [PATCH V2 5/7] mmc: sdhci: add CMD23 support for v4 mode
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
-References: <1529028255-6022-1-git-send-email-zhang.chunyan@linaro.org>
- <1529028255-6022-6-git-send-email-zhang.chunyan@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <2c91af23-da14-ed70-91b3-d7bfb06f3141@intel.com>
-Date:   Fri, 22 Jun 2018 22:40:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934111AbeFVTnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 15:43:24 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fWRxo-0002B0-RV; Fri, 22 Jun 2018 13:43:23 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fWRxl-0002jh-9X; Fri, 22 Jun 2018 13:43:17 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Fri, 22 Jun 2018 13:43:12 -0600
+Message-Id: <20180622194315.10475-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <1529028255-6022-6-git-send-email-zhang.chunyan@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, willy@infradead.org, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v4 0/3] Add parameter for disabling ACS redirection for P2P
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 05:04 AM, Chunyan Zhang wrote:
-> Host Driver Version 4.10 adds a new bit in Host Control 2 Register
-> for selecting Auto CMD23 or Auto CMD12 for ADMA3 data transfer.
+Hi,
 
-We don't support ADMA3.  It would require changes to the block driver.
-So is this change needed?
+As discussed in our PCI P2PDMA series, we'd like to add a kernel
+parameter for selectively disabling ACS redirection for select
+bridges. Seeing this turned out to be a small series in itself, we've
+decided to send this separately from the P2P work.
 
-> 
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> ---
->  drivers/mmc/host/sdhci.c | 16 +++++++++++++++-
->  drivers/mmc/host/sdhci.h |  1 +
->  2 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index b8ee124..3b2af7e 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -954,6 +954,20 @@ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
->  	       !mrq->cap_cmd_during_tfr;
->  }
->  
-> +static inline void sdhci_set_auto_cmd23(struct sdhci_host *host,
-> +					struct mmc_command *cmd)
-> +{
-> +	u16 ctrl2;
-> +
-> +	if (host->v4_mode) {
+This series generalizes the code already done for the resource_alignment
+option that already exists. The first patch creates a helper function
+to match PCI devices against strings based on the code that already
+existed in pci_specified_resource_alignment().
 
-Isn't this only for a V4.1 controller, and doesn't the mode have to be "Auto
-Cmd Auto Select"?
+The second patch expands the new helper to optionally take a path of
+PCI devfns. This is to address Alex's renumbering concern when using
+simple bus-devfns. The implementation is essentially how he described it and
+similar to the Intel VT-d spec (Section 8.3.1).
 
+The final patch adds the disable_acs_redir kernel parameter which takes
+a list of PCI devices and will disable the ACS P2P Request Redirect,
+ACS P2P Completion Redirect and ACS P2P Egress Control bits for the
+selected devices. This allows P2P traffic between selected bridges and
+seeing it's done at boot, before IOMMU group creating the IOMMU groups
+will be created correctly based on the bits.
 
-> +		ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +		ctrl2 |= SDHCI_CMD23_ENABLE;
-> +		sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
-> +	} else {
-> +		sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
-> +	}
-> +}
-> +
->  static void sdhci_set_transfer_mode(struct sdhci_host *host,
->  	struct mmc_command *cmd)
->  {
-> @@ -989,7 +1003,7 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
->  			mode |= SDHCI_TRNS_AUTO_CMD12;
->  		else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
->  			mode |= SDHCI_TRNS_AUTO_CMD23;
-> -			sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
-> +			sdhci_set_auto_cmd23(host, cmd);
->  		}
->  	}
->  
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 1e84539..d5e1c10 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -185,6 +185,7 @@
->  #define   SDHCI_CTRL_DRV_TYPE_D		0x0030
->  #define  SDHCI_CTRL_EXEC_TUNING		0x0040
->  #define  SDHCI_CTRL_TUNED_CLK		0x0080
-> +#define  SDHCI_CMD23_ENABLE		0x0800
->  #define  SDHCI_CTRL_V4_MODE		0x1000
->  #define  SDHCI_CTRL_64BIT_ADDR		0x2000
->  #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
-> 
+Thanks,
 
+Logan
+
+--
+
+Changes since v3:
+* Removed some of the cruft that was copied from the resource_alignment
+  paramater (per Alex)
+* A number of docuemntation fixes as noticed by Alex and Willy
+
+Changes since v2:
+* Rebased onto v4.18-rc1 (no conflicts)
+* Minor tweaks to the documentation per Andy
+* Removed the "path:" prefix and use the path parsing code
+  for simple devices (as it works the same). Per a suggestion from Alex
+
+Changes since v1:
+
+* Reworked pci_dev_str_match_path using strrchr as suggested by Alex
+* Collected Christian's Acks
+
+--
+
+Logan Gunthorpe (3):
+  PCI: Make specifying PCI devices in kernel parameters reusable
+  PCI: Allow specifying devices using a base bus and path of devfns
+  PCI: Introduce the disable_acs_redir parameter
+
+ Documentation/admin-guide/kernel-parameters.txt |  41 +++-
+ drivers/pci/pci.c                               | 305 +++++++++++++++++++-----
+ 2 files changed, 285 insertions(+), 61 deletions(-)
+
+--
+2.11.0
