@@ -2,214 +2,194 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7890C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18FAC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6200E24720
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DDB7246E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:21:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="vCiNYMgS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6200E24720
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="pMEvdvVN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DDB7246E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934054AbeFVSTU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 14:19:20 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44203 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933691AbeFVSTT (ORCPT
+        id S934057AbeFVSVP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:21:15 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39976 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933646AbeFVSVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 14:19:19 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z9-v6so3855418plk.11
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 11:19:18 -0700 (PDT)
+        Fri, 22 Jun 2018 14:21:14 -0400
+Received: by mail-pf0-f194.google.com with SMTP id z24-v6so3583888pfe.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 11:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=N6w/C3eeYoLAa2v/BhFfHURLHlMISlkJH+8ytQR2BXY=;
-        b=vCiNYMgSLjLA2jkDHIS1pPVxdcIDpsKpV5eg3DnaFBTqbWG8sXxm9EJjl3EsVYkRkt
-         DSTpGyjnZ3M9gYb2IHj48d8ocd6rKj1ENHCZK2fcJ3/2fjq8oLhABCA8wTEeFY4bf1cd
-         IrKDoCv8lz9zLmZ6N7XgtPpJiWvDnfpYJGTDQ=
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Z5U7xO27ugme0b2zNqmiAUgMkQRPxwGUVTB+32vXUO0=;
+        b=pMEvdvVNVSF3G3R3jP7wracOjMQGvwqJx3k6Xfnhs0AxDAL1mALub2pSSSAZKl6iHJ
+         DIcjJ+dT2TvV/2pn9CAtntXvEXP9vtPlGHj7thQfHl1FaZNhV+dd9K2ky40QLdxryUhk
+         yEZgi9gKQTWYCiwayUdan3VokOKRdJW+s4M9/ueoaXHci1TJhFYx9GWCdJxikiTdD4wW
+         gaWW25fCKcbX03hwrU6lGvYDlyuTDcv54VisuJw1MgV+b0viZzgCH+TZulOxP4AI7xcq
+         TsSwpAB17Un4WkicKmY6VsCMS9K+EVkm553oLqN+CYc9cw+PcTGIEpEx2qgYfoWlCdXp
+         jsVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N6w/C3eeYoLAa2v/BhFfHURLHlMISlkJH+8ytQR2BXY=;
-        b=ga2oNbeoTbf61syVhXkmnw/f5HPapLUkYl3oKSEeNrdrJ0Upn5NnQnx/vjTn362OsF
-         6RJAVl4NJfJRUjVFqLgxsKKdaY8qm8TelHORZomdykrFtSR8o/CX0v/zAl01NQuw6XpT
-         Gc5d9Xn0eINkhzsTxyl127/A8tfS1qd2BaUlqkcsALt77iYbPian2gnLlK7dkHZcxUnF
-         xulhUyuSu8o2+5qYKMEoHYjUT79pb8UAmTAwUpe8H8w/70/a4UBZYu6z3m8DF3wqSKM+
-         l404/0TroEfFko3tlBHOPAft6jmy9UXifKNz1dChe+qQn+gm/UAov4zqdITHn3OD4/ce
-         sz7Q==
-X-Gm-Message-State: APt69E2G3YydEEkaBoR2JXyijZ7S/ykmG6fS2oUToY9BzmIrxPFsNezL
-        z/F5Kx0iaIeiefqxRIWFLh9peQ==
-X-Google-Smtp-Source: ADUXVKJWV7Miwk/7tvPQN1Viz41S7EWQjVsu9TCBuemMaQ4VWsfvAZl1sojHSMFUGgePgXHn5bpkrQ==
-X-Received: by 2002:a17:902:7d89:: with SMTP id a9-v6mr2754107plm.238.1529691558494;
-        Fri, 22 Jun 2018 11:19:18 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id y14-v6sm9781941pgv.37.2018.06.22.11.19.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 11:19:17 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 11:19:16 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Byungchul Park <max.byungchul.park@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        jiangshanlai@gmail.com, josh@joshtriplett.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com, luto@kernel.org
-Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
- rcu_dynticks
-Message-ID: <20180622181916.GA13628@joelaf.mtv.corp.google.com>
-References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
- <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
- <20180620145814.GQ3593@linux.vnet.ibm.com>
- <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
- <20180620164902.GW3593@linux.vnet.ibm.com>
- <20180622055659.GA255098@joelaf.mtv.corp.google.com>
- <20180622132843.GN3593@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622132843.GN3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Z5U7xO27ugme0b2zNqmiAUgMkQRPxwGUVTB+32vXUO0=;
+        b=I4Syp6WWwaKVtxmm663WbP12t9/C21fUG9PiJJrTf16cakyfkffZh6cczgqAhNNrhJ
+         o3cFyUBVrE+izs6EsIaEEhTp3Qkwnki4Nt7nBNm5oFHGrVzLVRo3P5+CCRJ7rL+0GHZ3
+         ySyVS5UZxdZrcqYvsHeqXSCHF5lhFMdwfhJo/LnOvG5B/feVzeUaSGyY7eBvSCkDuEtP
+         AsPFNP1BlJjabI7pRYv/XFlwm9SMJz4ETslIwdsbrsREIHmi1SlgDbp1JU2iun/iPYwz
+         tdZ+PZnVuheQvkIvePxH9OwCOO1vFUVS8kz0oPemdU9PZ/OExdCOwHoIYqbNFkILiLlL
+         MF4A==
+X-Gm-Message-State: APt69E1/et6uPAAnSz9crV9euPIQSLv8+q58tLlAJemOlyRhoVjp2Bz+
+        jJQUWk72xKRqtfrFMiN+oVr8oCQ9ATA=
+X-Google-Smtp-Source: ADUXVKIU3XY4yRRbi9JX9Pty+WcQxXo4bfrgF1d3gMF+t8AhrFNM3VLiEiEHGA143iNfUQJzndD8xg==
+X-Received: by 2002:a62:c61d:: with SMTP id m29-v6mr2902605pfg.26.1529691673113;
+        Fri, 22 Jun 2018 11:21:13 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b065:2cd9:e530:8535:a508:f820? ([2600:1010:b065:2cd9:e530:8535:a508:f820])
+        by smtp.gmail.com with ESMTPSA id d6-v6sm10955156pgc.38.2018.06.22.11.21.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 11:21:12 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v4 4/4] seccomp: add support for passing fds via USER_NOTIF
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <CAG48ez0HW-nScxn4G5p8UHtYy=T435ZkF3Tb1ARTyyijt_cNEg@mail.gmail.com>
+Date:   Fri, 22 Jun 2018 11:21:08 -0700
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        suda.akihiro@lab.ntt.co.jp, "Tobin C. Harding" <me@tobin.cc>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8C2AA818-2F53-4F40-842F-288B4C709414@amacapital.net>
+References: <20180621220416.5412-1-tycho@tycho.ws> <20180621220416.5412-5-tycho@tycho.ws> <CAG48ez0HW-nScxn4G5p8UHtYy=T435ZkF3Tb1ARTyyijt_cNEg@mail.gmail.com>
+To:     Jann Horn <jannh@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 06:28:43AM -0700, Paul E. McKenney wrote:
-> On Thu, Jun 21, 2018 at 10:56:59PM -0700, Joel Fernandes wrote:
-> > Hi Paul,
-> > 
-> > On Wed, Jun 20, 2018 at 09:49:02AM -0700, Paul E. McKenney wrote:
-> > > On Thu, Jun 21, 2018 at 01:05:22AM +0900, Byungchul Park wrote:
-> > > > On Wed, Jun 20, 2018 at 11:58 PM, Paul E. McKenney
-> > > > <paulmck@linux.vnet.ibm.com> wrote:
-> > > > > On Wed, Jun 20, 2018 at 05:47:20PM +0900, Byungchul Park wrote:
-> > > > >> Hello folks,
-> > > > >>
-> > > > >> I'm careful in saying that ->dynticks_nmi_nesting can be removed but I
-> > > > >> think it's possible since the only thing we are interested in with
-> > > > >> regard to ->dynticks_nesting or ->dynticks_nmi_nesting is whether rcu is
-> > > > >> idle or not.
-> > > > >
-> > > > > Please keep in mind that NMIs cannot be masked, which means that the
-> > > > > rcu_nmi_enter() and rcu_nmi_exit() pair can be invoked at any point in
-> > > > > the process, between any consecutive pair of instructions.  The saving
-> > > 
-> > > And yes, I should have looked at this patch more closely before replying.
-> > > But please see below.
-> > > 
-> > > > I believe I understand what NMI is and why you introduced
-> > > > ->dynticks_nmi_nesting. Or am I missing something?
-> > > 
-> > > Perhaps the fact that there are architectures that can enter interrupt
-> > > handlers and never leave them when the CPU is non-idle.  One example of
-> > > this is the usermode upcalls in the comment that you removed.
-> > 
-> > I spent some time tonight and last night trying to understand this concept of
-> > never leaving an interrupt, I hope you don't mind me asking this dumb
-> > question... perhaps I will learn something : Could you let me know how is it
-> > possible that an interrupt never exits?
-> > 
-> > Typically an interrupt never exiting sounds like a hard-lockup. This is how
-> > hardlock detector works: Since regular interrupts in linux can't nest, the
-> > hardlockup detector checks if hrtimer interrupts are being handled and if
-> > not, then it throws a splat, panics the kernel etc. So I am a bit troubled by
-> > this interrupt never exiting concept..
-> > 
-> > Further since an interrupt is an atomic context, it cannot sleep or schedule
-> > into usermode so how are these upcalls handled from the interrupt?
-> 
-> It has been some years since I traced the code flow, but what happened
 
-No problem, thanks for the discussion. :)
 
-> back then is that it switches itself from an interrupt handler to not
-> without actually returning from the interrupt.  This can only happen when
-> interrupting a non-idle process, thankfully, and RCU's dyntick-idle code
-> relies on this restriction.  If I remember correctly, the code ends up
-> executing in the context of the interrupted process, but it has been some
-> years, so please apply appropriate skepticism.
+> On Jun 22, 2018, at 9:23 AM, Jann Horn <jannh@google.com> wrote:
+>=20
+>> On Fri, Jun 22, 2018 at 12:05 AM Tycho Andersen <tycho@tycho.ws> wrote:
+>>=20
+>> The idea here is that the userspace handler should be able to pass an fd
+>> back to the trapped task, for example so it can be returned from socket()=
+.
+>>=20
+>> I've proposed one API here, but I'm open to other options. In particular,=
 
-Sure. So in a later thread you mentioned "usermode helpers". I took a closer
-look at that subsystem, and it seems you can execute usermode helpers from
-atomic sections with help of UMH_NO_WAIT flag.
+>> this only lets you return an fd from a syscall, which may not be enough i=
+n
+>> all cases. For example, if an fd is written to an output parameter instea=
+d
+>> of returned, the current API can't handle this. Another case is that
+>> netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
+>> ever decides to install an fd and output it, we wouldn't be able to handl=
+e
+>> this either.
+>>=20
+>> Still, the vast majority of interesting cases are covered by this API, so=
 
-Then I checked where this flag is used and it turns out its from the
-mce_work_trigger function in x86/kernel/cpu/mcheck/dev-mcelog.c which can be
-called infact from an interrupt context (mce_notify_irq).
+>> perhaps it is Enough.
+>>=20
+>> I've left it as a separate commit for two reasons:
+>>  * It illustrates the way in which we would grow struct seccomp_notif and=
 
-Is this the usecase you remember causing this weird transitions to userspace?
+>>    struct seccomp_notif_resp without using netlink
+>>  * It shows just how little code is needed to accomplish this :)
+>>=20
+> [...]
+>> @@ -1669,10 +1706,20 @@ static ssize_t seccomp_notify_write(struct file *=
+file, const char __user *buf,
+>>                goto out;
+>>        }
+>>=20
+>> +       if (resp.return_fd) {
+>> +               knotif->flags =3D resp.fd_flags;
+>> +               knotif->file =3D fget(resp.fd);
+>> +               if (!knotif->file) {
+>> +                       ret =3D -EBADF;
+>> +                       goto out;
+>> +               }
+>> +       }
+>> +
+>=20
+> I think this is a security bug. Imagine the following scenario:
+>=20
+> - attacker creates processes A and B
+> - process A installs a seccomp filter and sends the notification fd
+> to process B
+> - process A starts a syscall for which the filter returns
+> SECCOMP_RET_USER_NOTIF
+> - process B reads the notification from the notification fd
+> - process B uses dup2() to copy the notification fd to file
+> descriptor 1 (stdout)
+> - process B executes a setuid root binary
+> - the setuid root binary opens some privileged file descriptor
+> (something like open("/etc/shadow", O_RDWR))
+> - the setuid root binary tries to write some attacker-controlled data to s=
+tdout
+> - seccomp_notify_write() interprets the start of the written data as
+> a struct seccomp_notif_resp
+> - seccomp_notify_write() grabs the privileged file descriptor and
+> installs a copy in process A
+> - process A now has access to the privileged file (e.g. /etc/shadow)
+>=20
+> It isn't clear whether it would actually be exploitable - you'd need a
+> setuid binary that performs the right actions - but it's still bad.
 
-> Please take a look at the "Interrupts and NMIs" section of the file
-> Documentation/RCU/Design/Requirements/Requirements.html for a bit
-> more information.
+Jann is right. ->read and ->write must not reference any of the calling task=
+=E2=80=99s state except the literal memory passed in.
 
-Sure, thanks for the pointer.
-
-> > Lastly, can you point me to an example how the rcu_nmi_enter/exit() pair can go
-> > out sync? That is they aren't paired and nested properly? In my mind they
-> > always should be but I may be missing the usecase. I'm happy to try and
-> > reproduce and trace this if you can let me know how to so that I can study
-> > it better. 
-> 
-> I have never seen NMIs be unpaired or improperly nested.  However,
-> given that rcu_irq_enter() invokes rcu_nmi_enter() and rcu_irq_exit()
-> invokes rcu_nmi_exit(), it is definitely the case that rcu_nmi_enter()
-> and rcu_nmi_exit() need to deal with unpaired and improperly nested
-> invocations.
-
-Just wondering how would the fact that rcu_irq_enter calls into rcu_nmi_enter
-cause an improper nesting?
-
-Just to define what "improper nesting" means, if we can go through an
-example. Do you mean a scenario like?
-
-rcu_nmi_enter (called because of NMI)
-rcu_nmi_enter (called because of IRQ)
-rcu_nmi_exit (called because of NMI)
-rcu_nmi_exit (called because of IRQ)
-
-Such scenario seems impossible to me because the IRQ can't be entered after
-the NMI entered.
-
-On the other hand, if you meant that when IRQ is being handled, an NMI fires
-just before the rcu_irq_enter calls rcu_nmi_enter, then the worst that could
-happen seems to be that the rcu_nmi_enter/exit pairs will not be nested
-within the outer rcu_nmi_enter/exit pair even though the NMI interrupted the
-IRQ. So it'll be something like:
-
-rcu_nmi_enter (called because of NMI)
-rcu_nmi_exit (called because of NMI)
-rcu_nmi_enter (called because of IRQ)
-rcu_nmi_exit (called because of IRQ)
-
-Even though what really happened in the real world is:
-
-IRQ entered
-NMI entered
-NMI exited
-IRQ exited
-
-This also seems reasonable to me, but is this what you meant by improper
-nesting of the rcu_nmi_enter/exit? If yes, what makes it unreasonable?
-
-> So why this function-call structure?  Well, you see, NMI handlers can
-> take what appear to RCU to be normal interrupts...
-> 
-> (And I just added that fun fact to Requirements.html.)
-
-Yes, I'll definitely go through all the interrupt requirements in the doc and
-thanks for referring me to it.
-
-thanks,
-
- - Joel
-
+>=20
+> Unless I'm missing something, can you please turn the ->read and
+> ->write handlers into an ->unlocked_ioctl handler? Something like
+> this:
+>=20
+> struct seccomp_user_notif_args {
+>        u64 buf;
+>        u64 size;
+> };
+>=20
+> static long unlocked_ioctl(struct file *file, unsigned int cmd,
+> unsigned long arg)
+> {
+>        struct seccomp_user_notif_args args;
+>        struct seccomp_user_notif_args __user *uargs;
+>=20
+>        if (cmd !=3D SECCOMP_USER_NOTIF_READ && cmd !=3D SECCOMP_USER_NOTIF_=
+WRITE)
+>                return -EINVAL;
+>=20
+>        if (copy_from_user(&args, uargs, sizeof(args)))
+>                return -EFAULT;
+>=20
+>        switch (cmd) {
+>        case SECCOMP_USER_NOTIF_READ:
+>                return seccomp_notify_read(file, (char __user
+> *)args.buf, (size_t)args.size);
+>        case SECCOMP_USER_NOTIF_WRITE:
+>                return seccomp_notify_write(file, (char __user
+> *)args.buf, (size_t)args.size);
+>        default:
+>                return -EINVAL;
+>        }
+> }
