@@ -6,159 +6,207 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 753D2C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC987C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31572246E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:46:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31572246E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id A1415246E5
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:50:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1415246E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933991AbeFVRqT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:46:19 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:41839 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933838AbeFVRqO (ORCPT
+        id S933836AbeFVRuV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 13:50:21 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52948 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932973AbeFVRuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:46:14 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fWQ8P-00011X-U7; Fri, 22 Jun 2018 11:46:09 -0600
-Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fWQ8O-0006yw-RO; Fri, 22 Jun 2018 11:46:09 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Paul Eggert <eggert@cs.ucla.edu>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-alpha@vger.kernel.org,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-References: <20180420120605.1612248-1-arnd@arndb.de>
-        <20180420120605.1612248-2-arnd@arndb.de>
-        <20180621154915.GA31947@gmail.com>
-        <CAK8P3a1QYTfRNQt2+a29BpvgYM_pnSFrO=NBvVo=BdUa2q9ngQ@mail.gmail.com>
-        <20180621161121.GB7222@gmail.com>
-        <CAK8P3a1mx16S+DhEMQA6WBJ7efdhN5YaKKVHU6n+E6kfifM-Qg@mail.gmail.com>
-        <20180622021636.GA11266@gmail.com>
-Date:   Fri, 22 Jun 2018 12:45:50 -0500
-In-Reply-To: <20180622021636.GA11266@gmail.com> (Ingo Molnar's message of
-        "Fri, 22 Jun 2018 04:16:36 +0200")
-Message-ID: <87a7rm3eb5.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 22 Jun 2018 13:50:20 -0400
+Received: by mail-wm0-f65.google.com with SMTP id p126-v6so3020567wmb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 10:50:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=TShafgsBWfn6iGnSCjcwREbbKOPNxuc+JSLFAdF2zMU=;
+        b=t2ed7GyaTsm1+E3VGqzPLbtimC4lvmiCel8W5HU7RnJ7yp9tEGK3h9aM5tPVoYaCSQ
+         2WtTiVO4I6ldQpydNmupI0yxr8RVv+xSAtf/qgCZ0wFS589EC/2LAL7MDYXMgZIN1eSL
+         vBqZLKIMvZXRuL3Jj6pKpYwjIXROhCJZPV4/i4UUbcejb6EBOmKVFpEGHNhLH4PbLmnx
+         E2wIFIovvKPqbxBjONSUhfJ3YgTc+Lliethr5OST5xfZFVZHQsmrnXzuTCyQTSkXBOV+
+         OLBAfhyHLq7UvaTLnsgLC0zJKWHvkgFX48AkkfNuYvf9MUmWFb2OA5I6VjAiXcFkmjrw
+         fDHg==
+X-Gm-Message-State: APt69E22Yt3finLMnNYrBdTIs4H8KJxU/lIzTt1ZJhCjjgM0Bo/oa9zg
+        dounj7cYc5My+fbbMBRVnYZ5TfnVAjHgIv1aqQ4aswUjpaM=
+X-Google-Smtp-Source: ADUXVKJwpchP6KyD33lRgxSLaxymI4KAp16jNa/SCY2QYEN7bVgqsPkKqSRXFanVBezQHnPYJO2RIIySmmCoijcZDlk=
+X-Received: by 2002:a1c:8d15:: with SMTP id p21-v6mr2242900wmd.145.1529689819109;
+ Fri, 22 Jun 2018 10:50:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fWQ8O-0006yw-RO;;;mid=<87a7rm3eb5.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18NyDJtD3hlt8ugYxsIDxghFxemtJzVMNA=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2 2/2] rusage: allow 64-bit times ru_utime/ru_stime
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Received: by 2002:a1c:1714:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 10:50:18
+ -0700 (PDT)
+In-Reply-To: <20180524172436.GA17738@beast>
+References: <20180524172436.GA17738@beast>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Fri, 22 Jun 2018 19:50:18 +0200
+Message-ID: <CACO55ttzvFZqUjXNut5n0ENR9e2+N2WfWnKnjfaWgNesspQ9UA@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH] drm/nouveau/secboot/acr: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Alexandre Courbot <acourbot@nvidia.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo Molnar <mingo@kernel.org> writes:
-
-> * Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu, May 24, 2018 at 7:24 PM, Kees Cook <keescook@chromium.org> wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> allocates the working buffers before starting the writing so it won't
+> abort in the middle. This needs an initial walk of the lists to figure
+> out how large the buffer should be.
 >
->> However, the other question that has to be asked then is whether
->> there is anything wrong with wait4()/waitid() and getrusuage() that
->> we want to change beyond the time value passing. We have
->> answered a similar question with 'yes' for stat(), which has led
->> to the introduction of statx(),
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 >
-> So we are thinking about adding wait5() in essence, right?
-
-> One thing we might want to look into whether the wait4() and waitid() ABIs could 
-> be 'merged', by making wait4() essentially a natural special case of
-> waitid().
-
-Essentially waitid(2) not waitid(3) has already seen this merger.
-In that there is nothing to wait for that you can not already
-expression with waitid.  status vs siginfo is a little different
-but the information is encoded in both.
-
-And waitid(2) optionally returns a struct rusage.
-
-> This would mean that the only new system call we'd have to add is waitid2() in 
-> essence, which would solve both the rusage layout problem and would offer a 
-> unified ABI.
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  .../nouveau/nvkm/subdev/secboot/acr_r352.c    | 25 ++++++++++++++++---
+>  .../nouveau/nvkm/subdev/secboot/acr_r367.c    | 16 +++++++++++-
+>  2 files changed, 37 insertions(+), 4 deletions(-)
 >
-> If that makes sense (it might not!!), then I'd also modernize waitid2() by making 
-> it attribute structure based, have a length field and make the ABI extensible from 
-> now on going forward without having to introduce a new syscall variant every time 
-> we come up with something new...
-
-The only part where something is not parameterized in waitid is with the
-return of rusage.
-
-What to wait for takes an explicit type parameter.
-What is being returned in siginfo returns an si_code to describe how
-to decode it.
-
-If it weren't for the zombie being gone after waitid returns I don't
-think it would make any sense to combine getrusage and waitid together
-at all.
-
-> I.e. how the perf syscall does ABI extensions: we've had dozens of ABI extensions, 
-> some of them pretty complex, and not a single time did we have to modify glibc and 
-> tooling was able to adapt quickly yet in a both backwards and forwards compatible 
-> fashion.
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+> index a721354249ce..d02e183717dc 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+> @@ -414,6 +414,20 @@ acr_r352_ls_write_wpr(struct acr_r352 *acr, struct list_head *imgs,
+>  {
+>         struct ls_ucode_img *_img;
+>         u32 pos = 0;
+> +       u32 max_desc_size = 0;
+> +       u8 *gdesc;
+> +
+> +       /* Figure out how large we need gdesc to be. */
+> +       list_for_each_entry(_img, imgs, node) {
+> +               const struct acr_r352_ls_func *ls_func =
+> +                                           acr->func->ls_func[_img->falcon_id];
+> +
+> +               max_desc_size = max(max_desc_size, ls_func->bl_desc_size);
+> +       }
+> +
+> +       gdesc = kmalloc(max_desc_size, GFP_KERNEL);
+> +       if (!gdesc)
+> +               return -ENOMEM;
 >
-> Another, simpler example is the new sys_sched_setattr() syscall, that too is using 
-> the perf_copy_attr() ABI method, via sched_copy_attr(). (With a minor 
-> compatibility quirk of SCHED_ATTR_SIZE_VER0 that a new wait ABI wouldn't have to 
-> do - i.e. it could be made even simpler.)
+>         nvkm_kmap(wpr_blob);
 >
-> This way we only have:
+> @@ -421,7 +435,6 @@ acr_r352_ls_write_wpr(struct acr_r352 *acr, struct list_head *imgs,
+>                 struct ls_ucode_img_r352 *img = ls_ucode_img_r352(_img);
+>                 const struct acr_r352_ls_func *ls_func =
+>                                             acr->func->ls_func[_img->falcon_id];
+> -               u8 gdesc[ls_func->bl_desc_size];
 >
-> SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr, unsigned int, flags)
+
+if there are no guarantees that (ls_func->bl_desc_size & 0x4 == 0),
+then we need to memset a bit more, because 4 bytes at the time are
+actually copied inside nvkm_gpuobj_memcpy_to later in that code, but
+the last 4 bytes are only partly memset to 0.
+
+If ls_func->bl_desc_size is always a multiple of 0x4, then it isn't as
+important, but still better to be fixed. Or maybe
+nvkm_gpuobj_memcpy_to should do that handling and check if the size is
+a multiple of 0x4 and otherwise handle that case?
+
+Same is valid for the changes in the r367 file.
+
+>                 nvkm_gpuobj_memcpy_to(wpr_blob, pos, &img->wpr_header,
+>                                       sizeof(img->wpr_header));
+> @@ -447,6 +460,8 @@ acr_r352_ls_write_wpr(struct acr_r352 *acr, struct list_head *imgs,
 >
-> But even 'pid' and 'flags' could have been part of the attribute, i.e. one we pick 
-> up an attribute structure from user-space we can have really low argument count 
-> system calls. This also concentrates all the compat concerns into handling the 
-> attribute structure properly - no weird per-arch artifacts and quirks with 4-5-6 
-> system call arguments.
-
-The trouble with attributes is that means you can't filter your system
-call arguments with seccomp.  Which most of the time is a pretty big
-downside.
-
-
-From what I have seen the only truly interesting case for extending
-waitid is something file descriptor based so the parent/child
-relationship is not necessary to wait for a process to terminate.
-
-As for getrusage.  If a sane union of the rusage limits and cgroups or
-something like cgroups could be devised.  That would be ideal.  Of
-course except for the memory cgroups the similarity to the resource
-usage measurments and limits really isn't there.  So I don't know if
-merging them would be a real possibility.
-
-So I suspect the simplest thing to do would be to set a flag in the
-idtype member of waitid that says give me rusage64 and then we would
-be done.  Alternately we could use the low bits of the resource usage
-pointer.  Assuming we don't want to introduce another syscall that is.
-I really don't see much incremental extensibility potential in the wait
-or rusage interface right now.
-
-Eric
+>         nvkm_done(wpr_blob);
+>
+> +       kfree(gdesc);
+> +
+>         return 0;
+>  }
+>
+> @@ -771,7 +786,11 @@ acr_r352_load(struct nvkm_acr *_acr, struct nvkm_falcon *falcon,
+>         struct fw_bl_desc *hsbl_desc;
+>         void *bl, *blob_data, *hsbl_code, *hsbl_data;
+>         u32 code_size;
+> -       u8 bl_desc[bl_desc_size];
+> +       u8 *bl_desc;
+> +
+> +       bl_desc = kzalloc(bl_desc_size, GFP_KERNEL);
+> +       if (!bl_desc)
+> +               return -ENOMEM;
+>
+>         /* Find the bootloader descriptor for our blob and copy it */
+>         if (blob == acr->load_blob) {
+> @@ -802,7 +821,6 @@ acr_r352_load(struct nvkm_acr *_acr, struct nvkm_falcon *falcon,
+>                               code_size, hsbl_desc->start_tag, 0, false);
+>
+>         /* Generate the BL header */
+> -       memset(bl_desc, 0, bl_desc_size);
+>         acr->func->generate_hs_bl_desc(load_hdr, bl_desc, offset);
+>
+>         /*
+> @@ -811,6 +829,7 @@ acr_r352_load(struct nvkm_acr *_acr, struct nvkm_falcon *falcon,
+>         nvkm_falcon_load_dmem(falcon, bl_desc, hsbl_desc->dmem_load_off,
+>                               bl_desc_size, 0);
+>
+> +       kfree(bl_desc);
+>         return hsbl_desc->start_tag << 8;
+>  }
+>
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r367.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r367.c
+> index 866877b88797..978ad0790367 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r367.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r367.c
+> @@ -265,6 +265,19 @@ acr_r367_ls_write_wpr(struct acr_r352 *acr, struct list_head *imgs,
+>  {
+>         struct ls_ucode_img *_img;
+>         u32 pos = 0;
+> +       u32 max_desc_size = 0;
+> +       u8 *gdesc;
+> +
+> +       list_for_each_entry(_img, imgs, node) {
+> +               const struct acr_r352_ls_func *ls_func =
+> +                                           acr->func->ls_func[_img->falcon_id];
+> +
+> +               max_desc_size = max(max_desc_size, ls_func->bl_desc_size);
+> +       }
+> +
+> +       gdesc = kmalloc(max_desc_size, GFP_KERNEL);
+> +       if (!gdesc)
+> +               return -ENOMEM;
+>
+>         nvkm_kmap(wpr_blob);
+>
+> @@ -272,7 +285,6 @@ acr_r367_ls_write_wpr(struct acr_r352 *acr, struct list_head *imgs,
+>                 struct ls_ucode_img_r367 *img = ls_ucode_img_r367(_img);
+>                 const struct acr_r352_ls_func *ls_func =
+>                                             acr->func->ls_func[_img->falcon_id];
+> -               u8 gdesc[ls_func->bl_desc_size];
+>
+>                 nvkm_gpuobj_memcpy_to(wpr_blob, pos, &img->wpr_header,
+>                                       sizeof(img->wpr_header));
+> @@ -298,6 +310,8 @@ acr_r367_ls_write_wpr(struct acr_r352 *acr, struct list_head *imgs,
+>
+>         nvkm_done(wpr_blob);
+>
+> +       kfree(gdesc);
+> +
+>         return 0;
+>  }
+>
+> --
+> 2.17.0
+>
+>
+> --
+> Kees Cook
+> Pixel Security
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
