@@ -2,152 +2,234 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9E7C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C911FC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D83CB23EF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:30:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="axZj/xM8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83CB23EF8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 2300B23EF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:30:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2300B23EF8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753072AbeFVIaB (ORCPT
+        id S1754189AbeFVIaM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:30:01 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34707 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeFVI36 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:29:58 -0400
-Received: by mail-ed1-f66.google.com with SMTP id u25-v6so757766eds.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jn0S/FAHudF6Cdbfx42uUwmiIws+FjYRWGmIIrdyqTg=;
-        b=axZj/xM8mPmIc3shEn/ozrMgUiwjGfNWanlcHftl10ygjZiSmq2gKtEuZ0cZTX1x2e
-         T/nxBskTSc3XN5vB3ZUG2gNu7hLyGZ7wsWdo60LBl1t9PvuscEbSdugZEnI3Xe3DQhoa
-         Hb3mbbsIsCDE66rCglgSovMrWOQwCTbW4P8Gk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=Jn0S/FAHudF6Cdbfx42uUwmiIws+FjYRWGmIIrdyqTg=;
-        b=FitQWMCxucDc7N5YbgQD/F5d3Mt+7xTmvE+72fY7lBVQjQisxmtlAN4aPowlGVWkqC
-         OzXrkaF8QHjPih6bmoz5GlQt4f6cv9X1YEWUCVpYWAEVTNioaJhHiaeMg390nVJP5oyz
-         Hp/09PyJ28VJA+CjWmns+QrSy4TPiTOI6atEidVrpQQH2ROKdJ9PT75l0EODezU7SLPt
-         DxzGaBAcVVcu135qgGfPQgosQAna1Jg0iimzzO3uAI0NOzRsI6endfPGgMIjb7G9HDwp
-         W/XX4bGRlsa+zvhj9lnSUVCfUuw0GH2k9Kw7qJm1RAzHfjcKzt5SdylNgX5Zs1F2Z6/+
-         20qw==
-X-Gm-Message-State: APt69E37eAP6K+Srq/9BMALWnWb+Nb+R/vfzttxeirTD2+YlHFfEj58w
-        14C1FR5+6WoK9EQ5WCs5JayUKXpU
-X-Google-Smtp-Source: ADUXVKL8wcEEXPe7DQwXEs4X09PsStMLkMdPEo3w8IrNbjzUQ9jak2jg864c/CZANZBlDi796AQaMA==
-X-Received: by 2002:a50:c9c1:: with SMTP id c1-v6mr1032550edi.40.1529656197324;
-        Fri, 22 Jun 2018 01:29:57 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
-        by smtp.gmail.com with ESMTPSA id d11-v6sm2937764edh.61.2018.06.22.01.29.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 01:29:56 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 10:29:54 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: Consider drivers setting DRIVER_ATOMIC as atomic.
-Message-ID: <20180622082954.GF2958@phenom.ffwll.local>
-Mail-Followup-To: Eric Anholt <eric@anholt.net>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180621195428.17447-1-eric@anholt.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621195428.17447-1-eric@anholt.net>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Fri, 22 Jun 2018 04:30:12 -0400
+Received: from mga04.intel.com ([192.55.52.120]:11000 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751119AbeFVIaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 04:30:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 01:30:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,256,1526367600"; 
+   d="scan'208";a="234671154"
+Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.250.52])
+  by orsmga005.jf.intel.com with SMTP; 22 Jun 2018 01:30:03 -0700
+Received: by ubuntu (sSMTP sendmail emulation); Sat, 23 Jun 2018 00:30:03 +0800
+Message-ID: <1529683148.2729.6.camel@intel.com>
+Subject: Re: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch
+ Kconfig
+From:   Ley Foon Tan <ley.foon.tan@intel.com>
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <5e9b0aa4-ded1-725d-c401-49c13b7d5f9d@broadcom.com>
+References: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
+         <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
+         <20180621165400.GB14519@e107981-ln.cambridge.arm.com>
+         <5e9b0aa4-ded1-725d-c401-49c13b7d5f9d@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 22 Jun 2018 23:59:08 +0800
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 12:54:28PM -0700, Eric Anholt wrote:
-> Drivers such as vc4 don't initialize mode_config.funcs until later in
-> initialization, but we know they're atomic since they've got the flag
-> set.  This avoids oopsing on dereferencing funcs in the new atomic
-> methods sanity checks.
+On Thu, 2018-06-21 at 22:08 -0700, Scott Branden wrote:
 > 
-> I moved the atomic check function down below the core flag check, to
-> avoid needing a prototype.
 > 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Fixes: ba1f665f161c ("drm: Add checks for atomic_[duplicate/destroy]_state with atomic drivers")
+> On 18-06-21 09:54 AM, Lorenzo Pieralisi wrote:
+> > 
+> > 
+> > On Wed, Jun 20, 2018 at 10:07:33AM +0200, Jan Kiszka wrote:
+> > > 
+> > > 
+> > > On 2018-06-19 13:21, Lorenzo Pieralisi wrote:
+> > > > 
+> > > > 
+> > > > Commit 51bc085d6454 ("PCI: Improve host drivers compile test
+> > > > coverage")
+> > > > added configuration options to allow PCI host controller
+> > > > drivers to be
+> > > > compile tested on all architectures.
+> > > > 
+> > > > Some host controller drivers (eg PCIE_ALTERA) config entries
+> > > > select
+> > > > the PCI_DOMAINS config option to enable PCI domains management
+> > > > in
+> > > > the kernel. Now that host controller drivers can be compiled on
+> > > > all architectures, this triggers build regressions on arches
+> > > > that
+> > > > do not implement the PCI_DOMAINS required API (ie
+> > > > pci_domain_nr()):
+> > > > 
+> > > > drivers/ata/pata_ali.c: In function 'ali_init_chipset':
+> > > > drivers/ata/pata_ali.c:469:38: error:
+> > > >          implicit declaration of function 'pci_domain_nr';
+> > > >                                            did you mean
+> > > > 'pci_iomap_wc'?
+> > > > 
+> > > > Furthemore, some software configurations (ie Jailhouse) require
+> > > > a
+> > > > PCI_DOMAINS enabled kernel to configure multiple host
+> > > > controllers
+> > > > without having an explicit dependency on the ARM platform on
+> > > > which
+> > > > they run.
+> > > > 
+> > > > Make PCI_DOMAINS a visible configuration option on ARM so that
+> > > > software
+> > > > configurations that need it can manually select it and move the
+> > > > PCI_DOMAINS selection from PCI controllers configuration file
+> > > > to ARM
+> > > > sub-arch config entries that currently require it, fixing the
+> > > > issue.
+> > > > 
+> > > > Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test
+> > > > coverage")
+> > > > Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us
+> > > > .net
+> > > > Reported-by: Guenter Roeck <linux@roeck-us.net>
+> > > > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > > > Cc: Scott Branden <scott.branden@broadcom.com>
+> > > > Cc: Will Deacon <will.deacon@arm.com>
+> > > > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > > > Cc: Rob Herring <robh@kernel.org>
+> > > > Cc: Russell King <linux@armlinux.org.uk>
+> > > > Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> > > > Cc: Guenter Roeck <linux@roeck-us.net>
+> > > > Cc: Ley Foon Tan <lftan@altera.com>
+> > > > ---
+> > > > v1 -> v2
+> > > >     - Removed ARCH_VIRT PCI_DOMAINS selection
+> > > >     - Added PCI_DOMAINS visible config option
+> > > > 
+> > > > v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
+> > > > 
+> > > >   arch/arm/Kconfig               | 8 +++++++-
+> > > >   arch/arm/mach-bcm/Kconfig      | 1 +
+> > > >   arch/arm/mach-socfpga/Kconfig  | 1 +
+> > > >   drivers/pci/controller/Kconfig | 3 ---
+> > > >   4 files changed, 9 insertions(+), 4 deletions(-)
+> > > > 
+> > > > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > > > index 54eeb8d00bc6..843edfd000be 100644
+> > > > --- a/arch/arm/Kconfig
+> > > > +++ b/arch/arm/Kconfig
+> > > > @@ -1245,8 +1245,14 @@ config PCI
+> > > >       VESA. If you have PCI, say Y, otherwise N.
+> > > > 
+> > > >   config PCI_DOMAINS
+> > > > -   bool
+> > > > +   bool "Support for multiple PCI domains"
+> > > >     depends on PCI
+> > > > +   help
+> > > > +     Enable PCI domains kernel management. Say Y if your
+> > > > machine
+> > > > +     has a PCI bus hierarchy that requires more than one PCI
+> > > > +     domain (aka segment) to be correctly managed. Say N
+> > > > otherwise.
+> > > > +
+> > > > +     If you don't know what to do here, say N.
+> > > > 
+> > > >   config PCI_DOMAINS_GENERIC
+> > > >     def_bool PCI_DOMAINS
+> > > > diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-
+> > > > bcm/Kconfig
+> > > > index c46a728df44e..25aac6ee2ab1 100644
+> > > > --- a/arch/arm/mach-bcm/Kconfig
+> > > > +++ b/arch/arm/mach-bcm/Kconfig
+> > > > @@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
+> > > >     select GPIOLIB
+> > > >     select ARM_AMBA
+> > > >     select PINCTRL
+> > > > +   select PCI_DOMAINS if PCI
+> > > >     help
+> > > >       This enables support for systems based on Broadcom IPROC
+> > > > architected SoCs.
+> > > >       The IPROC complex contains one or more ARM CPUs along
+> > > > with common
+> > > > diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-
+> > > > socfpga/Kconfig
+> > > > index d0f62eacf59d..4adb901dd5eb 100644
+> > > > --- a/arch/arm/mach-socfpga/Kconfig
+> > > > +++ b/arch/arm/mach-socfpga/Kconfig
+> > > > @@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
+> > > >     select HAVE_ARM_SCU
+> > > >     select HAVE_ARM_TWD if SMP
+> > > >     select MFD_SYSCON
+> > > > +   select PCI_DOMAINS if PCI
+> > > > 
+> > > >   if ARCH_SOCFPGA
+> > > >   config SOCFPGA_SUSPEND
+> > > > diff --git a/drivers/pci/controller/Kconfig
+> > > > b/drivers/pci/controller/Kconfig
+> > > > index 18fa09b3ac8f..cc9fa02d32a0 100644
+> > > > --- a/drivers/pci/controller/Kconfig
+> > > > +++ b/drivers/pci/controller/Kconfig
+> > > > @@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
+> > > >     depends on OF
+> > > >     select PCI_HOST_COMMON
+> > > >     select IRQ_DOMAIN
+> > > > -   select PCI_DOMAINS
+> > > >     help
+> > > >       Say Y here if you want to support a simple generic PCI
+> > > > host
+> > > >       controller, such as the one emulated by kvmtool.
+> > > > @@ -138,7 +137,6 @@ config PCI_VERSATILE
+> > > > 
+> > > >   config PCIE_IPROC
+> > > >     tristate
+> > > > -   select PCI_DOMAINS
+> > > >     help
+> > > >       This enables the iProc PCIe core controller support for
+> > > > Broadcom's
+> > > >       iProc family of SoCs. An appropriate bus interface driver
+> > > > needs
+> > > > @@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
+> > > >   config PCIE_ALTERA
+> > > >     bool "Altera PCIe controller"
+> > > >     depends on ARM || NIOS2 || COMPILE_TEST
+> > > > -   select PCI_DOMAINS
+> > > >     help
+> > > >       Say Y here if you want to enable PCIe controller support
+> > > > on Altera
+> > > >       FPGA.
+> > > > 
+> > > Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+> > Thanks a lot. Scott, Ley Foon, does it work for you ? I would like
+> > to ask Bjorn to send it asap since the build on sparc is still
+> > broken.
+> Change will have to be made for arm64 for ARCH_BCM_IPROC as well.
+Yes, need to add it to arm64 too. Others are okay.
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Ley Foon Tan <ley.foon.tan@intel.com>
 
-btw, dim fixes also generates Cc: tags for you (author/reviewer/maintainer
-of the commit your fixing), besides just the Fixes: line.
--Daniel
 
-> ---
->  include/drm/drmP.h | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/drm/drmP.h b/include/drm/drmP.h
-> index f5099c12c6a6..c5dfbdb7271d 100644
-> --- a/include/drm/drmP.h
-> +++ b/include/drm/drmP.h
-> @@ -97,6 +97,16 @@ struct pci_controller;
->  
->  #define DRM_IF_VERSION(maj, min) (maj << 16 | min)
->  
-> +#define DRM_SWITCH_POWER_ON 0
-> +#define DRM_SWITCH_POWER_OFF 1
-> +#define DRM_SWITCH_POWER_CHANGING 2
-> +#define DRM_SWITCH_POWER_DYNAMIC_OFF 3
-> +
-> +static inline bool drm_core_check_feature(struct drm_device *dev, int feature)
-> +{
-> +	return dev->driver->driver_features & feature;
-> +}
-> +
->  /**
->   * drm_drv_uses_atomic_modeset - check if the driver implements
->   * atomic_commit()
-> @@ -107,17 +117,8 @@ struct pci_controller;
->   */
->  static inline bool drm_drv_uses_atomic_modeset(struct drm_device *dev)
->  {
-> -	return dev->mode_config.funcs->atomic_commit != NULL;
-> -}
-> -
-> -#define DRM_SWITCH_POWER_ON 0
-> -#define DRM_SWITCH_POWER_OFF 1
-> -#define DRM_SWITCH_POWER_CHANGING 2
-> -#define DRM_SWITCH_POWER_DYNAMIC_OFF 3
-> -
-> -static inline bool drm_core_check_feature(struct drm_device *dev, int feature)
-> -{
-> -	return dev->driver->driver_features & feature;
-> +	return drm_core_check_feature(dev, DRIVER_ATOMIC) ||
-> +		dev->mode_config.funcs->atomic_commit != NULL;
->  }
->  
->  /* returns true if currently okay to sleep */
-> -- 
-> 2.18.0.rc2
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Regards
+Ley Foon
