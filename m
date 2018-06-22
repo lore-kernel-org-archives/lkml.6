@@ -2,103 +2,102 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDC8C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8810C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24AB524715
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:16:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24AB524715
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DD802471C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:17:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD802471C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934069AbeFVSQJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 14:16:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58574 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933585AbeFVSQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 14:16:08 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BF04987AAC;
-        Fri, 22 Jun 2018 18:16:07 +0000 (UTC)
-Received: from flask (unknown [10.43.2.80])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1F12E2026D6C;
-        Fri, 22 Jun 2018 18:16:04 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Fri, 22 Jun 2018 20:16:04 +0200
-Date:   Fri, 22 Jun 2018 20:16:04 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     KVM <kvm@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] x86/kvm: Handle all MCA banks
-Message-ID: <20180622181603.GB5549@flask>
-References: <20180622095101.32587-1-bp@alien8.de>
- <20180622095101.32587-4-bp@alien8.de>
+        id S934130AbeFVSRB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:17:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53053 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933508AbeFVSQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 14:16:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 90D0AAD11;
+        Fri, 22 Jun 2018 18:16:58 +0000 (UTC)
+Date:   Fri, 22 Jun 2018 11:16:54 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     akpm@linux-foundation.org, torvalds@linux-foundation.org
+Cc:     tgraf@suug.ch, herbert@gondor.apana.org.au,
+        manfred@colorfullife.com, mhocko@kernel.org,
+        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        neilb@suse.com
+Subject: Re: [PATCH v2 1/4] lib/rhashtable: simplify bucket_table_alloc()
+Message-ID: <20180622181654.evngae326rd5hr4n@linux-r8p5>
+References: <20180621212825.3059-1-dave@stgolabs.net>
+ <20180621212825.3059-2-dave@stgolabs.net>
+ <20180622181540.5gul4lx5dteqzzk3@linux-r8p5>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180622095101.32587-4-bp@alien8.de>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 22 Jun 2018 18:16:07 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 22 Jun 2018 18:16:07 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
+In-Reply-To: <20180622181540.5gul4lx5dteqzzk3@linux-r8p5>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-22 11:51+0200, Borislav Petkov:
-> From: Borislav Petkov <bp@suse.de>
-> 
-> Extend the range of MCA banks which get passed to set/get_msr_mce() to
-> include all the MSRs of the last bank too.
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> ---
->  arch/x86/kvm/x86.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 80452b0f0e8c..a7d344823356 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2466,7 +2466,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  
->  	case MSR_IA32_MCG_CTL:
->  	case MSR_IA32_MCG_STATUS:
-> -	case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_CTL(KVM_MAX_MCE_BANKS) - 1:
-> +	case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS) - 1:
+Cc'ing Neil.
 
-It was correct before.  We have 32 banks (KVM_MAX_MCE_BANKS), so the
-last useable has index 31 and the "- 1" is going to roll over from first
-MSR of bank 32 to the last MSR of the last bank.
+On Fri, 22 Jun 2018, Davidlohr Bueso wrote:
 
-Another way of writing it would be:
-
- case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_MISC(KVM_MAX_MCE_BANKS - 1):
-
->  		return set_msr_mce(vcpu, msr_info);
->  
->  	case MSR_K7_PERFCTR0 ... MSR_K7_PERFCTR3:
-> @@ -2588,9 +2588,10 @@ static int get_msr_mce(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
->  	case MSR_IA32_MCG_STATUS:
->  		data = vcpu->arch.mcg_status;
->  		break;
-> +
->  	default:
->  		if (msr >= MSR_IA32_MC0_CTL &&
-> -		    msr < MSR_IA32_MCx_CTL(bank_num)) {
-> +		    msr < MSR_IA32_MCx_MISC(bank_num)) {
-
-Similar logic here.
-
-I think it would be best just to keep the current code,
-
-thanks.
+>As of ce91f6ee5b3 (mm: kvmalloc does not fallback to vmalloc for incompatible gfp flag),
+>we can simplify the caller and trust kvzalloc() to just do the right thing. For the
+>case of the GFP_ATOMIC context, we can drop the __GFP_NORETRY flag for obvious reasons,
+>and for the __GFP_NOWARN case, however, it is changed such that the caller passes the
+>flag instead of making bucket_table_alloc() handle it.
+>
+>This slightly changes the gfp flags passed on to nested_table_alloc() as it will now
+>also use GFP_ATOMIC | __GFP_NOWARN. However, I consider this a positive consequence
+>as for the same reasons we want nowarn semantics in bucket_table_alloc().
+>
+>Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+>---
+>
+>v2:
+>- Changes based on Neil's concerns about keeping nowarn flag.
+>- Better changelog.
+>
+>
+>lib/rhashtable.c | 7 ++-----
+>1 file changed, 2 insertions(+), 5 deletions(-)
+>
+>diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+>index 9427b5766134..083f871491a1 100644
+>--- a/lib/rhashtable.c
+>+++ b/lib/rhashtable.c
+>@@ -175,10 +175,7 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
+>	int i;
+>
+>	size = sizeof(*tbl) + nbuckets * sizeof(tbl->buckets[0]);
+>-	if (gfp != GFP_KERNEL)
+>-		tbl = kzalloc(size, gfp | __GFP_NOWARN | __GFP_NORETRY);
+>-	else
+>-		tbl = kvzalloc(size, gfp);
+>+	tbl = kvzalloc(size, gfp);
+>
+>	size = nbuckets;
+>
+>@@ -459,7 +456,7 @@ static int rhashtable_insert_rehash(struct rhashtable *ht,
+>
+>	err = -ENOMEM;
+>
+>-	new_tbl = bucket_table_alloc(ht, size, GFP_ATOMIC);
+>+	new_tbl = bucket_table_alloc(ht, size, GFP_ATOMIC | __GFP_NOWARN);
+>	if (new_tbl == NULL)
+>		goto fail;
+>
+>-- 
+>2.16.4
+>
