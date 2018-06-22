@@ -2,66 +2,114 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E025C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE1FC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DF3E243BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:33:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF3E243BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 7271E243BB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7271E243BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933581AbeFVOdG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:33:06 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41830 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933275AbeFVOdF (ORCPT
+        id S933603AbeFVOeF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:34:05 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:44640 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751551AbeFVOeD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:33:05 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fWN7R-0006bp-Q0; Fri, 22 Jun 2018 16:32:57 +0200
-Date:   Fri, 22 Jun 2018 16:32:57 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Chang S. Bae" <chang.seok.bae@intel.com>
-cc:     Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 4/7] x86/fsgsbase/64: Factor out load FS/GS segments
- from __switch_to
-In-Reply-To: <1529536506-26237-5-git-send-email-chang.seok.bae@intel.com>
-Message-ID: <alpine.DEB.2.21.1806221632460.2402@nanos.tec.linutronix.de>
-References: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com> <1529536506-26237-5-git-send-email-chang.seok.bae@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 22 Jun 2018 10:34:03 -0400
+Received: from ayla.of.borg ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id 1qa21y0083XaVaC06qa2Gs; Fri, 22 Jun 2018 16:34:02 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fWN8U-00055H-1q; Fri, 22 Jun 2018 16:34:02 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fWN8T-0001xf-W1; Fri, 22 Jun 2018 16:34:02 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable@vger.kernel.org
+Subject: [PATCH v3] time: Make sure jiffies_to_msecs() preserves non-zero time periods
+Date:   Fri, 22 Jun 2018 16:33:57 +0200
+Message-Id: <20180622143357.7495-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018, Chang S. Bae wrote:
+For the common cases where 1000 is a multiple of HZ, or HZ is a multiple
+of 1000, jiffies_to_msecs() never returns zero when passed a non-zero
+time period.
 
-> Instead of open coding the calls to load_seg_legacy(), add a
-> load_fsgs() helper to handle fs and gs.  When FSGSBASE is enabled,
-> load_fsgs() will be updated.
-> 
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> Reviewed-by: Andi Kleen <ak@linux.intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Reviewed-by: Andy Lutomirski <luto@kernel.org>
+However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 1024 or
+1200, as used on alpha and DECstation), jiffies_to_msecs() may return
+zero for small non-zero time periods.  This may break code that relies
+on receiving back a non-zero value.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+jiffies_to_usecs() does not need such a fix: one jiffy can only be
+less than one µs if HZ > 1000000, and such large values of HZ are
+already rejected at build time, twice:
+  - include/linux/jiffies.h does #error if HZ >= 12288,
+  - kernel/time/time.c has BUILD_BUG_ON(HZ > USEC_PER_SEC).
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Cc: stable@vger.kernel.org
+---
+Broken since forever.
+
+v3:
+  - Add Reviewed-by,
+  - Cc stable,
+  - Explain better why jiffies_to_usecs() does not need a fix,
+
+v2:
+  - Add examples of affected systems,
+  - Use DIV_ROUND_UP().
+---
+ kernel/time/time.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 6fa99213fc720e4b..2b41e8e2d31db26f 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -28,6 +28,7 @@
+  */
+ 
+ #include <linux/export.h>
++#include <linux/kernel.h>
+ #include <linux/timex.h>
+ #include <linux/capability.h>
+ #include <linux/timekeeper_internal.h>
+@@ -314,9 +315,10 @@ unsigned int jiffies_to_msecs(const unsigned long j)
+ 	return (j + (HZ / MSEC_PER_SEC) - 1)/(HZ / MSEC_PER_SEC);
+ #else
+ # if BITS_PER_LONG == 32
+-	return (HZ_TO_MSEC_MUL32 * j) >> HZ_TO_MSEC_SHR32;
++	return (HZ_TO_MSEC_MUL32 * j + (1ULL << HZ_TO_MSEC_SHR32) - 1) >>
++	       HZ_TO_MSEC_SHR32;
+ # else
+-	return (j * HZ_TO_MSEC_NUM) / HZ_TO_MSEC_DEN;
++	return DIV_ROUND_UP(j * HZ_TO_MSEC_NUM, HZ_TO_MSEC_DEN);
+ # endif
+ #endif
+ }
+-- 
+2.17.1
+
