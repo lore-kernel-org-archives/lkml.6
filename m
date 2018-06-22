@@ -2,65 +2,81 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F9AC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 495A2C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC40024294
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:22:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC40024294
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id EADDB242A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:24:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzwsL/rs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADDB242A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751406AbeFVNWC (ORCPT
+        id S1751441AbeFVNYy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:22:02 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:37470 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751284AbeFVNV7 (ORCPT
+        Fri, 22 Jun 2018 09:24:54 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35616 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751198AbeFVNYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:21:59 -0400
-Received: by mail-vk0-f65.google.com with SMTP id w8-v6so3895693vkh.4;
-        Fri, 22 Jun 2018 06:21:58 -0700 (PDT)
+        Fri, 22 Jun 2018 09:24:51 -0400
+Received: by mail-lf0-f66.google.com with SMTP id i15-v6so8867462lfc.2;
+        Fri, 22 Jun 2018 06:24:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=c6RFhdx24gHjaHZ+lf0qUUpUPEvHeiAwmAcU+tUxyBo=;
+        b=YzwsL/rsqos6nQ0xUVw3Qxn5ECJo7wfEQsFhcZ2lAnJ+FWoTqdjnaOvxsMEd18UVnp
+         1+35IrY913G8kuiveZ6xWnZ3OpNdQBDpIcVC0Iqj1+LIBl1QPIkG9LOhbhreD8DHxsz3
+         qv5hg/a97of7T3wfjFU9Rtl/+FgIjJZo+0CZSl/g71FIWx8pUTZEIOIf+uUxGiOlfo34
+         35+2sqZ8dnCgQAKuxKyBIhlEUXOI3v4vhxYToeakqW722K8U+5CE0r/2wRzJFXNEgU3a
+         hexM/76C5CUg2c60MdWWW1rTSbqKWwz1oxzG6MHLSyvn8UtAsRMpnc+5uXfV1U0U9ora
+         965g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AY91DYJ5newMHEXGSTRy2JU6WaaXgsRpphSctV5iJ6k=;
-        b=Boohnx/gR3vkCoTWVnExbe3KXCqntIBks28H/uw5jCbLFFt2/YKRC//R3B3mpBXuqQ
-         nDyNITChH2lsBH5DTeynO+EKxmgF7ONbprXkqBPdcZSaR/6LIN44i0BYZGIgfnwe9x2i
-         zNu3wyZU+mjHyZNfc3KhzUyVunl4j3DyHDMN5f5b0JVkzujVShC1DgKMuK4N3PRMY2NS
-         l1JVXYlP5HQ9AGZRLm6KYJZ0UIKXdIa7Q+Tj6LJr4W3bmGdqR7fIqn5LhIQr9K/jCYUr
-         WMiaSe5RpyCj1QTzWdQtCYYrveGMmBZl19a68c8jVQIQ4uIq19PtZjecg+dXFM1QaQgB
-         4ZpQ==
-X-Gm-Message-State: APt69E24krfi4J9LbItJBEujAdkc1ZV/gZpYbVv5QfS97YdzMkEBlDxi
-        smxggRwdAIBj6KPylcjzJbehkPxPD+gkb9u+CRk=
-X-Google-Smtp-Source: ADUXVKJbrUb0Xrpkmt1jL3RccwShs8InZHZC3d/rV2wZOZizhfcDL7WuvnDTJVqJk+GiZ169T0Eg0vvn+wGqNP8GFFs=
-X-Received: by 2002:a1f:644:: with SMTP id 65-v6mr932714vkg.159.1529673718320;
- Fri, 22 Jun 2018 06:21:58 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=c6RFhdx24gHjaHZ+lf0qUUpUPEvHeiAwmAcU+tUxyBo=;
+        b=qYxgAhizZLgTiuGmF00LdPLDBGoNNTaMDAwAMhXLeqt4XHDWsuVRulo/sVJNgi0RAe
+         XMev9EPS0vM8Se2rhXKkvpgIkn3j7kIs83EA66b12/W8FP7YXFiRR9OqT+wfxCv7q1b0
+         bBksFeQ8LentD/FhSo3TzvCmBP9FYQ+MizI+aGWxk3S3ljbB+iosG4NUD2x8WKzmC8jp
+         qppzGtQEE6haxD3AYQo5ejNo57GzpPI9dxWRJHbX1NDHRyjX+j5jGRbwwa70tuTs3HbI
+         Sa7YaRGPm/ujlBx6Ja8ubbP7emNPmBjCTfjiDo0IqWf2+nC3TaWdXbewqyC5sMYCD+9m
+         Zd7Q==
+X-Gm-Message-State: APt69E0U/WX9/riu4jTTQ54tJHkMKK11R7/4YXq5UZafySPygXM0pZhp
+        gx17nP7cn+Is2znh+2obCZsnLAk1YDcaO8MjA4U=
+X-Google-Smtp-Source: ADUXVKJUCOEAwgLkTFTWnWO1SH3/dkA9kejRAuJpWbujpBNV43E8Wqaz2hRZPtshd0o5PmFcIw3rPQiwInCBbyH9XIo=
+X-Received: by 2002:a2e:804c:: with SMTP id p12-v6mr1255181ljg.22.1529673890091;
+ Fri, 22 Jun 2018 06:24:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-2-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528973829-25493-2-git-send-email-michel.pollet@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jun 2018 15:21:47 +0200
-Message-ID: <CAMuHMdUr+PT540D+MK5kuAsZW+4MRu5KE+kid6QZkMacRjAsXw@mail.gmail.com>
-Subject: Re: [PATCH v9 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
-To:     Michel Pollet <michel.pollet@bp.renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 06:24:48
+ -0700 (PDT)
+In-Reply-To: <20180621202339.GC13748@dastard>
+References: <20180620150138.49380-1-arnd@arndb.de> <20180621202339.GC13748@dastard>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 22 Jun 2018 15:24:48 +0200
+X-Google-Sender-Auth: RMDJeYxh2Yes9zjhh1Y-BGUHxbA
+Message-ID: <CAK8P3a0C4hgu9apX8vE6BrqnrU76dHhafY8J-ppPBdhPbxq26Q@mail.gmail.com>
+Subject: Re: [PATCH] vfs: replace current_kernel_time64 with ktime equivalent
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andi Kleen <andi.kleen@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jeff Layton <jlayton@redhat.com>, Jan Kara <jack@suse.cz>,
+        Brian Foster <bfoster@redhat.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,22 +84,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the constants necessary to use the renesas,r9a06g032-sysctrl node.
+On Thu, Jun 21, 2018 at 10:23 PM, Dave Chinner <david@fromorbit.com> wrote:
+> On Wed, Jun 20, 2018 at 05:01:24PM +0200, Arnd Bergmann wrote:
+
+>> diff --git a/fs/inode.c b/fs/inode.c
+>> index 2c300e981796..e27bd9334939 100644
+>> --- a/fs/inode.c
+>> +++ b/fs/inode.c
+>> @@ -2133,7 +2133,9 @@ EXPORT_SYMBOL(timespec64_trunc);
+>>   */
+>>  struct timespec64 current_time(struct inode *inode)
+>>  {
+>> -     struct timespec64 now = current_kernel_time64();
+>> +     struct timespec64 now;
+>> +
+>> +     ktime_get_coarse_real_ts64(&now);
 >
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Can I just say as a filesystem dev who has no idea at all about
+> kernel timer implementations: this is an awful API change.  There
+> are hundreds of callers of current_time(), so I'm not going to be
+> the only person looking at this function who has no clue about WTF
+> "ktime_get_coarse_real" actually means or does. Further, this
+> function is not documented, and jumps straight into internal time
+> implementation stuff, so I'm lost straight away if somebody asks me
+> "what does that function do"?. i.e. I have *no clue* what this
+> function returns or why this code uses it.
 
-Thanks, queuing in clk-renesas-for-v4.19.
+You definitely have a point about the documentation. I meant to
+fix that as part of the recent rework of the timekeeping.h header
+but haven't finished it, partly because the header is still being
+changed as we get rid of the older interfaces.
 
-Gr{oetje,eeting}s,
+> i.e. the function goes from an obvious self documenting name that
+> has been blessed as the current kernel timestamp to something that
+> only people who work on the time subsystem understand and know when
+> to use. It might make sense to you, but it sucks for everyone
+> else....
+>
+> Keep the wrapper, please. Change it to ktime_get_current(), if you
+> really must change the function namespace...
 
-                        Geert
+The thing about current_kernel_time/current_kernel_time64/
+ktime_get_coarse_real_ts64 is that it hasn't been a good choice
+as a default time accessor for a long time, pretty much everything
+outside of current_time() has a better option:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+- For measuring time intervals, you want a monotonic time source,
+  not a 'real' one, to prevent time from going backwards during leap
+  seconds or settimeofday() adjustments.
+- For getting a timestamp as fast as possible, using a timespec64
+  based interface adds extra overhead compared to 'jiffies' or
+  ktime_t (64-bit nanoseconds), especially when passing the
+  struct as the return value.
+- As mentioned before, almost all machines these days have a
+  fast clocksource device, so getting a 'coarse' timestamp is
+  barely faster than an accurate one.
+- Having an interface with (at best) millisecond precsision but
+  nanosecond resolution can be confusing, as it suggests a much
+  more precision than we can give (the 'coarse' in the name is
+  meant to clarify that).
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+While changing over all device drivers from the old-style interfaces
+with 32-bit time_t (current_kernel_time, get_seconds,
+do_getimeofday and getnstimeofday, getrawmonotonic,
+get_monotonic_coarse, get_monotonic_boottime), we tried to
+also address those problems, using ktime_get() as the preferred
+interface, or an interface with a longer name where we had
+specific reasons.
+
+Outside of file system timestamps, there are only two other
+files left that ask for a timestamp that is both 'coarse' and
+'realtime', and both only do that when user space specifically
+asks for that combination.
+
+       Arnd
