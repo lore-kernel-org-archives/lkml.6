@@ -2,114 +2,113 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D9CC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08533C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8F3B22CB2
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:49:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A841B22DFB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:51:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bhH+4PxH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8F3B22CB2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="nC0CZtDx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A841B22DFB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934067AbeFVAtu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 20:49:50 -0400
-Received: from mail-eopbgr20076.outbound.protection.outlook.com ([40.107.2.76]:21504
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933819AbeFVAts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 20:49:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XB6qCwKFBQLIwQYjTLMZgMYgvar7Af+Q+ZacEsOtLLA=;
- b=bhH+4PxHT/heo68yc78tapNQtgq1HEVbxhKNL2B7SSkk5toG6bDMCi3WYQ9Lcf/sgrMbg4ATvnhrzhU1FhJzKLjl/6aX4WStd6LSpDBi/h6frW1Puc6oCjGd5a07bScemirEjLvFQOpoRE+JhVGh43pdBMrY+j1AeWAlxgG/BfU=
-Received: from HE1PR04MB1450.eurprd04.prod.outlook.com (10.163.176.12) by
- HE1PR04MB1562.eurprd04.prod.outlook.com (10.164.48.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.17; Fri, 22 Jun 2018 00:49:44 +0000
-Received: from HE1PR04MB1450.eurprd04.prod.outlook.com
- ([fe80::6c56:638d:9996:7449]) by HE1PR04MB1450.eurprd04.prod.outlook.com
- ([fe80::6c56:638d:9996:7449%4]) with mapi id 15.20.0863.016; Fri, 22 Jun 2018
- 00:49:44 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: RE: [PATCH] usb: chipidea: Fix ULPI on imx51
-Thread-Topic: [PATCH] usb: chipidea: Fix ULPI on imx51
-Thread-Index: AQHT+Dx9S+jGiJqO7k2zhWn8R6Ncp6Rp1dOAgAAELICAAPGKgIAAF74AgAADh4CAAKyKoA==
-Date:   Fri, 22 Jun 2018 00:49:43 +0000
-Message-ID: <HE1PR04MB1450D1881C07BEAEF4A8283B8B750@HE1PR04MB1450.eurprd04.prod.outlook.com>
-References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
- <CAOMZO5AyAegbvUtX42by99mU8yQfi91bmhJfd9iqu1Ak0dEHiw@mail.gmail.com>
- <CAOMZO5DJj=oQfsB-vNP=81HCiy-69j-5U+Km9P6LxGpnLx9xzg@mail.gmail.com>
- <CAHQ1cqHxq+RM1nNHECY75Cojd_kxu1ERLe6+MhMLUa5kb10r8w@mail.gmail.com>
- <0f31d801-528e-54ee-f385-b7aa3eef414f@cogentembedded.com>
- <26d9fd57-07bc-0bba-2f29-ca778bd85328@cogentembedded.com>
-In-Reply-To: <26d9fd57-07bc-0bba-2f29-ca778bd85328@cogentembedded.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR04MB1562;7:6hUe2gbiEo3IYZt/Z5zSpXUIRSRLnA1XHvnXUWx++Atbpx1iQQjXahhv2hH9eTNVqm4voszSUhOkqWBTpHNN5CwUz17rUm8cVn/TDKEMWbEFTJobKAHNaoznXhRB+soqEHbEV2KaUHFca5KtmEp5gVkueuGk3nQa5m50dpRm5r01UYEfP9LXAtZlMiri91k6Juyjv/WMN0x7vmvUFnaVgpRBz5O6+9Amp8pBHCSjyGqbzNunrS9XqhC+RgPaG4w6
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: bc88af13-f969-4edf-a805-08d5d7da0b9e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1562;
-x-ms-traffictypediagnostic: HE1PR04MB1562:
-x-microsoft-antispam-prvs: <HE1PR04MB1562EAFB06E4040DEE54F1818B750@HE1PR04MB1562.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB1562;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1562;
-x-forefront-prvs: 071156160B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(346002)(39380400002)(396003)(199004)(189003)(99286004)(6436002)(86362001)(6246003)(229853002)(316002)(97736004)(8936002)(53936002)(105586002)(9686003)(2906002)(76176011)(3846002)(7696005)(8676002)(81166006)(106356001)(6116002)(55016002)(486006)(110136005)(446003)(476003)(54906003)(3660700001)(7736002)(81156014)(3280700002)(305945005)(44832011)(11346002)(74316002)(5250100002)(2900100001)(59450400001)(186003)(5660300001)(39060400002)(93886005)(68736007)(14454004)(66066001)(4326008)(33656002)(25786009)(478600001)(7416002)(102836004)(6506007)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1562;H:HE1PR04MB1450.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: RpzHwOYhDLBxDzRDdps7iywDcYX/wO64ojO4AyBqbhIrkTbMkRouSe2u63PEZQTRBiCtY5dHtiYJkcHqNcmzsbNnYk1ehdJt2zrGFiKOTz800cP90YLlb+L7olKX1RUCOElUAIObEfqXrqHDdT/m7UAhbhg9+nGgFSwCuqB6nRUD7ATXrNTxiTla99JQeg/PL5cnSPbNaO8PncC0U6QN+Gp6LJmvM6k8/+bNnDQKzlVxGGsfrXZcVqs0w7L1r6xpgR8tY85U15ZHVt6J4CBB5a1xmDxU8uHF5pmlPSoJuUVUqtfDI98UE2cWJ9Yc9deg66y5fkrMeOHqcKYDxUiJHQ==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S934112AbeFVAvk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 20:51:40 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:41919 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934052AbeFVAvi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 20:51:38 -0400
+Received: by mail-qt0-f193.google.com with SMTP id y20-v6so4620945qto.8
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 17:51:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=b5z48HeJ1lP4NZgcMC1Xib0kcwWubGoVrtOpUOakYu8=;
+        b=nC0CZtDxrf9nv7egcQzflXi3k/lu+RztX69n0MQhUmFzi5DjB2MGBFJz6R7JibnR8e
+         +zg8B9P1Qh8JJvN5m5NGGKrswCi4zWBhhMWZA14RvvGRFeCsVXfZwC8qlHo9jPZ+MeMI
+         Z0O1/Ug+j7JiwIySVUpG8jIVRpNT5YkepQueOpR7PLj5YqXz0PfQ59CS18PXh12TpMKs
+         OOy/gy47RqsNRounZmYf1hB25NMc0LawlPWiLREtpMVH2UK0a6MJCeqaNY7SMIazxDSd
+         VDXyUFHxK2mnAxdtctoRo0+1JlOgEzhfojrdDGqFnL1ALu6h2e+frYV9iN+CtmEscNFi
+         7LcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=b5z48HeJ1lP4NZgcMC1Xib0kcwWubGoVrtOpUOakYu8=;
+        b=NrpQaMxgzdsV0CizGE9SE/emgN+gRVXYPaJlt7AgLG0CXpP4Dwfpoo1gwjbA+gS2pv
+         FO1CK/hLAnokRw90qLxqmi+jK7L8XemMjrVNW8ZPq9tyJkwxNT4x70+291Xhxx61yz5r
+         eC682U4ycqIyOK7aWGz+QCHre7ygcSCrmvytNWlJDr7O/VxX9bMSvgt3Am1lJ4WI0f3i
+         1wqI26YFgO3tpi8lx+nnEbWoCUaEgEtXmLHRTx0tyxbvbVTouuGJTcqY8kKMRW8JGoi4
+         sVHc8wgi47ewbZmjn9M6NMSDW5TpqibR8n5h4lHYOXwGmCWQsS5sWfSMMDTYLmZNTI4v
+         rbHQ==
+X-Gm-Message-State: APt69E0FTLaljiUjevYtQcuq+YzLpJsAfc65CzR8z/r6QWJZOWRazvBj
+        826p6OqX1hA2usovRynU53IYeQ==
+X-Google-Smtp-Source: ADUXVKJcojlNIdrZOXMVrw728SZEYEuWFW4LYPVUPW6qoaicZjPzS0oMqavLolEmWo9ENIwzMnDrNw==
+X-Received: by 2002:ac8:2931:: with SMTP id y46-v6mr26022891qty.416.1529628697814;
+        Thu, 21 Jun 2018 17:51:37 -0700 (PDT)
+Received: from cisco ([173.38.117.67])
+        by smtp.gmail.com with ESMTPSA id v123-v6sm4152739qka.79.2018.06.21.17.51.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 17:51:36 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 18:51:34 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        suda.akihiro@lab.ntt.co.jp, "Tobin C. Harding" <me@tobin.cc>
+Subject: Re: [PATCH v4 4/4] seccomp: add support for passing fds via
+ USER_NOTIF
+Message-ID: <20180622005134.GJ3992@cisco>
+References: <20180621220416.5412-1-tycho@tycho.ws>
+ <20180621220416.5412-5-tycho@tycho.ws>
+ <CAG48ez0d+tRsfvstU3Kd7T=kkdKbbfpNS+19NLTchhSL1fUyNg@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc88af13-f969-4edf-a805-08d5d7da0b9e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2018 00:49:43.9020
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1562
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez0d+tRsfvstU3Kd7T=kkdKbbfpNS+19NLTchhSL1fUyNg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IA0KPiA+Pj4+DQo+ID4+DQo+ID4+IEkgbmV2ZXIgYXNzdW1lZCBpdCB3YXMgYSByZWdyZXNzaW9u
-IGFuZCB0aGF0IFVTQiB3b3JrZWQgb24gUkRVMSBib2FyZA0KPiA+PiBiZWZvcmUsIHNvIEkgbmV2
-ZXIgdHJpZWQgdG8gc2VlIGlmIHRoaXMgd2FzIGEgcmVncmVzc2lvbi4gSSBjYW4gb25seQ0KPiA+
-PiB0ZWxsIHlvdSB0aGF0IGl0IGhhbmdzIGFzIHNvb24gYXMgYW55IFBPUlRTQyByZWdpc3RlcnMg
-YXJlIGFjY2Vzc2VkLg0KPiA+DQo+ID4gSGFuZyBhdCByZWdpc3RlciBhY2Nlc3MgdXN1YWxseSBt
-ZWFucyB0aGF0IG1vZHVsZSB0aGF0IG93bnMgdGhlDQo+ID4gcmVnaXN0ZXIgaXMgbm90IGNsb2Nr
-ZWQuDQo+IA0KPiBPbiBSRFUxLCBjYWxsIHRvIHVzYl9waHlfaW5pdCgpIGFjdHVhbGx5IGNhbGxz
-IHVzYl9nZW5fcGh5X2luaXQoKSB0aGF0IGRvZXMNCj4gcmVndWxhdG9yX2VuYWJsZSgpIGZvciAm
-dnVzYl9yZWcgYW5kIGNsa19wcmVwYXJlX2VuYWJsZSgpIGZvciAmY2xrXzI2TV91c2IuICBJDQo+
-IHRoaW5nIHNvbWUgb2YgdGhlc2UgdHdvIGlzIGFjdHVhbGx5IG5lZWRlZCB0byBhdm9pZCBoYW5n
-IG9uIHJlZ2lzdGVyIGFjY2Vzcy4NCg0KRmFiaW8sIHdvdWxkIHlvdSBwbGVhc2UgY2hlY2sgYm90
-aCByZWd1bGF0b3IgYW5kIGNsb2NrIGZvciBVTFBJIFBIWSBhcmUgb24gYXQgaW14NTFiYmc/DQoN
-ClBldGVyDQo=
+On Fri, Jun 22, 2018 at 01:34:18AM +0200, Jann Horn wrote:
+> On Fri, Jun 22, 2018 at 12:05 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> >
+> > The idea here is that the userspace handler should be able to pass an fd
+> > back to the trapped task, for example so it can be returned from socket().
+> [...]
+> > +Userspace can also return file descriptors. For example, one may decide to
+> > +intercept ``socket()`` syscalls, and return some file descriptor from those
+> > +based on some policy. To return a file descriptor, the ``return_fd`` member
+> > +should be non-zero, the ``fd`` argument should be the fd in the listener's
+> > +table to send to the tracee (similar to how ``SCM_RIGHTS`` works), and
+> > +``fd_flags`` should be the flags that the fd in the tracee's table is opened
+> > +with (e.g. ``O_EXCL`` or similar).
+> 
+> fd_flags only contains file descriptor flags (meaning only O_CLOEXEC).
+> O_EXCL is a file creation flag, so setting it here wouldn't make sense.
+> Setting file status flags like O_APPEND does make sense, but those are
+> stored in the `struct file` and don't need to be passed separately;
+> the caller can e.g. set them via fcntl(fd, F_SETFD, flags) or on
+> open().
+> (The fcntl.2 manpage explains these.)
+
+Ugh, yes, O_CLOEXEC is what I meant. Thanks, I'll clarify.
+
+Tycho
