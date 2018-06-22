@@ -2,384 +2,114 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D9FC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D9CC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0EE622C9B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8F3B22CB2
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:49:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sFqLjri7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0EE622C9B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bhH+4PxH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8F3B22CB2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934024AbeFVApn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 20:45:43 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:43503 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933857AbeFVApl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 20:45:41 -0400
-Received: by mail-yw0-f196.google.com with SMTP id r19-v6so1819744ywc.10
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 17:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9LIUUYjX2yya/fzIDGRJMcHZZGhB8Scf+vPj88sv5Zs=;
-        b=sFqLjri71xbmZ6cBslC2x/fZH8sbCOyMbZiYj74yfzRIaKh/nCjNOM8E3Omq2WOjR1
-         tSjJIb+TN2hjCUNwb6bWyEBUkh4vW/Ip63lix6A5pievEPtdpEYQVpHcmzqeqTI4nOZt
-         EiYOJgDERNhpAnHIcjErhk5X0vGSe+pfoVIln3RjfaNCaA1a9KUy2EYCiSUiuzncmI7g
-         EEZqxe7oLQFtROx5w/nOWsYUxOjjWurapaEXo4whqQsyeOLdv98SFmh2l4OEBknYvKTm
-         M9oh6NoC+mBbuvcoaWxLFGCXVwtkpLC0odG5kieNdqkDRrXToYnOhQbmBJPjc685jfK1
-         D/lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9LIUUYjX2yya/fzIDGRJMcHZZGhB8Scf+vPj88sv5Zs=;
-        b=Di0HbvaSfq9747cYQ4CvPyXafU3XGyKMEyurPfiuPwhciLq/ZHkA61Msi6BejUHWMc
-         wudVsLI6uyds7e88so6yY0QbTFEDBFupdJ9BHaTcjmR762uGAWZYcC7woVcOOecWNfz2
-         TPVZ11gF8ppfSHrKncrOcm/9JDMCj/EK2M1Kz9huencHsrqYiV95dYWrTaRIAFK1v+Rz
-         kpQPxlyYF/SRO/7R/RIHAj31R8P+UwtiPJYspjQSpmdmWUWpo8t8RFLYixBdy6THSSF9
-         HznQYRVo6MLIjRLwihESlPEqb38OkxckJVOdFEbTRxfJiEPUXJNinR+N2JXLo6TkW1gk
-         drcw==
-X-Gm-Message-State: APt69E0bp21j8fOPWhef1DxeRlYNACW2A/HiZ7akxVEgq742txDgOMHW
-        n9AMMC9aT8cjR7ZTzg7zmK4g+4eGeL1+ip94wKqzvw==
-X-Google-Smtp-Source: ADUXVKKwLtHKOv/ohWms0LDKSyi7NFTVxPzbIanEGUXI/iBCd4yUp4eqIApyKBU3x0bl8bjVULloqJMUz5FXEWZmTPo=
-X-Received: by 2002:a81:ac24:: with SMTP id k36-v6mr13341099ywh.133.1529628340074;
- Thu, 21 Jun 2018 17:45:40 -0700 (PDT)
+        id S934067AbeFVAtu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 20:49:50 -0400
+Received: from mail-eopbgr20076.outbound.protection.outlook.com ([40.107.2.76]:21504
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933819AbeFVAts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 20:49:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XB6qCwKFBQLIwQYjTLMZgMYgvar7Af+Q+ZacEsOtLLA=;
+ b=bhH+4PxHT/heo68yc78tapNQtgq1HEVbxhKNL2B7SSkk5toG6bDMCi3WYQ9Lcf/sgrMbg4ATvnhrzhU1FhJzKLjl/6aX4WStd6LSpDBi/h6frW1Puc6oCjGd5a07bScemirEjLvFQOpoRE+JhVGh43pdBMrY+j1AeWAlxgG/BfU=
+Received: from HE1PR04MB1450.eurprd04.prod.outlook.com (10.163.176.12) by
+ HE1PR04MB1562.eurprd04.prod.outlook.com (10.164.48.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.17; Fri, 22 Jun 2018 00:49:44 +0000
+Received: from HE1PR04MB1450.eurprd04.prod.outlook.com
+ ([fe80::6c56:638d:9996:7449]) by HE1PR04MB1450.eurprd04.prod.outlook.com
+ ([fe80::6c56:638d:9996:7449%4]) with mapi id 15.20.0863.016; Fri, 22 Jun 2018
+ 00:49:44 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: RE: [PATCH] usb: chipidea: Fix ULPI on imx51
+Thread-Topic: [PATCH] usb: chipidea: Fix ULPI on imx51
+Thread-Index: AQHT+Dx9S+jGiJqO7k2zhWn8R6Ncp6Rp1dOAgAAELICAAPGKgIAAF74AgAADh4CAAKyKoA==
+Date:   Fri, 22 Jun 2018 00:49:43 +0000
+Message-ID: <HE1PR04MB1450D1881C07BEAEF4A8283B8B750@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
+ <CAOMZO5AyAegbvUtX42by99mU8yQfi91bmhJfd9iqu1Ak0dEHiw@mail.gmail.com>
+ <CAOMZO5DJj=oQfsB-vNP=81HCiy-69j-5U+Km9P6LxGpnLx9xzg@mail.gmail.com>
+ <CAHQ1cqHxq+RM1nNHECY75Cojd_kxu1ERLe6+MhMLUa5kb10r8w@mail.gmail.com>
+ <0f31d801-528e-54ee-f385-b7aa3eef414f@cogentembedded.com>
+ <26d9fd57-07bc-0bba-2f29-ca778bd85328@cogentembedded.com>
+In-Reply-To: <26d9fd57-07bc-0bba-2f29-ca778bd85328@cogentembedded.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR04MB1562;7:6hUe2gbiEo3IYZt/Z5zSpXUIRSRLnA1XHvnXUWx++Atbpx1iQQjXahhv2hH9eTNVqm4voszSUhOkqWBTpHNN5CwUz17rUm8cVn/TDKEMWbEFTJobKAHNaoznXhRB+soqEHbEV2KaUHFca5KtmEp5gVkueuGk3nQa5m50dpRm5r01UYEfP9LXAtZlMiri91k6Juyjv/WMN0x7vmvUFnaVgpRBz5O6+9Amp8pBHCSjyGqbzNunrS9XqhC+RgPaG4w6
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: bc88af13-f969-4edf-a805-08d5d7da0b9e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1562;
+x-ms-traffictypediagnostic: HE1PR04MB1562:
+x-microsoft-antispam-prvs: <HE1PR04MB1562EAFB06E4040DEE54F1818B750@HE1PR04MB1562.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB1562;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1562;
+x-forefront-prvs: 071156160B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(346002)(39380400002)(396003)(199004)(189003)(99286004)(6436002)(86362001)(6246003)(229853002)(316002)(97736004)(8936002)(53936002)(105586002)(9686003)(2906002)(76176011)(3846002)(7696005)(8676002)(81166006)(106356001)(6116002)(55016002)(486006)(110136005)(446003)(476003)(54906003)(3660700001)(7736002)(81156014)(3280700002)(305945005)(44832011)(11346002)(74316002)(5250100002)(2900100001)(59450400001)(186003)(5660300001)(39060400002)(93886005)(68736007)(14454004)(66066001)(4326008)(33656002)(25786009)(478600001)(7416002)(102836004)(6506007)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1562;H:HE1PR04MB1450.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: RpzHwOYhDLBxDzRDdps7iywDcYX/wO64ojO4AyBqbhIrkTbMkRouSe2u63PEZQTRBiCtY5dHtiYJkcHqNcmzsbNnYk1ehdJt2zrGFiKOTz800cP90YLlb+L7olKX1RUCOElUAIObEfqXrqHDdT/m7UAhbhg9+nGgFSwCuqB6nRUD7ATXrNTxiTla99JQeg/PL5cnSPbNaO8PncC0U6QN+Gp6LJmvM6k8/+bNnDQKzlVxGGsfrXZcVqs0w7L1r6xpgR8tY85U15ZHVt6J4CBB5a1xmDxU8uHF5pmlPSoJuUVUqtfDI98UE2cWJ9Yc9deg66y5fkrMeOHqcKYDxUiJHQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20180522222805.80314-1-rajatja@google.com> <20180523175808.28030-1-rajatja@google.com>
- <20180523175808.28030-6-rajatja@google.com> <c27290dd401bb2954db4959559c39a00@codeaurora.org>
- <CACK8Z6EHDv0d5zwgKj2N+DyxKEj9dVkSoN2Y_HTOKv8L9p-OAg@mail.gmail.com>
- <7e146f62d1fa82a6f37848b22efc1b97@codeaurora.org> <CAA93t1r2fG+U9av2jj8jKrVfHrc_UABOS3DVO-UfHgcsJKyv7g@mail.gmail.com>
- <52d480b22e70713966039443931c2697@codeaurora.org>
-In-Reply-To: <52d480b22e70713966039443931c2697@codeaurora.org>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Thu, 21 Jun 2018 17:45:03 -0700
-Message-ID: <CACK8Z6FrQKrx4NWMdDMUmKt0M9OhUcWwrHOmeno1YnqdKS4qHw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] Documentation/ABI: Add details of PCI AER statistics
-To:     Oza Pawandeep <poza@codeaurora.org>
-Cc:     Rajat Jain <rajatxjain@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Thomas Tai <thomas.tai@oracle.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-pci <linux-pci@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jes Sorensen <jsorensen@fb.com>, Kyle McMartin <jkkm@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc88af13-f969-4edf-a805-08d5d7da0b9e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2018 00:49:43.9020
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1562
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 2:19 AM <poza@codeaurora.org> wrote:
->
-> On 2018-06-19 22:01, Rajat Jain wrote:
-> > On Mon, Jun 18, 2018 at 11:03 PM,  <poza@codeaurora.org> wrote:
-> >> On 2018-06-19 05:41, Rajat Jain wrote:
-> >>>
-> >>> Hello,
-> >>>
-> >>> On Sat, Jun 16, 2018 at 10:24 PM <poza@codeaurora.org> wrote:
-> >>>>
-> >>>>
-> >>>> On 2018-05-23 23:28, Rajat Jain wrote:
-> >>>> > Add the PCI AER statistics details to
-> >>>> > Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >>>> > and provide a pointer to it in
-> >>>> > Documentation/PCI/pcieaer-howto.txt
-> >>>> >
-> >>>> > Signed-off-by: Rajat Jain <rajatja@google.com>
-> >>>> > ---
-> >>>> > v2: Move the documentation to Documentation/ABI/
-> >>>> >
-> >>>> >  .../testing/sysfs-bus-pci-devices-aer_stats   | 103 ++++++++++++++++++
-> >>>> >  Documentation/PCI/pcieaer-howto.txt           |   5 +
-> >>>> >  2 files changed, 108 insertions(+)
-> >>>> >  create mode 100644
-> >>>> > Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >>>> >
-> >>>> > diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >>>> > b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >>>> > new file mode 100644
-> >>>> > index 000000000000..f55c389290ac
-> >>>> > --- /dev/null
-> >>>> > +++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >>>> > @@ -0,0 +1,103 @@
-> >>>> > +==========================
-> >>>> > +PCIe Device AER statistics
-> >>>> > +==========================
-> >>>> > +These attributes show up under all the devices that are AER capable.
-> >>>> > These
-> >>>> > +statistical counters indicate the errors "as seen/reported by the
-> >>>> > device".
-> >>>> > +Note that this may mean that if an end point is causing problems, the
-> >>>> > AER
-> >>>> > +counters may increment at its link partner (e.g. root port) because
-> >>>> > the
-> >>>> > +errors will be "seen" / reported by the link partner and not the the
-> >>>> > +problematic end point itself (which may report all counters as 0 as it
-> >>>> > never
-> >>>> > +saw any problems).
-> >>>> > +
-> >>>> > +Where:
-> >>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_total_cor_errs
-> >>>> > +Date:                May 2018
-> >>>> > +Kernel Version: 4.17.0
-> >>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> >>>> > +Description: Total number of correctable errors seen and reported by
-> >>>> > this
-> >>>> > +             PCI device using ERR_COR.
-> >>>> > +
-> >>>> > +Where:
-> >>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_total_fatal_errs
-> >>>> > +Date:                May 2018
-> >>>> > +Kernel Version: 4.17.0
-> >>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> >>>> > +Description: Total number of uncorrectable fatal errors seen and
-> >>>> > reported
-> >>>> > +             by this PCI device using ERR_FATAL.
-> >>>> > +
-> >>>> > +Where:
-> >>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_total_nonfatal_errs
-> >>>> > +Date:                May 2018
-> >>>> > +Kernel Version: 4.17.0
-> >>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> >>>> > +Description: Total number of uncorrectable non-fatal errors seen and
-> >>>> > reported
-> >>>> > +             by this PCI device using ERR_NONFATAL.
-> >>>> > +
-> >>>> > +Where:
-> >>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_correctable
-> >>>> > +Date:                May 2018
-> >>>> > +Kernel Version: 4.17.0
-> >>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> >>>> > +Description: Breakdown of of correctable errors seen and reported by
-> >>>> > this
-> >>>> > +             PCI device using ERR_COR. A sample result looks like
-> >>>> > this:
-> >>>> > +-----------------------------------------
-> >>>> > +Receiver Error = 0x174
-> >>>> > +Bad TLP = 0x19
-> >>>> > +Bad DLLP = 0x3
-> >>>> > +RELAY_NUM Rollover = 0x0
-> >>>> > +Replay Timer Timeout = 0x1
-> >>>> > +Advisory Non-Fatal = 0x0
-> >>>> > +Corrected Internal Error = 0x0
-> >>>> > +Header Log Overflow = 0x0
-> >>>> > +-----------------------------------------
-> >>>> why hex display ? decimal is easy to read as these are counters.
-> >>>
-> >>>
-> >>> Have no particular preference. Since these can be potentially large
-> >>> numbers, just had a random thought that hex might make it more
-> >>> concise. I can change to decimal if that is preferable.
-> >>>
-> >>>> > +
-> >>>> > +Where:
-> >>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_uncorrectable
-> >>>> > +Date:                May 2018
-> >>>> > +Kernel Version: 4.17.0
-> >>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> >>>> > +Description: Breakdown of of correctable errors seen and reported by
-> >>>> > this
-> >>>> > +             PCI device using ERR_FATAL or ERR_NONFATAL. A sample
-> >>>> > result
-> >>>> > +             looks like this:
-> >>>> > +-----------------------------------------
-> >>>> > +Undefined = 0x0
-> >>>> > +Data Link Protocol = 0x0
-> >>>> > +Surprise Down Error = 0x0
-> >>>> > +Poisoned TLP = 0x0
-> >>>> > +Flow Control Protocol = 0x0
-> >>>> > +Completion Timeout = 0x0
-> >>>> > +Completer Abort = 0x0
-> >>>> > +Unexpected Completion = 0x0
-> >>>> > +Receiver Overflow = 0x0
-> >>>> > +Malformed TLP = 0x0
-> >>>> > +ECRC = 0x0
-> >>>> > +Unsupported Request = 0x0
-> >>>> > +ACS Violation = 0x0
-> >>>> > +Uncorrectable Internal Error = 0x0
-> >>>> > +MC Blocked TLP = 0x0
-> >>>> > +AtomicOp Egress Blocked = 0x0
-> >>>> > +TLP Prefix Blocked Error = 0x0
-> >>>> > +-----------------------------------------
-> >>>> > +
-> >>>> > +============================
-> >>>> > +PCIe Rootport AER statistics
-> >>>> > +============================
-> >>>> > +These attributes showup under only the rootports that are AER capable.
-> >>>> > These
-> >>>> > +indicate the number of error messages as "reported to" the rootport.
-> >>>> > Please note
-> >>>> > +that the rootports also transmit (internally) the ERR_* messages for
-> >>>> > errors seen
-> >>>> > +by the internal rootport PCI device, so these counters includes them
-> >>>> > and are
-> >>>> > +thus cumulative of all the error messages on the PCI hierarchy
-> >>>> > originating
-> >>>> > +at that root port.
-> >>>>
-> >>>> what about switches and bridges ?
-> >>>
-> >>>
-> >>> What about them? AIUI, the switches forward the ERR_ messages from
-> >>> downstream devices to the rootport, like they do with standard
-> >>> messages. They can potentially generate their own ERR_ message and
-> >>> that would be reported no different than other end point devices.
-> >>
-> >>
-> >>
-> >> yes, what I meant to ask is; the ERR_FATAL msg coming from EP, can be
-> >> contained by switch
-> >> and the error handling code thinks that, the error is contained by
-> >> switch
-> >> irrespective of
-> >> AER or DPC, and it will think that the problem could be with
-> >> Switch/bridge
-> >> upstream link.
-> >>
-> >> hence the pci_dev of the switch where you should be increment your
-> >> counters.
-> >> of course ER_FATAL would have traversed till RP, but that doesnt meant
-> >> that
-> >> you account the error there.
-> >
-> > In this case, for the pci_dev for the rootport:
-> > - rootport_total_fatal_errors will be incremented (since it will get
-> > ERR_FATAL)
-> > - dev_total_fatal_errors will not be incremented.
->
-> ok but my confusion is: should you not be incrementing counter against
-> pci_dev of switch ? and not the RP ?
-> because the problem was with upstream link of the EP (e.g. switch)
-
-The question is who sent the ERR_* message to the rootport? That is
-the guy who noticed the problem, and will most likely be the switch
-port in your case. It is this guy whose counter shall be incremented.
-
->
-> >
-> > The dev_total_fatal_errors will be incremented only for the pci device
-> > identified by the "Error Source Identification Register" in the PCIe
-> > spec. Does this help clarify?
->
-> >
-> >>
-> >>
-> >>>
-> >>>> Also Can you give some idea as e.g what is the difference between
-> >>>> dev_total_fatal_errs and rootport_total_fatal_errs  (assuming that
-> >>>> both
-> >>>> are same pci_dev.
-> >>>
-> >>>
-> >>> For a pci_dev representing the rootport:
-> >>>
-> >>> dev_total_fatal_errors = how many times this PCI device *experienced*
-> >>> a fatal problem on its own (i.e. either link issues while talking to
-> >>> its link partner, or some internal errors).
-> >>>
-> >>> rootport_total_fatal_errors = how many times this rootport was
-> >>> *informed* about a problem (via ERR_* messages) in the PCI hierarchy
-> >>> that originates at it (can be any link further downstream). This
-> >>> includes the dev_total_fatal_errors also, because any errors detected
-> >>> by the rootport are also "informed" to itself via ERR_* messages. In
-> >>> reality, this is just the total number of ERR_FATAL messages received
-> >>> at the rootport. This sysfs attribute will only exist for root ports.
-> >>>
-> >>>>
-> >>>> rootport_total_fatal_errs gives me an idea that how many times
-> >>>> things
-> >>>> have been failed under this pci_dev ?
-> >>>
-> >>>
-> >>> Yes, as above.
-> >>>
-> >>>> which means num of downstream link problems. but I am still trying
-> >>>> to
-> >>>> make sense as how it could be used,
-> >>>> since we dont have BDF information associated with the number of
-> >>>> errors
-> >>>> anywhere (except these AER print messages)
-> >>>>
-> >>>
-> >>> Agree. That is a limitation. The challenges being more record
-> >>> keeping,
-> >>> more complicated sysfs representation, and given that PCI devices may
-> >>> come and go, how do we know it is the same device before we collate
-> >>> their stats etc.
-> >>>
-> >>>>
-> >>>> and dev_total_fatal_errs as you mentioned above that problematic EP,
-> >>>> then say root-port will report it and increment
-> >>>> dev_total_fatal_errs ++
-> >>>> does it also increment root-port_total_fatal_errs ++ in above
-> >>>> scenario ?
-> >>>
-> >>>
-> >>> Yes, as above, it will also root-port_total_fatal_errs++ for the root
-> >>> port of that hierarchy.
-> >>>
-> >>> Thanks,
-> >>>
-> >>> Rajat
-> >>>
-> >>>>
-> >>>> > +
-> >>>> > +Where:
-> >>>> > /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_cor_errs
-> >>>> > +Date:                May 2018
-> >>>> > +Kernel Version: 4.17.0
-> >>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> >>>> > +Description: Total number of ERR_COR messages reported to rootport.
-> >>>> > +
-> >>>> > +Where:
-> >>>> > /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_fatal_errs
-> >>>> > +Date:                May 2018
-> >>>> > +Kernel Version: 4.17.0
-> >>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> >>>> > +Description: Total number of ERR_FATAL messages reported to rootport.
-> >>>> > +
-> >>>> > +Where:
-> >>>> > /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_nonfatal_errs
-> >>>> > +Date:                May 2018
-> >>>> > +Kernel Version: 4.17.0
-> >>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> >>>> > +Description: Total number of ERR_NONFATAL messages reported to
-> >>>> > rootport.
-> >>>> > diff --git a/Documentation/PCI/pcieaer-howto.txt
-> >>>> > b/Documentation/PCI/pcieaer-howto.txt
-> >>>> > index acd0dddd6bb8..91b6e677cb8c 100644
-> >>>> > --- a/Documentation/PCI/pcieaer-howto.txt
-> >>>> > +++ b/Documentation/PCI/pcieaer-howto.txt
-> >>>> > @@ -73,6 +73,11 @@ In the example, 'Requester ID' means the ID of the
-> >>>> > device who sends
-> >>>> >  the error message to root port. Pls. refer to pci express specs for
-> >>>> >  other fields.
-> >>>> >
-> >>>> > +2.4 AER Statistics / Counters
-> >>>> > +
-> >>>> > +When PCIe AER errors are captured, the counters / statistics are also
-> >>>> > exposed
-> >>>> > +in form of sysfs attributes which are documented at
-> >>>> > +Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >>>> >
-> >>>> >  3. Developer Guide
+IA0KPiA+Pj4+DQo+ID4+DQo+ID4+IEkgbmV2ZXIgYXNzdW1lZCBpdCB3YXMgYSByZWdyZXNzaW9u
+IGFuZCB0aGF0IFVTQiB3b3JrZWQgb24gUkRVMSBib2FyZA0KPiA+PiBiZWZvcmUsIHNvIEkgbmV2
+ZXIgdHJpZWQgdG8gc2VlIGlmIHRoaXMgd2FzIGEgcmVncmVzc2lvbi4gSSBjYW4gb25seQ0KPiA+
+PiB0ZWxsIHlvdSB0aGF0IGl0IGhhbmdzIGFzIHNvb24gYXMgYW55IFBPUlRTQyByZWdpc3RlcnMg
+YXJlIGFjY2Vzc2VkLg0KPiA+DQo+ID4gSGFuZyBhdCByZWdpc3RlciBhY2Nlc3MgdXN1YWxseSBt
+ZWFucyB0aGF0IG1vZHVsZSB0aGF0IG93bnMgdGhlDQo+ID4gcmVnaXN0ZXIgaXMgbm90IGNsb2Nr
+ZWQuDQo+IA0KPiBPbiBSRFUxLCBjYWxsIHRvIHVzYl9waHlfaW5pdCgpIGFjdHVhbGx5IGNhbGxz
+IHVzYl9nZW5fcGh5X2luaXQoKSB0aGF0IGRvZXMNCj4gcmVndWxhdG9yX2VuYWJsZSgpIGZvciAm
+dnVzYl9yZWcgYW5kIGNsa19wcmVwYXJlX2VuYWJsZSgpIGZvciAmY2xrXzI2TV91c2IuICBJDQo+
+IHRoaW5nIHNvbWUgb2YgdGhlc2UgdHdvIGlzIGFjdHVhbGx5IG5lZWRlZCB0byBhdm9pZCBoYW5n
+IG9uIHJlZ2lzdGVyIGFjY2Vzcy4NCg0KRmFiaW8sIHdvdWxkIHlvdSBwbGVhc2UgY2hlY2sgYm90
+aCByZWd1bGF0b3IgYW5kIGNsb2NrIGZvciBVTFBJIFBIWSBhcmUgb24gYXQgaW14NTFiYmc/DQoN
+ClBldGVyDQo=
