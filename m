@@ -2,179 +2,170 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF43C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE460C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9860E244C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:24:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9860E244C0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9616E244C8
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:26:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9616E244C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933862AbeFVPYw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:24:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50972 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933291AbeFVPYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:24:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 87E0BAF6E;
-        Fri, 22 Jun 2018 15:24:46 +0000 (UTC)
-Date:   Fri, 22 Jun 2018 17:24:44 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-mm@kvack.org,
-        David Rientjes <rientjes@google.com>,
-        Felix Kuehling <felix.kuehling@amd.com>
-Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180622152444.GC10465@dhcp22.suse.cz>
-References: <20180622150242.16558-1-mhocko@kernel.org>
- <0aa9f695-5702-6704-9462-7779cbfdb3fd@amd.com>
+        id S933802AbeFVP0v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:26:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8726 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933304AbeFVP0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:26:50 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4BAD6C46BBEEC;
+        Fri, 22 Jun 2018 23:26:35 +0800 (CST)
+Received: from [127.0.0.1] (10.57.101.250) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.382.0; Fri, 22 Jun 2018
+ 23:26:27 +0800
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+To:     Will Deacon <will.deacon@arm.com>
+References: <20180621091850.GA22505@arm.com> <5B2B7A84.8090309@hisilicon.com>
+ <20180621105404.GB22505@arm.com> <5B2CB440.8040705@hisilicon.com>
+ <20180622092330.GD7601@arm.com> <5B2CD33B.9020702@hisilicon.com>
+ <20180622111614.GA1150@arm.com> <5B2CF723.7010600@hisilicon.com>
+ <20180622133133.GA1802@arm.com> <5B2CFDCD.6040207@hisilicon.com>
+ <20180622144346.GB1802@arm.com>
+CC:     James Morse <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <suzuki.poulose@arm.com>, <dave.martin@arm.com>,
+        <mark.rutland@arm.com>, <marc.zyngier@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, <xiexiuqi@huawei.com>,
+        huangdaode <huangdaode@hisilicon.com>,
+        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        <jonathan.cameron@huawei.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        <libeijian@hisilicon.com>, <zhangbin011@hisilicon.com>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B2D1524.4060803@hisilicon.com>
+Date:   Fri, 22 Jun 2018 23:26:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0aa9f695-5702-6704-9462-7779cbfdb3fd@amd.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180622144346.GB1802@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.101.250]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 22-06-18 17:13:02, Christian König wrote:
-> Hi Michal,
-> 
-> [Adding Felix as well]
-> 
-> Well first of all you have a misconception why at least the AMD graphics
-> driver need to be able to sleep in an MMU notifier: We need to sleep because
-> we need to wait for hardware operations to finish and *NOT* because we need
-> to wait for locks.
-> 
-> I'm not sure if your flag now means that you generally can't sleep in MMU
-> notifiers any more, but if that's the case at least AMD hardware will break
-> badly. In our case the approach of waiting for a short time for the process
-> to be reaped and then select another victim actually sounds like the right
-> thing to do.
+Hi Will,
 
-Well, I do not need to make the notifier code non blocking all the time.
-All I need is to ensure that it won't sleep if the flag says so and
-return -EAGAIN instead.
+On 2018/6/22 22:43, Will Deacon wrote:
+> On Fri, Jun 22, 2018 at 09:46:53PM +0800, Wei Xu wrote:
+>> On 2018/6/22 21:31, Will Deacon wrote:
+>>> On Fri, Jun 22, 2018 at 09:18:27PM +0800, Wei Xu wrote:
+>>>> On 2018/6/22 19:16, Will Deacon wrote:
+>>>>> On Fri, Jun 22, 2018 at 06:45:15PM +0800, Wei Xu wrote:
+>>>>>> On 2018/6/22 17:23, Will Deacon wrote:
+>>>>>>> Perhaps just writing back the table entries is enough to cause the issue,
+>>>>>>> although I really can't understand why that would be the case. Can you try
+>>>>>>> the diff below (without my previous change), please?
+>>>>>> Thanks!
+>>>>>> But it does not resolve the issue(only apply this patch based on 4.17.0).
+>>>>> Thanks, that's a useful data point. It means that it still crashes even if
+>>>>> we write back the same table entries, so it's the fact that we're writing
+>>>>> them at all which causes the problem, not the value that we write.
+>>>>>
+>>>>> Whilst looking at the code, we noticed a missing DMB. On the off-chance
+>>>>> that it helps, can you try this instead please?
+>>>> Thanks!
+>>>> Only apply below patch based on 4.17.0, we still got the crash.
+>>> Oh well, it was worth a shot (and that's still a fix worth having). Please
+>>> can you provide the complete disassembly for kpti_install_ng_mappings()
+>>> (I'm referring to the C function in cpufeature.c) along with a corresponding
+>>> crash log so that we can correlate the instruction stream with the crash?
+>> Just let me know if you need more information.
+> Thanks; the disassembly and log are really helpful.
+>
+> I have another patch for you to try below. Please can you let me know how
+> you get on, and sorry for the back-and-forth on this.
 
-So here is what I do for amdgpu:
+No worry.
+Great, I have tried 30 times and it works well with this patch applying 
+on the 4.17.0.
+And is it possible to let me know how you are using the disassemble and 
+log to debug
+this kind issue?
+Thanks!
 
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> > index 83e344fbb50a..d138a526feff 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> > @@ -136,12 +136,18 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
-> >    *
-> >    * Take the rmn read side lock.
-> >    */
-> > -static void amdgpu_mn_read_lock(struct amdgpu_mn *rmn)
-> > +static int amdgpu_mn_read_lock(struct amdgpu_mn *rmn, bool blockable)
-> >   {
-> > -	mutex_lock(&rmn->read_lock);
-> > +	if (blockable)
-> > +		mutex_lock(&rmn->read_lock);
-> > +	else if (!mutex_trylock(&rmn->read_lock))
-> > +		return -EAGAIN;
-> > +
-> >   	if (atomic_inc_return(&rmn->recursion) == 1)
-> >   		down_read_non_owner(&rmn->lock);
-> >   	mutex_unlock(&rmn->read_lock);
-> > +
-> > +	return 0;
-> >   }
-> >   /**
-> > @@ -197,10 +203,11 @@ static void amdgpu_mn_invalidate_node(struct amdgpu_mn_node *node,
-> >    * We block for all BOs between start and end to be idle and
-> >    * unmap them by move them into system domain again.
-> >    */
-> > -static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-> > +static int amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-> >   						 struct mm_struct *mm,
-> >   						 unsigned long start,
-> > -						 unsigned long end)
-> > +						 unsigned long end,
-> > +						 bool blockable)
-> >   {
-> >   	struct amdgpu_mn *rmn = container_of(mn, struct amdgpu_mn, mn);
-> >   	struct interval_tree_node *it;
-> > @@ -208,7 +215,11 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-> >   	/* notification is exclusive, but interval is inclusive */
-> >   	end -= 1;
-> > -	amdgpu_mn_read_lock(rmn);
-> > +	/* TODO we should be able to split locking for interval tree and
-> > +	 * amdgpu_mn_invalidate_node
-> > +	 */
-> > +	if (amdgpu_mn_read_lock(rmn, blockable))
-> > +		return -EAGAIN;
-> >   	it = interval_tree_iter_first(&rmn->objects, start, end);
-> >   	while (it) {
-> > @@ -219,6 +230,8 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-> >   		amdgpu_mn_invalidate_node(node, start, end);
-> >   	}
-> > +
-> > +	return 0;
-> >   }
-> >   /**
-> > @@ -233,10 +246,11 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-> >    * necessitates evicting all user-mode queues of the process. The BOs
-> >    * are restorted in amdgpu_mn_invalidate_range_end_hsa.
-> >    */
-> > -static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
-> > +static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
-> >   						 struct mm_struct *mm,
-> >   						 unsigned long start,
-> > -						 unsigned long end)
-> > +						 unsigned long end,
-> > +						 bool blockable)
-> >   {
-> >   	struct amdgpu_mn *rmn = container_of(mn, struct amdgpu_mn, mn);
-> >   	struct interval_tree_node *it;
-> > @@ -244,7 +258,8 @@ static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
-> >   	/* notification is exclusive, but interval is inclusive */
-> >   	end -= 1;
-> > -	amdgpu_mn_read_lock(rmn);
-> > +	if (amdgpu_mn_read_lock(rmn, blockable))
-> > +		return -EAGAIN;
-> >   	it = interval_tree_iter_first(&rmn->objects, start, end);
-> >   	while (it) {
-> > @@ -262,6 +277,8 @@ static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
-> >   				amdgpu_amdkfd_evict_userptr(mem, mm);
-> >   		}
-> >   	}
-> > +
-> > +	return 0;
-> >   }
-> >   /**
--- 
-Michal Hocko
-SUSE Labs
+Best Regards,
+Wei
+
+> Will
+>
+> --->8
+>
+> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+> index 5f9a73a4452c..26c5c3fabca8 100644
+> --- a/arch/arm64/mm/proc.S
+> +++ b/arch/arm64/mm/proc.S
+> @@ -216,9 +216,14 @@ ENDPROC(idmap_cpu_replace_ttbr1)
+>   	.endm
+>   
+>   	.macro __idmap_kpti_put_pgtable_ent_ng, type
+> -	orr	\type, \type, #PTE_NG		// Same bit for blocks and pages
+> +	eor	\type, \type, #PTE_NG		// Same bit for blocks and pages
+>   	str	\type, [cur_\()\type\()p]	// Update the entry and ensure it
+> +	tbz	\type, #11, 1234f
+>   	dc	civac, cur_\()\type\()p		// is visible to all CPUs.
+> +	b	1235f
+> +	1234:
+> +	dc	cvac, cur_\()\type\()p
+> +	1235:
+>   	.endm
+>   
+>   /*
+> @@ -298,6 +303,7 @@ skip_pgd:
+>   	/* PUD */
+>   walk_puds:
+>   	.if CONFIG_PGTABLE_LEVELS > 3
+> +	eor	pgd, pgd, #PTE_NG
+>   	pte_to_phys	cur_pudp, pgd
+>   	add	end_pudp, cur_pudp, #(PTRS_PER_PUD * 8)
+>   do_pud:	__idmap_kpti_get_pgtable_ent	pud
+> @@ -319,6 +325,7 @@ next_pud:
+>   	/* PMD */
+>   walk_pmds:
+>   	.if CONFIG_PGTABLE_LEVELS > 2
+> +	eor	pud, pud, #PTE_NG
+>   	pte_to_phys	cur_pmdp, pud
+>   	add	end_pmdp, cur_pmdp, #(PTRS_PER_PMD * 8)
+>   do_pmd:	__idmap_kpti_get_pgtable_ent	pmd
+> @@ -339,6 +346,7 @@ next_pmd:
+>   
+>   	/* PTE */
+>   walk_ptes:
+> +	eor	pmd, pmd, #PTE_NG
+>   	pte_to_phys	cur_ptep, pmd
+>   	add	end_ptep, cur_ptep, #(PTRS_PER_PTE * 8)
+>   do_pte:	__idmap_kpti_get_pgtable_ent	pte
+>
+> .
+>
+
+
