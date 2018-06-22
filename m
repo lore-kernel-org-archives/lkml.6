@@ -2,119 +2,231 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFD0C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 701BEC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEC4223DA4
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:12:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="JrejdkUk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEC4223DA4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BDBE323DA6
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:12:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDBE323DA6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751206AbeFVGME (ORCPT
+        id S1751295AbeFVGMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 02:12:04 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:32779 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750886AbeFVGMC (ORCPT
+        Fri, 22 Jun 2018 02:12:13 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:39986 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750931AbeFVGMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 02:12:02 -0400
-Received: by mail-ot0-f194.google.com with SMTP id h6-v6so6310627otj.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 23:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xfHnxkzE4Wi5xDsDcRnYG+o731E8cZ9kYe04AJmD+yM=;
-        b=JrejdkUk0X7Ye3BjJBCaN8e2ZqjqtL830W/n9W2IdtgjSSBU1eNVLzGLsaKK5NiR5B
-         5Gl+fUdDucy7z9QWQhECePwPwmW5XCqFR4/7SCZ+X7mYYJI4sAu5xWH6GIGsWGNtvYsR
-         FnjN8JgXvKjn3kPIpY6vgGQAqoDlS6iDGgWRhse9xijNPxERnH8LVR8DrMKgyYgI4Hba
-         gS8rC2q+0Aai/VfhYR3zpFxNS4eUTPAuQYchJzFA0YNo0CQLdjz+6X22BNCinh1HksDA
-         cCwuZj/Mw8HaV1VXW1wmZgo9H03CO42rZX/x03VvGoqQ9v97s7oTiCx8M5eCa94jZmuN
-         yynw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xfHnxkzE4Wi5xDsDcRnYG+o731E8cZ9kYe04AJmD+yM=;
-        b=FBOripGktCtfZ64G/P6dIDRnxU7fuwgiccXuB7JJ5Z574P79bW8+72rrlKCbfVELwP
-         DL1a44zlNqebdPmLM1K7j4qyl9Ua22gqY4VCduETxIxR6yUdX+i1vRcRMnnkdqITH65I
-         TwYy4UZ6zCrtELt4blWCiM+q0lTMscJ2KRY7IyDe9znNwlUg6NiHUUYishyM7JmHsJWe
-         3DR5VlUBT0YSd377S7ssU6tc0mL2pqVgBoFgjYH9UYO/27PVzBdRxYrakpzQH6Uxn5ah
-         gQZD+F3WTFQYov58Ih1POA2xvnrERr6RTOjwNB3YHyfMQ8PRy2RG5YbbjcEbnaz1NiQf
-         PKcg==
-X-Gm-Message-State: APt69E1eVLhlvT/k029pjlm3GrFxCvfiPyitrhSxRMqn0RxnD6pfC2Jf
-        ah0kotWtuP9vJCLN8jO8cK38l5OxCip2oYq1mMB+Dg==
-X-Google-Smtp-Source: ADUXVKI5M5w/n2SJbUQz3pe90kG5qTKuAkumQE/1EjAcTt26FfBKac4qk2jVksqZAgj1ir2tkI5MPG77KJY8Ey8Zudc=
-X-Received: by 2002:a9d:3072:: with SMTP id w47-v6mr149351otd.387.1529647922226;
- Thu, 21 Jun 2018 23:12:02 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 23:12:01
- -0700 (PDT)
-In-Reply-To: <1529647683-14531-1-git-send-email-n-horiguchi@ah.jp.nec.com>
-References: <1529647683-14531-1-git-send-email-n-horiguchi@ah.jp.nec.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 21 Jun 2018 23:12:01 -0700
-Message-ID: <CAPcyv4hpdvGRi+=psT47ePB6QigJW2JEq-zhbVXsTHb14pWfUQ@mail.gmail.com>
-Subject: Re: [PATCH v1] mm: initialize struct page for reserved pages in ZONE_DEVICE
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 22 Jun 2018 02:12:12 -0400
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.53 with ESMTP; 22 Jun 2018 15:12:09 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.222.33)
+        by 156.147.1.125 with ESMTP; 22 Jun 2018 15:12:09 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com
+Cc:     linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        joel@joelfernandes.org
+Subject: [PATCH] rcu: Refactor rcu_{nmi,irq}_{enter,exit}()
+Date:   Fri, 22 Jun 2018 15:12:06 +0900
+Message-Id: <1529647926-24427-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 11:08 PM, Naoya Horiguchi
-<n-horiguchi@ah.jp.nec.com> wrote:
-> Reading /proc/kpageflags for pfns allocated by pmem namespace triggers
-> kernel panic with a message like "BUG: unable to handle kernel paging
-> request at fffffffffffffffe".
->
-> The first few pages (controlled by altmap passed to memmap_init_zone())
-> in the ZONE_DEVICE can skip struct page initialization, which causes
-> the reported issue.
->
-> This patch simply adds some initialization code for them.
->
-> Fixes: 4b94ffdc4163 ("x86, mm: introduce vmem_altmap to augment vmemmap_populate()")
-> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> ---
->  mm/page_alloc.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git v4.17-mmotm-2018-06-07-16-59/mm/page_alloc.c v4.17-mmotm-2018-06-07-16-59_patched/mm/page_alloc.c
-> index 1772513..0b36afe 100644
-> --- v4.17-mmotm-2018-06-07-16-59/mm/page_alloc.c
-> +++ v4.17-mmotm-2018-06-07-16-59_patched/mm/page_alloc.c
-> @@ -5574,8 +5574,16 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->          * Honor reservation requested by the driver for this ZONE_DEVICE
->          * memory
->          */
-> -       if (altmap && start_pfn == altmap->base_pfn)
-> +       if (altmap && start_pfn == altmap->base_pfn) {
-> +               unsigned long i;
-> +
-> +               for (i = 0; i < altmap->reserve; i++) {
-> +                       page = pfn_to_page(start_pfn + i);
-> +                       __init_single_page(page, start_pfn + i, zone, nid);
-> +                       SetPageReserved(page);
-> +               }
->                 start_pfn += altmap->reserve;
-> +       }
+When passing through irq or NMI contexts, the current code uses
+->dynticks_nmi_nesting to detect if it's in the ourmost at the moment.
 
-No, unfortunately this will clobber metadata that lives in that
-reserved area, see __nvdimm_setup_pfn().
+Here, the thing is that all the related functions, rcu_irq_enter(),
+rcu_nmi_enter(), rcu_irq_exit() and rcu_nmi_exit() are carrying out
+the check within each under the following call relationship so there
+must be redundant conditional branches:
+
+   rcu_irq_enter()
+      /* A conditional branch with ->dynticks_nmi_nesting */
+      rcu_nmi_enter()
+         /* A conditional branch with ->dynticks_nmi_nesting */
+      /* A conditional branch with ->dynticks_nmi_nesting */
+
+   rcu_irq_exit()
+      /* A conditional branch with ->dynticks_nmi_nesting */
+      rcu_nmi_exit()
+         /* A conditional branch with ->dynticks_nmi_nesting */
+      /* A conditional branch with ->dynticks_nmi_nesting */
+
+   rcu_nmi_enter()
+      /* A conditional branch with ->dynticks_nmi_nesting */
+
+   rcu_nmi_exit()
+      /* A conditional branch with ->dynticks_nmi_nesting */
+
+In order to make the code more readable and remove redundant
+conditional branches, we need to refactor rcu_{nmi,irq}_{enter,exit}()
+so they use a common function for each like:
+
+   rcu_irq_enter() inlining rcu_nmi_enter_common(irq)
+      /* A conditional branch with ->dynticks_nmi_nesting */
+
+   rcu_irq_exit() inlining rcu_nmi_exit_common(irq)
+      /* A conditional branch with ->dynticks_nmi_nesting */
+
+   rcu_nmi_enter() inlining rcu_nmi_enter_common(nmi)
+      /* A conditional branch with ->dynticks_nmi_nesting */
+
+   rcu_nmi_exit() inlining rcu_nmi_exit_common(nmi)
+      /* A conditional branch with ->dynticks_nmi_nesting */
+
+Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+---
+ kernel/rcu/tree.c | 59 ++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 39 insertions(+), 20 deletions(-)
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index deb2508..cdae85f 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -764,17 +764,17 @@ void rcu_user_enter(void)
+ #endif /* CONFIG_NO_HZ_FULL */
+ 
+ /**
+- * rcu_nmi_exit - inform RCU of exit from NMI context
++ * rcu_nmi_exit_common - inform RCU of exit from NMI context
+  *
+  * If we are returning from the outermost NMI handler that interrupted an
+  * RCU-idle period, update rdtp->dynticks and rdtp->dynticks_nmi_nesting
+  * to let the RCU grace-period handling know that the CPU is back to
+  * being RCU-idle.
+  *
+- * If you add or remove a call to rcu_nmi_exit(), be sure to test
++ * If you add or remove a call to rcu_nmi_exit_common(), be sure to test
+  * with CONFIG_RCU_EQS_DEBUG=y.
+  */
+-void rcu_nmi_exit(void)
++static __always_inline void rcu_nmi_exit_common(bool irq)
+ {
+ 	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+ 
+@@ -800,7 +800,22 @@ void rcu_nmi_exit(void)
+ 	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
+ 	trace_rcu_dyntick(TPS("Startirq"), rdtp->dynticks_nmi_nesting, 0, rdtp->dynticks);
+ 	WRITE_ONCE(rdtp->dynticks_nmi_nesting, 0); /* Avoid store tearing. */
++
++	if (irq)
++		rcu_prepare_for_idle();
++
+ 	rcu_dynticks_eqs_enter();
++
++	if (irq)
++		rcu_dynticks_task_enter();
++}
++
++/**
++ * rcu_nmi_exit - inform RCU of exit from NMI context
++ */
++void rcu_nmi_exit(void)
++{
++	rcu_nmi_exit_common(false);
+ }
+ 
+ /**
+@@ -824,14 +839,8 @@ void rcu_nmi_exit(void)
+  */
+ void rcu_irq_exit(void)
+ {
+-	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+-
+ 	lockdep_assert_irqs_disabled();
+-	if (rdtp->dynticks_nmi_nesting == 1)
+-		rcu_prepare_for_idle();
+-	rcu_nmi_exit();
+-	if (rdtp->dynticks_nmi_nesting == 0)
+-		rcu_dynticks_task_enter();
++	rcu_nmi_exit_common(true);
+ }
+ 
+ /*
+@@ -914,7 +923,7 @@ void rcu_user_exit(void)
+ #endif /* CONFIG_NO_HZ_FULL */
+ 
+ /**
+- * rcu_nmi_enter - inform RCU of entry to NMI context
++ * rcu_nmi_enter_common - inform RCU of entry to NMI context
+  *
+  * If the CPU was idle from RCU's viewpoint, update rdtp->dynticks and
+  * rdtp->dynticks_nmi_nesting to let the RCU grace-period handling know
+@@ -922,10 +931,10 @@ void rcu_user_exit(void)
+  * long as the nesting level does not overflow an int.  (You will probably
+  * run out of stack space first.)
+  *
+- * If you add or remove a call to rcu_nmi_enter(), be sure to test
++ * If you add or remove a call to rcu_nmi_enter_common(), be sure to test
+  * with CONFIG_RCU_EQS_DEBUG=y.
+  */
+-void rcu_nmi_enter(void)
++static __always_inline void rcu_nmi_enter_common(bool irq)
+ {
+ 	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+ 	long incby = 2;
+@@ -942,7 +951,15 @@ void rcu_nmi_enter(void)
+ 	 * period (observation due to Andy Lutomirski).
+ 	 */
+ 	if (rcu_dynticks_curr_cpu_in_eqs()) {
++
++		if (irq)
++			rcu_dynticks_task_exit();
++
+ 		rcu_dynticks_eqs_exit();
++
++		if (irq)
++			rcu_cleanup_after_idle();
++
+ 		incby = 1;
+ 	}
+ 	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
+@@ -954,6 +971,14 @@ void rcu_nmi_enter(void)
+ }
+ 
+ /**
++ * rcu_nmi_enter - inform RCU of entry to NMI context
++ */
++void rcu_nmi_enter(void)
++{
++	rcu_nmi_enter_common(false);
++}
++
++/**
+  * rcu_irq_enter - inform RCU that current CPU is entering irq away from idle
+  *
+  * Enter an interrupt handler, which might possibly result in exiting
+@@ -977,14 +1002,8 @@ void rcu_nmi_enter(void)
+  */
+ void rcu_irq_enter(void)
+ {
+-	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+-
+ 	lockdep_assert_irqs_disabled();
+-	if (rdtp->dynticks_nmi_nesting == 0)
+-		rcu_dynticks_task_exit();
+-	rcu_nmi_enter();
+-	if (rdtp->dynticks_nmi_nesting == 1)
+-		rcu_cleanup_after_idle();
++	rcu_nmi_enter_common(true);
+ }
+ 
+ /*
+-- 
+1.9.1
+
