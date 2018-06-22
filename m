@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BFAC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C7DC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13C1323CC2
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:55:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C1323CC2
+	by mail.kernel.org (Postfix) with ESMTP id 5212523CC4
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:55:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5212523CC4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934448AbeFVDzL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 23:55:11 -0400
+        id S934479AbeFVDzQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 23:55:16 -0400
 Received: from mga11.intel.com ([192.55.52.93]:48405 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934399AbeFVDzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 23:55:09 -0400
+        id S934399AbeFVDzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 23:55:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 20:55:09 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 20:55:12 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,255,1526367600"; 
-   d="scan'208";a="65335051"
+   d="scan'208";a="65335061"
 Received: from wanpingl-mobl.ccr.corp.intel.com (HELO yhuang6-ux31a.ccr.corp.intel.com) ([10.254.212.200])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Jun 2018 20:55:07 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 21 Jun 2018 20:55:09 -0700
 From:   "Huang, Ying" <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -mm -v4 01/21] mm, THP, swap: Enable PMD swap operations for CONFIG_THP_SWAP
-Date:   Fri, 22 Jun 2018 11:51:31 +0800
-Message-Id: <20180622035151.6676-2-ying.huang@intel.com>
+Subject: [PATCH -mm -v4 02/21] mm, THP, swap: Make CONFIG_THP_SWAP depends on CONFIG_SWAP
+Date:   Fri, 22 Jun 2018 11:51:32 +0800
+Message-Id: <20180622035151.6676-3-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180622035151.6676-1-ying.huang@intel.com>
 References: <20180622035151.6676-1-ying.huang@intel.com>
@@ -58,12 +58,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huang Ying <ying.huang@intel.com>
 
-Previously, the PMD swap operations are only enabled for
-CONFIG_ARCH_ENABLE_THP_MIGRATION.  Because they are only used by the
-THP migration support.  We will support PMD swap mapping to the huge
-swap cluster and swapin the THP as a whole.  That will be enabled via
-CONFIG_THP_SWAP and needs these PMD swap operations.  So enable the
-PMD swap operations for CONFIG_THP_SWAP too.
+It's unreasonable to optimize swapping for THP without basic swapping
+support.  And this will cause build errors when THP_SWAP functions are
+defined in swapfile.c and called elsewhere.
+
+The comments are fixed too to reflect the latest progress.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -79,106 +78,25 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- arch/x86/include/asm/pgtable.h |  2 +-
- include/asm-generic/pgtable.h  |  2 +-
- include/linux/swapops.h        | 44 ++++++++++++++++++++++--------------------
- 3 files changed, 25 insertions(+), 23 deletions(-)
+ mm/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 99ecde23c3ec..13bf58838daf 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1224,7 +1224,7 @@ static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
- 	return pte_clear_flags(pte, _PAGE_SWP_SOFT_DIRTY);
- }
+diff --git a/mm/Kconfig b/mm/Kconfig
+index ce95491abd6a..cee958bb6002 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -420,10 +420,9 @@ config ARCH_WANTS_THP_SWAP
  
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+#if defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) || defined(CONFIG_THP_SWAP)
- static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
- {
- 	return pmd_set_flags(pmd, _PAGE_SWP_SOFT_DIRTY);
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index f59639afaa39..bb8354981a36 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -675,7 +675,7 @@ static inline void ptep_modify_prot_commit(struct mm_struct *mm,
- #endif
+ config THP_SWAP
+ 	def_bool y
+-	depends on TRANSPARENT_HUGEPAGE && ARCH_WANTS_THP_SWAP
++	depends on TRANSPARENT_HUGEPAGE && ARCH_WANTS_THP_SWAP && SWAP
+ 	help
+ 	  Swap transparent huge pages in one piece, without splitting.
+-	  XXX: For now this only does clustered swap space allocation.
  
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
--#ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+#if !defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) && !defined(CONFIG_THP_SWAP)
- static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
- {
- 	return pmd;
-diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-index 1d3877c39a00..f1be5a52f5c8 100644
---- a/include/linux/swapops.h
-+++ b/include/linux/swapops.h
-@@ -258,17 +258,7 @@ static inline int is_write_migration_entry(swp_entry_t entry)
+ 	  For selection by architectures with reasonable THP sizes.
  
- #endif
- 
--struct page_vma_mapped_walk;
--
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
--extern void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
--		struct page *page);
--
--extern void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
--		struct page *new);
--
--extern void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd);
--
-+#if defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) || defined(CONFIG_THP_SWAP)
- static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
- {
- 	swp_entry_t arch_entry;
-@@ -286,6 +276,28 @@ static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
- 	arch_entry = __swp_entry(swp_type(entry), swp_offset(entry));
- 	return __swp_entry_to_pmd(arch_entry);
- }
-+#else
-+static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
-+{
-+	return swp_entry(0, 0);
-+}
-+
-+static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
-+{
-+	return __pmd(0);
-+}
-+#endif
-+
-+struct page_vma_mapped_walk;
-+
-+#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+extern void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
-+		struct page *page);
-+
-+extern void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
-+		struct page *new);
-+
-+extern void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd);
- 
- static inline int is_pmd_migration_entry(pmd_t pmd)
- {
-@@ -306,16 +318,6 @@ static inline void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
- 
- static inline void pmd_migration_entry_wait(struct mm_struct *m, pmd_t *p) { }
- 
--static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
--{
--	return swp_entry(0, 0);
--}
--
--static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
--{
--	return __pmd(0);
--}
--
- static inline int is_pmd_migration_entry(pmd_t pmd)
- {
- 	return 0;
 -- 
 2.16.4
 
