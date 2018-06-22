@@ -3,135 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12237C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215A5C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EED52486F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:11:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EED52486F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C589524877
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:14:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C589524877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754351AbeFVULc (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 16:11:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42745 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeFVULb (ORCPT
+        id S933047AbeFVUOy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 16:14:54 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:41517 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751445AbeFVUOw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 16:11:31 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fWSP0-00038n-Es; Fri, 22 Jun 2018 22:11:26 +0200
-Date:   Fri, 22 Jun 2018 22:11:26 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Lukas Wunner <lukas@wunner.de>
-cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] genirq: Synchronize only with single thread on
- free_irq()
-In-Reply-To: <alpine.DEB.2.21.1806222144160.1589@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1806222155230.1589@nanos.tec.linutronix.de>
-References: <8f770886632640321592873e4c902218d42c436b.1527194314.git.lukas@wunner.de> <alpine.DEB.2.21.1806212217571.1591@nanos.tec.linutronix.de> <20180622080125.GA13709@wunner.de> <alpine.DEB.2.21.1806222144160.1589@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 22 Jun 2018 16:14:52 -0400
+Received: by mail-ua0-f195.google.com with SMTP id a5-v6so5046973uao.8;
+        Fri, 22 Jun 2018 13:14:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DnH51KZqoNTDjvy8pu7ivy0w7vw3RQxx9fBREhvBqvM=;
+        b=qP6tDBJr9ZbvPeGIifb7Giqg14eNNSy9IwRqCq1ou4LK4n7inpKbiYVIsBWkQd739/
+         MUSkIASNrvHaiJOr04p6AxBcpJ/7bq72UazZxqq72DWYr73mRbNQwMvJvGEUAujTI7/L
+         Z+RGiYpXn6mXPTRIaIorvuVlTUafJqVkFC5k7GCwSyy8uNM3i9gr+JlQOpn737Z7sheq
+         0GQ2mU07gopUTjZfPZ4b4Xl7+qggKLLtH45ReXDvVnTUMsLdgvkstHzgYBsGNlIORjEV
+         FwwzoeMZ1xrEEtSbYumq5lxF4agnpCFIFnfwcAlJVoMXy0mSaCaIssyg6m4mWzSjNIfl
+         mDng==
+X-Gm-Message-State: APt69E32a5GlPQXVcxRomTKQstfqANxpAODU+Gvrf89cwd456Gt2kcxc
+        RO0OEdFZnFJvuqntpVWfEVj5tZ4hTYRh9GvW7m/FYQ==
+X-Google-Smtp-Source: ADUXVKIyBK2jVwDKuv9bFZ4C5jZcB3HYO8LH7jPt1QvnSutu+alF/jOHkUBtx6Q1qQRk57XLwIRiSUsNI28mPlPsYlQ=
+X-Received: by 2002:ab0:265:: with SMTP id 92-v6mr2169854uas.26.1529698492137;
+ Fri, 22 Jun 2018 13:14:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20180622100820.29616-1-geert@linux-m68k.org> <alpine.DEB.2.21.1806221753560.2402@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1806221753560.2402@nanos.tec.linutronix.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 22 Jun 2018 22:14:40 +0200
+Message-ID: <CAMuHMdVkg3gOkykbZOzW2CpCd+WRdyKqehs9_WKQ8nbtSgwVgw@mail.gmail.com>
+Subject: Re: [PATCH v4] MAINTAINERS: Add file patterns for x86 device tree bindings
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Jun 2018, Thomas Gleixner wrote:
-> On Fri, 22 Jun 2018, Lukas Wunner wrote:
-> > On Thu, Jun 21, 2018 at 10:21:44PM +0200, Thomas Gleixner wrote:
-> > > On Thu, 24 May 2018, Lukas Wunner wrote:
-> > > >  static int irq_wait_for_interrupt(struct irqaction *action)
-> > > >  {
-> > > > -	set_current_state(TASK_INTERRUPTIBLE);
-> > > > +	for (;;) {
-> > > > +		set_current_state(TASK_INTERRUPTIBLE);
-> > > >  
-> > > > -	while (!kthread_should_stop()) {
-> > > > +		if (kthread_should_stop()) {
-> > > > +			/* may need to run one last time. */
-> > > > +			if (test_and_clear_bit(IRQTF_RUNTHREAD,
-> > > > +					       &action->thread_flags)) {
-> > > > +				__set_current_state(TASK_RUNNING);
-> > > > +				return 0;
-> > > > +			}
-> > > > +			__set_current_state(TASK_RUNNING);
-> > > > +			return -1;
-> > > > +		}
-> > > >  
-> > > >  		if (test_and_clear_bit(IRQTF_RUNTHREAD,
-> > > >  				       &action->thread_flags)) {
-> > > > @@ -766,10 +776,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
-> > > >  			return 0;
-> > > >  		}
-> > > >  		schedule();
-> > > > -		set_current_state(TASK_INTERRUPTIBLE);
-> > > >  	}
-> > > > -	__set_current_state(TASK_RUNNING);
-> > > > -	return -1;
-> > > >  }
-> > > >  
-> > > >  /*
-> > > > @@ -990,7 +997,7 @@ static int irq_thread(void *data)
-> > > >  	/*
-> > > >  	 * This is the regular exit path. __free_irq() is stopping the
-> > > >  	 * thread via kthread_stop() after calling
-> > > > -	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
-> > > > +	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
-> > > >  	 * oneshot mask bit can be set. We cannot verify that as we
-> > > >  	 * cannot touch the oneshot mask at this point anymore as
-> > > >  	 * __setup_irq() might have given out currents thread_mask
-> > > > @@ -1595,7 +1602,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
-> > > >  	unregister_handler_proc(irq, action);
-> > > >  
-> > > >  	/* Make sure it's not being used on another CPU: */
-> > > > -	synchronize_irq(irq);
-> > > > +	synchronize_hardirq(irq);
-> > > 
-> > > So after that, action can be freed and when the thread above tries to
-> > > access it. Nice Use After Free. That needs more thought.
-> > 
-> > No, after that, kthread_stop() is called which blocks until the IRQ
-> > thread has completed.  Only then is the action freed.
-> 
-> Missed that. Fair enough.
+Hi Thomas,
 
-I just had to go back and figure out why I missed it:
+On Fri, Jun 22, 2018 at 5:57 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Fri, 22 Jun 2018, Geert Uytterhoeven wrote:
+> > Submitters of device tree binding documentation may forget to CC
+> > the subsystem maintainer if this is missing.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > ---
+> > v3:
+> >   - Update for next-20180622,
+> >
+> > v2:
+> >   - No changes.
+> >
+> > Impact on "scripts/get_maintainer.pl -f Documentation/devicetree/bindings/x86/":
+> >
+> > -Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS,commit_signer:1/1=100%)
+> > +Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+>
+> I assume there is no way to make sure that Rob and the device tree folks
+> are on top of that list? While it's somehow x86 related most of the
+> devicetree details are way over my head. :)
 
-kthread_stop() is only half of the story. Just look at the comment above:
+I think the order is from most-specific to least-specific.
 
-		 * oneshot mask bit can be set.  We cannot verify that as we
-		 * cannot touch the oneshot mask at this point anymore as
-		 * __setup_irq() might have given out currents thread_mask
+> I'll pick it up nevertheless
 
-But you got lucky. That comment is not longer accurate because at the time
-when it was written desc->request_mutex did not exist.
+Thanks!
 
-It's there now and prevents a concurrent request_irq() coming in after
-dropping desc->lock and handing out the oneshot mask bit. It that wouldn't
-be the case, then your scheme would be very subtly busted.
+Gr{oetje,eeting}s,
 
-This really needs to be documented in the code, the comment needs to be
-fixed and the changelog needs a proper explanation of all that.
+                        Geert
 
-Thanks,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-	tglx
-
-
-
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
