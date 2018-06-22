@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6992C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1B6C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7776C244DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:34:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7776C244DE
+	by mail.kernel.org (Postfix) with ESMTP id EDEBB244DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:34:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDEBB244DE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934041AbeFVPeM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:34:12 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:46412 "EHLO extserv.mm-sol.com"
+        id S934072AbeFVPeP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:34:15 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:46399 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933983AbeFVPeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933978AbeFVPeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 11:34:08 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id A7E8E4F88E;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 7AA8DCD3C;
         Fri, 22 Jun 2018 18:33:59 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 22/32] media: camss: ispif: Add support for 8x96
-Date:   Fri, 22 Jun 2018 18:33:31 +0300
-Message-Id: <1529681621-9682-23-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH 17/32] media: camss: Add basic runtime PM support
+Date:   Fri, 22 Jun 2018 18:33:26 +0300
+Message-Id: <1529681621-9682-18-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
 References: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
@@ -40,116 +40,342 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ISPIF hardware modules on 8x16 and 8x96 are similar. However on
-8x96 the ISPIF routes data to two VFE hardware modules. Add
-separate interrupt handler for 8x96 to handle the additional
-interrupts.
+There is a PM domain for each of the VFE hardware modules. Add
+support for basic runtime PM support to be able to control the
+PM domains. When a PM domain needs to be powered on - a device
+link is created. When a PM domain needs to be powered off -
+its device link is removed. This allows separate and
+independent control of the PM domains.
+
+Suspend/Resume is still not supported.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/platform/qcom/camss/camss-ispif.c | 76 ++++++++++++++++++++++++-
- 1 file changed, 73 insertions(+), 3 deletions(-)
+ drivers/media/platform/qcom/camss/camss-csid.c   |  4 ++
+ drivers/media/platform/qcom/camss/camss-csiphy.c |  5 ++
+ drivers/media/platform/qcom/camss/camss-ispif.c  | 19 ++++++-
+ drivers/media/platform/qcom/camss/camss-vfe.c    | 13 +++++
+ drivers/media/platform/qcom/camss/camss.c        | 63 ++++++++++++++++++++++++
+ drivers/media/platform/qcom/camss/camss.h        | 11 +++++
+ 6 files changed, 113 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+index 627ef44..ea2b0ba 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid.c
++++ b/drivers/media/platform/qcom/camss/camss-csid.c
+@@ -13,6 +13,7 @@
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ #include <media/media-entity.h>
+ #include <media/v4l2-device.h>
+@@ -316,6 +317,8 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
+ 	if (on) {
+ 		u32 hw_version;
+ 
++		pm_runtime_get_sync(dev);
++
+ 		ret = regulator_enable(csid->vdda);
+ 		if (ret < 0)
+ 			return ret;
+@@ -348,6 +351,7 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
+ 		disable_irq(csid->irq);
+ 		camss_disable_clocks(csid->nclocks, csid->clock);
+ 		ret = regulator_disable(csid->vdda);
++		pm_runtime_put_sync(dev);
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
+index 0383e94..2db78791 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy.c
++++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+@@ -13,6 +13,7 @@
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <media/media-entity.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-subdev.h>
+@@ -240,6 +241,8 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
+ 		u8 hw_version;
+ 		int ret;
+ 
++		pm_runtime_get_sync(dev);
++
+ 		ret = csiphy_set_clock_rates(csiphy);
+ 		if (ret < 0)
+ 			return ret;
+@@ -259,6 +262,8 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
+ 		disable_irq(csiphy->irq);
+ 
+ 		camss_disable_clocks(csiphy->nclocks, csiphy->clock);
++
++		pm_runtime_put_sync(dev);
+ 	}
+ 
+ 	return 0;
 diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
-index 8b04f8a..b124cd3 100644
+index ed50cc5..8b04f8a 100644
 --- a/drivers/media/platform/qcom/camss/camss-ispif.c
 +++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-@@ -116,13 +116,77 @@ static const u32 ispif_formats[] = {
- };
+@@ -14,6 +14,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mutex.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <media/media-entity.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-subdev.h>
+@@ -169,6 +170,14 @@ static int ispif_reset(struct ispif_device *ispif)
+ 	u32 val;
+ 	int ret;
+ 
++	ret = camss_pm_domain_on(to_camss(ispif), PM_DOMAIN_VFE0);
++	if (ret < 0)
++		return ret;
++
++	ret = camss_pm_domain_on(to_camss(ispif), PM_DOMAIN_VFE1);
++	if (ret < 0)
++		return ret;
++
+ 	ret = camss_enable_clocks(ispif->nclocks_for_reset,
+ 				  ispif->clock_for_reset,
+ 				  to_device(ispif));
+@@ -201,12 +210,15 @@ static int ispif_reset(struct ispif_device *ispif)
+ 		msecs_to_jiffies(ISPIF_RESET_TIMEOUT_MS));
+ 	if (!time) {
+ 		dev_err(to_device(ispif), "ISPIF reset timeout\n");
+-		return -EIO;
++		ret = -EIO;
+ 	}
+ 
+ 	camss_disable_clocks(ispif->nclocks_for_reset, ispif->clock_for_reset);
+ 
+-	return 0;
++	camss_pm_domain_off(to_camss(ispif), PM_DOMAIN_VFE0);
++	camss_pm_domain_off(to_camss(ispif), PM_DOMAIN_VFE1);
++
++	return ret;
+ }
  
  /*
-- * ispif_isr - ISPIF module interrupt handler
-+ * ispif_isr_8x96 - ISPIF module interrupt handler for 8x96
-  * @irq: Interrupt line
-  * @dev: ISPIF device
-  *
-  * Return IRQ_HANDLED on success
-  */
--static irqreturn_t ispif_isr(int irq, void *dev)
-+static irqreturn_t ispif_isr_8x96(int irq, void *dev)
+@@ -232,6 +244,8 @@ static int ispif_set_power(struct v4l2_subdev *sd, int on)
+ 			goto exit;
+ 		}
+ 
++		pm_runtime_get_sync(dev);
++
+ 		ret = camss_enable_clocks(ispif->nclocks, ispif->clock, dev);
+ 		if (ret < 0)
+ 			goto exit;
+@@ -252,6 +266,7 @@ static int ispif_set_power(struct v4l2_subdev *sd, int on)
+ 			goto exit;
+ 		} else if (ispif->power_count == 1) {
+ 			camss_disable_clocks(ispif->nclocks, ispif->clock);
++			pm_runtime_put_sync(dev);
+ 		}
+ 
+ 		ispif->power_count--;
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+index 3f589c4..4afbef8 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+@@ -15,6 +15,7 @@
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/spinlock_types.h>
+ #include <linux/spinlock.h>
+ #include <media/media-entity.h>
+@@ -1981,6 +1982,12 @@ static int vfe_get(struct vfe_device *vfe)
+ 	mutex_lock(&vfe->power_lock);
+ 
+ 	if (vfe->power_count == 0) {
++		ret = camss_pm_domain_on(vfe->camss, vfe->id);
++		if (ret < 0)
++			goto error_pm_domain;
++
++		pm_runtime_get_sync(vfe->camss->dev);
++
+ 		ret = vfe_set_clock_rates(vfe);
+ 		if (ret < 0)
+ 			goto error_clocks;
+@@ -2012,6 +2019,10 @@ static int vfe_get(struct vfe_device *vfe)
+ 	camss_disable_clocks(vfe->nclocks, vfe->clock);
+ 
+ error_clocks:
++	pm_runtime_put_sync(vfe->camss->dev);
++	camss_pm_domain_off(vfe->camss, vfe->id);
++
++error_pm_domain:
+ 	mutex_unlock(&vfe->power_lock);
+ 
+ 	return ret;
+@@ -2034,6 +2045,8 @@ static void vfe_put(struct vfe_device *vfe)
+ 			vfe_halt(vfe);
+ 		}
+ 		camss_disable_clocks(vfe->nclocks, vfe->clock);
++		pm_runtime_put_sync(vfe->camss->dev);
++		camss_pm_domain_off(vfe->camss, vfe->id);
+ 	}
+ 
+ 	vfe->power_count--;
+diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+index 171e2c9..dcc0c30 100644
+--- a/drivers/media/platform/qcom/camss/camss.c
++++ b/drivers/media/platform/qcom/camss/camss.c
+@@ -14,6 +14,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
+ #include <linux/of_graph.h>
++#include <linux/pm_runtime.h>
++#include <linux/pm_domain.h>
+ #include <linux/slab.h>
+ #include <linux/videodev2.h>
+ 
+@@ -393,6 +395,26 @@ int camss_get_pixel_clock(struct media_entity *entity, u32 *pixel_clock)
+ 	return 0;
+ }
+ 
++int camss_pm_domain_on(struct camss *camss, int id)
 +{
-+	struct ispif_device *ispif = dev;
-+	u32 value0, value1, value2, value3, value4, value5;
++	if (camss->version == CAMSS_8x96) {
++		camss->genpd_link[id] = device_link_add(camss->dev,
++				camss->genpd[id], DL_FLAG_STATELESS |
++				DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
 +
-+	value0 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_0(0));
-+	value1 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_1(0));
-+	value2 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_2(0));
-+	value3 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_0(1));
-+	value4 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_1(1));
-+	value5 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_2(1));
++		if (!camss->genpd_link[id])
++			return -EINVAL;
++	}
 +
-+	writel_relaxed(value0, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_0(0));
-+	writel_relaxed(value1, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_1(0));
-+	writel_relaxed(value2, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_2(0));
-+	writel_relaxed(value3, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_0(1));
-+	writel_relaxed(value4, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_1(1));
-+	writel_relaxed(value5, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_2(1));
-+
-+	writel(0x1, ispif->base + ISPIF_IRQ_GLOBAL_CLEAR_CMD);
-+
-+	if ((value0 >> 27) & 0x1)
-+		complete(&ispif->reset_complete);
-+
-+	if (unlikely(value0 & ISPIF_VFE_m_IRQ_STATUS_0_PIX0_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 pix0 overflow\n");
-+
-+	if (unlikely(value0 & ISPIF_VFE_m_IRQ_STATUS_0_RDI0_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 rdi0 overflow\n");
-+
-+	if (unlikely(value1 & ISPIF_VFE_m_IRQ_STATUS_1_PIX1_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 pix1 overflow\n");
-+
-+	if (unlikely(value1 & ISPIF_VFE_m_IRQ_STATUS_1_RDI1_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 rdi1 overflow\n");
-+
-+	if (unlikely(value2 & ISPIF_VFE_m_IRQ_STATUS_2_RDI2_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE0 rdi2 overflow\n");
-+
-+	if (unlikely(value3 & ISPIF_VFE_m_IRQ_STATUS_0_PIX0_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 pix0 overflow\n");
-+
-+	if (unlikely(value3 & ISPIF_VFE_m_IRQ_STATUS_0_RDI0_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 rdi0 overflow\n");
-+
-+	if (unlikely(value4 & ISPIF_VFE_m_IRQ_STATUS_1_PIX1_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 pix1 overflow\n");
-+
-+	if (unlikely(value4 & ISPIF_VFE_m_IRQ_STATUS_1_RDI1_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 rdi1 overflow\n");
-+
-+	if (unlikely(value5 & ISPIF_VFE_m_IRQ_STATUS_2_RDI2_OVERFLOW))
-+		dev_err_ratelimited(to_device(ispif), "VFE1 rdi2 overflow\n");
-+
-+	return IRQ_HANDLED;
++	return 0;
 +}
 +
-+/*
-+ * ispif_isr_8x16 - ISPIF module interrupt handler for 8x16
-+ * @irq: Interrupt line
-+ * @dev: ISPIF device
-+ *
-+ * Return IRQ_HANDLED on success
-+ */
-+static irqreturn_t ispif_isr_8x16(int irq, void *dev)
- {
- 	struct ispif_device *ispif = dev;
- 	u32 value0, value1, value2;
-@@ -954,8 +1018,14 @@ int msm_ispif_subdev_init(struct ispif_device *ispif,
- 	ispif->irq = r->start;
- 	snprintf(ispif->irq_name, sizeof(ispif->irq_name), "%s_%s",
- 		 dev_name(dev), MSM_ISPIF_NAME);
--	ret = devm_request_irq(dev, ispif->irq, ispif_isr,
-+	if (to_camss(ispif)->version == CAMSS_8x16)
-+		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x16,
- 			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
-+	else if (to_camss(ispif)->version == CAMSS_8x96)
-+		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x96,
-+			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
-+	else
-+		ret = -EINVAL;
- 	if (ret < 0) {
- 		dev_err(dev, "request_irq failed: %d\n", ret);
- 		return ret;
++void camss_pm_domain_off(struct camss *camss, int id)
++{
++	if (camss->version == CAMSS_8x96)
++		device_link_del(camss->genpd_link[id]);
++}
++
+ /*
+  * camss_of_parse_endpoint_node - Parse port endpoint node
+  * @dev: Device
+@@ -896,6 +918,23 @@ static int camss_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (camss->version == CAMSS_8x96) {
++		camss->genpd[PM_DOMAIN_VFE0] = dev_pm_domain_attach_by_id(
++						camss->dev, PM_DOMAIN_VFE0);
++		if (IS_ERR(camss->genpd[PM_DOMAIN_VFE0]))
++			return PTR_ERR(camss->genpd[PM_DOMAIN_VFE0]);
++
++		camss->genpd[PM_DOMAIN_VFE1] = dev_pm_domain_attach_by_id(
++						camss->dev, PM_DOMAIN_VFE1);
++		if (IS_ERR(camss->genpd[PM_DOMAIN_VFE1])) {
++			dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE0],
++					     true);
++			return PTR_ERR(camss->genpd[PM_DOMAIN_VFE1]);
++		}
++	}
++
++	pm_runtime_enable(dev);
++
+ 	return 0;
+ 
+ err_register_subdevs:
+@@ -912,6 +951,13 @@ void camss_delete(struct camss *camss)
+ 	media_device_unregister(&camss->media_dev);
+ 	media_device_cleanup(&camss->media_dev);
+ 
++	pm_runtime_disable(camss->dev);
++
++	if (camss->version == CAMSS_8x96) {
++		dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE0], true);
++		dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE1], true);
++	}
++
+ 	kfree(camss);
+ }
+ 
+@@ -947,12 +993,29 @@ static const struct of_device_id camss_dt_match[] = {
+ 
+ MODULE_DEVICE_TABLE(of, camss_dt_match);
+ 
++static int camss_runtime_suspend(struct device *dev)
++{
++	return 0;
++}
++
++static int camss_runtime_resume(struct device *dev)
++{
++	return 0;
++}
++
++static const struct dev_pm_ops camss_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
++	SET_RUNTIME_PM_OPS(camss_runtime_suspend, camss_runtime_resume, NULL)
++};
++
+ static struct platform_driver qcom_camss_driver = {
+ 	.probe = camss_probe,
+ 	.remove = camss_remove,
+ 	.driver = {
+ 		.name = "qcom-camss",
+ 		.of_match_table = camss_dt_match,
++		.pm = &camss_pm_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
+index dff1045..418996d 100644
+--- a/drivers/media/platform/qcom/camss/camss.h
++++ b/drivers/media/platform/qcom/camss/camss.h
+@@ -10,6 +10,7 @@
+ #ifndef QC_MSM_CAMSS_H
+ #define QC_MSM_CAMSS_H
+ 
++#include <linux/device.h>
+ #include <linux/types.h>
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-device.h>
+@@ -56,6 +57,12 @@ struct resources_ispif {
+ 	char *interrupt;
+ };
+ 
++enum pm_domain {
++	PM_DOMAIN_VFE0,
++	PM_DOMAIN_VFE1,
++	PM_DOMAIN_COUNT
++};
++
+ enum camss_version {
+ 	CAMSS_8x16,
+ 	CAMSS_8x96,
+@@ -75,6 +82,8 @@ struct camss {
+ 	int vfe_num;
+ 	struct vfe_device *vfe;
+ 	atomic_t ref_count;
++	struct device *genpd[PM_DOMAIN_COUNT];
++	struct device_link *genpd_link[PM_DOMAIN_COUNT];
+ };
+ 
+ struct camss_camera_interface {
+@@ -99,6 +108,8 @@ int camss_enable_clocks(int nclocks, struct camss_clock *clock,
+ 			struct device *dev);
+ void camss_disable_clocks(int nclocks, struct camss_clock *clock);
+ int camss_get_pixel_clock(struct media_entity *entity, u32 *pixel_clock);
++int camss_pm_domain_on(struct camss *camss, int id);
++void camss_pm_domain_off(struct camss *camss, int id);
+ void camss_delete(struct camss *camss);
+ 
+ #endif /* QC_MSM_CAMSS_H */
 -- 
 2.7.4
 
