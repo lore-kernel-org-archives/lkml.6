@@ -2,98 +2,166 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B837BC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 928E7C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA0423D96
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:59:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA0423D96
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 36AF423D9B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:04:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpJmb6Yn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36AF423D9B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751046AbeFVF7K (ORCPT
+        id S1751098AbeFVGET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 01:59:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41095 "EHLO mx2.suse.de"
+        Fri, 22 Jun 2018 02:04:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750779AbeFVF7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 01:59:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6EF8BACB3;
-        Fri, 22 Jun 2018 05:59:07 +0000 (UTC)
-Subject: Re: [PATCH] xen: Remove unnecessary BUG_ON from __unbind_from_irq()
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     ben.hutchings@codethink.co.uk, roger.pau@citrix.com,
-        stable@vger.kernel.org
-References: <1529602184-2861-1-git-send-email-boris.ostrovsky@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <bbf57e79-e79c-baea-a22a-ffb57990c448@suse.com>
-Date:   Fri, 22 Jun 2018 07:59:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1529602184-2861-1-git-send-email-boris.ostrovsky@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
+        id S1750866AbeFVGER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 02:04:17 -0400
+Received: from devnote (s169.156.222.122.fls.vectant.ne.jp [122.222.156.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96A2F23D9C;
+        Fri, 22 Jun 2018 06:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529647457;
+        bh=0EBEzknj7XEOX9pH1bSTlP7bpV8101Kn6Vm76Jxufpg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jpJmb6Yn/5mS/fkI+tyJzXAirhEVf8BiKgSIybgZmmoOzDyBiELO1UdCTyT3GMuyy
+         R91XLDo6nSiqve44gUADi2cUHenGK7klF1qZ0fnejYVolYivH7kt1xcvlX/rCBHajB
+         hImRiU4F4SteYs3F3YymT0IzzqM6NsPjEEjZFaxk=
+Date:   Fri, 22 Jun 2018 15:04:12 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
+Message-Id: <20180622150412.ef26a31acb46c5baebd97ddb@kernel.org>
+In-Reply-To: <20180621161648.29e7a4cc@gandalf.local.home>
+References: <152465856498.26224.16969986455942749517.stgit@devbox>
+        <20180621161648.29e7a4cc@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/06/18 19:29, Boris Ostrovsky wrote:
-> Commit 910f8befdf5b ("xen/pirq: fix error path cleanup when binding
-> MSIs") fixed a couple of errors in error cleanup path of
-> xen_bind_pirq_msi_to_irq(). This cleanup allowed a call to
-> __unbind_from_irq() with an unbound irq, which would result in
-> triggering the BUG_ON there.
+Hi Steve,
+
+On Thu, 21 Jun 2018 16:16:48 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> Hi Masami,
 > 
-> Since there is really no reason for the BUG_ON (xen_free_irq() can
-> operate on unbound irqs) we can remove it.
+> Are you going to post another version of this patch set?
+
+No, this is the latest one which I sent to LKML.
+Oops, it was 2 month ago now...
+
+Thank you,
+
 > 
-> Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: stable@vger.kernel.org
+> -- Steve
+> 
+> 
+> On Wed, 25 Apr 2018 21:16:06 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Hi,
+> > 
+> > This is the 7th version of the fetch-arg improvement series.
+> > This includes variable changes on fetcharg framework like,
+> > 
+> > - Add fetcharg testcases (syntax, argN, symbol, string and array)
+> >   and probepoint testcase.
+> > - Rewrite fetcharg framework with fetch_insn, switch-case based
+> >   instead of function pointer.
+> > - Add "symbol" type support, which shows symbol+offset instead of
+> >   address value.
+> > - Add "$argN" fetcharg, which fetches function parameters.
+> >   (currently only for x86-64)
+> > - Add array type support (including string arrary :) ) ,
+> >   which enables to get fixed length array from probe-events.
+> > - Add array type support for perf-probe, so that user can
+> >   dump partial array entries.
+> > 
+> > V6 is here:
+> >  https://lkml.org/lkml/2018/3/17/75
+> > 
+> > Changes from the v6 are here:
+> >  [6/16]  - Fix to return an error if failed to fetch string and
+> >         fill zero-length data_loc in error case.
+> >  [11/16] - Update document for restructured text.
+> >  [15/16] - Fix README test.
+> >  [16/16] - Add type-casting description (and note) to documentation.
+> > 
+> > And rebased on the latest Steve's ftrace/core branch.
+> > 
+> > Thank you,
+> > 
+> > ---
+> > 
+> > Masami Hiramatsu (16):
+> >       tracing: probeevent: Cleanup print argument functions
+> >       tracing: probeevent: Cleanup argument field definition
+> >       tracing: probeevent: Remove NOKPROBE_SYMBOL from print functions
+> >       tracing: probeevent: Introduce new argument fetching code
+> >       tracing: probeevent: Unify fetch type tables
+> >       tracing: probeevent: Return consumed bytes of dynamic area
+> >       tracing: probeevent: Append traceprobe_ for exported function
+> >       tracing: probeevent: Unify fetch_insn processing common part
+> >       tracing: probeevent: Add symbol type
+> >       x86: ptrace: Add function argument access API
+> >       tracing: probeevent: Add $argN for accessing function args
+> >       tracing: probeevent: Add array type support
+> >       selftests: ftrace: Add a testcase for symbol type
+> >       selftests: ftrace: Add a testcase for $argN with kprobe_event
+> >       selftests: ftrace: Add a testcase for array type with kprobe_event
+> >       perf-probe: Add array argument support
+> > 
+> > 
+> >  Documentation/trace/kprobetrace.rst                |   23 +
+> >  arch/Kconfig                                       |    7 
+> >  arch/x86/Kconfig                                   |    1 
+> >  arch/x86/include/asm/ptrace.h                      |   38 +
+> >  kernel/trace/trace.c                               |    9 
+> >  kernel/trace/trace_kprobe.c                        |  358 ++++--------
+> >  kernel/trace/trace_probe.c                         |  620 +++++++++-----------
+> >  kernel/trace/trace_probe.h                         |  282 +++------
+> >  kernel/trace/trace_probe_tmpl.h                    |  216 +++++++
+> >  kernel/trace/trace_uprobe.c                        |  176 ++----
+> >  tools/perf/Documentation/perf-probe.txt            |   12 
+> >  tools/perf/util/probe-event.c                      |   20 +
+> >  tools/perf/util/probe-event.h                      |    2 
+> >  tools/perf/util/probe-file.c                       |    5 
+> >  tools/perf/util/probe-file.h                       |    1 
+> >  tools/perf/util/probe-finder.c                     |   95 ++-
+> >  .../ftrace/test.d/kprobe/kprobe_args_argN.tc       |   25 +
+> >  .../ftrace/test.d/kprobe/kprobe_args_array.tc      |   92 +++
+> >  .../ftrace/test.d/kprobe/kprobe_args_symbol.tc     |   77 ++
+> >  19 files changed, 1127 insertions(+), 932 deletions(-)
+> >  create mode 100644 kernel/trace/trace_probe_tmpl.h
+> >  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_argN.tc
+> >  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_array.tc
+> >  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
+> > 
+> > --
+> > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+> 
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
 
-
-Juergen
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
