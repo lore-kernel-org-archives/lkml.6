@@ -2,742 +2,346 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,TRACKER_ID,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70BEC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957B0C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47BDA24451
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:02:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47BDA24451
+	by mail.kernel.org (Postfix) with ESMTP id 3F30624456
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:04:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhAHNF03"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F30624456
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754157AbeFVPCz (ORCPT
+        id S1754299AbeFVPEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:02:55 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35635 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeFVPCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:02:52 -0400
-Received: by mail-wm0-f67.google.com with SMTP id j15-v6so3017626wme.0;
-        Fri, 22 Jun 2018 08:02:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tKURP0Iqzw6WDEYIBjBI/IKNNwPWLBJ7NluyEljguLs=;
-        b=adyF9cVd1oZfm5HMLCPshoMichtn91w7EMODcKAYFWINgsuMtDCZxyALy4OTWo36jy
-         5Hj2+99bvjTVhSEcJ81UpD4UCZBnpf8yxbozLfJo5+XFhBmRwy4p/1vMIujeEhLAYKtI
-         m6onW153qtfuht8o+Z2Cie8uxpijIjNMhU7rw1nmKLKuZ3wtmLZteNkRM1e+s82QchlF
-         lkV/7XSH6eGO+caXZvm431dAaxrYmzrujLxpZtZBV0IAPuHlAUk6RR5IDtOgFrx01x0L
-         K8uT3G/gkMUC8NWjH6pYPeCjqWC5aqxIg/+tHKDeF7+kkShkRYbhgge++zWGG2UcjwQp
-         JF1A==
-X-Gm-Message-State: APt69E2+5RCOItBQoRk/e++iU1nSMKdpm63atbwbxmJz3PGT9rnuOhZQ
-        4AmDZ4qwph9Yz4d1n9uVRVwKeUoZ
-X-Google-Smtp-Source: AAOMgpfJ3ny/7Bge5ODf1JQaH/j16mc3bNS+Ov41J5EMNqnXjYsSjp06qpfJ8FDlgo/UNnQ4Zc88Hw==
-X-Received: by 2002:a1c:e306:: with SMTP id a6-v6mr1890430wmh.15.1529679770844;
-        Fri, 22 Jun 2018 08:02:50 -0700 (PDT)
-Received: from tiehlicka.suse.cz (ip-37-188-179-217.eurotel.cz. [37.188.179.217])
-        by smtp.gmail.com with ESMTPSA id d102-v6sm2623463wma.10.2018.06.22.08.02.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 08:02:49 -0700 (PDT)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-mm@kvack.org,
-        David Rientjes <rientjes@google.com>
-Subject: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Date:   Fri, 22 Jun 2018 17:02:42 +0200
-Message-Id: <20180622150242.16558-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Fri, 22 Jun 2018 11:04:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754269AbeFVPEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:04:22 -0400
+Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39E432445B
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 15:04:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529679861;
+        bh=jGxCLxQWNPc0Ad+MggeFu8A7bIfGYrFA4Bi3PMNYnxA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RhAHNF03J/URiLgT7llGZl6yT25JkSQdg21fOuJDJm0sHQqOJLGj7Hy8RdKRp0ete
+         6izE9G3GZTgB3gVTm3LUHbeoV9DbOzTFGd+B3u9dhxmctoq6FtevO/ZkbLRkJ/VoGU
+         vZ8vRpiBAbnfcf7cmvC94hbNRQtZudSogL+/WYZI=
+Received: by mail-wm0-f51.google.com with SMTP id v131-v6so3000954wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 08:04:21 -0700 (PDT)
+X-Gm-Message-State: APt69E002WkP7RX9g6JDBYF5y63BkUY6tNfScljPINHUKABHZd5IzXPz
+        asm34/N5wrxYLjqxRCC2ZIoBwfPXBuMHAJuh/NMYmA==
+X-Google-Smtp-Source: ADUXVKJVZ7HT6GES4o+LQqceoctoDpESFXBDdxCjbGxsZmX1mj0OMFz+HIBVGzHPwkI+o17EMKT36XCh5occiJUbvp4=
+X-Received: by 2002:a1c:f30f:: with SMTP id q15-v6mr1934222wmq.36.1529679859643;
+ Fri, 22 Jun 2018 08:04:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20180620195652.27251-1-riel@surriel.com> <20180620195652.27251-5-riel@surriel.com>
+In-Reply-To: <20180620195652.27251-5-riel@surriel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 22 Jun 2018 08:04:07 -0700
+X-Gmail-Original-Message-ID: <CALCETrVUgO3PYvwbV9BHbepcEZ=Lwqm8TkETuC5ijUC9h0AQ6Q@mail.gmail.com>
+Message-ID: <CALCETrVUgO3PYvwbV9BHbepcEZ=Lwqm8TkETuC5ijUC9h0AQ6Q@mail.gmail.com>
+Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+To:     Rik van Riel <riel@surriel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, 86@vger.kernel.org,
+        Andrew Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Galbraith <efault@gmx.de>, songliubraving@fb.com,
+        kernel-team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On Wed, Jun 20, 2018 at 12:57 PM Rik van Riel <riel@surriel.com> wrote:
+>
+> Lazy TLB mode can result in an idle CPU being woken up by a TLB flush,
+> when all it really needs to do is reload %CR3 at the next context switch,
+> assuming no page table pages got freed.
+>
+> This patch deals with that issue by introducing a third TLB state,
+> TLBSTATE_FLUSH, which causes %CR3 to be reloaded at the next context
+> switch.
+>
+> Atomic compare and exchange is used to close races between the TLB
+> shootdown code and the context switch code. Keying off just the
+> tlb_gen is likely to not be enough, since that would not give
+> lazy_clb_can_skip_flush() information on when it is facing a race
+> and has to send the IPI to a CPU in the middle of a LAZY -> OK switch.
+>
+> Unlike the 2016 version of this patch, CPUs in TLBSTATE_LAZY are not
+> removed from the mm_cpumask(mm), since that would prevent the TLB
+> flush IPIs at page table free time from being sent to all the CPUs
+> that need them.
 
-There are several blockable mmu notifiers which might sleep in
-mmu_notifier_invalidate_range_start and that is a problem for the
-oom_reaper because it needs to guarantee a forward progress so it cannot
-depend on any sleepable locks. Currently we simply back off and mark an
-oom victim with blockable mmu notifiers as done after a short sleep.
-That can result in selecting a new oom victim prematurely because the
-previous one still hasn't torn its memory down yet.
+Eek, this is so complicated.  In the 2016 version of the patches, you
+needed all this.  But I rewrote the whole subsystem to make it easier
+now :)  I think that you can get rid of all of this and instead just
+revert the relevant parts of:
 
-We can do much better though. Even if mmu notifiers use sleepable locks
-there is no reason to automatically assume those locks are held.
-Moreover most notifiers only care about a portion of the address
-space. This patch handles the first part of the problem.
-__mmu_notifier_invalidate_range_start gets a blockable flag and
-callbacks are not allowed to sleep if the flag is set to false. This is
-achieved by using trylock instead of the sleepable lock for most
-callbacks. I think we can improve that even further because there is
-a common pattern to do a range lookup first and then do something about
-that. The first part can be done without a sleeping lock I presume.
+b956575bed91ecfb136a8300742ecbbf451471ab
 
-Anyway, what does the oom_reaper do with all that? We do not have to
-fail right away. We simply retry if there is at least one notifier which
-couldn't make any progress. A retry loop is already implemented to wait
-for the mmap_sem and this is basically the same thing.
+All the bookkeeping is already in place -- no need for new state.
 
-Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Cc: Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>
-Cc: Dimitri Sivanich <sivanich@sgi.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86))
-Cc: linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Cc: amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS)
-Cc: dri-devel@lists.freedesktop.org (open list:DRM DRIVERS)
-Cc: intel-gfx@lists.freedesktop.org (open list:INTEL DRM DRIVERS (excluding Poulsbo, Moorestow...)
-Cc: linux-rdma@vger.kernel.org (open list:INFINIBAND SUBSYSTEM)
-Cc: xen-devel@lists.xenproject.org (moderated list:XEN HYPERVISOR INTERFACE)
-Cc: linux-mm@kvack.org (open list:HMM - Heterogeneous Memory Management)
-Reported-by: David Rientjes <rientjes@google.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
 
-Hi,
-this is an RFC and not tested at all. I am not very familiar with the
-mmu notifiers semantics very much so this is a crude attempt to achieve
-what I need basically. It might be completely wrong but I would like
-to discuss what would be a better way if that is the case.
-
-get_maintainers gave me quite large list of people to CC so I had to trim
-it down. If you think I have forgot somebody, please let me know
-
-Any feedback is highly appreciated.
-
- arch/x86/kvm/x86.c                      |  7 ++++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  | 33 +++++++++++++++++++------
- drivers/gpu/drm/i915/i915_gem_userptr.c | 10 +++++---
- drivers/gpu/drm/radeon/radeon_mn.c      | 15 ++++++++---
- drivers/infiniband/core/umem_odp.c      | 15 ++++++++---
- drivers/infiniband/hw/hfi1/mmu_rb.c     |  7 ++++--
- drivers/misc/mic/scif/scif_dma.c        |  7 ++++--
- drivers/misc/sgi-gru/grutlbpurge.c      |  7 ++++--
- drivers/xen/gntdev.c                    | 14 ++++++++---
- include/linux/kvm_host.h                |  2 +-
- include/linux/mmu_notifier.h            | 15 +++++++++--
- mm/hmm.c                                |  7 ++++--
- mm/mmu_notifier.c                       | 15 ++++++++---
- mm/oom_kill.c                           | 29 +++++++++++-----------
- virt/kvm/kvm_main.c                     | 12 ++++++---
- 15 files changed, 137 insertions(+), 58 deletions(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 6bcecc325e7e..ac08f5d711be 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7203,8 +7203,9 @@ static void vcpu_load_eoi_exitmap(struct kvm_vcpu *vcpu)
- 	kvm_x86_ops->load_eoi_exitmap(vcpu, eoi_exit_bitmap);
- }
- 
--void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
--		unsigned long start, unsigned long end)
-+int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-+		unsigned long start, unsigned long end,
-+		bool blockable)
- {
- 	unsigned long apic_address;
- 
-@@ -7215,6 +7216,8 @@ void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
- 	apic_address = gfn_to_hva(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
- 	if (start <= apic_address && apic_address < end)
- 		kvm_make_all_cpus_request(kvm, KVM_REQ_APIC_PAGE_RELOAD);
-+
-+	return 0;
- }
- 
- void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu)
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-index 83e344fbb50a..d138a526feff 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-@@ -136,12 +136,18 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
-  *
-  * Take the rmn read side lock.
-  */
--static void amdgpu_mn_read_lock(struct amdgpu_mn *rmn)
-+static int amdgpu_mn_read_lock(struct amdgpu_mn *rmn, bool blockable)
- {
--	mutex_lock(&rmn->read_lock);
-+	if (blockable)
-+		mutex_lock(&rmn->read_lock);
-+	else if (!mutex_trylock(&rmn->read_lock))
-+		return -EAGAIN;
-+
- 	if (atomic_inc_return(&rmn->recursion) == 1)
- 		down_read_non_owner(&rmn->lock);
- 	mutex_unlock(&rmn->read_lock);
-+
-+	return 0;
- }
- 
- /**
-@@ -197,10 +203,11 @@ static void amdgpu_mn_invalidate_node(struct amdgpu_mn_node *node,
-  * We block for all BOs between start and end to be idle and
-  * unmap them by move them into system domain again.
-  */
--static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-+static int amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
- 						 struct mm_struct *mm,
- 						 unsigned long start,
--						 unsigned long end)
-+						 unsigned long end,
-+						 bool blockable)
- {
- 	struct amdgpu_mn *rmn = container_of(mn, struct amdgpu_mn, mn);
- 	struct interval_tree_node *it;
-@@ -208,7 +215,11 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
- 	/* notification is exclusive, but interval is inclusive */
- 	end -= 1;
- 
--	amdgpu_mn_read_lock(rmn);
-+	/* TODO we should be able to split locking for interval tree and
-+	 * amdgpu_mn_invalidate_node
-+	 */
-+	if (amdgpu_mn_read_lock(rmn, blockable))
-+		return -EAGAIN;
- 
- 	it = interval_tree_iter_first(&rmn->objects, start, end);
- 	while (it) {
-@@ -219,6 +230,8 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
- 
- 		amdgpu_mn_invalidate_node(node, start, end);
- 	}
-+
-+	return 0;
- }
- 
- /**
-@@ -233,10 +246,11 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-  * necessitates evicting all user-mode queues of the process. The BOs
-  * are restorted in amdgpu_mn_invalidate_range_end_hsa.
-  */
--static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
-+static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 						 struct mm_struct *mm,
- 						 unsigned long start,
--						 unsigned long end)
-+						 unsigned long end,
-+						 bool blockable)
- {
- 	struct amdgpu_mn *rmn = container_of(mn, struct amdgpu_mn, mn);
- 	struct interval_tree_node *it;
-@@ -244,7 +258,8 @@ static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 	/* notification is exclusive, but interval is inclusive */
- 	end -= 1;
- 
--	amdgpu_mn_read_lock(rmn);
-+	if (amdgpu_mn_read_lock(rmn, blockable))
-+		return -EAGAIN;
- 
- 	it = interval_tree_iter_first(&rmn->objects, start, end);
- 	while (it) {
-@@ -262,6 +277,8 @@ static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 				amdgpu_amdkfd_evict_userptr(mem, mm);
- 		}
- 	}
-+
-+	return 0;
- }
- 
- /**
-diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
-index 854bd51b9478..5285df9331fa 100644
---- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-+++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-@@ -112,10 +112,11 @@ static void del_object(struct i915_mmu_object *mo)
- 	mo->attached = false;
- }
- 
--static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
-+static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 						       struct mm_struct *mm,
- 						       unsigned long start,
--						       unsigned long end)
-+						       unsigned long end,
-+						       bool blockable)
- {
- 	struct i915_mmu_notifier *mn =
- 		container_of(_mn, struct i915_mmu_notifier, mn);
-@@ -124,7 +125,7 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 	LIST_HEAD(cancelled);
- 
- 	if (RB_EMPTY_ROOT(&mn->objects.rb_root))
--		return;
-+		return 0;
- 
- 	/* interval ranges are inclusive, but invalidate range is exclusive */
- 	end--;
-@@ -152,7 +153,8 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 		del_object(mo);
- 	spin_unlock(&mn->lock);
- 
--	if (!list_empty(&cancelled))
-+	/* TODO: can we skip waiting here? */
-+	if (!list_empty(&cancelled) && blockable)
- 		flush_workqueue(mn->wq);
- }
- 
-diff --git a/drivers/gpu/drm/radeon/radeon_mn.c b/drivers/gpu/drm/radeon/radeon_mn.c
-index abd24975c9b1..b47e828b725d 100644
---- a/drivers/gpu/drm/radeon/radeon_mn.c
-+++ b/drivers/gpu/drm/radeon/radeon_mn.c
-@@ -118,10 +118,11 @@ static void radeon_mn_release(struct mmu_notifier *mn,
-  * We block for all BOs between start and end to be idle and
-  * unmap them by move them into system domain again.
-  */
--static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
-+static int radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
- 					     struct mm_struct *mm,
- 					     unsigned long start,
--					     unsigned long end)
-+					     unsigned long end,
-+					     bool blockable)
- {
- 	struct radeon_mn *rmn = container_of(mn, struct radeon_mn, mn);
- 	struct ttm_operation_ctx ctx = { false, false };
-@@ -130,7 +131,13 @@ static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
- 	/* notification is exclusive, but interval is inclusive */
- 	end -= 1;
- 
--	mutex_lock(&rmn->lock);
-+	/* TODO we should be able to split locking for interval tree and
-+	 * the tear down.
-+	 */
-+	if (blockable)
-+		mutex_lock(&rmn->lock);
-+	else if (!mutex_trylock(&rmn->lock))
-+		return -EAGAIN;
- 
- 	it = interval_tree_iter_first(&rmn->objects, start, end);
- 	while (it) {
-@@ -167,6 +174,8 @@ static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
- 	}
- 	
- 	mutex_unlock(&rmn->lock);
-+
-+	return 0;
- }
- 
- static const struct mmu_notifier_ops radeon_mn_ops = {
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index 182436b92ba9..f65f6a29daae 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -207,22 +207,29 @@ static int invalidate_range_start_trampoline(struct ib_umem *item, u64 start,
- 	return 0;
- }
- 
--static void ib_umem_notifier_invalidate_range_start(struct mmu_notifier *mn,
-+static int ib_umem_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 						    struct mm_struct *mm,
- 						    unsigned long start,
--						    unsigned long end)
-+						    unsigned long end,
-+						    bool blockable)
- {
- 	struct ib_ucontext *context = container_of(mn, struct ib_ucontext, mn);
- 
- 	if (!context->invalidate_range)
--		return;
-+		return 0;
-+
-+	if (blockable)
-+		down_read(&context->umem_rwsem);
-+	else if (!down_read_trylock(&context->umem_rwsem))
-+		return -EAGAIN;
- 
- 	ib_ucontext_notifier_start_account(context);
--	down_read(&context->umem_rwsem);
- 	rbt_ib_umem_for_each_in_range(&context->umem_tree, start,
- 				      end,
- 				      invalidate_range_start_trampoline, NULL);
- 	up_read(&context->umem_rwsem);
-+
-+	return 0;
- }
- 
- static int invalidate_range_end_trampoline(struct ib_umem *item, u64 start,
-diff --git a/drivers/infiniband/hw/hfi1/mmu_rb.c b/drivers/infiniband/hw/hfi1/mmu_rb.c
-index 70aceefe14d5..8780560d1623 100644
---- a/drivers/infiniband/hw/hfi1/mmu_rb.c
-+++ b/drivers/infiniband/hw/hfi1/mmu_rb.c
-@@ -284,10 +284,11 @@ void hfi1_mmu_rb_remove(struct mmu_rb_handler *handler,
- 	handler->ops->remove(handler->ops_arg, node);
- }
- 
--static void mmu_notifier_range_start(struct mmu_notifier *mn,
-+static int mmu_notifier_range_start(struct mmu_notifier *mn,
- 				     struct mm_struct *mm,
- 				     unsigned long start,
--				     unsigned long end)
-+				     unsigned long end,
-+				     bool blockable)
- {
- 	struct mmu_rb_handler *handler =
- 		container_of(mn, struct mmu_rb_handler, mn);
-@@ -313,6 +314,8 @@ static void mmu_notifier_range_start(struct mmu_notifier *mn,
- 
- 	if (added)
- 		queue_work(handler->wq, &handler->del_work);
-+
-+	return 0;
- }
- 
- /*
-diff --git a/drivers/misc/mic/scif/scif_dma.c b/drivers/misc/mic/scif/scif_dma.c
-index 63d6246d6dff..d940568bed87 100644
---- a/drivers/misc/mic/scif/scif_dma.c
-+++ b/drivers/misc/mic/scif/scif_dma.c
-@@ -200,15 +200,18 @@ static void scif_mmu_notifier_release(struct mmu_notifier *mn,
- 	schedule_work(&scif_info.misc_work);
- }
- 
--static void scif_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
-+static int scif_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 						     struct mm_struct *mm,
- 						     unsigned long start,
--						     unsigned long end)
-+						     unsigned long end,
-+						     bool blockable)
- {
- 	struct scif_mmu_notif	*mmn;
- 
- 	mmn = container_of(mn, struct scif_mmu_notif, ep_mmu_notifier);
- 	scif_rma_destroy_tcw(mmn, start, end - start);
-+
-+	return 0
- }
- 
- static void scif_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
-diff --git a/drivers/misc/sgi-gru/grutlbpurge.c b/drivers/misc/sgi-gru/grutlbpurge.c
-index a3454eb56fbf..be28f05bfafa 100644
---- a/drivers/misc/sgi-gru/grutlbpurge.c
-+++ b/drivers/misc/sgi-gru/grutlbpurge.c
-@@ -219,9 +219,10 @@ void gru_flush_all_tlb(struct gru_state *gru)
- /*
-  * MMUOPS notifier callout functions
-  */
--static void gru_invalidate_range_start(struct mmu_notifier *mn,
-+static int gru_invalidate_range_start(struct mmu_notifier *mn,
- 				       struct mm_struct *mm,
--				       unsigned long start, unsigned long end)
-+				       unsigned long start, unsigned long end,
-+				       bool blockable)
- {
- 	struct gru_mm_struct *gms = container_of(mn, struct gru_mm_struct,
- 						 ms_notifier);
-@@ -231,6 +232,8 @@ static void gru_invalidate_range_start(struct mmu_notifier *mn,
- 	gru_dbg(grudev, "gms %p, start 0x%lx, end 0x%lx, act %d\n", gms,
- 		start, end, atomic_read(&gms->ms_range_active));
- 	gru_flush_tlb_range(gms, start, end - start);
-+
-+	return 0;
- }
- 
- static void gru_invalidate_range_end(struct mmu_notifier *mn,
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index bd56653b9bbc..50724d09fe5c 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -465,14 +465,20 @@ static void unmap_if_in_range(struct grant_map *map,
- 	WARN_ON(err);
- }
- 
--static void mn_invl_range_start(struct mmu_notifier *mn,
-+static int mn_invl_range_start(struct mmu_notifier *mn,
- 				struct mm_struct *mm,
--				unsigned long start, unsigned long end)
-+				unsigned long start, unsigned long end,
-+				bool blockable)
- {
- 	struct gntdev_priv *priv = container_of(mn, struct gntdev_priv, mn);
- 	struct grant_map *map;
- 
--	mutex_lock(&priv->lock);
-+	/* TODO do we really need a mutex here? */
-+	if (blockable)
-+		mutex_lock(&priv->lock);
-+	else if (!mutex_trylock(&priv->lock))
-+		return -EAGAIN;
-+
- 	list_for_each_entry(map, &priv->maps, next) {
- 		unmap_if_in_range(map, start, end);
- 	}
-@@ -480,6 +486,8 @@ static void mn_invl_range_start(struct mmu_notifier *mn,
- 		unmap_if_in_range(map, start, end);
- 	}
- 	mutex_unlock(&priv->lock);
-+
-+	return true;
- }
- 
- static void mn_release(struct mmu_notifier *mn,
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 4ee7bc548a83..e4181063e755 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1275,7 +1275,7 @@ static inline long kvm_arch_vcpu_async_ioctl(struct file *filp,
- }
- #endif /* CONFIG_HAVE_KVM_VCPU_ASYNC_IOCTL */
- 
--void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-+int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
- 		unsigned long start, unsigned long end);
- 
- #ifdef CONFIG_HAVE_KVM_VCPU_RUN_PID_CHANGE
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index 392e6af82701..369867501bed 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -230,7 +230,8 @@ extern int __mmu_notifier_test_young(struct mm_struct *mm,
- extern void __mmu_notifier_change_pte(struct mm_struct *mm,
- 				      unsigned long address, pte_t pte);
- extern void __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
--				  unsigned long start, unsigned long end);
-+				  unsigned long start, unsigned long end,
-+				  bool blockable);
- extern void __mmu_notifier_invalidate_range_end(struct mm_struct *mm,
- 				  unsigned long start, unsigned long end,
- 				  bool only_end);
-@@ -281,7 +282,17 @@ static inline void mmu_notifier_invalidate_range_start(struct mm_struct *mm,
- 				  unsigned long start, unsigned long end)
- {
- 	if (mm_has_notifiers(mm))
--		__mmu_notifier_invalidate_range_start(mm, start, end);
-+		__mmu_notifier_invalidate_range_start(mm, start, end, true);
-+}
-+
-+static inline int mmu_notifier_invalidate_range_start_nonblock(struct mm_struct *mm,
-+				  unsigned long start, unsigned long end)
-+{
-+	int ret = 0;
-+	if (mm_has_notifiers(mm))
-+		ret = __mmu_notifier_invalidate_range_start(mm, start, end, false);
-+
-+	return ret;
- }
- 
- static inline void mmu_notifier_invalidate_range_end(struct mm_struct *mm,
-diff --git a/mm/hmm.c b/mm/hmm.c
-index de7b6bf77201..81fd57bd2634 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -177,16 +177,19 @@ static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
- 	up_write(&hmm->mirrors_sem);
- }
- 
--static void hmm_invalidate_range_start(struct mmu_notifier *mn,
-+static int hmm_invalidate_range_start(struct mmu_notifier *mn,
- 				       struct mm_struct *mm,
- 				       unsigned long start,
--				       unsigned long end)
-+				       unsigned long end,
-+				       bool blockable)
- {
- 	struct hmm *hmm = mm->hmm;
- 
- 	VM_BUG_ON(!hmm);
- 
- 	atomic_inc(&hmm->sequence);
-+
-+	return 0;
- }
- 
- static void hmm_invalidate_range_end(struct mmu_notifier *mn,
-diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index eff6b88a993f..30cc43121da9 100644
---- a/mm/mmu_notifier.c
-+++ b/mm/mmu_notifier.c
-@@ -174,18 +174,25 @@ void __mmu_notifier_change_pte(struct mm_struct *mm, unsigned long address,
- 	srcu_read_unlock(&srcu, id);
- }
- 
--void __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
--				  unsigned long start, unsigned long end)
-+int __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
-+				  unsigned long start, unsigned long end,
-+				  bool blockable)
- {
- 	struct mmu_notifier *mn;
-+	int ret = 0;
- 	int id;
- 
- 	id = srcu_read_lock(&srcu);
- 	hlist_for_each_entry_rcu(mn, &mm->mmu_notifier_mm->list, hlist) {
--		if (mn->ops->invalidate_range_start)
--			mn->ops->invalidate_range_start(mn, mm, start, end);
-+		if (mn->ops->invalidate_range_start) {
-+			int _ret = mn->ops->invalidate_range_start(mn, mm, start, end, blockable);
-+			if (_ret)
-+				ret = _ret;
-+		}
- 	}
- 	srcu_read_unlock(&srcu, id);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range_start);
- 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 84081e77bc51..7e0c6e78ae5c 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -479,9 +479,10 @@ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
- static struct task_struct *oom_reaper_list;
- static DEFINE_SPINLOCK(oom_reaper_lock);
- 
--void __oom_reap_task_mm(struct mm_struct *mm)
-+bool __oom_reap_task_mm(struct mm_struct *mm)
- {
- 	struct vm_area_struct *vma;
-+	bool ret = true;
- 
- 	/*
- 	 * Tell all users of get_user/copy_from_user etc... that the content
-@@ -511,12 +512,17 @@ void __oom_reap_task_mm(struct mm_struct *mm)
- 			struct mmu_gather tlb;
- 
- 			tlb_gather_mmu(&tlb, mm, start, end);
--			mmu_notifier_invalidate_range_start(mm, start, end);
-+			if (mmu_notifier_invalidate_range_start_nonblock(mm, start, end)) {
-+				ret = false;
-+				continue;
-+			}
- 			unmap_page_range(&tlb, vma, start, end, NULL);
- 			mmu_notifier_invalidate_range_end(mm, start, end);
- 			tlb_finish_mmu(&tlb, start, end);
- 		}
- 	}
-+
-+	return ret;
- }
- 
- static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
-@@ -545,18 +551,6 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 		goto unlock_oom;
- 	}
- 
--	/*
--	 * If the mm has invalidate_{start,end}() notifiers that could block,
--	 * sleep to give the oom victim some more time.
--	 * TODO: we really want to get rid of this ugly hack and make sure that
--	 * notifiers cannot block for unbounded amount of time
--	 */
--	if (mm_has_blockable_invalidate_notifiers(mm)) {
--		up_read(&mm->mmap_sem);
--		schedule_timeout_idle(HZ);
--		goto unlock_oom;
--	}
--
- 	/*
- 	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
- 	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
-@@ -571,7 +565,12 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 
- 	trace_start_task_reaping(tsk->pid);
- 
--	__oom_reap_task_mm(mm);
-+	/* failed to reap part of the address space. Try again later */
-+	if (!__oom_reap_task_mm(mm)) {
-+		up_read(&mm->mmap_sem);
-+		ret = false;
-+		goto out_unlock;
-+	}
- 
- 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
- 			task_pid_nr(tsk), tsk->comm,
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index ada21f47f22b..6f7e709d2944 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -135,7 +135,7 @@ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm);
- static unsigned long long kvm_createvm_count;
- static unsigned long long kvm_active_vms;
- 
--__weak void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-+__weak int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
- 		unsigned long start, unsigned long end)
- {
- }
-@@ -354,13 +354,15 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
- 	srcu_read_unlock(&kvm->srcu, idx);
- }
- 
--static void kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
-+static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 						    struct mm_struct *mm,
- 						    unsigned long start,
--						    unsigned long end)
-+						    unsigned long end,
-+						    bool blockable)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
- 	int need_tlb_flush = 0, idx;
-+	int ret;
- 
- 	idx = srcu_read_lock(&kvm->srcu);
- 	spin_lock(&kvm->mmu_lock);
-@@ -378,9 +380,11 @@ static void kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 
- 	spin_unlock(&kvm->mmu_lock);
- 
--	kvm_arch_mmu_notifier_invalidate_range(kvm, start, end);
-+	ret = kvm_arch_mmu_notifier_invalidate_range(kvm, start, end, blockable);
- 
- 	srcu_read_unlock(&kvm->srcu, idx);
-+
-+	return ret;
- }
- 
- static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
--- 
-2.17.1
-
+>
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Tested-by: Song Liu <songliubraving@fb.com>
+> ---
+>  arch/x86/include/asm/tlbflush.h |   5 ++
+>  arch/x86/include/asm/uv/uv.h    |   6 +--
+>  arch/x86/mm/tlb.c               | 108 ++++++++++++++++++++++++++++++++++++----
+>  arch/x86/platform/uv/tlb_uv.c   |   2 +-
+>  4 files changed, 107 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+> index 88a4d6b87ff7..0a8bdd6084de 100644
+> --- a/arch/x86/include/asm/tlbflush.h
+> +++ b/arch/x86/include/asm/tlbflush.h
+> @@ -171,6 +171,7 @@ struct tlb_context {
+>
+>  #define TLBSTATE_OK    0
+>  #define TLBSTATE_LAZY  1
+> +#define TLBSTATE_FLUSH 2
+>
+>  struct tlb_state {
+>         /*
+> @@ -199,6 +200,10 @@ struct tlb_state {
+>          *    We're heuristically guessing that the CR3 load we
+>          *    skipped more than makes up for the overhead added by
+>          *    lazy mode.
+> +        *
+> +        *  - Lazily using a real mm, which has seen a TLB invalidation on
+> +        *    other CPUs. TLB needs to be flushed at context switch time,
+> +        *    state == TLBSTATE_FLUSH.
+>          */
+>         int state;
+>
+> diff --git a/arch/x86/include/asm/uv/uv.h b/arch/x86/include/asm/uv/uv.h
+> index a80c0673798f..d801afb5fe90 100644
+> --- a/arch/x86/include/asm/uv/uv.h
+> +++ b/arch/x86/include/asm/uv/uv.h
+> @@ -17,7 +17,7 @@ extern int is_uv_hubless(void);
+>  extern void uv_cpu_init(void);
+>  extern void uv_nmi_init(void);
+>  extern void uv_system_init(void);
+> -extern const struct cpumask *uv_flush_tlb_others(const struct cpumask *cpumask,
+> +extern struct cpumask *uv_flush_tlb_others(struct cpumask *cpumask,
+>                                                  const struct flush_tlb_info *info);
+>
+>  #else  /* X86_UV */
+> @@ -27,8 +27,8 @@ static inline int is_uv_system(void)  { return 0; }
+>  static inline int is_uv_hubless(void)  { return 0; }
+>  static inline void uv_cpu_init(void)   { }
+>  static inline void uv_system_init(void)        { }
+> -static inline const struct cpumask *
+> -uv_flush_tlb_others(const struct cpumask *cpumask,
+> +static inline struct cpumask *
+> +uv_flush_tlb_others(struct cpumask *cpumask,
+>                     const struct flush_tlb_info *info)
+>  { return cpumask; }
+>
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index e063e623e52c..4b27d8469848 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/export.h>
+>  #include <linux/cpu.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/gfp.h>
+>
+>  #include <asm/tlbflush.h>
+>  #include <asm/mmu_context.h>
+> @@ -227,8 +228,6 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+>                 __flush_tlb_all();
+>         }
+>  #endif
+> -       this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
+> -
+>         /*
+>          * The membarrier system call requires a full memory barrier and
+>          * core serialization before returning to user-space, after
+> @@ -236,8 +235,11 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+>          * memory barrier and core serializing instruction.
+>          */
+>         if (real_prev == next) {
+> +               int *tlbstate = this_cpu_ptr(&cpu_tlbstate.state);
+> +               int oldstate = *tlbstate;
+> +
+>                 VM_WARN_ON(this_cpu_read(cpu_tlbstate.ctxs[prev_asid].ctx_id) !=
+> -                          next->context.ctx_id);
+> +                               next->context.ctx_id);
+>
+>                 /*
+>                  * We don't currently support having a real mm loaded without
+> @@ -250,6 +252,26 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+>                                  !cpumask_test_cpu(cpu, mm_cpumask(next))))
+>                         cpumask_set_cpu(cpu, mm_cpumask(next));
+>
+> +               /*
+> +                * In lazy TLB mode. The atomic exchange makes sure there was
+> +                * no TLB shootdown all the way to this context switch.
+> +                */
+> +               if (oldstate == TLBSTATE_LAZY)
+> +                       oldstate = cmpxchg(tlbstate, oldstate, TLBSTATE_OK);
+> +
+> +               /*
+> +                * There was a TLB invalidation while this CPU was idle.
+> +                * The code in choose_new_asid will figure out what kind
+> +                * of flush is needed.
+> +                */
+> +               if (oldstate == TLBSTATE_FLUSH)
+> +                       goto reload_cr3;
+> +
+> +               /*
+> +                * Nothing to do. Either we are switching between two
+> +                * threads in the same process, or we were in TLBSTATE_LAZY
+> +                * without any TLB invalidations happening.
+> +                */
+>                 return;
+>         } else {
+>                 u16 new_asid;
+> @@ -294,6 +316,8 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+>                  * Start remote flushes and then read tlb_gen.
+>                  */
+>                 cpumask_set_cpu(cpu, mm_cpumask(next));
+> + reload_cr3:
+> +               this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
+>                 next_tlb_gen = atomic64_read(&next->context.tlb_gen);
+>
+>                 choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+> @@ -454,6 +478,9 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
+>                  * paging-structure cache to avoid speculatively reading
+>                  * garbage into our TLB.  Since switching to init_mm is barely
+>                  * slower than a minimal flush, just switch to init_mm.
+> +                *
+> +                * This should be rare, with native_flush_tlb_others skipping
+> +                * IPIs to lazy TLB mode CPUs.
+>                  */
+>                 switch_mm_irqs_off(NULL, &init_mm, NULL);
+>                 return;
+> @@ -557,9 +584,57 @@ static void flush_tlb_func_remote(void *info)
+>         flush_tlb_func_common(f, false, TLB_REMOTE_SHOOTDOWN);
+>  }
+>
+> +/*
+> + * Determine whether a CPU's TLB needs to be flushed now, or whether the
+> + * flush can be delayed until the next context switch, by changing the
+> + * tlbstate from TLBSTATE_LAZY to TLBSTATE_FLUSH.
+> + */
+> +static bool lazy_tlb_can_skip_flush(int cpu)
+> +{
+> +       int *tlbstate = &per_cpu(cpu_tlbstate.state, cpu);
+> +       int old;
+> +
+> +       switch (*tlbstate) {
+> +       case TLBSTATE_FLUSH:
+> +               /* The TLB will be flushed on the next context switch. */
+> +               return true;
+> +       case TLBSTATE_LAZY:
+> +               /*
+> +                * The CPU is in TLBSTATE_LAZY, which could context switch back
+> +                * to TLBSTATE_OK, re-using the old TLB state without a flush.
+> +                * if that happened, send a TLB flush IPI.
+> +                *
+> +                * Otherwise, the state is now TLBSTATE_FLUSH, and TLB will
+> +                * be flushed at the next context switch. Skip the IPI.
+> +                */
+> +               old = cmpxchg(tlbstate, TLBSTATE_LAZY, TLBSTATE_FLUSH);
+> +               return old != TLBSTATE_OK;
+> +       case TLBSTATE_OK:
+> +       default:
+> +               /* A task on the CPU is actively using the mm. Flush the TLB. */
+> +               return false;
+> +       }
+> +}
+> +
+>  void native_flush_tlb_others(const struct cpumask *cpumask,
+>                              const struct flush_tlb_info *info)
+>  {
+> +       cpumask_t *mask = (struct cpumask *)cpumask;
+> +       cpumask_var_t varmask;
+> +       bool can_lazy_flush = false;
+> +       unsigned int cpu;
+> +
+> +       /*
+> +        * A temporary cpumask allows the kernel to skip sending IPIs
+> +        * to CPUs in lazy TLB state, without also removing them from
+> +        * mm_cpumask(mm).
+> +        */
+> +       if (alloc_cpumask_var(&varmask, GFP_ATOMIC)) {
+> +               cpumask_copy(varmask, cpumask);
+> +               mask = varmask;
+> +               can_lazy_flush = true;
+> +       }
+> +
+>         count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+>         if (info->end == TLB_FLUSH_ALL)
+>                 trace_tlb_flush(TLB_REMOTE_SEND_IPI, TLB_FLUSH_ALL);
+> @@ -583,17 +658,30 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
+>                  * that UV should be updated so that smp_call_function_many(),
+>                  * etc, are optimal on UV.
+>                  */
+> -               unsigned int cpu;
+> -
+>                 cpu = smp_processor_id();
+> -               cpumask = uv_flush_tlb_others(cpumask, info);
+> -               if (cpumask)
+> -                       smp_call_function_many(cpumask, flush_tlb_func_remote,
+> +               mask = uv_flush_tlb_others(mask, info);
+> +               if (mask)
+> +                       smp_call_function_many(mask, flush_tlb_func_remote,
+>                                                (void *)info, 1);
+> -               return;
+> +               goto out;
+> +       }
+> +
+> +       /*
+> +        * Instead of sending IPIs to CPUs in lazy TLB mode, move that
+> +        * CPU's TLB state to TLBSTATE_FLUSH, causing the TLB to be flushed
+> +        * at the next context switch, or at page table free time.
+> +        */
+> +       if (can_lazy_flush) {
+> +               for_each_cpu(cpu, mask) {
+> +                       if (lazy_tlb_can_skip_flush(cpu))
+> +                               cpumask_clear_cpu(cpu, mask);
+> +               }
+>         }
+> -       smp_call_function_many(cpumask, flush_tlb_func_remote,
+> +
+> +       smp_call_function_many(mask, flush_tlb_func_remote,
+>                                (void *)info, 1);
+> + out:
+> +       free_cpumask_var(varmask);
+>  }
+>
+>  /*
+> diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
+> index b36caae0fb2f..42730acec8b7 100644
+> --- a/arch/x86/platform/uv/tlb_uv.c
+> +++ b/arch/x86/platform/uv/tlb_uv.c
+> @@ -1102,7 +1102,7 @@ static int set_distrib_bits(struct cpumask *flush_mask, struct bau_control *bcp,
+>   * Returns pointer to cpumask if some remote flushing remains to be
+>   * done.  The returned pointer is valid till preemption is re-enabled.
+>   */
+> -const struct cpumask *uv_flush_tlb_others(const struct cpumask *cpumask,
+> +struct cpumask *uv_flush_tlb_others(struct cpumask *cpumask,
+>                                           const struct flush_tlb_info *info)
+>  {
+>         unsigned int cpu = smp_processor_id();
+> --
+> 2.14.4
+>
