@@ -3,118 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F4EC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF669C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E63A823F8E
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65BF223F97
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:27:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ddih+1Ti"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63A823F8E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="fm/b+uzv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BF223F97
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754127AbeFVJZ7 (ORCPT
+        id S1753906AbeFVJ1C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:25:59 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:50511 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751258AbeFVJZ5 (ORCPT
+        Fri, 22 Jun 2018 05:27:02 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55670 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751297AbeFVJ1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:25:57 -0400
-Received: by mail-it0-f66.google.com with SMTP id u4-v6so2018962itg.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 02:25:57 -0700 (PDT)
+        Fri, 22 Jun 2018 05:27:00 -0400
+Received: by mail-it0-f68.google.com with SMTP id 16-v6so1976285itl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 02:26:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=yozavAgaJtd/Hy70ZPpt0J6KyJ6kBhtto8TXrqp+e0A=;
-        b=Ddih+1Tig2dI3YX0fCMTchQ3QdD/FzI5jSjIe9BtIT1f7fzDKRanI/XK0sRa3Mf4VM
-         im6Qfot6bHzmpV6gXaKU6r1w8O8EAfpK5cmj8UW2LfnBt+pSdd+/JRUvCa/0uPbrdzCm
-         NV0wiDmA0hpKN+4SteQO7gSdB8Qs0QrnLNR9Q=
+        bh=Md/910clLWggldptlIQB4OIGYDcDTe6jCwRI0nd4OTA=;
+        b=fm/b+uzvjuqs1+/NvXFwd6D2N9lszgiBJKGTKLSCKx1lzR4tU2V6KHFUNn+Lxnfvuf
+         yAx4ZNhkOIrASemjak6CZ9j5AMWzJavBhKxyh7FXxPYdqLxb6o+4Sr2DRSCTVLP5OmOX
+         HQ33ovaN0ko0n+0ZnYtr4QLd0w04sXd20/4yFrIN8TzUCUMZOksTweELZKYHQG9IiWMY
+         Owh8Y0w8osED0oID8jCs5bqFKOwg547p/kcX0ntAiKD3UQFz8bsaCOULYeYbS3odOiUB
+         mGu9y+1DLhIHzPmaw5A6OrtiyNT9Q1IcHhC2HyT58Yj7tbpCayj8B/yYTDLFNsewto/A
+         9nkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=yozavAgaJtd/Hy70ZPpt0J6KyJ6kBhtto8TXrqp+e0A=;
-        b=jjCHRVnY00eZZgS6AF1t4E6z7/ef6Vu77b2/WGnbnu6rBleBv/9yUxQ0Ue1zNUPUAW
-         m/aY9a3+iikm7jsG8xQeNV1fm6B2fRTb68mdR7aqWUiRTts5PIYob5QzAvc07VYLF+YY
-         p6C/SV1eQW16W00ZL/Up1XWkFNKKIYBqdblnsejKH2tL3C/Hday2Q/YgrcWBVPiGMonn
-         yEV0f/pnF7OyzAFomKZcDH7dQmuFroBOhDBtnMN4kXwW2C454NKG741AffVS3jXbs/tp
-         rR7f8urj2hWNdeFuv15mvENkY85rRCnNIzOEU0Ws6pKan47+i54MwdeEnWmSTiuOb7Bx
-         Doig==
-X-Gm-Message-State: APt69E3hda4hWnwkYAfkhEbaToeWwzKmlgmhxdPrbiOJh1/SF192nMTM
-        3JsBbYVXnd+NxraFawyIdQ83fl6uHTVONBvEcnQ=
-X-Google-Smtp-Source: ADUXVKI9Fu/3rkyIcUlBK1ODJbs3I0MCOrAZyBLK1o8AM8yvsqCMkrkCpg1LOLnsia6DkYm6jexeSvfzOCfRu6kdoCs=
-X-Received: by 2002:a02:430c:: with SMTP id s12-v6mr632228jab.72.1529659556821;
- Fri, 22 Jun 2018 02:25:56 -0700 (PDT)
+        bh=Md/910clLWggldptlIQB4OIGYDcDTe6jCwRI0nd4OTA=;
+        b=pQnZLYKuAUlLlmvck6Nx29GAebXtAzCSNlAEDIQK2yXwjXrPUZ0uAJA20kspzPFSoz
+         lqnzNy2Wl+XIbmj6Q9FsFE2tcnU4acVgYyKzhrqL2LitX1Z7bTn4AxHeBB1xxUFs1ARE
+         2GeF8zESGEeSmee+iXHWIEW7IbdNoMBmeCrkpuj8JBxbm0005ofkjhhVNdDQCJ1fcz0G
+         8R7f9PVKurkibpE4FnTO25Z5aRG/mJISxju5GdtLkxLdL2Wz0TkeXVuOm62Ql7zT8i4Y
+         rpLtoL/sLZzlTG85xBT1dLLLP14BmZDm23G6B8AwU+ybRwMcdA/SJuV4jwtfKzRrUnQR
+         8QoA==
+X-Gm-Message-State: APt69E1aQgZHjzSJmts9PptKbHMy0Z58XLqnARU1ceEoMgIjR9QXkjfO
+        EYF+sMNsbGNUYJ4idRdEEuGDgnAG1jDrnP9FPwSA6w==
+X-Google-Smtp-Source: ADUXVKIpSldEK5YHYTfT6PEgvQoGM8xMxOHasuPCExFRnFgnAt0uTcUh6Q63JNWbckvMNTHthYNaYkejr5NIwVu0l68=
+X-Received: by 2002:a24:82c2:: with SMTP id t185-v6mr944280itd.117.1529659619420;
+ Fri, 22 Jun 2018 02:26:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180622082752.GX11011@yexl-desktop>
-In-Reply-To: <20180622082752.GX11011@yexl-desktop>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 22 Jun 2018 18:25:45 +0900
-Message-ID: <CA+55aFw5ghByk_zCN25G6rPPSAQma3Mh0t4s18CtLg=h6U9+Zg@mail.gmail.com>
-Subject: Re: [lkp-robot] [fs] 3deb642f0d: will-it-scale.per_process_ops -8.8% regression
-To:     kernel test robot <xiaolong.ye@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LKP <lkp@01.org>
+Received: by 2002:a4f:73d5:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 02:26:58
+ -0700 (PDT)
+In-Reply-To: <CAPpJ_ee0xxW69GPi8A2RvUUv=O4gesYCbOKiCngLrHi4hk0T7A@mail.gmail.com>
+References: <20180525095452.5203-1-jian-hong@endlessm.com> <CAD8Lp456sVtCrC0cMHXQV-PCXq12GfOjtmCpwuguF_=c-1YyaA@mail.gmail.com>
+ <CAPpJ_ee0xxW69GPi8A2RvUUv=O4gesYCbOKiCngLrHi4hk0T7A@mail.gmail.com>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Fri, 22 Jun 2018 17:26:58 +0800
+Message-ID: <CAPpJ_ed-OvXr-hj0yZraKN3ROZPCkAgS8qT3rc9WCJt+mYq3hg@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: Add a new Realtek 8723DE ID 0bda:b009
+To:     Daniel Drake <drake@endlessm.com>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Bluetooth mailing list 
+        <linux-bluetooth@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Added Al, since this all came in through his trees. The guilty
-authors were already added by the robot ]
+Hi,
 
-On Fri, Jun 22, 2018 at 5:31 PM kernel test robot <xiaolong.ye@intel.com> wrote:
+This patch is already tested and confirmed by our colleagues in Guatemala.
+
+Regards,
+Jian-Hong Pan
+.........................................................................
+
+
+Jian-Hong Pan  |  +886 2 7712 8713  |  Endless
+
+
+2018-05-25 22:05 GMT+08:00 Jian-Hong Pan <jian-hong@endlessm.com>:
+> Hi Daniel,
 >
-> FYI, we noticed a -8.8% regression of will-it-scale.per_process_ops due to commit:
-
-Guys, this seems pretty big.
-
-What was the alleged advantage of the new poll methods again? Because
-it sure isn't obvious - not from the numbers, and not from the commit
-messages.
-
-The code seems to be garbage. It replaces our nice generic "you can do
-anything you damn well like in your poll function" with two limited
-fixed-function "just give me the poll head and the mask".
-
-I was assuming there  was a good reason for it, but looking closer I
-see absolutely nothing but negatives. The argument that keyed wake-ups
-somehow make multiple wake-queues irrelevant doesn't hold water when
-the code is more complex and apparently slower. It's not like anybody
-ever *had* to use multiple wait-queues, but the old code was both
-simpler and cleaner and *allowed* you to use multiple queues if you
-wanted to.
-
-So the old code is simpler, cleaner, and more flexible. And according
-to the test robot, it also performs better.
-
-So I'm inclined to just revert the whole mess unless I get some
-serious explanations for what the supposed advantages are.
-
-The disadvantages are obvious: every poll event now causes *two*
-indirect branches to the low-level filesystem or driver - one to get
-he poll head, and one to get the mask. Add to that all the new "do we
-have the new-style or old sane poll interface" tests, and poll is
-obviously more complicated.
-
-Quite frankly, when I look at it, I just go "that's _stupid_". I'm
-entirely  missing the point of the conversion, and it's not explained
-in the messages either.
-
-If we could get the poll head by just having a direct pointer in the
-'struct file', maybe that would be one thing. As it is, this all
-literally just adds overhead for no obvious reason. It replaced one
-simple direct call with two dependent but separate ones.
-
-                Linus
+> 2018-05-25 21:25 GMT+08:00 Daniel Drake <drake@endlessm.com>:
+>> Hi Jian-Hong,
+>>
+>> On Fri, May 25, 2018 at 3:54 AM, Jian-Hong Pan <jian-hong@endlessm.com> wrote:
+>>>
+>>> Without this patch we cannot turn on the Bluethooth adapter on HP
+>>> 14-bs007la.
+>>
+>> Please correct me if I'm wrong, but it looks like we are still waiting
+>> for the testing of this patch from our colleagues in Guatemala.
+>>
+>> There are unlikely to be any issues with such a trivial change, but we
+>> should probably wait for confirmation that it works before having it
+>> included upstream.
+>
+> Oh, sure!  That will be better.  Thanks for your reminder.
+>
+> Thanks,
+> Jian-Hong Pan
+>
+>> Thanks
+>> Daniel
