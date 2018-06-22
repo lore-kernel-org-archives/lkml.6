@@ -2,187 +2,126 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C5BC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD6CC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12AF923C00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF35923C06
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:28:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bBt1ZoMl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12AF923C00
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="kypyKdey"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF35923C06
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934161AbeFVB2j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 21:28:39 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42570 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933129AbeFVB2h (ORCPT
+        id S934232AbeFVB2r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 21:28:47 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:53642 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933129AbeFVB2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 21:28:37 -0400
-Received: by mail-oi0-f67.google.com with SMTP id k190-v6so4699418oib.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 18:28:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kgqu9VYT1TaU24pZjye+OB8Bvfsz1IZnru2Dr8kYFKM=;
-        b=bBt1ZoMlkG3cH/sUG773e5Ba1lz16T4UPjjlfdJXXBkfPQf1NIJZNQNnmP1Up0UQi8
-         3C2k23drGUtzH9iG2NKOQT6d158sVjqYHzy3fwzt9HVSEGA6BxIkUnaDxoziArCu2WrZ
-         Y22NpP15vlIKRImebpbZ7rKU0dYmetishxlwqIJwL4yJNFuw/DL7pXr92xorezhpaRZa
-         H9ebVCZOFf/PbHumwWUwAGzR3PKrCeVE6BcewcOKDc+w5PQPvYErOLeBaMhSuqmu5aic
-         XvLNFkSwsqNEyTO+NbxxzjfTfJ6o5jLrEzMnI2pSTTzOVO6E+vzyQP/uN0Pf9hcjL76n
-         fPUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kgqu9VYT1TaU24pZjye+OB8Bvfsz1IZnru2Dr8kYFKM=;
-        b=ccXN57cZ6pm86cS2l0UTT24EpYO7cklFXGR+IrdSxz7lXp6SaqNcR05Ai7DmZz6hrm
-         q6+lRe/J6I6xslphUD0THxt+R237inokZxuhVppt/BvxccBDX8JiQoXf8R4Cn19s+L8V
-         Zn7dB5Z4ceqKu5x3A5GeFE3b3vqXGdqC04pvV2DwmX6kBsHTUZL+5wy9/QyGn7CFdQGt
-         UJv31PC8UPB8JVB0VnvioZN9ulYzPyU/+UkgFhLj19HwLR3qniz2isWeY3Bn/FhkO9aG
-         XPBWb3uhEvy7F9uyBEJBDBwdxB7ePl6M551WbbORGn0rQrXVl+rIe/JIDsb0FM5dhP9k
-         h8Qg==
-X-Gm-Message-State: APt69E3Rtn+7DDJUl42sqjJcC8bcIEr9+3Z0j/xUk+Z6khR+CUJkCbGT
-        4JYCIEgcam/VD//Lip+S4nMBl9WJ6BIs2EHvwGbGLg==
-X-Google-Smtp-Source: ADUXVKIjbF+2DX2d6Tt+T4fs+1exglv2jE2GEjk8Edh4nXa4VHyH+JBdzVvaJnK+4gGldKpjoo11ndxNlXpUQHYxf4U=
-X-Received: by 2002:aca:3048:: with SMTP id w69-v6mr14543733oiw.29.1529630916681;
- Thu, 21 Jun 2018 18:28:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180621220416.5412-1-tycho@tycho.ws> <20180621220416.5412-2-tycho@tycho.ws>
- <CAG48ez2-vK57HfbRs94YLiz3SVJ7u4tTrxtAmbRepDqk6m-c_A@mail.gmail.com> <20180622005829.GK3992@cisco>
-In-Reply-To: <20180622005829.GK3992@cisco>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 22 Jun 2018 03:28:24 +0200
-Message-ID: <CAG48ez1Wob-CrbrPfgP_OBoG7zas4bJwFdLFFQLtgQAkj+HEOQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] seccomp: add a return code to trap to userspace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        suda.akihiro@lab.ntt.co.jp, "Tobin C. Harding" <me@tobin.cc>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 21 Jun 2018 21:28:43 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 21530800E6;
+        Fri, 22 Jun 2018 13:28:40 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1529630920;
+        bh=zh9Bm2H5PYknnqxky6dqon6akCS4GwH72LXfKWUQKbY=;
+        h=From:To:Cc:Subject:Date;
+        b=kypyKdeyBt66kS/oXbp42R6b6rmNFo1P/wnc/kcQ3ZRBAsKv27HiCVyGOHGAGBv2e
+         iJIQmKDzGxrwSMyyJWBrdPPaQART5MBJjvHxfhVvRvjlIgFtJK/Ql70LkH3lwLLreo
+         t35kNO4nfl/hCBCpl+PPP0Kk1QttMplcwCJjUJSw=
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5b2c50c70000>; Fri, 22 Jun 2018 13:28:39 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 95F3C13EE1C;
+        Fri, 22 Jun 2018 13:28:42 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 5B6241E2626; Fri, 22 Jun 2018 13:28:39 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v5 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Date:   Fri, 22 Jun 2018 13:28:29 +1200
+Message-Id: <20180622012835.17874-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 2:58 AM Tycho Andersen <tycho@tycho.ws> wrote:
->
-> On Fri, Jun 22, 2018 at 01:21:47AM +0200, Jann Horn wrote:
-> > On Fri, Jun 22, 2018 at 12:05 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> > >
-> > > This patch introduces a means for syscalls matched in seccomp to notify
-> > > some other task that a particular filter has been triggered.
-> > [...]
-> > > +Userspace Notification
-> > > +======================
-> > > +
-> > > +The ``SECCOMP_RET_USER_NOTIF`` return code lets seccomp filters pass a
-> > > +particular syscall to userspace to be handled. This may be useful for
-> > > +applications like container managers, which whish to intercept particular
-> >
-> > typo: "wish"
-> >
-> > [...]
-> > > +passed around via ``SCM_RIGHTS`` or similar. Alternativley, a filter fd can be
-> >
-> > typo: "Alternatively"
-> >
-> > [...]
-> > > +It is worth noting that ``struct seccomp_data`` contains the values of register
-> > > +arguments to the syscall, but does not contain pointers to memory. The task's
-> > > +memory is accessiable to suitably privileged traces via via ``ptrace()`` or
-> >
-> > Typo: "accessible"
->
-> Thanks!
->
-> > [...]
-> > > +
-> > > +static void seccomp_do_user_notification(int this_syscall,
-> > > +                                        struct seccomp_filter *match,
-> > > +                                        const struct seccomp_data *sd)
-> > > +{
-> > > +       int err;
-> > > +       long ret = 0;
-> > > +       struct seccomp_knotif n = {};
-> > > +
-> > > +       mutex_lock(&match->notify_lock);
-> > > +       err = -ENOSYS;
-> > > +       if (!match->has_listener)
-> > > +               goto out;
-> > > +
-> > > +       n.pid = task_pid(current);
-> > > +       n.state = SECCOMP_NOTIFY_INIT;
-> > > +       n.data = sd;
-> > > +       n.id = seccomp_next_notify_id(match);
-> > > +       init_completion(&n.ready);
-> > > +
-> > > +       list_add(&n.list, &match->notifications);
-> > > +       wake_up_poll(&match->wqh, EPOLLIN | EPOLLRDNORM);
-> > > +
-> > > +       mutex_unlock(&match->notify_lock);
-> > > +       up(&match->request);
-> > > +
-> > > +       err = wait_for_completion_interruptible(&n.ready);
-> > > +       mutex_lock(&match->notify_lock);
-> > > +
-> > > +       /*
-> > > +        * Here it's possible we got a signal and then had to wait on the mutex
-> > > +        * while the reply was sent, so let's be sure there wasn't a response
-> > > +        * in the meantime.
-> > > +        */
-> > > +       if (err < 0 && n.state != SECCOMP_NOTIFY_REPLIED) {
-> > > +               /*
-> > > +                * We got a signal. Let's tell userspace about it (potentially
-> > > +                * again, if we had already notified them about the first one).
-> > > +                */
-> > > +               if (n.state == SECCOMP_NOTIFY_SENT) {
-> > > +                       n.state = SECCOMP_NOTIFY_INIT;
-> > > +                       up(&match->request);
-> > > +               }
-> > > +               mutex_unlock(&match->notify_lock);
-> > > +               err = wait_for_completion_killable(&n.ready);
-> >
-> > Does this mean that when you get a signal that isn't SIGKILL,
-> > wait_for_completion_interruptible() will bail out with -ERESTARTSYS,
-> > but then you hang on this wait_for_completion_killable()? I don't
-> > understand what's going on here. What's the point of using
-> > wait_for_completion_interruptible() when you'll just hang on another
-> > wait on the same "struct completion"?
->
-> This is the implementation of this suggestion by Andy:
-> https://lkml.org/lkml/2018/3/15/1122
->
-> The idea is to alert the listener that there was a signal exactly
-> once, in case it's in the middle of processing a request it could bail
-> out and do something else. So the killable wait is intended to ignore
-> other (non-fatal) signals after the first one and wait for whatever
-> the handler decides to do with the signal it received.
+Hi,
 
-How can the listener tell that a signal arrived? When the first
-non-fatal signal comes in, you just set the state to
-SECCOMP_NOTIFY_INIT if it was SECCOMP_NOTIFY_SENT, right? So the
-listener will potentially see the request twice, but with no
-additional indicator that a signal arrived? And in particular, if the
-listener doesn't read the request before the signal arrives, it will
-only see the request once, just as if it was a normal request with no
-signals involved?
+I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chip
+to one of our boards which uses the Marvell NFCv2 controller.
 
-Would it perhaps make sense to add a field to struct seccomp_notif
-that indicates whether the notification is for a normal syscall or a
-canceled syscall?
+This particular chip is a bit odd in that the datasheet states support
+for ONFI 1.0 but the revision number field is 00 00. It also is marked
+ABAFA but reports internally as ABAGA. Finally it has internal 8-bit ECC
+which cannot be disabled.
+
+The existing test in micron_supports_on_die_ecc() determines that on-die
+ECC is supported but not mandatory but I know for this chip it is
+mandatory despite what set_features returns.
+
+In order for this to work I need to set nand-ecc-mode = "on-die" in my
+dts. Ideally I'd like it to be automatic based on what the hardware can
+support but that may be asking too much at the moment.
+
+Here's a dump of the parameter page from the chip I have
+
+00000000: 4f 4e 46 49 00 00 18 00 3f 00 00 00 00 00 00 00 ONFI....?.......
+00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00000020: 4d 49 43 52 4f 4e 20 20 20 20 20 20 4d 54 32 39  MICRON MT29
+00000030: 46 31 47 30 38 41 42 41 47 41 57 50 20 20 20 20  F1G08ABAGAWP    
+00000040: 2c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ,...............
+00000050: 00 08 00 00 80 00 00 02 00 00 20 00 40 00 00 00  ..........  .@...
+00000060: 00 04 00 00 01 22 01 14 00 01 05 08 00 00 04 00 ....."..........
+00000070: 08 01 0e 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00000080: 08 3f 00 3f 00 58 02 10 27 46 00 64 00 00 00 00 .?.?.X..'F.d....
+00000090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000a0: 00 00 00 00 01 00 00 00 00 02 04 80 01 81 04 03 ................
+000000b0: 02 01 1e 90 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 85 a6 ................
+
+Series changes in v3:
+- No longer RFC
+- dropped "mtd: rawnand: micron: add ONFI_FEATURE_ON_DIE_ECC to supported
+  features" which Boris has already picked up
+- dropped "mtd: rawnand: marvell: Support page size of 2048 with 8-bit ECC"
+  since I can't test it.
+
+Series changes in v4:
+- based on top of http://patchwork.ozlabs.org/patch/932006/
+
+Series changes in v5:
+- address review comments from Boris on patches 5 and 6
+
+Chris Packham (6):
+  mtd: rawnand: marvell: Handle on-die ECC
+  mtd: rawnand: add manufacturer fixup for ONFI parameter page
+  mtd: rawnand: add defines for ONFI version bits
+  mtd: rawnand: micron: add fixup for ONFI revision
+  mtd: rawnand: micron: support 8/512 on-die ECC
+  mtd: rawnand: micron: detect forced on-die ECC
+
+ drivers/mtd/nand/raw/marvell_nand.c |   1 +
+ drivers/mtd/nand/raw/nand_base.c    |  14 +--
+ drivers/mtd/nand/raw/nand_micron.c  | 129 +++++++++++++++++++++++-----
+ include/linux/mtd/rawnand.h         |  14 +++
+ 4 files changed, 131 insertions(+), 27 deletions(-)
+
+-- 
+2.17.1
+
