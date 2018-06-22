@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 358DBC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1304EC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E42E323C8C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9913423C8D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:24:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="chNCEB6s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E42E323C8C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DQcFbwHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9913423C8D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934371AbeFVDYo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 23:24:44 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41480 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934351AbeFVDYl (ORCPT
+        id S934394AbeFVDYv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 23:24:51 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41324 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934351AbeFVDYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 23:24:41 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w8-v6so2746830ply.8
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 20:24:41 -0700 (PDT)
+        Thu, 21 Jun 2018 23:24:46 -0400
+Received: by mail-pf0-f196.google.com with SMTP id a11-v6so2503150pff.8
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 20:24:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+TGsoxWDLx0eUmV2mltgdZ45P5o8tIzkTFsYHg4OQtk=;
-        b=chNCEB6sm09PWStU9jTmEJfkARLnMmFnIs3LWB96Ywi5xtXH5QD1kZmuLICKkG/YUr
-         9JDMDEMkYhwGSrFr8hhXi8S45xfv4vl4beRKRE2kKx7cKATL8CPRPSnQumlicFK49Dbc
-         xcbO7o3b0TP7xQU85XLQZcIswV33L6Z4izJSk=
+        bh=paUx3mbJ/fGKTrCzR9iWMd0cKrJ2DrCtPIBJlU27mGU=;
+        b=DQcFbwHdVjXgwNHsPmH/5+YmkRsdmeVOJf+ZekByCAcieL3gIrpms653HeFKzfHmbe
+         zK7D1nY2PHQwPJLcsmnD4nqhIUQ9fJJrK5ml8ui8oQdrl4YmGZ52vSpzz87d/aLcSZxI
+         rCdUgfL0BZ2t9X0ovS3oeC5RUHxWCli6Fw2ig=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+TGsoxWDLx0eUmV2mltgdZ45P5o8tIzkTFsYHg4OQtk=;
-        b=bn22tSPjr50i3DyeDUFLNfe1tcxFAE9RwnMnp+V0fIO76Mn3kD2uF6P/LU26ojwF8T
-         Dh39v96mud7Mg6nyy8qWqK6lQXe+Y1R8OFpBqi/YUyY81xmR9JOtqcHs8OvlNh4t1bUi
-         Fp+xJD2v4F4KQMiKFIKvt8VwKqJzm/0RzZXEB+n0RubXQMTdG28CkoG37LWgN+b2ns1R
-         YSLEijsQqYpOgQaWgTiqZXIy5CO8ppXxfYsgQnwOSuJ1cmU86VdmpiVZOZfxRk2t0HTc
-         OnaWc58VYSlu8Dj3PWXT9EkXG3OzB5ulE8O2x4bzS4OFPtHbd6bM4s37fuGUSl0eY1M0
-         HYvw==
-X-Gm-Message-State: APt69E3mWseUESHO5mtAlAjIyIk6CJSucXgdplrnbinZMqNjfzKNxJDo
-        plUazkv+ordoWeHce/Sfr9h3LA==
-X-Google-Smtp-Source: ADUXVKLxUayHvahlXZHsWxOHdqZYIykCEJxhcy83THpA6nl+jKqwZt19aZc/C/fKbTMzYVWjzd/xaQ==
-X-Received: by 2002:a17:902:2983:: with SMTP id h3-v6mr31419435plb.232.1529637880909;
-        Thu, 21 Jun 2018 20:24:40 -0700 (PDT)
+        bh=paUx3mbJ/fGKTrCzR9iWMd0cKrJ2DrCtPIBJlU27mGU=;
+        b=BtRAT/CpCHvtAX/H4vCVtWCi4QHlIy7qPcGc2KpLefpeZkn6WLNN900FadIGPazCYc
+         xXW6KKMA/D8ThMUsWPVggVVmJo57jng3TjhrS90B72rcpoR/4l98OLNlNGOjbgnOTlz7
+         aPy6X+J2iSSa56ENR9cs7SN4bLR3/Rbltq+7ZTa4n+EAOOLnxme4n9tjyvKtArV2vHXO
+         gxTzzDxraOe/g6PBtTZU0B8H/Vfqz0CY4sQ8L+/boVAX9yxQCRbxHUIQL9bnqkemUHhu
+         HVNztxn09R4bLEltXikFawtV6p+SRrVqTpfS+kihYoLYTYTtyVlSh8Ctv6gGqHVRy6FW
+         Vg9w==
+X-Gm-Message-State: APt69E1I8Tf4NFLBD6GiUk1JGS+vHQuSRoTgvhm25nad3HQT6In1E4In
+        LuUOnGeYxU+KTXnHDW6sKK/TSw==
+X-Google-Smtp-Source: ADUXVKJodmSUOgqjSfId0B+dBIh5A8tJFf3xr897MvtoedZcErNGeAeAHWlRIkHSRnP2LPtRpK2gRA==
+X-Received: by 2002:a65:4146:: with SMTP id x6-v6mr24869475pgp.221.1529637886034;
+        Thu, 21 Jun 2018 20:24:46 -0700 (PDT)
 Received: from localhost.localdomain ([45.56.155.153])
-        by smtp.gmail.com with ESMTPSA id a23-v6sm9286253pfn.113.2018.06.21.20.24.36
+        by smtp.gmail.com with ESMTPSA id a23-v6sm9286253pfn.113.2018.06.21.20.24.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 20:24:40 -0700 (PDT)
+        Thu, 21 Jun 2018 20:24:45 -0700 (PDT)
 From:   Guodong Xu <guodong.xu@linaro.org>
 To:     vkoul@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         dan.j.williams@intel.com
@@ -62,9 +62,9 @@ Cc:     liyu65@hisilicon.com, suzhuangluan@hisilicon.com,
         sunliang10@huawei.com, fengbaopeng@hisilicon.com,
         dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Guodong Xu <guodong.xu@linaro.org>
-Subject: [PATCH 2/3] k3dma: add support to reserved minimum channels
-Date:   Fri, 22 Jun 2018 11:24:15 +0800
-Message-Id: <20180622032416.20133-3-guodong.xu@linaro.org>
+Subject: [PATCH 3/3] k3dma: delete axi_config
+Date:   Fri, 22 Jun 2018 11:24:16 +0800
+Message-Id: <20180622032416.20133-4-guodong.xu@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180622032416.20133-1-guodong.xu@linaro.org>
 References: <20180622032416.20133-1-guodong.xu@linaro.org>
@@ -75,75 +75,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Li Yu <liyu65@hisilicon.com>
 
-On k3 series of SoC, DMA controller reserves some channels for
-other on-chip coprocessors. By adding support to dma_min_chan, kernel
-will not be able to use these reserved channels.
+Axi_config controls whether DMA resources can be accessed in non-secure
+mode, such as linux kernel. The setting is actually done in
+bootloader stage.
 
-One example is on Hi3660 platform, channel 0 is reserved to lpm3.
-
-Please also refer to Documentation/devicetree/bindings/dma/k3dma.txt
+This patch removes axi_config from k3dma driver.
 
 Signed-off-by: Li Yu <liyu65@hisilicon.com>
 Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
 ---
- drivers/dma/k3dma.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/dma/k3dma.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index fa31cccbe04f..13cec12742e3 100644
+index 13cec12742e3..ddd7d1e054c0 100644
 --- a/drivers/dma/k3dma.c
 +++ b/drivers/dma/k3dma.c
-@@ -113,6 +113,7 @@ struct k3_dma_dev {
- 	struct dma_pool		*pool;
- 	u32			dma_channels;
- 	u32			dma_requests;
-+	u32			dma_min_chan;
- 	unsigned int		irq;
- };
+@@ -52,8 +52,6 @@
+ #define CX_SRC			0x814
+ #define CX_DST			0x818
+ #define CX_CFG			0x81c
+-#define AXI_CFG			0x820
+-#define AXI_CFG_DEFAULT		0x201201
  
-@@ -309,7 +310,7 @@ static void k3_dma_tasklet(unsigned long arg)
+ #define CX_LLI_CHAIN_EN		0x2
+ #define CX_CFG_EN		0x1
+@@ -158,7 +156,6 @@ static void k3_dma_set_desc(struct k3_dma_phy *phy, struct k3_desc_hw *hw)
+ 	writel_relaxed(hw->count, phy->base + CX_CNT0);
+ 	writel_relaxed(hw->saddr, phy->base + CX_SRC);
+ 	writel_relaxed(hw->daddr, phy->base + CX_DST);
+-	writel_relaxed(AXI_CFG_DEFAULT, phy->base + AXI_CFG);
+ 	writel_relaxed(hw->config, phy->base + CX_CFG);
+ }
  
- 	/* check new channel request in d->chan_pending */
- 	spin_lock_irq(&d->lock);
--	for (pch = 0; pch < d->dma_channels; pch++) {
-+	for (pch = d->dma_min_chan; pch < d->dma_channels; pch++) {
- 		p = &d->phy[pch];
- 
- 		if (p->vchan == NULL && !list_empty(&d->chan_pending)) {
-@@ -326,7 +327,7 @@ static void k3_dma_tasklet(unsigned long arg)
- 	}
- 	spin_unlock_irq(&d->lock);
- 
--	for (pch = 0; pch < d->dma_channels; pch++) {
-+	for (pch = d->dma_min_chan; pch < d->dma_channels; pch++) {
- 		if (pch_alloc & (1 << pch)) {
- 			p = &d->phy[pch];
- 			c = p->vchan;
-@@ -825,6 +826,8 @@ static int k3_dma_probe(struct platform_device *op)
- 				"dma-channels", &d->dma_channels);
- 		of_property_read_u32((&op->dev)->of_node,
- 				"dma-requests", &d->dma_requests);
-+		of_property_read_u32((&op->dev)->of_node,
-+				"dma-min-chan", &d->dma_min_chan);
- 	}
- 
- 	d->clk = devm_clk_get(&op->dev, NULL);
-@@ -848,12 +851,12 @@ static int k3_dma_probe(struct platform_device *op)
- 		return -ENOMEM;
- 
- 	/* init phy channel */
--	d->phy = devm_kcalloc(&op->dev,
--		d->dma_channels, sizeof(struct k3_dma_phy), GFP_KERNEL);
-+	d->phy = devm_kcalloc(&op->dev, (d->dma_channels - d->dma_min_chan),
-+			sizeof(struct k3_dma_phy), GFP_KERNEL);
- 	if (d->phy == NULL)
- 		return -ENOMEM;
- 
--	for (i = 0; i < d->dma_channels; i++) {
-+	for (i = d->dma_min_chan; i < d->dma_channels; i++) {
- 		struct k3_dma_phy *p = &d->phy[i];
- 
- 		p->idx = i;
 -- 
 2.17.1
 
