@@ -6,110 +6,137 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D866C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6284BC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC8F23F4B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:01:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC8F23F4B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 238DD23F4D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:01:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238DD23F4D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751400AbeFVJBi (ORCPT
+        id S1751548AbeFVJBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:01:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40731 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751235AbeFVJBf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:01:35 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5M90sKu013631
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 22 Jun 2018 02:00:54 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5M90sFP013628;
-        Fri, 22 Jun 2018 02:00:54 -0700
-Date:   Fri, 22 Jun 2018 02:00:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Hans de Goede <tipbot@zytor.com>
-Message-ID: <tip-52e1cf2d19c2e62e6a81b8de3f7320d033917dd5@git.kernel.org>
-Cc:     peterz@infradead.org, hdegoede@redhat.com, hpa@zytor.com,
-        mingo@kernel.org, ard.biesheuvel@linaro.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, hdegoede@redhat.com, hpa@zytor.com,
-          peterz@infradead.org, torvalds@linux-foundation.org,
-          ard.biesheuvel@linaro.org
-In-Reply-To: <20180622064222.11633-2-ard.biesheuvel@linaro.org>
-References: <20180622064222.11633-2-ard.biesheuvel@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/urgent] efi/libstub/tpm: Initialize efi_physical_addr_t
- vars to zero for mixed mode
-Git-Commit-ID: 52e1cf2d19c2e62e6a81b8de3f7320d033917dd5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 22 Jun 2018 05:01:43 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9117 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751389AbeFVJBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 05:01:40 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9B35ECB26CA05;
+        Fri, 22 Jun 2018 17:01:09 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.382.0; Fri, 22 Jun 2018
+ 17:00:28 +0800
+Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
+To:     Punit Agrawal <punit.agrawal@arm.com>,
+        Xie XiuQi <xiexiuqi@huawei.com>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        <tnowicki@caviumnetworks.com>, <linux-pci@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        <linux-mm@kvack.org>, <wanghuiqiang@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zhongjiang <zhongjiang@huawei.com>,
+        linux-arm <linux-arm-kernel@lists.infradead.org>
+References: <20180611145330.GO13364@dhcp22.suse.cz>
+ <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
+ <87bmce60y3.fsf@e105922-lin.cambridge.arm.com>
+ <8b715082-14d4-f10b-d2d6-b23be7e4bf7e@huawei.com>
+ <20180619120714.GE13685@dhcp22.suse.cz>
+ <874lhz3pmn.fsf@e105922-lin.cambridge.arm.com>
+ <20180619140818.GA16927@e107981-ln.cambridge.arm.com>
+ <87wouu3jz1.fsf@e105922-lin.cambridge.arm.com>
+ <20180619151425.GH13685@dhcp22.suse.cz>
+ <87r2l23i2b.fsf@e105922-lin.cambridge.arm.com>
+ <20180619163256.GA18952@e107981-ln.cambridge.arm.com>
+ <814205eb-ae86-a519-bed0-f09b8e2d3a02@huawei.com>
+ <87602d3ccl.fsf@e105922-lin.cambridge.arm.com>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <5c083c9c-473f-f504-848b-48506d0fd380@huawei.com>
+Date:   Fri, 22 Jun 2018 16:58:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <87602d3ccl.fsf@e105922-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  52e1cf2d19c2e62e6a81b8de3f7320d033917dd5
-Gitweb:     https://git.kernel.org/tip/52e1cf2d19c2e62e6a81b8de3f7320d033917dd5
-Author:     Hans de Goede <hdegoede@redhat.com>
-AuthorDate: Fri, 22 Jun 2018 08:42:22 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 22 Jun 2018 10:58:27 +0200
+On 2018/6/20 19:51, Punit Agrawal wrote:
+> Xie XiuQi <xiexiuqi@huawei.com> writes:
+> 
+>> Hi Lorenzo, Punit,
+>>
+>>
+>> On 2018/6/20 0:32, Lorenzo Pieralisi wrote:
+>>> On Tue, Jun 19, 2018 at 04:35:40PM +0100, Punit Agrawal wrote:
+>>>> Michal Hocko <mhocko@kernel.org> writes:
+>>>>
+>>>>> On Tue 19-06-18 15:54:26, Punit Agrawal wrote:
+>>>>> [...]
+>>>>>> In terms of $SUBJECT, I wonder if it's worth taking the original patch
+>>>>>> as a temporary fix (it'll also be easier to backport) while we work on
+>>>>>> fixing these other issues and enabling memoryless nodes.
+>>>>>
+>>>>> Well, x86 already does that but copying this antipatern is not really
+>>>>> nice. So it is good as a quick fix but it would be definitely much
+>>>>> better to have a robust fix. Who knows how many other places might hit
+>>>>> this. You certainly do not want to add a hack like this all over...
+>>>>
+>>>> Completely agree! I was only suggesting it as a temporary measure,
+>>>> especially as it looked like a proper fix might be invasive.
+>>>>
+>>>> Another fix might be to change the node specific allocation to node
+>>>> agnostic allocations. It isn't clear why the allocation is being
+>>>> requested from a specific node. I think Lorenzo suggested this in one of
+>>>> the threads.
+>>>
+>>> I think that code was just copypasted but it is better to fix the
+>>> underlying issue.
+>>>
+>>>> I've started putting together a set fixing the issues identified in this
+>>>> thread. It should give a better idea on the best course of action.
+>>>
+>>> On ACPI ARM64, this diff should do if I read the code correctly, it
+>>> should be (famous last words) just a matter of mapping PXMs to nodes for
+>>> every SRAT GICC entry, feel free to pick it up if it works.
+>>>
+>>> Yes, we can take the original patch just because it is safer for an -rc
+>>> cycle even though if the patch below would do delaying the fix for a
+>>> couple of -rc (to get it tested across ACPI ARM64 NUMA platforms) is
+>>> not a disaster.
+>>
+>> I tested this patch on my arm board, it works.
+> 
+> I am assuming you tried the patch without enabling support for
+> memory-less nodes.
+> 
+> The patch de-couples the onlining of numa nodes (as parsed from SRAT)
+> from NR_CPUS restriction. When it comes to building zonelists, the node
+> referenced by the PCI controller also has zonelists initialised.
+> 
+> So it looks like a fallback node is setup even if we don't have
+> memory-less nodes enabled. I need to stare some more at the code to see
+> why we need memory-less nodes at all then ...
 
-efi/libstub/tpm: Initialize efi_physical_addr_t vars to zero for mixed mode
+Yes, please. From my limited MM knowledge, zonelists should not be
+initialised if no CPU and no memory on this node, correct me if I'm
+wrong.
 
-Commit:
+Thanks
+Hanjun
 
-  79832f0b5f71 ("efi/libstub/tpm: Initialize pointer variables to zero for mixed mode")
-
-fixes a problem with the tpm code on mixed mode (64-bit kernel on 32-bit UEFI),
-where 64-bit pointer variables are not fully initialized by the 32-bit EFI code.
-
-A similar problem applies to the efi_physical_addr_t variables which
-are written by the ->get_event_log() EFI call. Even though efi_physical_addr_t
-is 64-bit everywhere, it seems that some 32-bit UEFI implementations only
-fill in the lower 32 bits when passed a pointer to an efi_physical_addr_t
-to fill.
-
-This commit initializes these to 0 to, to ensure the upper 32 bits are
-0 in mixed mode. This fixes recent kernels sometimes hanging during
-early boot on mixed mode UEFI systems.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.16+
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180622064222.11633-2-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- drivers/firmware/efi/libstub/tpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index caa37a6dd9d4..a90b0b8fc69a 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -64,7 +64,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
- 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
- 	efi_status_t status;
--	efi_physical_addr_t log_location, log_last_entry;
-+	efi_physical_addr_t log_location = 0, log_last_entry = 0;
- 	struct linux_efi_tpm_eventlog *log_tbl = NULL;
- 	unsigned long first_entry_addr, last_entry_addr;
- 	size_t log_size, last_entry_size;
