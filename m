@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D79DC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3276FC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C09E249B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C09E249B2
+	by mail.kernel.org (Postfix) with ESMTP id E8B1F249B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:51:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8B1F249B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933993AbeFVWuk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:50:40 -0400
-Received: from mga17.intel.com ([192.55.52.151]:52517 "EHLO mga17.intel.com"
+        id S934047AbeFVWvF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 18:51:05 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22310 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933467AbeFVWmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933440AbeFVWmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 18:42:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
-   d="scan'208";a="234843361"
+   d="scan'208";a="234843400"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:47 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -37,9 +37,9 @@ Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V7 05/41] x86/intel_rdt: Introduce resource group's mode resctrl file
-Date:   Fri, 22 Jun 2018 15:41:56 -0700
-Message-Id: <20ab78fda26a8c8d98e18ec555f6a1f728948972.1529706536.git.reinette.chatre@intel.com>
+Subject: [PATCH V7 17/41] x86/intel_rdt: Introduce the Cache Pseudo-Locking modes
+Date:   Fri, 22 Jun 2018 15:42:08 -0700
+Message-Id: <98d6ca129bbe7dd0932d1fcfeb3cbb65f29a8d9d.1529706536.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1529706536.git.reinette.chatre@intel.com>
 References: <cover.1529706536.git.reinette.chatre@intel.com>
@@ -50,11 +50,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new resctrl file "mode" associated with each resource group is
-introduced. This file will display the resource group's current mode and an
-administrator can also use it to modify the resource group's mode.
-
-Only shareable mode is currently supported.
+The two modes used to manage Cache Pseudo-Locked regions are introduced.  A
+resource group is assigned "pseudo-locksetup" mode when the user indicates
+that this resource group will be used for a Cache Pseudo-Locked
+region. When the Cache Pseudo-Locked region has been set up successfully
+after the user wrote the requested schemata to the "schemata" file, then
+the mode will automatically changed to "pseudo-locked".  The user is not
+able to modify the mode to "pseudo-locked" by writing "pseudo-locked" to
+the "mode" file directly.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -65,119 +68,73 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/902574465439924850a6e7c4cc06b8a79bd7d2b4.1527593970.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/6ab82fb595f4b0ffa305dc204255b921eed51de7.1527593970.git.reinette.chatre@intel.com
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 83 ++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt.h          | 10 ++++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 13 +++++++++++--
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 8bbb047bf37c..bda87f5ef7bc 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -84,15 +84,25 @@ enum rdt_group_type {
+  * enum rdtgrp_mode - Mode of a RDT resource group
+  * @RDT_MODE_SHAREABLE: This resource group allows sharing of its allocations
+  * @RDT_MODE_EXCLUSIVE: No sharing of this resource group's allocations allowed
++ * @RDT_MODE_PSEUDO_LOCKSETUP: Resource group will be used for Pseudo-Locking
++ * @RDT_MODE_PSEUDO_LOCKED: No sharing of this resource group's allocations
++ *                          allowed AND the allocations are Cache Pseudo-Locked
+  *
+  * The mode of a resource group enables control over the allowed overlap
+  * between allocations associated with different resource groups (classes
+  * of service). User is able to modify the mode of a resource group by
+  * writing to the "mode" resctrl file associated with the resource group.
++ *
++ * The "shareable", "exclusive", and "pseudo-locksetup" modes are set by
++ * writing the appropriate text to the "mode" file. A resource group enters
++ * "pseudo-locked" mode after the schemata is written while the resource
++ * group is in "pseudo-locksetup" mode.
+  */
+ enum rdtgrp_mode {
+ 	RDT_MODE_SHAREABLE = 0,
+ 	RDT_MODE_EXCLUSIVE,
++	RDT_MODE_PSEUDO_LOCKSETUP,
++	RDT_MODE_PSEUDO_LOCKED,
+ 
+ 	/* Must be last */
+ 	RDT_NUM_MODES,
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 51e99d1b1caa..e161e52aed3b 100644
+index 6519b69e6791..336bc686a962 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -147,6 +147,24 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
- 	return RDT_NUM_MODES;
+@@ -161,8 +161,10 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
  }
  
-+static const char * const rdt_mode_str[] = {
-+	[RDT_MODE_SHAREABLE]	= "shareable",
-+};
-+
-+/**
-+ * rdtgroup_mode_str - Return the string representation of mode
-+ * @mode: the resource group mode as &enum rdtgroup_mode
-+ *
-+ * Return: string representation of valid mode, "unknown" otherwise
-+ */
-+static const char *rdtgroup_mode_str(enum rdtgrp_mode mode)
-+{
-+	if (mode < RDT_MODE_SHAREABLE || mode >= RDT_NUM_MODES)
-+		return "unknown";
-+
-+	return rdt_mode_str[mode];
-+}
-+
- /* set uid and gid of rdtgroup dirs and files to that of the creator */
- static int rdtgroup_kn_set_ugid(struct kernfs_node *kn)
- {
-@@ -761,6 +779,63 @@ static ssize_t max_threshold_occ_write(struct kernfs_open_file *of,
- 	return nbytes;
- }
- 
-+/*
-+ * rdtgroup_mode_show - Display mode of this resource group
-+ */
-+static int rdtgroup_mode_show(struct kernfs_open_file *of,
-+			      struct seq_file *s, void *v)
-+{
-+	struct rdtgroup *rdtgrp;
-+
-+	rdtgrp = rdtgroup_kn_lock_live(of->kn);
-+	if (!rdtgrp) {
-+		rdtgroup_kn_unlock(of->kn);
-+		return -ENOENT;
-+	}
-+
-+	seq_printf(s, "%s\n", rdtgroup_mode_str(rdtgrp->mode));
-+
-+	rdtgroup_kn_unlock(of->kn);
-+	return 0;
-+}
-+
-+static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
-+				   char *buf, size_t nbytes, loff_t off)
-+{
-+	struct rdtgroup *rdtgrp;
-+	enum rdtgrp_mode mode;
-+	int ret = 0;
-+
-+	/* Valid input requires a trailing newline */
-+	if (nbytes == 0 || buf[nbytes - 1] != '\n')
-+		return -EINVAL;
-+	buf[nbytes - 1] = '\0';
-+
-+	rdtgrp = rdtgroup_kn_lock_live(of->kn);
-+	if (!rdtgrp) {
-+		rdtgroup_kn_unlock(of->kn);
-+		return -ENOENT;
-+	}
-+
-+	rdt_last_cmd_clear();
-+
-+	mode = rdtgrp->mode;
-+
-+	if ((!strcmp(buf, "shareable") && mode == RDT_MODE_SHAREABLE))
-+		goto out;
-+
-+	if (!strcmp(buf, "shareable")) {
-+		rdtgrp->mode = RDT_MODE_SHAREABLE;
-+	} else {
-+		rdt_last_cmd_printf("unknown/unsupported mode\n");
-+		ret = -EINVAL;
-+	}
-+
-+out:
-+	rdtgroup_kn_unlock(of->kn);
-+	return ret ?: nbytes;
-+}
-+
- /* rdtgroup information files for one cache resource. */
- static struct rftype res_common_files[] = {
- 	{
-@@ -874,6 +949,14 @@ static struct rftype res_common_files[] = {
- 		.seq_show	= rdtgroup_schemata_show,
- 		.fflags		= RF_CTRL_BASE,
- 	},
-+	{
-+		.name		= "mode",
-+		.mode		= 0644,
-+		.kf_ops		= &rdtgroup_kf_single_ops,
-+		.write		= rdtgroup_mode_write,
-+		.seq_show	= rdtgroup_mode_show,
-+		.fflags		= RF_CTRL_BASE,
-+	},
+ static const char * const rdt_mode_str[] = {
+-	[RDT_MODE_SHAREABLE]	= "shareable",
+-	[RDT_MODE_EXCLUSIVE]	= "exclusive",
++	[RDT_MODE_SHAREABLE]		= "shareable",
++	[RDT_MODE_EXCLUSIVE]		= "exclusive",
++	[RDT_MODE_PSEUDO_LOCKSETUP]	= "pseudo-locksetup",
++	[RDT_MODE_PSEUDO_LOCKED]	= "pseudo-locked",
  };
  
- static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
+ /**
+@@ -759,6 +761,13 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ 			case RDT_MODE_EXCLUSIVE:
+ 				exclusive |= *ctrl;
+ 				break;
++			/*
++			 * Temporarily handle pseudo-locking enums
++			 * to silence compile warnings until handling
++			 * added in later patches.
++			 */
++			case RDT_MODE_PSEUDO_LOCKSETUP:
++			case RDT_MODE_PSEUDO_LOCKED:
+ 			case RDT_NUM_MODES:
+ 				WARN(1,
+ 				     "invalid mode for closid %d\n", i);
 -- 
 2.17.0
 
