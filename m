@@ -2,147 +2,185 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A52C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9873C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6040323C3F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:13:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6040323C3F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 5623723C40
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:15:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mpe+EJ7f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5623723C40
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934302AbeFVCNX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 22:13:23 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:54142 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933905AbeFVCNW (ORCPT
+        id S933972AbeFVCPY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:15:24 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43411 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932875AbeFVCPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 22:13:22 -0400
-Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.53 with ESMTP; 22 Jun 2018 11:13:19 +0900
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.151 with ESMTP; 22 Jun 2018 11:13:19 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Fri, 22 Jun 2018 11:13:16 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
-        raistlin@linux.it, linux-kernel@vger.kernel.org,
-        juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com,
-        joel@joelfernandes.org
-Subject: Re: [RESEND PATCH v5 2/2] sched/deadline: Set cp->elements[0].cpu to
- -1 when the heap is empty
-Message-ID: <20180622021316.GA17010@X58A-UD3R>
-References: <1529297905-24703-1-git-send-email-byungchul.park@lge.com>
- <1529297905-24703-2-git-send-email-byungchul.park@lge.com>
- <20180621150452.4480c33f@gandalf.local.home>
+        Thu, 21 Jun 2018 22:15:23 -0400
+Received: by mail-pf0-f195.google.com with SMTP id y8-v6so2427100pfm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 19:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=B0M8i5k1DqiL6hanBImyyWKZU8OCOQojZq7QNR0yujs=;
+        b=Mpe+EJ7fRyj6U0mvMuW86eYdonue/sl1U69GpE9Xzyjj69tOdpgvhM1qCIgTnvKvRQ
+         ePNzzH8apbiXpCZ3X8oGJ9jVCO5K7AV+UlkGUrHcV443tdNvhmsPLRuJ/6UTO2AkkoTq
+         jAXglwbKBpDmrWX/YGZPQJ1tjAE2Nn7ZmIn8sz7wpWbfxChiHUc3kxRLSGg3rFSQEUG2
+         ge6CRpAkk/+DnrPVky1DWMKyD0dp8oaVjVp9NWv/SgBufdRXsd7vNOPIsPEQ8Bx9564j
+         fR43ApGVOYl7J5mA4EQDBSjL9KY78pp7adEj/dGnOpfgQYrtCP9YIbjitivxbNVvIlXU
+         uI/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=B0M8i5k1DqiL6hanBImyyWKZU8OCOQojZq7QNR0yujs=;
+        b=sNVq/qgrHkBIlDsJnpdn5MfNXjVqo6g4ArYghEGIF/UEiWlZ90mYAjyVISA+Hff6lB
+         wyM1+9DoQIyFOJc5DDHTpEfuYj9KH9tYDDb6YKrhlYLHcooWptUd1e/WyYzqeccb0iBe
+         pgJe6Pm2mRl9mekN4kZvi9jn/gKxy75MI9dEbvWf2AAHkZSJWmEeYPZdzgOaI87W2TPp
+         0ak8Hd13z5AqePfoy237QQZt+MnTOi6TLSPyyGXfRXavBEX/oAp3yjdBQx/zTKo77NPY
+         +WvDyGvQ63UBOUbFNmzl2crvgTvNH68j5d/waJa05oHYQLnMK0Okj5+hEOHrUDseGR+n
+         oaZg==
+X-Gm-Message-State: APt69E08WPV0Lz630hZokKA3N8Je6MzHF/UVnPhPcii81NfuHE8du6Un
+        3rz6a8iAax2jGiidAt8CuxI60A==
+X-Google-Smtp-Source: ADUXVKKgGQCpuoNY0sd/Ek6Q4yBOtenNFURND5YH9Eg5tx5pyBPIBeqeVz1nhpV40lOjsM2sgy9uIg==
+X-Received: by 2002:a63:62c4:: with SMTP id w187-v6mr3829555pgb.55.1529633722613;
+        Thu, 21 Jun 2018 19:15:22 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (s169.156.222.122.fls.vectant.ne.jp. [122.222.156.169])
+        by smtp.gmail.com with ESMTPSA id q207-v6sm7409500pgq.11.2018.06.21.19.15.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 19:15:21 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 12:15:11 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 13/26] ppc: Convert mmu context allocation to new IDA
+ API
+Message-ID: <20180622121511.00ae9d00@roar.ozlabs.ibm.com>
+In-Reply-To: <20180621212835.5636-14-willy@infradead.org>
+References: <20180621212835.5636-1-willy@infradead.org>
+        <20180621212835.5636-14-willy@infradead.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621150452.4480c33f@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 03:04:52PM -0400, Steven Rostedt wrote:
-> On Mon, 18 Jun 2018 13:58:25 +0900
-> Byungchul Park <byungchul.park@lge.com> wrote:
-> 
-> > Hello Steven and Daniel,
-> > 
-> > I've changed the 2nd patch a little bit to consider cpudl_clear()
-> > additionally. Can I keep your Acked-by on?
-> 
-> Actually, I think this should be a separate patch. It handles a
-> different issue.
+On Thu, 21 Jun 2018 14:28:22 -0700
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Do you think this should be a separate patch even though both are
-anyway for considering empty one properly?
+> ida_alloc_range is the perfect fit for this use case.  Eliminates
+> a custom spinlock, a call to ida_pre_get and a local check for the
+> allocated ID exceeding a maximum.
+> 
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> ---
+>  arch/powerpc/mm/mmu_context_book3s64.c | 44 +++-----------------------
+>  1 file changed, 4 insertions(+), 40 deletions(-)
+> 
+> diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
+> index f3d4b4a0e561..5a0cf2cc8ba0 100644
+> --- a/arch/powerpc/mm/mmu_context_book3s64.c
+> +++ b/arch/powerpc/mm/mmu_context_book3s64.c
+> @@ -26,48 +26,16 @@
+>  #include <asm/mmu_context.h>
+>  #include <asm/pgalloc.h>
+>  
+> -static DEFINE_SPINLOCK(mmu_context_lock);
+>  static DEFINE_IDA(mmu_context_ida);
+>  
+>  static int alloc_context_id(int min_id, int max_id)
+>  {
+> -	int index, err;
+> -
+> -again:
+> -	if (!ida_pre_get(&mmu_context_ida, GFP_KERNEL))
+> -		return -ENOMEM;
+> -
+> -	spin_lock(&mmu_context_lock);
+> -	err = ida_get_new_above(&mmu_context_ida, min_id, &index);
+> -	spin_unlock(&mmu_context_lock);
+> -
+> -	if (err == -EAGAIN)
+> -		goto again;
+> -	else if (err)
+> -		return err;
+> -
+> -	if (index > max_id) {
+> -		spin_lock(&mmu_context_lock);
+> -		ida_remove(&mmu_context_ida, index);
+> -		spin_unlock(&mmu_context_lock);
+> -		return -ENOMEM;
+> -	}
+> -
+> -	return index;
+> +	return ida_alloc_range(&mmu_context_ida, min_id, max_id, GFP_KERNEL);
+>  }
+>  
+>  void hash__reserve_context_id(int id)
+>  {
+> -	int rc, result = 0;
+> -
+> -	do {
+> -		if (!ida_pre_get(&mmu_context_ida, GFP_KERNEL))
+> -			break;
+> -
+> -		spin_lock(&mmu_context_lock);
+> -		rc = ida_get_new_above(&mmu_context_ida, id, &result);
+> -		spin_unlock(&mmu_context_lock);
+> -	} while (rc == -EAGAIN);
+> +	int result = ida_alloc_range(&mmu_context_ida, id, id, GFP_KERNEL);
+>  
+>  	WARN(result != id, "mmu: Failed to reserve context id %d (rc %d)\n", id, result);
+>  }
+> @@ -172,9 +140,7 @@ int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
+>  
+>  void __destroy_context(int context_id)
+>  {
+> -	spin_lock(&mmu_context_lock);
+> -	ida_remove(&mmu_context_ida, context_id);
+> -	spin_unlock(&mmu_context_lock);
+> +	ida_free(&mmu_context_ida, context_id);
+>  }
+>  EXPORT_SYMBOL_GPL(__destroy_context);
+>  
+> @@ -182,13 +148,11 @@ static void destroy_contexts(mm_context_t *ctx)
+>  {
+>  	int index, context_id;
+>  
+> -	spin_lock(&mmu_context_lock);
+>  	for (index = 0; index < ARRAY_SIZE(ctx->extended_id); index++) {
+>  		context_id = ctx->extended_id[index];
+>  		if (context_id)
+> -			ida_remove(&mmu_context_ida, context_id);
+> +			ida_free(&mmu_context_ida, context_id);
+>  	}
+> -	spin_unlock(&mmu_context_lock);
+>  }
+>  
+>  static void pte_frag_destroy(void *pte_frag)
 
-OK, I will then.
+This hunk should be okay because the mmu_context_lock does not protect
+the extended_id array, right Aneesh?
 
-Thanks a lot, Steve.
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 
-> > (I temporarily removed the Acked-by you gave me.)
-> > 
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-> > 
-> > -----8<-----
-> > >From 1e368d276186c22f9da298206c718b33e805828d Mon Sep 17 00:00:00 2001  
-> > From: Byungchul Park <byungchul.park@lge.com>
-> > Date: Mon, 4 Jun 2018 15:05:08 +0900
-> > Subject: [RESEND PATCH v5 2/2] sched/deadline: Set cp->elements[0].cpu to -1 when the
-> >  heap is empty
-> > 
-> > Currently, migrating tasks to cpu0 unconditionally happens when the
-> > heap is empty, since cp->elements[0].cpu is initialized to 0(=cpu0).
-> > We have to distinguish between the empty case and cpu0 to avoid the
-> > unnecessary migrations. Therefore, it has to return an invalid value
-> > e.i. -1 in the case the heap is empty.
-> > 
-> > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> > Suggested-by: Joel Fernandes <joelaf@google.com>
-> > ---
-> >  kernel/sched/cpudeadline.c | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-> > index ae4fbdc..a200b36 100644
-> > --- a/kernel/sched/cpudeadline.c
-> > +++ b/kernel/sched/cpudeadline.c
-> > @@ -136,6 +136,10 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
-> >  
-> >  		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
-> >  
-> > +		/* The heap tree is empty, just return. */
-> > +		if (best_cpu == -1)
-> > +			return 0;
-> > +
-> 
-> Actually, why not put the if before the WARN_ON, and then we can
-> simplify the WARN_ON:
-> 
-> 	if (best_cpu == -1)
-> 		return 0;
-> 
-> 	WARN_ON(!cpu_present(best_cpu));
-> 
-> -- Steve
-> 
-> >  		if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
-> >  		    dl_time_before(dl_se->deadline, cpudl_maximum_dl(cp))) {
-> >  			if (later_mask)
-> > @@ -172,6 +176,13 @@ void cpudl_clear(struct cpudl *cp, int cpu)
-> >  		 * This could happen if a rq_offline_dl is
-> >  		 * called for a CPU without -dl tasks running.
-> >  		 */
-> > +	} else if (cp->size == 1){
-> > +		/* Only one element in the heap, clear it. */
-> > +		cp->elements[0].cpu = -1;
-> > +		cp->elements[cpu].idx = IDX_INVALID;
-> > +		cp->size = 0;
-> > +
-> > +		cpumask_set_cpu(cpu, cp->free_cpus);
-> >  	} else {
-> >  		new_cpu = cp->elements[cp->size - 1].cpu;
-> >  		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
-> > @@ -267,6 +278,9 @@ int cpudl_init(struct cpudl *cp)
-> >  	for_each_possible_cpu(i)
-> >  		cp->elements[i].idx = IDX_INVALID;
-> >  
-> > +	/* Mark heap as initially empty. */
-> > +	cp->elements[0].cpu = -1;
-> > +
-> >  	return 0;
-> >  }
-> >  
+Thanks,
+Nick
