@@ -2,145 +2,149 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A57DC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C8AC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B2423C30
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03BD623C30
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:08:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IVEmFKif"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24B2423C30
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIBCT3xZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03BD623C30
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934262AbeFVCGy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 22:06:54 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:32849 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934132AbeFVCGv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 22:06:51 -0400
-Received: by mail-pf0-f193.google.com with SMTP id b17-v6so2433997pfi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 19:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=clj++TUZwbU/E/HLENQlGkckumGGwaTdPxQYbhbkHkk=;
-        b=IVEmFKifSRzY3GYR307n8/uErxSJKenUUS9ok7QhV7Pn4o5g2LeQ4QRxLJ9tWG9am5
-         PpoTzf3vhmEGmHtIEdxkvJ5EkycCvis7gY1ctSpq+drjaslQFPAHgvH9AkKK8SZPXtyN
-         r56QXDfh3dPPv4SSrD6VPBt0EXyamJ9S8De0Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=clj++TUZwbU/E/HLENQlGkckumGGwaTdPxQYbhbkHkk=;
-        b=rKWGtSRBM/W8xr6QOVFR5nniP/Rq6wPbNlB6v0WUx3fI9L1w4sPVfePdJTYR+K1Yjl
-         WepvdBhTwEHR3YRFde/CObrFInRWxAmsODkjbK2au6T9kpJPlBL/ijLhUBW6ELdeqwBq
-         VYYEuWGJa04tMXxJaW2dwjY9082I4/Z7dQhIR2DMutMN5Gu80bBRL6vKEigjt7tqzjIl
-         5rgGD6Mh8pYpM1CMgQ2ZPEl0dxEbOX2SSs+xRHgLlr99e4IYgCu6dqCJZOVgiBu4owhj
-         e4UXNH/kBCRjwKF3Kd7wXXnHkV15qMTBzeiJAYfOaxEym0fASgWDowX54Q7ly5yzHsz+
-         OGBg==
-X-Gm-Message-State: APt69E0BvAF9b5QibylITsGOkeaOx3J9FjpUYVThCX5DeGF6A1gUj3xI
-        kX/myq+khLfrxeo2vDbRprn/Qg==
-X-Google-Smtp-Source: ADUXVKI2HVX46OLjPalErLi7JL+IoebBKMSDxsaPt60uNSgFtgeMHD4B+ieqqWGHL/F9nUJqWaSAEw==
-X-Received: by 2002:a62:b02:: with SMTP id t2-v6mr29860028pfi.36.1529633210697;
-        Thu, 21 Jun 2018 19:06:50 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:0:1000:1501:bc2f:3082:9938:5d41])
-        by smtp.gmail.com with ESMTPSA id m1-v6sm8986995pfh.155.2018.06.21.19.06.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 19:06:49 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 19:06:47 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 12/12] mfd: cros_ec: Add throttler sub-device
-Message-ID: <20180622020646.GB180395@ban.mtv.corp.google.com>
-References: <20180621015237.100100-1-mka@chromium.org>
- <20180621015237.100100-13-mka@chromium.org>
+        id S934292AbeFVCIZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:08:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43218 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934181AbeFVCIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 22:08:23 -0400
+Received: from mail-yw0-f169.google.com (mail-yw0-f169.google.com [209.85.161.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA5C123C30;
+        Fri, 22 Jun 2018 02:08:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529633303;
+        bh=uqNCsLvZ4oYVeWTldEROQfN2ozzAbo55X2r86a3vvVI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=UIBCT3xZT2e1C4UJ/aocbCedPACoYqN/p53dz8Ib3cNpDOmzShf5MpKHRbWvvzchP
+         AYorWD53rJyOq3f0Wb8CJUmm4AZaSdajc+GHwAHdRRYooTfk6yovJuA6o+EU56SF1O
+         vU12ghwthWYKTQbaDBhHFPf9Jyt/eaAuSLvhFcXQ=
+Received: by mail-yw0-f169.google.com with SMTP id b125-v6so1889567ywe.1;
+        Thu, 21 Jun 2018 19:08:22 -0700 (PDT)
+X-Gm-Message-State: APt69E2POMSGBjMZMNnaDK/VLQBqjookdW7jFsmPvVed2P2PuJ2xOAz6
+        ZjY0piMIZqDn7S1+re36JGiXITIWlXx8DO2Dc2o=
+X-Google-Smtp-Source: ADUXVKLooSbOpPNkdjijh0EONwTWOlmEA4UgDZ/cjXb64s1W5iX86lhlFPAfD2uFk1ryMiRNbgveHA0cbpfY3wiHQYw=
+X-Received: by 2002:a81:94c5:: with SMTP id l188-v6mr13119536ywg.463.1529633302126;
+ Thu, 21 Jun 2018 19:08:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621015237.100100-13-mka@chromium.org>
-User-Agent: Mutt/1.10+32 (bdae56f54f92) (2018-06-21)
+Received: by 2002:a5b:b89:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 19:07:41 -0700 (PDT)
+In-Reply-To: <4617134.5euanDEBgJ@pcbe13614>
+References: <4617134.5euanDEBgJ@pcbe13614>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 21 Jun 2018 21:07:41 -0500
+X-Gmail-Original-Message-ID: <CANk1AXQ6cZnxN5tXckZektnbfWixPhS8+VitMZ4fcMyAcQzfqA@mail.gmail.com>
+Message-ID: <CANk1AXQ6cZnxN5tXckZektnbfWixPhS8+VitMZ4fcMyAcQzfqA@mail.gmail.com>
+Subject: Re: fpga: fpga_mgr_get() buggy ?
+To:     federico.vaga@cern.ch
+Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 06:52:37PM -0700, Matthias Kaehlcke wrote:
-> Instantiate the CrOS EC throttler if it is enabled in the kernel
-> configuration.
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+On Thu, Jun 21, 2018 at 8:13 AM, Federico Vaga <federico.vaga@cern.ch> wrote:
 
-Reviewed-by: Brian Norris <briannorris@chromium.org>
+Hi Federico,
 
-> ---
-> Changes in v4:
-> - register throttler in cros_ec_dev.c instead of cros_ec.c
-> 
-> Changes in v3:
-> - patch added to series
-> ---
->  drivers/mfd/cros_ec_dev.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index eafd06f62a3a..9e56c2793075 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -383,6 +383,22 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
->  	kfree(msg);
->  }
->  
-> +static const struct mfd_cell ec_throttler_cells[] = {
-> +	{ .name = "cros-ec-throttler" }
-> +};
-> +
-> +static void cros_ec_throttler_register(struct cros_ec_dev *ec)
-> +{
-> +	int ret;
-> +
-> +	ret = mfd_add_devices(ec->dev, 0, ec_throttler_cells,
-> +			      ARRAY_SIZE(ec_throttler_cells),
-> +			      NULL, 0, NULL);
-> +	if (ret)
-> +		dev_err(ec->dev,
-> +			"failed to add cros-ec-throttler device: %d\n", ret);
-> +}
-> +
->  static int ec_device_probe(struct platform_device *pdev)
->  {
->  	int retval = -ENOMEM;
-> @@ -422,6 +438,9 @@ static int ec_device_probe(struct platform_device *pdev)
->  	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
->  		cros_ec_sensors_register(ec);
->  
-> +	if (IS_ENABLED(CONFIG_CROS_EC_THROTTLER))
-> +		cros_ec_throttler_register(ec);
-> +
->  	/* Take control of the lightbar from the EC. */
->  	lb_manual_suspend_ctrl(ec, 1);
->  
-> -- 
-> 2.18.0.rc2.346.g013aa6912e-goog
-> 
+Thanks for the analysis.  I'll probably not be able to look into this
+very much until next week.  A few notes below.
+
+> Hello,
+>
+> I believe that this patch
+>
+> fpga: manager: change api, don't use drvdata
+> 7085e2a94f7df5f419e3cfb2fe809ce6564e9629
+>
+> is incomplete and buggy.
+>
+> I completely agree that drvdata should not be used by the FPGA manager
+> or any other subsystem like that.
+>
+> What is buggy is the function fpga_mgr_get().
+> That patch has been done to allow multiple FPGA manager instances to
+> be linked to the same device (PCI it says). But function
+> fpga_mgr_get() will return only the first found: what about the
+> others?
+
+I was thinking it was going to be one manager per device which makes
+sense if the device corresponds to a single FPGA.  But I could see
+that there could be valid use cases that had more than one FPGA such
+as on a PCI card.
+
+>
+> Then, all load kernel-doc comments says:
+>
+> "This code assumes the caller got the mgr pointer from
+> of_fpga_mgr_get() or fpga_mgr_get()"
+>
+> but that function does not allow me to get, for instance, the second
+> FPGA manager on my card.
+>
+> Since, thanks to this patch I'm actually the creator of the
+> fpga_manager structure,  I do not need to use fpga_mgr_get() to
+> retrieve that data structure.
+> Despite this, I believe we still need to increment the module
+> reference counter (which is done by fpga_mgr_get()).
+>
+> We can fix this function by just replacing the argument from 'device'
+> to 'fpga_manager' (the one returned by create() ).
+
+At first thought, that's what I'd want.
+
+> Alternatively, we
+> can add an 'owner' field in "struct fpga_manager_ops" and 'get' it
+> when we use it. Or again, just an 'owner' argument in the create()
+> function.
+
+It seems like we shouldn't have to do that.
+
+> I'm proposing these alternatives because I'm not sure that
+> this is correct:
+>
+>         if (!try_module_get(dev->parent->driver->owner))
+>
+> What if the device does not have a driver? Do we consider the
+> following a valid use case?
+>
+>
+> probe(struct device *dev) {
+>   struct device *mydev;
+>
+>   mydev->parent = dev;
+>   device_register(mydev);
+>   fpga_mrg_create(mydev, ....);
+> }
+
+When would you want to do that?
+
+Alan
+
+>
+>
+> thanks :)
+>
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
