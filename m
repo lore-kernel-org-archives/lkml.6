@@ -2,40 +2,40 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B02C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4664C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 667542447B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:16:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C2C224485
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:16:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GL8Rrzo5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667542447B
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IGbZY08K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C2C224485
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754362AbeFVPQX (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:16:23 -0400
+        id S933627AbeFVPQk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:16:40 -0400
 Received: from mail-db5eur01on0055.outbound.protection.outlook.com ([104.47.2.55]:28256
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754318AbeFVPQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:16:18 -0400
+        id S1754332AbeFVPQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:16:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gwm/tENwYmyRy7uHKURsBdfnNa0bsTsPrunCsakYpuY=;
- b=GL8Rrzo50cMF4MOnH/IifxJQgGVQGqwJ33u6lTa/vgQ45XkOjKooimLoo5ISGQL+bjEKfI5FGl/3cnzxqihix8QA56O4sVun//GpMldAh79cHWiSUZb4nVkXIaRaf1O7skRczx0WrRbfDK7XWSv6SI5XQiMWL5pXUruciFso8wM=
+ bh=tDmjDzRDA6EiKuo/fVz/VbmFV+pzOdTMFB863OOWKiE=;
+ b=IGbZY08KxuhMBDTgs1UOdqM+yEVAFLRYWXTWROvw2ycizR8bL3l+xFvm9xFceFZ+/q9D3qEhi4l+uBzcu1jVK5DtEqkeDgExHzy5ha0GyU4IbPhcK0eDJzCSY6FZ8H/EvPBXItX0iuyAZare79IDNOLcmxmv32bReLAi9LIrymo=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 Received: from fsr-ub1664-175.ea.freescale.net (95.76.156.53) by
  VI1PR04MB1613.eurprd04.prod.outlook.com (2a01:111:e400:596b::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.19; Fri, 22 Jun
- 2018 15:16:14 +0000
+ 2018 15:16:15 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Lucas Stach <l.stach@pengutronix.de>,
         Dong Aisheng <aisheng.dong@nxp.com>
@@ -47,9 +47,9 @@ Cc:     linux-gpio@vger.kernel.org, linux-imx@nxp.com,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v5 1/2] dt-bindings: add binding for i.MX8MQ IOMUXC
-Date:   Fri, 22 Jun 2018 18:15:48 +0300
-Message-Id: <1529680549-22079-2-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v5 2/2] pinctrl: imx: add driver for i.MX8MQ
+Date:   Fri, 22 Jun 2018 18:15:49 +0300
+Message-Id: <1529680549-22079-3-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529680549-22079-1-git-send-email-abel.vesa@nxp.com>
 References: <1529680549-22079-1-git-send-email-abel.vesa@nxp.com>
@@ -60,52 +60,51 @@ X-ClientProxiedBy: AM6PR0402CA0036.eurprd04.prod.outlook.com
  (2603:10a6:209::49) To VI1PR04MB1613.eurprd04.prod.outlook.com
  (2a01:111:e400:596b::19)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dad8a5a2-32f2-4e09-e5cc-08d5d8531894
+X-MS-Office365-Filtering-Correlation-Id: 7f30a915-219b-4722-f944-08d5d853194f
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1613;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1613;3:KgdwL2kAoYHBVraiV5XU9ghQQJSX6cRKzaEwO3KVgmbT3mSiWFEFEPL0guhJkiIOR2rMZESC9izlfumjN+jyn51bkvZLx2L7b0NajpADX/JSg7t7P4A7Z9DCOpUn4LfyuDR0N8A3IOw3tEpLOjG1Ji6cra1swSrjQlgrYVyxcT2RWjoWOzY2hB04yT1L64C1n3L9GfqWm4ZLXeLByGgqw74uNv/sZ127uCjRYAWcTXm+OlmEiGauB7po7NyR5g0T;25:y1wHaW/PQoPF/EwQLNH53r8VnzW7/+rhoWvFDiyVPA1dWMeT1Vnw3S+WWwK/t7mEEdBWOfsZ191PGEkV4RCnQbYXBSkDcA3ucdOpXGbZe+nSzMhBUWBEexi6zh3ppDyvy5xPMNgRaTuWXMoE3lM/ALB6oLgt3f2E/b/0mi/3fptOM4gQavbdjof5TbLI69ygnmBAeJWvEDxX8HyP/kwS+Ul9hATo5q8GeRKJC4gyLr7XhkKEeYLqnNSLUnYvok8oMfE2W9Ly4c/G9k5xpu0g5Ral1TQTjS4EVJX+JFXoEN1L9wb2ArC5EEA85WBDzR6SVgzN+9C3RvKHslQlK4y8xA==;31:SgYA7v8fGjkenuv1XAucpOfrpWKv3LJ8dQ/PV7PXWIhfAILNaRdtXUsCgtOS0f5CxwIJqfMZYaUysUMOrnG3Jj3LqeXpvPTf+0yU1Y/wuUC7bksSEMuVIbP/LfQxtw5rNXvDCHJPnDgS1eac3214exoHRFTcsY6kj7+VzkMzagOdTlREBkpkvPn+gynLTYv6CR1TmciLVSYiPhO6JlqZAYBUxlF6PqV1T1qN/fkTzbc=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1613;3:99j1QR8HqTBcGD63NrbMLD10kpiMe0bleJUzQrHA7fC815D3liI/qvsqr+kg9nBfCnbwMP7cQerYY3OkS8cQO14QYwGAXUHwhxW4TPdvmVeSGDLfAZ9mb1Fhov22e+pjZRd1rdAOga0aqIJPYQENHYqLGXjBmaqiGXd2DiAxs7CvkapWWZtSwM7rLpLumMhXnn1npRM0MdvIwm3QK/0375swcktcR4Y8GovPm1PxdMT3+xzd3Wdang6jrqAy2qDZ;25:0bAfn7iUMD7/NevuTb9Oui7YYJmBnSiW1VEG41VspRBh2zqR6jtM9VIj7muHB4t5r8BaTzDvIKcVZLVt1e5+116gysm/Tr6cRZeycVS+c3Cncs0GiruuIN/FgGcW62aLYfkCihCmz7z5OjE9R3I/6lfzf3Py28T/c0w6XpafshYrTCl/zcELl05FliRryUit5Vf4cT5e92945lgo6kSpH6gC96RV9QWmlWnMZS8mJrTRE00tGejs4US2nr5xwqmG3mAsOq7kr6XnSKs6WcdTK9I955lbz20mM01ElPgmovI+NurjDVtCt86frwXjlpE08ewHbACsdzMG5Eyz/NoKmA==;31:Bja2AUZpyxTpZ/iQVShv80f0l5JayxKOHeHDIntLvXy/p4hUo7AbCdsjEvmeVs5h4FYdN3QYf/K3PYoEinF8Zh4S0jWK021ILznJNkhQlxhJOrsjQpwNIzkQNLlIY95SoWB43qgXjDRTwp9S2XmxzQzu7+y04iEEhTFu1kBv7/v9GxJZLiKA6GvqMbUzieRJh1HYfT7hEE1KlGhMxXx+7jw2K7sgPQjoMmCoQDKE4qY=
 X-MS-TrafficTypeDiagnostic: VI1PR04MB1613:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1613;20:lbXdaZ/dYxVQi5zL5ZU8/M77kC87RRGAOrqGnBoESwqHUIPFQqxHB+9Ov7W2tcUaVa95VFhNmihNkf7CLGJsyGRvwSdNBpjqzCelakEYL0pENOjxbHaO3wVOWfltusrPpzkmWDKB4XnubVseuJ6+qBzDK4c5nU8GQ+4+8T8ds5aZpEHSBQtx6OJIN1xQeBlYwMjaBLZFH7RJpMWK8GdBLObSRcsSu/d9dsRw+rS5O2GcA7UaR4V3OBOLl/Fz2ZuoCcnVo5wgPEd4HlaJXD/Q4+LqpikETPXrHwXklINIcOqexP7Gz617gWrYeZ4EIhJh+qIi6bb0L1buPh6JjkcqOANqCqb8ubGvobk7cyWPlv1mudQHEmxtEhEtWXSv9889RZtPaEnL6CoSBfL8C1c/VXnS86yR336CzF6tctBgoB099uAnrB3b6EzfxFBUTXTpeXlyXHkw2UAXhvZ9ltvDfC+VCBKr+AzzEjjb6LLDq1YXxtinycywdI47utdaqE3k;4:P2tsdDF/HN7RIWGUciHV//e0noBW4PaT1SAi5RuIIfLQO7uceRoOphGFBN4d3J9F+KFCQCcl5Lgkibax6R83kTgEVhQZgi9T6HMYCFKbP1hH205+3/OMWqf3cfmSH+Xfrct/8vpKoLpl2ifznY2pTjKYM1mshXnAbbr2GauP1g7SWzZdQLbofEzFJx08B7qIV3PF68aADbTYXCPyZmJEqzf6XNy1vaT0aUbxl5jhNB/BItvWDrFGzflr7RjqQGwWezgX2Y/xuT9x1HTWk4OYuDXiTrGSPC+nlha+0wlA6aVdlYPFAAeUjQP5BMVaFOjP
-X-Microsoft-Antispam-PRVS: <VI1PR04MB16130290A1D338232E08D605F6750@VI1PR04MB1613.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1613;20:LuYEsJZJCY7DRX10bEd+hci/ekoUdWXboeLcjMCHQdjFc1fBEZaqPbUP+TSs2Ei0vBTPO4NLM4k4S7IvfrP7GNDamEGYjlh5LVWpRvfahcFBOJotslpFTesf7WoCf0utsdtVPDsy3WhkwEwDqTsaOKucdWSHt6vtcO/FLk+JEWsC7eg7DLFC21t7vxUBWubFFiamKwWX8ireSqsTKDH/hkS1eELIQeLCk11dgpMTw3WMBpCNQUyLGhKKKu6qufreAEDaoZXCXSS+3qcofqzVc62eaPu3HR6O3RtSj4dRFNdWxkkJkZ/sb9XTv1QQwd/L0zjC0NxrFyVq9ZErSUCjTZdLYvtrEyyGFy/jD34rPMTmXcIltkvgdY2oWzucQL7Us40POVsintDkPOQLdJP92zdAKDL9mCi4TddzkNz06SH4GDFX9NaEaToYf3030Lu2pj5QthYx+SoMxyrqQRjgzgXCzVDy3NAeiWun97hLC37Q2TMt/p6rhHeNXN8V+iny;4:521qi9wXJ4+HLRF41Vjs3VkPc37RH+Evub+TxMJkx+SX7G9K/sRnz95Znpt1k8Bj4IxohVLUOW6WP9KjnF6emFyyHtMyeSXSpyCpGvZPRg41XQMjp98bE1dLSfG+5sMZQ7H+/dQWW+LhQInnFXOhBvl/+AR7aHmZ/ZmgWh3Nkofr47MGWCXdsYpfvPcgyb6xrJIYPl20ksokXsATfvzHFlrjxUjVXnAnPVNXG6bcvbg5P7KNyroEw7zs3ET5Ms0U5jRrXduymfkZ84ZQ+EVrUtB6azMzdVN4YEcPd1mQlfrzmgshIwrpq+8oyW1DSPH8
+X-Microsoft-Antispam-PRVS: <VI1PR04MB161329D0C61425867DCF7648F6750@VI1PR04MB1613.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR04MB1613;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1613;
 X-Forefront-PRVS: 071156160B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39380400002)(396003)(39860400002)(376002)(189003)(199004)(105586002)(47776003)(54906003)(478600001)(50466002)(48376002)(5660300001)(81156014)(6506007)(53936002)(3846002)(6486002)(110136005)(8676002)(6116002)(186003)(26005)(81166006)(106356001)(386003)(6512007)(16526019)(956004)(51416003)(36756003)(86362001)(50226002)(66066001)(7736002)(6636002)(4326008)(6666003)(76176011)(52116002)(8936002)(316002)(44832011)(68736007)(97736004)(486006)(25786009)(2906002)(7416002)(476003)(16586007)(11346002)(446003)(2616005)(305945005)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1613;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39380400002)(396003)(39860400002)(376002)(189003)(199004)(105586002)(47776003)(54906003)(478600001)(50466002)(48376002)(5660300001)(81156014)(6506007)(53936002)(3846002)(6486002)(110136005)(8676002)(6116002)(186003)(26005)(81166006)(106356001)(386003)(6512007)(16526019)(956004)(51416003)(36756003)(86362001)(50226002)(66066001)(7736002)(6636002)(4326008)(6666003)(76176011)(52116002)(8936002)(316002)(44832011)(68736007)(97736004)(486006)(25786009)(2906002)(7416002)(476003)(16586007)(11346002)(446003)(2616005)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1613;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB1613;23:oNyqt6xG2hKbG6vad67cpwhRbakVmNdLgkUBOZwqH?=
- =?us-ascii?Q?JrsAk8jMeK66DIOuc+maeFsjJ4YwsyoWBPK8zvCJmMlhAdiIQ/WsWUQ7VYtF?=
- =?us-ascii?Q?3oGLO6qFtd8cucMBETLcDTfBX16lzjGri9+vuhiEGq3wu2nAp2w697EWnKPX?=
- =?us-ascii?Q?a0emTy/VjK5UmGqGonognqU5wQ9B9zgEde6mCohV6Ph5zbB6EnMjBt7UwvwN?=
- =?us-ascii?Q?kMHqvf8b2TEtKLiN9zupaXJsODWcZ0cniqnIrEYmYS0wM0SIQbm+pmie4EhK?=
- =?us-ascii?Q?+n6q1nH1dGzh3dD2hAP8iXcV7omwuT5HOVETlsOLHeNptFMBNcBr1DhyVP75?=
- =?us-ascii?Q?OnR9vRnsReUbbxqMC9YPNGldU7G+mV4aCFsu7kFgfLPvOBQo66XJhKTDXGT+?=
- =?us-ascii?Q?8WMWvv+drNtfxEzhhQRcz+CADAmRV6IkcjEfdpzv7Z+clX6v5KrdifniC5uv?=
- =?us-ascii?Q?OZmiwd62F3fqD1WI0DbPGyC+Gi6ImcloYaTIPTcyEE3V09fJmMa9Av4NK5O3?=
- =?us-ascii?Q?JIL5qDvqTUP9b9OepvtEH1XF6AEIHo6xYDuEFN9RoLSf66u6QxQzRyPy3POg?=
- =?us-ascii?Q?ERwTqf7MFf+6tQIAQkrNnS+Gzvg6VbN+uw0AaB2wGM+5tXU4GLWNHsNH93v7?=
- =?us-ascii?Q?ALaZtjquB5sLJfoq0TD8T/dD7p5MGWEagTb3VulTscfzIpARripYlViZjDsL?=
- =?us-ascii?Q?QSMofiZtrYZSoF2qOAhu9SXi7tezVdwQKe9teDCgMXb7PP1GOj5rEZ7eTyz0?=
- =?us-ascii?Q?mqDnF4T3/jyFMIM4uJyksRWI8LPse4LNvvNh8qUuMSrouHEVlCM6oIsE91cM?=
- =?us-ascii?Q?C7gVaN3s8cPb/0ezrastwgsLa3CXTWO+X46rXG4LhX/p7IcNbXlKg/b7yIoh?=
- =?us-ascii?Q?/tLiu7m32uHWUXa4N3z0lFO6x7r7aaAYNKipkb5jrudJqYBoWNvMrrGSYRMa?=
- =?us-ascii?Q?DLvZHCbrKvLEddNi44tSfNQHRF8D4MB6s9VmYtQFRU9tOHqalAlxztNQYtZ3?=
- =?us-ascii?Q?aJUU9aCWaRdWcthTbIOdic8Z6+NKUPhAIx35JzOe8KRmoS0Mf9KpA1CqmY7k?=
- =?us-ascii?Q?Ey9UsKeB0YFXJv7i5e+48iVdee4nTbjcb4WoceAJGnBsQh2ygTVk4uWf1tre?=
- =?us-ascii?Q?9rnXoYFP9i8ugFfWO8BIl5ND6QnSYykuAqVgyB/3Ltba+dQQsiq2xSc0gFJw?=
- =?us-ascii?Q?d3wp2P8T8IxQuHIVJXNfgiK+LDbOUM42XiQVQbGGK/JYnSahmiCyxvX5etYL?=
- =?us-ascii?Q?JvbBJe+ZQv4PjUgSUKT/Xm9gDRyN3g4zLsulXDWRDZ2ZZ+F7Gsb+Rv0Xt4Z6?=
- =?us-ascii?B?Zz09?=
-X-Microsoft-Antispam-Message-Info: y8buwyHZeCwEEgRsdGxa7/bi4elEln9rhChg2IQbbirY3li5VnCN6UIiYj3QS83zMqVIf7CaY8380UBraLi2K5E7b/XvGXuk74g64JEwkrBPrFeuJIy1w3azo6/6VyCFgIV1x1VuWs+2X9p7KI7ZDFSsanc9boWm2uhdlGZAce/Xq8XqhxOLO+G6SLH5lTamqG5wQ90f5aPMsgvuM/3/ts1Ma+xKl3MYc4gl8eVOJ+oG/eeGIkcbxMI8v95beMV4zl8NzJY9yLqTi/AAkBp4lALND9/Nfl0YdcqSAeyThqgrjpmGNEVI6Z3d4/6mudd/
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1613;6:hUj0NwsWsULtq5VbdztMCqSy/0CxQp4/w218sJA6Xlrs4fKupbKlT1dDBHPHl2zybzVNeJ7yJnQK9AviLOV7rLAt5/RvK1ibHvsIHzQ3CauAa9JePdTS/lINpbimUqZFg6oXtwWKh0iIXDj0vlvFPQlfHw+7V50ox0JQL41pvpNOU1ZllCnlR/zpoQzObVmNV2P7a3VUGkn4VIe4xqsXVJRnZWleX3IMs27N3xCf1zj94H3NcArNm1IvKgKeexv0AclQR3JcJgZQDSVpl9UK3BzQ2W46+d8f6CBA1goFw3mvFcGPMpa9RK6RxgklMkXtDGvjrd/8Xhc/1fOX5lkEDGiTQO2zIZFujurwF08MpWMY2AImu1rXWiBRK5iBQCrbnjH0P4aVqqm8PL7NZRp7nD11YyvkqPAAVaz+hgeRrs7ACyQWQz+uWveAUI7Vj/JXCNQtUsBvhR5o5a8vZhU+4w==;5:jT4CIz3eFJHjeZnUNSDrI7sxhP8tQiMqpto8jf1XzXlFLf0oCpy+r6sXMXtNhHDTsDRNk437gSbXsePY+EbVDsw4i1jA7X6+xJdhalkE2+2Od/O2hzW2u8pmm9WmKOTsnxbcUiSVvdTwBLIE6SBiQf24nAK9lgh6SjCU0s0xngY=;24:pPxABozB3tlVFqhZx9DLPZx9hAlhH8+GQMV5H5/rKQUgU9snW8ZBJ9SHTUAEINfL56wY6DfY/54EeljaJnkpSCHUdRL88OQEhzXfDFwtuMY=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB1613;23:aZy9NKRHeOD7NEGwSQT64N2ACb9DuQDnqAs3coANM?=
+ =?us-ascii?Q?7+OJhCMURL08WKczEt/qvMiqkrdyHqnFwL5ADwqCp00a4ONup3or+slwBuWI?=
+ =?us-ascii?Q?mnQMv0Pjk3I1YSbQ/Q+eYpVfyi1xk8/UHx+hmYvgTfdRm1p9MhH287lfr46O?=
+ =?us-ascii?Q?BQQju2ErF/rSuEITPKkHH7vabOonlEALISCT6UyuKSI+OmEwHZcRzbJDC0hK?=
+ =?us-ascii?Q?d4cy8oB9mqbB6Jeq0GuiuOVKPPvOTXb9csB8TuD0CSM8MuJ2xH+EL7u3cbU8?=
+ =?us-ascii?Q?DHO/H/mzv/VMhgKNV0N1rH5PTZmGYBvKBuuezqyzwcuPxzJy4iY6iqnMq6ix?=
+ =?us-ascii?Q?pUmhQ9J0xtGEqW/RWKsnA8JsBRTNiN99BHHszlW9OzRS8u59MMl/LOJ8D18A?=
+ =?us-ascii?Q?+765LYpp3etZNrd/v56/0Zn4fyBdAspah0LUMFaE7TBrU9DyGazwQ3So37A0?=
+ =?us-ascii?Q?WV04S0AtgVCLWo4BRrBn3inXLMoSWd11/7Wc6iiZRYRrQ2HGqWutmyMnufon?=
+ =?us-ascii?Q?lvA0pWznCnwbnOU6X1oNasmW1R1iTmBHGMdmsrAm/JdpQuzNzWcU639OBcRn?=
+ =?us-ascii?Q?iDvJumHRotlG+nn1xnMs+mGgvD09JWcRYn5uY5QjtKYkI6AoqCdawSkCe6rX?=
+ =?us-ascii?Q?BbXFR1ju1CucjlZ/u3G1SqFK/wzVhnuTHUbIihoM1RBUVd3LA85EN7UXTTSi?=
+ =?us-ascii?Q?GQv57n8j56dij6N0Cd0lUIQ+9hAxaJlkRTH4a04f2K4B6/Ng7DFSWXqh+HeM?=
+ =?us-ascii?Q?fdiZekClwGyBvEXQ40AmorJQIw3LivebxSaR1bxGAFqJSYsbJCOI4UMbBZly?=
+ =?us-ascii?Q?m7fZsostkZkW9bdYzWfG91uYh8/e0cEU1VfV3MJO9o3b6nRiKP9EKZ2mcsYT?=
+ =?us-ascii?Q?mq5mSAxshxSaYdyc8IEh/kqBVSoULWtNdcFn218RspDj+VbJouk56exTIgn2?=
+ =?us-ascii?Q?SlgnB7vvD47C5tGDaWklJcuv46IgcKsov0vrs91ICZA5xkXCGiAZyq+bKdcr?=
+ =?us-ascii?Q?ovRG9WFi2vmu5d3OCCb13rlv2YI6/xIdt40btByRL7gCUZivL2vN1ZkVTA2W?=
+ =?us-ascii?Q?mJgh1Y0T5+2HE8urPv1rm6EQk2UKFZIwh1yMfbrnuArW4f/IdOW8t56g1B4o?=
+ =?us-ascii?Q?37kxOW2teZCiE61QGvewX+YxH/E0Rf7dmOBz5NfOfsVKgSjN5vDFqhqkuOx4?=
+ =?us-ascii?Q?zfs4RXGi8gisYe7PajYB6UKeu/uCUVw3TUAVfzqMOFYVnTxw6bVXJuoLq4uT?=
+ =?us-ascii?Q?e9MR3bzaYS5P80uBQspRms4iTYvC2B0GDr7tMvP?=
+X-Microsoft-Antispam-Message-Info: xgPPa3lOKQrafHe+xwhe4tnnmUBV48uIEtrFI41LAmGSTWrkDRHmdWGkHTe8mqVYjPme1aBh/6+L+gVwxbv66nl47cNjWoJ2sgp024KfoYyDOdhLvLjZhNXnx75ybLza3wt2LzHQLCHl3Fb6E9Cy1rQLWST8p2MoVafC8jxitdBdBtSqgNNQenDm3uiP5I4Cq6/uWj40QdNDqASxFc1RzaICxwgj/ZEac8oEXhyJoDdFl8mP89Kg+6flkfAkju/5bohrbZdqIW6MJAxGoIyGUwvFZ+Un+pSeJ+4o9g2NQ97KfDc+Y3wh1UUPXl7sWyg2
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1613;6:HTSjly9rXa4TEOLVZCGEq2/ijQL0iZ6jzql0z3XJtwggqzDMG5l7PmWljyWugoxZktKjtFYQcBWJHrDpyLBnNDFYG9noC1G2cefoMdhd/m9LkjcadEqszFXkFHN2DWG8P0HkketXLCZnQzzT4qxYvVQRGdcwQOWC0Ml8/wNfnneNaYHIBVYBytTtu4n4xm4UflIsddxhAjk+U4OPNzF0iuOABr4g7y1vgI0eygHOftbLvUpIvnux5i7WplBO6fogMBP4mlEyWb5qvNJw334Zn6o4YkSojtagSXKXNuDfcZEqWggYSpoMYGQIkzDD1FvvK5jqgCVqa212S8KGb7erC5D03UsRxuR31dWh0fFNTZjeIhJ3ES1EJM5mRbjlMZxNDlOMySXGbUyg5pDHkVs8UgYs1X8ndC84Z7gy1YZRp2gHQUjnW095pg4kkvF8wCsrG1rw4FIJDUAV5hO3vqFUKw==;5:mUp68tAEnudgpz2o0eKGjTojW/1p0lhW496Z46cg/VfN9JHXmBqyFWnRjOZwpcNzftNi3/Ep1KVNbI0pZzzXThXXVdZ2F7Bzgi4obTcTSttTC6e9gc8sfay/ODj/A04SyeeJ8Wkgiqmfn/Bww9K7d0S4NeJrPYhw55yHT4M9XIg=;24:mSHvouwSb5w5gyBrVGeYGDOI8idJLq7BRTe28J1fqF5wpkRI2e8Fb9WrS/25VEO4rmgjsKmQ29yUJlgxrUcDc4H7qJbcbE95fuasaOINhj8=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1613;7:XDySpC+PcchuJQvDHM49XQfVozaaPiJpMY37m1A48bpVeb56fW+RCuCiypoERI2kQvW2v/afbBtsW9GqXaiT/fyPev2RUGTM38FB81hpop+kAz7GUSCqAzjt8R+bSNJCifBLrSqmhcK3S0o7ZqfnpQj19O+fbdBKEg0lUAgUVsxRnK8KcULCSzOCMHl9XD3PD74ZjLUjT7+rRNQDx/6TEfNZ8sAv3e4QO9s4ZPqbAASeCmGq9PKt7yQ81DMUS63v
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1613;7:7PLMccjSK5ZxpBxmi3PpMmgMriL0ijj9JttOYyXk2axxW3KhIyzpevCV8lBFmU+B1UlOHFB9ayzUBMoHgFNf7rFDuD1CsmjHCx/W2wuwFHd2U/DbtVuim5MCmUtryztWM9HkfCHJUPwolxyKpV/Q4aHOhDBK1h3QSr6YQYanuWbCOXN8FW6F5A5b2cIvzZsrQhTyz3YffFzCZkb7/GeZxaUu/Ve/ShSGdOfZ/L6QWwVK3hAhEU7xhzExKWiDncq1
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2018 15:16:14.0002
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2018 15:16:15.2322
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dad8a5a2-32f2-4e09-e5cc-08d5d8531894
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f30a915-219b-4722-f944-08d5d853194f
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1613
@@ -114,54 +113,408 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the binding for the i.MX8MQ pin controller, in the same
-fashion as earlier i.MX SoCs.
+From: Lucas Stach <l.stach@pengutronix.de>
 
+The i.MX8MQ pincontrol works in a similar way to the earlier i.MX SoCs.
+This driver builds on top of the imx specific pinconf handling.
+
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+ drivers/pinctrl/freescale/Kconfig          |   7 +
+ drivers/pinctrl/freescale/Makefile         |   1 +
+ drivers/pinctrl/freescale/pinctrl-imx8mq.c | 351 +++++++++++++++++++++++++++++
+ 3 files changed, 359 insertions(+)
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8mq.c
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index 0d8ba1e..dccf64c 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -117,6 +117,13 @@ config PINCTRL_IMX7ULP
+ 	help
+ 	  Say Y here to enable the imx7ulp pinctrl driver
+ 
++config PINCTRL_IMX8MQ
++	bool "IMX8MQ pinctrl driver"
++	depends on SOC_IMX8MQ
++	select PINCTRL_IMX
++	help
++	  Say Y here to enable the imx8mq pinctrl driver
++
+ config PINCTRL_VF610
+ 	bool "Freescale Vybrid VF610 pinctrl driver"
+ 	depends on SOC_VF610
+diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
+index 368be8c..73175b3 100644
+--- a/drivers/pinctrl/freescale/Makefile
++++ b/drivers/pinctrl/freescale/Makefile
+@@ -17,6 +17,7 @@ obj-$(CONFIG_PINCTRL_IMX6SX)	+= pinctrl-imx6sx.o
+ obj-$(CONFIG_PINCTRL_IMX6UL)	+= pinctrl-imx6ul.o
+ obj-$(CONFIG_PINCTRL_IMX7D)	+= pinctrl-imx7d.o
+ obj-$(CONFIG_PINCTRL_IMX7ULP)	+= pinctrl-imx7ulp.o
++obj-$(CONFIG_PINCTRL_IMX8MQ)	+= pinctrl-imx8mq.o
+ obj-$(CONFIG_PINCTRL_VF610)	+= pinctrl-vf610.o
+ obj-$(CONFIG_PINCTRL_MXS)	+= pinctrl-mxs.o
+ obj-$(CONFIG_PINCTRL_IMX23)	+= pinctrl-imx23.o
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mq.c b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
 new file mode 100644
-index 0000000..e1c405d
+index 0000000..8d39af5
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
-@@ -0,0 +1,32 @@
-+* Freescale IMX8MQ IOMUX Controller
++++ b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
+@@ -0,0 +1,351 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017-2018 NXP
++ * Copyright (C) 2018 Pengutronix, Lucas Stach <kernel@pengutronix.de>
++ */
 +
-+Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
-+for common binding part and usage.
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pinctrl/pinctrl.h>
 +
-+Required properties:
-+- compatible: "fsl,imx8mq-iomuxc"
-+- fsl,pins: each entry consists of 6 integers and represents the mux and config
-+  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
-+  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
-+  imx8mq-pinfunc.h under device tree source folder.  The last integer CONFIG is
-+  the pad setting value like pull-up on this pin.  Please refer to i.MX8M Quad
-+  Reference Manual for detailed CONFIG settings.
++#include "pinctrl-imx.h"
 +
-+Examples:
-+
-+&uart1 {
-+       pinctrl-names = "default";
-+       pinctrl-0 = <&pinctrl_uart1>;
++enum imx8mq_pads {
++	MX8MQ_PAD_RESERVE0 = 0,
++	MX8MQ_PAD_RESERVE1 = 1,
++	MX8MQ_PAD_RESERVE2 = 2,
++	MX8MQ_PAD_RESERVE3 = 3,
++	MX8MQ_PAD_RESERVE4 = 4,
++	MX8MQ_IOMUXC_PMIC_STBY_REQ_CCMSRCGPCMIX = 5,
++	MX8MQ_IOMUXC_PMIC_ON_REQ_SNVSMIX = 6,
++	MX8MQ_IOMUXC_ONOFF_SNVSMIX = 7,
++	MX8MQ_IOMUXC_POR_B_SNVSMIX = 8,
++	MX8MQ_IOMUXC_RTC_RESET_B_SNVSMIX = 9,
++	MX8MQ_IOMUXC_GPIO1_IO00 = 10,
++	MX8MQ_IOMUXC_GPIO1_IO01 = 11,
++	MX8MQ_IOMUXC_GPIO1_IO02 = 12,
++	MX8MQ_IOMUXC_GPIO1_IO03 = 13,
++	MX8MQ_IOMUXC_GPIO1_IO04 = 14,
++	MX8MQ_IOMUXC_GPIO1_IO05 = 15,
++	MX8MQ_IOMUXC_GPIO1_IO06 = 16,
++	MX8MQ_IOMUXC_GPIO1_IO07 = 17,
++	MX8MQ_IOMUXC_GPIO1_IO08 = 18,
++	MX8MQ_IOMUXC_GPIO1_IO09 = 19,
++	MX8MQ_IOMUXC_GPIO1_IO10 = 20,
++	MX8MQ_IOMUXC_GPIO1_IO11 = 21,
++	MX8MQ_IOMUXC_GPIO1_IO12 = 22,
++	MX8MQ_IOMUXC_GPIO1_IO13 = 23,
++	MX8MQ_IOMUXC_GPIO1_IO14 = 24,
++	MX8MQ_IOMUXC_GPIO1_IO15 = 25,
++	MX8MQ_IOMUXC_ENET_MDC = 26,
++	MX8MQ_IOMUXC_ENET_MDIO = 27,
++	MX8MQ_IOMUXC_ENET_TD3 = 28,
++	MX8MQ_IOMUXC_ENET_TD2 = 29,
++	MX8MQ_IOMUXC_ENET_TD1 = 30,
++	MX8MQ_IOMUXC_ENET_TD0 = 31,
++	MX8MQ_IOMUXC_ENET_TX_CTL = 32,
++	MX8MQ_IOMUXC_ENET_TXC = 33,
++	MX8MQ_IOMUXC_ENET_RX_CTL = 34,
++	MX8MQ_IOMUXC_ENET_RXC = 35,
++	MX8MQ_IOMUXC_ENET_RD0 = 36,
++	MX8MQ_IOMUXC_ENET_RD1 = 37,
++	MX8MQ_IOMUXC_ENET_RD2 = 38,
++	MX8MQ_IOMUXC_ENET_RD3 = 39,
++	MX8MQ_IOMUXC_SD1_CLK = 40,
++	MX8MQ_IOMUXC_SD1_CMD = 41,
++	MX8MQ_IOMUXC_SD1_DATA0 = 42,
++	MX8MQ_IOMUXC_SD1_DATA1 = 43,
++	MX8MQ_IOMUXC_SD1_DATA2 = 44,
++	MX8MQ_IOMUXC_SD1_DATA3 = 45,
++	MX8MQ_IOMUXC_SD1_DATA4 = 46,
++	MX8MQ_IOMUXC_SD1_DATA5 = 47,
++	MX8MQ_IOMUXC_SD1_DATA6 = 48,
++	MX8MQ_IOMUXC_SD1_DATA7 = 49,
++	MX8MQ_IOMUXC_SD1_RESET_B = 50,
++	MX8MQ_IOMUXC_SD1_STROBE = 51,
++	MX8MQ_IOMUXC_SD2_CD_B = 52,
++	MX8MQ_IOMUXC_SD2_CLK = 53,
++	MX8MQ_IOMUXC_SD2_CMD = 54,
++	MX8MQ_IOMUXC_SD2_DATA0 = 55,
++	MX8MQ_IOMUXC_SD2_DATA1 = 56,
++	MX8MQ_IOMUXC_SD2_DATA2 = 57,
++	MX8MQ_IOMUXC_SD2_DATA3 = 58,
++	MX8MQ_IOMUXC_SD2_RESET_B = 59,
++	MX8MQ_IOMUXC_SD2_WP = 60,
++	MX8MQ_IOMUXC_NAND_ALE = 61,
++	MX8MQ_IOMUXC_NAND_CE0_B = 62,
++	MX8MQ_IOMUXC_NAND_CE1_B = 63,
++	MX8MQ_IOMUXC_NAND_CE2_B = 64,
++	MX8MQ_IOMUXC_NAND_CE3_B = 65,
++	MX8MQ_IOMUXC_NAND_CLE = 66,
++	MX8MQ_IOMUXC_NAND_DATA00 = 67,
++	MX8MQ_IOMUXC_NAND_DATA01 = 68,
++	MX8MQ_IOMUXC_NAND_DATA02 = 69,
++	MX8MQ_IOMUXC_NAND_DATA03 = 70,
++	MX8MQ_IOMUXC_NAND_DATA04 = 71,
++	MX8MQ_IOMUXC_NAND_DATA05 = 72,
++	MX8MQ_IOMUXC_NAND_DATA06 = 73,
++	MX8MQ_IOMUXC_NAND_DATA07 = 74,
++	MX8MQ_IOMUXC_NAND_DQS = 75,
++	MX8MQ_IOMUXC_NAND_RE_B = 76,
++	MX8MQ_IOMUXC_NAND_READY_B = 77,
++	MX8MQ_IOMUXC_NAND_WE_B = 78,
++	MX8MQ_IOMUXC_NAND_WP_B = 79,
++	MX8MQ_IOMUXC_SAI5_RXFS = 80,
++	MX8MQ_IOMUXC_SAI5_RXC = 81,
++	MX8MQ_IOMUXC_SAI5_RXD0 = 82,
++	MX8MQ_IOMUXC_SAI5_RXD1 = 83,
++	MX8MQ_IOMUXC_SAI5_RXD2 = 84,
++	MX8MQ_IOMUXC_SAI5_RXD3 = 85,
++	MX8MQ_IOMUXC_SAI5_MCLK = 86,
++	MX8MQ_IOMUXC_SAI1_RXFS = 87,
++	MX8MQ_IOMUXC_SAI1_RXC = 88,
++	MX8MQ_IOMUXC_SAI1_RXD0 = 89,
++	MX8MQ_IOMUXC_SAI1_RXD1 = 90,
++	MX8MQ_IOMUXC_SAI1_RXD2 = 91,
++	MX8MQ_IOMUXC_SAI1_RXD3 = 92,
++	MX8MQ_IOMUXC_SAI1_RXD4 = 93,
++	MX8MQ_IOMUXC_SAI1_RXD5 = 94,
++	MX8MQ_IOMUXC_SAI1_RXD6 = 95,
++	MX8MQ_IOMUXC_SAI1_RXD7 = 96,
++	MX8MQ_IOMUXC_SAI1_TXFS = 97,
++	MX8MQ_IOMUXC_SAI1_TXC = 98,
++	MX8MQ_IOMUXC_SAI1_TXD0 = 99,
++	MX8MQ_IOMUXC_SAI1_TXD1 = 100,
++	MX8MQ_IOMUXC_SAI1_TXD2 = 101,
++	MX8MQ_IOMUXC_SAI1_TXD3 = 102,
++	MX8MQ_IOMUXC_SAI1_TXD4 = 103,
++	MX8MQ_IOMUXC_SAI1_TXD5 = 104,
++	MX8MQ_IOMUXC_SAI1_TXD6 = 105,
++	MX8MQ_IOMUXC_SAI1_TXD7 = 106,
++	MX8MQ_IOMUXC_SAI1_MCLK = 107,
++	MX8MQ_IOMUXC_SAI2_RXFS = 108,
++	MX8MQ_IOMUXC_SAI2_RXC = 109,
++	MX8MQ_IOMUXC_SAI2_RXD0 = 110,
++	MX8MQ_IOMUXC_SAI2_TXFS = 111,
++	MX8MQ_IOMUXC_SAI2_TXC = 112,
++	MX8MQ_IOMUXC_SAI2_TXD0 = 113,
++	MX8MQ_IOMUXC_SAI2_MCLK = 114,
++	MX8MQ_IOMUXC_SAI3_RXFS = 115,
++	MX8MQ_IOMUXC_SAI3_RXC = 116,
++	MX8MQ_IOMUXC_SAI3_RXD = 117,
++	MX8MQ_IOMUXC_SAI3_TXFS = 118,
++	MX8MQ_IOMUXC_SAI3_TXC = 119,
++	MX8MQ_IOMUXC_SAI3_TXD = 120,
++	MX8MQ_IOMUXC_SAI3_MCLK = 121,
++	MX8MQ_IOMUXC_SPDIF_TX = 122,
++	MX8MQ_IOMUXC_SPDIF_RX = 123,
++	MX8MQ_IOMUXC_SPDIF_EXT_CLK = 124,
++	MX8MQ_IOMUXC_ECSPI1_SCLK = 125,
++	MX8MQ_IOMUXC_ECSPI1_MOSI = 126,
++	MX8MQ_IOMUXC_ECSPI1_MISO = 127,
++	MX8MQ_IOMUXC_ECSPI1_SS0 = 128,
++	MX8MQ_IOMUXC_ECSPI2_SCLK = 129,
++	MX8MQ_IOMUXC_ECSPI2_MOSI = 130,
++	MX8MQ_IOMUXC_ECSPI2_MISO = 131,
++	MX8MQ_IOMUXC_ECSPI2_SS0 = 132,
++	MX8MQ_IOMUXC_I2C1_SCL = 133,
++	MX8MQ_IOMUXC_I2C1_SDA = 134,
++	MX8MQ_IOMUXC_I2C2_SCL = 135,
++	MX8MQ_IOMUXC_I2C2_SDA = 136,
++	MX8MQ_IOMUXC_I2C3_SCL = 137,
++	MX8MQ_IOMUXC_I2C3_SDA = 138,
++	MX8MQ_IOMUXC_I2C4_SCL = 139,
++	MX8MQ_IOMUXC_I2C4_SDA = 140,
++	MX8MQ_IOMUXC_UART1_RXD = 141,
++	MX8MQ_IOMUXC_UART1_TXD = 142,
++	MX8MQ_IOMUXC_UART2_RXD = 143,
++	MX8MQ_IOMUXC_UART2_TXD = 144,
++	MX8MQ_IOMUXC_UART3_RXD = 145,
++	MX8MQ_IOMUXC_UART3_TXD = 146,
++	MX8MQ_IOMUXC_UART4_RXD = 147,
++	MX8MQ_IOMUXC_UART4_TXD = 148,
 +};
 +
-+iomuxc: iomuxc@30330000 {
-+        compatible = "fsl,imx8mq-iomuxc";
-+        reg = <0x0 0x30330000 0x0 0x10000>;
-+
-+        pinctrl_uart1: uart1grp {
-+                fsl,pins = <
-+                        MX8MQ_IOMUXC_UART1_RXD_UART1_DCE_RX             0x49
-+                        MX8MQ_IOMUXC_UART1_TXD_UART1_DCE_TX             0x49
-+                >;
-+        };
++/* Pad names for the pinmux subsystem */
++static const struct pinctrl_pin_desc imx8mq_pinctrl_pads[] = {
++	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE0),
++	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE1),
++	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE2),
++	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE3),
++	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE4),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_PMIC_STBY_REQ_CCMSRCGPCMIX),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_PMIC_ON_REQ_SNVSMIX),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ONOFF_SNVSMIX),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_POR_B_SNVSMIX),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_RTC_RESET_B_SNVSMIX),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO00),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO01),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO02),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO03),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO04),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO05),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO06),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO07),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO08),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO09),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO10),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO11),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO12),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO13),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO14),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO15),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_MDC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_MDIO),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TD3),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TD2),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TD1),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TD0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TX_CTL),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RX_CTL),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RD0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RD1),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RD2),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RD3),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_CLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_CMD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA1),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA2),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA3),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA4),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA5),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA6),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA7),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_RESET_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_STROBE),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_CD_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_CLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_CMD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_DATA0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_DATA1),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_DATA2),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_DATA3),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_RESET_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_WP),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_ALE),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CE0_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CE1_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CE2_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CE3_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CLE),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA00),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA01),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA02),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA03),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA04),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA05),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA06),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA07),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DQS),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_RE_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_READY_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_WE_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_WP_B),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXFS),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXD0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXD1),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXD2),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXD3),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_MCLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXFS),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD1),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD2),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD3),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD4),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD5),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD6),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD7),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXFS),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD1),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD2),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD3),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD4),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD5),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD6),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD7),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_MCLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_RXFS),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_RXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_RXD0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_TXFS),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_TXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_TXD0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_MCLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_RXFS),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_RXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_RXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_TXFS),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_TXC),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_TXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_MCLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SPDIF_TX),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SPDIF_RX),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SPDIF_EXT_CLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI1_SCLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI1_MOSI),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI1_MISO),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI1_SS0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI2_SCLK),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI2_MOSI),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI2_MISO),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI2_SS0),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C1_SCL),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C1_SDA),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C2_SCL),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C2_SDA),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C3_SCL),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C3_SDA),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C4_SCL),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C4_SDA),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART1_RXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART1_TXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART2_RXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART2_TXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART3_RXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART3_TXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART4_RXD),
++	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART4_TXD),
 +};
++
++static const struct imx_pinctrl_soc_info imx8mq_pinctrl_info = {
++	.pins = imx8mq_pinctrl_pads,
++	.npins = ARRAY_SIZE(imx8mq_pinctrl_pads),
++	.gpr_compatible = "fsl,imx8mq-iomuxc-gpr",
++};
++
++static const struct of_device_id imx8mq_pinctrl_of_match[] = {
++	{ .compatible = "fsl,imx8mq-iomuxc", .data = &imx8mq_pinctrl_info, },
++	{ /* sentinel */ }
++};
++
++static int imx8mq_pinctrl_probe(struct platform_device *pdev)
++{
++	return imx_pinctrl_probe(pdev, &imx8mq_pinctrl_info);
++}
++
++static struct platform_driver imx8mq_pinctrl_driver = {
++	.driver = {
++		.name = "imx8mq-pinctrl",
++		.of_match_table = of_match_ptr(imx8mq_pinctrl_of_match),
++		.suppress_bind_attrs = true,
++	},
++	.probe = imx8mq_pinctrl_probe,
++};
++
++static int __init imx8mq_pinctrl_init(void)
++{
++	return platform_driver_register(&imx8mq_pinctrl_driver);
++}
++arch_initcall(imx8mq_pinctrl_init);
 -- 
 2.7.4
 
