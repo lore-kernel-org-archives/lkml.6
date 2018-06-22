@@ -4,100 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13588C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E014C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD9ED249B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 060EE249C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:21:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="X2TeE81V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD9ED249B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="WMsVwJQZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 060EE249C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933915AbeFVXUZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 19:20:25 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59014 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754482AbeFVXUX (ORCPT
+        id S934005AbeFVXVQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 19:21:16 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39578 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933931AbeFVXVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 19:20:23 -0400
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5MNBa8Q024273;
-        Fri, 22 Jun 2018 16:19:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=facebook; bh=J6geCaSJSVoZ5nmKGrOR1XudJGLgQ2H1tw7+q+QXJlU=;
- b=X2TeE81VL4Rx8+YJL3MCZmHZHex16Kf83tC+2GT1NlMX+R1EhXEbOSBdjPUbt6yT0lYD
- LR45YvljBmdLb4lLzcv2ML9xQoDNJNRa/7aWuP9n+wJUGCgLzytjsKf2tX9TkU//UU16
- Xs1svrZgJdSFFw+sQPO7TUIsYPx6ikFkwuA= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2js4nx8yk1-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 22 Jun 2018 16:19:48 -0700
-Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
- mail.TheFacebook.com (192.168.16.17) with Microsoft SMTP Server (TLS) id
- 14.3.361.1; Fri, 22 Jun 2018 16:19:42 -0700
-Date:   Fri, 22 Jun 2018 16:19:40 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-CC:     Okash Khawaja <osk@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
-        "Alexei Starovoitov" <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next 2/3] bpf: btf: add btf json print functionality
-Message-ID: <20180622231940.fvkxfqccvyf5uewk@kafai-mbp.dhcp.thefacebook.com>
-References: <20180621145935.41ff8974@cakuba.netronome.com>
- <20180621225117.dhrkrtmkfbeihbe4@kafai-mbp.dhcp.thefacebook.com>
- <20180621160719.2cfb4b58@cakuba.netronome.com>
- <20180621235746.dfq6kdtkogftw3ws@kafai-mbp.dhcp.thefacebook.com>
- <20180621172523.6cd00ed1@cakuba.netronome.com>
- <20180622012052.htkvholi674x6i4f@kafai-mbp.dhcp.thefacebook.com>
- <20180622114032.162b2a76@cakuba.netronome.com>
- <20180622205535.c6vjhdwt5er4wc32@kafai-mbp.dhcp.thefacebook.com>
- <20180622142743.2b890d0f@cakuba.netronome.com>
- <20180622144952.353d50c0@cakuba.netronome.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180622144952.353d50c0@cakuba.netronome.com>
-User-Agent: NeoMutt/20180512
-X-Originating-IP: [192.168.52.123]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+        Fri, 22 Jun 2018 19:21:14 -0400
+Received: by mail-pf0-f195.google.com with SMTP id r11-v6so3862900pfl.6
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 16:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=subject:date:message-id:cc:from:to;
+        bh=sqC8pE5iajhtogWJlfHen5WxYD8aVk/phL1mUlPtmu0=;
+        b=WMsVwJQZ3LGG60DxIGHfGtO74kEARZ1Z4c9rh9WXGQxRsC2tgz70SVhub7T+tVGXL/
+         5011FFxWiBEBwvvlOTLQO6zqK13t0apVQv4kM1FnxdlIgYKdUCWBEM2wNHOKZ2McyaDp
+         XhozU7rc6hCyVqPrAQBeTXbpD2yfDtMWLJm2EM4rqcQIKxc83A9Ygbs3Lr4CMDYyNXhh
+         o7FK3HRIIINcZM3ZSsyTztJFHa4ItwTRmfbVfoM22aLd2cVeEfKPxWry7MxGU95sI+EA
+         4mHTSWX0K3UvIeS/WfcifmGbacCxlQd4FlpJY2Y7/QJVqkMt257XRBu1/JGA5CbLH5tA
+         zMyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:date:message-id:cc:from:to;
+        bh=sqC8pE5iajhtogWJlfHen5WxYD8aVk/phL1mUlPtmu0=;
+        b=FE+qqE2MoQkzq0/XRu/12ivU8hOwwI0TFaybVimru+DSDxWc2CvvpNpTZZK0OWuKZq
+         iEGMVldOZBTsJ/kiNEpjwWmcE4M9hnrDH0WcDMXzHEbDbqa5glT1AbbLQ8xMC/Qttjv7
+         LpOFBWxVSeBS9NoT6YIXeoOyy04EdGY8YE+yRvXStd7oiUgZfxx6Zla5x6Q+q9s5I7/m
+         zUZ56jovpswO1CRs2/hYNWhfPjRPQWyuthyNbSZmwyXE8Ku6T9rDStPR5ttzKMwStW/c
+         ZqcuNK4OQYssdkt50P+kxmtDSEqqiBfrKP6BeBCkhtHjc3vZEWd7iyEKyYe9tgV9OBiL
+         P1hg==
+X-Gm-Message-State: APt69E0sMqSZhsBrF9FfUB8DMRJKDdReDAm61x3IG+De1IUG0VuIcD+Q
+        GMwGC7J67PWKV1ugQgtEY0bSWA==
+X-Google-Smtp-Source: ADUXVKJ7q+Z1KJHk+A2vvpf2yKqWTtUl0uEnAMXCq1gKG7w7nlTA/n3G8oslBrc+fwMComc0abyFLg==
+X-Received: by 2002:a65:6148:: with SMTP id o8-v6mr2982991pgv.93.1529709673601;
+        Fri, 22 Jun 2018 16:21:13 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id m11-v6sm4096904pgt.46.2018.06.22.16.21.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 16:21:12 -0700 (PDT)
+Subject: Driver for the RISC-V Interrupt Controller
+Date:   Fri, 22 Jun 2018 16:20:03 -0700
+Message-Id: <20180622232006.12158-1-palmer@sifive.com>
+X-Mailer: git-send-email 2.16.4
+Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
+        shorne@gmail.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 02:49:52PM -0700, Jakub Kicinski wrote:
-> On Fri, 22 Jun 2018 14:27:43 -0700, Jakub Kicinski wrote:
-> > BTF in JSON is very useful, and will help people who writes simple
-> > orchestration/scripts based on bpftool *a* *lot*.  I really appreciate
-> > this addition to bpftool and will start using it myself as soon as it
-> > lands.  I'm not sure why the reluctance to slightly change the output
-> > format?
-> 
-> Ohh, maybe that's the misunderstanding, you only implemented JSON so
-> you wanted it to be as readable and clean as possible.  Hence the hex
-> output and cutting out the old cruft!  That perspective makes sense!
-> But I think we should keep JSON for machines (but including BTF
-> formatted values) and let's make the plain text output nice and clean,
-> agreed.
-Right, it is what my earlier comment meant on "this ascii output is
-for human".  We merely call it json because we are reusing
-the json's meaning on {}, [] and int since it fits nicely
-on what we want to achieve, readability.  Other than that,
-it does not have to follow other json's requirements.
-We can call it whatever except json to avoid wrong
-user expectation.  Putting it under "-j"/"-p" was a mistake.
-Hence, I said this patch belongs to the 'plaintext" output.
+The RISC-V ISA mandantes the presence of a simple, per-hart (hardware
+thread) interrupt controller availiable to supervisor mode.  This patch
+set adds a driver for this interrupt controller.
 
-If we really needed a similar output under "-j" or "-p", things
-had to be changed and it belongs to a separate patch.
+The patch set itself has been around in various flavors for a while, but
+as far as I remember it's never been properly cleaned up and submitted
+before.  As it currently stands it's essentially three seperate patches,
+but as they're all intertwined I'm keeping them together.  Sorry if
+that's the wrong thing to do.
+
+The patches are:
+
+* A cleanup to arch/riscv to remove a bit of the old initialization
+  mechanism that snuck in to our arch port.  This patch is trivial, so
+  unless there's any feedback on it specificly I'll include it in my
+  next pull request.
+* The addition of device tree bindings to describe "riscv,cpu-intc".
+* The actual irqchip driver.  If this gets merged before the arch/riscv
+  patch then it'll cause our build to fail, but I'm assuming this will
+  be targeted at the next merge window so we should be safe.
+
