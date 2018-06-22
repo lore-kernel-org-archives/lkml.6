@@ -2,665 +2,148 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A1BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DCAC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3D1A2435B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:14:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3D1A2435B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 708D32435B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:14:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="vtyiIDzA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708D32435B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754128AbeFVOOC (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:14:02 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51028 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751284AbeFVON7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:13:59 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9882AB299AB8;
-        Fri, 22 Jun 2018 22:13:54 +0800 (CST)
-Received: from localhost (10.47.145.145) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.382.0; Fri, 22 Jun 2018
- 22:13:53 +0800
-Date:   Fri, 22 Jun 2018 15:13:38 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Baolin Wang <baolin.wang@linaro.org>
-CC:     <jic23@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <freeman.liu@spreadtrum.com>, <broonie@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] iio: adc: Add Spreadtrum SC27XX PMICs ADC
- support
-Message-ID: <20180622151338.00003622@huawei.com>
-In-Reply-To: <95836d610301133ffdac1efa86d7daf4cecb97b7.1529550463.git.baolin.wang@linaro.org>
-References: <900586c7a4ce55818ab330c738f306c7452191ef.1529550463.git.baolin.wang@linaro.org>
-        <95836d610301133ffdac1efa86d7daf4cecb97b7.1529550463.git.baolin.wang@linaro.org>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S933139AbeFVOOt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:14:49 -0400
+Received: from mail-db5eur01on0050.outbound.protection.outlook.com ([104.47.2.50]:32028
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751266AbeFVOOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:14:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1nSEqeodU3uC0tC/Br0TkhMEJNMlDLNTPOdTFyHfwy4=;
+ b=vtyiIDzAIC0HYDeEsi/y3w8wSe2lAdkn9SPEyIhClVWINEhIjtaOVsMR9wPFSas2EBIAZd2ekTNjoQSuRu+E/dRr4olV8uFvSNfUlk6VPWfWXDG2c9CuvEMnIDDrdntlGoZY+tCsJamLd7PPQleuwub63Ferof/rQZ4QF/MP+KY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+Received: from b29396-OptiPlex-7040.ap.freescale.net (119.31.174.66) by
+ AM0PR04MB4211.eurprd04.prod.outlook.com (2603:10a6:208:66::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.19; Fri, 22 Jun 2018 14:14:38 +0000
+From:   Dong Aisheng <aisheng.dong@nxp.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     dongas86@gmail.com, kernel@pengutronix.de, shawnguo@kernel.org,
+        fabio.estevam@nxp.com, linux-imx@nxp.com,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V3 1/5] dt-bindings: mailbox: allow mbox-cells to be equal to 0
+Date:   Fri, 22 Jun 2018 22:11:56 +0800
+Message-Id: <1529676720-7533-2-git-send-email-aisheng.dong@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529676720-7533-1-git-send-email-aisheng.dong@nxp.com>
+References: <1529676720-7533-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.145.145]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK0PR03CA0020.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::32) To AM0PR04MB4211.eurprd04.prod.outlook.com
+ (2603:10a6:208:66::21)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 362390a7-3b8e-4474-4387-08d5d84a7f3f
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4211;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;3:eymtSGXcxOHCBDV5a8dkz8VgBUS2O9SjlDujy+DS9qQ2QL9H+kkYx8ZPzUd0ycFrrSOJqP/6KjpblRUWZuBCrX5GA2YYYUm6OjK5Iz8Hnj9ktQC6m00nvU1helU8gPx4ZLnnx70SkHuolCh0MJz5i/9gIs2lzAh37hki9ccj9K1YunbFl5itLyABNNMC/t7W6DFT/DG0kK2q/+/mPDlHtjXUA/peUC4MzkQguiy6jJMcagb7T88ucWkPoVtP1tmW;25:chAj+LWvwAjOBdLoHelv6693vlVfhXYLDBLQOqoY+Nk3QcS1Qltz7AiXt8KIA5WgphStpJD5Te3MyskfWORfrMrWj5ylT05N7ALzhkP/mO++GCSze53lRHxSnEjWNO/k2nstHTuuCmI6QcBDBV46zjDON1Kk6K1uHpk0TEA76djEaWnNoUa8WdczYseIcqdv8htqV9itiDSVqQD3Ym4vHawzLwTbtfGNTeygq+EvGFTaEft4PVKmy8iQZbofBXxbtLWXCSfTtGQwFpk+x6eMdNbRX3DP7ZY+1J8H0Hto8gc2sl7NG0jIkLrzFEn7YkFNNI4/F/Nw1UFUYskxkkVqdg==;31:d87Us8ppVfa3/IjGDs19VbWJWmuyX7mq2B9+EEQGNa8NgEOaFsn36EQhAREH8eXTkhpkGPznAwMUll0e9xN0UjGzR7JjigG3ufC7IA6o/Dgfrp5qu0GlkrXkWW1zQ2d9lbL6HZ12en3ABjgjJcdZzHhHpw25KzB63YSmsWykjArJvEKKGukHQm4IQOnxZsSW/j02JkQ1Pdr92rwOzhHHcrxhrGWR+pnCFNmzlkwLq8o=
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4211:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;20:U8dA+qvypRvVMYB/WTFI+sT2R4TVsV/KpIs1RdHdTF/otjBBy2eElW/OUawIYJONIas5167uKXUB8qiRTsW8lPxpSTf3bNzRgAosgM4r3Vm0raZWyrFYFN5QMHBgcM9+GNZanRbkSopk5PlQN85vdvIUOHrjQZ2aGnu9knBnVhYpDodKqWBe54tXwH/OcZC+lFH5HpJT2kmrQmIGqgioyHJzphW6cA2QXcV34X2iu/1dnP80239HEITBplgEWMEFpnqio/e51nYvj3EQsX0N3N+yL4WMgOw9H548YZ+tr3wutx6OvLE14WhvP7f5U6OOXiakUemRwXYcaMjuyJBnLuqbplbhqqRSvhyIBn5xYd85o+C8a9VJizFrCBUKAYcm2enUBUn0RZ0Vs4hmBiIC97FupHcF+suaAwHiW2dKDIjmiTrjnOIs/7L4mVzMHNk4jmUhnFaBzmRFsjoPvYSC6bNG2BPpTAnZ8EKoDjABGlV0ZMCxfhGX3V8tzL+rVPG9;4:67jNFKyAPT97K5dAavRFIRDKSU5tdqqLD0A4/gfJq6mfhUgXxvhn4VGUdyEKudyPjOesVN4rOuBKCA0GslE/kyrMCuQfpfX7SMPA9VDaB5ksa+uUlTnQ7YRSH1VQNd2b5tvMVVpq6jg/GP38anvb0/UCq2Gt49kePJLc94cvrbqPWFk20nMK1DCvmst8nJ+m/BgRv2lPhdd58HBRg84kBS4IahEgVBEWMaMhcTcyk2dcdmtdoAA8mxprUhCC2XoAYUnVbODm7iXu05/WEhsbS0zksfrSnGNak4tVSIJMGU4zmcULkU3vhjWP6YKRXcq5b1vwxrfjDKcYWI0xbFkyZtAHhF17sJz95BrlVPmNOtUSNkPy2+S23AIrbnoOrOwA
+X-Microsoft-Antispam-PRVS: <AM0PR04MB4211603FC60ECC15C538D1DD80750@AM0PR04MB4211.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(180628864354917)(9452136761055)(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4211;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4211;
+X-Forefront-PRVS: 071156160B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(39380400002)(366004)(376002)(54534003)(199004)(189003)(305945005)(7736002)(2906002)(6512007)(54906003)(316002)(97736004)(53936002)(25786009)(50466002)(4326008)(50226002)(48376002)(15650500001)(478600001)(3846002)(5660300001)(39060400002)(6116002)(16586007)(6486002)(2361001)(6666003)(76176011)(68736007)(26005)(6916009)(52116002)(81166006)(2616005)(386003)(446003)(956004)(476003)(11346002)(186003)(16526019)(105586002)(106356001)(47776003)(86362001)(66066001)(8936002)(6506007)(51416003)(8676002)(486006)(81156014)(2351001)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4211;H:b29396-OptiPlex-7040.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4211;23:7z7Od/0VD8SCYeu7vIwfYECpWkQefUtY6ronTNhFj?=
+ =?us-ascii?Q?geK2tCYw46+I9BANTsuSjb5Xfhlh979aYZ9ISj4GgNAvUQhFOr0i34S+GQKU?=
+ =?us-ascii?Q?vHmuwkgjj7VjvLEeXcSudd1RqOPS5+I3xiVipR7MpgefX3RoqiPeRIX8Phaj?=
+ =?us-ascii?Q?KPS1LaCeQj18BeMk1YnqVqff//8/YuyhKtnQ5AK7ZMSm/K9m+EF4l5qyb85+?=
+ =?us-ascii?Q?zldryNnamad/im9TYpxqsXk3+mFxOSDoNYvx2GNeCHicZn+fKo3358PotePh?=
+ =?us-ascii?Q?yFpYXD5ThqfAIhhYjzjfSBxeSSTG22Owb5en5eOrL2r3LM/e4dJhGAhadu43?=
+ =?us-ascii?Q?P6sjyRFgrLmtidwl2Mz9Vs2/KlwpGDX+tBT/sudVo/25nV3tPJcPXMWMxt/7?=
+ =?us-ascii?Q?la2ysPaMIDxTTtZ1+IbPfdRun26IHx5CrhEYQIuruCoHw2SG5jfnZpWDsOYS?=
+ =?us-ascii?Q?Dqy2b4yCr45ztY8D9XTPGdAN7CxUhFayCmGubReW0JTR9K8HhiRolHlh4N8c?=
+ =?us-ascii?Q?OWB9Ma0zjOQiw5iXQUGWV48rWvwz1C2NM+Rc0AN4M9eZg2r3UnYwHOrQzfOE?=
+ =?us-ascii?Q?3vPaXZbGiA+G9qPvjJhHLzMAUIrRMai3XOFfFCQOlO37Tw6hLg0rrPT9YW0d?=
+ =?us-ascii?Q?ERwMK2fYAkYgs56loDkD+iAvREHbfWxAqKxMnAaNl66a4GwSELcLSF4h+p6G?=
+ =?us-ascii?Q?nZOv9oIdCbMNN95g/YRiPlr5hIYwDyCNqVQnFAAYwg1PTbQKNI9YZ5fYraC4?=
+ =?us-ascii?Q?yE3KAly4kHxZ2RpecX6thxNASIzcDnN/UI9CU4DHsOfQRDQobYddfVFPn4K9?=
+ =?us-ascii?Q?A+gFLSXzkSqCV74uNhrAiGwSc6IYctvv1a2E6hnqon5LgRO9yI+7jDyiPpmE?=
+ =?us-ascii?Q?gkFb8v//tljF6wZPj/wG1MN9onyEN6W9qSlS5nrptl0F33BLUa3HHc2cOIRp?=
+ =?us-ascii?Q?uIunB03QL13xSI2GTnNHeUtpvx2+RftVKcGh/y9ammVy0rrlwQ7wLKX9UHxS?=
+ =?us-ascii?Q?xAGFOyg9uMga3Y0R//1P9yiz+ar75frcE9vRXfIn36ztLHrl4D6RYKWslBzY?=
+ =?us-ascii?Q?235dDOOoK0zzk1dz6tRyfeXBXKEvDCj9hNrdBJWItt4rItEvF7s7+EA6al5z?=
+ =?us-ascii?Q?y/W2Nb7idw5drCNVrlxSDa/h1Ma8KPDN+v31FK7RPTM5fVs7ccAhPZAI2mA4?=
+ =?us-ascii?Q?OLWYGape84/F4VL3mRgCBGbdksSmsSO8kLpvd6WAhaHfQSa9bMHAKcb6SYT9?=
+ =?us-ascii?Q?gUEt1LomPyKSNIow11WuUsEy1xqNizhEnUjOVq1rXAyI32v+UqZ6Hkd2HJLT?=
+ =?us-ascii?Q?K6X1WfUQ7GKArpLzLpih/g=3D?=
+X-Microsoft-Antispam-Message-Info: AGthmjhEw56GZeOfg+tk0u53AVp8SpRi4Y0fHK+MtLXWG0xJddo/Cgyws6M8KJwddF/Tnt94KfygBuChJSa2bSb/0CjvEA/EwRJiVrnPLoBYx0QhYXDVx6kIAFrYE8O/7ifJd6yK9vgxusGEOiKKmEXjiy9Kjc3gH6AEc9Q/Nl+fFeRMCPlYhP0wwu1bgSQGffR85+PvNPOLG9t2u3y54IhD//KUBQjkPagRluHFn1vnrZ709g4gTI6Zuu3U4ND4PnxL5ezmBKaMx00sPeX8tqyKsMunOhL3Nizfk6SEHeKIdS/n5q2XwKrrnehatKPawbZe16vZFGg43eL9KLWg87zvRf4paEy9t4IFkb+bI9g=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;6:5RZ8p+bZIW8Cn2IHB/SUfpadazdUNPM5j/jqvCND8C314MLlq59AR+s0XkOn2tKH6xtqiX7SUtMu8ku0cn7NuB0Mv0bWR7V6DYVVeV2GMCFkvDevOEaPprAw7jAdm4kBXyez2rtYVaxBhvMlCph1886rVaS/Ud5jgFv1xg6170U+Lg5W7H9gZhhuktKG4ZVRsLFJ5rc1pbqHSJfYg/krjtr5S7+2Ngtz/XPQFD8aCG7YQszmeheOLOpQ62C575/SPBEkMrGraFZ/v/NZUGAhfoRgBufwlKiT5va7cA6m5nvDukcgFUzKJL4/W8/JucFyGqugrwfT5I8awSFpJsAMPtPhImNmnl1LnhtHT5dFf0u5M4iD/9QLBZh3G5ISo15FlTV1znYx905lTiO6cTTxYnsZh/A9WCj0BZ00vr5gW8JFqFhiRc17tu4lqX/5B6bP/kgTHS05T474U5tl9xX0PQ==;5:nRLnba7PUqmFwwpEQyFehAF6VmrVZ1Kjbg71LOJZJdES+kH0wZrHNO13qIxB9WBzQr25UOxrUtaQ5k7jHTjMfMLSSd9dynED2eJOG5G4VMQFOBZC2c5mi89+hgF4lt4i3CrAZQdXwReSiVVmV9H8ptHpqNZn3ra7cV0/G9eVTBs=;24:O7x8NmId3winI38l64Qzi/PgXT6z6IcjDu2bCdQCShReqUgtRpdUWcxZpbL+qoOdCRWnS1zG5s2YHGyM1JbkPJPL8whjazJYYMFUvM5+Ta8=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;7:kFcqkyTejMZ5RpiOiVc91kKksmC3x1j878Vq8PNSPRHszpMXS86lId8/ikHD5GMdjUiMWCqaUf7biowt502B3Z/Y1WTuD3jOB7jpVXvqa4tSVQ1YdYM+no8aTBSD0R5qukgJ2RFIqDuiopNoW5A9U11OCyAUQKAQD6OJ+7GYzLVMsupd5e+Vcd8ZP56P6xV30XdylXWoyMCioVovjO1YSiJx7RApSLyuU7LIYjTAo0OzCHPOGn0GmLaQiyFgbi+/
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2018 14:14:38.1041
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 362390a7-3b8e-4474-4387-08d5d84a7f3f
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4211
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Jun 2018 11:14:05 +0800
-Baolin Wang <baolin.wang@linaro.org> wrote:
+Mailbox devices may have only one channel which means the mbox-cells
+at least 1 does not make sense for this type devices. Let's remove
+that limitation to allow the mbox-cells to be equal to 0.
 
-> From: Freeman Liu <freeman.liu@spreadtrum.com>
-> 
-> The Spreadtrum SC27XX PMICs ADC controller contains 32 channels,
-> which is used to sample voltages with 12 bits conversion.
-> 
-> [Baolin Wang did lots of improvements]
-> 
-> Signed-off-by: Freeman Liu <freeman.liu@spreadtrum.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ChangeLog:
+ * New patch introduced in v3 series
+ * Actually there're already users in kernel with mbox-cells set to 0.
+   See:
+   arch/arm/boot/dts/bcm283x.dtsi:145: #mbox-cells = <0>;
+---
+ Documentation/devicetree/bindings/mailbox/mailbox.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-One trivial missed bit of cleanup inline.  I'll sort that
-when applying if no one else points anything out before I get back to my
-development machine.
-
-Jonathan
-
-> ---
-> Changes since v2:
->  - Remove lock when read/set the channel scale.
->  - Add devm actions to fix race issue.
->  - Drop the device data and will be added in future if it needed.
->  - Undo the previous operation if enabling ADC failed.
->  - Remove raw access.
->  - Fix some coding style issues.
-> 
-> Changes since v1:
->  - Add const for static structures definition.
->  - Change SC27XX_ADC_TO_VOLTAGE macro to be one function.
->  - Move channel scale accessing into mutex protection.
->  - Fix some typos.
-> ---
->  drivers/iio/adc/Kconfig      |   10 +
->  drivers/iio/adc/Makefile     |    1 +
->  drivers/iio/adc/sc27xx_adc.c |  526 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 537 insertions(+)
->  create mode 100644 drivers/iio/adc/sc27xx_adc.c
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 9da7907..985b73e 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -621,6 +621,16 @@ config ROCKCHIP_SARADC
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called rockchip_saradc.
->  
-> +config SC27XX_ADC
-> +	tristate "Spreadtrum SC27xx series PMICs ADC"
-> +	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> +	help
-> +	  Say yes here to build support for the integrated ADC inside the
-> +	  Spreadtrum SC27xx series PMICs.
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called sc27xx_adc.
-> +
->  config SPEAR_ADC
->  	tristate "ST SPEAr ADC"
->  	depends on PLAT_SPEAR || COMPILE_TEST
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index 28a9423..03db7b5 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -59,6 +59,7 @@ obj-$(CONFIG_QCOM_SPMI_VADC) += qcom-spmi-vadc.o
->  obj-$(CONFIG_QCOM_PM8XXX_XOADC) += qcom-pm8xxx-xoadc.o
->  obj-$(CONFIG_RCAR_GYRO_ADC) += rcar-gyroadc.o
->  obj-$(CONFIG_ROCKCHIP_SARADC) += rockchip_saradc.o
-> +obj-$(CONFIG_SC27XX_ADC) += sc27xx_adc.o
->  obj-$(CONFIG_SPEAR_ADC) += spear_adc.o
->  obj-$(CONFIG_STX104) += stx104.o
->  obj-$(CONFIG_SUN4I_GPADC) += sun4i-gpadc-iio.o
-> diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
-> new file mode 100644
-> index 0000000..58bc73b
-> --- /dev/null
-> +++ b/drivers/iio/adc/sc27xx_adc.c
-> @@ -0,0 +1,526 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 Spreadtrum Communications Inc.
-> +
-> +#include <linux/hwspinlock.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +/* PMIC global registers definition */
-> +#define SC27XX_MODULE_EN		0xc08
-> +#define SC27XX_MODULE_ADC_EN		BIT(5)
-> +#define SC27XX_ARM_CLK_EN		0xc10
-> +#define SC27XX_CLK_ADC_EN		BIT(5)
-> +#define SC27XX_CLK_ADC_CLK_EN		BIT(6)
-> +
-> +/* ADC controller registers definition */
-> +#define SC27XX_ADC_CTL			0x0
-> +#define SC27XX_ADC_CH_CFG		0x4
-> +#define SC27XX_ADC_DATA			0x4c
-> +#define SC27XX_ADC_INT_EN		0x50
-> +#define SC27XX_ADC_INT_CLR		0x54
-> +#define SC27XX_ADC_INT_STS		0x58
-> +#define SC27XX_ADC_INT_RAW		0x5c
-> +
-> +/* Bits and mask definition for SC27XX_ADC_CTL register */
-> +#define SC27XX_ADC_EN			BIT(0)
-> +#define SC27XX_ADC_CHN_RUN		BIT(1)
-> +#define SC27XX_ADC_12BIT_MODE		BIT(2)
-> +#define SC27XX_ADC_RUN_NUM_MASK		GENMASK(7, 4)
-> +#define SC27XX_ADC_RUN_NUM_SHIFT	4
-> +
-> +/* Bits and mask definition for SC27XX_ADC_CH_CFG register */
-> +#define SC27XX_ADC_CHN_ID_MASK		GENMASK(4, 0)
-> +#define SC27XX_ADC_SCALE_MASK		GENMASK(10, 8)
-> +#define SC27XX_ADC_SCALE_SHIFT		8
-> +
-> +/* Bits definitions for SC27XX_ADC_INT_EN registers */
-> +#define SC27XX_ADC_IRQ_EN		BIT(0)
-> +
-> +/* Bits definitions for SC27XX_ADC_INT_CLR registers */
-> +#define SC27XX_ADC_IRQ_CLR		BIT(0)
-> +
-> +/* Mask definition for SC27XX_ADC_DATA register */
-> +#define SC27XX_ADC_DATA_MASK		GENMASK(11, 0)
-> +
-> +/* Timeout (ms) for the trylock of hardware spinlocks */
-> +#define SC27XX_ADC_HWLOCK_TIMEOUT	5000
-> +
-> +/* Maximum ADC channel number */
-> +#define SC27XX_ADC_CHANNEL_MAX		32
-> +
-> +/* ADC voltage ratio definition */
-> +#define SC27XX_VOLT_RATIO(n, d)		\
-> +	(((n) << SC27XX_RATIO_NUMERATOR_OFFSET) | (d))
-> +#define SC27XX_RATIO_NUMERATOR_OFFSET	16
-> +#define SC27XX_RATIO_DENOMINATOR_MASK	GENMASK(15, 0)
-> +
-> +struct sc27xx_adc_data {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +	/*
-> +	 * One hardware spinlock to synchronize between the multiple
-> +	 * subsystems which will access the unique ADC controller.
-> +	 */
-> +	struct hwspinlock *hwlock;
-> +	struct completion completion;
-> +	int channel_scale[SC27XX_ADC_CHANNEL_MAX];
-> +	u32 base;
-> +	int value;
-> +	int irq;
-> +};
-> +
-> +struct sc27xx_adc_linear_graph {
-> +	int volt0;
-> +	int adc0;
-> +	int volt1;
-> +	int adc1;
-> +};
-> +
-> +/*
-> + * According to the datasheet, we can convert one ADC value to one voltage value
-> + * through 2 points in the linear graph. If the voltage is less than 1.2v, we
-> + * should use the small-scale graph, and if more than 1.2v, we should use the
-> + * big-scale graph.
-> + */
-> +static const struct sc27xx_adc_linear_graph big_scale_graph = {
-> +	4200, 3310,
-> +	3600, 2832,
-> +};
-> +
-> +static const struct sc27xx_adc_linear_graph small_scale_graph = {
-> +	1000, 3413,
-> +	100, 341,
-> +};
-> +
-> +static int sc27xx_adc_get_ratio(int channel, int scale)
-> +{
-> +	switch (channel) {
-> +	case 1:
-> +	case 2:
-> +	case 3:
-> +	case 4:
-> +		return scale ? SC27XX_VOLT_RATIO(400, 1025) :
-> +			SC27XX_VOLT_RATIO(1, 1);
-> +	case 5:
-> +		return SC27XX_VOLT_RATIO(7, 29);
-> +	case 6:
-> +		return SC27XX_VOLT_RATIO(375, 9000);
-> +	case 7:
-> +	case 8:
-> +		return scale ? SC27XX_VOLT_RATIO(100, 125) :
-> +			SC27XX_VOLT_RATIO(1, 1);
-> +	case 19:
-> +		return SC27XX_VOLT_RATIO(1, 3);
-> +	default:
-> +		return SC27XX_VOLT_RATIO(1, 1);
-> +	}
-> +	return SC27XX_VOLT_RATIO(1, 1);
-> +}
-> +
-> +static int sc27xx_adc_read(struct sc27xx_adc_data *data, int channel,
-> +			   int scale, int *val)
-> +{
-> +	int ret;
-> +	u32 tmp;
-> +
-> +	reinit_completion(&data->completion);
-> +
-> +	ret = hwspin_lock_timeout_raw(data->hwlock, SC27XX_ADC_HWLOCK_TIMEOUT);
-> +	if (ret) {
-> +		dev_err(data->dev, "timeout to get the hwspinlock\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits(data->regmap, data->base + SC27XX_ADC_CTL,
-> +				 SC27XX_ADC_EN, SC27XX_ADC_EN);
-> +	if (ret)
-> +		goto unlock_adc;
-> +
-> +	/* Configure the channel id and scale */
-> +	tmp = (scale << SC27XX_ADC_SCALE_SHIFT) & SC27XX_ADC_SCALE_MASK;
-> +	tmp |= channel & SC27XX_ADC_CHN_ID_MASK;
-> +	ret = regmap_update_bits(data->regmap, data->base + SC27XX_ADC_CH_CFG,
-> +				 SC27XX_ADC_CHN_ID_MASK | SC27XX_ADC_SCALE_MASK,
-> +				 tmp);
-> +	if (ret)
-> +		goto disable_adc;
-> +
-> +	/* Select 12bit conversion mode, and only sample 1 time */
-> +	tmp = SC27XX_ADC_12BIT_MODE;
-> +	tmp |= (0 << SC27XX_ADC_RUN_NUM_SHIFT) & SC27XX_ADC_RUN_NUM_MASK;
-> +	ret = regmap_update_bits(data->regmap, data->base + SC27XX_ADC_CTL,
-> +				 SC27XX_ADC_RUN_NUM_MASK | SC27XX_ADC_12BIT_MODE,
-> +				 tmp);
-> +	if (ret)
-> +		goto disable_adc;
-> +
-> +	ret = regmap_update_bits(data->regmap, data->base + SC27XX_ADC_CTL,
-> +				 SC27XX_ADC_CHN_RUN, SC27XX_ADC_CHN_RUN);
-> +	if (ret)
-> +		goto disable_adc;
-> +
-> +	wait_for_completion(&data->completion);
-> +
-> +disable_adc:
-> +	regmap_update_bits(data->regmap, data->base + SC27XX_ADC_CTL,
-> +			   SC27XX_ADC_EN, 0);
-> +unlock_adc:
-> +	hwspin_unlock_raw(data->hwlock);
-> +
-> +	if (!ret)
-> +		*val = data->value;
-> +
-> +	return ret;
-> +}
-> +
-> +static irqreturn_t sc27xx_adc_isr(int irq, void *dev_id)
-> +{
-> +	struct sc27xx_adc_data *data = dev_id;
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(data->regmap, data->base + SC27XX_ADC_INT_CLR,
-> +				 SC27XX_ADC_IRQ_CLR, SC27XX_ADC_IRQ_CLR);
-> +	if (ret)
-> +		return IRQ_RETVAL(ret);
-> +
-> +	ret = regmap_read(data->regmap, data->base + SC27XX_ADC_DATA,
-> +			  &data->value);
-> +	if (ret)
-> +		return IRQ_RETVAL(ret);
-> +
-> +	data->value &= SC27XX_ADC_DATA_MASK;
-> +	complete(&data->completion);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static void sc27xx_adc_volt_ratio(struct sc27xx_adc_data *data,
-> +				  int channel, int scale,
-> +				  u32 *div_numerator, u32 *div_denominator)
-> +{
-> +	u32 ratio = sc27xx_adc_get_ratio(channel, scale);
-> +
-> +	*div_numerator = ratio >> SC27XX_RATIO_NUMERATOR_OFFSET;
-> +	*div_denominator = ratio & SC27XX_RATIO_DENOMINATOR_MASK;
-> +}
-> +
-> +static int sc27xx_adc_to_volt(const struct sc27xx_adc_linear_graph *graph,
-> +			      int raw_adc)
-> +{
-> +	int tmp;
-> +
-> +	tmp = (graph->volt0 - graph->volt1) * (raw_adc - graph->adc1);
-> +	tmp /= (graph->adc0 - graph->adc1);
-> +	tmp += graph->volt1;
-> +
-> +	return tmp < 0 ? 0 : tmp;
-> +}
-> +
-> +static int sc27xx_adc_convert_volt(struct sc27xx_adc_data *data, int channel,
-> +				   int scale, int raw_adc)
-> +{
-> +	u32 numerator, denominator;
-> +	u32 volt;
-> +
-> +	/*
-> +	 * Convert ADC values to voltage values according to the linear graph,
-> +	 * and channel 5 and channel 1 has been calibrated, so we can just
-> +	 * return the voltage values calculated by the linear graph. But other
-> +	 * channels need be calculated to the real voltage values with the
-> +	 * voltage ratio.
-> +	 */
-> +	switch (channel) {
-> +	case 5:
-> +		return sc27xx_adc_to_volt(&big_scale_graph, raw_adc);
-> +
-> +	case 1:
-> +		return sc27xx_adc_to_volt(&small_scale_graph, raw_adc);
-> +
-> +	default:
-> +		volt = sc27xx_adc_to_volt(&small_scale_graph, raw_adc);
-> +		break;
-> +	}
-> +
-> +	sc27xx_adc_volt_ratio(data, channel, scale, &numerator, &denominator);
-> +
-> +	return (volt * denominator + numerator / 2) / numerator;
-> +}
-> +
-> +static int sc27xx_adc_read_processed(struct sc27xx_adc_data *data,
-> +				     int channel, int scale, int *val)
-> +{
-> +	int ret, raw_adc;
-> +
-> +	ret = sc27xx_adc_read(data, channel, scale, &raw_adc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*val = sc27xx_adc_convert_volt(data, channel, scale, raw_adc);
-> +	return 0;
-> +}
-> +
-> +static int sc27xx_adc_read_raw(struct iio_dev *indio_dev,
-> +			       struct iio_chan_spec const *chan,
-> +			       int *val, int *val2, long mask)
-> +{
-> +	struct sc27xx_adc_data *data = iio_priv(indio_dev);
-> +	int scale = data->channel_scale[chan->channel];
-> +	int ret, tmp;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_PROCESSED:
-> +		mutex_lock(&indio_dev->mlock);
-> +		ret = sc27xx_adc_read_processed(data, chan->channel, scale,
-> +						&tmp);
-> +		mutex_unlock(&indio_dev->mlock);
-> +
-> +		if (ret)
-> +			return ret;
-> +
-> +		*val = tmp;
-> +		return IIO_VAL_INT;
-> +
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val = scale;
-> +		return IIO_VAL_INT;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int sc27xx_adc_write_raw(struct iio_dev *indio_dev,
-> +				struct iio_chan_spec const *chan,
-> +				int val, int val2, long mask)
-> +{
-> +	struct sc27xx_adc_data *data = iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		data->channel_scale[chan->channel] = val;
-> +		return IIO_VAL_INT;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const struct iio_info sc27xx_info = {
-> +	.read_raw = &sc27xx_adc_read_raw,
-> +	.write_raw = &sc27xx_adc_write_raw,
-> +};
-> +
-> +#define SC27XX_ADC_CHANNEL(index) {				\
-> +	.type = IIO_VOLTAGE,					\
-> +	.channel = index,					\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |	\
-> +			      BIT(IIO_CHAN_INFO_SCALE),		\
-> +	.datasheet_name = "CH##index",				\
-> +	.indexed = 1,						\
-> +}
-> +
-> +static const struct iio_chan_spec sc27xx_channels[] = {
-> +	SC27XX_ADC_CHANNEL(0),
-> +	SC27XX_ADC_CHANNEL(1),
-> +	SC27XX_ADC_CHANNEL(2),
-> +	SC27XX_ADC_CHANNEL(3),
-> +	SC27XX_ADC_CHANNEL(4),
-> +	SC27XX_ADC_CHANNEL(5),
-> +	SC27XX_ADC_CHANNEL(6),
-> +	SC27XX_ADC_CHANNEL(7),
-> +	SC27XX_ADC_CHANNEL(8),
-> +	SC27XX_ADC_CHANNEL(9),
-> +	SC27XX_ADC_CHANNEL(10),
-> +	SC27XX_ADC_CHANNEL(11),
-> +	SC27XX_ADC_CHANNEL(12),
-> +	SC27XX_ADC_CHANNEL(13),
-> +	SC27XX_ADC_CHANNEL(14),
-> +	SC27XX_ADC_CHANNEL(15),
-> +	SC27XX_ADC_CHANNEL(16),
-> +	SC27XX_ADC_CHANNEL(17),
-> +	SC27XX_ADC_CHANNEL(18),
-> +	SC27XX_ADC_CHANNEL(19),
-> +	SC27XX_ADC_CHANNEL(20),
-> +	SC27XX_ADC_CHANNEL(21),
-> +	SC27XX_ADC_CHANNEL(22),
-> +	SC27XX_ADC_CHANNEL(23),
-> +	SC27XX_ADC_CHANNEL(24),
-> +	SC27XX_ADC_CHANNEL(25),
-> +	SC27XX_ADC_CHANNEL(26),
-> +	SC27XX_ADC_CHANNEL(27),
-> +	SC27XX_ADC_CHANNEL(28),
-> +	SC27XX_ADC_CHANNEL(29),
-> +	SC27XX_ADC_CHANNEL(30),
-> +	SC27XX_ADC_CHANNEL(31),
-> +};
-> +
-> +static int sc27xx_adc_enable(struct sc27xx_adc_data *data)
-> +{
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(data->regmap, SC27XX_MODULE_EN,
-> +				 SC27XX_MODULE_ADC_EN, SC27XX_MODULE_ADC_EN);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable ADC work clock and controller clock */
-> +	ret = regmap_update_bits(data->regmap, SC27XX_ARM_CLK_EN,
-> +				 SC27XX_CLK_ADC_EN | SC27XX_CLK_ADC_CLK_EN,
-> +				 SC27XX_CLK_ADC_EN | SC27XX_CLK_ADC_CLK_EN);
-> +	if (ret)
-> +		goto disable_adc;
-> +
-> +	ret = regmap_update_bits(data->regmap, data->base + SC27XX_ADC_INT_EN,
-> +				 SC27XX_ADC_IRQ_EN, SC27XX_ADC_IRQ_EN);
-> +	if (ret)
-> +		goto disable_clk;
-> +
-> +	return 0;
-> +
-> +disable_clk:
-> +	regmap_update_bits(data->regmap, SC27XX_ARM_CLK_EN,
-> +			   SC27XX_CLK_ADC_EN | SC27XX_CLK_ADC_CLK_EN, 0);
-> +disable_adc:
-> +	regmap_update_bits(data->regmap, SC27XX_MODULE_EN,
-> +			   SC27XX_MODULE_ADC_EN, 0);
-> +
-> +	return ret;
-> +}
-> +
-> +static void sc27xx_adc_disable(void *_data)
-> +{
-> +	struct sc27xx_adc_data *data = _data;
-> +
-> +	regmap_update_bits(data->regmap, data->base + SC27XX_ADC_INT_EN,
-> +			   SC27XX_ADC_IRQ_EN, 0);
-> +
-> +	/* Disable ADC work clock and controller clock */
-> +	regmap_update_bits(data->regmap, SC27XX_ARM_CLK_EN,
-> +			   SC27XX_CLK_ADC_EN | SC27XX_CLK_ADC_CLK_EN, 0);
-> +
-> +	regmap_update_bits(data->regmap, SC27XX_MODULE_EN,
-> +			   SC27XX_MODULE_ADC_EN, 0);
-> +}
-> +
-> +static void sc27xx_adc_free_hwlock(void *_data)
-> +{
-> +	struct hwspinlock *hwlock = _data;
-> +
-> +	hwspin_lock_free(hwlock);
-> +}
-> +
-> +static int sc27xx_adc_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct sc27xx_adc_data *sc27xx_data;
-> +	struct iio_dev *indio_dev;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*sc27xx_data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	sc27xx_data = iio_priv(indio_dev);
-> +
-> +	sc27xx_data->regmap = dev_get_regmap(pdev->dev.parent, NULL);
-> +	if (!sc27xx_data->regmap) {
-> +		dev_err(&pdev->dev, "failed to get ADC regmap\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = of_property_read_u32(np, "reg", &sc27xx_data->base);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to get ADC base address\n");
-> +		return ret;
-> +	}
-> +
-> +	sc27xx_data->irq = platform_get_irq(pdev, 0);
-> +	if (sc27xx_data->irq < 0) {
-> +		dev_err(&pdev->dev, "failed to get ADC irq number\n");
-> +		return sc27xx_data->irq;
-> +	}
-> +
-> +	ret = of_hwspin_lock_get_id(np, 0);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to get hwspinlock id\n");
-> +		return ret;
-> +	}
-> +
-> +	sc27xx_data->hwlock = hwspin_lock_request_specific(ret);
-> +	if (!sc27xx_data->hwlock) {
-> +		dev_err(&pdev->dev, "failed to request hwspinlock\n");
-> +		return -ENXIO;
-> +	}
-> +
-> +	ret = devm_add_action(&pdev->dev, sc27xx_adc_free_hwlock,
-> +			      sc27xx_data->hwlock);
-> +	if (ret) {
-> +		sc27xx_adc_free_hwlock(sc27xx_data->hwlock);
-> +		dev_err(&pdev->dev, "failed to add hwspinlock action\n");
-> +		return ret;
-> +	}
-> +
-> +	init_completion(&sc27xx_data->completion);
-> +	sc27xx_data->dev = &pdev->dev;
-> +
-> +	ret = sc27xx_adc_enable(sc27xx_data);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to enable ADC module\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = devm_add_action(&pdev->dev, sc27xx_adc_disable, sc27xx_data);
-> +	if (ret) {
-> +		sc27xx_adc_disable(sc27xx_data);
-> +		dev_err(&pdev->dev, "failed to add ADC disable action\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = devm_request_threaded_irq(&pdev->dev, sc27xx_data->irq, NULL,
-> +					sc27xx_adc_isr, IRQF_ONESHOT,
-> +					pdev->name, sc27xx_data);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to request ADC irq\n");
-> +		return ret;
-> +	}
-> +
-> +	indio_dev->dev.parent = &pdev->dev;
-> +	indio_dev->name = dev_name(&pdev->dev);
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->info = &sc27xx_info;
-> +	indio_dev->channels = sc27xx_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(sc27xx_channels);
-> +	ret = devm_iio_device_register(&pdev->dev, indio_dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "could not register iio (ADC)");
-> +		return ret;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, indio_dev);
-
-Why?  Looks like this is left over from when we had a remove.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id sc27xx_adc_of_match[] = {
-> +	{ .compatible = "sprd,sc2731-adc", },
-> +	{ }
-> +};
-> +
-> +static struct platform_driver sc27xx_adc_driver = {
-> +	.probe = sc27xx_adc_probe,
-> +	.driver = {
-> +		.name = "sc27xx-adc",
-> +		.of_match_table = sc27xx_adc_of_match,
-> +	},
-> +};
-> +
-> +module_platform_driver(sc27xx_adc_driver);
-> +
-> +MODULE_AUTHOR("Freeman Liu <freeman.liu@spreadtrum.com>");
-> +MODULE_DESCRIPTION("Spreadtrum SC27XX ADC Driver");
-> +MODULE_LICENSE("GPL v2");
-
+diff --git a/Documentation/devicetree/bindings/mailbox/mailbox.txt b/Documentation/devicetree/bindings/mailbox/mailbox.txt
+index af8ecee..c2fcd05 100644
+--- a/Documentation/devicetree/bindings/mailbox/mailbox.txt
++++ b/Documentation/devicetree/bindings/mailbox/mailbox.txt
+@@ -6,8 +6,7 @@ assign appropriate mailbox channel to client drivers.
+ * Mailbox Controller
+ 
+ Required property:
+-- #mbox-cells: Must be at least 1. Number of cells in a mailbox
+-		specifier.
++- #mbox-cells: Number of cells in a mailbox specifier.
+ 
+ Example:
+ 	mailbox: mailbox {
+-- 
+2.7.4
 
