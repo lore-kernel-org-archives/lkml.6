@@ -2,103 +2,100 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 799A7C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6DACC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D98123E8D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:00:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yKBw/L9B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D98123E8D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9EBAE23E88
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EBAE23E88
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751715AbeFVIAC (ORCPT
+        id S1751423AbeFVIAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:00:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35926 "EHLO mail.kernel.org"
+        Fri, 22 Jun 2018 04:00:00 -0400
+Received: from mga14.intel.com ([192.55.52.115]:32271 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751153AbeFVH76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751119AbeFVH76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 03:59:58 -0400
-Received: from mail-wm0-f52.google.com (mail-wm0-f52.google.com [74.125.82.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DBBA23E8F;
-        Fri, 22 Jun 2018 07:59:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529654398;
-        bh=ML5VXJG5L1GQFRcJNXddxbi0HbDDTvL/+5hwHMVip0Y=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=yKBw/L9Bw2ZR20yEDyfPmSvbzxD+TyXeVMgaNN3MfdfDvR1SlxP/+GA9Dg8vgc17U
-         hhRj5jzE6DAykKwm4Fud6sedZ0XsIkKiaJyfNT0Jl4EDhoz/3BBMkEWccZ6zO1qijs
-         DQa7TkWxx/ev8FjIv3jE8SM0vhQuMZv6MbY8C36U=
-Received: by mail-wm0-f52.google.com with SMTP id l15-v6so5547546wmc.1;
-        Fri, 22 Jun 2018 00:59:58 -0700 (PDT)
-X-Gm-Message-State: APt69E3gdQK5ZLf0STyJ3DpJzfcrT4HF3iBJ+YhgsE+iWbyovYdkcvap
-        XTyux2u+KyPORj6wXA9IqC7GPU2zBZ13+Fh3w0Y=
-X-Google-Smtp-Source: AAOMgpeTO34aZJoeZF4d1q7f0HEwpq2g/2nCxH/+mHn6IRVhQynFTFKCpSSzqgGv4bNihoqIBR9idWqpfJkpqFzWONQ=
-X-Received: by 2002:a1c:e6d9:: with SMTP id e86-v6mr743252wmi.135.1529654396676;
- Fri, 22 Jun 2018 00:59:56 -0700 (PDT)
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 00:59:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,255,1526367600"; 
+   d="scan'208";a="59316311"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Jun 2018 00:59:56 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 4DDBD143; Fri, 22 Jun 2018 10:59:58 +0300 (EEST)
+Date:   Fri, 22 Jun 2018 10:59:58 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     yang.shi@linux.alibaba.com
+Cc:     hughd@google.com, vbabka@suse.cz, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH 1/2] mm: thp: register mm for khugepaged when merging
+ vma for shmem
+Message-ID: <20180622075958.mzagr2ayufiuokea@black.fi.intel.com>
+References: <1529622949-75504-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 00:59:56
- -0700 (PDT)
-In-Reply-To: <1529608199-5583-8-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-References: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <1529608199-5583-8-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 22 Jun 2018 09:59:56 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPffUmnms72vLDU9pEQCtpUCHir=5ae-vTPpS0wfmNut4g@mail.gmail.com>
-Message-ID: <CAJKOXPffUmnms72vLDU9pEQCtpUCHir=5ae-vTPpS0wfmNut4g@mail.gmail.com>
-Subject: Re: [PATCH 7/7] dt-bindings: samsung: Document binding for SGH-T959P board
-To:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xc-racer2@live.ca
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529622949-75504-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 June 2018 at 21:09, Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com=
-> wrote:
-> From: Jonathan Bakker <xc-racer2@live.ca>
->
-
-Commit msg.
-
-Best regards,
-Krzysztof
-
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+On Thu, Jun 21, 2018 at 11:15:48PM +0000, yang.shi@linux.alibaba.com wrote:
+> When merging anonymous page vma, if the size of vma can fit in at least
+> one hugepage, the mm will be registered for khugepaged for collapsing
+> THP in the future.
+> 
+> But, it skips shmem vma. Doing so for shmem too, but not file-private
+> mapping, when merging vma in order to increase the odd to collapse
+> hugepage by khugepaged.
+> 
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
 > ---
->  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
-.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> index edce6602de50..8a9358336aab 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> @@ -3,6 +3,7 @@
->  Required root node properties:
->      - compatible =3D should be one or more of the following.
->         - "samsung,aries"       - for S5PV210-based Samsung Aries board.
-> +       - "samsung,fascinate4g" - for S5PV210-based Samsung Galaxy S Fasc=
-inate 4G (SGH-T959P) board.
->         - "samsung,galaxys"     - for S5PV210-based Samsung Galaxy S (i90=
-00)  board.
->         - "samsung,artik5"      - for Exynos3250-based Samsung ARTIK5 mod=
-ule.
->         - "samsung,artik5-eval" - for Exynos3250-based Samsung ARTIK5 eva=
-l board.
-> --
-> 2.7.4
->
+> v1 --> 2:
+> * Exclude file-private mapping per Kirill's comment
+> 
+>  mm/khugepaged.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index d7b2a4b..9b0ec30 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -440,8 +440,12 @@ int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
+>  		 * page fault if needed.
+>  		 */
+>  		return 0;
+> -	if (vma->vm_ops || (vm_flags & VM_NO_KHUGEPAGED))
+> -		/* khugepaged not yet working on file or special mappings */
+> +	if ((vma->vm_ops && (!shmem_file(vma->vm_file) || vma->anon_vma)) ||
+> +	    (vm_flags & VM_NO_KHUGEPAGED))
+> +		/*
+> +		 * khugepaged not yet working on non-shmem file or special
+> +		 * mappings. And, file-private shmem THP is not supported.
+> +		 */
+>  		return 0;
+
+My point was that vma->anon_vma check above this one should not prevent
+collapse for shmem.
+
+Looking into this more, I think we should just replace all these checks
+with hugepage_vma_check() call.
+
+-- 
+ Kirill A. Shutemov
