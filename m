@@ -2,149 +2,94 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C8AC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 319D6C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03BD623C30
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:08:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIBCT3xZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03BD623C30
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DC3DE23C35
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:08:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3DE23C35
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934292AbeFVCIZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 22:08:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43218 "EHLO mail.kernel.org"
+        id S934328AbeFVCIj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:08:39 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37897 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934181AbeFVCIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 22:08:23 -0400
-Received: from mail-yw0-f169.google.com (mail-yw0-f169.google.com [209.85.161.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA5C123C30;
-        Fri, 22 Jun 2018 02:08:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529633303;
-        bh=uqNCsLvZ4oYVeWTldEROQfN2ozzAbo55X2r86a3vvVI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=UIBCT3xZT2e1C4UJ/aocbCedPACoYqN/p53dz8Ib3cNpDOmzShf5MpKHRbWvvzchP
-         AYorWD53rJyOq3f0Wb8CJUmm4AZaSdajc+GHwAHdRRYooTfk6yovJuA6o+EU56SF1O
-         vU12ghwthWYKTQbaDBhHFPf9Jyt/eaAuSLvhFcXQ=
-Received: by mail-yw0-f169.google.com with SMTP id b125-v6so1889567ywe.1;
-        Thu, 21 Jun 2018 19:08:22 -0700 (PDT)
-X-Gm-Message-State: APt69E2POMSGBjMZMNnaDK/VLQBqjookdW7jFsmPvVed2P2PuJ2xOAz6
-        ZjY0piMIZqDn7S1+re36JGiXITIWlXx8DO2Dc2o=
-X-Google-Smtp-Source: ADUXVKLooSbOpPNkdjijh0EONwTWOlmEA4UgDZ/cjXb64s1W5iX86lhlFPAfD2uFk1ryMiRNbgveHA0cbpfY3wiHQYw=
-X-Received: by 2002:a81:94c5:: with SMTP id l188-v6mr13119536ywg.463.1529633302126;
- Thu, 21 Jun 2018 19:08:22 -0700 (PDT)
+        id S934181AbeFVCIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 22:08:37 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 19:08:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,255,1526367600"; 
+   d="scan'208";a="51896125"
+Received: from sandybridge-desktop.sh.intel.com (HELO sandybridge-desktop) ([10.239.160.116])
+  by orsmga006.jf.intel.com with ESMTP; 21 Jun 2018 19:08:35 -0700
+Date:   Fri, 22 Jun 2018 10:14:10 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3][RFC] Introduce the in-kernel hibernation encryption
+Message-ID: <20180622021410.GA30305@sandybridge-desktop>
+References: <cover.1529486870.git.yu.c.chen@intel.com>
+ <20180621085332.GA21807@amd>
+ <CAJZ5v0izS8CNzhsd_bjB40xTkZxaxh13NtHsJi9LYXEr84MoMA@mail.gmail.com>
+ <20180621191443.GB14623@amd>
 MIME-Version: 1.0
-Received: by 2002:a5b:b89:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 19:07:41 -0700 (PDT)
-In-Reply-To: <4617134.5euanDEBgJ@pcbe13614>
-References: <4617134.5euanDEBgJ@pcbe13614>
-From:   Alan Tull <atull@kernel.org>
-Date:   Thu, 21 Jun 2018 21:07:41 -0500
-X-Gmail-Original-Message-ID: <CANk1AXQ6cZnxN5tXckZektnbfWixPhS8+VitMZ4fcMyAcQzfqA@mail.gmail.com>
-Message-ID: <CANk1AXQ6cZnxN5tXckZektnbfWixPhS8+VitMZ4fcMyAcQzfqA@mail.gmail.com>
-Subject: Re: fpga: fpga_mgr_get() buggy ?
-To:     federico.vaga@cern.ch
-Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180621191443.GB14623@amd>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 8:13 AM, Federico Vaga <federico.vaga@cern.ch> wrote:
+Hi,
+On Thu, Jun 21, 2018 at 09:14:43PM +0200, Pavel Machek wrote:
+> On Thu 2018-06-21 14:08:40, Rafael J. Wysocki wrote:
+> > On Thu, Jun 21, 2018 at 10:53 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> > > Hi!
+> > >
+> > >> As security becomes more and more important, we add the in-kernel
+> > >> encryption support for hibernation.
+> > > ...
+> > >> There was a discussion on the mailing list on whether this key should
+> > >> be derived in kernel or in user space. And it turns out to be generating
+> > >> the key by user space is more acceptable[1]. So this patch set is divided
+> > >> into two parts:
+> > >> 1. The hibernation snapshot encryption in kernel space,
+> > >> 2. the key derivation implementation in user space.
+> > >
+> > > uswsusp was created so that this kind of stuff could be kept in
+> > > userspace. You get graphical progress bar (etc) too. As you already
+> > > have userspace component for key derivation, I see no advantages to
+> > > uswsusp.
+> > >
+> > > If you have some, please explain.
+> > 
+> > Not having to transfer plain text kernel memory to user space is one
+> > IMO.
+> 
+> Well, AFAICT in this case userland has the key and encrypted data are
+> on disk. That does not seem to be improvement.
+> 
+uswsusp needs to read the snapshot from kernel first, while
+do encryption in kernel directly would reduce the IO. Besides,
+the kernel memory content is protect from been read from
+user space from first place, although finally they are
+encrypted on the disk.
 
-Hi Federico,
+Best,
+Yu
 
-Thanks for the analysis.  I'll probably not be able to look into this
-very much until next week.  A few notes below.
-
-> Hello,
->
-> I believe that this patch
->
-> fpga: manager: change api, don't use drvdata
-> 7085e2a94f7df5f419e3cfb2fe809ce6564e9629
->
-> is incomplete and buggy.
->
-> I completely agree that drvdata should not be used by the FPGA manager
-> or any other subsystem like that.
->
-> What is buggy is the function fpga_mgr_get().
-> That patch has been done to allow multiple FPGA manager instances to
-> be linked to the same device (PCI it says). But function
-> fpga_mgr_get() will return only the first found: what about the
-> others?
-
-I was thinking it was going to be one manager per device which makes
-sense if the device corresponds to a single FPGA.  But I could see
-that there could be valid use cases that had more than one FPGA such
-as on a PCI card.
-
->
-> Then, all load kernel-doc comments says:
->
-> "This code assumes the caller got the mgr pointer from
-> of_fpga_mgr_get() or fpga_mgr_get()"
->
-> but that function does not allow me to get, for instance, the second
-> FPGA manager on my card.
->
-> Since, thanks to this patch I'm actually the creator of the
-> fpga_manager structure,  I do not need to use fpga_mgr_get() to
-> retrieve that data structure.
-> Despite this, I believe we still need to increment the module
-> reference counter (which is done by fpga_mgr_get()).
->
-> We can fix this function by just replacing the argument from 'device'
-> to 'fpga_manager' (the one returned by create() ).
-
-At first thought, that's what I'd want.
-
-> Alternatively, we
-> can add an 'owner' field in "struct fpga_manager_ops" and 'get' it
-> when we use it. Or again, just an 'owner' argument in the create()
-> function.
-
-It seems like we shouldn't have to do that.
-
-> I'm proposing these alternatives because I'm not sure that
-> this is correct:
->
->         if (!try_module_get(dev->parent->driver->owner))
->
-> What if the device does not have a driver? Do we consider the
-> following a valid use case?
->
->
-> probe(struct device *dev) {
->   struct device *mydev;
->
->   mydev->parent = dev;
->   device_register(mydev);
->   fpga_mrg_create(mydev, ....);
-> }
-
-When would you want to do that?
-
-Alan
-
->
->
-> thanks :)
->
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
