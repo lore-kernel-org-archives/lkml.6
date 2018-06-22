@@ -2,282 +2,118 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7BFC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15754C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4634924804
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:44:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4634924804
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id C3A7424805
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:44:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A7424805
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964783AbeFVToG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:44:06 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46822 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934264AbeFVTnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:43:24 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fWRxo-0002B2-RV; Fri, 22 Jun 2018 13:43:23 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fWRxl-0002jm-Ij; Fri, 22 Jun 2018 13:43:17 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Fri, 22 Jun 2018 13:43:14 -0600
-Message-Id: <20180622194315.10475-3-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180622194315.10475-1-logang@deltatee.com>
-References: <20180622194315.10475-1-logang@deltatee.com>
+        id S934526AbeFVToa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:44:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934264AbeFVTo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 15:44:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DC9C1402345E;
+        Fri, 22 Jun 2018 19:44:28 +0000 (UTC)
+Received: from flask (unknown [10.43.2.80])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3FB9821565E1;
+        Fri, 22 Jun 2018 19:44:27 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Fri, 22 Jun 2018 21:44:26 +0200
+Date:   Fri, 22 Jun 2018 21:44:26 +0200
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for Linux 4.18-rc2
+Message-ID: <20180622194426.GE2377@flask>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, willy@infradead.org, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v4 2/3] PCI: Allow specifying devices using a base bus and path of devfns
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 22 Jun 2018 19:44:28 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 22 Jun 2018 19:44:28 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When specifying PCI devices on the kernel command line using a
-BDF, the bus numbers can change when adding or replacing a device,
-changing motherboard firmware, or applying kernel parameters like
-pci=assign-buses. When this happens, it is usually undesirable to
-apply whatever command line tweak to the wrong device.
+Linus,
 
-Therefore, it is useful to be able to specify devices with a base
-bus number and the path of devfns needed to get to it. (Similar to
-the "device scope" structure in the Intel VT-d spec, Section 8.3.1.)
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-Thus, we add an option to specify devices in the following format:
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
 
-[<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
+are available in the Git repository at:
 
-The path can be any segment within the PCI hierarchy of any length and
-determined through the use of 'lspci -t'. When specified this way, it is
-less likely that a renumbered bus will result in a valid device specification
-and the tweak won't be applied to the wrong device.
+  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Stephen Bates <sbates@raithlin.com>
-Acked-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
----
- Documentation/admin-guide/kernel-parameters.txt |   8 +-
- drivers/pci/pci.c                               | 117 ++++++++++++++++++++----
- 2 files changed, 103 insertions(+), 22 deletions(-)
+for you to fetch changes up to 2ddc649810133fcf8e5282eea898ee7ececf161e:
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index e783bcefadac..a69947d9e14e 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3000,7 +3000,7 @@
- 				or a set of devices (<pci_dev>). These are
- 				specified in one of the following formats:
- 
--				[<domain>:]<bus>:<slot>.<func>
-+				[<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
- 				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
- 
- 				Note: the first format specifies a PCI
-@@ -3009,7 +3009,11 @@
- 				firmware changes, or due to changes caused
- 				by other kernel parameters. If the
- 				domain is left unspecified, it is
--				taken to be zero. The second format
-+				taken to be zero. Optionally, a path
-+				to a device through multiple slot/function
-+				addresses can be specified after the base
-+				address (this is more robust against
-+				renumbering issues). The second format
- 				selects devices using IDs from the
- 				configuration space which may match multiple
- 				devices in the system.
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index cb999b2a9530..3fc823b756e3 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -192,6 +192,89 @@ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
- #endif
- 
- /**
-+ * pci_dev_str_match_path - test if a path string matches a device
-+ * @dev:    the PCI device to test
-+ * @p:      string to match the device against
-+ * @endptr: pointer to the string after the match
-+ *
-+ * Test if a string (typically from a kernel parameter) formatted as a
-+ * path of slot/function addresses matches a PCI device. The string must
-+ * be of the form:
-+ *
-+ *   [<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
-+ *
-+ * A path for a device can be obtained using 'lspci -t'. Using a path
-+ * is more robust against bus renumbering than using only a single bus,
-+ * slot and function address.
-+ *
-+ * Returns 1 if the string matches the device, 0 if it does not and
-+ * a negative error code if it fails to parse the string.
-+ */
-+static int pci_dev_str_match_path(struct pci_dev *dev, const char *path,
-+				  const char **endptr)
-+{
-+	int ret;
-+	int seg, bus, slot, func;
-+	char *wpath, *p;
-+	char end;
-+
-+	*endptr = strchrnul(path, ';');
-+
-+	wpath = kmemdup_nul(path, *endptr - path, GFP_KERNEL);
-+	if (!wpath)
-+		return -ENOMEM;
-+
-+	while (1) {
-+		p = strrchr(wpath, '/');
-+		if (!p)
-+			break;
-+		ret = sscanf(p, "/%x.%x%c", &slot, &func, &end);
-+		if (ret != 2) {
-+			ret = -EINVAL;
-+			goto free_and_exit;
-+		}
-+
-+		if (dev->devfn != PCI_DEVFN(slot, func)) {
-+			ret = 0;
-+			goto free_and_exit;
-+		}
-+
-+		/*
-+		 * Note: we don't need to get a reference to the upstream
-+		 * bridge because we hold a reference to the top level
-+		 * device which should hold a reference to the bridge,
-+		 * and so on.
-+		 */
-+		dev = pci_upstream_bridge(dev);
-+		if (!dev) {
-+			ret = 0;
-+			goto free_and_exit;
-+		}
-+
-+		*p = 0;
-+	}
-+
-+	ret = sscanf(wpath, "%x:%x:%x.%x%c", &seg, &bus, &slot,
-+		     &func, &end);
-+	if (ret != 4) {
-+		seg = 0;
-+		ret = sscanf(wpath, "%x:%x.%x%c", &bus, &slot, &func, &end);
-+		if (ret != 3) {
-+			ret = -EINVAL;
-+			goto free_and_exit;
-+		}
-+	}
-+
-+	ret = (seg == pci_domain_nr(dev->bus) &&
-+	       bus == dev->bus->number &&
-+	       dev->devfn == PCI_DEVFN(slot, func));
-+
-+free_and_exit:
-+	kfree(wpath);
-+	return ret;
-+}
-+
-+/**
-  * pci_dev_str_match - test if a string matches a device
-  * @dev:    the PCI device to test
-  * @p:      string to match the device against
-@@ -200,13 +283,16 @@ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
-  * Test if a string (typically from a kernel parameter) matches a
-  * specified. The string may be of one of the following formats:
-  *
-- *   [<domain>:]<bus>:<slot>.<func>
-+ *   [<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
-  *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
-  *
-  * The first format specifies a PCI bus/slot/function address which
-  * may change if new hardware is inserted, if motherboard firmware changes,
-  * or due to changes caused in kernel parameters. If the domain is
-- * left unspecified, it is taken to be 0.
-+ * left unspecified, it is taken to be 0. In order to be robust against
-+ * bus renumbering issues, a path of PCI slot/function numbers may be used
-+ * to address the specific device. The path for a device can be determined
-+ * through the use of 'lspci -t'.
-  *
-  * The second format matches devices using IDs in the configuration
-  * space which may match multiple devices in the system. A value of 0
-@@ -222,7 +308,7 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
- 			     const char **endptr)
- {
- 	int ret;
--	int seg, bus, slot, func, count;
-+	int count;
- 	unsigned short vendor, device, subsystem_vendor, subsystem_device;
- 
- 	if (strncmp(p, "pci:", 4) == 0) {
-@@ -248,25 +334,16 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
- 		    (!subsystem_device ||
- 			    subsystem_device == dev->subsystem_device))
- 			goto found;
--
- 	} else {
--		/* PCI Bus,Slot,Function ids are specified */
--		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
--			     &func, &count);
--		if (ret != 4) {
--			seg = 0;
--			ret = sscanf(p, "%x:%x.%x%n", &bus, &slot,
--				     &func, &count);
--			if (ret != 3)
--				return -EINVAL;
--		}
--
--		p += count;
-+		/*
-+		 * PCI Bus,Slot,Function ids are specified
-+		 *  (optionally, may include a path of devfns following it)
-+		 */
- 
--		if (seg == pci_domain_nr(dev->bus) &&
--		    bus == dev->bus->number &&
--		    slot == PCI_SLOT(dev->devfn) &&
--		    func == PCI_FUNC(dev->devfn))
-+		ret = pci_dev_str_match_path(dev, p, &p);
-+		if (ret < 0)
-+			return ret;
-+		else if (ret)
- 			goto found;
- 	}
- 
--- 
-2.11.0
+  KVM: fix KVM_CAP_HYPERV_TLBFLUSH paragraph number (2018-06-22 17:30:20 +0200)
 
+----------------------------------------------------------------
+KVM fixes for 4.18-rc2
+
+ARM:
+ - Lazy FPSIMD switching fixes
+ - Really disable compat ioctls on architectures that don't want it
+ - Disable compat on arm64 (it was never implemented...)
+ - Rely on architectural requirements for GICV on GICv3
+ - Detect bad alignments in unmap_stage2_range
+
+x86:
+ - Add nested VM entry checks to avoid broken error recovery path
+ - Minor documentation fix
+
+----------------------------------------------------------------
+Ard Biesheuvel (1):
+      KVM: arm/arm64: Drop resource size check for GICV window
+
+Dave Martin (3):
+      KVM: arm64: Don't mask softirq with IRQs disabled in vcpu_put()
+      KVM: arm64/sve: Fix SVE trap restoration for non-current tasks
+      KVM: arm64: Avoid mistaken attempts to save SVE state for vcpus
+
+Jia He (1):
+      KVM: arm/arm64: add WARN_ON if size is not PAGE_SIZE aligned in unmap_stage2_range
+
+Marc Orr (1):
+      kvm: vmx: Nested VM-entry prereqs for event inj.
+
+Marc Zyngier (2):
+      KVM: Enforce error in ioctl for compat tasks when !KVM_COMPAT
+      KVM: arm64: Prevent KVM_COMPAT from being selected
+
+Mark Rutland (1):
+      arm64: Introduce sysreg_clear_set()
+
+Radim Krčmář (1):
+      Merge tag 'kvmarm-fixes-for-4.18-1' of git://git.kernel.org/.../kvmarm/kvmarm
+
+Vitaly Kuznetsov (1):
+      KVM: fix KVM_CAP_HYPERV_TLBFLUSH paragraph number
+
+ Documentation/virtual/kvm/api.txt |  2 +-
+ arch/arm64/include/asm/kvm_host.h |  1 +
+ arch/arm64/include/asm/sysreg.h   | 11 +++++++
+ arch/arm64/kvm/fpsimd.c           | 36 +++++++++++++++------
+ arch/x86/include/asm/vmx.h        |  3 ++
+ arch/x86/kvm/vmx.c                | 67 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.h                |  9 ++++++
+ virt/kvm/Kconfig                  |  2 +-
+ virt/kvm/arm/mmu.c                |  2 ++
+ virt/kvm/arm/vgic/vgic-v3.c       |  5 ---
+ virt/kvm/kvm_main.c               | 19 ++++++-----
+ 11 files changed, 131 insertions(+), 26 deletions(-)
