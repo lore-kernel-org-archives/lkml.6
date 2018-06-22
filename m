@@ -3,75 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEF6C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F81C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD1122422C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:52:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD1122422C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 76FB62422F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:52:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76FB62422F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754278AbeFVMwU (ORCPT
+        id S1754308AbeFVMwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 08:52:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54494 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751300AbeFVMwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:52:18 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 051C3400E9BA;
-        Fri, 22 Jun 2018 12:52:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-238.rdu2.redhat.com [10.10.120.238])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E74531C707;
-        Fri, 22 Jun 2018 12:52:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180621184754.GB21326@outlook.office365.com>
-References: <20180621184754.GB21326@outlook.office365.com> <152720682792.9073.14747437198191460035.stgit@warthog.procyon.org.uk>
-To:     Andrei Vagin <avagin@virtuozzo.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [16/32] kernfs, sysfs, cgroup, intel_rdt: Support fs_context [ver #8]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <29798.1529671936.1@warthog.procyon.org.uk>
-Date:   Fri, 22 Jun 2018 13:52:16 +0100
-Message-ID: <29799.1529671936@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 22 Jun 2018 12:52:18 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 22 Jun 2018 12:52:18 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+        Fri, 22 Jun 2018 08:52:40 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:57409 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751325AbeFVMwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 08:52:38 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id CA1286301B;
+        Fri, 22 Jun 2018 12:50:16 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 6/7] arm64: allwinner: a64: add device tree node for HDMI simplefb
+Date:   Fri, 22 Jun 2018 20:45:39 +0800
+Message-Id: <20180622124540.56203-5-icenowy@aosc.io>
+In-Reply-To: <20180622124540.56203-1-icenowy@aosc.io>
+References: <20180622124540.56203-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrei Vagin <avagin@virtuozzo.com> wrote:
+As the U-Boot bootloader now is also capable of initialize the HDMI on
+A64 boards, add a simplefb device tree node for accessing the HDMI
+framebuffer initialized by the bootloader.
 
->                 ret = 0;
-> +               ctx->root = root;
->                 goto out_unlock;
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Dropped LCD SimpleFB as it's already added. LCD SimpleFB needs some
+  fix but the fix is present when adding DE2 CCU.
 
-Okay, I can see that.
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
->                 percpu_ref_reinit(&root->cgrp.self.refcnt);
->                 mutex_unlock(&cgroup_mutex);
->         }
-> +       cgroup_get(&root->cgrp);
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 318c4ba8ae9f..840753432ea5 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -68,6 +68,15 @@
+ 				 <&display_clocks CLK_MIXER0>;
+ 			status = "disabled";
+ 		};
++
++		simplefb_hdmi: framebuffer-hdmi {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer1-lcd1-hdmi";
++			clocks = <&display_clocks CLK_MIXER1>,
++				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	cpus {
+-- 
+2.17.1
 
-This probably needs to be conditional on ret == 0.
-
-Which version are you testing btw?  The patches in git have been fixed a
-little from what was last posted.
-
-David
