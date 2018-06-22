@@ -2,186 +2,98 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB2CC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF35C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E61B224624
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:55:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E61B224624
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E833024624
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E833024624
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933846AbeFVQzL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:55:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33653 "EHLO mail.bootlin.com"
+        id S933647AbeFVQ4K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:56:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:38368 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933549AbeFVQzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:55:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9E38220DCD; Fri, 22 Jun 2018 18:55:07 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4C50720734;
-        Fri, 22 Jun 2018 18:54:57 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 18:54:56 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v4 4/5] mtd: rawnand: denali_dt: add more clocks based
- on IP datasheet
-Message-ID: <20180622185456.20f84264@bbrezillon>
-In-Reply-To: <1529683598-25783-5-git-send-email-yamada.masahiro@socionext.com>
-References: <1529683598-25783-1-git-send-email-yamada.masahiro@socionext.com>
-        <1529683598-25783-5-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1754279AbeFVQ4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 12:56:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13C0E14;
+        Fri, 22 Jun 2018 09:56:08 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1E5F3F557;
+        Fri, 22 Jun 2018 09:56:06 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 17:55:59 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Hurley <peter@hurleysoftware.com>
+Subject: Re: [PATCH 1/7] atomics/tty: add missing atomic_long_t * cast
+Message-ID: <20180622165535.w3jvdzc6aykkiq5m@lakrids.cambridge.arm.com>
+References: <20180529180746.29684-1-mark.rutland@arm.com>
+ <20180529180746.29684-2-mark.rutland@arm.com>
+ <20180605120021.GH12258@hirez.programming.kicks-ass.net>
+ <20180605142051.GB12925@kroah.com>
+ <20180605144304.GW12180@hirez.programming.kicks-ass.net>
+ <20180605145334.GA12235@hirez.programming.kicks-ass.net>
+ <20180606140042.GA8865@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606140042.GA8865@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Jun 2018 01:06:37 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+Hi,
 
-> Currently, denali_dt.c requires a single anonymous clock, but
-> the Denali User's Guide requires three clocks for this IP:
+On Wed, Jun 06, 2018 at 04:00:42PM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Jun 05, 2018 at 04:53:34PM +0200, Peter Zijlstra wrote:
+> > On Tue, Jun 05, 2018 at 04:43:04PM +0200, Peter Zijlstra wrote:
+> > 
+> > > I can make a proper patch, hold on.
+> > 
+> > ---
+> > Subject: atomic/tty: Fix up atomic abuse in ldsem
+> > 
+> > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
+> > working after making the atomic_long interface type safe.
+> > 
+> > Needing casts is bad form, which made me look at the code. There are no
+> > ld_semaphore::count users outside of these functions so there is no
+> > reason why it can not be an atomic_long_t in the first place, obviating
+> > the need for this cast.
+> > 
+> > That also ensures the loads use atomic_long_read(), which implies (at
+> > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+> > 
+> > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
+> > very thin (the only difference is not changing *old on success, which
+> > most callers don't seem to care about).
+> > 
+> > So rework the whole thing to use atomic_long_t and its accessors
+> > directly.
+> > 
+> > While there, fixup all the horrible comment styles.
+> > 
+> > Cc: Peter Hurley <peter@hurleysoftware.com>
+> > Reported-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > 
->  - clk: controller core clock
-> 
->  - clk_x: bus interface clock
-> 
->  - ecc_clk: clock at which ECC circuitry is run
-> 
-> This commit supports these named clocks to represent the real hardware.
-> 
-> For the backward compatibility, the driver still accepts a single clock
-> just as before.  The clk_x_rate is taken from the clock driver again if
-> the named clock "clk_x" is available.  This will happen only for future
-> DT, hence the existing DT files are not affected.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Reviewed-by: Richard Weinberger <richard@nod.at>
-> Tested-by: Richard Weinberger <richard@nod.at>
-> ---
-> 
-> Changes in v4: None
-> Changes in v3:
->   - Change the patch order so that the bug-fix one comes the first
-> 
-> Changes in v2:
->   - Split patches into sensible chunks
-> 
->  drivers/mtd/nand/raw/denali_dt.c | 53 ++++++++++++++++++++++++++++++++++------
->  1 file changed, 45 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
-> index 6b4bd16..afaae37 100644
-> --- a/drivers/mtd/nand/raw/denali_dt.c
-> +++ b/drivers/mtd/nand/raw/denali_dt.c
-> @@ -27,7 +27,9 @@
->  
->  struct denali_dt {
->  	struct denali_nand_info	denali;
-> -	struct clk		*clk;
-> +	struct clk *clk;	/* core clock */
-> +	struct clk *clk_x;	/* bus interface clock */
-> +	struct clk *clk_ecc;	/* ECC circuit clock */
+> Looks good, I'll queue this up after 4.18-rc1 is out, thanks.
 
-Probably better to use a kernel-doc header to document those fields.
-Anyway,
+Now that v4.18-rc1 is out, I thought I'd ping so that this doesn't get
+forgotten.
 
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Have a good weekend!
 
->  };
->  
->  struct denali_dt_data {
-> @@ -115,28 +117,61 @@ static int denali_dt_probe(struct platform_device *pdev)
->  	if (IS_ERR(denali->host))
->  		return PTR_ERR(denali->host);
->  
-> -	dt->clk = devm_clk_get(dev, NULL);
-> +	/*
-> +	 * A single anonymous clock is supported for the backward compatibility.
-> +	 * New platforms should support all the named clocks.
-> +	 */
-> +	dt->clk = devm_clk_get(dev, "nand");
-> +	if (IS_ERR(dt->clk))
-> +		dt->clk = devm_clk_get(dev, NULL);
->  	if (IS_ERR(dt->clk)) {
->  		dev_err(dev, "no clk available\n");
->  		return PTR_ERR(dt->clk);
->  	}
-> +
-> +	dt->clk_x = devm_clk_get(dev, "nand_x");
-> +	if (IS_ERR(dt->clk_x))
-> +		dt->clk_x = NULL;
-> +
-> +	dt->clk_ecc = devm_clk_get(dev, "ecc");
-> +	if (IS_ERR(dt->clk_ecc))
-> +		dt->clk_ecc = NULL;
-> +
->  	ret = clk_prepare_enable(dt->clk);
->  	if (ret)
->  		return ret;
->  
-> -	/*
-> -	 * Hardcode the clock rate for the backward compatibility.
-> -	 * This works for both SOCFPGA and UniPhier.
-> -	 */
-> -	denali->clk_x_rate = 200000000;
-> +	ret = clk_prepare_enable(dt->clk_x);
-> +	if (ret)
-> +		goto out_disable_clk;
-> +
-> +	ret = clk_prepare_enable(dt->clk_ecc);
-> +	if (ret)
-> +		goto out_disable_clk_x;
-> +
-> +	if (dt->clk_x) {
-> +		denali->clk_x_rate = clk_get_rate(dt->clk_x);
-> +	} else {
-> +		/*
-> +		 * Hardcode the clock rates for the backward compatibility.
-> +		 * This works for both SOCFPGA and UniPhier.
-> +		 */
-> +		dev_notice(dev,
-> +			   "necessary clock is missing. default clock rates are used.\n");
-> +		denali->clk_x_rate = 200000000;
-> +	}
->  
->  	ret = denali_init(denali);
->  	if (ret)
-> -		goto out_disable_clk;
-> +		goto out_disable_clk_ecc;
->  
->  	platform_set_drvdata(pdev, dt);
->  	return 0;
->  
-> +out_disable_clk_ecc:
-> +	clk_disable_unprepare(dt->clk_ecc);
-> +out_disable_clk_x:
-> +	clk_disable_unprepare(dt->clk_x);
->  out_disable_clk:
->  	clk_disable_unprepare(dt->clk);
->  
-> @@ -148,6 +183,8 @@ static int denali_dt_remove(struct platform_device *pdev)
->  	struct denali_dt *dt = platform_get_drvdata(pdev);
->  
->  	denali_remove(&dt->denali);
-> +	clk_disable_unprepare(dt->clk_ecc);
-> +	clk_disable_unprepare(dt->clk_x);
->  	clk_disable_unprepare(dt->clk);
->  
->  	return 0;
-
+Mark.
