@@ -2,124 +2,138 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C04C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 283D8C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD9E72437F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:18:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD9E72437F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id D157024386
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:19:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbbC6z9m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D157024386
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753147AbeFVOSP (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:18:15 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:33413 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751209AbeFVOSN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:18:13 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MGzR4-1fSZWt32Pq-00Dr03; Fri, 22 Jun 2018 16:18:09 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Vyacheslav Dubeyko <slava@dubeyko.com>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        stable@vger.kernel.org,
-        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hfs/hfsplus: use documented official timestamp range
-Date:   Fri, 22 Jun 2018 16:17:32 +0200
-Message-Id: <20180622141758.229589-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:m71kq+EW7DCpNDD22ji8Kqt9orK+JiyKhpCE+8SPMyFxJCwNhtO
- XGlDAxZ2g9m5wMBAHo7yxLLoqNRdtzNfP87y6PqbMfT2CTNFAZUwGwvDK5CzRSgp/0zmjVD
- Xk9i8aCJVh7o0SlPwcTBrbpaDW9q9Kb7j24wITXhjnDVmRZeLjTkyDi7TAKmkRU842S+Q/8
- mVnZSGTnW3wE5fUqHcwgw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7YFBCuhiy4Q=:BpLikdIRBd+BwrIczIWg6x
- 7ABwItAuIJytvfIH6Y4RS7cxCOjwHkIqdoDCR5GyRczdtMbpzNePVGnN9pubSpom8JsEH44Up
- mGOpG2wWvD9FQsmJNIw1h85W9Ho6OcCjgzuFGYHNJxYAHAQUBHcK1T+BgEcHQWnr+7wDuCXVh
- eNwt/tg/42Z7HurL2ZnEqq058P2GFG4xOvV1HTKFxQh8HD2C4m/2DrQABlczoz73pg5p9aKBg
- KVRLNzwkzrYNMpxgDTe3h+RSLxDHuZTeInstc26zXDwyW40mzrthK3zwkuLhNv/SLujFrDbVM
- M8fscONocTqOT2EvePmIAsImbnutNzyGQ4qtt3YFfXP4AG0Qd/WVtkYIRwvEZo6SUdV/mnFYq
- 61SeFIQiz/ulZKxnt8sqzTVArv2vXE94HGnjC6T06SgRorsockfff5LnmYotULMi0G08aCaIo
- EYo1+kdX6mqGP5W1OGCGEoJmu6tUsJsjv/B6GPbrZvkze2HqF/vBrLceztpfb+SIr41SisfIz
- kc1ub3euYNr5RuC+W4M4VTTQkx0sOjyLObE3ZrLso8Yj9BfjPAho0FlkZsAbf3s0Sm29Q+VOz
- ryYev+DRsn43j0oqMZwmaEAt1VEBLhqAo9EXc4mLsaeJ85+ioUY/azC+8eEFhdMWmsQxTHSWR
- JMz4wTqlZpw0MgaJBxUshn7o3VpENC0Nviu/6HmjU+aaiMgm3Uy7FBqmUgomBD5BOAy8=
+        id S933189AbeFVOT2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:19:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35464 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752027AbeFVOT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:19:27 -0400
+Received: from mail-wr0-f171.google.com (mail-wr0-f171.google.com [209.85.128.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB2132438B
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 14:19:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529677167;
+        bh=XGU5MKu0RuEQpnWkuo0edRwUFsjyq9kfc6UNh/QSO7Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=kbbC6z9m1VR7y+Fvv60xhnTusCI83Ua3YowTCf0zRSue0Lu9V7W9GgBAwNJX/SLhG
+         Kzp0c98QQPUZvlhF2RJ1gWfZNBzhsFu3lbaqXJ/eWmXNmyxj5hvhW6ow9/FbT+KsIs
+         /BWUJROjK6YoXAp1TVegY3VeJiyMhReUbV97L7KQ=
+Received: by mail-wr0-f171.google.com with SMTP id l14-v6so1818860wrq.13
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 07:19:26 -0700 (PDT)
+X-Gm-Message-State: APt69E2wPPAQCK9Nc2z8exibTNeCrij9Gnr3qvWTnQOgRzwN2/TvLdVt
+        mJbL3fGjyQpHSOtDWpjVuuZnfRgMEwGQsL0A3Pr9Ew==
+X-Google-Smtp-Source: ADUXVKJuhQ6RbK2OBUwOjB0CaE3qWn6AigrCg26GwJ/v3nypnCAThnV0umqntW4CjYvcy53G1Fa84wKH024w2fP98NM=
+X-Received: by 2002:adf:85ec:: with SMTP id 41-v6mr1798202wru.120.1529677165422;
+ Fri, 22 Jun 2018 07:19:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
+ <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
+ <20180620145814.GQ3593@linux.vnet.ibm.com> <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
+ <20180620164902.GW3593@linux.vnet.ibm.com> <20180622055659.GA255098@joelaf.mtv.corp.google.com>
+ <20180622132843.GN3593@linux.vnet.ibm.com>
+In-Reply-To: <20180622132843.GN3593@linux.vnet.ibm.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 22 Jun 2018 07:19:13 -0700
+X-Gmail-Original-Message-ID: <CALCETrXgubD2BBx9Xe2PALbStgPYc=_GTNkoH03469rpN5JwZw@mail.gmail.com>
+Message-ID: <CALCETrXgubD2BBx9Xe2PALbStgPYc=_GTNkoH03469rpN5JwZw@mail.gmail.com>
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct rcu_dynticks
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     joel@joelfernandes.org, max.byungchul.park@gmail.com,
+        Byungchul Park <byungchul.park@lge.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com,
+        Andrew Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the official documentation for HFS+ [1], inode timestamps
-are supposed to cover the time range from 1904 to 2040 as originally
-used in classic MacOS.
+On Fri, Jun 22, 2018 at 6:26 AM Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+>
+> On Thu, Jun 21, 2018 at 10:56:59PM -0700, Joel Fernandes wrote:
+> > Hi Paul,
+> >
+> > On Wed, Jun 20, 2018 at 09:49:02AM -0700, Paul E. McKenney wrote:
+> > > On Thu, Jun 21, 2018 at 01:05:22AM +0900, Byungchul Park wrote:
+> > > > On Wed, Jun 20, 2018 at 11:58 PM, Paul E. McKenney
+> > > > <paulmck@linux.vnet.ibm.com> wrote:
+> > > > > On Wed, Jun 20, 2018 at 05:47:20PM +0900, Byungchul Park wrote:
+> > > > >> Hello folks,
+> > > > >>
+> > > > >> I'm careful in saying that ->dynticks_nmi_nesting can be removed but I
+> > > > >> think it's possible since the only thing we are interested in with
+> > > > >> regard to ->dynticks_nesting or ->dynticks_nmi_nesting is whether rcu is
+> > > > >> idle or not.
+> > > > >
+> > > > > Please keep in mind that NMIs cannot be masked, which means that the
+> > > > > rcu_nmi_enter() and rcu_nmi_exit() pair can be invoked at any point in
+> > > > > the process, between any consecutive pair of instructions.  The saving
+> > >
+> > > And yes, I should have looked at this patch more closely before replying.
+> > > But please see below.
+> > >
+> > > > I believe I understand what NMI is and why you introduced
+> > > > ->dynticks_nmi_nesting. Or am I missing something?
+> > >
+> > > Perhaps the fact that there are architectures that can enter interrupt
+> > > handlers and never leave them when the CPU is non-idle.  One example of
+> > > this is the usermode upcalls in the comment that you removed.
+> >
+> > I spent some time tonight and last night trying to understand this concept of
+> > never leaving an interrupt, I hope you don't mind me asking this dumb
+> > question... perhaps I will learn something : Could you let me know how is it
+> > possible that an interrupt never exits?
+> >
+> > Typically an interrupt never exiting sounds like a hard-lockup. This is how
+> > hardlock detector works: Since regular interrupts in linux can't nest, the
+> > hardlockup detector checks if hrtimer interrupts are being handled and if
+> > not, then it throws a splat, panics the kernel etc. So I am a bit troubled by
+> > this interrupt never exiting concept..
+> >
+> > Further since an interrupt is an atomic context, it cannot sleep or schedule
+> > into usermode so how are these upcalls handled from the interrupt?
+>
+> It has been some years since I traced the code flow, but what happened
+> back then is that it switches itself from an interrupt handler to not
+> without actually returning from the interrupt.  This can only happen when
+> interrupting a non-idle process, thankfully, and RCU's dyntick-idle code
+> relies on this restriction.  If I remember correctly, the code ends up
+> executing in the context of the interrupted process, but it has been some
+> years, so please apply appropriate skepticism.
 
-The traditional Linux usage is to convert the timestamps into an unsigned
-32-bit number based on the Unix epoch and from there to a time_t. On
-32-bit systems, that wraps the time from 2038 to 1902, so the last
-two years of the valid time range become garbled. On 64-bit systems,
-all times before 1970 get turned into timestamps between 2038 and 2106,
-which is more convenient but also different from the documented behavior.
+...
 
-The same behavior is used in Darwin and presumaby all versions of MacOS X,
-as seen in the to_hfs_time() function in [2]. It is unclear whether this
-is a bug in the file system code, or intentional but undocumented behavior.
+>
+> I have never seen NMIs be unpaired or improperly nested.  However,
+> given that rcu_irq_enter() invokes rcu_nmi_enter() and rcu_irq_exit()
+> invokes rcu_nmi_exit(), it is definitely the case that rcu_nmi_enter()
+> and rcu_nmi_exit() need to deal with unpaired and improperly nested
+> invocations.
 
-This changes Linux over to the traditional MacOS (pre MacOS X)
-behavior. This means all files that are created on MacOS X or Linux
-with future timestamps between 2040 and 2106 will now show up as past
-dates. Timestamps between 2038 and 2040 will still be represented
-incorrectly on 32-bit architectures as times between 1902 and 1904,
-but that will be fixed once we have user space with 64-bit time_t.
-
-Cc: stable@vger.kernel.org
-Link: [1] https://developer.apple.com/library/archive/technotes/tn/tn1150.html
-Link: [2] https://opensource.apple.com/source/xnu/xnu-344/bsd/hfs/MacOSStubs.c
-Suggested-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Note: This is the patch that Viacheslav asked for, but given how
-MacOS X behaves, I'm increasingly thinking this is a bad idea.
----
- fs/hfs/hfs_fs.h         | 2 +-
- fs/hfsplus/hfsplus_fs.h | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-index 6d0783e2e276..39c1f3a43ed8 100644
---- a/fs/hfs/hfs_fs.h
-+++ b/fs/hfs/hfs_fs.h
-@@ -247,7 +247,7 @@ extern void hfs_mark_mdb_dirty(struct super_block *sb);
-  *
-  */
- #define __hfs_u_to_mtime(sec)	cpu_to_be32(sec + 2082844800U - sys_tz.tz_minuteswest * 60)
--#define __hfs_m_to_utime(sec)	(be32_to_cpu(sec) - 2082844800U  + sys_tz.tz_minuteswest * 60)
-+#define __hfs_m_to_utime(sec)	((time64_t)be32_to_cpu(sec) - 2082844800U  + sys_tz.tz_minuteswest * 60)
- 
- #define HFS_I(inode)	(container_of(inode, struct hfs_inode_info, vfs_inode))
- #define HFS_SB(sb)	((struct hfs_sb_info *)(sb)->s_fs_info)
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index d9255abafb81..57838ef4dcdc 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -530,8 +530,9 @@ int hfsplus_submit_bio(struct super_block *sb, sector_t sector, void *buf,
- 		       void **data, int op, int op_flags);
- int hfsplus_read_wrapper(struct super_block *sb);
- 
--/* time macros */
--#define __hfsp_mt2ut(t)		(be32_to_cpu(t) - 2082844800U)
-+/* time macros: convert between 1904-2040 and 1970-2106 range,
-+ * pre-1970 timestamps are interpreted as post-2038 times after wrap-around */
-+#define __hfsp_mt2ut(t)		((time64_t)be32_to_cpu(t) - 2082844800U)
- #define __hfsp_ut2mt(t)		(cpu_to_be32(t + 2082844800U))
- 
- /* compatibility */
--- 
-2.9.0
-
+This is very strange.  There are certainly cases in x86 where an
+interrupt-ish code path can become less interrupt-ish without
+returning (killing a task that overflows a kernel stack is an
+example), but the RCU calls should still nest correctly.  Do you know
+the history of this requirement?
