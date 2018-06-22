@@ -2,192 +2,134 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_REDIR autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90B2C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C6FC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 666FE247B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:11:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666FE247B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id E8282247B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:12:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="HQpCVlAV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8282247B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=posteo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934079AbeFVTLj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:11:39 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:36426 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1753275AbeFVTLi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:11:38 -0400
-Received: (qmail 5008 invoked by uid 2102); 22 Jun 2018 15:11:37 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 22 Jun 2018 15:11:37 -0400
-Date:   Fri, 22 Jun 2018 15:11:37 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Will Deacon <will.deacon@arm.com>
-cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by release-acquire
- and by locks
-In-Reply-To: <20180622183007.GD1802@arm.com>
-Message-ID: <Pine.LNX.4.44L0.1806221458480.1454-100000@iolanthe.rowland.org>
+        id S934410AbeFVTMC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:12:02 -0400
+Received: from mout01.posteo.de ([185.67.36.65]:38462 "EHLO mout01.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934368AbeFVTMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 15:12:01 -0400
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id 673A220FCF
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 21:11:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1529694719; bh=KtxregzzKBkOWKp8WAZbpARV/DbWhOkGpSPmb6+VfXM=;
+        h=Subject:To:Cc:From:Date:From;
+        b=HQpCVlAV6ylDxsIN7mDW6e70+ZZV9i0kZWp9ryzI4GvoP6pDcpzCrB2QGt4HzYOI4
+         Oq5c+EGCkdHQS6MBSsbMv4ME/m9trhTxkmGCaBAsUkEnbFSM+6a0rvTEGpmjGUryts
+         yLaGoruYbolGtK38w06TEQxtHaEkn2lRGF5i085qV8SWA+XX2nGsPy5M/dHJbOieO6
+         eMUCIP/SIOJlnrcbUrkLu1+5DWHFR2QHASUHQUWy1V/N/yz1QO9RdqA2ve3agyj5M3
+         ZkEMN8lqMlS7f9qYhuM3lyEUaWOzCq7F9lqVq2Q255v3xPknT++z+ZhQLI6POiBbxq
+         AfMs+PRFHq7Eg==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 41C7V55VJ4z9rxL;
+        Fri, 22 Jun 2018 21:11:57 +0200 (CEST)
+Subject: Re: [PATCH] staging: rtl8723bs: do not use assignment in if condition
+To:     Joe Perches <joe@perches.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+References: <20180621182230.27823-1-michael.straube@posteo.de>
+ <20180622104007.ob5nt2rip2fu436h@mwanda>
+ <d6f21cd91d4e6482b5c5d125607ed75c25e9c7a0.camel@perches.com>
+ <20180622105719.pt3lh6fqi2nziqsz@mwanda>
+ <28dd699b-3013-c42c-07d5-1117d7ab3622@posteo.de>
+ <36a7227189b8c7602dd9ffd21a5369b7029e61f1.camel@perches.com>
+From:   Michael Straube <michael.straube@posteo.de>
+Message-ID: <2c2a0f79-7970-8c55-6119-189114b279e3@posteo.de>
+Date:   Fri, 22 Jun 2018 21:11:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <36a7227189b8c7602dd9ffd21a5369b7029e61f1.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Jun 2018, Will Deacon wrote:
+On 06/22/18 19:28, Joe Perches wrote:
+> On Fri, 2018-06-22 at 14:48 +0200, Michael Straube wrote:
+>> On 06/22/18 12:57, Dan Carpenter wrote:
+>>> On Fri, Jun 22, 2018 at 03:54:22AM -0700, Joe Perches wrote:
+>>>> On Fri, 2018-06-22 at 13:40 +0300, Dan Carpenter wrote:
+>>>>> On Thu, Jun 21, 2018 at 08:22:30PM +0200, Michael Straube wrote:
+>>>>>> Fix checkpatch error 'do not use assignment in if condition'.
+>>>> []
+>>>>>> diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+>>>>>> index e55895632921..87a4ced41028 100644
+>>>>>> --- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+>>>>>> +++ b/
+>>>>>> @@ -1181,9 +1181,8 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
+>>>>>>    	     (mac[3] == 0xff) && (mac[4] == 0xff) && (mac[5] == 0xff)) ||
+>>>>>>    	    ((mac[0] == 0x00) && (mac[1] == 0x00) && (mac[2] == 0x00) &&
+>>>>>>    	     (mac[3] == 0x00) && (mac[4] == 0x00) && (mac[5] == 0x00))) {
+>>>>
+>>>> Should also use is_broadcast_ether_addr and is_zero_ether_addr
+>>>>
+>>>>>> -		if (np &&
+>>>>>> -		    (addr = of_get_property(np, "local-mac-address", &len)) &&
+>>>>>> -		    len == ETH_ALEN) {
+>>>>>> +		addr = of_get_property(np, "local-mac-address", &len);
+>>>>>> +		if (np && addr && len == ETH_ALEN) {
+>>>>>
+>>>>> You can remove the "np" check.
+>>>>>
+>>>>> 		if (addr && len == ETH_ALEN) {
+>>>>
+>>>> It looks more like the rewrite is incorrect
+>>>> as np is tested before of_get_property
+>>>>
+>>>
+>>> That's what I was worried about too, but if "np" is NULL then
+>>> of_get_property() just returns NULL so it's fine.
+>>
+>> So it should be this?
+>>
+>>           if (((mac[0] == 0xff) && (mac[1] == 0xff) && (mac[2] == 0xff) &&
+>>                (mac[3] == 0xff) && (mac[4] == 0xff) && (mac[5] == 0xff)) ||
+>>               ((mac[0] == 0x00) && (mac[1] == 0x00) && (mac[2] == 0x00) &&
+>>                (mac[3] == 0x00) && (mac[4] == 0x00) && (mac[5] == 0x00)) &&
+>>               (is_broadcast_ether_addr(mac) || is_zero_ether_addr(mac))) {
+> 
+> No as the mac[] tests are the same as is_<foo>_ether_addr
 
-> Hi Alan,
-> 
-> On Fri, Jun 22, 2018 at 02:09:04PM -0400, Alan Stern wrote:
-> > On Fri, 22 Jun 2018, Will Deacon wrote:
-> > > On Thu, Jun 21, 2018 at 01:27:12PM -0400, Alan Stern wrote:
-> > > > More than one kernel developer has expressed the opinion that the LKMM
-> > > > should enforce ordering of writes by release-acquire chains and by
-> > > > locking.  In other words, given the following code:
-> > > > 
-> > > > 	WRITE_ONCE(x, 1);
-> > > > 	spin_unlock(&s):
-> > > > 	spin_lock(&s);
-> > > > 	WRITE_ONCE(y, 1);
-> > > > 
-> > > > or the following:
-> > > > 
-> > > > 	smp_store_release(&x, 1);
-> > > > 	r1 = smp_load_acquire(&x);	// r1 = 1
-> > > > 	WRITE_ONCE(y, 1);
-> > > > 
-> > > > the stores to x and y should be propagated in order to all other CPUs,
-> > > > even though those other CPUs might not access the lock s or be part of
-> > > > the release-acquire chain.  In terms of the memory model, this means
-> > > > that rel-rf-acq-po should be part of the cumul-fence relation.
-> > > > 
-> > > > All the architectures supported by the Linux kernel (including RISC-V)
-> > > > do behave this way, albeit for varying reasons.  Therefore this patch
-> > > > changes the model in accordance with the developers' wishes.
-> > > 
-> > > Interesting...
-> > > 
-> > > I think the second example would preclude us using LDAPR for load-acquire,
-> > 
-> > What are the semantics of LDAPR?  That instruction isn't included in my
-> > year-old copy of the ARMv8.1 manual; the closest it comes is LDAR and
-> > LDAXP.
-> 
-> It's part of 8.3 and is documented in the latest Arm Arm:
-> 
-> https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf
-> 
-> It's also included in the upstream armv8.cat file using the 'Q' set.
+Ok, I understand now.
 
-I'll have to look at that.
+> and there's nothing really objectionable about embedding
+> the assignment in the if here.
+> 
+> Output from checkpatch is not gospel and can be ignored
+> whenever appropriate.
 
-> > > so I'm surprised that RISC-V is ok with this. For example, the first test
-> > > below is allowed on arm64.
-> > 
-> > Does ARMv8 use LDAPR for smp_load_aquire()?  If it doesn't, this is a 
-> > moot point.
-> 
-> I don't think it's a moot point. We want new architectures to implement
-> acquire/release efficiently, and it's not unlikely that they will have
-> acquire loads that are similar in semantics to LDAPR. This patch prevents
-> them from doing so, and it also breaks Power and RISC-V without any clear
-> justification for the stronger semantics.
-> 
-> > > I also think this would break if we used DMB LD to implement load-acquire
-> > > (second test below).
-> > 
-> > Same question.
-> 
-> Same answer (and RISC-V is a concrete example of an architecture building
-> acquire using a load->load+store fence).
-> 
-> > > So I'm not a big fan of this change, and I'm surprised this works on all
-> > > architectures. What's the justification?
-> > 
-> > For ARMv8, I've been going by something you wrote in an earlier email
-> > to the effect that store-release and load-acquire are fully ordered,
-> > and therefore a release can never be forwarded to an acquire.  Is that
-> > still true?  But evidently it only justifies patch 1 in this series,
-> > not patch 2.
-> 
-> LDAR and STLR are RCsc, so that remains true. arm64 is not broken by this
-> patch, but I'm still objecting to the change in semantics.
-> 
-> > For RISC-V, I've been going by Andrea's and Luc's comments.
-> 
-> https://is.gd/WhV1xz
-> 
-> From that state of rmem, you can propagate the writes out of order on
-> RISC-V.
-> 
-> > > > Reading back some of the old threads [1], it seems the direct
-> > > > translation of the first into acquire-release would be:
-> > > >
-> > > >     WRITE_ONCE(x, 1);
-> > > >     smp_store_release(&s, 1);
-> > > >     r1 = smp_load_acquire(&s);
-> > > >     WRITE_ONCE(y, 1);
-> > > >
-> > > > Which is I think easier to make happen than the second example you give.
-> > > 
-> > > It's easier, but it will still break on architectures with native support
-> > > for RCpc acquire/release.
-> > 
-> > Again, do we want the kernel to support that?
-> 
-> Yes, I think we do. That's the most common interpretation of
-> acquire/release, it matches what C11 has done and it facilitates
-> construction of acquire using a load->load+store fence.
-> 
-> > For that matter, what would happen if someone were to try using RCpc 
-> > semantics for lock/unlock?  Or to put it another way, why do you 
-> > contemplate the possibility of RCpc acquire/release but not RCpc 
-> > lock/unlock?
-> 
-> I think lock/unlock is a higher-level abstraction than acquire/release
-> and therefore should be simpler to use and easier to reason about.
-> acquire/release are building blocks for more complicated synchronisation
-> mechanisms and we shouldn't be penalising their implementation without good
-> reason.
-> 
-> > > Could we drop the acquire/release stuff from the patch and limit this change
-> > > to locking instead?
-> > 
-> > The LKMM uses the same CAT code for acquire/release and lock/unlock.  
-> > (In essence, it considers a lock to be an acquire and an unlock to be a
-> > release; everything else follows from that.)  Treating one differently
-> > from the other in these tests would require some significant changes.
-> > It wouldn't be easy.
-> 
-> It would be boring if it was easy ;) I think this is a case of the tail
-> wagging the dog.
-> 
-> Paul -- please can you drop this patch until we've resolved this discussion?
+Ok, good to know.
 
-Agreed.  It sounds like we'll need two versions of the Rel and Acq sets
-in the memory model; one for RCpc and one for RCsc.  smp_load_acquire
-and smp_store_release will use the former, and locking will use the
-latter.
+> 		memcpy(mac_addr, ""\x00\xe0\x4c\x87\x00\x00", ETH_ALEN);
+> 
+> Although the last memcpy of a fixed mac address could
+> probably use eth_random_addr to reduce the likelihood
+> of mac address collision so maybe
+> 
+> 		eth_random_addr(mac_addr);
+  
+Using a random address would be preffered?
 
-Would it suffice to have this duplication just for release, using a
-single version of acquire?  What would happen on ARMv8 or RISC-V if an
-RCsc release was read by an RCpc acquire?  Or vice versa?
 
-Alan
-
+Thanks for your help and patience.
+Michael
