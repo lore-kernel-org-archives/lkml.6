@@ -3,29 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DBBC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3A9C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57A324959
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57A324959
+	by mail.kernel.org (Postfix) with ESMTP id C3C682495A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:33:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C682495A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933573AbeFVWcR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:32:17 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:48424 "EHLO vps-vb.mhejs.net"
+        id S933883AbeFVWd2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 18:33:28 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:50348 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754184AbeFVWcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 18:32:16 -0400
+        id S1754530AbeFVWd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 18:33:27 -0400
 Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.90_1)
         (envelope-from <mail@maciej.szmigiero.name>)
-        id 1fWUbE-000650-Ni; Sat, 23 Jun 2018 00:32:12 +0200
-Subject: [PATCH 1/2] x86/microcode/AMD: Integrate verify_patch_size() into
- verify_patch()
+        id 1fWUcO-00065I-Ul; Sat, 23 Jun 2018 00:33:24 +0200
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: [PATCH 2/2] x86/microcode/AMD: Check patch size for all known CPU
+ families
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -34,7 +36,6 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
 References: <cover.1529424596.git.mail@maciej.szmigiero.name>
  <39d0efb50538e4a1a06da693559bb13b060ad676.1529424596.git.mail@maciej.szmigiero.name>
  <20180621083649.GC12742@zn.tnic>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
 Openpgp: preference=signencrypt
 Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
  xsFNBFpGusUBEADXUMM2t7y9sHhI79+2QUnDdpauIBjZDukPZArwD+sDlx5P+jxaZ13XjUQc
@@ -77,8 +78,8 @@ Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
  afYHkuEjMo0Xps3o3uvKg7coooH521nNsv4ci+KeBq3mgMCRAy0g/Ef+Ql7mt900RCBHu4tk
  tOhPc3J1ep/e2WAJ4ngUqJhilzyCJnzVJ4cT79VK/uPtlfUCZdUz+jTC88TmP1p5wlucS31k
  Thy/CV4cqDFB8yzEujTSiRzd7neG3sH0vcxBd69uvSxLZPLGID840k0v5sftPA==
-Message-ID: <c6df0de8-c6a0-bd6e-d312-7ba97aa3c984@maciej.szmigiero.name>
-Date:   Sat, 23 Jun 2018 00:32:12 +0200
+Message-ID: <a2275167-f650-b73f-0de8-1aa78b3281ed@maciej.szmigiero.name>
+Date:   Sat, 23 Jun 2018 00:33:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
@@ -91,151 +92,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Integrating verify_patch_size() into verify_patch() will allows us to
-introduce in the next commit a check whether the indicated patch size makes
-sense for its indicated CPU family - for all CPU families known to the
-driver.
+Previously, the AMD microcode update driver has only checked the indicated
+microcode patch size for patches for the currently running CPU family.
+Patches for other families had their size trusted without further
+verification.
+
+Introduce such check for all CPU families known to the driver so if we spot
+a patch that is longer than expected for its family we'll carefully skip
+over only the expected length to make sure we don't miss good patches in
+case the indicated patch size was something nonsensically huge.
 
 Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 ---
-This is part 1/2 of a replacement for
+This is part 2/2 of a replacement for
 "[PATCH v7 3/9] x86/microcode/AMD: Integrate verify_patch_size() into verify_patch()".
 
- arch/x86/kernel/cpu/microcode/amd.c | 82 ++++++++++-------------------
- 1 file changed, 29 insertions(+), 53 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 67 ++++++++++++++++-------------
+ 1 file changed, 37 insertions(+), 30 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 120778771909..53820b92aabb 100644
+index 53820b92aabb..04a298da4c21 100644
 --- a/arch/x86/kernel/cpu/microcode/amd.c
 +++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -176,9 +176,6 @@ static bool verify_patch_section(const u8 *buf, size_t buf_size, bool early)
- 	return true;
- }
+@@ -201,43 +201,31 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
+ 	hdr = (const u32 *)buf;
+ 	patch_size = hdr[1];
  
--static unsigned int verify_patch_size(u8 family, u32 patch_size,
--				      unsigned int size);
--
- /*
-  * Check whether there is a valid, non-truncated microcode patch of the
-  * right size for a particular family @family at the beginning of a passed
-@@ -192,7 +189,7 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
- 			 unsigned int *crnt_size, bool early)
- {
- 	const u32 *hdr;
--	u32 patch_size;
-+	u32 patch_size, max_size;
- 	const struct microcode_header_amd *mc_hdr;
- 	u8 patch_fam;
- 
-@@ -234,12 +231,36 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
- 	if (family != patch_fam)
- 		return false;
- 
-+#define F1XH_MPB_MAX_SIZE 2048
-+#define F14H_MPB_MAX_SIZE 1824
-+#define F15H_MPB_MAX_SIZE 4096
-+#define F16H_MPB_MAX_SIZE 3458
-+#define F17H_MPB_MAX_SIZE 3200
-+
-+	switch (family) {
-+	case 0x14:
-+		max_size = F14H_MPB_MAX_SIZE;
-+		break;
-+	case 0x15:
-+		max_size = F15H_MPB_MAX_SIZE;
-+		break;
-+	case 0x16:
-+		max_size = F16H_MPB_MAX_SIZE;
-+		break;
-+	case 0x17:
-+		max_size = F17H_MPB_MAX_SIZE;
-+		break;
-+	default:
-+		max_size = F1XH_MPB_MAX_SIZE;
-+		break;
-+	}
-+
- 	/*
- 	 * The section header length is not included in this indicated size
- 	 * but is present in the leftover file length so we need to subtract
--	 * it before passing this value to the function below.
-+	 * it from the leftover file length.
- 	 */
--	if (!verify_patch_size(family, patch_size, buf_size - SECTION_HDR_SIZE)) {
-+	if (patch_size > min_t(u32, buf_size - SECTION_HDR_SIZE, max_size)) {
+-	if (buf_size - SECTION_HDR_SIZE < patch_size) {
++	if (buf_size - SECTION_HDR_SIZE < sizeof(*mc_hdr)) {
  		if (!early)
- 			pr_err("Patch of size %u too large.\n", patch_size);
+-			pr_err("Patch of size %u truncated.\n", patch_size);
++			pr_err("Truncated patch header.\n");
  
-@@ -637,45 +658,6 @@ static int collect_cpu_info_amd(int cpu, struct cpu_signature *csig)
- 	return 0;
- }
+ 		*crnt_size = buf_size;
+ 		return false;
+ 	}
  
--/*
-- * Check whether the passed remaining file @size is large enough to contain a
-- * patch of the indicated @patch_size (and also whether this size does not
-- * exceed the per-family maximum).
-- */
--static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int size)
--{
--	u32 max_size;
+-	/*
+-	 * Set a patch length limit of slightly less than U32_MAX to
+-	 * prevent overflowing 32-bit variables holding the whole
+-	 * patch section size.
+-	 */
+-	if (patch_size > U32_MAX - SECTION_HDR_SIZE) {
+-		if (!early)
+-			pr_err("Patch of size %u too large.\n", patch_size);
 -
--#define F1XH_MPB_MAX_SIZE 2048
--#define F14H_MPB_MAX_SIZE 1824
--#define F15H_MPB_MAX_SIZE 4096
--#define F16H_MPB_MAX_SIZE 3458
--#define F17H_MPB_MAX_SIZE 3200
--
--	switch (family) {
--	case 0x14:
--		max_size = F14H_MPB_MAX_SIZE;
--		break;
--	case 0x15:
--		max_size = F15H_MPB_MAX_SIZE;
--		break;
--	case 0x16:
--		max_size = F16H_MPB_MAX_SIZE;
--		break;
--	case 0x17:
--		max_size = F17H_MPB_MAX_SIZE;
--		break;
--	default:
--		max_size = F1XH_MPB_MAX_SIZE;
--		break;
+-		*crnt_size = SECTION_HDR_SIZE + PATCH_MAX_SIZE;
+-		return false;
 -	}
 -
--	if (patch_size > min_t(u32, size, max_size))
--		return 0;
+-	*crnt_size = SECTION_HDR_SIZE + patch_size;
 -
--	return patch_size;
--}
--
- static enum ucode_state apply_microcode_amd(int cpu)
- {
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
-@@ -765,7 +747,7 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
- {
- 	struct microcode_header_amd *mc_hdr;
- 	struct ucode_patch *patch;
--	unsigned int patch_size, crnt_size, ret;
-+	unsigned int patch_size, crnt_size;
- 	u32 proc_fam;
- 	u16 proc_id;
+ 	mc_hdr = (const struct microcode_header_amd *)(buf + SECTION_HDR_SIZE);
+ 	patch_fam = 0xf + (mc_hdr->processor_rev_id >> 12);
  
-@@ -791,13 +773,7 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
- 		return crnt_size;
+-	/* Is the patch for the proper CPU family? */
+-	if (family != patch_fam)
+-		return false;
+-
++	/*
++	 * Check whether patch_size isn't something nonsensically huge so
++	 * we don't skip over good patches by mistake.
++	 */
+ #define F1XH_MPB_MAX_SIZE 2048
+ #define F14H_MPB_MAX_SIZE 1824
+ #define F15H_MPB_MAX_SIZE 4096
+ #define F16H_MPB_MAX_SIZE 3458
+ #define F17H_MPB_MAX_SIZE 3200
+ 
+-	switch (family) {
++	switch (patch_fam) {
++	case 0x10 ... 0x13:
++		max_size = F1XH_MPB_MAX_SIZE;
++		break;
+ 	case 0x14:
+ 		max_size = F14H_MPB_MAX_SIZE;
+ 		break;
+@@ -251,22 +239,41 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
+ 		max_size = F17H_MPB_MAX_SIZE;
+ 		break;
+ 	default:
+-		max_size = F1XH_MPB_MAX_SIZE;
++		/*
++		 * Don't know the max size for future families...
++		 * Set a patch length limit of slightly less than U32_MAX to
++		 * prevent overflowing 32-bit variables holding the whole
++		 * patch section size.
++		 */
++		max_size = U32_MAX - SECTION_HDR_SIZE;
+ 		break;
  	}
  
 -	/*
 -	 * The section header length is not included in this indicated size
 -	 * but is present in the leftover file length so we need to subtract
--	 * it before passing this value to the function below.
+-	 * it from the leftover file length.
 -	 */
--	ret = verify_patch_size(family, patch_size, leftover - SECTION_HDR_SIZE);
--	if (!ret) {
-+	if (!verify_patch(family, fw, leftover, &crnt_size, false)) {
- 		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
- 		return crnt_size;
+-	if (patch_size > min_t(u32, buf_size - SECTION_HDR_SIZE, max_size)) {
++	if (patch_size > max_size) {
++		if (!early)
++			pr_err("Patch of size %u exceeds family %u maximum.\n",
++			       patch_size, (unsigned int)patch_fam);
++
++		*crnt_size = min_t(unsigned int,
++				   SECTION_HDR_SIZE + max_size,
++				   buf_size);
++		return false;
++	}
++
++	if (buf_size - SECTION_HDR_SIZE < patch_size) {
+ 		if (!early)
+-			pr_err("Patch of size %u too large.\n", patch_size);
++			pr_err("Patch of size %u truncated.\n", patch_size);
+ 
++		*crnt_size = buf_size;
+ 		return false;
  	}
+ 
++	*crnt_size = SECTION_HDR_SIZE + patch_size;
++
++	/* Is the patch for the proper CPU family? */
++	if (family != patch_fam)
++		return false;
++
+ 	return true;
+ }
+ 
 -- 
 2.17.0
 
