@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2B9C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F18C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A51240DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:03:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A51240DE
+	by mail.kernel.org (Postfix) with ESMTP id 6441D240DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6441D240DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754505AbeFVLD5 (ORCPT
+        id S1754524AbeFVLEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 07:03:57 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:42898 "EHLO
+        Fri, 22 Jun 2018 07:04:23 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:42896 "EHLO
         xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754178AbeFVLDz (ORCPT
+        with ESMTP id S1751315AbeFVLEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 07:03:55 -0400
+        Fri, 22 Jun 2018 07:04:22 -0400
 Received: from ayla.of.borg ([84.194.111.163])
         by xavier.telenet-ops.be with bizsmtp
-        id 1n3u1y00d3XaVaC01n3uh2; Fri, 22 Jun 2018 13:03:54 +0200
+        id 1n4M1y01d3XaVaC01n4Mm4; Fri, 22 Jun 2018 13:04:21 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ayla.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fWJr8-0002LK-78; Fri, 22 Jun 2018 13:03:54 +0200
+        id 1fWJrZ-0002Le-QB; Fri, 22 Jun 2018 13:04:21 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fWJr8-0008ET-5a; Fri, 22 Jun 2018 13:03:54 +0200
+        id 1fWJrZ-0008FR-Oc; Fri, 22 Jun 2018 13:04:21 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+To:     Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc:     linux1394-devel@lists.sourceforge.net,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v4] fbdev: Remove depends on HAS_DMA in case of platform dependency
-Date:   Fri, 22 Jun 2018 13:03:51 +0200
-Message-Id: <20180622110351.31602-1-geert@linux-m68k.org>
+Subject: [PATCH v4] firewire: Remove depends on HAS_DMA in case of platform dependency
+Date:   Fri, 22 Jun 2018 13:04:19 +0200
+Message-Id: <20180622110419.31664-1-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,13 +61,11 @@ This simplifies the dependencies, and allows to improve compile-testing.
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Reviewed-by: Mark Brown <broonie@kernel.org>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
 v4:
   - Rebase to v4.18-rc1 (applies to next-20180622, too),
 
 v3:
-  - Add Acked-by,
   - Rebase to v4.17-rc1,
 
 v2:
@@ -75,23 +73,19 @@ v2:
   - Drop RFC state,
   - Split per subsystem.
 ---
- drivers/video/fbdev/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/firewire/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index 591a13a597874ec0..c6f9023aede4adbc 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -2074,7 +2074,8 @@ config FB_XILINX
- 
- config FB_GOLDFISH
- 	tristate "Goldfish Framebuffer"
--	depends on FB && HAS_DMA && (GOLDFISH || COMPILE_TEST)
-+	depends on FB
-+	depends on GOLDFISH || COMPILE_TEST
- 	select FB_CFB_FILLRECT
- 	select FB_CFB_COPYAREA
- 	select FB_CFB_IMAGEBLIT
+diff --git a/drivers/firewire/Kconfig b/drivers/firewire/Kconfig
+index 145974f9662b63e6..4199849e37585181 100644
+--- a/drivers/firewire/Kconfig
++++ b/drivers/firewire/Kconfig
+@@ -1,5 +1,4 @@
+ menu "IEEE 1394 (FireWire) support"
+-	depends on HAS_DMA
+ 	depends on PCI || COMPILE_TEST
+ 	# firewire-core does not depend on PCI but is
+ 	# not useful without PCI controller driver
 -- 
 2.17.1
 
