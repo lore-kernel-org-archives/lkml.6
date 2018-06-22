@@ -2,157 +2,118 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC99DC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CEDC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A52C223E85
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:58:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CscbKXye"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A52C223E85
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A91823E84
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:59:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A91823E84
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751441AbeFVH6r (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 03:58:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751085AbeFVH6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 03:58:44 -0400
-Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D050A23E85;
-        Fri, 22 Jun 2018 07:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529654324;
-        bh=0LG1vepAGvdkBl55GxRmWpfzTo9AxTB7NSV+VULFoYM=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=CscbKXyeR9amy6C/j2eRj3pbKfqnywRyzgAeel2qEyBKZWjINpsmwF6a/VU3mQzvu
-         nDHbWnK3oX8uKqK2O2n4n3GY1FvdpRYfT1jRFDWhGEuzP717yFXySFlU3YV+Z1rCnH
-         5mx28iCJoP8EuZYYD2+skm1TV0NCacbnXRAjXD5Q=
-Received: by mail-wm0-f46.google.com with SMTP id p11-v6so1366430wmc.4;
-        Fri, 22 Jun 2018 00:58:43 -0700 (PDT)
-X-Gm-Message-State: APt69E2H2g3PdLrvo7XTPSZCSjnaIi/s5/xrUc/jQy/H88f+lls/1BNi
-        T8tAvr0oDBv3SdoNZkUJxXgOAAi7hVoFFUyPRP0=
-X-Google-Smtp-Source: ADUXVKK/v+jw0IDyJ5nhauF8iLWA84DaokeWZYHIWO6JtsW0Jmz8Qdr+u3XUOfv6c7IJrn3XMDNMXU0EVhgTnRpb0LE=
-X-Received: by 2002:a1c:6d85:: with SMTP id b5-v6mr765232wmi.135.1529654322393;
- Fri, 22 Jun 2018 00:58:42 -0700 (PDT)
+        id S932885AbeFVH66 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 03:58:58 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59314 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751085AbeFVH65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 03:58:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47CE71435;
+        Fri, 22 Jun 2018 00:58:57 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC0663F557;
+        Fri, 22 Jun 2018 00:58:54 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 08:58:53 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com, patrick.bellasi@arm.com,
+        joel@joelfernandes.org, daniel.lezcano@linaro.org,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v6 04/11] cpufreq/schedutil: use rt utilization tracking
+Message-ID: <20180622075853.GC23168@e108498-lin.cambridge.arm.com>
+References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
+ <1528459794-13066-5-git-send-email-vincent.guittot@linaro.org>
+ <20180621184524.GB27616@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 00:58:41
- -0700 (PDT)
-In-Reply-To: <1529608199-5583-7-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-References: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <1529608199-5583-7-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 22 Jun 2018 09:58:41 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeG89+7PjPfr42posJ9CvhUfFvMNe-oFpi4DiS57-E6cg@mail.gmail.com>
-Message-ID: <CAJKOXPeG89+7PjPfr42posJ9CvhUfFvMNe-oFpi4DiS57-E6cg@mail.gmail.com>
-Subject: Re: [PATCH 6/7] ARM: dts: s5pv210: Add initial DTS config for
- SGH-T959P phone
-To:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xc-racer2@live.ca
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180621184524.GB27616@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 June 2018 at 21:09, Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com=
-> wrote:
-> From: Jonathan Bakker <xc-racer2@live.ca>
+Hi Peter,
 
-Commit msg needed.
+On Thursday 21 Jun 2018 at 20:45:24 (+0200), Peter Zijlstra wrote:
+> On Fri, Jun 08, 2018 at 02:09:47PM +0200, Vincent Guittot wrote:
+> >  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+> >  {
+> >  	struct rq *rq = cpu_rq(sg_cpu->cpu);
+> > +	unsigned long util;
+> >  
+> >  	if (rq->rt.rt_nr_running)
+> >  		return sg_cpu->max;
+> >  
+> > +	util = sg_cpu->util_dl;
+> > +	util += sg_cpu->util_cfs;
+> > +	util += sg_cpu->util_rt;
+> > +
+> >  	/*
+> >  	 * Utilization required by DEADLINE must always be granted while, for
+> >  	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
+> > @@ -197,7 +204,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+> >  	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+> >  	 * ready for such an interface. So, we only do the latter for now.
+> >  	 */
+> > -	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+> > +	return min(sg_cpu->max, util);
+> >  }
+> 
+> So this (and the dl etc. equivalents) result in exactly the problems
+> complained about last time, no?
+> 
+> What I proposed was something along the lines of:
+> 
+> 	util = 1024 * sg_cpu->util_cfs;
+> 	util /= (1024 - (sg_cpu->util_rt + sg_cpu->util_dl + ...));
+> 
+> 	return min(sg_cpu->max, util + sg_cpu->bw_dl);
+> 
+> Where we, instead of directly adding the various util signals.
+> 
+> I now see an email from Quentin asking if these things are not in fact
+> the same, but no, they are not. The difference is that the above only
+> affects the CFS signal and will re-normalize the utilization of an
+> 'always' running task back to 1 by compensating for the stolen capacity.
+> 
+> But it will not, like these here patches, affect the OPP selection of
+> other classes. If there is no CFS utilization (or very little), then the
+> renormalization will not matter, and the existing DL bandwidth
+> compuation will be unaffected.
 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  arch/arm/boot/dts/Makefile                |  1 +
->  arch/arm/boot/dts/s5pv210-fascinate4g.dts | 40 +++++++++++++++++++++++++=
-++++++
->  2 files changed, 41 insertions(+)
->  create mode 100644 arch/arm/boot/dts/s5pv210-fascinate4g.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 522ebdca1d3d..d00e995875bb 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -846,6 +846,7 @@ dtb-$(CONFIG_ARCH_S3C64XX) +=3D \
->         s3c6410-smdk6410.dtb
->  dtb-$(CONFIG_ARCH_S5PV210) +=3D \
->         s5pv210-aquila.dtb \
-> +       s5pv210-fascinate4g.dtb \
->         s5pv210-galaxys.dtb \
->         s5pv210-goni.dtb \
->         s5pv210-smdkc110.dtb \
-> diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dt=
-s/s5pv210-fascinate4g.dts
-> new file mode 100644
-> index 000000000000..37967f57c7b7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-> @@ -0,0 +1,40 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/dts-v1/;
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
+Right, thinking more carefully about this re-scaling, the two things are
+indeed not the same, but I'm still not sure if this is what we want.
 
-Duplicated header.
+Say we have 50% of the capacity stolen by RT, and a 25% CFS task
+running. If we re-scale, we'll end up with a 50% request for CFS
+(util==512 for your code above). But if we want to see a little bit
+of idle time in the system, we should really request an OPP for 75%+ of
+capacity no ? Or am I missing something ?
 
-> +#include "s5pv210-aries.dtsi"
-> +
-> +/ {
-> +       model =3D "Samsung Galaxy S Fascinate 4G (SGH-T959P) based on S5P=
-V210";
-> +       compatible =3D "samsung,fascinate4g", "samsung,aries", "samsung,s=
-5pv210";
-> +
-> +       chosen {
-> +               bootargs =3D "console=3DttySAC2,115200n8 root=3D/dev/mmcb=
-lk1p1 rw rootwait ignore_loglevel earlyprintk";
+And also, I think Juri had concerns when we use the util_dl (as a PELT
+signal) for OPP selection since that kills the benefit of DL for long
+running DL tasks. Or can we assume that DL tasks with very long
+runtime/periods are a corner case we can ignore ?
 
-Same comment as for Galaxy S.
-
-Best regards,
-Krzysztof
-
-> +       };
-> +
-> +       gpio-keys {
-> +               compatible =3D "gpio-keys";
-> +
-> +               power {
-> +                       label =3D "power";
-> +                       gpios =3D <&gph2 6 GPIO_ACTIVE_LOW>;
-> +                       linux,code =3D <KEY_POWER>;
-> +                       wakeup-source;
-> +               };
-> +
-> +               vol-down {
-> +                       label =3D "volume_down";
-> +                       gpios =3D <&gph3 2 GPIO_ACTIVE_LOW>;
-> +                       linux,code =3D <KEY_VOLUMEDOWN>;
-> +               };
-> +
-> +               vol-up {
-> +                       label =3D "volume_up";
-> +                       gpios =3D <&gph3 1 GPIO_ACTIVE_LOW>;
-> +                       linux,code =3D <KEY_VOLUMEUP>;
-> +               };
-> +       };
-> +};
-> --
-> 2.7.4
->
+Thanks,
+Quentin
