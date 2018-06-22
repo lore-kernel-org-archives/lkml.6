@@ -2,134 +2,218 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C6FC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6347AC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8282247B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:12:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="HQpCVlAV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8282247B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=posteo.de
+	by mail.kernel.org (Postfix) with ESMTP id 19FA924603
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:13:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19FA924603
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934410AbeFVTMC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:12:02 -0400
-Received: from mout01.posteo.de ([185.67.36.65]:38462 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934368AbeFVTMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:12:01 -0400
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id 673A220FCF
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 21:11:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1529694719; bh=KtxregzzKBkOWKp8WAZbpARV/DbWhOkGpSPmb6+VfXM=;
-        h=Subject:To:Cc:From:Date:From;
-        b=HQpCVlAV6ylDxsIN7mDW6e70+ZZV9i0kZWp9ryzI4GvoP6pDcpzCrB2QGt4HzYOI4
-         Oq5c+EGCkdHQS6MBSsbMv4ME/m9trhTxkmGCaBAsUkEnbFSM+6a0rvTEGpmjGUryts
-         yLaGoruYbolGtK38w06TEQxtHaEkn2lRGF5i085qV8SWA+XX2nGsPy5M/dHJbOieO6
-         eMUCIP/SIOJlnrcbUrkLu1+5DWHFR2QHASUHQUWy1V/N/yz1QO9RdqA2ve3agyj5M3
-         ZkEMN8lqMlS7f9qYhuM3lyEUaWOzCq7F9lqVq2Q255v3xPknT++z+ZhQLI6POiBbxq
-         AfMs+PRFHq7Eg==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 41C7V55VJ4z9rxL;
-        Fri, 22 Jun 2018 21:11:57 +0200 (CEST)
-Subject: Re: [PATCH] staging: rtl8723bs: do not use assignment in if condition
-To:     Joe Perches <joe@perches.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <20180621182230.27823-1-michael.straube@posteo.de>
- <20180622104007.ob5nt2rip2fu436h@mwanda>
- <d6f21cd91d4e6482b5c5d125607ed75c25e9c7a0.camel@perches.com>
- <20180622105719.pt3lh6fqi2nziqsz@mwanda>
- <28dd699b-3013-c42c-07d5-1117d7ab3622@posteo.de>
- <36a7227189b8c7602dd9ffd21a5369b7029e61f1.camel@perches.com>
-From:   Michael Straube <michael.straube@posteo.de>
-Message-ID: <2c2a0f79-7970-8c55-6119-189114b279e3@posteo.de>
-Date:   Fri, 22 Jun 2018 21:11:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934412AbeFVTNj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:13:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50606 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934096AbeFVTNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 15:13:37 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F036244D01;
+        Fri, 22 Jun 2018 19:13:36 +0000 (UTC)
+Received: from flask (unknown [10.43.2.80])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5823A2026D6C;
+        Fri, 22 Jun 2018 19:13:34 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Fri, 22 Jun 2018 21:13:33 +0200
+Date:   Fri, 22 Jun 2018 21:13:33 +0200
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] KVM: x86: hyperv: implement PV IPI send hypercalls
+Message-ID: <20180622191333.GC2377@flask>
+References: <20180622145616.5851-1-vkuznets@redhat.com>
+ <20180622145616.5851-4-vkuznets@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <36a7227189b8c7602dd9ffd21a5369b7029e61f1.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622145616.5851-4-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 22 Jun 2018 19:13:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 22 Jun 2018 19:13:37 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/22/18 19:28, Joe Perches wrote:
-> On Fri, 2018-06-22 at 14:48 +0200, Michael Straube wrote:
->> On 06/22/18 12:57, Dan Carpenter wrote:
->>> On Fri, Jun 22, 2018 at 03:54:22AM -0700, Joe Perches wrote:
->>>> On Fri, 2018-06-22 at 13:40 +0300, Dan Carpenter wrote:
->>>>> On Thu, Jun 21, 2018 at 08:22:30PM +0200, Michael Straube wrote:
->>>>>> Fix checkpatch error 'do not use assignment in if condition'.
->>>> []
->>>>>> diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
->>>>>> index e55895632921..87a4ced41028 100644
->>>>>> --- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
->>>>>> +++ b/
->>>>>> @@ -1181,9 +1181,8 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
->>>>>>    	     (mac[3] == 0xff) && (mac[4] == 0xff) && (mac[5] == 0xff)) ||
->>>>>>    	    ((mac[0] == 0x00) && (mac[1] == 0x00) && (mac[2] == 0x00) &&
->>>>>>    	     (mac[3] == 0x00) && (mac[4] == 0x00) && (mac[5] == 0x00))) {
->>>>
->>>> Should also use is_broadcast_ether_addr and is_zero_ether_addr
->>>>
->>>>>> -		if (np &&
->>>>>> -		    (addr = of_get_property(np, "local-mac-address", &len)) &&
->>>>>> -		    len == ETH_ALEN) {
->>>>>> +		addr = of_get_property(np, "local-mac-address", &len);
->>>>>> +		if (np && addr && len == ETH_ALEN) {
->>>>>
->>>>> You can remove the "np" check.
->>>>>
->>>>> 		if (addr && len == ETH_ALEN) {
->>>>
->>>> It looks more like the rewrite is incorrect
->>>> as np is tested before of_get_property
->>>>
->>>
->>> That's what I was worried about too, but if "np" is NULL then
->>> of_get_property() just returns NULL so it's fine.
->>
->> So it should be this?
->>
->>           if (((mac[0] == 0xff) && (mac[1] == 0xff) && (mac[2] == 0xff) &&
->>                (mac[3] == 0xff) && (mac[4] == 0xff) && (mac[5] == 0xff)) ||
->>               ((mac[0] == 0x00) && (mac[1] == 0x00) && (mac[2] == 0x00) &&
->>                (mac[3] == 0x00) && (mac[4] == 0x00) && (mac[5] == 0x00)) &&
->>               (is_broadcast_ether_addr(mac) || is_zero_ether_addr(mac))) {
+2018-06-22 16:56+0200, Vitaly Kuznetsov:
+> Using hypercall for sending IPIs is faster because this allows to specify
+> any number of vCPUs (even > 64 with sparse CPU set), the whole procedure
+> will take only one VMEXIT.
 > 
-> No as the mac[] tests are the same as is_<foo>_ether_addr
-
-Ok, I understand now.
-
-> and there's nothing really objectionable about embedding
-> the assignment in the if here.
+> Current Hyper-V TLFS (v5.0b) claims that HvCallSendSyntheticClusterIpi
+> hypercall can't be 'fast' (passing parameters through registers) but
+> apparently this is not true, Windows always uses it as 'fast' so we need
+> to support that.
 > 
-> Output from checkpatch is not gospel and can be ignored
-> whenever appropriate.
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> @@ -1357,6 +1357,108 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
+>  		((u64)rep_cnt << HV_HYPERCALL_REP_COMP_OFFSET);
+>  }
+>  
+> +static u64 kvm_hv_send_ipi(struct kvm_vcpu *current_vcpu, u64 ingpa, u64 outgpa,
+> +			   bool ex, bool fast)
+> +{
+> +	struct kvm *kvm = current_vcpu->kvm;
+> +	struct hv_send_ipi_ex send_ipi_ex;
+> +	struct hv_send_ipi send_ipi;
+> +	struct kvm_vcpu *vcpu;
+> +	unsigned long valid_bank_mask = 0;
+> +	u64 sparse_banks[64];
+> +	int sparse_banks_len, i;
+> +	struct kvm_lapic_irq irq = {0};
+> +	bool all_cpus;
+> +
+> +	if (!ex) {
+> +		if (!fast) {
+> +			if (unlikely(kvm_read_guest(kvm, ingpa, &send_ipi,
+> +						    sizeof(send_ipi))))
+> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+> +			sparse_banks[0] = send_ipi.cpu_mask;
+> +			irq.vector = send_ipi.vector;
+> +		} else {
+> +			/* 'reserved' part of hv_send_ipi should be 0 */
+> +			if (unlikely(ingpa >> 32 != 0))
+> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+> +			sparse_banks[0] = outgpa;
+> +			irq.vector = (u32)ingpa;
+> +		}
+> +		all_cpus = false;
+> +
+> +		trace_kvm_hv_send_ipi(irq.vector, sparse_banks[0]);
+> +	} else {
+> +		if (unlikely(kvm_read_guest(kvm, ingpa, &send_ipi_ex,
+> +					    sizeof(send_ipi_ex))))
+> +			return HV_STATUS_INVALID_HYPERCALL_INPUT;
+> +
+> +		trace_kvm_hv_send_ipi_ex(send_ipi_ex.vector,
+> +					 send_ipi_ex.vp_set.format,
+> +					 send_ipi_ex.vp_set.valid_bank_mask);
+> +
+> +		irq.vector = send_ipi_ex.vector;
+> +		valid_bank_mask = send_ipi_ex.vp_set.valid_bank_mask;
+> +		sparse_banks_len = bitmap_weight(&valid_bank_mask, 64) *
+> +			sizeof(sparse_banks[0]);
+> +		all_cpus = send_ipi_ex.vp_set.format !=
+> +			HV_GENERIC_SET_SPARSE_4K;
 
-Ok, good to know.
+This would be much better readable as
 
-> 		memcpy(mac_addr, ""\x00\xe0\x4c\x87\x00\x00", ETH_ALEN);
-> 
-> Although the last memcpy of a fixed mac address could
-> probably use eth_random_addr to reduce the likelihood
-> of mac address collision so maybe
-> 
-> 		eth_random_addr(mac_addr);
-  
-Using a random address would be preffered?
+  send_ipi_ex.vp_set.format == HV_GENERIC_SET_ALL
 
+And if Microsoft ever adds more formats, they won't be all VCPUs, so
+we're future-proofing as well.
 
-Thanks for your help and patience.
-Michael
+> +
+> +		if (!sparse_banks_len)
+> +			goto ret_success;
+> +
+> +		if (!all_cpus &&
+> +		    kvm_read_guest(kvm,
+> +				   ingpa + offsetof(struct hv_send_ipi_ex,
+> +						    vp_set.bank_contents),
+> +				   sparse_banks,
+> +				   sparse_banks_len))
+> +			return HV_STATUS_INVALID_HYPERCALL_INPUT;
+> +	}
+> +
+> +	if ((irq.vector < HV_IPI_LOW_VECTOR) ||
+> +	    (irq.vector > HV_IPI_HIGH_VECTOR))
+> +		return HV_STATUS_INVALID_HYPERCALL_INPUT;
+> +
+> +	irq.delivery_mode = APIC_DM_FIXED;
+
+I'd set this during variable definition.
+
+APIC_DM_FIXED is 0 anyway and the compiler probably won't optimize it
+here due to function with side effects since definition.
+
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+> +		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
+> +		int bank = hv->vp_index / 64, sbank = 0;
+> +
+> +		if (!all_cpus) {
+> +			/* Banks >64 can't be represented */
+> +			if (bank >= 64)
+> +				continue;
+> +
+> +			/* Non-ex hypercalls can only address first 64 vCPUs */
+> +			if (!ex && bank)
+> +				continue;
+> +
+> +			if (ex) {
+> +				/*
+> +				 * Check is the bank of this vCPU is in sparse
+> +				 * set and get the sparse bank number.
+> +				 */
+> +				sbank = get_sparse_bank_no(valid_bank_mask,
+> +							   bank);
+> +
+> +				if (sbank < 0)
+> +					continue;
+> +			}
+> +
+> +			if (!(sparse_banks[sbank] & BIT_ULL(hv->vp_index % 64)))
+> +				continue;
+> +		}
+> +
+> +		/* We fail only when APIC is disabled */
+> +		if (!kvm_apic_set_irq(vcpu, &irq, NULL))
+> +			return HV_STATUS_INVALID_HYPERCALL_INPUT;
+
+Does Windows use this even for 1 VCPU IPI?
+
+I'm thinking we could apply the same optimization we do for LAPIC -- RCU
+protected array that maps vp_index to vcpu.
+
+Thanks.
+
+> +	}
+> +
+> +ret_success:
+> +	return HV_STATUS_SUCCESS;
+> +}
+> +
+>  bool kvm_hv_hypercall_enabled(struct kvm *kvm)
+>  {
+>  	return READ_ONCE(kvm->arch.hyperv.hv_hypercall) & HV_X64_MSR_HYPERCALL_ENABLE;
+> @@ -1526,6 +1628,20 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+>  		}
+>  		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt, true);
+>  		break;
+> +	case HVCALL_SEND_IPI:
+> +		if (unlikely(rep)) {
+> +			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
+> +			break;
+> +		}
+> +		ret = kvm_hv_send_ipi(vcpu, ingpa, outgpa, false, fast);
+> +		break;
+> +	case HVCALL_SEND_IPI_EX:
+> +		if (unlikely(fast || rep)) {
+
+Now I'm getting worried that the ex can be fast as well and we'll be
+reading the banks from XMM registers. :)
