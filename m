@@ -2,104 +2,117 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E435AC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EB5C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ED8D2487D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:19:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED8D2487D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id BD69124884
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:22:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GmE8Za6P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD69124884
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754331AbeFVUTG (ORCPT
+        id S1754417AbeFVUWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 16:19:06 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:60500 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751406AbeFVUTF (ORCPT
+        Fri, 22 Jun 2018 16:22:44 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55484 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbeFVUWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 16:19:05 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fWSWJ-0003Kn-Ir; Fri, 22 Jun 2018 16:18:59 -0400
-Message-ID: <1529698739.7898.206.camel@surriel.com>
-Subject: Re: [PATCH 7/7] x86,idle: do not leave mm in idle state
-From:   Rik van Riel <riel@surriel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mike Galbraith <efault@gmx.de>, songliubraving@fb.com,
-        kernel-team <kernel-team@fb.com>
-Date:   Fri, 22 Jun 2018 16:18:59 -0400
-In-Reply-To: <CALCETrXJzhwXkEi5oC9XY58B8fYT26WhMT+KBt-8m2M+foQvsw@mail.gmail.com>
-References: <20180620195652.27251-1-riel@surriel.com>
-         <20180620195652.27251-8-riel@surriel.com>
-         <CALCETrXfHhPNe9J0NEabxdtKGRV+XOX=n6vtL7rbOY6e2GXMqA@mail.gmail.com>
-         <1529682813.7898.195.camel@surriel.com>
-         <CALCETrXJzhwXkEi5oC9XY58B8fYT26WhMT+KBt-8m2M+foQvsw@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-FOgcyJ4rmpbsNcsMzLOR"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Fri, 22 Jun 2018 16:22:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=P/2zcIGvOya58GBqTiymPO95qTaF2o8vN2bi00SLNmY=; b=GmE8Za6PLRh1DB+G4Yysdb8LUc
+        ZufcsGkzPDCNrsSaGJQqKthOScoMuxEPxQCOPfD1c9Fa+vesLYpTXJEZ5es/nrB4U+jhcfkfkm5s2
+        oUr7Lz8QTzAxdL+n64vMr4GxWY/doGQzfD44FUWs/7bhPyEWCqSxp3ycS8RLBI6+4rbi3K4dMR85h
+        NnQdxYOxhVzHfmD8Z48X64B7COC3K9Vz4Rz3wdm5N7Tot3p79VmPd6ZKLfasWWPBjhJ4jRI4HwOGq
+        Y6XuLLw3olxQmm6hN1swzm3DYB6Sd/Ib1dbaogrlY/w9WiLXl2Tfb7QltGBKa4E4oOzAN4TBclREI
+        aGQu9hQw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fWSZq-0003QZ-Nh; Fri, 22 Jun 2018 20:22:39 +0000
+Subject: Re: [PATCH 0/4] docs: e100[0] fix build errors
+To:     "Tobin C. Harding" <me@tobin.cc>, Jonathan Corbet <corbet@lwn.net>
+Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180622003708.31848-1-me@tobin.cc>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ba768d6c-dd21-3600-5cba-151b5d6185f1@infradead.org>
+Date:   Fri, 22 Jun 2018 13:22:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180622003708.31848-1-me@tobin.cc>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tobin,
 
---=-FOgcyJ4rmpbsNcsMzLOR
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 06/21/2018 05:37 PM, Tobin C. Harding wrote:
+> Hi Jonathan,
+> 
+> This patch set fixes current docs build failure on Linus' mainline
+> 
+> commit: (ba4dbdedd3ed Merge tag 'jfs-4.18' of git://github.com/kleikamp/linux-shaggy)
+> 
+> (FYI this is 8 commits after Linux 4.18-rc1).
+> 
+> And also same build errors on today's linux-next
+> 
+> 8439c34f07a3 (tag: next-20180621, linux-next/master, linux-next) Add linux-next specific files for 20180621
+> 
+> 
+> I split the patches in between the two drivers to enable use of the
+> 'Fixes:' tag.
+> 
+> Tobin C. Harding (4):
+>   Documentation: e100: Use correct heading adornment
+>   Documentation: e1000: Use correct heading adornment
+>   Documentation: e100: Fix docs build error
+>   Documentation: e1000: Fix docs build error
+> 
+>  Documentation/networking/e100.rst  | 112 +++++++++++++++--------------
+>  Documentation/networking/e1000.rst |  76 ++++++++++----------
+>  2 files changed, 96 insertions(+), 92 deletions(-)
 
-On Fri, 2018-06-22 at 09:01 -0700, Andy Lutomirski wrote:
-> Hmm, fair enough.  I think a better heuristic would be if the
-> estimated idle duration is more than, say, 10ms.  I *think* the code
-> has been cleaned up enough that this is easy now.  (Using time
-> instead
-> of C6 will make it a lot less dependent on which idle driver is in
-> use.)
+I am still seeing a few warnings (your 4 patches applied to
+linux-next-20180622):
 
-This particular bit of code is only in intel_idle
-though, and not every cpuidle governor estimates
-an idle duration, nor does it get passed up the
-stack (presumably because it not always exists).
+linux-next-20180622/Documentation/networking/e100.rst:57: WARNING: Literal block expected; none found.
+linux-next-20180622/Documentation/networking/e100.rst:68: WARNING: Literal block expected; none found.
+linux-next-20180622/Documentation/networking/e100.rst:75: WARNING: Literal block expected; none found.
+linux-next-20180622/Documentation/networking/e100.rst:84: WARNING: Literal block expected; none found.
+linux-next-20180622/Documentation/networking/e100.rst:93: WARNING: Inline emphasis start-string without end-string.
+linux-next-20180622/Documentation/networking/e1000.rst:83: ERROR: Unexpected indentation.
+linux-next-20180622/Documentation/networking/e1000.rst:84: WARNING: Block quote ends without a blank line; unexpected unindent.
+linux-next-20180622/Documentation/networking/e1000.rst:173: WARNING: Definition list ends without a blank line; unexpected unindent.
+linux-next-20180622/Documentation/networking/e1000.rst:236: WARNING: Definition list ends without a blank line; unexpected unindent.
 
-I will just drop this patch for now, and see if
-adding back in the patch that skips manipulation
-of the mm_cpumask(&init_mm), since that might make
-leave_mm() a little cheaper.
 
-We would still have excess manipulation of the
-bitmask when re-entering the task from what should
-have been lazy TLB mode, but total cache line
-contention would likely still be down from where
-it is before that patch.
+You didn't get these warnings?  or they weren't important?
+or "perfect" was not your primary goal?   :)   [which is fine]
 
---=20
-All Rights Reversed.
---=-FOgcyJ4rmpbsNcsMzLOR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+[I see around 50 similar doc formatting warnings/errors in the entire
+Documentation build.]
 
------BEGIN PGP SIGNATURE-----
+Anyway, much better than it was.  Thanks.
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlstWbMACgkQznnekoTE
-3oPXIwf/YCCJ5jn5eqnX+bve6nrCkkiTM/403Blkcna9riUkVfjr0QjYIWlMIQnl
-d3z44p1v1ZdtYYP3cqCXJignzKwc9PFjjKw51VEVyJnOecyJra3HvX9bfl+/c2eb
-K+LhHlf8nmpnCXnwTbDshzIZ151QNbIdnS8Oi+gj26B/tBiwsR2I5/NLXMzuW33q
-QJAOZ47W/gIWZ98ClnNgT9Ig4PizRrNi0yfPdXOXF/hm43joC0N+riDqDaetIdSA
-+k+Imj1ip+8zqCrrrf0wN8+6mLrq4Kj+6EcjGpf2igc324LCLCgq+qjdk8nMNqcr
-E4sH0axuzOMA91wMOjQbMglXQcRsiQ==
-=17gQ
------END PGP SIGNATURE-----
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
---=-FOgcyJ4rmpbsNcsMzLOR--
-
+-- 
+~Randy
