@@ -2,179 +2,161 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E15C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD86FC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA2A923EE9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:22:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2A923EE9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 64A1623EEA
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:24:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64A1623EEA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754134AbeFVIWn (ORCPT
+        id S1754128AbeFVIYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:22:43 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:52520 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751393AbeFVIWj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:22:39 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id D5ADD28A5E1
-Subject: Re: [PATCH v3] PM / devfreq: Fix devfreq_add_device() when drivers
- are built as modules.
-To:     Akhil P Oommen <akhilpo@codeaurora.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-pm@vger.kernel.org
-References: <20180621220430.25644-1-enric.balletbo@collabora.com>
- <0383b4a703a0b619023c0654a4a7637419c72ebd.camel@collabora.com>
- <addc4280-729f-85d7-a314-35afbb7c8bb1@codeaurora.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <36c9720c-7428-0a17-5252-7afbd80bce6b@collabora.com>
-Date:   Fri, 22 Jun 2018 10:22:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 04:24:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45265 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751194AbeFVIYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 04:24:44 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A4E7820799; Fri, 22 Jun 2018 10:24:41 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F2A58206FF;
+        Fri, 22 Jun 2018 10:24:40 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 10:24:41 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v4 09/10] gpio: Add a driver for Cadence I3C GPIO
+ expander
+Message-ID: <20180622102441.35856a50@bbrezillon>
+In-Reply-To: <CACRpkdY_7mi8GPiopZ9Yg4Y0-AV_SriZe=1yN5is6eH6FUm6Qg@mail.gmail.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+        <20180330074751.25987-10-boris.brezillon@bootlin.com>
+        <CACRpkdY_7mi8GPiopZ9Yg4Y0-AV_SriZe=1yN5is6eH6FUm6Qg@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <addc4280-729f-85d7-a314-35afbb7c8bb1@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ezequiel and Akhil,
+Hi Linus,
 
-On 22/06/18 09:03, Akhil P Oommen wrote:
+I realize I never replied to this review.
+
+On Thu, 26 Apr 2018 10:44:26 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> On Fri, Mar 30, 2018 at 9:47 AM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
 > 
-> On 6/22/2018 6:41 AM, Ezequiel Garcia wrote:
->> Hey Enric,
->>
->> On Fri, 2018-06-22 at 00:04 +0200, Enric Balletbo i Serra wrote:
->>> When the devfreq driver and the governor driver are built as modules,
->>> the call to devfreq_add_device() or governor_store() fails because
->>> the
->>> governor driver is not loaded at the time the devfreq driver loads.
->>> The
->>> devfreq driver has a build dependency on the governor but also should
->>> have a runtime dependency. We need to make sure that the governor
->>> driver
->>> is loaded before the devfreq driver.
->>>
->>> This patch fixes this bug by adding a try_then_request_governor()
->>> function. First tries to find the governor, and then, if it is not
->>> found,
->>> it requests the module and tries again.
->>>
->>> Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor
->>> using name)
->>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>> ---
->>>
->>> Changes in v3:
->>> - Remove unneded change in dev_err message.
->>> - Fix err returned value in case to not find the governor.
->>>
->>> Changes in v2:
->>> - Add a new function to request the module and call that function
->>> from
->>>    devfreq_add_device and governor_store.
->>>
->>>   drivers/devfreq/devfreq.c | 65 ++++++++++++++++++++++++++++++++-----
->>> -- 
->> [snip snip]
->>> -    governor = find_devfreq_governor(devfreq->governor_name);
->>> +    governor = try_then_request_governor(devfreq-
->>>> governor_name);
->>>       if (IS_ERR(governor)) {
->>>           dev_err(dev, "%s: Unable to find governor for the
->>> device\n",
->>>               __func__);
->>>           err = PTR_ERR(governor);
->>> -        goto err_init;
->>> +        goto err_unregister;
->>>       }
->>>   +    mutex_lock(&devfreq_list_lock);
->>> +
->> I know it's not something we are introducing in this patch,
->> but still... calling a hook with a mutex held looks
->> fishy to me.
->>
->> This lock should only protect the list, unless I am missing
->> something.
->>
-
-I think so too.
-
->>>       devfreq->governor = governor;
->>>       err = devfreq->governor->event_handler(devfreq,
->>> DEVFREQ_GOV_START,
->>>                           NULL);
->>> @@ -663,14 +703,16 @@ struct devfreq *devfreq_add_device(struct
->>> device *dev,
->>>               __func__);
->>>           goto err_init;
->>>       }
->>> +
->>> +    list_add(&devfreq->node, &devfreq_list);
->>> +
->>>       mutex_unlock(&devfreq_list_lock);
->>>         return devfreq;
->>>     err_init:
->>> -    list_del(&devfreq->node);
->>>       mutex_unlock(&devfreq_list_lock);
->>> -
->>> +err_unregister:
->>>       device_unregister(&devfreq->dev);
->>>   err_dev:
->>>       if (devfreq)
->>> @@ -988,12 +1030,13 @@ static ssize_t governor_store(struct device
->>> *dev, struct device_attribute *attr,
->>>       if (ret != 1)
->>>           return -EINVAL;
->>>   -    mutex_lock(&devfreq_list_lock);
->>> -    governor = find_devfreq_governor(str_governor);
->>> +    governor = try_then_request_governor(str_governor);
->>>       if (IS_ERR(governor)) {
->>> -        ret = PTR_ERR(governor);
->>> -        goto out;
->>> +        return PTR_ERR(governor);
->>>       }
->>> +
->>> +    mutex_lock(&devfreq_list_lock);
->>> +
->>>       if (df->governor == governor) {
->>>           ret = 0;
->>>           goto out;
->>> -- 
->>> 2.17.1
->>>
->>>
->>
->> Regards,
->> Eze
+> > Add a driver for Cadence I3C GPIO expander.
+> >
+> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>  
 > 
-> Adding to Ezequiel's point, shouldn't we take more granular lock (devfreq->lock)
-> first and then call devfreq_list_lock at the time of adding to the list?
+> This is pretty much OK, and I don't want to raise the bar
+> even higher for you to get this code into the kernel, so:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Thanks.
+
 > 
-
-Yes, I think so. I think, though, that this should be a separate patch, not sure
-if a pre or post patch to this one, but for sure it's another topic. Current
-patch tries to solve different problem an only tries to follow the current
-locking/unlocking. Anyway this is a maintainer decision I guess.
-
-Thanks,
- Enric
-
-> -Akhil.
+> The following is an observation for future improvement:
 > 
+> > +static int cdns_i3c_gpio_read_reg(struct cdns_i3c_gpio *gpioc, u8 reg,
+> > +                                 u8 *val)
+> > +{
+> > +       struct i3c_priv_xfer xfers[] = {
+> > +               {
+> > +                       .len = sizeof(reg),
+> > +                       .data.out = &reg,
+> > +               },
+> > +               {
+> > +                       .rnw = true,
+> > +                       .len = sizeof(*val),
+> > +                       .data.in = val,
+> > +               },
+> > +       };
+> > +
+> > +       return i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
+> > +                                       ARRAY_SIZE(xfers));
+> > +}
+> > +
+> > +static int cdns_i3c_gpio_write_reg(struct cdns_i3c_gpio *gpioc, u8 reg,
+> > +                                  u8 val)
+> > +{
+> > +       struct i3c_priv_xfer xfers[] = {
+> > +               {
+> > +                       .len = sizeof(reg),
+> > +                       .data.out = &reg,
+> > +               },
+> > +               {
+> > +                       .len = sizeof(val),
+> > +                       .data.out = &val,
+> > +               },
+> > +       };
+> > +
+> > +       return i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
+> > +                                       ARRAY_SIZE(xfers));
+> > +}  
+> 
+> This is starting to resemble
+> drivers/base/regmap/regmap-i2c.c
+> 
+> Maybe we should very quickly add regmap-i3c.c as this
+> infrastructre has had a great positive effect on may kernel
+> subsystems.
+
+Yes I considered that too, I was just waiting for at least one
+other user before adding this regmap-i3c implementation.
+
+> 
+> > +static int cdns_i3c_gpio_get_direction(struct gpio_chip *g, unsigned offset)
+> > +{
+> > +       struct cdns_i3c_gpio *gpioc = gpioc_to_cdns_gpioc(g);
+> > +
+> > +       return gpioc->dir & BIT(offset);  
+> 
+> I would:
+> 
+> return !!(gpioc->dir & BIT(offset));
+> 
+> So you clamp it to bit 0.
+
+Will fix that in my v5.
+
+Thanks for your review.
+
+Boris
