@@ -2,86 +2,133 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E768C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F17C7C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D07524242
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:54:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D07524242
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E8842414C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:04:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tC95QYUT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E8842414C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753941AbeFVMym (ORCPT
+        id S1751387AbeFVNEZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 08:54:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34808 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751198AbeFVMyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:54:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D6987A9;
-        Fri, 22 Jun 2018 05:54:41 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2682B3F246;
-        Fri, 22 Jun 2018 05:54:39 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 13:54:34 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
-        valentin.schneider@arm.com, patrick.bellasi@arm.com,
-        joel@joelfernandes.org, daniel.lezcano@linaro.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v6 04/11] cpufreq/schedutil: use rt utilization tracking
-Message-ID: <20180622125433.GA26461@e108498-lin.cambridge.arm.com>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-5-git-send-email-vincent.guittot@linaro.org>
- <20180621184524.GB27616@hirez.programming.kicks-ass.net>
- <20180622075853.GC23168@e108498-lin.cambridge.arm.com>
- <20180622113713.GJ2494@hirez.programming.kicks-ass.net>
+        Fri, 22 Jun 2018 09:04:25 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37334 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751256AbeFVNEW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 09:04:22 -0400
+Received: by mail-oi0-f66.google.com with SMTP id l22-v6so6059642oib.4;
+        Fri, 22 Jun 2018 06:04:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:reply-to:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=dbVBxsuuo6bbGeHwIZBf7U0ckFYVfBwq1TlGd9zrPhA=;
+        b=tC95QYUTY0EtcxTGy5SkUi3SRPVyoQVrlUhWiqxlzz3RqCwk/hCMohJ4vgQiW5Dell
+         rXtw9ET9TEp22vXqL64Zn/CChHSQs/MsGc9j9SqtFz/w1uArQt4biNS373ASeiTv62n2
+         /U8wbS6qfxHxatj52e1VxRNGdVVlQwov3yP8l1VFdxy1dw9WGnuALgW2C8fIN8JOQHIB
+         6TmeEh1NLSMmg7nMUSVPo7tSZyrd8Lf2yaTM2iKwAu6cPYRod0M9RUIXy3BjjqNco6ij
+         boE+bMehMsDMoSPOrQ6JJNdeAqXc4ewZd5lUypTdG4RMcjKARo8wGhJ35S0lDsi83Vvo
+         IKBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=dbVBxsuuo6bbGeHwIZBf7U0ckFYVfBwq1TlGd9zrPhA=;
+        b=dSCeS718pq94ELEh/PpaN9GprqhAylSqVmPdGNoPOf/pp0+9KE3Jqi9TkLuRk0pxLk
+         zNvjshwsT8CE4YN9FYOukyk+8+T2wj0zS+3Mf33upb03SVSkwBH9NJip+ltxOLVaDIQ5
+         cy3QAx8SHJcVCDPvAiZ2f0vOKeCoBsBwidncmxXEHR38KyQVYTss13YYwwHl2AAFDwJB
+         D5j42MomiKD6IhcQS3cVExAYVTL+tHNtdjoxzW3WkXyhzWXGe9ynmnTFORzWSt9QcH/Z
+         PpKHTh3ImyTJpwOZMFmUz9bcISlur6MehvJ2MPijFnR9ciNq8/wzt08Vf/XRHw45a1YZ
+         Wy1g==
+X-Gm-Message-State: APt69E2BIZ3IfQLhlFpX+LHpt1+3LEjjKXDFr6QqVKYVgTponLN429tc
+        hKHSG71ZztxqxG0rWnR4Ow==
+X-Google-Smtp-Source: AAOMgpdg3Eb43ewTuweRQItJVEZpW3YS4yJBQXOxVd4xXQNrUpzPEoTpKJvQ/N/PvL4T3SrKDIbFRw==
+X-Received: by 2002:aca:750d:: with SMTP id q13-v6mr867510oic.40.1529672661883;
+        Fri, 22 Jun 2018 06:04:21 -0700 (PDT)
+Received: from serve.minyard.net ([47.184.170.59])
+        by smtp.gmail.com with ESMTPSA id e43-v6sm5019566otc.60.2018.06.22.06.04.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 06:04:20 -0700 (PDT)
+Received: from [192.168.27.3] (t430m.minyard.net [192.168.27.3])
+        by serve.minyard.net (Postfix) with ESMTPSA id DCC09675;
+        Fri, 22 Jun 2018 08:04:19 -0500 (CDT)
+Reply-To: minyard@acm.org
+Subject: Re: [PATCH v4] MAINTAINERS: Add file patterns for ipmi device tree
+ bindings
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        openipmi-developer@lists.sourceforge.net,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180622100815.29221-1-geert@linux-m68k.org>
+From:   Corey Minyard <minyard@acm.org>
+Message-ID: <307ab976-6e1c-275d-8fb7-cd9b99255115@acm.org>
+Date:   Fri, 22 Jun 2018 08:04:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622113713.GJ2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180622100815.29221-1-geert@linux-m68k.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 22 Jun 2018 at 13:37:13 (+0200), Peter Zijlstra wrote:
-> That is true.. So we could limit the scaling to the case where there is
-> no idle time, something like:
-> 
-> 	util = sg_cpu->util_cfs;
-> 
-> 	cap_cfs = (1024 - (sg_cpu->util_rt + ...));
-> 	if (util == cap_cfs)
-> 		util = sg_cpu->max;
-> 
-> That specifically handles the '0% idle -> 100% freq' case, but I don't
-> realy like edge behaviour like that. If for some reason it all doesn't
-> quite align you're left with bits.
-> 
-> And the linear scaling is the next simplest thing that avoids the hard
-> boundary case.
+On 06/22/2018 05:08 AM, Geert Uytterhoeven wrote:
+> Submitters of device tree binding documentation may forget to CC
+> the subsystem maintainer if this is missing.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> v3:
+>    - Update for next-20180622,
+>
+> v2:
+>    - New.
 
-Right, so maybe we'll get something smoother by just summing the signals
-as Vincent is proposing ? You will still request max freq for the
-(util == cap_cfs) case you described. By definition, you will have
-(util_cfs + util_rt + ...) == 1024 in this case.
+Thanks, I have this queue.
 
-cap_cfs is the delta between RT+DL+... and 1024, and the only case where
-util_cfs can be equal to cap_cfs is if util_cfs fills that delta
-entirely.
+-corey
 
-I hope that makes sense
+> Impact on "scripts/get_maintainer.pl -f Documentation/devicetree/bindings/ipmi/":
+>
+> +Corey Minyard <minyard@acm.org> (supporter:IPMI SUBSYSTEM)
+>   Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+>   Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> -Corey Minyard <cminyard@mvista.com> (commit_signer:2/2=100%)
+> -Haiyue Wang <haiyue.wang@linux.intel.com> (commit_signer:2/2=100%,authored:2/2=100%)
+> -Avi Fishman <avifishman70@gmail.com> (commit_signer:1/2=50%)
+> +openipmi-developer@lists.sourceforge.net (moderated list:IPMI SUBSYSTEM)
+>   devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+>   linux-kernel@vger.kernel.org (open list)
+> ---
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 76b5dd65291f9650..321fbaa7e7d273a2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7463,6 +7463,7 @@ M:	Corey Minyard <minyard@acm.org>
+>   L:	openipmi-developer@lists.sourceforge.net (moderated for non-subscribers)
+>   W:	http://openipmi.sourceforge.net/
+>   S:	Supported
+> +F:	Documentation/devicetree/bindings/ipmi/
+>   F:	Documentation/IPMI.txt
+>   F:	drivers/char/ipmi/
+>   F:	include/linux/ipmi*
 
-Thanks,
-Quentin
+
