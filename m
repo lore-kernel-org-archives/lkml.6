@@ -2,116 +2,90 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A6EC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9EFC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D67B7243CB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67B7243CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 509F3243D1
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:37:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lB05iYZB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 509F3243D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933552AbeFVOga (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:36:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36072 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751284AbeFVOg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:36:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C669280D;
-        Fri, 22 Jun 2018 07:36:28 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D9103F2EA;
-        Fri, 22 Jun 2018 07:36:27 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 15:36:24 +0100
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, valentin.schneider@arm.com,
-        dietmar.eggemann@arm.com, vincent.guittot@linaro.org,
-        gaku.inami.xh@renesas.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/9] sched: Add static_key for asymmetric cpu capacity
- optimizations
-Message-ID: <20180622143624.GD8461@e105550-lin.cambridge.arm.com>
-References: <1529485549-5191-1-git-send-email-morten.rasmussen@arm.com>
- <1529485549-5191-2-git-send-email-morten.rasmussen@arm.com>
- <20180622082222.GD23168@e108498-lin.cambridge.arm.com>
+        id S933595AbeFVOhJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:37:09 -0400
+Received: from sonic313-19.consmr.mail.bf2.yahoo.com ([74.6.133.193]:41452
+        "EHLO sonic313-19.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751312AbeFVOhH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:37:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1529678227; bh=6rG/nuQosN3Bsl+rMVBwmXI/Cd4i8kRTZOCtIA5rAi0=; h=To:Cc:From:Subject:Date:From:Subject; b=lB05iYZB1200XaREchGqTnu2s8bp5mkd0/Gn2wuNfqQeLo0ljKFUdultY39ad05ubhS3PBSWutfOpB6TBmUGyyengXJ4HqsThgelHt+9TbPFwSidYDxDP4Wtyf/+TYwnEbGmc55fU8tUt3Lkz8K5DYmygI1oDEocnPnACCqOsRXTsYJpX1kfDsXxt5waPTGdNhWnIcd/K5VmTAlbhiQcU9bvcWQaGrNhxL2ghVmoetAjCRbEAEQsUDFf09UkongHBSoQDbCJ7MMEtzPKtsfMjbfWcqgNLOZUw9hwVO4dIrgjX0UTJR0m9EGyfactKOeT6vCnlgplZuWXtjEQZZ4lrQ==
+X-YMail-OSG: Myk7XYYVM1n0AlH.6xic8IrCIx6vQVS7cIxVGbTWvWlDx_Cu9JGg6hrDL31J.Ka
+ kzHThR6ZbtfNEXEw_pMiB0gGnvpQQnmAMQv85vnzlK.fv2t2H2lz0vhJu6tOMhgZwK_rCmktjBhi
+ Y0uWFHjyQYN9kDkuRLErU.3PjWDdwIsGrA69kJOzl_1yGCF8DfNwbkbEBe5ybQpsHapynlngWJAb
+ 2M7.MfSeAT.9xt0RYZqPq.nvSa23FhssiMORFejb0tN.dTWz8aNN8aqy.Nf65SeW85vw2Fo7enbF
+ Z1l4NAevioTarLYhyNMBNgAl2LnJL_YDSAbjSxqbJNsHcrNTzQSm2UC53gfCvsCRkmKzpbexnDgW
+ 3zbfwJ6WBjGILoVOdRZWe9nwxz7ugcRg_yZ7PP8h2QfLkc99BE3sdbvjI.2cLcEmz.kJgUyvHbvh
+ 1uvwltrmaFc5q0l6AotYPGJm4vyt.TwzNG0C.YKF9ju7EwiHM2kmVFYkrLZtzEL2qoUTr_ACgLIv
+ wnilTj6Or8jemRa_0CaUFU24BEK5ux0r31cT9d1XLFqn1EHIBxdfJyj9RKTgHCXl7VnzNxZB8cWw
+ v.5Wgq1f5cGY6dFEJP5BOTUEAYjGBrCD5_Dc1ojT.yQpPKKCgz0VKFLe2RIYnyTMhYvBOhXJlfyT
+ oaWW.nIlMKO6TmLu0OI_D4.HoUJlGjvPdke042h_STnqwMX.kynVb4VURZiPgy3jl6B6BtK2eRyf
+ fC9w1aHKLH08oKr0cOegGkkJzYWGnLc1V2RN_kLcxAHbmuoFHT_5XN9oT6FaU_PJQZRtQB5pVok.
+ qckQx1W0eVlI4LZkRZJ.kyUU85MW_vfgCdoRXLnCYZAzoY3L.HmpLPcda51FYEuOxlr8qPC8E_47
+ _wphxOkpwnHQGDhotklFanR7RC4lIl2KSl_TnZ893CPEk3gZINb9R27353TsMX1_hYlj_xkR70YL
+ h3Gcv5W2sxX3XAeHf7f4HPu0OmO8x8h3E.RVesgTzGdfRikiSh3IsE5o-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Fri, 22 Jun 2018 14:37:07 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
+          by smtp410.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 55a35926a0ed68bbcb2891aa1d65f576;
+          Fri, 22 Jun 2018 14:37:02 +0000 (UTC)
+To:     Al Viro <viro@ZenIV.linux.org.uk>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: 4.18-rc1 regression in /proc/self xattr handling
+Message-ID: <020be8a4-961b-b92f-7ee9-3c439d629338@schaufler-ca.com>
+Date:   Fri, 22 Jun 2018 07:37:00 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622082222.GD23168@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 09:22:22AM +0100, Quentin Perret wrote:
-> Hi Morten,
-> 
-> On Wednesday 20 Jun 2018 at 10:05:41 (+0100), Morten Rasmussen wrote:
-> > +static void update_asym_cpucapacity(int cpu)
-> > +{
-> > +	int enable = false;
-> > +
-> > +	rcu_read_lock();
-> > +	if (lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
-> > +		enable = true;
-> > +	rcu_read_unlock();
-> > +
-> > +	if (enable) {
-> > +		/* This expects to be hotplug-safe */
-> > +		static_branch_enable_cpuslocked(&sched_asym_cpucapacity);
-> > +	}
-> > +}
-> 
-> What would happen if you hotplugged an entire cluster ? You'd loose the
-> SD_ASYM_CPUCAPACITY flag but keep the static key is that right ? Should
-> we care ?
+There is a regression in behavior regarding xattrs in /proc after:
 
-I don't think we should care. The static key enables additional checks
-and tweaks but AFAICT none of them requires the SD_ASYM_CPUCAPACITY to
-be set and they should all be have no effect if that is the case. I
-added the static key just avoid the overhead on systems where they would
-have no effect. At least that is intention, I could course have broken
-things by mistake.
+commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Wed May 2 21:26:16 2018 -0400
 
-> And also, Peter mentioned an issue with the EAS patches with multiple
-> root_domains. Does that apply here as well ? What if you had a
-> configuration with big and little CPUs in different root_domains for ex?
-> 
-> Should we disable the static key in the above cases ?
+    procfs: get rid of ancient BS in pid_revalidate() uses
+    
 
-Exclusive cpusets are more tricky as the flags will be the same for
-sched_domains at the same level. So we can't set the flag correctly if
-someone configures the exclusive cpusets such that you have one
-root_domain spanning big and a subset of little, and one spanning the
-remaining little cpus if all topology levels are preserved. If we
-imagine a three cluster system where 0-3 and 4-7 little clusters, and
-8-11 is a big cluster with cpusets configured as 0-5 and 6-11. The first
-set should _not_ have SD_ASYM_CPUCAPACITY set, while the second should.
+Prior to this change lgetxattr() would provide the correct attributes
+for entries in /proc. With this change I see that while the behavior
+remains correct if the procid is specified, it is not when "self" is
+used. On a system with Smack enabled, where the shell has the Smack label
+"Crackle" I see: 
 
-I'm tempted to say we shouldn't care in this situation. Setting the
-flags correctly in the three cluster example would require knowledge
-about the cpuset configuration which we don't have in the arch code so
-SD_ASYM_CPUCAPACITY flag detection would have be done by the
-sched_domain build code. However, not setting the flag according to the
-actual members of the exclusive cpuset means that homogeneous
-sched_domains might have SD_ASYM_CPUCAPACITY set enabling potentially
-wrong scheduling decisions.
+[root@localhost linux]# attr -S -g SMACK64 /proc/self/attr/current
+Attribute "SMACK64" had a 1 byte value for /proc/self/attr/current:
+_
+[root@localhost linux]# attr -S -g SMACK64 /proc/$BASHPID/attr/current
+Attribute "SMACK64" had a 7 byte value for /proc/1716/attr/current:
+Crackle
 
-We can actually end up with this problem just by hotplugging too. If you
-unplug the entire big cluster in the three cluster example above, you
-preserve DIE level which would have SD_ASYM_CPUCAPACITY set even though
-we only have little cpus left.
+These should be the same, and in the past have been. I don't know
+what SELinux expects as far as attributes in /proc, so I can't say
+if the problem is manifest with SELinux.
 
-As I see it, we have two choices: 1) Set the flags correctly for
-exclusive cpusets which means some additional "fun" in the sched_domain
-hierarchy set up, or 2) ignore it and make sure that setting
-SD_ASYM_CPUCAPACITY on homogeneous sched_domains works fairly okay. The
-latter seems easier.
 
-Morten
