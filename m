@@ -2,192 +2,120 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E1CC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 353EDC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1082D22502
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:24:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ItwJS1Bf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1082D22502
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id E9F7222502
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:25:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F7222502
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934337AbeFVQYV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:24:21 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40607 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934068AbeFVQYT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:24:19 -0400
-Received: by mail-oi0-f68.google.com with SMTP id f79-v6so6632022oib.7
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:24:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z5C/hfOuKMWgQDA89JYSSORPadsCSEdJExsP8B/ELU8=;
-        b=ItwJS1Bf+AE5HFfLPbs+9OuPR6UKl7iMA3RDz3oH6Uc9NOEwAJlC6hqpRCXnIclqd9
-         QgXFDZv06U/T6eyINrbXnlU/RJKHgkMcWNhVpR6yfiUeplxjGkbB9H7hebp1neBoIlYH
-         22t6+GoYB4zPqAoLad7xFDQbESJd+ffuXKhSZBU5G9rxa3wPdlihGHbtvIe8kvSrZKso
-         HU1qxhNrYsIaPxECLDX9Ucnfe3fV9K2naYH4d2WAwtpkPwxbd7r+pCkl0VS5hqdZU7ey
-         e2g9Ycks0sUosCNXDhvQg8+e8aY4XfcZs0CS1cBVFnnmmdFpnNvGFvcRDvIyZYhX457l
-         vj/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z5C/hfOuKMWgQDA89JYSSORPadsCSEdJExsP8B/ELU8=;
-        b=X3srQo3E2ITWFjoo7Yxxxx573AceRQbB2XXfTE3AJ3ruFx25ToOG/GcduCTPOjlkic
-         Lm6WkAAU55mRQjs94Gbce/MkNi3ZBtAbp65p634XUVHs8ark66FZB9OvMyI3+uEn84+m
-         U3ghzjFcjVoR9L4/I2dEUGLCQt7fYjfvlK/1C1TjSzKnccasxCQv3vJdnW8I43OooqY4
-         FtUALnllNLI2AvMt0t9+enybayimhgwgzX2xOsuMTmDkq7DcYPN8UJTFnzMNoeMIrZDW
-         m5lVHx+18k9ZgKwXhkU50JFM+iyr7EuSGE1b8rkdnLGLMmon5VTgRZSl6vYZhnokzj/s
-         C1SA==
-X-Gm-Message-State: APt69E0/tJiQyh11GLqaueuKAuaB0azTKpInMZmQ1VnbHPhJ0gU82bpH
-        VBBOK9Mcz5ckxEEIw8LjelcMvmYocGvacahyI4OmKQ==
-X-Google-Smtp-Source: AAOMgpfmvFrCeL9WLRWJq21cOarst5xBU/bQ1ZkRUe3Vy2OMZWciM0q3FtXIKCt76htZ6Mpj6wjO85Ectf76VRHUIeU=
-X-Received: by 2002:aca:5bd5:: with SMTP id p204-v6mr1278119oib.91.1529684658482;
- Fri, 22 Jun 2018 09:24:18 -0700 (PDT)
+        id S934357AbeFVQZI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:25:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53716 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934341AbeFVQZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 12:25:04 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9B70081A4EBA;
+        Fri, 22 Jun 2018 16:25:03 +0000 (UTC)
+Received: from redhat.com (ovpn-120-43.rdu2.redhat.com [10.10.120.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 248551C71D;
+        Fri, 22 Jun 2018 16:25:03 +0000 (UTC)
+Date:   Fri, 22 Jun 2018 12:25:01 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [Intel-gfx] [RFC PATCH] mm, oom: distinguish blockable mode for
+ mmu notifiers
+Message-ID: <20180622162501.GB3497@redhat.com>
+References: <20180622150242.16558-1-mhocko@kernel.org>
+ <152968180950.11773.3374981930722769733@mail.alporthouse.com>
 MIME-Version: 1.0
-References: <20180621220416.5412-1-tycho@tycho.ws> <20180621220416.5412-2-tycho@tycho.ws>
- <CAG48ez3Ek_KG54ejR=Q=XtW_HDs8hQ+cgFODzn4rQ0nVDVpODg@mail.gmail.com> <20180622151514.GM3992@cisco>
-In-Reply-To: <20180622151514.GM3992@cisco>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 22 Jun 2018 18:24:07 +0200
-Message-ID: <CAG48ez0_k=6RmEaM4yTYyHe4B9uWKTLPxSX4Tz6ZXU5noKvCCQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] seccomp: add a return code to trap to userspace
-To:     tycho@tycho.ws
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        luto@amacapital.net, oleg@redhat.com, ebiederm@xmission.com,
-        serge@hallyn.com, christian.brauner@ubuntu.com,
-        tyhicks@canonical.com, suda.akihiro@lab.ntt.co.jp, me@tobin.cc
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <152968180950.11773.3374981930722769733@mail.alporthouse.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 22 Jun 2018 16:25:03 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 22 Jun 2018 16:25:03 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 5:15 PM Tycho Andersen <tycho@tycho.ws> wrote:
->
-> Hi Jann,
->
-> On Fri, Jun 22, 2018 at 04:40:20PM +0200, Jann Horn wrote:
-> > On Fri, Jun 22, 2018 at 12:05 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > This patch introduces a means for syscalls matched in seccomp to notify
-> > > some other task that a particular filter has been triggered.
-> > >
-> > > The motivation for this is primarily for use with containers. For example,
-> > > if a container does an init_module(), we obviously don't want to load this
-> > > untrusted code, which may be compiled for the wrong version of the kernel
-> > > anyway. Instead, we could parse the module image, figure out which module
-> > > the container is trying to load and load it on the host.
-> > >
-> > > As another example, containers cannot mknod(), since this checks
-> > > capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
-> > > /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
-> > > coding some whitelist in the kernel. Another example is mount(), which has
-> > > many security restrictions for good reason, but configuration or runtime
-> > > knowledge could potentially be used to relax these restrictions.
-> > >
-> > > This patch adds functionality that is already possible via at least two
-> > > other means that I know about, both of which involve ptrace(): first, one
-> > > could ptrace attach, and then iterate through syscalls via PTRACE_SYSCALL.
-> > > Unfortunately this is slow, so a faster version would be to install a
-> > > filter that does SECCOMP_RET_TRACE, which triggers a PTRACE_EVENT_SECCOMP.
-> > > Since ptrace allows only one tracer, if the container runtime is that
-> > > tracer, users inside the container (or outside) trying to debug it will not
-> > > be able to use ptrace, which is annoying. It also means that older
-> > > distributions based on Upstart cannot boot inside containers using ptrace,
-> > > since upstart itself uses ptrace to start services.
-> > >
-> > > The actual implementation of this is fairly small, although getting the
-> > > synchronization right was/is slightly complex.
-> > >
-> > > Finally, it's worth noting that the classic seccomp TOCTOU of reading
-> > > memory data from the task still applies here, but can be avoided with
-> > > careful design of the userspace handler: if the userspace handler reads all
-> > > of the task memory that is necessary before applying its security policy,
-> > > the tracee's subsequent memory edits will not be read by the tracer.
-> >
-> > I've been thinking about how one would actually write userspace code
-> > that uses this API, and whether PID reuse is an issue here. As far as
-> > I can tell, the following situation can happen:
-> >
-> >  - seccomped process tries to perform a syscall that gets trapped
-> >  - notification is sent to the supervisor
-> >  - supervisor reads the notification
-> >  - seccomped process gets SIGKILLed
-> >  - new process appears with the PID that the seccomped process had
-> >  - supervisor tries to access memory of the seccomped process via
-> > process_vm_{read,write}v or /proc/$pid/mem
-> >  - supervisor unintentionally accesses memory of the new process instead
-> >
-> > This could have particularly nasty consequences if the supervisor has
-> > to write to memory of the seccomped process for some reason.
-> > It might make sense to explicitly document how the API has to be used
-> > to avoid such a scenario from occuring. AFAICS,
-> > process_vm_{read,write}v are fundamentally unsafe for this;
-> > /proc/$pid/mem might be safe if you do the following dance in the
-> > supervisor to validate that you have a reference to the right struct
-> > mm before starting to actually access memory:
-> >
-> >  - supervisor reads a syscall notification for the seccomped process with PID $A
-> >  - supervisor opens /proc/$A/mem [taking a reference on the mm of the
-> > process that currently has PID $A]
-> >  - supervisor reads all pending events from the notification FD; if
-> > one of them says that PID $A was signalled, send back -ERESTARTSYS (or
-> > -ERESTARTNOINTR?) and bail out
-> >  - [at this point, the open FD to /proc/$A/mem is known to actually
-> > refer to the mm struct of the seccomped process]
-> >  - read and write on the open FD to /proc/$A/mem as necessary
-> >  - send back the syscall result
->
-> Yes, this is a nasty problem :(. We have the id in the
-> request/response structs to avoid this race, so perhaps we can re-use
-> that? So it would look like:
->
-> - supervisor gets syscall notification for $A
-> - supervisor opens /proc/$A/mem or /proc/$A/map_files/... or a dir fd
->   to the container's root or whatever
+On Fri, Jun 22, 2018 at 04:36:49PM +0100, Chris Wilson wrote:
+> Quoting Michal Hocko (2018-06-22 16:02:42)
+> > Hi,
+> > this is an RFC and not tested at all. I am not very familiar with the
+> > mmu notifiers semantics very much so this is a crude attempt to achieve
+> > what I need basically. It might be completely wrong but I would like
+> > to discuss what would be a better way if that is the case.
+> > 
+> > get_maintainers gave me quite large list of people to CC so I had to trim
+> > it down. If you think I have forgot somebody, please let me know
+> 
+> > diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > index 854bd51b9478..5285df9331fa 100644
+> > --- a/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > +++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > @@ -112,10 +112,11 @@ static void del_object(struct i915_mmu_object *mo)
+> >         mo->attached = false;
+> >  }
+> >  
+> > -static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> > +static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> >                                                        struct mm_struct *mm,
+> >                                                        unsigned long start,
+> > -                                                      unsigned long end)
+> > +                                                      unsigned long end,
+> > +                                                      bool blockable)
+> >  {
+> >         struct i915_mmu_notifier *mn =
+> >                 container_of(_mn, struct i915_mmu_notifier, mn);
+> > @@ -124,7 +125,7 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> >         LIST_HEAD(cancelled);
+> >  
+> >         if (RB_EMPTY_ROOT(&mn->objects.rb_root))
+> > -               return;
+> > +               return 0;
+> 
+> The principle wait here is for the HW (even after fixing all the locks
+> to be not so coarse, we still have to wait for the HW to finish its
+> access). The first pass would be then to not do anything here if
+> !blockable.
+> 
+> Jerome keeps on shaking his head and telling us we're doing it all
+> wrong, so maybe it'll all fall out of HMM before we have to figure out
+> how to differentiate between objects that can be invalidated immediately
+> and those that need to acquire locks and/or wait.
 
-(or open a dir fd to /proc/$A; then later, you can use openat()
-relative to that to open whatever you need)
+Intel and AMD are doing it right nowadays (IIRC AMD had a bug a while
+back). What i want is to replace GUP and notifier with HMM, with the
+intention that we can mitigate in more clever way thing like OOM or
+other mm aspect inside HMM and thus isolating mm folks from ever having
+to decipher GPU or other weird drivers :)
 
-> - supervisor calls seccomp(SECCOMP_NOTIFICATION_IS_VALID, req->id, listener_fd)
-> - supervisor knows that the fds it has open are safe
->
-> That way it doesn't have to flush the whole queue? Of course this
-> makes things a lot slower, but it does enable safety for more than
-> just memory accesses, and also isn't required for things which
-> wouldn't read memory.
+I also want to do that for optimization purposes to allow to share
+more thing accross multiple GPU that mirror same range of address.
 
-That sounds good to me. :)
+Finaly another motiviation is to avoid the pin GUP implies and only
+rely on mmu notification. This would unlock some memory migration
+from ever backing of early when they see the pin.
 
-> > It might be nice if the kernel was able to directly give the
-> > supervisor an FD to /proc/$A/mem that is guaranteed to point to the
-> > right struct mm, but trying to implement that would probably make this
-> > patch set significantly larger?
->
-> I'll take a look and see how big it is, it doesn't *seem* like it
-> should be that hard. Famous last words :)
+I intend to post patches sometime before XDC this year and discuss
+them at XDC see how people on driver side feel about that. I also
+want to use that as an excuse to gather features request and other
+Santa wishlist for HMM ;)
 
-Good luck. :D
-
-If you do manage to implement this, it might actually make sense to
-hand out an O_PATH FD to /proc/$A (or perhaps more accurately,
-/proc/$A/task/$A?) instead of an FD to /proc/*/mem. Then you could
-safely open whatever files you need from the process' procfs directory
-in a race-free manner.
-
-I think you'd have to add some way to tell the kernel in which procfs
-instance you want the lookup to happen; so I think you'd need to
-supply an FD to the root of a procfs when opening a notification fd,
-and then in the read handler, you'd have to perform a lookup in
-procfs.
+Cheers,
+Jérôme
