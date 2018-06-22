@@ -6,242 +6,621 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6104C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8223C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A8A24665
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:07:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A8A24665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 74E9024665
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:07:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E9024665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933822AbeFVRHM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:07:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42955 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933668AbeFVRHK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:07:10 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5MH6q6r147004
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 22 Jun 2018 10:06:52 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5MH6pGA146993;
-        Fri, 22 Jun 2018 10:06:51 -0700
-Date:   Fri, 22 Jun 2018 10:06:51 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Will Deacon <tipbot@zytor.com>
-Message-ID: <tip-784e0300fe9fe4aa81bd7df9d59e138f56bb605b@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        tglx@linutronix.de, mingo@kernel.org,
-        mathieu.desnoyers@efficios.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          will.deacon@arm.com, mathieu.desnoyers@efficios.com,
-          mingo@kernel.org, hpa@zytor.com
-In-Reply-To: <1529664307-983-1-git-send-email-will.deacon@arm.com>
-References: <1529664307-983-1-git-send-email-will.deacon@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] rseq: Avoid infinite recursion when delivering
- SIGSEGV
-Git-Commit-ID: 784e0300fe9fe4aa81bd7df9d59e138f56bb605b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S933899AbeFVRHW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 13:07:22 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50458 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754384AbeFVRHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 13:07:20 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2195E5AF3FDBF;
+        Sat, 23 Jun 2018 01:07:17 +0800 (CST)
+Received: from localhost (10.47.144.153) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Sat, 23 Jun 2018
+ 01:07:13 +0800
+Date:   Fri, 22 Jun 2018 18:06:59 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     William Breathitt Gray <vilhelm.gray@gmail.com>
+CC:     <gregkh@linuxfoundation.org>, <jic23@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <fabrice.gasnier@st.com>,
+        <benjamin.gaignard@st.com>, <robh+dt@kernel.org>,
+        <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <mark.rutland@arm.com>
+Subject: Re: [PATCH v7 08/10] counter: stm32-lptimer: add counter device
+Message-ID: <20180622180659.00002de8@huawei.com>
+In-Reply-To: <e7a693fc6d716f8f948737be23375c8c92be3590.1529607879.git.vilhelm.gray@gmail.com>
+References: <cover.1529607879.git.vilhelm.gray@gmail.com>
+        <e7a693fc6d716f8f948737be23375c8c92be3590.1529607879.git.vilhelm.gray@gmail.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.47.144.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  784e0300fe9fe4aa81bd7df9d59e138f56bb605b
-Gitweb:     https://git.kernel.org/tip/784e0300fe9fe4aa81bd7df9d59e138f56bb605b
-Author:     Will Deacon <will.deacon@arm.com>
-AuthorDate: Fri, 22 Jun 2018 11:45:07 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 22 Jun 2018 19:04:22 +0200
+On Thu, 21 Jun 2018 17:08:46 -0400
+William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 
-rseq: Avoid infinite recursion when delivering SIGSEGV
+> From: Fabrice Gasnier <fabrice.gasnier@st.com>
+> 
+> Add support for new counter device to stm32-lptimer.
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-When delivering a signal to a task that is using rseq, we call into
-__rseq_handle_notify_resume() so that the registers pushed in the
-sigframe are updated to reflect the state of the restartable sequence
-(for example, ensuring that the signal returns to the abort handler if
-necessary).
+> ---
+>  drivers/counter/Kconfig                       |  10 +
+>  drivers/counter/Makefile                      |   1 +
+>  drivers/{iio => }/counter/stm32-lptimer-cnt.c | 361 ++++++++++++++++--
+>  drivers/iio/Kconfig                           |   1 -
+>  drivers/iio/Makefile                          |   1 -
+>  drivers/iio/counter/Kconfig                   |  17 -
+>  drivers/iio/counter/Makefile                  |   7 -
+>  7 files changed, 350 insertions(+), 48 deletions(-)
+>  rename drivers/{iio => }/counter/stm32-lptimer-cnt.c (48%)
+>  delete mode 100644 drivers/iio/counter/Kconfig
+>  delete mode 100644 drivers/iio/counter/Makefile
+> 
+> diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+> index fcfbaa935122..fc072b97e5d2 100644
+> --- a/drivers/counter/Kconfig
+> +++ b/drivers/counter/Kconfig
+> @@ -46,4 +46,14 @@ config STM32_TIMER_CNT
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called stm32-timer-cnt.
+>  
+> +config STM32_LPTIMER_CNT
+> +	tristate "STM32 LP Timer encoder counter driver"
+> +	depends on (MFD_STM32_LPTIMER || COMPILE_TEST) && IIO
+> +	help
+> +	  Select this option to enable STM32 Low-Power Timer quadrature encoder
+> +	  and counter driver.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called stm32-lptimer-cnt.
+> +
+>  endif # COUNTER
+> diff --git a/drivers/counter/Makefile b/drivers/counter/Makefile
+> index ff024259fb46..8ff19b32022b 100644
+> --- a/drivers/counter/Makefile
+> +++ b/drivers/counter/Makefile
+> @@ -9,3 +9,4 @@ counter-y := generic-counter.o
+>  
+>  obj-$(CONFIG_104_QUAD_8)	+= 104-quad-8.o
+>  obj-$(CONFIG_STM32_TIMER_CNT)	+= stm32-timer-cnt.o
+> +obj-$(CONFIG_STM32_LPTIMER_CNT)	+= stm32-lptimer-cnt.o
+> diff --git a/drivers/iio/counter/stm32-lptimer-cnt.c b/drivers/counter/stm32-lptimer-cnt.c
+> similarity index 48%
+> rename from drivers/iio/counter/stm32-lptimer-cnt.c
+> rename to drivers/counter/stm32-lptimer-cnt.c
+> index 42fb8ba67090..80fc883f84e7 100644
+> --- a/drivers/iio/counter/stm32-lptimer-cnt.c
+> +++ b/drivers/counter/stm32-lptimer-cnt.c
+> @@ -11,16 +11,18 @@
+>   */
+>  
+>  #include <linux/bitfield.h>
+> +#include <linux/counter.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/mfd/stm32-lptimer.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  
+>  struct stm32_lptim_cnt {
+> +	struct counter_device counter;
+>  	struct device *dev;
+>  	struct regmap *regmap;
+>  	struct clk *clk;
+> -	u32 preset;
+> +	u32 ceiling;
+>  	u32 polarity;
+>  	u32 quadrature_mode;
+>  };
+> @@ -54,7 +56,7 @@ static int stm32_lptim_set_enable_state(struct stm32_lptim_cnt *priv,
+>  	}
+>  
+>  	/* LP timer must be enabled before writing CMP & ARR */
+> -	ret = regmap_write(priv->regmap, STM32_LPTIM_ARR, priv->preset);
+> +	ret = regmap_write(priv->regmap, STM32_LPTIM_ARR, priv->ceiling);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -247,44 +249,57 @@ static const struct iio_enum stm32_lptim_cnt_polarity_en = {
+>  	.set = stm32_lptim_cnt_set_polarity,
+>  };
+>  
+> -static ssize_t stm32_lptim_cnt_get_preset(struct iio_dev *indio_dev,
+> -					  uintptr_t private,
+> -					  const struct iio_chan_spec *chan,
+> -					  char *buf)
+> +static ssize_t stm32_lptim_cnt_get_ceiling(struct stm32_lptim_cnt *priv,
+> +					   char *buf)
+>  {
+> -	struct stm32_lptim_cnt *priv = iio_priv(indio_dev);
+> -
+> -	return snprintf(buf, PAGE_SIZE, "%u\n", priv->preset);
+> +	return snprintf(buf, PAGE_SIZE, "%u\n", priv->ceiling);
+>  }
+>  
+> -static ssize_t stm32_lptim_cnt_set_preset(struct iio_dev *indio_dev,
+> -					  uintptr_t private,
+> -					  const struct iio_chan_spec *chan,
+> -					  const char *buf, size_t len)
+> +static ssize_t stm32_lptim_cnt_set_ceiling(struct stm32_lptim_cnt *priv,
+> +					   const char *buf, size_t len)
+>  {
+> -	struct stm32_lptim_cnt *priv = iio_priv(indio_dev);
+>  	int ret;
+>  
+>  	if (stm32_lptim_is_enabled(priv))
+>  		return -EBUSY;
+>  
+> -	ret = kstrtouint(buf, 0, &priv->preset);
+> +	ret = kstrtouint(buf, 0, &priv->ceiling);
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (priv->preset > STM32_LPTIM_MAX_ARR)
+> +	if (priv->ceiling > STM32_LPTIM_MAX_ARR)
+>  		return -EINVAL;
+>  
+>  	return len;
+>  }
+>  
+> +static ssize_t stm32_lptim_cnt_get_preset_iio(struct iio_dev *indio_dev,
+> +					      uintptr_t private,
+> +					      const struct iio_chan_spec *chan,
+> +					      char *buf)
+> +{
+> +	struct stm32_lptim_cnt *priv = iio_priv(indio_dev);
+> +
+> +	return stm32_lptim_cnt_get_ceiling(priv, buf);
+> +}
+> +
+> +static ssize_t stm32_lptim_cnt_set_preset_iio(struct iio_dev *indio_dev,
+> +					      uintptr_t private,
+> +					      const struct iio_chan_spec *chan,
+> +					      const char *buf, size_t len)
+> +{
+> +	struct stm32_lptim_cnt *priv = iio_priv(indio_dev);
+> +
+> +	return stm32_lptim_cnt_set_ceiling(priv, buf, len);
+> +}
+> +
+>  /* LP timer with encoder */
+>  static const struct iio_chan_spec_ext_info stm32_lptim_enc_ext_info[] = {
+>  	{
+>  		.name = "preset",
+>  		.shared = IIO_SEPARATE,
+> -		.read = stm32_lptim_cnt_get_preset,
+> -		.write = stm32_lptim_cnt_set_preset,
+> +		.read = stm32_lptim_cnt_get_preset_iio,
+> +		.write = stm32_lptim_cnt_set_preset_iio,
+>  	},
+>  	IIO_ENUM("polarity", IIO_SEPARATE, &stm32_lptim_cnt_polarity_en),
+>  	IIO_ENUM_AVAILABLE("polarity", &stm32_lptim_cnt_polarity_en),
+> @@ -309,8 +324,8 @@ static const struct iio_chan_spec_ext_info stm32_lptim_cnt_ext_info[] = {
+>  	{
+>  		.name = "preset",
+>  		.shared = IIO_SEPARATE,
+> -		.read = stm32_lptim_cnt_get_preset,
+> -		.write = stm32_lptim_cnt_set_preset,
+> +		.read = stm32_lptim_cnt_get_preset_iio,
+> +		.write = stm32_lptim_cnt_set_preset_iio,
+>  	},
+>  	IIO_ENUM("polarity", IIO_SEPARATE, &stm32_lptim_cnt_polarity_en),
+>  	IIO_ENUM_AVAILABLE("polarity", &stm32_lptim_cnt_polarity_en),
+> @@ -327,11 +342,293 @@ static const struct iio_chan_spec stm32_lptim_cnt_channels = {
+>  	.indexed = 1,
+>  };
+>  
+> +/**
+> + * stm32_lptim_cnt_function - enumerates stm32 LPTimer counter & encoder modes
+> + * @STM32_LPTIM_COUNTER_INCREASE: up count on IN1 rising, falling or both edges
+> + * @STM32_LPTIM_ENCODER_BOTH_EDGE: count on both edges (IN1 & IN2 quadrature)
+> + */
+> +enum stm32_lptim_cnt_function {
+> +	STM32_LPTIM_COUNTER_INCREASE,
+> +	STM32_LPTIM_ENCODER_BOTH_EDGE,
+> +};
+> +
+> +static enum count_function stm32_lptim_cnt_functions[] = {
+> +	[STM32_LPTIM_COUNTER_INCREASE] = COUNT_FUNCTION_INCREASE,
+> +	[STM32_LPTIM_ENCODER_BOTH_EDGE] = COUNT_FUNCTION_QUADRATURE_X4,
+> +};
+> +
+> +enum stm32_lptim_synapse_action {
+> +	STM32_LPTIM_SYNAPSE_ACTION_RISING_EDGE,
+> +	STM32_LPTIM_SYNAPSE_ACTION_FALLING_EDGE,
+> +	STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES,
+> +	STM32_LPTIM_SYNAPSE_ACTION_NONE,
+> +};
+> +
+> +static enum synapse_action stm32_lptim_cnt_synapse_actions[] = {
+> +	/* Index must match with stm32_lptim_cnt_polarity[] (priv->polarity) */
+> +	[STM32_LPTIM_SYNAPSE_ACTION_RISING_EDGE] = SYNAPSE_ACTION_RISING_EDGE,
+> +	[STM32_LPTIM_SYNAPSE_ACTION_FALLING_EDGE] = SYNAPSE_ACTION_FALLING_EDGE,
+> +	[STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES] = SYNAPSE_ACTION_BOTH_EDGES,
+> +	[STM32_LPTIM_SYNAPSE_ACTION_NONE] = SYNAPSE_ACTION_NONE,
+> +};
+> +
+> +static int stm32_lptim_cnt_read(struct counter_device *counter,
+> +				struct counter_count *count,
+> +				struct count_read_value *val)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +	u32 cnt;
+> +	int ret;
+> +
+> +	ret = regmap_read(priv->regmap, STM32_LPTIM_CNT, &cnt);
+> +	if (ret)
+> +		return ret;
+> +
+> +	count_read_value_set(val, COUNT_POSITION, &cnt);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_lptim_cnt_function_get(struct counter_device *counter,
+> +					struct counter_count *count,
+> +					size_t *function)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +
+> +	if (!priv->quadrature_mode) {
+> +		*function = STM32_LPTIM_COUNTER_INCREASE;
+> +		return 0;
+> +	}
+> +
+> +	if (priv->polarity == STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES) {
+> +		*function = STM32_LPTIM_ENCODER_BOTH_EDGE;
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int stm32_lptim_cnt_function_set(struct counter_device *counter,
+> +					struct counter_count *count,
+> +					size_t function)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +
+> +	if (stm32_lptim_is_enabled(priv))
+> +		return -EBUSY;
+> +
+> +	switch (function) {
+> +	case STM32_LPTIM_COUNTER_INCREASE:
+> +		priv->quadrature_mode = 0;
+> +		return 0;
+> +	case STM32_LPTIM_ENCODER_BOTH_EDGE:
+> +		priv->quadrature_mode = 1;
+> +		priv->polarity = STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES;
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static ssize_t stm32_lptim_cnt_enable_read(struct counter_device *counter,
+> +					   struct counter_count *count,
+> +					   void *private, char *buf)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +	int ret;
+> +
+> +	ret = stm32_lptim_is_enabled(priv);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return scnprintf(buf, PAGE_SIZE, "%u\n", ret);
+> +}
+> +
+> +static ssize_t stm32_lptim_cnt_enable_write(struct counter_device *counter,
+> +					    struct counter_count *count,
+> +					    void *private,
+> +					    const char *buf, size_t len)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +	bool enable;
+> +	int ret;
+> +
+> +	ret = kstrtobool(buf, &enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Check nobody uses the timer, or already disabled/enabled */
+> +	ret = stm32_lptim_is_enabled(priv);
+> +	if ((ret < 0) || (!ret && !enable))
+> +		return ret;
+> +	if (enable && ret)
+> +		return -EBUSY;
+> +
+> +	ret = stm32_lptim_setup(priv, enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = stm32_lptim_set_enable_state(priv, enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t stm32_lptim_cnt_ceiling_read(struct counter_device *counter,
+> +					    struct counter_count *count,
+> +					    void *private, char *buf)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +
+> +	return stm32_lptim_cnt_get_ceiling(priv, buf);
+> +}
+> +
+> +static ssize_t stm32_lptim_cnt_ceiling_write(struct counter_device *counter,
+> +					     struct counter_count *count,
+> +					     void *private,
+> +					     const char *buf, size_t len)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +
+> +	return stm32_lptim_cnt_set_ceiling(priv, buf, len);
+> +}
+> +
+> +static const struct counter_count_ext stm32_lptim_cnt_ext[] = {
+> +	{
+> +		.name = "enable",
+> +		.read = stm32_lptim_cnt_enable_read,
+> +		.write = stm32_lptim_cnt_enable_write
+> +	},
+> +	{
+> +		.name = "ceiling",
+> +		.read = stm32_lptim_cnt_ceiling_read,
+> +		.write = stm32_lptim_cnt_ceiling_write
+> +	},
+> +};
+> +
+> +static int stm32_lptim_cnt_action_get(struct counter_device *counter,
+> +				      struct counter_count *count,
+> +				      struct counter_synapse *synapse,
+> +				      size_t *action)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +	size_t function;
+> +	int err;
+> +
+> +	err = stm32_lptim_cnt_function_get(counter, count, &function);
+> +	if (err)
+> +		return err;
+> +
+> +	switch (function) {
+> +	case STM32_LPTIM_COUNTER_INCREASE:
+> +		/* LP Timer acts as up-counter on input 1 */
+> +		if (synapse->signal->id == count->synapses[0].signal->id)
+> +			*action = priv->polarity;
+> +		else
+> +			*action = STM32_LPTIM_SYNAPSE_ACTION_NONE;
+> +		return 0;
+> +	case STM32_LPTIM_ENCODER_BOTH_EDGE:
+> +		*action = priv->polarity;
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int stm32_lptim_cnt_action_set(struct counter_device *counter,
+> +				      struct counter_count *count,
+> +				      struct counter_synapse *synapse,
+> +				      size_t action)
+> +{
+> +	struct stm32_lptim_cnt *const priv = counter->priv;
+> +	size_t function;
+> +	int err;
+> +
+> +	if (stm32_lptim_is_enabled(priv))
+> +		return -EBUSY;
+> +
+> +	err = stm32_lptim_cnt_function_get(counter, count, &function);
+> +	if (err)
+> +		return err;
+> +
+> +	/* only set polarity when in counter mode (on input 1) */
+> +	if (function == STM32_LPTIM_COUNTER_INCREASE
+> +	    && synapse->signal->id == count->synapses[0].signal->id) {
+> +		switch (action) {
+> +		case STM32_LPTIM_SYNAPSE_ACTION_RISING_EDGE:
+> +		case STM32_LPTIM_SYNAPSE_ACTION_FALLING_EDGE:
+> +		case STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES:
+> +			priv->polarity = action;
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static const struct counter_ops stm32_lptim_cnt_ops = {
+> +	.count_read = stm32_lptim_cnt_read,
+> +	.function_get = stm32_lptim_cnt_function_get,
+> +	.function_set = stm32_lptim_cnt_function_set,
+> +	.action_get = stm32_lptim_cnt_action_get,
+> +	.action_set = stm32_lptim_cnt_action_set,
+> +};
+> +
+> +static struct counter_signal stm32_lptim_cnt_signals[] = {
+> +	{
+> +		.id = 0,
+> +		.name = "Channel 1 Quadrature A"
+> +	},
+> +	{
+> +		.id = 1,
+> +		.name = "Channel 1 Quadrature B"
+> +	}
+> +};
+> +
+> +static struct counter_synapse stm32_lptim_cnt_synapses[] = {
+> +	{
+> +		.actions_list = stm32_lptim_cnt_synapse_actions,
+> +		.num_actions = ARRAY_SIZE(stm32_lptim_cnt_synapse_actions),
+> +		.signal = &stm32_lptim_cnt_signals[0]
+> +	},
+> +	{
+> +		.actions_list = stm32_lptim_cnt_synapse_actions,
+> +		.num_actions = ARRAY_SIZE(stm32_lptim_cnt_synapse_actions),
+> +		.signal = &stm32_lptim_cnt_signals[1]
+> +	}
+> +};
+> +
+> +/* LP timer with encoder */
+> +static struct counter_count stm32_lptim_enc_counts = {
+> +	.id = 0,
+> +	.name = "LPTimer Count",
+> +	.functions_list = stm32_lptim_cnt_functions,
+> +	.num_functions = ARRAY_SIZE(stm32_lptim_cnt_functions),
+> +	.synapses = stm32_lptim_cnt_synapses,
+> +	.num_synapses = ARRAY_SIZE(stm32_lptim_cnt_synapses),
+> +	.ext = stm32_lptim_cnt_ext,
+> +	.num_ext = ARRAY_SIZE(stm32_lptim_cnt_ext)
+> +};
+> +
+> +/* LP timer without encoder (counter only) */
+> +static struct counter_count stm32_lptim_in1_counts = {
+> +	.id = 0,
+> +	.name = "LPTimer Count",
+> +	.functions_list = stm32_lptim_cnt_functions,
+> +	.num_functions = 1,
+> +	.synapses = stm32_lptim_cnt_synapses,
+> +	.num_synapses = 1,
+> +	.ext = stm32_lptim_cnt_ext,
+> +	.num_ext = ARRAY_SIZE(stm32_lptim_cnt_ext)
+> +};
+> +
+>  static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+>  {
+>  	struct stm32_lptimer *ddata = dev_get_drvdata(pdev->dev.parent);
+>  	struct stm32_lptim_cnt *priv;
+>  	struct iio_dev *indio_dev;
+> +	int ret;
+>  
+>  	if (IS_ERR_OR_NULL(ddata))
+>  		return -EINVAL;
+> @@ -344,8 +641,9 @@ static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+>  	priv->dev = &pdev->dev;
+>  	priv->regmap = ddata->regmap;
+>  	priv->clk = ddata->clk;
+> -	priv->preset = STM32_LPTIM_MAX_ARR;
+> +	priv->ceiling = STM32_LPTIM_MAX_ARR;
+>  
+> +	/* Initialize IIO device */
+>  	indio_dev->name = dev_name(&pdev->dev);
+>  	indio_dev->dev.parent = &pdev->dev;
+>  	indio_dev->dev.of_node = pdev->dev.of_node;
+> @@ -356,9 +654,28 @@ static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+>  		indio_dev->channels = &stm32_lptim_cnt_channels;
+>  	indio_dev->num_channels = 1;
+>  
+> +	/* Initialize Counter device */
+> +	priv->counter.name = dev_name(&pdev->dev);
+> +	priv->counter.parent = &pdev->dev;
+> +	priv->counter.ops = &stm32_lptim_cnt_ops;
+> +	if (ddata->has_encoder) {
+> +		priv->counter.counts = &stm32_lptim_enc_counts;
+> +		priv->counter.num_signals = ARRAY_SIZE(stm32_lptim_cnt_signals);
+> +	} else {
+> +		priv->counter.counts = &stm32_lptim_in1_counts;
+> +		priv->counter.num_signals = 1;
+> +	}
+> +	priv->counter.num_counts = 1;
+> +	priv->counter.signals = stm32_lptim_cnt_signals;
+> +	priv->counter.priv = priv;
+> +
+>  	platform_set_drvdata(pdev, priv);
+>  
+> -	return devm_iio_device_register(&pdev->dev, indio_dev);
+> +	ret = devm_iio_device_register(&pdev->dev, indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_counter_register(&pdev->dev, &priv->counter);
+>  }
+>  
+>  static const struct of_device_id stm32_lptim_cnt_of_match[] = {
+> diff --git a/drivers/iio/Kconfig b/drivers/iio/Kconfig
+> index d08aeb41cd07..ac764840483a 100644
+> --- a/drivers/iio/Kconfig
+> +++ b/drivers/iio/Kconfig
+> @@ -74,7 +74,6 @@ source "drivers/iio/afe/Kconfig"
+>  source "drivers/iio/amplifiers/Kconfig"
+>  source "drivers/iio/chemical/Kconfig"
+>  source "drivers/iio/common/Kconfig"
+> -source "drivers/iio/counter/Kconfig"
+>  source "drivers/iio/dac/Kconfig"
+>  source "drivers/iio/dummy/Kconfig"
+>  source "drivers/iio/frequency/Kconfig"
+> diff --git a/drivers/iio/Makefile b/drivers/iio/Makefile
+> index cb5993251381..bff682ad1cfb 100644
+> --- a/drivers/iio/Makefile
+> +++ b/drivers/iio/Makefile
+> @@ -20,7 +20,6 @@ obj-y += amplifiers/
+>  obj-y += buffer/
+>  obj-y += chemical/
+>  obj-y += common/
+> -obj-y += counter/
+>  obj-y += dac/
+>  obj-y += dummy/
+>  obj-y += gyro/
+> diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
+> deleted file mode 100644
+> index eeb358122cbe..000000000000
+> --- a/drivers/iio/counter/Kconfig
+> +++ /dev/null
+> @@ -1,17 +0,0 @@
+> -#
+> -# Counter devices
+> -#
+> -# When adding new entries keep the list in alphabetical order
+> -
+> -menu "Counters"
+> -
+> -config STM32_LPTIMER_CNT
+> -	tristate "STM32 LP Timer encoder counter driver"
+> -	depends on MFD_STM32_LPTIMER || COMPILE_TEST
+> -	help
+> -	  Select this option to enable STM32 Low-Power Timer quadrature encoder
+> -	  and counter driver.
+> -
+> -	  To compile this driver as a module, choose M here: the
+> -	  module will be called stm32-lptimer-cnt.
+> -endmenu
+> diff --git a/drivers/iio/counter/Makefile b/drivers/iio/counter/Makefile
+> deleted file mode 100644
+> index 93933ba49280..000000000000
+> --- a/drivers/iio/counter/Makefile
+> +++ /dev/null
+> @@ -1,7 +0,0 @@
+> -#
+> -# Makefile for IIO counter devices
+> -#
+> -
+> -# When adding new entries keep the list in alphabetical order
+> -
+> -obj-$(CONFIG_STM32_LPTIMER_CNT)	+= stm32-lptimer-cnt.o
 
-However, if the rseq management fails due to an unrecoverable fault when
-accessing userspace or certain combinations of RSEQ_CS_* flags, then we
-will attempt to deliver a SIGSEGV. This has the potential for infinite
-recursion if the rseq code continuously fails on signal delivery.
 
-Avoid this problem by using force_sigsegv() instead of force_sig(), which
-is explicitly designed to reset the SEGV handler to SIG_DFL in the case
-of a recursive fault. In doing so, remove rseq_signal_deliver() from the
-internal rseq API and have an optional struct ksignal * parameter to
-rseq_handle_notify_resume() instead.
-
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: peterz@infradead.org
-Cc: paulmck@linux.vnet.ibm.com
-Cc: boqun.feng@gmail.com
-Link: https://lkml.kernel.org/r/1529664307-983-1-git-send-email-will.deacon@arm.com
-
----
- arch/arm/kernel/signal.c     |  4 ++--
- arch/powerpc/kernel/signal.c |  4 ++--
- arch/x86/entry/common.c      |  2 +-
- arch/x86/kernel/signal.c     |  2 +-
- include/linux/sched.h        | 18 +++++++++++-------
- kernel/rseq.c                |  7 ++++---
- 6 files changed, 21 insertions(+), 16 deletions(-)
-
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index f09e9d66d605..dec130e7078c 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -544,7 +544,7 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
- 	 * Increment event counter and perform fixup for the pre-signal
- 	 * frame.
- 	 */
--	rseq_signal_deliver(regs);
-+	rseq_signal_deliver(ksig, regs);
- 
- 	/*
- 	 * Set up the stack frame
-@@ -666,7 +666,7 @@ do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
- 			} else {
- 				clear_thread_flag(TIF_NOTIFY_RESUME);
- 				tracehook_notify_resume(regs);
--				rseq_handle_notify_resume(regs);
-+				rseq_handle_notify_resume(NULL, regs);
- 			}
- 		}
- 		local_irq_disable();
-diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
-index 17fe4339ba59..b3e8db376ecd 100644
---- a/arch/powerpc/kernel/signal.c
-+++ b/arch/powerpc/kernel/signal.c
-@@ -134,7 +134,7 @@ static void do_signal(struct task_struct *tsk)
- 	/* Re-enable the breakpoints for the signal stack */
- 	thread_change_pc(tsk, tsk->thread.regs);
- 
--	rseq_signal_deliver(tsk->thread.regs);
-+	rseq_signal_deliver(&ksig, tsk->thread.regs);
- 
- 	if (is32) {
-         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
-@@ -170,7 +170,7 @@ void do_notify_resume(struct pt_regs *regs, unsigned long thread_info_flags)
- 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
- 		clear_thread_flag(TIF_NOTIFY_RESUME);
- 		tracehook_notify_resume(regs);
--		rseq_handle_notify_resume(regs);
-+		rseq_handle_notify_resume(NULL, regs);
- 	}
- 
- 	user_enter();
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 92190879b228..3b2490b81918 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -164,7 +164,7 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
- 		if (cached_flags & _TIF_NOTIFY_RESUME) {
- 			clear_thread_flag(TIF_NOTIFY_RESUME);
- 			tracehook_notify_resume(regs);
--			rseq_handle_notify_resume(regs);
-+			rseq_handle_notify_resume(NULL, regs);
- 		}
- 
- 		if (cached_flags & _TIF_USER_RETURN_NOTIFY)
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 445ca11ff863..92a3b312a53c 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -692,7 +692,7 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
- 	 * Increment event counter and perform fixup for the pre-signal
- 	 * frame.
- 	 */
--	rseq_signal_deliver(regs);
-+	rseq_signal_deliver(ksig, regs);
- 
- 	/* Set up the stack frame */
- 	if (is_ia32_frame(ksig)) {
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index c1882643d455..9256118bd40c 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1799,20 +1799,22 @@ static inline void rseq_set_notify_resume(struct task_struct *t)
- 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
- }
- 
--void __rseq_handle_notify_resume(struct pt_regs *regs);
-+void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
- 
--static inline void rseq_handle_notify_resume(struct pt_regs *regs)
-+static inline void rseq_handle_notify_resume(struct ksignal *ksig,
-+					     struct pt_regs *regs)
- {
- 	if (current->rseq)
--		__rseq_handle_notify_resume(regs);
-+		__rseq_handle_notify_resume(ksig, regs);
- }
- 
--static inline void rseq_signal_deliver(struct pt_regs *regs)
-+static inline void rseq_signal_deliver(struct ksignal *ksig,
-+				       struct pt_regs *regs)
- {
- 	preempt_disable();
- 	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
- 	preempt_enable();
--	rseq_handle_notify_resume(regs);
-+	rseq_handle_notify_resume(ksig, regs);
- }
- 
- /* rseq_preempt() requires preemption to be disabled. */
-@@ -1861,10 +1863,12 @@ static inline void rseq_execve(struct task_struct *t)
- static inline void rseq_set_notify_resume(struct task_struct *t)
- {
- }
--static inline void rseq_handle_notify_resume(struct pt_regs *regs)
-+static inline void rseq_handle_notify_resume(struct ksignal *ksig,
-+					     struct pt_regs *regs)
- {
- }
--static inline void rseq_signal_deliver(struct pt_regs *regs)
-+static inline void rseq_signal_deliver(struct ksignal *ksig,
-+				       struct pt_regs *regs)
- {
- }
- static inline void rseq_preempt(struct task_struct *t)
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index ae306f90c514..22b6acf1ad63 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -251,10 +251,10 @@ static int rseq_ip_fixup(struct pt_regs *regs)
-  * respect to other threads scheduled on the same CPU, and with respect
-  * to signal handlers.
-  */
--void __rseq_handle_notify_resume(struct pt_regs *regs)
-+void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
- {
- 	struct task_struct *t = current;
--	int ret;
-+	int ret, sig;
- 
- 	if (unlikely(t->flags & PF_EXITING))
- 		return;
-@@ -268,7 +268,8 @@ void __rseq_handle_notify_resume(struct pt_regs *regs)
- 	return;
- 
- error:
--	force_sig(SIGSEGV, t);
-+	sig = ksig ? ksig->sig : 0;
-+	force_sigsegv(sig, t);
- }
- 
- #ifdef CONFIG_DEBUG_RSEQ
