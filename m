@@ -2,177 +2,88 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A847DC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F27C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D91824511
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D91824511
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3791324519
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:40:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3791324519
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934362AbeFVPjt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:39:49 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:46412 "EHLO extserv.mm-sol.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933938AbeFVPeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:34:03 -0400
-Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 309664F884;
-        Fri, 22 Jun 2018 18:33:59 +0300 (EEST)
-From:   Todor Tomov <todor.tomov@linaro.org>
-To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 08/32] media: camss: Unify the clock names
-Date:   Fri, 22 Jun 2018 18:33:17 +0300
-Message-Id: <1529681621-9682-9-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
-References: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
+        id S934363AbeFVPkB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:40:01 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42049 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933674AbeFVPj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:39:59 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fWOA1-0007oK-Ei; Fri, 22 Jun 2018 17:39:41 +0200
+Date:   Fri, 22 Jun 2018 17:39:41 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+cc:     "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/7] x86/fsgsbase/64: Introduce FS/GS base helper
+ functions
+In-Reply-To: <CALCETrVzLT0AwUFxZGjuREaontqzJe0DEccNFwLTKdLcLxcARA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1806221735400.2402@nanos.tec.linutronix.de>
+References: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com> <1529536506-26237-2-git-send-email-chang.seok.bae@intel.com> <alpine.DEB.2.21.1806221610500.2402@nanos.tec.linutronix.de>
+ <CALCETrVzLT0AwUFxZGjuREaontqzJe0DEccNFwLTKdLcLxcARA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unify the clock names - use names closer to the clock
-definitions.
+On Fri, 22 Jun 2018, Andy Lutomirski wrote:
+> On Fri, Jun 22, 2018 at 7:28 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > +unsigned long read_task_fsbase(struct task_struct *task)
+> > > +{
+> > > +     unsigned long fsbase;
+> > > +
+> > > +     if (task == current) {
+> > > +             fsbase = read_fsbase();
+> > > +     } else {
+> > > +             /*
+> > > +              * XXX: This will not behave as expected if called
+> > > +              * if fsindex != 0. This preserves an existing bug
+> > > +              * that will be fixed.
+> >
+> > I'm late to this party, but let me ask the obvious question:
+> >
+> >     Why is the existing bug not fixed as the first patch in the series?
+> 
+> IIRC that was how I did it in the old version of this code.  I think
+> it did it because it was less messy to fix the bug after cleaning up
+> the code, but I could be remembering wrong.
 
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
----
- .../devicetree/bindings/media/qcom,camss.txt       | 24 +++++++++++-----------
- drivers/media/platform/qcom/camss/camss.c          | 20 ++++++++----------
- 2 files changed, 20 insertions(+), 24 deletions(-)
+Fair enough. Though the general rule is: Fix bugs first and then do
+features, unless you really need the extra step to fix it proper.
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,camss.txt b/Documentation/devicetree/bindings/media/qcom,camss.txt
-index cadeceb..032e8ed 100644
---- a/Documentation/devicetree/bindings/media/qcom,camss.txt
-+++ b/Documentation/devicetree/bindings/media/qcom,camss.txt
-@@ -53,7 +53,7 @@ Qualcomm Camera Subsystem
- 	Usage: required
- 	Value type: <stringlist>
- 	Definition: Should contain the following entries:
--                - "camss_top_ahb"
-+                - "top_ahb"
-                 - "ispif_ahb"
-                 - "csiphy0_timer"
-                 - "csiphy1_timer"
-@@ -67,11 +67,11 @@ Qualcomm Camera Subsystem
-                 - "csi1_phy"
-                 - "csi1_pix"
-                 - "csi1_rdi"
--                - "camss_ahb"
--                - "camss_vfe_vfe"
--                - "camss_csi_vfe"
--                - "iface"
--                - "bus"
-+                - "ahb"
-+                - "vfe0"
-+                - "csi_vfe0"
-+                - "vfe_ahb"
-+                - "vfe_axi"
- - vdda-supply:
- 	Usage: required
- 	Value type: <phandle>
-@@ -161,7 +161,7 @@ Qualcomm Camera Subsystem
- 			<&gcc GCC_CAMSS_CSI_VFE0_CLK>,
- 			<&gcc GCC_CAMSS_VFE_AHB_CLK>,
- 			<&gcc GCC_CAMSS_VFE_AXI_CLK>;
--                clock-names = "camss_top_ahb",
-+                clock-names = "top_ahb",
-                         "ispif_ahb",
-                         "csiphy0_timer",
-                         "csiphy1_timer",
-@@ -175,11 +175,11 @@ Qualcomm Camera Subsystem
-                         "csi1_phy",
-                         "csi1_pix",
-                         "csi1_rdi",
--                        "camss_ahb",
--                        "camss_vfe_vfe",
--                        "camss_csi_vfe",
--                        "iface",
--                        "bus";
-+                        "ahb",
-+                        "vfe0",
-+                        "csi_vfe0",
-+                        "vfe_ahb",
-+                        "vfe_axi";
- 		vdda-supply = <&pm8916_l2>;
- 		iommus = <&apps_iommu 3>;
- 		ports {
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index abf6184..0b663e0 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -32,8 +32,7 @@ static const struct resources csiphy_res[] = {
- 	/* CSIPHY0 */
- 	{
- 		.regulator = { NULL },
--		.clock = { "camss_top_ahb", "ispif_ahb",
--			   "camss_ahb", "csiphy0_timer" },
-+		.clock = { "top_ahb", "ispif_ahb", "ahb", "csiphy0_timer" },
- 		.clock_rate = { { 0 },
- 				{ 0 },
- 				{ 0 },
-@@ -45,8 +44,7 @@ static const struct resources csiphy_res[] = {
- 	/* CSIPHY1 */
- 	{
- 		.regulator = { NULL },
--		.clock = { "camss_top_ahb", "ispif_ahb",
--			   "camss_ahb", "csiphy1_timer" },
-+		.clock = { "top_ahb", "ispif_ahb", "ahb", "csiphy1_timer" },
- 		.clock_rate = { { 0 },
- 				{ 0 },
- 				{ 0 },
-@@ -60,8 +58,7 @@ static const struct resources csid_res[] = {
- 	/* CSID0 */
- 	{
- 		.regulator = { "vdda" },
--		.clock = { "camss_top_ahb", "ispif_ahb",
--			   "csi0_ahb", "camss_ahb",
-+		.clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
- 			   "csi0", "csi0_phy", "csi0_pix", "csi0_rdi" },
- 		.clock_rate = { { 0 },
- 				{ 0 },
-@@ -78,8 +75,7 @@ static const struct resources csid_res[] = {
- 	/* CSID1 */
- 	{
- 		.regulator = { "vdda" },
--		.clock = { "camss_top_ahb", "ispif_ahb",
--			   "csi1_ahb", "camss_ahb",
-+		.clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
- 			   "csi1", "csi1_phy", "csi1_pix", "csi1_rdi" },
- 		.clock_rate = { { 0 },
- 				{ 0 },
-@@ -96,10 +92,10 @@ static const struct resources csid_res[] = {
- 
- static const struct resources_ispif ispif_res = {
- 	/* ISPIF */
--	.clock = { "camss_top_ahb", "camss_ahb", "ispif_ahb",
-+	.clock = { "top_ahb", "ahb", "ispif_ahb",
- 		   "csi0", "csi0_pix", "csi0_rdi",
- 		   "csi1", "csi1_pix", "csi1_rdi" },
--	.clock_for_reset = { "camss_vfe_vfe", "camss_csi_vfe" },
-+	.clock_for_reset = { "vfe0", "csi_vfe0" },
- 	.reg = { "ispif", "csi_clk_mux" },
- 	.interrupt = "ispif"
- 
-@@ -108,8 +104,8 @@ static const struct resources_ispif ispif_res = {
- static const struct resources vfe_res = {
- 	/* VFE0 */
- 	.regulator = { NULL },
--	.clock = { "camss_top_ahb", "camss_vfe_vfe", "camss_csi_vfe",
--		   "iface", "bus", "camss_ahb" },
-+	.clock = { "top_ahb", "vfe0", "csi_vfe0",
-+		   "vfe_ahb", "vfe_axi", "ahb" },
- 	.clock_rate = { { 0 },
- 			{ 50000000, 80000000, 100000000, 160000000,
- 			  177780000, 200000000, 266670000, 320000000,
--- 
-2.7.4
+Now in that case the real question is whether this is a bug or just a
+slight incorrectness which has no practical impact. If it's the latter,
+then introduce the new function which does the right thing first and make
+the new fs/gs base functions use it without having a blurb about preserving
+bugs.
+
+Thanks,
+
+	tglx
+
+
 
