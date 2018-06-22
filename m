@@ -2,107 +2,276 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 070B5C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AE5C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4FC124627
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5E5C24624
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfOLHcCv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FC124627
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="NJ93fsPP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E5C24624
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933908AbeFVQ4j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:56:39 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42069 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933472AbeFVQ4h (ORCPT
+        id S933971AbeFVQ4m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:56:42 -0400
+Received: from mail.efficios.com ([167.114.142.138]:39164 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933472AbeFVQ4j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:56:37 -0400
-Received: by mail-pg0-f68.google.com with SMTP id c10-v6so3222508pgu.9
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uplf+FY22xsVmutCHVqJElx8IqHhtMdktBTBDdjS/XM=;
-        b=gfOLHcCvKCWTXrW36xibcKriVsFSsL+A2n84+1gkJoYPLiDr8I1AFJKO4doRyHq0cC
-         fWnLICo2QiGReL7uM0K81rqOyMllZPrWUtkz7Fwu9hbLoooqe3Vhn/TsFkuctJ8e8ncZ
-         tz+WFMUgV6Zq2kvZ5LknDugCzHt/Jovdmkhws=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uplf+FY22xsVmutCHVqJElx8IqHhtMdktBTBDdjS/XM=;
-        b=NsPnL40KNa8zvGWz1PIvcxLH9vA53SgY7VszrC4Tf1KCKTSKvlJwKKk9QxIv+4jddl
-         1e7TLL5V3VQdu6+0HzE0TCKzaMh9yBhsTmhhn++OfaX4TNZQG57UipIhd2MbDUbCiPxz
-         TRviFAY4hRMYWNsOc/RAl5IFS8OAvQDh0B+wUrbgKEHMAX01MhsVWomugu1COAmogi8Y
-         OEzQgDo5aIQL7GuNRJ3FHUKUVjtkJ+Alo8Vbc/uoofbNjbglPR23K8GepUiZ/ZNpDch7
-         AwI7fJ58Xlv+onO9jkCWXWg1tbc4CqNmyPiB05SlkzGOJYYpMUKf2QoJRVMOGtvcJWMY
-         bm/g==
-X-Gm-Message-State: APt69E3Ixny79rxA+fi7z6GRSPN51+MKtO0iVl2GxHqakDgmcPyilhFn
-        yzJjMvOiKz3T+nfji/5S6x+Htg==
-X-Google-Smtp-Source: ADUXVKIwR2RcMMuWhHTxPLxkNPiaIQmuby12lNwhv0nRRb1S98e8OvyMHD0q+/rADrxT3J/8Syh6pg==
-X-Received: by 2002:a65:4c4d:: with SMTP id l13-v6mr2162968pgr.211.1529686596589;
-        Fri, 22 Jun 2018 09:56:36 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x14-v6sm7555065pge.85.2018.06.22.09.56.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 09:56:35 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 09:56:34 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: Add pmu node to sdm845
-Message-ID: <20180622165634.GB10336@builder>
-References: <20180522062352.151257-1-swboyd@chromium.org>
+        Fri, 22 Jun 2018 12:56:39 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id E77CA1B4BFA;
+        Fri, 22 Jun 2018 12:56:38 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 58OLUaQstC8I; Fri, 22 Jun 2018 12:56:38 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 476A81B4BE3;
+        Fri, 22 Jun 2018 12:56:38 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 476A81B4BE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1529686598;
+        bh=lBfem5vuHtj52dXyqw4TbGXtCnf20qe7c+e1Dw3HB1s=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=NJ93fsPPlnlYgSr7cq7JTwi6Ts3uwlVQlrTkCxk0xrj3UXgqzwjkc0fheCy/5+BL1
+         9Hvob58kk0hY7IIugw6lHOICCPK7g0lAnk5NIQMxhSATKV1gxQNM0jxt1zOl/fhZ51
+         yk6ps/QvLJF+B42lRzTF9P7f8AZH/R9KzJnq9gaspkBlhd+dR96ntq1VFCXPH180dr
+         SiexOkpvrgzouaka6TG9/UZ5eB2Rxkk4hAd1RNQyP4J0o1nism7bPe78vlc0u/1pe0
+         ffPUPcJyeJq4BTvHCqDmzZG5STj0YY/ioDxD+dYdX+AUzP5m7chrU7wFCyzoBb0dj3
+         q8Ux0BrJNuGOg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 2t1Sm_eZKatj; Fri, 22 Jun 2018 12:56:38 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 2FDC51B4BD9;
+        Fri, 22 Jun 2018 12:56:38 -0400 (EDT)
+Date:   Fri, 22 Jun 2018 12:56:38 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>
+Message-ID: <573508582.2432.1529686598096.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1529664307-983-1-git-send-email-will.deacon@arm.com>
+References: <1529664307-983-1-git-send-email-will.deacon@arm.com>
+Subject: Re: [PATCH v3] rseq: Avoid infinite recursion when delivering
+ SIGSEGV
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522062352.151257-1-swboyd@chromium.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: Avoid infinite recursion when delivering SIGSEGV
+Thread-Index: Tfc2jbx24lTNq/tpoDHKOGkifC+bkQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 21 May 23:23 PDT 2018, Stephen Boyd wrote:
+----- On Jun 22, 2018, at 6:45 AM, Will Deacon will.deacon@arm.com wrote:
 
-> Add the CPU PMU on sdm845 to get perf support for hardware events.
+> When delivering a signal to a task that is using rseq, we call into
+> __rseq_handle_notify_resume() so that the registers pushed in the
+> sigframe are updated to reflect the state of the restartable sequence
+> (for example, ensuring that the signal returns to the abort handler if
+> necessary).
 > 
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> However, if the rseq management fails due to an unrecoverable fault when
+> accessing userspace or certain combinations of RSEQ_CS_* flags, then we
+> will attempt to deliver a SIGSEGV. This has the potential for infinite
+> recursion if the rseq code continuously fails on signal delivery.
+> 
+> Avoid this problem by using force_sigsegv() instead of force_sig(), which
+> is explicitly designed to reset the SEGV handler to SIG_DFL in the case
+> of a recursive fault. In doing so, remove rseq_signal_deliver() from the
+> internal rseq API and have an optional struct ksignal * parameter to
+> rseq_handle_notify_resume() instead.
+> 
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-Regards,
-Bjorn
+Thomas, do you want to pick up Will's rseq fix into the tip tree ?
+
+Thanks,
+
+Mathieu
+
 
 > ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 7c85e7c596db..93a62c2be86c 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -152,6 +152,11 @@
->  		};
->  	};
->  
-> +	pmu {
-> +		compatible = "arm,armv8-pmuv3";
-> +		interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
->  	timer {
->  		compatible = "arm,armv8-timer";
->  		interrupts = <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
-> -- 
-> Sent by a computer through tubes
+> v2 -> v3: Reintroduce rseq_signal_deliver()
 > 
+> arch/arm/kernel/signal.c     |  4 ++--
+> arch/powerpc/kernel/signal.c |  4 ++--
+> arch/x86/entry/common.c      |  2 +-
+> arch/x86/kernel/signal.c     |  2 +-
+> include/linux/sched.h        | 18 +++++++++++-------
+> kernel/rseq.c                |  7 ++++---
+> 6 files changed, 21 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+> index f09e9d66d605..dec130e7078c 100644
+> --- a/arch/arm/kernel/signal.c
+> +++ b/arch/arm/kernel/signal.c
+> @@ -544,7 +544,7 @@ static void handle_signal(struct ksignal *ksig, struct
+> pt_regs *regs)
+> 	 * Increment event counter and perform fixup for the pre-signal
+> 	 * frame.
+> 	 */
+> -	rseq_signal_deliver(regs);
+> +	rseq_signal_deliver(ksig, regs);
+> 
+> 	/*
+> 	 * Set up the stack frame
+> @@ -666,7 +666,7 @@ do_work_pending(struct pt_regs *regs, unsigned int
+> thread_flags, int syscall)
+> 			} else {
+> 				clear_thread_flag(TIF_NOTIFY_RESUME);
+> 				tracehook_notify_resume(regs);
+> -				rseq_handle_notify_resume(regs);
+> +				rseq_handle_notify_resume(NULL, regs);
+> 			}
+> 		}
+> 		local_irq_disable();
+> diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+> index 17fe4339ba59..b3e8db376ecd 100644
+> --- a/arch/powerpc/kernel/signal.c
+> +++ b/arch/powerpc/kernel/signal.c
+> @@ -134,7 +134,7 @@ static void do_signal(struct task_struct *tsk)
+> 	/* Re-enable the breakpoints for the signal stack */
+> 	thread_change_pc(tsk, tsk->thread.regs);
+> 
+> -	rseq_signal_deliver(tsk->thread.regs);
+> +	rseq_signal_deliver(&ksig, tsk->thread.regs);
+> 
+> 	if (is32) {
+>         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+> @@ -170,7 +170,7 @@ void do_notify_resume(struct pt_regs *regs, unsigned long
+> thread_info_flags)
+> 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
+> 		clear_thread_flag(TIF_NOTIFY_RESUME);
+> 		tracehook_notify_resume(regs);
+> -		rseq_handle_notify_resume(regs);
+> +		rseq_handle_notify_resume(NULL, regs);
+> 	}
+> 
+> 	user_enter();
+> diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+> index 92190879b228..3b2490b81918 100644
+> --- a/arch/x86/entry/common.c
+> +++ b/arch/x86/entry/common.c
+> @@ -164,7 +164,7 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32
+> cached_flags)
+> 		if (cached_flags & _TIF_NOTIFY_RESUME) {
+> 			clear_thread_flag(TIF_NOTIFY_RESUME);
+> 			tracehook_notify_resume(regs);
+> -			rseq_handle_notify_resume(regs);
+> +			rseq_handle_notify_resume(NULL, regs);
+> 		}
+> 
+> 		if (cached_flags & _TIF_USER_RETURN_NOTIFY)
+> diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+> index 445ca11ff863..92a3b312a53c 100644
+> --- a/arch/x86/kernel/signal.c
+> +++ b/arch/x86/kernel/signal.c
+> @@ -692,7 +692,7 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+> 	 * Increment event counter and perform fixup for the pre-signal
+> 	 * frame.
+> 	 */
+> -	rseq_signal_deliver(regs);
+> +	rseq_signal_deliver(ksig, regs);
+> 
+> 	/* Set up the stack frame */
+> 	if (is_ia32_frame(ksig)) {
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 87bf02d93a27..c54dda3cd9e5 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1799,20 +1799,22 @@ static inline void rseq_set_notify_resume(struct
+> task_struct *t)
+> 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+> }
+> 
+> -void __rseq_handle_notify_resume(struct pt_regs *regs);
+> +void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+> 
+> -static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+> +static inline void rseq_handle_notify_resume(struct ksignal *ksig,
+> +					     struct pt_regs *regs)
+> {
+> 	if (current->rseq)
+> -		__rseq_handle_notify_resume(regs);
+> +		__rseq_handle_notify_resume(ksig, regs);
+> }
+> 
+> -static inline void rseq_signal_deliver(struct pt_regs *regs)
+> +static inline void rseq_signal_deliver(struct ksignal *ksig,
+> +				       struct pt_regs *regs)
+> {
+> 	preempt_disable();
+> 	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
+> 	preempt_enable();
+> -	rseq_handle_notify_resume(regs);
+> +	rseq_handle_notify_resume(ksig, regs);
+> }
+> 
+> /* rseq_preempt() requires preemption to be disabled. */
+> @@ -1864,10 +1866,12 @@ static inline void rseq_execve(struct task_struct *t)
+> static inline void rseq_set_notify_resume(struct task_struct *t)
+> {
+> }
+> -static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+> +static inline void rseq_handle_notify_resume(struct ksignal *ksig,
+> +					     struct pt_regs *regs)
+> {
+> }
+> -static inline void rseq_signal_deliver(struct pt_regs *regs)
+> +static inline void rseq_signal_deliver(struct ksignal *ksig,
+> +				       struct pt_regs *regs)
+> {
+> }
+> static inline void rseq_preempt(struct task_struct *t)
+> diff --git a/kernel/rseq.c b/kernel/rseq.c
+> index ae306f90c514..22b6acf1ad63 100644
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -251,10 +251,10 @@ static int rseq_ip_fixup(struct pt_regs *regs)
+>  * respect to other threads scheduled on the same CPU, and with respect
+>  * to signal handlers.
+>  */
+> -void __rseq_handle_notify_resume(struct pt_regs *regs)
+> +void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+> {
+> 	struct task_struct *t = current;
+> -	int ret;
+> +	int ret, sig;
+> 
+> 	if (unlikely(t->flags & PF_EXITING))
+> 		return;
+> @@ -268,7 +268,8 @@ void __rseq_handle_notify_resume(struct pt_regs *regs)
+> 	return;
+> 
+> error:
+> -	force_sig(SIGSEGV, t);
+> +	sig = ksig ? ksig->sig : 0;
+> +	force_sigsegv(sig, t);
+> }
+> 
+> #ifdef CONFIG_DEBUG_RSEQ
+> --
+> 2.1.4
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
