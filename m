@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4DCC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A95C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FCD024330
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:02:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FCD024330
+	by mail.kernel.org (Postfix) with ESMTP id 3956124330
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:02:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3956124330
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=h-hofmeier.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933296AbeFVOCP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:02:15 -0400
-Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:41837 "EHLO
+        id S933424AbeFVOCU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:02:20 -0400
+Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:41857 "EHLO
         faui40.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933135AbeFVOCN (ORCPT
+        by vger.kernel.org with ESMTP id S933135AbeFVOCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:02:13 -0400
+        Fri, 22 Jun 2018 10:02:17 -0400
 Received: from faui49man9 (faui49man9.informatik.uni-erlangen.de [131.188.42.54])
-        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 3B66A58C4AF;
-        Fri, 22 Jun 2018 16:02:07 +0200 (CEST)
-Received: by faui49man9 (sSMTP sendmail emulation); Fri, 22 Jun 2018 16:02:07 +0200
+        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 9FE2358C5A0;
+        Fri, 22 Jun 2018 16:02:12 +0200 (CEST)
+Received: by faui49man9 (sSMTP sendmail emulation); Fri, 22 Jun 2018 16:02:12 +0200
 From:   Henriette Hofmeier <passt@h-hofmeier.de>
 To:     devel@linuxdriverproject.org
 Cc:     florian.harbecke@fau.de, linux-kernel@i4.cs.fau.de,
@@ -36,9 +36,9 @@ Cc:     florian.harbecke@fau.de, linux-kernel@i4.cs.fau.de,
         joe@perches.com, keescook@chromium.org, natechancellor@gmail.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         xmrancho@gmail.com, Henriette Hofmeier <passt@h-hofmeier.de>
-Subject: [PATCH 1/3] staging: rtl8723bs: Move definition open brace
-Date:   Fri, 22 Jun 2018 16:01:57 +0200
-Message-Id: <1529676119-21591-2-git-send-email-passt@h-hofmeier.de>
+Subject: [PATCH 2/3] staging: rtl8723bs: Remove unnecessary initializations
+Date:   Fri, 22 Jun 2018 16:01:58 +0200
+Message-Id: <1529676119-21591-3-git-send-email-passt@h-hofmeier.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529676119-21591-1-git-send-email-passt@h-hofmeier.de>
 References: <1529676119-21591-1-git-send-email-passt@h-hofmeier.de>
@@ -47,40 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move open braces of definitions to the next line
-to comply with codestyle.
+Remove initializations of global variables with 0.
 Criticized by checkpatch.
 
 Signed-off-by: Henriette Hofmeier <passt@h-hofmeier.de>
 Signed-off-by: Florian Harbecke <florian.harbecke@fau.de>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_efuse.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index a81e130..0952d15 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -331,7 +331,8 @@ static void init_mlme_ext_priv_value(struct adapter *padapter)
+diff --git a/drivers/staging/rtl8723bs/core/rtw_efuse.c b/drivers/staging/rtl8723bs/core/rtw_efuse.c
+index bbf6f3f..9d265f4 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_efuse.c
++++ b/drivers/staging/rtl8723bs/core/rtw_efuse.c
+@@ -13,18 +13,18 @@
  
- static int has_channel(RT_CHANNEL_INFO *channel_set,
- 					   u8 chanset_size,
--					   u8 chan) {
-+					   u8 chan)
-+{
- 	int i;
  
- 	for (i = 0; i < chanset_size; i++) {
-@@ -345,7 +346,8 @@ static int has_channel(RT_CHANNEL_INFO *channel_set,
+ /*------------------------Define local variable------------------------------*/
+-u8 fakeEfuseBank = 0;
+-u32 fakeEfuseUsedBytes = 0;
++u8 fakeEfuseBank;
++u32 fakeEfuseUsedBytes;
+ u8 fakeEfuseContent[EFUSE_MAX_HW_SIZE] = {0};
+ u8 fakeEfuseInitMap[EFUSE_MAX_MAP_LEN] = {0};
+ u8 fakeEfuseModifiedMap[EFUSE_MAX_MAP_LEN] = {0};
  
- static void init_channel_list(struct adapter *padapter, RT_CHANNEL_INFO *channel_set,
- 							  u8 chanset_size,
--							  struct p2p_channels *channel_list) {
-+							  struct p2p_channels *channel_list)
-+{
+-u32 BTEfuseUsedBytes = 0;
++u32 BTEfuseUsedBytes;
+ u8 BTEfuseContent[EFUSE_MAX_BT_BANK][EFUSE_MAX_HW_SIZE];
+ u8 BTEfuseInitMap[EFUSE_BT_MAX_MAP_LEN] = {0};
+ u8 BTEfuseModifiedMap[EFUSE_BT_MAX_MAP_LEN] = {0};
  
- 	struct p2p_oper_class_map op_class[] = {
- 		{ IEEE80211G,  81,   1,  13,  1, BW20 },
+-u32 fakeBTEfuseUsedBytes = 0;
++u32 fakeBTEfuseUsedBytes;
+ u8 fakeBTEfuseContent[EFUSE_MAX_BT_BANK][EFUSE_MAX_HW_SIZE];
+ u8 fakeBTEfuseInitMap[EFUSE_BT_MAX_MAP_LEN] = {0};
+ u8 fakeBTEfuseModifiedMap[EFUSE_BT_MAX_MAP_LEN] = {0};
 -- 
 2.7.4
 
