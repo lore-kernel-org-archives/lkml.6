@@ -2,121 +2,156 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09675C43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 08:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FC5C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 08:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B096224B6D
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 08:41:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="inwH6OMZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B096224B6D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id BE2AC24B78
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 08:56:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2AC24B78
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751791AbeFWIlH (ORCPT
+        id S1751759AbeFWI4n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 04:41:07 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:43018 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751769AbeFWIlE (ORCPT
+        Sat, 23 Jun 2018 04:56:43 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43164 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751696AbeFWI4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 04:41:04 -0400
-Received: from mail-ua0-f169.google.com (mail-ua0-f169.google.com [209.85.217.169]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w5N8erbY029944;
-        Sat, 23 Jun 2018 17:40:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w5N8erbY029944
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529743254;
-        bh=eoVsUjrTCNVbfRDhPiyiF8cS5j9cLMlWN9SNBp4SvRE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=inwH6OMZSoIisRUzGlywshODTb6vj0P/lfbw2nQA3qtYDG3LBTMcMJGaiWIRvSxes
-         iHFMiPEmtDQV+jdVuMRm5WpS3QczvoomeNI4hrBmOy98dRDCFab/1jlwM7nmOvmjSk
-         A0si1XiSvO1bU61IrjTN2cCtp9RIf+JmqwveFtkRMwxJz7JMCsgE9T6RNSzauFa3kL
-         qjKV56kjIgjqYhnttnv2+noij7X0FYJIbbZuLjQ0FIyqxNxsIwTGvUXcZAfUDpQ/TX
-         5mV5mELRU/2ZxMlcYUgQdoe7FaqVu82nAtEnPwlYr/pjhGtbsNPDCLnnuo4j4dcXMA
-         qQgIVzh/5yQqQ==
-X-Nifty-SrcIP: [209.85.217.169]
-Received: by mail-ua0-f169.google.com with SMTP id l11-v6so5742384uak.7;
-        Sat, 23 Jun 2018 01:40:54 -0700 (PDT)
-X-Gm-Message-State: APt69E1XMhcVS5amaI7ynQdDZErhhe09wBSAR5K55d8qCn5qpjUOeA41
-        BMzfVCvvo/YT1pWzrUSGipE1/ueEe2QfBgtMv/k=
-X-Google-Smtp-Source: ADUXVKLbneVmWlz9qLuHHbq/Py7D9yIJ4hd7iRXjntCtjzeSE7YQuyE668QU/QUkt4n6gbVfkPMed3SIr8W6qQTKv8Q=
-X-Received: by 2002:a9f:3d6b:: with SMTP id m43-v6mr3131588uai.17.1529743253133;
- Sat, 23 Jun 2018 01:40:53 -0700 (PDT)
+        Sat, 23 Jun 2018 04:56:41 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fWeLQ-0003c7-R3; Sat, 23 Jun 2018 10:56:33 +0200
+Date:   Sat, 23 Jun 2018 10:56:29 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Palmer Dabbelt <palmer@sifive.com>
+cc:     jason@lakedaemon.net, marc.zyngier@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, aou@eecs.berkeley.edu, shorne@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Michael Clark <mjc@sifive.com>
+Subject: Re: [PATCH 3/3] irqchip: RISC-V Local Interrupt Controller Driver
+In-Reply-To: <20180622232006.12158-4-palmer@sifive.com>
+Message-ID: <alpine.DEB.2.21.1806231041110.8650@nanos.tec.linutronix.de>
+References: <20180622232006.12158-1-palmer@sifive.com> <20180622232006.12158-4-palmer@sifive.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Sat, 23 Jun 2018 01:40:12
- -0700 (PDT)
-In-Reply-To: <20180619201458.4559-1-paul.burton@mips.com>
-References: <20180619190225.7eguhiw3ixaiwpgl@pburton-laptop> <20180619201458.4559-1-paul.burton@mips.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 23 Jun 2018 17:40:12 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASFqH7a1ZLhp_aLQXTPxODPbctVwEZ+5SL1OMp0kRQJGQ@mail.gmail.com>
-Message-ID: <CAK7LNASFqH7a1ZLhp_aLQXTPxODPbctVwEZ+5SL1OMp0kRQJGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Resolve -Wattribute-alias warnings from SYSCALL_DEFINEx()
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
-        Matthew Wilcox <matthew@wil.cx>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Khem Raj <raj.khem@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stafford Horne <shorne@gmail.com>,
-        Gideon Israel Dsouza <gidisrael@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-20 5:14 GMT+09:00 Paul Burton <paul.burton@mips.com>:
-> This series introduces infrastructure allowing compiler diagnostics to
-> be disabled or their severity modified for specific pieces of code, with
-> suitable abstractions to prevent that code from becoming tied to a
-> specific compiler.
->
-> This infrastructure is then used to disable the -Wattribute-alias
-> warning around syscall definitions, which rely on type mismatches to
-> sanitize arguments.
->
-> Finally PowerPC-specific #pragma's are removed now that the generic code
-> is handling this.
->
-> The series takes Arnd's RFC patches & addresses the review comments they
-> received. The most notable effect of this series to to avoid warnings &
-> build failures caused by -Wattribute-alias when compiling the kernel
-> with GCC 8.
->
-> Applies cleanly atop v4.18-rc1.
+On Fri, 22 Jun 2018, Palmer Dabbelt wrote:
+> +struct riscv_irq_data {
+> +	struct irq_chip		chip;
+> +	struct irq_domain	*domain;
+> +	int			hart;
+> +	char			name[20];
+> +};
+> +DEFINE_PER_CPU(struct riscv_irq_data, riscv_irq_data);
+
+static ?
+
+> +static void riscv_intc_irq(struct pt_regs *regs)
+> +{
+> +	struct pt_regs *old_regs = set_irq_regs(regs);
+> +	struct irq_domain *domain;
+> +	unsigned long cause = csr_read(scause);
+> +
+> +	/*
+> +	 * The high order bit of the trap cause register is always set for
+> +	 * interrupts, which allows us to differentiate them from exceptions
+> +	 * quickly.  The INTERRUPT_CAUSE_* macros don't contain that bit, so we
+> +	 * need to mask it off here.
+> +	 */
+> +	WARN_ON((cause & (1UL << (PTR_BITS - 1))) == 0);
+
+So what's the point of continuing here? 
 
 
-Series, applied to linux-kbuild/fixes.
-(since we need to fix warnings from GCC 8.1)
+> +	cause = cause & ~(1UL << (PTR_BITS - 1));
 
+Please define a proper CAUSE_MASK or such as this is really hard to read.
 
-Thanks!
+> +/*
+> + * On RISC-V systems local interrupts are masked or unmasked by writing the SIE
+> + * (Supervisor Interrupt Enable) CSR.  As CSRs can only be written on the local
+> + * hart, these functions can only be called on the hart that corresponds to the
+> + * IRQ chip.  They are only called internally to this module, so they BUG_ON if
+> + * this condition is violated rather than attempting to handle the error by
+> + * forwarding to the target hart, as that's already expected to have been done.
+> + */
+> +static void riscv_irq_mask(struct irq_data *d)
+> +{
+> +	struct riscv_irq_data *data = irq_data_get_irq_chip_data(d);
+> +
+> +	BUG_ON(smp_processor_id() != data->hart);
+> +	csr_clear(sie, 1 << (long)d->hwirq);
 
+What's the point of this type cast? Whether you shift by unsigned long or by
+long does not really matter, right? I'd rather expected to see 1U << d->hwirq
 
+> +static int __init riscv_intc_init(struct device_node *node, struct device_node *parent)
+> +{
+> +	int hart;
+> +	struct riscv_irq_data *data;
 
--- 
-Best Regards
-Masahiro Yamada
+Nit. Reverse fir tree ordering please
+
+	struct riscv_irq_data *data;
+	int hart;
+
+Simpler to parse.
+
+> +
+> +	if (parent)
+> +		return 0;
+
+Hmm, that wants a comment because it's not clear why this is done for the
+casual reader.
+
+> +
+> +	hart = riscv_of_processor_hart(node->parent);
+> +	if (hart < 0)
+> +		return -EIO;
+> +
+> +	data = &per_cpu(riscv_irq_data, hart);
+> +	snprintf(data->name, sizeof(data->name), "riscv,cpu_intc,%d", hart);
+> +	data->hart = hart;
+> +	data->chip.name = data->name;
+> +	data->chip.irq_mask = riscv_irq_mask;
+> +	data->chip.irq_unmask = riscv_irq_unmask;
+> +	data->chip.irq_enable = riscv_irq_enable;
+> +	data->chip.irq_disable = riscv_irq_disable;
+> +	data->domain = irq_domain_add_linear(node, PTR_BITS,
+> +					     &riscv_irqdomain_ops, data);
+> +	if (!data->domain)
+> +		goto error_add_linear;
+> +
+> +	set_handle_irq(&riscv_intc_irq);
+> +
+> +	pr_info("%s: %lu local interrupts mapped\n", data->name, PTR_BITS);
+> +	return 0;
+> +
+> +error_add_linear:
+> +	pr_warning("%s: unable to add IRQ domain\n",
+> +		   data->name);
+
+One line please.
+
+> +	return -ENXIO;
+
+Thanks,
+
+	tglx
