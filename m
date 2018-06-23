@@ -2,108 +2,175 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B299C43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 13:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFA7C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 13:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE1FA24BFD
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 13:12:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HrEqHSEa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1FA24BFD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 8AE6B24BF1
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 13:51:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE6B24BF1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752083AbeFWNMT (ORCPT
+        id S1751591AbeFWNvE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 09:12:19 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:44234 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751835AbeFWNMR (ORCPT
+        Sat, 23 Jun 2018 09:51:04 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43370 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751326AbeFWNvD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 09:12:17 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5ND9M8M193046;
-        Sat, 23 Jun 2018 13:12:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=RN9iRWNrlST7nEsJWa4e9MxRmiuL1xnmK6tptNEsCvE=;
- b=HrEqHSEaNlAkq2crdmi8DZXn0w0T2VYbfgTz0ovehjwdlZctm47F7bEwF9tNtuaPOagu
- 1HzQ2r0k1OOE1oLsbeXnYv1WqQtj62aZLFf5tgXz/YAgtCpQvUUSR4Kx+1auRXafAdxu
- elVFmkR4cYsMvo7wWNsTA4cDOS1JQeZ7FJQUIz96ZiJALaI+/DBG2pnuWeJXeF/oVuix
- BZE6/ucWgmwlTSclQG/v6XxGOYVHpPiAB4j0HaxulrMU5xRam8coA3OqXvCNtDiPqN4S
- 8ROKtNqz5nQ2XLjmE88iP1lDfFr+ybEbzhis+Cz3Z5CopEtW1UAF8/Uw3st1mQc1OysO qg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2jsfg0rfu0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 23 Jun 2018 13:12:17 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5NDCDZW003009
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 23 Jun 2018 13:12:14 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5NDCDlC012797;
-        Sat, 23 Jun 2018 13:12:13 GMT
-Received: from mail-ot0-f170.google.com (/74.125.82.170)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 23 Jun 2018 06:12:13 -0700
-Received: by mail-ot0-f170.google.com with SMTP id d19-v6so10452710oti.8;
-        Sat, 23 Jun 2018 06:12:13 -0700 (PDT)
-X-Gm-Message-State: APt69E2qEeXkWbKija+guJGX10nV0+ROqHF/cRzACXJ8agjoAb2fiuBG
-        t75S25GIexvSSbL8c4lrE7V8gH3/pNemoC+bkBo=
-X-Google-Smtp-Source: ADUXVKIdyPfYZ0cSCs6YyyEuAnFqxLJjxY7g4n0k5oF10TZJuaBG/0VocPYC+BreNa4Cx4tTR1PjFECp8XEPhyFAeTk=
-X-Received: by 2002:a9d:4609:: with SMTP id y9-v6mr3023161ote.259.1529759533015;
- Sat, 23 Jun 2018 06:12:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
- <20180621212518.19914-3-pasha.tatashin@oracle.com> <20180623091648.GA29468@zn.tnic>
-In-Reply-To: <20180623091648.GA29468@zn.tnic>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Sat, 23 Jun 2018 09:11:36 -0400
-X-Gmail-Original-Message-ID: <CAGM2reYWb4bHzydh4PQj9vZfjaX+BQ_hTJiB3krJ-3AhC2MvuA@mail.gmail.com>
-Message-ID: <CAGM2reYWb4bHzydh4PQj9vZfjaX+BQ_hTJiB3krJ-3AhC2MvuA@mail.gmail.com>
-Subject: Re: [PATCH v12 02/11] x86: initialize static branching early
-To:     bp@alien8.de
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Sat, 23 Jun 2018 09:51:03 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fWiur-00060r-OR; Sat, 23 Jun 2018 15:49:25 +0200
+Date:   Sat, 23 Jun 2018 15:49:24 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
-        feng.tang@intel.com, Petr Mladek <pmladek@suse.com>,
-        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8932 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=571
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806230158
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
+        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v12 06/11] time: replace read_boot_clock64() with
+ read_persistent_wall_and_boot_offset()
+In-Reply-To: <20180621212518.19914-7-pasha.tatashin@oracle.com>
+Message-ID: <alpine.DEB.2.21.1806231537430.8650@nanos.tec.linutronix.de>
+References: <20180621212518.19914-1-pasha.tatashin@oracle.com> <20180621212518.19914-7-pasha.tatashin@oracle.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borislav,
+On Thu, 21 Jun 2018, Pavel Tatashin wrote:
 
->
-> Reviewed-by: Borislav Petkov <bp@suse.de>
+> If architecture does not support exact boot time, it is challenging to
+> estimate boot time without having a reference to the current persistent
+> clock value. Yet, we cannot read the persistent clock time again, because
+> this may lead to math discrepancies with the caller of read_boot_clock64()
+> who have read the persistent clock at a different time.
+> 
+> This is why it is better to provide two values simultaneously: the
+> persistent clock value, and the boot time.
+> 
+> Thus, we replace read_boot_clock64() with:
+> read_persistent_wall_and_boot_offset(wall_time, boot_offset)
+> 
+> Where wall_time is returned by read_persistent_clock()
+> And boot_offset is wall_time - boot time
+> 
+> We calculate boot_offset using the current value of local_clock() so
+> architectures, that do not have a dedicated boot_clock but have early
+> sched_clock(), such as SPARCv9, x86, and possibly more will benefit from
+> this change by getting a better and more consistent estimate of the boot
+> time without need for an arch specific implementation.
 
-Thank you.
+Again. You are doing 5 things in one patch. 
 
->
-> Also, please take the patch below into your queue and keep it a separate
-> patch in case we have to revert it later. It should help in keeping the
-> mess manageable and not let it go completely out of control before we've
-> done the cleanup.
+>  /**
+> - * read_boot_clock64 -  Return time of the system start.
+> + * read_persistent_wall_and_boot_offset - Read persistent clock, and also offset
+> + *                                        from the boot.
+>   *
+>   * Weak dummy function for arches that do not yet support it.
+> - * Function to read the exact time the system has been started.
+> - * Returns a timespec64 with tv_sec=0 and tv_nsec=0 if unsupported.
+> - *
+> - *  XXX - Do be sure to remove it once all arches implement it.
+> + * wall_time	- current time as returned by persistent clock
+> + * boot_offset	- offset that is defined as wall_time - boot_time
+> + * The default function calculates offset based on the current value of
+> + * local_clock(). This way architectures that support sched_clock() but don't
+> + * support dedicated boot time clock will provide the best estimate of the
+> + * boot time.
+>   */
+> -void __weak read_boot_clock64(struct timespec64 *ts)
+> +void __weak __init
+> +read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
+> +				     struct timespec64 *boot_offset)
+>  {
+> -	ts->tv_sec = 0;
+> -	ts->tv_nsec = 0;
+> +	read_persistent_clock64(wall_time);
+> +	*boot_offset = ns_to_timespec64(local_clock());
 
-OK. I will include it into the next itiration. Once I get some more
-feedback from Thomas and Peter.
+Introduce the default function with
 
-Pavel
+	  *boot_offset = 0;
+
+And then in a follow up patch, add the local_clock() magic to it. This 'oh
+lets do all in one just because we can' is just wrong. It's harder to
+review and its bad for bisection because you cannot differentiate whether
+the wreckage comes from the timekeeping_init() conversion or the magic new
+functionality in read_persistent_wall_and_boot_offset().
+
+That said, I like the local_clock() idea itself, but it might wreckage some
+architecture(s), so we need to watchout for that.
+
+>  /* Flag for if timekeeping_resume() has injected sleeptime */
+> @@ -1521,28 +1527,28 @@ static bool persistent_clock_exists;
+>   */
+>  void __init timekeeping_init(void)
+>  {
+> +	struct timespec64 wall_time, boot_offset, wall_to_mono;
+>  	struct timekeeper *tk = &tk_core.timekeeper;
+>  	struct clocksource *clock;
+>  	unsigned long flags;
+> -	struct timespec64 now, boot, tmp;
+> -
+> -	read_persistent_clock64(&now);
+> -	if (!timespec64_valid_strict(&now)) {
+> -		pr_warn("WARNING: Persistent clock returned invalid value!\n"
+> -			"         Check your CMOS/BIOS settings.\n");
+> -		now.tv_sec = 0;
+> -		now.tv_nsec = 0;
+> -	} else if (now.tv_sec || now.tv_nsec)
+> -		persistent_clock_exists = true;
+>  
+> -	read_boot_clock64(&boot);
+> -	if (!timespec64_valid_strict(&boot)) {
+> -		pr_warn("WARNING: Boot clock returned invalid value!\n"
+> -			"         Check your CMOS/BIOS settings.\n");
+> -		boot.tv_sec = 0;
+> -		boot.tv_nsec = 0;
+> +	read_persistent_wall_and_boot_offset(&wall_time, &boot_offset);
+> +	if (timespec64_valid_strict(&wall_time) &&
+> +	    timespec64_to_ns(&wall_time)) {
+
+Can you please have an explicit ts_to_ns(wall) > 0 there? I know it's
+implied in timespec64_valid_strict(), but it makes this code more obvious.
+
+> +		persistent_clock_exists = true;
+> +	} else {
+> +		pr_warn("Persistent clock returned invalid value");
+> +		wall_time = (struct timespec64){0};
+>  	}
+>  
+> +	if (timespec64_compare(&wall_time, &boot_offset) < 0)
+> +		boot_offset = (struct timespec64){0};
+> +
+> +	/* We want set wall_to_mono, so the following is true:
+
+See: https://lkml.kernel.org/r/CA+55aFyQYJerovMsSoSKS7PessZBr4vNp-3QUUwhqk4A4_jcbg@mail.gmail.com
+
+> +	 * wall time + wall_to_mono = boot time
+> +	 */
+> +	wall_to_mono = timespec64_sub(boot_offset, wall_time);
+> +
+>  	raw_spin_lock_irqsave(&timekeeper_lock, flags);
+
+Thanks,
+
+	tglx
