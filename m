@@ -2,73 +2,101 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D133C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 01:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E372C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D598824AAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 01:59:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D598824AAA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 458A924A8E
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:08:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDkqYcDq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458A924A8E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934584AbeFWB7K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 21:59:10 -0400
-Received: from smtprelay0193.hostedemail.com ([216.40.44.193]:58608 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933977AbeFWB7J (ORCPT
+        id S934602AbeFWCIS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 22:08:18 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:46179 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934307AbeFWCIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 21:59:09 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 0EEA9180289B9;
-        Sat, 23 Jun 2018 01:59:09 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: shock08_157f2b7975656
-X-Filterd-Recvd-Size: 1696
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 23 Jun 2018 01:59:07 +0000 (UTC)
-Message-ID: <07e414cea905277f1909d92dab47d3461ea91991.camel@perches.com>
-Subject: Re: [PATCH] staging: rtl8723bs: do not use assignment in if
- condition
-From:   Joe Perches <joe@perches.com>
-To:     Michael Straube <michael.straube@posteo.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 22 Jun 2018 18:59:06 -0700
-In-Reply-To: <2c2a0f79-7970-8c55-6119-189114b279e3@posteo.de>
-References: <20180621182230.27823-1-michael.straube@posteo.de>
-         <20180622104007.ob5nt2rip2fu436h@mwanda>
-         <d6f21cd91d4e6482b5c5d125607ed75c25e9c7a0.camel@perches.com>
-         <20180622105719.pt3lh6fqi2nziqsz@mwanda>
-         <28dd699b-3013-c42c-07d5-1117d7ab3622@posteo.de>
-         <36a7227189b8c7602dd9ffd21a5369b7029e61f1.camel@perches.com>
-         <2c2a0f79-7970-8c55-6119-189114b279e3@posteo.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 22 Jun 2018 22:08:16 -0400
+Received: by mail-pg0-f67.google.com with SMTP id d2-v6so3689044pga.13;
+        Fri, 22 Jun 2018 19:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LPvY1MDqn4aCUMUwdeifiAc6SZjpV3XiIvjaQxgYHjw=;
+        b=pDkqYcDqEkPInEeBGLnkYtk+0j3Nyn17z4pDqFlJH9oBAnF2Lj2oEUIyfcdnaTIw9f
+         OC5qrjPevwRLEJxBliTuHRkkjlwyT6IDzxdNLy05Y69V1iroq4F9oLtFeUR/e45CsCV+
+         3zqBILltSqBZLina4rOQBLZKuAI2CAclht6OExkOUyxaFOOY3PSMBO9c4hBxTVkyXfV/
+         On4yXVx8SUBypykoL4CZ1jqz4G0t7Dw5pHAlwixgtahQ4yCiefsvl/SvHIrXvDR8GBSb
+         ThoDR7d9CYQqzahLenVGKVxOswxfwHKSIrJpToUEfBbHqNgFU0ia8p7+MTvSoGb3knzr
+         Hh8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LPvY1MDqn4aCUMUwdeifiAc6SZjpV3XiIvjaQxgYHjw=;
+        b=t2hiRwmxMrTpcHjr+LVNl9lEb0FI07ckmvz+6omUnHKwdZlXUHKmZhDGd+iw7NrnK1
+         90mH0wW/6R9pwe6+e9RsOnSpnN9ep02LvJWYLq20YLuKWv6ma7HaqfW4qjpO1mvnVKsh
+         dGXOquSCymCgonp61mQteyT9q9AuZTlNo5xF7tagG+qGbCB//W9nlFO00vIeKl0ISfUK
+         aOSM4nAGfxBTDNK2qIELZ4Ppcv+JCWmCbdVgxVYYsvLUVIkfo29Huwx41A7nxLvbgDPa
+         aWdE61noGtT4BlfXXZlb7ff5C+W5SMrMEyJGnYRgFHj9IBtotLmsDNZZKYJpncjFRMgP
+         G1nQ==
+X-Gm-Message-State: APt69E36Bu4C9vDrn7u913qreRners7mySMd6ZveTmBlbPy18riQDNZC
+        RncRbJ67Db2gllLFdPmgi23G2A4+
+X-Google-Smtp-Source: ADUXVKJCw8tqOnqdSRzWAgW7SQrXNR3ht+qjiAPrspxm0jGicWSHzCxyUoJLMlVgFisrWlFbkD/xpw==
+X-Received: by 2002:a62:211a:: with SMTP id h26-v6mr4038315pfh.133.1529719695889;
+        Fri, 22 Jun 2018 19:08:15 -0700 (PDT)
+Received: from localhost (g134.124-44-9.ppp.wakwak.ne.jp. [124.44.9.134])
+        by smtp.gmail.com with ESMTPSA id a27-v6sm15239202pfc.18.2018.06.22.19.08.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 19:08:15 -0700 (PDT)
+From:   Stafford Horne <shorne@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
+        linux-crypto@vger.kernel.org, Stafford Horne <shorne@gmail.com>
+Subject: [RFC PATCH 0/2] Fix GCC -Wstringop-truncation warnings
+Date:   Sat, 23 Jun 2018 11:07:51 +0900
+Message-Id: <20180623020753.27266-1-shorne@gmail.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-22 at 21:11 +0200, Michael Straube wrote:
-> On 06/22/18 19:28, Joe Perches wrote:
-> > Although the last memcpy of a fixed mac address could
-> > probably use eth_random_addr to reduce the likelihood
-> > of mac address collision so maybe
-> > 		eth_random_addr(mac_addr);
-> Using a random address would be preffered?
+Hello,
 
-mac address duplication is bad, so if there
-were 2 instances of this device on the same
-ethernet network, yes.
+When compiling OpenRISC kernels with our new toolchain based on 9.0.0 I am
+seeing various -Wstringop-truncation warnings.  There might be more as I am not
+compiling all drivers/modules yet, if someone thinks thats helpful let me know.
 
-> 
-> Thanks for your help and patience.
-> Michael
+I discussed this with Greg KH at the OSS Summit Japan yesterday and it seems no
+one has pointed these out yet, so here are the patches.
+
+Please let me know if I should keep these on the OpenRISC tree (which I can do
+for 4.18) or if the maintainers will pick them up separately.
+
+-Stafford
+
+Stafford Horne (2):
+  crypto: Fix -Wstringop-truncation warnings
+  kobject: Fix -Wstringop-truncation warning
+
+ crypto/ablkcipher.c | 4 ++--
+ crypto/blkcipher.c  | 2 +-
+ lib/kobject.c       | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+2.17.0
+
