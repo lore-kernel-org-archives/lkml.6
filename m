@@ -2,121 +2,170 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58172C43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 10:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CDEC43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 10:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C17E824B53
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 10:17:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C17E824B53
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 697AD24B78
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 10:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697AD24B78
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751701AbeFWKRM (ORCPT
+        id S1751653AbeFWKg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 06:17:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43315 "EHLO mail.bootlin.com"
+        Sat, 23 Jun 2018 06:36:28 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:36068 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751490AbeFWKRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 06:17:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 42EBA20720; Sat, 23 Jun 2018 12:17:06 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8001C203B0;
-        Sat, 23 Jun 2018 12:17:05 +0200 (CEST)
-Date:   Sat, 23 Jun 2018 12:17:05 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>
-Subject: Re: [PATCH v5 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180623121705.1d618c5d@bbrezillon>
-In-Reply-To: <ed1add9b-ba21-d3d3-64c4-44d18af3d133@axentia.se>
-References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
-        <20180622104930.32050-2-boris.brezillon@bootlin.com>
-        <ed1add9b-ba21-d3d3-64c4-44d18af3d133@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751385AbeFWKg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 06:36:26 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id k8jjMG97RbxD; Sat, 23 Jun 2018 12:36:25 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BDC2300329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:2300:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 26BB01EC019F;
+        Sat, 23 Jun 2018 12:36:25 +0200 (CEST)
+Date:   Sat, 23 Jun 2018 12:36:22 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     linux-crypto@vger.kernel.org
+Cc:     Mike Galbraith <efault@gmx.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, jpoimboe@redhat.com, luto@kernel.org,
+        peterz@infradead.org, brgerst@gmail.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+        h.peter.anvin@intel.com,
+        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH] x86/crypto: Add missing RETs
+Message-ID: <20180623103622.GA2760@zn.tnic>
+References: <20180507213755.GA32406@avx2>
+ <tip-51bad67ffbce0aaa44579f84ef5d05597054ec6a@git.kernel.org>
+ <1529235613.4572.7.camel@gmx.de>
+ <20180617120012.GB16877@zn.tnic>
+ <1529242717.4472.3.camel@gmx.de>
+ <1529244178.4674.1.camel@gmx.de>
+ <20180617194747.GA21160@zn.tnic>
+ <1529289279.31745.3.camel@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1529289279.31745.3.camel@gmx.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Lemme send a proper patch now...
 
-On Fri, 22 Jun 2018 23:35:34 +0200
-Peter Rosin <peda@axentia.se> wrote:
+---
+From: Borislav Petkov <bp@suse.de>
+Date: Sun, 17 Jun 2018 13:57:42 +0200
+Subject: [PATCH] x86/crypto: Add missing RETs
 
-> On 2018-06-22 12:49, Boris Brezillon wrote:
-> > Add core infrastructure to support I3C in Linux and document it.
-> > 
-> > This infrastructure is not complete yet and will be extended over
-> > time.
-> > 
-> > There are a few design choices that are worth mentioning because they
-> > impact the way I3C device drivers can interact with their devices:
-> > 
-> > - all functions used to send I3C/I2C frames must be called in
-> >   non-atomic context. Mainly done this way to ease implementation, but
-> >   this is still open to discussion. Please let me know if you think
-> >   it's worth considering an asynchronous model here
-> > - the bus element is a separate object and is not implicitly described
-> >   by the master (as done in I2C). The reason is that I want to be able
-> >   to handle multiple master connected to the same bus and visible to
-> >   Linux.
-> >   In this situation, we should only have one instance of the device and
-> >   not one per master, and sharing the bus object would be part of the
-> >   solution to gracefully handle this case.
-> >   I'm not sure we will ever need to deal with multiple masters
-> >   controlling the same bus and exposed under Linux, but separating the
-> >   bus and master concept is pretty easy, hence the decision to do it
-> >   like that.
-> >   The other benefit of separating the bus and master concepts is that
-> >   master devices appear under the bus directory in sysfs.  
-> 
-> Are bus multiplexers relevant to I3C?
+Add explicit RETs to the tail calls of AEGIS and MORUS crypto algorithms
+otherwise they run into INT3 padding due to
 
-Not yet, but who knows.
+  51bad67ffbce ("x86/asm: Pad assembly functions with INT3 instructions")
 
-> The locking needed for handling
-> muxes for I2C is, well, convoluted...
+leading to spurious debug exceptions.
 
-Do you remember what was the problem?
+Mike Galbraith <efault@gmx.de> took care of all the remaining callsites.
 
-Anyway, I'd really like to have basic support upstreamed before we
-start considering advanced use cases that do not exist yet. Don't get
-me wrong, I'm not against having the multiplexer/locking discussion,
-but it should not block inclusion of the I3C subsystem.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/crypto/aegis128-aesni-asm.S  | 1 +
+ arch/x86/crypto/aegis128l-aesni-asm.S | 1 +
+ arch/x86/crypto/aegis256-aesni-asm.S  | 1 +
+ arch/x86/crypto/morus1280-avx2-asm.S  | 1 +
+ arch/x86/crypto/morus1280-sse2-asm.S  | 1 +
+ arch/x86/crypto/morus640-sse2-asm.S   | 1 +
+ 6 files changed, 6 insertions(+)
 
-Regards,
+diff --git a/arch/x86/crypto/aegis128-aesni-asm.S b/arch/x86/crypto/aegis128-aesni-asm.S
+index 9254e0b6cc06..717bf0776421 100644
+--- a/arch/x86/crypto/aegis128-aesni-asm.S
++++ b/arch/x86/crypto/aegis128-aesni-asm.S
+@@ -535,6 +535,7 @@ ENTRY(crypto_aegis128_aesni_enc_tail)
+ 	movdqu STATE3, 0x40(STATEP)
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_aegis128_aesni_enc_tail)
+ 
+ .macro decrypt_block a s0 s1 s2 s3 s4 i
+diff --git a/arch/x86/crypto/aegis128l-aesni-asm.S b/arch/x86/crypto/aegis128l-aesni-asm.S
+index 9263c344f2c7..4eda2b8db9e1 100644
+--- a/arch/x86/crypto/aegis128l-aesni-asm.S
++++ b/arch/x86/crypto/aegis128l-aesni-asm.S
+@@ -645,6 +645,7 @@ ENTRY(crypto_aegis128l_aesni_enc_tail)
+ 	state_store0
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_aegis128l_aesni_enc_tail)
+ 
+ /*
+diff --git a/arch/x86/crypto/aegis256-aesni-asm.S b/arch/x86/crypto/aegis256-aesni-asm.S
+index 1d977d515bf9..32aae8397268 100644
+--- a/arch/x86/crypto/aegis256-aesni-asm.S
++++ b/arch/x86/crypto/aegis256-aesni-asm.S
+@@ -543,6 +543,7 @@ ENTRY(crypto_aegis256_aesni_enc_tail)
+ 	state_store0
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_aegis256_aesni_enc_tail)
+ 
+ /*
+diff --git a/arch/x86/crypto/morus1280-avx2-asm.S b/arch/x86/crypto/morus1280-avx2-asm.S
+index 37d422e77931..07653d4582a6 100644
+--- a/arch/x86/crypto/morus1280-avx2-asm.S
++++ b/arch/x86/crypto/morus1280-avx2-asm.S
+@@ -453,6 +453,7 @@ ENTRY(crypto_morus1280_avx2_enc_tail)
+ 	vmovdqu STATE4, (4 * 32)(%rdi)
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_morus1280_avx2_enc_tail)
+ 
+ /*
+diff --git a/arch/x86/crypto/morus1280-sse2-asm.S b/arch/x86/crypto/morus1280-sse2-asm.S
+index 1fe637c7be9d..bd1aa1b60869 100644
+--- a/arch/x86/crypto/morus1280-sse2-asm.S
++++ b/arch/x86/crypto/morus1280-sse2-asm.S
+@@ -652,6 +652,7 @@ ENTRY(crypto_morus1280_sse2_enc_tail)
+ 	movdqu STATE4_HI, (9 * 16)(%rdi)
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_morus1280_sse2_enc_tail)
+ 
+ /*
+diff --git a/arch/x86/crypto/morus640-sse2-asm.S b/arch/x86/crypto/morus640-sse2-asm.S
+index 71c72a0a0862..efa02816d921 100644
+--- a/arch/x86/crypto/morus640-sse2-asm.S
++++ b/arch/x86/crypto/morus640-sse2-asm.S
+@@ -437,6 +437,7 @@ ENTRY(crypto_morus640_sse2_enc_tail)
+ 	movdqu STATE4, (4 * 16)(%rdi)
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_morus640_sse2_enc_tail)
+ 
+ /*
+-- 
+2.17.0.582.gccdcbd54c
 
-Boris
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
