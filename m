@@ -2,137 +2,147 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D029C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 20:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5263FC43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 21:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0245624CFB
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 20:51:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0245624CFB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 0941C24D02
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 21:09:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="nbPaJlB1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0941C24D02
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751598AbeFWUva (ORCPT
+        id S1751963AbeFWVJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 16:51:30 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:34118 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751256AbeFWUv3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 16:51:29 -0400
-Received: by mail-ua0-f196.google.com with SMTP id r10-v6so516613uao.1
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Jun 2018 13:51:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j/jcKfi39dmwWG37Vyq1ISUMOYsGpfKlcT7iDR/Ae7o=;
-        b=ZkpOlBnOo1CGP+O1MXu+wxZmIknDsOpqzZW0Owizxww3XMX7T81g9n8/bqtJ/f+VKd
-         bmZ+M/Xqif73zrcM3B4mIVyVz03VFN9T/IsE5z48HfQFDlEr2rBhFMFsPGQ6wU9w54Lw
-         XB7WPmKvYjPKFZgNHdc+8b1Tv8hc15XtIKDeFlhyeOWi7t7xmj57d3fvsV5volfnYyNq
-         uTS2XCn4Z/BVpkiVQLJgEgD2tQvxJVZZUltBus/Uj1OhkTnnzX8AUJiqRQKn2Arfq7Nj
-         gdlZxjWmoErrqk50dyl6dHjIvACc4g35a/z7+6o6r0E5J89mnpWG0Ks5WHKyFJEk8LSg
-         yyhA==
-X-Gm-Message-State: APt69E0JLiEAlrdhi/rMa6yBorrIxDt1zeIMZcgiZ9rIKEmi0auN6XQl
-        Qx9TMtgAbgs5bUVip8XwAilLAZUdjHcJ5w3O4Sk=
-X-Google-Smtp-Source: ADUXVKJ2D/44zp5RF/qB0YR30C5P2W9T+NdU/WIOZFAoF8IycSD9YBa7HexAUju3GvqEF+xPIdns2HlCr2xaqnyvgM4=
-X-Received: by 2002:ab0:265:: with SMTP id 92-v6mr4711714uas.26.1529787088679;
- Sat, 23 Jun 2018 13:51:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180622184246.GA21226@roeck-us.net> <20180622210519.GA18630@bombadil.infradead.org>
- <20180622223335.GA12581@roeck-us.net>
-In-Reply-To: <20180622223335.GA12581@roeck-us.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 23 Jun 2018 22:51:16 +0200
-Message-ID: <CAMuHMdVa0c9Avy03sTK-DsqieXR6iovhkSYm_yRCVZofooY5hw@mail.gmail.com>
-Subject: Re: m68k boot failure in -next bisected to 'xarray: Replace
- exceptional entries'
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Matthew Wilcox <willy@infradead.org>, Josef Bacik <jbacik@fb.com>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 23 Jun 2018 17:09:35 -0400
+Received: from vern.gendns.com ([206.190.152.46]:36174 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751794AbeFWVJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 17:09:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=References:In-Reply-To:Message-Id:Date:Subject
+        :Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=maEMz18pCKG24uaA32JCn8pQVV5NOMrBgt8j+PS1fP0=; b=nbPaJlB1gtHLeiICM5m48YNO2
+        sLYRT8NzDCFtRnGeOW0MlK3+Qrm/ToEIq+n19MUjUTW0UmAcNn22W2++ic/NW9wX6aSdgWnIkc+wX
+        FBBQaYFEV47ohwWkMs2bjBdCQpmxPlf9si5rSQego8h5h5mLgycC8m/FVyJlrDu4BQlnrl/YJDOAi
+        oq0OvO/fOt05quSRrNg6SRD+z+eLFvh7HQlqqs+TPWu0OVqQClVB214RtL0+/W9BtpkJybJ1+d8hX
+        U9UiaEwsRj2dnzMe3vzV59UHz0uF4Q02dkZfDTRhGUBV3PbyOvF/tWweT7BW5M4CXG7idPdnBf9aw
+        V+cdItSbw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:51098 helo=freyr.lechnology.com)
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fWpmh-00CkwS-22; Sat, 23 Jun 2018 17:09:27 -0400
+From:   David Lechner <david@lechnology.com>
+To:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     David Lechner <david@lechnology.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/8] ARM: OMAP2+: add pdata quirks for PRUSS reset
+Date:   Sat, 23 Jun 2018 16:08:05 -0500
+Message-Id: <20180623210810.21232-4-david@lechnology.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180623210810.21232-1-david@lechnology.com>
+References: <20180623210810.21232-1-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+This adds platform data for the PRUSS reset on OMAP2+. This is following
+the pattern used by several other platform devices on these SoCs since
+there is not a proper reset controller.
 
-On Sat, Jun 23, 2018 at 12:33 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> On Fri, Jun 22, 2018 at 02:05:19PM -0700, Matthew Wilcox wrote:
-> > On Fri, Jun 22, 2018 at 11:42:46AM -0700, Guenter Roeck wrote:
-> > > a few days ago, m68k boot tests in linux-next started to crash.
-> > > I bisected the problem to commit 'xarray: Replace exceptional entries'.
-> > > Bisect and crash logs are attached below.
-> >
-> > Thank you!  I was afraid something like this might happen.
-> >
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 0 PID: 1 at lib/idr.c:42 idr_alloc_u32+0x44/0xe8
-> >
-> > Line 42 is:
-> >
-> >         if (WARN_ON_ONCE(radix_tree_is_internal_node(ptr)))
-> >                 return -EINVAL;
-> >
-> > The pointer passed in to idr_alloc() is not 4-byte aligned; it's aligned
-> > to a 2 byte boundary.  I'm having a little trouble seeing who it is that's
-> > passing in what pointer ...
-> >
-> > > Call Trace: [<000180d6>] __warn+0xc0/0xc2
-> > >  [<000020e8>] do_one_initcall+0x0/0x140
-> > >  [<0001816a>] warn_slowpath_null+0x26/0x2c
-> > >  [<002b50e4>] idr_alloc_u32+0x44/0xe8
-> > >  [<002b50e4>] idr_alloc_u32+0x44/0xe8
-> > >  [<002b51e4>] idr_alloc+0x5c/0x76
-> > >  [<00247160>] genl_register_family+0x14c/0x54c
-> >
-> > It makes sense to here (other than idr_alloc being listed twice)
-> >
-> > >  [<000020e8>] do_one_initcall+0x0/0x140
-> > >  [<003f0f02>] genl_init+0x0/0x34
-> >
-> > Assuming this is right, that would imply that genl_ctrl is not 4-byte
-> > aligned.  Is that true?  I'm not familiar with the m68k alignment rules,
-> > but it has a lot of 4-byte sized quantities in the struct, so I would
-> > assume it's 4-byte aligned.
-> >
-> > >  [<003f0ce6>] bpf_lwt_init+0x10/0x14
-> >
-> > I don't think this is the caller.
-> >
->
-> Here is the culprit:
->
-> genl_register_family(0x36dd7a) registering VFS_DQUOT
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at lib/idr.c:42 idr_alloc_u32+0x44/0xe8
->
-> It may be odd that fs/quota/netlink.c:quota_genl_family is not word
-> aligned, but on the other side I don't think there is a rule that
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/mach-omap2/pdata-quirks.c     |  9 +++++++++
+ include/linux/platform_data/ti-pruss.h | 18 ++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 include/linux/platform_data/ti-pruss.h
 
-On m68k (and a few other architectures), the alignment of int and larger
-integral types is 2 bytes.
-
-> the function parameter to genl_register_family() - or the second
-> parameter of idr_alloc() - must be word aligned. Am I missing
-> something ? After all, it could be a pointer to the nth element
-> of a string, or the caller could on purpose allocate IDRs for
-> (ptr), (ptr + 1), and so on.
-
-Good point.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+index 7f02743edbe4..8ea35d6cded5 100644
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -25,6 +25,7 @@
+ #include <linux/platform_data/hsmmc-omap.h>
+ #include <linux/platform_data/iommu-omap.h>
+ #include <linux/platform_data/ti-sysc.h>
++#include <linux/platform_data/ti-pruss.h>
+ #include <linux/platform_data/wkup_m3.h>
+ #include <linux/platform_data/asoc-ti-mcbsp.h>
+ 
+@@ -424,6 +425,12 @@ static struct wkup_m3_platform_data wkup_m3_data = {
+ 	.assert_reset = omap_device_assert_hardreset,
+ 	.deassert_reset = omap_device_deassert_hardreset,
+ };
++
++static struct ti_pruss_platform_data pruss_data = {
++	.reset_name = "pruss",
++	.assert_reset = omap_device_assert_hardreset,
++	.deassert_reset = omap_device_deassert_hardreset,
++};
+ #endif
+ 
+ #ifdef CONFIG_SOC_OMAP5
+@@ -568,6 +575,8 @@ static struct of_dev_auxdata omap_auxdata_lookup[] = {
+ #ifdef CONFIG_SOC_AM33XX
+ 	OF_DEV_AUXDATA("ti,am3352-wkup-m3", 0x44d00000, "44d00000.wkup_m3",
+ 		       &wkup_m3_data),
++	OF_DEV_AUXDATA("ti,am3352-pru-rproc", 0x4a300000, "4a300000.cpu",
++		       &pruss_data),
+ #endif
+ #ifdef CONFIG_SOC_AM43XX
+ 	OF_DEV_AUXDATA("ti,am4372-wkup-m3", 0x44d00000, "44d00000.wkup_m3",
+diff --git a/include/linux/platform_data/ti-pruss.h b/include/linux/platform_data/ti-pruss.h
+new file mode 100644
+index 000000000000..e401e621ebdf
+--- /dev/null
++++ b/include/linux/platform_data/ti-pruss.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * TI PRU remote processor platform data
++ */
++
++#ifndef _LINUX_PLATFORM_DATA_TI_PRU_H
++#define _LINUX_PLATFORM_DATA_TI_PRU_H
++
++struct platform_device;
++
++struct ti_pruss_platform_data {
++	const char *reset_name;
++
++	int (*assert_reset)(struct platform_device *pdev, const char *name);
++	int (*deassert_reset)(struct platform_device *pdev, const char *name);
++};
++
++#endif /* _LINUX_PLATFORM_DATA_TI_PRU_H */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
