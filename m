@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0029EC43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 14:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B6BC43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 14:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C4E624C1C
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 14:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDBA924C1C
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 14:20:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mqoMtdtd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gakjnq1h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4E624C1C
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A0cj/3Oq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IVF2elBA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBA924C1C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751801AbeFWOTz (ORCPT
+        id S1751945AbeFWOUB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 10:19:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34806 "EHLO
+        Sat, 23 Jun 2018 10:20:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34882 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751197AbeFWOTv (ORCPT
+        with ESMTP id S1751570AbeFWOT5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 10:19:51 -0400
+        Sat, 23 Jun 2018 10:19:57 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AEC0F60B14; Sat, 23 Jun 2018 14:19:50 +0000 (UTC)
+        id 06A3A60B13; Sat, 23 Jun 2018 14:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529763590;
-        bh=GejbrLmmlX3+GYhJzjzZY9EcmngcHL9MNUmyAViRjBQ=;
+        s=default; t=1529763597;
+        bh=0N8Rad715fu9CuHZByyx5uOJCM9DTfBYBmrjTx9VDEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mqoMtdtdCiBhNzjChLKE08OOcRApLUfx8Q2vrxVLTeg/LSjh3t2nBSLDnRK8wWz0J
-         SpyaIsIhf58G/iuNwxbBq0EtejxNm+/WCZuC0tvzDGzMh8pUFZRleR6n+ncf47Hssk
-         Gtoq13Uy+PUuto3O3yt8EKIGPiogADwbG5xlei2M=
+        b=A0cj/3OqkeJrB1au4tTjN0PMUuraOpVlJKDgyauKVE6Ivdiu/8/GYiGL53JaUNdqL
+         9CDRsrOXRR4bpnM29d1jY/lbuKnzdkEE14VPpHr4clQom80URAfGqIhiON4e1PFDwC
+         SvAZ1oYGEhi2OxpCBfc8VUE6SOTOUlPPSz4XbXXI=
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 39913608C8;
-        Sat, 23 Jun 2018 14:19:45 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B840A608C8;
+        Sat, 23 Jun 2018 14:19:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529763589;
-        bh=GejbrLmmlX3+GYhJzjzZY9EcmngcHL9MNUmyAViRjBQ=;
+        s=default; t=1529763596;
+        bh=0N8Rad715fu9CuHZByyx5uOJCM9DTfBYBmrjTx9VDEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gakjnq1hLoqgOXYbW7ntUDCHfRVYOiS6LDOi1SoB9dKlijtxnD2hOIfafZgcKsIk8
-         DjRH6doLtzUoThtOpDHLkX+L0xSgWvyPY3GH4p5XCnYV/BHW7TfM5f88PT7eXki/Dm
-         rBPV6YI8vKnXscLyeJ8ep4AfKvBpg1iEfD4a9VAs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39913608C8
+        b=IVF2elBAugRI/5366I0x2pZxadjYuoiMRJVBkkPHOUCxmkND351miONnIL0ihF7Gt
+         1OF4o9xs2SymEfXPU3FMwFu2h00scg5eWioIcAR1uTdOPfQhT8oVE4o3R/fOa97lD/
+         YejnuhGXo66t7iSqkMhIfRC0K6sOax8w5iqek/i8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B840A608C8
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -61,9 +61,9 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v3 1/3] clk: qcom: Move frequency table macro to common file
-Date:   Sat, 23 Jun 2018 19:49:25 +0530
-Message-Id: <1529763567-13131-2-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v3 2/3] dt-bindings: clock: Introduce QCOM Display clock bindings
+Date:   Sat, 23 Jun 2018 19:49:26 +0530
+Message-Id: <1529763567-13131-3-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
 References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
@@ -72,210 +72,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frequency table macro is used by multiple clock drivers, move frequency
-table macro to common header file.
+Add device tree bindings for display clock controller for Qualcomm
+Technology Inc's SDM845 SoCs.
 
 Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg.h        | 2 ++
- drivers/clk/qcom/gcc-apq8084.c    | 2 --
- drivers/clk/qcom/gcc-ipq4019.c    | 2 --
- drivers/clk/qcom/gcc-ipq8074.c    | 2 --
- drivers/clk/qcom/gcc-msm8916.c    | 2 --
- drivers/clk/qcom/gcc-msm8974.c    | 2 --
- drivers/clk/qcom/gcc-msm8994.c    | 2 --
- drivers/clk/qcom/gcc-msm8996.c    | 2 --
- drivers/clk/qcom/gcc-msm8998.c    | 2 --
- drivers/clk/qcom/gcc-sdm845.c     | 2 --
- drivers/clk/qcom/mmcc-apq8084.c   | 2 --
- drivers/clk/qcom/mmcc-msm8974.c   | 2 --
- drivers/clk/qcom/mmcc-msm8996.c   | 2 --
- drivers/clk/qcom/videocc-sdm845.c | 2 --
- 14 files changed, 2 insertions(+), 26 deletions(-)
+ .../devicetree/bindings/clock/qcom,dispcc.txt      | 19 +++++++++
+ include/dt-bindings/clock/qcom,dispcc-sdm845.h     | 45 ++++++++++++++++++++++
+ 2 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index b209a2f..dbd5a9e 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -7,6 +7,8 @@
- #include <linux/clk-provider.h>
- #include "clk-regmap.h"
-
-+#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc.txt b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+new file mode 100644
+index 0000000..d639e18
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+@@ -0,0 +1,19 @@
++Qualcomm Technologies, Inc. Display Clock Controller Binding
++------------------------------------------------------------
 +
- struct freq_tbl {
- 	unsigned long freq;
- 	u8 src;
-diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
-index 486d961..9c99a71 100644
---- a/drivers/clk/qcom/gcc-apq8084.c
-+++ b/drivers/clk/qcom/gcc-apq8084.c
-@@ -106,8 +106,6 @@ enum {
- 	"sleep_clk_src",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll gpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 46cb256..8902ad4 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -179,8 +179,6 @@ struct clk_fepll {
- 	"ddrpllapss",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static const struct freq_tbl ftbl_gcc_audio_pwm_clk[] = {
- 	F(48000000, P_XO, 1, 0, 0),
- 	F(200000000, P_FEPLL200, 1, 0, 0),
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 0462f4a..505c626 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -32,8 +32,6 @@
- #include "clk-regmap-mux.h"
- #include "reset.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_XO,
- 	P_GPLL0,
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index d6c7f50..ac2b0aa 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -264,8 +264,6 @@ enum {
- 	"sleep_clk",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll gpll0 = {
- 	.l_reg = 0x21004,
- 	.m_reg = 0x21008,
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index 348e30d..08e2900d 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -62,8 +62,6 @@ enum {
- 	"gpll4_vote",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll gpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
-index 1e38efc..53f0f36 100644
---- a/drivers/clk/qcom/gcc-msm8994.c
-+++ b/drivers/clk/qcom/gcc-msm8994.c
-@@ -57,8 +57,6 @@ enum {
- 	"gpll4",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_fixed_factor xo = {
- 	.mult = 1,
- 	.div = 1,
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 9f35b3f..9d3756c 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -32,8 +32,6 @@
- #include "reset.h"
- #include "gdsc.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_XO,
- 	P_GPLL0,
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index 78d87f5..9f0ae40 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -25,8 +25,6 @@
- #include "reset.h"
- #include "gdsc.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_AUD_REF_CLK,
- 	P_CORE_BI_PLL_TEST_SE,
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index e78e6f5..19b470f 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -25,8 +25,6 @@
- #include "gdsc.h"
- #include "reset.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_BI_TCXO,
- 	P_AUD_REF_CLK,
-diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
-index 30777f9..4ce1d7c 100644
---- a/drivers/clk/qcom/mmcc-apq8084.c
-+++ b/drivers/clk/qcom/mmcc-apq8084.c
-@@ -219,8 +219,6 @@ enum {
- 	"sleep_clk_src",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll mmpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index 715e7cd..9181851 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -184,8 +184,6 @@ enum {
- 	"dsi1pllbyte",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll mmpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 1a25ee4..60f08b3 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -34,8 +34,6 @@
- #include "reset.h"
- #include "gdsc.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_XO,
- 	P_MMPLL0,
-diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
-index 9073b7a..5d6a772 100644
---- a/drivers/clk/qcom/videocc-sdm845.c
-+++ b/drivers/clk/qcom/videocc-sdm845.c
-@@ -18,8 +18,6 @@
- #include "clk-pll.h"
- #include "gdsc.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_BI_TCXO,
- 	P_CORE_BI_PLL_TEST_SE,
---
++Required properties :
++
++- compatible : shall contain "qcom,sdm845-dispcc"
++- reg : shall contain base register location and length.
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
++
++Example:
++	dispcc: clock-controller@af00000 {
++		compatible = "qcom,sdm845-dispcc";
++		reg = <0xaf00000 0x100000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,dispcc-sdm845.h b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+new file mode 100644
+index 0000000..11eed4b
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++
++/* DISP_CC clock registers */
++#define DISP_CC_MDSS_AHB_CLK					0
++#define DISP_CC_MDSS_AXI_CLK					1
++#define DISP_CC_MDSS_BYTE0_CLK					2
++#define DISP_CC_MDSS_BYTE0_CLK_SRC				3
++#define DISP_CC_MDSS_BYTE0_INTF_CLK				4
++#define DISP_CC_MDSS_BYTE1_CLK					5
++#define DISP_CC_MDSS_BYTE1_CLK_SRC				6
++#define DISP_CC_MDSS_BYTE1_INTF_CLK				7
++#define DISP_CC_MDSS_ESC0_CLK					8
++#define DISP_CC_MDSS_ESC0_CLK_SRC				9
++#define DISP_CC_MDSS_ESC1_CLK					10
++#define DISP_CC_MDSS_ESC1_CLK_SRC				11
++#define DISP_CC_MDSS_MDP_CLK					12
++#define DISP_CC_MDSS_MDP_CLK_SRC				13
++#define DISP_CC_MDSS_MDP_LUT_CLK				14
++#define DISP_CC_MDSS_PCLK0_CLK					15
++#define DISP_CC_MDSS_PCLK0_CLK_SRC				16
++#define DISP_CC_MDSS_PCLK1_CLK					17
++#define DISP_CC_MDSS_PCLK1_CLK_SRC				18
++#define DISP_CC_MDSS_ROT_CLK					19
++#define DISP_CC_MDSS_ROT_CLK_SRC				20
++#define DISP_CC_MDSS_RSCC_AHB_CLK				21
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK				22
++#define DISP_CC_MDSS_VSYNC_CLK					23
++#define DISP_CC_MDSS_VSYNC_CLK_SRC				24
++#define DISP_CC_PLL0						25
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				26
++#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				27
++
++/* DISP_CC Reset */
++#define DISP_CC_MDSS_RSCC_BCR					0
++
++/* DISP_CC GDSCR */
++#define MDSS_GDSC						0
++
++#endif
+-- 
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
 
