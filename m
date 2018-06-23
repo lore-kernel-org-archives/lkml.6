@@ -2,122 +2,113 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F21C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9F6C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E85524BF0
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:30:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJscNRgK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E85524BF0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5FFA224BF0
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FFA224BF0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752054AbeFWMau (ORCPT
+        id S1752222AbeFWMa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 08:30:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751775AbeFWMas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 08:30:48 -0400
-Received: from localhost (unknown [122.178.210.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F9B324BEA;
-        Sat, 23 Jun 2018 12:30:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529757048;
-        bh=9aqOlUUN+N1JLn+FRzdn1bu+EJCRCNPq4raGuCInXe4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eJscNRgKkbDElqdY95HJIaBGCNv9C2LnkQgcdeu8bKJEMAviWrauN7r+ss6yok5GV
-         T2mreZ3YHHGrxZNcOZm8OqpcHwpD9ayFgGbD7xd0ttLOzgspcrIkJpAL6AjtHGrXDR
-         8MR1KNpwziLxVrG7Un95zK4Pgwc7vCOUtoBY0S6o=
-Date:   Sat, 23 Jun 2018 18:00:39 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        dmaengine@vger.kernel.org
-Subject: Re: [PATCH 16/26] dmaengine: Convert to new IDA API
-Message-ID: <20180623123039.GX27187@vkoul-mobl>
-References: <20180621212835.5636-1-willy@infradead.org>
- <20180621212835.5636-17-willy@infradead.org>
+        Sat, 23 Jun 2018 08:30:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49187 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751775AbeFWMax (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 08:30:53 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCUmJv468196
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 23 Jun 2018 05:30:48 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCUm3C468193;
+        Sat, 23 Jun 2018 05:30:48 -0700
+Date:   Sat, 23 Jun 2018 05:30:48 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-51be1335151771075dcb19f3464ca9f331134285@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, mingo@kernel.org, hpa@zytor.com
+Reply-To: kirill.shutemov@linux.intel.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com
+In-Reply-To: <20180622220841.54135-2-kirill.shutemov@linux.intel.com>
+References: <20180622220841.54135-2-kirill.shutemov@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] Revert "x86/mm: Mark __pgtable_l5_enabled
+ __initdata"
+Git-Commit-ID: 51be1335151771075dcb19f3464ca9f331134285
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180621212835.5636-17-willy@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-06-18, 14:28, Matthew Wilcox wrote:
-> Simpler and shorter code.
+Commit-ID:  51be1335151771075dcb19f3464ca9f331134285
+Gitweb:     https://git.kernel.org/tip/51be1335151771075dcb19f3464ca9f331134285
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Sat, 23 Jun 2018 01:08:40 +0300
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 23 Jun 2018 14:20:37 +0200
 
-I couldn't find ida_alloc/ida_free in 4.18-rc1 so I assume this will go
-thru tree adding this so:
+Revert "x86/mm: Mark __pgtable_l5_enabled __initdata"
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
+This reverts commit e4e961e36f063484c48bed919013c106d178995d.
 
-> 
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
-> ---
->  drivers/dma/dmaengine.c | 20 +++++---------------
->  1 file changed, 5 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-> index 08ba8473a284..1e9bdadfc312 100644
-> --- a/drivers/dma/dmaengine.c
-> +++ b/drivers/dma/dmaengine.c
-> @@ -161,9 +161,7 @@ static void chan_dev_release(struct device *dev)
->  
->  	chan_dev = container_of(dev, typeof(*chan_dev), device);
->  	if (atomic_dec_and_test(chan_dev->idr_ref)) {
-> -		mutex_lock(&dma_list_mutex);
-> -		ida_remove(&dma_ida, chan_dev->dev_id);
-> -		mutex_unlock(&dma_list_mutex);
-> +		ida_free(&dma_ida, chan_dev->dev_id);
->  		kfree(chan_dev->idr_ref);
->  	}
->  	kfree(chan_dev);
-> @@ -896,16 +894,10 @@ static bool device_has_all_tx_types(struct dma_device *device)
->  
->  static int get_dma_id(struct dma_device *device)
->  {
-> -	int rc;
-> -
-> -	do {
-> -		if (!ida_pre_get(&dma_ida, GFP_KERNEL))
-> -			return -ENOMEM;
-> -		mutex_lock(&dma_list_mutex);
-> -		rc = ida_get_new(&dma_ida, &device->dev_id);
-> -		mutex_unlock(&dma_list_mutex);
-> -	} while (rc == -EAGAIN);
-> +	int rc = ida_alloc(&dma_ida, GFP_KERNEL);
->  
-> +	if (rc >= 0)
-> +		device->dev_id = rc;
->  	return rc;
->  }
->  
-> @@ -1090,9 +1082,7 @@ int dma_async_device_register(struct dma_device *device)
->  err_out:
->  	/* if we never registered a channel just release the idr */
->  	if (atomic_read(idr_ref) == 0) {
-> -		mutex_lock(&dma_list_mutex);
-> -		ida_remove(&dma_ida, device->dev_id);
-> -		mutex_unlock(&dma_list_mutex);
-> +		ida_free(&dma_ida, device->dev_id);
->  		kfree(idr_ref);
->  		return rc;
->  	}
-> -- 
-> 2.17.1
+We need to use early version of pgtable_l5_enabled() in
+early_identify_cpu() as this code runs before cpu_feature_enabled() is
+usable.
 
--- 
-~Vinod
+But it leads to section mismatch:
+
+cpu_init()
+  load_mm_ldt()
+    ldt_slot_va()
+      LDT_BASE_ADDR
+        LDT_PGD_ENTRY
+	  pgtable_l5_enabled()
+	    __pgtable_l5_enabled
+
+__pgtable_l5_enabled marked as __initdata, but cpu_init() is not __init.
+
+It's fixable: early code can be isolated into a separate translation unit,
+but such change collides with other work in the area.  That's too much
+hassle to save 4 bytes of memory.
+
+Return __pgtable_l5_enabled back to be __ro_after_init.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/20180622220841.54135-2-kirill.shutemov@linux.intel.com
+
+---
+ arch/x86/kernel/head64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index a21d6ace648e..8047379e575a 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -44,7 +44,7 @@ static unsigned int __initdata next_early_pgt;
+ pmdval_t early_pmd_flags = __PAGE_KERNEL_LARGE & ~(_PAGE_GLOBAL | _PAGE_NX);
+ 
+ #ifdef CONFIG_X86_5LEVEL
+-unsigned int __pgtable_l5_enabled __initdata;
++unsigned int __pgtable_l5_enabled __ro_after_init;
+ unsigned int pgdir_shift __ro_after_init = 39;
+ EXPORT_SYMBOL(pgdir_shift);
+ unsigned int ptrs_per_p4d __ro_after_init = 1;
