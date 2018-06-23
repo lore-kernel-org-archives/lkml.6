@@ -2,112 +2,195 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD344C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B18EC43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A2C24A3C
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 292CE24A38
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:27:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OnAkh+Bo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A2C24A3C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="MLCmGvid"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292CE24A38
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934465AbeFWAWm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 20:22:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41222 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934358AbeFWAWl (ORCPT
+        id S934442AbeFWA1O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 20:27:14 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44008 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934235AbeFWA1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 20:22:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FaFggJwTUCggsC2o3Cn8emuuzUewcEx6BKdZuel9ues=; b=OnAkh+BotfEhABYsp59ElZyhy
-        Wsl7E/yiazZalJbQ8GPwHfXiKml7Qr6a9ht42EboP+4Lt5IXhmCMa99In6pXFf1vqUNOZFx5sksk+
-        ACU8vDrMbLvmgg+X7zByjU/6j6r4toclNuGJYgC3nhMWcoLjXQ1wEUdlzRTJUZYV2xlbXwcOMBYhI
-        8imv+3QbC214gyPw/XLCVWQikK0AkqE+14f7OHpyH7NcgmkBjxjYZUkATADwMaTpiExd2RZ4Vj2JY
-        Hfnl7EA8DAbr8F9XCps/zCOOHFIPNiCliA3J/Sytj4k/U3ORnTpr4+EW6ekjwl4S39Hz4jG49kQ8C
-        3R68PBlaw==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWWK7-0003cK-0G; Sat, 23 Jun 2018 00:22:39 +0000
-Date:   Fri, 22 Jun 2018 17:22:37 -0700
-From:   Darren Hart <dvhart@infradead.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Mario Limonciello <mario.limonciello@dell.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: dell-smbios: make a function and a pointer
- static
-Message-ID: <20180623002237.GG27466@fury>
-References: <20180621181524.30550-1-colin.king@canonical.com>
+        Fri, 22 Jun 2018 20:27:12 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w5N0Ol9v013305;
+        Fri, 22 Jun 2018 17:26:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=dpYrarBjnnXWUa0BDKHYMrXh3zj7ULSEbQPiQ8iuMBI=;
+ b=MLCmGvidFrkg4TtlJ6Z2ks2OXdSvuQu2EUIZ8MK7qI2/Wy1aZ6zluhKzm4bP+CH7NQAF
+ 4Nwi6FGXQWy+bitfLiOSXXdt4aNAYRIMngrntJ+dOQ1lC7j7nCqApWklHkEgDiNw++nE
+ 7EUWq+iIXdXzOMEMLwRz0JeOuqnkNO3Ua5A= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2js9wdr71c-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 22 Jun 2018 17:26:51 -0700
+Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
+ mail.thefacebook.com (192.168.16.11) with Microsoft SMTP Server (TLS) id
+ 14.3.361.1; Fri, 22 Jun 2018 17:26:41 -0700
+Date:   Fri, 22 Jun 2018 17:26:39 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+CC:     Okash Khawaja <osk@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
+        "Alexei Starovoitov" <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 2/3] bpf: btf: add btf json print functionality
+Message-ID: <20180623002639.h4qxy7aakypi6t7b@kafai-mbp.dhcp.thefacebook.com>
+References: <20180621225117.dhrkrtmkfbeihbe4@kafai-mbp.dhcp.thefacebook.com>
+ <20180621160719.2cfb4b58@cakuba.netronome.com>
+ <20180621235746.dfq6kdtkogftw3ws@kafai-mbp.dhcp.thefacebook.com>
+ <20180621172523.6cd00ed1@cakuba.netronome.com>
+ <20180622012052.htkvholi674x6i4f@kafai-mbp.dhcp.thefacebook.com>
+ <20180622114032.162b2a76@cakuba.netronome.com>
+ <20180622205535.c6vjhdwt5er4wc32@kafai-mbp.dhcp.thefacebook.com>
+ <20180622142743.2b890d0f@cakuba.netronome.com>
+ <20180622225408.jor7lpvsksnwiiec@kafai-mbp.dhcp.thefacebook.com>
+ <20180622163200.20564ec4@cakuba.netronome.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180621181524.30550-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180622163200.20564ec4@cakuba.netronome.com>
+User-Agent: NeoMutt/20180512
+X-Originating-IP: [192.168.52.123]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 07:15:24PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, Jun 22, 2018 at 04:32:00PM -0700, Jakub Kicinski wrote:
+> On Fri, 22 Jun 2018 15:54:08 -0700, Martin KaFai Lau wrote:
+> > > > > > > > > > >         "value": ["0x02","0x00","0x00","0x00","0x00","0x00","0x00","0x00"
+> > > > > > > > > > >         ],
+> > > > > > > > > > > 	"value_struct":{
+> > > > > > > > > > > 		"src_ip":2,      
+> > > > > > If for the same map the user changes the "src_ip" to an array of int[4]
+> > > > > > later (e.g. to support ipv6), it will become "src_ip": [1, 2, 3, 4].
+> > > > > > Is it breaking backward compat?
+> > > > > > i.e.
+> > > > > > struct five_tuples {
+> > > > > > -	int src_ip;
+> > > > > > +	int src_ip[4];
+> > > > > > /* ... */
+> > > > > > };    
+> > > > > 
+> > > > > Well, it is breaking backward compat, but it's the program doing it,
+> > > > > not bpftool :)  BTF changes so does the output.    
+> > > > As we see, the key/value's btf-output is inherently not backward compat.
+> > > > Hence, "-j" and "-p" will stay as is.  The whole existing json will
+> > > > be backward compat instead of only partly backward compat.  
+> > > 
+> > > No.  There is a difference between user of a facility changing their
+> > > input and kernel/libraries providing different output in response to
+> > > that, and the libraries suddenly changing the output on their own.
+> > > 
+> > > Your example is like saying if user started using IPv6 addresses
+> > > instead of IPv4 the netlink attributes in dumps will be different so
+> > > kernel didn't keep backwards compat.  While what you're doing is more
+> > > equivalent to dropping support for old ioctl interfaces because there
+> > > is a better mechanism now.  
+> > Sorry, I don't follow this.  I don't see netlink suffer json issue like
+> > the one on "key" and "value".
+> > 
+> > All I can grasp is, the json should normally be backward compat but now
+> > we are saying anything added by btf-output is an exception because
+> > the script parsing it will treat it differently than "key" and "value"
 > 
-> The function dell_smbios_smm_call and pointer platform_device are
-> local to the source and do not need to be in global scope, so make
-> them static.
+> Backward compatibility means that if I run *the same* program against
+> different kernels/libraries it continues to work.  If someone decides
+> to upgrade their program to work with IPv6 (which was your example)
+> obviously there is no way system as a whole will look 1:1 the same.
 > 
-> Cleans up sparse warnings:
-> warning: symbol 'platform_device' was not declared. Should it be static?
-> warning: symbol 'dell_smbios_smm_call' was not declared. Should it be
-> static?
+> > > BTF in JSON is very useful, and will help people who writes simple
+> > > orchestration/scripts based on bpftool *a* *lot*.  I really appreciate  
+> > Can you share what the script will do?  I want to understand why
+> > it cannot directly use the BTF format and the map data.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/platform/x86/dell-smbios-smm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Think about a python script which wants to read a counter in a map.
+> Right now it would have to get the BTF, find out which bytes are the
+> counter, then convert the bytes into a larger int.  With JSON BTF if
+> just does entry["formatted"]["value"]["counter"].
 > 
-> diff --git a/drivers/platform/x86/dell-smbios-smm.c b/drivers/platform/x86/dell-smbios-smm.c
-> index e9e9da556318..97a90bebc360 100644
-> --- a/drivers/platform/x86/dell-smbios-smm.c
-> +++ b/drivers/platform/x86/dell-smbios-smm.c
-> @@ -24,7 +24,7 @@
->  static int da_command_address;
->  static int da_command_code;
->  static struct calling_interface_buffer *buffer;
-> -struct platform_device *platform_device;
-> +static struct platform_device *platform_device;
->  static DEFINE_MUTEX(smm_mutex);
->  
->  static const struct dmi_system_id dell_device_table[] __initconst = {
-> @@ -82,7 +82,7 @@ static void find_cmd_address(const struct dmi_header *dm, void *dummy)
->  	}
->  }
->  
-> -int dell_smbios_smm_call(struct calling_interface_buffer *input)
-> +static int dell_smbios_smm_call(struct calling_interface_buffer *input)
+> Real life example from my test code (conversion of 3 element counter
+> array):
+> 
+> def str2int(strtab):
+>     inttab = []
+>     for i in strtab:
+>         inttab.append(int(i, 16))
+>     ba = bytearray(inttab)
+>     if len(strtab) == 4:
+>         fmt = "I"
+>     elif len(strtab) == 8:
+>         fmt = "Q"
+>     else:
+>         raise Exception("String array of len %d can't be unpacked to an int" %
+>                         (len(strtab)))
+>     return struct.unpack(fmt, ba)[0]
+> 
+> def convert(elems, idx):
+>     val = []
+>     for i in range(3):
+>         part = elems[idx]["value"][i * length:(i + 1) * length]
+>         val.append(str2int(part))
+>     return val
+> 
+> With BTF it would be:
+> 
+> 	elems[idx]["formatted"]["value"]
+> 
+> Which is fairly awesome.
+Thanks for the example.  Agree that with BTF, things are easier in general.
 
-Hrm. So these are passed by pointer to dell_smbios_register_device(), which is in
-turn called by dell_smbios_call() from dell-smbios-base.c.
+btw, what more awesome is,
+#> bpftool map find id 100 key 1
+{
+	"counter_x": 1,
+	"counter_y": 10
+}
 
-So while it is valid to make these static, since we're not referencing the
-symbol, but the pointer value instead - I do worry about the "static" suggesting
-to someone reading the code that this data is not used outside of this file,
-when it is.
-
-I'm not finding a position on this in coding-style.
-
-Andy, do you care to weigh in on this?
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+> 
+> > > this addition to bpftool and will start using it myself as soon as it
+> > > lands.  I'm not sure why the reluctance to slightly change the output
+> > > format?  
+> > The initial change argument is because the json has to be backward compat.
+> > 
+> > Then we show that btf-output is inherently not backward compat, so
+> > printing it in json does not make sense at all.
+> > 
+> > However, now it is saying part of it does not have to be backward compat.
+> 
+> Compatibility of "formatted" member is defined as -> fields broken out
+> according to BTF.  So it is backward compatible.  The definition of
+> "value" member is -> an array of unfortunately formatted array of
+> ugly hex strings :(
+> 
+> > I am fine putting it under "formatted" for "-j" or "-p" if that is the
+> > case, other than the double output is still confusing.  Lets wait for
+> > Okash's input.
+> >
+> > At the same time, the same output will be used as the default plaintext
+> > output when BTF is available.  Then the plaintext BTF output
+> > will not be limited by the json restrictions when we want
+> > to improve human readability later.  Apparently, the
+> > improvements on plaintext will not be always applicable
+> > to json output.
+> 
