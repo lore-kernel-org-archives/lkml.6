@@ -2,69 +2,146 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2B4C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 01:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5DCC43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 01:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71B2B24A94
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 01:41:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71B2B24A94
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id C9BA124A96
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 01:44:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jE3OYmjM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9BA124A96
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934481AbeFWBle (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 21:41:34 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:34280 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933585AbeFWBld (ORCPT
+        id S934559AbeFWBo0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 21:44:26 -0400
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:46370 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933977AbeFWBoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 21:41:33 -0400
-Received: from localhost (unknown [211.196.191.92])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4049D1213842C;
-        Fri, 22 Jun 2018 18:41:30 -0700 (PDT)
-Date:   Sat, 23 Jun 2018 10:41:28 +0900 (KST)
-Message-Id: <20180623.104128.1481634742295696624.davem@davemloft.net>
-To:     antoine.tenart@bootlin.com
-Cc:     gregory.clement@bootlin.com, mw@semihalf.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com
-Subject: Re: [PATCH net] net: mvneta: fix the Rx desc DMA address in the Rx
- path
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180622081539.16584-1-antoine.tenart@bootlin.com>
-References: <20180622081539.16584-1-antoine.tenart@bootlin.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 22 Jun 2018 18:41:32 -0700 (PDT)
+        Fri, 22 Jun 2018 21:44:24 -0400
+Received: by mail-lj1-f179.google.com with SMTP id v22-v6so2215514ljg.13;
+        Fri, 22 Jun 2018 18:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=PiSBHM91zU9kMDSinZx8scwBcHzw0q0UYy5nWqfWMrM=;
+        b=jE3OYmjM74JLCFmb3wJX+TE+P4SG0k1XzVCG7yOcicHc6NaoZu8L9adsPJ9g5Kup82
+         YzW251XbnKsAK7nMdOZ7zzOKUu+ivFAolaSknJZ3n17Td1O2EokYu61uXW0juRj0yqQf
+         OSYnT8k2amFz+8mjag7lRp9LheHMoI3XO806fuSwEJgI9xBwzXfvd8EncmQDFwMe8kZq
+         gAEPX33XL1rqZ9Xs2WZ4Q8j04DY8QxqXRxBgPLdj+CIwlaXoMPKDQmCMpTTjL+NOUEfC
+         6K1G4W8Xx/ColPIkZUbFsyFdviU3PgZCmRVLzLXBAEK5dx09PLHDzxlVQl2WHzLZdtck
+         R+XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=PiSBHM91zU9kMDSinZx8scwBcHzw0q0UYy5nWqfWMrM=;
+        b=oS7WOGDJmQPkbzUsKvgIkq1PfUoOHNJ3XqaEe46BPZGyT1e+zq0VvljFhl3IdkxEr0
+         MXxzhk1yOUfRmV1SEEmB9pRYeetayMALmWzrnwscM7LCbEmSnHpXWErTsl4kHXum4yqD
+         eXExGJWbPxtcFLxyO2LawlBjIA4zRSiPvdNG9kqiViZ02b9w7m6raSFIi3c6CUnsXsun
+         Nlb+fOTlzUBi+qrYTNDS/vD1B2BWhdAUpVVTM2GCU1wYx2XxlemCg1sGZsKr+cig+UWO
+         BfzZSRQSmwVTRZdaqAl7BJtp0J5Z622iip5bJya10omP2UoRQWLAAiksDBXVEeqXWBZc
+         lhzg==
+X-Gm-Message-State: APt69E1kkCJl2Fqfvm1frBw4w5yvO2M7qQzPzJ9l58ZgTlckpz/RbE7r
+        EBhsXCodGw2wgzL5pY9Gc5kow5IUZsc7umfOCVw=
+X-Google-Smtp-Source: ADUXVKLlI5xZ4D3WUMqeAC50uwtJtNFF+qEZHLW+yZfZr9uj1xc2oqDnDVYFIa/KQS+o9A//DlDBNJ2HTjOgNBWS+n8=
+X-Received: by 2002:a2e:808e:: with SMTP id i14-v6mr2521456ljg.85.1529718262864;
+ Fri, 22 Jun 2018 18:44:22 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:5119:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 18:44:22
+ -0700 (PDT)
+From:   shankarapailoor <shankarapailoor@gmail.com>
+Date:   Fri, 22 Jun 2018 18:44:22 -0700
+Message-ID: <CAB+yDaa3OycpeiEbFEGCOMoCmNoXH2By8aC87HCNaDL+O6SDJA@mail.gmail.com>
+Subject: Task Hung in btrfs_start_ordered_extent
+To:     Chris Mason <clm@fb.com>, jbacik@fb.com, dsterba@suse.com
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-Date: Fri, 22 Jun 2018 10:15:39 +0200
+Hi,
 
-> When using s/w buffer management, buffers are allocated and DMA mapped.
-> When doing so on an arm64 platform, an offset correction is applied on
-> the DMA address, before storing it in an Rx descriptor. The issue is
-> this DMA address is then used later in the Rx path without removing the
-> offset correction. Thus the DMA address is wrong, which can led to
-> various issues.
-> 
-> This patch fixes this by removing the offset correction from the DMA
-> address retrieved from the Rx descriptor before using it in the Rx path.
-> 
-> Fixes: 8d5047cf9ca2 ("net: mvneta: Convert to be 64 bits compatible")
-> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+I am using Syzkaller to fuzz linux 4.18.0-rc1 with btrfs and I found
+the following task hung bug. This is reproducible and I have a C
+program to reproduce the bug here: https://pastebin.com/dMfR6yZx
 
-Applied and queued up for -stable, thank you.
+Syzkaller hit 'INFO: task hung in btrfs_start_ordered_extent' bug.
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+INFO: task syz-executor329:3499 blocked for more than 120 seconds.
+      Not tainted 4.18.0-rc1+ #35
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor329 D23328  3499   3498 0x00000000
+Call Trace:
+ context_switch kernel/sched/core.c:2862 [inline]
+ __schedule+0x8cd/0x1d20 kernel/sched/core.c:3504
+ schedule+0x7c/0x1a0 kernel/sched/core.c:3548
+ btrfs_start_ordered_extent+0x366/0x510 fs/btrfs/ordered-data.c:784
+ __do_contiguous_readpages fs/btrfs/extent_io.c:3113 [inline]
+ __extent_readpages+0x1c3/0x6b0 fs/btrfs/extent_io.c:3158
+ extent_readpages+0x1f5/0x6d0 fs/btrfs/extent_io.c:4153
+ btrfs_readpages+0x25/0x30 fs/btrfs/inode.c:8724
+ read_pages+0x10d/0x500 mm/readahead.c:121
+ __do_page_cache_readahead+0x4ab/0x590 mm/readahead.c:209
+ ra_submit mm/internal.h:66 [inline]
+ do_sync_mmap_readahead mm/filemap.c:2444 [inline]
+ filemap_fault+0x939/0x1b20 mm/filemap.c:2520
+ __do_fault+0x84/0x1a0 mm/memory.c:3231
+ do_read_fault mm/memory.c:3641 [inline]
+ do_fault mm/memory.c:3741 [inline]
+ handle_pte_fault mm/memory.c:3972 [inline]
+ __handle_mm_fault+0x1931/0x2b40 mm/memory.c:4096
+ handle_mm_fault+0x3a4/0xa10 mm/memory.c:4133
+ faultin_page mm/gup.c:518 [inline]
+ __get_user_pages+0x3dc/0x11f0 mm/gup.c:718
+ __get_user_pages_locked mm/gup.c:889 [inline]
+ get_user_pages_unlocked+0x25a/0x390 mm/gup.c:1012
+ get_user_pages_fast+0x163/0x310 mm/gup.c:1865
+ iov_iter_get_pages+0x235/0xd70 lib/iov_iter.c:1129
+ dio_refill_pages fs/direct-io.c:170 [inline]
+ dio_get_page fs/direct-io.c:214 [inline]
+ do_direct_IO fs/direct-io.c:980 [inline]
+ do_blockdev_direct_IO+0x33c2/0x7800 fs/direct-io.c:1331
+ __blockdev_direct_IO+0x9d/0xc6 fs/direct-io.c:1417
+ btrfs_direct_IO+0x3c6/0xbf0 fs/btrfs/inode.c:8629
+ generic_file_direct_write+0x1e6/0x440 mm/filemap.c:3042
+ __btrfs_direct_write fs/btrfs/file.c:1813 [inline]
+ btrfs_file_write_iter+0x770/0x166a fs/btrfs/file.c:1954
+ call_write_iter include/linux/fs.h:1795 [inline]
+ new_sync_write fs/read_write.c:474 [inline]
+ __vfs_write+0x4e8/0x660 fs/read_write.c:487
+ vfs_write+0x189/0x510 fs/read_write.c:549
+ ksys_write+0xd8/0x1b0 fs/read_write.c:598
+ __do_sys_write fs/read_write.c:610 [inline]
+ __se_sys_write fs/read_write.c:607 [inline]
+ __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+ do_syscall_64+0xda/0x560 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440799
+Code: Bad RIP value.
+RSP: 002b:00007ffdf3c66738 EFLAGS: 00000217 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440799
+RDX: 00000000d996d7aa RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 0000000000004000 R09: 0000000000004000
+R10: 0000000000000004 R11: 0000000000000217 R12: 0000000000401c20
+R13: 0000000000401cb0 R14: 0000000000000000 R15: 0000000000000000
+
+My kernel configs: https://pastebin.com/KFcaLxhj
+
+Please let me know if I can provide more information
+
+-- 
+Regards,
+Shankara Pailoor
