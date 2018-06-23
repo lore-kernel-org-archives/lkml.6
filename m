@@ -2,170 +2,68 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CDEC43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 10:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7398DC43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 10:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 697AD24B78
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 10:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697AD24B78
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 0B4E824B81
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 10:57:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4E824B81
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751653AbeFWKg2 (ORCPT
+        id S1751769AbeFWK5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 06:36:28 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:36068 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751385AbeFWKg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 06:36:26 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id k8jjMG97RbxD; Sat, 23 Jun 2018 12:36:25 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BDC2300329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:2300:329c:23ff:fea6:a903])
+        Sat, 23 Jun 2018 06:57:22 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:55311 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751490AbeFWK5V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 06:57:21 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 26BB01EC019F;
-        Sat, 23 Jun 2018 12:36:25 +0200 (CEST)
-Date:   Sat, 23 Jun 2018 12:36:22 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     linux-crypto@vger.kernel.org
-Cc:     Mike Galbraith <efault@gmx.de>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, jpoimboe@redhat.com, luto@kernel.org,
-        peterz@infradead.org, brgerst@gmail.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
-        h.peter.anvin@intel.com,
-        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH] x86/crypto: Add missing RETs
-Message-ID: <20180623103622.GA2760@zn.tnic>
-References: <20180507213755.GA32406@avx2>
- <tip-51bad67ffbce0aaa44579f84ef5d05597054ec6a@git.kernel.org>
- <1529235613.4572.7.camel@gmx.de>
- <20180617120012.GB16877@zn.tnic>
- <1529242717.4472.3.camel@gmx.de>
- <1529244178.4674.1.camel@gmx.de>
- <20180617194747.GA21160@zn.tnic>
- <1529289279.31745.3.camel@gmx.de>
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id C679234C95D;
+        Sat, 23 Jun 2018 12:57:18 +0200 (CEST)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Linux on Intel x86: How to disable Hyperthreading
+Date:   Sat, 23 Jun 2018 12:57:18 +0200
+Message-ID: <1554914.aCy3vs9hif@merkaba>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1529289279.31745.3.camel@gmx.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lemme send a proper patch now...
+Q2O0ZCBwZW9wbGUgZm9yIFg4NiBhcmNoaXRlY3R1cmUgaW4gTUFJTlRBSU5FUlMuCgoKSGkhCgpB
+Y2NvcmRpbmcgdG8KCmh0dHBzOi8vd3d3Lmt1a2V0ei1ibG9nLmRlL3RsYmxlZWQtbmV1ZS1zaWNo
+ZXJoZWl0c2x1ZWNrZW4tYmVpLWludGVsLWNwdXMvCgppbgoKaHR0cHM6Ly93d3cuYmxhY2toYXQu
+Y29tL3VzLTE4L2JyaWVmaW5ncy9zY2hlZHVsZS8jdGxibGVlZC13aGVuLXByb3RlY3RpbmcteW91
+ci1jcHUtY2FjaGVzLWlzLW5vdC1lbm91Z2gtMTAxNDkKCihGaXJlZm94IGFuZCBDaHJvbWl1bSB3
+aXRoIGN1cnJlbnQgc2V0dGluZ3MgYW5kIGFkZC1vbnMgd2ViYnJvd3NlcnMgZG8gCm5vdCBkaXNw
+bGF5IHRoZSBjb250ZW50cyBvZiB0aGUgcGFnZSkKCm9uZSBjYW4gcmVhZDoKCj4gT3VyIFRMQmxl
+ZWQgZXhwbG9pdCBzdWNjZXNzZnVsbHkgbGVha3MgYSAyNTYtYml0IEVkRFNBIGtleSBmcm9tCj4g
+bGliZ2NyeXB0ICh1c2VkIGluIGUuZy4gR1BHKSB3aXRoIGEgOTglIHN1Y2Nlc3MgcmF0ZSBhZnRl
+ciBqdXN0IGEKPiBzaW5nbGUgb2JzZXJ2YXRpb24gb2Ygc2lnbmluZyBvcGVyYXRpb24gb24gYSBj
+by1yZXNpZGVudCBoeXBlcnRocmVhZAo+IGFuZCBqdXN0IDE3IHNlY29uZHMgb2YgYW5hbHlzaXMg
+dGltZS4ACgoKQW5kIHRoaXMgcHJvYmFibHkgd291bGQgZXhwbGFpbiB0aGUgZGlzYWJsaW5nIG9m
+IGl0IGluIE9wZW5CU0QuCgpXaGF0IGlzIHlvdXIgdGFrZSBvbiB0aGlzPwoKCkFsc28gaG93IHdv
+dWxkIHlvdSBkaXNhYmxlIGl0IGluIGNhc2UgeW91IHdvdWxkPwoKSSBjdXJyZW50bHkgdGVzdCBy
+dW4gd2l0aCB0aGUgc2NyaXB0IEkgZm91bmQgb246CgpodHRwczovL3NlcnZlcmZhdWx0LmNvbS9x
+dWVzdGlvbnMvMjM1ODI1L2Rpc2FibGUtaHlwZXJ0aHJlYWRpbmctZnJvbS13aXRoaW4tbGludXgt
+bm8tYWNjZXNzLXRvLWJpb3MKCkp1c3QgdG8gc2VlIHdoZXRoZXIgSSBub3RpY2UgYSBzaWduaWZp
+Y2FudCBwZXJmb3JtYW5jZSBkcm9wLgoKVGhhbmtzLgotLSAKTWFydGlu
 
----
-From: Borislav Petkov <bp@suse.de>
-Date: Sun, 17 Jun 2018 13:57:42 +0200
-Subject: [PATCH] x86/crypto: Add missing RETs
 
-Add explicit RETs to the tail calls of AEGIS and MORUS crypto algorithms
-otherwise they run into INT3 padding due to
 
-  51bad67ffbce ("x86/asm: Pad assembly functions with INT3 instructions")
 
-leading to spurious debug exceptions.
-
-Mike Galbraith <efault@gmx.de> took care of all the remaining callsites.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/crypto/aegis128-aesni-asm.S  | 1 +
- arch/x86/crypto/aegis128l-aesni-asm.S | 1 +
- arch/x86/crypto/aegis256-aesni-asm.S  | 1 +
- arch/x86/crypto/morus1280-avx2-asm.S  | 1 +
- arch/x86/crypto/morus1280-sse2-asm.S  | 1 +
- arch/x86/crypto/morus640-sse2-asm.S   | 1 +
- 6 files changed, 6 insertions(+)
-
-diff --git a/arch/x86/crypto/aegis128-aesni-asm.S b/arch/x86/crypto/aegis128-aesni-asm.S
-index 9254e0b6cc06..717bf0776421 100644
---- a/arch/x86/crypto/aegis128-aesni-asm.S
-+++ b/arch/x86/crypto/aegis128-aesni-asm.S
-@@ -535,6 +535,7 @@ ENTRY(crypto_aegis128_aesni_enc_tail)
- 	movdqu STATE3, 0x40(STATEP)
- 
- 	FRAME_END
-+	ret
- ENDPROC(crypto_aegis128_aesni_enc_tail)
- 
- .macro decrypt_block a s0 s1 s2 s3 s4 i
-diff --git a/arch/x86/crypto/aegis128l-aesni-asm.S b/arch/x86/crypto/aegis128l-aesni-asm.S
-index 9263c344f2c7..4eda2b8db9e1 100644
---- a/arch/x86/crypto/aegis128l-aesni-asm.S
-+++ b/arch/x86/crypto/aegis128l-aesni-asm.S
-@@ -645,6 +645,7 @@ ENTRY(crypto_aegis128l_aesni_enc_tail)
- 	state_store0
- 
- 	FRAME_END
-+	ret
- ENDPROC(crypto_aegis128l_aesni_enc_tail)
- 
- /*
-diff --git a/arch/x86/crypto/aegis256-aesni-asm.S b/arch/x86/crypto/aegis256-aesni-asm.S
-index 1d977d515bf9..32aae8397268 100644
---- a/arch/x86/crypto/aegis256-aesni-asm.S
-+++ b/arch/x86/crypto/aegis256-aesni-asm.S
-@@ -543,6 +543,7 @@ ENTRY(crypto_aegis256_aesni_enc_tail)
- 	state_store0
- 
- 	FRAME_END
-+	ret
- ENDPROC(crypto_aegis256_aesni_enc_tail)
- 
- /*
-diff --git a/arch/x86/crypto/morus1280-avx2-asm.S b/arch/x86/crypto/morus1280-avx2-asm.S
-index 37d422e77931..07653d4582a6 100644
---- a/arch/x86/crypto/morus1280-avx2-asm.S
-+++ b/arch/x86/crypto/morus1280-avx2-asm.S
-@@ -453,6 +453,7 @@ ENTRY(crypto_morus1280_avx2_enc_tail)
- 	vmovdqu STATE4, (4 * 32)(%rdi)
- 
- 	FRAME_END
-+	ret
- ENDPROC(crypto_morus1280_avx2_enc_tail)
- 
- /*
-diff --git a/arch/x86/crypto/morus1280-sse2-asm.S b/arch/x86/crypto/morus1280-sse2-asm.S
-index 1fe637c7be9d..bd1aa1b60869 100644
---- a/arch/x86/crypto/morus1280-sse2-asm.S
-+++ b/arch/x86/crypto/morus1280-sse2-asm.S
-@@ -652,6 +652,7 @@ ENTRY(crypto_morus1280_sse2_enc_tail)
- 	movdqu STATE4_HI, (9 * 16)(%rdi)
- 
- 	FRAME_END
-+	ret
- ENDPROC(crypto_morus1280_sse2_enc_tail)
- 
- /*
-diff --git a/arch/x86/crypto/morus640-sse2-asm.S b/arch/x86/crypto/morus640-sse2-asm.S
-index 71c72a0a0862..efa02816d921 100644
---- a/arch/x86/crypto/morus640-sse2-asm.S
-+++ b/arch/x86/crypto/morus640-sse2-asm.S
-@@ -437,6 +437,7 @@ ENTRY(crypto_morus640_sse2_enc_tail)
- 	movdqu STATE4, (4 * 16)(%rdi)
- 
- 	FRAME_END
-+	ret
- ENDPROC(crypto_morus640_sse2_enc_tail)
- 
- /*
--- 
-2.17.0.582.gccdcbd54c
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
