@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1967CC43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 21:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36836C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 21:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C27D324D06
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 21:10:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB2E224D07
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 21:10:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="rCVbw4x0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C27D324D06
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="s6AZvowz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB2E224D07
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752089AbeFWVKB (ORCPT
+        id S1751894AbeFWVJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 17:10:01 -0400
-Received: from vern.gendns.com ([206.190.152.46]:36214 "EHLO vern.gendns.com"
+        Sat, 23 Jun 2018 17:09:32 -0400
+Received: from vern.gendns.com ([206.190.152.46]:36156 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751967AbeFWVJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 17:09:38 -0400
+        id S1751585AbeFWVJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 17:09:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=lechnology.com; s=default; h=References:In-Reply-To:Message-Id:Date:Subject
         :Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YZOcb97MCD3PibKaF4dn8eXvxk98fS+/5AgfJmzYkko=; b=rCVbw4x0zbJQYo8eF4/18itYd
-        2JbN9v/HPyVkPX2PLcd2CLtCUVRUfNbjqyDwrn8rhZ3Y2M2SwGWceQWdBuX7BDt9YfZPN86K3XUam
-        jeAm47QKxM7HM+Wcn3fEBHtH4fLbF3xxj6rTMuq6plXIxkeCUe8MCmlbUSen1UOGkteIRoM60sAg4
-        eIEJUYhbv/OlOd0GhGHJSEBFP+XEfLHx7Tivv29i2RlZz+2dkZjom1ZhwvvKz0NTyFpZE9huHCcpL
-        5gUyv0cCbTOuq4HprnnbudoqLUBq3AYHFHqFBQxqbMlHCg+XinBEIMmkyYN54CeiW9+AMQsM6PrJl
-        wTx7BtDrg==;
+         bh=5YsslAmBg+F02DdA3+2zMCxV2hpNzP0YmTHal6XE7zE=; b=s6AZvowzo/KC0XWsP8Sr39dwC
+        X3wCwQScobOH9gPlcNb3sYSN9KbAL3yb6r7wpLpavBY4XnCU5WRLZKjo+BqA+Drn55sKG5Ve0F53n
+        LZLJ9VCcuYo7yrTeIoeIQXOkRvKxefyYwkFFCPIZ/O7GqK+5BmzEItxPdlOnE+DN9iH9GCdP1nEtf
+        clGQPPHIs1lJUMsXNCD0mdkZd+SzWW65VA58cP4u8t8FQ4prNa9zM4IiFnQmc9jp+ghNEfwearjcf
+        Tb47epqG8nuIer7WxAwcp4ekYWOoa5bWsWBlazvFW3myfpACy/Yw6U7cfKH5TZVthwbCRvCEMJ4tL
+        5SMew2R9A==;
 Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:51098 helo=freyr.lechnology.com)
         by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <david@lechnology.com>)
-        id 1fWpmn-00CkwS-BZ; Sat, 23 Jun 2018 17:09:34 -0400
+        id 1fWpme-00CkwS-5N; Sat, 23 Jun 2018 17:09:24 -0400
 From:   David Lechner <david@lechnology.com>
 To:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -52,9 +52,9 @@ Cc:     David Lechner <david@lechnology.com>,
         =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/8] ARM: dts: da850: add node for PRUSS
-Date:   Sat, 23 Jun 2018 16:08:09 -0500
-Message-Id: <20180623210810.21232-8-david@lechnology.com>
+Subject: [PATCH 1/8] remoteproc: add map parameter to da_to_va
+Date:   Sat, 23 Jun 2018 16:08:03 -0500
+Message-Id: <20180623210810.21232-2-david@lechnology.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180623210810.21232-1-david@lechnology.com>
 References: <20180623210810.21232-1-david@lechnology.com>
@@ -73,35 +73,221 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a new remoteproc node to the da850 device tree for the PRUSS.
+This adds a new map parameter to the da_to_va callback for remoteproc
+devices. This parameter will be used by devices that have more than
+one memory map, such as the PRU found in TI Sitara SoCs.
+
+On these devices, the same physical memory address can refer to two
+different locations, i.e. instruction memory or data memory both start
+at 0x0. So, an extra bit of information is needed in the da_to_va
+callback to tell these apart.
+
+Devices that only have a single memory map will just pass 0 for this
+parameter. For now we are using 0 everywhere, but later patches will
+modify this value.
 
 Signed-off-by: David Lechner <david@lechnology.com>
 ---
+ drivers/remoteproc/imx_rproc.c             |  2 +-
+ drivers/remoteproc/keystone_remoteproc.c   |  3 ++-
+ drivers/remoteproc/qcom_adsp_pil.c         |  2 +-
+ drivers/remoteproc/qcom_q6v5_pil.c         |  2 +-
+ drivers/remoteproc/qcom_wcnss.c            |  2 +-
+ drivers/remoteproc/remoteproc_core.c       | 10 ++++++----
+ drivers/remoteproc/remoteproc_elf_loader.c |  4 ++--
+ drivers/remoteproc/remoteproc_internal.h   |  2 +-
+ drivers/remoteproc/st_slim_rproc.c         |  2 +-
+ drivers/remoteproc/wkup_m3_rproc.c         |  3 ++-
+ include/linux/remoteproc.h                 |  2 +-
+ 11 files changed, 19 insertions(+), 15 deletions(-)
 
-Note: this requires the recent common-clk patches for power-domains
-
- arch/arm/boot/dts/da850.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index 3fc8b8fd816e..8b052e96fb53 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -540,6 +540,14 @@
- 			clocks = <&pll0_auxclk>;
- 			status = "disabled";
- 		};
-+		pru_rproc: cpu@30000 {
-+			compatible = "ti,da850-pru-rproc";
-+			reg = <0x30000 0x10000>;
-+			interrupts = <3>, <4>;
-+			interrupt-names = "pru0-vq", "pru1-vq";
-+			power-domains = <&psc0 13>;
-+			status = "disabled";
-+		};
- 		mmc0: mmc@40000 {
- 			compatible = "ti,da830-mmc";
- 			reg = <0x40000 0x1000>;
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 54c07fd3f204..78c3502fea36 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -211,7 +211,7 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+ 	return -ENOENT;
+ }
+ 
+-static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct imx_rproc *priv = rproc->priv;
+ 	void *va = NULL;
+diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+index aaac31134e39..0f87cf95ae4f 100644
+--- a/drivers/remoteproc/keystone_remoteproc.c
++++ b/drivers/remoteproc/keystone_remoteproc.c
+@@ -254,7 +254,8 @@ static void keystone_rproc_kick(struct rproc *rproc, int vqid)
+  * can be used either by the remoteproc core for loading (when using kernel
+  * remoteproc loader), or by any rpmsg bus drivers.
+  */
+-static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len,
++				     int map)
+ {
+ 	struct keystone_rproc *ksproc = rproc->priv;
+ 	void __iomem *va = NULL;
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 89a86ce07f99..25a174a06985 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -167,7 +167,7 @@ static int adsp_stop(struct rproc *rproc)
+ 	return ret;
+ }
+ 
+-static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+ 	int offset;
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 2bf8e7c49f2a..58ba7349b311 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -995,7 +995,7 @@ static int q6v5_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
+-static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct q6v5 *qproc = rproc->priv;
+ 	int offset;
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index b0e07e9f42d5..92b05fb10557 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -295,7 +295,7 @@ static int wcnss_stop(struct rproc *rproc)
+ 	return ret;
+ }
+ 
+-static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+ 	int offset;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index a9609d971f7f..fb9ae85a0bee 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -145,6 +145,8 @@ static void rproc_disable_iommu(struct rproc *rproc)
+  * @rproc: handle of a remote processor
+  * @da: remoteproc device address to translate
+  * @len: length of the memory region @da is pointing to
++ * @map: indicates which memory map to use for devices with more than one
++ *       memory map or 0 for devices that only have a single memory map
+  *
+  * Some remote processors will ask us to allocate them physically contiguous
+  * memory regions (which we call "carveouts"), and map them to specific
+@@ -169,13 +171,13 @@ static void rproc_disable_iommu(struct rproc *rproc)
+  * here the output of the DMA API for the carveouts, which should be more
+  * correct.
+  */
+-void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct rproc_mem_entry *carveout;
+ 	void *ptr = NULL;
+ 
+ 	if (rproc->ops->da_to_va) {
+-		ptr = rproc->ops->da_to_va(rproc, da, len);
++		ptr = rproc->ops->da_to_va(rproc, da, len, map);
+ 		if (ptr)
+ 			goto out;
+ 	}
+@@ -468,7 +470,7 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+ 	}
+ 
+ 	/* what's the kernel address of this resource ? */
+-	ptr = rproc_da_to_va(rproc, rsc->da, rsc->len);
++	ptr = rproc_da_to_va(rproc, rsc->da, rsc->len, 0);
+ 	if (!ptr) {
+ 		dev_err(dev, "erroneous trace resource entry\n");
+ 		return -EINVAL;
+@@ -1124,7 +1126,7 @@ static void rproc_coredump(struct rproc *rproc)
+ 		phdr->p_flags = PF_R | PF_W | PF_X;
+ 		phdr->p_align = 0;
+ 
+-		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++		ptr = rproc_da_to_va(rproc, segment->da, segment->size, 0);
+ 		if (!ptr) {
+ 			dev_err(&rproc->dev,
+ 				"invalid coredump segment (%pad, %zu)\n",
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index b17d72ec8603..8888d39e1b13 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -182,7 +182,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 		}
+ 
+ 		/* grab the kernel address for this device address */
+-		ptr = rproc_da_to_va(rproc, da, memsz);
++		ptr = rproc_da_to_va(rproc, da, memsz, 0);
+ 		if (!ptr) {
+ 			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
+ 			ret = -EINVAL;
+@@ -333,6 +333,6 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+ 	if (!shdr)
+ 		return NULL;
+ 
+-	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
++	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, 0);
+ }
+ EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 7570beb035b5..92968a341f86 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -51,7 +51,7 @@ void rproc_exit_sysfs(void);
+ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+-void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
++void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map);
+ int rproc_trigger_recovery(struct rproc *rproc);
+ 
+ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+index 1ffb1f0c43d6..146badc9f061 100644
+--- a/drivers/remoteproc/st_slim_rproc.c
++++ b/drivers/remoteproc/st_slim_rproc.c
+@@ -178,7 +178,7 @@ static int slim_rproc_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
+-static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct st_slim_rproc *slim_rproc = rproc->priv;
+ 	void *va = NULL;
+diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+index 1ada0e51fef6..12cb26ebf35b 100644
+--- a/drivers/remoteproc/wkup_m3_rproc.c
++++ b/drivers/remoteproc/wkup_m3_rproc.c
+@@ -88,7 +88,8 @@ static int wkup_m3_rproc_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
+-static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len,
++				    int map)
+ {
+ 	struct wkup_m3_rproc *wkupm3 = rproc->priv;
+ 	void *va = NULL;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index dfdaede9139e..2d88e394fc99 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -343,7 +343,7 @@ struct rproc_ops {
+ 	int (*start)(struct rproc *rproc);
+ 	int (*stop)(struct rproc *rproc);
+ 	void (*kick)(struct rproc *rproc, int vqid);
+-	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
++	void * (*da_to_va)(struct rproc *rproc, u64 da, int len, int map);
+ 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+ 	struct resource_table *(*find_loaded_rsc_table)(
+ 				struct rproc *rproc, const struct firmware *fw);
 -- 
 2.17.1
 
