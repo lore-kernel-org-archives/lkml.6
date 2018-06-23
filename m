@@ -2,98 +2,105 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A34C43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 04:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D73C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 04:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37FDB24946
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 04:21:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FDB24946
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A00EC24B26
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 04:41:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="ltXJatiY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A00EC24B26
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751197AbeFWEVL (ORCPT
+        id S1751458AbeFWElL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 00:21:11 -0400
-Received: from mga17.intel.com ([192.55.52.151]:24346 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750777AbeFWEVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 00:21:10 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 21:21:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,260,1526367600"; 
-   d="scan'208";a="65619580"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga004.fm.intel.com with ESMTP; 22 Jun 2018 21:21:03 -0700
-Date:   Fri, 22 Jun 2018 21:20:33 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 02/16] x86/split_lock: Handle #AC exception for split
- lock in kernel mode
-Message-ID: <20180623042033.GF18979@romley-ivt3.sc.intel.com>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <1527435965-202085-3-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1806212301590.1591@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806212301590.1591@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 23 Jun 2018 00:41:11 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43201 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751273AbeFWElJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 00:41:09 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y8-v6so4085431pfm.10
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 21:41:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=CW3gtRZPbTm2ilrBisLi7BBMmZuYVObAHL2BztC1qpo=;
+        b=ltXJatiYkVpJdvymlwmFmTPK69caCHB3TOU2obwFTltYATeRF3fEKO7FIrige8LRX4
+         5OhiOIDUowHBoGbISrs3DJF7DDhC24RbcQw/IsI0xa/gsNCXI4WDCWsL5YBJZ32cO201
+         n/oHTO8/PHcABos6SWXBzl1CzCLtE/updVIWk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CW3gtRZPbTm2ilrBisLi7BBMmZuYVObAHL2BztC1qpo=;
+        b=Aey1FwZmyenxMpIQ9s5TtbA10sr8vJ+6y4ak4K6SMQ1RxwNNpcZc5TkEFksQ+0O97X
+         A+6rg/sTH40oR2m8pkMM0/GVZFX92+Fs+aHl3XSIbpfncfhsqpGCBbok5cAIXjglTGcl
+         HBJlu3vBywyXDFrWBhxcikAQL1ufg4IG/6B13Q0TpEPDRjLnOfyvFLGWU3yuarTB9QP5
+         hLh1lRY4ZtLel6rW9ggjmB4nw4jwy/g3wolk0mVVFE1hzLP2LslQG6Od0a0CFU8R6KEQ
+         PCL8vY/nwmEimz4EAXp1YAyFaXoWeSJCqlXdUYvZySBrL62m4Fp14bJryqaZ6pOR5pYe
+         FjNQ==
+X-Gm-Message-State: APt69E2EgR734jMWmsxo7Q+ZcBNdYuRPYxlIbRIik2pq/HQqkg6dMKAI
+        4dcaXRTdng6e1fLto4k7htR205wFgG8=
+X-Google-Smtp-Source: ADUXVKIBW7NiMXp2kpR0mLurErTRLfxmdaJQ/l06LGymlPbhsnpKs+o/eybTRJKzGOOdjSqBJb5ofQ==
+X-Received: by 2002:a65:410d:: with SMTP id w13-v6mr3609456pgp.414.1529728868523;
+        Fri, 22 Jun 2018 21:41:08 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id 29-v6sm22695637pfp.24.2018.06.22.21.41.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 21:41:07 -0700 (PDT)
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] Documentation: RCU: Fix broken link to LKML archive
+Date:   Fri, 22 Jun 2018 21:40:55 -0700
+Message-Id: <20180623044055.118383-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 12:49:00PM +0200, Thomas Gleixner wrote:
-> On Sun, 27 May 2018, Fenghua Yu wrote:
-> > +static void wait_for_reexecution(void)
-> > +{
-> > +	while (time_before(jiffies, disable_split_lock_jiffies +
-> > +			   reenable_split_lock_delay))
-> > +		cpu_relax();
-> > +}
-> > +
-> > +/*
-> > + * TEST_CTL MSR is shared among threads on the same core. To simplify
-> > + * situation, disable_split_lock_jiffies is global instead of per core.
-> 
-> This patch surely earns extra points in the trainwreck engineering contest,
-> but that's not taking place on LKML.
-> 
-> The whole thing is simply:
-> 
-> handle_ac()
-> {
-> 	if (user_mode(regs)) {
-> 		 do_trap(AC, SIGBUS, ...);
-> 	} else {
-> 		disable_ac_on_local_cpu();
-> 		WARN_ONCE(1);
-> 	}
-> }
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-Should I add kernel parameter or control knob to opt-out the feature?
-I'm afraid firmware may hang system after handling split lock if the
-feature is enabled by kernel, e.g. "reboot" hits split lock in firmware
-and firmware hangs the system after handling #AC.
+While going through the RCU requirements for interrupts, I noticed that
+one of the LKML links is broken. This patch changes it to use the
+archive from lore.kernel.org which works fine.
 
-Thanks.
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ Documentation/RCU/Design/Requirements/Requirements.html | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--Fenghua
+diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
+index 9b808402f8ce..58b6557007a3 100644
+--- a/Documentation/RCU/Design/Requirements/Requirements.html
++++ b/Documentation/RCU/Design/Requirements/Requirements.html
+@@ -2269,10 +2269,10 @@ Thankfully, RCU update-side primitives, including
+ The name notwithstanding, some Linux-kernel architectures
+ can have nested NMIs, which RCU must handle correctly.
+ Andy Lutomirski
+-<a href="https://lkml.kernel.org/g/CALCETrXLq1y7e_dKFPgou-FKHB6Pu-r8+t-6Ds+8=va7anBWDA@mail.gmail.com">surprised me</a>
++<a href="https://lkml.kernel.org/r/CALCETrXLq1y7e_dKFPgou-FKHB6Pu-r8+t-6Ds+8=va7anBWDA@mail.gmail.com">surprised me</a>
+ with this requirement;
+ he also kindly surprised me with
+-<a href="https://lkml.kernel.org/g/CALCETrXSY9JpW3uE6H8WYk81sg56qasA2aqmjMPsq5dOtzso=g@mail.gmail.com">an algorithm</a>
++<a href="https://lkml.kernel.org/r/CALCETrXSY9JpW3uE6H8WYk81sg56qasA2aqmjMPsq5dOtzso=g@mail.gmail.com">an algorithm</a>
+ that meets this requirement.
+ 
+ <p>
+-- 
+2.18.0.rc2.346.g013aa6912e-goog
+
