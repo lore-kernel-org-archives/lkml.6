@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDB6C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10614C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34DFB24ABB
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEED824ABC
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:21:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LpDlmN+O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34DFB24ABB
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WxlURdmD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEED824ABC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934753AbeFWCVL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 22:21:11 -0400
-Received: from mail-pl0-f47.google.com ([209.85.160.47]:41524 "EHLO
-        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934528AbeFWCVI (ORCPT
+        id S934771AbeFWCVT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 22:21:19 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39751 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934528AbeFWCVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 22:21:08 -0400
-Received: by mail-pl0-f47.google.com with SMTP id w8-v6so4273946ply.8
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 19:21:08 -0700 (PDT)
+        Fri, 22 Jun 2018 22:21:15 -0400
+Received: by mail-pf0-f194.google.com with SMTP id r11-v6so3990598pfl.6
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 19:21:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QlhV7eDSbsU4GPDGTwzyQDGWNJMnX8a7YNDVlGTagBM=;
-        b=LpDlmN+OsYjFbyDSsEpoClCn/Pz9gUAmYcvMoF2+088NDTQta0e1d717zm5GoFqKma
-         G99hLqSylXi/k+GgXKMmi3avEG013+TtrfU8M7Re/YoYKewWhk3KdWFycySY7N7gCOp7
-         LiaU56/bTKCBxENMFWlTiFA2vHwC6ahnOHGHc=
+        bh=N6l5ADvfSARlBrFBLh9//Q8Y5HUEl/bDth4c/brQGkk=;
+        b=WxlURdmDbAsopckzPs87JfrpO7YFHsw+qidS6gzFHAF8brPet5F1uzoQQJiEotUoCv
+         DYJni3FAh3r4za3XeLOeDQTtUi1TZ7nU14JjW1mZk9959O6lBg8dN8jlc10GBcLYCJts
+         lNgW9L2z95O5KO2wF+miWm97uNUn8cVfC1URE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QlhV7eDSbsU4GPDGTwzyQDGWNJMnX8a7YNDVlGTagBM=;
-        b=b6r0er3hsnV03MK0DJ3iZKrb0H0NInltG8oyBbUCaA9nRwDV/cS+2vAaUOi1D/gICn
-         5GEYBYOaqDT9TU+qLnZoDD6h44p5fu8RHrKtTI1H0hRLbpMQIiZ3fxjxodMFgtm99Sod
-         XQe6tTCw5QhJHrt4wCizf63H5RoOuxx5B36fRmJd/pzHCTeTTeBxukRZtQg7B/hRi4bx
-         rf/t2NLaBHicYsTND2eYxghUPcQrNTPIVsoTKxMuGi08CvoqaORbVbbU+6Q2TPeR4ZDd
-         3ADiZ8DG7L9TAxNmkQ5ByuDwhhN/Bt+vERL/ME7Za3HVuzPGSczs+u7pFXDZ5Xz38wP4
-         EOSw==
-X-Gm-Message-State: APt69E2AqoKVnNmZj3JwmpKr2dyUszG+pF+dZcGrhonTerhU1MPeOsFo
-        omK1t+7MKRwb4gCICooOy6Wl+A==
-X-Google-Smtp-Source: ADUXVKJun1lY3LX4iqRiEQMehr+U5Xw+otdtPrfL0oxbdXIYdES51zsViDw1rz4n2oNTYzsRKBdYFw==
-X-Received: by 2002:a17:902:422:: with SMTP id 31-v6mr3862394ple.320.1529720468323;
-        Fri, 22 Jun 2018 19:21:08 -0700 (PDT)
+        bh=N6l5ADvfSARlBrFBLh9//Q8Y5HUEl/bDth4c/brQGkk=;
+        b=Wr1EAqeyZkVpyl3lnoCpgwzrBpxIjyOkr6GZSWPH4DgFsONtSjDu/I57yOMms4GpyP
+         R18o118RvJtkqCTDRbH08Azt78GkPCHoncni1g/4NnPKgvEo7aqXwBobL9c1prF1I67+
+         xS60md77wSZSD5BQsZ6YgIW941+6a4XFnYs92T6GrogTDtcNZEizapxMedNLCg71xOP6
+         63/kAh+q+VembjdkaY8vjPeHC6R2OhKw3sEh3+c3gG10fMs5HqGYIePXs1HLilPo2Lg3
+         djMvClfEibzbkQvPWPG4AsbADmUK4tHWo8sY04bv2zR7W9Q8Mv0k6poevllrE18+DMtt
+         2nAw==
+X-Gm-Message-State: APt69E3u8+oN+/z1PW2Aj47fLFd/q521RNgMUTjzxdbaHvYkkYI6IPBF
+        9fZNu3c7lypMGcVIInCv6fV2qg==
+X-Google-Smtp-Source: ADUXVKJ1V2XQzWKskz/YDEm8bb9Xn6Z0Xo5ofbNPfvTCrThKco+gZSj6uXmegiP43FW6dgcmvdS9QA==
+X-Received: by 2002:a65:468e:: with SMTP id h14-v6mr3245878pgr.89.1529720474766;
+        Fri, 22 Jun 2018 19:21:14 -0700 (PDT)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id k69-v6sm15243965pgc.39.2018.06.22.19.21.07
+        by smtp.googlemail.com with ESMTPSA id a8-v6sm17553197pfe.72.2018.06.22.19.21.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 19:21:07 -0700 (PDT)
+        Fri, 22 Jun 2018 19:21:14 -0700 (PDT)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
         vgoyal@redhat.com, herbert@gondor.apana.org.au,
@@ -61,12 +61,10 @@ To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
 Cc:     ard.biesheuvel@linaro.org, james.morse@arm.com,
         bhsharma@redhat.com, kexec@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH v10 04/14] of/fdt: add helper functions for handling properties
-Date:   Sat, 23 Jun 2018 11:20:48 +0900
-Message-Id: <20180623022058.10935-5-takahiro.akashi@linaro.org>
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v10 05/14] arm64: add image head flag definitions
+Date:   Sat, 23 Jun 2018 11:20:49 +0900
+Message-Id: <20180623022058.10935-6-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180623022058.10935-1-takahiro.akashi@linaro.org>
 References: <20180623022058.10935-1-takahiro.akashi@linaro.org>
@@ -75,128 +73,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These functions will be used later to handle kexec-specific properties
-in arm64's kexec_file implementation.
+Those image head's flags will be used later by kexec_file loader.
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
 ---
- drivers/of/fdt.c       | 62 ++++++++++++++++++++++++++++++++++++++++--
- include/linux/of_fdt.h | 10 +++++--
- 2 files changed, 68 insertions(+), 4 deletions(-)
+ arch/arm64/include/asm/boot.h | 15 +++++++++++++++
+ arch/arm64/kernel/head.S      |  2 +-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 6da20b9688f7..f7c9d69ce86c 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -25,6 +25,7 @@
- #include <linux/debugfs.h>
- #include <linux/serial_core.h>
- #include <linux/sysfs.h>
-+#include <linux/types.h>
+diff --git a/arch/arm64/include/asm/boot.h b/arch/arm64/include/asm/boot.h
+index 355e552a9175..0bab7eed3012 100644
+--- a/arch/arm64/include/asm/boot.h
++++ b/arch/arm64/include/asm/boot.h
+@@ -5,6 +5,21 @@
  
- #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
- #include <asm/page.h>
-@@ -537,8 +538,8 @@ void *of_fdt_unflatten_tree(const unsigned long *blob,
- EXPORT_SYMBOL_GPL(of_fdt_unflatten_tree);
+ #include <asm/sizes.h>
  
- /* Everything below here references initial_boot_params directly. */
--int __initdata dt_root_addr_cells;
--int __initdata dt_root_size_cells;
-+int dt_root_addr_cells;
-+int dt_root_size_cells;
++#define ARM64_MAGIC		"ARM\x64"
++
++#define HEAD_FLAG_BE_SHIFT		0
++#define HEAD_FLAG_PAGE_SIZE_SHIFT	1
++#define HEAD_FLAG_BE_MASK		0x1
++#define HEAD_FLAG_PAGE_SIZE_MASK	0x3
++
++#define HEAD_FLAG_BE			1
++#define HEAD_FLAG_PAGE_SIZE_4K		1
++#define HEAD_FLAG_PAGE_SIZE_16K		2
++#define HEAD_FLAG_PAGE_SIZE_64K		3
++
++#define head_flag_field(flags, field) \
++		(((flags) >> field##_SHIFT) & field##_MASK)
++
+ /*
+  * arm64 requires the DTB to be 8 byte aligned and
+  * not exceed 2MB in size.
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index b0853069702f..8cbac6232ed1 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -91,7 +91,7 @@ _head:
+ 	.quad	0				// reserved
+ 	.quad	0				// reserved
+ 	.quad	0				// reserved
+-	.ascii	"ARM\x64"			// Magic number
++	.ascii	ARM64_MAGIC			// Magic number
+ #ifdef CONFIG_EFI
+ 	.long	pe_header - _head		// Offset to the PE header.
  
- void *initial_boot_params;
- 
-@@ -1330,3 +1331,60 @@ late_initcall(of_fdt_raw_init);
- #endif
- 
- #endif /* CONFIG_OF_EARLY_FLATTREE */
-+
-+bool of_fdt_cells_size_fitted(u64 base, u64 size)
-+{
-+	/* if *_cells >= 2, cells can hold 64-bit values anyway */
-+	if ((dt_root_addr_cells == 1) && (base > U32_MAX))
-+		return false;
-+
-+	if ((dt_root_size_cells == 1) && (size > U32_MAX))
-+		return false;
-+
-+	return true;
-+}
-+
-+size_t of_fdt_reg_cells_size(void)
-+{
-+	return (dt_root_addr_cells + dt_root_size_cells) * sizeof(u32);
-+}
-+
-+#define FDT_ALIGN(x, a)	(((x) + (a) - 1) & ~((a) - 1))
-+#define FDT_TAGALIGN(x)	(FDT_ALIGN((x), FDT_TAGSIZE))
-+
-+int fdt_prop_len(const char *prop_name, int len)
-+{
-+	return (strlen(prop_name) + 1) +
-+		sizeof(struct fdt_property) +
-+		FDT_TAGALIGN(len);
-+}
-+
-+static void fill_property(void *buf, u64 val64, int cells)
-+{
-+	__be32 val32;
-+
-+	while (cells) {
-+		val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
-+		memcpy(buf, &val32, sizeof(val32));
-+		buf += sizeof(val32);
-+	}
-+}
-+
-+int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
-+						u64 addr, u64 size)
-+{
-+	char buf[sizeof(__be32) * 2 * 2];
-+		/* assume dt_root_[addr|size]_cells <= 2 */
-+	void *prop;
-+	size_t buf_size;
-+
-+	buf_size = of_fdt_reg_cells_size();
-+	prop = buf;
-+
-+	fill_property(prop, addr, dt_root_addr_cells);
-+	prop += dt_root_addr_cells * sizeof(u32);
-+
-+	fill_property(prop, size, dt_root_size_cells);
-+
-+	return fdt_setprop(fdt, nodeoffset, name, buf, buf_size);
-+}
-diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
-index b9cd9ebdf9b9..9615d6142578 100644
---- a/include/linux/of_fdt.h
-+++ b/include/linux/of_fdt.h
-@@ -37,8 +37,8 @@ extern void *of_fdt_unflatten_tree(const unsigned long *blob,
- 				   struct device_node **mynodes);
- 
- /* TBD: Temporary export of fdt globals - remove when code fully merged */
--extern int __initdata dt_root_addr_cells;
--extern int __initdata dt_root_size_cells;
-+extern int dt_root_addr_cells;
-+extern int dt_root_size_cells;
- extern void *initial_boot_params;
- 
- extern char __dtb_start[];
-@@ -108,5 +108,11 @@ static inline void unflatten_device_tree(void) {}
- static inline void unflatten_and_copy_device_tree(void) {}
- #endif /* CONFIG_OF_EARLY_FLATTREE */
- 
-+bool of_fdt_cells_size_fitted(u64 base, u64 size);
-+size_t of_fdt_reg_cells_size(void);
-+int fdt_prop_len(const char *prop_name, int len);
-+int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
-+						u64 addr, u64 size);
-+
- #endif /* __ASSEMBLY__ */
- #endif /* _LINUX_OF_FDT_H */
 -- 
 2.17.0
 
