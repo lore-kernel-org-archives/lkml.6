@@ -4,55 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EC6C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 05:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B6BC43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 05:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E6DE24B2B
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 05:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17C4424B32
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 05:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y5hqdAMv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6DE24B2B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b+1+EBws"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C4424B32
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751479AbeFWFAX (ORCPT
+        id S1751506AbeFWFAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 01:00:23 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34551 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbeFWFAV (ORCPT
+        Sat, 23 Jun 2018 01:00:34 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36440 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751449AbeFWFAa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 01:00:21 -0400
-Received: by mail-pg0-f68.google.com with SMTP id q4-v6so3818883pgr.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 22:00:21 -0700 (PDT)
+        Sat, 23 Jun 2018 01:00:30 -0400
+Received: by mail-pf0-f194.google.com with SMTP id u16-v6so332655pfh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 22:00:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=iR+qEr2tiyoznVaO+gtZ5lYofHvz5XR9jfVKhHvFVcY=;
-        b=Y5hqdAMvM5PH9B16IAOhqZPqDzkfMoUvagsra/WHxgIjSxi+XrkkFkSjWO7k8QrKgN
-         ievP+8N9EEV6kA4hx1Ia2QjiI5Ts5sM9ujIp8w9cX48LZ4YMd0BmDlFGrAZr++IOnUgr
-         Iapfx3r3cI6fFDxVPunQUTanAAQUiKktBbd6M=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=eCGpJN+Du2K06bSnc1x9wpfp8uLy1lBlRT3RJhDL9yc=;
+        b=b+1+EBws9kcF+NRXDbNQJbAylaYtNyBnLOgfICtWlq3WjC/WUSMrSsu5SRliaE4VhZ
+         Ty81kFCWB1VHY7rRfVNgz/1PZYJ/16LycDgcMnyDNATRnqfxLiUm+Lmwj4t6ck8WZG3h
+         3zsbEuxPla7V4XF3SCHJaO0R0atyfPPjimGJo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iR+qEr2tiyoznVaO+gtZ5lYofHvz5XR9jfVKhHvFVcY=;
-        b=WX1UOhMsjMg/NFhfmANJtkkQJTsTjBLW/+fxVbUlkt68QeMav8aaLn+gNEKmzPlX5F
-         zVekgH47y+QpEpdCY/V+xGl1/8qSCkdkCPMIUrnlPUZMRBruErv3F8T52JiGyNOgMliW
-         4asxoZLgcqrDqD3aBOXrgIq9s3OVOso99Y8TwUojOIZ5SpiI+9LmOgcqMyncOr9xbPZm
-         YEWt8Tw6j6P63on79hpQGoXvfhtekHklMvQRQDr5R1ceOyJ/Ah7wQAPPr+e/eek22/KF
-         4mRbWtwuW6hIoWVDYAd1dezJODT1MSjKuZEJfRcdELg7AWfNmL21NfCfwG2OwVccpGrU
-         IweA==
-X-Gm-Message-State: APt69E2XsawL12EashJi4wxX/oOpHfSqZATLrt73WfAcxTgJX3TvXFwp
-        DRHGk7yaqsQZ5LPRohHjuzAV
-X-Google-Smtp-Source: ADUXVKLWTjN1DhPPmbMk3UdvAKe0nJZCmXri1iER4cVOgmIwQ0yFvVlLrKIkKKz25bKVlC9oFNDJjw==
-X-Received: by 2002:a65:5086:: with SMTP id r6-v6mr3613841pgp.375.1529730020818;
-        Fri, 22 Jun 2018 22:00:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=eCGpJN+Du2K06bSnc1x9wpfp8uLy1lBlRT3RJhDL9yc=;
+        b=uXUl+ZwrJFa82JCEshb/o8Y+nl0DJzFrbOcW+EPOsrjRxeLJfk+ifu8vKG/qHI9Ybh
+         pM0QHY/0O/PnLWU/gEJOPQjHNBxJ2XI2kNxo16O69nbv2PAJ9fsu8W7f+1UzJBVoCpkh
+         E02qD6g0hqblK+XQ/nlChik83QutL6/1jI3AsfyGHtrXZIZOoL4X4JGxX+dWCoYB9xEf
+         nQDAOBAkrhZEaSddCJrgqMvpADZXeirnxPTcEs3eB4/XjMIPnKs4w+H4aApBX1JHa6rZ
+         T5/nYENBZ8kLL91n52LYvskJGceIkn/34yDDziU+XRQk/Rx17bmR0a0YQjWYE08bhWHa
+         HAsA==
+X-Gm-Message-State: APt69E1oUCQiPYYNXwx37ZHN73vtg5wgY3CP5K3eU3VKl1HWjQdNs1HB
+        Zpkje5KTTBoa7IyxIVe/8fB6
+X-Google-Smtp-Source: ADUXVKK4esSdEILkP6rIxVj6QKrD/rigzO7LMjbA7ipQutIiybTC7vZtCyArce7DtH75R57Yb/XJ3w==
+X-Received: by 2002:a62:4d01:: with SMTP id a1-v6mr4440836pfb.144.1529730029606;
+        Fri, 22 Jun 2018 22:00:29 -0700 (PDT)
 Received: from localhost.localdomain ([2405:204:70c3:aca:6549:5166:32c7:2dab])
-        by smtp.gmail.com with ESMTPSA id y14-v6sm10787603pgv.37.2018.06.22.22.00.11
+        by smtp.gmail.com with ESMTPSA id y14-v6sm10787603pgv.37.2018.06.22.22.00.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 22:00:20 -0700 (PDT)
+        Fri, 22 Jun 2018 22:00:29 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
 Cc:     liuwei@actions-semi.com, mp-cs@actions-semi.com,
@@ -64,49 +65,53 @@ Cc:     liuwei@actions-semi.com, mp-cs@actions-semi.com,
         manivannanece23@gmail.com, thomas.liau@actions-semi.com,
         jeff.chen@actions-semi.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 0/3] Add gpio interrupt support for Actions Semi S900 SoC
-Date:   Sat, 23 Jun 2018 10:29:51 +0530
-Message-Id: <20180623045954.6729-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 1/3] dt-bindings: pinctrl: Add gpio interrupt bindings for Actions S900 SoC
+Date:   Sat, 23 Jun 2018 10:29:52 +0530
+Message-Id: <20180623045954.6729-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180623045954.6729-1-manivannan.sadhasivam@linaro.org>
+References: <20180623045954.6729-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds interrupt support for Actions Semi S900 GPIO's. Each
-port has individual register sets for configuring the below interrupt
-types:
+Add gpio interrupt bindings for Actions Semi S900 SoC.
 
-1. Rising Edge Interrupt
-2. Falling Edge Interrupt
-3. Software Emulation of both Edges
-4. High Level Interrupt
-5. Low Level Interrupt
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/pinctrl/actions,s900-pinctrl.txt          | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks,
-Mani
-
-Changes in v2:
-
-* Removed custom IRQ domain implementation and used GPIO_IRQCHIP with
-  multi parents based on gpio-tegra186.c
-* Added support for emulating interrupt on both edges
-* Added parentheses to the expression as spotted by Linus
-* Added Rob's Reviewed-by tag for bindings patch
-
-Manivannan Sadhasivam (3):
-  dt-bindings: pinctrl: Add gpio interrupt bindings for Actions S900 SoC
-  arm64: dts: actions: Add interrupt properties to pinctrl node for S900
-  pinctrl: actions: Add interrupt support for OWL S900 SoC
-
- .../bindings/pinctrl/actions,s900-pinctrl.txt |  10 +
- arch/arm64/boot/dts/actions/s900.dtsi         |   8 +
- drivers/pinctrl/actions/Kconfig               |   1 +
- drivers/pinctrl/actions/pinctrl-owl.c         | 271 +++++++++++++++++-
- drivers/pinctrl/actions/pinctrl-owl.h         |  22 +-
- drivers/pinctrl/actions/pinctrl-s900.c        |  31 +-
- 6 files changed, 325 insertions(+), 18 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+index 8fb5a53775e8..81b58dddd3ed 100644
+--- a/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+@@ -19,6 +19,10 @@ Required Properties:
+                     defines the interrupt number, the second encodes
+                     the trigger flags described in
+                     bindings/interrupt-controller/interrupts.txt
++- interrupts: The interrupt outputs from the controller. There is one GPIO
++              interrupt per GPIO bank. The number of interrupts listed depends
++              on the number of GPIO banks on the SoC. The interrupts must be
++              ordered by bank, starting with bank 0.
+ 
+ Please refer to pinctrl-bindings.txt in this directory for details of the
+ common pinctrl bindings used by client devices, including the meaning of the
+@@ -180,6 +184,12 @@ Example:
+                   #gpio-cells = <2>;
+                   interrupt-controller;
+                   #interrupt-cells = <2>;
++                  interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
++                               <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
++                               <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
++                               <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++                               <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++                               <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 
+                   uart2-default: uart2-default {
+                           pinmux {
 -- 
 2.17.1
 
