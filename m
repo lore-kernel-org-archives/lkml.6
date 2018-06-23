@@ -2,98 +2,88 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CECC43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 17:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C093DC43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 17:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003DC24CA9
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 17:27:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzM1zOpS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003DC24CA9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6284524CAC
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 17:28:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6284524CAC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751610AbeFWR1M (ORCPT
+        id S1751759AbeFWR2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 13:27:12 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41406 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751482AbeFWR1L (ORCPT
+        Sat, 23 Jun 2018 13:28:03 -0400
+Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:50132 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751706AbeFWR2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 13:27:11 -0400
-Received: by mail-oi0-f68.google.com with SMTP id c6-v6so1180732oic.8
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Jun 2018 10:27:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=uZ/cKN99V9rNLCWYZ0LnfuplHzNecEnNi1hIsRvcxFc=;
-        b=DzM1zOpSjQ2hm9LoXQNEUyzb5Tx9pRbgK1WeogR3pgtN5Rq0XVZB6bfD8CsyiLNotK
-         QOb1BW98o2E6TuXTUTDKgvm9uPW/ELp/t27SgLjFowJb1yT7NFSfJgnnrXgy84KsbuOw
-         B4YI03h/kTD2nVo3tpSinE1xBoVEuGTwsmdiETZfnuATHhbGl2Us3/jW1Zyqbw1x1/j6
-         mZJCzP2GrZRScGD+HN5AOwaAkeP9EVtzSTqHF076lZ93yRCfoRjLaaKwcphoq1wZMZvd
-         5MJgd2/afrOiwe4X+Mx5dzLhlL3YnJ+KYZEou++HBpk3bq8s2iZ5/saYRhfPdXqEWlLI
-         N0yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=uZ/cKN99V9rNLCWYZ0LnfuplHzNecEnNi1hIsRvcxFc=;
-        b=dSVcHT+CgZKLzrJ1VLmF6WbK8x10YDwQSF8y7iIqz7OnAZslHyoZR9NTG3ii5hE1Rh
-         A8wIkL5pbIuMT2aDQ7jyB8hhLcbTzY8ICeUHh2npZshUdmqlYkUjugLhk2xP/jTAF16c
-         K7eu95D5606xpBq0JoA52Y9me5CeMOMpe/eCJm+r7IZ/0mUp2H+iDj/TIr7nbP6jvrYJ
-         +n49aUpkFhfzHZXt/2HJTVcfoY4uEuQFCuiImd8v3es6zz0/BEyPeRewjMolC6VMXGu2
-         NzfJh6YXBCWdY08VRzdMunrkJtxFKyzHJ1aD5xyGmj365sXKEmEScJkQxJJFmr1SW4Em
-         rEqw==
-X-Gm-Message-State: APt69E3Ilhfjid3GcbfT8BjNkDwf+Az4wbmsDlbWb7Z90ZTVANOin2Bn
-        LEvFX6gdkIk2mDrXnL4kVCCN0+dT6Hk1dDN/TC0=
-X-Google-Smtp-Source: ADUXVKLA4K6bMRctgGXQ5pKOYe253NU3eknjO9v6q4kop8dszYlvAC0QwJuK6X4/FY6MJ2HQiQ+moqJtagVtClMHS4I=
-X-Received: by 2002:aca:fc82:: with SMTP id a124-v6mr3628104oii.69.1529774830568;
- Sat, 23 Jun 2018 10:27:10 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Sat, 23 Jun 2018 10:27:10
- -0700 (PDT)
-In-Reply-To: <CAOMZO5BSVKSEjk1inZb_yA6VNkZiW_gWK3LdzkAzwZzJb+hVfQ@mail.gmail.com>
-References: <1529636119-4076-1-git-send-email-chakra@openedev.com>
- <CAOMZO5DJGCESqtSqbEw4O0Vxv3noUoCrTgbRCmwB2fJdVvu0RQ@mail.gmail.com> <CAOMZO5BSVKSEjk1inZb_yA6VNkZiW_gWK3LdzkAzwZzJb+hVfQ@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sat, 23 Jun 2018 14:27:10 -0300
-Message-ID: <CAOMZO5B8tSTgBkZbAqRPdru=TaZ9=NZyKAOncgeCGCRqpQWwzg@mail.gmail.com>
-Subject: Re: [PATCH] Fix for clk disable issue on imx6ul
-To:     Chakra Divi <2chakrass@gmail.com>
-Cc:     Robin van der Gracht <robin@protonic.nl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Chakra Divi <chakra@openedev.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Yongcai Huang <anson.huang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 23 Jun 2018 13:28:02 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 68809180A887B;
+        Sat, 23 Jun 2018 17:28:01 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: test66_80162a1557e0e
+X-Filterd-Recvd-Size: 2400
+Received: from joe-laptop.perches.com (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 23 Jun 2018 17:28:00 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: Convert random_ether_addr to eth_random_addr
+Date:   Sat, 23 Jun 2018 10:27:58 -0700
+Message-Id: <d5ed83275b7e9ed8bacbcc8a45fcb5ac419c272f.1529774856.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 12:47 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> On Sat, Jun 23, 2018 at 12:38 PM, Fabio Estevam <festevam@gmail.com> wrote:
->
->> Looking at the CCM_CCGR0 register (address: 20C_4068) there is no
->> aips_tz3 clock gate in bits 31-30.
->>
->> Bits 31-30 are gpio2_clocks and Anson has recently sent a patch adding
->> support for it:
->> https://patchwork.kernel.org/patch/10481351/
->
-> Sorry, the correct link for the imx6ul patch is this one instead:
-> https://patchwork.kernel.org/patch/10445059/
+random_ether_addr is a #define for eth_random_addr which is
+generally preferred in kernel code by ~3:1
 
-And you will also need the dts part of the patch as well:
-https://patchwork.kernel.org/patch/10445053/
+Convert the uses of random_ether_addr to enable removing the #define
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/staging/mt7621-eth/mtk_eth_soc.c               | 2 +-
+ drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/mt7621-eth/mtk_eth_soc.c b/drivers/staging/mt7621-eth/mtk_eth_soc.c
+index 2c7a2e666bfb..e1696b06870e 100644
+--- a/drivers/staging/mt7621-eth/mtk_eth_soc.c
++++ b/drivers/staging/mt7621-eth/mtk_eth_soc.c
+@@ -1822,7 +1822,7 @@ static int __init mtk_init(struct net_device *dev)
+ 
+ 	/* If the mac address is invalid, use random mac address  */
+ 	if (!is_valid_ether_addr(dev->dev_addr)) {
+-		random_ether_addr(dev->dev_addr);
++		eth_random_addr(dev->dev_addr);
+ 		dev_err(eth->dev, "generated random MAC address %pM\n",
+ 			dev->dev_addr);
+ 		dev->addr_assign_type = NET_ADDR_RANDOM;
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
+index 21874e78d8a1..9d9a9e102bb8 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
+@@ -2382,7 +2382,7 @@ static void ieee80211_start_ibss_wq(struct work_struct *work)
+ 	if (ieee->state == IEEE80211_NOLINK) {
+ 		printk("creating new IBSS cell\n");
+ 		if(!ieee->wap_set)
+-			random_ether_addr(ieee->current_network.bssid);
++			eth_random_addr(ieee->current_network.bssid);
+ 
+ 		if(ieee->modulation & IEEE80211_CCK_MODULATION){
+ 
+-- 
+2.15.0
+
