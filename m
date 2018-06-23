@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B53EC43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6B5C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153C624BD9
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:22:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153C624BD9
+	by mail.kernel.org (Postfix) with ESMTP id BD7EA24BEB
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:22:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7EA24BEB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752079AbeFWMWR (ORCPT
+        id S1752087AbeFWMWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 08:22:17 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49233 "EHLO
+        Sat, 23 Jun 2018 08:22:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35161 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751775AbeFWMWP (ORCPT
+        with ESMTP id S1751640AbeFWMWr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 08:22:15 -0400
+        Sat, 23 Jun 2018 08:22:47 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCMBiq465387
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCMgTb465426
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 23 Jun 2018 05:22:11 -0700
+        Sat, 23 Jun 2018 05:22:42 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCMAHV465384;
-        Sat, 23 Jun 2018 05:22:10 -0700
-Date:   Sat, 23 Jun 2018 05:22:10 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCMgMT465423;
+        Sat, 23 Jun 2018 05:22:42 -0700
+Date:   Sat, 23 Jun 2018 05:22:42 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-f2a177292bd052ce12ac453d2ceeb083fe07718a@git.kernel.org>
-Cc:     mingo@kernel.org, hpa@zytor.com, reinette.chatre@intel.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          reinette.chatre@intel.com, hpa@zytor.com, mingo@kernel.org
-In-Reply-To: <3eef559aa9fd693a104ff99ff909cfee450c1695.1529706536.git.reinette.chatre@intel.com>
-References: <3eef559aa9fd693a104ff99ff909cfee450c1695.1529706536.git.reinette.chatre@intel.com>
+Message-ID: <tip-018961ae5579016d46ee03587c0ecf673821eedb@git.kernel.org>
+Cc:     reinette.chatre@intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com
+Reply-To: reinette.chatre@intel.com, tglx@linutronix.de, hpa@zytor.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <67391160bbf06143bc62d856d3d234eb152008b7.1529706536.git.reinette.chatre@intel.com>
+References: <67391160bbf06143bc62d856d3d234eb152008b7.1529706536.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Discover supported platforms via
- prefetch disable bits
-Git-Commit-ID: f2a177292bd052ce12ac453d2ceeb083fe07718a
+Subject: [tip:x86/cache] x86/intel_rdt: Pseudo-lock region creation/removal
+ core
+Git-Commit-ID: 018961ae5579016d46ee03587c0ecf673821eedb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,22 +57,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f2a177292bd052ce12ac453d2ceeb083fe07718a
-Gitweb:     https://git.kernel.org/tip/f2a177292bd052ce12ac453d2ceeb083fe07718a
+Commit-ID:  018961ae5579016d46ee03587c0ecf673821eedb
+Gitweb:     https://git.kernel.org/tip/018961ae5579016d46ee03587c0ecf673821eedb
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Fri, 22 Jun 2018 15:42:20 -0700
+AuthorDate: Fri, 22 Jun 2018 15:42:21 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 23 Jun 2018 13:03:49 +0200
 
-x86/intel_rdt: Discover supported platforms via prefetch disable bits
+x86/intel_rdt: Pseudo-lock region creation/removal core
 
-Knowing the model specific prefetch disable bits is required to support
-cache pseudo-locking because the hardware prefetchers need to be disabled
-when the kernel memory is pseudo-locked to cache. We add these bits only
-for platforms known to support cache pseudo-locking.
+The user requests a pseudo-locked region by providing a schemata to a
+resource group that is in the pseudo-locksetup mode. This is the
+functionality that consumes the parsed user data and creates the
+pseudo-locked region.
 
-When the user requests locksetup mode to be entered it will fail if the
-prefetch disabling bits are not known for the platform.
+First, required information is deduced from user provided data.
+This includes, how much memory does the requested bitmask represent,
+which CPU the requested region is associated with, and what is the
+cache line size of that cache (to learn the stride needed for locking).
+Second, a contiguous block of memory matching the requested bitmask is
+allocated.
+
+Finally, pseudo-locking is performed. The resource group already has the
+allocation that reflects the requested bitmask. With this class of service
+active and interference minimized, the allocated memory is loaded into the
+cache.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -83,104 +92,440 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/3eef559aa9fd693a104ff99ff909cfee450c1695.1529706536.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/67391160bbf06143bc62d856d3d234eb152008b7.1529706536.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 75 +++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt.h             |  17 ++
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 337 +++++++++++++++++++++++++++-
+ 2 files changed, 353 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index b5d3ddfa94e6..f245aaae514e 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -129,11 +129,26 @@ struct mongroup {
+  * @d:			RDT domain to which this pseudo-locked region
+  *			belongs
+  * @cbm:		bitmask of the pseudo-locked region
++ * @lock_thread_wq:	waitqueue used to wait on the pseudo-locking thread
++ *			completion
++ * @thread_done:	variable used by waitqueue to test if pseudo-locking
++ *			thread completed
++ * @cpu:		core associated with the cache on which the setup code
++ *			will be run
++ * @line_size:		size of the cache lines
++ * @size:		size of pseudo-locked region in bytes
++ * @kmem:		the kernel memory associated with pseudo-locked region
+  */
+ struct pseudo_lock_region {
+ 	struct rdt_resource	*r;
+ 	struct rdt_domain	*d;
+ 	u32			cbm;
++	wait_queue_head_t	lock_thread_wq;
++	int			thread_done;
++	int			cpu;
++	unsigned int		line_size;
++	unsigned int		size;
++	void			*kmem;
+ };
+ 
+ /**
+@@ -505,6 +520,8 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
+ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
+ bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm);
+ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
++int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp);
++void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int update_domains(struct rdt_resource *r, int closid);
+ void closid_free(int closid);
 diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index b145a7386b10..cbba4bc17522 100644
+index cbba4bc17522..22387af30a9e 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -12,8 +12,73 @@
+@@ -11,8 +11,14 @@
+ 
  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
  
++#include <linux/cacheinfo.h>
++#include <linux/cpu.h>
++#include <linux/cpumask.h>
++#include <linux/kthread.h>
  #include <linux/slab.h>
-+#include <asm/intel-family.h>
++#include <asm/cacheflush.h>
+ #include <asm/intel-family.h>
++#include <asm/intel_rdt_sched.h>
  #include "intel_rdt.h"
  
-+/*
-+ * MSR_MISC_FEATURE_CONTROL register enables the modification of hardware
-+ * prefetcher state. Details about this register can be found in the MSR
-+ * tables for specific platforms found in Intel's SDM.
+ /*
+@@ -79,6 +85,53 @@ static u64 get_prefetch_disable_bits(void)
+ 	return 0;
+ }
+ 
++/**
++ * pseudo_lock_region_init - Initialize pseudo-lock region information
++ * @plr: pseudo-lock region
++ *
++ * Called after user provided a schemata to be pseudo-locked. From the
++ * schemata the &struct pseudo_lock_region is on entry already initialized
++ * with the resource, domain, and capacity bitmask. Here the information
++ * required for pseudo-locking is deduced from this data and &struct
++ * pseudo_lock_region initialized further. This information includes:
++ * - size in bytes of the region to be pseudo-locked
++ * - cache line size to know the stride with which data needs to be accessed
++ *   to be pseudo-locked
++ * - a cpu associated with the cache instance on which the pseudo-locking
++ *   flow can be executed
++ *
++ * Return: 0 on success, <0 on failure. Descriptive error will be written
++ * to last_cmd_status buffer.
 + */
-+#define MSR_MISC_FEATURE_CONTROL	0x000001a4
++static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
++{
++	struct cpu_cacheinfo *ci;
++	int i;
 +
-+/*
-+ * The bits needed to disable hardware prefetching varies based on the
-+ * platform. During initialization we will discover which bits to use.
++	/* Pick the first cpu we find that is associated with the cache. */
++	plr->cpu = cpumask_first(&plr->d->cpu_mask);
++
++	if (!cpu_online(plr->cpu)) {
++		rdt_last_cmd_printf("cpu %u associated with cache not online\n",
++				    plr->cpu);
++		return -ENODEV;
++	}
++
++	ci = get_cpu_cacheinfo(plr->cpu);
++
++	plr->size = rdtgroup_cbm_to_size(plr->r, plr->d, plr->cbm);
++
++	for (i = 0; i < ci->num_leaves; i++) {
++		if (ci->info_list[i].level == plr->r->cache_level) {
++			plr->line_size = ci->info_list[i].coherency_line_size;
++			return 0;
++		}
++	}
++
++	rdt_last_cmd_puts("unable to determine cache line size\n");
++	return -1;
++}
++
+ /**
+  * pseudo_lock_init - Initialize a pseudo-lock region
+  * @rdtgrp: resource group to which new pseudo-locked region will belong
+@@ -98,10 +151,69 @@ static int pseudo_lock_init(struct rdtgroup *rdtgrp)
+ 	if (!plr)
+ 		return -ENOMEM;
+ 
++	init_waitqueue_head(&plr->lock_thread_wq);
+ 	rdtgrp->plr = plr;
+ 	return 0;
+ }
+ 
++/**
++ * pseudo_lock_region_clear - Reset pseudo-lock region data
++ * @plr: pseudo-lock region
++ *
++ * All content of the pseudo-locked region is reset - any memory allocated
++ * freed.
++ *
++ * Return: void
 + */
-+static u64 prefetch_disable_bits;
++static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
++{
++	plr->size = 0;
++	plr->line_size = 0;
++	kfree(plr->kmem);
++	plr->kmem = NULL;
++	plr->r = NULL;
++	if (plr->d)
++		plr->d->plr = NULL;
++	plr->d = NULL;
++	plr->cbm = 0;
++}
 +
 +/**
-+ * get_prefetch_disable_bits - prefetch disable bits of supported platforms
++ * pseudo_lock_region_alloc - Allocate kernel memory that will be pseudo-locked
++ * @plr: pseudo-lock region
 + *
-+ * Capture the list of platforms that have been validated to support
-+ * pseudo-locking. This includes testing to ensure pseudo-locked regions
-+ * with low cache miss rates can be created under variety of load conditions
-+ * as well as that these pseudo-locked regions can maintain their low cache
-+ * miss rates under variety of load conditions for significant lengths of time.
++ * Initialize the details required to set up the pseudo-locked region and
++ * allocate the contiguous memory that will be pseudo-locked to the cache.
 + *
-+ * After a platform has been validated to support pseudo-locking its
-+ * hardware prefetch disable bits are included here as they are documented
-+ * in the SDM.
-+ *
-+ * Return:
-+ * If platform is supported, the bits to disable hardware prefetchers, 0
-+ * if platform is not supported.
++ * Return: 0 on success, <0 on failure.  Descriptive error will be written
++ * to last_cmd_status buffer.
 + */
-+static u64 get_prefetch_disable_bits(void)
++static int pseudo_lock_region_alloc(struct pseudo_lock_region *plr)
 +{
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL ||
-+	    boot_cpu_data.x86 != 6)
-+		return 0;
++	int ret;
 +
-+	switch (boot_cpu_data.x86_model) {
-+	case INTEL_FAM6_BROADWELL_X:
-+		/*
-+		 * SDM defines bits of MSR_MISC_FEATURE_CONTROL register
-+		 * as:
-+		 * 0    L2 Hardware Prefetcher Disable (R/W)
-+		 * 1    L2 Adjacent Cache Line Prefetcher Disable (R/W)
-+		 * 2    DCU Hardware Prefetcher Disable (R/W)
-+		 * 3    DCU IP Prefetcher Disable (R/W)
-+		 * 63:4 Reserved
-+		 */
-+		return 0xF;
-+	case INTEL_FAM6_ATOM_GOLDMONT:
-+	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+		/*
-+		 * SDM defines bits of MSR_MISC_FEATURE_CONTROL register
-+		 * as:
-+		 * 0     L2 Hardware Prefetcher Disable (R/W)
-+		 * 1     Reserved
-+		 * 2     DCU Hardware Prefetcher Disable (R/W)
-+		 * 63:3  Reserved
-+		 */
-+		return 0x5;
++	ret = pseudo_lock_region_init(plr);
++	if (ret < 0)
++		return ret;
++
++	/*
++	 * We do not yet support contiguous regions larger than
++	 * KMALLOC_MAX_SIZE.
++	 */
++	if (plr->size > KMALLOC_MAX_SIZE) {
++		rdt_last_cmd_puts("requested region exceeds maximum size\n");
++		return -E2BIG;
++	}
++
++	plr->kmem = kzalloc(plr->size, GFP_KERNEL);
++	if (!plr->kmem) {
++		rdt_last_cmd_puts("unable to allocate memory\n");
++		return -ENOMEM;
 +	}
 +
 +	return 0;
 +}
 +
  /**
-  * pseudo_lock_init - Initialize a pseudo-lock region
-  * @rdtgrp: resource group to which new pseudo-locked region will belong
-@@ -225,6 +290,16 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
- 		return -EINVAL;
- 	}
+  * pseudo_lock_free - Free a pseudo-locked region
+  * @rdtgrp: resource group to which pseudo-locked region belonged
+@@ -114,10 +226,142 @@ static int pseudo_lock_init(struct rdtgroup *rdtgrp)
+  */
+ static void pseudo_lock_free(struct rdtgroup *rdtgrp)
+ {
++	pseudo_lock_region_clear(rdtgrp->plr);
+ 	kfree(rdtgrp->plr);
+ 	rdtgrp->plr = NULL;
+ }
  
++/**
++ * pseudo_lock_fn - Load kernel memory into cache
++ * @_rdtgrp: resource group to which pseudo-lock region belongs
++ *
++ * This is the core pseudo-locking flow.
++ *
++ * First we ensure that the kernel memory cannot be found in the cache.
++ * Then, while taking care that there will be as little interference as
++ * possible, the memory to be loaded is accessed while core is running
++ * with class of service set to the bitmask of the pseudo-locked region.
++ * After this is complete no future CAT allocations will be allowed to
++ * overlap with this bitmask.
++ *
++ * Local register variables are utilized to ensure that the memory region
++ * to be locked is the only memory access made during the critical locking
++ * loop.
++ *
++ * Return: 0. Waiter on waitqueue will be woken on completion.
++ */
++static int pseudo_lock_fn(void *_rdtgrp)
++{
++	struct rdtgroup *rdtgrp = _rdtgrp;
++	struct pseudo_lock_region *plr = rdtgrp->plr;
++	u32 rmid_p, closid_p;
++	unsigned long i;
++#ifdef CONFIG_KASAN
 +	/*
-+	 * Not knowing the bits to disable prefetching implies that this
-+	 * platform does not support Cache Pseudo-Locking.
++	 * The registers used for local register variables are also used
++	 * when KASAN is active. When KASAN is active we use a regular
++	 * variable to ensure we always use a valid pointer, but the cost
++	 * is that this variable will enter the cache through evicting the
++	 * memory we are trying to lock into the cache. Thus expect lower
++	 * pseudo-locking success rate when KASAN is active.
 +	 */
-+	prefetch_disable_bits = get_prefetch_disable_bits();
-+	if (prefetch_disable_bits == 0) {
-+		rdt_last_cmd_puts("pseudo-locking not supported\n");
-+		return -EINVAL;
++	unsigned int line_size;
++	unsigned int size;
++	void *mem_r;
++#else
++	register unsigned int line_size asm("esi");
++	register unsigned int size asm("edi");
++#ifdef CONFIG_X86_64
++	register void *mem_r asm("rbx");
++#else
++	register void *mem_r asm("ebx");
++#endif /* CONFIG_X86_64 */
++#endif /* CONFIG_KASAN */
++
++	/*
++	 * Make sure none of the allocated memory is cached. If it is we
++	 * will get a cache hit in below loop from outside of pseudo-locked
++	 * region.
++	 * wbinvd (as opposed to clflush/clflushopt) is required to
++	 * increase likelihood that allocated cache portion will be filled
++	 * with associated memory.
++	 */
++	native_wbinvd();
++
++	/*
++	 * Always called with interrupts enabled. By disabling interrupts
++	 * ensure that we will not be preempted during this critical section.
++	 */
++	local_irq_disable();
++
++	/*
++	 * Call wrmsr and rdmsr as directly as possible to avoid tracing
++	 * clobbering local register variables or affecting cache accesses.
++	 *
++	 * Disable the hardware prefetcher so that when the end of the memory
++	 * being pseudo-locked is reached the hardware will not read beyond
++	 * the buffer and evict pseudo-locked memory read earlier from the
++	 * cache.
++	 */
++	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
++	closid_p = this_cpu_read(pqr_state.cur_closid);
++	rmid_p = this_cpu_read(pqr_state.cur_rmid);
++	mem_r = plr->kmem;
++	size = plr->size;
++	line_size = plr->line_size;
++	/*
++	 * Critical section begin: start by writing the closid associated
++	 * with the capacity bitmask of the cache region being
++	 * pseudo-locked followed by reading of kernel memory to load it
++	 * into the cache.
++	 */
++	__wrmsr(IA32_PQR_ASSOC, rmid_p, rdtgrp->closid);
++	/*
++	 * Cache was flushed earlier. Now access kernel memory to read it
++	 * into cache region associated with just activated plr->closid.
++	 * Loop over data twice:
++	 * - In first loop the cache region is shared with the page walker
++	 *   as it populates the paging structure caches (including TLB).
++	 * - In the second loop the paging structure caches are used and
++	 *   cache region is populated with the memory being referenced.
++	 */
++	for (i = 0; i < size; i += PAGE_SIZE) {
++		/*
++		 * Add a barrier to prevent speculative execution of this
++		 * loop reading beyond the end of the buffer.
++		 */
++		rmb();
++		asm volatile("mov (%0,%1,1), %%eax\n\t"
++			:
++			: "r" (mem_r), "r" (i)
++			: "%eax", "memory");
++	}
++	for (i = 0; i < size; i += line_size) {
++		/*
++		 * Add a barrier to prevent speculative execution of this
++		 * loop reading beyond the end of the buffer.
++		 */
++		rmb();
++		asm volatile("mov (%0,%1,1), %%eax\n\t"
++			:
++			: "r" (mem_r), "r" (i)
++			: "%eax", "memory");
++	}
++	/*
++	 * Critical section end: restore closid with capacity bitmask that
++	 * does not overlap with pseudo-locked region.
++	 */
++	__wrmsr(IA32_PQR_ASSOC, rmid_p, closid_p);
++
++	/* Re-enable the hardware prefetcher(s) */
++	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
++	local_irq_enable();
++
++	plr->thread_done = 1;
++	wake_up_interruptible(&plr->lock_thread_wq);
++	return 0;
++}
++
+ /**
+  * rdtgroup_monitor_in_progress - Test if monitoring in progress
+  * @r: resource group being queried
+@@ -399,7 +643,6 @@ bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm)
+ 		if (bitmap_intersects(cbm, cbm_b, cbm_len))
+ 			return true;
+ 	}
+-
+ 	return false;
+ }
+ 
+@@ -448,3 +691,95 @@ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
+ 	free_cpumask_var(cpu_with_psl);
+ 	return ret;
+ }
++
++/**
++ * rdtgroup_pseudo_lock_create - Create a pseudo-locked region
++ * @rdtgrp: resource group to which pseudo-lock region belongs
++ *
++ * Called when a resource group in the pseudo-locksetup mode receives a
++ * valid schemata that should be pseudo-locked. Since the resource group is
++ * in pseudo-locksetup mode the &struct pseudo_lock_region has already been
++ * allocated and initialized with the essential information. If a failure
++ * occurs the resource group remains in the pseudo-locksetup mode with the
++ * &struct pseudo_lock_region associated with it, but cleared from all
++ * information and ready for the user to re-attempt pseudo-locking by
++ * writing the schemata again.
++ *
++ * Return: 0 if the pseudo-locked region was successfully pseudo-locked, <0
++ * on failure. Descriptive error will be written to last_cmd_status buffer.
++ */
++int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
++{
++	struct pseudo_lock_region *plr = rdtgrp->plr;
++	struct task_struct *thread;
++	int ret;
++
++	ret = pseudo_lock_region_alloc(plr);
++	if (ret < 0)
++		return ret;
++
++	plr->thread_done = 0;
++
++	thread = kthread_create_on_node(pseudo_lock_fn, rdtgrp,
++					cpu_to_node(plr->cpu),
++					"pseudo_lock/%u", plr->cpu);
++	if (IS_ERR(thread)) {
++		ret = PTR_ERR(thread);
++		rdt_last_cmd_printf("locking thread returned error %d\n", ret);
++		goto out_region;
 +	}
 +
- 	if (rdtgroup_monitor_in_progress(rdtgrp)) {
- 		rdt_last_cmd_puts("monitoring in progress\n");
- 		return -EINVAL;
++	kthread_bind(thread, plr->cpu);
++	wake_up_process(thread);
++
++	ret = wait_event_interruptible(plr->lock_thread_wq,
++				       plr->thread_done == 1);
++	if (ret < 0) {
++		/*
++		 * If the thread does not get on the CPU for whatever
++		 * reason and the process which sets up the region is
++		 * interrupted then this will leave the thread in runnable
++		 * state and once it gets on the CPU it will derefence
++		 * the cleared, but not freed, plr struct resulting in an
++		 * empty pseudo-locking loop.
++		 */
++		rdt_last_cmd_puts("locking thread interrupted\n");
++		goto out_region;
++	}
++
++	rdtgrp->mode = RDT_MODE_PSEUDO_LOCKED;
++	closid_free(rdtgrp->closid);
++	ret = 0;
++	goto out;
++
++out_region:
++	pseudo_lock_region_clear(plr);
++out:
++	return ret;
++}
++
++/**
++ * rdtgroup_pseudo_lock_remove - Remove a pseudo-locked region
++ * @rdtgrp: resource group to which the pseudo-locked region belongs
++ *
++ * The removal of a pseudo-locked region can be initiated when the resource
++ * group is removed from user space via a "rmdir" from userspace or the
++ * unmount of the resctrl filesystem. On removal the resource group does
++ * not go back to pseudo-locksetup mode before it is removed, instead it is
++ * removed directly. There is thus assymmetry with the creation where the
++ * &struct pseudo_lock_region is removed here while it was not created in
++ * rdtgroup_pseudo_lock_create().
++ *
++ * Return: void
++ */
++void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp)
++{
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP)
++		/*
++		 * Default group cannot be a pseudo-locked region so we can
++		 * free closid here.
++		 */
++		closid_free(rdtgrp->closid);
++
++	pseudo_lock_free(rdtgrp);
++}
