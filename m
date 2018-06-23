@@ -2,131 +2,94 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B28C43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 15:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58DDC43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 15:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E65124C39
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 15:05:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E65124C39
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B57824C3A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 15:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B57824C3A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751654AbeFWPFz (ORCPT
+        id S1751666AbeFWPQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 11:05:55 -0400
-Received: from mga02.intel.com ([134.134.136.20]:3700 "EHLO mga02.intel.com"
+        Sat, 23 Jun 2018 11:16:16 -0400
+Received: from sauhun.de ([88.99.104.3]:57564 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751474AbeFWPFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 11:05:53 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jun 2018 08:05:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,262,1526367600"; 
-   d="scan'208";a="59605619"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Jun 2018 08:05:52 -0700
-Date:   Sat, 23 Jun 2018 08:05:21 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 02/16] x86/split_lock: Handle #AC exception for split
- lock in kernel mode
-Message-ID: <20180623150521.GG18979@romley-ivt3.sc.intel.com>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <1527435965-202085-3-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1806212301590.1591@nanos.tec.linutronix.de>
- <20180623042033.GF18979@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806231108540.8650@nanos.tec.linutronix.de>
+        id S1750957AbeFWPQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 11:16:14 -0400
+Received: from localhost (KD106181193149.au-net.ne.jp [106.181.193.149])
+        by pokefinder.org (Postfix) with ESMTPSA id F2A0056430D;
+        Sat, 23 Jun 2018 17:16:10 +0200 (CEST)
+Date:   Sun, 24 Jun 2018 00:16:06 +0900
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        kramasub@codeaurora.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: soc: qcom: Fix default clock-freq for
+ qcom,geni-i2c
+Message-ID: <20180623151605.kyycbeema55trj7w@ninjato>
+References: <20180613175011.217585-1-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ivrb7mvwhvohmbnu"
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806231108540.8650@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180613175011.217585-1-dianders@chromium.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 11:17:03AM +0200, Thomas Gleixner wrote:
-> On Fri, 22 Jun 2018, Fenghua Yu wrote:
-> > On Fri, Jun 22, 2018 at 12:49:00PM +0200, Thomas Gleixner wrote:
-> > > On Sun, 27 May 2018, Fenghua Yu wrote:
-> > > > +static void wait_for_reexecution(void)
-> > > > +{
-> > > > +	while (time_before(jiffies, disable_split_lock_jiffies +
-> > > > +			   reenable_split_lock_delay))
-> > > > +		cpu_relax();
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * TEST_CTL MSR is shared among threads on the same core. To simplify
-> > > > + * situation, disable_split_lock_jiffies is global instead of per core.
-> > > 
-> > > This patch surely earns extra points in the trainwreck engineering contest,
-> > > but that's not taking place on LKML.
-> > > 
-> > > The whole thing is simply:
-> > > 
-> > > handle_ac()
-> > > {
-> > > 	if (user_mode(regs)) {
-> > > 		 do_trap(AC, SIGBUS, ...);
-> > > 	} else {
-> > > 		disable_ac_on_local_cpu();
-> > > 		WARN_ONCE(1);
-> > > 	}
-> > > }
-> > 
-> > Should I add kernel parameter or control knob to opt-out the feature?
-> 
-> A simple command line option 'acoff' or something more sensible should be
-> ok. No sysfs knobs or whatever please. The Kconfig option is not required
-> either.
 
-Ok. I will have a command line option.
+--ivrb7mvwhvohmbnu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-BTW, I have a Kconfig option to enable split lock test in kernel mode in
-patch #15. Are the Kconfig option and the kernel test code still needed
-in next version?
+On Wed, Jun 13, 2018 at 10:50:11AM -0700, Douglas Anderson wrote:
+> In an early version of the I2C patch that was posted to the list the
+> default I2C frequency (if none was specified) was 400 kHz.  There was
+> debate on the list and we decided that it would be more consistent
+> with the rest of i2c if we defaulted to 100 kHz.  ...but we never
+> updated the bindings.  Let's fix this.
+>=20
+> NOTE: since the i2c driver itself hasn't actually landed yet and the
+> SoC here is very new it seems terribly unlikely that anyone was
+> relying on the old 400 kHz number, so I'll assume this is an OK
+> "incompatible" device tree change.
+>=20
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-> 
-> > I'm afraid firmware may hang system after handling split lock if the
-> > feature is enabled by kernel, e.g. "reboot" hits split lock in firmware
-> > and firmware hangs the system after handling #AC.
-> 
-> Have you observed the problem in reality? I mean why would 'reboot' be the
-> critical path? I'd rather expect that EFI callbacks or SMM 'value add'
-> would trip over it.
-> 
-> Vs. reboot. If that is the only problem then we might just have to clear
-> #AC enable before issuing it, but that does not need to be part of the
-> initial patch set. Its an orthogonal issue.
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
 
-Yes, I do see a real firmware hang after hitting and handling a split lock
-in firmware during "reboot" in one simulation test environment. Apprantly
-the split lock (and alignment access) is treated as a failure in firmware.
 
-This real case triggered my concern that split lock in any future
-firmware may happen in any path including run time service, S3/S4/S5,
-hotplug. If we don't have opt-out option or something similar, system hang
-from split lock in firmware can be a blocking issue on some platforms. If
-that happens, bisect always finds the split lock patch to blame.
+--ivrb7mvwhvohmbnu
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
 
--Fenghua
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsuZDEACgkQFA3kzBSg
+Kbbhuw/7B/7/vIwCaTj1MqUvwjHVbteIrjemXNc+JPPtKQ2HHmVgoD5Vx5T45odY
+TCcCpcAARHPYE9yPFiR+kz9x6GF74tI9UV/Ej8FilSn7gcb8aZIP1uMnMmUf/QH9
+F2O5EA+ym1CawGM2Ah1t6Yv7O4QQkLf7WLCRW+KZbiuBb+rqwAvSjjubJ9QBpZbQ
+0c6ZXNY6anUOocaBB6Dz7Nd6DULruewjnn7B2kaVK3sV+59xUuNABIChZQLhVGQD
+TG3d0jXlG+ggO3BKrOlkvVdIb1aFQ1o4VjdDPMG2ydVbqVbH0fmdnL1E9CdRErmi
+LKtybI9ewySMpeerPw5Jaa+fwg1dn0colMRODwCOChuNMBYvjkuK2eTlIbwE5nU2
+ch9/GjoTKcNth44sEu/xAc6573ghgxEf/zPxD2oisInPpXMC3GfYlT5UXOtLInCu
+03xR6240Bc0CqQnHNpikEvVlR6BfVdibPgtksQ038revRoJPPF9OjUnuosysFdNm
+SLnEbPpO4mW7XJ4rBb8E4hCoHkOqp3DgKobA8Cj55IBRwq3aC42XWlsB54wfH38e
+dVYXq3dvNqd/HtIKgwcXy1HdZpFRG1q/AV4ivOF5tNBIsJjwtc903ZdisRZygxWO
+mn+a64gCIcnaabypw8Ow4prOuBpqFMxk6q8upjL9IB5Rn0qXR9w=
+=uNZX
+-----END PGP SIGNATURE-----
+
+--ivrb7mvwhvohmbnu--
