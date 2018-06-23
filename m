@@ -6,41 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FC5C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 08:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFCDC43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 09:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE2AC24B78
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 08:56:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2AC24B78
+	by mail.kernel.org (Postfix) with ESMTP id 22D1824B78
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 09:04:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D1824B78
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751759AbeFWI4n (ORCPT
+        id S1751781AbeFWJEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 04:56:43 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:43164 "EHLO
+        Sat, 23 Jun 2018 05:04:33 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43175 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751696AbeFWI4l (ORCPT
+        with ESMTP id S1751724AbeFWJEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 04:56:41 -0400
+        Sat, 23 Jun 2018 05:04:32 -0400
 Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1fWeLQ-0003c7-R3; Sat, 23 Jun 2018 10:56:33 +0200
-Date:   Sat, 23 Jun 2018 10:56:29 +0200 (CEST)
+        id 1fWeT3-0003dz-UG; Sat, 23 Jun 2018 11:04:26 +0200
+Date:   Sat, 23 Jun 2018 11:04:25 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Palmer Dabbelt <palmer@sifive.com>
-cc:     jason@lakedaemon.net, marc.zyngier@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, aou@eecs.berkeley.edu, shorne@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Michael Clark <mjc@sifive.com>
-Subject: Re: [PATCH 3/3] irqchip: RISC-V Local Interrupt Controller Driver
-In-Reply-To: <20180622232006.12158-4-palmer@sifive.com>
-Message-ID: <alpine.DEB.2.21.1806231041110.8650@nanos.tec.linutronix.de>
-References: <20180622232006.12158-1-palmer@sifive.com> <20180622232006.12158-4-palmer@sifive.com>
+To:     Andy Lutomirski <luto@kernel.org>
+cc:     Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>, michael-git@rodin.online,
+        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] arch/x86/entry/vsyscall/vsyscall_gtod.c: remove
+ __read_mostly from vclocks_used
+In-Reply-To: <CALCETrVDuqie6WS--gyb9ohEKXmreA+iN5P-raJbnfS7Tp8nkQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1806231057040.8650@nanos.tec.linutronix.de>
+References: <20180604172711.18962-1-michael-git@rodin.online> <alpine.DEB.2.21.1806222333070.1589@nanos.tec.linutronix.de> <CALCETrVDuqie6WS--gyb9ohEKXmreA+iN5P-raJbnfS7Tp8nkQ@mail.gmail.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -52,105 +53,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Jun 2018, Palmer Dabbelt wrote:
-> +struct riscv_irq_data {
-> +	struct irq_chip		chip;
-> +	struct irq_domain	*domain;
-> +	int			hart;
-> +	char			name[20];
-> +};
-> +DEFINE_PER_CPU(struct riscv_irq_data, riscv_irq_data);
+On Fri, 22 Jun 2018, Andy Lutomirski wrote:
+> On Fri, Jun 22, 2018 at 3:47 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > On Mon, 4 Jun 2018, Michael Rodin wrote:
+> >
+> > > The variable "vclocks_used" doesn't appear to be "read mostly".
+> > > Measurements of the access frequency with perf stat [1] and
+> > > perf report show, that approximately half of the accesses to
+> > > this variable are write accesses and happen in update_vsyscall()
+> > > in the file arch/x86/entry/vsyscall/vsyscall_gtod.c.
+> > > The measurements were done with the kernel 4.13.0-43-generic used by
+> > > ubuntu as well as with the stable kernel 4.16.7 with a custom config.
+> > > I've used "perf bench sched" and iperf3 as workloads.
+> > >
+> > > This was discovered during my master thesis in the CADOS project [2].
+> >
+> > Nice find, but ...
+> >
+> > The point is that the content of that variable changes once in a blue moon,
+> > so the intent of marking it read_mostly is almost correct.
+> 
+> I would propose a rather different fix.  Add a an
+> arch_change_clocksource() function.  Do:
+> 
+> static inline void arch_change_clocksource(struct clocksource
+> *new_clocksource) { ... }
+> #define arch_change_clocksource arch_change_clocksource
+> 
+> and
+> 
+> #ifndef arch_change_clocksource
+> static inline void arch_change_clocksource(struct clocksource
+> *new_clocksource) {}
+> #endif
+>
+> in the generic header.  In change_clocksource(), add a call to
+> arch_change_clocksource() right after tk_setup_internals().  In x86's
+> arch_change_clocksource, update vclocks_used.
+> 
+> Now it's genuinely read_mostly, and we don't need to touch that
+> cacheline at all in the normal clock tick code.  Everyone wins.
+> (vclocks_used is actually rather rarely read.  It's only used to
+> prevent user code from accessing a never-used clocksource through the
+> vvar area, which is a hardening measure.  It's only referenced from
+> the vvar fault handler code.)
 
-static ?
-
-> +static void riscv_intc_irq(struct pt_regs *regs)
-> +{
-> +	struct pt_regs *old_regs = set_irq_regs(regs);
-> +	struct irq_domain *domain;
-> +	unsigned long cause = csr_read(scause);
-> +
-> +	/*
-> +	 * The high order bit of the trap cause register is always set for
-> +	 * interrupts, which allows us to differentiate them from exceptions
-> +	 * quickly.  The INTERRUPT_CAUSE_* macros don't contain that bit, so we
-> +	 * need to mask it off here.
-> +	 */
-> +	WARN_ON((cause & (1UL << (PTR_BITS - 1))) == 0);
-
-So what's the point of continuing here? 
-
-
-> +	cause = cause & ~(1UL << (PTR_BITS - 1));
-
-Please define a proper CAUSE_MASK or such as this is really hard to read.
-
-> +/*
-> + * On RISC-V systems local interrupts are masked or unmasked by writing the SIE
-> + * (Supervisor Interrupt Enable) CSR.  As CSRs can only be written on the local
-> + * hart, these functions can only be called on the hart that corresponds to the
-> + * IRQ chip.  They are only called internally to this module, so they BUG_ON if
-> + * this condition is violated rather than attempting to handle the error by
-> + * forwarding to the target hart, as that's already expected to have been done.
-> + */
-> +static void riscv_irq_mask(struct irq_data *d)
-> +{
-> +	struct riscv_irq_data *data = irq_data_get_irq_chip_data(d);
-> +
-> +	BUG_ON(smp_processor_id() != data->hart);
-> +	csr_clear(sie, 1 << (long)d->hwirq);
-
-What's the point of this type cast? Whether you shift by unsigned long or by
-long does not really matter, right? I'd rather expected to see 1U << d->hwirq
-
-> +static int __init riscv_intc_init(struct device_node *node, struct device_node *parent)
-> +{
-> +	int hart;
-> +	struct riscv_irq_data *data;
-
-Nit. Reverse fir tree ordering please
-
-	struct riscv_irq_data *data;
-	int hart;
-
-Simpler to parse.
-
-> +
-> +	if (parent)
-> +		return 0;
-
-Hmm, that wants a comment because it's not clear why this is done for the
-casual reader.
-
-> +
-> +	hart = riscv_of_processor_hart(node->parent);
-> +	if (hart < 0)
-> +		return -EIO;
-> +
-> +	data = &per_cpu(riscv_irq_data, hart);
-> +	snprintf(data->name, sizeof(data->name), "riscv,cpu_intc,%d", hart);
-> +	data->hart = hart;
-> +	data->chip.name = data->name;
-> +	data->chip.irq_mask = riscv_irq_mask;
-> +	data->chip.irq_unmask = riscv_irq_unmask;
-> +	data->chip.irq_enable = riscv_irq_enable;
-> +	data->chip.irq_disable = riscv_irq_disable;
-> +	data->domain = irq_domain_add_linear(node, PTR_BITS,
-> +					     &riscv_irqdomain_ops, data);
-> +	if (!data->domain)
-> +		goto error_add_linear;
-> +
-> +	set_handle_irq(&riscv_intc_irq);
-> +
-> +	pr_info("%s: %lu local interrupts mapped\n", data->name, PTR_BITS);
-> +	return 0;
-> +
-> +error_add_linear:
-> +	pr_warning("%s: unable to add IRQ domain\n",
-> +		   data->name);
-
-One line please.
-
-> +	return -ENXIO;
+Agreed.
 
 Thanks,
 
