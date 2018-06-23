@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720B6C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE459C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EEFB24BE4
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EEFB24BE4
+	by mail.kernel.org (Postfix) with ESMTP id 853B624BE4
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:26:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853B624BE4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752266AbeFWMZd (ORCPT
+        id S1752292AbeFWM0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 08:25:33 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36987 "EHLO
+        Sat, 23 Jun 2018 08:26:04 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36545 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751932AbeFWMZb (ORCPT
+        with ESMTP id S1751859AbeFWM0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 08:25:31 -0400
+        Sat, 23 Jun 2018 08:26:03 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCPPxg467203
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCPv4j467247
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 23 Jun 2018 05:25:25 -0700
+        Sat, 23 Jun 2018 05:25:57 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCPPvW467199;
-        Sat, 23 Jun 2018 05:25:25 -0700
-Date:   Sat, 23 Jun 2018 05:25:25 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCPvcN467244;
+        Sat, 23 Jun 2018 05:25:57 -0700
+Date:   Sat, 23 Jun 2018 05:25:57 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-443810fe6160542c78e24c66047edd7a3cc830c6@git.kernel.org>
-Cc:     tglx@linutronix.de, reinette.chatre@intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: hpa@zytor.com, tglx@linutronix.de, reinette.chatre@intel.com,
+Message-ID: <tip-1c3fd056db38a5411ec06ef7ae52067408dee7fa@git.kernel.org>
+Cc:     reinette.chatre@intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com
+Reply-To: tglx@linutronix.de, reinette.chatre@intel.com, hpa@zytor.com,
           mingo@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <6b2ea76181099d1b79ccfa7d3be24497ab2d1a45.1529706536.git.reinette.chatre@intel.com>
-References: <6b2ea76181099d1b79ccfa7d3be24497ab2d1a45.1529706536.git.reinette.chatre@intel.com>
+In-Reply-To: <fccbb9b20f07655ab0a4df9fa1c1babc0288aea0.1529706536.git.reinette.chatre@intel.com>
+References: <fccbb9b20f07655ab0a4df9fa1c1babc0288aea0.1529706536.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Create debugfs files for
- pseudo-locking testing
-Git-Commit-ID: 443810fe6160542c78e24c66047edd7a3cc830c6
+Subject: [tip:x86/cache] x86/intel_rdt: Create character device exposing
+ pseudo-locked region
+Git-Commit-ID: 1c3fd056db38a5411ec06ef7ae52067408dee7fa
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,38 +57,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  443810fe6160542c78e24c66047edd7a3cc830c6
-Gitweb:     https://git.kernel.org/tip/443810fe6160542c78e24c66047edd7a3cc830c6
+Commit-ID:  1c3fd056db38a5411ec06ef7ae52067408dee7fa
+Gitweb:     https://git.kernel.org/tip/1c3fd056db38a5411ec06ef7ae52067408dee7fa
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Fri, 22 Jun 2018 15:42:26 -0700
+AuthorDate: Fri, 22 Jun 2018 15:42:27 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 23 Jun 2018 13:03:51 +0200
 
-x86/intel_rdt: Create debugfs files for pseudo-locking testing
+x86/intel_rdt: Create character device exposing pseudo-locked region
 
-There is no simple yes/no test to determine if pseudo-locking was
-successful. In order to test pseudo-locking we expose a debugfs file for
-each pseudo-locked region that will record the latency of reading the
-pseudo-locked memory at a stride of 32 bytes (hardcoded). These numbers
-will give us an idea of locking was successful or not since they will
-reflect cache hits and cache misses (hardware prefetching is disabled
-during the test).
+After a pseudo-locked region is created it needs to be made
+available to user space for usage.
 
-The new debugfs file "pseudo_lock_measure" will, when the
-pseudo_lock_mem_latency tracepoint is enabled, record the latency of
-accessing each cache line twice.
-
-Kernel tracepoints offer us histograms (when CONFIG_HIST_TRIGGERS is
-enabled) that is a simple way to visualize the memory access latency
-and immediately see any cache misses. For example, the hist trigger
-below before trigger of the measurement will display the memory access
-latency and instances at each latency:
-echo 'hist:keys=latency' > /sys/kernel/debug/tracing/events/resctrl/\
-                           pseudo_lock_mem_latency/trigger
-echo 1 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/enable
-echo 1 > /sys/kernel/debug/resctrl/<newlock>/pseudo_lock_measure
-echo 0 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/enable
-cat /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/hist
+A character device supporting mmap() is created for each pseudo-locked
+region. A user space application can now use mmap() system call to map
+pseudo-locked region into its virtual address space.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -99,301 +82,408 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/6b2ea76181099d1b79ccfa7d3be24497ab2d1a45.1529706536.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/fccbb9b20f07655ab0a4df9fa1c1babc0288aea0.1529706536.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/Makefile                      |   1 +
- arch/x86/kernel/cpu/intel_rdt.h                   |   3 +
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c       | 176 +++++++++++++++++++++-
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h |  23 +++
- 4 files changed, 202 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel_rdt.h             |  14 +-
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 282 ++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    |   1 +
+ 3 files changed, 288 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index c4e02555563a..347137e80bf5 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_CPU_SUP_UMC_32)		+= umc.o
- 
- obj-$(CONFIG_INTEL_RDT)	+= intel_rdt.o intel_rdt_rdtgroup.o intel_rdt_monitor.o
- obj-$(CONFIG_INTEL_RDT)	+= intel_rdt_ctrlmondata.o intel_rdt_pseudo_lock.o
-+CFLAGS_intel_rdt_pseudo_lock.o = -I$(src)
- 
- obj-$(CONFIG_X86_MCE)			+= mcheck/
- obj-$(CONFIG_MTRR)			+= mtrr/
 diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index a97be4094fa5..8a7102cfbec7 100644
+index 8a7102cfbec7..b8e490a43290 100644
 --- a/arch/x86/kernel/cpu/intel_rdt.h
 +++ b/arch/x86/kernel/cpu/intel_rdt.h
 @@ -138,6 +138,8 @@ struct mongroup {
   * @line_size:		size of the cache lines
   * @size:		size of pseudo-locked region in bytes
   * @kmem:		the kernel memory associated with pseudo-locked region
-+ * @debugfs_dir:	pointer to this region's directory in the debugfs
-+ *			filesystem
++ * @minor:		minor number of character device associated with this
++ *			region
+  * @debugfs_dir:	pointer to this region's directory in the debugfs
+  *			filesystem
   */
- struct pseudo_lock_region {
- 	struct rdt_resource	*r;
-@@ -149,6 +151,7 @@ struct pseudo_lock_region {
+@@ -151,6 +153,7 @@ struct pseudo_lock_region {
  	unsigned int		line_size;
  	unsigned int		size;
  	void			*kmem;
-+	struct dentry		*debugfs_dir;
++	unsigned int		minor;
+ 	struct dentry		*debugfs_dir;
  };
  
- /**
+@@ -524,6 +527,8 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
+ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
+ bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm);
+ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
++int rdt_pseudo_lock_init(void);
++void rdt_pseudo_lock_release(void);
+ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp);
+ void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+@@ -551,13 +556,4 @@ void cqm_handle_limbo(struct work_struct *work);
+ bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
+ void __check_limbo(struct rdt_domain *d, bool force_free);
+ 
+-/*
+- * Define the hooks for Cache Pseudo-Locking to use within rdt_mount().
+- * These are no-ops provided for the new kernfs changes to use as a
+- * baseline in preparation for a conflict-free merge between it
+- * (kernfs changes) and the Cache Pseudo-Locking enabling.
+- */
+-static inline int rdt_pseudo_lock_init(void) { return 0; }
+-static inline void rdt_pseudo_lock_release(void) { }
+-
+ #endif /* _ASM_X86_INTEL_RDT_H */
 diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index 22387af30a9e..5851f3e20742 100644
+index 5851f3e20742..5020ac3e83a1 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -14,6 +14,7 @@
- #include <linux/cacheinfo.h>
- #include <linux/cpu.h>
+@@ -16,6 +16,7 @@
  #include <linux/cpumask.h>
-+#include <linux/debugfs.h>
+ #include <linux/debugfs.h>
  #include <linux/kthread.h>
++#include <linux/mman.h>
  #include <linux/slab.h>
  #include <asm/cacheflush.h>
-@@ -21,6 +22,9 @@
- #include <asm/intel_rdt_sched.h>
- #include "intel_rdt.h"
+ #include <asm/intel-family.h>
+@@ -38,6 +39,14 @@
+  */
+ static u64 prefetch_disable_bits;
  
-+#define CREATE_TRACE_POINTS
-+#include "intel_rdt_pseudo_lock_event.h"
++/*
++ * Major number assigned to and shared by all devices exposing
++ * pseudo-locked regions.
++ */
++static unsigned int pseudo_lock_major;
++static unsigned long pseudo_lock_minor_avail = GENMASK(MINORBITS, 0);
++static struct class *pseudo_lock_class;
 +
- /*
-  * MSR_MISC_FEATURE_CONTROL register enables the modification of hardware
-  * prefetcher state. Details about this register can be found in the MSR
-@@ -176,6 +180,7 @@ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
- 		plr->d->plr = NULL;
- 	plr->d = NULL;
- 	plr->cbm = 0;
-+	plr->debugfs_dir = NULL;
- }
- 
  /**
-@@ -692,6 +697,161 @@ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
- 	return ret;
+  * get_prefetch_disable_bits - prefetch disable bits of supported platforms
+  *
+@@ -89,6 +98,66 @@ static u64 get_prefetch_disable_bits(void)
+ 	return 0;
  }
  
 +/**
-+ * measure_cycles_lat_fn - Measure cycle latency to read pseudo-locked memory
-+ * @_plr: pseudo-lock region to measure
++ * pseudo_lock_minor_get - Obtain available minor number
++ * @minor: Pointer to where new minor number will be stored
 + *
-+ * There is no deterministic way to test if a memory region is cached. One
-+ * way is to measure how long it takes to read the memory, the speed of
-+ * access is a good way to learn how close to the cpu the data was. Even
-+ * more, if the prefetcher is disabled and the memory is read at a stride
-+ * of half the cache line, then a cache miss will be easy to spot since the
-+ * read of the first half would be significantly slower than the read of
-+ * the second half.
++ * A bitmask is used to track available minor numbers. Here the next free
++ * minor number is marked as unavailable and returned.
 + *
-+ * Return: 0. Waiter on waitqueue will be woken on completion.
++ * Return: 0 on success, <0 on failure.
 + */
-+static int measure_cycles_lat_fn(void *_plr)
++static int pseudo_lock_minor_get(unsigned int *minor)
 +{
-+	struct pseudo_lock_region *plr = _plr;
-+	unsigned long i;
-+	u64 start, end;
-+#ifdef CONFIG_KASAN
-+	/*
-+	 * The registers used for local register variables are also used
-+	 * when KASAN is active. When KASAN is active we use a regular
-+	 * variable to ensure we always use a valid pointer to access memory.
-+	 * The cost is that accessing this pointer, which could be in
-+	 * cache, will be included in the measurement of memory read latency.
-+	 */
-+	void *mem_r;
-+#else
-+#ifdef CONFIG_X86_64
-+	register void *mem_r asm("rbx");
-+#else
-+	register void *mem_r asm("ebx");
-+#endif /* CONFIG_X86_64 */
-+#endif /* CONFIG_KASAN */
++	unsigned long first_bit;
 +
-+	local_irq_disable();
-+	/*
-+	 * The wrmsr call may be reordered with the assignment below it.
-+	 * Call wrmsr as directly as possible to avoid tracing clobbering
-+	 * local register variable used for memory pointer.
-+	 */
-+	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
-+	mem_r = plr->kmem;
-+	/*
-+	 * Dummy execute of the time measurement to load the needed
-+	 * instructions into the L1 instruction cache.
-+	 */
-+	start = rdtsc_ordered();
-+	for (i = 0; i < plr->size; i += 32) {
-+		start = rdtsc_ordered();
-+		asm volatile("mov (%0,%1,1), %%eax\n\t"
-+			     :
-+			     : "r" (mem_r), "r" (i)
-+			     : "%eax", "memory");
-+		end = rdtsc_ordered();
-+		trace_pseudo_lock_mem_latency((u32)(end - start));
-+	}
-+	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
-+	local_irq_enable();
-+	plr->thread_done = 1;
-+	wake_up_interruptible(&plr->lock_thread_wq);
++	first_bit = find_first_bit(&pseudo_lock_minor_avail, MINORBITS);
++
++	if (first_bit == MINORBITS)
++		return -ENOSPC;
++
++	__clear_bit(first_bit, &pseudo_lock_minor_avail);
++	*minor = first_bit;
++
 +	return 0;
 +}
 +
 +/**
-+ * pseudo_lock_measure_cycles - Trigger latency measure to pseudo-locked region
-+ *
-+ * The measurement of latency to access a pseudo-locked region should be
-+ * done from a cpu that is associated with that pseudo-locked region.
-+ * Determine which cpu is associated with this region and start a thread on
-+ * that cpu to perform the measurement, wait for that thread to complete.
-+ *
-+ * Return: 0 on success, <0 on failure
++ * pseudo_lock_minor_release - Return minor number to available
++ * @minor: The minor number made available
 + */
-+static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp)
++static void pseudo_lock_minor_release(unsigned int minor)
 +{
-+	struct pseudo_lock_region *plr = rdtgrp->plr;
-+	struct task_struct *thread;
-+	unsigned int cpu;
-+	int ret;
-+
-+	cpus_read_lock();
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	if (rdtgrp->flags & RDT_DELETED) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
-+	plr->thread_done = 0;
-+	cpu = cpumask_first(&plr->d->cpu_mask);
-+	if (!cpu_online(cpu)) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
-+	thread = kthread_create_on_node(measure_cycles_lat_fn, plr,
-+					cpu_to_node(cpu),
-+					"pseudo_lock_measure/%u", cpu);
-+	if (IS_ERR(thread)) {
-+		ret = PTR_ERR(thread);
-+		goto out;
-+	}
-+	kthread_bind(thread, cpu);
-+	wake_up_process(thread);
-+
-+	ret = wait_event_interruptible(plr->lock_thread_wq,
-+				       plr->thread_done == 1);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = 0;
-+
-+out:
-+	mutex_unlock(&rdtgroup_mutex);
-+	cpus_read_unlock();
-+	return ret;
++	__set_bit(minor, &pseudo_lock_minor_avail);
 +}
 +
-+static ssize_t pseudo_lock_measure_trigger(struct file *file,
-+					   const char __user *user_buf,
-+					   size_t count, loff_t *ppos)
++/**
++ * region_find_by_minor - Locate a pseudo-lock region by inode minor number
++ * @minor: The minor number of the device representing pseudo-locked region
++ *
++ * When the character device is accessed we need to determine which
++ * pseudo-locked region it belongs to. This is done by matching the minor
++ * number of the device to the pseudo-locked region it belongs.
++ *
++ * Minor numbers are assigned at the time a pseudo-locked region is associated
++ * with a cache instance.
++ *
++ * Return: On success return pointer to resource group owning the pseudo-locked
++ *         region, NULL on failure.
++ */
++static struct rdtgroup *region_find_by_minor(unsigned int minor)
 +{
-+	struct rdtgroup *rdtgrp = file->private_data;
-+	size_t buf_size;
-+	char buf[32];
-+	int ret;
-+	bool bv;
++	struct rdtgroup *rdtgrp, *rdtgrp_match = NULL;
 +
-+	buf_size = min(count, (sizeof(buf) - 1));
-+	if (copy_from_user(buf, user_buf, buf_size))
-+		return -EFAULT;
-+
-+	buf[buf_size] = '\0';
-+	ret = strtobool(buf, &bv);
-+	if (ret == 0 && bv) {
-+		ret = debugfs_file_get(file->f_path.dentry);
-+		if (ret)
-+			return ret;
-+		ret = pseudo_lock_measure_cycles(rdtgrp);
-+		if (ret == 0)
-+			ret = count;
-+		debugfs_file_put(file->f_path.dentry);
++	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
++		if (rdtgrp->plr && rdtgrp->plr->minor == minor) {
++			rdtgrp_match = rdtgrp;
++			break;
++		}
 +	}
-+
-+	return ret;
++	return rdtgrp_match;
 +}
-+
-+static const struct file_operations pseudo_measure_fops = {
-+	.write = pseudo_lock_measure_trigger,
-+	.open = simple_open,
-+	.llseek = default_llseek,
-+};
 +
  /**
-  * rdtgroup_pseudo_lock_create - Create a pseudo-locked region
-  * @rdtgrp: resource group to which pseudo-lock region belongs
-@@ -747,6 +907,15 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
- 		goto out_region;
+  * pseudo_lock_region_init - Initialize pseudo-lock region information
+  * @plr: pseudo-lock region
+@@ -872,6 +941,8 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ {
+ 	struct pseudo_lock_region *plr = rdtgrp->plr;
+ 	struct task_struct *thread;
++	unsigned int new_minor;
++	struct device *dev;
+ 	int ret;
+ 
+ 	ret = pseudo_lock_region_alloc(plr);
+@@ -916,11 +987,55 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 					    &pseudo_measure_fops);
  	}
  
-+	if (!IS_ERR_OR_NULL(debugfs_resctrl)) {
-+		plr->debugfs_dir = debugfs_create_dir(rdtgrp->kn->name,
-+						      debugfs_resctrl);
-+		if (!IS_ERR_OR_NULL(plr->debugfs_dir))
-+			debugfs_create_file("pseudo_lock_measure", 0200,
-+					    plr->debugfs_dir, rdtgrp,
-+					    &pseudo_measure_fops);
++	ret = pseudo_lock_minor_get(&new_minor);
++	if (ret < 0) {
++		rdt_last_cmd_puts("unable to obtain a new minor number\n");
++		goto out_debugfs;
 +	}
++
++	/*
++	 * Unlock access but do not release the reference. The
++	 * pseudo-locked region will still be here on return.
++	 *
++	 * The mutex has to be released temporarily to avoid a potential
++	 * deadlock with the mm->mmap_sem semaphore which is obtained in
++	 * the device_create() callpath below as well as before the mmap()
++	 * callback is called.
++	 */
++	mutex_unlock(&rdtgroup_mutex);
++
++	dev = device_create(pseudo_lock_class, NULL,
++			    MKDEV(pseudo_lock_major, new_minor),
++			    rdtgrp, "%s", rdtgrp->kn->name);
++
++	mutex_lock(&rdtgroup_mutex);
++
++	if (IS_ERR(dev)) {
++		ret = PTR_ERR(dev);
++		rdt_last_cmd_printf("failed to create character device: %d\n",
++				    ret);
++		goto out_minor;
++	}
++
++	/* We released the mutex - check if group was removed while we did so */
++	if (rdtgrp->flags & RDT_DELETED) {
++		ret = -ENODEV;
++		goto out_device;
++	}
++
++	plr->minor = new_minor;
 +
  	rdtgrp->mode = RDT_MODE_PSEUDO_LOCKED;
  	closid_free(rdtgrp->closid);
  	ret = 0;
-@@ -774,12 +943,17 @@ out:
+ 	goto out;
+ 
++out_device:
++	device_destroy(pseudo_lock_class, MKDEV(pseudo_lock_major, new_minor));
++out_minor:
++	pseudo_lock_minor_release(new_minor);
++out_debugfs:
++	debugfs_remove_recursive(plr->debugfs_dir);
+ out_region:
+ 	pseudo_lock_region_clear(plr);
+ out:
+@@ -943,6 +1058,8 @@ out:
   */
  void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp)
  {
--	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP)
-+	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++	struct pseudo_lock_region *plr = rdtgrp->plr;
++
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
  		/*
  		 * Default group cannot be a pseudo-locked region so we can
- 		 * free closid here.
- 		 */
- 		closid_free(rdtgrp->closid);
-+		goto free;
-+	}
-+
-+	debugfs_remove_recursive(rdtgrp->plr->debugfs_dir);
+@@ -953,7 +1070,172 @@ void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp)
+ 	}
  
-+free:
+ 	debugfs_remove_recursive(rdtgrp->plr->debugfs_dir);
++	device_destroy(pseudo_lock_class, MKDEV(pseudo_lock_major, plr->minor));
++	pseudo_lock_minor_release(plr->minor);
+ 
+ free:
  	pseudo_lock_free(rdtgrp);
  }
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-new file mode 100644
-index 000000000000..3cd0fa27d5fe
---- /dev/null
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM resctrl
 +
-+#if !defined(_TRACE_PSEUDO_LOCK_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_PSEUDO_LOCK_H
++static int pseudo_lock_dev_open(struct inode *inode, struct file *filp)
++{
++	struct rdtgroup *rdtgrp;
 +
-+#include <linux/tracepoint.h>
++	mutex_lock(&rdtgroup_mutex);
 +
-+TRACE_EVENT(pseudo_lock_mem_latency,
-+	    TP_PROTO(u32 latency),
-+	    TP_ARGS(latency),
-+	    TP_STRUCT__entry(__field(u32, latency)),
-+	    TP_fast_assign(__entry->latency = latency),
-+	    TP_printk("latency=%u", __entry->latency)
-+	   );
++	rdtgrp = region_find_by_minor(iminor(inode));
++	if (!rdtgrp) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -ENODEV;
++	}
 +
-+#endif /* _TRACE_PSEUDO_LOCK_H */
++	filp->private_data = rdtgrp;
++	atomic_inc(&rdtgrp->waitcount);
++	/* Perform a non-seekable open - llseek is not supported */
++	filp->f_mode &= ~(FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE);
 +
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+#define TRACE_INCLUDE_FILE intel_rdt_pseudo_lock_event
-+#include <trace/define_trace.h>
++	mutex_unlock(&rdtgroup_mutex);
++
++	return 0;
++}
++
++static int pseudo_lock_dev_release(struct inode *inode, struct file *filp)
++{
++	struct rdtgroup *rdtgrp;
++
++	mutex_lock(&rdtgroup_mutex);
++	rdtgrp = filp->private_data;
++	WARN_ON(!rdtgrp);
++	if (!rdtgrp) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -ENODEV;
++	}
++	filp->private_data = NULL;
++	atomic_dec(&rdtgrp->waitcount);
++	mutex_unlock(&rdtgroup_mutex);
++	return 0;
++}
++
++static int pseudo_lock_dev_mremap(struct vm_area_struct *area)
++{
++	/* Not supported */
++	return -EINVAL;
++}
++
++static const struct vm_operations_struct pseudo_mmap_ops = {
++	.mremap = pseudo_lock_dev_mremap,
++};
++
++static int pseudo_lock_dev_mmap(struct file *filp, struct vm_area_struct *vma)
++{
++	unsigned long vsize = vma->vm_end - vma->vm_start;
++	unsigned long off = vma->vm_pgoff << PAGE_SHIFT;
++	struct pseudo_lock_region *plr;
++	struct rdtgroup *rdtgrp;
++	unsigned long physical;
++	unsigned long psize;
++
++	mutex_lock(&rdtgroup_mutex);
++
++	rdtgrp = filp->private_data;
++	WARN_ON(!rdtgrp);
++	if (!rdtgrp) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -ENODEV;
++	}
++
++	plr = rdtgrp->plr;
++
++	/*
++	 * Task is required to run with affinity to the cpus associated
++	 * with the pseudo-locked region. If this is not the case the task
++	 * may be scheduled elsewhere and invalidate entries in the
++	 * pseudo-locked region.
++	 */
++	if (!cpumask_subset(&current->cpus_allowed, &plr->d->cpu_mask)) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -EINVAL;
++	}
++
++	physical = __pa(plr->kmem) >> PAGE_SHIFT;
++	psize = plr->size - off;
++
++	if (off > plr->size) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -ENOSPC;
++	}
++
++	/*
++	 * Ensure changes are carried directly to the memory being mapped,
++	 * do not allow copy-on-write mapping.
++	 */
++	if (!(vma->vm_flags & VM_SHARED)) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -EINVAL;
++	}
++
++	if (vsize > psize) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -ENOSPC;
++	}
++
++	memset(plr->kmem + off, 0, vsize);
++
++	if (remap_pfn_range(vma, vma->vm_start, physical + vma->vm_pgoff,
++			    vsize, vma->vm_page_prot)) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -EAGAIN;
++	}
++	vma->vm_ops = &pseudo_mmap_ops;
++	mutex_unlock(&rdtgroup_mutex);
++	return 0;
++}
++
++static const struct file_operations pseudo_lock_dev_fops = {
++	.owner =	THIS_MODULE,
++	.llseek =	no_llseek,
++	.read =		NULL,
++	.write =	NULL,
++	.open =		pseudo_lock_dev_open,
++	.release =	pseudo_lock_dev_release,
++	.mmap =		pseudo_lock_dev_mmap,
++};
++
++static char *pseudo_lock_devnode(struct device *dev, umode_t *mode)
++{
++	struct rdtgroup *rdtgrp;
++
++	rdtgrp = dev_get_drvdata(dev);
++	if (mode)
++		*mode = 0600;
++	return kasprintf(GFP_KERNEL, "pseudo_lock/%s", rdtgrp->kn->name);
++}
++
++int rdt_pseudo_lock_init(void)
++{
++	int ret;
++
++	ret = register_chrdev(0, "pseudo_lock", &pseudo_lock_dev_fops);
++	if (ret < 0)
++		return ret;
++
++	pseudo_lock_major = ret;
++
++	pseudo_lock_class = class_create(THIS_MODULE, "pseudo_lock");
++	if (IS_ERR(pseudo_lock_class)) {
++		ret = PTR_ERR(pseudo_lock_class);
++		unregister_chrdev(pseudo_lock_major, "pseudo_lock");
++		return ret;
++	}
++
++	pseudo_lock_class->devnode = pseudo_lock_devnode;
++	return 0;
++}
++
++void rdt_pseudo_lock_release(void)
++{
++	class_destroy(pseudo_lock_class);
++	pseudo_lock_class = NULL;
++	unregister_chrdev(pseudo_lock_major, "pseudo_lock");
++	pseudo_lock_major = 0;
++}
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index bc52c593a87c..7b4a09d81a30 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -2067,6 +2067,7 @@ static void rdt_kill_sb(struct super_block *sb)
+ 		reset_all_ctrls(r);
+ 	cdp_disable_all();
+ 	rmdir_all_sub();
++	rdt_pseudo_lock_release();
+ 	rdtgroup_default.mode = RDT_MODE_SHAREABLE;
+ 	static_branch_disable_cpuslocked(&rdt_alloc_enable_key);
+ 	static_branch_disable_cpuslocked(&rdt_mon_enable_key);
