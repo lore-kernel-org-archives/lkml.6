@@ -2,116 +2,101 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9016DC43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD17DC43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4384E24ACD
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:21:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9752924ACE
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:22:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kNofj1H0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4384E24ACD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tYip9nvI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9752924ACE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934935AbeFWCV4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 22:21:56 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:43723 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934856AbeFWCVx (ORCPT
+        id S934953AbeFWCWY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 22:22:24 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:43455 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934626AbeFWCWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 22:21:53 -0400
-Received: by mail-pf0-f193.google.com with SMTP id y8-v6so3991581pfm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 19:21:52 -0700 (PDT)
+        Fri, 22 Jun 2018 22:22:21 -0400
+Received: by mail-yw0-f195.google.com with SMTP id r19-v6so3027849ywc.10;
+        Fri, 22 Jun 2018 19:22:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kjrhtHupdHh4T5Hnsk+P2sAae5O1LRvrUqSekVnnVSw=;
-        b=kNofj1H0U7Jw4ClKkIBEMiVX02MACndzKKCawpN+Ze9B3jo6c4pewzlZtXN+62sR87
-         p/niEICqNaT2bXBkULcysrad368qaB1aMcZznES1lHarEOYCJbBueMORBP5d5U7e8teN
-         n4zukzR+/fEZ4yFinkoL/i316OWePqGkYwrhU=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=m6tqfOlJVWDA4H2/n763TYEcyCQKcv6oGMLWRzkv7v0=;
+        b=tYip9nvICtvdMmPxngeeevAI2c4dwxcX3xMXMXmzq62K8MfsmOahvG3SLhlhPtzSVO
+         o03WBJB85a9flf1gGwicbdsn0QPWCV50KrB7jmGexOLgVDwsOD8H400uiMhHvMe+g4Di
+         rYXUre4LEo0iLlxCQTdANkP8/t70mfucS24pSilYtIMXRsAFU9K1i/GRzzb0S2mHHY7+
+         jzEEIYLamAwpB4m6dPzMFXy4yphqrhjcE6spQHWIhdp4U/XafFSiyaFJBhQXcXDtuvQ6
+         329uB/RCQmQBxypUXgOAMkBewjI5ek3AnKuReJ/F+Z1BwZ1bkM14R0WLMEGwx/poFOnT
+         weUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=kjrhtHupdHh4T5Hnsk+P2sAae5O1LRvrUqSekVnnVSw=;
-        b=eZHVywgCz/FU+WXrcG81e7Kl+bw7dk+SYcGznV5qxsSeYlJlQFF6y04YHDr9GKIO4K
-         nSidFGb8/BYCGDqzfC8UaG9nd9iNSJZiGUenZYg5NTDLv7wWKwzuS/ZX1WkXk50EzjTY
-         D1EXnMVMG3ucr1CFw5+is2l0PwX3TdwX1JHMR+vGLPABRH7AyWVX51J4joJdkF4O+oY1
-         niGYILhT+pMFNQZnEAVLXStuUskme212qdlCD0SBbCJcSdc+oSQddSTup1KIrO0sQfdK
-         AfhJ8unV6H9fbRJhsWmclNKJQKInD2vYQ9ZpH8ic/LyjI+psiwrrtkm04FvzTC242lJp
-         dAtw==
-X-Gm-Message-State: APt69E0j2VO3Ijb5HLabmTXkVE/Tf8lXSvbQuPCzkdNxMRVVh1nWwNcr
-        uYDmf5cEIKsaN4StQL7uXoMt1w==
-X-Google-Smtp-Source: ADUXVKKuYQTI4ZVrrOJAWwRe4rSjJIpAs2BYccNzkFVQpFkhzl+mZt8NFLdebP6YCqEV9gPVerIJPQ==
-X-Received: by 2002:a63:2b88:: with SMTP id r130-v6mr3349043pgr.170.1529720512561;
-        Fri, 22 Jun 2018 19:21:52 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id e81-v6sm19973085pfb.62.2018.06.22.19.21.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 19:21:52 -0700 (PDT)
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de
-Cc:     ard.biesheuvel@linaro.org, james.morse@arm.com,
-        bhsharma@redhat.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v10 14/14] arm64: kexec_file: add kaslr support
-Date:   Sat, 23 Jun 2018 11:20:58 +0900
-Message-Id: <20180623022058.10935-15-takahiro.akashi@linaro.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180623022058.10935-1-takahiro.akashi@linaro.org>
-References: <20180623022058.10935-1-takahiro.akashi@linaro.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=m6tqfOlJVWDA4H2/n763TYEcyCQKcv6oGMLWRzkv7v0=;
+        b=hlIwTw61hwQyVOGOAm2gfMJW7B3L+a6GxC1yprsLbAvE2glVE8nPoYC3l6+rzxH/JC
+         YrA1nqoApW7ffwXp1J3+uDtFEqM0G6CUowKc4epV6PMKmiPsHbaTx0IgoJeCgRYBZ/uQ
+         Ge3iumAcQfdn9Pvo9NMfuz1CbVwH6I3nEksH+ozEJVxlMAO4+BioSz6yI/QCtGLWtTll
+         /f6EAteDxAuxFLgdIwxcb0MK9DI6DAJlqvY3iXYMAVyIaq0LKigVOsePf+5MJaULANeQ
+         yRFP3agzvjZu3G7i8+X0G/MfyLB60r3tstwFOKWOzipo3TE4kNW8hRw4nAVjmmrRsEI8
+         jEGQ==
+X-Gm-Message-State: APt69E3TG+kcbtnH91zwVpE3QZZMUqBU5JxD2ZlwJHHD2K6Vhyle9ks6
+        RZ67itBgs15gkedXmUETF5lKIqaQrH+VhaG5kVU=
+X-Google-Smtp-Source: ADUXVKIrHlKZSk/gdADMq8CZdgSsDkDWqQOqGKqyAYzuWYs/u5bjroQSlIoA978+KhwCfuZ2znCDyKNPGT4sVXGoxHo=
+X-Received: by 2002:a0d:e446:: with SMTP id n67-v6mr2047337ywe.112.1529720541318;
+ Fri, 22 Jun 2018 19:22:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:61d0:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 19:22:20
+ -0700 (PDT)
+In-Reply-To: <20180623020753.27266-2-shorne@gmail.com>
+References: <20180623020753.27266-1-shorne@gmail.com> <20180623020753.27266-2-shorne@gmail.com>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Fri, 22 Jun 2018 19:22:20 -0700
+Message-ID: <CAMo8BfLZi5NBr-rjGd8y88t8o=e9q-Mra05GJbH5OtUvXZhZgw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] crypto: Fix -Wstringop-truncation warnings
+To:     Stafford Horne <shorne@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding "kalsr-seed" to dtb enables triggering kaslr, or kernel virtual
-address randomization, at secondary kernel boot. We always do this as
-it wll have no harm on kaslr-incapable kernel.
+On Fri, Jun 22, 2018 at 7:07 PM, Stafford Horne <shorne@gmail.com> wrote:
+> As of GCC 9.0.0 the build is reporting warnings like:
+>
+>     crypto/ablkcipher.c: In function =E2=80=98crypto_ablkcipher_report=E2=
+=80=99:
+>     crypto/ablkcipher.c:374:2: warning: =E2=80=98strncpy=E2=80=99 specifi=
+ed bound 64 equals destination size [-Wstringop-truncation]
+>       strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>        sizeof(rblkcipher.geniv));
+>        ~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> This means the strnycpy might create a non null terminated string.  Fix t=
+his by
+> limiting the size of the string copy to include the null terminator.
 
-We don't have any "switch" to turn off this feature directly, but still
-can suppress it by passing "nokaslr" as a kernel boot argument.
+That could work if the destination buffer was zero-initialized,
+but it's allocated on stack and is not initialized.
+Replacing strncpy with strlcpy without changing its arguments
+should do the right thing.
 
-Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/kernel/machine_kexec_file.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 6aec996d015a..1283c1d912f2 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -16,6 +16,7 @@
- #include <linux/libfdt.h>
- #include <linux/memblock.h>
- #include <linux/of_fdt.h>
-+#include <linux/random.h>
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/vmalloc.h>
-@@ -132,6 +133,12 @@ static int setup_dtb(struct kimage *image,
- 			goto out_err;
- 	}
- 
-+	/* add kaslr-seed */
-+	get_random_bytes(&value, sizeof(value));
-+	ret = fdt_setprop(buf, nodeoffset, "kaslr-seed", &value, sizeof(value));
-+	if (ret)
-+		goto out_err;
-+
- 	/* trim a buffer */
- 	fdt_pack(buf);
- 	*dtb_buf = buf;
--- 
-2.17.0
-
+--=20
+Thanks.
+-- Max
