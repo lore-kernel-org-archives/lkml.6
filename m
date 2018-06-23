@@ -2,101 +2,286 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD17DC43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625D7C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9752924ACE
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:22:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D44E24AD2
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 02:23:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tYip9nvI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9752924ACE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jap1Iu7M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D44E24AD2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934953AbeFWCWY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 22:22:24 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:43455 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934626AbeFWCWV (ORCPT
+        id S934965AbeFWCW7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 22:22:59 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45148 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934815AbeFWCVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 22:22:21 -0400
-Received: by mail-yw0-f195.google.com with SMTP id r19-v6so3027849ywc.10;
-        Fri, 22 Jun 2018 19:22:21 -0700 (PDT)
+        Fri, 22 Jun 2018 22:21:32 -0400
+Received: by mail-pl0-f67.google.com with SMTP id o18-v6so3575731pll.12
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 19:21:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=m6tqfOlJVWDA4H2/n763TYEcyCQKcv6oGMLWRzkv7v0=;
-        b=tYip9nvICtvdMmPxngeeevAI2c4dwxcX3xMXMXmzq62K8MfsmOahvG3SLhlhPtzSVO
-         o03WBJB85a9flf1gGwicbdsn0QPWCV50KrB7jmGexOLgVDwsOD8H400uiMhHvMe+g4Di
-         rYXUre4LEo0iLlxCQTdANkP8/t70mfucS24pSilYtIMXRsAFU9K1i/GRzzb0S2mHHY7+
-         jzEEIYLamAwpB4m6dPzMFXy4yphqrhjcE6spQHWIhdp4U/XafFSiyaFJBhQXcXDtuvQ6
-         329uB/RCQmQBxypUXgOAMkBewjI5ek3AnKuReJ/F+Z1BwZ1bkM14R0WLMEGwx/poFOnT
-         weUw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=yeGoM3EFxFbCiZ0pTQN0LbMNYGMSzZ9MYrt6IRMCBfE=;
+        b=jap1Iu7MUFgvUPylb7x96BhLEP8ufMgho9sJXw+1vAB1+zlRMaAvzFuZaoW4AUjlQw
+         JB3WuhiYzbJ+SwX4N8or7bgkEiJ6KsN700nZKW38YsyT7Vm4+sSN2wPky1NJaGD3KyPA
+         fqznRaE0a9bWD2ZuckSPFHrE7Vp2oV2AOGQVo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=m6tqfOlJVWDA4H2/n763TYEcyCQKcv6oGMLWRzkv7v0=;
-        b=hlIwTw61hwQyVOGOAm2gfMJW7B3L+a6GxC1yprsLbAvE2glVE8nPoYC3l6+rzxH/JC
-         YrA1nqoApW7ffwXp1J3+uDtFEqM0G6CUowKc4epV6PMKmiPsHbaTx0IgoJeCgRYBZ/uQ
-         Ge3iumAcQfdn9Pvo9NMfuz1CbVwH6I3nEksH+ozEJVxlMAO4+BioSz6yI/QCtGLWtTll
-         /f6EAteDxAuxFLgdIwxcb0MK9DI6DAJlqvY3iXYMAVyIaq0LKigVOsePf+5MJaULANeQ
-         yRFP3agzvjZu3G7i8+X0G/MfyLB60r3tstwFOKWOzipo3TE4kNW8hRw4nAVjmmrRsEI8
-         jEGQ==
-X-Gm-Message-State: APt69E3TG+kcbtnH91zwVpE3QZZMUqBU5JxD2ZlwJHHD2K6Vhyle9ks6
-        RZ67itBgs15gkedXmUETF5lKIqaQrH+VhaG5kVU=
-X-Google-Smtp-Source: ADUXVKIrHlKZSk/gdADMq8CZdgSsDkDWqQOqGKqyAYzuWYs/u5bjroQSlIoA978+KhwCfuZ2znCDyKNPGT4sVXGoxHo=
-X-Received: by 2002:a0d:e446:: with SMTP id n67-v6mr2047337ywe.112.1529720541318;
- Fri, 22 Jun 2018 19:22:21 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:61d0:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 19:22:20
- -0700 (PDT)
-In-Reply-To: <20180623020753.27266-2-shorne@gmail.com>
-References: <20180623020753.27266-1-shorne@gmail.com> <20180623020753.27266-2-shorne@gmail.com>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Fri, 22 Jun 2018 19:22:20 -0700
-Message-ID: <CAMo8BfLZi5NBr-rjGd8y88t8o=e9q-Mra05GJbH5OtUvXZhZgw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] crypto: Fix -Wstringop-truncation warnings
-To:     Stafford Horne <shorne@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-crypto@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=yeGoM3EFxFbCiZ0pTQN0LbMNYGMSzZ9MYrt6IRMCBfE=;
+        b=bIWvdV9sKUX2tVDugerg4YFCoIPYMCqsS+NFGeDQ+TslpxRn1/hBiWfM7ziikl1juO
+         IXBLtBTF+OPxZdasWqDJXFojjoC3wY7F+cgnqRYNejW5GQBexXyXa80GycX2dW3ctsQ7
+         So3EaxDmlJbAiiGGP5J0Lt7XvevrmqSm1sDg7KhijC28stAjJRw+ov3rp3oHL5kEc62K
+         hd1Os/asiaDDQJs/MurKwNRvCgVX+uSjlYRjKbAdTs/MmeSbHVCYZ6eFQEmhY18aq1LW
+         5cCqYNVE90T57LDRmmUVyC28sjMPhheQ9fzRWXa08oMJ15wJNvFYDanHxT6lnfVegkR3
+         CUmQ==
+X-Gm-Message-State: APt69E0xN7pUupdNsOofb6IL1IeA+EpPjsRqtoe+r830t8UIj0o5+uts
+        Td90cqAiUg1mqthHpMejbS8cUg==
+X-Google-Smtp-Source: ADUXVKJhzYaNgmhSmLtPcKCiht877vyRaJRTLAlVTQVUEkBPNVsgKYMIq9KNdStxThzo8Dx5ew+++g==
+X-Received: by 2002:a17:902:b217:: with SMTP id t23-v6mr3905535plr.312.1529720491947;
+        Fri, 22 Jun 2018 19:21:31 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id l11-v6sm12787249pff.50.2018.06.22.19.21.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 19:21:31 -0700 (PDT)
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de
+Cc:     ard.biesheuvel@linaro.org, james.morse@arm.com,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v10 09/14] arm64: kexec_file: allow for loading Image-format kernel
+Date:   Sat, 23 Jun 2018 11:20:53 +0900
+Message-Id: <20180623022058.10935-10-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180623022058.10935-1-takahiro.akashi@linaro.org>
+References: <20180623022058.10935-1-takahiro.akashi@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 7:07 PM, Stafford Horne <shorne@gmail.com> wrote:
-> As of GCC 9.0.0 the build is reporting warnings like:
->
->     crypto/ablkcipher.c: In function =E2=80=98crypto_ablkcipher_report=E2=
-=80=99:
->     crypto/ablkcipher.c:374:2: warning: =E2=80=98strncpy=E2=80=99 specifi=
-ed bound 64 equals destination size [-Wstringop-truncation]
->       strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
->       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->        sizeof(rblkcipher.geniv));
->        ~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> This means the strnycpy might create a non null terminated string.  Fix t=
-his by
-> limiting the size of the string copy to include the null terminator.
+This patch provides kexec_file_ops for "Image"-format kernel. In this
+implementation, a binary is always loaded with a fixed offset identified
+in text_offset field of its header.
 
-That could work if the destination buffer was zero-initialized,
-but it's allocated on stack and is not initialized.
-Replacing strncpy with strlcpy without changing its arguments
-should do the right thing.
+Regarding signature verification for trusted boot, this patch doesn't
+contains CONFIG_KEXEC_VERIFY_SIG support, which is to be added later
+in this series, but file-attribute-based verification is still a viable
+option by enabling IMA security subsystem.
 
---=20
-Thanks.
--- Max
+You can sign(label) a to-be-kexec'ed kernel image on target file system
+with:
+    $ evmctl ima_sign --key /path/to/private_key.pem Image
+
+On live system, you must have IMA enforced with, at least, the following
+security policy:
+    "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig"
+
+See more details about IMA here:
+    https://sourceforge.net/p/linux-ima/wiki/Home/
+
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/include/asm/kexec.h         |  28 +++++++
+ arch/arm64/kernel/Makefile             |   2 +-
+ arch/arm64/kernel/kexec_image.c        | 108 +++++++++++++++++++++++++
+ arch/arm64/kernel/machine_kexec_file.c |   1 +
+ 4 files changed, 138 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/kernel/kexec_image.c
+
+diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+index 01bbf6cebf12..69333694e3e2 100644
+--- a/arch/arm64/include/asm/kexec.h
++++ b/arch/arm64/include/asm/kexec.h
+@@ -101,6 +101,34 @@ struct kimage_arch {
+ 	void *dtb_buf;
+ };
+ 
++/**
++ * struct arm64_image_header - arm64 kernel image header
++ * See Documentation/arm64/booting.txt for details
++ *
++ * @mz_magic: DOS header magic number ('MZ', optional)
++ * @code1: Instruction (branch to stext)
++ * @text_offset: Image load offset
++ * @image_size: Effective image size
++ * @flags: Bit-field flags
++ * @reserved: Reserved
++ * @magic: Magic number
++ * @pe_header: Offset to PE COFF header (optional)
++ **/
++
++struct arm64_image_header {
++	__le16 mz_magic; /* also code0 */
++	__le16 pad;
++	__le32 code1;
++	__le64 text_offset;
++	__le64 image_size;
++	__le64 flags;
++	__le64 reserved[3];
++	__le32 magic;
++	__le32 pe_header;
++};
++
++extern const struct kexec_file_ops kexec_image_ops;
++
+ struct kimage;
+ 
+ extern int load_other_segments(struct kimage *image,
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index 06281e1ad7ed..a9cc7752f276 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -50,7 +50,7 @@ arm64-obj-$(CONFIG_RANDOMIZE_BASE)	+= kaslr.o
+ arm64-obj-$(CONFIG_HIBERNATION)		+= hibernate.o hibernate-asm.o
+ arm64-obj-$(CONFIG_KEXEC_CORE)		+= machine_kexec.o relocate_kernel.o	\
+ 					   cpu-reset.o
+-arm64-obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o
++arm64-obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o kexec_image.o
+ arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+= arm64-reloc-test.o
+ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+ arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
+diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+new file mode 100644
+index 000000000000..a47cf9bc699e
+--- /dev/null
++++ b/arch/arm64/kernel/kexec_image.c
+@@ -0,0 +1,108 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Kexec image loader
++
++ * Copyright (C) 2018 Linaro Limited
++ * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
++ */
++
++#define pr_fmt(fmt)	"kexec_file(Image): " fmt
++
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/kexec.h>
++#include <linux/string.h>
++#include <asm/boot.h>
++#include <asm/byteorder.h>
++#include <asm/cpufeature.h>
++#include <asm/memory.h>
++
++static int image_probe(const char *kernel_buf, unsigned long kernel_len)
++{
++	const struct arm64_image_header *h;
++
++	h = (const struct arm64_image_header *)(kernel_buf);
++
++	if (!h || (kernel_len < sizeof(*h)) ||
++			!memcmp(&h->magic, ARM64_MAGIC, sizeof(ARM64_MAGIC)))
++		return -EINVAL;
++
++	return 0;
++}
++
++static void *image_load(struct kimage *image,
++				char *kernel, unsigned long kernel_len,
++				char *initrd, unsigned long initrd_len,
++				char *cmdline, unsigned long cmdline_len)
++{
++	struct arm64_image_header *h;
++	u64 flags, value;
++	struct kexec_buf kbuf;
++	unsigned long text_offset;
++	struct kexec_segment *kernel_segment;
++	int ret;
++
++	/* Don't support old kernel */
++	h = (struct arm64_image_header *)kernel;
++	if (!h->text_offset)
++		return ERR_PTR(-EINVAL);
++
++	/* Check cpu features */
++	flags = le64_to_cpu(h->flags);
++	value = head_flag_field(flags, HEAD_FLAG_BE);
++	if (((value == HEAD_FLAG_BE) && !IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) ||
++	    ((value != HEAD_FLAG_BE) && IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)))
++		if (!system_supports_mixed_endian())
++			return ERR_PTR(-EINVAL);
++
++	value = head_flag_field(flags, HEAD_FLAG_PAGE_SIZE);
++	if (((value == HEAD_FLAG_PAGE_SIZE_4K) &&
++			!system_supports_4kb_granule()) ||
++	    ((value == HEAD_FLAG_PAGE_SIZE_64K) &&
++			!system_supports_64kb_granule()) ||
++	    ((value == HEAD_FLAG_PAGE_SIZE_16K) &&
++			!system_supports_16kb_granule()))
++		return ERR_PTR(-EINVAL);
++
++	/* Load the kernel */
++	kbuf.image = image;
++	kbuf.buf_min = 0;
++	kbuf.buf_max = ULONG_MAX;
++	kbuf.top_down = false;
++
++	kbuf.buffer = kernel;
++	kbuf.bufsz = kernel_len;
++	kbuf.memsz = le64_to_cpu(h->image_size);
++	text_offset = le64_to_cpu(h->text_offset);
++	kbuf.buf_align = SZ_2M;
++
++	/* Adjust kernel segment with TEXT_OFFSET */
++	kbuf.memsz += text_offset;
++
++	ret = kexec_add_buffer(&kbuf);
++	if (ret)
++		goto out;
++
++	kernel_segment = &image->segment[image->nr_segments - 1];
++	kernel_segment->mem += text_offset;
++	kernel_segment->memsz -= text_offset;
++	image->start = kernel_segment->mem;
++
++	pr_debug("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
++				kernel_segment->mem, kbuf.bufsz,
++				kernel_segment->memsz);
++
++	/* Load additional data */
++	ret = load_other_segments(image,
++				kernel_segment->mem, kernel_segment->memsz,
++				initrd, initrd_len, cmdline, cmdline_len);
++
++out:
++	return ERR_PTR(ret);
++}
++
++const struct kexec_file_ops kexec_image_ops = {
++	.probe = image_probe,
++	.load = image_load,
++};
+diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+index 7115c4f915dc..199e86e791c9 100644
+--- a/arch/arm64/kernel/machine_kexec_file.c
++++ b/arch/arm64/kernel/machine_kexec_file.c
+@@ -20,6 +20,7 @@
+ #include <asm/byteorder.h>
+ 
+ const struct kexec_file_ops * const kexec_file_loaders[] = {
++	&kexec_image_ops,
+ 	NULL
+ };
+ 
+-- 
+2.17.0
+
