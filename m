@@ -2,198 +2,164 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4375C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 17:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B68C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 18:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8977D24CBA
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 17:54:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8977D24CBA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4081F24C8D
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 18:09:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qgy8Qi9p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4081F24C8D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751913AbeFWRyj (ORCPT
+        id S1751819AbeFWSJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 13:54:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57518 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751652AbeFWRyi (ORCPT
+        Sat, 23 Jun 2018 14:09:22 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:46762 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751665AbeFWSJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 13:54:38 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5NHrwlX054215
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Jun 2018 13:54:37 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jsfu91r40-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Jun 2018 13:54:37 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 23 Jun 2018 13:54:37 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 23 Jun 2018 13:54:32 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5NHsVuQ14352750
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 23 Jun 2018 17:54:31 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 93F35B2064;
-        Sat, 23 Jun 2018 13:54:29 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 58BB4B2066;
-        Sat, 23 Jun 2018 13:54:29 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.148.28])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat, 23 Jun 2018 13:54:29 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A35AB16C41B5; Sat, 23 Jun 2018 10:56:34 -0700 (PDT)
-Date:   Sat, 23 Jun 2018 10:56:34 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Byungchul Park <max.byungchul.park@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        jiangshanlai@gmail.com, josh@joshtriplett.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com, luto@kernel.org
-Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
- rcu_dynticks
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180620145814.GQ3593@linux.vnet.ibm.com>
- <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
- <20180620164902.GW3593@linux.vnet.ibm.com>
- <20180622055659.GA255098@joelaf.mtv.corp.google.com>
- <20180622132843.GN3593@linux.vnet.ibm.com>
- <20180622181916.GA13628@joelaf.mtv.corp.google.com>
- <20180622205813.GV3593@linux.vnet.ibm.com>
- <20180622170042.4adfbe21@gandalf.local.home>
- <20180622211600.GX3593@linux.vnet.ibm.com>
- <20180623154839.GA12939@joelaf.mtv.corp.google.com>
+        Sat, 23 Jun 2018 14:09:21 -0400
+Received: by mail-io0-f195.google.com with SMTP id u23-v6so5184828ioc.13
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Jun 2018 11:09:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=kcuemrlYkhAZbDeo04gVaJTteSCeXmOjRKFr5CbMiU4=;
+        b=Qgy8Qi9p7SaEiYsitwBXB7trWbaLpfEQhwIodrAL7dQHv2zL0kSen5FX18q7hwuLsQ
+         zw5HFtjZzcSCQivuCxruujp0Mb0+b9B6g4Y1YA+bhdMbCeQsBsKOLnck1n5gRU8tXmS2
+         dTtl2n9D/FUuiXyKqkebos0zZYdlVwAoR5qek=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=kcuemrlYkhAZbDeo04gVaJTteSCeXmOjRKFr5CbMiU4=;
+        b=PCr7LEozDgv/t94WEaFyfWQ7dj+SUy83C10rSnUFbt4S+DI1gcCrv+JlAGT9ovn6L1
+         dHrC2aTGSoSo7LjMBDGls8pJNg3g6q03cNiB5hZq7N8F9VsE8NUHG8pzF64NnuyetiW2
+         Degn1LZGhUmcXYAQLyuX18e8Jtda949DT1QC8/QtaJNol8j8aAxvhOCkkxq6isDOv6zM
+         F99DUE1J6WNFl++NRWV5p96a9dUc6dzBvzvrobZCheenq8xrBXtOcUj8ltSy5EeHR2rz
+         RaVSos9D04KFxFTBYSS4VVJ4FwzmmmJchVZGgHN/uPF4ZjK3y3KdNxRD+RAeerCv4N5H
+         8iHA==
+X-Gm-Message-State: APt69E3sGKkW3AiDcamavkEPGSfuCiAqZ6kIAN5Oxk80lvNwpECPVWoI
+        ftDkSKvZ5IUhnzbuGfeKgbvY9pV4eETENweXP+dXwQ==
+X-Google-Smtp-Source: AAOMgpdL1l10Atb9OPQkw8iAzDXPmpxx5GzbPCLqAMPpQba9DULbAsgGTa9PEcQxIYeuqAwHa5/G5Orn2Xwd33lVpfQ=
+X-Received: by 2002:a6b:520d:: with SMTP id g13-v6mr5509810iob.60.1529777360279;
+ Sat, 23 Jun 2018 11:09:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180623154839.GA12939@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062317-0052-0000-0000-0000030315D4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009247; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01051252; UDB=6.00538817; IPR=6.00829908;
- MB=3.00021827; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-23 17:54:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062317-0053-0000-0000-00005D1D939B
-Message-Id: <20180623175634.GI3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806230213
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Sat, 23 Jun 2018 11:09:19
+ -0700 (PDT)
+In-Reply-To: <20180623174258.GA15904@chaos.in-kiel.de>
+References: <20180623174258.GA15904@chaos.in-kiel.de>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 23 Jun 2018 20:09:19 +0200
+Message-ID: <CAKv+Gu8yA1L6P=W70gm1u_uuF9xJ+XVWeWB0MxC3Fur=_DeVmw@mail.gmail.com>
+Subject: Re: [PATCH] make radeon driver find ATOM BIOS again on 64-bit EFI systems
+To:     Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 08:48:39AM -0700, Joel Fernandes wrote:
-> On Fri, Jun 22, 2018 at 02:16:00PM -0700, Paul E. McKenney wrote:
-> > On Fri, Jun 22, 2018 at 05:00:42PM -0400, Steven Rostedt wrote:
-> > > On Fri, 22 Jun 2018 13:58:13 -0700
-> > > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> > > 
-> > > > Something like this:
-> > > > 
-> > > > 	IRQ entered
-> > > > 
-> > > > And never exited.  Ever.  I actually saw this in 2011.
-> > > 
-> > > I still believe this was actually a bug. And perhaps you made the RCU
-> > > code robust enough to handle this bug ;-)
-> > 
-> > Welcome to my world!
-> > 
-> > But I recall it being used in several places, so if it was a bug, it
-> > was an intentional bug.  Probably the worst kind.
-> > 
-> > Sort of like nested NMIs and interrupts within NMI handlers.  ;-)
-> > 
-> > > > Or something like this:
-> > > > 
-> > > > 	IRQ exited
-> > > > 
-> > > > Without a corresponding IRQ enter.
-> > > > 
-> > > > The current code handles both of these situations, at least assuming
-> > > > that the interrupt entry/exit happens during a non-idle period.
-> > > > 
-> > > > > > So why this function-call structure?  Well, you see, NMI handlers can
-> > > > > > take what appear to RCU to be normal interrupts...
-> > > > > > 
-> > > > > > (And I just added that fun fact to Requirements.html.)  
-> > > > > 
-> > > > > Yes, I'll definitely go through all the interrupt requirements in the doc and
-> > > > > thanks for referring me to it.  
-> > > > 
-> > > > My concern may well be obsolete.  It would be good if it was!  ;-)
-> > > 
-> > > I'd love to mandate that irq_enter() must be paired with irq_exit(). I
-> > > don't really see any rationale for it to be otherwise. If there is a
-> > > case, perhaps it needs to be fixed.
-> > 
-> > Given that the usermode helpers now look to be common code using
-> > workqueues, kthreads, and calls to do_execve(), it might well be that
-> > the days of half-interrupts are behind us.
-> > 
-> > But how to actually validate this?  My offer of adding a WARN_ON_ONCE()
-> > and waiting a few years still stands, but perhaps you have a better
-> > approach.
-> 
-> Hi Paul, I am Ok with adding a warning for a couple of releases if you and
-> others are Ok with it, how about something like this? Feel free to use the
-> diff as a starting point or a different approach if you/others prefer
-> something else. Thanks.
+(+ Hans, who may be able to test this on 32-bit h/w)
 
-A few years rather than a few releases, but yes.  ;-)
+On 23 June 2018 at 19:43, Wilfried Klaebe
+<linux-kernel@lebenslange-mailadresse.de> wrote:
+> make radeon driver find ATOM BIOS again on 64-bit EFI systems
+>
+> Commit 2c3625cb9fa2c477d5877a1819e29d6a902e5fef ("efi/x86: Fold
+> __setup_efi_pci32() and __setup_efi_pci64() into one function")
+> broke finding radeon's BIOS ROM on Apple MacBook Pro 8,2. Fix.
+>
+>
+> On my Apple MacBook Pro 8,2, Linux 4.18-rc1 was unable to locate a BIOS
+> ROM for the radeon GPU. Comparing Linux 4.17 and 4.18-rc1 dmesg:
+>
+>  radeon 0000:01:00.0: Invalid PCI ROM header signature: expecting 0xaa55, got 0x0000
+>  radeon 0000:01:00.0: Invalid PCI ROM header signature: expecting 0xaa55, got 0x0000
+> -ATOM BIOS: Apple
+> +[drm:radeon_get_bios [radeon]] *ERROR* Unable to locate a BIOS ROM
+>
+> Bisecting found 2c3625cb9fa2c477d5877a1819e29d6a902e5fef.
+>
+> Comparing the old __setup_efi_pci32 and __setup_efi_pci64, and looking
+> at what the new __setup_efi_pci does, I noticed that the first does
+>
+>         status = efi_early->call(pci->attributes, pci,
+>                                  EfiPciIoAttributeOperationGet, 0, 0,
+>                                  &attributes);
+>
+> while the second does
+>
+>         status = efi_early->call(pci->attributes, pci,
+>                                  EfiPciIoAttributeOperationGet, 0,
+>                                  &attributes);
+>
+> (note the difference of one "0, "), while the third has two occurences
+> of "0, " too in it's EfiPciIoAttributeOperationGet call construct.
+>
+> Testing confirmed my machine works as expected with the variant with
+> just one "0, "; I cannot test if this is true for other 64-bit EFI
+> machines or maybe even 32-bit EFI machines.
+>
+>
+> Signed-off-by: Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
+> Fixes: 2c3625cb9fa2 ("efi/x86: Fold __setup_efi_pci32() and __setup_efi_pci64() into one function")
+>
 
-The checks would need to go just before the "crowbar" stores.  I will put
-something together after Byungchul's patches in this area have had time
-to burn in for a few days.
+Hello Wilfried,
 
-							Thanx, Paul
+Thanks for tracking down this issue.
 
-> ---8<-----------------------
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 8788ddbc0d13..176de74f5027 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -767,6 +767,21 @@ void rcu_idle_enter(void)
->   */
->  void rcu_user_enter(void)
->  {
-> +	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-> +
-> +	/*
-> +	 * Add warning to ensure: no known instances of entering userspace from
-> +	 * IRQ/NMI handlers exist today. Currently special crowbarring of the
-> +	 * dynticks_nmi_nesting and maintaining of this separate counter when
-> +	 * dynticks_nesting exists, is done in order to handle entering of
-> +	 * userspace from an IRQ context and never returning. Lets track it for
-> +	 * a couple of kernel releases and then if the warning doesn't occur,
-> +	 * we can try to simplify the code and combine/eliminate the counters.
-> +	 * See: http://lkml.kernel.org/r/20180622181422.GT3593@linux.vnet.ibm.com
-> +	 */
-> +	WARN_ON_ONCE(rdtp->dynticks_nmi_nesting &&
-> +		     rdtp->dynticks_nmi_nesting != DYNTICK_IRQ_NONIDLE);
-> +
->  	lockdep_assert_irqs_disabled();
->  	rcu_eqs_enter(true);
->  }
-> 
+It seems the two 0s in the 32-bit version are there because the type
+of the argument is UINT64. So instead, I'd like to apply this change:
 
+>         void *romimage;
+>
+>         status = efi_call_proto(efi_pci_io_protocol, attributes, pci,
+> -                               EfiPciIoAttributeOperationGet, 0, 0,
+> +                               EfiPciIoAttributeOperationGet, 0ULL,
+>                                 &attributes);
+>         if (status != EFI_SUCCESS)
+>
+
+unless anyone objects?
+
+Thanks,
+Ard.
+
+> diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+> index a8a8642d2b0b..1b348610bd86 100644
+> --- a/arch/x86/boot/compressed/eboot.c
+> +++ b/arch/x86/boot/compressed/eboot.c
+> @@ -117,9 +117,14 @@ __setup_efi_pci(efi_pci_io_protocol_t *pci, struct pci_setup_rom **__rom)
+>         uint64_t attributes, romsize;
+>         void *romimage;
+>
+> -       status = efi_call_proto(efi_pci_io_protocol, attributes, pci,
+> -                               EfiPciIoAttributeOperationGet, 0, 0,
+> -                               &attributes);
+> +       if (efi_early->is64)
+> +               status = efi_call_proto(efi_pci_io_protocol, attributes, pci,
+> +                                       EfiPciIoAttributeOperationGet, 0,
+> +                                       &attributes);
+> +       else
+> +               status = efi_call_proto(efi_pci_io_protocol, attributes, pci,
+> +                                       EfiPciIoAttributeOperationGet, 0, 0,
+> +                                       &attributes);
+>         if (status != EFI_SUCCESS)
+>                 return status;
+>
