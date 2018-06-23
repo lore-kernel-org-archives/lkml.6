@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8476CC43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8573C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4814124BB1
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:12:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4814124BB1
+	by mail.kernel.org (Postfix) with ESMTP id 76DD324BB1
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:13:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DD324BB1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751934AbeFWMMf (ORCPT
+        id S1751941AbeFWMNG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 08:12:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44159 "EHLO
+        Sat, 23 Jun 2018 08:13:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38857 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751654AbeFWMMe (ORCPT
+        with ESMTP id S1751442AbeFWMNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 08:12:34 -0400
+        Sat, 23 Jun 2018 08:13:05 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCCTHd463908
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCD0d6463953
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 23 Jun 2018 05:12:29 -0700
+        Sat, 23 Jun 2018 05:13:00 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCCTYk463905;
-        Sat, 23 Jun 2018 05:12:29 -0700
-Date:   Sat, 23 Jun 2018 05:12:29 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCD06b463950;
+        Sat, 23 Jun 2018 05:13:00 -0700
+Date:   Sat, 23 Jun 2018 05:13:00 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-9af4c0a6dc1a1abf5336f2c3f951444db6b71da9@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, reinette.chatre@intel.com
-Reply-To: reinette.chatre@intel.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <5e29cf0209ea2deac9beacd35cbe5239a50959fb.1529706536.git.reinette.chatre@intel.com>
-References: <5e29cf0209ea2deac9beacd35cbe5239a50959fb.1529706536.git.reinette.chatre@intel.com>
+Message-ID: <tip-7604df6e16ae0b4dba6553ae74abcf7280a512fb@git.kernel.org>
+Cc:     reinette.chatre@intel.com, mingo@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, reinette.chatre@intel.com
+In-Reply-To: <34baacfced4d787d994ec7015e249e6c7e619053.1529706536.git.reinette.chatre@intel.com>
+References: <34baacfced4d787d994ec7015e249e6c7e619053.1529706536.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Making CBM name and type more
- explicit
-Git-Commit-ID: 9af4c0a6dc1a1abf5336f2c3f951444db6b71da9
+Subject: [tip:x86/cache] x86/intel_rdt: Support flexible data to parsing
+ callbacks
+Git-Commit-ID: 7604df6e16ae0b4dba6553ae74abcf7280a512fb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,25 +57,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9af4c0a6dc1a1abf5336f2c3f951444db6b71da9
-Gitweb:     https://git.kernel.org/tip/9af4c0a6dc1a1abf5336f2c3f951444db6b71da9
+Commit-ID:  7604df6e16ae0b4dba6553ae74abcf7280a512fb
+Gitweb:     https://git.kernel.org/tip/7604df6e16ae0b4dba6553ae74abcf7280a512fb
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Fri, 22 Jun 2018 15:42:02 -0700
+AuthorDate: Fri, 22 Jun 2018 15:42:03 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 23 Jun 2018 13:03:43 +0200
 
-x86/intel_rdt: Making CBM name and type more explicit
+x86/intel_rdt: Support flexible data to parsing callbacks
 
-cbm_validate() receives a pointer to the variable that will be initialized
-with a validated capacity bitmask. The pointer points to a variable of type
-unsigned long that is immediately assigned to a variable of type u32 by the
-caller on return from cbm_validate().
+Each resource is associated with a configurable callback that should be
+used to parse the information provided for the particular resource from
+user space. In addition to the resource and domain pointers this callback
+is provided with just the character buffer being parsed.
 
-Let cbm_validate() initialize a variable of type u32 directly.
-
-At this time also change tha variable name "data" within parse_cbm() to a
-name more reflective of the content: "cbm_val". This frees up the generic
-"data" to be used later when it is indeed used for a collection of input.
+In support of flexible parsing the callback is modified to support a void
+pointer as argument. This enables resources that need more data than just
+the user provided data to pass its required data to the callback without
+affecting the signatures for the callbacks of all the other resources.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -86,43 +85,61 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/5e29cf0209ea2deac9beacd35cbe5239a50959fb.1529706536.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/34baacfced4d787d994ec7015e249e6c7e619053.1529706536.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h             | 6 +++---
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 6 ++++--
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index c9033fd774d5..b2b2864150aa 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -371,7 +371,7 @@ struct rdt_resource {
+ 	struct rdt_cache	cache;
+ 	struct rdt_membw	membw;
+ 	const char		*format_str;
+-	int (*parse_ctrlval)	(char *buf, struct rdt_resource *r,
++	int (*parse_ctrlval)	(void *data, struct rdt_resource *r,
+ 				 struct rdt_domain *d);
+ 	struct list_head	evt_list;
+ 	int			num_rmid;
+@@ -379,8 +379,8 @@ struct rdt_resource {
+ 	unsigned long		fflags;
+ };
+ 
+-int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d);
+-int parse_bw(char *buf, struct rdt_resource *r,  struct rdt_domain *d);
++int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d);
++int parse_bw(void *_buf, struct rdt_resource *r,  struct rdt_domain *d);
+ 
+ extern struct mutex rdtgroup_mutex;
+ 
 diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index 2c23bb136ccc..b3da5b981dd8 100644
+index b3da5b981dd8..ab4bb8731825 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -87,7 +87,7 @@ int parse_bw(char *buf, struct rdt_resource *r, struct rdt_domain *d)
-  *	are allowed (e.g. FFFFH, 0FF0H, 003CH, etc.).
-  * Additionally Haswell requires at least two bits set.
-  */
--static bool cbm_validate(char *buf, unsigned long *data, struct rdt_resource *r)
-+static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+@@ -64,9 +64,10 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+ 	return true;
+ }
+ 
+-int parse_bw(char *buf, struct rdt_resource *r, struct rdt_domain *d)
++int parse_bw(void *_buf, struct rdt_resource *r, struct rdt_domain *d)
  {
- 	unsigned long first_bit, zero_bit, val;
- 	unsigned int cbm_len = r->cache.cbm_len;
-@@ -128,16 +128,17 @@ static bool cbm_validate(char *buf, unsigned long *data, struct rdt_resource *r)
-  */
- int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d)
- {
--	unsigned long data;
-+	u32 cbm_val;
+ 	unsigned long data;
++	char *buf = _buf;
  
  	if (d->have_new_ctrl) {
  		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
- 		return -EINVAL;
- 	}
+@@ -126,8 +127,9 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+  * Read one cache bit mask (hex). Check that it is valid for the current
+  * resource type.
+  */
+-int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d)
++int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+ {
++	char *buf = _data;
+ 	u32 cbm_val;
  
--	if(!cbm_validate(buf, &data, r))
-+	if (!cbm_validate(buf, &cbm_val, r))
- 		return -EINVAL;
--	d->new_ctrl = data;
-+
-+	d->new_ctrl = cbm_val;
- 	d->have_new_ctrl = true;
- 
- 	return 0;
+ 	if (d->have_new_ctrl) {
