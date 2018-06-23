@@ -2,187 +2,260 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 948A3C43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 364BBC43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD3B24A58
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:47:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pHfIObsX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Rc7yo79/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD3B24A58
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id D724324A5A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:47:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D724324A5A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934537AbeFWAqf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 20:46:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59336 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934302AbeFWAqd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 20:46:33 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 510FD60275; Sat, 23 Jun 2018 00:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529714793;
-        bh=v7buNuVFzpnVJsADR4vrFzqFI74kUBo3/b4G/Peoo4o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=pHfIObsXRKmjYhZho5n8YCBJ93TX8gxBNYHik7qgP42Jzxohhn2wnaEENyAajNv3c
-         CyXx1QkPkLw6b/NrQ2WaRYVujLqt1bHzrBk4afqqfVz9/m/pKSQsQXHTv3IMwxFkeF
-         RHS89ctoDahGWahwgczv8sKFAs2c/syuUdBArzuE=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: collinsd@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 60BB060275;
-        Sat, 23 Jun 2018 00:46:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529714791;
-        bh=v7buNuVFzpnVJsADR4vrFzqFI74kUBo3/b4G/Peoo4o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Rc7yo79/6IUPzWehKKb81jFGHXU5lE5PaJL9MomPyLosVHWq/pFqdZ46/yZbcHq9O
-         2su3Tx5OEIS4tA4CsTTinxf8EigxEz4BKrAytvXKX9L7JeTen2U/pKb5QAtDsDsCSR
-         x58WRmixmQKnjFcd9+QgqZ6B4Au0EyubrML44qBg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60BB060275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-From:   David Collins <collinsd@codeaurora.org>
-To:     broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     David Collins <collinsd@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        sboyd@kernel.org, dianders@chromium.org, mka@chromium.org
-Subject: [PATCH v8 0/2] regulator: add QCOM RPMh regulator driver
-Date:   Fri, 22 Jun 2018 17:46:12 -0700
-Message-Id: <cover.1529712888.git.collinsd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S934611AbeFWArZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 20:47:25 -0400
+Received: from mga18.intel.com ([134.134.136.126]:8167 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934339AbeFWArX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 20:47:23 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 17:47:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
+   d="gz'50?scan'50,208,50";a="49227644"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Jun 2018 17:47:21 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fWWi0-000IbV-J5; Sat, 23 Jun 2018 08:47:20 +0800
+Date:   Sat, 23 Jun 2018 08:47:13 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     kbuild-all@01.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, shakeelb@google.com,
+        hannes@cmpxchg.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH 1/2] mm: revert mem_cgroup_put() introduction
+Message-ID: <201806230844.RXx55fMi%fengguang.wu@intel.com>
+References: <20180623000600.5818-1-guro@fb.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="M9NhX3UHpAaciwkO"
+Content-Disposition: inline
+In-Reply-To: <20180623000600.5818-1-guro@fb.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds a driver and device tree binding documentation for
-PMIC regulator control via Resource Power Manager-hardened (RPMh) on some
-Qualcomm Technologies, Inc. SoCs such as SDM845.  RPMh is a hardware block
-which contains several accelerators which are used to manage various
-hardware resources that are shared between the processors of the SoC.  The
-final hardware state of a regulator is determined within RPMh by performing
-max aggregation of the requests made by all of the processors.
 
-The RPMh regulator driver depends upon the RPMh driver [1] and command DB
-driver [2] which are both still undergoing review.  It also depends upon
-three recent regulator patches: [3], [4], and [5] as well as an RPMh
-helper patch [6].
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Changes since v7 [7]:
- - Removed the cmd_db_ready() call from the driver probe function as it
-   is now handled by the RPMh driver itself [6]
- - Added Reviewed-by tag for driver patch 2/2
+Hi Roman,
 
-Changes since v6 [8]:
- - Removed 'count' parameter from rpmh_regulator_send_request() since
-   it is always 1
- - Fixed _rpmh_regulator_vrm_set_voltage_sel() return value
- - Added a helper function to capture common code between
-   rpmh_regulator_enable() and rpmh_regulator_disable()
- - Added an iterator for pmic_rpmh_data in rpmh_regulator_init_vreg()
- - Added Reviewed-by tag for both patches
+Thank you for the patch! Yet something to improve:
 
-Changes since v5 [9]:
- - Removed unused constants
- - Added Reviewed-by tag for DT patch 1/2
+[auto build test ERROR on next-20180622]
+[cannot apply to linus/master v4.18-rc1 v4.17 v4.17-rc7 v4.18-rc1]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Changes since v4 [10]:
- - Removed support for DT properties qcom,regulator-drms-modes and
-   qcom,drms-mode-max-microamps
- - Specified fixed DRMS high power mode minimum limits for LDO type
-   regulators
- - Removed DRMS support for SMPS and BOB type regulators
- - Simplified voltage caching logic
+url:    https://github.com/0day-ci/linux/commits/Roman-Gushchin/mm-revert-mem_cgroup_put-introduction/20180623-080942
+config: i386-tinyconfig (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
 
-Changes since v3 [11]:
- - Removed support for DT properties qcom,regulator-initial-microvolt
-   and qcom,headroom-microvolt
- - Renamed DT property qcom,allowed-drms-modes to be
-   qcom,regulator-drms-modes
- - Updated DT binding documentation to mention which common regulator
-   bindings can be used for qcom-rpmh-regulator devices
- - Added voltage caching so that voltage requests are only sent to RPMh
-   after the regulator has been enabled at least once
- - Changed 'voltage_selector' default value to be -ENOTRECOVERABLE to
-   interact with [5]
- - Initialized 'enabled' to -EINVAL so that unused regulators are
-   disabled by regulator_late_cleanup()
- - Removed rpmh_regulator_load_default_parameters() as it is no longer
-   needed
- - Updated the mode usage description in qcom,rpmh-regulator.h
+Note: the linux-review/Roman-Gushchin/mm-revert-mem_cgroup_put-introduction/20180623-080942 HEAD 76214420a3e55c42797f5f22cb04d1a3331c1ece builds fine.
+      It only hurts bisectibility.
 
-Changes since v2 [12]:
- - Replaced '_' with '-' in device tree supply property names
- - Renamed qcom_rpmh-regulator.c to be qcom-rpmh-regulator.c
- - Updated various DT property names to use "microvolt" and "microamp"
- - Moved allowed modes constraint specification out of the driver [4]
- - Replaced rpmh_client with device pointer to match new RPMh API [1]
- - Corrected drms mode threshold checking
- - Initialized voltage_selector to -EINVAL when not specified in DT
- - Added constants for PMIC regulator hardware modes
- - Corrected type sign of mode mapping tables
- - Made variable names for mode arrays plural
- - Simplified Kconfig depends on
- - Removed unnecessary constants and struct fields
- - Added some descriptive comments
+All errors (new ones prefixed by >>):
 
-Changes since v1 [13]:
- - Addressed review feedback from Doug, Mark, and Stephen
- - Replaced set_voltage()/get_voltage() callbacks with set_voltage_sel()/
-   get_voltage_sel()
- - Added set_bypass()/get_bypass() callbacks for BOB pass-through mode
-   control
- - Removed top-level PMIC data structures
- - Removed initialization variables from structs and passed them as
-   function parameters
- - Removed various comments and error messages
- - Simplified mode handling
- - Refactored per-PMIC rpmh-regulator data specification
- - Simplified probe function
- - Moved header into DT patch
- - Removed redundant property listings from DT binding documentation
+   mm/oom_kill.c: In function 'oom_kill_memcg_victim':
+>> mm/oom_kill.c:1026:2: error: implicit declaration of function 'mem_cgroup_put'; did you mean 'mem_cgroup_id'? [-Werror=implicit-function-declaration]
+     mem_cgroup_put(oc->chosen_memcg);
+     ^~~~~~~~~~~~~~
+     mem_cgroup_id
+   cc1: some warnings being treated as errors
 
-[1]: https://lkml.org/lkml/2018/6/20/519
-[2]: https://lkml.org/lkml/2018/4/10/714
-[3]: https://lkml.org/lkml/2018/4/18/556
-[4]: https://lkml.org/lkml/2018/5/11/696
-[5]: https://lkml.org/lkml/2018/5/15/1005
-[6]: https://lkml.org/lkml/2018/6/18/1188
-[7]: https://lkml.org/lkml/2018/6/8/573
-[8]: https://lkml.org/lkml/2018/6/4/879
-[9]: https://lkml.org/lkml/2018/6/1/895
-[10]: https://lkml.org/lkml/2018/5/22/1168
-[11]: https://lkml.org/lkml/2018/5/11/701
-[12]: https://lkml.org/lkml/2018/4/13/687
-[13]: https://lkml.org/lkml/2018/3/16/1431
+vim +1026 mm/oom_kill.c
 
-David Collins (2):
-  regulator: dt-bindings: add QCOM RPMh regulator bindings
-  regulator: add QCOM RPMh regulator driver
+4ac2c83a Roman Gushchin 2018-06-15   997  
+7388c5c4 Roman Gushchin 2018-06-15   998  static bool oom_kill_memcg_victim(struct oom_control *oc)
+7388c5c4 Roman Gushchin 2018-06-15   999  {
+4ac2c83a Roman Gushchin 2018-06-15  1000  	if (oc->chosen_memcg == NULL || oc->chosen_memcg == INFLIGHT_VICTIM)
+4ac2c83a Roman Gushchin 2018-06-15  1001  		return oc->chosen_memcg;
+4ac2c83a Roman Gushchin 2018-06-15  1002  
+7388c5c4 Roman Gushchin 2018-06-15  1003  	/*
+7388c5c4 Roman Gushchin 2018-06-15  1004  	 * If memory.oom_group is set, kill all tasks belonging to the sub-tree
+7388c5c4 Roman Gushchin 2018-06-15  1005  	 * of the chosen memory cgroup, otherwise kill the task with the biggest
+7388c5c4 Roman Gushchin 2018-06-15  1006  	 * memory footprint.
+7388c5c4 Roman Gushchin 2018-06-15  1007  	 */
+7388c5c4 Roman Gushchin 2018-06-15  1008  	if (mem_cgroup_oom_group(oc->chosen_memcg)) {
+7388c5c4 Roman Gushchin 2018-06-15  1009  		mem_cgroup_scan_tasks(oc->chosen_memcg, oom_kill_memcg_member,
+7388c5c4 Roman Gushchin 2018-06-15  1010  				      NULL);
+7388c5c4 Roman Gushchin 2018-06-15  1011  		/* We have one or more terminating processes at this point. */
+7388c5c4 Roman Gushchin 2018-06-15  1012  		oc->chosen_task = INFLIGHT_VICTIM;
+7388c5c4 Roman Gushchin 2018-06-15  1013  	} else {
+4ac2c83a Roman Gushchin 2018-06-15  1014  		oc->chosen_points = 0;
+4ac2c83a Roman Gushchin 2018-06-15  1015  		oc->chosen_task = NULL;
+4ac2c83a Roman Gushchin 2018-06-15  1016  		mem_cgroup_scan_tasks(oc->chosen_memcg, oom_evaluate_task, oc);
+4ac2c83a Roman Gushchin 2018-06-15  1017  
+7388c5c4 Roman Gushchin 2018-06-15  1018  		if (oc->chosen_task == NULL ||
+7388c5c4 Roman Gushchin 2018-06-15  1019  		    oc->chosen_task == INFLIGHT_VICTIM)
+4ac2c83a Roman Gushchin 2018-06-15  1020  			goto out;
+4ac2c83a Roman Gushchin 2018-06-15  1021  
+4ac2c83a Roman Gushchin 2018-06-15  1022  		__oom_kill_process(oc->chosen_task);
+7388c5c4 Roman Gushchin 2018-06-15  1023  	}
+4ac2c83a Roman Gushchin 2018-06-15  1024  
+4ac2c83a Roman Gushchin 2018-06-15  1025  out:
+4ac2c83a Roman Gushchin 2018-06-15 @1026  	mem_cgroup_put(oc->chosen_memcg);
+4ac2c83a Roman Gushchin 2018-06-15  1027  	return oc->chosen_task;
+4ac2c83a Roman Gushchin 2018-06-15  1028  }
+4ac2c83a Roman Gushchin 2018-06-15  1029  
 
- .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++
- drivers/regulator/Kconfig                          |   9 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/qcom-rpmh-regulator.c            | 746 +++++++++++++++++++++
- .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +
- 5 files changed, 952 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
- create mode 100644 drivers/regulator/qcom-rpmh-regulator.c
- create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
+:::::: The code at line 1026 was first introduced by commit
+:::::: 4ac2c83a8e8a0708278b6f2bb44dc4c880fdcaf6 mm, oom: cgroup-aware OOM killer
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+:::::: TO: Roman Gushchin <guro@fb.com>
+:::::: CC: Stephen Rothwell <sfr@canb.auug.org.au>
 
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--M9NhX3UHpAaciwkO
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--M9NhX3UHpAaciwkO--
