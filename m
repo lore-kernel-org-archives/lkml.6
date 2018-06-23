@@ -2,90 +2,109 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D3FC43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 13:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 180D8C43144
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 14:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0048D24078
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 13:58:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Nmyd8BvV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0048D24078
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id C49FA24B77
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 14:03:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C49FA24B77
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751652AbeFWN6P (ORCPT
+        id S1751666AbeFWODs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 09:58:15 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:44602 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751451AbeFWN6N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 09:58:13 -0400
-Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w5NDvYBW015690;
-        Sat, 23 Jun 2018 22:57:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w5NDvYBW015690
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529762256;
-        bh=eF6juXb7PirRchUcfKJpaftuAQl8aBHmTPqdBo4/Lqw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nmyd8BvV8EY4bEtgAC9k6W+nM6sM3FbLyMCoPHjKLvEM9zj0B4NZ7zXV+9htJI3Fk
-         B7CX7gOwYC3vERSIVhughD9DksIgZCX4nkHVMlpONDfASbxRhlNw3kO5S1Iuc6rvto
-         DGVXikA+FsM1zfiCYGdusSdAxiUG7zbqICJYkZ+6lNEaeFfHZFE3LUmYQkW+grRRa+
-         imx95FK5IIkz8RLUuLBb0te+f/x30FsKh8c+JOCJs+HnQ6cpLmDd+VEUybgX6HilCm
-         bJ33+iJAfTgeitMU1dnHBwK0PjDpHrZu8/o/7BHHvYv7N6jRhaUQwWiIkc5kGoZ4ID
-         A3imn6KzTBnLg==
-X-Nifty-SrcIP: [125.199.20.195]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] kbuild: do not update config for 'make kernelrelease'
-Date:   Sat, 23 Jun 2018 22:56:09 +0900
-Message-Id: <1529762169-13488-3-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529762169-13488-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1529762169-13488-1-git-send-email-yamada.masahiro@socionext.com>
+        Sat, 23 Jun 2018 10:03:48 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:52500 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751492AbeFWODr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 10:03:47 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id BD4AD2018D;
+        Sat, 23 Jun 2018 16:03:45 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id c-fOrj5OkzkL; Sat, 23 Jun 2018 16:03:45 +0200 (CEST)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 3590520084;
+        Sat, 23 Jun 2018 16:03:45 +0200 (CEST)
+Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server id 14.3.399.0; Sat, 23 Jun 2018
+ 16:03:44 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)      id B87A43182354;
+ Sat, 23 Jun 2018 16:03:44 +0200 (CEST)
+Date:   Sat, 23 Jun 2018 16:03:44 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Tommi Rantala <tommi.t.rantala@nokia.com>
+CC:     <netdev@vger.kernel.org>, huaibin Wang <huaibin.wang@6wind.com>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] xfrm: fix missing dst_release() after policy
+ blocking lbcast and multicast
+Message-ID: <20180623140344.xplih5tva7zii6xg@gauss3.secunet.de>
+References: <20180621063048.13847-1-tommi.t.rantala@nokia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180621063048.13847-1-tommi.t.rantala@nokia.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 0F940785-078D-4A46-AC60-E149D26AC067
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'make kernelrelease' depends on CONFIG_LOCALVERSION(_AUTO), but
-for the same reason as install targets, we do not want to update
-the configuration just for printing the kernelrelease string.
+On Thu, Jun 21, 2018 at 09:30:47AM +0300, Tommi Rantala wrote:
+> Fix missing dst_release() when local broadcast or multicast traffic is
+> xfrm policy blocked.
+> 
+> For IPv4 this results to dst leak: ip_route_output_flow() allocates
+> dst_entry via __ip_route_output_key() and passes it to
+> xfrm_lookup_route(). xfrm_lookup returns ERR_PTR(-EPERM) that is
+> propagated. The dst that was allocated is never released.
+> 
+> IPv4 local broadcast testcase:
+>  ping -b 192.168.1.255 &
+>  sleep 1
+>  ip xfrm policy add src 0.0.0.0/0 dst 192.168.1.255/32 dir out action block
+> 
+> IPv4 multicast testcase:
+>  ping 224.0.0.1 &
+>  sleep 1
+>  ip xfrm policy add src 0.0.0.0/0 dst 224.0.0.1/32 dir out action block
+> 
+> For IPv6 the missing dst_release() causes trouble e.g. when used in netns:
+>  ip netns add TEST
+>  ip netns exec TEST ip link set lo up
+>  ip link add dummy0 type dummy
+>  ip link set dev dummy0 netns TEST
+>  ip netns exec TEST ip addr add fd00::1111 dev dummy0
+>  ip netns exec TEST ip link set dummy0 up
+>  ip netns exec TEST ping -6 -c 5 ff02::1%dummy0 &
+>  sleep 1
+>  ip netns exec TEST ip xfrm policy add src ::/0 dst ff02::1 dir out action block
+>  wait
+>  ip netns del TEST
+> 
+> After netns deletion we see:
+> [  258.239097] unregister_netdevice: waiting for lo to become free. Usage count = 2
+> [  268.279061] unregister_netdevice: waiting for lo to become free. Usage count = 2
+> [  278.367018] unregister_netdevice: waiting for lo to become free. Usage count = 2
+> [  288.375259] unregister_netdevice: waiting for lo to become free. Usage count = 2
+> 
+> Fixes: ac37e2515c1a ("xfrm: release dst_orig in case of error in xfrm_lookup()")
+> Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
 
-This is likely to happen when you compiled the kernel with
-CROSS_COMPILE, but forget to pass it to 'make kernelrelease'.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2: None
-
- Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Makefile b/Makefile
-index f1e06fba..bb7394a 100644
---- a/Makefile
-+++ b/Makefile
-@@ -225,7 +225,8 @@ no-dot-config-targets := $(clean-targets) \
- 			 cscope gtags TAGS tags help% %docs check% coccicheck \
- 			 $(version_h) headers_% archheaders archscripts \
- 			 kernelversion %src-pkg
--no-sync-config-targets := $(no-dot-config-targets) install %install
-+no-sync-config-targets := $(no-dot-config-targets) install %install \
-+			   kernelrelease
- 
- config-targets  := 0
- mixed-targets   := 0
--- 
-2.7.4
-
+Patch applied, thanks a lot!
