@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E96C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0412C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B10624BE7
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B10624BE7
+	by mail.kernel.org (Postfix) with ESMTP id 5A94C24BE7
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:27:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A94C24BE7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeFWM1H (ORCPT
+        id S1752286AbeFWM1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 08:27:07 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41739 "EHLO
+        Sat, 23 Jun 2018 08:27:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46097 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751640AbeFWM1G (ORCPT
+        with ESMTP id S1751896AbeFWM1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 08:27:06 -0400
+        Sat, 23 Jun 2018 08:27:37 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCR0mu467331
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCRW07467537
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 23 Jun 2018 05:27:00 -0700
+        Sat, 23 Jun 2018 05:27:32 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCR0ri467328;
-        Sat, 23 Jun 2018 05:27:00 -0700
-Date:   Sat, 23 Jun 2018 05:27:00 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCRW3m467533;
+        Sat, 23 Jun 2018 05:27:32 -0700
+Date:   Sat, 23 Jun 2018 05:27:32 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-5c3968994582c1265cdb81884533371cbe868a93@git.kernel.org>
-Cc:     mingo@kernel.org, hpa@zytor.com, reinette.chatre@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, reinette.chatre@intel.com
-In-Reply-To: <36c1414e9bd17c3faf440f32b644b9c879bcbae2.1529706536.git.reinette.chatre@intel.com>
-References: <36c1414e9bd17c3faf440f32b644b9c879bcbae2.1529706536.git.reinette.chatre@intel.com>
+Message-ID: <tip-8b0d3ba3140f8ed7563b2e0788bc595e25fee808@git.kernel.org>
+Cc:     mingo@kernel.org, reinette.chatre@intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: mingo@kernel.org, reinette.chatre@intel.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <1ef4f99dd6ba12fa6fb44c5a1141e75f952b9cd9.1529706536.git.reinette.chatre@intel.com>
+References: <1ef4f99dd6ba12fa6fb44c5a1141e75f952b9cd9.1529706536.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Support L3 cache performance event
- of Broadwell
-Git-Commit-ID: 5c3968994582c1265cdb81884533371cbe868a93
+Subject: [tip:x86/cache] x86/intel_rdt: Limit C-states dynamically when
+ pseudo-locking active
+Git-Commit-ID: 8b0d3ba3140f8ed7563b2e0788bc595e25fee808
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,19 +57,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5c3968994582c1265cdb81884533371cbe868a93
-Gitweb:     https://git.kernel.org/tip/5c3968994582c1265cdb81884533371cbe868a93
+Commit-ID:  8b0d3ba3140f8ed7563b2e0788bc595e25fee808
+Gitweb:     https://git.kernel.org/tip/8b0d3ba3140f8ed7563b2e0788bc595e25fee808
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Fri, 22 Jun 2018 15:42:29 -0700
+AuthorDate: Fri, 22 Jun 2018 15:42:30 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 23 Jun 2018 13:03:52 +0200
 
-x86/intel_rdt: Support L3 cache performance event of Broadwell
+x86/intel_rdt: Limit C-states dynamically when pseudo-locking active
 
-Broadwell microarchitecture supports pseudo-locking. Add support for
-the L3 cache related performance events of these systems so that
-the success of pseudo-locking can be measured more accurately on these
-platforms.
+Deeper C-states impact cache content through shrinking of the cache or
+flushing entire cache to memory before reducing power to the cache.
+Deeper C-states will thus negatively impact the pseudo-locked regions.
+
+To avoid impacting pseudo-locked regions C-states are limited on
+pseudo-locked region creation so that cores associated with the
+pseudo-locked region are prevented from entering deeper C-states.
+This is accomplished by requesting a CPU latency target which will
+prevent the core from entering C6 across all supported platforms.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -80,134 +85,191 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/36c1414e9bd17c3faf440f32b644b9c879bcbae2.1529706536.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/1ef4f99dd6ba12fa6fb44c5a1141e75f952b9cd9.1529706536.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c       | 56 +++++++++++++++++++++++
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h | 10 ++++
- 2 files changed, 66 insertions(+)
+ Documentation/x86/intel_rdt_ui.txt          |  4 +-
+ arch/x86/kernel/cpu/intel_rdt.h             |  2 +
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 85 ++++++++++++++++++++++++++++-
+ 3 files changed, 87 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index bcd0a6d2fcf8..acac30b67c62 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -461,8 +461,8 @@ in the cache via carefully configuring the CAT feature and controlling
+ application behavior. There is no guarantee that data is placed in
+ cache. Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict
+ “locked” data from cache. Power management C-states may shrink or
+-power off cache. It is thus recommended to limit the processor maximum
+-C-state, for example, by setting the processor.max_cstate kernel parameter.
++power off cache. Deeper C-states will automatically be restricted on
++pseudo-locked region creation.
+ 
+ It is required that an application using a pseudo-locked region runs
+ with affinity to the cores (or a subset of the cores) associated
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index b8e490a43290..2d9cbb9d7a58 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -142,6 +142,7 @@ struct mongroup {
+  *			region
+  * @debugfs_dir:	pointer to this region's directory in the debugfs
+  *			filesystem
++ * @pm_reqs:		Power management QoS requests related to this region
+  */
+ struct pseudo_lock_region {
+ 	struct rdt_resource	*r;
+@@ -155,6 +156,7 @@ struct pseudo_lock_region {
+ 	void			*kmem;
+ 	unsigned int		minor;
+ 	struct dentry		*debugfs_dir;
++	struct list_head	pm_reqs;
+ };
+ 
+ /**
 diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index aa9fa8a16875..5f674e042b35 100644
+index 5f674e042b35..8769dd5bb955 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -847,6 +847,8 @@ static int measure_cycles_lat_fn(void *_plr)
+@@ -17,6 +17,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/kthread.h>
+ #include <linux/mman.h>
++#include <linux/pm_qos.h>
+ #include <linux/slab.h>
+ #include <asm/cacheflush.h>
+ #include <asm/intel-family.h>
+@@ -172,6 +173,76 @@ static struct rdtgroup *region_find_by_minor(unsigned int minor)
+ 	return rdtgrp_match;
+ }
  
- static int measure_cycles_perf_fn(void *_plr)
- {
-+	unsigned long long l3_hits = 0, l3_miss = 0;
-+	u64 l3_hit_bits = 0, l3_miss_bits = 0;
- 	struct pseudo_lock_region *plr = _plr;
- 	unsigned long long l2_hits, l2_miss;
- 	u64 l2_hit_bits, l2_miss_bits;
-@@ -880,6 +882,16 @@ static int measure_cycles_perf_fn(void *_plr)
- 	 *     L2_HIT   02H
- 	 *     L1_MISS  08H
- 	 *     L2_MISS  10H
-+	 *
-+	 * On Broadwell Microarchitecture the MEM_LOAD_UOPS_RETIRED event
-+	 * has two "no fix" errata associated with it: BDM35 and BDM100. On
-+	 * this platform we use the following events instead:
-+	 *  L2_RQSTS 24H (Documented in https://download.01.org/perfmon/BDW/)
-+	 *       REFERENCES FFH
-+	 *       MISS       3FH
-+	 *  LONGEST_LAT_CACHE 2EH (Documented in SDM)
-+	 *       REFERENCE 4FH
-+	 *       MISS      41H
- 	 */
- 
- 	/*
-@@ -898,6 +910,14 @@ static int measure_cycles_perf_fn(void *_plr)
- 		l2_hit_bits = (0x52ULL << 16) | (0x2 << 8) | 0xd1;
- 		l2_miss_bits = (0x52ULL << 16) | (0x10 << 8) | 0xd1;
- 		break;
-+	case INTEL_FAM6_BROADWELL_X:
-+		/* On BDW the l2_hit_bits count references, not hits */
-+		l2_hit_bits = (0x52ULL << 16) | (0xff << 8) | 0x24;
-+		l2_miss_bits = (0x52ULL << 16) | (0x3f << 8) | 0x24;
-+		/* On BDW the l3_hit_bits count references, not hits */
-+		l3_hit_bits = (0x52ULL << 16) | (0x4f << 8) | 0x2e;
-+		l3_miss_bits = (0x52ULL << 16) | (0x41 << 8) | 0x2e;
-+		break;
- 	default:
- 		goto out;
- 	}
-@@ -914,9 +934,21 @@ static int measure_cycles_perf_fn(void *_plr)
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, 0x0);
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0, 0x0);
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 1, 0x0);
-+	if (l3_hit_bits > 0) {
-+		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2, 0x0);
-+		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3, 0x0);
-+		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 2, 0x0);
-+		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 3, 0x0);
-+	}
- 	/* Set and enable the L2 counters */
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, l2_hit_bits);
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, l2_miss_bits);
-+	if (l3_hit_bits > 0) {
-+		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2,
-+				      l3_hit_bits);
-+		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3,
-+				      l3_miss_bits);
-+	}
- 	mem_r = plr->kmem;
- 	size = plr->size;
- 	line_size = plr->line_size;
-@@ -934,11 +966,35 @@ static int measure_cycles_perf_fn(void *_plr)
- 			      l2_hit_bits & ~(0x40ULL << 16));
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1,
- 			      l2_miss_bits & ~(0x40ULL << 16));
-+	if (l3_hit_bits > 0) {
-+		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2,
-+				      l3_hit_bits & ~(0x40ULL << 16));
-+		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3,
-+				      l3_miss_bits & ~(0x40ULL << 16));
-+	}
- 	l2_hits = native_read_pmc(0);
- 	l2_miss = native_read_pmc(1);
-+	if (l3_hit_bits > 0) {
-+		l3_hits = native_read_pmc(2);
-+		l3_miss = native_read_pmc(3);
-+	}
- 	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
- 	local_irq_enable();
-+	/*
-+	 * On BDW we count references and misses, need to adjust. Sometimes
-+	 * the "hits" counter is a bit more than the references, for
-+	 * example, x references but x + 1 hits. To not report invalid
-+	 * hit values in this case we treat that as misses eaqual to
-+	 * references.
-+	 */
-+	if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X)
-+		l2_hits -= (l2_miss > l2_hits ? l2_hits : l2_miss);
- 	trace_pseudo_lock_l2(l2_hits, l2_miss);
-+	if (l3_hit_bits > 0) {
-+		if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X)
-+			l3_hits -= (l3_miss > l3_hits ? l3_hits : l3_miss);
-+		trace_pseudo_lock_l3(l3_hits, l3_miss);
-+	}
- 
- out:
- 	plr->thread_done = 1;
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-index efad50d2ee2f..2c041e6d9f05 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-@@ -25,6 +25,16 @@ TRACE_EVENT(pseudo_lock_l2,
- 	    TP_printk("hits=%llu miss=%llu",
- 		      __entry->l2_hits, __entry->l2_miss));
- 
-+TRACE_EVENT(pseudo_lock_l3,
-+	    TP_PROTO(u64 l3_hits, u64 l3_miss),
-+	    TP_ARGS(l3_hits, l3_miss),
-+	    TP_STRUCT__entry(__field(u64, l3_hits)
-+			     __field(u64, l3_miss)),
-+	    TP_fast_assign(__entry->l3_hits = l3_hits;
-+			   __entry->l3_miss = l3_miss;),
-+	    TP_printk("hits=%llu miss=%llu",
-+		      __entry->l3_hits, __entry->l3_miss));
++/**
++ * pseudo_lock_pm_req - A power management QoS request list entry
++ * @list:	Entry within the @pm_reqs list for a pseudo-locked region
++ * @req:	PM QoS request
++ */
++struct pseudo_lock_pm_req {
++	struct list_head list;
++	struct dev_pm_qos_request req;
++};
 +
- #endif /* _TRACE_PSEUDO_LOCK_H */
++static void pseudo_lock_cstates_relax(struct pseudo_lock_region *plr)
++{
++	struct pseudo_lock_pm_req *pm_req, *next;
++
++	list_for_each_entry_safe(pm_req, next, &plr->pm_reqs, list) {
++		dev_pm_qos_remove_request(&pm_req->req);
++		list_del(&pm_req->list);
++		kfree(pm_req);
++	}
++}
++
++/**
++ * pseudo_lock_cstates_constrain - Restrict cores from entering C6
++ *
++ * To prevent the cache from being affected by power management entering
++ * C6 has to be avoided. This is accomplished by requesting a latency
++ * requirement lower than lowest C6 exit latency of all supported
++ * platforms as found in the cpuidle state tables in the intel_idle driver.
++ * At this time it is possible to do so with a single latency requirement
++ * for all supported platforms.
++ *
++ * Since Goldmont is supported, which is affected by X86_BUG_MONITOR,
++ * the ACPI latencies need to be considered while keeping in mind that C2
++ * may be set to map to deeper sleep states. In this case the latency
++ * requirement needs to prevent entering C2 also.
++ */
++static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
++{
++	struct pseudo_lock_pm_req *pm_req;
++	int cpu;
++	int ret;
++
++	for_each_cpu(cpu, &plr->d->cpu_mask) {
++		pm_req = kzalloc(sizeof(*pm_req), GFP_KERNEL);
++		if (!pm_req) {
++			rdt_last_cmd_puts("fail allocating mem for PM QoS\n");
++			ret = -ENOMEM;
++			goto out_err;
++		}
++		ret = dev_pm_qos_add_request(get_cpu_device(cpu),
++					     &pm_req->req,
++					     DEV_PM_QOS_RESUME_LATENCY,
++					     30);
++		if (ret < 0) {
++			rdt_last_cmd_printf("fail to add latency req cpu%d\n",
++					    cpu);
++			kfree(pm_req);
++			ret = -1;
++			goto out_err;
++		}
++		list_add(&pm_req->list, &plr->pm_reqs);
++	}
++
++	return 0;
++
++out_err:
++	pseudo_lock_cstates_relax(plr);
++	return ret;
++}
++
+ /**
+  * pseudo_lock_region_init - Initialize pseudo-lock region information
+  * @plr: pseudo-lock region
+@@ -239,6 +310,7 @@ static int pseudo_lock_init(struct rdtgroup *rdtgrp)
+ 		return -ENOMEM;
  
- #undef TRACE_INCLUDE_PATH
+ 	init_waitqueue_head(&plr->lock_thread_wq);
++	INIT_LIST_HEAD(&plr->pm_reqs);
+ 	rdtgrp->plr = plr;
+ 	return 0;
+ }
+@@ -1132,6 +1204,12 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = pseudo_lock_cstates_constrain(plr);
++	if (ret < 0) {
++		ret = -EINVAL;
++		goto out_region;
++	}
++
+ 	plr->thread_done = 0;
+ 
+ 	thread = kthread_create_on_node(pseudo_lock_fn, rdtgrp,
+@@ -1140,7 +1218,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	if (IS_ERR(thread)) {
+ 		ret = PTR_ERR(thread);
+ 		rdt_last_cmd_printf("locking thread returned error %d\n", ret);
+-		goto out_region;
++		goto out_cstates;
+ 	}
+ 
+ 	kthread_bind(thread, plr->cpu);
+@@ -1158,7 +1236,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 		 * empty pseudo-locking loop.
+ 		 */
+ 		rdt_last_cmd_puts("locking thread interrupted\n");
+-		goto out_region;
++		goto out_cstates;
+ 	}
+ 
+ 	if (!IS_ERR_OR_NULL(debugfs_resctrl)) {
+@@ -1219,6 +1297,8 @@ out_minor:
+ 	pseudo_lock_minor_release(new_minor);
+ out_debugfs:
+ 	debugfs_remove_recursive(plr->debugfs_dir);
++out_cstates:
++	pseudo_lock_cstates_relax(plr);
+ out_region:
+ 	pseudo_lock_region_clear(plr);
+ out:
+@@ -1252,6 +1332,7 @@ void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp)
+ 		goto free;
+ 	}
+ 
++	pseudo_lock_cstates_relax(plr);
+ 	debugfs_remove_recursive(rdtgrp->plr->debugfs_dir);
+ 	device_destroy(pseudo_lock_class, MKDEV(pseudo_lock_major, plr->minor));
+ 	pseudo_lock_minor_release(plr->minor);
