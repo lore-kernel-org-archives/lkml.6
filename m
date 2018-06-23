@@ -3,127 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B500C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD02DC43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 01:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD77E24A5C
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 00:55:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD77E24A5C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 93E9024A66
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 01:01:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E9024A66
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934407AbeFWAzv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 20:55:51 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:60784 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933753AbeFWAzu (ORCPT
+        id S934470AbeFWBBg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 21:01:36 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:52943 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933773AbeFWBBf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 20:55:50 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fWWq9-0006Mz-3d; Fri, 22 Jun 2018 20:55:45 -0400
-Message-ID: <1529715344.7898.214.camel@surriel.com>
-Subject: Re: [PATCH 7/7] x86,idle: do not leave mm in idle state
-From:   Rik van Riel <riel@surriel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mike Galbraith <efault@gmx.de>, songliubraving@fb.com,
-        kernel-team <kernel-team@fb.com>
-Date:   Fri, 22 Jun 2018 20:55:44 -0400
-In-Reply-To: <CALCETrX9PZEHs9bj476bj5qEb1aXtiH0K8G998t1+CbUuiaGmg@mail.gmail.com>
-References: <20180620195652.27251-1-riel@surriel.com>
-         <20180620195652.27251-8-riel@surriel.com>
-         <CALCETrXfHhPNe9J0NEabxdtKGRV+XOX=n6vtL7rbOY6e2GXMqA@mail.gmail.com>
-         <1529682813.7898.195.camel@surriel.com>
-         <CALCETrXJzhwXkEi5oC9XY58B8fYT26WhMT+KBt-8m2M+foQvsw@mail.gmail.com>
-         <1529698739.7898.206.camel@surriel.com>
-         <CALCETrX9PZEHs9bj476bj5qEb1aXtiH0K8G998t1+CbUuiaGmg@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-7UncSXbSFFRcWD/S54X1"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Fri, 22 Jun 2018 21:01:35 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0T3CFQK-_1529715669;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3CFQK-_1529715669)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 23 Jun 2018 09:01:15 +0800
+Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     Michal Hocko <mhocko@kernel.org>, Nadav Amit <nadav.amit@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, ldufour@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org
+References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
+ <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
+ <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
+ <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
+ <20180620071817.GJ13685@dhcp22.suse.cz>
+ <c184031d-b1db-503e-1a32-7963b4bf3de0@linux.alibaba.com>
+Message-ID: <94bdfcf0-68ea-404c-a60f-362f677884b6@linux.alibaba.com>
+Date:   Fri, 22 Jun 2018 18:01:08 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <c184031d-b1db-503e-1a32-7963b4bf3de0@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Yes, this is true but I guess what Yang Shi meant was that an userspace
+>> access racing with munmap is not well defined. You never know whether
+>> you get your data, #PTF or SEGV because it depends on timing. The user
+>> visible change might be that you lose content and get zero page instead
+>> if you hit the race window while we are unmapping which was not possible
+>> before. But whouldn't such an access pattern be buggy anyway? You need
+>> some form of external synchronization AFAICS.
+>>
+>> But maybe some userspace depends on "getting right data or get SEGV"
+>> semantic. If we have to preserve that then we can come up with a VM_DEAD
+>> flag set before we tear it down and force the SEGV on the #PF path.
+>> Something similar we already do for MMF_UNSTABLE.
+>
+> Set VM_DEAD with read mmap_sem held? It should be ok since this is the 
+> only place to set this flag for this unique special case.
 
---=-7UncSXbSFFRcWD/S54X1
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+BTW, it looks the vm flags have used up in 32 bit. If we really need 
+VM_DEAD, it should be for both 32-bit and 64-bit.
 
-On Fri, 2018-06-22 at 15:05 -0700, Andy Lutomirski wrote:
+Any suggestion?
 
-> I think the right solution if you want that last little bit of
-> performance is to get rid of the code in intel_idle and to add it in
-> the core idle code.  We have fancy scheduler code to estimate the
-> idle
-> time, and we should use it here IMO.
+Thanks,
+Yang
 
-Good point.
-
-However, I suspect we have some lower hanging
-larger fruit to tackle first.
-
-Every time we go into lazy TLB mode, we take
-a refcount on the mm. Every time we leave lazy
-TLB mode, we drop the refcount.
-
-Every time we switch from the idle task to a
-kernel thread, the kernel thread takes a
-refcount, and the idle task drops it. Every
-time we switch back, we do the same dance in
-reverse.
-
-I am working on a patch to grab the refcount
-once, and hang onto it while a particular mm
-is that CPU's lazy_mm.
-
-We can release it when we switch to a task
-with a different mm.
-
-The patches we have so far get rid of a lot of
-the pounding on mm_cpumask(mm).
-
-That patch should help us also get rid of tasks
-pounding on mm->count.
-
-After that, the idle state thing is probably
-of pretty small impact, though I suspect it will
-still be worth tackling :)
-
-
-As an aside, isn't the fancy CPU power management
-stuff in the scheduler cpufreq, not cpuidle? The
-cpuidle stuff in kernel/sched/idle.c looks like it
-will just call down into the menu governor (and
-maybe the ladder governor on some systems??)
-
---=20
-All Rights Reversed.
---=-7UncSXbSFFRcWD/S54X1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlstmpAACgkQznnekoTE
-3oPsDwf9EVZwLy81NwMzaGbUDfkhXeY90EF9Ol3ygh+aXm+9XNXvE7JRTqTVzMdf
-GOMT8MahXXOMW1ANQ1gwjUG26uwA8Qd8EhV76FCq5kdGKtZF/49UC6EPx+j3QSWo
-L9cqlOIqxIT+Nh6FuiXbzv8C/XKBlN+RZeYrmuTOY3ahiWMBY7U2I+tnXW3qiOs7
-Fe0koY5Xecz/5++zQ1SUXXnJYwHODWQgKV+q7FOMF19v2iruaP5opwQMx9yNMtCl
-JSCOpxJzhpVIuu4Hz1pP0W9dUFQdagb+BuK5CkMSkHgv2N3loTWum+4iDwHbt5p6
-4gy5H7Gj+FzzLOAQc+rf2rHM1Ydeqw==
-=V4Ja
------END PGP SIGNATURE-----
-
---=-7UncSXbSFFRcWD/S54X1--
+>
+> Yang
+>
+>
 
