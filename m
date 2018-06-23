@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB363C43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8476CC43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B81224BAF
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:12:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B81224BAF
+	by mail.kernel.org (Postfix) with ESMTP id 4814124BB1
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:12:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4814124BB1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751913AbeFWMME (ORCPT
+        id S1751934AbeFWMMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 08:12:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35541 "EHLO
+        Sat, 23 Jun 2018 08:12:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44159 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751808AbeFWMMD (ORCPT
+        with ESMTP id S1751654AbeFWMMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 08:12:03 -0400
+        Sat, 23 Jun 2018 08:12:34 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCBwnO463708
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCCTHd463908
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 23 Jun 2018 05:11:58 -0700
+        Sat, 23 Jun 2018 05:12:29 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCBvBN463705;
-        Sat, 23 Jun 2018 05:11:57 -0700
-Date:   Sat, 23 Jun 2018 05:11:57 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCCTYk463905;
+        Sat, 23 Jun 2018 05:12:29 -0700
+Date:   Sat, 23 Jun 2018 05:12:29 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-49f7b4efa1101bbc143a960eff3a9c8f9d6f7358@git.kernel.org>
-Cc:     reinette.chatre@intel.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, reinette.chatre@intel.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <83642cbba3c8c21db7fa6bb36fe7d385d3b275f2.1529706536.git.reinette.chatre@intel.com>
-References: <83642cbba3c8c21db7fa6bb36fe7d385d3b275f2.1529706536.git.reinette.chatre@intel.com>
+Message-ID: <tip-9af4c0a6dc1a1abf5336f2c3f951444db6b71da9@git.kernel.org>
+Cc:     hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, reinette.chatre@intel.com
+Reply-To: reinette.chatre@intel.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com
+In-Reply-To: <5e29cf0209ea2deac9beacd35cbe5239a50959fb.1529706536.git.reinette.chatre@intel.com>
+References: <5e29cf0209ea2deac9beacd35cbe5239a50959fb.1529706536.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Enable setting of exclusive mode
-Git-Commit-ID: 49f7b4efa1101bbc143a960eff3a9c8f9d6f7358
+Subject: [tip:x86/cache] x86/intel_rdt: Making CBM name and type more
+ explicit
+Git-Commit-ID: 9af4c0a6dc1a1abf5336f2c3f951444db6b71da9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,22 +57,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  49f7b4efa1101bbc143a960eff3a9c8f9d6f7358
-Gitweb:     https://git.kernel.org/tip/49f7b4efa1101bbc143a960eff3a9c8f9d6f7358
+Commit-ID:  9af4c0a6dc1a1abf5336f2c3f951444db6b71da9
+Gitweb:     https://git.kernel.org/tip/9af4c0a6dc1a1abf5336f2c3f951444db6b71da9
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Fri, 22 Jun 2018 15:42:01 -0700
+AuthorDate: Fri, 22 Jun 2018 15:42:02 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 23 Jun 2018 13:03:42 +0200
+CommitDate: Sat, 23 Jun 2018 13:03:43 +0200
 
-x86/intel_rdt: Enable setting of exclusive mode
+x86/intel_rdt: Making CBM name and type more explicit
 
-The new "mode" file now accepts "exclusive" that means that the
-allocations of this resource group cannot be shared.
+cbm_validate() receives a pointer to the variable that will be initialized
+with a validated capacity bitmask. The pointer points to a variable of type
+unsigned long that is immediately assigned to a variable of type u32 by the
+caller on return from cbm_validate().
 
-Enable users to modify a resource group's mode to "exclusive". To
-succeed it is required that there is no overlap between resource group's
-current schemata and that of all the other active resource groups as
-well as cache regions potentially used by other hardware entities.
+Let cbm_validate() initialize a variable of type u32 directly.
+
+At this time also change tha variable name "data" within parse_cbm() to a
+name more reflective of the content: "cbm_val". This frees up the generic
+"data" to be used later when it is indeed used for a collection of input.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -82,128 +86,43 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/83642cbba3c8c21db7fa6bb36fe7d385d3b275f2.1529706536.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/5e29cf0209ea2deac9beacd35cbe5239a50959fb.1529706536.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 97 +++++++++++++++++++++++++++++++-
- 1 file changed, 96 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 910febef55e8..ba1410ced420 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -812,6 +812,93 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
- 	return 0;
- }
- 
-+/**
-+ * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
-+ * @r: Resource to which domain instance @d belongs.
-+ * @d: The domain instance for which @closid is being tested.
-+ * @cbm: Capacity bitmask being tested.
-+ * @closid: Intended closid for @cbm.
-+ * @exclusive: Only check if overlaps with exclusive resource groups
-+ *
-+ * Checks if provided @cbm intended to be used for @closid on domain
-+ * @d overlaps with any other closids or other hardware usage associated
-+ * with this domain. If @exclusive is true then only overlaps with
-+ * resource groups in exclusive mode will be considered. If @exclusive
-+ * is false then overlaps with any resource group or hardware entities
-+ * will be considered.
-+ *
-+ * Return: false if CBM does not overlap, true if it does.
-+ */
-+static bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-+				  u32 _cbm, int closid, bool exclusive)
-+{
-+	unsigned long *cbm = (unsigned long *)&_cbm;
-+	unsigned long *ctrl_b;
-+	enum rdtgrp_mode mode;
-+	u32 *ctrl;
-+	int i;
-+
-+	/* Check for any overlap with regions used by hardware directly */
-+	if (!exclusive) {
-+		if (bitmap_intersects(cbm,
-+				      (unsigned long *)&r->cache.shareable_bits,
-+				      r->cache.cbm_len))
-+			return true;
-+	}
-+
-+	/* Check for overlap with other resource groups */
-+	ctrl = d->ctrl_val;
-+	for (i = 0; i < r->num_closid; i++, ctrl++) {
-+		ctrl_b = (unsigned long *)ctrl;
-+		if (closid_allocated(i) && i != closid) {
-+			if (bitmap_intersects(cbm, ctrl_b, r->cache.cbm_len)) {
-+				mode = rdtgroup_mode_by_closid(i);
-+				if (exclusive) {
-+					if (mode == RDT_MODE_EXCLUSIVE)
-+						return true;
-+					continue;
-+				}
-+				return true;
-+			}
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+/**
-+ * rdtgroup_mode_test_exclusive - Test if this resource group can be exclusive
-+ *
-+ * An exclusive resource group implies that there should be no sharing of
-+ * its allocated resources. At the time this group is considered to be
-+ * exclusive this test can determine if its current schemata supports this
-+ * setting by testing for overlap with all other resource groups.
-+ *
-+ * Return: true if resource group can be exclusive, false if there is overlap
-+ * with allocations of other resource groups and thus this resource group
-+ * cannot be exclusive.
-+ */
-+static bool rdtgroup_mode_test_exclusive(struct rdtgroup *rdtgrp)
-+{
-+	int closid = rdtgrp->closid;
-+	struct rdt_resource *r;
-+	struct rdt_domain *d;
-+
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		list_for_each_entry(d, &r->domains, list) {
-+			if (rdtgroup_cbm_overlaps(r, d, d->ctrl_val[closid],
-+						  rdtgrp->closid, false))
-+				return false;
-+		}
-+	}
-+
-+	return true;
-+}
-+
-+/**
-+ * rdtgroup_mode_write - Modify the resource group's mode
-+ *
-+ */
- static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
- 				   char *buf, size_t nbytes, loff_t off)
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 2c23bb136ccc..b3da5b981dd8 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -87,7 +87,7 @@ int parse_bw(char *buf, struct rdt_resource *r, struct rdt_domain *d)
+  *	are allowed (e.g. FFFFH, 0FF0H, 003CH, etc.).
+  * Additionally Haswell requires at least two bits set.
+  */
+-static bool cbm_validate(char *buf, unsigned long *data, struct rdt_resource *r)
++static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
  {
-@@ -834,11 +921,19 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+ 	unsigned long first_bit, zero_bit, val;
+ 	unsigned int cbm_len = r->cache.cbm_len;
+@@ -128,16 +128,17 @@ static bool cbm_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+  */
+ int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d)
+ {
+-	unsigned long data;
++	u32 cbm_val;
  
- 	mode = rdtgrp->mode;
+ 	if (d->have_new_ctrl) {
+ 		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
+ 		return -EINVAL;
+ 	}
  
--	if ((!strcmp(buf, "shareable") && mode == RDT_MODE_SHAREABLE))
-+	if ((!strcmp(buf, "shareable") && mode == RDT_MODE_SHAREABLE) ||
-+	    (!strcmp(buf, "exclusive") && mode == RDT_MODE_EXCLUSIVE))
- 		goto out;
+-	if(!cbm_validate(buf, &data, r))
++	if (!cbm_validate(buf, &cbm_val, r))
+ 		return -EINVAL;
+-	d->new_ctrl = data;
++
++	d->new_ctrl = cbm_val;
+ 	d->have_new_ctrl = true;
  
- 	if (!strcmp(buf, "shareable")) {
- 		rdtgrp->mode = RDT_MODE_SHAREABLE;
-+	} else if (!strcmp(buf, "exclusive")) {
-+		if (!rdtgroup_mode_test_exclusive(rdtgrp)) {
-+			rdt_last_cmd_printf("schemata overlaps\n");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		rdtgrp->mode = RDT_MODE_EXCLUSIVE;
- 	} else {
- 		rdt_last_cmd_printf("unknown/unsupported mode\n");
- 		ret = -EINVAL;
+ 	return 0;
