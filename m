@@ -2,527 +2,121 @@ Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F36FC43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 05:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB72C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 05:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DABEB24B35
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 05:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5B8B24B3E
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 05:21:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mp205bzs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABEB24B35
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YO7uLoSx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B8B24B3E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751596AbeFWFAw (ORCPT
+        id S1751459AbeFWFVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 01:00:52 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:47051 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751563AbeFWFAt (ORCPT
+        Sat, 23 Jun 2018 01:21:55 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:44684 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750951AbeFWFVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 01:00:49 -0400
-Received: by mail-pf0-f196.google.com with SMTP id q1-v6so4097518pff.13
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 22:00:49 -0700 (PDT)
+        Sat, 23 Jun 2018 01:21:53 -0400
+Received: by mail-pg0-f68.google.com with SMTP id b10-v6so151265pgq.11;
+        Fri, 22 Jun 2018 22:21:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wFozh2O9hbezI4QuIMCv0LGECSDy2bekeBxfuX06zvY=;
-        b=Mp205bzsxGVicxLM1v5ziDJgVw1lYjofkGKHDqnPHBfA+9aA2DPb0b18iK93eLyBJz
-         vPaHiR5+y6z4X4Uwll6WogJZDTo+TjsalskcMwmN8kp98d9jK3Zo/PKckkorQFiujeK3
-         YSp1JBXCdDajsiPVObEj5XQEw32JJPrqljLqw=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kwjgDpwtMuMEo+KPJA4zTLwkC8zxbqbGt1CGObleKV4=;
+        b=YO7uLoSxGsAG0mHVtXFslMr5t00XgOkoA/VWqjzGdkva2a2/b5Gt1vmnZmNuGn55xh
+         Wk2KAW7PB1+ay83Vffp++sJ52RifC3Ktn5kuo7y09lZ5HbcCLMsJJy0oitC7VvB3Qtd/
+         4ainD4PGTI7Xw25ObiIAzdIDApI6N9o1cpgjJiHC/GYT/8CT6u7Vug8vnPMddtUup4U5
+         GGrPd9FBlGY7dVewaz+iTLmcI3LM+PTB3YWaMHdZG0FgeQJ2XQQIifFTEP+agpDDAHdF
+         MCBGff6IJIGcSj4f6EoKNEthMRnGL1IAPacW3FWGZcC+3D7YHMp1ANqUA6w/Doo7N1bq
+         dRcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=wFozh2O9hbezI4QuIMCv0LGECSDy2bekeBxfuX06zvY=;
-        b=ZxhFkr0KUpAJWWUD7BEkOeHSZoVs9/MYc/1+nTvHMh/arN7um4wudvArE4JTwhjGbt
-         WhKWjgL3aWmPN/43YgZ+CI1DH0VGqIdKuYbQH9K4aNiTSu83W1l+HVGeAHIyW/uzV12P
-         bJyXwbGb3a5Fdrt8wcXatbrzLd3M04jCeK+oL3ch+G9mC2TRvmP77444UTanRqUUd9sM
-         Krg93isIECvY1+nOgqmmooA1s4XW+rgTU7m0B6REg/WdAc3iat1qxGE4gWrWH6uJkzAl
-         KG9XiClt6rqkj98Nj9FAv48zEvhYYkoTtO3DdRgLMbU4WW5yLa+u0+astAh+CWU8Tj4C
-         vO9w==
-X-Gm-Message-State: APt69E0L/6XxRy1MZoBENcxYGS5yWsJfTKWloUBEi5kdS0gnnmMNgpq0
-        AebyRx26UEmiziHlqK+qMoNM
-X-Google-Smtp-Source: ADUXVKJdC2sVa6MMhL+RuteuMM7NNxPUyEnEbH7SqeoczvUU2XjMiUO0lURdM64PgO48qpU03NgiIw==
-X-Received: by 2002:a63:bd01:: with SMTP id a1-v6mr3651597pgf.319.1529730048569;
-        Fri, 22 Jun 2018 22:00:48 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:70c3:aca:6549:5166:32c7:2dab])
-        by smtp.gmail.com with ESMTPSA id y14-v6sm10787603pgv.37.2018.06.22.22.00.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 22:00:48 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc:     liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 3/3] pinctrl: actions: Add interrupt support for OWL S900 SoC
-Date:   Sat, 23 Jun 2018 10:29:54 +0530
-Message-Id: <20180623045954.6729-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180623045954.6729-1-manivannan.sadhasivam@linaro.org>
-References: <20180623045954.6729-1-manivannan.sadhasivam@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kwjgDpwtMuMEo+KPJA4zTLwkC8zxbqbGt1CGObleKV4=;
+        b=ZTMXW1fpnDmJQ1vxX10J2aD8DdCVCb8/LyooVK28iSJD1ZUogFSGwHMltWMI/ZvjNy
+         encPBj4DrMqrJWmaq1LFA6WlnbFn4Z3f4bG7+4xZ4C4Jh0UMscfcZpm82p2mtOtLLC2B
+         WD8cTCegYs/PX7Q6tibZiHnHp//+C0hAYJeOGGm24DOTDZgrmCq0NXWkFQQT7gVZR4+R
+         rM1VXJLBYh0+5sBTxlbcWkkakmVT+Cqce/VuQe8Qe6QoCOwLzzJ+BUjVX21JWFcpUBAQ
+         glFcrd3Ft/4U3kPAblNF4eNA5m7foRNRjNxBynHFGowQ50TuP5jxst+cZHSoJ/eT8xFs
+         YiQg==
+X-Gm-Message-State: APt69E1dvDX+qmxykYN2FpxOBLlHE4wjds66SCSfbT3N2JykYpW9aGRE
+        +v7lYOKP11E7Do/8t8wuUZU=
+X-Google-Smtp-Source: ADUXVKIgVdrRKvCqANQmg8MzUUWp31lrRKSDEpdvywdM8XcnZLomaXOH2YmdaIxjKcup/dv1sE18DA==
+X-Received: by 2002:a65:5a07:: with SMTP id y7-v6mr3623768pgs.177.1529731312496;
+        Fri, 22 Jun 2018 22:21:52 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id k13-v6sm17033904pfg.130.2018.06.22.22.21.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 22:21:51 -0700 (PDT)
+Date:   Sat, 23 Jun 2018 14:21:49 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
+ locks
+Message-ID: <20180623052149.GA402@tigerII.localdomain>
+References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
+ <20180618143818.50b2f2f9@alans-desktop>
+ <20180619005308.GA405@jagdpanzerIV>
+ <20180619083021.4avsgvcqjrpkat6s@pathway.suse.cz>
+ <CA+55aFz9aGc-vGvKv_ZR2W2ZkZNSZfOHa0m_MbGH_a=x8oAW5Q@mail.gmail.com>
+ <20180619223447.4369748b@vmware.local.home>
+ <CA+55aFwpcbNO6FS4=O-BrsC4vMBaT3JeFG-_D9WtgmW+Dof3iA@mail.gmail.com>
+ <20180622172100.2293b5e5@alans-desktop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622172100.2293b5e5@alans-desktop>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add interrupt support for Actions Semi OWL S900 SoC.
+On (06/22/18 17:21), Alan Cox wrote:
+> On Wed, 20 Jun 2018 11:44:13 +0900
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> 
+> > On Wed, Jun 20, 2018 at 11:34 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > >
+> > > Perhaps we should do an audit of the console drivers and remove all
+> > > printk, pr_* , WARN*, BUG* from them.  
+> > 
+> > Only the actual _printing_ parts.
+> 
+> No because they are normally rather useful because that port isn't the
+> console. If you trylock
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/pinctrl/actions/Kconfig        |   1 +
- drivers/pinctrl/actions/pinctrl-owl.c  | 271 ++++++++++++++++++++++++-
- drivers/pinctrl/actions/pinctrl-owl.h  |  22 +-
- drivers/pinctrl/actions/pinctrl-s900.c |  31 +--
- 4 files changed, 307 insertions(+), 18 deletions(-)
+trylock is boring, me wants printk_safe_mask everywhere :)
 
-diff --git a/drivers/pinctrl/actions/Kconfig b/drivers/pinctrl/actions/Kconfig
-index 490927b4ea76..2397cb0f6011 100644
---- a/drivers/pinctrl/actions/Kconfig
-+++ b/drivers/pinctrl/actions/Kconfig
-@@ -5,6 +5,7 @@ config PINCTRL_OWL
- 	select PINCONF
- 	select GENERIC_PINCONF
- 	select GPIOLIB
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say Y here to enable Actions Semi OWL pinctrl driver
- 
-diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-index 76243caa08c6..ce032d71dad5 100644
---- a/drivers/pinctrl/actions/pinctrl-owl.c
-+++ b/drivers/pinctrl/actions/pinctrl-owl.c
-@@ -13,6 +13,7 @@
- #include <linux/err.h>
- #include <linux/gpio/driver.h>
- #include <linux/io.h>
-+#include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -45,6 +46,9 @@ struct owl_pinctrl {
- 	struct clk *clk;
- 	const struct owl_pinctrl_soc_data *soc;
- 	void __iomem *base;
-+	struct irq_chip irq_chip;
-+	unsigned int num_irq;
-+	unsigned int *irq;
- };
- 
- static void owl_update_bits(void __iomem *base, u32 mask, u32 val)
-@@ -701,10 +705,213 @@ static int owl_gpio_direction_output(struct gpio_chip *chip,
- 	return 0;
- }
- 
-+static void irq_set_type(struct owl_pinctrl *pctrl, int gpio, unsigned int type)
-+{
-+	const struct owl_gpio_port *port;
-+	void __iomem *gpio_base;
-+	unsigned long flags;
-+	unsigned int offset, value, irq_type = 0;
-+
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_BOTH:
-+		/*
-+		 * Since the hardware doesn't support interrupts on both edges,
-+		 * emulate it in the software by setting the single edge
-+		 * interrupt and switching to the opposite edge while ACKing
-+		 * the interrupt
-+		 */
-+		if (owl_gpio_get(&pctrl->chip, gpio))
-+			irq_type = OWL_GPIO_INT_EDGE_FALLING;
-+		else
-+			irq_type = OWL_GPIO_INT_EDGE_RISING;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_RISING:
-+		irq_type = OWL_GPIO_INT_EDGE_RISING;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+		irq_type = OWL_GPIO_INT_EDGE_FALLING;
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		irq_type = OWL_GPIO_INT_LEVEL_HIGH;
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_LOW:
-+		irq_type = OWL_GPIO_INT_LEVEL_LOW;
-+		break;
-+
-+	default:
-+		break;
-+	}
-+
-+	port = owl_gpio_get_port(pctrl, &gpio);
-+	if (WARN_ON(port == NULL))
-+		return;
-+
-+	gpio_base = pctrl->base + port->offset;
-+
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+
-+	offset = (gpio < 16) ? 4 : 0;
-+	value = readl_relaxed(gpio_base + port->intc_type + offset);
-+	value &= ~(OWL_GPIO_INT_MASK << ((gpio % 16) * 2));
-+	value |= irq_type << ((gpio % 16) * 2);
-+	writel_relaxed(value, gpio_base + port->intc_type + offset);
-+
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+}
-+
-+static void owl_gpio_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct owl_pinctrl *pctrl = gpiochip_get_data(gc);
-+	const struct owl_gpio_port *port;
-+	void __iomem *gpio_base;
-+	unsigned long flags;
-+	unsigned int gpio = data->hwirq;
-+	u32 val;
-+
-+	port = owl_gpio_get_port(pctrl, &gpio);
-+	if (WARN_ON(port == NULL))
-+		return;
-+
-+	gpio_base = pctrl->base + port->offset;
-+
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+
-+	owl_gpio_update_reg(gpio_base + port->intc_msk, gpio, false);
-+
-+	/* disable port interrupt if no interrupt pending bit is active */
-+	val = readl_relaxed(gpio_base + port->intc_msk);
-+	if (val == 0)
-+		owl_gpio_update_reg(gpio_base + port->intc_ctl,
-+					OWL_GPIO_CTLR_ENABLE, false);
-+
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+}
-+
-+static void owl_gpio_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct owl_pinctrl *pctrl = gpiochip_get_data(gc);
-+	const struct owl_gpio_port *port;
-+	void __iomem *gpio_base;
-+	unsigned long flags;
-+	unsigned int gpio = data->hwirq;
-+	u32 value;
-+
-+	port = owl_gpio_get_port(pctrl, &gpio);
-+	if (WARN_ON(port == NULL))
-+		return;
-+
-+	gpio_base = pctrl->base + port->offset;
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+
-+	/* enable port interrupt */
-+	value = readl_relaxed(gpio_base + port->intc_ctl);
-+	value |= BIT(OWL_GPIO_CTLR_ENABLE) | BIT(OWL_GPIO_CTLR_SAMPLE_CLK_24M);
-+	writel_relaxed(value, gpio_base + port->intc_ctl);
-+
-+	/* enable GPIO interrupt */
-+	owl_gpio_update_reg(gpio_base + port->intc_msk, gpio, true);
-+
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+}
-+
-+static void owl_gpio_irq_ack(struct irq_data *data)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct owl_pinctrl *pctrl = gpiochip_get_data(gc);
-+	const struct owl_gpio_port *port;
-+	void __iomem *gpio_base;
-+	unsigned long flags;
-+	unsigned int gpio = data->hwirq;
-+
-+	/*
-+	 * Switch the interrupt edge to the opposite edge of the interrupt
-+	 * which got triggered for the case of emulating both edges
-+	 */
-+	if (irqd_get_trigger_type(data) == IRQ_TYPE_EDGE_BOTH) {
-+		if (owl_gpio_get(gc, gpio))
-+			irq_set_type(pctrl, gpio, IRQ_TYPE_EDGE_FALLING);
-+		else
-+			irq_set_type(pctrl, gpio, IRQ_TYPE_EDGE_RISING);
-+	}
-+
-+	port = owl_gpio_get_port(pctrl, &gpio);
-+	if (WARN_ON(port == NULL))
-+		return;
-+
-+	gpio_base = pctrl->base + port->offset;
-+
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+
-+	owl_gpio_update_reg(gpio_base + port->intc_ctl,
-+				OWL_GPIO_CTLR_PENDING, true);
-+
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+}
-+
-+static int owl_gpio_irq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct owl_pinctrl *pctrl = gpiochip_get_data(gc);
-+
-+	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
-+		irq_set_handler_locked(data, handle_level_irq);
-+	else
-+		irq_set_handler_locked(data, handle_edge_irq);
-+
-+	irq_set_type(pctrl, data->hwirq, type);
-+
-+	return 0;
-+}
-+
-+static void owl_gpio_irq_handler(struct irq_desc *desc)
-+{
-+	struct owl_pinctrl *pctrl = irq_desc_get_handler_data(desc);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct irq_domain *domain = pctrl->chip.irq.domain;
-+	unsigned int parent = irq_desc_get_irq(desc);
-+	const struct owl_gpio_port *port;
-+	void __iomem *base;
-+	unsigned int pin, irq, offset = 0, i;
-+	unsigned long pending_irq;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	for (i = 0; i < pctrl->soc->nports; i++) {
-+		port = &pctrl->soc->ports[i];
-+		base = pctrl->base + port->offset;
-+
-+		/* skip ports that are not associated with this irq */
-+		if (parent != pctrl->irq[i])
-+			goto skip;
-+
-+		pending_irq = readl_relaxed(base + port->intc_pd);
-+
-+		for_each_set_bit(pin, &pending_irq, port->pins) {
-+			irq = irq_find_mapping(domain, offset + pin);
-+			generic_handle_irq(irq);
-+
-+			/* clear pending interrupt */
-+			owl_gpio_update_reg(base + port->intc_pd, pin, true);
-+		}
-+
-+skip:
-+		offset += port->pins;
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
- static int owl_gpio_init(struct owl_pinctrl *pctrl)
- {
- 	struct gpio_chip *chip;
--	int ret;
-+	struct gpio_irq_chip *gpio_irq;
-+	int ret, i, j, offset;
- 
- 	chip = &pctrl->chip;
- 	chip->base = -1;
-@@ -714,6 +921,35 @@ static int owl_gpio_init(struct owl_pinctrl *pctrl)
- 	chip->owner = THIS_MODULE;
- 	chip->of_node = pctrl->dev->of_node;
- 
-+	pctrl->irq_chip.name = chip->of_node->name;
-+	pctrl->irq_chip.irq_ack = owl_gpio_irq_ack;
-+	pctrl->irq_chip.irq_mask = owl_gpio_irq_mask;
-+	pctrl->irq_chip.irq_unmask = owl_gpio_irq_unmask;
-+	pctrl->irq_chip.irq_set_type = owl_gpio_irq_set_type;
-+
-+	gpio_irq = &chip->irq;
-+	gpio_irq->chip = &pctrl->irq_chip;
-+	gpio_irq->handler = handle_simple_irq;
-+	gpio_irq->default_type = IRQ_TYPE_NONE;
-+	gpio_irq->parent_handler = owl_gpio_irq_handler;
-+	gpio_irq->parent_handler_data = pctrl;
-+	gpio_irq->num_parents = pctrl->num_irq;
-+	gpio_irq->parents = pctrl->irq;
-+
-+	gpio_irq->map = devm_kcalloc(pctrl->dev, chip->ngpio,
-+				sizeof(*gpio_irq->map), GFP_KERNEL);
-+	if (!gpio_irq->map)
-+		return -ENOMEM;
-+
-+	for (i = 0, offset = 0; i < pctrl->soc->nports; i++) {
-+		const struct owl_gpio_port *port = &pctrl->soc->ports[i];
-+
-+		for (j = 0; j < port->pins; j++)
-+			gpio_irq->map[offset + j] = gpio_irq->parents[i];
-+
-+		offset += port->pins;
-+	}
-+
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
- 		dev_err(pctrl->dev, "failed to register gpiochip\n");
-@@ -728,7 +964,7 @@ int owl_pinctrl_probe(struct platform_device *pdev,
- {
- 	struct resource *res;
- 	struct owl_pinctrl *pctrl;
--	int ret;
-+	int ret, i;
- 
- 	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
- 	if (!pctrl)
-@@ -772,14 +1008,41 @@ int owl_pinctrl_probe(struct platform_device *pdev,
- 					&owl_pinctrl_desc, pctrl);
- 	if (IS_ERR(pctrl->pctrldev)) {
- 		dev_err(&pdev->dev, "could not register Actions OWL pinmux driver\n");
--		return PTR_ERR(pctrl->pctrldev);
-+		ret = PTR_ERR(pctrl->pctrldev);
-+		goto err_exit;
-+	}
-+
-+	ret = platform_irq_count(pdev);
-+	if (ret < 0)
-+		goto err_exit;
-+
-+	pctrl->num_irq = ret;
-+
-+	pctrl->irq = devm_kcalloc(&pdev->dev, pctrl->num_irq,
-+					sizeof(*pctrl->irq), GFP_KERNEL);
-+	if (!pctrl->irq) {
-+		ret = -ENOMEM;
-+		goto err_exit;
-+	}
-+
-+	for (i = 0; i < pctrl->num_irq ; i++) {
-+		pctrl->irq[i] = platform_get_irq(pdev, i);
-+		if (pctrl->irq[i] < 0) {
-+			ret = pctrl->irq[i];
-+			goto err_exit;
-+		}
- 	}
- 
- 	ret = owl_gpio_init(pctrl);
- 	if (ret)
--		return ret;
-+		goto err_exit;
- 
- 	platform_set_drvdata(pdev, pctrl);
- 
- 	return 0;
-+
-+err_exit:
-+	clk_disable_unprepare(pctrl->clk);
-+
-+	return ret;
- }
-diff --git a/drivers/pinctrl/actions/pinctrl-owl.h b/drivers/pinctrl/actions/pinctrl-owl.h
-index 74342378937c..a724d1d406d4 100644
---- a/drivers/pinctrl/actions/pinctrl-owl.h
-+++ b/drivers/pinctrl/actions/pinctrl-owl.h
-@@ -29,6 +29,18 @@ enum owl_pinconf_drv {
- 	OWL_PINCONF_DRV_12MA,
- };
- 
-+/* GPIO CTRL Bit Definition */
-+#define OWL_GPIO_CTLR_PENDING		0
-+#define OWL_GPIO_CTLR_ENABLE		1
-+#define OWL_GPIO_CTLR_SAMPLE_CLK_24M	2
-+
-+/* GPIO TYPE Bit Definition */
-+#define OWL_GPIO_INT_LEVEL_HIGH		0
-+#define OWL_GPIO_INT_LEVEL_LOW		1
-+#define OWL_GPIO_INT_EDGE_RISING	2
-+#define OWL_GPIO_INT_EDGE_FALLING	3
-+#define OWL_GPIO_INT_MASK		3
-+
- /**
-  * struct owl_pullctl - Actions pad pull control register
-  * @reg: offset to the pull control register
-@@ -121,6 +133,10 @@ struct owl_pinmux_func {
-  * @outen: offset of the output enable register.
-  * @inen: offset of the input enable register.
-  * @dat: offset of the data register.
-+ * @intc_ctl: offset of the interrupt control register.
-+ * @intc_pd: offset of the interrupt pending register.
-+ * @intc_msk: offset of the interrupt mask register.
-+ * @intc_type: offset of the interrupt type register.
-  */
- struct owl_gpio_port {
- 	unsigned int offset;
-@@ -128,6 +144,10 @@ struct owl_gpio_port {
- 	unsigned int outen;
- 	unsigned int inen;
- 	unsigned int dat;
-+	unsigned int intc_ctl;
-+	unsigned int intc_pd;
-+	unsigned int intc_msk;
-+	unsigned int intc_type;
- };
- 
- /**
-@@ -140,7 +160,7 @@ struct owl_gpio_port {
-  * @ngroups: number of entries in @groups.
-  * @padinfo: array describing the pad info of this SoC.
-  * @ngpios: number of pingroups the driver should expose as GPIOs.
-- * @port: array describing all GPIO ports of this SoC.
-+ * @ports: array describing all GPIO ports of this SoC.
-  * @nports: number of GPIO ports in this SoC.
-  */
- struct owl_pinctrl_soc_data {
-diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
-index 5503c7945764..ea67b14ef93b 100644
---- a/drivers/pinctrl/actions/pinctrl-s900.c
-+++ b/drivers/pinctrl/actions/pinctrl-s900.c
-@@ -1821,22 +1821,27 @@ static struct owl_padinfo s900_padinfo[NUM_PADS] = {
- 	[SGPIO3] = PAD_INFO_PULLCTL_ST(SGPIO3)
- };
- 
--#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat)	\
--	[OWL_GPIO_PORT_##port] = {				\
--		.offset = base,					\
--		.pins = count,					\
--		.outen = _outen,				\
--		.inen = _inen,					\
--		.dat = _dat,					\
-+#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat,		\
-+			_intc_ctl, _intc_pd, _intc_msk, _intc_type)	\
-+	[OWL_GPIO_PORT_##port] = {					\
-+		.offset = base,						\
-+		.pins = count,						\
-+		.outen = _outen,					\
-+		.inen = _inen,						\
-+		.dat = _dat,						\
-+		.intc_ctl = _intc_ctl,					\
-+		.intc_pd = _intc_pd,					\
-+		.intc_msk = _intc_msk,					\
-+		.intc_type = _intc_type,				\
- 	}
- 
- static const struct owl_gpio_port s900_gpio_ports[] = {
--	OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8),
--	OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8),
--	OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8),
--	OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8),
--	OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8),
--	OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8)
-+	OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8, 0x204, 0x208, 0x20C, 0x240),
-+	OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8, 0x534, 0x204, 0x208, 0x23C),
-+	OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8, 0x52C, 0x200, 0x204, 0x238),
-+	OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8, 0x524, 0x1FC, 0x200, 0x234),
-+	OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8, 0x51C, 0x1F8, 0x1FC, 0x230),
-+	OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8, 0x460, 0x140, 0x144, 0x178)
- };
- 
- static struct owl_pinctrl_soc_data s900_pinctrl_data = {
--- 
-2.17.1
+> Really that's all that you need - log the message to whichever console
+> targets you can currently safely do so. If it's none well there was
+> always the proposed morse code keyboard light driver 8)
 
+Hm, just discard messages? With printk_safe_mask we keep everything
+in a lockless per-CPU buffer, which we flush [per-CPU buffer -> printk logbuf]
+from irq_work, so we can print it later.
+
+	-ss
