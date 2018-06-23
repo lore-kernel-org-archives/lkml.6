@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A62C43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACE5C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 073A4241C4
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:14:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 073A4241C4
+	by mail.kernel.org (Postfix) with ESMTP id 3765F241F1
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 12:15:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3765F241F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751927AbeFWMOm (ORCPT
+        id S1752014AbeFWMPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 08:14:42 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44935 "EHLO
+        Sat, 23 Jun 2018 08:15:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36657 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751442AbeFWMOk (ORCPT
+        with ESMTP id S1751820AbeFWMPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 08:14:40 -0400
+        Sat, 23 Jun 2018 08:15:14 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCEZ63464083
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5NCF8E6464300
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 23 Jun 2018 05:14:35 -0700
+        Sat, 23 Jun 2018 05:15:08 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCEZT9464080;
-        Sat, 23 Jun 2018 05:14:35 -0700
-Date:   Sat, 23 Jun 2018 05:14:35 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5NCF8To464297;
+        Sat, 23 Jun 2018 05:15:08 -0700
+Date:   Sat, 23 Jun 2018 05:15:08 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-d9b48c86eb380bb272d0ad8f5338d8dc941f3b32@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org,
-        reinette.chatre@intel.com, mingo@kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, reinette.chatre@intel.com, tglx@linutronix.de,
-          hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <cc0058014c30adb88ca7d1a5abfadacbfb5edd0d.1529706536.git.reinette.chatre@intel.com>
-References: <cc0058014c30adb88ca7d1a5abfadacbfb5edd0d.1529706536.git.reinette.chatre@intel.com>
+Message-ID: <tip-e17e733070d4ab312a35848ab248e85b78dcb3f4@git.kernel.org>
+Cc:     reinette.chatre@intel.com, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, reinette.chatre@intel.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org
+In-Reply-To: <6e118c15d2c254a27b8891783505cd1bb94a2b10.1529706536.git.reinette.chatre@intel.com>
+References: <6e118c15d2c254a27b8891783505cd1bb94a2b10.1529706536.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Display resource groups'
- allocations' size in bytes
-Git-Commit-ID: d9b48c86eb380bb272d0ad8f5338d8dc941f3b32
+Subject: [tip:x86/cache] x86/intel_rdt: Documentation for Cache
+ Pseudo-Locking
+Git-Commit-ID: e17e733070d4ab312a35848ab248e85b78dcb3f4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,25 +57,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d9b48c86eb380bb272d0ad8f5338d8dc941f3b32
-Gitweb:     https://git.kernel.org/tip/d9b48c86eb380bb272d0ad8f5338d8dc941f3b32
+Commit-ID:  e17e733070d4ab312a35848ab248e85b78dcb3f4
+Gitweb:     https://git.kernel.org/tip/e17e733070d4ab312a35848ab248e85b78dcb3f4
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Fri, 22 Jun 2018 15:42:06 -0700
+AuthorDate: Fri, 22 Jun 2018 15:42:07 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 23 Jun 2018 13:03:44 +0200
 
-x86/intel_rdt: Display resource groups' allocations' size in bytes
+x86/intel_rdt: Documentation for Cache Pseudo-Locking
 
-The schemata file displays the allocations associated with each domain of
-each resource. The syntax of this file reflects the capacity bitmask (CBM)
-of the actual allocation. In order to determine the actual size of an
-allocation the user needs to dig through three different files to query the
-variables needed to compute it (the cache size, the CBM length, and the
-schemata).
-
-Introduce a new file "size" associated with each resource group that will
-mirror the schemata file syntax and display the size in bytes of each
-allocation.
+Add description of Cache Pseudo-Locking feature, its interface, as well as
+an example of its usage.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -86,129 +78,328 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/cc0058014c30adb88ca7d1a5abfadacbfb5edd0d.1529706536.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/6e118c15d2c254a27b8891783505cd1bb94a2b10.1529706536.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt.h          |  2 +
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 81 ++++++++++++++++++++++++++++++++
- 2 files changed, 83 insertions(+)
+ Documentation/x86/intel_rdt_ui.txt | 280 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 278 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 362c8fe695f3..ed20e91c28ed 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -467,6 +467,8 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 			   struct seq_file *s, void *v);
- bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
- 			   u32 _cbm, int closid, bool exclusive);
-+unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
-+				  u32 cbm);
- enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
- struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
- int update_domains(struct rdt_resource *r, int closid);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index e0ec41a6540e..cde0f4114d4e 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -20,6 +20,7 @@
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index de913e00e922..bcd0a6d2fcf8 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -29,7 +29,11 @@ mount options are:
+ L2 and L3 CDP are controlled seperately.
  
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
-+#include <linux/cacheinfo.h>
- #include <linux/cpu.h>
- #include <linux/fs.h>
- #include <linux/sysfs.h>
-@@ -1016,6 +1017,78 @@ out:
- 	return ret ?: nbytes;
- }
- 
-+/**
-+ * rdtgroup_cbm_to_size - Translate CBM to size in bytes
-+ * @r: RDT resource to which @d belongs.
-+ * @d: RDT domain instance.
-+ * @cbm: bitmask for which the size should be computed.
-+ *
-+ * The bitmask provided associated with the RDT domain instance @d will be
-+ * translated into how many bytes it represents. The size in bytes is
-+ * computed by first dividing the total cache size by the CBM length to
-+ * determine how many bytes each bit in the bitmask represents. The result
-+ * is multiplied with the number of bits set in the bitmask.
-+ */
-+unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
-+				  struct rdt_domain *d, u32 cbm)
-+{
-+	struct cpu_cacheinfo *ci;
-+	unsigned int size = 0;
-+	int num_b, i;
+ RDT features are orthogonal. A particular system may support only
+-monitoring, only control, or both monitoring and control.
++monitoring, only control, or both monitoring and control.  Cache
++pseudo-locking is a unique way of using cache control to "pin" or
++"lock" data in the cache. Details can be found in
++"Cache Pseudo-Locking".
 +
-+	num_b = bitmap_weight((unsigned long *)&cbm, r->cache.cbm_len);
-+	ci = get_cpu_cacheinfo(cpumask_any(&d->cpu_mask));
-+	for (i = 0; i < ci->num_leaves; i++) {
-+		if (ci->info_list[i].level == r->cache_level) {
-+			size = ci->info_list[i].size / r->cache.cbm_len * num_b;
-+			break;
-+		}
+ 
+ The mount succeeds if either of allocation or monitoring is present, but
+ only those files and directories supported by the system will be created.
+@@ -86,6 +90,8 @@ related to allocation:
+ 			      and available for sharing.
+ 			"E" - Corresponding region is used exclusively by
+ 			      one resource group. No sharing allowed.
++			"P" - Corresponding region is pseudo-locked. No
++			      sharing allowed.
+ 
+ Memory bandwitdh(MB) subdirectory contains the following files
+ with respect to allocation:
+@@ -192,7 +198,12 @@ When control is enabled all CTRL_MON groups will also contain:
+ "mode":
+ 	The "mode" of the resource group dictates the sharing of its
+ 	allocations. A "shareable" resource group allows sharing of its
+-	allocations while an "exclusive" resource group does not.
++	allocations while an "exclusive" resource group does not. A
++	cache pseudo-locked region is created by first writing
++	"pseudo-locksetup" to the "mode" file before writing the cache
++	pseudo-locked region's schemata to the resource group's "schemata"
++	file. On successful pseudo-locked region creation the mode will
++	automatically change to "pseudo-locked".
+ 
+ When monitoring is enabled all MON groups will also contain:
+ 
+@@ -410,6 +421,170 @@ L3CODE:0=fffff;1=fffff;2=fffff;3=fffff
+ L3DATA:0=fffff;1=fffff;2=3c0;3=fffff
+ L3CODE:0=fffff;1=fffff;2=fffff;3=fffff
+ 
++Cache Pseudo-Locking
++--------------------
++CAT enables a user to specify the amount of cache space that an
++application can fill. Cache pseudo-locking builds on the fact that a
++CPU can still read and write data pre-allocated outside its current
++allocated area on a cache hit. With cache pseudo-locking, data can be
++preloaded into a reserved portion of cache that no application can
++fill, and from that point on will only serve cache hits. The cache
++pseudo-locked memory is made accessible to user space where an
++application can map it into its virtual address space and thus have
++a region of memory with reduced average read latency.
++
++The creation of a cache pseudo-locked region is triggered by a request
++from the user to do so that is accompanied by a schemata of the region
++to be pseudo-locked. The cache pseudo-locked region is created as follows:
++- Create a CAT allocation CLOSNEW with a CBM matching the schemata
++  from the user of the cache region that will contain the pseudo-locked
++  memory. This region must not overlap with any current CAT allocation/CLOS
++  on the system and no future overlap with this cache region is allowed
++  while the pseudo-locked region exists.
++- Create a contiguous region of memory of the same size as the cache
++  region.
++- Flush the cache, disable hardware prefetchers, disable preemption.
++- Make CLOSNEW the active CLOS and touch the allocated memory to load
++  it into the cache.
++- Set the previous CLOS as active.
++- At this point the closid CLOSNEW can be released - the cache
++  pseudo-locked region is protected as long as its CBM does not appear in
++  any CAT allocation. Even though the cache pseudo-locked region will from
++  this point on not appear in any CBM of any CLOS an application running with
++  any CLOS will be able to access the memory in the pseudo-locked region since
++  the region continues to serve cache hits.
++- The contiguous region of memory loaded into the cache is exposed to
++  user-space as a character device.
++
++Cache pseudo-locking increases the probability that data will remain
++in the cache via carefully configuring the CAT feature and controlling
++application behavior. There is no guarantee that data is placed in
++cache. Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict
++“locked” data from cache. Power management C-states may shrink or
++power off cache. It is thus recommended to limit the processor maximum
++C-state, for example, by setting the processor.max_cstate kernel parameter.
++
++It is required that an application using a pseudo-locked region runs
++with affinity to the cores (or a subset of the cores) associated
++with the cache on which the pseudo-locked region resides. A sanity check
++within the code will not allow an application to map pseudo-locked memory
++unless it runs with affinity to cores associated with the cache on which the
++pseudo-locked region resides. The sanity check is only done during the
++initial mmap() handling, there is no enforcement afterwards and the
++application self needs to ensure it remains affine to the correct cores.
++
++Pseudo-locking is accomplished in two stages:
++1) During the first stage the system administrator allocates a portion
++   of cache that should be dedicated to pseudo-locking. At this time an
++   equivalent portion of memory is allocated, loaded into allocated
++   cache portion, and exposed as a character device.
++2) During the second stage a user-space application maps (mmap()) the
++   pseudo-locked memory into its address space.
++
++Cache Pseudo-Locking Interface
++------------------------------
++A pseudo-locked region is created using the resctrl interface as follows:
++
++1) Create a new resource group by creating a new directory in /sys/fs/resctrl.
++2) Change the new resource group's mode to "pseudo-locksetup" by writing
++   "pseudo-locksetup" to the "mode" file.
++3) Write the schemata of the pseudo-locked region to the "schemata" file. All
++   bits within the schemata should be "unused" according to the "bit_usage"
++   file.
++
++On successful pseudo-locked region creation the "mode" file will contain
++"pseudo-locked" and a new character device with the same name as the resource
++group will exist in /dev/pseudo_lock. This character device can be mmap()'ed
++by user space in order to obtain access to the pseudo-locked memory region.
++
++An example of cache pseudo-locked region creation and usage can be found below.
++
++Cache Pseudo-Locking Debugging Interface
++---------------------------------------
++The pseudo-locking debugging interface is enabled by default (if
++CONFIG_DEBUG_FS is enabled) and can be found in /sys/kernel/debug/resctrl.
++
++There is no explicit way for the kernel to test if a provided memory
++location is present in the cache. The pseudo-locking debugging interface uses
++the tracing infrastructure to provide two ways to measure cache residency of
++the pseudo-locked region:
++1) Memory access latency using the pseudo_lock_mem_latency tracepoint. Data
++   from these measurements are best visualized using a hist trigger (see
++   example below). In this test the pseudo-locked region is traversed at
++   a stride of 32 bytes while hardware prefetchers and preemption
++   are disabled. This also provides a substitute visualization of cache
++   hits and misses.
++2) Cache hit and miss measurements using model specific precision counters if
++   available. Depending on the levels of cache on the system the pseudo_lock_l2
++   and pseudo_lock_l3 tracepoints are available.
++   WARNING: triggering this  measurement uses from two (for just L2
++   measurements) to four (for L2 and L3 measurements) precision counters on
++   the system, if any other measurements are in progress the counters and
++   their corresponding event registers will be clobbered.
++
++When a pseudo-locked region is created a new debugfs directory is created for
++it in debugfs as /sys/kernel/debug/resctrl/<newdir>. A single
++write-only file, pseudo_lock_measure, is present in this directory. The
++measurement on the pseudo-locked region depends on the number, 1 or 2,
++written to this debugfs file. Since the measurements are recorded with the
++tracing infrastructure the relevant tracepoints need to be enabled before the
++measurement is triggered.
++
++Example of latency debugging interface:
++In this example a pseudo-locked region named "newlock" was created. Here is
++how we can measure the latency in cycles of reading from this region and
++visualize this data with a histogram that is available if CONFIG_HIST_TRIGGERS
++is set:
++# :> /sys/kernel/debug/tracing/trace
++# echo 'hist:keys=latency' > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/trigger
++# echo 1 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/enable
++# echo 1 > /sys/kernel/debug/resctrl/newlock/pseudo_lock_measure
++# echo 0 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/enable
++# cat /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/hist
++
++# event histogram
++#
++# trigger info: hist:keys=latency:vals=hitcount:sort=hitcount:size=2048 [active]
++#
++
++{ latency:        456 } hitcount:          1
++{ latency:         50 } hitcount:         83
++{ latency:         36 } hitcount:         96
++{ latency:         44 } hitcount:        174
++{ latency:         48 } hitcount:        195
++{ latency:         46 } hitcount:        262
++{ latency:         42 } hitcount:        693
++{ latency:         40 } hitcount:       3204
++{ latency:         38 } hitcount:       3484
++
++Totals:
++    Hits: 8192
++    Entries: 9
++   Dropped: 0
++
++Example of cache hits/misses debugging:
++In this example a pseudo-locked region named "newlock" was created on the L2
++cache of a platform. Here is how we can obtain details of the cache hits
++and misses using the platform's precision counters.
++
++# :> /sys/kernel/debug/tracing/trace
++# echo 1 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_l2/enable
++# echo 2 > /sys/kernel/debug/resctrl/newlock/pseudo_lock_measure
++# echo 0 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_l2/enable
++# cat /sys/kernel/debug/tracing/trace
++
++# tracer: nop
++#
++#                              _-----=> irqs-off
++#                             / _----=> need-resched
++#                            | / _---=> hardirq/softirq
++#                            || / _--=> preempt-depth
++#                            ||| /     delay
++#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
++#              | |       |   ||||       |         |
++ pseudo_lock_mea-1672  [002] ....  3132.860500: pseudo_lock_l2: hits=4097 miss=0
++
++
+ Examples for RDT allocation usage:
+ 
+ Example 1
+@@ -596,6 +771,107 @@ A resource group cannot be forced to overlap with an exclusive resource group:
+ # cat info/last_cmd_status
+ overlaps with exclusive group
+ 
++Example of Cache Pseudo-Locking
++-------------------------------
++Lock portion of L2 cache from cache id 1 using CBM 0x3. Pseudo-locked
++region is exposed at /dev/pseudo_lock/newlock that can be provided to
++application for argument to mmap().
++
++# mount -t resctrl resctrl /sys/fs/resctrl/
++# cd /sys/fs/resctrl
++
++Ensure that there are bits available that can be pseudo-locked, since only
++unused bits can be pseudo-locked the bits to be pseudo-locked needs to be
++removed from the default resource group's schemata:
++# cat info/L2/bit_usage
++0=SSSSSSSS;1=SSSSSSSS
++# echo 'L2:1=0xfc' > schemata
++# cat info/L2/bit_usage
++0=SSSSSSSS;1=SSSSSS00
++
++Create a new resource group that will be associated with the pseudo-locked
++region, indicate that it will be used for a pseudo-locked region, and
++configure the requested pseudo-locked region capacity bitmask:
++
++# mkdir newlock
++# echo pseudo-locksetup > newlock/mode
++# echo 'L2:1=0x3' > newlock/schemata
++
++On success the resource group's mode will change to pseudo-locked, the
++bit_usage will reflect the pseudo-locked region, and the character device
++exposing the pseudo-locked region will exist:
++
++# cat newlock/mode
++pseudo-locked
++# cat info/L2/bit_usage
++0=SSSSSSSS;1=SSSSSSPP
++# ls -l /dev/pseudo_lock/newlock
++crw------- 1 root root 243, 0 Apr  3 05:01 /dev/pseudo_lock/newlock
++
++/*
++ * Example code to access one page of pseudo-locked cache region
++ * from user space.
++ */
++#define _GNU_SOURCE
++#include <fcntl.h>
++#include <sched.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <sys/mman.h>
++
++/*
++ * It is required that the application runs with affinity to only
++ * cores associated with the pseudo-locked region. Here the cpu
++ * is hardcoded for convenience of example.
++ */
++static int cpuid = 2;
++
++int main(int argc, char *argv[])
++{
++	cpu_set_t cpuset;
++	long page_size;
++	void *mapping;
++	int dev_fd;
++	int ret;
++
++	page_size = sysconf(_SC_PAGESIZE);
++
++	CPU_ZERO(&cpuset);
++	CPU_SET(cpuid, &cpuset);
++	ret = sched_setaffinity(0, sizeof(cpuset), &cpuset);
++	if (ret < 0) {
++		perror("sched_setaffinity");
++		exit(EXIT_FAILURE);
 +	}
 +
-+	return size;
++	dev_fd = open("/dev/pseudo_lock/newlock", O_RDWR);
++	if (dev_fd < 0) {
++		perror("open");
++		exit(EXIT_FAILURE);
++	}
++
++	mapping = mmap(0, page_size, PROT_READ | PROT_WRITE, MAP_SHARED,
++		       dev_fd, 0);
++	if (mapping == MAP_FAILED) {
++		perror("mmap");
++		close(dev_fd);
++		exit(EXIT_FAILURE);
++	}
++
++	/* Application interacts with pseudo-locked memory @mapping */
++
++	ret = munmap(mapping, page_size);
++	if (ret < 0) {
++		perror("munmap");
++		close(dev_fd);
++		exit(EXIT_FAILURE);
++	}
++
++	close(dev_fd);
++	exit(EXIT_SUCCESS);
 +}
 +
-+/**
-+ * rdtgroup_size_show - Display size in bytes of allocated regions
-+ *
-+ * The "size" file mirrors the layout of the "schemata" file, printing the
-+ * size in bytes of each region instead of the capacity bitmask.
-+ *
-+ */
-+static int rdtgroup_size_show(struct kernfs_open_file *of,
-+			      struct seq_file *s, void *v)
-+{
-+	struct rdtgroup *rdtgrp;
-+	struct rdt_resource *r;
-+	struct rdt_domain *d;
-+	unsigned int size;
-+	bool sep = false;
-+	u32 cbm;
-+
-+	rdtgrp = rdtgroup_kn_lock_live(of->kn);
-+	if (!rdtgrp) {
-+		rdtgroup_kn_unlock(of->kn);
-+		return -ENOENT;
-+	}
-+
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		seq_printf(s, "%*s:", max_name_width, r->name);
-+		list_for_each_entry(d, &r->domains, list) {
-+			if (sep)
-+				seq_putc(s, ';');
-+			cbm = d->ctrl_val[rdtgrp->closid];
-+			size = rdtgroup_cbm_to_size(r, d, cbm);
-+			seq_printf(s, "%d=%u", d->id, size);
-+			sep = true;
-+		}
-+		seq_putc(s, '\n');
-+	}
-+
-+	rdtgroup_kn_unlock(of->kn);
-+
-+	return 0;
-+}
-+
- /* rdtgroup information files for one cache resource. */
- static struct rftype res_common_files[] = {
- 	{
-@@ -1144,6 +1217,14 @@ static struct rftype res_common_files[] = {
- 		.seq_show	= rdtgroup_mode_show,
- 		.fflags		= RF_CTRL_BASE,
- 	},
-+	{
-+		.name		= "size",
-+		.mode		= 0444,
-+		.kf_ops		= &rdtgroup_kf_single_ops,
-+		.seq_show	= rdtgroup_size_show,
-+		.fflags		= RF_CTRL_BASE,
-+	},
-+
- };
+ Locking between applications
+ ----------------------------
  
- static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
