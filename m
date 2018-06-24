@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCC4C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 09:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85FCC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 09:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B8C24E75
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 09:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F68A24E8A
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 09:58:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ojg7uVqN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B8C24E75
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csEuV1X2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F68A24E8A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeFXJ6T (ORCPT
+        id S1752206AbeFXJ6V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 05:58:19 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35803 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752111AbeFXJ6R (ORCPT
+        Sun, 24 Jun 2018 05:58:21 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:32872 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752106AbeFXJ6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 05:58:17 -0400
-Received: by mail-wr0-f193.google.com with SMTP id c13-v6so711112wrq.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 02:58:17 -0700 (PDT)
+        Sun, 24 Jun 2018 05:58:16 -0400
+Received: by mail-wr0-f195.google.com with SMTP id k16-v6so10686759wro.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 02:58:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Qkrcckuz44Cyt41A31MUxsK25Q72qjMqNa8L82+dMnU=;
-        b=ojg7uVqNRXkIuBLNzHmQloaBi4ZN6CkRfwgmQ+WU8iPJzGckxMvKlBi+0EmmRcbmJ+
-         sORLjUTls2OsWm8KS/TZgm67vazfSOjXKSbo2ZYGqZvsBumMDvrZW3NjZAhzTR/2XM8p
-         71d6N+7Eq77sTTihNNioYLs891RFr2tf75I4mym45lz1y420HKaM0WdaZzBaTzd+zLy1
-         LwlWmqY5+dq6btiq4KhQKGJto3jUgcuHlALBnkPNdhudSE1Yj4koJA7u1ZEpq+yZp8CD
-         lRekaXdpp4hkgadPZOSBMYJLpOc98i1qxr0Nem0MjSq89bMaIQxNz7SCYahvdL4DLf1f
-         mViA==
+        bh=5Md8H7iNHuNRqlImkhk8J1WUS54KhEvm1X6fF3w1m4g=;
+        b=csEuV1X2YFFmb7bx/BpTARNT6BXOqeNpgN+X3+8jCPal1k3XN3d6jC344Q0zuOI82D
+         EJlrZ6fINFqYCXmly4iefMyZPgjaiWnNryAlxQFKjl7KG7jLo1SaK2fA1byS4fR248FL
+         VylCSeAsRaT/kwMs7Tuu7v5wNnuUfZbd+AXvCOOInR5XD20iYse5E3egSaXFOW3F3Nhc
+         4DLLFMNZ0oZjZQ7ondUREZAONHl55UQ3bXzvT8F1Wd9P4SCp7ClQSc4M6IyWZox8ZMl8
+         eH/eGHZuyTTSReHC0GBMTbkxaysAGbZdOv2gitqDVZ63ljlrow3VM/zbD8F2k/i5N4r1
+         ljpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Qkrcckuz44Cyt41A31MUxsK25Q72qjMqNa8L82+dMnU=;
-        b=VgLp5TLI6g4X+bDnOKbx2ka03UWkSnsraps2ScKrHprWQLDmIoSsSRoFTrKPUeq52Q
-         zXuFF3oS3xy5v60AAl/7eJq6rFvQ94EaolHG0LrBqBtEUwLlgbHeSSh+Qci0xuBUZ5Vf
-         mwgOgti0g8d9qx1rGEWD+kPX+sKIIDdNOIJzOoTLPbIwNMqnXpPWcQ98S4Af4ouafebN
-         Yb8G1jEKEZ9S2P25YVH+YTyO7pzTpb14H68DeEXYGMqHiRUfqmtz3C9n2/eMGLh11bju
-         Bd0tIEgvzgE2F9itMZB0nlXW8GTexJW11VJt45qhEzUswMvgbOen1/ppnXoDdUAd8JcI
-         ybQg==
-X-Gm-Message-State: APt69E2tOyEZMQ+LfLf5gxdW7lPKyQRlkTXzIt8DpFk0wi/3L75fLgf7
-        dtc/XOepCAB5l57C3x7Bv+TNWQ==
-X-Google-Smtp-Source: ADUXVKI9gOiFJwaY3+ZqtR1PBVdiPuYJ3f0pY21N8ylFJPj4A3gU4m0kj14nNrcP9QR214rfaJH9ew==
-X-Received: by 2002:adf:b3d4:: with SMTP id x20-v6mr6942805wrd.272.1529834296110;
-        Sun, 24 Jun 2018 02:58:16 -0700 (PDT)
+        bh=5Md8H7iNHuNRqlImkhk8J1WUS54KhEvm1X6fF3w1m4g=;
+        b=Vwbwd20FTT2W7gSwdZwZ5/5m3y4J2qf4fF9j6Y94Txvo/wEDNercgZx/pQsjBbfVS4
+         CJOrYzLooZQKAM25iuvWyvy4vd0Y2eYk6ygLRDh9zx9QINauZ9l41UGW4IWk1XPYtNKq
+         c5uI9BYc+O2t45sXeUTynbtD+iS1J1u+8bwbUZrnEdit5q7vqcVZxtnbDqSssx0w2+Ys
+         EuhCeFUYj4gX1ltW/gb9FOeYNTft0BMbLeXb76XyV+lrak0kmfaboSkQWiE+wEsar+hT
+         VNlCP9FEUjhlnsbKmuhcy/jSt3eK+65JfEV8OsqG/VhTPUNcEP7Oc6q2zd4XDdhH6mbK
+         iyfw==
+X-Gm-Message-State: APt69E2wMQ0T5hXETtzOT+PVU0mrrEgqrO9BIsZ9vrlsWxJ2y2Iv9B2y
+        0mtL38c+e62IeIFRbNqZ4GfbjQ==
+X-Google-Smtp-Source: AAOMgpeM+5CFR029DDK3Jy2255p9WYovncm4KS8ePhkPpgBnl5CoI4MfNe9oavL3P+2DnciN5FSFIA==
+X-Received: by 2002:adf:f6c9:: with SMTP id y9-v6mr7320833wrp.4.1529834294714;
+        Sun, 24 Jun 2018 02:58:14 -0700 (PDT)
 Received: from localhost.localdomain (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
-        by smtp.gmail.com with ESMTPSA id u4-v6sm4468328wmc.1.2018.06.24.02.58.14
+        by smtp.gmail.com with ESMTPSA id u4-v6sm4468328wmc.1.2018.06.24.02.58.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 02:58:15 -0700 (PDT)
+        Sun, 24 Jun 2018 02:58:13 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v2 3/8] staging: rtl8192u: User memset to initialize memory, instead of loop.
-Date:   Sun, 24 Jun 2018 10:57:27 +0100
-Message-Id: <20180624095732.12082-4-johnfwhitmore@gmail.com>
+Subject: [PATCH v2 2/8] staging: rtl8192u: Correct indentation of switch statement - Coding Style
+Date:   Sun, 24 Jun 2018 10:57:26 +0100
+Message-Id: <20180624095732.12082-3-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180624095732.12082-1-johnfwhitmore@gmail.com>
 References: <20180624095732.12082-1-johnfwhitmore@gmail.com>
@@ -73,36 +73,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaced memory initialising loop with memset, as suggested by Andy Shevchenko
+Removed an extra indentation from the code of the various case options in a
+switch statement.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ .../rtl8192u/ieee80211/rtl819x_HTProc.c       | 30 +++++++++----------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 4bfadb49c363..bbac9d04c23e 100644
+index 54c48747f5fa..4bfadb49c363 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -742,8 +742,6 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
-  */
- static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
- {
--	u8					i;
--
- 	if (!pOperateMCS) {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "pOperateMCS can't be null in HT_PickMCSRate()\n");
- 		return false;
-@@ -756,8 +754,7 @@ static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
- 		//legacy rate routine handled at selectedrate
+@@ -753,28 +753,28 @@ static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
+ 	case IEEE_A:
+ 	case IEEE_B:
+ 	case IEEE_G:
+-			//legacy rate routine handled at selectedrate
++		//legacy rate routine handled at selectedrate
  
- 		//no MCS rate
--		for (i = 0; i <= 15; i++)
--			pOperateMCS[i] = 0;
-+		memset(pOperateMCS, 0, 15);
- 		break;
+-			//no MCS rate
+-			for (i = 0; i <= 15; i++)
+-				pOperateMCS[i] = 0;
+-			break;
++		//no MCS rate
++		for (i = 0; i <= 15; i++)
++			pOperateMCS[i] = 0;
++		break;
  
  	case IEEE_N_24G:	//assume CCK rate ok
+ 	case IEEE_N_5G:
+-			// Legacy part we only use 6, 5.5,2,1 for N_24G and 6 for N_5G.
+-			// Legacy part shall be handled at SelectRateSet().
+-
+-			//HT part
+-			// TODO: may be different if we have different number of antenna
+-			pOperateMCS[0] &= RATE_ADPT_1SS_MASK;	//support MCS 0~7
+-			pOperateMCS[1] &= RATE_ADPT_2SS_MASK;
+-			pOperateMCS[3] &= RATE_ADPT_MCS32_MASK;
+-			break;
++		// Legacy part we only use 6, 5.5,2,1 for N_24G and 6 for N_5G.
++		// Legacy part shall be handled at SelectRateSet().
++
++		//HT part
++		// TODO: may be different if we have different number of antenna
++		pOperateMCS[0] &= RATE_ADPT_1SS_MASK;	//support MCS 0~7
++		pOperateMCS[1] &= RATE_ADPT_2SS_MASK;
++		pOperateMCS[3] &= RATE_ADPT_MCS32_MASK;
++		break;
+ 
+ 	//should never reach here
+ 	default:
+-			break;
++		break;
+ 	}
+ 
+ 	return true;
 -- 
 2.17.1
 
