@@ -2,129 +2,115 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C39C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 18:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FE0C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 18:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00F3B252C5
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 18:00:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Xyy/BWi8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F3B252C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5266A252C7
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 18:07:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5266A252C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752108AbeFXSAP (ORCPT
+        id S1751665AbeFXSH4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 14:00:15 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:41445 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750794AbeFXSAM (ORCPT
+        Sun, 24 Jun 2018 14:07:56 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53590 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750780AbeFXSHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 14:00:12 -0400
-Received: by mail-ot0-f193.google.com with SMTP id d19-v6so12677174oti.8;
-        Sun, 24 Jun 2018 11:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sc/3OGXdeH7CMykaS3k5y7VrCSDs1GfWuQNQaPbJ3Os=;
-        b=Xyy/BWi88IZrd78vFesrBfsAUeZroNBe1ZlBUXjm5ATA7I8rr+vCNDJ5gRMAZ8w5wO
-         J46h+h2IU+fH4KzCe3ALOJrwbGnTne2O8VKM30tLDewKKeOfdB0e+JzGpqKlJi/Zcdsh
-         a/8tzdbnCYt6ooqiY20TWfx0zJs2UMXYvAeY1aP8oU4vXfzTATxDsV8ncxv9MrLkpnCg
-         +vFyXKXasiltu25O4w+lhMQiSm1aKkuH17SkCWrzxtbUbmLXwkeJ5GvjiRR/gIYIjmvj
-         IXz+IyTcw483Le21SWIHm48pn/dd8hJuMUPlOUxd3+mA2l6Bj1XnToaD2ON6WNFjL1Qv
-         ENAw==
+        Sun, 24 Jun 2018 14:07:55 -0400
+Received: by mail-wm0-f65.google.com with SMTP id x6-v6so6807759wmc.3;
+        Sun, 24 Jun 2018 11:07:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sc/3OGXdeH7CMykaS3k5y7VrCSDs1GfWuQNQaPbJ3Os=;
-        b=ZHhnmxiDJ/o6AQeowej9mSzXjmnSVrlQrUfavpI2V2SRgSQRFMg+X6XTjzl0ydAbfK
-         gej4HJ1l3B6ecViNB5z/qVCh/2HSQiMGa4Iq4tLQlmGH2TMgmObVdEzcLvs0JBOFSr9A
-         l0STHZ1tQQmKuimgsyjaERm+lBlei5jUv0GiXrNHurY8Pj+Uxphotk7o3Y/7r6B+fulg
-         13DZkUpoTPEV9MESARlLmr9UVvZGr8SDl8eN1EFEJ70V2HUTm8aI+39jB80V5D9Coy47
-         dNuwIJaLHHJenAW+i/4TD1WBthIEjus6nBJBW/sCBbqsGukjfC8RWPAKjk/vn/xkZn2l
-         x0cw==
-X-Gm-Message-State: APt69E0zk2zJvW5hcKD6sDl2DEnWKHqmk73HGI0JtpbrtundAaBBPGe/
-        MgY0MW2za+bP7nvtTPC1spHQHVRVBVuX/H6PicU=
-X-Google-Smtp-Source: ADUXVKJSYzrztBifRsLZvIIWqhq2Mfwod+j/gk/pDDZ+VCYTqRamlSClBft/gnwinMxKiVtGcP1W/DxvfdCR/evNVVQ=
-X-Received: by 2002:a9d:2909:: with SMTP id d9-v6mr5372760otb.258.1529863211984;
- Sun, 24 Jun 2018 11:00:11 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sY8k+51LcoTqNjd5h6jQX9iWxQiiFeU02dMZ1Rzhtgo=;
+        b=jFYqKlL2U1VvzgTytPL/pC5qQBKXmAFXDfXXoYTTYMqtd16Zb1NgjePwLEJfR/1r0q
+         xTH/G5ZscMh7uXDGopZUR+CtVGpRK/ipLmZlK4zhbZ0jbSLWZJCArGUGot1wgiilGyZB
+         cPw9Zq3h3V/koA4P47UMC7VNU4nv/zqbnySjfqp/p9vymHs02JUXSAJL8hzWpBi701Xc
+         x6hexiRCuxXReENatznvQ2hme57sa61l+Cp24seHexhyJq6Z+tRNSeGdUKOq2wa5ZOZ9
+         fxjzW8TyekcNO4sdyd0Xkdt6j0NGVcIxm/dE/GvwxwgLD//XV1HGi5Ep/J62URl2gsuq
+         sjVQ==
+X-Gm-Message-State: APt69E1nTNlDQkpjRMI39Fuy+jinMQkYJWEdjAN7uqtvbOBisEP3HKLS
+        /gykL0sy15B5Xx3u5FLO0Sn366b1
+X-Google-Smtp-Source: ADUXVKKRO3jL5BK1Wv+MREU2FS/g1t1ETt0BNrmTlIIKj3lKti7NPSADu8G4WugkPssj6HpOXETkHw==
+X-Received: by 2002:a1c:da4e:: with SMTP id r75-v6mr7103430wmg.64.1529863673466;
+        Sun, 24 Jun 2018 11:07:53 -0700 (PDT)
+Received: from [192.168.64.169] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
+        by smtp.gmail.com with ESMTPSA id q17-v6sm12976061wrr.7.2018.06.24.11.07.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Jun 2018 11:07:52 -0700 (PDT)
+Subject: Re: [PATCH 5/5] nvme: use __blk_mq_complete_request in timeout path
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     axboe@kernel.dk, martin.petersen@oracle.com, keith.busch@intel.com,
+        josef@toxicpanda.com, ulf.hansson@linaro.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1529500964-28429-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1529500964-28429-6-git-send-email-jianchao.w.wang@oracle.com>
+ <20180620143956.GA20950@lst.de>
+ <42583ee2-fe9d-39da-b82a-38a27b03fdb3@oracle.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <1817441e-6810-ed40-a8fd-403742818aae@grimberg.me>
+Date:   Sun, 24 Jun 2018 21:07:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <4c338a129ab14ab41949da5e3c21aed0d77dff8d.1529647619.git.chunfeng.yun@mediatek.com>
- <644d00edd2932c1a0d0a1bf368dd25427d1d9f64.1529647619.git.chunfeng.yun@mediatek.com>
-In-Reply-To: <644d00edd2932c1a0d0a1bf368dd25427d1d9f64.1529647619.git.chunfeng.yun@mediatek.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 24 Jun 2018 20:00:01 +0200
-Message-ID: <CAFBinCBS+fpfx6jaaqD=kqFuMF6ko8GikbV1ZVwgbDh-Sn8T8w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] usb: core: phy: fix return value checking about devm_of_phy_get_by_index()
-To:     chunfeng.yun@mediatek.com, johan@kernel.org
-Cc:     gregkh@linuxfoundation.org, felipe.balbi@linux.intel.com,
-        matthias.bgg@gmail.com, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <42583ee2-fe9d-39da-b82a-38a27b03fdb3@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Chunfeng,
 
-thank you for the patch!
+> Hi Christoph
+> 
+> Thanks for your kindly response.
+> 
+> On 06/20/2018 10:39 PM, Christoph Hellwig wrote:
+>>> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+>>> index 73a97fc..2a161f6 100644
+>>> --- a/drivers/nvme/host/pci.c
+>>> +++ b/drivers/nvme/host/pci.c
+>>> @@ -1203,6 +1203,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
+>>>   		nvme_warn_reset(dev, csts);
+>>>   		nvme_dev_disable(dev, false);
+>>>   		nvme_reset_ctrl(&dev->ctrl);
+>>> +		__blk_mq_complete_request(req);
+>>>   		return BLK_EH_DONE;
+>>>   	}
+>>>   
+>>> @@ -1213,6 +1214,11 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
+>>>   		dev_warn(dev->ctrl.device,
+>>>   			 "I/O %d QID %d timeout, completion polled\n",
+>>>   			 req->tag, nvmeq->qid);
+>>> +		/*
+>>> +		 * nvme_end_request will invoke blk_mq_complete_request,
+>>> +		 * it will do nothing for this timed out request.
+>>> +		 */
+>>> +		__blk_mq_complete_request(req);
+>>
+>> And this clearly is bogus.  We want to iterate over the tagetset
+>> and cancel all requests, not do that manually here.
+>>
+>> That was the whole point of the original change.
+>>
+> 
+> For nvme-pci, we indeed have an issue that when nvme_reset_work->nvme_dev_disable returns, timeout path maybe still
+> running and the nvme_dev_disable invoked by timeout path will race with the nvme_reset_work.
+> However, the hole is still there right now w/o my changes, but just narrower.
 
-On Fri, Jun 22, 2018 at 8:33 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
->
-> 1. use IS_ERR() but not IS_ERR_OR_NULL() because devm_of_phy_get_by_index()
->     never return NULL value;
-ACK - good catch!
+Given the amount of fixes (and fixes of fixes) we had in the timeout 
+handler, maybe it'd be a good idea to step back and take a another look?
 
-> 2. devm_of_phy_get_by_index() should not fail for a valid index
-I have learned that the PHY framework can return -ENODEV if the PHY is:
-1. supposed to be handled by the legacy USB PHY framework
-2. the PHY node is disabled in devicetree
-
-see [0] for the code in the PHY framework and [1] for the discussion
-with Johan (who informed me of case #1, I added him on this mail)
-
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> ---
->  drivers/usb/core/phy.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
-> index 9879767..0f972e1 100644
-> --- a/drivers/usb/core/phy.c
-> +++ b/drivers/usb/core/phy.c
-> @@ -23,14 +23,11 @@ static int usb_phy_roothub_add_phy(struct device *dev, int index,
->                                    struct list_head *list)
->  {
->         struct usb_phy_roothub *roothub_entry;
-> -       struct phy *phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
-> +       struct phy *phy;
->
-> -       if (IS_ERR_OR_NULL(phy)) {
-> -               if (!phy || PTR_ERR(phy) == -ENODEV)
-> -                       return 0;
-> -               else
-> -                       return PTR_ERR(phy);
-> -       }
-> +       phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
-> +       if (IS_ERR(phy))
-> +               return PTR_ERR(phy);
-@Johan can you please review this as well? maybe we need to keep the
--ENODEV check
-
-
-Regards
-Martin
-
-
-[0] https://elixir.bootlin.com/linux/v4.18-rc2/source/drivers/phy/phy-core.c#L421
-[1] https://lkml.org/lkml/2018/4/19/88
+Won't it be better to avoid disabling the device and return
+BLK_EH_RESET_TIMER if we are not aborting in the timeout handler?
