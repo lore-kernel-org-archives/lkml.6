@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002CFC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0AAC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D2D240AC
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D2D240AC
+	by mail.kernel.org (Postfix) with ESMTP id C67A02415C
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C67A02415C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754496AbeFXP2j (ORCPT
+        id S1754527AbeFXP2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:28:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58872 "EHLO
+        Sun, 24 Jun 2018 11:28:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58880 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752717AbeFXP2h (ORCPT
+        with ESMTP id S1751894AbeFXP2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:28:37 -0400
+        Sun, 24 Jun 2018 11:28:46 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 510FE2C;
-        Sun, 24 Jun 2018 15:28:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 510C22C;
+        Sun, 24 Jun 2018 15:28:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 05/52] net/sched: act_simple: fix parsing of TCA_DEF_DATA
-Date:   Sun, 24 Jun 2018 23:20:58 +0800
-Message-Id: <20180624142744.639406409@linuxfoundation.org>
+        stable@vger.kernel.org, Sachin Prabhu <sprabhu@redhat.com>,
+        Steve French <smfrench@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.14 31/52] smb3: on reconnect set PreviousSessionId field
+Date:   Sun, 24 Jun 2018 23:21:24 +0800
+Message-Id: <20180624142746.347926845@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -51,88 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit 8d499533e0bc02d44283dbdab03142b599b8ba16 ]
+commit b2adf22fdfba85a6701c481faccdbbb3a418ccfc upstream.
 
-use nla_strlcpy() to avoid copying data beyond the length of TCA_DEF_DATA
-netlink attribute, in case it is less than SIMP_MAX_DATA and it does not
-end with '\0' character.
+The server detects reconnect by the (non-zero) value in PreviousSessionId
+of SMB2/SMB3 SessionSetup request, but this behavior regressed due
+to commit 166cea4dc3a4f66f020cfb9286225ecd228ab61d
+("SMB2: Separate RawNTLMSSP authentication from SMB2_sess_setup")
 
-v2: fix errors in the commit message, thanks Hangbin Liu
-
-Fixes: fa1b1cff3d06 ("net_cls_act: Make act_simple use of netlink policy.")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+CC: Stable <stable@vger.kernel.org>
+CC: Sachin Prabhu <sprabhu@redhat.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/act_simple.c |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
 
---- a/net/sched/act_simple.c
-+++ b/net/sched/act_simple.c
-@@ -53,22 +53,22 @@ static void tcf_simp_release(struct tc_a
- 	kfree(d->tcfd_defdata);
- }
+---
+ fs/cifs/smb2pdu.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1182,6 +1182,7 @@ SMB2_sess_setup(const unsigned int xid,
+ 	sess_data->ses = ses;
+ 	sess_data->buf0_type = CIFS_NO_BUFFER;
+ 	sess_data->nls_cp = (struct nls_table *) nls_cp;
++	sess_data->previous_session = ses->Suid;
  
--static int alloc_defdata(struct tcf_defact *d, char *defdata)
-+static int alloc_defdata(struct tcf_defact *d, const struct nlattr *defdata)
- {
- 	d->tcfd_defdata = kzalloc(SIMP_MAX_DATA, GFP_KERNEL);
- 	if (unlikely(!d->tcfd_defdata))
- 		return -ENOMEM;
--	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
-+	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
- 	return 0;
- }
- 
--static void reset_policy(struct tcf_defact *d, char *defdata,
-+static void reset_policy(struct tcf_defact *d, const struct nlattr *defdata,
- 			 struct tc_defact *p)
- {
- 	spin_lock_bh(&d->tcf_lock);
- 	d->tcf_action = p->action;
- 	memset(d->tcfd_defdata, 0, SIMP_MAX_DATA);
--	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
-+	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
- 	spin_unlock_bh(&d->tcf_lock);
- }
- 
-@@ -87,7 +87,6 @@ static int tcf_simp_init(struct net *net
- 	struct tcf_defact *d;
- 	bool exists = false;
- 	int ret = 0, err;
--	char *defdata;
- 
- 	if (nla == NULL)
- 		return -EINVAL;
-@@ -110,8 +109,6 @@ static int tcf_simp_init(struct net *net
- 		return -EINVAL;
- 	}
- 
--	defdata = nla_data(tb[TCA_DEF_DATA]);
--
- 	if (!exists) {
- 		ret = tcf_idr_create(tn, parm->index, est, a,
- 				     &act_simp_ops, bind, false);
-@@ -119,7 +116,7 @@ static int tcf_simp_init(struct net *net
- 			return ret;
- 
- 		d = to_defact(*a);
--		ret = alloc_defdata(d, defdata);
-+		ret = alloc_defdata(d, tb[TCA_DEF_DATA]);
- 		if (ret < 0) {
- 			tcf_idr_release(*a, bind);
- 			return ret;
-@@ -133,7 +130,7 @@ static int tcf_simp_init(struct net *net
- 		if (!ovr)
- 			return -EEXIST;
- 
--		reset_policy(d, defdata, parm);
-+		reset_policy(d, tb[TCA_DEF_DATA], parm);
- 	}
- 
- 	if (ret == ACT_P_CREATED)
+ 	while (sess_data->func)
+ 		sess_data->func(sess_data);
 
 
