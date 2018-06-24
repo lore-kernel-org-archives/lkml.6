@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7435BC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 21:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE48C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 21:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CAC525322
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 21:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2F9625323
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 21:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="WEdwHcYX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CAC525322
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="TckV7yVF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F9625323
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752115AbeFXV1f (ORCPT
+        id S1751998AbeFXV1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 17:27:35 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:37116 "EHLO
+        Sun, 24 Jun 2018 17:27:33 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:37144 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751770AbeFXV1b (ORCPT
+        with ESMTP id S1751813AbeFXV1b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 24 Jun 2018 17:27:31 -0400
 Received: from trochilidae.lan (unknown [IPv6:2a02:169:34d6:10::3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 67BF75C02DA;
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id AA5455C1C06;
         Sun, 24 Jun 2018 23:27:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
         t=1529875649;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=ihTjcV0FxWVC2xyrFSTEdxyL75EYhpS5BZrp5FIyS2Y=;
-        b=WEdwHcYXyriUSmci2Jdb6wycg6mA8MwPC5XyP+j0tPvR8pgiB9fRQPWZqSLwsHbun2hqM1
-        zUCbNXhoXdyKIP+vV49FgljQP2W6DD7R05C07NJBJZi94+YdJfEoJuE/tyTmEhjXajmU6G
-        YIcwtxo1uAb8O74mnUnvPB+k1O7f15Q=
+         in-reply-to:in-reply-to:references:references;
+        bh=Sam56dJzffh/HgwJOXi79xAsu0HRMYX5+/Q/e7SsbuA=;
+        b=TckV7yVF+vC0vjS+/JPM+KL3391hE0lTUf4PGLRgY7ruUadHMzKpyU6nDaA1fa1u2bGN7r
+        0P1PjyQv71EATgDnXK4WtAzKy9PGBeOTYW42Q1cQuV7OAHoP5m+WId8gCf4A/KLGd26q4F
+        FN8PlMVNG6BF31/i8xNEUnj9DOQGURQ=
 From:   Stefan Agner <stefan@agner.ch>
 To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
         computersforpeace@gmail.com, marek.vasut@gmail.com,
@@ -47,10 +48,12 @@ Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
         gaireg@gaireg.de, linux-mtd@lists.infradead.org,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v8 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
-Date:   Sun, 24 Jun 2018 23:27:21 +0200
-Message-Id: <20180624212727.21672-1-stefan@agner.ch>
+Subject: [PATCH v8 1/6] mtd: rawnand: add Reed-Solomon error correction algorithm
+Date:   Sun, 24 Jun 2018 23:27:22 +0200
+Message-Id: <20180624212727.21672-2-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180624212727.21672-1-stefan@agner.ch>
+References: <20180624212727.21672-1-stefan@agner.ch>
 X-Spamd-Result: default: False [-2.10 / 15.00];
          TO_MATCH_ENVRCPT_ALL(0.00)[];
          RCPT_COUNT_TWELVE(0.00)[24];
@@ -71,88 +74,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eigth and hopefully final revision gets rid of nand_release() as
-suggested by Boris.
+Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
 
---
-Stefan
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/mtd/nand.txt | 2 +-
+ drivers/mtd/nand/raw/nand_base.c               | 1 +
+ include/linux/mtd/rawnand.h                    | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-Changes since v1:
-- Split controller and NAND chip structure
-- Add BCH support
-- Allow to select algorithm and strength using device tree
-- Improve HW ECC error reporting and use DEC_STATUS_BUF only
-- Use SPDX license identifier
-- Use per algorithm mtd_ooblayout_ops
-- Use setup_data_interface callback for NAND timing configuration
-
-Changes since v2:
-- Set clock rate using assigned-clocks
-- Use BIT() macro
-- Fix and improve timing calculation
-- Improve ECC error handling
-- Store OOB layout for tag area in Tegra chip structure
-- Update/fix bindings
-- Use more specific variable names (replace "value")
-- Introduce nand-is-boot-medium
-- Choose sensible ECC strenght automatically
-- Use wait_for_completion_timeout
-- Print register dump on completion timeout
-- Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
-
-Changes since v3:
-- Implement tegra_nand_(read|write)_raw using DMA
-- Implement tegra_nand_(read|write)_oob using DMA
-- Name registers according to Tegra 2 Technical Reference Manual (v02p)
-- Use wait_for_completion_io_timeout to account for IO
-- Get chip select id from device tree reg property
-- Clear interrupts and reinit wait queues in case command/DMA times out
-- Set default MTD name after nand_set_flash_node
-- Move MODULE_DEVICE_TABLE after declaration of tegra_nand_of_match
-- Make (rs|bch)_strength static
-
-Changes since v4:
-- Pass OOB area to nand_check_erased_ecc_chunk
-- Pass algorithm specific bits_per_step to tegra_nand_get_strength
-- Store ECC layout in chip structure
-- Fix pointer assignment (use NULL)
-- Removed obsolete header delay.h
-- Fixed newlines
-- Use non-_io variant of wait_for_completion_timeout
-
-Changes since v5:
-- Drop extra OOB bytes support
-
-Changes since v6:
-- checkpatch.pl fixes
-
-Changes since v7:
-- Replace nand_release() with mtd_device_unregister() + nand_cleanup()
-
-Lucas Stach (1):
-  ARM: dts: tegra: add Tegra20 NAND flash controller node
-
-Stefan Agner (5):
-  mtd: rawnand: add Reed-Solomon error correction algorithm
-  mtd: rawnand: add an option to specify NAND chip as a boot device
-  mtd: rawnand: tegra: add devicetree binding
-  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-  ARM: dts: tegra: enable NAND flash on Colibri T20
-
- .../devicetree/bindings/mtd/nand.txt          |    6 +-
- .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
- MAINTAINERS                                   |    7 +
- arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
- arch/arm/boot/dts/tegra20.dtsi                |   15 +
- drivers/mtd/nand/raw/Kconfig                  |   10 +
- drivers/mtd/nand/raw/Makefile                 |    1 +
- drivers/mtd/nand/raw/nand_base.c              |    4 +
- drivers/mtd/nand/raw/tegra_nand.c             | 1230 +++++++++++++++++
- include/linux/mtd/rawnand.h                   |    7 +
- 10 files changed, 1359 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
- create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
-
+diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
+index 8bb11d809429d..eaef8c657aa5c 100644
+--- a/Documentation/devicetree/bindings/mtd/nand.txt
++++ b/Documentation/devicetree/bindings/mtd/nand.txt
+@@ -25,7 +25,7 @@ Optional NAND chip properties:
+ 		  Deprecated values:
+ 		  "soft_bch": use "soft" and nand-ecc-algo instead
+ - nand-ecc-algo: string, algorithm of NAND ECC.
+-		 Supported values are: "hamming", "bch".
++		 Valid values are: "hamming", "bch", "rs".
+ - nand-bus-width : 8 or 16 bus width if not present 8
+ - nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
+ 
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 10c4f9919850c..47e9cb9063da4 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5777,6 +5777,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
+ static const char * const nand_ecc_algos[] = {
+ 	[NAND_ECC_HAMMING]	= "hamming",
+ 	[NAND_ECC_BCH]		= "bch",
++	[NAND_ECC_RS]		= "rs",
+ };
+ 
+ static int of_get_nand_ecc_algo(struct device_node *np)
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 3e8ec3b8a39c7..2d9cb7acbc3d8 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -121,6 +121,7 @@ enum nand_ecc_algo {
+ 	NAND_ECC_UNKNOWN,
+ 	NAND_ECC_HAMMING,
+ 	NAND_ECC_BCH,
++	NAND_ECC_RS,
+ };
+ 
+ /*
 -- 
 2.17.1
 
