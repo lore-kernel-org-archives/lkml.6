@@ -2,143 +2,123 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FA5C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05D9C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE486208DC
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:28:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE486208DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id B41FF21711
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:29:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41FF21711
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751994AbeFXN2e (ORCPT
+        id S1752007AbeFXN3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 09:28:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60292 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751812AbeFXN2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 09:28:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6DE75AD08;
-        Sun, 24 Jun 2018 13:28:31 +0000 (UTC)
-Subject: Re: [PATCH 4/4] soc: actions: Fix help text in Kconfig for
- OWL_PM_DOMAINS
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     robh+dt@kernel.org, liuwei@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        manivannanece23@gmail.com, Jeff Chen <jeff.chen@actions-semi.com>,
-        "Thomas C. Liau" <thomas.liau@actions-semi.com>
-References: <20180411164036.8046-1-manivannan.sadhasivam@linaro.org>
- <20180411164036.8046-5-manivannan.sadhasivam@linaro.org>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <62ef1835-8db9-f1e8-53b9-4cd74b5d416d@suse.de>
-Date:   Sun, 24 Jun 2018 15:28:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 24 Jun 2018 09:29:48 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:47665 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751812AbeFXN3q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 09:29:46 -0400
+Received: from localhost ([2.166.249.57]) by mrelayeu.kundenserver.de
+ (mreue104 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 0MJkO4-1fVybz2FvA-0018N5; Sun, 24 Jun 2018 15:29:03 +0200
+Date:   Sun, 24 Jun 2018 15:28:59 +0200
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, linus.walleij@linaro.org,
+        rdunlap@infradead.org, devicetree@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] iio: hx711: add data-ready-delay-ns property in DT
+Message-ID: <20180624132858.GA2296@imap.1und1.de>
+References: <20180623185420.GA17842@arbeit>
+ <20180624141048.7628eaac@archlinux>
 MIME-Version: 1.0
-In-Reply-To: <20180411164036.8046-5-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180624141048.7628eaac@archlinux>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Provags-ID: V03:K1:y2K/o9gEk8XAxeAexWpFDbvvrhDTa/m5BQZ2WcEiz1LV/ya93K1
+ 4WTlIbUOKjNstvejnrT8SRt09wnQ1h22cKlb6kONS9yFVswcz2P5PS/FSF8UaltgzW+g79B
+ vNcK9xezVG2U+Mm2aAgXYCagRMuW1iZWYK+8A2c0iCFYGtdgr2bYkM5cGZg7sFlDhn/5vYJ
+ EIkVxLTcdyL9zRoO/N68g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:G7pSkKFD+7Y=:qFnj9/wyEAKXkgd2MvItNT
+ auoGcI3dYo9r4srl3fEQwhBCicKYesfqtICFPuoBz4myCN/nQ/Uv/ZPaHFOqtJfhQlAGkRmQD
+ xRm7MOKkXAU8/x31EhbqnmYA4uZBJw+0sqxb4IC8y/aLfCGvqVFEtylIF4YMm6zxZU1GBr963
+ BbeWgxDe12PmjC8QTXHHDahuQdaumGDqzsraUNuI4jfb86P2P1NhhSMHz/+R4aGcM39veAH2Z
+ bZCuHCPNC/4uM4QmIEPuSMpesY3RKJPQNrtOZg4DQbME3vwIvs/e+H/KgFSRFGAZUU+oC5j2P
+ OmZ1ul9ML2SlibxPgMRkdAv7mgb3A0GE8J7MckEmo8Otjz/i0qmdT+MPuxVNUU6BtMGUoDZi4
+ FZRmxJu20/54g9i4vGo1i/iprU2HawxiZllj/rWwP/LltIK5JiBZSUCOzQy/2UuDyy5pAltAj
+ /mDnTsVbnkL8fWXIn/ZEKyT5OoGkUkXWQjioxn4XBiVF6qFeknpJXDkiVD/DB8rAvBrICi8xs
+ V7kEfGFnrXABsrFl2aPjO04lMVgyGyi+uvan5gZcb4bEVJo0r+ki9ZU9qMUL7rERBnmCWXkJg
+ p3vnN6A905Eg1sZZ7qmKJHtAtkNq/p2ZDxWVbm2CfWVbhKzdUZoyLljNV7Au1aHbxwIuamfwX
+ CtKgByLgItlyuimp5A6J5Ev3Yw5EBqYQvRtppUAi44wV+t5NDZ5z8Th43XZYIok+MDQ0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mani,
+Hi Jonathan,
 
-Am 11.04.2018 um 18:40 schrieb Manivannan Sadhasivam:
-> OWL_PM_DOMAINS is being used by 3 SoCs of OWL family. This fixes
-> the wording to use family name OWL instead of SoC name S500.
+Jonathan Cameron <jic23@kernel.org> schrieb am Sun, 24. Jun 14:10:
+> On Sat, 23 Jun 2018 20:54:21 +0200
+> Andreas Klinger <ak@it-klinger.de> wrote:
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/soc/actions/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > add data-ready-delay-ns property for hx711 ADC
+> > this is the delay after rising PD_SCK until DOUT is read and assumed to be
+> > ready
+> > 
+> > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
 > 
-> diff --git a/drivers/soc/actions/Kconfig b/drivers/soc/actions/Kconfig
-> index 9d68b5a771c3..26c3155d3738 100644
-> --- a/drivers/soc/actions/Kconfig
-> +++ b/drivers/soc/actions/Kconfig
-> @@ -10,7 +10,7 @@ config OWL_PM_DOMAINS
->  	select PM_GENERIC_DOMAINS
->  	help
->  	  Say 'y' here to enable support for Smart Power System (SPS)
-> -	  power-gating on Actions Semiconductor S500 SoC.
-> +	  power-gating on Actions Semiconductor OWL SoCs.
+> One unconnected change.  I'm not sure it's wrong as such but it should not
+> be in this patch.
+> 
+> > ---
+> >  Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> > index b3629405f568..8c9bcaa4d750 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> > +++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> > @@ -8,11 +8,18 @@ Required properties:
+> >  		See Documentation/devicetree/bindings/gpio/gpio.txt
+> >   - avdd-supply:	Definition of the regulator used as analog supply
+> >  
+> > +Optional properties:
+> > + - data-ready-delay-ns:	additional delay in nanoseconds between rising of
+> > +			PD_SCK until DOUT is ready
+> > +			should be less then maximum PD_SCK high time which
+> > +			is 50000 in the datasheet
+> > +
+> >  Example:
+> > -weight@0 {
+> > +weight {
 
-Thanks for spotting this. However, repeating OWL from the title (which I
-think should be spelled Owl in free text, given that I also read Falcon
-as another bird for GT9 [*]) does not seem too helpful for people
-wondering whether or not to enable the driver.
+The device tree compiler (dtc) gives a warning if there is no reg = <...>
+setting. That's why i changed it to be without @0.
 
-I would much rather do a patch updating this to "S500 and S700 SoCs"
-with Fixes and then just add S900 as part of your preceding patch.
+Should i create an individual patch for this change in this series or
+create another patch which is unrelated to this series?
 
-Regards,
 Andreas
 
-[*] https://androidpc.es/blog/2015/11/10/actions-gt7/
-
->  	  If unsure, say 'n'.
->  
->  endif
+> 
+> Change has nothing to do with this patch...
+> 
+> >  	compatible = "avia,hx711";
+> >  	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
+> >  	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+> >  	avdd-suppy = <&avdd>;
+> > +	data-ready-delay-ns = <1000>;
+> >  };
+> >  
 > 
 
-
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
