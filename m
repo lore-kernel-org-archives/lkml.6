@@ -6,112 +6,136 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AA3C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7546EC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99B5F24EF0
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:07:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99B5F24EF0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 36A0D24EF0
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:09:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36A0D24EF0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751957AbeFXNHp (ORCPT
+        id S1751924AbeFXNJL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 09:07:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59595 "EHLO mx2.suse.de"
+        Sun, 24 Jun 2018 09:09:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52843 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751183AbeFXNHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 09:07:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B93B7ADDC;
-        Sun, 24 Jun 2018 13:07:42 +0000 (UTC)
-Subject: Re: [PATCH 3/4] soc: actions: sps: Add S900 power domains
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        robh+dt@kernel.org
-Cc:     liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        manivannanece23@gmail.com
-References: <20180411164036.8046-1-manivannan.sadhasivam@linaro.org>
- <20180411164036.8046-4-manivannan.sadhasivam@linaro.org>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <5e267c76-1c71-2381-ee66-50a5bef1cfc2@suse.de>
-Date:   Sun, 24 Jun 2018 15:07:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751619AbeFXNJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 09:09:10 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 67D3520734; Sun, 24 Jun 2018 15:09:08 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 35CEE206A0;
+        Sun, 24 Jun 2018 15:09:08 +0200 (CEST)
+Date:   Sun, 24 Jun 2018 15:09:08 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/14] ubi: Add module parameter to force a full scan
+Message-ID: <20180624150908.2bb490bb@bbrezillon>
+In-Reply-To: <20180613212344.11608-12-richard@nod.at>
+References: <20180613212344.11608-1-richard@nod.at>
+        <20180613212344.11608-12-richard@nod.at>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180411164036.8046-4-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 11.04.2018 um 18:40 schrieb Manivannan Sadhasivam:
-> Add power domains for Actions Semi S900 SoC.
+On Wed, 13 Jun 2018 23:23:41 +0200
+Richard Weinberger <richard@nod.at> wrote:
+
+> Using this parameter one can force UBI do to a full scan
+> instead of using a fastmap.
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Richard Weinberger <richard@nod.at>
 > ---
->  drivers/soc/actions/owl-sps.c | 58 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
+>  drivers/mtd/ubi/attach.c | 13 +++++++++----
+>  drivers/mtd/ubi/build.c  |  5 ++++-
+>  2 files changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
+> index 9a8072cf458c..134b15f093c3 100644
+> --- a/drivers/mtd/ubi/attach.c
+> +++ b/drivers/mtd/ubi/attach.c
+> @@ -925,7 +925,7 @@ static int check_corruption(struct ubi_device *ubi, struct ubi_vid_hdr *vid_hdr,
+>  	return err;
+>  }
+>  
+> -static bool vol_ignored(int vol_id)
+> +static bool vol_ignored(struct ubi_attach_info *ai, int vol_id)
+>  {
+>  	switch (vol_id) {
+>  		case UBI_LAYOUT_VOLUME_ID:
+> @@ -933,6 +933,9 @@ static bool vol_ignored(int vol_id)
+>  	}
+>  
+>  #ifdef CONFIG_MTD_UBI_FASTMAP
+> +	if (ai->force_full_scan)
+> +		return false;
+> +
+>  	return ubi_is_fm_vol(vol_id);
+>  #else
+>  	return false;
+> @@ -1143,7 +1146,7 @@ static int scan_peb(struct ubi_device *ubi, struct ubi_attach_info *ai,
+>  	}
+>  
+>  	vol_id = be32_to_cpu(vidh->vol_id);
+> -	if (vol_id > UBI_MAX_VOLUMES && !vol_ignored(vol_id)) {
+> +	if (vol_id > UBI_MAX_VOLUMES && !vol_ignored(ai, vol_id)) {
+>  		int lnum = be32_to_cpu(vidh->lnum);
+>  
+>  		/* Unsupported internal volume */
+> @@ -1581,9 +1584,11 @@ int ubi_attach(struct ubi_device *ubi, int force_scan)
+>  		force_scan = 1;
+>  	}
+>  
+> -	if (force_scan)
+> +	if (force_scan) {
+> +		ubi_msg(ubi, "full scan forced");
+> +		ai->force_full_scan = 1;
+>  		err = scan_all(ubi, ai, 0);
+> -	else {
+> +	} else {
+>  		err = scan_fast(ubi, &ai);
+>  		if (err > 0 || mtd_is_eccerr(err)) {
+>  			if (err != UBI_NO_FASTMAP) {
+> diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
+> index d2a726654ff1..1e3f75ede985 100644
+> --- a/drivers/mtd/ubi/build.c
+> +++ b/drivers/mtd/ubi/build.c
+> @@ -83,6 +83,7 @@ static struct mtd_dev_param mtd_dev_param[UBI_MAX_DEVICES];
+>  static bool fm_autoconvert;
+>  static bool fm_debug;
+>  #endif
+> +static bool force_scan;
+>  
+>  /* Slab cache for wear-leveling entries */
+>  struct kmem_cache *ubi_wl_entry_slab;
+> @@ -956,7 +957,7 @@ int ubi_attach_mtd_dev(struct mtd_info *mtd, int ubi_num,
+>  	if (!ubi->fm_buf)
+>  		goto out_free;
+>  #endif
+> -	err = ubi_attach(ubi, 0);
+> +	err = ubi_attach(ubi, force_scan);
+>  	if (err) {
+>  		ubi_err(ubi, "failed to attach mtd%d, error %d",
+>  			mtd->index, err);
+> @@ -1458,6 +1459,8 @@ module_param(fm_autoconvert, bool, 0644);
+>  MODULE_PARM_DESC(fm_autoconvert, "Set this parameter to enable fastmap automatically on images without a fastmap.");
+>  module_param(fm_debug, bool, 0);
+>  MODULE_PARM_DESC(fm_debug, "Set this parameter to enable fastmap debugging by default. Warning, this will make fastmap slow!");
+> +module_param(force_scan, bool, 0644);
+> +MODULE_PARM_DESC(force_scan, "Always do a full scan of the MTD and drop possible fastmap structures from the MTD.");
 
-Reviewed-by: Andreas Färber <afaerber@suse.de>
+Should we do that on a per-UBI device basis? I mean, you might want to
+force a full-scan but only on a specific UBI instance, not all of them,
+right?
 
-(Depends on bindings patch.)
+>  #endif
+>  MODULE_VERSION(__stringify(UBI_VERSION));
+>  MODULE_DESCRIPTION("UBI - Unsorted Block Images");
 
-Thanks,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
