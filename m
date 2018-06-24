@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFC9C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F629C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 365BA25008
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:36:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB86D2500B
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:36:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oUV2vQJf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 365BA25008
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChpaOWS+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB86D2500B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755363AbeFXPgE (ORCPT
+        id S1755388AbeFXPgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:36:04 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36588 "EHLO
+        Sun, 24 Jun 2018 11:36:09 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40793 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755190AbeFXPgB (ORCPT
+        with ESMTP id S1755365AbeFXPgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:36:01 -0400
-Received: by mail-wm0-f67.google.com with SMTP id u18-v6so2862526wmc.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 08:36:01 -0700 (PDT)
+        Sun, 24 Jun 2018 11:36:05 -0400
+Received: by mail-wm0-f67.google.com with SMTP id z13-v6so1156727wma.5
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 08:36:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5Md8H7iNHuNRqlImkhk8J1WUS54KhEvm1X6fF3w1m4g=;
-        b=oUV2vQJfVZ2Jf49/Pb1AyixchiAISQqVU9XcUadDbbTRP+lHO4gRYGdbbgQCT46uZB
-         yVjPIa0m7oUHWFkqcZX8Steey6WwzBAcaGQ3H/IGCkp/N+AvNsZspAaRz4cKGUy0pgvh
-         63F1KB5NSWlNG4Rk1kAEG4tdIKphk//YCDt8YLFZQGOT2rOWi61qbbAu1Vn/yuuUO+/N
-         X9ORxHx1uzeait4qnUHCB+LzElLAPYtn9cd6bvmv9E6+nbVA+WkgtcDlGx9O7s/STzcc
-         G4zgwophwcez/UDRAONKI/aO/AJjHrBr3KXKOjPoKMIRpVUtHoC5tawU19IPz3kgAjV7
-         8FPQ==
+        bh=Xb7TZcr+J0XM29GonoJE0qrDKg0CbFQF66WLl1bB2jY=;
+        b=ChpaOWS+hX1QSTbeeeulwDHuUNcwPEXFdHYy2upPjJl6cAtlhrVuZzWtOvo/U9QrlP
+         yXKOLAoGEv5JVD18OijeIupAIBa5Tby2EqKYcFje7suOjtZjItssL2jJ7JcNCBuYZpSW
+         vEtdY8d5Dw/i8vgSglzVM+EXU1MVK5AloOLOxqUZ8HoPexZmGbH3CUcJ3kselMfbrwzx
+         33jHyvXc+U7lYKvXhZtTEWSptlzcgf7znph5QedVy+05OFqHpYBpyADXIAqwt7QYTnN+
+         oxDSP8efmMSETrHa/oczp4IlHbjxGEYtdNGmddqAw5VLZBlO1C0w5H5BXAk3ITeiL4WK
+         H3Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5Md8H7iNHuNRqlImkhk8J1WUS54KhEvm1X6fF3w1m4g=;
-        b=qLu6ARiBK+qR/Pv5HKwehXppUdY/H6bbmaJ9GmV06f2gs2tYKm6lmIhlRv8QSfLSjs
-         fjX1ktD6biaiVn0JmGYZhBMB3YSoLENxMnOYvrkl6OgeECOZE0L0swyUAqPbTQvPZseC
-         ugJRvrvjInVun2WZIeS0+aXTsRHn5eEyLRsiQ5Ed2aFNV40w5UK7/k4FhOQ4K/L4njw3
-         IsxbRiAfX9A459w82XMee1z0boUdIFhYpKGk4yO5u/LRkwkliIiDSpPEoqm+YJXaJXq5
-         MEfnqsBloypZQr5y5cu4HlhApKHKMWS/iAr86It1n9FKpcA9PJEZ5vYgnZg3LaPF6OV/
-         254w==
-X-Gm-Message-State: APt69E132a0AWErqS2eAKdvPpJATCtVfCX+iDqls4E+g7MV7f21tM4zi
-        +3NYme2BVB3ILwaew6wGQ5TQmLUl
-X-Google-Smtp-Source: ADUXVKLmN8Yrq7X69THBTk43bmfQ5i1sW9ZoipjHjGA1kiGne0Q3HToS2ndxLvUEA9HGfXIZxMameA==
-X-Received: by 2002:a1c:1286:: with SMTP id 128-v6mr7239888wms.9.1529854560274;
-        Sun, 24 Jun 2018 08:36:00 -0700 (PDT)
+        bh=Xb7TZcr+J0XM29GonoJE0qrDKg0CbFQF66WLl1bB2jY=;
+        b=LvzEX2wjmgujegDNbNDqRttAzJ1e12iI86ekLvl4ME6bMOfddkp34YRYUr91oxnk12
+         Vzy4zC8xsVY0Ly1SpXkgI7x9gyqkfXPibEwbDyLMe4HjKh198F+f9Q/Wuh4WuuDu6GzO
+         W9ysTHONlFRvPz9R3Ef9v/mpgzf0nuJR2xh7f+3eVOutaXyn+7654GumX0w63fKdsOvT
+         Vl0lOsTK4FbP3ke+iRnGQjhLtnH+hUVw0xodTFbvs4W1zdE1I6h9e+KGpxSM6C+Dxae0
+         VSZ41eftv4iXgAdest+5K6jXSwcutp2Kwcl2o6DoKRFiqDxVKyD8ciKaYb/bw7UElfMQ
+         Mq9w==
+X-Gm-Message-State: APt69E04I1WA35YFMU60Xm2OuSTg2156o+zzwTvra76qy7rK9SBCxHVa
+        kqj15wIRJutDAhjnKZn4HkZA1/P3
+X-Google-Smtp-Source: AAOMgpd3b4pzJQ6ZJghiLP39bfyOc/YidS2hrMiOPfAO14VkIzIzFL3FnH8UTvvXUbsFVCzi3jaPBQ==
+X-Received: by 2002:a1c:dc41:: with SMTP id t62-v6mr7110057wmg.42.1529854563596;
+        Sun, 24 Jun 2018 08:36:03 -0700 (PDT)
 Received: from localhost.localdomain (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
-        by smtp.gmail.com with ESMTPSA id j10-v6sm1505813wro.53.2018.06.24.08.35.58
+        by smtp.gmail.com with ESMTPSA id j10-v6sm1505813wro.53.2018.06.24.08.36.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 08:35:59 -0700 (PDT)
+        Sun, 24 Jun 2018 08:36:02 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v3 2/8] staging: rtl8192u: Correct indentation of switch statement - Coding Style
-Date:   Sun, 24 Jun 2018 16:34:48 +0100
-Message-Id: <20180624153454.27356-3-johnfwhitmore@gmail.com>
+Subject: [PATCH v3 4/8] staging: rtl8192u: Truncate block comments to 80 character length - Style
+Date:   Sun, 24 Jun 2018 16:34:50 +0100
+Message-Id: <20180624153454.27356-5-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180624153454.27356-1-johnfwhitmore@gmail.com>
 References: <20180624153454.27356-1-johnfwhitmore@gmail.com>
@@ -73,62 +73,282 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removed an extra indentation from the code of the various case options in a
-switch statement.
+Where possible truncation of block comments to the 80 character length
+preferred by the coding style.
+
+In a previous version of this commit some of the comments were contentious so
+those have not been touched in this version.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- .../rtl8192u/ieee80211/rtl819x_HTProc.c       | 30 +++++++++----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ .../rtl8192u/ieee80211/rtl819x_HTProc.c       | 106 +++++++++++-------
+ 1 file changed, 63 insertions(+), 43 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 54c48747f5fa..4bfadb49c363 100644
+index ccb7bdf5ad5d..0bd41ded87c9 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -753,28 +753,28 @@ static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
- 	case IEEE_A:
- 	case IEEE_B:
- 	case IEEE_G:
--			//legacy rate routine handled at selectedrate
-+		//legacy rate routine handled at selectedrate
+@@ -1,6 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
  
--			//no MCS rate
--			for (i = 0; i <= 15; i++)
--				pOperateMCS[i] = 0;
--			break;
-+		//no MCS rate
-+		for (i = 0; i <= 15; i++)
-+			pOperateMCS[i] = 0;
-+		break;
+-//As this function is mainly ported from Windows driver, so leave the name little changed. If any confusion caused, tell me. Created by WB. 2008.05.08
++/*
++ * As this function is mainly ported from Windows driver, so leave the name
++ * little changed. If any confusion caused, tell me. Created by WB. 2008.05.08
++ */
+ #include "ieee80211.h"
+ #include "rtl819x_HT.h"
+ u8 MCS_FILTER_ALL[16] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+@@ -42,8 +45,8 @@ static u8 AIRLINK_RALINK[3] = {0x00, 0x18, 0x02};
+ //static u8 DLINK_ATHEROS[3] = {0x00, 0x1c, 0xf0};
+ static u8 CISCO_BROADCOM[3] = {0x00, 0x17, 0x94};
+ /*
+- * 2008/04/01 MH For Cisco G mode RX TP We need to change FW duration. Should we put the
+- * code in other place??
++ * 2008/04/01 MH For Cisco G mode RX TP We need to change FW duration. Should we
++ * put the code in other place??
+  * static u8 WIFI_CISCO_G_AP[3] = {0x00, 0x40, 0x96};
+  */
+ /*
+@@ -117,7 +120,8 @@ void HTUpdateDefaultSetting(struct ieee80211_device *ieee)
+ }
  
- 	case IEEE_N_24G:	//assume CCK rate ok
- 	case IEEE_N_5G:
--			// Legacy part we only use 6, 5.5,2,1 for N_24G and 6 for N_5G.
--			// Legacy part shall be handled at SelectRateSet().
--
--			//HT part
--			// TODO: may be different if we have different number of antenna
--			pOperateMCS[0] &= RATE_ADPT_1SS_MASK;	//support MCS 0~7
--			pOperateMCS[1] &= RATE_ADPT_2SS_MASK;
--			pOperateMCS[3] &= RATE_ADPT_MCS32_MASK;
--			break;
-+		// Legacy part we only use 6, 5.5,2,1 for N_24G and 6 for N_5G.
-+		// Legacy part shall be handled at SelectRateSet().
-+
-+		//HT part
-+		// TODO: may be different if we have different number of antenna
-+		pOperateMCS[0] &= RATE_ADPT_1SS_MASK;	//support MCS 0~7
-+		pOperateMCS[1] &= RATE_ADPT_2SS_MASK;
-+		pOperateMCS[3] &= RATE_ADPT_MCS32_MASK;
-+		break;
+ /*
+- *function:  This function print out each field on HT capability IE mainly from (Beacon/ProbeRsp/AssocReq)
++ *function:  This function print out each field on HT capability
++ *           IE mainly from (Beacon/ProbeRsp/AssocReq)
+  *   input:  u8*	CapIE       //Capability IE to be printed out
+  *	     u8*	TitleString //mainly print out caller function
+  *  output:  none
+@@ -151,7 +155,8 @@ void HTDebugHTCapability(u8 *CapIE, u8 *TitleString)
+ }
  
- 	//should never reach here
- 	default:
--			break;
-+		break;
- 	}
+ /*
+- *function:  This function print out each field on HT Information IE mainly from (Beacon/ProbeRsp)
++ *function:  This function print out each field on HT Information
++ *           IE mainly from (Beacon/ProbeRsp)
+  *   input:  u8*	InfoIE       //Capability IE to be printed out
+  *	     u8*	TitleString //mainly print out caller function
+  *  output:  none
+@@ -387,8 +392,9 @@ static void HTIOTPeerDetermine(struct ieee80211_device *ieee)
+ }
  
- 	return true;
+ /*
+- *function:  Check whether driver should declare received rate up to MCS13 only since some chipset is not good
+- *	     at receiving MCS14~15 frame from some AP.
++ *function:  Check whether driver should declare received rate up to MCS13
++ *           only since some chipset is not good at receiving MCS14~15 frame
++ *           from some AP.
+  *   input:  struct ieee80211_device*	ieee
+  *	     u8 *			PeerMacAddr
+  *  output:  none
+@@ -402,7 +408,8 @@ static u8 HTIOTActIsDisableMCS14(struct ieee80211_device *ieee, u8 *PeerMacAddr)
+ /*
+  * Function:	HTIOTActIsDisableMCS15
+  *
+- * Overview:	Check whether driver should declare capability of receiving MCS15
++ * Overview:	Check whether driver should declare capability of receiving
++ *              MCS15
+  *
+  * Input:
+  *			PADAPTER		Adapter,
+@@ -439,7 +446,8 @@ static bool HTIOTActIsDisableMCS15(struct ieee80211_device *ieee)
+ /*
+  * Function:	HTIOTActIsDisableMCSTwoSpatialStream
+  *
+- * Overview:	Check whether driver should declare capability of receiving All 2 ss packets
++ * Overview:	Check whether driver should declare capability of receiving
++ *              All 2 ss packets
+  *
+  * Input:
+  *			PADAPTER		Adapter,
+@@ -462,7 +470,8 @@ static bool HTIOTActIsDisableMCSTwoSpatialStream(struct ieee80211_device *ieee,
+  *   input:  struct ieee80211_device*	ieee
+  *	     u8*			PeerMacAddr
+  *  output:  none
+- *  return:  return 1 if driver should disable EDCA turbo mode(otherwise return 0)
++ *  return:  return 1 if driver should disable EDCA turbo mode
++ *           (otherwise return 0)
+  */
+ static u8 HTIOTActIsDisableEDCATurbo(struct ieee80211_device *ieee,
+ 				     u8 *PeerMacAddr)
+@@ -471,7 +480,8 @@ static u8 HTIOTActIsDisableEDCATurbo(struct ieee80211_device *ieee,
+ }
+ 
+ /*
+- *function:  Check whether we need to use OFDM to sned MGNT frame for broadcom AP
++ *function:  Check whether we need to use OFDM to sned MGNT frame for
++ *           broadcom AP
+  *   input:  struct ieee80211_network *network   //current network we live
+  *  output:  none
+  *  return:  return 1 if true
+@@ -510,9 +520,9 @@ void HTResetIOTSetting(PRT_HIGH_THROUGHPUT pHTInfo)
+ /*
+  *function:  Construct Capablility Element in Beacon... if HTEnable is turned on
+  *   input:  struct ieee80211_device*	ieee
+- *	     u8*			posHTCap //pointer to store Capability Ele
+- *	     u8*			len //store length of CE
+- *	     u8				IsEncrypt //whether encrypt, needed further
++ *	     u8*		     posHTCap //pointer to store Capability Ele
++ *	     u8*		     len //store length of CE
++ *	     u8			     IsEncrypt //whether encrypt, needed further
+  *  output:  none
+  *  return:  none
+  *  notice:  posHTCap can't be null and should be initialized before.
+@@ -551,7 +561,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 	pCapELE->ShortGI20Mhz		= 1; // We can receive Short GI!!
+ 	pCapELE->ShortGI40Mhz		= 1; // We can receive Short GI!!
+ 	//DbgPrint("TX HT cap/info ele BW=%d SG20=%d SG40=%d\n\r",
+-		//pCapELE->ChlWidth, pCapELE->ShortGI20Mhz, pCapELE->ShortGI40Mhz);
++	//pCapELE->ChlWidth, pCapELE->ShortGI20Mhz, pCapELE->ShortGI40Mhz);
+ 	pCapELE->TxSTBC			= 1;
+ 	pCapELE->RxSTBC			= 0;
+ 	pCapELE->DelayBA		= 0;	// Do not support now!!
+@@ -612,19 +622,23 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 
+ //	IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA | IEEE80211_DL_HT, posHTCap, *len -2);
+ 
+-	//Print each field in detail. Driver should not print out this message by default
++	/*
++	 * Print each field in detail. Driver should not print out this message
++	 * by default
++	 */
+ //	HTDebugHTCapability(posHTCap, (u8*)"HTConstructCapability()");
+ }
+ 
+ /*
+- *function:  Construct  Information Element in Beacon... if HTEnable is turned on
++ *function:  Construct Information Element in Beacon... if HTEnable is turned on
+  *   input:  struct ieee80211_device*	ieee
+- *	     u8*			posHTCap //pointer to store Information Ele
+- *	     u8*			len   //store len of
+- *	     u8				IsEncrypt //whether encrypt, needed further
++ *	     u8*		     posHTCap //pointer to store Information Ele
++ *	     u8*		     len   //store len of
++ *	     u8			     IsEncrypt //whether encrypt, needed further
+  *  output:  none
+  *  return:  none
+- *  notice:  posHTCap can't be null and be initialized before. only AP and IBSS sta should do this
++ *  notice:  posHTCap can't be null and be initialized before.
++ *           Only AP and IBSS sta should do this
+  */
+ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *len, u8 IsEncrypt)
+ {
+@@ -666,16 +680,17 @@ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *le
+ }
+ 
+ /*
+- *  According to experiment, Realtek AP to STA (based on rtl8190) may achieve best performance
+- *  if both STA and AP set limitation of aggregation size to 32K, that is, set AMPDU density to 2
+- *  (Ref: IEEE 11n specification). However, if Realtek STA associates to other AP, STA should set
+- *  limitation of aggregation size to 8K, otherwise, performance of traffic stream from STA to AP
+- *  will be much less than the traffic stream from AP to STA if both of the stream runs concurrently
+- *  at the same time.
++ * According to experiment, Realtek AP to STA (based on rtl8190) may achieve
++ * best performance if both STA and AP set limitation of aggregation size to
++ * 32K, that is, set AMPDU density to 2 (Ref: IEEE 11n specification).
++ * However, if Realtek STA associates to other AP, STA should set limitation of
++ * aggregation size to 8K, otherwise, performance of traffic stream from STA to
++ * AP will be much less than the traffic stream from AP to STA if both of the
++ * stream runs concurrently at the same time.
+  *
+  *  Frame Format
+- *  Element ID		Length		OUI			Type1		Reserved
+- *  1 byte			1 byte		3 bytes		1 byte		1 byte
++ *  Element ID		Length		OUI		Type1		Reserved
++ *  1 byte		1 byte		3 bytes		1 byte		1 byte
+  *
+  *  OUI		= 0x00, 0xe0, 0x4c,
+  *  Type	= 0x02
+@@ -686,8 +701,8 @@ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *le
+ /*
+  *function:  Construct  Information Element in Beacon... in RT2RT condition
+  *   input:  struct ieee80211_device*	ieee
+- *	     u8*			posRT2RTAgg //pointer to store Information Ele
+- *	     u8*			len   //store len
++ *	     u8*		  posRT2RTAgg //pointer to store Information Ele
++ *	     u8*		  len   //store len
+  *  output:  none
+  *  return:  none
+  *  notice:
+@@ -736,7 +751,7 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+ /*
+  *function:  Pick the right Rate Adaptive table to use
+  *   input:  struct ieee80211_device*	ieee
+- *	     u8*			pOperateMCS //A pointer to MCS rate bitmap
++ *	     u8*		      pOperateMCS //A pointer to MCS rate bitmap
+  *  return:  always we return true
+  *  notice:
+  */
+@@ -853,8 +868,9 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
+ 	// TODO: adjust our operational rate set  according to our channel bandwidth, STBC and Antenna number
+ 
+ 	/*
+-	 * TODO: fill suggested rate adaptive rate index and give firmware info using Tx command packet
+-	 * we also shall suggested the first start rate set according to our singal strength
++	 * TODO: fill suggested rate adaptive rate index and give firmware info
++	 * using Tx command packet we also shall suggested the first start rate
++	 * set according to our singal strength
+ 	 */
+ 	HT_PickMCSRate(ieee, pOperateMCS);
+ 
+@@ -1013,7 +1029,8 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
+ 	/*
+ 	 * Filter out unsupported HT rate for this AP
+ 	 * Update RATR table
+-	 * This is only for 8190 ,8192 or later product which using firmware to handle rate adaptive mechanism.
++	 * This is only for 8190 ,8192 or later product which using firmware to
++	 * handle rate adaptive mechanism.
+ 	 */
+ 
+ 	/*
+@@ -1050,7 +1067,9 @@ void HTSetConnectBwModeCallback(struct ieee80211_device *ieee);
+  *   input:  struct ieee80211_device*	ieee
+  *  output:  none
+  *  return:  none
+- *  notice: This function is called when *  (1) MPInitialization Phase *  (2) Receiving of Deauthentication from AP
++ *  notice: This function is called when
++ *                                  *  (1) MPInitialization Phase
++ *                                  *  (2) Receiving of Deauthentication from AP
+  */
+ // TODO: Should this funciton be called when receiving of Disassociation?
+ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+@@ -1075,8 +1094,8 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+ 	/*
+ 	 * CCK rate support
+ 	 * This flag is set to true to support CCK rate by default.
+-	 * It will be affected by "pHTInfo->bRegSuppCCK" and AP capabilities only when associate to
+-	 * 11N BSS.
++	 * It will be affected by "pHTInfo->bRegSuppCCK" and AP capabilities
++	 * only when associate to 11N BSS.
+ 	 */
+ 	pHTInfo->bCurSuppCCK = true;
+ 
+@@ -1140,7 +1159,8 @@ void HTInitializeBssDesc(PBSS_HT pBssHT)
+ /*
+  *function:  initialize Bss HT structure(struct PBSS_HT)
+  *   input:  struct ieee80211_device	*ieee
+- *	     struct ieee80211_network	*pNetwork //usually current network we are live in
++ *	     struct ieee80211_network	*pNetwork //usually current network
++ *                                                  we are live in
+  *  output:  none
+  *  return:  none
+  *  notice: This function should ONLY be called before association
+@@ -1300,10 +1320,10 @@ void HTSetConnectBwMode(struct ieee80211_device *ieee, HT_CHANNEL_WIDTH	Bandwidt
+ 	pHTInfo->bSwBwInProgress = true;
+ 
+ 	/*
+-	 * TODO: 2007.7.13 by Emily Wait 2000ms  in order to guarantee that switching
+-	 *   bandwidth is executed after scan is finished. It is a temporal solution
+-	 *   because software should ganrantee the last operation of switching bandwidth
+-	 *   is executed properlly.
++	 * TODO: 2007.7.13 by Emily Wait 2000ms  in order to guarantee that
++	 * switching bandwidth is executed after scan is finished. It is a
++	 * temporal solution because software should ganrantee the last
++	 * operation of switching bandwidth is executed properlly.
+ 	 */
+ 	HTSetConnectBwModeCallback(ieee);
+ 
 -- 
 2.17.1
 
