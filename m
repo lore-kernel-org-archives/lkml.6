@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E521C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97249C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5816024FAC
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:30:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5816024FAC
+	by mail.kernel.org (Postfix) with ESMTP id 485FF24FAC
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:30:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 485FF24FAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754682AbeFXPaE (ORCPT
+        id S1754697AbeFXPaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:30:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58962 "EHLO
+        Sun, 24 Jun 2018 11:30:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58972 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752770AbeFXPaB (ORCPT
+        with ESMTP id S1752150AbeFXPaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:30:01 -0400
+        Sun, 24 Jun 2018 11:30:09 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82D742C;
-        Sun, 24 Jun 2018 15:30:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F5962C;
+        Sun, 24 Jun 2018 15:30:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Even Xu <even.xu@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
         Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 48/52] HID: intel_ish-hid: ipc: register more pm callbacks to support hibernation
-Date:   Sun, 24 Jun 2018 23:21:41 +0800
-Message-Id: <20180624142747.249549527@linuxfoundation.org>
+Subject: [PATCH 4.14 49/52] HID: wacom: Correct logical maximum Y for 2nd-gen Intuos Pro large
+Date:   Sun, 24 Jun 2018 23:21:42 +0800
+Message-Id: <20180624142747.300331342@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -51,110 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Even Xu <even.xu@intel.com>
+From: Jason Gerecke <killertofu@gmail.com>
 
-commit ebeaa367548e9e92dd9374b9464ff6e7d157117b upstream.
+commit d471b6b22d37bf9928c6d0202bdaaf76583b8b61 upstream.
 
-Current ISH driver only registers suspend/resume PM callbacks which don't
-support hibernation (suspend to disk). Basically after hiberation, the ISH
-can't resume properly and user may not see sensor events (for example: screen
-		rotation may not work).
+The HID descriptor for the 2nd-gen Intuos Pro large (PTH-860) contains
+a typo which defines an incorrect logical maximum Y value. This causes
+a small portion of the bottom of the tablet to become unusable (both
+because the area is below the "bottom" of the tablet and because
+'wacom_wac_event' ignores out-of-range values). It also results in a
+skewed aspect ratio.
 
-User will not see a crash or panic or anything except the following message
-in log:
+To fix this, we add a quirk to 'wacom_usage_mapping' which overwrites
+the data with the correct value.
 
-	hid-sensor-hub 001F:8086:22D8.0001: timeout waiting for response from ISHTP device
-
-So this patch adds support for S4/hiberbation to ISH by using the
-SIMPLE_DEV_PM_OPS() MACRO instead of struct dev_pm_ops directly. The suspend
-and resume functions will now be used for both suspend to RAM and hibernation.
-
-If power management is disabled, SIMPLE_DEV_PM_OPS will do nothing, the suspend
-and resume related functions won't be used, so mark them as __maybe_unused to
-clarify that this is the intended behavior, and remove #ifdefs for power
-management.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Even Xu <even.xu@intel.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
+CC: stable@vger.kernel.org # v4.10+
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/intel-ish-hid/ipc/pci-ish.c |   22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ drivers/hid/wacom_sys.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-+++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-@@ -204,8 +204,7 @@ static void ish_remove(struct pci_dev *p
- 	kfree(ishtp_dev);
- }
+--- a/drivers/hid/wacom_sys.c
++++ b/drivers/hid/wacom_sys.c
+@@ -284,6 +284,14 @@ static void wacom_usage_mapping(struct h
+ 		}
+ 	}
  
--#ifdef CONFIG_PM
--static struct device *ish_resume_device;
-+static struct device __maybe_unused *ish_resume_device;
- 
- /* 50ms to get resume response */
- #define WAIT_FOR_RESUME_ACK_MS		50
-@@ -219,7 +218,7 @@ static struct device *ish_resume_device;
-  * in that case a simple resume message is enough, others we need
-  * a reset sequence.
-  */
--static void ish_resume_handler(struct work_struct *work)
-+static void __maybe_unused ish_resume_handler(struct work_struct *work)
- {
- 	struct pci_dev *pdev = to_pci_dev(ish_resume_device);
- 	struct ishtp_device *dev = pci_get_drvdata(pdev);
-@@ -261,7 +260,7 @@ static void ish_resume_handler(struct wo
-  *
-  * Return: 0 to the pm core
-  */
--static int ish_suspend(struct device *device)
-+static int __maybe_unused ish_suspend(struct device *device)
- {
- 	struct pci_dev *pdev = to_pci_dev(device);
- 	struct ishtp_device *dev = pci_get_drvdata(pdev);
-@@ -287,7 +286,7 @@ static int ish_suspend(struct device *de
- 	return 0;
- }
- 
--static DECLARE_WORK(resume_work, ish_resume_handler);
-+static __maybe_unused DECLARE_WORK(resume_work, ish_resume_handler);
- /**
-  * ish_resume() - ISH resume callback
-  * @device:	device pointer
-@@ -296,7 +295,7 @@ static DECLARE_WORK(resume_work, ish_res
-  *
-  * Return: 0 to the pm core
-  */
--static int ish_resume(struct device *device)
-+static int __maybe_unused ish_resume(struct device *device)
- {
- 	struct pci_dev *pdev = to_pci_dev(device);
- 	struct ishtp_device *dev = pci_get_drvdata(pdev);
-@@ -310,21 +309,14 @@ static int ish_resume(struct device *dev
- 	return 0;
- }
- 
--static const struct dev_pm_ops ish_pm_ops = {
--	.suspend = ish_suspend,
--	.resume = ish_resume,
--};
--#define ISHTP_ISH_PM_OPS	(&ish_pm_ops)
--#else
--#define ISHTP_ISH_PM_OPS	NULL
--#endif /* CONFIG_PM */
-+static SIMPLE_DEV_PM_OPS(ish_pm_ops, ish_suspend, ish_resume);
- 
- static struct pci_driver ish_driver = {
- 	.name = KBUILD_MODNAME,
- 	.id_table = ish_pci_tbl,
- 	.probe = ish_probe,
- 	.remove = ish_remove,
--	.driver.pm = ISHTP_ISH_PM_OPS,
-+	.driver.pm = &ish_pm_ops,
- };
- 
- module_pci_driver(ish_driver);
++	/* 2nd-generation Intuos Pro Large has incorrect Y maximum */
++	if (hdev->vendor == USB_VENDOR_ID_WACOM &&
++	    hdev->product == 0x0358 &&
++	    WACOM_PEN_FIELD(field) &&
++	    wacom_equivalent_usage(usage->hid) == HID_GD_Y) {
++		field->logical_maximum = 43200;
++	}
++
+ 	switch (usage->hid) {
+ 	case HID_GD_X:
+ 		features->x_max = field->logical_maximum;
 
 
