@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35CDC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA173C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88E4F25091
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:45:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88E4F25091
+	by mail.kernel.org (Postfix) with ESMTP id 70DBD25099
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70DBD25099
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933214AbeFXPpS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:45:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60278 "EHLO
+        id S933288AbeFXPp0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:45:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60290 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932067AbeFXPpQ (ORCPT
+        with ESMTP id S932067AbeFXPpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:45:16 -0400
+        Sun, 24 Jun 2018 11:45:23 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCE8F49F;
-        Sun, 24 Jun 2018 15:45:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0172949F;
+        Sun, 24 Jun 2018 15:45:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Evgeniy Polyakov <zbr@ioremap.net>
-Subject: [PATCH 4.17 50/70] w1: mxc_w1: Enable clock before calling clk_get_rate() on it
-Date:   Sun, 24 Jun 2018 23:22:42 +0800
-Message-Id: <20180624142743.566372817@linuxfoundation.org>
+        stable@vger.kernel.org, Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com
+Subject: [PATCH 4.17 51/70] x86/vector: Fix the args of vector_alloc tracepoint
+Date:   Sun, 24 Jun 2018 23:22:43 +0800
+Message-Id: <20180624142743.630605649@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -50,68 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-commit 955bc61328dc0a297fb3baccd84e9d3aee501ed8 upstream.
+commit 838d76d63ec4eaeaa12bedfa50f261480f615200 upstream.
 
-According to the API, you may only call clk_get_rate() after actually
-enabling it.
+The vector_alloc tracepont reversed the reserved and ret aggs, that made
+the trace print wrong. Exchange them.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Fixes: a5fd9139f74c ("w1: add 1-wire master driver for i.MX27 / i.MX31")
-Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 8d1e3dca7de6 ("x86/vector: Add tracepoints for vector management")
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: hpa@zytor.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180601065031.21872-1-douly.fnst@cn.fujitsu.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/w1/masters/mxc_w1.c |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/trace/irq_vectors.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/w1/masters/mxc_w1.c
-+++ b/drivers/w1/masters/mxc_w1.c
-@@ -112,6 +112,10 @@ static int mxc_w1_probe(struct platform_
- 	if (IS_ERR(mdev->clk))
- 		return PTR_ERR(mdev->clk);
+--- a/arch/x86/include/asm/trace/irq_vectors.h
++++ b/arch/x86/include/asm/trace/irq_vectors.h
+@@ -236,7 +236,7 @@ TRACE_EVENT(vector_alloc,
+ 	TP_PROTO(unsigned int irq, unsigned int vector, bool reserved,
+ 		 int ret),
  
-+	err = clk_prepare_enable(mdev->clk);
-+	if (err)
-+		return err;
-+
- 	clkrate = clk_get_rate(mdev->clk);
- 	if (clkrate < 10000000)
- 		dev_warn(&pdev->dev,
-@@ -125,12 +129,10 @@ static int mxc_w1_probe(struct platform_
+-	TP_ARGS(irq, vector, ret, reserved),
++	TP_ARGS(irq, vector, reserved, ret),
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mdev->regs = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mdev->regs))
--		return PTR_ERR(mdev->regs);
--
--	err = clk_prepare_enable(mdev->clk);
--	if (err)
--		return err;
-+	if (IS_ERR(mdev->regs)) {
-+		err = PTR_ERR(mdev->regs);
-+		goto out_disable_clk;
-+	}
- 
- 	/* Software reset 1-Wire module */
- 	writeb(MXC_W1_RESET_RST, mdev->regs + MXC_W1_RESET);
-@@ -146,8 +148,12 @@ static int mxc_w1_probe(struct platform_
- 
- 	err = w1_add_master_device(&mdev->bus_master);
- 	if (err)
--		clk_disable_unprepare(mdev->clk);
-+		goto out_disable_clk;
-+
-+	return 0;
- 
-+out_disable_clk:
-+	clk_disable_unprepare(mdev->clk);
- 	return err;
- }
- 
+ 	TP_STRUCT__entry(
+ 		__field(	unsigned int,	irq		)
 
 
