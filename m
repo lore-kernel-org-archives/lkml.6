@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FF7C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B53C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6055F21456
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:43:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6055F21456
+	by mail.kernel.org (Postfix) with ESMTP id 32634208AF
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:44:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32634208AF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756188AbeFXPnv (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:43:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60156 "EHLO
+        id S932105AbeFXPn7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:43:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60164 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755444AbeFXPns (ORCPT
+        with ESMTP id S1756189AbeFXPn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:43:48 -0400
+        Sun, 24 Jun 2018 11:43:56 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 24D9B2C;
-        Sun, 24 Jun 2018 15:43:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 626B82C;
+        Sun, 24 Jun 2018 15:43:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shirish Pargaonkar <shirishpargaonkar@gmail.com>,
-        Noah Morrison <noah.morrison@rubrik.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.17 38/70] cifs: For SMB2 security informaion query, check for minimum sized security descriptor instead of sizeof FileAllInformation class
-Date:   Sun, 24 Jun 2018 23:22:30 +0800
-Message-Id: <20180624142742.858799064@linuxfoundation.org>
+        stable@vger.kernel.org, Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.17 15/70] ACPICA: AML parser: attempt to continue loading table after error
+Date:   Sun, 24 Jun 2018 23:22:07 +0800
+Message-Id: <20180624142741.441277396@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -52,60 +49,184 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shirish Pargaonkar <shirishpargaonkar@gmail.com>
+From: Erik Schmauss <erik.schmauss@intel.com>
 
-commit ee25c6dd7b05113783ce1f4fab6b30fc00d29b8d upstream.
+commit 5088814a6e931350e5bd29f5d59fa40c6dbbdf10 upstream.
 
-Validate_buf () function checks for an expected minimum sized response
-passed to query_info() function.
-For security information, the size of a security descriptor can be
-smaller (one subauthority, no ACEs) than the size of the structure
-that defines FileInfoClass of FileAllInformation.
+This change alters the parser so that the table load does not abort
+upon an error.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199725
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Shirish Pargaonkar <shirishpargaonkar@gmail.com>
-Reviewed-by: Noah Morrison <noah.morrison@rubrik.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Notable changes:
+
+If there is an error while parsing an element of the termlist, we
+will skip parsing the current termlist element and continue parsing
+to the next opcode in the termlist.
+
+If we get an error while parsing the conditional of If/Else/While or
+the device name of Scope, we will skip the body of the statement all
+together and pop the parser_state.
+
+If we get an error while parsing the base offset and length of an
+operation region declaration, we will remove the operation region
+from the namespace.
+
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsacl.h |   14 ++++++++++++++
- fs/cifs/smb2pdu.c |    3 +--
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ drivers/acpi/acpica/psloop.c   |   51 ++++++++++++++++++++++++++++++++++++++++-
+ drivers/acpi/acpica/psobject.c |   30 ++++++++++++++++++++++++
+ drivers/acpi/acpica/uterror.c  |   10 ++++----
+ 3 files changed, 85 insertions(+), 6 deletions(-)
 
---- a/fs/cifs/cifsacl.h
-+++ b/fs/cifs/cifsacl.h
-@@ -98,4 +98,18 @@ struct cifs_ace {
- 	struct cifs_sid sid; /* ie UUID of user or group who gets these perms */
- } __attribute__((packed));
+--- a/drivers/acpi/acpica/psloop.c
++++ b/drivers/acpi/acpica/psloop.c
+@@ -515,6 +515,22 @@ acpi_status acpi_ps_parse_loop(struct ac
+ 				if (ACPI_FAILURE(status)) {
+ 					return_ACPI_STATUS(status);
+ 				}
++				if (walk_state->opcode == AML_SCOPE_OP) {
++					/*
++					 * If the scope op fails to parse, skip the body of the
++					 * scope op because the parse failure indicates that the
++					 * device may not exist.
++					 */
++					walk_state->parser_state.aml =
++					    walk_state->aml + 1;
++					walk_state->parser_state.aml =
++					    acpi_ps_get_next_package_end
++					    (&walk_state->parser_state);
++					walk_state->aml =
++					    walk_state->parser_state.aml;
++					ACPI_ERROR((AE_INFO,
++						    "Skipping Scope block"));
++				}
  
-+/*
-+ * Minimum security identifier can be one for system defined Users
-+ * and Groups such as NULL SID and World or Built-in accounts such
-+ * as Administrator and Guest and consists of
-+ * Revision + Num (Sub)Auths + Authority + Domain (one Subauthority)
-+ */
-+#define MIN_SID_LEN  (1 + 1 + 6 + 4) /* in bytes */
+ 				continue;
+ 			}
+@@ -557,7 +573,40 @@ acpi_status acpi_ps_parse_loop(struct ac
+ 				if (ACPI_FAILURE(status)) {
+ 					return_ACPI_STATUS(status);
+ 				}
+-
++				if ((walk_state->control_state) &&
++				    ((walk_state->control_state->control.
++				      opcode == AML_IF_OP)
++				     || (walk_state->control_state->control.
++					 opcode == AML_WHILE_OP))) {
++					/*
++					 * If the if/while op fails to parse, we will skip parsing
++					 * the body of the op.
++					 */
++					parser_state->aml =
++					    walk_state->control_state->control.
++					    aml_predicate_start + 1;
++					parser_state->aml =
++					    acpi_ps_get_next_package_end
++					    (parser_state);
++					walk_state->aml = parser_state->aml;
 +
-+/*
-+ * Minimum security descriptor can be one without any SACL and DACL and can
-+ * consist of revision, type, and two sids of minimum size for owner and group
-+ */
-+#define MIN_SEC_DESC_LEN  (sizeof(struct cifs_ntsd) + (2 * MIN_SID_LEN))
++					ACPI_ERROR((AE_INFO,
++						    "Skipping While/If block"));
++					if (*walk_state->aml == AML_ELSE_OP) {
++						ACPI_ERROR((AE_INFO,
++							    "Skipping Else block"));
++						walk_state->parser_state.aml =
++						    walk_state->aml + 1;
++						walk_state->parser_state.aml =
++						    acpi_ps_get_next_package_end
++						    (parser_state);
++						walk_state->aml =
++						    parser_state->aml;
++					}
++					ACPI_FREE(acpi_ut_pop_generic_state
++						  (&walk_state->control_state));
++				}
++				op = NULL;
+ 				continue;
+ 			}
+ 		}
+--- a/drivers/acpi/acpica/psobject.c
++++ b/drivers/acpi/acpica/psobject.c
+@@ -12,6 +12,7 @@
+ #include "acparser.h"
+ #include "amlcode.h"
+ #include "acconvert.h"
++#include "acnamesp.h"
+ 
+ #define _COMPONENT          ACPI_PARSER
+ ACPI_MODULE_NAME("psobject")
+@@ -549,6 +550,21 @@ acpi_ps_complete_op(struct acpi_walk_sta
+ 
+ 		do {
+ 			if (*op) {
++				/*
++				 * These Opcodes need to be removed from the namespace because they
++				 * get created even if these opcodes cannot be created due to
++				 * errors.
++				 */
++				if (((*op)->common.aml_opcode == AML_REGION_OP)
++				    || ((*op)->common.aml_opcode ==
++					AML_DATA_REGION_OP)) {
++					acpi_ns_delete_children((*op)->common.
++								node);
++					acpi_ns_remove_node((*op)->common.node);
++					(*op)->common.node = NULL;
++					acpi_ps_delete_parse_tree(*op);
++				}
 +
- #endif /* _CIFSACL_H */
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2378,8 +2378,7 @@ SMB2_query_acl(const unsigned int xid, s
+ 				status2 =
+ 				    acpi_ps_complete_this_op(walk_state, *op);
+ 				if (ACPI_FAILURE(status2)) {
+@@ -574,6 +590,20 @@ acpi_ps_complete_op(struct acpi_walk_sta
+ #endif
+ 		walk_state->prev_op = NULL;
+ 		walk_state->prev_arg_types = walk_state->arg_types;
++
++		if (walk_state->parse_flags & ACPI_PARSE_MODULE_LEVEL) {
++			/*
++			 * There was something that went wrong while executing code at the
++			 * module-level. We need to skip parsing whatever caused the
++			 * error and keep going. One runtime error during the table load
++			 * should not cause the entire table to not be loaded. This is
++			 * because there could be correct AML beyond the parts that caused
++			 * the runtime error.
++			 */
++			ACPI_ERROR((AE_INFO,
++				    "Ignore error and continue table load"));
++			return_ACPI_STATUS(AE_OK);
++		}
+ 		return_ACPI_STATUS(status);
+ 	}
  
- 	return query_info(xid, tcon, persistent_fid, volatile_fid,
- 			  0, SMB2_O_INFO_SECURITY, additional_info,
--			  SMB2_MAX_BUFFER_SIZE,
--			  sizeof(struct smb2_file_all_info), data, plen);
-+			  SMB2_MAX_BUFFER_SIZE, MIN_SEC_DESC_LEN, data, plen);
- }
+--- a/drivers/acpi/acpica/uterror.c
++++ b/drivers/acpi/acpica/uterror.c
+@@ -182,20 +182,20 @@ acpi_ut_prefixed_namespace_error(const c
+ 	switch (lookup_status) {
+ 	case AE_ALREADY_EXISTS:
  
- int
+-		acpi_os_printf(ACPI_MSG_BIOS_ERROR);
++		acpi_os_printf("\n" ACPI_MSG_BIOS_ERROR);
+ 		message = "Failure creating";
+ 		break;
+ 
+ 	case AE_NOT_FOUND:
+ 
+-		acpi_os_printf(ACPI_MSG_BIOS_ERROR);
+-		message = "Failure looking up";
++		acpi_os_printf("\n" ACPI_MSG_BIOS_ERROR);
++		message = "Could not resolve";
+ 		break;
+ 
+ 	default:
+ 
+-		acpi_os_printf(ACPI_MSG_ERROR);
+-		message = "Failure looking up";
++		acpi_os_printf("\n" ACPI_MSG_ERROR);
++		message = "Failure resolving";
+ 		break;
+ 	}
+ 
 
 
