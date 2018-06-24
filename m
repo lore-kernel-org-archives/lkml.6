@@ -5,153 +5,153 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FBEC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D597C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5681A24E11
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:31:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5681A24E11
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CB60D24E11
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:31:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB60D24E11
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeFXHbm (ORCPT
+        id S1751984AbeFXHbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 03:31:42 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44744 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750737AbeFXHbj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 03:31:39 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fWzUA-0002lR-RS; Sun, 24 Jun 2018 09:30:59 +0200
-Date:   Sun, 24 Jun 2018 09:30:58 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
-        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
-In-Reply-To: <CAGM2rearx+sGh5pHzy4m-2y3izpQvVotyySt6Raam4L5Zmz5iQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1806240913130.8650@nanos.tec.linutronix.de>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com> <20180621212518.19914-10-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
- <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com> <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de> <CAGM2rearx+sGh5pHzy4m-2y3izpQvVotyySt6Raam4L5Zmz5iQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sun, 24 Jun 2018 03:31:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43172 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750737AbeFXHbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 03:31:46 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D73843082A43;
+        Sun, 24 Jun 2018 07:31:45 +0000 (UTC)
+Received: from llong.com (ovpn-116-26.phx2.redhat.com [10.3.116.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DF1DF17796;
+        Sun, 24 Jun 2018 07:31:41 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v11 5/9] cpuset: Make sure that partition flag work properly with CPU hotplug
+Date:   Sun, 24 Jun 2018 15:30:36 +0800
+Message-Id: <1529825440-9574-6-git-send-email-longman@redhat.com>
+In-Reply-To: <1529825440-9574-1-git-send-email-longman@redhat.com>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Sun, 24 Jun 2018 07:31:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Jun 2018, Pavel Tatashin wrote:
-> > > As soon as sched_clock() starts output non-zero values, we start
-> > > output time without correcting the output as it is done in
-> > > sched_clock_local() where unstable TSC and backward motion are
-> > > detected. But, since early in boot interrupts are disabled, we cannot
-> > > really correct invalid time, and therefore must rely on sched_clock()
-> > > to provide us with a contiguous and sane time.
-> >
-> > In early boot the TSC frequency is not changing at all so the whole
-> > unstable thing is completely irrelevant. And that also applies to backward
-> > motion. There is no such thing during early boot.
-> 
-> Yes, however, the frequency changes slightly during re-calibration. I
-> see it every time in my no-kvm qemu VM, and I think even on physical
-> machine. Now, as you suggest below, I can remove the second
-> calibration entirely, and keep only the early calibration, I am not
-> sure what the historical reason to why linux has two of them in the
+When there is a cpu hotplug event (CPU online or offline), the partitions
+may need to be reconfigured and regenerated. So code is added to
+the hotplug functions to make them work with new reserved_cpus mask to
+compute the right effective_cpus for each of the affected cpusets.
 
-git log/blame exist for a reason and in case that does not work asking
-around might give answers as well.
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++++
+ kernel/cgroup/cpuset.c                  | 26 ++++++++++++++++++++++++--
+ 2 files changed, 34 insertions(+), 2 deletions(-)
 
-> first place. But, I assumed the later one was more precise because of
-> some outside reasons, such as different cpu p-state, or something
-> else.
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 5f3170f..f4efa40 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1626,6 +1626,16 @@ Cpuset Interface Files
+ 	2) No CPU that has been distributed to child partition roots is
+ 	   is deleted.
+ 
++	When all the CPUs allocated to a partition are offlined, the
++	partition will be temporaily gone and all the tasks in it will
++	be migrated to another one that belongs to the parent of the
++	partition root.  This is a destructive operation and all the
++	existing CPU affinity that is narrower than the cpuset itself
++	will be lost.
++
++	When any of those offlined CPUs is onlined again, a new partition
++	will be re-created and the tasks will be migrated back.
++
+ 
+ Device controller
+ -----------------
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 3a646a9..e118dd8 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -900,7 +900,8 @@ static void update_tasks_cpumask(struct cpuset *cs)
+  * @parent: the parent cpuset
+  *
+  * If the parent has reserved CPUs, include them in the list of allowable
+- * CPUs in computing the new effective_cpus mask.
++ * CPUs in computing the new effective_cpus mask. The cpu_active_mask is
++ * used to mask off cpus that are to be offlined.
+  */
+ static void compute_effective_cpumask(struct cpumask *new_cpus,
+ 				      struct cpuset *cs, struct cpuset *parent)
+@@ -909,6 +910,7 @@ static void compute_effective_cpumask(struct cpumask *new_cpus,
+ 		cpumask_or(new_cpus, parent->effective_cpus,
+ 			   parent->reserved_cpus);
+ 		cpumask_and(new_cpus, new_cpus, cs->cpus_allowed);
++		cpumask_and(new_cpus, new_cpus, cpu_active_mask);
+ 	} else {
+ 		cpumask_and(new_cpus, cs->cpus_allowed, parent->effective_cpus);
+ 	}
+@@ -2562,9 +2564,17 @@ static void cpuset_hotplug_update_tasks(struct cpuset *cs)
+ 		goto retry;
+ 	}
+ 
+-	cpumask_and(&new_cpus, cs->cpus_allowed, parent_cs(cs)->effective_cpus);
++	compute_effective_cpumask(&new_cpus, cs, parent_cs(cs));
+ 	nodes_and(new_mems, cs->mems_allowed, parent_cs(cs)->effective_mems);
+ 
++	if (cs->nr_reserved) {
++		/*
++		 * Some of the CPUs may have been distributed to child
++		 * partition roots. So we need skip those when computing the
++		 * real effective cpus.
++		 */
++		cpumask_andnot(&new_cpus, &new_cpus, cs->reserved_cpus);
++	}
+ 	cpus_updated = !cpumask_equal(&new_cpus, cs->effective_cpus);
+ 	mems_updated = !nodes_equal(new_mems, cs->effective_mems);
+ 
+@@ -2614,6 +2624,11 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
+ 	cpumask_copy(&new_cpus, cpu_active_mask);
+ 	new_mems = node_states[N_MEMORY];
+ 
++	/*
++	 * If reserved_cpus is populated, it is likely that the check below
++	 * will produce a false positive on cpus_updated when the cpu list
++	 * isn't changed. It is extra work, but it is better to be safe.
++	 */
+ 	cpus_updated = !cpumask_equal(top_cpuset.effective_cpus, &new_cpus);
+ 	mems_updated = !nodes_equal(top_cpuset.effective_mems, new_mems);
+ 
+@@ -2622,6 +2637,13 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
+ 		spin_lock_irq(&callback_lock);
+ 		if (!on_dfl)
+ 			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
++		/*
++		 * Make sure that the reserved cpus aren't in the
++		 * effective cpus.
++		 */
++		if (top_cpuset.nr_reserved)
++			cpumask_andnot(&new_cpus, &new_cpus,
++					top_cpuset.reserved_cpus);
+ 		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
+ 		spin_unlock_irq(&callback_lock);
+ 		/* we don't mess with cpumasks of tasks in top_cpuset */
+-- 
+1.8.3.1
 
-cpu p->states are exactly the same. This is still early boot. Nothing has
-fiddled with any of this.
-
-> > > In earlier versions of this project, I was solving this problem by
-> > > adjusting __sched_clock_offset every time sched_clock()'s continuity was
-> > > changed by using a callback function into sched/clock.c. But, Peter was
-> > > against that approach.
-> >
-> > So your changelog is completely misleading and utterly wrong. What the heck
-> > has this to do with jiffies and the use_tsc jump label? Exactly nothing.
-> 
-> This output is what happens after: "sched: early sched_clock" but
-> before"x86/tsc: use tsc early", hence the title of patch: "x86/tsc:
-> prepare for early sched_clock"
-> So, before  "x86/tsc: prepare for early sched_clock" we go from
-> jiffies to real tsc, and thats where the problem happens. I assume
-> theoretically, the same problem could happen if we can't calibrate TSC
-> early, but succeed later. Now, this is, however, a moot point, as you
-> suggest to remove the second calibration.
-
-Please stop assuming things. Figure the root cause out, really.
-
-> After thinking about this some more, in the future revision I will
-> simply switch order for "x86/tsc: use tsc early" to go before  "sched:
-> early sched_clock", since transitions jiffies -> tsc and tsc ->
-> jiffies won't be possible with the changes you suggest below.
-> 
-> >
-> > > [    0.004000] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-> > > [    0.009000] tsc: Fast TSC calibration using PIT
-> > > [    0.010000] tsc: Detected 3192.137 MHz processor
-> > > [    0.011000] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2e03465ceb2,    max_idle_ns: 440795259855 ns
-> >
-> > > static_branch_enable(__use_tsc) is called, and timestamps became precise
-> > > but reduced:
-> >
-> > > [    0.002233] Calibrating delay loop (skipped), value calculated using timer frequency..     6384.27 BogoMIPS (lpj=3192137)
-> >
-> > This is crap, because this is not what the current implementation does. The
-> > current implementation enables the static branch when the early TSC sched
-> > clock is enabled. So even the timestamps are crap because with the early
-> > sched clock the time stamps are precise _before_ the timer interrupt is
-> > initialized. That's the whole purpose of the exercise, right?
-> >
-> > This made me assume that its an existing problem. Heck, changelogs are
-> > about facts and not fairy tales. And it's completely non interesting that
-> > you observed this problem with some random variant of your patches. What's
-> > interesting is the factual problem which makes the change necessary.
-> 
-> The changelog was about a fact, as stated above: output is from what
-> happens after "sched: early sched_clock" but before "x86/tsc: use tsc
-> early", (i.e.  "x86/tsc: use tsc early" might be reverted or
-> bisected).
-
-I can see the intention now, but this is exactly why precise wording and
-problem description and root cause analysis matter. It just confused me
-completely,
-
-> For this particular patch, I politely asked for suggestions in cover letter:
-> 
-> v10-v11
->        - I added one more patch:
->           "x86/tsc: prepare for early sched_clock" which fixes a problem
->           that I discovered while testing. I am not particularly happy with
->           the fix, as it adds a new argument that is used only in one
->           place, but if you have a suggestion for a different approach on
->           how to address this problem please let me know.
-
-Fair enough. I missed that. It would have been more obvious to mark the
-patch RFC and add exactly this into the changelog.
-
-Thanks,
-
-	tglx
