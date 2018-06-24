@@ -6,40 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FB1C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C159FC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2337F250A8
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2337F250A8
+	by mail.kernel.org (Postfix) with ESMTP id 7AC3D250AB
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC3D250AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933674AbeFXPqg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:46:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60970 "EHLO
+        id S933706AbeFXPqn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:46:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32892 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPqe (ORCPT
+        with ESMTP id S932073AbeFXPql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:46:34 -0400
+        Sun, 24 Jun 2018 11:46:41 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9CA29A95;
-        Sun, 24 Jun 2018 15:46:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBD5649F;
+        Sun, 24 Jun 2018 15:46:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Joerg Roedel <jroedel@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <liu.song.a23@gmail.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [PATCH 4.17 59/70] genirq/migration: Avoid out of line call if pending is not set
-Date:   Sun, 24 Jun 2018 23:22:51 +0800
-Message-Id: <20180624142744.149165176@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Subject: [PATCH 4.17 60/70] x86/intel_rdt: Enable CMT and MBM on new Skylake stepping
+Date:   Sun, 24 Jun 2018 23:22:52 +0800
+Message-Id: <20180624142744.219231390@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -56,72 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Tony Luck <tony.luck@intel.com>
 
-commit d340ebd696f921d3ad01b8c0c29dd38f2ad2bf3e upstream.
+commit 1d9f3e20a56d33e55748552aeec597f58542f92d upstream.
 
-The upcoming fix for the -EBUSY return from affinity settings requires to
-use the irq_move_irq() functionality even on irq remapped interrupts. To
-avoid the out of line call, move the check for the pending bit into an
-inline helper.
+New stepping of Skylake has fixes for cache occupancy and memory
+bandwidth monitoring.
 
-Preparatory change for the real fix. No functional change.
+Update the code to enable these by default on newer steppings.
 
-Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <liu.song.a23@gmail.com>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tariq Toukan <tariqt@mellanox.com>
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Link: https://lkml.kernel.org/r/20180604162224.471925894@linutronix.de
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: stable@vger.kernel.org # v4.14
+Cc: Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Link: https://lkml.kernel.org/r/20180608160732.9842-1-tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/irq.h    |    7 ++++++-
- kernel/irq/migration.c |    5 +----
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -551,7 +551,12 @@ extern int irq_affinity_online_cpu(unsig
- #endif
- 
- #if defined(CONFIG_SMP) && defined(CONFIG_GENERIC_PENDING_IRQ)
--void irq_move_irq(struct irq_data *data);
-+void __irq_move_irq(struct irq_data *data);
-+static inline void irq_move_irq(struct irq_data *data)
-+{
-+	if (unlikely(irqd_is_setaffinity_pending(data)))
-+		__irq_move_irq(data);
-+}
- void irq_move_masked_irq(struct irq_data *data);
- void irq_force_complete_move(struct irq_desc *desc);
- #else
---- a/kernel/irq/migration.c
-+++ b/kernel/irq/migration.c
-@@ -91,7 +91,7 @@ void irq_move_masked_irq(struct irq_data
- 	cpumask_clear(desc->pending_mask);
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -821,6 +821,8 @@ static __init void rdt_quirks(void)
+ 	case INTEL_FAM6_SKYLAKE_X:
+ 		if (boot_cpu_data.x86_stepping <= 4)
+ 			set_rdt_options("!cmt,!mbmtotal,!mbmlocal,!l3cat");
++		else
++			set_rdt_options("!l3cat");
+ 	}
  }
- 
--void irq_move_irq(struct irq_data *idata)
-+void __irq_move_irq(struct irq_data *idata)
- {
- 	bool masked;
- 
-@@ -102,9 +102,6 @@ void irq_move_irq(struct irq_data *idata
- 	 */
- 	idata = irq_desc_get_irq_data(irq_data_to_desc(idata));
- 
--	if (likely(!irqd_is_setaffinity_pending(idata)))
--		return;
--
- 	if (unlikely(irqd_irq_disabled(idata)))
- 		return;
  
 
 
