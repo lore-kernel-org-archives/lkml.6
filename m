@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AE3C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 002CFC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF8324F98
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF8324F98
+	by mail.kernel.org (Postfix) with ESMTP id B6D2D240AC
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D2D240AC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754433AbeFXP21 (ORCPT
+        id S1754496AbeFXP2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:28:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58858 "EHLO
+        Sun, 24 Jun 2018 11:28:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58872 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752087AbeFXP2Y (ORCPT
+        with ESMTP id S1752717AbeFXP2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:28:24 -0400
+        Sun, 24 Jun 2018 11:28:37 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D6B932C;
-        Sun, 24 Jun 2018 15:28:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 510FE2C;
+        Sun, 24 Jun 2018 15:28:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Joe Habermann <joe.habermann@quantum.com>
-Subject: [PATCH 4.14 14/52] ext4: update mtime in ext4_punch_hole even if no blocks are released
-Date:   Sun, 24 Jun 2018 23:21:07 +0800
-Message-Id: <20180624142745.296156535@linuxfoundation.org>
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 05/52] net/sched: act_simple: fix parsing of TCA_DEF_DATA
+Date:   Sun, 24 Jun 2018 23:20:58 +0800
+Message-Id: <20180624142744.639406409@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -51,77 +51,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Czerner <lczerner@redhat.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-commit eee597ac931305eff3d3fd1d61d6aae553bc0984 upstream.
+[ Upstream commit 8d499533e0bc02d44283dbdab03142b599b8ba16 ]
 
-Currently in ext4_punch_hole we're going to skip the mtime update if
-there are no actual blocks to release. However we've actually modified
-the file by zeroing the partial block so the mtime should be updated.
+use nla_strlcpy() to avoid copying data beyond the length of TCA_DEF_DATA
+netlink attribute, in case it is less than SIMP_MAX_DATA and it does not
+end with '\0' character.
 
-Moreover the sync and datasync handling is skipped as well, which is
-also wrong. Fix it.
+v2: fix errors in the commit message, thanks Hangbin Liu
 
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Joe Habermann <joe.habermann@quantum.com>
-Cc: <stable@vger.kernel.org>
+Fixes: fa1b1cff3d06 ("net_cls_act: Make act_simple use of netlink policy.")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/inode.c |   40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ net/sched/act_simple.c |   15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4246,28 +4246,28 @@ int ext4_punch_hole(struct inode *inode,
- 		EXT4_BLOCK_SIZE_BITS(sb);
- 	stop_block = (offset + length) >> EXT4_BLOCK_SIZE_BITS(sb);
+--- a/net/sched/act_simple.c
++++ b/net/sched/act_simple.c
+@@ -53,22 +53,22 @@ static void tcf_simp_release(struct tc_a
+ 	kfree(d->tcfd_defdata);
+ }
  
--	/* If there are no blocks to remove, return now */
--	if (first_block >= stop_block)
--		goto out_stop;
+-static int alloc_defdata(struct tcf_defact *d, char *defdata)
++static int alloc_defdata(struct tcf_defact *d, const struct nlattr *defdata)
+ {
+ 	d->tcfd_defdata = kzalloc(SIMP_MAX_DATA, GFP_KERNEL);
+ 	if (unlikely(!d->tcfd_defdata))
+ 		return -ENOMEM;
+-	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
++	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
+ 	return 0;
+ }
+ 
+-static void reset_policy(struct tcf_defact *d, char *defdata,
++static void reset_policy(struct tcf_defact *d, const struct nlattr *defdata,
+ 			 struct tc_defact *p)
+ {
+ 	spin_lock_bh(&d->tcf_lock);
+ 	d->tcf_action = p->action;
+ 	memset(d->tcfd_defdata, 0, SIMP_MAX_DATA);
+-	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
++	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
+ 	spin_unlock_bh(&d->tcf_lock);
+ }
+ 
+@@ -87,7 +87,6 @@ static int tcf_simp_init(struct net *net
+ 	struct tcf_defact *d;
+ 	bool exists = false;
+ 	int ret = 0, err;
+-	char *defdata;
+ 
+ 	if (nla == NULL)
+ 		return -EINVAL;
+@@ -110,8 +109,6 @@ static int tcf_simp_init(struct net *net
+ 		return -EINVAL;
+ 	}
+ 
+-	defdata = nla_data(tb[TCA_DEF_DATA]);
 -
--	down_write(&EXT4_I(inode)->i_data_sem);
--	ext4_discard_preallocations(inode);
--
--	ret = ext4_es_remove_extent(inode, first_block,
--				    stop_block - first_block);
--	if (ret) {
--		up_write(&EXT4_I(inode)->i_data_sem);
--		goto out_stop;
--	}
-+	/* If there are blocks to remove, do it */
-+	if (stop_block > first_block) {
-+
-+		down_write(&EXT4_I(inode)->i_data_sem);
-+		ext4_discard_preallocations(inode);
+ 	if (!exists) {
+ 		ret = tcf_idr_create(tn, parm->index, est, a,
+ 				     &act_simp_ops, bind, false);
+@@ -119,7 +116,7 @@ static int tcf_simp_init(struct net *net
+ 			return ret;
  
--	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
--		ret = ext4_ext_remove_space(inode, first_block,
--					    stop_block - 1);
--	else
--		ret = ext4_ind_remove_space(handle, inode, first_block,
--					    stop_block);
-+		ret = ext4_es_remove_extent(inode, first_block,
-+					    stop_block - first_block);
-+		if (ret) {
-+			up_write(&EXT4_I(inode)->i_data_sem);
-+			goto out_stop;
-+		}
-+
-+		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-+			ret = ext4_ext_remove_space(inode, first_block,
-+						    stop_block - 1);
-+		else
-+			ret = ext4_ind_remove_space(handle, inode, first_block,
-+						    stop_block);
+ 		d = to_defact(*a);
+-		ret = alloc_defdata(d, defdata);
++		ret = alloc_defdata(d, tb[TCA_DEF_DATA]);
+ 		if (ret < 0) {
+ 			tcf_idr_release(*a, bind);
+ 			return ret;
+@@ -133,7 +130,7 @@ static int tcf_simp_init(struct net *net
+ 		if (!ovr)
+ 			return -EEXIST;
  
--	up_write(&EXT4_I(inode)->i_data_sem);
-+		up_write(&EXT4_I(inode)->i_data_sem);
-+	}
- 	if (IS_SYNC(inode))
- 		ext4_handle_sync(handle);
+-		reset_policy(d, defdata, parm);
++		reset_policy(d, tb[TCA_DEF_DATA], parm);
+ 	}
  
+ 	if (ret == ACT_P_CREATED)
 
 
