@@ -2,127 +2,143 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E9DC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FA5C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D5324F05
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:28:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGU4D761"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36D5324F05
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CE486208DC
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:28:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE486208DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751951AbeFXN2N (ORCPT
+        id S1751994AbeFXN2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 09:28:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36638 "EHLO mail.kernel.org"
+        Sun, 24 Jun 2018 09:28:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60292 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751864AbeFXN2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 09:28:12 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A922324F04;
-        Sun, 24 Jun 2018 13:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529846891;
-        bh=/sYV0d9k8xQNIyCZFF9Abl7T6xVnLTdBQ2dQY8bFPrY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=vGU4D761kozeA6vFhl7u2/k9myKFlVFHh12/97itgQn1dmhKDlExodp4lLTyx+Hns
-         SSjwu/Y0BFUnJiGg7LGy0YUaAIFB8LhrP8bqa8oG6gc0tk2UgR0bJsYJJGYKmmSEH4
-         wBlbPMxF5ls8cmTH+xdKUWb41PZfAEICcMMDMtJE=
-Date:   Sun, 24 Jun 2018 14:28:04 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, freeman.liu@spreadtrum.com,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: Add Spreadtrum SC27XX PMICs
- ADC controller documentation
-Message-ID: <20180624142804.06ea3433@archlinux>
-In-Reply-To: <900586c7a4ce55818ab330c738f306c7452191ef.1529550463.git.baolin.wang@linaro.org>
-References: <900586c7a4ce55818ab330c738f306c7452191ef.1529550463.git.baolin.wang@linaro.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751812AbeFXN2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 09:28:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 6DE75AD08;
+        Sun, 24 Jun 2018 13:28:31 +0000 (UTC)
+Subject: Re: [PATCH 4/4] soc: actions: Fix help text in Kconfig for
+ OWL_PM_DOMAINS
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     robh+dt@kernel.org, liuwei@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        manivannanece23@gmail.com, Jeff Chen <jeff.chen@actions-semi.com>,
+        "Thomas C. Liau" <thomas.liau@actions-semi.com>
+References: <20180411164036.8046-1-manivannan.sadhasivam@linaro.org>
+ <20180411164036.8046-5-manivannan.sadhasivam@linaro.org>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <62ef1835-8db9-f1e8-53b9-4cd74b5d416d@suse.de>
+Date:   Sun, 24 Jun 2018 15:28:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180411164036.8046-5-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Jun 2018 11:14:04 +0800
-Baolin Wang <baolin.wang@linaro.org> wrote:
+Hi Mani,
 
-> This patch adds the binding documentation for Spreadtrum SC27XX series
-> PMICs ADC controller device.
+Am 11.04.2018 um 18:40 schrieb Manivannan Sadhasivam:
+> OWL_PM_DOMAINS is being used by 3 SoCs of OWL family. This fixes
+> the wording to use family name OWL instead of SoC name S500.
 > 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
-> Changes since v2:
->  - Add reviewed tag from Rob.
+>  drivers/soc/actions/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Changes since v1:
->  - No updates.
-> ---
->  .../bindings/iio/adc/sprd,sc27xx-adc.txt           |   36 ++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/sprd,sc27xx-adc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/sprd,sc27xx-adc.txt b/Documentation/devicetree/bindings/iio/adc/sprd,sc27xx-adc.txt
-> new file mode 100644
-> index 0000000..8aad960
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/sprd,sc27xx-adc.txt
-> @@ -0,0 +1,36 @@
-> +Spreadtrum SC27XX series PMICs ADC binding
-> +
-> +Required properties:
-> +- compatible: Should be one of the following.
-> +	"sprd,sc2720-adc"
-> +	"sprd,sc2721-adc"
-> +	"sprd,sc2723-adc"
-> +	"sprd,sc2730-adc"
-> +	"sprd,sc2731-adc"
-> +- reg: The address offset of ADC controller.
-> +- interrupt-parent: The interrupt controller.
-> +- interrupts: The interrupt number for the ADC device.
-> +- #io-channel-cells: Number of cells in an IIO specifier.
-> +- hwlocks: Reference to a phandle of a hwlock provider node.
-> +
-> +Example:
-> +
-> +	sc2731_pmic: pmic@0 {
-> +		compatible = "sprd,sc2731";
-> +		reg = <0>;
-> +		spi-max-frequency = <26000000>;
-> +		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		pmic_adc: adc@480 {
-> +			compatible = "sprd,sc2731-adc";
-> +			reg = <0x480>;
-> +			interrupt-parent = <&sc2731_pmic>;
-> +			interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
-> +			#io-channel-cells = <1>;
-> +			hwlocks = <&hwlock 4>;
-> +		};
-> +	};
+> diff --git a/drivers/soc/actions/Kconfig b/drivers/soc/actions/Kconfig
+> index 9d68b5a771c3..26c3155d3738 100644
+> --- a/drivers/soc/actions/Kconfig
+> +++ b/drivers/soc/actions/Kconfig
+> @@ -10,7 +10,7 @@ config OWL_PM_DOMAINS
+>  	select PM_GENERIC_DOMAINS
+>  	help
+>  	  Say 'y' here to enable support for Smart Power System (SPS)
+> -	  power-gating on Actions Semiconductor S500 SoC.
+> +	  power-gating on Actions Semiconductor OWL SoCs.
 
+Thanks for spotting this. However, repeating OWL from the title (which I
+think should be spelled Owl in free text, given that I also read Falcon
+as another bird for GT9 [*]) does not seem too helpful for people
+wondering whether or not to enable the driver.
+
+I would much rather do a patch updating this to "S500 and S700 SoCs"
+with Fixes and then just add S900 as part of your preceding patch.
+
+Regards,
+Andreas
+
+[*] https://androidpc.es/blog/2015/11/10/actions-gt7/
+
+>  	  If unsure, say 'n'.
+>  
+>  endif
+> 
+
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
