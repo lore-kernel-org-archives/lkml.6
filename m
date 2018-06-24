@@ -1,50 +1,53 @@
-Return-Path: <SRS0=hmx+=JJ=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AFAC43144
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 23:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85CFC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 00:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 829AE24D5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Jun 2018 23:39:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 829AE24D5F
+	by mail.kernel.org (Postfix) with ESMTP id 6F91E24D59
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 00:15:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F91E24D59
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751859AbeFWXjc (ORCPT
+        id S1751834AbeFXAPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 19:39:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44040 "EHLO
+        Sat, 23 Jun 2018 20:15:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44065 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751583AbeFWXja (ORCPT
+        with ESMTP id S1751583AbeFXAPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 19:39:30 -0400
+        Sat, 23 Jun 2018 20:15:15 -0400
 Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1fWs73-0000EU-7y; Sun, 24 Jun 2018 01:38:37 +0200
-Date:   Sun, 24 Jun 2018 01:38:36 +0200 (CEST)
+        id 1fWsfn-0000PN-4C; Sun, 24 Jun 2018 02:14:31 +0200
+Date:   Sun, 24 Jun 2018 02:14:30 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
-        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
-In-Reply-To: <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com> <20180621212518.19914-10-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
- <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com>
+To:     Baolin Wang <baolin.wang@linaro.org>
+cc:     john.stultz@linaro.org, daniel.lezcano@linaro.org, arnd@arndb.de,
+        tony@atomide.com, aaro.koskinen@iki.fi, linux@armlinux.org.uk,
+        mark.rutland@arm.com, marc.zyngier@arm.com, broonie@kernel.org,
+        paulmck@linux.vnet.ibm.com, mlichvar@redhat.com,
+        rdunlap@infradead.org, kstewart@linuxfoundation.org,
+        gregkh@linuxfoundation.org, pombredanne@nexb.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, heiko@sntech.de,
+        linus.walleij@linaro.org, viresh.kumar@linaro.org,
+        mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
+        douly.fnst@cn.fujitsu.com, len.brown@intel.com,
+        rajvi.jingar@intel.com, alexandre.belloni@bootlin.com,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH 1/8] time: Add persistent clock support
+In-Reply-To: <d330f02c8ef2a348b179850e1745a52ab9c47e90.1528878545.git.baolin.wang@linaro.org>
+Message-ID: <alpine.DEB.2.21.1806232224510.8650@nanos.tec.linutronix.de>
+References: <cover.1528878545.git.baolin.wang@linaro.org> <d330f02c8ef2a348b179850e1745a52ab9c47e90.1528878545.git.baolin.wang@linaro.org>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -56,253 +59,207 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Jun 2018, Pavel Tatashin wrote:
-> > So you forgot to answer this question. I did not find a system yet, which
-> > actually exposes this behaviour on mainline.
-> >
-> > Is this an artifact of your early sched clock thing?
-> >
-> 
-> Yes, it is. Let me explain how it happens.
-> 
-> So, the problem is introduced in patch "sched: early boot clock" by this change:
-> 
-> -       if (unlikely(!sched_clock_running))
-> -               return 0ull;
-> +       /* Use early clock until sched_clock_init_late() */
-> +       if (unlikely(sched_clock_running < 2))
-> +               return sched_clock() + __sched_clock_offset;
-> 
-> As soon as sched_clock() starts output non-zero values, we start
-> output time without correcting the output as it is done in
-> sched_clock_local() where unstable TSC and backward motion are
-> detected. But, since early in boot interrupts are disabled, we cannot
-> really correct invalid time, and therefore must rely on sched_clock()
-> to provide us with a contiguous and sane time.
+On Wed, 13 Jun 2018, Baolin Wang wrote:
+> Moreover we can register the clocksource with CLOCK_SOURCE_SUSPEND_NONSTOP
+> to be one persistent clock, then we can simplify the suspend/resume
+> accounting by removing CLOCK_SOURCE_SUSPEND_NONSTOP timing. After that
+> we can only compensate the OS time by persistent clock or RTC.
 
-In early boot the TSC frequency is not changing at all so the whole
-unstable thing is completely irrelevant. And that also applies to backward
-motion. There is no such thing during early boot.
+That makes sense because it adds a gazillion lines of code and removes 5?
+Not really,
 
-> In earlier versions of this project, I was solving this problem by
-> adjusting __sched_clock_offset every time sched_clock()'s continuity was
-> changed by using a callback function into sched/clock.c. But, Peter was
-> against that approach.
+> +/**
+> + * persistent_clock_read_data - data required to read persistent clock
+> + * @read: Returns a cycle value from persistent clock.
+> + * @last_cycles: Clock cycle value at last update.
+> + * @last_ns: Time value (nanoseconds) at last update.
+> + * @mask: Bitmask for two's complement subtraction of non 64bit clocks.
+> + * @mult: Cycle to nanosecond multiplier.
+> + * @shift: Cycle to nanosecond divisor.
+> + */
+> +struct persistent_clock_read_data {
+> +	u64 (*read)(void);
+> +	u64 last_cycles;
+> +	u64 last_ns;
+> +	u64 mask;
+> +	u32 mult;
+> +	u32 shift;
+> +};
+> +/**
+> + * persistent_clock - represent the persistent clock
+> + * @read_data: Data required to read from persistent clock.
+> + * @seq: Sequence counter for protecting updates.
+> + * @freq: The frequency of the persistent clock.
+> + * @wrap: Duration for persistent clock can run before wrapping.
+> + * @alarm: Update timeout for persistent clock wrap.
+> + * @alarm_inited: Indicate if the alarm has been initialized.
+> + */
+> +struct persistent_clock {
+> +	struct persistent_clock_read_data read_data;
+> +	seqcount_t seq;
+> +	u32 freq;
+> +	ktime_t wrap;
+> +	struct alarm alarm;
+> +	bool alarm_inited;
+> +};
 
-So your changelog is completely misleading and utterly wrong. What the heck
-has this to do with jiffies and the use_tsc jump label? Exactly nothing.
+NAK!
 
-> [    0.004000] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-> [    0.009000] tsc: Fast TSC calibration using PIT
-> [    0.010000] tsc: Detected 3192.137 MHz processor
-> [    0.011000] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2e03465ceb2,    max_idle_ns: 440795259855 ns
+There is no reason to invent yet another set of data structures and yet
+more read functions with a sequence counter. which are just a bad and
+broken copy of the existing timekeeping/clocksource code. And of course the
+stuff is not serialized against multiple registrations, etc. etc.
 
-> static_branch_enable(__use_tsc) is called, and timestamps became precise
-> but reduced:
+Plus the utter nonsense that any call site has to do the same thing over
+and over:
 
-> [    0.002233] Calibrating delay loop (skipped), value calculated using timer frequency..     6384.27 BogoMIPS (lpj=3192137)
+    register():
+    start_alarm_timer();
 
-This is crap, because this is not what the current implementation does. The
-current implementation enables the static branch when the early TSC sched
-clock is enabled. So even the timestamps are crap because with the early
-sched clock the time stamps are precise _before_ the timer interrupt is
-initialized. That's the whole purpose of the exercise, right?
+Why is this required in the first place? It's not at all. The only place
+where such an alarm timer will be required is when the system actually goes
+to suspend. Starting it at registration time is pointless and even counter
+productive. Assume the clocksource wraps every 2 hours. So you start it at
+boot time and after 119 minutes uptime the system suspends. So it will
+wakeup one minute later to update the clocksource. Heck no. If the timer is
+started when the machine actually suspends it will wake up earliest in 120
+minutes.
 
-This made me assume that its an existing problem. Heck, changelogs are
-about facts and not fairy tales. And it's completely non interesting that
-you observed this problem with some random variant of your patches. What's
-interesting is the factual problem which makes the change necessary.
+And you even add that to the TSC which does not need it at all. It will
+wrap in about 400 years on a 2GHZ machine. So you degrade the functionality
+instead of improving it.
 
-So the problem is not the transition from jiffies to early TSC because at
-the point where you enable the early TSC sched clock the jiffies sched
-clock value is exactly ZERO simply because the timer interrupt is not
-running yet.
+So no, this is not going anywhere.
 
-The problem happens when you switch from the early TSC thing to the real
-one in tsc_init(). And that happens because you reinitialize the cyc2ns
-data of the boot CPU which was already initialized. That sets the offset to
-the current TSC value and voila time goes backwards.
+Let's look at the problem itself:
 
-This whole nonsense can be completely avoided.
+   You want to use one clocksource for timekeeping during runtime which is
+   fast and accurate and another one for suspend time injection which is
+   slower and/or less accurate because the fast one stops in suspend.
 
-If you look at the existing tsc_init() then you'll notice that the loop
-which initializes cyc2ns data for each possible cpu is bonkers. It does the
-same stupid thing over and over for every possible CPU, i.e.
+   Plus you need an alarmtimer which makes sure that the clocksource does
+   not wrap around during suspend.
 
-      - Set already zeroed data to zero
+Now lets look what we have already:
 
-      - Calculate the cyc2ns conversion values from the same input
+   Both clocksources already exist and are registered as clocksources with
+   all required data in the clocksource core.
 
-      - Invoke sched_clock_idle_sleep/wakeup_event() which executes the
-        same code over and over on the boot cpu and the boot cpu sched
-        clock data.
+Ergo the only sane and logical conclusion is to expand the existing
+infrastructure to handle that.
 
-That's pointless and wants to be fixed in a preparatory step.
+When a clocksource is registered, then the registration function already
+makes decisions about using it as timekeeping clocksource. So add a few
+lines of code to check whether the newly registered clocksource is suitable
+and preferred for suspend.
 
-static void __init cyc2ns_init(void)
-{
-	unsigned int cpu, this_cpu = smp_processor_id();
-	struct cyc2ns_data data;
-	struct cyc2ns *c2n;
-
-	c2n = this_cpu_ptr(&cyc2ns);
-	seqcount_init(&c2n->seq);
-	set_cyc2ns_scale(tsc_khz, cpu, rdtsc());
-	data = c2n->data[0];
-
-	for_each_possible_cpu(cpu) {
-		if (cpu == this_cpu)
-			continue;
-		seqcount_init(&c2n->seq);
-		c2n = per_cpu_ptr(&cyc2ns, cpu)
-		c2n->data[0] = c2n->data[1] = data;
-	}
-}
-
-This is safe and correct because the whole latch mechanics are completely
-irrelevant for the non boot cpus as they are far away from being up. That
-replaces the loop in tsc_init() with a single call to cyc2ns_init(().
-
-The next bogosity is the whole calibration logic.
-
-void __init tsc_early_delay_calibrate(void)
-{
-	cpu_khz = x86_platform.calibrate_cpu();
-        tsc_khz = x86_platform.calibrate_tsc();
-
-        tsc_khz = tsc_khz ? : cpu_khz;
-        if (!tsc_khz)
-                return;
-
-        lpj = tsc_khz * 1000;
-        do_div(lpj, HZ);
-        loops_per_jiffy = lpj;
-}
-
-and
-
-void __init tsc_init(void)
-{
-        cpu_khz = x86_platform.calibrate_cpu();
-        tsc_khz = x86_platform.calibrate_tsc();
-
-        /*
-         * Trust non-zero tsc_khz as authorative,
-         * and use it to sanity check cpu_khz,
-         * which will be off if system timer is off.
-         */
-	if (tsc_khz == 0)
-                tsc_khz = cpu_khz;
-        else if (abs(cpu_khz - tsc_khz) * 10 > tsc_khz)
-		cpu_khz = tsc_khz;
-
-        if (!tsc_khz) {
-		.....
-
-So this is exactly the same code sequence just that tsc_init() has the
-extra logic of sanitizing cpu_khz for some bogus cpuid/msr values.
-
-So we have yet another completely pointless exercise in tsc_init(). It just
-can go away and the tsc_khz value will not be more precise in the second
-invocation of that stuff than in the first. Ergo the extra cpu_khz
-sanitizing can be moved to early calibrate and the duplicate nonsense in
-tsc_init() can be discarded.. tsc_init() then needs only to check for
-tsc_khz == 0 and be done with it.
-
-Now back to your early sched clock thing. It does in the init code:
-
-tsc_sched_clock_init()
-{
-	c2n = this_cpu_ptr(&cyc2ns);
-	seqcount_init(&c2n->seq);
-	__set_cyc2ns_scale(tsc_khz, cpu, rdtsc());
-}	
-
-i.e it avoids the sched_clock_idle_sleep/wakeup_event() calls because they
-make no sense, but it initializes cyc2ns for the boot CPU with the correct
-values.
-
-And this early init sequence also needs to pull over the tsc adjust
-magic. So tsc_early_delay_calibrate() which should btw. be renamed to
-tsc_early_init() should have:
-
-{
-	cpu_khz = x86_platform.calibrate_cpu();
-        tsc_khz = x86_platform.calibrate_tsc();
-
-        tsc_khz = tsc_khz ? : cpu_khz;
-        if (!tsc_khz)
-                return;
-
-        /* Sanitize TSC ADJUST before cyc2ns gets initialized */
-        tsc_store_and_check_tsc_adjust(true);
-
-	calc_lpj(tsc_khz);
+	if (!stops_in_suspend(newcs)) {
+		if (!suspend_cs || is_preferred_suspend_cs(newcs))
+			suspend_cs = newcs;
+	}		
 		
-	tsc_sched_clock_init();
-}
+The is_preferred_suspend_cs() can be based on rating, the maximum suspend
+length which can be achieved or whatever is sensible. It should start of as
+a very simple decision function based on rating and not an prematurely
+overengineered monstrosity.
 
-After that there is absolutely _ZERO_ reason to reinitialize the cyc2ns
-value for the boot CPU which also completely removes the requirement for
-this 'adjust offset' change. It's just going to work.
+The suspend/resume() code needs a few very simple changes:
+   
+xxx_suspend():
+	clocksource_prepare_suspend();
 
-The only change you have to make is:
+  Note, this is _NOT_ timekeeping_suspend() because that is invoked _AFTER_
+  alarmtimer_suspend(). So if an alarm timer is required it needs to be
+  armed before that. A trivial solution might be to just call it from
+  alarmtimer_suspend(), but that a minor detail to worry about.
 
-static void __init cyc2ns_init(void)
+timekeeping_suspend()
 {
-	unsigned int cpu, this_cpu = smp_processor_id();
-	struct cyc2ns_data data;
-	struct cyc2ns *c2n;
+	clocksource_enter_suspend();
+	...
 
-	c2n = this_cpu_ptr(&cyc2ns);
--	seqcount_init(&c2n->seq);
--	set_cyc2ns_scale(tsc_khz, cpu, rdtsc());
-	data = c2n->data[0];
+timekeeping_resume()
+{
+...
+	if (clocksource_leave_suspend(&nsec)) {
+		ts_delta = ns_to_timespec64(nsec);
+		sleeptime_injected = true;
+	} else if (......
 
-	for_each_possible_cpu(cpu) {
-		if (cpu == this_cpu)
-			continue;
-		seqcount_init(&c2n->seq);
-		c2n = per_cpu_ptr(&cyc2ns, cpu)
-		c2n->data[0] = c2n->data[1] = data;
-	}
+
+Now lets look at the new functions:
+
+void clocksource_prepare_suspend(void)
+{
+	if (!suspend_cs)
+		return;
+
+	if (needs_alarmtimer(suspend_cs))
+		start_suspend_alarm(suspend_cs);
 }
+
+void clocksource_enter_suspend(void)
+{
+	if (!suspend_cs)
+		return;
+	suspend_start = suspend_cs->read();
+}
+
+bool clocksource_leave_suspend(u64 *nsec)
+{
+	u64 now, delta;
+
+	if (!suspend_cs)
+		return false;
+
+	now = suspend_cs->read();
+	delta = clocksource_delta(now, suspend_start, suspend_cs->mask);
+	*nsec = mul_u64_u32_shr(delta, suspend_cs->mult, suspend_cs->shift);
+	return true;
+}
+
+See? It does not need any of this totally nonsensical stuff in your
+registration function and not any new read functions and whatever, because
+it simply can use the bog standard mult/shift values. Why? Because the
+conversion above can cope with a full 64 bit * 32 bit multiply without
+falling apart. It's already there in timekeeping_resume() otherwise
+resuming with a NONSTOP TSC would result in bogus sleep times after a few
+minutes. It's slower than the normal clocksource conversion which is
+optimized for performance, but thats completely irrelevant on resume. This
+whole blurb about requiring separate mult/shift values is just plain
+drivel.
+
+Plus any reasonably broad clocksource will not need an alarmtimer at
+all. Because the only reason it is needed is when the clocksource itself
+wraps around. And that has absolutely nothing to do with mult/shift
+values. That just depends on the frequency and the bitwidth of the counter,
+
+So it does not need an update function either because in case of broad
+enough clocksources there is absolutely no need for update and in case of
+wrapping ones the alarmtimer brings it out of suspend on time. And because
+the only interesting thing is the delta between suspend and resume this is
+all a complete non issue.
+
+The clocksource core already has all the registration/unregistration
+functionality plus an interface to reconfigure the frequency, so
+clocksources can come and go and be reconfigured and all of this just
+works.
+
+Once the extra few lines of code are in place, then you can go and cleanup
+the existing mess of homebrewn interfaces and claim that this is
+consolidation and simplification.
 
 <rant>
 
-TBH. I'm utterly disappointed how all this was approached.
+What's wrong with you people? Didn't they teach you in school that the
+first thing to do is proper problem and code analysis? If they did not, go
+back to them and ask your money back,
 
-I absolutely detest the approach of duct taping something new into existing
-code without a proper analysis of the existing infrastructure in the first
-place. This is just utter waste of time. I don't care about your wasted
-time at all, but I care about the fact, that I had to sit down and do the
-analysis myself and about the time wasted in reviewing half baken
-stuff. Sure, I was able do the analysis rather fast because I'm familiar
-with the code, but I still had to sit down and figure out all the
-details. You might have needed a week for that, but that would have saved
-you several weeks of tinkering and the frustration of getting your patches
-rejected over and over.
-
-Alone the fact that dmesg has this:
-
-[    0.000000] tsc: Fast TSC calibration using PIT
-[    0.020000] tsc: Fast TSC calibration using PIT
-
-should have made you look into exactly what I was looking at just now. It's
-really not rocket science to figure out that both calibrations do
-absolutely the same thing and this is even more hilarious as you are doing
-this to do boot time analysis in order to make the boot faster. Oh well.
+I'm really tired of these overengineered trainwrecks which are then
+advertised with bullshit marketing like the best invention since sliced
+bread. This might work in random corporates, but not here.
 
 </rant>
-
-So I made your homework and expect as compensation a sqeaky clean patch set
-with proper changelogs. I surely might have missed a few details, but I'm
-also sure you find and fix them if you avoid trying to repost the whole
-thing tomorrow. Take your time and do it right and ask questions upfront if
-anything is unclear instead of implementing hacks based on weird
-assumptions.
-
-That'll make up for both your and my frustration over this whole excercise.
 
 Thanks,
 
