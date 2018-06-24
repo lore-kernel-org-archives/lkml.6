@@ -2,153 +2,159 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31724C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 20:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F14C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 20:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9E2625301
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 20:15:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Or2HkYbo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9E2625301
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 18E9C2530A
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 20:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E9C2530A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeFXUPW (ORCPT
+        id S1751828AbeFXUkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 16:15:22 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55505 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751352AbeFXUPU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 16:15:20 -0400
-Received: by mail-wm0-f66.google.com with SMTP id v16-v6so6996953wmh.5;
-        Sun, 24 Jun 2018 13:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0aTDchLjVg7pdQa6ERXyM7zLrCMt6i74RkYisNWuAj0=;
-        b=Or2HkYbonNx1Acj9VhA4WCK0jF/Abjk44MpFxZ8WbOPY2PkInCc9bvRG/cJdgimapA
-         FcnQ7GG5daNEr3c7XTa8tV7Z5SJauUs/MqcSpkjkWwMHwgMcdnm5Hq3IhwrjbRjGqTck
-         NjSZyDJ4zxXT1VSbze33Gp16P9AnQjCMcjk1hblYh7hDKhlfZexfOQ/6GJ+26ZCwgrxx
-         1NyRmRp5LC9OdQ38mT3ecpJq+nQG3Fygzzxqb+7qWbeOwf+k6CY/Nm0XrdnkYtymjLKk
-         aCkZ1lgp+Tm02T7nhzW21CK3jbJNvRnXZK/EsV2Aj+qx2KLLpIVTv/pG2nd8wtxuXrCf
-         v/Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0aTDchLjVg7pdQa6ERXyM7zLrCMt6i74RkYisNWuAj0=;
-        b=X3jC6JGuzG5SVIhX4oikHjh/J5r+j7sg8w4N82opC4Ua6k1cZ2xrS4AJwHTdvABhaX
-         3SZehJuZLyQ1HvyktVltCezxRFmrnwYfprKI5ZBOYEBF6CKbaG06QmSRbmj9ttqEqaM3
-         +fuL1t+diqvf1GLopqoFB01RZL9hDbJbO5RLggeGr4q9PlxKjKf1AkatOIn1Ow1XXf5a
-         E6zntOS9fL5lSc1pgxFSiLVnSz7+K4rJ4r84RlnADIZWwV2x93fdJEFONWhvLc8qDRFc
-         sG6/f18EChhnQ2NQjIeWpHv1lXtAPEVUi6CCsGMCUccrR6JJGQI7Mi9/AwjFkClyxJ1z
-         HH2w==
-X-Gm-Message-State: APt69E39Fxja+nr/unhMuu2mEAaT7IJnVvuvb7UVsKMFqM4NGDCHBquC
-        DKP/jYR8UJZSWF3onYeGWZk=
-X-Google-Smtp-Source: ADUXVKImjuT1QUnmGeMLkNDHiYHipA9PkvoZj3kvT5ekNHSrPF4lETNy3KejDveByTlKUmwJ9D5s6g==
-X-Received: by 2002:a1c:3544:: with SMTP id c65-v6mr3971278wma.32.1529871318910;
-        Sun, 24 Jun 2018 13:15:18 -0700 (PDT)
-Received: from localhost.localdomain ([197.54.176.252])
-        by smtp.gmail.com with ESMTPSA id v138-v6sm13649019wmd.47.2018.06.24.13.15.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 13:15:17 -0700 (PDT)
-From:   Karim Eshapa <karim.eshapa@gmail.com>
-To:     lars@metafoo.de
-Cc:     Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Karim Eshapa <karim.eshapa@gmail.com>
-Subject: [PATCH] staging:iio:impedance-analyzer:ad5933: Macro replacment Cleanups.
-Date:   Sun, 24 Jun 2018 22:15:11 +0200
-Message-Id: <20180624201511.10597-1-karim.eshapa@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 24 Jun 2018 16:40:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58078 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751352AbeFXUkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 16:40:16 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 72F3B2079C; Sun, 24 Jun 2018 22:40:14 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F0419206A0;
+        Sun, 24 Jun 2018 22:40:13 +0200 (CEST)
+Date:   Sun, 24 Jun 2018 22:40:14 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Cc:     <richard@nod.at>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <marek.vasut@gmail.com>,
+        <f.fainelli@gmail.com>, <mmayer@broadcom.com>, <rogerq@ti.com>,
+        <ladis@linux-mips.org>, <ada@thorsis.com>,
+        <honghui.zhang@mediatek.com>, <miquel.raynal@bootlin.com>,
+        nagasureshkumarrelli@gmail.com, michals@xilinx.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [[LINUX PATCH v10] 1/4] Devicetree: Add pl353 smc controller
+ devicetree binding information
+Message-ID: <20180624224014.125cf0bc@bbrezillon>
+In-Reply-To: <1529563351-2241-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+References: <1529563351-2241-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1529563351-2241-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Doing some macro replacment to start an array of structures
-so it can be reused by manipulating it with different values.
+Hi Naga,
 
-Signed-off-by: Karim Eshapa <karim.eshapa@gmail.com>
----
- .../staging/iio/impedance-analyzer/ad5933.c   | 57 +++++++------------
- 1 file changed, 19 insertions(+), 38 deletions(-)
+Subject prefix should be "dt-bindings: memory: " not "Devicetree: ".
 
-diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
-index 3bcf49466361..14df89510396 100644
---- a/drivers/staging/iio/impedance-analyzer/ad5933.c
-+++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
-@@ -116,45 +116,26 @@ static struct ad5933_platform_data ad5933_default_pdata  = {
- 	.vref_mv = 3300,
- };
- 
-+#define AD5933_CHANNEL(_type, _extend_name, _info_mask_separate, _address, \
-+		_scan_index, _realbits) { \
-+	.type = (_type), \
-+	.extend_name = (_extend_name), \
-+	.info_mask_separate = (_info_mask_separate), \
-+	.address = (_address), \
-+	.scan_index = (_scan_index), \
-+	.scan_type = { \
-+		.sign = 's', \
-+		.realbits = (_realbits), \
-+		.storagebits = 16, \
-+	}, \
-+}
-+
- static const struct iio_chan_spec ad5933_channels[] = {
--	{
--		.type = IIO_TEMP,
--		.indexed = 1,
--		.channel = 0,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
--			BIT(IIO_CHAN_INFO_SCALE),
--		.address = AD5933_REG_TEMP_DATA,
--		.scan_index = -1,
--		.scan_type = {
--			.sign = 's',
--			.realbits = 14,
--			.storagebits = 16,
--		},
--	}, { /* Ring Channels */
--		.type = IIO_VOLTAGE,
--		.indexed = 1,
--		.channel = 0,
--		.extend_name = "real",
--		.address = AD5933_REG_REAL_DATA,
--		.scan_index = 0,
--		.scan_type = {
--			.sign = 's',
--			.realbits = 16,
--			.storagebits = 16,
--		},
--	}, {
--		.type = IIO_VOLTAGE,
--		.indexed = 1,
--		.channel = 0,
--		.extend_name = "imag",
--		.address = AD5933_REG_IMAG_DATA,
--		.scan_index = 1,
--		.scan_type = {
--			.sign = 's',
--			.realbits = 16,
--			.storagebits = 16,
--		},
--	},
-+	AD5933_CHANNEL(IIO_TEMP, NULL, BIT(IIO_CHAN_INFO_RAW) |
-+		BIT(IIO_CHAN_INFO_SCALE), AD5933_REG_TEMP_DATA, -1, 14),
-+	/* Ring Channels */
-+	AD5933_CHANNEL(IIO_VOLTAGE, "real", 0, AD5933_REG_REAL_DATA, 0, 16),
-+	AD5933_CHANNEL(IIO_VOLTAGE, "imag", 0, AD5933_REG_IMAG_DATA, 1, 16),
- };
- 
- static int ad5933_i2c_write(struct i2c_client *client, u8 reg, u8 len, u8 *data)
--- 
-2.17.1
+On Thu, 21 Jun 2018 12:12:28 +0530
+Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
 
+> Add pl353 static memory controller devicetree binding information.
+> 
+> Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+> ---
+> Changes in v10:
+>  - Corrected the typos like "should be" to "Must be" and nand to NAND etc..
+>  - Removed padding to describe size-cells and address-cells
+>  - Removed timing parameters from DT, and added ->setup_data_interface() hook
+>    to the driver to read the SDR timings
+>  - Modified label name from "pl353smcc_0: pl353smcc@e000e000" to
+>    "smcc: memory-controller@e000e000" as suggested by Miquel
+> Changes in v9:
+>  - Addressed below comments given by Randy Dunlap and Miquel Raynal
+>  - Typos
+>  - Added extra documentation that explains the HW ECC limitation with SMC
+>    (Comments given to v8: https://lkml.org/lkml/2018/3/22/23)
+> Changes in v8:
+>  - None
+> Changes in v7:
+>  - Corrected clocks description
+>  - prefixed '#' for address and size cells
+> Changes in v6:
+>  - None
+> Changes in v5:
+>  - Removed timing properties
+> Changes in v4:
+>  - none
+> Changes in v3:
+>  - none
+> Changes in v2:
+>  - modified timing binding info as per onfi timing parameters
+>  - add suffix nano second as timing unit
+>  - modified the clock names as per the IP spec
+> ---
+>  .../bindings/memory-controllers/pl353-smc.txt      | 41 ++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> new file mode 100644
+> index 0000000..8b4c65e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> @@ -0,0 +1,41 @@
+> +Device tree bindings for ARM PL353 static memory controller
+> +
+> +PL353 static memory controller supports two kinds of memory
+> +interfaces.i.e NAND and SRAM/NOR interfaces.
+> +The actual devices are instantiated from the child nodes of pl353 smc node.
+> +
+> +Required properties:
+> +- compatible		: Must be "arm,pl353-smc-r2p1"
+> +- reg			: Controller registers map and length.
+> +- clock-names		: List of input clock names - "ref_clk", "aper_clk"
+> +			  (See clock bindings for details).
+> +- clocks		: Clock phandles (see clock bindings for details).
+> +- address-cells		: Must be 1.
+> +- size-cells		: Must be 1.
+> +
+> +Child nodes:
+> + For NAND the "arm,pl353-nand-r2p1" and for NOR the "cfi-flash" drivers are
+> +supported as child nodes.
+> +
+> +for NAND partition information please refer the below file
+> +Documentation/devicetree/bindings/mtd/partition.txt
+> +
+> +Example:
+> +	smcc: memory-controller@e000e000
+> +			compatible = "arm,pl353-smc-r2p1"
+> +			clock-names = "memclk", "aclk";
+> +			clocks = <&clkc 11>, <&clkc 44>;
+> +			reg = <0xe000e000 0x1000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +			nand_0: flash@e1000000 {
+> +				compatible = "arm,pl353-nand-r2p1"
+> +				reg = <0xe1000000 0x1000000>;
+> +				(...)
+> +			};
+> +			nor0: flash@e2000000 {
+> +				compatible = "cfi-flash";
+> +				reg = <0xe2000000 0x2000000>;
+> +			};
+> +	};
+
+I had a look at the PL353 TRM, and the block diagram looks very similar
+to the atmel EBI/SMC one. AHB/AXI memory ranges that are used to
+interact with the memories are assigned CS ids, which can then be used
+to configure the timings (and other kind of stuff). I think you should
+have #address-cells = <2>, the first cell encoding the CS id, and the
+second one, the memory offset within the reserved range for this CS id.
+See the atmel,ebi binding [1].
+
+Regards,
+
+Boris
+
+[1]https://elixir.bootlin.com/linux/v4.18-rc2/source/Documentation/devicetree/bindings/memory-controllers/atmel,ebi.txt
