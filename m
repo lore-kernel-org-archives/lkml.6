@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAD0C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 11:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64526C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 11:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86CC624EC3
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 11:46:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86CC624EC3
+	by mail.kernel.org (Postfix) with ESMTP id 2294724ECA
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 11:51:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2294724ECA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751586AbeFXLqJ (ORCPT
+        id S1751714AbeFXLvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 07:46:09 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44862 "EHLO
+        Sun, 24 Jun 2018 07:51:31 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44868 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750797AbeFXLqI (ORCPT
+        with ESMTP id S1751183AbeFXLva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 07:46:08 -0400
+        Sun, 24 Jun 2018 07:51:30 -0400
 Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1fX3T5-0004SR-3W; Sun, 24 Jun 2018 13:46:07 +0200
-Date:   Sun, 24 Jun 2018 13:46:06 +0200 (CEST)
+        id 1fX3YG-0004Vx-H2; Sun, 24 Jun 2018 13:51:28 +0200
+Date:   Sun, 24 Jun 2018 13:51:28 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 cc:     LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] core updates for 4.18
-Message-ID: <alpine.DEB.2.21.1806241344340.8650@nanos.tec.linutronix.de>
+Subject: [GIT pull] efi updates for 4.18
+Message-ID: <alpine.DEB.2.21.1806241347000.8650@nanos.tec.linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -46,55 +46,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest core-urgent-for-linus git tree from:
+please pull the latest efi-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-for-linus
 
-Two tiny fixes:
+Two fixlets for the EFI maze:
 
- - Add the missing machine_real_restart() to objtools noreturn list so it
-   stops complaining
+  - Properly zero variables to prevent an early boot hang on EFI mixed mode
+    systems
 
- - Fix a trivial comment typo
+  - Fix the fallout of merging the 32bit and 64bit variants of EFI PCI
+    related code which ended up chosing the 32bit variant of the actual EFi
+    call invocation which leads to failures on 64bit.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Josh Poimboeuf (1):
-      objtool: Add machine_real_restart() to the noreturn list
+Ard Biesheuvel (1):
+      efi/x86: Fix incorrect invocation of PciIo->Attributes()
 
-Wei Wang (1):
-      kernel.h: Fix a typo in comment
+Hans de Goede (1):
+      efi/libstub/tpm: Initialize efi_physical_addr_t vars to zero for mixed mode
 
 
- include/linux/kernel.h | 2 +-
- tools/objtool/check.c  | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/boot/compressed/eboot.c   | 2 +-
+ drivers/firmware/efi/libstub/tpm.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index d23123238534..941dc0a5a877 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -666,7 +666,7 @@ do {									\
-  * your code. (Extra memory is used for special buffers that are
-  * allocated when trace_printk() is used.)
-  *
-- * A little optization trick is done here. If there's only one
-+ * A little optimization trick is done here. If there's only one
-  * argument, there's no need to scan the string for printf formats.
-  * The trace_puts() will suffice. But how can we take advantage of
-  * using trace_puts() when trace_printk() has only one argument?
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 38047c6aa575..f4a25bd1871f 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -164,6 +164,7 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
- 		"lbug_with_loc",
- 		"fortify_panic",
- 		"usercopy_abort",
-+		"machine_real_restart",
- 	};
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index a8a8642d2b0b..e57665b4ba1c 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -118,7 +118,7 @@ __setup_efi_pci(efi_pci_io_protocol_t *pci, struct pci_setup_rom **__rom)
+ 	void *romimage;
  
- 	if (func->bind == STB_WEAK)
+ 	status = efi_call_proto(efi_pci_io_protocol, attributes, pci,
+-				EfiPciIoAttributeOperationGet, 0, 0,
++				EfiPciIoAttributeOperationGet, 0ULL,
+ 				&attributes);
+ 	if (status != EFI_SUCCESS)
+ 		return status;
+diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+index caa37a6dd9d4..a90b0b8fc69a 100644
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -64,7 +64,7 @@ static void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+ 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+ 	efi_status_t status;
+-	efi_physical_addr_t log_location, log_last_entry;
++	efi_physical_addr_t log_location = 0, log_last_entry = 0;
+ 	struct linux_efi_tpm_eventlog *log_tbl = NULL;
+ 	unsigned long first_entry_addr, last_entry_addr;
+ 	size_t log_size, last_entry_size;
