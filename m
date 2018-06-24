@@ -2,111 +2,84 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0BBC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 11:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BEEC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 11:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE4B24EB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 11:29:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE4B24EB1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B5B1824EB4
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 11:34:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B1824EB4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751227AbeFXL3D (ORCPT
+        id S1751409AbeFXLeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 07:29:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44845 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750780AbeFXL3C (ORCPT
+        Sun, 24 Jun 2018 07:34:07 -0400
+Received: from bmailout2.hostsharing.net ([83.223.90.240]:60951 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750780AbeFXLeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 07:29:02 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fX3CW-0004Ed-NM; Sun, 24 Jun 2018 13:29:01 +0200
-Date:   Sun, 24 Jun 2018 13:29:00 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] x86 pti updates for 4.18
-Message-ID: <alpine.DEB.2.21.1806241324000.8650@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 24 Jun 2018 07:34:06 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 491182800B489;
+        Sun, 24 Jun 2018 13:34:04 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id DB885351FE; Sun, 24 Jun 2018 13:34:03 +0200 (CEST)
+Date:   Sun, 24 Jun 2018 13:34:03 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] genirq: Synchronize only with single thread on
+ free_irq()
+Message-ID: <20180624113403.GA22016@wunner.de>
+References: <32fc25aa35ecef4b2692f57687bb7fc2a57230e2.1529828292.git.lukas@wunner.de>
+ <d72b41309f077c8d3bee6cc08ad3662d50b5d22a.1529828292.git.lukas@wunner.de>
+ <alpine.DEB.2.21.1806241148030.8650@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1806241148030.8650@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Sun, Jun 24, 2018 at 11:49:10AM +0200, Thomas Gleixner wrote:
+> On Sun, 24 Jun 2018, Lukas Wunner wrote:
+> > When pciehp is converted to threaded IRQ handling, removal of unplugged
+> > devices below a PCIe hotplug port happens synchronously in the IRQ
+> > thread.  Removal of devices typically entails a call to free_irq() by
+> > their drivers.
+> 
+> Is this an actual mainline problem or did you discover that in course of
+> upcoming work?
 
-please pull the latest x86-pti-for-linus git tree from:
+It's needed for upcoming work, specifically the pciehp event handling
+rework which will hopefully appear in 4.19, so nothing urgent.
+Doesn't hurt at all to let this bake in linux-next for a few weeks.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-for-linus
+There is something else, you introduced irq_wake_thread() four years ago
+with a92444c6b222 for sdhci/sdio, but for some reason it was never used.
+Before you or anyone else deletes it for lack of callers, please be aware
+that I'm making heavy use of it now in pciehp.  I forgot to cc you on the
+relevant patch [17/32], but I'll bounce it to you in a minute in case
+you want to take a look at it.
 
-Two small updates for the speculative distractions:
-
-  - Make it more clear to the compiler that array_index_mask_nospec()
-    is not subject for optimizations. It's not perfect, but ...
-
-  - Don't report XEN PV guests as vulnerable because their mitigation state
-    depends on the hypervisor. Report unknown and refer to the hypervisor
-    requirement.
+Of course this begs the question how irq_wake_thread() is serialized
+against __free_irq(), but it seems that's safe because irq_wake_thread()
+searches the action list while holding desc->lock:  If it grabs the lock
+before __free_irq(), it'll just wake the thread normally.  If it grabs
+the lock after __free_irq(), the action will be gone from the list,
+so irq_wake_thread() essentially becomes a no-op.
 
 Thanks,
 
-	tglx
-
------------------->
-Dan Williams (1):
-      x86/spectre_v1: Disable compiler optimizations over array_index_mask_nospec()
-
-Jiri Kosina (1):
-      x86/pti: Don't report XenPV as vulnerable
-
-
- arch/x86/include/asm/barrier.h | 2 +-
- arch/x86/kernel/cpu/bugs.c     | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
-index 042b5e892ed1..14de0432d288 100644
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -38,7 +38,7 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- {
- 	unsigned long mask;
- 
--	asm ("cmp %1,%2; sbb %0,%0;"
-+	asm volatile ("cmp %1,%2; sbb %0,%0;"
- 			:"=r" (mask)
- 			:"g"(size),"r" (index)
- 			:"cc");
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index cd0fda1fff6d..404df26b7de8 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -27,6 +27,7 @@
- #include <asm/pgtable.h>
- #include <asm/set_memory.h>
- #include <asm/intel-family.h>
-+#include <asm/hypervisor.h>
- 
- static void __init spectre_v2_select_mitigation(void);
- static void __init ssb_select_mitigation(void);
-@@ -664,6 +665,9 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		if (boot_cpu_has(X86_FEATURE_PTI))
- 			return sprintf(buf, "Mitigation: PTI\n");
- 
-+		if (hypervisor_is_type(X86_HYPER_XEN_PV))
-+			return sprintf(buf, "Unknown (XEN PV detected, hypervisor mitigation required)\n");
-+
- 		break;
- 
- 	case X86_BUG_SPECTRE_V1:
+Lukas
