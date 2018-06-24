@@ -2,118 +2,375 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65608C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E54E6C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E9E25293
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:25:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ahGIENnB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E9E25293
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C55E25294
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:26:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C55E25294
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=CARNet.hr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752066AbeFXQZs (ORCPT
+        id S1752127AbeFXQ0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 12:25:48 -0400
-Received: from mail.efficios.com ([167.114.142.138]:47662 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750972AbeFXQZq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 12:25:46 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 20C1E1B7117;
-        Sun, 24 Jun 2018 12:25:46 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id LxGS8qu6xnlA; Sun, 24 Jun 2018 12:25:45 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 11E4D1B7113;
-        Sun, 24 Jun 2018 12:25:45 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 11E4D1B7113
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1529857545;
-        bh=bY3KjjMyn8THvQFNRJ8yz4vvDOS6w3d/cZTLK5O8RGg=;
-        h=From:To:Date:Message-Id;
-        b=ahGIENnBye8Pl6ITcmSOTlBGItJk6sgCT6Fb9U6ADpSk3cHBBa0X2vphgZQCI83k7
-         I2OYdROWV2e/l7u78fBToTOLZtVsQPL+gmwB4En8d/mn4zwsPTvO7KpEA2u6dI7E94
-         UxFeEWn+0ufupBNmGg7zm/tb2S7MWIg/v4+qmMtD8L32HUAql7b7TFoKMb4bNO7zl9
-         vshLHc4awxT1HqtbLALYyNSk6pozUSVqTRiAplWIBOpGBgYnSrXcDfwoZPg89rcPkl
-         9eTH6l7QuSMi82sICpRiuBwGvge6BTerJlYN/k4/FQ3JrzriYdaEh/fUCyd0XbAdJG
-         frvKpy0k0AsfQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 6rfPsNUApRl2; Sun, 24 Jun 2018 12:25:45 -0400 (EDT)
-Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id CD9D41B710C;
-        Sun, 24 Jun 2018 12:25:44 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Will Deacon <will.deacon@arm.com>, peterz@infradead.org,
-        paulmck@linux.vnet.ibm.com, boqun.feng@gmail.com,
-        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH for 4.18] MIPS: adapt to rseq API changes
-Date:   Sun, 24 Jun 2018 12:25:13 -0400
-Message-Id: <20180624162513.28264-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
+        Sun, 24 Jun 2018 12:26:36 -0400
+Received: from mail.CARNet.hr ([161.53.123.6]:53524 "EHLO mail.carnet.hr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750713AbeFXQ0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 12:26:35 -0400
+Received: from [2001:b68:ff:12::131] (port=56674 helo=gavran.carpriv.carnet.hr)
+        by mail.carnet.hr with esmtps (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <Valentin.Vidic@CARNet.hr>)
+        id 1fX7qN-0006iP-Sk; Sun, 24 Jun 2018 18:26:28 +0200
+Received: by gavran.carpriv.carnet.hr (Postfix, from userid 1000)
+        id 9024023A9E; Sun, 24 Jun 2018 18:26:27 +0200 (CEST)
+From:   Valentin Vidic <Valentin.Vidic@CARNet.hr>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
+        Marcus Wolf <linux@Wolf-Entwicklungen.de>,
+        =?UTF-8?q?Luca=20S=C3=B6the?= <luca@acul.me>,
+        Marcin Ciupak <marcin.s.ciupak@gmail.com>,
+        Michael Panzlaff <michael.panzlaff@fau.de>,
+        Derek Robson <robsonde@gmail.com>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Hugo Lefeuvre <hle@owl.eu.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Joe Perches <joe@perches.com>,
+        Valentin Vidic <Valentin.Vidic@CARNet.hr>
+Date:   Sun, 24 Jun 2018 18:25:06 +0200
+Message-Id: <20180624162505.29600-1-Valentin.Vidic@CARNet.hr>
+X-Mailer: git-send-email 2.18.0.rc2
+In-Reply-To: <36befceb2334197cce5cd44a61f86f38b870d54c.camel@perches.com>
+References: <20180624094245.23741-1-Valentin.Vidic@CARNet.hr>
+X-SA-Exim-Connect-IP: 2001:b68:ff:12::131
+Subject: [PATCH v2] staging: pi433: replace simple switch statements
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The prototype of rseq_handle_notify_resume() and rseq_signal_deliver()
-had to be changed to fix handling of traps occuring on signal delivery.
-The API change was merged at the same time as the rseq MIPS port.
+Use const array to map switch cases to resulting values.
 
-Adapt the MIPS port to this API change.
-
-Fixes: 784e0300fe ("rseq: Avoid infinite recursion when delivering SIGSEGV")
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: peterz@infradead.org
-Cc: paulmck@linux.vnet.ibm.com
-Cc: boqun.feng@gmail.com
-Cc: linux-mips@linux-mips.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <jhogan@kernel.org>
+Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
 ---
- arch/mips/kernel/signal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2: use correct type for const arrays
 
-diff --git a/arch/mips/kernel/signal.c b/arch/mips/kernel/signal.c
-index 00f2535d2226..0a9cfe7a0372 100644
---- a/arch/mips/kernel/signal.c
-+++ b/arch/mips/kernel/signal.c
-@@ -801,7 +801,7 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
- 		regs->regs[0] = 0;		/* Don't deal with this again.	*/
+ drivers/staging/pi433/rf69.c | 233 ++++++++++++++---------------------
+ 1 file changed, 93 insertions(+), 140 deletions(-)
+
+diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
+index 90280e9b006d..6bfffe8b8bae 100644
+--- a/drivers/staging/pi433/rf69.c
++++ b/drivers/staging/pi433/rf69.c
+@@ -111,27 +111,22 @@ static inline int rf69_read_mod_write(struct spi_device *spi, u8 reg,
+ 
+ int rf69_set_mode(struct spi_device *spi, enum mode mode)
+ {
+-	switch (mode) {
+-	case transmit:
+-		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
+-					   OPMODE_MODE_TRANSMIT);
+-	case receive:
+-		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
+-					   OPMODE_MODE_RECEIVE);
+-	case synthesizer:
+-		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
+-					   OPMODE_MODE_SYNTHESIZER);
+-	case standby:
+-		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
+-					   OPMODE_MODE_STANDBY);
+-	case mode_sleep:
+-		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
+-					   OPMODE_MODE_SLEEP);
+-	default:
++	static const u8 mode_map[] = {
++		[transmit] = OPMODE_MODE_TRANSMIT,
++		[receive] = OPMODE_MODE_RECEIVE,
++		[synthesizer] = OPMODE_MODE_SYNTHESIZER,
++		[standby] = OPMODE_MODE_STANDBY,
++		[mode_sleep] = OPMODE_MODE_SLEEP,
++	};
++
++	if (unlikely(mode >= ARRAY_SIZE(mode_map))) {
+ 		dev_dbg(&spi->dev, "set: illegal input param");
+ 		return -EINVAL;
  	}
  
--	rseq_signal_deliver(regs);
-+	rseq_signal_deliver(ksig, regs);
++	return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
++				   mode_map[mode]);
++
+ 	// we are using packet mode, so this check is not really needed
+ 	// but waiting for mode ready is necessary when going from sleep because the FIFO may not be immediately available from previous mode
+ 	//while (_mode == RF69_MODE_SLEEP && (READ_REG(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // Wait for ModeReady
+@@ -145,19 +140,19 @@ int rf69_set_data_mode(struct spi_device *spi, u8 data_mode)
  
- 	if (sig_uses_siginfo(&ksig->ka, abi))
- 		ret = abi->setup_rt_frame(vdso + abi->vdso->off_rt_sigreturn,
-@@ -870,7 +870,7 @@ asmlinkage void do_notify_resume(struct pt_regs *regs, void *unused,
- 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
- 		clear_thread_flag(TIF_NOTIFY_RESUME);
- 		tracehook_notify_resume(regs);
--		rseq_handle_notify_resume(regs);
-+		rseq_handle_notify_resume(NULL, regs);
+ int rf69_set_modulation(struct spi_device *spi, enum modulation modulation)
+ {
+-	switch (modulation) {
+-	case OOK:
+-		return rf69_read_mod_write(spi, REG_DATAMODUL,
+-					   MASK_DATAMODUL_MODULATION_TYPE,
+-					   DATAMODUL_MODULATION_TYPE_OOK);
+-	case FSK:
+-		return rf69_read_mod_write(spi, REG_DATAMODUL,
+-					   MASK_DATAMODUL_MODULATION_TYPE,
+-					   DATAMODUL_MODULATION_TYPE_FSK);
+-	default:
++	static const u8 modulation_map[] = {
++		[OOK] = DATAMODUL_MODULATION_TYPE_OOK,
++		[FSK] = DATAMODUL_MODULATION_TYPE_FSK,
++	};
++
++	if (unlikely(modulation >= ARRAY_SIZE(modulation_map))) {
+ 		dev_dbg(&spi->dev, "set: illegal input param");
+ 		return -EINVAL;
  	}
++
++	return rf69_read_mod_write(spi, REG_DATAMODUL,
++				   MASK_DATAMODUL_MODULATION_TYPE,
++				   modulation_map[modulation]);
+ }
  
- 	user_enter();
+ static enum modulation rf69_get_modulation(struct spi_device *spi)
+@@ -373,43 +368,30 @@ int rf69_set_output_power_level(struct spi_device *spi, u8 power_level)
+ 
+ int rf69_set_pa_ramp(struct spi_device *spi, enum pa_ramp pa_ramp)
+ {
+-	switch (pa_ramp) {
+-	case ramp3400:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_3400);
+-	case ramp2000:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_2000);
+-	case ramp1000:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_1000);
+-	case ramp500:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_500);
+-	case ramp250:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_250);
+-	case ramp125:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_125);
+-	case ramp100:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_100);
+-	case ramp62:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_62);
+-	case ramp50:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_50);
+-	case ramp40:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_40);
+-	case ramp31:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_31);
+-	case ramp25:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_25);
+-	case ramp20:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_20);
+-	case ramp15:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_15);
+-	case ramp12:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_12);
+-	case ramp10:
+-		return rf69_write_reg(spi, REG_PARAMP, PARAMP_10);
+-	default:
++	static const u8 pa_ramp_map[] = {
++		[ramp3400] = PARAMP_3400,
++		[ramp2000] = PARAMP_2000,
++		[ramp1000] = PARAMP_1000,
++		[ramp500] = PARAMP_500,
++		[ramp250] = PARAMP_250,
++		[ramp125] = PARAMP_125,
++		[ramp100] = PARAMP_100,
++		[ramp62] = PARAMP_62,
++		[ramp50] = PARAMP_50,
++		[ramp40] = PARAMP_40,
++		[ramp31] = PARAMP_31,
++		[ramp25] = PARAMP_25,
++		[ramp20] = PARAMP_20,
++		[ramp15] = PARAMP_15,
++		[ramp10] = PARAMP_10,
++	};
++
++	if (unlikely(pa_ramp >= ARRAY_SIZE(pa_ramp_map))) {
+ 		dev_dbg(&spi->dev, "set: illegal input param");
+ 		return -EINVAL;
+ 	}
++
++	return rf69_write_reg(spi, REG_PARAMP, pa_ramp_map[pa_ramp]);
+ }
+ 
+ int rf69_set_antenna_impedance(struct spi_device *spi,
+@@ -428,32 +410,23 @@ int rf69_set_antenna_impedance(struct spi_device *spi,
+ 
+ int rf69_set_lna_gain(struct spi_device *spi, enum lna_gain lna_gain)
+ {
+-	switch (lna_gain) {
+-	case automatic:
+-		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
+-					   LNA_GAIN_AUTO);
+-	case max:
+-		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
+-					   LNA_GAIN_MAX);
+-	case max_minus_6:
+-		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
+-					   LNA_GAIN_MAX_MINUS_6);
+-	case max_minus_12:
+-		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
+-					   LNA_GAIN_MAX_MINUS_12);
+-	case max_minus_24:
+-		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
+-					   LNA_GAIN_MAX_MINUS_24);
+-	case max_minus_36:
+-		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
+-					   LNA_GAIN_MAX_MINUS_36);
+-	case max_minus_48:
+-		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
+-					   LNA_GAIN_MAX_MINUS_48);
+-	default:
++	static const u8 lna_gain_map[] = {
++		[automatic] = LNA_GAIN_AUTO,
++		[max] = LNA_GAIN_MAX,
++		[max_minus_6] = LNA_GAIN_MAX_MINUS_6,
++		[max_minus_12] = LNA_GAIN_MAX_MINUS_12,
++		[max_minus_24] = LNA_GAIN_MAX_MINUS_24,
++		[max_minus_36] = LNA_GAIN_MAX_MINUS_36,
++		[max_minus_48] = LNA_GAIN_MAX_MINUS_48,
++	};
++
++	if (unlikely(lna_gain >= ARRAY_SIZE(lna_gain_map))) {
+ 		dev_dbg(&spi->dev, "set: illegal input param");
+ 		return -EINVAL;
+ 	}
++
++	return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
++				   lna_gain_map[lna_gain]);
+ }
+ 
+ static int rf69_set_bandwidth_intern(struct spi_device *spi, u8 reg,
+@@ -516,43 +489,24 @@ int rf69_set_bandwidth_during_afc(struct spi_device *spi,
+ int rf69_set_ook_threshold_dec(struct spi_device *spi,
+ 			       enum threshold_decrement threshold_decrement)
+ {
+-	switch (threshold_decrement) {
+-	case dec_every8th:
+-		return rf69_read_mod_write(spi, REG_OOKPEAK,
+-					   MASK_OOKPEAK_THRESDEC,
+-					   OOKPEAK_THRESHDEC_EVERY_8TH);
+-	case dec_every4th:
+-		return rf69_read_mod_write(spi, REG_OOKPEAK,
+-					   MASK_OOKPEAK_THRESDEC,
+-					   OOKPEAK_THRESHDEC_EVERY_4TH);
+-	case dec_every2nd:
+-		return rf69_read_mod_write(spi, REG_OOKPEAK,
+-					   MASK_OOKPEAK_THRESDEC,
+-					   OOKPEAK_THRESHDEC_EVERY_2ND);
+-	case dec_once:
+-		return rf69_read_mod_write(spi, REG_OOKPEAK,
+-					   MASK_OOKPEAK_THRESDEC,
+-					   OOKPEAK_THRESHDEC_ONCE);
+-	case dec_twice:
+-		return rf69_read_mod_write(spi, REG_OOKPEAK,
+-					   MASK_OOKPEAK_THRESDEC,
+-					   OOKPEAK_THRESHDEC_TWICE);
+-	case dec_4times:
+-		return rf69_read_mod_write(spi, REG_OOKPEAK,
+-					   MASK_OOKPEAK_THRESDEC,
+-					   OOKPEAK_THRESHDEC_4_TIMES);
+-	case dec_8times:
+-		return rf69_read_mod_write(spi, REG_OOKPEAK,
+-					   MASK_OOKPEAK_THRESDEC,
+-					   OOKPEAK_THRESHDEC_8_TIMES);
+-	case dec_16times:
+-		return rf69_read_mod_write(spi, REG_OOKPEAK,
+-					   MASK_OOKPEAK_THRESDEC,
+-					   OOKPEAK_THRESHDEC_16_TIMES);
+-	default:
++	static const u8 td_map[] = {
++		[dec_every8th] = OOKPEAK_THRESHDEC_EVERY_8TH,
++		[dec_every4th] = OOKPEAK_THRESHDEC_EVERY_4TH,
++		[dec_every2nd] = OOKPEAK_THRESHDEC_EVERY_2ND,
++		[dec_once] = OOKPEAK_THRESHDEC_ONCE,
++		[dec_twice] = OOKPEAK_THRESHDEC_TWICE,
++		[dec_4times] = OOKPEAK_THRESHDEC_4_TIMES,
++		[dec_8times] = OOKPEAK_THRESHDEC_8_TIMES,
++		[dec_16times] = OOKPEAK_THRESHDEC_16_TIMES,
++	};
++
++	if (unlikely(threshold_decrement >= ARRAY_SIZE(td_map))) {
+ 		dev_dbg(&spi->dev, "set: illegal input param");
+ 		return -EINVAL;
+ 	}
++
++	return rf69_read_mod_write(spi, REG_OOKPEAK, MASK_OOKPEAK_THRESDEC,
++				   td_map[threshold_decrement]);
+ }
+ 
+ int rf69_set_dio_mapping(struct spi_device *spi, u8 dio_number, u8 value)
+@@ -749,23 +703,21 @@ int rf69_disable_crc(struct spi_device *spi)
+ int rf69_set_address_filtering(struct spi_device *spi,
+ 			       enum address_filtering address_filtering)
+ {
+-	switch (address_filtering) {
+-	case filtering_off:
+-		return rf69_read_mod_write(spi, REG_PACKETCONFIG1,
+-					   MASK_PACKETCONFIG1_ADDRESSFILTERING,
+-					   PACKETCONFIG1_ADDRESSFILTERING_OFF);
+-	case node_address:
+-		return rf69_read_mod_write(spi, REG_PACKETCONFIG1,
+-					   MASK_PACKETCONFIG1_ADDRESSFILTERING,
+-					   PACKETCONFIG1_ADDRESSFILTERING_NODE);
+-	case node_or_broadcast_address:
+-		return rf69_read_mod_write(spi, REG_PACKETCONFIG1,
+-					   MASK_PACKETCONFIG1_ADDRESSFILTERING,
+-					   PACKETCONFIG1_ADDRESSFILTERING_NODEBROADCAST);
+-	default:
++	const int af_map[] = {
++		[filtering_off] = PACKETCONFIG1_ADDRESSFILTERING_OFF,
++		[node_address] = PACKETCONFIG1_ADDRESSFILTERING_NODE,
++		[node_or_broadcast_address] =
++			PACKETCONFIG1_ADDRESSFILTERING_NODEBROADCAST,
++	};
++
++	if (unlikely(address_filtering >= ARRAY_SIZE(af_map))) {
+ 		dev_dbg(&spi->dev, "set: illegal input param");
+ 		return -EINVAL;
+ 	}
++
++	return rf69_read_mod_write(spi, REG_PACKETCONFIG1,
++				   MASK_PACKETCONFIG1_ADDRESSFILTERING,
++				   af_map[address_filtering]);
+ }
+ 
+ int rf69_set_payload_length(struct spi_device *spi, u8 payload_length)
+@@ -824,17 +776,18 @@ int rf69_set_fifo_threshold(struct spi_device *spi, u8 threshold)
+ 
+ int rf69_set_dagc(struct spi_device *spi, enum dagc dagc)
+ {
+-	switch (dagc) {
+-	case normal_mode:
+-		return rf69_write_reg(spi, REG_TESTDAGC, DAGC_NORMAL);
+-	case improve:
+-		return rf69_write_reg(spi, REG_TESTDAGC, DAGC_IMPROVED_LOWBETA0);
+-	case improve_for_low_modulation_index:
+-		return rf69_write_reg(spi, REG_TESTDAGC, DAGC_IMPROVED_LOWBETA1);
+-	default:
++	static const u8 dagc_map[] = {
++		[normal_mode] = DAGC_NORMAL,
++		[improve] = DAGC_IMPROVED_LOWBETA0,
++		[improve_for_low_modulation_index] = DAGC_IMPROVED_LOWBETA1,
++	};
++
++	if (unlikely(dagc >= ARRAY_SIZE(dagc_map))) {
+ 		dev_dbg(&spi->dev, "set: illegal input param");
+ 		return -EINVAL;
+ 	}
++
++	return rf69_write_reg(spi, REG_TESTDAGC, dagc_map[dagc]);
+ }
+ 
+ /*-------------------------------------------------------------------------*/
 -- 
-2.11.0
+2.18.0.rc2
 
