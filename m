@@ -3,39 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E96BC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3BAC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:12:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B3C251F3
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:10:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B3C251F3
+	by mail.kernel.org (Postfix) with ESMTP id CE0AD2521B
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:12:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0AD2521B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755055AbeFXPf7 (ORCPT
+        id S1755394AbeFXQMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:35:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59474 "EHLO
+        Sun, 24 Jun 2018 12:12:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59296 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751533AbeFXPf5 (ORCPT
+        with ESMTP id S1754980AbeFXPdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:35:57 -0400
+        Sun, 24 Jun 2018 11:33:47 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63B5449F;
-        Sun, 24 Jun 2018 15:35:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E31D49F;
+        Sun, 24 Jun 2018 15:33:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Richard W.M. Jones" <rjones@redhat.com>,
-        Lorenzo Dalrio <lorenzo.dalrio@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.16 44/64] libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
-Date:   Sun, 24 Jun 2018 23:22:25 +0800
-Message-Id: <20180624142746.518835572@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 25/64] ALSA: hda/realtek - Enable mic-mute hotkey for several Lenovo AIOs
+Date:   Sun, 24 Jun 2018 23:22:06 +0800
+Message-Id: <20180624142745.336518405@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -52,56 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 2cfce3a86b64b53f0a70e92a6a659c720c319b45 upstream.
+commit 986376b68dcc95bb7df60ad30c2353c1f7578fa5 upstream.
 
-Commit 184add2ca23c ("libata: Apply NOLPM quirk for SanDisk
-SD7UB3Q*G1001 SSDs") disabled LPM for SanDisk SD7UB3Q*G1001 SSDs.
+We have several Lenovo AIOs like M810z, M820z and M920z, they have
+the same design for mic-mute hotkey and led and they use the same
+codec with the same pin configuration, so use the pin conf table to
+apply fix to all of them.
 
-This has lead to several reports of users of that SSD where LPM
-was working fine and who know have a significantly increased idle
-power consumption on their laptops.
-
-Likely there is another problem on the T450s from the original
-reporter which gets exposed by the uncore reaching deeper sleep
-states (higher PC-states) due to LPM being enabled. The problem as
-reported, a hardfreeze about once a day, already did not sound like
-it would be caused by LPM and the reports of the SSD working fine
-confirm this. The original reporter is ok with dropping the quirk.
-
-A X250 user has reported the same hard freeze problem and for him
-the problem went away after unrelated updates, I suspect some GPU
-driver stack changes fixed things.
-
-TL;DR: The original reporters problem were triggered by LPM but not
-an LPM issue, so drop the quirk for the SSD in question.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1583207
-Cc: stable@vger.kernel.org
-Cc: Richard W.M. Jones <rjones@redhat.com>
-Cc: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
-Reported-by: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Acked-by: "Richard W.M. Jones" <rjones@redhat.com>
+Fixes: 29693efcea0f ("ALSA: hda - Fix micmute hotkey problem for a lenovo AIO machine")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    3 ---
- 1 file changed, 3 deletions(-)
+ sound/pci/hda/patch_realtek.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4553,9 +4553,6 @@ static const struct ata_blacklist_entry
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
- 						ATA_HORKAGE_NOLPM, },
- 
--	/* Sandisk devices which are known to not handle LPM well */
--	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
--
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6580,7 +6580,6 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x3138, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+-	SND_PCI_QUIRK(0x17aa, 0x3112, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3978, "IdeaPad Y410P", ALC269_FIXUP_NO_SHUTUP),
+@@ -6752,6 +6751,11 @@ static const struct snd_hda_pin_quirk al
+ 		{0x1b, 0x01111010},
+ 		{0x1e, 0x01451130},
+ 		{0x21, 0x02211020}),
++	SND_HDA_PIN_QUIRK(0x10ec0235, 0x17aa, "Lenovo", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
++		{0x12, 0x90a60140},
++		{0x14, 0x90170110},
++		{0x19, 0x02a11030},
++		{0x21, 0x02211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0236, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		{0x12, 0x90a60140},
+ 		{0x14, 0x90170110},
 
 
