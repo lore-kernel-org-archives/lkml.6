@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BDAC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A885EC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B3A724FF3
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B3A724FF3
+	by mail.kernel.org (Postfix) with ESMTP id 63AC224FF6
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63AC224FF6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755215AbeFXPeZ (ORCPT
+        id S1755225AbeFXPee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:34:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59338 "EHLO
+        Sun, 24 Jun 2018 11:34:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59350 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754659AbeFXPeX (ORCPT
+        with ESMTP id S1754659AbeFXPeb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:34:23 -0400
+        Sun, 24 Jun 2018 11:34:31 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 949362C;
-        Sun, 24 Jun 2018 15:34:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8287F2C;
+        Sun, 24 Jun 2018 15:34:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Balbir Singh <bsingharora@gmail.com>,
+        stable@vger.kernel.org,
+        shankarapailoor <shankarapailoor@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 07/64] tcp: verify the checksum of the first data segment in a new connection
-Date:   Sun, 24 Jun 2018 23:21:48 +0800
-Message-Id: <20180624142744.063463910@linuxfoundation.org>
+Subject: [PATCH 4.16 08/64] socket: close race condition between sock_close() and sockfs_setattr()
+Date:   Sun, 24 Jun 2018 23:21:49 +0800
+Message-Id: <20180624142744.123985912@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -52,60 +55,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank van der Linden <fllinden@amazon.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 4fd44a98ffe0d048246efef67ed640fdf2098a62 ]
+[ Upstream commit 6d8c50dcb029872b298eea68cc6209c866fd3e14 ]
 
-commit 079096f103fa ("tcp/dccp: install syn_recv requests into ehash
-table") introduced an optimization for the handling of child sockets
-created for a new TCP connection.
+fchownat() doesn't even hold refcnt of fd until it figures out
+fd is really needed (otherwise is ignored) and releases it after
+it resolves the path. This means sock_close() could race with
+sockfs_setattr(), which leads to a NULL pointer dereference
+since typically we set sock->sk to NULL in ->release().
 
-But this optimization passes any data associated with the last ACK of the
-connection handshake up the stack without verifying its checksum, because it
-calls tcp_child_process(), which in turn calls tcp_rcv_state_process()
-directly.  These lower-level processing functions do not do any checksum
-verification.
+As pointed out by Al, this is unique to sockfs. So we can fix this
+in socket layer by acquiring inode_lock in sock_close() and
+checking against NULL in sockfs_setattr().
 
-Insert a tcp_checksum_complete call in the TCP_NEW_SYN_RECEIVE path to
-fix this.
+sock_release() is called in many places, only the sock_close()
+path matters here. And fortunately, this should not affect normal
+sock_close() as it is only called when the last fd refcnt is gone.
+It only affects sock_close() with a parallel sockfs_setattr() in
+progress, which is not common.
 
-Fixes: 079096f103fa ("tcp/dccp: install syn_recv requests into ehash table")
-Signed-off-by: Frank van der Linden <fllinden@amazon.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Tested-by: Balbir Singh <bsingharora@gmail.com>
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Fixes: 86741ec25462 ("net: core: Add a UID field to struct sock.")
+Reported-by: shankarapailoor <shankarapailoor@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Lorenzo Colitti <lorenzo@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_ipv4.c |    4 ++++
- net/ipv6/tcp_ipv6.c |    4 ++++
- 2 files changed, 8 insertions(+)
+ net/socket.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -1680,6 +1680,10 @@ process:
- 			reqsk_put(req);
- 			goto discard_it;
- 		}
-+		if (tcp_checksum_complete(skb)) {
-+			reqsk_put(req);
-+			goto csum_error;
-+		}
- 		if (unlikely(sk->sk_state != TCP_LISTEN)) {
- 			inet_csk_reqsk_queue_drop_and_put(sk, req);
- 			goto lookup;
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1459,6 +1459,10 @@ process:
- 			reqsk_put(req);
- 			goto discard_it;
- 		}
-+		if (tcp_checksum_complete(skb)) {
-+			reqsk_put(req);
-+			goto csum_error;
-+		}
- 		if (unlikely(sk->sk_state != TCP_LISTEN)) {
- 			inet_csk_reqsk_queue_drop_and_put(sk, req);
- 			goto lookup;
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -538,7 +538,10 @@ static int sockfs_setattr(struct dentry
+ 	if (!err && (iattr->ia_valid & ATTR_UID)) {
+ 		struct socket *sock = SOCKET_I(d_inode(dentry));
+ 
+-		sock->sk->sk_uid = iattr->ia_uid;
++		if (sock->sk)
++			sock->sk->sk_uid = iattr->ia_uid;
++		else
++			err = -ENOENT;
+ 	}
+ 
+ 	return err;
+@@ -587,12 +590,16 @@ EXPORT_SYMBOL(sock_alloc);
+  *	an inode not a file.
+  */
+ 
+-void sock_release(struct socket *sock)
++static void __sock_release(struct socket *sock, struct inode *inode)
+ {
+ 	if (sock->ops) {
+ 		struct module *owner = sock->ops->owner;
+ 
++		if (inode)
++			inode_lock(inode);
+ 		sock->ops->release(sock);
++		if (inode)
++			inode_unlock(inode);
+ 		sock->ops = NULL;
+ 		module_put(owner);
+ 	}
+@@ -606,6 +613,11 @@ void sock_release(struct socket *sock)
+ 	}
+ 	sock->file = NULL;
+ }
++
++void sock_release(struct socket *sock)
++{
++	__sock_release(sock, NULL);
++}
+ EXPORT_SYMBOL(sock_release);
+ 
+ void __sock_tx_timestamp(__u16 tsflags, __u8 *tx_flags)
+@@ -1146,7 +1158,7 @@ static int sock_mmap(struct file *file,
+ 
+ static int sock_close(struct inode *inode, struct file *filp)
+ {
+-	sock_release(SOCKET_I(inode));
++	__sock_release(SOCKET_I(inode), inode);
+ 	return 0;
+ }
+ 
 
 
