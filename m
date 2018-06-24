@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF69C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEEEC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B2AD24E39
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2AD24E39
+	by mail.kernel.org (Postfix) with ESMTP id B66A624FEE
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B66A624FEE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755186AbeFXPeK (ORCPT
+        id S1755198AbeFXPeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:34:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59318 "EHLO
+        Sun, 24 Jun 2018 11:34:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754659AbeFXPeI (ORCPT
+        with ESMTP id S1754659AbeFXPeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:34:08 -0400
+        Sun, 24 Jun 2018 11:34:15 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA6E12C;
-        Sun, 24 Jun 2018 15:34:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EBBC12C;
+        Sun, 24 Jun 2018 15:34:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alvaro Gamez Machado <alvaro.gamez@hazent.com>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        Simon Horman <simon.horman@netronome.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 05/64] net: phy: dp83822: use BMCR_ANENABLE instead of BMSR_ANEGCAPABLE for DP83620
-Date:   Sun, 24 Jun 2018 23:21:46 +0800
-Message-Id: <20180624142743.941503248@linuxfoundation.org>
+Subject: [PATCH 4.16 06/64] net/sched: act_simple: fix parsing of TCA_DEF_DATA
+Date:   Sun, 24 Jun 2018 23:21:47 +0800
+Message-Id: <20180624142743.998517903@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -51,97 +51,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit b718e8c8f4f5920aaddc2e52d5e32f494c91129c ]
+[ Upstream commit 8d499533e0bc02d44283dbdab03142b599b8ba16 ]
 
-DP83620 register set is compatible with the DP83848, but it also supports
-100base-FX. When the hardware is configured such as that fiber mode is
-enabled, autonegotiation is not possible.
+use nla_strlcpy() to avoid copying data beyond the length of TCA_DEF_DATA
+netlink attribute, in case it is less than SIMP_MAX_DATA and it does not
+end with '\0' character.
 
-The chip, however, doesn't expose this information via BMSR_ANEGCAPABLE.
-Instead, this bit is always set high, even if the particular hardware
-configuration makes it so that auto negotiation is not possible [1]. Under
-these circumstances, the phy subsystem keeps trying for autonegotiation to
-happen, without success.
+v2: fix errors in the commit message, thanks Hangbin Liu
 
-Hereby, we inspect BMCR_ANENABLE bit after genphy_config_init, which on
-reset is set to 0 when auto negotiation is disabled, and so we use this
-value instead of BMSR_ANEGCAPABLE.
-
-[1] https://e2e.ti.com/support/interface/ethernet/f/903/p/697165/2571170
-
-Signed-off-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
+Fixes: fa1b1cff3d06 ("net_cls_act: Make act_simple use of netlink policy.")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/dp83848.c |   35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+ net/sched/act_simple.c |   15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
---- a/drivers/net/phy/dp83848.c
-+++ b/drivers/net/phy/dp83848.c
-@@ -74,6 +74,25 @@ static int dp83848_config_intr(struct ph
- 	return phy_write(phydev, DP83848_MICR, control);
+--- a/net/sched/act_simple.c
++++ b/net/sched/act_simple.c
+@@ -53,22 +53,22 @@ static void tcf_simp_release(struct tc_a
+ 	kfree(d->tcfd_defdata);
  }
  
-+static int dp83848_config_init(struct phy_device *phydev)
-+{
-+	int err;
-+	int val;
-+
-+	err = genphy_config_init(phydev);
-+	if (err < 0)
-+		return err;
-+
-+	/* DP83620 always reports Auto Negotiation Ability on BMSR. Instead,
-+	 * we check initial value of BMCR Auto negotiation enable bit
-+	 */
-+	val = phy_read(phydev, MII_BMCR);
-+	if (!(val & BMCR_ANENABLE))
-+		phydev->autoneg = AUTONEG_DISABLE;
-+
-+	return 0;
-+}
-+
- static struct mdio_device_id __maybe_unused dp83848_tbl[] = {
- 	{ TI_DP83848C_PHY_ID, 0xfffffff0 },
- 	{ NS_DP83848C_PHY_ID, 0xfffffff0 },
-@@ -83,7 +102,7 @@ static struct mdio_device_id __maybe_unu
- };
- MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
+-static int alloc_defdata(struct tcf_defact *d, char *defdata)
++static int alloc_defdata(struct tcf_defact *d, const struct nlattr *defdata)
+ {
+ 	d->tcfd_defdata = kzalloc(SIMP_MAX_DATA, GFP_KERNEL);
+ 	if (unlikely(!d->tcfd_defdata))
+ 		return -ENOMEM;
+-	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
++	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
+ 	return 0;
+ }
  
--#define DP83848_PHY_DRIVER(_id, _name)				\
-+#define DP83848_PHY_DRIVER(_id, _name, _config_init)		\
- 	{							\
- 		.phy_id		= _id,				\
- 		.phy_id_mask	= 0xfffffff0,			\
-@@ -92,7 +111,7 @@ MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
- 		.flags		= PHY_HAS_INTERRUPT,		\
- 								\
- 		.soft_reset	= genphy_soft_reset,		\
--		.config_init	= genphy_config_init,		\
-+		.config_init	= _config_init,			\
- 		.suspend	= genphy_suspend,		\
- 		.resume		= genphy_resume,		\
- 								\
-@@ -102,10 +121,14 @@ MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
+-static void reset_policy(struct tcf_defact *d, char *defdata,
++static void reset_policy(struct tcf_defact *d, const struct nlattr *defdata,
+ 			 struct tc_defact *p)
+ {
+ 	spin_lock_bh(&d->tcf_lock);
+ 	d->tcf_action = p->action;
+ 	memset(d->tcfd_defdata, 0, SIMP_MAX_DATA);
+-	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
++	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
+ 	spin_unlock_bh(&d->tcf_lock);
+ }
+ 
+@@ -87,7 +87,6 @@ static int tcf_simp_init(struct net *net
+ 	struct tcf_defact *d;
+ 	bool exists = false;
+ 	int ret = 0, err;
+-	char *defdata;
+ 
+ 	if (nla == NULL)
+ 		return -EINVAL;
+@@ -110,8 +109,6 @@ static int tcf_simp_init(struct net *net
+ 		return -EINVAL;
  	}
  
- static struct phy_driver dp83848_driver[] = {
--	DP83848_PHY_DRIVER(TI_DP83848C_PHY_ID, "TI DP83848C 10/100 Mbps PHY"),
--	DP83848_PHY_DRIVER(NS_DP83848C_PHY_ID, "NS DP83848C 10/100 Mbps PHY"),
--	DP83848_PHY_DRIVER(TI_DP83620_PHY_ID, "TI DP83620 10/100 Mbps PHY"),
--	DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY"),
-+	DP83848_PHY_DRIVER(TI_DP83848C_PHY_ID, "TI DP83848C 10/100 Mbps PHY",
-+			   genphy_config_init),
-+	DP83848_PHY_DRIVER(NS_DP83848C_PHY_ID, "NS DP83848C 10/100 Mbps PHY",
-+			   genphy_config_init),
-+	DP83848_PHY_DRIVER(TI_DP83620_PHY_ID, "TI DP83620 10/100 Mbps PHY",
-+			   dp83848_config_init),
-+	DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY",
-+			   genphy_config_init),
- };
- module_phy_driver(dp83848_driver);
+-	defdata = nla_data(tb[TCA_DEF_DATA]);
+-
+ 	if (!exists) {
+ 		ret = tcf_idr_create(tn, parm->index, est, a,
+ 				     &act_simp_ops, bind, false);
+@@ -119,7 +116,7 @@ static int tcf_simp_init(struct net *net
+ 			return ret;
  
+ 		d = to_defact(*a);
+-		ret = alloc_defdata(d, defdata);
++		ret = alloc_defdata(d, tb[TCA_DEF_DATA]);
+ 		if (ret < 0) {
+ 			tcf_idr_release(*a, bind);
+ 			return ret;
+@@ -133,7 +130,7 @@ static int tcf_simp_init(struct net *net
+ 		if (!ovr)
+ 			return -EEXIST;
+ 
+-		reset_policy(d, defdata, parm);
++		reset_policy(d, tb[TCA_DEF_DATA], parm);
+ 	}
+ 
+ 	if (ret == ACT_P_CREATED)
 
 
