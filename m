@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DBEC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3BDC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 302F224FA4
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:29:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 302F224FA4
+	by mail.kernel.org (Postfix) with ESMTP id 684EC24FA5
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:29:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684EC24FA5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754626AbeFXP3l (ORCPT
+        id S1754647AbeFXP3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:29:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58936 "EHLO
+        Sun, 24 Jun 2018 11:29:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58942 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751986AbeFXP3j (ORCPT
+        with ESMTP id S1751986AbeFXP3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:29:39 -0400
+        Sun, 24 Jun 2018 11:29:46 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D0A849F;
-        Sun, 24 Jun 2018 15:29:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EBBE49F;
+        Sun, 24 Jun 2018 15:29:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 4.14 45/52] iwlwifi: fw: harden page loading code
-Date:   Sun, 24 Jun 2018 23:21:38 +0800
-Message-Id: <20180624142747.106326343@linuxfoundation.org>
+        stable@vger.kernel.org, Becky Ligon <ligon@clemson.edu>,
+        Martin Brandenburg <martin@omnibond.com>, hubcap@omnibond.com
+Subject: [PATCH 4.14 46/52] orangefs: set i_size on new symlink
+Date:   Sun, 24 Jun 2018 23:21:39 +0800
+Message-Id: <20180624142747.151270278@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -49,141 +50,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Martin Brandenburg <martin@omnibond.com>
 
-commit 9039d985811d5b109b58b202b7594fd24e433fed upstream.
+commit f6a4b4c9d07dda90c7c29dae96d6119ac6425dca upstream.
 
-The page loading code trusts the data provided in the firmware images
-a bit too much and may cause a buffer overflow or copy unknown data if
-the block sizes don't match what we expect.
+As long as a symlink inode remains in-core, the destination (and
+therefore size) will not be re-fetched from the server, as it cannot
+change.  The original implementation of the attribute cache assumed that
+setting the expiry time in the past was sufficient to cause a re-fetch
+of all attributes on the next getattr.  That does not work in this case.
 
-To prevent potential problems, harden the code by checking if the
-sizes we are copying are what we expect.
+The bug manifested itself as follows.  When the command sequence
 
+touch foo; ln -s foo bar; ls -l bar
+
+is run, the output was
+
+lrwxrwxrwx. 1 fedora fedora 4906 Apr 24 19:10 bar -> foo
+
+However, after a re-mount, ls -l bar produces
+
+lrwxrwxrwx. 1 fedora fedora    3 Apr 24 19:10 bar -> foo
+
+After this commit, even before a re-mount, the output is
+
+lrwxrwxrwx. 1 fedora fedora    3 Apr 24 19:10 bar -> foo
+
+Reported-by: Becky Ligon <ligon@clemson.edu>
+Signed-off-by: Martin Brandenburg <martin@omnibond.com>
+Fixes: 71680c18c8f2 ("orangefs: Cache getattr results.")
 Cc: stable@vger.kernel.org
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Cc: hubcap@omnibond.com
+Signed-off-by: Mike Marshall <hubcap@omnibond.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/fw/paging.c |   49 ++++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 8 deletions(-)
+ fs/orangefs/namei.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/fw/paging.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/paging.c
-@@ -8,6 +8,7 @@
-  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018        Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of version 2 of the GNU General Public License as
-@@ -30,6 +31,7 @@
-  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018        Intel Corporation
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -174,7 +176,7 @@ static int iwl_alloc_fw_paging_mem(struc
- static int iwl_fill_paging_mem(struct iwl_fw_runtime *fwrt,
- 			       const struct fw_img *image)
- {
--	int sec_idx, idx;
-+	int sec_idx, idx, ret;
- 	u32 offset = 0;
- 
- 	/*
-@@ -201,17 +203,23 @@ static int iwl_fill_paging_mem(struct iw
- 	 */
- 	if (sec_idx >= image->num_sec - 1) {
- 		IWL_ERR(fwrt, "Paging: Missing CSS and/or paging sections\n");
--		iwl_free_fw_paging(fwrt);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err;
+--- a/fs/orangefs/namei.c
++++ b/fs/orangefs/namei.c
+@@ -314,6 +314,13 @@ static int orangefs_symlink(struct inode
+ 		ret = PTR_ERR(inode);
+ 		goto out;
  	}
++	/*
++	 * This is necessary because orangefs_inode_getattr will not
++	 * re-read symlink size as it is impossible for it to change.
++	 * Invalidating the cache does not help.  orangefs_new_inode
++	 * does not set the correct size (it does not know symname).
++	 */
++	inode->i_size = strlen(symname);
  
- 	/* copy the CSS block to the dram */
- 	IWL_DEBUG_FW(fwrt, "Paging: load paging CSS to FW, sec = %d\n",
- 		     sec_idx);
- 
-+	if (image->sec[sec_idx].len > fwrt->fw_paging_db[0].fw_paging_size) {
-+		IWL_ERR(fwrt, "CSS block is larger than paging size\n");
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
- 	memcpy(page_address(fwrt->fw_paging_db[0].fw_paging_block),
- 	       image->sec[sec_idx].data,
--	       fwrt->fw_paging_db[0].fw_paging_size);
-+	       image->sec[sec_idx].len);
- 	dma_sync_single_for_device(fwrt->trans->dev,
- 				   fwrt->fw_paging_db[0].fw_paging_phys,
- 				   fwrt->fw_paging_db[0].fw_paging_size,
-@@ -232,6 +240,14 @@ static int iwl_fill_paging_mem(struct iw
- 	for (idx = 1; idx < fwrt->num_of_paging_blk; idx++) {
- 		struct iwl_fw_paging *block = &fwrt->fw_paging_db[idx];
- 
-+		if (block->fw_paging_size > image->sec[sec_idx].len - offset) {
-+			IWL_ERR(fwrt,
-+				"Paging: paging size is larger than remaining data in block %d\n",
-+				idx);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
- 		memcpy(page_address(block->fw_paging_block),
- 		       image->sec[sec_idx].data + offset,
- 		       block->fw_paging_size);
-@@ -242,19 +258,32 @@ static int iwl_fill_paging_mem(struct iw
- 
- 		IWL_DEBUG_FW(fwrt,
- 			     "Paging: copied %d paging bytes to block %d\n",
--			     fwrt->fw_paging_db[idx].fw_paging_size,
--			     idx);
-+			     block->fw_paging_size, idx);
-+
-+		offset += block->fw_paging_size;
- 
--		offset += fwrt->fw_paging_db[idx].fw_paging_size;
-+		if (offset > image->sec[sec_idx].len) {
-+			IWL_ERR(fwrt,
-+				"Paging: offset goes over section size\n");
-+			ret = -EINVAL;
-+			goto err;
-+		}
- 	}
- 
- 	/* copy the last paging block */
- 	if (fwrt->num_of_pages_in_last_blk > 0) {
- 		struct iwl_fw_paging *block = &fwrt->fw_paging_db[idx];
- 
-+		if (image->sec[sec_idx].len - offset > block->fw_paging_size) {
-+			IWL_ERR(fwrt,
-+				"Paging: last block is larger than paging size\n");
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
- 		memcpy(page_address(block->fw_paging_block),
- 		       image->sec[sec_idx].data + offset,
--		       FW_PAGING_SIZE * fwrt->num_of_pages_in_last_blk);
-+		       image->sec[sec_idx].len - offset);
- 		dma_sync_single_for_device(fwrt->trans->dev,
- 					   block->fw_paging_phys,
- 					   block->fw_paging_size,
-@@ -266,6 +295,10 @@ static int iwl_fill_paging_mem(struct iw
- 	}
- 
- 	return 0;
-+
-+err:
-+	iwl_free_fw_paging(fwrt);
-+	return ret;
- }
- 
- static int iwl_save_fw_paging(struct iwl_fw_runtime *fwrt,
+ 	gossip_debug(GOSSIP_NAME_DEBUG,
+ 		     "Assigned symlink inode new number of %pU\n",
 
 
