@@ -2,115 +2,131 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FE0C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 18:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42467C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 18:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5266A252C7
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 18:07:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5266A252C7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	by mail.kernel.org (Postfix) with ESMTP id E443A252C8
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 18:14:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqyWI1ZE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E443A252C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751665AbeFXSH4 (ORCPT
+        id S1751390AbeFXSOg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 14:07:56 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53590 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750780AbeFXSHz (ORCPT
+        Sun, 24 Jun 2018 14:14:36 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:42303 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750769AbeFXSOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 14:07:55 -0400
-Received: by mail-wm0-f65.google.com with SMTP id x6-v6so6807759wmc.3;
-        Sun, 24 Jun 2018 11:07:54 -0700 (PDT)
+        Sun, 24 Jun 2018 14:14:34 -0400
+Received: by mail-lf0-f65.google.com with SMTP id u202-v6so524744lff.9;
+        Sun, 24 Jun 2018 11:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=qYdXgGdymscMzna58pIG2G67+erNmrOJHfk9CjKMqYM=;
+        b=JqyWI1ZE8l7haJGZV4Ca2iDyvAAqAW6sYD+5W3C969vcO+daJI5gWLY6Nj6NAnx72z
+         WlEGjJzrxqdCWEz/hKxQn2RuxhbC2ANNY7mnpWsMbKgbhwK9bPuuchhiLlwngj0F6KzS
+         Qoq9Mt3sX6MgVEhFKCH9jqa4+Dv3dlUdgTy2Ja5g1hEXOzNuWvg7d1WbhD0+AMMhBMQj
+         xX2QUpmfm3mLcpaade+YqOvN7meSqq0r3bizYydf5ZzHVbb44N1PaKPGoVprtQSbnmM+
+         AmUhluDRijHT8zWvKZqLkfduSeWeY88CRSW5Bp7/rbAYQ1BxcJEfaITdJTm6gbKuS3Ul
+         qYwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sY8k+51LcoTqNjd5h6jQX9iWxQiiFeU02dMZ1Rzhtgo=;
-        b=jFYqKlL2U1VvzgTytPL/pC5qQBKXmAFXDfXXoYTTYMqtd16Zb1NgjePwLEJfR/1r0q
-         xTH/G5ZscMh7uXDGopZUR+CtVGpRK/ipLmZlK4zhbZ0jbSLWZJCArGUGot1wgiilGyZB
-         cPw9Zq3h3V/koA4P47UMC7VNU4nv/zqbnySjfqp/p9vymHs02JUXSAJL8hzWpBi701Xc
-         x6hexiRCuxXReENatznvQ2hme57sa61l+Cp24seHexhyJq6Z+tRNSeGdUKOq2wa5ZOZ9
-         fxjzW8TyekcNO4sdyd0Xkdt6j0NGVcIxm/dE/GvwxwgLD//XV1HGi5Ep/J62URl2gsuq
-         sjVQ==
-X-Gm-Message-State: APt69E1nTNlDQkpjRMI39Fuy+jinMQkYJWEdjAN7uqtvbOBisEP3HKLS
-        /gykL0sy15B5Xx3u5FLO0Sn366b1
-X-Google-Smtp-Source: ADUXVKKRO3jL5BK1Wv+MREU2FS/g1t1ETt0BNrmTlIIKj3lKti7NPSADu8G4WugkPssj6HpOXETkHw==
-X-Received: by 2002:a1c:da4e:: with SMTP id r75-v6mr7103430wmg.64.1529863673466;
-        Sun, 24 Jun 2018 11:07:53 -0700 (PDT)
-Received: from [192.168.64.169] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id q17-v6sm12976061wrr.7.2018.06.24.11.07.51
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qYdXgGdymscMzna58pIG2G67+erNmrOJHfk9CjKMqYM=;
+        b=MbUzLOBRksA4/xnJZaXS/ygxwvlZJYCm9OGOChW7x5vDQIK9vtXhmdvuRrkDL5fOv0
+         DF13PIY2cxQCtEnFPhDud3Qs4U9z/mgTZwnG8i1F+4B5noFTTMu1Rys2926DAtp51W6K
+         Kr9k2/xzScayH/Pqklpyu1Bo7MjL8ckflQQbJgla2sGSxmWPzuYLnelZ0SObnjihBRxk
+         GG9s6DnTP0RAFy7A1NvN6BzRJMlZQVQRSqSg7G5zI5vEfumoaa3fChrBAetqFnVFVyg4
+         KtBznPJ9jJebWR2es2QpDD9lVQmoFXiZBsf7G1+0sOGopuiZoB+1el59M36qmDhlINB7
+         /GtA==
+X-Gm-Message-State: APt69E1gJb3B0FZ1fz2zSzPsAKEQKHCMOe9dNDvmTU+F/OX1M/Rg6nVc
+        RJ5yTB2yuDZ2b+l1HKcT/yQ=
+X-Google-Smtp-Source: ADUXVKJP2cUntjeciG9Nz/+dHWcsuiDp6c8BGoixbz1X9HUcSfBRSFfnQzZrsJMLwATymihYG6igDQ==
+X-Received: by 2002:a19:e9d7:: with SMTP id j84-v6mr3875450lfk.115.1529864073238;
+        Sun, 24 Jun 2018 11:14:33 -0700 (PDT)
+Received: from localhost.localdomain (apn-31-0-33-209.dynamic.gprs.plus.pl. [31.0.33.209])
+        by smtp.gmail.com with ESMTPSA id h82-v6sm2761433lfg.51.2018.06.24.11.14.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 11:07:52 -0700 (PDT)
-Subject: Re: [PATCH 5/5] nvme: use __blk_mq_complete_request in timeout path
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     axboe@kernel.dk, martin.petersen@oracle.com, keith.busch@intel.com,
-        josef@toxicpanda.com, ulf.hansson@linaro.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1529500964-28429-1-git-send-email-jianchao.w.wang@oracle.com>
- <1529500964-28429-6-git-send-email-jianchao.w.wang@oracle.com>
- <20180620143956.GA20950@lst.de>
- <42583ee2-fe9d-39da-b82a-38a27b03fdb3@oracle.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <1817441e-6810-ed40-a8fd-403742818aae@grimberg.me>
-Date:   Sun, 24 Jun 2018 21:07:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <42583ee2-fe9d-39da-b82a-38a27b03fdb3@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 24 Jun 2018 11:14:32 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH] ASoC: cx20442: Don't ignore regulator_get() errors.
+Date:   Sun, 24 Jun 2018 20:14:41 +0200
+Message-Id: <20180624181441.6975-1-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In its current shape, the driver just ignores errors returned by
+regulator_get() at component_probe().  This doesn't hurt on Amstrad
+Delta board as long as it registers the codec device at late_initcall,
+when the regulator which depends on basic-mmio-gpio device (probed as
+late as at dev_initcall) is already available.  Otherwise the driver
+may end up trying to control a codec which is not powered up.
 
-> Hi Christoph
-> 
-> Thanks for your kindly response.
-> 
-> On 06/20/2018 10:39 PM, Christoph Hellwig wrote:
->>> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
->>> index 73a97fc..2a161f6 100644
->>> --- a/drivers/nvme/host/pci.c
->>> +++ b/drivers/nvme/host/pci.c
->>> @@ -1203,6 +1203,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
->>>   		nvme_warn_reset(dev, csts);
->>>   		nvme_dev_disable(dev, false);
->>>   		nvme_reset_ctrl(&dev->ctrl);
->>> +		__blk_mq_complete_request(req);
->>>   		return BLK_EH_DONE;
->>>   	}
->>>   
->>> @@ -1213,6 +1214,11 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
->>>   		dev_warn(dev->ctrl.device,
->>>   			 "I/O %d QID %d timeout, completion polled\n",
->>>   			 req->tag, nvmeq->qid);
->>> +		/*
->>> +		 * nvme_end_request will invoke blk_mq_complete_request,
->>> +		 * it will do nothing for this timed out request.
->>> +		 */
->>> +		__blk_mq_complete_request(req);
->>
->> And this clearly is bogus.  We want to iterate over the tagetset
->> and cancel all requests, not do that manually here.
->>
->> That was the whole point of the original change.
->>
-> 
-> For nvme-pci, we indeed have an issue that when nvme_reset_work->nvme_dev_disable returns, timeout path maybe still
-> running and the nvme_dev_disable invoked by timeout path will race with the nvme_reset_work.
-> However, the hole is still there right now w/o my changes, but just narrower.
+Remove that dependency on initialization order by handling the error.
+If the regulator is not yet available and -ENODEV is returned, convert
+it to -EPROBE_DEFER to get another chance.
 
-Given the amount of fixes (and fixes of fixes) we had in the timeout 
-handler, maybe it'd be a good idea to step back and take a another look?
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+Created and tested on linux-4.18-rc1
 
-Won't it be better to avoid disabling the device and return
-BLK_EH_RESET_TIMER if we are not aborting in the timeout handler?
+ sound/soc/codecs/cx20442.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/cx20442.c b/sound/soc/codecs/cx20442.c
+index 07dd33b09596..ab174b5114dc 100644
+--- a/sound/soc/codecs/cx20442.c
++++ b/sound/soc/codecs/cx20442.c
+@@ -362,8 +362,27 @@ static int cx20442_component_probe(struct snd_soc_component *component)
+ 		return -ENOMEM;
+ 
+ 	cx20442->por = regulator_get(component->dev, "POR");
+-	if (IS_ERR(cx20442->por))
+-		dev_warn(component->dev, "failed to get the regulator");
++	if (IS_ERR(cx20442->por)) {
++		int err = PTR_ERR(cx20442->por);
++
++		dev_warn(component->dev, "failed to get POR supply (%d)", err);
++		/*
++		 * When running on a non-dt platform and requested regulator
++		 * is not available, regulator_get() never returns
++		 * -EPROBE_DEFER as it is not able to justify if the regulator
++		 * may still appear later.  On the other hand, the board can
++		 * still set full constraints flag at late_initcall in order
++		 * to instruct regulator_get() to return a dummy one if
++		 * sufficient.  Hence, if we get -ENODEV here, let's convert
++		 * it to -EPROBE_DEFER and wait for the board to decide or
++		 * let Deferred Probe infrastructure handle this error.
++		 */
++		if (err == -ENODEV)
++			err = -EPROBE_DEFER;
++		kfree(cx20442);
++		return err;
++	}
++
+ 	cx20442->tty = NULL;
+ 
+ 	snd_soc_component_set_drvdata(component, cx20442);
+-- 
+2.16.4
+
