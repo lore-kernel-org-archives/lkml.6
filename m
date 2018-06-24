@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B24C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760F3C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C7C24FC4
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:30:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C7C24FC4
+	by mail.kernel.org (Postfix) with ESMTP id 33CC224FB6
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33CC224FB6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754709AbeFXPa2 (ORCPT
+        id S1754722AbeFXPaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:30:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58988 "EHLO
+        Sun, 24 Jun 2018 11:30:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59000 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752865AbeFXPaZ (ORCPT
+        with ESMTP id S1752709AbeFXPad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:30:25 -0400
+        Sun, 24 Jun 2018 11:30:33 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11FB92C;
-        Sun, 24 Jun 2018 15:30:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D77962C;
+        Sun, 24 Jun 2018 15:30:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Easton <kevin@guarana.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 50/52] vhost: fix info leak due to uninitialized memory
-Date:   Sun, 24 Jun 2018 23:21:43 +0800
-Message-Id: <20180624142747.352454563@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 51/52] fs/binfmt_misc.c: do not allow offset overflow
+Date:   Sun, 24 Jun 2018 23:21:44 +0800
+Message-Id: <20180624142747.412490033@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -51,41 +53,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael S. Tsirkin <mst@redhat.com>
+From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
 
-commit 670ae9caaca467ea1bfd325cb2a5c98ba87f94ad upstream.
+commit 5cc41e099504b77014358b58567c5ea6293dd220 upstream.
 
-struct vhost_msg within struct vhost_msg_node is copied to userspace.
-Unfortunately it turns out on 64 bit systems vhost_msg has padding after
-type which gcc doesn't initialize, leaking 4 uninitialized bytes to
-userspace.
+WHen registering a new binfmt_misc handler, it is possible to overflow
+the offset to get a negative value, which might crash the system, or
+possibly leak kernel data.
 
-This padding also unfortunately means 32 bit users of this interface are
-broken on a 64 bit kernel which will need to be fixed separately.
+Here is a crash log when 2500000000 was used as an offset:
 
-Fixes: CVE-2018-1118
-Cc: stable@vger.kernel.org
-Reported-by: Kevin Easton <kevin@guarana.org>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+  BUG: unable to handle kernel paging request at ffff989cfd6edca0
+  IP: load_misc_binary+0x22b/0x470 [binfmt_misc]
+  PGD 1ef3e067 P4D 1ef3e067 PUD 0
+  Oops: 0000 [#1] SMP NOPTI
+  Modules linked in: binfmt_misc kvm_intel ppdev kvm irqbypass joydev input_leds serio_raw mac_hid parport_pc qemu_fw_cfg parpy
+  CPU: 0 PID: 2499 Comm: bash Not tainted 4.15.0-22-generic #24-Ubuntu
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
+  RIP: 0010:load_misc_binary+0x22b/0x470 [binfmt_misc]
+  Call Trace:
+    search_binary_handler+0x97/0x1d0
+    do_execveat_common.isra.34+0x667/0x810
+    SyS_execve+0x31/0x40
+    do_syscall_64+0x73/0x130
+    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Use kstrtoint instead of simple_strtoul.  It will work as the code
+already set the delimiter byte to '\0' and we only do it when the field
+is not empty.
+
+Tested with offsets -1, 2500000000, UINT_MAX and INT_MAX.  Also tested
+with examples documented at Documentation/admin-guide/binfmt-misc.rst
+and other registrations from packages on Ubuntu.
+
+Link: http://lkml.kernel.org/r/20180529135648.14254-1-cascardo@canonical.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vhost/vhost.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/binfmt_misc.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2382,6 +2382,9 @@ struct vhost_msg_node *vhost_new_msg(str
- 	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
- 	if (!node)
- 		return NULL;
-+
-+	/* Make sure all padding within the structure is initialized. */
-+	memset(&node->msg, 0, sizeof node->msg);
- 	node->vq = vq;
- 	node->msg.type = type;
- 	return node;
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -387,8 +387,13 @@ static Node *create_entry(const char __u
+ 		s = strchr(p, del);
+ 		if (!s)
+ 			goto einval;
+-		*s++ = '\0';
+-		e->offset = simple_strtoul(p, &p, 10);
++		*s = '\0';
++		if (p != s) {
++			int r = kstrtoint(p, 10, &e->offset);
++			if (r != 0 || e->offset < 0)
++				goto einval;
++		}
++		p = s;
+ 		if (*p++)
+ 			goto einval;
+ 		pr_debug("register: offset: %#x\n", e->offset);
+@@ -428,7 +433,8 @@ static Node *create_entry(const char __u
+ 		if (e->mask &&
+ 		    string_unescape_inplace(e->mask, UNESCAPE_HEX) != e->size)
+ 			goto einval;
+-		if (e->size + e->offset > BINPRM_BUF_SIZE)
++		if (e->size > BINPRM_BUF_SIZE ||
++		    BINPRM_BUF_SIZE - e->size < e->offset)
+ 			goto einval;
+ 		pr_debug("register: magic/mask length: %i\n", e->size);
+ 		if (USE_DEBUG) {
 
 
