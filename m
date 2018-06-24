@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54E6C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DC4C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C55E25294
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C55E25294
+	by mail.kernel.org (Postfix) with ESMTP id 99CC425294
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99CC425294
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=CARNet.hr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752127AbeFXQ0g (ORCPT
+        id S1751858AbeFXQbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 12:26:36 -0400
-Received: from mail.CARNet.hr ([161.53.123.6]:53524 "EHLO mail.carnet.hr"
+        Sun, 24 Jun 2018 12:31:48 -0400
+Received: from mail.CARNet.hr ([161.53.123.6]:40167 "EHLO mail.carnet.hr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750713AbeFXQ0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 12:26:35 -0400
-Received: from [2001:b68:ff:12::131] (port=56674 helo=gavran.carpriv.carnet.hr)
+        id S1750713AbeFXQbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 12:31:47 -0400
+Received: from [2001:b68:ff:12::131] (port=56676 helo=gavran.carpriv.carnet.hr)
         by mail.carnet.hr with esmtps (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <Valentin.Vidic@CARNet.hr>)
-        id 1fX7qN-0006iP-Sk; Sun, 24 Jun 2018 18:26:28 +0200
+        id 1fX7vS-0007A8-Jy; Sun, 24 Jun 2018 18:31:43 +0200
 Received: by gavran.carpriv.carnet.hr (Postfix, from userid 1000)
-        id 9024023A9E; Sun, 24 Jun 2018 18:26:27 +0200 (CEST)
+        id 722A923A9E; Sun, 24 Jun 2018 18:31:42 +0200 (CEST)
 From:   Valentin Vidic <Valentin.Vidic@CARNet.hr>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
@@ -41,13 +41,13 @@ Cc:     =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Joe Perches <joe@perches.com>,
         Valentin Vidic <Valentin.Vidic@CARNet.hr>
-Date:   Sun, 24 Jun 2018 18:25:06 +0200
-Message-Id: <20180624162505.29600-1-Valentin.Vidic@CARNet.hr>
+Date:   Sun, 24 Jun 2018 18:31:38 +0200
+Message-Id: <20180624163138.30976-1-Valentin.Vidic@CARNet.hr>
 X-Mailer: git-send-email 2.18.0.rc2
-In-Reply-To: <36befceb2334197cce5cd44a61f86f38b870d54c.camel@perches.com>
+In-Reply-To: <20180624162505.29600-1-Valentin.Vidic@CARNet.hr>
 References: <20180624094245.23741-1-Valentin.Vidic@CARNet.hr>
 X-SA-Exim-Connect-IP: 2001:b68:ff:12::131
-Subject: [PATCH v2] staging: pi433: replace simple switch statements
+Subject: [PATCH v3] staging: pi433: replace simple switch statements
 X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,12 +59,13 @@ Use const array to map switch cases to resulting values.
 Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
 ---
 v2: use correct type for const arrays
+v3: add missing static keyword for af_map
 
  drivers/staging/pi433/rf69.c | 233 ++++++++++++++---------------------
  1 file changed, 93 insertions(+), 140 deletions(-)
 
 diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index 90280e9b006d..6bfffe8b8bae 100644
+index 90280e9b006d..341d6901a801 100644
 --- a/drivers/staging/pi433/rf69.c
 +++ b/drivers/staging/pi433/rf69.c
 @@ -111,27 +111,22 @@ static inline int rf69_read_mod_write(struct spi_device *spi, u8 reg,
@@ -326,7 +327,7 @@ index 90280e9b006d..6bfffe8b8bae 100644
 -					   MASK_PACKETCONFIG1_ADDRESSFILTERING,
 -					   PACKETCONFIG1_ADDRESSFILTERING_NODEBROADCAST);
 -	default:
-+	const int af_map[] = {
++	static const u8 af_map[] = {
 +		[filtering_off] = PACKETCONFIG1_ADDRESSFILTERING_OFF,
 +		[node_address] = PACKETCONFIG1_ADDRESSFILTERING_NODE,
 +		[node_or_broadcast_address] =
