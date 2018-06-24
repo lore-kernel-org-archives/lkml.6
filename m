@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24275C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B44EC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB7B124FDD
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7B124FDD
+	by mail.kernel.org (Postfix) with ESMTP id EA43124FDD
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA43124FDD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754983AbeFXPcy (ORCPT
+        id S1754998AbeFXPdB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:32:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59230 "EHLO
+        Sun, 24 Jun 2018 11:33:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59236 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754177AbeFXPcv (ORCPT
+        with ESMTP id S1754598AbeFXPc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:32:51 -0400
+        Sun, 24 Jun 2018 11:32:58 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D05FB49F;
-        Sun, 24 Jun 2018 15:32:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6AAB049F;
+        Sun, 24 Jun 2018 15:32:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
-Subject: [PATCH 4.16 19/64] driver core: Dont ignore class_dir_create_and_add() failure.
-Date:   Sun, 24 Jun 2018 23:22:00 +0800
-Message-Id: <20180624142744.904734965@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.16 20/64] Btrfs: fix clone vs chattr NODATASUM race
+Date:   Sun, 24 Jun 2018 23:22:01 +0800
+Message-Id: <20180624142744.966094791@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -51,79 +51,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Omar Sandoval <osandov@fb.com>
 
-commit 84d0c27d6233a9ba0578b20f5a09701eb66cee42 upstream.
+commit b5c40d598f5408bd0ca22dfffa82f03cd9433f23 upstream.
 
-syzbot is hitting WARN() at kernfs_add_one() [1].
-This is because kernfs_create_link() is confused by previous device_add()
-call which continued without setting dev->kobj.parent field when
-get_device_parent() failed by memory allocation fault injection.
-Fix this by propagating the error from class_dir_create_and_add() to
-the calllers of get_device_parent().
+In btrfs_clone_files(), we must check the NODATASUM flag while the
+inodes are locked. Otherwise, it's possible that btrfs_ioctl_setflags()
+will change the flags after we check and we can end up with a party
+checksummed file.
 
-[1] https://syzkaller.appspot.com/bug?id=fae0fb607989ea744526d1c082a5b8de6529116f
+The race window is only a few instructions in size, between the if and
+the locks which is:
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable <stable@vger.kernel.org>
+3834         if (S_ISDIR(src->i_mode) || S_ISDIR(inode->i_mode))
+3835                 return -EISDIR;
+
+where the setflags must be run and toggle the NODATASUM flag (provided
+the file size is 0).  The clone will block on the inode lock, segflags
+takes the inode lock, changes flags, releases log and clone continues.
+
+Not impossible but still needs a lot of bad luck to hit unintentionally.
+
+Fixes: 0e7b824c4ef9 ("Btrfs: don't make a file partly checksummed through file clone")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+[ update changelog ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/core.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ fs/btrfs/ioctl.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -1458,7 +1458,7 @@ class_dir_create_and_add(struct class *c
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -3837,11 +3837,6 @@ static noinline int btrfs_clone_files(st
+ 	    src->i_sb != inode->i_sb)
+ 		return -EXDEV;
  
- 	dir = kzalloc(sizeof(*dir), GFP_KERNEL);
- 	if (!dir)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
+-	/* don't make the dst file partly checksummed */
+-	if ((BTRFS_I(src)->flags & BTRFS_INODE_NODATASUM) !=
+-	    (BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM))
+-		return -EINVAL;
+-
+ 	if (S_ISDIR(src->i_mode) || S_ISDIR(inode->i_mode))
+ 		return -EISDIR;
  
- 	dir->class = class;
- 	kobject_init(&dir->kobj, &class_dir_ktype);
-@@ -1468,7 +1468,7 @@ class_dir_create_and_add(struct class *c
- 	retval = kobject_add(&dir->kobj, parent_kobj, "%s", class->name);
- 	if (retval < 0) {
- 		kobject_put(&dir->kobj);
--		return NULL;
-+		return ERR_PTR(retval);
+@@ -3851,6 +3846,13 @@ static noinline int btrfs_clone_files(st
+ 		inode_lock(src);
  	}
- 	return &dir->kobj;
- }
-@@ -1775,6 +1775,10 @@ int device_add(struct device *dev)
  
- 	parent = get_device(dev->parent);
- 	kobj = get_device_parent(dev, parent);
-+	if (IS_ERR(kobj)) {
-+		error = PTR_ERR(kobj);
-+		goto parent_error;
++	/* don't make the dst file partly checksummed */
++	if ((BTRFS_I(src)->flags & BTRFS_INODE_NODATASUM) !=
++	    (BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM)) {
++		ret = -EINVAL;
++		goto out_unlock;
 +	}
- 	if (kobj)
- 		dev->kobj.parent = kobj;
- 
-@@ -1873,6 +1877,7 @@ done:
- 	kobject_del(&dev->kobj);
-  Error:
- 	cleanup_glue_dir(dev, glue_dir);
-+parent_error:
- 	put_device(parent);
- name_error:
- 	kfree(dev->p);
-@@ -2692,6 +2697,11 @@ int device_move(struct device *dev, stru
- 	device_pm_lock();
- 	new_parent = get_device(new_parent);
- 	new_parent_kobj = get_device_parent(dev, new_parent);
-+	if (IS_ERR(new_parent_kobj)) {
-+		error = PTR_ERR(new_parent_kobj);
-+		put_device(new_parent);
-+		goto out;
-+	}
- 
- 	pr_debug("device: '%s': %s: moving to '%s'\n", dev_name(dev),
- 		 __func__, new_parent ? dev_name(new_parent) : "<NULL>");
++
+ 	/* determine range to clone */
+ 	ret = -EINVAL;
+ 	if (off + len > src->i_size || off + len < off)
 
 
