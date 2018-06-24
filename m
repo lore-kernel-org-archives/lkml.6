@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D64C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D054C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A03EE25355
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:46:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A6BD2535A
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="NlaMxeiQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A03EE25355
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wqpsa8+h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A6BD2535A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeFXWqJ (ORCPT
+        id S1752502AbeFXWq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 18:46:09 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:56277 "EHLO
+        Sun, 24 Jun 2018 18:46:26 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:56270 "EHLO
         gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751966AbeFXWpD (ORCPT
+        with ESMTP id S1751949AbeFXWpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 24 Jun 2018 18:45:03 -0400
 Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E283C8448C;
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5AF1C8448B;
         Mon, 25 Jun 2018 10:45:01 +1200 (NZST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
         s=mail; t=1529880301;
-        bh=ZUQi09JnsYs0EIb6IhpuYL5TBptPy7Kb6rjaHPfJo/Y=;
+        bh=C3PdnOqV/ztdeq2R845eBsDJK1N+7lLs2VpHns3o1RA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=NlaMxeiQ5RqinsnqKtUtzPbt6vcyAI6Yp+8Mh7DNoLXONTBAzhCCq4FaVZTTnSJPj
-         4FH6cxqHJt7/7U40YyfN2e0Eg4GZw3SCCb19vjasaNHC5S7MbGd2rSrhSjUwIJT5/Z
-         ZWLrFhyWKdnAntYvgtaXehlqv9U9IS9ojkyy1d64=
+        b=wqpsa8+hCQ160pFUors+PvrkTvjeXRIyzgHyJdsuDtehhWVdJs6PAHKaFu7GjrnKJ
+         BRbCAaZ2qvDYw7M3ZMjv6lMcw3WUwkI1jn+AC5GC8bfStDrPyrKwQ5MUxJLb/XHzHA
+         XKxbcy1XokT1EiBFLvfBktcs9lstiXrHFHpsnY64=
 Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b301ee80000>; Mon, 25 Jun 2018 10:45:01 +1200
+        id <B5b301eec0000>; Mon, 25 Jun 2018 10:45:00 +1200
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 1F2FD13EFAE;
-        Mon, 25 Jun 2018 10:45:00 +1200 (NZST)
+        by smtp (Postfix) with ESMTP id 8DDC713EE1C;
+        Mon, 25 Jun 2018 10:45:04 +1200 (NZST)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id B050D1E2626; Mon, 25 Jun 2018 10:44:56 +1200 (NZST)
+        id 2A7181E2626; Mon, 25 Jun 2018 10:45:01 +1200 (NZST)
 From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
 To:     miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
         dwmw2@infradead.org, computersforpeace@gmail.com,
@@ -52,9 +52,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Chris Packham <chris.packham@alliedtelesis.co.nz>,
         Richard Weinberger <richard@nod.at>,
         Marek Vasut <marek.vasut@gmail.com>
-Subject: [PATCH v6 2/6] mtd: rawnand: add manufacturer fixup for ONFI parameter page
-Date:   Mon, 25 Jun 2018 10:44:44 +1200
-Message-Id: <20180624224448.21872-3-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v6 6/6] mtd: rawnand: micron: detect forced on-die ECC
+Date:   Mon, 25 Jun 2018 10:44:48 +1200
+Message-Id: <20180624224448.21872-7-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624224448.21872-1-chris.packham@alliedtelesis.co.nz>
 References: <20180624224448.21872-1-chris.packham@alliedtelesis.co.nz>
@@ -63,62 +63,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is called after the ONFI parameter page checksum is verified
-and allows us to override the contents of the parameter page.
+Some Micron NAND chips have on-die ECC forceably enabled. Detect these
+based on chip ID as there seems to be no other way of distinguishing
+these chips from those that have optional support for on-die ECC.
 
-Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 ---
-Changes in v2:
-- New
-Changes in v3:
-- Add doc comment and review from Boris
 Changes in v4:
-- None
+- New
 Changes in v5:
-- None
+- fail if on-die ECC is mandatory and the current ecc.mode is not
+  NAND_ECC_ON_DIE.
 Changes in v6:
-- None
+- Update commit message, add review from Boris
 
- drivers/mtd/nand/raw/nand_base.c | 4 ++++
- include/linux/mtd/rawnand.h      | 3 +++
- 2 files changed, 7 insertions(+)
+ drivers/mtd/nand/raw/nand_micron.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 0cd3e216b95c..65250308c82d 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5172,6 +5172,10 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
- 		}
- 	}
- 
-+	if (chip->manufacturer.desc && chip->manufacturer.desc->ops &&
-+	    chip->manufacturer.desc->ops->fixup_onfi_param_page)
-+		chip->manufacturer.desc->ops->fixup_onfi_param_page(chip, p);
-+
- 	/* Check version */
- 	val = le16_to_cpu(p->revision);
- 	if (val & (1 << 5))
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 3e8ec3b8a39c..ef7e3b4e91ea 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -778,11 +778,14 @@ nand_get_sdr_timings(const struct nand_data_interface *conf)
-  *	  implementation) if any.
-  * @cleanup: the ->init() function may have allocated resources, ->cleanup()
-  *	     is here to let vendor specific code release those resources.
-+ * @fixup_onfi_param_page: apply vendor specific fixups to the ONFI
-+ *	parameter page. This is called after the checksum is verified.
-  */
- struct nand_manufacturer_ops {
- 	void (*detect)(struct nand_chip *chip);
- 	int (*init)(struct nand_chip *chip);
- 	void (*cleanup)(struct nand_chip *chip);
-+	void (*fixup_onfi_param_page)(struct nand_chip *chip, struct nand_onfi_params *p);
+diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
+index f83053562925..35fa6880a799 100644
+--- a/drivers/mtd/nand/raw/nand_micron.c
++++ b/drivers/mtd/nand/raw/nand_micron.c
+@@ -255,6 +255,14 @@ enum {
+ 	MICRON_ON_DIE_MANDATORY,
  };
  
- /**
++/*
++ * These parts are known to have on-die ECC forceably enabled
++ */
++static u8 micron_on_die_ecc[] = {
++	0xd1, /* MT29F1G08ABAFA */
++	0xa1, /* MT29F1G08ABBFA */
++};
++
+ /*
+  * Try to detect if the NAND support on-die ECC. To do this, we enable
+  * the feature, and read back if it has been enabled as expected. We
+@@ -269,6 +277,11 @@ static int micron_supports_on_die_ecc(struct nand_chip *chip)
+ {
+ 	u8 feature[ONFI_SUBFEATURE_PARAM_LEN] = { 0, };
+ 	int ret;
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(micron_on_die_ecc); i++)
++		if (chip->id.data[1] == micron_on_die_ecc[i])
++			return MICRON_ON_DIE_MANDATORY;
+ 
+ 	if (!chip->parameters.onfi.version)
+ 		return MICRON_ON_DIE_UNSUPPORTED;
+@@ -322,7 +335,8 @@ static int micron_nand_init(struct nand_chip *chip)
+ 
+ 	ondie = micron_supports_on_die_ecc(chip);
+ 
+-	if (ondie == MICRON_ON_DIE_MANDATORY) {
++	if (ondie == MICRON_ON_DIE_MANDATORY &&
++	    chip->ecc.mode != NAND_ECC_ON_DIE) {
+ 		pr_err("On-die ECC forcefully enabled, not supported\n");
+ 		return -EINVAL;
+ 	}
 -- 
 2.18.0
 
