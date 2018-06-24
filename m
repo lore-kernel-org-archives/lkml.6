@@ -1,106 +1,119 @@
 Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAC0C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED4EC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E10B24DEF
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:09:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E10B24DEF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id EA4F924DF9
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:11:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qnhE+0vf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA4F924DF9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751570AbeFXHJg (ORCPT
+        id S1751729AbeFXHLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 03:09:36 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44704 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750713AbeFXHJf (ORCPT
+        Sun, 24 Jun 2018 03:11:12 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43440 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750734AbeFXHLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 03:09:35 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fWz93-0002cc-J3; Sun, 24 Jun 2018 09:09:09 +0200
-Date:   Sun, 24 Jun 2018 09:09:09 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     syzbot <syzbot+a4eb8c7766952a1ca872@syzkaller.appspotmail.com>
-cc:     ast@kernel.org, daniel@iogearbox.net,
-        David Miller <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, kuznet@ms2.inr.ac.ru,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        x86@kernel.org, yoshfuji@linux-ipv6.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: BUG: unable to handle kernel paging request in
- bpf_int_jit_compile
-In-Reply-To: <000000000000d48c8e056f5b6c67@google.com>
-Message-ID: <alpine.DEB.2.21.1806240849150.8650@nanos.tec.linutronix.de>
-References: <000000000000d48c8e056f5b6c67@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 24 Jun 2018 03:11:10 -0400
+Received: by mail-wr0-f195.google.com with SMTP id p14-v6so1657680wrq.10;
+        Sun, 24 Jun 2018 00:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fJnpxvlHss854XTqSPUAAxz93Rfu1q6qJYVBHEIeCyI=;
+        b=qnhE+0vfMxH9DZYHwXw4OssKh9WJzUpUC/VDbcHg0R3+NOwyrzxoarB3DtbrkwHpM4
+         hDWuXOyOtPHgL80AwPmCjSO86IDuELEfYsIooyD3bkkVkcaUrBKcheF+Col/LPSH5vBi
+         tNujHLRBbBkRuve+5dsLLdKH/xoZiDq+nh71xZM1gGFUYd4EIHT9UKqIlqu9sUtbJtdj
+         vRrGmEMZoE7QKL0fjAhLAyhZNxAMTUmosyZec+swF+5+WEShXPIGqiHCedzWJ68b8OM6
+         V8wC1Zbt6IYXLGjqvDtRHpu5bBZmUw2BnuzOoCP8PJ1UunvqolXKhFnyhfL5cPXXsxKM
+         SOrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fJnpxvlHss854XTqSPUAAxz93Rfu1q6qJYVBHEIeCyI=;
+        b=OKceip303ETw0EEw8KD3WAhlKH9a5uG7hgClPoyG1OqJoTEsR02LrvEKWA9mkunAMy
+         E5zJI69jq3WtHIFBEN+KKxsxOdX9YFQ3PoYClY4pstnuu0a403CnOVh0Xu/jGaGEWA+w
+         HgKhKJcdVFPA4+tXEd2zEUwq4spH4McfL4Ga2MSP14V60MSNI8cDIuIdrUKvvb8uSSpR
+         vHv+K7R7/3fX9gpLKMj+stZKAqNY37Owq75ni1oSikUn45GNy2RDGAbojKeQ7rvg8wWb
+         5olUJ+ub8EC6ofnfWXMXELOPEh3IvvDJfT6gGpVnLGK33yPbaVr7BcIL/gmM0Hrl+sP4
+         yq/g==
+X-Gm-Message-State: APt69E3RTx1fAApJRUw+lTxjeIq7xOmnXyUfe9GMadZcuFiKZ0sy53m2
+        r9o2uzb9pVqKHmqnDS40RQ4=
+X-Google-Smtp-Source: AAOMgpc7zrd318eGhJPuAaHiNlr9OYIjOvlcVGJWMiB6MGA/RWv7MW1ptt1SWwIXoMJP19BySUumRQ==
+X-Received: by 2002:adf:b219:: with SMTP id u25-v6mr6591495wra.1.1529824269160;
+        Sun, 24 Jun 2018 00:11:09 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id g88-v6sm7811335wmc.27.2018.06.24.00.11.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 24 Jun 2018 00:11:08 -0700 (PDT)
+Date:   Sun, 24 Jun 2018 09:11:05 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-crypto@vger.kernel.org, Mike Galbraith <efault@gmx.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        jpoimboe@redhat.com, luto@kernel.org, peterz@infradead.org,
+        brgerst@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        dvlasenk@redhat.com, h.peter.anvin@intel.com,
+        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] x86/crypto: Add missing RETs
+Message-ID: <20180624071105.GA29407@gmail.com>
+References: <20180507213755.GA32406@avx2>
+ <tip-51bad67ffbce0aaa44579f84ef5d05597054ec6a@git.kernel.org>
+ <1529235613.4572.7.camel@gmx.de>
+ <20180617120012.GB16877@zn.tnic>
+ <1529242717.4472.3.camel@gmx.de>
+ <1529244178.4674.1.camel@gmx.de>
+ <20180617194747.GA21160@zn.tnic>
+ <1529289279.31745.3.camel@gmx.de>
+ <20180623103622.GA2760@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180623103622.GA2760@zn.tnic>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Jun 2018, syzbot wrote:
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a4eb8c7766952a1ca872@syzkaller.appspotmail.com
+
+* Borislav Petkov <bp@alien8.de> wrote:
+
+> Lemme send a proper patch now...
 > 
-> RAX: ffffffffffffffda RBX: 0000000001429914 RCX: 0000000000455a99
-> RDX: 0000000000000048 RSI: 0000000020000240 RDI: 0000000000000005
-> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
-> R13: 00000000004bb7d5 R14: 00000000004c8508 R15: 0000000000000023
-> BUG: unable to handle kernel paging request at ffffffffa0008002
-> PGD 8e6d067 P4D 8e6d067 PUD 8e6e063 PMD 1b4528067 PTE 1d433d161
-> Oops: 0003 [#1] SMP KASAN
-> CPU: 1 PID: 4811 Comm: syz-executor0 Not tainted 4.18.0-rc1+ #114
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
-> 01/01/2011
-> RIP: 0010:bpf_jit_binary_lock_ro include/linux/filter.h:703 [inline]
-> RIP: 0010:bpf_int_jit_compile+0xc36/0xf30 arch/x86/net/bpf_jit_comp.c:1168
+> ---
+> From: Borislav Petkov <bp@suse.de>
+> Date: Sun, 17 Jun 2018 13:57:42 +0200
+> Subject: [PATCH] x86/crypto: Add missing RETs
+> 
+> Add explicit RETs to the tail calls of AEGIS and MORUS crypto algorithms
+> otherwise they run into INT3 padding due to
+> 
+>   51bad67ffbce ("x86/asm: Pad assembly functions with INT3 instructions")
+> 
+> leading to spurious debug exceptions.
+> 
+> Mike Galbraith <efault@gmx.de> took care of all the remaining callsites.
 
-static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
-{
-        WARN_ON_ONCE(set_memory_ro((unsigned long)hdr, hdr->pages));
-}
-
-Qualitee. set_memory_ro() has legitimate reasons to fail, but sure it does
-not most of the time.
-
-So instead of implementing proper error handling, this adds complete bogus
-wrappers. Hell, set_memory_*() have stub functions which return 0 for the
-CONFIG_ARCH_HAS_SET_MEMORY=n case.
-
-The unlock function is even more hilarious:
-
-static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
-{
-        if (fp->locked) {
-                WARN_ON_ONCE(set_memory_rw((unsigned long)fp, fp->pages));
-                /* In case set_memory_rw() fails, we want to be the first
-                 * to crash here instead of some random place later on.
-                 */
-                fp->locked = 0;
-        }
-}
-
-Great approach for a facility, which deals with untrusted user space
-stuff. Yeah. I know. The BPF mantra is: "Performance first"
-
-I'm really tempted to make the BPF config switch depend on BROKEN. 
+Note that 51bad67ffbce has been zapped because it caused too many problems like 
+this, but the explicit RETs make sense nevertheless. When applying the patch 
+please don't include the SHA1 of the non-upstream (and probably never-upstream) 
+commit.
 
 Thanks,
 
-	tglx
+	Ingo
