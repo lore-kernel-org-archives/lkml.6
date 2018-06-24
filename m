@@ -6,36 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF28C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 540EEC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F028625041
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:39:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F028625041
+	by mail.kernel.org (Postfix) with ESMTP id 1994B25046
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:39:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1994B25046
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932202AbeFXPjj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:39:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59826 "EHLO
+        id S1755813AbeFXPjq (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:39:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59840 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755799AbeFXPjh (ORCPT
+        with ESMTP id S1751852AbeFXPjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:39:37 -0400
+        Sun, 24 Jun 2018 11:39:44 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC1952C;
-        Sun, 24 Jun 2018 15:39:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85A5749F;
+        Sun, 24 Jun 2018 15:39:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 63/64] fs/binfmt_misc.c: do not allow offset overflow
-Date:   Sun, 24 Jun 2018 23:22:44 +0800
-Message-Id: <20180624142747.520384029@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Song Liu <songliubraving@fb.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <liu.song.a23@gmail.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Mike Travis <mike.travis@hpe.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Tariq Toukan <tariqt@mellanox.com>
+Subject: [PATCH 4.16 54/64] genirq/affinity: Defer affinity setting if irq chip is busy
+Date:   Sun, 24 Jun 2018 23:22:35 +0800
+Message-Id: <20180624142747.042193053@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -52,80 +57,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 5cc41e099504b77014358b58567c5ea6293dd220 upstream.
+commit 12f47073a40f6aa75119d8f5df4077b7f334cced upstream.
 
-WHen registering a new binfmt_misc handler, it is possible to overflow
-the offset to get a negative value, which might crash the system, or
-possibly leak kernel data.
+The case that interrupt affinity setting fails with -EBUSY can be handled
+in the kernel completely by using the already available generic pending
+infrastructure.
 
-Here is a crash log when 2500000000 was used as an offset:
+If a irq_chip::set_affinity() fails with -EBUSY, handle it like the
+interrupts for which irq_chip::set_affinity() can only be invoked from
+interrupt context. Copy the new affinity mask to irq_desc::pending_mask and
+set the affinity pending bit. The next raised interrupt for the affected
+irq will check the pending bit and try to set the new affinity from the
+handler. This avoids that -EBUSY is returned when an affinity change is
+requested from user space and the previous change has not been cleaned
+up. The new affinity will take effect when the next interrupt is raised
+from the device.
 
-  BUG: unable to handle kernel paging request at ffff989cfd6edca0
-  IP: load_misc_binary+0x22b/0x470 [binfmt_misc]
-  PGD 1ef3e067 P4D 1ef3e067 PUD 0
-  Oops: 0000 [#1] SMP NOPTI
-  Modules linked in: binfmt_misc kvm_intel ppdev kvm irqbypass joydev input_leds serio_raw mac_hid parport_pc qemu_fw_cfg parpy
-  CPU: 0 PID: 2499 Comm: bash Not tainted 4.15.0-22-generic #24-Ubuntu
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
-  RIP: 0010:load_misc_binary+0x22b/0x470 [binfmt_misc]
-  Call Trace:
-    search_binary_handler+0x97/0x1d0
-    do_execveat_common.isra.34+0x667/0x810
-    SyS_execve+0x31/0x40
-    do_syscall_64+0x73/0x130
-    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Use kstrtoint instead of simple_strtoul.  It will work as the code
-already set the delimiter byte to '\0' and we only do it when the field
-is not empty.
-
-Tested with offsets -1, 2500000000, UINT_MAX and INT_MAX.  Also tested
-with examples documented at Documentation/admin-guide/binfmt-misc.rst
-and other registrations from packages on Ubuntu.
-
-Link: http://lkml.kernel.org/r/20180529135648.14254-1-cascardo@canonical.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Song Liu <songliubraving@fb.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <liu.song.a23@gmail.com>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: stable@vger.kernel.org
+Cc: Mike Travis <mike.travis@hpe.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Tariq Toukan <tariqt@mellanox.com>
+Link: https://lkml.kernel.org/r/20180604162224.819273597@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/binfmt_misc.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ kernel/irq/manage.c |   37 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 35 insertions(+), 2 deletions(-)
 
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -387,8 +387,13 @@ static Node *create_entry(const char __u
- 		s = strchr(p, del);
- 		if (!s)
- 			goto einval;
--		*s++ = '\0';
--		e->offset = simple_strtoul(p, &p, 10);
-+		*s = '\0';
-+		if (p != s) {
-+			int r = kstrtoint(p, 10, &e->offset);
-+			if (r != 0 || e->offset < 0)
-+				goto einval;
-+		}
-+		p = s;
- 		if (*p++)
- 			goto einval;
- 		pr_debug("register: offset: %#x\n", e->offset);
-@@ -428,7 +433,8 @@ static Node *create_entry(const char __u
- 		if (e->mask &&
- 		    string_unescape_inplace(e->mask, UNESCAPE_HEX) != e->size)
- 			goto einval;
--		if (e->size + e->offset > BINPRM_BUF_SIZE)
-+		if (e->size > BINPRM_BUF_SIZE ||
-+		    BINPRM_BUF_SIZE - e->size < e->offset)
- 			goto einval;
- 		pr_debug("register: magic/mask length: %i\n", e->size);
- 		if (USE_DEBUG) {
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -205,6 +205,39 @@ int irq_do_set_affinity(struct irq_data
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_GENERIC_PENDING_IRQ
++static inline int irq_set_affinity_pending(struct irq_data *data,
++					   const struct cpumask *dest)
++{
++	struct irq_desc *desc = irq_data_to_desc(data);
++
++	irqd_set_move_pending(data);
++	irq_copy_pending(desc, dest);
++	return 0;
++}
++#else
++static inline int irq_set_affinity_pending(struct irq_data *data,
++					   const struct cpumask *dest)
++{
++	return -EBUSY;
++}
++#endif
++
++static int irq_try_set_affinity(struct irq_data *data,
++				const struct cpumask *dest, bool force)
++{
++	int ret = irq_do_set_affinity(data, dest, force);
++
++	/*
++	 * In case that the underlying vector management is busy and the
++	 * architecture supports the generic pending mechanism then utilize
++	 * this to avoid returning an error to user space.
++	 */
++	if (ret == -EBUSY && !force)
++		ret = irq_set_affinity_pending(data, dest);
++	return ret;
++}
++
+ int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
+ 			    bool force)
+ {
+@@ -215,8 +248,8 @@ int irq_set_affinity_locked(struct irq_d
+ 	if (!chip || !chip->irq_set_affinity)
+ 		return -EINVAL;
+ 
+-	if (irq_can_move_pcntxt(data)) {
+-		ret = irq_do_set_affinity(data, mask, force);
++	if (irq_can_move_pcntxt(data) && !irqd_is_setaffinity_pending(data)) {
++		ret = irq_try_set_affinity(data, mask, force);
+ 	} else {
+ 		irqd_set_move_pending(data);
+ 		irq_copy_pending(desc, mask);
 
 
