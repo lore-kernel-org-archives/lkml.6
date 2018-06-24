@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A885EC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D66C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63AC224FF6
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63AC224FF6
+	by mail.kernel.org (Postfix) with ESMTP id A896824FF7
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A896824FF7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755225AbeFXPee (ORCPT
+        id S1755090AbeFXPel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:34:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59350 "EHLO
+        Sun, 24 Jun 2018 11:34:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59364 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754659AbeFXPeb (ORCPT
+        with ESMTP id S1751924AbeFXPej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:34:31 -0400
+        Sun, 24 Jun 2018 11:34:39 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8287F2C;
-        Sun, 24 Jun 2018 15:34:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED4F649F;
+        Sun, 24 Jun 2018 15:34:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        shankarapailoor <shankarapailoor@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Lorenzo Colitti <lorenzo@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, trevor.francis@46labs.com,
+        Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 08/64] socket: close race condition between sock_close() and sockfs_setattr()
-Date:   Sun, 24 Jun 2018 23:21:49 +0800
-Message-Id: <20180624142744.123985912@linuxfoundation.org>
+Subject: [PATCH 4.16 09/64] udp: fix rx queue len reported by diag and proc interface
+Date:   Sun, 24 Jun 2018 23:21:50 +0800
+Message-Id: <20180624142744.212559778@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -55,90 +51,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 6d8c50dcb029872b298eea68cc6209c866fd3e14 ]
+[ Upstream commit 6c206b20092a3623184cff9470dba75d21507874 ]
 
-fchownat() doesn't even hold refcnt of fd until it figures out
-fd is really needed (otherwise is ignored) and releases it after
-it resolves the path. This means sock_close() could race with
-sockfs_setattr(), which leads to a NULL pointer dereference
-since typically we set sock->sk to NULL in ->release().
+After commit 6b229cf77d68 ("udp: add batching to udp_rmem_release()")
+the sk_rmem_alloc field does not measure exactly anymore the
+receive queue length, because we batch the rmem release. The issue
+is really apparent only after commit 0d4a6608f68c ("udp: do rmem bulk
+free even if the rx sk queue is empty"): the user space can easily
+check for an empty socket with not-0 queue length reported by the 'ss'
+tool or the procfs interface.
 
-As pointed out by Al, this is unique to sockfs. So we can fix this
-in socket layer by acquiring inode_lock in sock_close() and
-checking against NULL in sockfs_setattr().
+We need to use a custom UDP helper to report the correct queue length,
+taking into account the forward allocation deficit.
 
-sock_release() is called in many places, only the sock_close()
-path matters here. And fortunately, this should not affect normal
-sock_close() as it is only called when the last fd refcnt is gone.
-It only affects sock_close() with a parallel sockfs_setattr() in
-progress, which is not common.
-
-Fixes: 86741ec25462 ("net: core: Add a UID field to struct sock.")
-Reported-by: shankarapailoor <shankarapailoor@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Lorenzo Colitti <lorenzo@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reported-by: trevor.francis@46labs.com
+Fixes: 6b229cf77d68 ("UDP: add batching to udp_rmem_release()")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/socket.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ include/net/transp_v6.h |   11 +++++++++--
+ include/net/udp.h       |    5 +++++
+ net/ipv4/udp.c          |    2 +-
+ net/ipv4/udp_diag.c     |    2 +-
+ net/ipv6/datagram.c     |    6 +++---
+ net/ipv6/udp.c          |    3 ++-
+ 6 files changed, 21 insertions(+), 8 deletions(-)
 
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -538,7 +538,10 @@ static int sockfs_setattr(struct dentry
- 	if (!err && (iattr->ia_valid & ATTR_UID)) {
- 		struct socket *sock = SOCKET_I(d_inode(dentry));
+--- a/include/net/transp_v6.h
++++ b/include/net/transp_v6.h
+@@ -45,8 +45,15 @@ int ip6_datagram_send_ctl(struct net *ne
+ 			  struct flowi6 *fl6, struct ipcm6_cookie *ipc6,
+ 			  struct sockcm_cookie *sockc);
  
--		sock->sk->sk_uid = iattr->ia_uid;
-+		if (sock->sk)
-+			sock->sk->sk_uid = iattr->ia_uid;
-+		else
-+			err = -ENOENT;
- 	}
- 
- 	return err;
-@@ -587,12 +590,16 @@ EXPORT_SYMBOL(sock_alloc);
-  *	an inode not a file.
-  */
- 
--void sock_release(struct socket *sock)
-+static void __sock_release(struct socket *sock, struct inode *inode)
- {
- 	if (sock->ops) {
- 		struct module *owner = sock->ops->owner;
- 
-+		if (inode)
-+			inode_lock(inode);
- 		sock->ops->release(sock);
-+		if (inode)
-+			inode_unlock(inode);
- 		sock->ops = NULL;
- 		module_put(owner);
- 	}
-@@ -606,6 +613,11 @@ void sock_release(struct socket *sock)
- 	}
- 	sock->file = NULL;
- }
-+
-+void sock_release(struct socket *sock)
+-void ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp,
+-			     __u16 srcp, __u16 destp, int bucket);
++void __ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp,
++			       __u16 srcp, __u16 destp, int rqueue, int bucket);
++static inline void
++ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp, __u16 srcp,
++			__u16 destp, int bucket)
 +{
-+	__sock_release(sock, NULL);
++	__ip6_dgram_sock_seq_show(seq, sp, srcp, destp, sk_rmem_alloc_get(sp),
++				  bucket);
 +}
- EXPORT_SYMBOL(sock_release);
  
- void __sock_tx_timestamp(__u16 tsflags, __u8 *tx_flags)
-@@ -1146,7 +1158,7 @@ static int sock_mmap(struct file *file,
+ #define LOOPBACK4_IPV6 cpu_to_be32(0x7f000006)
  
- static int sock_close(struct inode *inode, struct file *filp)
+--- a/include/net/udp.h
++++ b/include/net/udp.h
+@@ -244,6 +244,11 @@ static inline __be16 udp_flow_src_port(s
+ 	return htons((((u64) hash * (max - min)) >> 32) + min);
+ }
+ 
++static inline int udp_rqueue_get(struct sock *sk)
++{
++	return sk_rmem_alloc_get(sk) - READ_ONCE(udp_sk(sk)->forward_deficit);
++}
++
+ /* net/ipv4/udp.c */
+ void udp_destruct_sock(struct sock *sk);
+ void skb_consume_udp(struct sock *sk, struct sk_buff *skb, int len);
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -2710,7 +2710,7 @@ static void udp4_format_sock(struct sock
+ 		" %02X %08X:%08X %02X:%08lX %08X %5u %8d %lu %d %pK %d",
+ 		bucket, src, srcp, dest, destp, sp->sk_state,
+ 		sk_wmem_alloc_get(sp),
+-		sk_rmem_alloc_get(sp),
++		udp_rqueue_get(sp),
+ 		0, 0L, 0,
+ 		from_kuid_munged(seq_user_ns(f), sock_i_uid(sp)),
+ 		0, sock_i_ino(sp),
+--- a/net/ipv4/udp_diag.c
++++ b/net/ipv4/udp_diag.c
+@@ -163,7 +163,7 @@ static int udp_diag_dump_one(struct sk_b
+ static void udp_diag_get_info(struct sock *sk, struct inet_diag_msg *r,
+ 		void *info)
  {
--	sock_release(SOCKET_I(inode));
-+	__sock_release(SOCKET_I(inode), inode);
+-	r->idiag_rqueue = sk_rmem_alloc_get(sk);
++	r->idiag_rqueue = udp_rqueue_get(sk);
+ 	r->idiag_wqueue = sk_wmem_alloc_get(sk);
+ }
+ 
+--- a/net/ipv6/datagram.c
++++ b/net/ipv6/datagram.c
+@@ -1025,8 +1025,8 @@ exit_f:
+ }
+ EXPORT_SYMBOL_GPL(ip6_datagram_send_ctl);
+ 
+-void ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp,
+-			     __u16 srcp, __u16 destp, int bucket)
++void __ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp,
++			       __u16 srcp, __u16 destp, int rqueue, int bucket)
+ {
+ 	const struct in6_addr *dest, *src;
+ 
+@@ -1042,7 +1042,7 @@ void ip6_dgram_sock_seq_show(struct seq_
+ 		   dest->s6_addr32[2], dest->s6_addr32[3], destp,
+ 		   sp->sk_state,
+ 		   sk_wmem_alloc_get(sp),
+-		   sk_rmem_alloc_get(sp),
++		   rqueue,
+ 		   0, 0L, 0,
+ 		   from_kuid_munged(seq_user_ns(seq), sock_i_uid(sp)),
+ 		   0,
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -1473,7 +1473,8 @@ int udp6_seq_show(struct seq_file *seq,
+ 		struct inet_sock *inet = inet_sk(v);
+ 		__u16 srcp = ntohs(inet->inet_sport);
+ 		__u16 destp = ntohs(inet->inet_dport);
+-		ip6_dgram_sock_seq_show(seq, v, srcp, destp, bucket);
++		__ip6_dgram_sock_seq_show(seq, v, srcp, destp,
++					  udp_rqueue_get(v), bucket);
+ 	}
  	return 0;
  }
- 
 
 
