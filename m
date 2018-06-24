@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDC5C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D55C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7AB3250BF
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:48:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7AB3250BF
+	by mail.kernel.org (Postfix) with ESMTP id 1F672250BF
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:48:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F672250BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933525AbeFXPsI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:48:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33216 "EHLO
+        id S933909AbeFXPsO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:48:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33224 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPsF (ORCPT
+        with ESMTP id S932073AbeFXPsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:48:05 -0400
+        Sun, 24 Jun 2018 11:48:12 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C31392C;
-        Sun, 24 Jun 2018 15:48:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2705B2C;
+        Sun, 24 Jun 2018 15:48:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.17 39/70] nbd: fix nbd device deletion
-Date:   Sun, 24 Jun 2018 23:22:31 +0800
-Message-Id: <20180624142742.919278815@linuxfoundation.org>
+        stable@vger.kernel.org, Becky Ligon <ligon@clemson.edu>,
+        Martin Brandenburg <martin@omnibond.com>, hubcap@omnibond.com
+Subject: [PATCH 4.17 65/70] orangefs: report attributes_mask and attributes for statx
+Date:   Sun, 24 Jun 2018 23:22:57 +0800
+Message-Id: <20180624142744.546301833@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -49,39 +49,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Martin Brandenburg <martin@omnibond.com>
 
-commit 8364da4751cf22201d74933d5e634176f44ed407 upstream.
+commit 7f54910fa8dfe504f2e1563f4f6ddc3294dfbf3a upstream.
 
-This fixes a use after free bug, we shouldn't be doing disk->queue right
-after we do del_gendisk(disk).  Save the queue and do the cleanup after
-the del_gendisk.
+OrangeFS formerly failed to set attributes_mask with the result that
+software could not see immutable and append flags present in the
+filesystem.
 
-Fixes: c6a4759ea0c9 ("nbd: add device refcounting")
-cc: stable@vger.kernel.org
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Becky Ligon <ligon@clemson.edu>
+Signed-off-by: Martin Brandenburg <martin@omnibond.com>
+Fixes: 68a24a6cc4a6 ("orangefs: implement statx")
+Cc: stable@vger.kernel.org
+Cc: hubcap@omnibond.com
+Signed-off-by: Mike Marshall <hubcap@omnibond.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/nbd.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/orangefs/inode.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -173,9 +173,12 @@ static const struct device_attribute pid
- static void nbd_dev_remove(struct nbd_device *nbd)
- {
- 	struct gendisk *disk = nbd->disk;
-+	struct request_queue *q;
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -269,6 +269,13 @@ int orangefs_getattr(const struct path *
+ 		else
+ 			stat->result_mask = STATX_BASIC_STATS &
+ 			    ~STATX_SIZE;
 +
- 	if (disk) {
-+		q = disk->queue;
- 		del_gendisk(disk);
--		blk_cleanup_queue(disk->queue);
-+		blk_cleanup_queue(q);
- 		blk_mq_free_tag_set(&nbd->tag_set);
- 		disk->private_data = NULL;
- 		put_disk(disk);
++		stat->attributes_mask = STATX_ATTR_IMMUTABLE |
++		    STATX_ATTR_APPEND;
++		if (inode->i_flags & S_IMMUTABLE)
++			stat->attributes |= STATX_ATTR_IMMUTABLE;
++		if (inode->i_flags & S_APPEND)
++			stat->attributes |= STATX_ATTR_APPEND;
+ 	}
+ 	return ret;
+ }
 
 
