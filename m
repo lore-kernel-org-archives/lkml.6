@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D70DBC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5591BC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EC6A24FE3
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EC6A24FE3
+	by mail.kernel.org (Postfix) with ESMTP id 0B89224C00
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B89224C00
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755089AbeFXPdd (ORCPT
+        id S1755109AbeFXPdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:33:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59276 "EHLO
+        Sun, 24 Jun 2018 11:33:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59284 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754921AbeFXPdc (ORCPT
+        with ESMTP id S1755067AbeFXPdk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:33:32 -0400
+        Sun, 24 Jun 2018 11:33:40 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A1F9C2C;
-        Sun, 24 Jun 2018 15:33:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EA3F49F;
+        Sun, 24 Jun 2018 15:33:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Harvey <jamespharvey20@gmail.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.16 23/64] btrfs: scrub: Dont use inode pages for device replace
-Date:   Sun, 24 Jun 2018 23:22:04 +0800
-Message-Id: <20180624142745.188805942@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Peres <martin.peres@free.fr>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 24/64] ALSA: usb-audio: Disable the quirk for Nura headset
+Date:   Sun, 24 Jun 2018 23:22:05 +0800
+Message-Id: <20180624142745.271724183@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -50,67 +50,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit ac0b4145d662a3b9e34085dea460fb06ede9b69b upstream.
+commit 5ebf6b1e459606d7fbf4fc67d2c28a6540953d93 upstream.
 
-[BUG]
-Btrfs can create compressed extent without checksum (even though it
-shouldn't), and if we then try to replace device containing such extent,
-the result device will contain all the uncompressed data instead of the
-compressed one.
+The commit 33193dca671c ("ALSA: usb-audio: Add a quirk for Nura's
+first gen headset") added a quirk for Nura headset with USB ID
+0a12:1243, with a hope that it doesn't conflict with others.
+Unfortunately, other devices (e.g. Philips Wecall) with the very same
+ID got broken by this change, spewing an error like:
+  usb 2-1.8.2: 2:1: cannot set freq 48000 to ep 0x3
 
-Test case already submitted to fstests:
-https://patchwork.kernel.org/patch/10442353/
+Until we find a proper solution, fix the regression at first by
+disabling the added quirk entry.
 
-[CAUSE]
-When handling compressed extent without checksum, device replace will
-goe into copy_nocow_pages() function.
-
-In that function, btrfs will get all inodes referring to this data
-extents and then use find_or_create_page() to get pages direct from that
-inode.
-
-The problem here is, pages directly from inode are always uncompressed.
-And for compressed data extent, they mismatch with on-disk data.
-Thus this leads to corrupted compressed data extent written to replace
-device.
-
-[FIX]
-In this attempt, we could just remove the "optimization" branch, and let
-unified scrub_pages() to handle it.
-
-Although scrub_pages() won't bother reusing page cache, it will be a
-little slower, but it does the correct csum checking and won't cause
-such data corruption caused by "optimization".
-
-Note about the fix: this is the minimal fix that can be backported to
-older stable trees without conflicts. The whole callchain from
-copy_nocow_pages() can be deleted, and will be in followup patches.
-
-Fixes: ff023aac3119 ("Btrfs: add code to scrub to copy read data to another disk")
-CC: stable@vger.kernel.org # 4.4+
-Reported-by: James Harvey <jamespharvey20@gmail.com>
-Reviewed-by: James Harvey <jamespharvey20@gmail.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-[ remove code removal, add note why ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199905
+Fixes: 33193dca671c ("ALSA: usb-audio: Add a quirk for Nura's first gen headset")
+Reviewed-by: Martin Peres <martin.peres@free.fr>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/scrub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/usb/quirks-table.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -2762,7 +2762,7 @@ static int scrub_extent(struct scrub_ctx
- 			have_csum = scrub_find_csum(sctx, logical, csum);
- 			if (have_csum == 0)
- 				++sctx->stat.no_csum;
--			if (sctx->is_dev_replace && !have_csum) {
-+			if (0 && sctx->is_dev_replace && !have_csum) {
- 				ret = copy_nocow_pages(sctx, logical, l,
- 						       mirror_num,
- 						      physical_for_dev_replace);
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -3277,6 +3277,10 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
+ 	}
+ },
+ 
++/* disabled due to regression for other devices;
++ * see https://bugzilla.kernel.org/show_bug.cgi?id=199905
++ */
++#if 0
+ {
+ 	/*
+ 	 * Nura's first gen headphones use Cambridge Silicon Radio's vendor
+@@ -3324,6 +3328,7 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
+ 		}
+ 	}
+ },
++#endif /* disabled */
+ 
+ {
+ 	/*
 
 
