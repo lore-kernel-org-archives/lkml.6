@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8919C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D732AC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE82250AC
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE82250AC
+	by mail.kernel.org (Postfix) with ESMTP id 8B661250AC
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B661250AC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932960AbeFXPqu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:46:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33022 "EHLO
+        id S933714AbeFXPq4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:46:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33050 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPqr (ORCPT
+        with ESMTP id S932073AbeFXPqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:46:47 -0400
+        Sun, 24 Jun 2018 11:46:54 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90ACF86D;
-        Sun, 24 Jun 2018 15:46:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC7DB49F;
+        Sun, 24 Jun 2018 15:46:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        stable@vger.kernel.org, Sean Young <sean@mess.org>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.17 61/70] media: uvcvideo: Prevent setting unavailable flags
-Date:   Sun, 24 Jun 2018 23:22:53 +0800
-Message-Id: <20180624142744.272910329@linuxfoundation.org>
+Subject: [PATCH 4.17 62/70] media: rc: ensure input/lirc device can be opened after register
+Date:   Sun, 24 Jun 2018 23:22:54 +0800
+Message-Id: <20180624142744.341416386@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -52,66 +49,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Sean Young <sean@mess.org>
 
-commit 0dc68cabdb626e33d02561529e6a4c681b72a784 upstream.
+commit d7832cd2a3c87eb6ae1e802c88b6fc56c5823f6d upstream.
 
-The addition of an extra operation to use the GET_INFO command
-overwrites all existing flags from the uvc_ctrls table. This includes
-setting all controls as supporting GET_MIN, GET_MAX, GET_RES, and
-GET_DEF regardless of whether they do or not.
+Since commit cb84343fced1 ("media: lirc: do not call close() or open() on
+unregistered devices") rc_open() will return -ENODEV if rcdev->registered
+is false. Ensure this is set before we register the input device and the
+lirc device, else we have a short window where the neither the lirc or
+input device can be opened.
 
-Move the initialisation of these control capabilities directly to the
-uvc_ctrl_fill_xu_info() call where they were originally located in that
-use case, and ensure that the new functionality in uvc_ctrl_get_flags()
-will only set flags based on their reported capability from the GET_INFO
-call.
+Fixes: cb84343fced1 ("media: lirc: do not call close() or open() on unregistered devices")
 
-Fixes: 859086ae3636 ("media: uvcvideo: Apply flags from device to actual properties")
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Tested-by: Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: stable@vger.kernel.org # v4.16+
+Signed-off-by: Sean Young <sean@mess.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/uvc/uvc_ctrl.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/media/rc/rc-main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1607,14 +1607,12 @@ static int uvc_ctrl_get_flags(struct uvc
- 	ret = uvc_query_ctrl(dev, UVC_GET_INFO, ctrl->entity->id, dev->intfnum,
- 			     info->selector, data, 1);
- 	if (!ret)
--		info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
--			    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF
--			    | (data[0] & UVC_CONTROL_CAP_GET ?
--			       UVC_CTRL_FLAG_GET_CUR : 0)
--			    | (data[0] & UVC_CONTROL_CAP_SET ?
--			       UVC_CTRL_FLAG_SET_CUR : 0)
--			    | (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
--			       UVC_CTRL_FLAG_AUTO_UPDATE : 0);
-+		info->flags |= (data[0] & UVC_CONTROL_CAP_GET ?
-+				UVC_CTRL_FLAG_GET_CUR : 0)
-+			    |  (data[0] & UVC_CONTROL_CAP_SET ?
-+				UVC_CTRL_FLAG_SET_CUR : 0)
-+			    |  (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
-+				UVC_CTRL_FLAG_AUTO_UPDATE : 0);
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -1860,6 +1860,8 @@ int rc_register_device(struct rc_dev *de
+ 		 dev->device_name ?: "Unspecified device", path ?: "N/A");
+ 	kfree(path);
  
- 	kfree(data);
- 	return ret;
-@@ -1689,6 +1687,9 @@ static int uvc_ctrl_fill_xu_info(struct
- 
- 	info->size = le16_to_cpup((__le16 *)data);
- 
-+	info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
-+		    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF;
++	dev->registered = true;
 +
- 	ret = uvc_ctrl_get_flags(dev, ctrl, info);
- 	if (ret < 0) {
- 		uvc_trace(UVC_TRACE_CONTROL,
+ 	if (dev->driver_type != RC_DRIVER_IR_RAW_TX) {
+ 		rc = rc_setup_rx_device(dev);
+ 		if (rc)
+@@ -1879,8 +1881,6 @@ int rc_register_device(struct rc_dev *de
+ 			goto out_lirc;
+ 	}
+ 
+-	dev->registered = true;
+-
+ 	dev_dbg(&dev->dev, "Registered rc%u (driver: %s)\n", dev->minor,
+ 		dev->driver_name ? dev->driver_name : "unknown");
+ 
 
 
