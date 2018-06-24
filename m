@@ -6,238 +6,112 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947D7C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AA3C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE8924EF0
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:07:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE8924EF0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 99B5F24EF0
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:07:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99B5F24EF0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751949AbeFXNHC (ORCPT
+        id S1751957AbeFXNHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 09:07:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39129 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751926AbeFXNHA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 09:07:00 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5OD6mld836248
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 24 Jun 2018 06:06:48 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5OD6mKi836245;
-        Sun, 24 Jun 2018 06:06:48 -0700
-Date:   Sun, 24 Jun 2018 06:06:48 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vitaly Kuznetsov <tipbot@zytor.com>
-Message-ID: <tip-0e4c88f37693d4857fc0be66e548e2eb8b3d8a15@git.kernel.org>
-Cc:     Michael.H.Kelley@microsoft.com, kys@microsoft.com,
-        sthemmin@microsoft.com, mikelley@microsoft.com,
-        haiyangz@microsoft.com, hpa@zytor.com, mingo@kernel.org,
-        vkuznets@redhat.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, Tianyu.Lan@microsoft.com
-Reply-To: sthemmin@microsoft.com, kys@microsoft.com,
-          Michael.H.Kelley@microsoft.com, linux-kernel@vger.kernel.org,
-          Tianyu.Lan@microsoft.com, tglx@linutronix.de,
-          vkuznets@redhat.com, haiyangz@microsoft.com, mingo@kernel.org,
-          hpa@zytor.com, mikelley@microsoft.com
-In-Reply-To: <20180621133238.30757-1-vkuznets@redhat.com>
-References: <20180621133238.30757-1-vkuznets@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/hyperv] x86/hyper-v: Use cheaper
- HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} hypercalls when possible
-Git-Commit-ID: 0e4c88f37693d4857fc0be66e548e2eb8b3d8a15
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 24 Jun 2018 09:07:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59595 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751183AbeFXNHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 09:07:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B93B7ADDC;
+        Sun, 24 Jun 2018 13:07:42 +0000 (UTC)
+Subject: Re: [PATCH 3/4] soc: actions: sps: Add S900 power domains
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        robh+dt@kernel.org
+Cc:     liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        manivannanece23@gmail.com
+References: <20180411164036.8046-1-manivannan.sadhasivam@linaro.org>
+ <20180411164036.8046-4-manivannan.sadhasivam@linaro.org>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <5e267c76-1c71-2381-ee66-50a5bef1cfc2@suse.de>
+Date:   Sun, 24 Jun 2018 15:07:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180411164036.8046-4-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0e4c88f37693d4857fc0be66e548e2eb8b3d8a15
-Gitweb:     https://git.kernel.org/tip/0e4c88f37693d4857fc0be66e548e2eb8b3d8a15
-Author:     Vitaly Kuznetsov <vkuznets@redhat.com>
-AuthorDate: Thu, 21 Jun 2018 15:32:38 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 24 Jun 2018 15:01:14 +0200
+Am 11.04.2018 um 18:40 schrieb Manivannan Sadhasivam:
+> Add power domains for Actions Semi S900 SoC.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/soc/actions/owl-sps.c | 58 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
 
-x86/hyper-v: Use cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} hypercalls when possible
+Reviewed-by: Andreas Färber <afaerber@suse.de>
 
-While working on Hyper-V style PV TLB flush support in KVM I noticed that
-real Windows guests use TLB flush hypercall in a somewhat smarter way:
+(Depends on bindings patch.)
 
-  When the flush needs to be performed on a subset of first 64 vCPUs or on
-  all present vCPUs Windows avoids more expensive hypercalls which support
-  sparse CPU sets and uses their 'cheap' counterparts.
+Thanks,
+Andreas
 
-This means that HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED name is actually a
-misnomer: EX hypercalls (which support sparse CPU sets) are "available",
-not "recommended". This makes sense as they are actually harder to parse.
-
-Nothing stops us from being equally 'smart' in Linux too. Switch to doing
-cheaper hypercalls whenever possible.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-Cc: Tianyu Lan <Tianyu.Lan@microsoft.com>
-Cc: devel@linuxdriverproject.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20180621133238.30757-1-vkuznets@redhat.com
-
----
- arch/x86/hyperv/mmu.c | 73 ++++++++++++++++++++++-----------------------------
- 1 file changed, 32 insertions(+), 41 deletions(-)
-
-diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
-index de27615c51ea..0d90e515ec98 100644
---- a/arch/x86/hyperv/mmu.c
-+++ b/arch/x86/hyperv/mmu.c
-@@ -16,6 +16,8 @@
- /* Each gva in gva_list encodes up to 4096 pages to flush */
- #define HV_TLB_FLUSH_UNIT (4096 * PAGE_SIZE)
- 
-+static u64 hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
-+				      const struct flush_tlb_info *info);
- 
- /*
-  * Fills in gva_list starting from offset. Returns the number of items added.
-@@ -93,10 +95,24 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
- 	if (cpumask_equal(cpus, cpu_present_mask)) {
- 		flush->flags |= HV_FLUSH_ALL_PROCESSORS;
- 	} else {
-+		/*
-+		 * From the supplied CPU set we need to figure out if we can get
-+		 * away with cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE}
-+		 * hypercalls. This is possible when the highest VP number in
-+		 * the set is < 64. As VP numbers are usually in ascending order
-+		 * and match Linux CPU ids, here is an optimization: we check
-+		 * the VP number for the highest bit in the supplied set first
-+		 * so we can quickly find out if using *_EX hypercalls is a
-+		 * must. We will also check all VP numbers when walking the
-+		 * supplied CPU set to remain correct in all cases.
-+		 */
-+		if (hv_cpu_number_to_vp_number(cpumask_last(cpus)) >= 64)
-+			goto do_ex_hypercall;
-+
- 		for_each_cpu(cpu, cpus) {
- 			vcpu = hv_cpu_number_to_vp_number(cpu);
- 			if (vcpu >= 64)
--				goto do_native;
-+				goto do_ex_hypercall;
- 
- 			__set_bit(vcpu, (unsigned long *)
- 				  &flush->processor_mask);
-@@ -123,7 +139,12 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
- 		status = hv_do_rep_hypercall(HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST,
- 					     gva_n, 0, flush, NULL);
- 	}
-+	goto check_status;
-+
-+do_ex_hypercall:
-+	status = hyperv_flush_tlb_others_ex(cpus, info);
- 
-+check_status:
- 	local_irq_restore(flags);
- 
- 	if (!(status & HV_HYPERCALL_RESULT_MASK))
-@@ -132,35 +153,22 @@ do_native:
- 	native_flush_tlb_others(cpus, info);
- }
- 
--static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
--				       const struct flush_tlb_info *info)
-+static u64 hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
-+				      const struct flush_tlb_info *info)
- {
- 	int nr_bank = 0, max_gvas, gva_n;
- 	struct hv_tlb_flush_ex **flush_pcpu;
- 	struct hv_tlb_flush_ex *flush;
--	u64 status = U64_MAX;
--	unsigned long flags;
--
--	trace_hyperv_mmu_flush_tlb_others(cpus, info);
-+	u64 status;
- 
--	if (!hv_hypercall_pg)
--		goto do_native;
--
--	if (cpumask_empty(cpus))
--		return;
--
--	local_irq_save(flags);
-+	if (!(ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED))
-+		return U64_MAX;
- 
- 	flush_pcpu = (struct hv_tlb_flush_ex **)
- 		     this_cpu_ptr(hyperv_pcpu_input_arg);
- 
- 	flush = *flush_pcpu;
- 
--	if (unlikely(!flush)) {
--		local_irq_restore(flags);
--		goto do_native;
--	}
--
- 	if (info->mm) {
- 		/*
- 		 * AddressSpace argument must match the CR3 with PCID bits
-@@ -176,15 +184,8 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
- 
- 	flush->hv_vp_set.valid_bank_mask = 0;
- 
--	if (!cpumask_equal(cpus, cpu_present_mask)) {
--		flush->hv_vp_set.format = HV_GENERIC_SET_SPARSE_4K;
--		nr_bank = cpumask_to_vpset(&(flush->hv_vp_set), cpus);
--	}
--
--	if (!nr_bank) {
--		flush->hv_vp_set.format = HV_GENERIC_SET_ALL;
--		flush->flags |= HV_FLUSH_ALL_PROCESSORS;
--	}
-+	flush->hv_vp_set.format = HV_GENERIC_SET_SPARSE_4K;
-+	nr_bank = cpumask_to_vpset(&(flush->hv_vp_set), cpus);
- 
- 	/*
- 	 * We can flush not more than max_gvas with one hypercall. Flush the
-@@ -213,12 +214,7 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
- 			gva_n, nr_bank, flush, NULL);
- 	}
- 
--	local_irq_restore(flags);
--
--	if (!(status & HV_HYPERCALL_RESULT_MASK))
--		return;
--do_native:
--	native_flush_tlb_others(cpus, info);
-+	return status;
- }
- 
- void hyperv_setup_mmu_ops(void)
-@@ -226,11 +222,6 @@ void hyperv_setup_mmu_ops(void)
- 	if (!(ms_hyperv.hints & HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED))
- 		return;
- 
--	if (!(ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED)) {
--		pr_info("Using hypercall for remote TLB flush\n");
--		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others;
--	} else {
--		pr_info("Using ext hypercall for remote TLB flush\n");
--		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others_ex;
--	}
-+	pr_info("Using hypercall for remote TLB flush\n");
-+	pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others;
- }
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
