@@ -2,115 +2,93 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A114C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C357C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0986124F79
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0986124F79
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 051F024F80
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051F024F80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752637AbeFXP0h (ORCPT
+        id S1752678AbeFXP0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:26:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58724 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751856AbeFXP0g (ORCPT
+        Sun, 24 Jun 2018 11:26:39 -0400
+Received: from smtprelay0031.hostedemail.com ([216.40.44.31]:39681 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751895AbeFXP0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 24 Jun 2018 11:26:36 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE8172C;
-        Sun, 24 Jun 2018 15:26:34 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Harvey <jamespharvey20@gmail.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 23/52] btrfs: scrub: Dont use inode pages for device replace
-Date:   Sun, 24 Jun 2018 23:21:16 +0800
-Message-Id: <20180624142745.884707052@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
-References: <20180624142744.234164867@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id B5C68180A9C62;
+        Sun, 24 Jun 2018 15:26:35 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: crate45_909d8511f660c
+X-Filterd-Recvd-Size: 2360
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 24 Jun 2018 15:26:33 +0000 (UTC)
+Message-ID: <36befceb2334197cce5cd44a61f86f38b870d54c.camel@perches.com>
+Subject: Re: [PATCH] staging: pi433: replace simple switch statements
+From:   Joe Perches <joe@perches.com>
+To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Simon =?ISO-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>,
+        Marcus Wolf <linux@Wolf-Entwicklungen.de>,
+        Luca =?ISO-8859-1?Q?S=F6the?= <luca@acul.me>,
+        Marcin Ciupak <marcin.s.ciupak@gmail.com>,
+        Michael Panzlaff <michael.panzlaff@fau.de>,
+        Derek Robson <robsonde@gmail.com>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Hugo Lefeuvre <hle@owl.eu.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Sun, 24 Jun 2018 08:26:32 -0700
+In-Reply-To: <20180624094245.23741-1-Valentin.Vidic@CARNet.hr>
+References: <20180624094245.23741-1-Valentin.Vidic@CARNet.hr>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Sun, 2018-06-24 at 11:42 +0200, Valentin Vidic wrote:
+> Use const array to map switch cases to resulting values.
 
-------------------
+I suggest you make the const arrays the same type
+as the argument in the function being called.
 
-From: Qu Wenruo <wqu@suse.com>
+> diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
+[]
+> @@ -111,27 +111,22 @@ static inline int rf69_read_mod_write(struct spi_device *spi, u8 reg,
+>  
+>  int rf69_set_mode(struct spi_device *spi, enum mode mode)
+>  {
+> -	switch (mode) {
+> -	case transmit:
+> -		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
+> -					   OPMODE_MODE_TRANSMIT);
+[]
+> +	static const int mode_map[] = {
+> +		[transmit] = OPMODE_MODE_TRANSMIT,
+> +		[receive] = OPMODE_MODE_RECEIVE,
+> +		[synthesizer] = OPMODE_MODE_SYNTHESIZER,
+> +		[standby] = OPMODE_MODE_STANDBY,
+> +		[mode_sleep] = OPMODE_MODE_SLEEP,
+> +	};
+[]
+> +	return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
+> +				   mode_map[mode]);
 
-commit ac0b4145d662a3b9e34085dea460fb06ede9b69b upstream.
+drivers/staging/pi433/rf69.c:static inline int rf69_read_mod_write(struct spi_device *spi, u8 reg,
+drivers/staging/pi433/rf69.c-                                 u8 mask, u8 value)
 
-[BUG]
-Btrfs can create compressed extent without checksum (even though it
-shouldn't), and if we then try to replace device containing such extent,
-the result device will contain all the uncompressed data instead of the
-compressed one.
+so u8 here.
 
-Test case already submitted to fstests:
-https://patchwork.kernel.org/patch/10442353/
-
-[CAUSE]
-When handling compressed extent without checksum, device replace will
-goe into copy_nocow_pages() function.
-
-In that function, btrfs will get all inodes referring to this data
-extents and then use find_or_create_page() to get pages direct from that
-inode.
-
-The problem here is, pages directly from inode are always uncompressed.
-And for compressed data extent, they mismatch with on-disk data.
-Thus this leads to corrupted compressed data extent written to replace
-device.
-
-[FIX]
-In this attempt, we could just remove the "optimization" branch, and let
-unified scrub_pages() to handle it.
-
-Although scrub_pages() won't bother reusing page cache, it will be a
-little slower, but it does the correct csum checking and won't cause
-such data corruption caused by "optimization".
-
-Note about the fix: this is the minimal fix that can be backported to
-older stable trees without conflicts. The whole callchain from
-copy_nocow_pages() can be deleted, and will be in followup patches.
-
-Fixes: ff023aac3119 ("Btrfs: add code to scrub to copy read data to another disk")
-CC: stable@vger.kernel.org # 4.4+
-Reported-by: James Harvey <jamespharvey20@gmail.com>
-Reviewed-by: James Harvey <jamespharvey20@gmail.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-[ remove code removal, add note why ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/btrfs/scrub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -2775,7 +2775,7 @@ static int scrub_extent(struct scrub_ctx
- 			have_csum = scrub_find_csum(sctx, logical, csum);
- 			if (have_csum == 0)
- 				++sctx->stat.no_csum;
--			if (sctx->is_dev_replace && !have_csum) {
-+			if (0 && sctx->is_dev_replace && !have_csum) {
- 				ret = copy_nocow_pages(sctx, logical, l,
- 						       mirror_num,
- 						      physical_for_dev_replace);
-
+etc...
 
