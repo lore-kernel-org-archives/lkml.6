@@ -2,120 +2,225 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE5CC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 00:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4D0C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 01:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B60D324D5E
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 00:55:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B60D324D5E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4007D24D38
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 01:17:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o1Qo//iF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4007D24D38
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751934AbeFXAzZ (ORCPT
+        id S1751962AbeFXBRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 20:55:25 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44125 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751585AbeFXAzX (ORCPT
+        Sat, 23 Jun 2018 21:17:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44282 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751585AbeFXBRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 20:55:23 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fWtJ6-0000aa-PS; Sun, 24 Jun 2018 02:55:08 +0200
-Date:   Sun, 24 Jun 2018 02:55:08 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-cc:     Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 02/16] x86/split_lock: Handle #AC exception for split
- lock in kernel mode
-In-Reply-To: <20180623150521.GG18979@romley-ivt3.sc.intel.com>
-Message-ID: <alpine.DEB.2.21.1806240245160.8650@nanos.tec.linutronix.de>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com> <1527435965-202085-3-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1806212301590.1591@nanos.tec.linutronix.de> <20180623042033.GF18979@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806231108540.8650@nanos.tec.linutronix.de> <20180623150521.GG18979@romley-ivt3.sc.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 23 Jun 2018 21:17:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uqFTKc8Pl3zju6GVzjKkhKOn/l7K3Eyst8MOjvNJN48=; b=o1Qo//iF1Pr34P4YaOm3SLren
+        JXGMfCNDhlVnSzY+nESd6Psq5AY/3621L/ABDxCFj7LMYppbuLs/XqveQcWnEWewjmBUkE/CuaFgH
+        zW/bqlIjwW6dV86pvnkX6pHQidJbeEhhr6vVlZDSBoRLsQ+3WkmzafHHu8T/qSIoFi2KxaQ+K1ugr
+        912AFQywtrwREl4Msu4B1tqWnW25/L9/sJHZGU3gDnTkrg3O7pWUeHw3ErNFsDqEWT0GtbdNrBOje
+        Klm2nXlIAlm3oexwFX7cLN2Iz96kQrtsVE5ZKYvf6J9r36lKKpUJQQqNKREb88Mx1+9s/cAt0x5OI
+        A8YJvtGKA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fWteJ-0007vJ-QP; Sun, 24 Jun 2018 01:17:03 +0000
+Date:   Sat, 23 Jun 2018 18:17:03 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Josef Bacik <jbacik@fb.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: Re: m68k boot failure in -next bisected to 'xarray: Replace
+ exceptional entries'
+Message-ID: <20180624011703.GH18630@bombadil.infradead.org>
+References: <20180622184246.GA21226@roeck-us.net>
+ <20180622210519.GA18630@bombadil.infradead.org>
+ <20180622223335.GA12581@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622223335.GA12581@roeck-us.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Jun 2018, Fenghua Yu wrote:
-> On Sat, Jun 23, 2018 at 11:17:03AM +0200, Thomas Gleixner wrote:
-> > On Fri, 22 Jun 2018, Fenghua Yu wrote:
-> > > Should I add kernel parameter or control knob to opt-out the feature?
-> > 
-> > A simple command line option 'acoff' or something more sensible should be
-> > ok. No sysfs knobs or whatever please. The Kconfig option is not required
-> > either.
-> 
-> Ok. I will have a command line option.
-> 
-> BTW, I have a Kconfig option to enable split lock test in kernel mode in
-> patch #15. Are the Kconfig option and the kernel test code still needed
-> in next version?
+On Fri, Jun 22, 2018 at 03:33:35PM -0700, Guenter Roeck wrote:
+> It may be odd that fs/quota/netlink.c:quota_genl_family is not word
+> aligned, but on the other side I don't think there is a rule that
+> the function parameter to genl_register_family() - or the second
+> parameter of idr_alloc() - must be word aligned. Am I missing
+> something ? After all, it could be a pointer to the nth element
+> of a string, or the caller could on purpose allocate IDRs for
+> (ptr), (ptr + 1), and so on.
 
-Unless you do not trust #AC to work everywhere where it is advertised it's
-pretty much pointless.
+This is probably going to cure the problem for you (apply on top
+of the existing radix tree / IDR changes).
 
-Btw, please get also rid of these bloated control_ac() stuff. We have
-msr_set/clear_bit() so no need to reinvent the wheel.
+I realised when I was reviewing the patch that it's no good; if you
+call idr_replace() with a radix_tree_is_internal_node(), then you'll
+still get a crash.  I'm going to have to disable the optimisation of
+shrinking the tree all the way into the head for the IDR.  But this
+will probably get m68k working again.
 
-> > > I'm afraid firmware may hang system after handling split lock if the
-> > > feature is enabled by kernel, e.g. "reboot" hits split lock in firmware
-> > > and firmware hangs the system after handling #AC.
-> > 
-> > Have you observed the problem in reality? I mean why would 'reboot' be the
-> > critical path? I'd rather expect that EFI callbacks or SMM 'value add'
-> > would trip over it.
-> > 
-> > Vs. reboot. If that is the only problem then we might just have to clear
-> > #AC enable before issuing it, but that does not need to be part of the
-> > initial patch set. Its an orthogonal issue.
-> 
-> Yes, I do see a real firmware hang after hitting and handling a split lock
-> in firmware during "reboot" in one simulation test environment. Apprantly
-> the split lock (and alignment access) is treated as a failure in firmware.
-
-It's not treated as failure. The firmware simply does not have an handler
-for #AC installed and dies. I hope you yelled at the firmware people
-already.
-
-> This real case triggered my concern that split lock in any future
-> firmware may happen in any path including run time service, S3/S4/S5,
-> hotplug. If we don't have opt-out option or something similar, system hang
-> from split lock in firmware can be a blocking issue on some platforms. If
-> that happens, bisect always finds the split lock patch to blame.
-
-That's fine. The changelog will hopefully explain it along with the text
-that people should use the commandline option and yell at their firmware
-supplier. So what? Move on....
-
-If that is a real wide spread issue in practice, then we might have to go
-for some ugly workarounds, but we won't find out when we add them
-upfront. So testing will show what's wrong in firmware land and we can
-handle it from there. It's a completely orthogonal issue and has nothing to
-do with the core functionality.
-
-Thanks,
-
-	tglx
-
-
+diff --git a/lib/idr.c b/lib/idr.c
+index 58b88f5eb672..51ee0c6170d1 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -38,17 +38,24 @@ int idr_alloc_u32(struct idr *idr, void *ptr, u32 *nextid,
+ 	void __rcu **slot;
+ 	unsigned int base = idr->idr_base;
+ 	unsigned int id = *nextid;
++	bool advanced = false;
+ 
+-	if (WARN_ON_ONCE(radix_tree_is_internal_node(ptr)))
+-		return -EINVAL;
+ 	if (WARN_ON_ONCE(!(idr->idr_rt.xa_flags & ROOT_IS_IDR)))
+ 		idr->idr_rt.xa_flags |= IDR_RT_MARKER;
+ 
+ 	id = (id < base) ? 0 : id - base;
++	if (id == 0 && radix_tree_is_internal_node(ptr) && idr_is_empty(idr)) {
++		advanced = true;
++		id = 1;
++	}
+ 	radix_tree_iter_init(&iter, id);
+ 	slot = idr_get_free(&idr->idr_rt, &iter, gfp, max - base);
+ 	if (IS_ERR(slot))
+ 		return PTR_ERR(slot);
++	if (advanced) {
++		iter.index = 0;
++		slot--;
++	}
+ 
+ 	*nextid = iter.index + base;
+ 	/* there is a memory barrier inside radix_tree_iter_replace() */
+@@ -295,8 +302,6 @@ void *idr_replace(struct idr *idr, void *ptr, unsigned long id)
+ 	void __rcu **slot = NULL;
+ 	void *entry;
+ 
+-	if (WARN_ON_ONCE(radix_tree_is_internal_node(ptr)))
+-		return ERR_PTR(-EINVAL);
+ 	id -= idr->idr_base;
+ 
+ 	entry = __radix_tree_lookup(&idr->idr_rt, id, &node, &slot);
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index 101f1c28e1b6..b0bd105a365d 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -562,11 +562,14 @@ static inline bool radix_tree_shrink(struct radix_tree_root *root)
+ 		child = rcu_dereference_raw(node->slots[0]);
+ 		if (!child)
+ 			break;
+-		if (!radix_tree_is_internal_node(child) && node->shift)
++		if (!radix_tree_is_internal_node(child))
+ 			break;
+ 
+-		if (radix_tree_is_internal_node(child))
++		if (radix_tree_is_internal_node(child)) {
++			if (!node->shift)
++				break;
+ 			entry_to_node(child)->parent = NULL;
++		}
+ 
+ 		/*
+ 		 * We don't need rcu_assign_pointer(), since we are simply
+@@ -733,7 +736,7 @@ static void radix_tree_free_nodes(struct radix_tree_node *node)
+ 
+ 	for (;;) {
+ 		void *entry = rcu_dereference_raw(child->slots[offset]);
+-		if (xa_is_node(entry)) {
++		if (xa_is_node(entry) && child->shift) {
+ 			child = entry_to_node(entry);
+ 			offset = 0;
+ 			continue;
+@@ -904,6 +907,8 @@ void *__radix_tree_lookup(const struct radix_tree_root *root,
+ 		parent = entry_to_node(node);
+ 		offset = radix_tree_descend(parent, &node, index);
+ 		slot = parent->slots + offset;
++		if (parent->shift == 0)
++			break;
+ 	}
+ 
+ 	if (nodep)
+@@ -977,9 +982,6 @@ static inline void replace_sibling_entries(struct radix_tree_node *node,
+ static void replace_slot(void __rcu **slot, void *item,
+ 		struct radix_tree_node *node, int count, int values)
+ {
+-	if (WARN_ON_ONCE(radix_tree_is_internal_node(item)))
+-		return;
+-
+ 	if (node && (count || values)) {
+ 		node->count += count;
+ 		node->nr_values += values;
+diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
+index 46fc2f1142c3..e494f1d24687 100644
+--- a/tools/testing/radix-tree/idr-test.c
++++ b/tools/testing/radix-tree/idr-test.c
+@@ -227,6 +227,43 @@ void idr_u32_test(int base)
+ 	idr_u32_test1(&idr, 0xffffffff);
+ }
+ 
++static void idr_align_test(struct idr *idr)
++{
++	char name[] = "Motorola 68000";
++	int i;
++
++	for (i = 0; i < 9; i++)
++		BUG_ON(idr_alloc(idr, &name[i], 0, 0, GFP_KERNEL) != i);
++	idr_destroy(idr);
++
++	for (i = 1; i < 10; i++)
++		BUG_ON(idr_alloc(idr, &name[i], 0, 0, GFP_KERNEL) != i - 1);
++	idr_destroy(idr);
++
++	for (i = 2; i < 11; i++)
++		BUG_ON(idr_alloc(idr, &name[i], 0, 0, GFP_KERNEL) != i - 2);
++	idr_destroy(idr);
++
++	for (i = 3; i < 12; i++)
++		BUG_ON(idr_alloc(idr, &name[i], 0, 0, GFP_KERNEL) != i - 3);
++	idr_destroy(idr);
++
++	for (i = 0; i < 8; i++) {
++		BUG_ON(idr_alloc(idr, &name[i], 0, 0, GFP_KERNEL) != 0);
++		BUG_ON(idr_alloc(idr, &name[i + 1], 0, 0, GFP_KERNEL) != 1);
++		idr_remove(idr, 1);
++		idr_remove(idr, 0);
++		BUG_ON(!idr_is_empty(idr));
++	}
++
++	for (i = 0; i < 8; i++) {
++		BUG_ON(idr_alloc(idr, NULL, 0, 0, GFP_KERNEL) != 0);
++		idr_replace(idr, &name[i], 0);
++		BUG_ON(idr_find(idr, 0) != &name[i]);
++		idr_remove(idr, 0);
++	}
++}
++
+ void idr_checks(void)
+ {
+ 	unsigned long i;
+@@ -307,6 +344,7 @@ void idr_checks(void)
+ 	idr_u32_test(4);
+ 	idr_u32_test(1);
+ 	idr_u32_test(0);
++	idr_align_test(&idr);
+ }
+ 
+ /*
