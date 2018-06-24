@@ -5,47 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FDDC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EF2C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EAB524D80
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:07:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EAB524D80
+	by mail.kernel.org (Postfix) with ESMTP id 1043B24D82
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:09:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1043B24D82
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751977AbeFXCHM (ORCPT
+        id S1752038AbeFXCJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 22:07:12 -0400
-Received: from p3plsmtpa12-02.prod.phx3.secureserver.net ([68.178.252.231]:45015
-        "EHLO p3plsmtpa12-02.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751597AbeFXCHK (ORCPT
+        Sat, 23 Jun 2018 22:09:16 -0400
+Received: from p3plsmtpa12-09.prod.phx3.secureserver.net ([68.178.252.238]:40977
+        "EHLO p3plsmtpa12-09.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751599AbeFXCJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 22:07:10 -0400
+        Sat, 23 Jun 2018 22:09:15 -0400
 Received: from [192.168.0.67] ([24.218.182.144])
         by :SMTPAUTH: with ESMTPSA
-        id WuQnf8yDKJu7xWuQnfl14O; Sat, 23 Jun 2018 19:07:10 -0700
-Subject: Re: [Patch v2 05/15] CIFS: Calculate the correct request length based
- on page offset and tail size
+        id WuSnfdVrA669vWuSofOVo5; Sat, 23 Jun 2018 19:09:14 -0700
+Subject: Re: [Patch v2 06/15] CIFS: Introduce helper function to get page
+ offset and length in smb_rqst
 To:     longli@microsoft.com, Steve French <sfrench@samba.org>,
         linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
         linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
 References: <20180530194807.31657-1-longli@linuxonhyperv.com>
- <20180530194807.31657-6-longli@linuxonhyperv.com>
+ <20180530194807.31657-7-longli@linuxonhyperv.com>
 From:   Tom Talpey <tom@talpey.com>
-Message-ID: <183b5cd5-b12b-de08-7867-c2addf29c974@talpey.com>
-Date:   Sat, 23 Jun 2018 22:07:10 -0400
+Message-ID: <a6613388-0dc5-7646-b71f-75b8bec4e4d9@talpey.com>
+Date:   Sat, 23 Jun 2018 22:09:14 -0400
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180530194807.31657-6-longli@linuxonhyperv.com>
+In-Reply-To: <20180530194807.31657-7-longli@linuxonhyperv.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfFwHTur7dmMiHGS5K8pCdF8Ut/MxIREKvzm8azzB0ExS8/OzmBzDCUoz+WORJZ1NkKXAC7ADU81JDdVQAAxIkxA/sUV46EEtNsgXqANZ4wWgywjnhsmN
- IlHT2tkYAaj/AJBR8//U6w4/xM5i5BGLLRCqhab9TwhF4/CipWqEkUENoUCCcEebKchIExS+S8xWI5p3CIoILvNRvdwkU95bhPCf1A9A02yG7rT4Muq1OFkK
- W40okAFMWLoL3ij4Mba2WTqjfbKqcu2r6O5Ewbcz0ywvpusCsAr9iQcIuBtv/7tOVsSh8dxrok5FIAxQGP02+7Ez/BcNod8d6/CitBfB7Xuly7/HsdmQ6eho
- eXreT73f
+X-CMAE-Envelope: MS4wfAHToKcuGOpd1cmEjLTuyHQNdtb2EFs1LTH2/vCbg3ohKcf7RtlMxGTs4vfgvsowtv9ly+rfJrwDJvEMRw0s6JmzsrBQR/2pWRc0x7C+8JyTH3dG71eO
+ FAJPZsk7XjTRtUawJFlgb4Civvx0jk6PemWAFgEkE/5Q5q+M9yg+JA5l7qWyaVvIhDwIp/u5+1AvtcFc8qoYSylpbQJrR5V6TvHHoPOwelf63PHZATmu+hsv
+ 7uYArM+9UlJNyS5Kfid6oqYXYaT+yv2RmZS39hHmFyygF4j6ZoPQyeQBpu5CHMPiNdMn1sujA5L8zp2ZnjAK/wk9gHqkjtzACdEIqBZ8t3Vr1EEyhB7/7kvq
+ q/1YEVGY
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -54,58 +54,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 5/30/2018 3:47 PM, Long Li wrote:
 > From: Long Li <longli@microsoft.com>
 > 
-> It's possible that the page offset is non-zero in the pages in a request,
-> change the function to calculate the correct data buffer length.
+> Introduce a function rqst_page_get_length to return the page offset and
+> length for a given page in smb_rqst. This function is to be used by
+> following patches.
 > 
 > Signed-off-by: Long Li <longli@microsoft.com>
 > ---
->   fs/cifs/transport.c | 20 +++++++++++++++++---
->   1 file changed, 17 insertions(+), 3 deletions(-)
+>   fs/cifs/cifsproto.h |  3 +++
+>   fs/cifs/misc.c      | 17 +++++++++++++++++
+>   2 files changed, 20 insertions(+)
 > 
-> diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
-> index 927226a..d6b5523 100644
-> --- a/fs/cifs/transport.c
-> +++ b/fs/cifs/transport.c
-> @@ -212,10 +212,24 @@ rqst_len(struct smb_rqst *rqst)
->   	for (i = 0; i < rqst->rq_nvec; i++)
->   		buflen += iov[i].iov_len;
+> diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
+> index 7933c5f..89dda14 100644
+> --- a/fs/cifs/cifsproto.h
+> +++ b/fs/cifs/cifsproto.h
+> @@ -557,4 +557,7 @@ int cifs_alloc_hash(const char *name, struct crypto_shash **shash,
+>   		    struct sdesc **sdesc);
+>   void cifs_free_hash(struct crypto_shash **shash, struct sdesc **sdesc);
 >   
-> -	/* add in the page array if there is one */
-> +	/*
-> +	 * Add in the page array if there is one. The caller needs to make
-> +	 * sure rq_offset and rq_tailsz are set correctly. If a buffer of
-> +	 * multiple pages ends at page boundary, rq_tailsz needs to be set to
-> +	 * PAGE_SIZE.
-> +	 */
->   	if (rqst->rq_npages) {
-> -		buflen += rqst->rq_pagesz * (rqst->rq_npages - 1);
-> -		buflen += rqst->rq_tailsz;
-> +		if (rqst->rq_npages == 1)
-> +			buflen += rqst->rq_tailsz;
-> +		else {
-> +			/*
-> +			 * If there is more than one page, calculate the
-> +			 * buffer length based on rq_offset and rq_tailsz
-> +			 */
-> +			buflen += rqst->rq_pagesz * (rqst->rq_npages - 1) -
-> +					rqst->rq_offset;
-> +			buflen += rqst->rq_tailsz;
-> +		}
+> +extern void rqst_page_get_length(struct smb_rqst *rqst, unsigned int page,
+> +				unsigned int *len, unsigned int *offset);
+> +
+>   #endif			/* _CIFSPROTO_H */
+> diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+> index 96849b5..e951417 100644
+> --- a/fs/cifs/misc.c
+> +++ b/fs/cifs/misc.c
+> @@ -905,3 +905,20 @@ cifs_free_hash(struct crypto_shash **shash, struct sdesc **sdesc)
+>   		crypto_free_shash(*shash);
+>   	*shash = NULL;
+>   }
+> +
+> +/**
+> + * rqst_page_get_length - obtain the length and offset for a page in smb_rqst
+> + * Input: rqst - a smb_rqst, page - a page index for rqst
+> + * Output: *len - the length for this page, *offset - the offset for this page
+> + */
+> +void rqst_page_get_length(struct smb_rqst *rqst, unsigned int page,
+> +				unsigned int *len, unsigned int *offset)
+> +{
+> +	*len = rqst->rq_pagesz;
+> +	*offset = (page == 0) ? rqst->rq_offset : 0;
 
-Wouldn't it be simpler to keep the original code, but then just subtract
-the rq_offset?
+Really? Page 0 always has a zero offset??
 
-	buflen += rqst->rq_pagesz * (rqst->rq_npages - 1);
-	buflen += rqst->rq_tailsz;
-	buflen -= rqst->rq_offset;
+> +
+> +	if (rqst->rq_npages == 1 || page == rqst->rq_npages-1)
+> +		*len = rqst->rq_tailsz;
+> +	else if (page == 0)
+> +		*len = rqst->rq_pagesz - rqst->rq_offset;
+> +}
+> 
 
-It's kind of confusing as written. Also, what if it's just one page, but
-has a non-zero offset? Is that somehow not possible? My suggested code
-would take that into account, yours doesn't.
+This subroutine does what patch 5 does inline. Why not push this patch
+up in the sequence and use the helper?
 
 Tom.
-
->   	}
->   
->   	return buflen;
-> 
