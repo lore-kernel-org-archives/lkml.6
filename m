@@ -2,292 +2,97 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E781C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF238C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4DF1251AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:03:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4DF1251AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 77794251AF
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:04:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uHs3Om/L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77794251AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754423AbeFXQDo (ORCPT
+        id S1754840AbeFXQED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 12:03:44 -0400
-Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:37390 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755919AbeFXPlG (ORCPT
+        Sun, 24 Jun 2018 12:04:03 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46181 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755913AbeFXPlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:41:06 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 4D0B51804A5F3;
-        Sun, 24 Jun 2018 15:41:05 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: order69_7dc9adacbe63c
-X-Filterd-Recvd-Size: 10280
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 24 Jun 2018 15:41:04 +0000 (UTC)
-Message-ID: <35e73723b9f982a400d5313df405972c09f9b374.camel@perches.com>
-Subject: Re: [PATCH 2/6] device: Add #define dev_fmt similar to #define
- pr_fmt
-From:   Joe Perches <joe@perches.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Date:   Sun, 24 Jun 2018 08:41:03 -0700
-In-Reply-To: <53ed025e7f188c931b99f83066457b2266e69cd6.camel@perches.com>
-References: <cover.1525878372.git.joe@perches.com>
-         <3f213f4f9ee604c1797af67360d8da1836b34271.1525878372.git.joe@perches.com>
-         <53ed025e7f188c931b99f83066457b2266e69cd6.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 24 Jun 2018 11:41:05 -0400
+Received: by mail-wr0-f194.google.com with SMTP id l14-v6so6064402wrq.13
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 08:41:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=MT2uFqBXz6lD5/6nAK7r+pYbCGG3WuvJ0V3hIZDp6iI=;
+        b=uHs3Om/LbXiBWLOEbYHMpTADOWvElfhhaTF/zaYbTeCaMhGj3xDOo5XZ+YpIT7Tt8K
+         IxM3OMf2oIq8I1iN0eBHGdbSbbR2l1PR4RZacByY6mIZ/SX8kspsqLp2VbA/5wPw1am6
+         FWQZUPxdYGZsNoC4wr0usLsjkaPVFrB0xl9eWLVsoYBDFbcJRrhePGlP1bjGUhZgsF9A
+         LrSNO1iLswxto4s5dC1w9UeZJknmSm4ZTMLZMVZzQqN5nFXc2E/wJc4LoIdxinqUOKVA
+         tFmBVHu1SvAJA54zpLeXvbzzd2cNfNocc5/hvr7AF+eSMt/CKN9m4VtAG+XQs8AdlqKT
+         iuQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=MT2uFqBXz6lD5/6nAK7r+pYbCGG3WuvJ0V3hIZDp6iI=;
+        b=PIhdf/YUa/QocfduY9HCbKaLuR+Rzz4hv5/TBxck8Qgr/wp6H8g4owrNziPMQYgh3/
+         +JfoQ+MhyvzdTCBHy6rH1ZtANVfBRnPTggiTSpct5hqQvRr/WoS5Xu+DAb7EbwKe1FpD
+         ajyAaFC1L796g1/z89KY9EpY3mOdtwVvTrsbqMIf8MvhTu1XRYsdcokGLK9/N6FuwrAr
+         dFU9dU9oP4WplOdarg+shCe5gWMepvCWW6uSDegI8M8tUzZKLutCfiBAwaaBQseRvGce
+         c/YuhJlUDgFet0vZbIZTT7f10yyrvslCQUSdIygds4lSfrhXMMlN0nxpYjssyUey1ol8
+         syIg==
+X-Gm-Message-State: APt69E2tlgdv84Co+PDj8HSBdyKpd8AgMGYpRgxfSDidDLicRxLaYRLy
+        bD+rlXrgXTy8YfaYsUKbokJ3RD7H
+X-Google-Smtp-Source: AAOMgpcChmIN9tV5Mcim7nJuYmGNvcMeasvzuhxEqtGhNmatq9dFw8kfAPxsx+NIt50zdKy7MwOahg==
+X-Received: by 2002:a5d:4843:: with SMTP id n3-v6mr7223484wrs.24.1529854864510;
+        Sun, 24 Jun 2018 08:41:04 -0700 (PDT)
+Received: from localhost.localdomain (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
+        by smtp.gmail.com with ESMTPSA id w12-v6sm2782920wrp.69.2018.06.24.08.41.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Jun 2018 08:41:03 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH v3 8/8] staging: rtl8192u: Correction of spelling mistake in  comment.
+Date:   Sun, 24 Jun 2018 16:40:27 +0100
+Message-Id: <20180624154027.27654-9-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180624154027.27654-1-johnfwhitmore@gmail.com>
+References: <20180624154027.27654-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-19 at 06:31 -0700, Joe Perches wrote:
-> Greg?  Ping?
-> 
-> The patches to impi have hit -next and the impi code
-> works differently without this patch.
+Simple spelling correction.
 
-Greg?
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You are listed as the maintainer for this subsystem.
-Do you want me to  get this applied via someone else?
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 07259f108ee5..a54688b3d674 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -866,7 +866,7 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
+ 	/*
+ 	 * TODO: fill suggested rate adaptive rate index and give firmware info
+ 	 * using Tx command packet we also shall suggested the first start rate
+-	 * set according to our singal strength
++	 * set according to our signal strength
+ 	 */
+ 	HT_PickMCSRate(ieee, pOperateMCS);
+ 
+-- 
+2.17.1
 
-> 
-> On Wed, 2018-05-09 at 08:15 -0700, Joe Perches wrote:
-> > Add a prefixing macro to dev_<level> uses similar to the pr_fmt
-> > prefixing macro used in pr_<level> calls.
-> > 
-> > This can help avoid some string duplication in dev_<level> uses.
-> > 
-> > The default, like pr_fmt, is an empty #define dev_fmt(fmt) fmt
-> > 
-> > Rename the existing dev_<level> functions to _dev_<level> and
-> > introduce #define dev_<level> _dev_<level> macros that use the
-> > new #define dev_fmt
-> > 
-> > Miscellanea:
-> > 
-> > o Consistently use #defines with fmt, ... and ##__VA_ARGS__
-> > o Remove unnecessary externs
-> > 
-> > Signed-off-by: Joe Perches <joe@perches.com>
-> > ---
-> >  drivers/base/core.c    |  12 +++---
-> >  include/linux/device.h | 103 ++++++++++++++++++++++++++++---------------------
-> >  2 files changed, 64 insertions(+), 51 deletions(-)
-> > 
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index ad7b50897bcc..9c87a41cef82 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -2985,12 +2985,12 @@ void func(const struct device *dev, const char *fmt, ...)	\
-> >  }								\
-> >  EXPORT_SYMBOL(func);
-> >  
-> > -define_dev_printk_level(dev_emerg, KERN_EMERG);
-> > -define_dev_printk_level(dev_alert, KERN_ALERT);
-> > -define_dev_printk_level(dev_crit, KERN_CRIT);
-> > -define_dev_printk_level(dev_err, KERN_ERR);
-> > -define_dev_printk_level(dev_warn, KERN_WARNING);
-> > -define_dev_printk_level(dev_notice, KERN_NOTICE);
-> > +define_dev_printk_level(_dev_emerg, KERN_EMERG);
-> > +define_dev_printk_level(_dev_alert, KERN_ALERT);
-> > +define_dev_printk_level(_dev_crit, KERN_CRIT);
-> > +define_dev_printk_level(_dev_err, KERN_ERR);
-> > +define_dev_printk_level(_dev_warn, KERN_WARNING);
-> > +define_dev_printk_level(_dev_notice, KERN_NOTICE);
-> >  define_dev_printk_level(_dev_info, KERN_INFO);
-> >  
-> >  #endif
-> > diff --git a/include/linux/device.h b/include/linux/device.h
-> > index 563077d1cdc1..49c6b5d6a9f8 100644
-> > --- a/include/linux/device.h
-> > +++ b/include/linux/device.h
-> > @@ -1306,30 +1306,34 @@ struct device_link *device_link_add(struct device *consumer,
-> >  				    struct device *supplier, u32 flags);
-> >  void device_link_del(struct device_link *link);
-> >  
-> > +#ifndef dev_fmt
-> > +#define dev_fmt(fmt) fmt
-> > +#endif
-> > +
-> >  #ifdef CONFIG_PRINTK
-> >  
-> > -extern __printf(3, 0)
-> > +__printf(3, 0)
-> >  int dev_vprintk_emit(int level, const struct device *dev,
-> >  		     const char *fmt, va_list args);
-> > -extern __printf(3, 4)
-> > +__printf(3, 4)
-> >  int dev_printk_emit(int level, const struct device *dev, const char *fmt, ...);
-> >  
-> > -extern __printf(3, 4)
-> > +__printf(3, 4)
-> >  void dev_printk(const char *level, const struct device *dev,
-> >  		const char *fmt, ...);
-> > -extern __printf(2, 3)
-> > -void dev_emerg(const struct device *dev, const char *fmt, ...);
-> > -extern __printf(2, 3)
-> > -void dev_alert(const struct device *dev, const char *fmt, ...);
-> > -extern __printf(2, 3)
-> > -void dev_crit(const struct device *dev, const char *fmt, ...);
-> > -extern __printf(2, 3)
-> > -void dev_err(const struct device *dev, const char *fmt, ...);
-> > -extern __printf(2, 3)
-> > -void dev_warn(const struct device *dev, const char *fmt, ...);
-> > -extern __printf(2, 3)
-> > -void dev_notice(const struct device *dev, const char *fmt, ...);
-> > -extern __printf(2, 3)
-> > +__printf(2, 3)
-> > +void _dev_emerg(const struct device *dev, const char *fmt, ...);
-> > +__printf(2, 3)
-> > +void _dev_alert(const struct device *dev, const char *fmt, ...);
-> > +__printf(2, 3)
-> > +void _dev_crit(const struct device *dev, const char *fmt, ...);
-> > +__printf(2, 3)
-> > +void _dev_err(const struct device *dev, const char *fmt, ...);
-> > +__printf(2, 3)
-> > +void _dev_warn(const struct device *dev, const char *fmt, ...);
-> > +__printf(2, 3)
-> > +void _dev_notice(const struct device *dev, const char *fmt, ...);
-> > +__printf(2, 3)
-> >  void _dev_info(const struct device *dev, const char *fmt, ...);
-> >  
-> >  #else
-> > @@ -1347,26 +1351,26 @@ static inline void __dev_printk(const char *level, const struct device *dev,
-> >  {}
-> >  static inline __printf(3, 4)
-> >  void dev_printk(const char *level, const struct device *dev,
-> > -		const char *fmt, ...)
-> > +		 const char *fmt, ...)
-> >  {}
-> >  
-> >  static inline __printf(2, 3)
-> > -void dev_emerg(const struct device *dev, const char *fmt, ...)
-> > +void _dev_emerg(const struct device *dev, const char *fmt, ...)
-> >  {}
-> >  static inline __printf(2, 3)
-> > -void dev_crit(const struct device *dev, const char *fmt, ...)
-> > +void _dev_crit(const struct device *dev, const char *fmt, ...)
-> >  {}
-> >  static inline __printf(2, 3)
-> > -void dev_alert(const struct device *dev, const char *fmt, ...)
-> > +void _dev_alert(const struct device *dev, const char *fmt, ...)
-> >  {}
-> >  static inline __printf(2, 3)
-> > -void dev_err(const struct device *dev, const char *fmt, ...)
-> > +void _dev_err(const struct device *dev, const char *fmt, ...)
-> >  {}
-> >  static inline __printf(2, 3)
-> > -void dev_warn(const struct device *dev, const char *fmt, ...)
-> > +void _dev_warn(const struct device *dev, const char *fmt, ...)
-> >  {}
-> >  static inline __printf(2, 3)
-> > -void dev_notice(const struct device *dev, const char *fmt, ...)
-> > +void _dev_notice(const struct device *dev, const char *fmt, ...)
-> >  {}
-> >  static inline __printf(2, 3)
-> >  void _dev_info(const struct device *dev, const char *fmt, ...)
-> > @@ -1375,27 +1379,36 @@ void _dev_info(const struct device *dev, const char *fmt, ...)
-> >  #endif
-> >  
-> >  /*
-> > - * Stupid hackaround for existing uses of non-printk uses dev_info
-> > - *
-> > - * Note that the definition of dev_info below is actually _dev_info
-> > - * and a macro is used to avoid redefining dev_info
-> > + * #defines for all the dev_<level> macros to prefix with whatever
-> > + * possible use of #define dev_fmt(fmt) ...
-> >   */
-> >  
-> > -#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-> > +#define dev_emerg(dev, fmt, ...)					\
-> > +	_dev_emerg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-> > +#define dev_crit(dev, fmt, ...)						\
-> > +	_dev_crit(dev, dev_fmt(fmt), ##__VA_ARGS__)
-> > +#define dev_alert(dev, fmt, ...)					\
-> > +	_dev_alert(dev, dev_fmt(fmt), ##__VA_ARGS__)
-> > +#define dev_err(dev, fmt, ...)						\
-> > +	_dev_err(dev, dev_fmt(fmt), ##__VA_ARGS__)
-> > +#define dev_warn(dev, fmt, ...)						\
-> > +	_dev_warn(dev, dev_fmt(fmt), ##__VA_ARGS__)
-> > +#define dev_notice(dev, fmt, ...)					\
-> > +	_dev_notice(dev, dev_fmt(fmt), ##__VA_ARGS__)
-> > +#define dev_info(dev, fmt, ...)						\
-> > +	_dev_info(dev, dev_fmt(fmt), ##__VA_ARGS__)
-> >  
-> >  #if defined(CONFIG_DYNAMIC_DEBUG)
-> > -#define dev_dbg(dev, format, ...)		     \
-> > -do {						     \
-> > -	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
-> > -} while (0)
-> > +#define dev_dbg(dev, fmt, ...)						\
-> > +	dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-> >  #elif defined(DEBUG)
-> > -#define dev_dbg(dev, format, arg...)		\
-> > -	dev_printk(KERN_DEBUG, dev, format, ##arg)
-> > +#define dev_dbg(dev, fmt, ...)						\
-> > +	dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__)
-> >  #else
-> > -#define dev_dbg(dev, format, arg...)				\
-> > -({								\
-> > -	if (0)							\
-> > -		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
-> > +#define dev_dbg(dev, fmt, ...)						\
-> > +({									\
-> > +	if (0)								\
-> > +		dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__); \
-> >  })
-> >  #endif
-> >  
-> > @@ -1467,7 +1480,7 @@ do {									\
-> >  	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
-> >  	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT) &&	\
-> >  	    __ratelimit(&_rs))						\
-> > -		__dynamic_dev_dbg(&descriptor, dev, fmt,		\
-> > +		__dynamic_dev_dbg(&descriptor, dev, dev_fmt(fmt),	\
-> >  				  ##__VA_ARGS__);			\
-> >  } while (0)
-> >  #elif defined(DEBUG)
-> > @@ -1477,23 +1490,23 @@ do {									\
-> >  				      DEFAULT_RATELIMIT_INTERVAL,	\
-> >  				      DEFAULT_RATELIMIT_BURST);		\
-> >  	if (__ratelimit(&_rs))						\
-> > -		dev_printk(KERN_DEBUG, dev, fmt, ##__VA_ARGS__);	\
-> > +		dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__); \
-> >  } while (0)
-> >  #else
-> >  #define dev_dbg_ratelimited(dev, fmt, ...)				\
-> >  do {									\
-> >  	if (0)								\
-> > -		dev_printk(KERN_DEBUG, dev, fmt, ##__VA_ARGS__);	\
-> > +		dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__); \
-> >  } while (0)
-> >  #endif
-> >  
-> >  #ifdef VERBOSE_DEBUG
-> >  #define dev_vdbg	dev_dbg
-> >  #else
-> > -#define dev_vdbg(dev, format, arg...)				\
-> > -({								\
-> > -	if (0)							\
-> > -		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
-> > +#define dev_vdbg(dev, fmt, ...)						\
-> > +({									\
-> > +	if (0)								\
-> > +		dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__); \
-> >  })
-> >  #endif
-> >  
