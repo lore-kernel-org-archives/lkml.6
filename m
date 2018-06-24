@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C93C6C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F28C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F1CF24F6B
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1CF24F6B
+	by mail.kernel.org (Postfix) with ESMTP id 9BA6324F6D
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:25:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA6324F6D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752233AbeFXPZl (ORCPT
+        id S1752269AbeFXPZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:25:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58638 "EHLO
+        Sun, 24 Jun 2018 11:25:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58650 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752195AbeFXPZi (ORCPT
+        with ESMTP id S1752236AbeFXPZo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:25:38 -0400
+        Sun, 24 Jun 2018 11:25:44 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A92592B;
-        Sun, 24 Jun 2018 15:25:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4FB3B2C;
+        Sun, 24 Jun 2018 15:25:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 15/52] ext4: do not allow external inodes for inline data
-Date:   Sun, 24 Jun 2018 23:21:08 +0800
-Message-Id: <20180624142745.366164765@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>, stable@kernel.org
+Subject: [PATCH 4.14 16/52] ext4: bubble errors from ext4_find_inline_data_nolock() up to ext4_iget()
+Date:   Sun, 24 Jun 2018 23:21:09 +0800
+Message-Id: <20180624142745.432886365@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -53,46 +52,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 117166efb1ee8f13c38f9e96b258f16d4923f888 upstream.
+commit eb9b5f01c33adebc31cbc236c02695f605b0e417 upstream.
 
-The inline data feature was implemented before we added support for
-external inodes for xattrs.  It makes no sense to support that
-combination, but the problem is that there are a number of extended
-attribute checks that are skipped if e_value_inum is non-zero.
+If ext4_find_inline_data_nolock() returns an error it needs to get
+reflected up to ext4_iget().  In order to fix this,
+ext4_iget_extra_inode() needs to return an error (and not return
+void).
 
-Unfortunately, the inline data code is completely e_value_inum
-unaware, and attempts to interpret the xattr fields as if it were an
-inline xattr --- at which point, Hilarty Ensues.
+This is related to "ext4: do not allow external inodes for inline
+data" (which fixes CVE-2018-11412) in that in the errors=continue
+case, it would be useful to for userspace to receive an error
+indicating that file system is corrupted.
 
-This addresses CVE-2018-11412.
-
-https://bugzilla.kernel.org/show_bug.cgi?id=199803
-
-Reported-by: Jann Horn <jannh@google.com>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inline.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/ext4/inode.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -150,6 +150,12 @@ int ext4_find_inline_data_nolock(struct
- 		goto out;
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4634,19 +4634,21 @@ static blkcnt_t ext4_inode_blocks(struct
+ 	}
+ }
  
- 	if (!is.s.not_found) {
-+		if (is.s.here->e_value_inum) {
-+			EXT4_ERROR_INODE(inode, "inline data xattr refers "
-+					 "to an external xattr inode");
-+			error = -EFSCORRUPTED;
-+			goto out;
-+		}
- 		EXT4_I(inode)->i_inline_off = (u16)((void *)is.s.here -
- 					(void *)ext4_raw_inode(&is.iloc));
- 		EXT4_I(inode)->i_inline_size = EXT4_MIN_INLINE_DATA_SIZE +
+-static inline void ext4_iget_extra_inode(struct inode *inode,
++static inline int ext4_iget_extra_inode(struct inode *inode,
+ 					 struct ext4_inode *raw_inode,
+ 					 struct ext4_inode_info *ei)
+ {
+ 	__le32 *magic = (void *)raw_inode +
+ 			EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize;
++
+ 	if (EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize + sizeof(__le32) <=
+ 	    EXT4_INODE_SIZE(inode->i_sb) &&
+ 	    *magic == cpu_to_le32(EXT4_XATTR_MAGIC)) {
+ 		ext4_set_inode_state(inode, EXT4_STATE_XATTR);
+-		ext4_find_inline_data_nolock(inode);
++		return ext4_find_inline_data_nolock(inode);
+ 	} else
+ 		EXT4_I(inode)->i_inline_off = 0;
++	return 0;
+ }
+ 
+ int ext4_get_projid(struct inode *inode, kprojid_t *projid)
+@@ -4826,7 +4828,9 @@ struct inode *ext4_iget(struct super_blo
+ 			ei->i_extra_isize = sizeof(struct ext4_inode) -
+ 					    EXT4_GOOD_OLD_INODE_SIZE;
+ 		} else {
+-			ext4_iget_extra_inode(inode, raw_inode, ei);
++			ret = ext4_iget_extra_inode(inode, raw_inode, ei);
++			if (ret)
++				goto bad_inode;
+ 		}
+ 	}
+ 
 
 
