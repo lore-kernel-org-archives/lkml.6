@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDB3C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D587FC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76FA024F74
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76FA024F74
+	by mail.kernel.org (Postfix) with ESMTP id 86F3024F76
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F3024F76
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeFXP0Y (ORCPT
+        id S1752525AbeFXP0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:26:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58708 "EHLO
+        Sun, 24 Jun 2018 11:26:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58718 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbeFXP0U (ORCPT
+        with ESMTP id S1751856AbeFXP03 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:26:20 -0400
+        Sun, 24 Jun 2018 11:26:29 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73A3192B;
-        Sun, 24 Jun 2018 15:26:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2214892F;
+        Sun, 24 Jun 2018 15:26:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Su Yue <suy.fnst@cn.fujitsu.com>,
+        stable@vger.kernel.org, Su Yue <suy.fnst@cn.fujitsu.com>,
+        Nikolay Borisov <nborisov@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 21/52] Btrfs: fix memory and mount leak in btrfs_ioctl_rm_dev_v2()
-Date:   Sun, 24 Jun 2018 23:21:14 +0800
-Message-Id: <20180624142745.745176011@linuxfoundation.org>
+Subject: [PATCH 4.14 22/52] btrfs: return error value if create_io_em failed in cow_file_range
+Date:   Sun, 24 Jun 2018 23:21:15 +0800
+Message-Id: <20180624142745.820448187@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -51,83 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Su Yue <suy.fnst@cn.fujitsu.com>
 
-commit fd4e994bd1f9dc9628e168a7f619bf69f6984635 upstream.
+commit 090a127afa8f73e9618d4058d6755f7ec7453dd6 upstream.
 
-If we have invalid flags set, when we error out we must drop our writer
-counter and free the buffer we allocated for the arguments. This bug is
-trivially reproduced with the following program on 4.7+:
+In cow_file_range(), create_io_em() may fail, but its return value is
+not recorded.  Then return value may be 0 even it failed which is a
+wrong behavior.
 
-	#include <fcntl.h>
-	#include <stdint.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <unistd.h>
-	#include <sys/ioctl.h>
-	#include <sys/stat.h>
-	#include <sys/types.h>
-	#include <linux/btrfs.h>
-	#include <linux/btrfs_tree.h>
+Let cow_file_range() return PTR_ERR(em) if create_io_em() failed.
 
-	int main(int argc, char **argv)
-	{
-		struct btrfs_ioctl_vol_args_v2 vol_args = {
-			.flags = UINT64_MAX,
-		};
-		int ret;
-		int fd;
-
-		if (argc != 2) {
-			fprintf(stderr, "usage: %s PATH\n", argv[0]);
-			return EXIT_FAILURE;
-		}
-
-		fd = open(argv[1], O_WRONLY);
-		if (fd == -1) {
-			perror("open");
-			return EXIT_FAILURE;
-		}
-
-		ret = ioctl(fd, BTRFS_IOC_RM_DEV_V2, &vol_args);
-		if (ret == -1)
-			perror("ioctl");
-
-		close(fd);
-		return EXIT_SUCCESS;
-	}
-
-When unmounting the filesystem, we'll hit the
-WARN_ON(mnt_get_writers(mnt)) in cleanup_mnt() and also may prevent the
-filesystem to be remounted read-only as the writer count will stay
-lifted.
-
-Fixes: 6b526ed70cf1 ("btrfs: introduce device delete by devid")
-CC: stable@vger.kernel.org # 4.9+
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+Fixes: 6f9994dbabe5 ("Btrfs: create a helper to create em for IO")
+CC: stable@vger.kernel.org # 4.11+
+Signed-off-by: Su Yue <suy.fnst@cn.fujitsu.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ioctl.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/btrfs/inode.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2682,8 +2682,10 @@ static long btrfs_ioctl_rm_dev_v2(struct
- 	}
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1027,8 +1027,10 @@ static noinline int cow_file_range(struc
+ 				  ram_size, /* ram_bytes */
+ 				  BTRFS_COMPRESS_NONE, /* compress_type */
+ 				  BTRFS_ORDERED_REGULAR /* type */);
+-		if (IS_ERR(em))
++		if (IS_ERR(em)) {
++			ret = PTR_ERR(em);
+ 			goto out_reserve;
++		}
+ 		free_extent_map(em);
  
- 	/* Check for compatibility reject unknown flags */
--	if (vol_args->flags & ~BTRFS_VOL_ARG_V2_FLAGS_SUPPORTED)
--		return -EOPNOTSUPP;
-+	if (vol_args->flags & ~BTRFS_VOL_ARG_V2_FLAGS_SUPPORTED) {
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
- 
- 	if (test_and_set_bit(BTRFS_FS_EXCL_OP, &fs_info->flags)) {
- 		ret = BTRFS_ERROR_DEV_EXCL_RUN_IN_PROGRESS;
+ 		ret = btrfs_add_ordered_extent(inode, start, ins.objectid,
 
 
