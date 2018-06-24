@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9540BC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E341C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EDAD24FDE
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDAD24FDE
+	by mail.kernel.org (Postfix) with ESMTP id B9E3524FE0
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9E3524FE0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755018AbeFXPdI (ORCPT
+        id S1755039AbeFXPdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:33:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59246 "EHLO
+        Sun, 24 Jun 2018 11:33:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59258 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754716AbeFXPdG (ORCPT
+        with ESMTP id S1754546AbeFXPdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:33:06 -0400
+        Sun, 24 Jun 2018 11:33:15 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69F232C;
-        Sun, 24 Jun 2018 15:33:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CAFED2C;
+        Sun, 24 Jun 2018 15:33:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
-        Julian Anastasov <ja@ssi.bg>, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 03/64] ipv6: allow PMTU exceptions to local routes
-Date:   Sun, 24 Jun 2018 23:21:44 +0800
-Message-Id: <20180624142743.833882848@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Su Yue <suy.fnst@cn.fujitsu.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.16 21/64] Btrfs: fix memory and mount leak in btrfs_ioctl_rm_dev_v2()
+Date:   Sun, 24 Jun 2018 23:22:02 +0800
+Message-Id: <20180624142745.039762211@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -51,37 +51,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Anastasov <ja@ssi.bg>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit 0975764684487bf3f7a47eef009e750ea41bd514 ]
+commit fd4e994bd1f9dc9628e168a7f619bf69f6984635 upstream.
 
-IPVS setups with local client and remote tunnel server need
-to create exception for the local virtual IP. What we do is to
-change PMTU from 64KB (on "lo") to 1460 in the common case.
+If we have invalid flags set, when we error out we must drop our writer
+counter and free the buffer we allocated for the arguments. This bug is
+trivially reproduced with the following program on 4.7+:
 
-Suggested-by: Martin KaFai Lau <kafai@fb.com>
-Fixes: 45e4fd26683c ("ipv6: Only create RTF_CACHE routes after encountering pmtu exception")
-Fixes: 7343ff31ebf0 ("ipv6: Don't create clones of host routes.")
-Signed-off-by: Julian Anastasov <ja@ssi.bg>
-Acked-by: David Ahern <dsahern@gmail.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+	#include <fcntl.h>
+	#include <stdint.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <unistd.h>
+	#include <sys/ioctl.h>
+	#include <sys/stat.h>
+	#include <sys/types.h>
+	#include <linux/btrfs.h>
+	#include <linux/btrfs_tree.h>
+
+	int main(int argc, char **argv)
+	{
+		struct btrfs_ioctl_vol_args_v2 vol_args = {
+			.flags = UINT64_MAX,
+		};
+		int ret;
+		int fd;
+
+		if (argc != 2) {
+			fprintf(stderr, "usage: %s PATH\n", argv[0]);
+			return EXIT_FAILURE;
+		}
+
+		fd = open(argv[1], O_WRONLY);
+		if (fd == -1) {
+			perror("open");
+			return EXIT_FAILURE;
+		}
+
+		ret = ioctl(fd, BTRFS_IOC_RM_DEV_V2, &vol_args);
+		if (ret == -1)
+			perror("ioctl");
+
+		close(fd);
+		return EXIT_SUCCESS;
+	}
+
+When unmounting the filesystem, we'll hit the
+WARN_ON(mnt_get_writers(mnt)) in cleanup_mnt() and also may prevent the
+filesystem to be remounted read-only as the writer count will stay
+lifted.
+
+Fixes: 6b526ed70cf1 ("btrfs: introduce device delete by devid")
+CC: stable@vger.kernel.org # 4.9+
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/route.c |    3 ---
- 1 file changed, 3 deletions(-)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -2077,9 +2077,6 @@ static void __ip6_rt_update_pmtu(struct
- 	const struct in6_addr *daddr, *saddr;
- 	struct rt6_info *rt6 = (struct rt6_info *)dst;
+---
+ fs/btrfs/ioctl.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -2665,8 +2665,10 @@ static long btrfs_ioctl_rm_dev_v2(struct
+ 	}
  
--	if (rt6->rt6i_flags & RTF_LOCAL)
--		return;
--
- 	if (dst_metric_locked(dst, RTAX_MTU))
- 		return;
+ 	/* Check for compatibility reject unknown flags */
+-	if (vol_args->flags & ~BTRFS_VOL_ARG_V2_FLAGS_SUPPORTED)
+-		return -EOPNOTSUPP;
++	if (vol_args->flags & ~BTRFS_VOL_ARG_V2_FLAGS_SUPPORTED) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
  
+ 	if (test_and_set_bit(BTRFS_FS_EXCL_OP, &fs_info->flags)) {
+ 		ret = BTRFS_ERROR_DEV_EXCL_RUN_IN_PROGRESS;
 
 
