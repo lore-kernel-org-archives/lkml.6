@@ -2,826 +2,106 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 824FDC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E96BC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03FBD251F2
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:10:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uVKSjNrv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03FBD251F2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C8B3C251F3
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:10:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B3C251F3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755568AbeFXQK0 (ORCPT
+        id S1755055AbeFXPf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 12:10:26 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38715 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751533AbeFXPgA (ORCPT
+        Sun, 24 Jun 2018 11:35:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59474 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbeFXPf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:36:00 -0400
-Received: by mail-wm0-f67.google.com with SMTP id 69-v6so7344217wmf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 08:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nglHdYa04LyYai2cglOAcFjHhMXHRhixExhM2yAmZvQ=;
-        b=uVKSjNrvaIFcgfNrggWRQTfudgPtezdCZZI0jjnbe1thAwN8JVcA2ovOaVDUeytuSv
-         lleK9wRPYAK+m65WSCHByApiXhtOruVgGtjsGeXWHdObT3SZd4mYEadTmnep0xVvha2S
-         biDj2Xn5iYvBMi8iUBAkOLC8y3awBx1FBJJtzaAQTE5NMY2RorT0Ng11XxEZkpM80cnq
-         sUxQ+AMT59qfVQ5LHjB3Gme8T86m9tvQBjqinZVlShv7xFiP7ZDvhZrYbn3X6y/QewQ/
-         e9ZpSGS2yTdBn6qVQy1GBjS3JF8lsfm0I/uU8TVydiTYOMsHrlTjB8bk3FVcTcRi+vxn
-         rO7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nglHdYa04LyYai2cglOAcFjHhMXHRhixExhM2yAmZvQ=;
-        b=kh7vqXfC24UcH0LBd3ikjMHNvRPVSytQd1Myik1gm1TfaN1gbZ9NekW/u7w2G8KSxr
-         dGbRKUV38X5Vv/T+czLoxomTXJ51fFPgfbAoCcjoQxGMvGgrv1O5qFn3m6dNAKZVZwCT
-         HhuucLhWHvrllAzG8+UduiGHPYCuh7Wd1EsWerYrYfpvW4AnqSpWDhNu2chRmxLQeo8H
-         CvvEtwqffsUTM7buhJ4Ii8nMnNevJAMeEayg6IfC+Pwy2ebsxM6XvWTt3a5QZ6j7Ion2
-         poAOYVrKLkZiz2FZZdw8uN4qKY3gUNzEh35JHTQ1pd0XlZnex7aLS+goXRtI8goZ1LxU
-         nXAA==
-X-Gm-Message-State: APt69E3FJ3Gic1/3uEJquLJf6SJjML31vTUN9gqoYx+bi0KCcH5uHQaj
-        tnHkWoSgjdbNYKMyjmvf2/WWaph4
-X-Google-Smtp-Source: ADUXVKLXhfNFwGB5T0xEuEofDdmwxnrCNzV3EuwODfm8Qt136ECpntmaF+6nhrRTYej5huyDY+P3dQ==
-X-Received: by 2002:a1c:9:: with SMTP id 9-v6mr6713826wma.10.1529854558478;
-        Sun, 24 Jun 2018 08:35:58 -0700 (PDT)
-Received: from localhost.localdomain (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
-        by smtp.gmail.com with ESMTPSA id j10-v6sm1505813wro.53.2018.06.24.08.35.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 08:35:57 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
+        Sun, 24 Jun 2018 11:35:57 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63B5449F;
+        Sun, 24 Jun 2018 15:35:55 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v3 1/8] staging: rtl8192u: change block comments to prefered style - Coding Style
-Date:   Sun, 24 Jun 2018 16:34:47 +0100
-Message-Id: <20180624153454.27356-2-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180624153454.27356-1-johnfwhitmore@gmail.com>
-References: <20180624153454.27356-1-johnfwhitmore@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, "Richard W.M. Jones" <rjones@redhat.com>,
+        Lorenzo Dalrio <lorenzo.dalrio@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.16 44/64] libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
+Date:   Sun, 24 Jun 2018 23:22:25 +0800
+Message-Id: <20180624142746.518835572@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
+References: <20180624142743.613370789@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the comment blocks are commening out code so have been left for the
-moment.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+------------------
+
+From: Hans de Goede <hdegoede@redhat.com>
+
+commit 2cfce3a86b64b53f0a70e92a6a659c720c319b45 upstream.
+
+Commit 184add2ca23c ("libata: Apply NOLPM quirk for SanDisk
+SD7UB3Q*G1001 SSDs") disabled LPM for SanDisk SD7UB3Q*G1001 SSDs.
+
+This has lead to several reports of users of that SSD where LPM
+was working fine and who know have a significantly increased idle
+power consumption on their laptops.
+
+Likely there is another problem on the T450s from the original
+reporter which gets exposed by the uncore reaching deeper sleep
+states (higher PC-states) due to LPM being enabled. The problem as
+reported, a hardfreeze about once a day, already did not sound like
+it would be caused by LPM and the reports of the SSD working fine
+confirm this. The original reporter is ok with dropping the quirk.
+
+A X250 user has reported the same hard freeze problem and for him
+the problem went away after unrelated updates, I suspect some GPU
+driver stack changes fixed things.
+
+TL;DR: The original reporters problem were triggered by LPM but not
+an LPM issue, so drop the quirk for the SSD in question.
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1583207
+Cc: stable@vger.kernel.org
+Cc: Richard W.M. Jones <rjones@redhat.com>
+Cc: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
+Reported-by: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Acked-by: "Richard W.M. Jones" <rjones@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../rtl8192u/ieee80211/rtl819x_HTProc.c       | 366 ++++++++++--------
- 1 file changed, 195 insertions(+), 171 deletions(-)
+ drivers/ata/libata-core.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 5a48693e2cf3..54c48747f5fa 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -41,17 +41,18 @@ static u8 EDIMAX_RALINK[3] = {0x00, 0x0e, 0x2e};
- static u8 AIRLINK_RALINK[3] = {0x00, 0x18, 0x02};
- //static u8 DLINK_ATHEROS[3] = {0x00, 0x1c, 0xf0};
- static u8 CISCO_BROADCOM[3] = {0x00, 0x17, 0x94};
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4553,9 +4553,6 @@ static const struct ata_blacklist_entry
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
+ 
+-	/* Sandisk devices which are known to not handle LPM well */
+-	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
 -
--// 2008/04/01 MH For Cisco G mode RX TP We need to change FW duration. Should we put the
--// code in other place??
--//static u8 WIFI_CISCO_G_AP[3] = {0x00, 0x40, 0x96};
--/********************************************************************************************************************
-+/*
-+ * 2008/04/01 MH For Cisco G mode RX TP We need to change FW duration. Should we put the
-+ * code in other place??
-+ * static u8 WIFI_CISCO_G_AP[3] = {0x00, 0x40, 0x96};
-+ */
-+/*
-  *function:  This function update default settings in pHTInfo structure
-  *   input:  PRT_HIGH_THROUGHPUT	pHTInfo
-  *  output:  none
-  *  return:  none
-  *  notice:  These value need be modified if any changes.
-- * *****************************************************************************************************************/
-+ */
- void HTUpdateDefaultSetting(struct ieee80211_device *ieee)
- {
- 	PRT_HIGH_THROUGHPUT	pHTInfo = ieee->pHTInfo;
-@@ -93,8 +94,10 @@ void HTUpdateDefaultSetting(struct ieee80211_device *ieee)
- 	// 8190 only. Assign duration operation mode to firmware
- 	pMgntInfo->bTxEnableFwCalcDur = (BOOLEAN)pNdisCommon->bRegTxEnableFwCalcDur;
- #endif
--	// 8190 only, Realtek proprietary aggregation mode
--	// Set MPDUDensity=2,   1: Set MPDUDensity=2(32k)  for Realtek AP and set MPDUDensity=0(8k) for others
-+	/*
-+	 * 8190 only, Realtek proprietary aggregation mode
-+	 * Set MPDUDensity=2,   1: Set MPDUDensity=2(32k)  for Realtek AP and set MPDUDensity=0(8k) for others
-+	 */
- 	pHTInfo->bRegRT2RTAggregation = 1;//0: Set MPDUDensity=2,   1: Set MPDUDensity=2(32k)  for Realtek AP and set MPDUDensity=0(8k) for others
- 
- 	// For Rx Reorder Control
-@@ -113,14 +116,14 @@ void HTUpdateDefaultSetting(struct ieee80211_device *ieee)
- #endif
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  This function print out each field on HT capability IE mainly from (Beacon/ProbeRsp/AssocReq)
-  *   input:  u8*	CapIE       //Capability IE to be printed out
-  *	     u8*	TitleString //mainly print out caller function
-  *  output:  none
-  *  return:  none
-  *  notice:  Driver should not print out this message by default.
-- * *****************************************************************************************************************/
-+ */
- void HTDebugHTCapability(u8 *CapIE, u8 *TitleString)
- {
- 	static u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};	// For 11n EWC definition, 2007.07.17, by Emily
-@@ -147,14 +150,14 @@ void HTDebugHTCapability(u8 *CapIE, u8 *TitleString)
- 				pCapELE->MCS[1], pCapELE->MCS[2], pCapELE->MCS[3], pCapELE->MCS[4]);
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  This function print out each field on HT Information IE mainly from (Beacon/ProbeRsp)
-  *   input:  u8*	InfoIE       //Capability IE to be printed out
-  *	     u8*	TitleString //mainly print out caller function
-  *  output:  none
-  *  return:  none
-  *  notice:  Driver should not print out this message by default.
-- * *****************************************************************************************************************/
-+ */
- void HTDebugHTInfo(u8 *InfoIE, u8 *TitleString)
- {
- 	static u8	EWC11NHTInfo[] = {0x00, 0x90, 0x4c, 0x34};	// For 11n EWC definition, 2007.07.17, by Emily
-@@ -209,8 +212,8 @@ void HTDebugHTInfo(u8 *InfoIE, u8 *TitleString)
- }
- 
- /*
--*	Return:		true if station in half n mode and AP supports 40 bw
--*/
-+ *	Return:		true if station in half n mode and AP supports 40 bw
-+ */
- static bool IsHTHalfNmode40Bandwidth(struct ieee80211_device *ieee)
- {
- 	bool			retValue = false;
-@@ -276,14 +279,14 @@ u16 HTMcsToDataRate(struct ieee80211_device *ieee, u8 nMcsRate)
- 	return MCS_DATA_RATE[is40MHz][isShortGI][(nMcsRate & 0x7f)];
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  This function returns current datarate.
-  *   input:  struct ieee80211_device*	ieee
-  *	     u8				nDataRate
-  *  output:  none
-  *  return:  tx rate
-  *  notice:  quite unsure about how to use this function //wb
-- * *****************************************************************************************************************/
-+ */
- u16  TxCountToDataRate(struct ieee80211_device *ieee, u8 nDataRate)
- {
- 	//PRT_HIGH_THROUGHPUT	pHTInfo = ieee->pHTInfo;
-@@ -345,13 +348,13 @@ bool IsHTHalfNmodeAPs(struct ieee80211_device *ieee)
- 	return retValue;
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  This function returns peer IOT.
-  *   input:  struct ieee80211_device*	ieee
-  *  output:  none
-  *  return:
-  *  notice:
-- * *****************************************************************************************************************/
-+ */
- static void HTIOTPeerDetermine(struct ieee80211_device *ieee)
- {
- 	PRT_HIGH_THROUGHPUT	pHTInfo = ieee->pHTInfo;
-@@ -383,31 +386,31 @@ static void HTIOTPeerDetermine(struct ieee80211_device *ieee)
- 	IEEE80211_DEBUG(IEEE80211_DL_IOT, "Joseph debug!! IOTPEER: %x\n", pHTInfo->IOTPeer);
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  Check whether driver should declare received rate up to MCS13 only since some chipset is not good
-  *	     at receiving MCS14~15 frame from some AP.
-  *   input:  struct ieee80211_device*	ieee
-  *	     u8 *			PeerMacAddr
-  *  output:  none
-  *  return:  return 1 if driver should declare MCS13 only(otherwise return 0)
--  * *****************************************************************************************************************/
-+ */
- static u8 HTIOTActIsDisableMCS14(struct ieee80211_device *ieee, u8 *PeerMacAddr)
- {
- 	return 0;
- }
- 
--/**
--* Function:	HTIOTActIsDisableMCS15
--*
--* Overview:	Check whether driver should declare capability of receiving MCS15
--*
--* Input:
--*			PADAPTER		Adapter,
--*
--* Output:		None
--* Return:	true if driver should disable MCS15
--* 2008.04.15	Emily
--*/
-+/*
-+ * Function:	HTIOTActIsDisableMCS15
-+ *
-+ * Overview:	Check whether driver should declare capability of receiving MCS15
-+ *
-+ * Input:
-+ *			PADAPTER		Adapter,
-+ *
-+ * Output:		None
-+ * Return:	true if driver should disable MCS15
-+ * 2008.04.15	Emily
-+ */
- static bool HTIOTActIsDisableMCS15(struct ieee80211_device *ieee)
- {
- 	bool retValue = false;
-@@ -433,18 +436,18 @@ static bool HTIOTActIsDisableMCS15(struct ieee80211_device *ieee)
- 	return retValue;
- }
- 
--/**
--* Function:	HTIOTActIsDisableMCSTwoSpatialStream
--*
--* Overview:	Check whether driver should declare capability of receiving All 2 ss packets
--*
--* Input:
--*			PADAPTER		Adapter,
--*
--* Output:		None
--* Return:	true if driver should disable all two spatial stream packet
--* 2008.04.21	Emily
--*/
-+/*
-+ * Function:	HTIOTActIsDisableMCSTwoSpatialStream
-+ *
-+ * Overview:	Check whether driver should declare capability of receiving All 2 ss packets
-+ *
-+ * Input:
-+ *			PADAPTER		Adapter,
-+ *
-+ * Output:		None
-+ * Return:	true if driver should disable all two spatial stream packet
-+ * 2008.04.21	Emily
-+ */
- static bool HTIOTActIsDisableMCSTwoSpatialStream(struct ieee80211_device *ieee,
- 						 u8 *PeerMacAddr)
- {
-@@ -454,25 +457,25 @@ static bool HTIOTActIsDisableMCSTwoSpatialStream(struct ieee80211_device *ieee,
- 	return false;
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  Check whether driver should disable EDCA turbo mode
-  *   input:  struct ieee80211_device*	ieee
-  *	     u8*			PeerMacAddr
-  *  output:  none
-  *  return:  return 1 if driver should disable EDCA turbo mode(otherwise return 0)
--  * *****************************************************************************************************************/
-+ */
- static u8 HTIOTActIsDisableEDCATurbo(struct ieee80211_device *ieee,
- 				     u8 *PeerMacAddr)
- {	/* default enable EDCA Turbo mode. */
- 	return false;
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  Check whether we need to use OFDM to sned MGNT frame for broadcom AP
-  *   input:  struct ieee80211_network *network   //current network we live
-  *  output:  none
-  *  return:  return 1 if true
--  * *****************************************************************************************************************/
-+ */
- static u8 HTIOTActIsMgntUseCCK6M(struct ieee80211_network *network)
- {
- 	u8	retValue = 0;
-@@ -504,7 +507,7 @@ void HTResetIOTSetting(PRT_HIGH_THROUGHPUT pHTInfo)
- 	pHTInfo->IOTPeer = HT_IOT_PEER_UNKNOWN;
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  Construct Capablility Element in Beacon... if HTEnable is turned on
-  *   input:  struct ieee80211_device*	ieee
-  *	     u8*			posHTCap //pointer to store Capability Ele
-@@ -513,7 +516,7 @@ void HTResetIOTSetting(PRT_HIGH_THROUGHPUT pHTInfo)
-  *  output:  none
-  *  return:  none
-  *  notice:  posHTCap can't be null and should be initialized before.
--  * *****************************************************************************************************************/
-+ */
- void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u8 *len, u8 IsEncrypt)
- {
- 	PRT_HIGH_THROUGHPUT	pHT = ieee->pHTInfo;
-@@ -557,8 +560,10 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 	pCapELE->PSMP			= 0; // Do not support now!!
- 	pCapELE->LSigTxopProtect	= 0; // Do not support now!!
- 
--	//MAC HT parameters info
--	// TODO: Nedd to take care of this part
-+	/*
-+	 * MAC HT parameters info
-+	 * TODO: Nedd to take care of this part
-+	 */
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "TX HT cap/info ele BW=%d MaxAMSDUSize:%d DssCCk:%d\n", pCapELE->ChlWidth, pCapELE->MaxAMSDUSize, pCapELE->DssCCk);
- 
- 	if (IsEncrypt) {
-@@ -580,8 +585,10 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 	if (pHT->IOTAction & HT_IOT_ACT_DISABLE_ALL_2SS)
- 		pCapELE->MCS[1] &= 0x00;
- 
--	// 2008.06.12
--	// For RTL819X, if pairwisekey = wep/tkip, ap is ralink, we support only MCS0~7.
-+	/*
-+	 * 2008.06.12
-+	 * For RTL819X, if pairwisekey = wep/tkip, ap is ralink, we support only MCS0~7.
-+	 */
- 	if (ieee->GetHalfNmodeSupportByAPsHandler(ieee->dev)) {
- 		int i;
- 
-@@ -609,7 +616,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- //	HTDebugHTCapability(posHTCap, (u8*)"HTConstructCapability()");
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  Construct  Information Element in Beacon... if HTEnable is turned on
-  *   input:  struct ieee80211_device*	ieee
-  *	     u8*			posHTCap //pointer to store Information Ele
-@@ -618,7 +625,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
-  *  output:  none
-  *  return:  none
-  *  notice:  posHTCap can't be null and be initialized before. only AP and IBSS sta should do this
--  * *****************************************************************************************************************/
-+ */
- void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *len, u8 IsEncrypt)
- {
- 	PRT_HIGH_THROUGHPUT	pHT = ieee->pHTInfo;
-@@ -659,24 +666,24 @@ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *le
- }
- 
- /*
--  *  According to experiment, Realtek AP to STA (based on rtl8190) may achieve best performance
--  *  if both STA and AP set limitation of aggregation size to 32K, that is, set AMPDU density to 2
--  *  (Ref: IEEE 11n specification). However, if Realtek STA associates to other AP, STA should set
--  *  limitation of aggregation size to 8K, otherwise, performance of traffic stream from STA to AP
--  *  will be much less than the traffic stream from AP to STA if both of the stream runs concurrently
--  *  at the same time.
--  *
--  *  Frame Format
--  *  Element ID		Length		OUI			Type1		Reserved
--  *  1 byte			1 byte		3 bytes		1 byte		1 byte
--  *
--  *  OUI		= 0x00, 0xe0, 0x4c,
--  *  Type	= 0x02
--  *  Reserved	= 0x00
--  *
--  *  2007.8.21 by Emily
--*/
--/********************************************************************************************************************
-+ *  According to experiment, Realtek AP to STA (based on rtl8190) may achieve best performance
-+ *  if both STA and AP set limitation of aggregation size to 32K, that is, set AMPDU density to 2
-+ *  (Ref: IEEE 11n specification). However, if Realtek STA associates to other AP, STA should set
-+ *  limitation of aggregation size to 8K, otherwise, performance of traffic stream from STA to AP
-+ *  will be much less than the traffic stream from AP to STA if both of the stream runs concurrently
-+ *  at the same time.
-+ *
-+ *  Frame Format
-+ *  Element ID		Length		OUI			Type1		Reserved
-+ *  1 byte			1 byte		3 bytes		1 byte		1 byte
-+ *
-+ *  OUI		= 0x00, 0xe0, 0x4c,
-+ *  Type	= 0x02
-+ *  Reserved	= 0x00
-+ *
-+ *  2007.8.21 by Emily
-+ */
-+/*
-  *function:  Construct  Information Element in Beacon... in RT2RT condition
-  *   input:  struct ieee80211_device*	ieee
-  *	     u8*			posRT2RTAgg //pointer to store Information Ele
-@@ -684,7 +691,7 @@ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *le
-  *  output:  none
-  *  return:  none
-  *  notice:
--  * *****************************************************************************************************************/
-+ */
- void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg, u8 *len)
- {
- 	if (!posRT2RTAgg) {
-@@ -726,13 +733,13 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
- #endif
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  Pick the right Rate Adaptive table to use
-  *   input:  struct ieee80211_device*	ieee
-  *	     u8*			pOperateMCS //A pointer to MCS rate bitmap
-  *  return:  always we return true
-  *  notice:
--  * *****************************************************************************************************************/
-+ */
- static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
- {
- 	u8					i;
-@@ -774,24 +781,24 @@ static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
- }
- 
- /*
--*	Description:
--*		This function will get the highest speed rate in input MCS set.
--*
--*	/param	Adapter			Pionter to Adapter entity
--*			pMCSRateSet		Pointer to MCS rate bitmap
--*			pMCSFilter		Pointer to MCS rate filter
--*
--*	/return	Highest MCS rate included in pMCSRateSet and filtered by pMCSFilter.
--*
--*/
--/********************************************************************************************************************
-+ *	Description:
-+ *		This function will get the highest speed rate in input MCS set.
-+ *
-+ *	/param	Adapter			Pionter to Adapter entity
-+ *			pMCSRateSet		Pointer to MCS rate bitmap
-+ *			pMCSFilter		Pointer to MCS rate filter
-+ *
-+ *	/return	Highest MCS rate included in pMCSRateSet and filtered by pMCSFilter.
-+ *
-+ */
-+/*
-  *function:  This function will get the highest speed rate in input MCS set.
-  *   input:  struct ieee80211_device*	ieee
-  *	     u8*			pMCSRateSet //Pointer to MCS rate bitmap
-  *	     u8*			pMCSFilter //Pointer to MCS rate filter
-  *  return:  Highest MCS rate included in pMCSRateSet and filtered by pMCSFilter
-  *  notice:
--  * *****************************************************************************************************************/
-+ */
- u8 HTGetHighestMCSRate(struct ieee80211_device *ieee, u8 *pMCSRateSet, u8 *pMCSFilter)
- {
- 	u8		i, j;
-@@ -829,14 +836,13 @@ u8 HTGetHighestMCSRate(struct ieee80211_device *ieee, u8 *pMCSRateSet, u8 *pMCSF
- }
- 
- /*
--**
--**1.Filter our operation rate set with AP's rate set
--**2.shall reference channel bandwidth, STBC, Antenna number
--**3.generate rate adative table for firmware
--**David 20060906
--**
--** \pHTSupportedCap: the connected STA's supported rate Capability element
--*/
-+ * 1.Filter our operation rate set with AP's rate set
-+ * 2.shall reference channel bandwidth, STBC, Antenna number
-+ * 3.generate rate adative table for firmware
-+ * David 20060906
-+ *
-+ * \pHTSupportedCap: the connected STA's supported rate Capability element
-+ */
- static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
- 			  u8 *pOperateMCS)
- {
-@@ -849,18 +855,20 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
- 
- 	// TODO: adjust our operational rate set  according to our channel bandwidth, STBC and Antenna number
- 
--	// TODO: fill suggested rate adaptive rate index and give firmware info using Tx command packet
--	// we also shall suggested the first start rate set according to our singal strength
-+	/*
-+	 * TODO: fill suggested rate adaptive rate index and give firmware info using Tx command packet
-+	 * we also shall suggested the first start rate set according to our singal strength
-+	 */
- 	HT_PickMCSRate(ieee, pOperateMCS);
- 
- 	// For RTL819X, if pairwisekey = wep/tkip, we support only MCS0~7.
- 	if (ieee->GetHalfNmodeSupportByAPsHandler(ieee->dev))
- 		pOperateMCS[1] = 0;
- 
--	//
--	// For RTL819X, we support only MCS0~15.
--	// And also, we do not know how to use MCS32 now.
--	//
-+	/*
-+	 * For RTL819X, we support only MCS0~15.
-+	 * And also, we do not know how to use MCS32 now.
-+	 */
- 	for (i = 2; i <= 15; i++)
- 		pOperateMCS[i] = 0;
- 
-@@ -911,30 +919,33 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 
- 	pHTInfo->bCurTxBW40MHz = (pPeerHTInfo->RecommemdedTxWidth == 1);
- 
--	//
--	// Update short GI/ long GI setting
--	//
--	// TODO:
-+	/*
-+	 * Update short GI/ long GI setting
-+	 *
-+	 * TODO:
-+	 */
- 	pHTInfo->bCurShortGI20MHz = pHTInfo->bRegShortGI20MHz &&
- 				    (pPeerHTCap->ShortGI20Mhz == 1);
- 	pHTInfo->bCurShortGI40MHz = pHTInfo->bRegShortGI40MHz &&
- 				   (pPeerHTCap->ShortGI40Mhz == 1);
- 
--	//
--	// Config TX STBC setting
--	//
--	// TODO:
-+	/*
-+	 * Config TX STBC setting
-+	 *
-+	 * TODO:
-+	 */
- 
--	//
--	// Config DSSS/CCK  mode in 40MHz mode
--	//
--	// TODO:
-+	/*
-+	 * Config DSSS/CCK  mode in 40MHz mode
-+	 *
-+	 * TODO:
-+	 */
- 	pHTInfo->bCurSuppCCK = pHTInfo->bRegSuppCCK &&
- 			       (pPeerHTCap->DssCCk == 1);
- 
--	//
--	// Config and configure A-MSDU setting
--	//
-+	/*
-+	 * Config and configure A-MSDU setting
-+	 */
- 	pHTInfo->bCurrent_AMSDU_Support = pHTInfo->bAMSDU_Support;
- 
- 	nMaxAMSDUSize = (pPeerHTCap->MaxAMSDUSize == 0) ? 3839 : 7935;
-@@ -943,14 +954,15 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 		pHTInfo->nCurrent_AMSDU_MaxSize = nMaxAMSDUSize;
- 	else
- 		pHTInfo->nCurrent_AMSDU_MaxSize = pHTInfo->nAMSDU_MaxSize;
--	//
--	// Config A-MPDU setting
--	//
-+	/*
-+	 * Config A-MPDU setting
-+	 */
- 	pHTInfo->bCurrentAMPDUEnable = pHTInfo->bAMPDUEnable;
- 
--	// <1> Decide AMPDU Factor
--
--	// By Emily
-+	/*
-+	 * <1> Decide AMPDU Factor
-+	 * By Emily
-+	 */
- 	if (!pHTInfo->bRegRT2RTAggregation) {
- 		// Decide AMPDU Factor according to protocol handshake
- 		if (pHTInfo->AMPDU_Factor > pPeerHTCap->MaxRxAMPDUFactor)
-@@ -958,8 +970,10 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 		else
- 			pHTInfo->CurrentAMPDUFactor = pHTInfo->AMPDU_Factor;
- 	} else {
--		// Set MPDU density to 2 to Realtek AP, and set it to 0 for others
--		// Replace MPDU factor declared in original association response frame format. 2007.08.20 by Emily
-+		/*
-+		 * Set MPDU density to 2 to Realtek AP, and set it to 0 for others
-+		 * Replace MPDU factor declared in original association response frame format. 2007.08.20 by Emily
-+		 */
- 		if (ieee->current_network.bssht.bdRT2RTAggregation) {
- 			if (ieee->pairwise_key_type != KEY_TYPE_NA)
- 				// Realtek may set 32k in security mode and 64k for others
-@@ -974,8 +988,10 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 		}
- 	}
- 
--	// <2> Set AMPDU Minimum MPDU Start Spacing
--	// 802.11n 3.0 section 9.7d.3
-+	/*
-+	 * <2> Set AMPDU Minimum MPDU Start Spacing
-+	 * 802.11n 3.0 section 9.7d.3
-+	 */
- 	if (pHTInfo->MPDU_Density > pPeerHTCap->MPDUDensity)
- 		pHTInfo->CurrentMPDUDensity = pHTInfo->MPDU_Density;
- 	else
-@@ -997,22 +1013,24 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 	// Rx Reorder Setting
- 	pHTInfo->bCurRxReorderEnable = pHTInfo->bRegRxReorderEnable;
- 
--	//
--	// Filter out unsupported HT rate for this AP
--	// Update RATR table
--	// This is only for 8190 ,8192 or later product which using firmware to handle rate adaptive mechanism.
--	//
-+	/*
-+	 * Filter out unsupported HT rate for this AP
-+	 * Update RATR table
-+	 * This is only for 8190 ,8192 or later product which using firmware to handle rate adaptive mechanism.
-+	 */
- 
--	// Handle Ralink AP bad MCS rate set condition. Joseph.
--	// This fix the bug of Ralink AP. This may be removed in the future.
-+	/*
-+	 * Handle Ralink AP bad MCS rate set condition. Joseph.
-+	 * This fix the bug of Ralink AP. This may be removed in the future.
-+	 */
- 	if (pPeerHTCap->MCS[0] == 0)
- 		pPeerHTCap->MCS[0] = 0xff;
- 
- 	HTFilterMCSRate(ieee, pPeerHTCap->MCS, ieee->dot11HTOperationalRateSet);
- 
--	//
--	// Config MIMO Power Save setting
--	//
-+	/*
-+	 * Config MIMO Power Save setting
-+	 */
- 	pHTInfo->PeerMimoPs = pPeerHTCap->MimoPwrSave;
- 	if (pHTInfo->PeerMimoPs == MIMO_PS_STATIC)
- 		pMcsFilter = MCS_FILTER_1SS;
-@@ -1023,28 +1041,28 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 	ieee->HTHighestOperaRate = HTGetHighestMCSRate(ieee, ieee->dot11HTOperationalRateSet, pMcsFilter);
- 	ieee->HTCurrentOperaRate = ieee->HTHighestOperaRate;
- 
--	//
--	// Config current operation mode.
--	//
-+	/*
-+	 * Config current operation mode.
-+	 */
- 	pHTInfo->CurrentOpMode = pPeerHTInfo->OptMode;
- }
- 
- void HTSetConnectBwModeCallback(struct ieee80211_device *ieee);
--/********************************************************************************************************************
-+/*
-  *function:  initialize HT info(struct PRT_HIGH_THROUGHPUT)
-  *   input:  struct ieee80211_device*	ieee
-  *  output:  none
-  *  return:  none
-  *  notice: This function is called when *  (1) MPInitialization Phase *  (2) Receiving of Deauthentication from AP
--********************************************************************************************************************/
-+ */
- // TODO: Should this funciton be called when receiving of Disassociation?
- void HTInitializeHTInfo(struct ieee80211_device *ieee)
- {
- 	PRT_HIGH_THROUGHPUT pHTInfo = ieee->pHTInfo;
- 
--	//
--	// These parameters will be reset when receiving deauthentication packet
--	//
-+	/*
-+	 * These parameters will be reset when receiving deauthentication packet
-+	 */
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "===========>%s()\n", __func__);
- 	pHTInfo->bCurrentHTSupport = false;
- 
-@@ -1057,10 +1075,12 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
- 	pHTInfo->bCurShortGI40MHz = false;
- 	pHTInfo->bForcedShortGI = false;
- 
--	// CCK rate support
--	// This flag is set to true to support CCK rate by default.
--	// It will be affected by "pHTInfo->bRegSuppCCK" and AP capabilities only when associate to
--	// 11N BSS.
-+	/*
-+	 * CCK rate support
-+	 * This flag is set to true to support CCK rate by default.
-+	 * It will be affected by "pHTInfo->bRegSuppCCK" and AP capabilities only when associate to
-+	 * 11N BSS.
-+	 */
- 	pHTInfo->bCurSuppCCK = true;
- 
- 	// AMSDU related
-@@ -1099,13 +1119,13 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
- 	}
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  initialize Bss HT structure(struct PBSS_HT)
-  *   input:  PBSS_HT pBssHT //to be initialized
-  *  output:  none
-  *  return:  none
-  *  notice: This function is called when initialize network structure
--********************************************************************************************************************/
-+ */
- void HTInitializeBssDesc(PBSS_HT pBssHT)
- {
- 	pBssHT->bdSupportHT = false;
-@@ -1120,14 +1140,14 @@ void HTInitializeBssDesc(PBSS_HT pBssHT)
- 	pBssHT->bdRT2RTLongSlotTime = false;
- }
- 
--/********************************************************************************************************************
-+/*
-  *function:  initialize Bss HT structure(struct PBSS_HT)
-  *   input:  struct ieee80211_device	*ieee
-  *	     struct ieee80211_network	*pNetwork //usually current network we are live in
-  *  output:  none
-  *  return:  none
-  *  notice: This function should ONLY be called before association
--********************************************************************************************************************/
-+ */
- void HTResetSelfAndSavePeerSetting(struct ieee80211_device *ieee,	struct ieee80211_network *pNetwork)
- {
- 	PRT_HIGH_THROUGHPUT		pHTInfo = ieee->pHTInfo;
-@@ -1166,8 +1186,10 @@ void HTResetSelfAndSavePeerSetting(struct ieee80211_device *ieee,	struct ieee802
- 		// Determine the IOT Peer Vendor.
- 		HTIOTPeerDetermine(ieee);
- 
--		// Decide IOT Action
--		// Must be called after the parameter of pHTInfo->bCurrentRT2RTAggregation is decided
-+		/*
-+		 * Decide IOT Action
-+		 * Must be called after the parameter of pHTInfo->bCurrentRT2RTAggregation is decided
-+		 */
- 		pHTInfo->IOTAction = 0;
- 		bIOTAction = HTIOTActIsDisableMCS14(ieee, pNetwork->bssid);
- 		if (bIOTAction)
-@@ -1208,27 +1230,27 @@ void HTUpdateSelfAndPeerSetting(struct ieee80211_device *ieee,	struct ieee80211_
- 	PHT_INFORMATION_ELE		pPeerHTInfo = (PHT_INFORMATION_ELE)pNetwork->bssht.bdHTInfoBuf;
- 
- 	if (pHTInfo->bCurrentHTSupport) {
--		//
--		// Config current operation mode.
--		//
-+		/*
-+		 * Config current operation mode.
-+		 */
- 		if (pNetwork->bssht.bdHTInfoLen != 0)
- 			pHTInfo->CurrentOpMode = pPeerHTInfo->OptMode;
- 
--		//
--		// <TODO: Config according to OBSS non-HT STA present!!>
--		//
-+		/*
-+		 * <TODO: Config according to OBSS non-HT STA present!!>
-+		 */
- 	}
- }
- EXPORT_SYMBOL(HTUpdateSelfAndPeerSetting);
- 
--/********************************************************************************************************************
-+/*
-  *function:  check whether HT control field exists
-  *   input:  struct ieee80211_device	*ieee
-  *	     u8*			pFrame //coming skb->data
-  *  output:  none
-  *  return:  return true if HT control field exists(false otherwise)
-  *  notice:
--********************************************************************************************************************/
-+ */
- u8 HTCCheck(struct ieee80211_device *ieee, u8 *pFrame)
- {
- 	if (ieee->pHTInfo->bCurrentHTSupport) {
-@@ -1240,9 +1262,9 @@ u8 HTCCheck(struct ieee80211_device *ieee, u8 *pFrame)
- 	return false;
- }
- 
--//
--// This function set bandwidth mode in protocol layer.
--//
-+/*
-+ * This function set bandwidth mode in protocol layer.
-+ */
- void HTSetConnectBwMode(struct ieee80211_device *ieee, HT_CHANNEL_WIDTH	Bandwidth, HT_EXTCHNL_OFFSET	Offset)
- {
- 	PRT_HIGH_THROUGHPUT pHTInfo = ieee->pHTInfo;
-@@ -1280,10 +1302,12 @@ void HTSetConnectBwMode(struct ieee80211_device *ieee, HT_CHANNEL_WIDTH	Bandwidt
- 
- 	pHTInfo->bSwBwInProgress = true;
- 
--	// TODO: 2007.7.13 by Emily Wait 2000ms  in order to guarantee that switching
--	//   bandwidth is executed after scan is finished. It is a temporal solution
--	//   because software should ganrantee the last operation of switching bandwidth
--	//   is executed properlly.
-+	/*
-+	 * TODO: 2007.7.13 by Emily Wait 2000ms  in order to guarantee that switching
-+	 *   bandwidth is executed after scan is finished. It is a temporal solution
-+	 *   because software should ganrantee the last operation of switching bandwidth
-+	 *   is executed properlly.
-+	 */
- 	HTSetConnectBwModeCallback(ieee);
- 
- //	spin_unlock_irqrestore(&(ieee->bw_spinlock), flags);
--- 
-2.17.1
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+
 
