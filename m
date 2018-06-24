@@ -6,44 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540EEC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB425C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1994B25046
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:39:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1994B25046
+	by mail.kernel.org (Postfix) with ESMTP id 752F225049
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 752F225049
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755813AbeFXPjq (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:39:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59840 "EHLO
+        id S932242AbeFXPkC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:40:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59874 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751852AbeFXPjo (ORCPT
+        with ESMTP id S932203AbeFXPj7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:39:44 -0400
+        Sun, 24 Jun 2018 11:39:59 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85A5749F;
-        Sun, 24 Jun 2018 15:39:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6FD349F;
+        Sun, 24 Jun 2018 15:39:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Song Liu <songliubraving@fb.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <liu.song.a23@gmail.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Tariq Toukan <tariqt@mellanox.com>
-Subject: [PATCH 4.16 54/64] genirq/affinity: Defer affinity setting if irq chip is busy
-Date:   Sun, 24 Jun 2018 23:22:35 +0800
-Message-Id: <20180624142747.042193053@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Watson <davejwatson@fb.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 10/70] tls: fix waitall behavior in tls_sw_recvmsg
+Date:   Sun, 24 Jun 2018 23:22:02 +0800
+Message-Id: <20180624142741.104630205@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
-References: <20180624142743.613370789@linuxfoundation.org>
+In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
+References: <20180624142740.481662434@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -53,98 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 12f47073a40f6aa75119d8f5df4077b7f334cced upstream.
+[ Upstream commit 06030dbaf3b6c5801dcdb7fe4fbab3b91c8da84a ]
 
-The case that interrupt affinity setting fails with -EBUSY can be handled
-in the kernel completely by using the already available generic pending
-infrastructure.
+Current behavior in tls_sw_recvmsg() is to wait for incoming tls
+messages and copy up to exactly len bytes of data that the user
+provided. This is problematic in the sense that i) if no packet
+is currently queued in strparser we keep waiting until one has been
+processed and pushed into tls receive layer for tls_wait_data() to
+wake up and push the decrypted bits to user space. Given after
+tls decryption, we're back at streaming data, use sock_rcvlowat()
+hint from tcp socket instead. Retain current behavior with MSG_WAITALL
+flag and otherwise use the hint target for breaking the loop and
+returning to application. This is done if currently no ctx->recv_pkt
+is ready, otherwise continue to process it from our strparser
+backlog.
 
-If a irq_chip::set_affinity() fails with -EBUSY, handle it like the
-interrupts for which irq_chip::set_affinity() can only be invoked from
-interrupt context. Copy the new affinity mask to irq_desc::pending_mask and
-set the affinity pending bit. The next raised interrupt for the affected
-irq will check the pending bit and try to set the new affinity from the
-handler. This avoids that -EBUSY is returned when an affinity change is
-requested from user space and the previous change has not been cleaned
-up. The new affinity will take effect when the next interrupt is raised
-from the device.
-
-Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Song Liu <songliubraving@fb.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <liu.song.a23@gmail.com>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tariq Toukan <tariqt@mellanox.com>
-Link: https://lkml.kernel.org/r/20180604162224.819273597@linutronix.de
+Fixes: c46234ebb4d1 ("tls: RX path for ktls")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Dave Watson <davejwatson@fb.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/irq/manage.c |   37 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 2 deletions(-)
+ net/tls/tls_sw.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -205,6 +205,39 @@ int irq_do_set_affinity(struct irq_data
- 	return ret;
- }
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -755,7 +755,7 @@ int tls_sw_recvmsg(struct sock *sk,
+ 	struct sk_buff *skb;
+ 	ssize_t copied = 0;
+ 	bool cmsg = false;
+-	int err = 0;
++	int target, err = 0;
+ 	long timeo;
  
-+#ifdef CONFIG_GENERIC_PENDING_IRQ
-+static inline int irq_set_affinity_pending(struct irq_data *data,
-+					   const struct cpumask *dest)
-+{
-+	struct irq_desc *desc = irq_data_to_desc(data);
-+
-+	irqd_set_move_pending(data);
-+	irq_copy_pending(desc, dest);
-+	return 0;
-+}
-+#else
-+static inline int irq_set_affinity_pending(struct irq_data *data,
-+					   const struct cpumask *dest)
-+{
-+	return -EBUSY;
-+}
-+#endif
-+
-+static int irq_try_set_affinity(struct irq_data *data,
-+				const struct cpumask *dest, bool force)
-+{
-+	int ret = irq_do_set_affinity(data, dest, force);
-+
-+	/*
-+	 * In case that the underlying vector management is busy and the
-+	 * architecture supports the generic pending mechanism then utilize
-+	 * this to avoid returning an error to user space.
-+	 */
-+	if (ret == -EBUSY && !force)
-+		ret = irq_set_affinity_pending(data, dest);
-+	return ret;
-+}
-+
- int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
- 			    bool force)
- {
-@@ -215,8 +248,8 @@ int irq_set_affinity_locked(struct irq_d
- 	if (!chip || !chip->irq_set_affinity)
- 		return -EINVAL;
+ 	flags |= nonblock;
+@@ -765,6 +765,7 @@ int tls_sw_recvmsg(struct sock *sk,
  
--	if (irq_can_move_pcntxt(data)) {
--		ret = irq_do_set_affinity(data, mask, force);
-+	if (irq_can_move_pcntxt(data) && !irqd_is_setaffinity_pending(data)) {
-+		ret = irq_try_set_affinity(data, mask, force);
- 	} else {
- 		irqd_set_move_pending(data);
- 		irq_copy_pending(desc, mask);
+ 	lock_sock(sk);
+ 
++	target = sock_rcvlowat(sk, flags & MSG_WAITALL, len);
+ 	timeo = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
+ 	do {
+ 		bool zc = false;
+@@ -857,6 +858,9 @@ fallback_to_reg_recv:
+ 					goto recv_end;
+ 			}
+ 		}
++		/* If we have a new message from strparser, continue now. */
++		if (copied >= target && !ctx->recv_pkt)
++			break;
+ 	} while (len);
+ 
+ recv_end:
 
 
