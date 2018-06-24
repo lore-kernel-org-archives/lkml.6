@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDB3C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1554C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A86925074
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:41:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A86925074
+	by mail.kernel.org (Postfix) with ESMTP id 712C325063
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 712C325063
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756004AbeFXPlk (ORCPT
+        id S1756016AbeFXPlq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:41:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60006 "EHLO
+        Sun, 24 Jun 2018 11:41:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60014 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755737AbeFXPlg (ORCPT
+        with ESMTP id S1755737AbeFXPln (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:41:36 -0400
+        Sun, 24 Jun 2018 11:41:43 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 924AD49F;
-        Sun, 24 Jun 2018 15:41:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84A0349F;
+        Sun, 24 Jun 2018 15:41:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
-Subject: [PATCH 4.17 22/70] driver core: Dont ignore class_dir_create_and_add() failure.
-Date:   Sun, 24 Jun 2018 23:22:14 +0800
-Message-Id: <20180624142741.851579120@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.17 23/70] Btrfs: allow empty subvol= again
+Date:   Sun, 24 Jun 2018 23:22:15 +0800
+Message-Id: <20180624142741.907866859@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -51,79 +50,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Omar Sandoval <osandov@fb.com>
 
-commit 84d0c27d6233a9ba0578b20f5a09701eb66cee42 upstream.
+commit 37becec95ac31b209eb1c8e096f1093a7db00f32 upstream.
 
-syzbot is hitting WARN() at kernfs_add_one() [1].
-This is because kernfs_create_link() is confused by previous device_add()
-call which continued without setting dev->kobj.parent field when
-get_device_parent() failed by memory allocation fault injection.
-Fix this by propagating the error from class_dir_create_and_add() to
-the calllers of get_device_parent().
+I got a report that after upgrading to 4.16, someone's filesystems
+weren't mounting:
 
-[1] https://syzkaller.appspot.com/bug?id=fae0fb607989ea744526d1c082a5b8de6529116f
+[   23.845852] BTRFS info (device loop0): unrecognized mount option 'subvol='
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable <stable@vger.kernel.org>
+Before 4.16, this mounted the default subvolume. It turns out that this
+empty "subvol=" is actually an application bug, but it was causing the
+application to fail, so it's an ABI break if you squint.
+
+The generic parsing code we use for mount options (match_token())
+doesn't match an empty string as "%s". Previously, setup_root_args()
+removed the "subvol=" string, but the mount path was cleaned up to not
+need that. Add a dummy Opt_subvol_empty to fix this.
+
+The simple workaround is to use / or . for the value of 'subvol=' .
+
+Fixes: 312c89fbca06 ("btrfs: cleanup btrfs_mount() using btrfs_mount_root()")
+CC: stable@vger.kernel.org # 4.16+
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/core.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ fs/btrfs/super.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -1467,7 +1467,7 @@ class_dir_create_and_add(struct class *c
- 
- 	dir = kzalloc(sizeof(*dir), GFP_KERNEL);
- 	if (!dir)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	dir->class = class;
- 	kobject_init(&dir->kobj, &class_dir_ktype);
-@@ -1477,7 +1477,7 @@ class_dir_create_and_add(struct class *c
- 	retval = kobject_add(&dir->kobj, parent_kobj, "%s", class->name);
- 	if (retval < 0) {
- 		kobject_put(&dir->kobj);
--		return NULL;
-+		return ERR_PTR(retval);
- 	}
- 	return &dir->kobj;
- }
-@@ -1784,6 +1784,10 @@ int device_add(struct device *dev)
- 
- 	parent = get_device(dev->parent);
- 	kobj = get_device_parent(dev, parent);
-+	if (IS_ERR(kobj)) {
-+		error = PTR_ERR(kobj);
-+		goto parent_error;
-+	}
- 	if (kobj)
- 		dev->kobj.parent = kobj;
- 
-@@ -1882,6 +1886,7 @@ done:
- 	kobject_del(&dev->kobj);
-  Error:
- 	cleanup_glue_dir(dev, glue_dir);
-+parent_error:
- 	put_device(parent);
- name_error:
- 	kfree(dev->p);
-@@ -2701,6 +2706,11 @@ int device_move(struct device *dev, stru
- 	device_pm_lock();
- 	new_parent = get_device(new_parent);
- 	new_parent_kobj = get_device_parent(dev, new_parent);
-+	if (IS_ERR(new_parent_kobj)) {
-+		error = PTR_ERR(new_parent_kobj);
-+		put_device(new_parent);
-+		goto out;
-+	}
- 
- 	pr_debug("device: '%s': %s: moving to '%s'\n", dev_name(dev),
- 		 __func__, new_parent ? dev_name(new_parent) : "<NULL>");
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -323,6 +323,7 @@ enum {
+ 	Opt_ssd, Opt_nossd,
+ 	Opt_ssd_spread, Opt_nossd_spread,
+ 	Opt_subvol,
++	Opt_subvol_empty,
+ 	Opt_subvolid,
+ 	Opt_thread_pool,
+ 	Opt_treelog, Opt_notreelog,
+@@ -388,6 +389,7 @@ static const match_table_t tokens = {
+ 	{Opt_ssd_spread, "ssd_spread"},
+ 	{Opt_nossd_spread, "nossd_spread"},
+ 	{Opt_subvol, "subvol=%s"},
++	{Opt_subvol_empty, "subvol="},
+ 	{Opt_subvolid, "subvolid=%s"},
+ 	{Opt_thread_pool, "thread_pool=%u"},
+ 	{Opt_treelog, "treelog"},
+@@ -461,6 +463,7 @@ int btrfs_parse_options(struct btrfs_fs_
+ 			btrfs_set_opt(info->mount_opt, DEGRADED);
+ 			break;
+ 		case Opt_subvol:
++		case Opt_subvol_empty:
+ 		case Opt_subvolid:
+ 		case Opt_subvolrootid:
+ 		case Opt_device:
 
 
