@@ -1,178 +1,77 @@
 Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24153C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 10:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03A6C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 10:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B4724E7F
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 10:02:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ixb6/wkc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B4724E7F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5989924E8A
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 10:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5989924E8A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752093AbeFXKC4 (ORCPT
+        id S1751999AbeFXKPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 06:02:56 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34301 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751853AbeFXKCy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 06:02:54 -0400
-Received: by mail-wr0-f195.google.com with SMTP id a12-v6so10690016wro.1;
-        Sun, 24 Jun 2018 03:02:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=STbLXZFkP8lvq39nh91MgIemr4Whwu32he1l/Wdipdo=;
-        b=Ixb6/wkclVKxXDKUlohVBxxj3IjPN/OYhFd/HkdSZJlRTR64PKhGZyAdWGIXPiDQQY
-         TQQGIl47k+d5WBJrcudMXYiw7w5+xXGAJx2/Rn7FE8TwYEMeBrkU+D+ZZMljnfqcybdS
-         wFQtQ7xXAl/xzcM5FbuJC8DKSf57kCGP6eGMMDwM4gZkoiXFV/GcAZJ5UOpm7Cl82bpI
-         6pJHtkMIX9rSOiiks1FQd9UN3CSO2CPpHSOVlL5Ogw9Zqyq5MIhBMo22C3Lb2fdi88mo
-         p+TNo1MWnVOl16+Ttc/auTtSRxuHMhRMVDFVbzq/T4wRGzkdSWKTKbygu3JLztZ7qr4t
-         PxpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=STbLXZFkP8lvq39nh91MgIemr4Whwu32he1l/Wdipdo=;
-        b=OOeAYmVU6xdD1x9MfnioTMLDbGq1E0pPT4vUnWA+9rE5gnvXho5MIDd4wcLghTa39g
-         nPKxUV60p47LUGzfczeK1oGf6DPielhkZCMpSPZ8n3Pw5CyHhvDF8F3Esa2sxr6ykKvX
-         AXmHPmcXgjT2qGodGA/ln2kLJN1QBLJWPO4CvQ9ZJojAdufCRApt5hf7AHUX8lBV5+BE
-         6He8VfyZJNi3UmRyuxcZryz0GB/40G2u5ksia6kjmmIvo/s/wrLeXIeVxKQY+pyNTDng
-         7CY97zBUW+iBxt7zHfTqhGJJyHK+mzhVrL/4HuG5ULTX26ekQjyXt4ZzQZEaqMP4rQN0
-         cGQw==
-X-Gm-Message-State: APt69E14P8zp3OBxB5htBtd1fT1J4BtRLCF7MHmirM/QVvCQP7F5u98G
-        PyLxkpIVb3niANd9LcWfDUk=
-X-Google-Smtp-Source: AAOMgpccyIAdg8fawzVL34ACtR9f8rexQmWHn4MXpq/tTiQamGKeheyv+y7T3XaMdygfUd/dFH2RBg==
-X-Received: by 2002:adf:87f1:: with SMTP id c46-v6mr6619747wrc.246.1529834572919;
-        Sun, 24 Jun 2018 03:02:52 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id u15-v6sm9436329wma.37.2018.06.24.03.02.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 24 Jun 2018 03:02:52 -0700 (PDT)
-Date:   Sun, 24 Jun 2018 12:02:50 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     tglx@linutronix.de,
-        syzbot+a4eb8c7766952a1ca872@syzkaller.appspotmail.com,
-        ast@kernel.org, daniel@iogearbox.net, hpa@zytor.com,
-        kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, x86@kernel.org,
-        yoshfuji@linux-ipv6.org, peterz@infradead.org
-Subject: Re: BUG: unable to handle kernel paging request in
- bpf_int_jit_compile
-Message-ID: <20180624100249.GA9493@gmail.com>
-References: <000000000000d48c8e056f5b6c67@google.com>
- <alpine.DEB.2.21.1806240849150.8650@nanos.tec.linutronix.de>
- <20180624.161411.1560796210597132716.davem@davemloft.net>
+        Sun, 24 Jun 2018 06:15:11 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:39330 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751596AbeFXKPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 06:15:09 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Y_JPkAkR4ruk; Sun, 24 Jun 2018 12:15:08 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BE50300329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:300:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D518B1EC0299;
+        Sun, 24 Jun 2018 12:15:07 +0200 (CEST)
+Date:   Sun, 24 Jun 2018 12:15:03 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@kernel.org>, linux-crypto@vger.kernel.org,
+        Mike Galbraith <efault@gmx.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        torvalds@linux-foundation.org, jpoimboe@redhat.com,
+        luto@kernel.org, peterz@infradead.org, brgerst@gmail.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+        h.peter.anvin@intel.com,
+        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] x86/crypto: Add missing RETs
+Message-ID: <20180624101503.GA26953@zn.tnic>
+References: <tip-51bad67ffbce0aaa44579f84ef5d05597054ec6a@git.kernel.org>
+ <1529235613.4572.7.camel@gmx.de>
+ <20180617120012.GB16877@zn.tnic>
+ <1529242717.4472.3.camel@gmx.de>
+ <1529244178.4674.1.camel@gmx.de>
+ <20180617194747.GA21160@zn.tnic>
+ <1529289279.31745.3.camel@gmx.de>
+ <20180623103622.GA2760@zn.tnic>
+ <20180624071105.GA29407@gmail.com>
+ <alpine.DEB.2.21.1806240911520.8650@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180624.161411.1560796210597132716.davem@davemloft.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.DEB.2.21.1806240911520.8650@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jun 24, 2018 at 09:12:35AM +0200, Thomas Gleixner wrote:
+> We should really have something like that exactly to catch cases like this.
 
-* David Miller <davem@davemloft.net> wrote:
+Sounds like a good use case for the snake language.
 
-> From: Thomas Gleixner <tglx@linutronix.de>
-> Date: Sun, 24 Jun 2018 09:09:09 +0200 (CEST)
-> 
-> > I'm really tempted to make the BPF config switch depend on BROKEN. 
-> 
-> This really isn't necessary Thomas.
-> 
-> Whoever wrote the code didn't understand that set ro can legitimately
-> fail.
+-- 
+Regards/Gruss,
+    Boris.
 
-No, that's *NOT* the only thing that happened, according to the Git history.
-
-The first use of set_memory_ro() in include/linux/filter.h was added by
-this commit almost four years ago:
-
-  # 2014/09
-  60a3b2253c41 ("net: bpf: make eBPF interpreter images read-only")
-
-... and yes, that commit didn't anticipate the (in hindsight) obvious property of 
-a function that changes global kernel mappings that if it is used after bootup 
-without locking it 'may fail'. So that commit slipping through is 'shit happens' 
-and I don't think we ever complained about such things slipping through.
-
-But what happened after that is not so good:
-
-A bit over two years later a crash was found:
-
-    Eric and Willem reported that they recently saw random crashes when
-    JIT was in use and bisected this to 74451e66d516 ("bpf: make jited
-    programs visible in traces"). Issue was that the consolidation part
-    added bpf_jit_binary_unlock_ro() that would unlock previously made
-    read-only memory back to read-write.
-
-... but instead of fixing it for real, it was only tinkered with:
-
-  # 2017//02
-  9d876e79df6a ("bpf: fix unlocking of jited image when module ronx not set")
-
-... but the problems persisted:
-
-    Improve bpf_{prog,jit_binary}_{un,}lock_ro() by throwing a
-    one-time warning in case of an error when the image couldn't
-    be set read-only, and also mark struct bpf_prog as locked when
-    bpf_prog_lock_ro() was called.
-
-... so the warnings Thomas complained about here were then added a month later:
-
-  # 2017/03
-  65869a47f348 ("bpf: improve read-only handling")
-
-It 'improved' nothing of the sort, and the warnings and 'debug code' shows that
-the author was aware that these functions could actually fail. To quote the fine
-code, introduced a year ago:
-
-                WARN_ON_ONCE(set_memory_rw((unsigned long)fp, fp->pages));
-                /* In case set_memory_rw() fails, we want to be the first
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                 * to crash here instead of some random place later on.
-                 */
-                fp->locked = 0;
-
-... and then, this month, it was tweaked *YET ANOTHER TIME*:
-
-    bpf: reject any prog that failed read-only lock
-
-    We currently lock any JITed image as read-only via bpf_jit_binary_lock_ro()
-    as well as the BPF image as read-only through bpf_prog_lock_ro(). In
-    the case any of these would fail we throw a WARN_ON_ONCE() in order to
-    yell loudly to the log. Perhaps, to some extend, this may be comparable
-    to an allocation where __GFP_NOWARN is explicitly not set.
-
-  # 2018/06
-  9facc336876f ("bpf: reject any prog that failed read-only lock")
-
-The tone of uncertainty of the changelog, combined with the unfixed typo in it, 
-suggests that this commit too was just waved through to upstream without any real 
-review and without much design thinking behind it.
-
-And yes, this was still not the right fix, as the fuzzer crash reported in this 
-thread outlines - we'll probably need a 5th commit?
-
-> So let's correct that instead of flaming a feature.
-
-So accusing Thomas of 'flaming a feature' is a really unfair attack in light of 
-all the details above.
-
-Thanks,
-
-	Ingo
+Good mailing practices for 400: avoid top-posting and trim the reply.
