@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAA0C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 339D0C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87145250E7
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:50:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87145250E7
+	by mail.kernel.org (Postfix) with ESMTP id DC227250E9
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:50:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC227250E9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934164AbeFXPuX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:50:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33400 "EHLO
+        id S934183AbeFXPuc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:50:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPuV (ORCPT
+        with ESMTP id S932073AbeFXPu2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:50:21 -0400
+        Sun, 24 Jun 2018 11:50:28 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E57462C;
-        Sun, 24 Jun 2018 15:50:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7826B2C;
+        Sun, 24 Jun 2018 15:50:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        stable@vger.kernel.org, Julian Anastasov <ja@ssi.bg>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 03/39] netfilter: ebtables: handle string from userspace with care
-Date:   Sun, 24 Jun 2018 23:23:50 +0800
-Message-Id: <20180624152352.391893156@linuxfoundation.org>
+Subject: [PATCH 4.9 04/39] ipvs: fix buffer overflow with sync daemon and service
+Date:   Sun, 24 Jun 2018 23:23:51 +0800
+Message-Id: <20180624152352.499199890@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624152352.038950449@linuxfoundation.org>
 References: <20180624152352.038950449@linuxfoundation.org>
@@ -50,100 +51,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Julian Anastasov <ja@ssi.bg>
 
-[ Upstream commit 94c752f99954797da583a84c4907ff19e92550a4 ]
+[ Upstream commit 52f96757905bbf0edef47f3ee6c7c784e7f8ff8a ]
 
-strlcpy() can't be safely used on a user-space provided string,
-as it can try to read beyond the buffer's end, if the latter is
-not NULL terminated.
+syzkaller reports for buffer overflow for interface name
+when starting sync daemons [1]
 
-Leveraging the above, syzbot has been able to trigger the following
-splat:
+What we do is that we copy user structure into larger stack
+buffer but later we search NUL past the stack buffer.
+The same happens for sched_name when adding/editing virtual server.
 
-BUG: KASAN: stack-out-of-bounds in strlcpy include/linux/string.h:300
-[inline]
-BUG: KASAN: stack-out-of-bounds in compat_mtw_from_user
-net/bridge/netfilter/ebtables.c:1957 [inline]
-BUG: KASAN: stack-out-of-bounds in ebt_size_mwt
-net/bridge/netfilter/ebtables.c:2059 [inline]
-BUG: KASAN: stack-out-of-bounds in size_entry_mwt
-net/bridge/netfilter/ebtables.c:2155 [inline]
-BUG: KASAN: stack-out-of-bounds in compat_copy_entries+0x96c/0x14a0
-net/bridge/netfilter/ebtables.c:2194
-Write of size 33 at addr ffff8801b0abf888 by task syz-executor0/4504
+We are restricted by IP_VS_SCHEDNAME_MAXLEN and IP_VS_IFNAME_MAXLEN
+being used as size in include/uapi/linux/ip_vs.h, so they
+include the space for NUL.
 
-CPU: 0 PID: 4504 Comm: syz-executor0 Not tainted 4.17.0-rc2+ #40
+As using strlcpy is wrong for unsafe source, replace it with
+strscpy and add checks to return EINVAL if source string is not
+NUL-terminated. The incomplete strlcpy fix comes from 2.6.13.
+
+For the netlink interface reduce the len parameter for
+IPVS_DAEMON_ATTR_MCAST_IFN and IPVS_SVC_ATTR_SCHED_NAME,
+so that we get proper EINVAL.
+
+[1]
+kernel BUG at lib/string.c:1052!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 373 Comm: syz-executor936 Not tainted 4.17.0-rc4+ #45
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 Google 01/01/2011
+RIP: 0010:fortify_panic+0x13/0x20 lib/string.c:1051
+RSP: 0018:ffff8801c976f800 EFLAGS: 00010282
+RAX: 0000000000000022 RBX: 0000000000000040 RCX: 0000000000000000
+RDX: 0000000000000022 RSI: ffffffff8160f6f1 RDI: ffffed00392edef6
+RBP: ffff8801c976f800 R08: ffff8801cf4c62c0 R09: ffffed003b5e4fb0
+R10: ffffed003b5e4fb0 R11: ffff8801daf27d87 R12: ffff8801c976fa20
+R13: ffff8801c976fae4 R14: ffff8801c976fae0 R15: 000000000000048b
+FS:  00007fd99f75e700(0000) GS:ffff8801daf00000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200001c0 CR3: 00000001d6843000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  memcpy+0x37/0x50 mm/kasan/kasan.c:303
-  strlcpy include/linux/string.h:300 [inline]
-  compat_mtw_from_user net/bridge/netfilter/ebtables.c:1957 [inline]
-  ebt_size_mwt net/bridge/netfilter/ebtables.c:2059 [inline]
-  size_entry_mwt net/bridge/netfilter/ebtables.c:2155 [inline]
-  compat_copy_entries+0x96c/0x14a0 net/bridge/netfilter/ebtables.c:2194
-  compat_do_replace+0x483/0x900 net/bridge/netfilter/ebtables.c:2285
-  compat_do_ebt_set_ctl+0x2ac/0x324 net/bridge/netfilter/ebtables.c:2367
-  compat_nf_sockopt net/netfilter/nf_sockopt.c:144 [inline]
-  compat_nf_setsockopt+0x9b/0x140 net/netfilter/nf_sockopt.c:156
-  compat_ip_setsockopt+0xff/0x140 net/ipv4/ip_sockglue.c:1279
-  inet_csk_compat_setsockopt+0x97/0x120 net/ipv4/inet_connection_sock.c:1041
-  compat_tcp_setsockopt+0x49/0x80 net/ipv4/tcp.c:2901
-  compat_sock_common_setsockopt+0xb4/0x150 net/core/sock.c:3050
-  __compat_sys_setsockopt+0x1ab/0x7c0 net/compat.c:403
-  __do_compat_sys_setsockopt net/compat.c:416 [inline]
-  __se_compat_sys_setsockopt net/compat.c:413 [inline]
-  __ia32_compat_sys_setsockopt+0xbd/0x150 net/compat.c:413
-  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
-  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7fb3cb9
-RSP: 002b:00000000fff0c26c EFLAGS: 00000282 ORIG_RAX: 000000000000016e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000080 RSI: 0000000020000300 RDI: 00000000000005f4
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  strlen include/linux/string.h:270 [inline]
+  strlcpy include/linux/string.h:293 [inline]
+  do_ip_vs_set_ctl+0x31c/0x1d00 net/netfilter/ipvs/ip_vs_ctl.c:2388
+  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+  nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
+  ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1253
+  udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2487
+  ipv6_setsockopt+0x149/0x170 net/ipv6/ipv6_sockglue.c:917
+  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3057
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3046
+  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
+  __do_sys_setsockopt net/socket.c:1914 [inline]
+  __se_sys_setsockopt net/socket.c:1911 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x447369
+RSP: 002b:00007fd99f75dda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00000000006e39e4 RCX: 0000000000447369
+RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000018 R09: 0000000000000000
+R10: 00000000200001c0 R11: 0000000000000246 R12: 00000000006e39e0
+R13: 75a1ff93f0896195 R14: 6f745f3168746576 R15: 0000000000000001
+Code: 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b 48 89 df e8 d2 8f 48 fa eb
+de 55 48 89 fe 48 c7 c7 60 65 64 88 48 89 e5 e8 91 dd f3 f9 <0f> 0b 90 90
+90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41 56
+RIP: fortify_panic+0x13/0x20 lib/string.c:1051 RSP: ffff8801c976f800
 
-The buggy address belongs to the page:
-page:ffffea0006c2afc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: 0000000000000000 ffffea0006c20101 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Fix the issue replacing the unsafe function with strscpy() and
-taking care of possible errors.
-
-Fixes: 81e675c227ec ("netfilter: ebtables: add CONFIG_COMPAT support")
-Reported-and-tested-by: syzbot+4e42a04e0bc33cb6c087@syzkaller.appspotmail.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Reported-and-tested-by: syzbot+aac887f77319868646df@syzkaller.appspotmail.com
+Fixes: e4ff67513096 ("ipvs: add sync_maxlen parameter for the sync daemon")
+Fixes: 4da62fc70d7c ("[IPVS]: Fix for overflows")
+Signed-off-by: Julian Anastasov <ja@ssi.bg>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/netfilter/ebtables.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/netfilter/ipvs/ip_vs_ctl.c |   21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1923,7 +1923,8 @@ static int compat_mtw_from_user(struct c
- 	int off, pad = 0;
- 	unsigned int size_kern, match_size = mwt->match_size;
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2390,8 +2390,10 @@ do_ip_vs_set_ctl(struct sock *sk, int cm
+ 			struct ipvs_sync_daemon_cfg cfg;
  
--	strlcpy(name, mwt->u.name, sizeof(name));
-+	if (strscpy(name, mwt->u.name, sizeof(name)) < 0)
-+		return -EINVAL;
+ 			memset(&cfg, 0, sizeof(cfg));
+-			strlcpy(cfg.mcast_ifn, dm->mcast_ifn,
+-				sizeof(cfg.mcast_ifn));
++			ret = -EINVAL;
++			if (strscpy(cfg.mcast_ifn, dm->mcast_ifn,
++				    sizeof(cfg.mcast_ifn)) <= 0)
++				goto out_dec;
+ 			cfg.syncid = dm->syncid;
+ 			ret = start_sync_thread(ipvs, &cfg, dm->state);
+ 		} else {
+@@ -2429,12 +2431,19 @@ do_ip_vs_set_ctl(struct sock *sk, int cm
+ 		}
+ 	}
  
- 	if (state->buf_kern_start)
- 		dst = state->buf_kern_start + state->buf_kern_offset;
++	if ((cmd == IP_VS_SO_SET_ADD || cmd == IP_VS_SO_SET_EDIT) &&
++	    strnlen(usvc.sched_name, IP_VS_SCHEDNAME_MAXLEN) ==
++	    IP_VS_SCHEDNAME_MAXLEN) {
++		ret = -EINVAL;
++		goto out_unlock;
++	}
++
+ 	/* Check for valid protocol: TCP or UDP or SCTP, even for fwmark!=0 */
+ 	if (usvc.protocol != IPPROTO_TCP && usvc.protocol != IPPROTO_UDP &&
+ 	    usvc.protocol != IPPROTO_SCTP) {
+-		pr_err("set_ctl: invalid protocol: %d %pI4:%d %s\n",
++		pr_err("set_ctl: invalid protocol: %d %pI4:%d\n",
+ 		       usvc.protocol, &usvc.addr.ip,
+-		       ntohs(usvc.port), usvc.sched_name);
++		       ntohs(usvc.port));
+ 		ret = -EFAULT;
+ 		goto out_unlock;
+ 	}
+@@ -2863,7 +2872,7 @@ static const struct nla_policy ip_vs_cmd
+ static const struct nla_policy ip_vs_daemon_policy[IPVS_DAEMON_ATTR_MAX + 1] = {
+ 	[IPVS_DAEMON_ATTR_STATE]	= { .type = NLA_U32 },
+ 	[IPVS_DAEMON_ATTR_MCAST_IFN]	= { .type = NLA_NUL_STRING,
+-					    .len = IP_VS_IFNAME_MAXLEN },
++					    .len = IP_VS_IFNAME_MAXLEN - 1 },
+ 	[IPVS_DAEMON_ATTR_SYNC_ID]	= { .type = NLA_U32 },
+ 	[IPVS_DAEMON_ATTR_SYNC_MAXLEN]	= { .type = NLA_U16 },
+ 	[IPVS_DAEMON_ATTR_MCAST_GROUP]	= { .type = NLA_U32 },
+@@ -2881,7 +2890,7 @@ static const struct nla_policy ip_vs_svc
+ 	[IPVS_SVC_ATTR_PORT]		= { .type = NLA_U16 },
+ 	[IPVS_SVC_ATTR_FWMARK]		= { .type = NLA_U32 },
+ 	[IPVS_SVC_ATTR_SCHED_NAME]	= { .type = NLA_NUL_STRING,
+-					    .len = IP_VS_SCHEDNAME_MAXLEN },
++					    .len = IP_VS_SCHEDNAME_MAXLEN - 1 },
+ 	[IPVS_SVC_ATTR_PE_NAME]		= { .type = NLA_NUL_STRING,
+ 					    .len = IP_VS_PENAME_MAXLEN },
+ 	[IPVS_SVC_ATTR_FLAGS]		= { .type = NLA_BINARY,
 
 
