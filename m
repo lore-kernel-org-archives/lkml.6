@@ -6,38 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A8FC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC043C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2467721BC6
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:48:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2467721BC6
+	by mail.kernel.org (Postfix) with ESMTP id 9302621C2C
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:49:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9302621C2C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933994AbeFXPsw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:48:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33274 "EHLO
+        id S934004AbeFXPs7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:48:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33288 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPsu (ORCPT
+        with ESMTP id S932073AbeFXPs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:48:50 -0400
+        Sun, 24 Jun 2018 11:48:57 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82BE786A;
-        Sun, 24 Jun 2018 15:48:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D45FD49F;
+        Sun, 24 Jun 2018 15:48:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 70/70] mm, page_alloc: do not break __GFP_THISNODE by zonelist reset
-Date:   Sun, 24 Jun 2018 23:23:02 +0800
-Message-Id: <20180624142744.890083770@linuxfoundation.org>
+        stable@vger.kernel.org, Becky Ligon <ligon@clemson.edu>,
+        Martin Brandenburg <martin@omnibond.com>, hubcap@omnibond.com
+Subject: [PATCH 4.17 64/70] orangefs: set i_size on new symlink
+Date:   Sun, 24 Jun 2018 23:22:56 +0800
+Message-Id: <20180624142744.479182208@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -54,75 +49,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Martin Brandenburg <martin@omnibond.com>
 
-commit 7810e6781e0fcbca78b91cf65053f895bf59e85f upstream.
+commit f6a4b4c9d07dda90c7c29dae96d6119ac6425dca upstream.
 
-In __alloc_pages_slowpath() we reset zonelist and preferred_zoneref for
-allocations that can ignore memory policies.  The zonelist is obtained
-from current CPU's node.  This is a problem for __GFP_THISNODE
-allocations that want to allocate on a different node, e.g.  because the
-allocating thread has been migrated to a different CPU.
+As long as a symlink inode remains in-core, the destination (and
+therefore size) will not be re-fetched from the server, as it cannot
+change.  The original implementation of the attribute cache assumed that
+setting the expiry time in the past was sufficient to cause a re-fetch
+of all attributes on the next getattr.  That does not work in this case.
 
-This has been observed to break SLAB in our 4.4-based kernel, because
-there it relies on __GFP_THISNODE working as intended.  If a slab page
-is put on wrong node's list, then further list manipulations may corrupt
-the list because page_to_nid() is used to determine which node's
-list_lock should be locked and thus we may take a wrong lock and race.
+The bug manifested itself as follows.  When the command sequence
 
-Current SLAB implementation seems to be immune by luck thanks to commit
-511e3a058812 ("mm/slab: make cache_grow() handle the page allocated on
-arbitrary node") but there may be others assuming that __GFP_THISNODE
-works as promised.
+touch foo; ln -s foo bar; ls -l bar
 
-We can fix it by simply removing the zonelist reset completely.  There
-is actually no reason to reset it, because memory policies and cpusets
-don't affect the zonelist choice in the first place.  This was different
-when commit 183f6371aac2 ("mm: ignore mempolicies when using
-ALLOC_NO_WATERMARK") introduced the code, as mempolicies provided their
-own restricted zonelists.
+is run, the output was
 
-We might consider this for 4.17 although I don't know if there's
-anything currently broken.
+lrwxrwxrwx. 1 fedora fedora 4906 Apr 24 19:10 bar -> foo
 
-SLAB is currently not affected, but in kernels older than 4.7 that don't
-yet have 511e3a058812 ("mm/slab: make cache_grow() handle the page
-allocated on arbitrary node") it is.  That's at least 4.4 LTS.  Older
-ones I'll have to check.
+However, after a re-mount, ls -l bar produces
 
-So stable backports should be more important, but will have to be
-reviewed carefully, as the code went through many changes.  BTW I think
-that also the ac->preferred_zoneref reset is currently useless if we
-don't also reset ac->nodemask from a mempolicy to NULL first (which we
-probably should for the OOM victims etc?), but I would leave that for a
-separate patch.
+lrwxrwxrwx. 1 fedora fedora    3 Apr 24 19:10 bar -> foo
 
-Link: http://lkml.kernel.org/r/20180525130853.13915-1-vbabka@suse.cz
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Fixes: 183f6371aac2 ("mm: ignore mempolicies when using ALLOC_NO_WATERMARK")
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+After this commit, even before a re-mount, the output is
+
+lrwxrwxrwx. 1 fedora fedora    3 Apr 24 19:10 bar -> foo
+
+Reported-by: Becky Ligon <ligon@clemson.edu>
+Signed-off-by: Martin Brandenburg <martin@omnibond.com>
+Fixes: 71680c18c8f2 ("orangefs: Cache getattr results.")
+Cc: stable@vger.kernel.org
+Cc: hubcap@omnibond.com
+Signed-off-by: Mike Marshall <hubcap@omnibond.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/page_alloc.c |    1 -
- 1 file changed, 1 deletion(-)
+ fs/orangefs/namei.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4162,7 +4162,6 @@ retry:
- 	 * orientated.
- 	 */
- 	if (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
--		ac->zonelist = node_zonelist(numa_node_id(), gfp_mask);
- 		ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
- 					ac->high_zoneidx, ac->nodemask);
+--- a/fs/orangefs/namei.c
++++ b/fs/orangefs/namei.c
+@@ -326,6 +326,13 @@ static int orangefs_symlink(struct inode
+ 		ret = PTR_ERR(inode);
+ 		goto out;
  	}
++	/*
++	 * This is necessary because orangefs_inode_getattr will not
++	 * re-read symlink size as it is impossible for it to change.
++	 * Invalidating the cache does not help.  orangefs_new_inode
++	 * does not set the correct size (it does not know symname).
++	 */
++	inode->i_size = strlen(symname);
+ 
+ 	gossip_debug(GOSSIP_NAME_DEBUG,
+ 		     "Assigned symlink inode new number of %pU\n",
 
 
