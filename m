@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8311EC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AF4C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33AA324FC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:31:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33AA324FC0
+	by mail.kernel.org (Postfix) with ESMTP id 6C8D524FC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:31:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8D524FC0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754843AbeFXPba (ORCPT
+        id S1754844AbeFXPbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:31:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59086 "EHLO
+        Sun, 24 Jun 2018 11:31:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751965AbeFXPb2 (ORCPT
+        with ESMTP id S1751965AbeFXPbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:31:28 -0400
+        Sun, 24 Jun 2018 11:31:35 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0BDC92C;
-        Sun, 24 Jun 2018 15:31:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BD3A02C;
+        Sun, 24 Jun 2018 15:31:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kevin Wangtao <kevin.wangtao@hisilicon.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 39/52] cpufreq: Fix new policy initialization during limits updates via sysfs
-Date:   Sun, 24 Jun 2018 23:21:32 +0800
-Message-Id: <20180624142746.780465691@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <smfrench@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.14 30/52] smb3: fix various xid leaks
+Date:   Sun, 24 Jun 2018 23:21:23 +0800
+Message-Id: <20180624142746.297456928@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -52,50 +50,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tao Wang <kevin.wangtao@hisilicon.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit c7d1f119c48f64bebf0fa1e326af577c6152fe30 upstream.
+commit cfe89091644c441a1ade6dae6d2e47b715648615 upstream.
 
-If the policy limits are updated via cpufreq_update_policy() and
-subsequently via sysfs, the limits stored in user_policy may be
-set incorrectly.
+Fix a few cases where we were not freeing the xid which led to
+active requests being non-zero at unmount time.
 
-For example, if both min and max are set via sysfs to the maximum
-available frequency, user_policy.min and user_policy.max will also
-be the maximum.  If a policy notifier triggered by
-cpufreq_update_policy() lowers both the min and the max at this
-point, that change is not reflected by the user_policy limits, so
-if the max is updated again via sysfs to the same lower value,
-then user_policy.max will be lower than user_policy.min which
-shouldn't happen.  In particular, if one of the policy CPUs is
-then taken offline and back online, cpufreq_set_policy() will
-fail for it due to a failing limits check.
-
-To prevent that from happening, initialize the min and max fields
-of the new_policy object to the ones stored in user_policy that
-were previously set via sysfs.
-
-Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-[ rjw: Subject & changelog ]
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cpufreq.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/cifs/smb2ops.c |   63 +++++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 44 insertions(+), 19 deletions(-)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -693,6 +693,8 @@ static ssize_t store_##file_name					\
- 	struct cpufreq_policy new_policy;				\
- 									\
- 	memcpy(&new_policy, policy, sizeof(*policy));			\
-+	new_policy.min = policy->user_policy.min;			\
-+	new_policy.max = policy->user_policy.max;			\
- 									\
- 	ret = sscanf(buf, "%u", &new_policy.object);			\
- 	if (ret != 1)							\
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -1571,8 +1571,11 @@ get_smb2_acl_by_path(struct cifs_sb_info
+ 		oparms.create_options = 0;
+ 
+ 	utf16_path = cifs_convert_path_to_utf16(path, cifs_sb);
+-	if (!utf16_path)
+-		return ERR_PTR(-ENOMEM);
++	if (!utf16_path) {
++		rc = -ENOMEM;
++		free_xid(xid);
++		return ERR_PTR(rc);
++	}
+ 
+ 	oparms.tcon = tcon;
+ 	oparms.desired_access = READ_CONTROL;
+@@ -1630,8 +1633,11 @@ set_smb2_acl(struct cifs_ntsd *pnntsd, _
+ 		access_flags = WRITE_DAC;
+ 
+ 	utf16_path = cifs_convert_path_to_utf16(path, cifs_sb);
+-	if (!utf16_path)
+-		return -ENOMEM;
++	if (!utf16_path) {
++		rc = -ENOMEM;
++		free_xid(xid);
++		return rc;
++	}
+ 
+ 	oparms.tcon = tcon;
+ 	oparms.desired_access = access_flags;
+@@ -1691,15 +1697,21 @@ static long smb3_zero_range(struct file
+ 
+ 	/* if file not oplocked can't be sure whether asking to extend size */
+ 	if (!CIFS_CACHE_READ(cifsi))
+-		if (keep_size == false)
+-			return -EOPNOTSUPP;
++		if (keep_size == false) {
++			rc = -EOPNOTSUPP;
++			free_xid(xid);
++			return rc;
++		}
+ 
+ 	/*
+ 	 * Must check if file sparse since fallocate -z (zero range) assumes
+ 	 * non-sparse allocation
+ 	 */
+-	if (!(cifsi->cifsAttrs & FILE_ATTRIBUTE_SPARSE_FILE))
+-		return -EOPNOTSUPP;
++	if (!(cifsi->cifsAttrs & FILE_ATTRIBUTE_SPARSE_FILE)) {
++		rc = -EOPNOTSUPP;
++		free_xid(xid);
++		return rc;
++	}
+ 
+ 	/*
+ 	 * need to make sure we are not asked to extend the file since the SMB3
+@@ -1708,8 +1720,11 @@ static long smb3_zero_range(struct file
+ 	 * which for a non sparse file would zero the newly extended range
+ 	 */
+ 	if (keep_size == false)
+-		if (i_size_read(inode) < offset + len)
+-			return -EOPNOTSUPP;
++		if (i_size_read(inode) < offset + len) {
++			rc = -EOPNOTSUPP;
++			free_xid(xid);
++			return rc;
++		}
+ 
+ 	cifs_dbg(FYI, "offset %lld len %lld", offset, len);
+ 
+@@ -1743,8 +1758,11 @@ static long smb3_punch_hole(struct file
+ 
+ 	/* Need to make file sparse, if not already, before freeing range. */
+ 	/* Consider adding equivalent for compressed since it could also work */
+-	if (!smb2_set_sparse(xid, tcon, cfile, inode, set_sparse))
+-		return -EOPNOTSUPP;
++	if (!smb2_set_sparse(xid, tcon, cfile, inode, set_sparse)) {
++		rc = -EOPNOTSUPP;
++		free_xid(xid);
++		return rc;
++	}
+ 
+ 	cifs_dbg(FYI, "offset %lld len %lld", offset, len);
+ 
+@@ -1776,8 +1794,10 @@ static long smb3_simple_falloc(struct fi
+ 
+ 	/* if file not oplocked can't be sure whether asking to extend size */
+ 	if (!CIFS_CACHE_READ(cifsi))
+-		if (keep_size == false)
+-			return -EOPNOTSUPP;
++		if (keep_size == false) {
++			free_xid(xid);
++			return rc;
++		}
+ 
+ 	/*
+ 	 * Files are non-sparse by default so falloc may be a no-op
+@@ -1786,14 +1806,16 @@ static long smb3_simple_falloc(struct fi
+ 	 */
+ 	if ((cifsi->cifsAttrs & FILE_ATTRIBUTE_SPARSE_FILE) == 0) {
+ 		if (keep_size == true)
+-			return 0;
++			rc = 0;
+ 		/* check if extending file */
+ 		else if (i_size_read(inode) >= off + len)
+ 			/* not extending file and already not sparse */
+-			return 0;
++			rc = 0;
+ 		/* BB: in future add else clause to extend file */
+ 		else
+-			return -EOPNOTSUPP;
++			rc = -EOPNOTSUPP;
++		free_xid(xid);
++		return rc;
+ 	}
+ 
+ 	if ((keep_size == true) || (i_size_read(inode) >= off + len)) {
+@@ -1805,8 +1827,11 @@ static long smb3_simple_falloc(struct fi
+ 		 * ie potentially making a few extra pages at the beginning
+ 		 * or end of the file non-sparse via set_sparse is harmless.
+ 		 */
+-		if ((off > 8192) || (off + len + 8192 < i_size_read(inode)))
+-			return -EOPNOTSUPP;
++		if ((off > 8192) || (off + len + 8192 < i_size_read(inode))) {
++			rc = -EOPNOTSUPP;
++			free_xid(xid);
++			return rc;
++		}
+ 
+ 		rc = smb2_set_sparse(xid, tcon, cfile, inode, false);
+ 	}
 
 
