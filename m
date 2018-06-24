@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 169A8C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC835C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C23D624FFD
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C23D624FFD
+	by mail.kernel.org (Postfix) with ESMTP id 92C3F24FFE
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C3F24FFE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755267AbeFXPfD (ORCPT
+        id S1755284AbeFXPfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:35:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59388 "EHLO
+        Sun, 24 Jun 2018 11:35:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59398 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755167AbeFXPfA (ORCPT
+        with ESMTP id S1754958AbeFXPfI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:35:00 -0400
+        Sun, 24 Jun 2018 11:35:08 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36D5E2C;
-        Sun, 24 Jun 2018 15:34:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F199E49F;
+        Sun, 24 Jun 2018 15:35:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dennis Wassenberg <dennis.wassenberg@secunet.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 28/64] ALSA: hda: add dock and led support for HP EliteBook 830 G5
-Date:   Sun, 24 Jun 2018 23:22:09 +0800
-Message-Id: <20180624142745.530884386@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.16 37/64] nbd: use bd_set_size when updating disk size
+Date:   Sun, 24 Jun 2018 23:22:18 +0800
+Message-Id: <20180624142746.138975525@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -51,32 +50,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+From: Josef Bacik <jbacik@fb.com>
 
-commit 2861751f67b91e1d24e68010ced96614fb3140f4 upstream.
+commit 9e2b19675d1338d2a38e99194756f2db44a081df upstream.
 
-This patch adds missing initialisation for HP 2013 UltraSlim Dock
-Line-In/Out PINs and activates keyboard mute/micmute leds
-for HP EliteBook 830 G5
+When we stopped relying on the bdev everywhere I broke updating the
+block device size on the fly, which ceph relies on.  We can't just do
+set_capacity, we also have to do bd_set_size so things like parted will
+notice the device size change.
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 29eaadc ("nbd: stop using the bdev everywhere")
+cc: stable@vger.kernel.org
+Signed-off-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/block/nbd.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -959,6 +959,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
- 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
- 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -234,9 +234,18 @@ static void nbd_size_clear(struct nbd_de
+ static void nbd_size_update(struct nbd_device *nbd)
+ {
+ 	struct nbd_config *config = nbd->config;
++	struct block_device *bdev = bdget_disk(nbd->disk, 0);
++
+ 	blk_queue_logical_block_size(nbd->disk->queue, config->blksize);
+ 	blk_queue_physical_block_size(nbd->disk->queue, config->blksize);
+ 	set_capacity(nbd->disk, config->bytesize >> 9);
++	if (bdev) {
++		if (bdev->bd_disk)
++			bd_set_size(bdev, config->bytesize);
++		else
++			bdev->bd_invalidated = 1;
++		bdput(bdev);
++	}
+ 	kobject_uevent(&nbd_to_dev(nbd)->kobj, KOBJ_CHANGE);
+ }
+ 
+@@ -1114,7 +1123,6 @@ static int nbd_start_device_ioctl(struct
+ 	if (ret)
+ 		return ret;
+ 
+-	bd_set_size(bdev, config->bytesize);
+ 	if (max_part)
+ 		bdev->bd_invalidated = 1;
+ 	mutex_unlock(&nbd->config_lock);
 
 
