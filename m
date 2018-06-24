@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB099C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE33C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F6FD250B3
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6FD250B3
+	by mail.kernel.org (Postfix) with ESMTP id 61493250B3
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61493250B3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933755AbeFXPrL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:47:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33130 "EHLO
+        id S933780AbeFXPrT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:47:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPrI (ORCPT
+        with ESMTP id S932073AbeFXPrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:47:08 -0400
+        Sun, 24 Jun 2018 11:47:15 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45CBB49F;
-        Sun, 24 Jun 2018 15:47:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6663F2C;
+        Sun, 24 Jun 2018 15:47:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Ming Lei <ming.lei@redhat.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Roman Pen <roman.penyaev@profitbricks.com>,
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.17 42/70] blk-mq: reinit q->tag_set_list entry only after grace period
-Date:   Sun, 24 Jun 2018 23:22:34 +0800
-Message-Id: <20180624142743.099167594@linuxfoundation.org>
+Subject: [PATCH 4.17 43/70] bdi: Move cgroup bdi_writeback to a dedicated low concurrency workqueue
+Date:   Sun, 24 Jun 2018 23:22:35 +0800
+Message-Id: <20180624142743.172934037@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -53,102 +50,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Pen <roman.penyaev@profitbricks.com>
+From: Tejun Heo <tj@kernel.org>
 
-commit a347c7ad8edf4c5685154f3fdc3c12fc1db800ba upstream.
+commit f183464684190bacbfb14623bd3e4e51b7575b4c upstream.
 
-It is not allowed to reinit q->tag_set_list list entry while RCU grace
-period has not completed yet, otherwise the following soft lockup in
-blk_mq_sched_restart() happens:
+>From 0aa2e9b921d6db71150633ff290199554f0842a8 Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Wed, 23 May 2018 10:29:00 -0700
 
-[ 1064.252652] watchdog: BUG: soft lockup - CPU#12 stuck for 23s! [fio:9270]
-[ 1064.254445] task: ffff99b912e8b900 task.stack: ffffa6d54c758000
-[ 1064.254613] RIP: 0010:blk_mq_sched_restart+0x96/0x150
-[ 1064.256510] Call Trace:
-[ 1064.256664]  <IRQ>
-[ 1064.256824]  blk_mq_free_request+0xea/0x100
-[ 1064.256987]  msg_io_conf+0x59/0xd0 [ibnbd_client]
-[ 1064.257175]  complete_rdma_req+0xf2/0x230 [ibtrs_client]
-[ 1064.257340]  ? ibtrs_post_recv_empty+0x4d/0x70 [ibtrs_core]
-[ 1064.257502]  ibtrs_clt_rdma_done+0xd1/0x1e0 [ibtrs_client]
-[ 1064.257669]  ib_create_qp+0x321/0x380 [ib_core]
-[ 1064.257841]  ib_process_cq_direct+0xbd/0x120 [ib_core]
-[ 1064.258007]  irq_poll_softirq+0xb7/0xe0
-[ 1064.258165]  __do_softirq+0x106/0x2a2
-[ 1064.258328]  irq_exit+0x92/0xa0
-[ 1064.258509]  do_IRQ+0x4a/0xd0
-[ 1064.258660]  common_interrupt+0x7a/0x7a
-[ 1064.258818]  </IRQ>
+cgwb_release() punts the actual release to cgwb_release_workfn() on
+system_wq.  Depending on the number of cgroups or block devices, there
+can be a lot of cgwb_release_workfn() in flight at the same time.
 
-Meanwhile another context frees other queue but with the same set of
-shared tags:
+We're periodically seeing close to 256 kworkers getting stuck with the
+following stack trace and overtime the entire system gets stuck.
 
-[ 1288.201183] INFO: task bash:5910 blocked for more than 180 seconds.
-[ 1288.201833] bash            D    0  5910   5820 0x00000000
-[ 1288.202016] Call Trace:
-[ 1288.202315]  schedule+0x32/0x80
-[ 1288.202462]  schedule_timeout+0x1e5/0x380
-[ 1288.203838]  wait_for_completion+0xb0/0x120
-[ 1288.204137]  __wait_rcu_gp+0x125/0x160
-[ 1288.204287]  synchronize_sched+0x6e/0x80
-[ 1288.204770]  blk_mq_free_queue+0x74/0xe0
-[ 1288.204922]  blk_cleanup_queue+0xc7/0x110
-[ 1288.205073]  ibnbd_clt_unmap_device+0x1bc/0x280 [ibnbd_client]
-[ 1288.205389]  ibnbd_clt_unmap_dev_store+0x169/0x1f0 [ibnbd_client]
-[ 1288.205548]  kernfs_fop_write+0x109/0x180
-[ 1288.206328]  vfs_write+0xb3/0x1a0
-[ 1288.206476]  SyS_write+0x52/0xc0
-[ 1288.206624]  do_syscall_64+0x68/0x1d0
-[ 1288.206774]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+  [<ffffffff810ee40c>] _synchronize_rcu_expedited.constprop.72+0x2fc/0x330
+  [<ffffffff810ee634>] synchronize_rcu_expedited+0x24/0x30
+  [<ffffffff811ccf23>] bdi_unregister+0x53/0x290
+  [<ffffffff811cd1e9>] release_bdi+0x89/0xc0
+  [<ffffffff811cd645>] wb_exit+0x85/0xa0
+  [<ffffffff811cdc84>] cgwb_release_workfn+0x54/0xb0
+  [<ffffffff810a68d0>] process_one_work+0x150/0x410
+  [<ffffffff810a71fd>] worker_thread+0x6d/0x520
+  [<ffffffff810ad3dc>] kthread+0x12c/0x160
+  [<ffffffff81969019>] ret_from_fork+0x29/0x40
+  [<ffffffffffffffff>] 0xffffffffffffffff
 
-What happened is the following:
+The events leading to the lockup are...
 
-1. There are several MQ queues with shared tags.
-2. One queue is about to be freed and now task is in
-   blk_mq_del_queue_tag_set().
-3. Other CPU is in blk_mq_sched_restart() and loops over all queues in
-   tag list in order to find hctx to restart.
+1. A lot of cgwb_release_workfn() is queued at the same time and all
+   system_wq kworkers are assigned to execute them.
 
-Because linked list entry was modified in blk_mq_del_queue_tag_set()
-without proper waiting for a grace period, blk_mq_sched_restart()
-never ends, spining in list_for_each_entry_rcu_rr(), thus soft lockup.
+2. They all end up calling synchronize_rcu_expedited().  One of them
+   wins and tries to perform the expedited synchronization.
 
-Fix is simple: reinit list entry after an RCU grace period elapsed.
+3. However, that invovles queueing rcu_exp_work to system_wq and
+   waiting for it.  Because #1 is holding all available kworkers on
+   system_wq, rcu_exp_work can't be executed.  cgwb_release_workfn()
+   is waiting for synchronize_rcu_expedited() which in turn is waiting
+   for cgwb_release_workfn() to free up some of the kworkers.
 
-Fixes: Fixes: 705cda97ee3a ("blk-mq: Make it safe to use RCU to iterate over blk_mq_tag_set.tag_list")
+We shouldn't be scheduling hundreds of cgwb_release_workfn() at the
+same time.  There's nothing to be gained from that.  This patch
+updates cgwb release path to use a dedicated percpu workqueue with
+@max_active of 1.
+
+While this resolves the problem at hand, it might be a good idea to
+isolate rcu_exp_work to its own workqueue too as it can be used from
+various paths and is prone to this sort of indirect A-A deadlocks.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Cc: stable@vger.kernel.org
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-block@vger.kernel.org
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-mq.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ mm/backing-dev.c |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2473,7 +2473,6 @@ static void blk_mq_del_queue_tag_set(str
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -412,6 +412,7 @@ static void wb_exit(struct bdi_writeback
+  * protected.
+  */
+ static DEFINE_SPINLOCK(cgwb_lock);
++static struct workqueue_struct *cgwb_release_wq;
  
- 	mutex_lock(&set->tag_list_lock);
- 	list_del_rcu(&q->tag_set_list);
--	INIT_LIST_HEAD(&q->tag_set_list);
- 	if (list_is_singular(&set->tag_list)) {
- 		/* just transitioned to unshared */
- 		set->flags &= ~BLK_MQ_F_TAG_SHARED;
-@@ -2481,8 +2480,8 @@ static void blk_mq_del_queue_tag_set(str
- 		blk_mq_update_tag_set_depth(set, false);
- 	}
- 	mutex_unlock(&set->tag_list_lock);
--
- 	synchronize_rcu();
-+	INIT_LIST_HEAD(&q->tag_set_list);
+ /**
+  * wb_congested_get_create - get or create a wb_congested
+@@ -522,7 +523,7 @@ static void cgwb_release(struct percpu_r
+ {
+ 	struct bdi_writeback *wb = container_of(refcnt, struct bdi_writeback,
+ 						refcnt);
+-	schedule_work(&wb->release_work);
++	queue_work(cgwb_release_wq, &wb->release_work);
  }
  
- static void blk_mq_add_queue_tag_set(struct blk_mq_tag_set *set,
+ static void cgwb_kill(struct bdi_writeback *wb)
+@@ -784,6 +785,21 @@ static void cgwb_bdi_register(struct bac
+ 	spin_unlock_irq(&cgwb_lock);
+ }
+ 
++static int __init cgwb_init(void)
++{
++	/*
++	 * There can be many concurrent release work items overwhelming
++	 * system_wq.  Put them in a separate wq and limit concurrency.
++	 * There's no point in executing many of these in parallel.
++	 */
++	cgwb_release_wq = alloc_workqueue("cgwb_release", 0, 1);
++	if (!cgwb_release_wq)
++		return -ENOMEM;
++
++	return 0;
++}
++subsys_initcall(cgwb_init);
++
+ #else	/* CONFIG_CGROUP_WRITEBACK */
+ 
+ static int cgwb_bdi_init(struct backing_dev_info *bdi)
 
 
