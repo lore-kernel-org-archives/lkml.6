@@ -2,112 +2,116 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 518CBC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E94DC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0275224E48
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:24:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpB10Gh/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0275224E48
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C65A24E56
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:35:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C65A24E56
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeFXIY1 (ORCPT
+        id S1751853AbeFXIfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 04:24:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751823AbeFXIYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 04:24:24 -0400
-Received: from localhost (unknown [193.47.165.251])
+        Sun, 24 Jun 2018 04:35:40 -0400
+Received: from mailout3.hostsharing.net ([176.9.242.54]:38451 "EHLO
+        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750984AbeFXIfi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 04:35:38 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by mailout3.hostsharing.net (Postfix) with ESMTPS id 050F8101E69BB;
+        Sun, 24 Jun 2018 10:35:37 +0200 (CEST)
+Received: from localhost (unknown [89.246.108.87])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07CED24E39;
-        Sun, 24 Jun 2018 08:24:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529828663;
-        bh=yKLM/pQY54IGy51q1KTclziGrReSLUtlrR7tmp5YJaw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bpB10Gh/51L+65G8J3hR/d/PMgPAmlmGN5G3gI+39bRBNH4ERrwAd4jlacBSpMqZ3
-         fleT1x7KAYpBv8eNQI7mF27x7xskhtshNzcM9nTqSXEXH63ZzYsxWmdlnOyUhJwQtd
-         HP9PI66iGPk7DBlF3m/7+kd3Y2GAQgdSK0bO1Wms=
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Kees Cook <keescook@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Leon Romanovsky <leonro@mellanox.com>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Hadar Hen Zion <hadarh@mellanox.com>,
-        Matan Barak <matanb@mellanox.com>,
-        Michael J Ruhl <michael.j.ruhl@intel.com>,
-        Noa Osherovich <noaos@mellanox.com>,
-        Raed Salem <raeds@mellanox.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        linux-netdev <netdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH rdma-next 08/12] overflow.h: Add arithmetic shift helper
-Date:   Sun, 24 Jun 2018 11:23:49 +0300
-Message-Id: <20180624082353.16138-9-leon@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180624082353.16138-1-leon@kernel.org>
-References: <20180624082353.16138-1-leon@kernel.org>
+        by h08.hostsharing.net (Postfix) with ESMTPSA id 92574603E134;
+        Sun, 24 Jun 2018 10:35:36 +0200 (CEST)
+X-Mailbox-Line: From 32fc25aa35ecef4b2692f57687bb7fc2a57230e2 Mon Sep 17 00:00:00 2001
+Message-Id: <32fc25aa35ecef4b2692f57687bb7fc2a57230e2.1529828292.git.lukas@wunner.de>
+From:   Lukas Wunner <lukas@wunner.de>
+Date:   Sun, 24 Jun 2018 10:35:18 +0200
+Subject: [PATCH v2 1/2] genirq: Update code comments wrt recycled thread_mask
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leon Romanovsky <leonro@mellanox.com>
+Previously a race existed between __free_irq() and __setup_irq() wherein
+the thread_mask of a just removed action could be handed out to a newly
+added action and the freed irq thread would then tread on the oneshot
+mask bit of the newly added irq thread in irq_finalize_oneshot():
 
-Add shift_overflow() helper to help driver authors to ensure that
-shift operand doesn't cause to overflow, which is very common pattern
-for RDMA drivers.
+time
+ |  __free_irq()
+ |    raw_spin_lock_irqsave(&desc->lock, flags);
+ |    <remove action from linked list>
+ |    raw_spin_unlock_irqrestore(&desc->lock, flags);
+ |
+ |  __setup_irq()
+ |    raw_spin_lock_irqsave(&desc->lock, flags);
+ |    <traverse linked list to determine oneshot mask bit>
+ |    raw_spin_unlock_irqrestore(&desc->lock, flags);
+ |
+ |  irq_thread() of freed irq (__free_irq() waits in synchronize_irq())
+ |    irq_thread_fn()
+ |      irq_finalize_oneshot()
+ |        raw_spin_lock_irq(&desc->lock);
+ |        desc->threads_oneshot &= ~action->thread_mask;
+ |        raw_spin_unlock_irq(&desc->lock);
+ v
 
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+The race was known at least since 2012 when it was documented in a code
+comment by commit e04268b0effc ("genirq: Remove paranoid warnons and
+bogus fixups").
+
+But it wasn't until 2017 that it was fixed by commit 9114014cf4e6
+("genirq: Add mutex to irq desc to serialize request/free_irq()"),
+apparently inadvertantly so because the race is neither mentioned in the
+commit message nor was the code comment updated.  Make up for that.
+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
 ---
- include/linux/overflow.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ kernel/irq/manage.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-index 8712ff70995f..2a3395248e94 100644
---- a/include/linux/overflow.h
-+++ b/include/linux/overflow.h
-@@ -202,6 +202,29 @@
-
- #endif /* COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW */
-
-+/**
-+ * shift_overflow() - Peform shift operation with overflow check
-+ * @a: value to be shifted
-+ * @b: shift operand
-+ *
-+ * Checks if a << b will overflow
-+ *
-+ * Returns: result of shift for no overflow or SIZE_MAX for overflow
-+ */
-+static inline __must_check size_t shift_overflow(size_t a, size_t b)
-+{
-+	size_t c, res;
-+
-+	if (b >= sizeof(size_t) * BITS_PER_BYTE)
-+		return SIZE_MAX;
-+
-+	c = (size_t)1 << b;
-+	if (check_mul_overflow(a, c, &res))
-+		return SIZE_MAX;
-+
-+	return res;
-+}
-+
- /**
-  * array_size() - Calculate size of 2-dimensional array.
-  *
---
-2.14.4
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 591cfe901162..123a227d3357 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1025,10 +1025,7 @@ static int irq_thread(void *data)
+ 	 * This is the regular exit path. __free_irq() is stopping the
+ 	 * thread via kthread_stop() after calling
+ 	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
+-	 * oneshot mask bit can be set. We cannot verify that as we
+-	 * cannot touch the oneshot mask at this point anymore as
+-	 * __setup_irq() might have given out currents thread_mask
+-	 * again.
++	 * oneshot mask bit can be set.
+ 	 */
+ 	task_work_cancel(current, irq_thread_dtor);
+ 	return 0;
+@@ -1245,7 +1242,9 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+ 	/*
+ 	 * Protects against a concurrent __free_irq() call which might wait
+ 	 * for synchronize_irq() to complete without holding the optional
+-	 * chip bus lock and desc->lock.
++	 * chip bus lock and desc->lock. Also protects against handing out
++	 * a recycled oneshot thread_mask bit while it's still in use by
++	 * its previous owner.
+ 	 */
+ 	mutex_lock(&desc->request_mutex);
+ 
+-- 
+2.17.1
 
