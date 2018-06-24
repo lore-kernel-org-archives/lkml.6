@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C323C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E36BC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE56221456
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:44:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE56221456
+	by mail.kernel.org (Postfix) with ESMTP id B6AA321456
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:44:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6AA321456
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932237AbeFXPoO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:44:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60180 "EHLO
+        id S932291AbeFXPoV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:44:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932106AbeFXPoM (ORCPT
+        with ESMTP id S932106AbeFXPoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:44:12 -0400
+        Sun, 24 Jun 2018 11:44:19 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C396A2C;
-        Sun, 24 Jun 2018 15:44:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E28A12C;
+        Sun, 24 Jun 2018 15:44:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Joe Habermann <joe.habermann@quantum.com>
-Subject: [PATCH 4.17 17/70] ext4: update mtime in ext4_punch_hole even if no blocks are released
-Date:   Sun, 24 Jun 2018 23:22:09 +0800
-Message-Id: <20180624142741.564453712@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.17 18/70] ext4: do not allow external inodes for inline data
+Date:   Sun, 24 Jun 2018 23:22:10 +0800
+Message-Id: <20180624142741.623679115@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -50,77 +50,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Czerner <lczerner@redhat.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit eee597ac931305eff3d3fd1d61d6aae553bc0984 upstream.
+commit 117166efb1ee8f13c38f9e96b258f16d4923f888 upstream.
 
-Currently in ext4_punch_hole we're going to skip the mtime update if
-there are no actual blocks to release. However we've actually modified
-the file by zeroing the partial block so the mtime should be updated.
+The inline data feature was implemented before we added support for
+external inodes for xattrs.  It makes no sense to support that
+combination, but the problem is that there are a number of extended
+attribute checks that are skipped if e_value_inum is non-zero.
 
-Moreover the sync and datasync handling is skipped as well, which is
-also wrong. Fix it.
+Unfortunately, the inline data code is completely e_value_inum
+unaware, and attempts to interpret the xattr fields as if it were an
+inline xattr --- at which point, Hilarty Ensues.
 
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+This addresses CVE-2018-11412.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199803
+
+Reported-by: Jann Horn <jannh@google.com>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Joe Habermann <joe.habermann@quantum.com>
-Cc: <stable@vger.kernel.org>
+Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |   40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ fs/ext4/inline.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4298,28 +4298,28 @@ int ext4_punch_hole(struct inode *inode,
- 		EXT4_BLOCK_SIZE_BITS(sb);
- 	stop_block = (offset + length) >> EXT4_BLOCK_SIZE_BITS(sb);
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -144,6 +144,12 @@ int ext4_find_inline_data_nolock(struct
+ 		goto out;
  
--	/* If there are no blocks to remove, return now */
--	if (first_block >= stop_block)
--		goto out_stop;
--
--	down_write(&EXT4_I(inode)->i_data_sem);
--	ext4_discard_preallocations(inode);
--
--	ret = ext4_es_remove_extent(inode, first_block,
--				    stop_block - first_block);
--	if (ret) {
--		up_write(&EXT4_I(inode)->i_data_sem);
--		goto out_stop;
--	}
-+	/* If there are blocks to remove, do it */
-+	if (stop_block > first_block) {
-+
-+		down_write(&EXT4_I(inode)->i_data_sem);
-+		ext4_discard_preallocations(inode);
- 
--	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
--		ret = ext4_ext_remove_space(inode, first_block,
--					    stop_block - 1);
--	else
--		ret = ext4_ind_remove_space(handle, inode, first_block,
--					    stop_block);
-+		ret = ext4_es_remove_extent(inode, first_block,
-+					    stop_block - first_block);
-+		if (ret) {
-+			up_write(&EXT4_I(inode)->i_data_sem);
-+			goto out_stop;
+ 	if (!is.s.not_found) {
++		if (is.s.here->e_value_inum) {
++			EXT4_ERROR_INODE(inode, "inline data xattr refers "
++					 "to an external xattr inode");
++			error = -EFSCORRUPTED;
++			goto out;
 +		}
-+
-+		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-+			ret = ext4_ext_remove_space(inode, first_block,
-+						    stop_block - 1);
-+		else
-+			ret = ext4_ind_remove_space(handle, inode, first_block,
-+						    stop_block);
- 
--	up_write(&EXT4_I(inode)->i_data_sem);
-+		up_write(&EXT4_I(inode)->i_data_sem);
-+	}
- 	if (IS_SYNC(inode))
- 		ext4_handle_sync(handle);
- 
+ 		EXT4_I(inode)->i_inline_off = (u16)((void *)is.s.here -
+ 					(void *)ext4_raw_inode(&is.iloc));
+ 		EXT4_I(inode)->i_inline_size = EXT4_MIN_INLINE_DATA_SIZE +
 
 
