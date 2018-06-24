@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF927C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6409EC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4BFF24F92
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:27:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4BFF24F92
+	by mail.kernel.org (Postfix) with ESMTP id 1F96C24F92
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:27:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F96C24F92
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754204AbeFXP1r (ORCPT
+        id S1752517AbeFXP1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:27:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58812 "EHLO
+        Sun, 24 Jun 2018 11:27:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58818 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752146AbeFXP1o (ORCPT
+        with ESMTP id S1751796AbeFXP1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:27:44 -0400
+        Sun, 24 Jun 2018 11:27:54 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2352F2C;
-        Sun, 24 Jun 2018 15:27:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 167492C;
+        Sun, 24 Jun 2018 15:27:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 09/52] net: in virtio_net_hdr only add VLAN_HLEN to csum_start if payload holds vlan
-Date:   Sun, 24 Jun 2018 23:21:02 +0800
-Message-Id: <20180624142744.917831958@linuxfoundation.org>
+Subject: [PATCH 4.14 10/52] hv_netvsc: Fix a network regression after ifdown/ifup
+Date:   Sun, 24 Jun 2018 23:21:03 +0800
+Message-Id: <20180624142744.982236269@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -50,135 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit fd3a88625844907151737fc3b4201676effa6d27 ]
+[ Upstream commit 52acf73b6e9a6962045feb2ba5a8921da2201915 ]
 
-Tun, tap, virtio, packet and uml vector all use struct virtio_net_hdr
-to communicate packet metadata to userspace.
+Recently people reported the NIC stops working after
+"ifdown eth0; ifup eth0". It turns out in this case the TX queues are not
+enabled, after the refactoring of the common detach logic: when the NIC
+has sub-channels, usually we enable all the TX queues after all
+sub-channels are set up: see rndis_set_subchannel() ->
+netif_device_attach(), but in the case of "ifdown eth0; ifup eth0" where
+the number of channels doesn't change, we also must make sure the TX queues
+are enabled. The patch fixes the regression.
 
-For skbuffs with vlan, the first two return the packet as it may have
-existed on the wire, inserting the VLAN tag in the user buffer.  Then
-virtio_net_hdr.csum_start needs to be adjusted by VLAN_HLEN bytes.
-
-Commit f09e2249c4f5 ("macvtap: restore vlan header on user read")
-added this feature to macvtap. Commit 3ce9b20f1971 ("macvtap: Fix
-csum_start when VLAN tags are present") then fixed up csum_start.
-
-Virtio, packet and uml do not insert the vlan header in the user
-buffer.
-
-When introducing virtio_net_hdr_from_skb to deduplicate filling in
-the virtio_net_hdr, the variant from macvtap which adds VLAN_HLEN was
-applied uniformly, breaking csum offset for packets with vlan on
-virtio and packet.
-
-Make insertion of VLAN_HLEN optional. Convert the callers to pass it
-when needed.
-
-Fixes: e858fae2b0b8f4 ("virtio_net: use common code for virtio_net_hdr and skb GSO conversion")
-Fixes: 1276f24eeef2 ("packet: use common code for virtio_net_hdr and skb GSO conversion")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/tap.c          |    5 ++++-
- drivers/net/tun.c          |    3 ++-
- drivers/net/virtio_net.c   |    3 ++-
- include/linux/virtio_net.h |   11 ++++-------
- net/packet/af_packet.c     |    4 ++--
- 5 files changed, 14 insertions(+), 12 deletions(-)
+ drivers/net/hyperv/netvsc_drv.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/tap.c
-+++ b/drivers/net/tap.c
-@@ -777,13 +777,16 @@ static ssize_t tap_put_user(struct tap_q
- 	int total;
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -123,8 +123,10 @@ static int netvsc_open(struct net_device
+ 	}
  
- 	if (q->flags & IFF_VNET_HDR) {
-+		int vlan_hlen = skb_vlan_tag_present(skb) ? VLAN_HLEN : 0;
- 		struct virtio_net_hdr vnet_hdr;
-+
- 		vnet_hdr_len = READ_ONCE(q->vnet_hdr_sz);
- 		if (iov_iter_count(iter) < vnet_hdr_len)
- 			return -EINVAL;
+ 	rdev = nvdev->extension;
+-	if (!rdev->link_state)
++	if (!rdev->link_state) {
+ 		netif_carrier_on(net);
++		netif_tx_wake_all_queues(net);
++	}
  
- 		if (virtio_net_hdr_from_skb(skb, &vnet_hdr,
--					    tap_is_little_endian(q), true))
-+					    tap_is_little_endian(q), true,
-+					    vlan_hlen))
- 			BUG();
- 
- 		if (copy_to_iter(&vnet_hdr, sizeof(vnet_hdr), iter) !=
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1648,7 +1648,8 @@ static ssize_t tun_put_user(struct tun_s
- 			return -EINVAL;
- 
- 		if (virtio_net_hdr_from_skb(skb, &gso,
--					    tun_is_little_endian(tun), true)) {
-+					    tun_is_little_endian(tun), true,
-+					    vlan_hlen)) {
- 			struct skb_shared_info *sinfo = skb_shinfo(skb);
- 			pr_err("unexpected GSO type: "
- 			       "0x%x, gso_size %d, hdr_len %d\n",
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1237,7 +1237,8 @@ static int xmit_skb(struct send_queue *s
- 		hdr = skb_vnet_hdr(skb);
- 
- 	if (virtio_net_hdr_from_skb(skb, &hdr->hdr,
--				    virtio_is_little_endian(vi->vdev), false))
-+				    virtio_is_little_endian(vi->vdev), false,
-+				    0))
- 		BUG();
- 
- 	if (vi->mergeable_rx_bufs)
---- a/include/linux/virtio_net.h
-+++ b/include/linux/virtio_net.h
-@@ -58,7 +58,8 @@ static inline int virtio_net_hdr_to_skb(
- static inline int virtio_net_hdr_from_skb(const struct sk_buff *skb,
- 					  struct virtio_net_hdr *hdr,
- 					  bool little_endian,
--					  bool has_data_valid)
-+					  bool has_data_valid,
-+					  int vlan_hlen)
- {
- 	memset(hdr, 0, sizeof(*hdr));   /* no info leak */
- 
-@@ -83,12 +84,8 @@ static inline int virtio_net_hdr_from_sk
- 
- 	if (skb->ip_summed == CHECKSUM_PARTIAL) {
- 		hdr->flags = VIRTIO_NET_HDR_F_NEEDS_CSUM;
--		if (skb_vlan_tag_present(skb))
--			hdr->csum_start = __cpu_to_virtio16(little_endian,
--				skb_checksum_start_offset(skb) + VLAN_HLEN);
--		else
--			hdr->csum_start = __cpu_to_virtio16(little_endian,
--				skb_checksum_start_offset(skb));
-+		hdr->csum_start = __cpu_to_virtio16(little_endian,
-+			skb_checksum_start_offset(skb) + vlan_hlen);
- 		hdr->csum_offset = __cpu_to_virtio16(little_endian,
- 				skb->csum_offset);
- 	} else if (has_data_valid &&
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2046,7 +2046,7 @@ static int packet_rcv_vnet(struct msghdr
- 		return -EINVAL;
- 	*len -= sizeof(vnet_hdr);
- 
--	if (virtio_net_hdr_from_skb(skb, &vnet_hdr, vio_le(), true))
-+	if (virtio_net_hdr_from_skb(skb, &vnet_hdr, vio_le(), true, 0))
- 		return -EINVAL;
- 
- 	return memcpy_to_msg(msg, (void *)&vnet_hdr, sizeof(vnet_hdr));
-@@ -2313,7 +2313,7 @@ static int tpacket_rcv(struct sk_buff *s
- 	if (do_vnet) {
- 		if (virtio_net_hdr_from_skb(skb, h.raw + macoff -
- 					    sizeof(struct virtio_net_hdr),
--					    vio_le(), true)) {
-+					    vio_le(), true, 0)) {
- 			spin_lock(&sk->sk_receive_queue.lock);
- 			goto drop_n_account;
- 		}
+ 	if (vf_netdev) {
+ 		/* Setting synthetic device up transparently sets
 
 
