@@ -2,94 +2,143 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16DFC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 01:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4306CC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 01:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B523624D71
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 01:18:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B523624D71
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E183824D7A
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 01:57:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E183824D7A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752020AbeFXBSL (ORCPT
+        id S1751915AbeFXB5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 21:18:11 -0400
-Received: from mga12.intel.com ([192.55.52.136]:59164 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751585AbeFXBSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 21:18:10 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jun 2018 18:18:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,263,1526367600"; 
-   d="scan'208";a="239731667"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Jun 2018 18:18:10 -0700
-Date:   Sat, 23 Jun 2018 18:17:38 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 02/16] x86/split_lock: Handle #AC exception for split
- lock in kernel mode
-Message-ID: <20180624011738.GI18979@romley-ivt3.sc.intel.com>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <1527435965-202085-3-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1806212301590.1591@nanos.tec.linutronix.de>
- <20180623042033.GF18979@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806231108540.8650@nanos.tec.linutronix.de>
- <20180623150521.GG18979@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806240245160.8650@nanos.tec.linutronix.de>
+        Sat, 23 Jun 2018 21:57:40 -0400
+Received: from p3plsmtpa12-08.prod.phx3.secureserver.net ([68.178.252.237]:56838
+        "EHLO p3plsmtpa12-08.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751721AbeFXB5j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 21:57:39 -0400
+Received: from [192.168.0.67] ([24.218.182.144])
+        by :SMTPAUTH: with ESMTPSA
+        id WuAWfVUlKt60AWuAWfTqFP; Sat, 23 Jun 2018 18:50:21 -0700
+Subject: Re: [Patch v2 02/15] CIFS: Add support for direct pages in rdata
+To:     longli@microsoft.com, Steve French <sfrench@samba.org>,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20180530194807.31657-1-longli@linuxonhyperv.com>
+ <20180530194807.31657-3-longli@linuxonhyperv.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <67b8afe7-f5e0-b36a-fcc1-87f1ae08eaa4@talpey.com>
+Date:   Sat, 23 Jun 2018 21:50:20 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806240245160.8650@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180530194807.31657-3-longli@linuxonhyperv.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfCLJ08a4oga1Jr5hglwit0EDmHzs9X6Zw+l5cgPdrOAE/xzJYkXX0PMZsyWIfjvYN66UkunqX8FoM8BuqJ5ShmCWQRtf9/BOsDqrf2F9hH5Fomwoopi6
+ BnMLfaqUq3VJTASdGQ+f0Er3VLiP8gZgtlxwbvuIJSQmBN+yGcQHjAkRP9u94IaNWVdGigBoL9ae0lk4ot6ZOcO7kbVRqokNw+pzx4gWQJD6WU/qlm1qqqqR
+ H1gB6NTotcCdvUCS4mvRenOHYfule/DfViu8aPRJN017ZDVCImX9D/fuRhDi8/tbzIy6vsqm1PnFuATtory4zGibBy06CxUKO6qEJyWRM6j1i13hnDfqskL+
+ PWdfMcHm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 24, 2018 at 02:55:08AM +0200, Thomas Gleixner wrote:
-> On Sat, 23 Jun 2018, Fenghua Yu wrote:
-> > On Sat, Jun 23, 2018 at 11:17:03AM +0200, Thomas Gleixner wrote:
-> > > On Fri, 22 Jun 2018, Fenghua Yu wrote:
-> It's not treated as failure. The firmware simply does not have an handler
-> for #AC installed and dies. I hope you yelled at the firmware people
-> already.
+On 5/30/2018 3:47 PM, Long Li wrote:
+> From: Long Li <longli@microsoft.com>
+> 
+> Add a function to allocate rdata without allocating pages for data
+> transfer. This gives the caller an option to pass a number of pages
+> that point to the data buffer.
+> 
+> rdata is still reponsible for free those pages after it's done.
 
-I think firmware does handle the split lock in its #AC handler because
-firmware shows the following log and system hangs:
+"Caller" is still responsible? Or is the rdata somehow freeing itself
+via another mechanism?
 
-!!!! IA32 Exception Type - 11(#AC - Alignment Check)  CPU Apic ID - 00000014!
-!
-ExceptionData - 00000000
-EIP  - 6A9DB6C3, CS  - 00000010, EFLAGS - 00010006
-...
+> 
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+>   fs/cifs/cifsglob.h |  2 +-
+>   fs/cifs/file.c     | 23 ++++++++++++++++++++---
+>   2 files changed, 21 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
+> index 8d16c3e..56864a87 100644
+> --- a/fs/cifs/cifsglob.h
+> +++ b/fs/cifs/cifsglob.h
+> @@ -1179,7 +1179,7 @@ struct cifs_readdata {
+>   	unsigned int			tailsz;
+>   	unsigned int			credits;
+>   	unsigned int			nr_pages;
+> -	struct page			*pages[];
+> +	struct page			**pages;
 
-> If that is a real wide spread issue in practice, then we might have to go
-> for some ugly workarounds, but we won't find out when we add them
-> upfront. So testing will show what's wrong in firmware land and we can
-> handle it from there. It's a completely orthogonal issue and has nothing to
-> do with the core functionality.
+Technically speaking, these are syntactically equivalent. It may not
+be worth changing this historic definition.
 
-Sure
+Tom.
 
-Thanks.
 
--Fenghua
+>   };
+>   
+>   struct cifs_writedata;
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index 23fd430..1c98293 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -2880,13 +2880,13 @@ cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from)
+>   }
+>   
+>   static struct cifs_readdata *
+> -cifs_readdata_alloc(unsigned int nr_pages, work_func_t complete)
+> +cifs_readdata_direct_alloc(struct page **pages, work_func_t complete)
+>   {
+>   	struct cifs_readdata *rdata;
+>   
+> -	rdata = kzalloc(sizeof(*rdata) + (sizeof(struct page *) * nr_pages),
+> -			GFP_KERNEL);
+> +	rdata = kzalloc(sizeof(*rdata), GFP_KERNEL);
+>   	if (rdata != NULL) {
+> +		rdata->pages = pages;
+>   		kref_init(&rdata->refcount);
+>   		INIT_LIST_HEAD(&rdata->list);
+>   		init_completion(&rdata->done);
+> @@ -2896,6 +2896,22 @@ cifs_readdata_alloc(unsigned int nr_pages, work_func_t complete)
+>   	return rdata;
+>   }
+>   
+> +static struct cifs_readdata *
+> +cifs_readdata_alloc(unsigned int nr_pages, work_func_t complete)
+> +{
+> +	struct page **pages =
+> +		kzalloc(sizeof(struct page *) * nr_pages, GFP_KERNEL);
+> +	struct cifs_readdata *ret = NULL;
+> +
+> +	if (pages) {
+> +		ret = cifs_readdata_direct_alloc(pages, complete);
+> +		if (!ret)
+> +			kfree(pages);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>   void
+>   cifs_readdata_release(struct kref *refcount)
+>   {
+> @@ -2910,6 +2926,7 @@ cifs_readdata_release(struct kref *refcount)
+>   	if (rdata->cfile)
+>   		cifsFileInfo_put(rdata->cfile);
+>   
+> +	kvfree(rdata->pages);
+>   	kfree(rdata);
+>   }
+>   
+> 
