@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817A0C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7970EC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B1A624227
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:29:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1A624227
+	by mail.kernel.org (Postfix) with ESMTP id BFB3F24FA4
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:29:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB3F24FA4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754595AbeFXP3X (ORCPT
+        id S1754610AbeFXP3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:29:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58918 "EHLO
+        Sun, 24 Jun 2018 11:29:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58928 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752190AbeFXP3V (ORCPT
+        with ESMTP id S1751986AbeFXP33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:29:21 -0400
+        Sun, 24 Jun 2018 11:29:29 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F8E42C;
-        Sun, 24 Jun 2018 15:29:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBACC2C;
+        Sun, 24 Jun 2018 15:29:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Evgeniy Polyakov <zbr@ioremap.net>
-Subject: [PATCH 4.14 43/52] w1: mxc_w1: Enable clock before calling clk_get_rate() on it
-Date:   Sun, 24 Jun 2018 23:21:36 +0800
-Message-Id: <20180624142746.988803786@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Subject: [PATCH 4.14 44/52] x86/intel_rdt: Enable CMT and MBM on new Skylake stepping
+Date:   Sun, 24 Jun 2018 23:21:37 +0800
+Message-Id: <20180624142747.036059653@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -51,67 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+From: Tony Luck <tony.luck@intel.com>
 
-commit 955bc61328dc0a297fb3baccd84e9d3aee501ed8 upstream.
+commit 1d9f3e20a56d33e55748552aeec597f58542f92d upstream.
 
-According to the API, you may only call clk_get_rate() after actually
-enabling it.
+New stepping of Skylake has fixes for cache occupancy and memory
+bandwidth monitoring.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Update the code to enable these by default on newer steppings.
 
-Fixes: a5fd9139f74c ("w1: add 1-wire master driver for i.MX27 / i.MX31")
-Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: stable@vger.kernel.org # v4.14
+Cc: Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Link: https://lkml.kernel.org/r/20180608160732.9842-1-tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/w1/masters/mxc_w1.c |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/w1/masters/mxc_w1.c
-+++ b/drivers/w1/masters/mxc_w1.c
-@@ -112,6 +112,10 @@ static int mxc_w1_probe(struct platform_
- 	if (IS_ERR(mdev->clk))
- 		return PTR_ERR(mdev->clk);
- 
-+	err = clk_prepare_enable(mdev->clk);
-+	if (err)
-+		return err;
-+
- 	clkrate = clk_get_rate(mdev->clk);
- 	if (clkrate < 10000000)
- 		dev_warn(&pdev->dev,
-@@ -125,12 +129,10 @@ static int mxc_w1_probe(struct platform_
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mdev->regs = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mdev->regs))
--		return PTR_ERR(mdev->regs);
--
--	err = clk_prepare_enable(mdev->clk);
--	if (err)
--		return err;
-+	if (IS_ERR(mdev->regs)) {
-+		err = PTR_ERR(mdev->regs);
-+		goto out_disable_clk;
-+	}
- 
- 	/* Software reset 1-Wire module */
- 	writeb(MXC_W1_RESET_RST, mdev->regs + MXC_W1_RESET);
-@@ -146,8 +148,12 @@ static int mxc_w1_probe(struct platform_
- 
- 	err = w1_add_master_device(&mdev->bus_master);
- 	if (err)
--		clk_disable_unprepare(mdev->clk);
-+		goto out_disable_clk;
-+
-+	return 0;
- 
-+out_disable_clk:
-+	clk_disable_unprepare(mdev->clk);
- 	return err;
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -773,6 +773,8 @@ static __init void rdt_quirks(void)
+ 	case INTEL_FAM6_SKYLAKE_X:
+ 		if (boot_cpu_data.x86_stepping <= 4)
+ 			set_rdt_options("!cmt,!mbmtotal,!mbmlocal,!l3cat");
++		else
++			set_rdt_options("!l3cat");
+ 	}
  }
  
 
