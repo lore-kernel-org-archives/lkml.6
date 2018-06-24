@@ -2,137 +2,133 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF123C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDA9C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F80251B4
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:05:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F80251B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 59F8D251B7
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:05:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vGD2qNK/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F8D251B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755621AbeFXQFH (ORCPT
+        id S1755685AbeFXQFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 12:05:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59944 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755446AbeFXPk6 (ORCPT
+        Sun, 24 Jun 2018 12:05:30 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33190 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755635AbeFXPk4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:40:58 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4496149F;
-        Sun, 24 Jun 2018 15:40:56 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Sun, 24 Jun 2018 11:40:56 -0400
+Received: by mail-wm0-f68.google.com with SMTP id z6-v6so10336450wma.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 08:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=5Md8H7iNHuNRqlImkhk8J1WUS54KhEvm1X6fF3w1m4g=;
+        b=vGD2qNK/PybbbtU6kUOEiA52rFYLrSvGQ8QUIziUK9788Jya4d4Q0KCPfJeq2Vac4P
+         +rw19ogZNhp+GxAY8Y0ylWBk4qee08nsFqM11Mshs8sE/sW0e4jm5QCqVonJ0dj87CeG
+         fC+bOzYnmEzL9Y4El+YtnHX6rorpYbbDPxnr5I0bm7qGHvye9YjLrrVgOENBOE6zKo6J
+         Jc86v2wfYFScvEnLTTmIPaK+tn1m4qQcpgpq/8+LqIy8R5llqhyy2sATF2S0393+uv/3
+         Hz4esdhW+mTGo+h2xYU2PSRAZOZYve53FQYegqvG4nq2BJObfaAJ/yBhX6Sh0LXKxSYc
+         IuBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=5Md8H7iNHuNRqlImkhk8J1WUS54KhEvm1X6fF3w1m4g=;
+        b=NyAtKxwzTB92CbYid3F0YUVrMzouKV2RKJYBv9pejLJMaFHlWRrCbCXp21KQ7DbRFg
+         VsSrULsUyoN6AtNgToZVVgrCaWg6Y+Rwr7Pk/ZfSLRllAuVc1KDvLNXJzhsjBvv26oGq
+         sGH8K34MftnWPP1RW3AuXfTqO/NNDIBwBO33I8iZJ68YWlbXD09k0ZUthBJoJBmQ982o
+         oiLnVby8omhzMfP+um3hWVDD05plYbKVkfEbDB8fUcOByJmfqVwdHFEbOqbtyaoVTfzF
+         CFXXvtzm5PqcF39d5Pj2Uq6LhaQ2lfndSjDZ+fixnZaGYIslzcdc4fyQNYvlijsChEn6
+         KM0g==
+X-Gm-Message-State: APt69E3fKmC0xmmjjSjbab93jQGMfpxgXemSDJRRD7hfMuMn6jM3/SYC
+        pU/tXBPQIrNus5rpgA/Wm8zthd8t
+X-Google-Smtp-Source: ADUXVKJ4DPsUzSe44oSn7/+dCxoz7Jf18YSj7hT/CW5KTK4JafnZ6kO6HP1dnWGNQFNLV09sbPdH0A==
+X-Received: by 2002:a1c:e69d:: with SMTP id e29-v6mr3697210wmi.140.1529854854745;
+        Sun, 24 Jun 2018 08:40:54 -0700 (PDT)
+Received: from localhost.localdomain (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
+        by smtp.gmail.com with ESMTPSA id w12-v6sm2782920wrp.69.2018.06.24.08.40.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Jun 2018 08:40:53 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 07/70] net/sched: act_simple: fix parsing of TCA_DEF_DATA
-Date:   Sun, 24 Jun 2018 23:21:59 +0800
-Message-Id: <20180624142740.929012544@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
-References: <20180624142740.481662434@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH v3 2/8] staging: rtl8192u: Correct indentation of switch statement - Coding Style
+Date:   Sun, 24 Jun 2018 16:40:21 +0100
+Message-Id: <20180624154027.27654-3-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180624154027.27654-1-johnfwhitmore@gmail.com>
+References: <20180624154027.27654-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Removed an extra indentation from the code of the various case options in a
+switch statement.
 
-------------------
-
-From: Davide Caratti <dcaratti@redhat.com>
-
-[ Upstream commit 8d499533e0bc02d44283dbdab03142b599b8ba16 ]
-
-use nla_strlcpy() to avoid copying data beyond the length of TCA_DEF_DATA
-netlink attribute, in case it is less than SIMP_MAX_DATA and it does not
-end with '\0' character.
-
-v2: fix errors in the commit message, thanks Hangbin Liu
-
-Fixes: fa1b1cff3d06 ("net_cls_act: Make act_simple use of netlink policy.")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- net/sched/act_simple.c |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ .../rtl8192u/ieee80211/rtl819x_HTProc.c       | 30 +++++++++----------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
---- a/net/sched/act_simple.c
-+++ b/net/sched/act_simple.c
-@@ -53,22 +53,22 @@ static void tcf_simp_release(struct tc_a
- 	kfree(d->tcfd_defdata);
- }
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 54c48747f5fa..4bfadb49c363 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -753,28 +753,28 @@ static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
+ 	case IEEE_A:
+ 	case IEEE_B:
+ 	case IEEE_G:
+-			//legacy rate routine handled at selectedrate
++		//legacy rate routine handled at selectedrate
  
--static int alloc_defdata(struct tcf_defact *d, char *defdata)
-+static int alloc_defdata(struct tcf_defact *d, const struct nlattr *defdata)
- {
- 	d->tcfd_defdata = kzalloc(SIMP_MAX_DATA, GFP_KERNEL);
- 	if (unlikely(!d->tcfd_defdata))
- 		return -ENOMEM;
--	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
-+	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
- 	return 0;
- }
+-			//no MCS rate
+-			for (i = 0; i <= 15; i++)
+-				pOperateMCS[i] = 0;
+-			break;
++		//no MCS rate
++		for (i = 0; i <= 15; i++)
++			pOperateMCS[i] = 0;
++		break;
  
--static void reset_policy(struct tcf_defact *d, char *defdata,
-+static void reset_policy(struct tcf_defact *d, const struct nlattr *defdata,
- 			 struct tc_defact *p)
- {
- 	spin_lock_bh(&d->tcf_lock);
- 	d->tcf_action = p->action;
- 	memset(d->tcfd_defdata, 0, SIMP_MAX_DATA);
--	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
-+	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
- 	spin_unlock_bh(&d->tcf_lock);
- }
- 
-@@ -87,7 +87,6 @@ static int tcf_simp_init(struct net *net
- 	struct tcf_defact *d;
- 	bool exists = false;
- 	int ret = 0, err;
--	char *defdata;
- 
- 	if (nla == NULL)
- 		return -EINVAL;
-@@ -110,8 +109,6 @@ static int tcf_simp_init(struct net *net
- 		return -EINVAL;
- 	}
- 
--	defdata = nla_data(tb[TCA_DEF_DATA]);
+ 	case IEEE_N_24G:	//assume CCK rate ok
+ 	case IEEE_N_5G:
+-			// Legacy part we only use 6, 5.5,2,1 for N_24G and 6 for N_5G.
+-			// Legacy part shall be handled at SelectRateSet().
 -
- 	if (!exists) {
- 		ret = tcf_idr_create(tn, parm->index, est, a,
- 				     &act_simp_ops, bind, false);
-@@ -119,7 +116,7 @@ static int tcf_simp_init(struct net *net
- 			return ret;
+-			//HT part
+-			// TODO: may be different if we have different number of antenna
+-			pOperateMCS[0] &= RATE_ADPT_1SS_MASK;	//support MCS 0~7
+-			pOperateMCS[1] &= RATE_ADPT_2SS_MASK;
+-			pOperateMCS[3] &= RATE_ADPT_MCS32_MASK;
+-			break;
++		// Legacy part we only use 6, 5.5,2,1 for N_24G and 6 for N_5G.
++		// Legacy part shall be handled at SelectRateSet().
++
++		//HT part
++		// TODO: may be different if we have different number of antenna
++		pOperateMCS[0] &= RATE_ADPT_1SS_MASK;	//support MCS 0~7
++		pOperateMCS[1] &= RATE_ADPT_2SS_MASK;
++		pOperateMCS[3] &= RATE_ADPT_MCS32_MASK;
++		break;
  
- 		d = to_defact(*a);
--		ret = alloc_defdata(d, defdata);
-+		ret = alloc_defdata(d, tb[TCA_DEF_DATA]);
- 		if (ret < 0) {
- 			tcf_idr_release(*a, bind);
- 			return ret;
-@@ -133,7 +130,7 @@ static int tcf_simp_init(struct net *net
- 		if (!ovr)
- 			return -EEXIST;
- 
--		reset_policy(d, defdata, parm);
-+		reset_policy(d, tb[TCA_DEF_DATA], parm);
+ 	//should never reach here
+ 	default:
+-			break;
++		break;
  	}
  
- 	if (ret == ACT_P_CREATED)
-
+ 	return true;
+-- 
+2.17.1
 
