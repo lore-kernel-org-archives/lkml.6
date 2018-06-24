@@ -3,39 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF263C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C93C6C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A792B24F6B
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A792B24F6B
+	by mail.kernel.org (Postfix) with ESMTP id 7F1CF24F6B
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1CF24F6B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752193AbeFXPZe (ORCPT
+        id S1752233AbeFXPZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:25:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58626 "EHLO
+        Sun, 24 Jun 2018 11:25:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751482AbeFXPZb (ORCPT
+        with ESMTP id S1752195AbeFXPZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:25:31 -0400
+        Sun, 24 Jun 2018 11:25:38 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6C30992B;
-        Sun, 24 Jun 2018 15:25:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A92592B;
+        Sun, 24 Jun 2018 15:25:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 06/52] tcp: verify the checksum of the first data segment in a new connection
-Date:   Sun, 24 Jun 2018 23:20:59 +0800
-Message-Id: <20180624142744.686732960@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.14 15/52] ext4: do not allow external inodes for inline data
+Date:   Sun, 24 Jun 2018 23:21:08 +0800
+Message-Id: <20180624142745.366164765@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -52,60 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank van der Linden <fllinden@amazon.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 4fd44a98ffe0d048246efef67ed640fdf2098a62 ]
+commit 117166efb1ee8f13c38f9e96b258f16d4923f888 upstream.
 
-commit 079096f103fa ("tcp/dccp: install syn_recv requests into ehash
-table") introduced an optimization for the handling of child sockets
-created for a new TCP connection.
+The inline data feature was implemented before we added support for
+external inodes for xattrs.  It makes no sense to support that
+combination, but the problem is that there are a number of extended
+attribute checks that are skipped if e_value_inum is non-zero.
 
-But this optimization passes any data associated with the last ACK of the
-connection handshake up the stack without verifying its checksum, because it
-calls tcp_child_process(), which in turn calls tcp_rcv_state_process()
-directly.  These lower-level processing functions do not do any checksum
-verification.
+Unfortunately, the inline data code is completely e_value_inum
+unaware, and attempts to interpret the xattr fields as if it were an
+inline xattr --- at which point, Hilarty Ensues.
 
-Insert a tcp_checksum_complete call in the TCP_NEW_SYN_RECEIVE path to
-fix this.
+This addresses CVE-2018-11412.
 
-Fixes: 079096f103fa ("tcp/dccp: install syn_recv requests into ehash table")
-Signed-off-by: Frank van der Linden <fllinden@amazon.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Tested-by: Balbir Singh <bsingharora@gmail.com>
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+https://bugzilla.kernel.org/show_bug.cgi?id=199803
+
+Reported-by: Jann Horn <jannh@google.com>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_ipv4.c |    4 ++++
- net/ipv6/tcp_ipv6.c |    4 ++++
- 2 files changed, 8 insertions(+)
 
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -1675,6 +1675,10 @@ process:
- 			reqsk_put(req);
- 			goto discard_it;
- 		}
-+		if (tcp_checksum_complete(skb)) {
-+			reqsk_put(req);
-+			goto csum_error;
+---
+ fs/ext4/inline.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -150,6 +150,12 @@ int ext4_find_inline_data_nolock(struct
+ 		goto out;
+ 
+ 	if (!is.s.not_found) {
++		if (is.s.here->e_value_inum) {
++			EXT4_ERROR_INODE(inode, "inline data xattr refers "
++					 "to an external xattr inode");
++			error = -EFSCORRUPTED;
++			goto out;
 +		}
- 		if (unlikely(sk->sk_state != TCP_LISTEN)) {
- 			inet_csk_reqsk_queue_drop_and_put(sk, req);
- 			goto lookup;
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1453,6 +1453,10 @@ process:
- 			reqsk_put(req);
- 			goto discard_it;
- 		}
-+		if (tcp_checksum_complete(skb)) {
-+			reqsk_put(req);
-+			goto csum_error;
-+		}
- 		if (unlikely(sk->sk_state != TCP_LISTEN)) {
- 			inet_csk_reqsk_queue_drop_and_put(sk, req);
- 			goto lookup;
+ 		EXT4_I(inode)->i_inline_off = (u16)((void *)is.s.here -
+ 					(void *)ext4_raw_inode(&is.iloc));
+ 		EXT4_I(inode)->i_inline_size = EXT4_MIN_INLINE_DATA_SIZE +
 
 
