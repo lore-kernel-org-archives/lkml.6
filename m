@@ -2,118 +2,139 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3052CC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 659CFC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2A324D86
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:28:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC2A324D86
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+	by mail.kernel.org (Postfix) with ESMTP id AFABD24D86
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:36:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="f3z51hkm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFABD24D86
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeFXC2p (ORCPT
+        id S1752118AbeFXCgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 22:28:45 -0400
-Received: from p3plsmtpa12-04.prod.phx3.secureserver.net ([68.178.252.233]:48811
-        "EHLO p3plsmtpa12-04.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751894AbeFXC2n (ORCPT
+        Sat, 23 Jun 2018 22:36:55 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:58536 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751895AbeFXCgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 22:28:43 -0400
-Received: from [192.168.0.67] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id WulefzNUAOIAfWulefWpjR; Sat, 23 Jun 2018 19:28:43 -0700
-Subject: Re: [Patch v2 12/15] CIFS: Pass page offset for encrypting
-To:     longli@microsoft.com, Steve French <sfrench@samba.org>,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-References: <20180530194807.31657-1-longli@linuxonhyperv.com>
- <20180530194807.31657-13-longli@linuxonhyperv.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <fd7d65d2-115d-c15b-816c-768e6600f803@talpey.com>
-Date:   Sat, 23 Jun 2018 22:28:43 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 23 Jun 2018 22:36:54 -0400
+Received: from mail-vk0-f49.google.com (mail-vk0-f49.google.com [209.85.213.49]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w5O2amHh005751;
+        Sun, 24 Jun 2018 11:36:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w5O2amHh005751
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1529807809;
+        bh=rKHslT/osSK2RWhr+8cP3M6PlQ3fg3jn62HGRMqDmVg=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=f3z51hkmMDw0FlcGSwv+NEthMTsPF8TiDFW6tUVuxzqVwgjyl4SIBqwgsztuwydvX
+         HkPpb8kBFTv23hUFdap2BuiPVPxM1mqRd/Nxaww+aDQfqBMPpPLvDXhWyGkfG9rkyq
+         uqZb48dNQYyowEyD5SgKNHAOSmbg6PoegjUv8T8MA7xtnYD/exoGImsPtN4GzSWF7u
+         i9/0NrZhxTQ7pl15mINVk8jP4m9V+2CdcsMAArQKKJjp8VfFXNY4YQDe8cIh6ywbBA
+         xXH+Z7VtRaQVYk7IkJso5kpzJzXSSswDwc86avqVR5G/F+pucAwdnv1cptDJ496yB7
+         wixcIg9UTf7BQ==
+X-Nifty-SrcIP: [209.85.213.49]
+Received: by mail-vk0-f49.google.com with SMTP id s187-v6so6000041vke.9;
+        Sat, 23 Jun 2018 19:36:48 -0700 (PDT)
+X-Gm-Message-State: APt69E1/JVD8BKkcM2sSgk3NSfe/QnD4OsawrDw1ePjFejPACxTSQjnO
+        Ig76HhFw+KEltZ4T8x/YYYtqZEB1dX0MIO3i5mo=
+X-Google-Smtp-Source: ADUXVKLymIt9hvgD1unybeRXbPfkmxXovdE4NqRtt2FQbkuLbsG1+izq6cMfC917oRnSG6AK1P6hOd+ovS8Vg/DSF5k=
+X-Received: by 2002:a1f:2348:: with SMTP id j69-v6mr4461066vkj.160.1529807807496;
+ Sat, 23 Jun 2018 19:36:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180530194807.31657-13-longli@linuxonhyperv.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfN/1pjsBskPaN8mkUyb1ViybTlmgjDtN3mekST9Kf81Ni6CO2y+DVxtsW5WR1eO76wsU3Lq+s0+R8b6XG+ySDAxzqiP8PCCR6Edvc4Kco5Kz/RL4touU
- xzO54HUaajrUAmvpVzYe3VFx6hbofDykuMTRqKQ878wMoSgdi31Z29ahN9JZlskLLC13vZTfOvuUmVRK0pRtX1W7CYfdU8R+9nd6Pm99CySAVUZ9TDq+4J6k
- xZ/mBnujjYIJSUI1rIw7WVXHreGrSK5vRlfIaLPBf0gR8yvOIWQnZEITsUQOYgVVySM0BCWvFwV4QJCNz+fyXoNfUmKS8NNwpVA+C0NUEnjxdcHgvLWoYfl0
- ZUxLzBYy
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Sat, 23 Jun 2018 19:36:06
+ -0700 (PDT)
+In-Reply-To: <87r2l4jkgf.fsf@xmission.com>
+References: <CAK7LNASMpvFgue9gZ=6Epq_Skt2pvTVOoT9w=SzA_uGR87KP-w@mail.gmail.com>
+ <87r2l4jkgf.fsf@xmission.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sun, 24 Jun 2018 11:36:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATmdv+n7i0sJTAQMkbRHRVj-mihJs5nS-oi4fUkB8x8qg@mail.gmail.com>
+Message-ID: <CAK7LNATmdv+n7i0sJTAQMkbRHRVj-mihJs5nS-oi4fUkB8x8qg@mail.gmail.com>
+Subject: Re: [GIT PULL 2/2] Kconfig updates for v4.18
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/30/2018 3:48 PM, Long Li wrote:
-> From: Long Li <longli@microsoft.com>
-> 
-> Encryption function needs to read data starting page offset from input
-> buffer.
-> 
-> This doesn't affect decryption path since it allocates its own page
-> buffers.
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
-> ---
->   fs/cifs/smb2ops.c | 20 +++++++++++++-------
->   1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-> index 1fa1c29..38d19b6 100644
-> --- a/fs/cifs/smb2ops.c
-> +++ b/fs/cifs/smb2ops.c
-> @@ -2189,9 +2189,10 @@ init_sg(struct smb_rqst *rqst, u8 *sign)
->   		smb2_sg_set_buf(&sg[i], rqst->rq_iov[i].iov_base,
->   						rqst->rq_iov[i].iov_len);
->   	for (j = 0; i < sg_len - 1; i++, j++) {
-> -		unsigned int len = (j < rqst->rq_npages - 1) ? rqst->rq_pagesz
-> -							: rqst->rq_tailsz;
-> -		sg_set_page(&sg[i], rqst->rq_pages[j], len, 0);
-> +		unsigned int len, offset;
-> +
-> +		rqst_page_get_length(rqst, j, &len, &offset);
-> +		sg_set_page(&sg[i], rqst->rq_pages[j], len, offset);
->   	}
->   	smb2_sg_set_buf(&sg[sg_len - 1], sign, SMB2_SIGNATURE_SIZE);
->   	return sg;
-> @@ -2332,6 +2333,7 @@ smb3_init_transform_rq(struct TCP_Server_Info *server, struct smb_rqst *new_rq,
->   		return rc;
->   
->   	new_rq->rq_pages = pages;
-> +	new_rq->rq_offset = old_rq->rq_offset;
->   	new_rq->rq_npages = old_rq->rq_npages;
->   	new_rq->rq_pagesz = old_rq->rq_pagesz;
->   	new_rq->rq_tailsz = old_rq->rq_tailsz;
-> @@ -2363,10 +2365,14 @@ smb3_init_transform_rq(struct TCP_Server_Info *server, struct smb_rqst *new_rq,
->   
->   	/* copy pages form the old */
->   	for (i = 0; i < npages; i++) {
-> -		char *dst = kmap(new_rq->rq_pages[i]);
-> -		char *src = kmap(old_rq->rq_pages[i]);
-> -		unsigned int len = (i < npages - 1) ? new_rq->rq_pagesz :
-> -							new_rq->rq_tailsz;
-> +		char *dst, *src;
-> +		unsigned int offset, len;
-> +
-> +		rqst_page_get_length(new_rq, i, &len, &offset);
-> +
-> +		dst = (char *) kmap(new_rq->rq_pages[i]) + offset;
-> +		src = (char *) kmap(old_rq->rq_pages[i]) + offset;
+Hi.
 
-Ouch! TWO kmap/kunmaps per page of data? Is there not already a kva,
-at least for the destination (message)?
+2018-06-18 22:25 GMT+09:00 Eric W. Biederman <ebiederm@xmission.com>:
+> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+>
+>> - drop CONFIG_CROSS_COMPILE support
+>
+> aka
+>> commit f1089c92da791034af73478159626007cba7f092
+>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Date:   Mon May 28 18:21:39 2018 +0900
+>>
+>>     kbuild: remove CONFIG_CROSS_COMPILE support
+>>
+>>     Kbuild provides a couple of ways to specify CROSS_COMPILE:
+>>
+>>     [1] Command line
+>>     [2] Environment
+>>     [3] arch/*/Makefile (only some architectures)
+>>     [4] CONFIG_CROSS_COMPILE
+>>
+>>     [4] is problematic for the compiler capability tests in Kconfig.
+>>     CONFIG_CROSS_COMPILE allows users to change the compiler prefix from
+>>     'make menuconfig', etc.  It means, the compiler options would have
+>>     to be all re-calculated everytime CONFIG_CROSS_COMPILE is changed.
+>>
+>>     To avoid complexity and performance issues, I'd like to evaluate
+>>     the shell commands statically, i.e. only parsing Kconfig files.
+>>
+>>     I guess the majority is [1] or [2].  Currently, there are only
+>>     5 defconfig files that specify CONFIG_CROSS_COMPILE.
+>>       arch/arm/configs/lpc18xx_defconfig
+>>       arch/hexagon/configs/comet_defconfig
+>>       arch/nds32/configs/defconfig
+>>       arch/openrisc/configs/or1ksim_defconfig
+>>       arch/openrisc/configs/simple_smp_defconfig
+>>
+>>     Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>     Reviewed-by: Kees Cook <keescook@chromium.org>
+>>
+>
+> I just started working against 4.18-rc1 and discovered this.
+>
+> This has broken my setup for building and testing changes on other
+> architectures.  I have to put the name of the compiler prefix somewhere.
+> The mapping between the prefix to gcc and the linux architecture is
+> non-trivial.  Especially with a lot of architectures in the test pool.
+>
+> I am tired and frustrated this morning as this is going to keep me from
+> getting done what I had planned today.
+>
+> This is a regression pure and simple.  It breaks my workflow.  Please
+> fix it.
+>
+> Eric
+>
 
-Tom.
+Sorry, I cannot fix.
+
+As I mentioned in the commit log,
+CONFIG_CROSS_COMPILE cannot co-exist with the new Kconfig feature.
+
+Only the possible fix is to revert almost all Kbuild/Kconfig commits
+merged in the previous MW, but I do not want to.
 
 
-> +
->   		memcpy(dst, src, len);
->   		kunmap(new_rq->rq_pages[i]);
->   		kunmap(old_rq->rq_pages[i]);
-> 
+
+-- 
+Best Regards
+Masahiro Yamada
