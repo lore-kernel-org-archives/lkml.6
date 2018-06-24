@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CDDC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC02BC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8657325002
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8657325002
+	by mail.kernel.org (Postfix) with ESMTP id 7211525006
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7211525006
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755330AbeFXPfc (ORCPT
+        id S1751889AbeFXPfj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:35:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59432 "EHLO
+        Sun, 24 Jun 2018 11:35:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59442 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754563AbeFXPfa (ORCPT
+        with ESMTP id S1754259AbeFXPfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:35:30 -0400
+        Sun, 24 Jun 2018 11:35:37 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 910F292F;
-        Sun, 24 Jun 2018 15:35:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF08549F;
+        Sun, 24 Jun 2018 15:35:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kevin Wangtao <kevin.wangtao@hisilicon.com>,
+        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.16 40/64] cpufreq: Fix new policy initialization during limits updates via sysfs
-Date:   Sun, 24 Jun 2018 23:22:21 +0800
-Message-Id: <20180624142746.296894543@linuxfoundation.org>
+Subject: [PATCH 4.16 41/64] cpufreq: ti-cpufreq: Fix an incorrect error return value
+Date:   Sun, 24 Jun 2018 23:22:22 +0800
+Message-Id: <20180624142746.346520086@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -52,50 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tao Wang <kevin.wangtao@hisilicon.com>
+From: Suman Anna <s-anna@ti.com>
 
-commit c7d1f119c48f64bebf0fa1e326af577c6152fe30 upstream.
+commit e5d295b06d69a1924665a16a4987be475addd00f upstream.
 
-If the policy limits are updated via cpufreq_update_policy() and
-subsequently via sysfs, the limits stored in user_policy may be
-set incorrectly.
+Commit 05829d9431df (cpufreq: ti-cpufreq: kfree opp_data when
+failure) has fixed a memory leak in the failure path, however
+the patch returned a positive value on get_cpu_device() failure
+instead of the previous negative value. Fix this incorrect error
+return value properly.
 
-For example, if both min and max are set via sysfs to the maximum
-available frequency, user_policy.min and user_policy.max will also
-be the maximum.  If a policy notifier triggered by
-cpufreq_update_policy() lowers both the min and the max at this
-point, that change is not reflected by the user_policy limits, so
-if the max is updated again via sysfs to the same lower value,
-then user_policy.max will be lower than user_policy.min which
-shouldn't happen.  In particular, if one of the policy CPUs is
-then taken offline and back online, cpufreq_set_policy() will
-fail for it due to a failing limits check.
-
-To prevent that from happening, initialize the min and max fields
-of the new_policy object to the ones stored in user_policy that
-were previously set via sysfs.
-
-Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
+Fixes: 05829d9431df (cpufreq: ti-cpufreq: kfree opp_data when failure)
+Cc: 4.14+ <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Suman Anna <s-anna@ti.com>
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-[ rjw: Subject & changelog ]
-Cc: All applicable <stable@vger.kernel.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cpufreq.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/cpufreq/ti-cpufreq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -703,6 +703,8 @@ static ssize_t store_##file_name					\
- 	struct cpufreq_policy new_policy;				\
- 									\
- 	memcpy(&new_policy, policy, sizeof(*policy));			\
-+	new_policy.min = policy->user_policy.min;			\
-+	new_policy.max = policy->user_policy.max;			\
- 									\
- 	ret = sscanf(buf, "%u", &new_policy.object);			\
- 	if (ret != 1)							\
+--- a/drivers/cpufreq/ti-cpufreq.c
++++ b/drivers/cpufreq/ti-cpufreq.c
+@@ -226,7 +226,7 @@ static int ti_cpufreq_probe(struct platf
+ 	opp_data->cpu_dev = get_cpu_device(0);
+ 	if (!opp_data->cpu_dev) {
+ 		pr_err("%s: Failed to get device for CPU0\n", __func__);
+-		ret = ENODEV;
++		ret = -ENODEV;
+ 		goto free_opp_data;
+ 	}
+ 
 
 
