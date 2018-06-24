@@ -2,93 +2,94 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C357C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB26FC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051F024F80
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051F024F80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id A1B0E24F80
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B0E24F80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752678AbeFXP0j (ORCPT
+        id S1751859AbeFXP0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:26:39 -0400
-Received: from smtprelay0031.hostedemail.com ([216.40.44.31]:39681 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751895AbeFXP0g (ORCPT
+        Sun, 24 Jun 2018 11:26:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58732 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751895AbeFXP0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:26:36 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id B5C68180A9C62;
-        Sun, 24 Jun 2018 15:26:35 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: crate45_909d8511f660c
-X-Filterd-Recvd-Size: 2360
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 24 Jun 2018 15:26:33 +0000 (UTC)
-Message-ID: <36befceb2334197cce5cd44a61f86f38b870d54c.camel@perches.com>
-Subject: Re: [PATCH] staging: pi433: replace simple switch statements
-From:   Joe Perches <joe@perches.com>
-To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Simon =?ISO-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>,
-        Marcus Wolf <linux@Wolf-Entwicklungen.de>,
-        Luca =?ISO-8859-1?Q?S=F6the?= <luca@acul.me>,
-        Marcin Ciupak <marcin.s.ciupak@gmail.com>,
-        Michael Panzlaff <michael.panzlaff@fau.de>,
-        Derek Robson <robsonde@gmail.com>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Hugo Lefeuvre <hle@owl.eu.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Sun, 24 Jun 2018 08:26:32 -0700
-In-Reply-To: <20180624094245.23741-1-Valentin.Vidic@CARNet.hr>
-References: <20180624094245.23741-1-Valentin.Vidic@CARNet.hr>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 24 Jun 2018 11:26:44 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE43192F;
+        Sun, 24 Jun 2018 15:26:42 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 24/52] ALSA: hda/realtek - Enable mic-mute hotkey for several Lenovo AIOs
+Date:   Sun, 24 Jun 2018 23:21:17 +0800
+Message-Id: <20180624142745.941353851@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
+References: <20180624142744.234164867@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-06-24 at 11:42 +0200, Valentin Vidic wrote:
-> Use const array to map switch cases to resulting values.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-I suggest you make the const arrays the same type
-as the argument in the function being called.
+------------------
 
-> diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-[]
-> @@ -111,27 +111,22 @@ static inline int rf69_read_mod_write(struct spi_device *spi, u8 reg,
->  
->  int rf69_set_mode(struct spi_device *spi, enum mode mode)
->  {
-> -	switch (mode) {
-> -	case transmit:
-> -		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
-> -					   OPMODE_MODE_TRANSMIT);
-[]
-> +	static const int mode_map[] = {
-> +		[transmit] = OPMODE_MODE_TRANSMIT,
-> +		[receive] = OPMODE_MODE_RECEIVE,
-> +		[synthesizer] = OPMODE_MODE_SYNTHESIZER,
-> +		[standby] = OPMODE_MODE_STANDBY,
-> +		[mode_sleep] = OPMODE_MODE_SLEEP,
-> +	};
-[]
-> +	return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
-> +				   mode_map[mode]);
+From: Hui Wang <hui.wang@canonical.com>
 
-drivers/staging/pi433/rf69.c:static inline int rf69_read_mod_write(struct spi_device *spi, u8 reg,
-drivers/staging/pi433/rf69.c-                                 u8 mask, u8 value)
+commit 986376b68dcc95bb7df60ad30c2353c1f7578fa5 upstream.
 
-so u8 here.
+We have several Lenovo AIOs like M810z, M820z and M920z, they have
+the same design for mic-mute hotkey and led and they use the same
+codec with the same pin configuration, so use the pin conf table to
+apply fix to all of them.
 
-etc...
+Fixes: 29693efcea0f ("ALSA: hda - Fix micmute hotkey problem for a lenovo AIO machine")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ sound/pci/hda/patch_realtek.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6439,7 +6439,6 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x3138, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+-	SND_PCI_QUIRK(0x17aa, 0x3112, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3978, "IdeaPad Y410P", ALC269_FIXUP_NO_SHUTUP),
+@@ -6610,6 +6609,11 @@ static const struct snd_hda_pin_quirk al
+ 		{0x12, 0x90a60140},
+ 		{0x14, 0x90170110},
+ 		{0x21, 0x02211020}),
++	SND_HDA_PIN_QUIRK(0x10ec0235, 0x17aa, "Lenovo", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
++		{0x12, 0x90a60140},
++		{0x14, 0x90170110},
++		{0x19, 0x02a11030},
++		{0x21, 0x02211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0236, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		{0x12, 0x90a60140},
+ 		{0x14, 0x90170150},
+
 
