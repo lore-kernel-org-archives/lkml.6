@@ -2,145 +2,148 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB808C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DBCC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8496625333
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3926925348
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:40:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ci1NDGNL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8496625333
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLpmI0z2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3926925348
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751977AbeFXWkQ (ORCPT
+        id S1752127AbeFXWk1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 18:40:16 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40063 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751625AbeFXWkP (ORCPT
+        Sun, 24 Jun 2018 18:40:27 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34087 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751625AbeFXWkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 18:40:15 -0400
-Received: by mail-wr0-f193.google.com with SMTP id g18-v6so11680558wro.7
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 15:40:14 -0700 (PDT)
+        Sun, 24 Jun 2018 18:40:24 -0400
+Received: by mail-it0-f68.google.com with SMTP id y127-v6so10511169itd.1;
+        Sun, 24 Jun 2018 15:40:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:cc:references:to:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kckc2JON4bIyfqUbuOt5vK735Ow6/bMXuJfQPvyhsjw=;
-        b=ci1NDGNLdLnCzu9BkCmSCGNWfrCBORGwCCi7LCosfExHcZ6g2ExB/ejEe2+wjx7TVu
-         +kPkv0ahtMVHbl/2AZ1EiQPD+WU3LN7OYa4YEpFfx79mOMwa3OymMfNIA7TzKhhUWyDF
-         R8lyL5WICqq0KMB7YVlj/h4NkXF0tokvAaV5Q=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/dmAH43kyX4umm/xRhYyqJXINAz95gfLlRxOCncoMkg=;
+        b=kLpmI0z2TCJWRI09ltCrLDLp3vgMsuiw/WP3aPZFPZ1n+KwReQjXHpTmaapEKg7HjH
+         bu9J2komdWTxPsLpiphDKBiZ9JW3zpmbXVsR1tH+1zF7+HbUU4qRoVmim9ekMecHy8Tv
+         p8OlK27FW9r5QJxXeY0sPS7+WKaw1v9WTQMiKVkMmP2jg4YjtPpp9o1hSh8tGOg3Wn45
+         /mzIlZCvBSTp0ROiMDaPwPc66KUMgI8NbbR5AAujW4gY6HLsoJ8pM8spygDNzVpWseOb
+         hCFxJ09552opR/PdFD+ZkhVreaK1Jc9VCFOsrpQ7aGmYJo8ignzufdYCsmyCIvu3b/Ht
+         soSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:cc:references:to:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kckc2JON4bIyfqUbuOt5vK735Ow6/bMXuJfQPvyhsjw=;
-        b=qJGWRafZclSAqv1s5sIHSyeDgE1hV/1zxMN3ZSX5qvy5Qw93dljM310MGme7S+slZh
-         Msmy5LiDj8Eas/5WEZvA4QGy33jbjTvp1iF65QRh2IrZfqfaoITGpvLRK/4XtoeDdBUY
-         r7804JeY31EPa+iFsBPrDcFu6Ijz0io2rGBjP2/sB2PE/ynNp90ZTAjYGeqn/WHfBUa5
-         Y5yuYaDashrTMf9cUGZbLVNMdNie+6mCE2zDAOEJnRtNR5nrF5iggTfVZN50jH4usR3C
-         Kj7uxWAHNNNGrZgx5KAdvs8uDBYXoLXqQEECnkBURR7aYK5pZ2stB8QzhZoC/JOpvNr0
-         jcWg==
-X-Gm-Message-State: APt69E0DiExlZP+OdwKvwUsyce1wvokiTtgBFmgQ8Ee0l0QMlgz+FjTD
-        BMS+71DGwaXEvtM2KxyAMj4R6g==
-X-Google-Smtp-Source: AAOMgpfV4VW/J3Mpbt8seEEpKmTMnbeAmDJcp1NYrNGRcvGEGaOO+ZppkByr72hZQxZJwp1ApGb9bg==
-X-Received: by 2002:adf:8747:: with SMTP id 7-v6mr7580415wrz.117.1529880013999;
-        Sun, 24 Jun 2018 15:40:13 -0700 (PDT)
-Received: from [192.168.8.101] ([37.171.249.253])
-        by smtp.googlemail.com with ESMTPSA id z18-v6sm4304661wrp.59.2018.06.24.15.40.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 15:40:13 -0700 (PDT)
-Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle injection
- framework
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
- <20180620043415.57yvgzlye4l7wdqy@vireshk-i7>
-To:     rjw@rjwysocki.net
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <fc2ef4e9-7ec8-c644-9495-e33f000531b2@linaro.org>
-Date:   Mon, 25 Jun 2018 00:40:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/dmAH43kyX4umm/xRhYyqJXINAz95gfLlRxOCncoMkg=;
+        b=m8XveFu+qrwT7l+7FWFuEnfDS0t97A5tBTn4dGQHOgiIpPMpzhTvTRvIk4xxJ3b+wM
+         zvSc3ELHMLOpX/MBX54U7PYGeURoqsTmv7U5Tk/WtaFBbn+bo8aX9esV3rn703v7kEKO
+         Yyeqsz2F/iWXGc0adM1YMO3sVve1hSdg4KNlTOd5P0+/tuZ91lJ45I/H3wFMlytV4xES
+         IotKq8fwQKcXi1aqUwQvg5+YkmcVz1+siU+Jtn2cmZcTeNpThSL5IyGWoFBDhSphKCzS
+         Wu8MIQLRLLgEQxyb2GHaY9xhxh4YaHXymdLpo29t7q7OT15evDYlHVFjiDBxnbTFUnk5
+         XZeg==
+X-Gm-Message-State: APt69E2ZvWfhvNPruvOxtWklRja04WB+Zu5K9XruJh1za74rjHRGvpv1
+        BzHhUevGTIfdfnm8/ly9dIfx68HqUoyWDVVoYbdbhTgv
+X-Google-Smtp-Source: ADUXVKItmvFHsrcn1ewpDukkFzt3iOahy1U1CmctzWLzpJLfs1wzTgkY24bpn5buuZyhAaxp9Dqpp/aEBbR7xjr9u1Y=
+X-Received: by 2002:a24:a501:: with SMTP id k1-v6mr8037223itf.79.1529880023075;
+ Sun, 24 Jun 2018 15:40:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180620043415.57yvgzlye4l7wdqy@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
+ <CAOMZO5AyAegbvUtX42by99mU8yQfi91bmhJfd9iqu1Ak0dEHiw@mail.gmail.com>
+ <CAOMZO5DJj=oQfsB-vNP=81HCiy-69j-5U+Km9P6LxGpnLx9xzg@mail.gmail.com>
+ <CAHQ1cqHxq+RM1nNHECY75Cojd_kxu1ERLe6+MhMLUa5kb10r8w@mail.gmail.com>
+ <CAOMZO5B98O9XA8GhdWxJZ6DFgS=O+smHURm8v5jEirj31tuUhg@mail.gmail.com>
+ <CAHQ1cqELs4LaQkmPiPjXQuF17+7PBsEtbmSt8iveLqRv+4bgfQ@mail.gmail.com> <CAOMZO5CumdNSP6iTfgXPdmpcZwh7YmBstUpAmb3A1QAf1UWJdw@mail.gmail.com>
+In-Reply-To: <CAOMZO5CumdNSP6iTfgXPdmpcZwh7YmBstUpAmb3A1QAf1UWJdw@mail.gmail.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Sun, 24 Jun 2018 15:40:11 -0700
+Message-ID: <CAHQ1cqHpNvZGAfFKrp-OiZevsha5CBwJsw8GT+uhgNSfEUejkw@mail.gmail.com>
+Subject: Re: [PATCH] usb: chipidea: Fix ULPI on imx51
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Peter Chen <peter.chen@nxp.com>, linux-usb@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 22, 2018 at 9:27 AM Fabio Estevam <festevam@gmail.com> wrote:
+>
+> Hi Andrey,
+>
+> On Thu, Jun 21, 2018 at 6:44 PM, Andrey Smirnov
+> <andrew.smirnov@gmail.com> wrote:
+>
+> > I just finished experimenting with it on RDU1 and Babbage boards and I
+> > can't reproduce the hang that you describe against 4.18-rc1. At this
+> > point I wonder if it's the bootloader that is a variable that plays
+> > into this. I was booting both boards with 2018.06.0 version of barebox
+> > + the custom patches that can be found here
+> > https://github.com/ndreys/barebox/commits/rdu1-netboot. Note that the
+> > last patch in that branch/stack was added as a part of this
+> > investigation, but even before it, I was able to boot Linux just fine,
+> > albeit without working USB.
+>
+> Thanks for investigating this issue.
+>
+> Yes, t is possible that the difference in behaviour that we see could
+> be related to the fact we use different bootloaders.
+>
+> In order to make things easier, I am sharing a Buildroot image for
+> imx51-babbage that contains U-Boot 2018.05 + kernel 4.17.2:
+> https://www.dropbox.com/s/yevnu4y1zdchnbt/sdcard.img?dl=0
+>
+> Please flash it directly to the SD card via dd and boot it.
+>
+> You will notice that it will boot normally. Then please copy a
+> 4.18-rc1 zImage into the first SD card partition and you will notice
+> the hang.
+>
 
-Hi Rafael,
+It's definitely the bootloader, or more specifically whether or not it
+initialized/used USB before booting the kernel. Some interesting
+highlights:
 
-do you think this patch is acceptable for merging ?
+ - On your "good" 4.17.2 based image, if you interrupt U-Boot, do "usb
+start" (optionally "usb stop") and then "boot", you'll get the hang
+that I was trying to fix with my patch.
 
+ - Things are exact opposite with 4.18-rc1 and doing the above would
+_prevent_ the hang and the image would boot fine.
 
+ - Disabling USB in Barebox based boot "stack" gets it to behave the
+same way as U-boot from your image (hanging when booting 4.18-rc1)
 
-On 20/06/2018 06:34, Viresh Kumar wrote:
-> On 19-06-18, 15:23, Daniel Lezcano wrote:
->> Initially, the cpu_cooling device for ARM was changed by adding a new
->> policy inserting idle cycles. The intel_powerclamp driver does a
->> similar action.
->>
->> Instead of implementing idle injections privately in the cpu_cooling
->> device, move the idle injection code in a dedicated framework and give
->> the opportunity to other frameworks to make use of it.
->>
->> The framework relies on the smpboot kthreads which handles via its
->> main loop the common code for hotplugging and [un]parking.
->>
->> This code was previously tested with the cpu cooling device and went
->> through several iterations. It results now in split code and API
->> exported in the header file. It was tested with the cpu cooling device
->> with success.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->> Cc: Eduardo Valentin <edubezval@gmail.com>
->> Cc: Javi Merino <javi.merino@kernel.org>
->> Cc: Leo Yan <leo.yan@linaro.org>
->> Cc: Kevin Wangtao <kevin.wangtao@linaro.org>
->> Cc: Vincent Guittot <vincent.guittot@linaro.org>
->> Cc: Rui Zhang <rui.zhang@intel.com>
->> Cc: Daniel Thompson <daniel.thompson@linaro.org>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
->> ---
->>
->> V9:
->>    - Unconditionnally reset the should_run flag for all kthreads
->>      belonging to the cpumask and remove the park() callback (Viresh Kumar)
->>    - Fix up the typos in the comments (Viresh Kumar)
-> 
-> Looks great now. Can't think of any more races :)
-> 
-> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
+Digging more into code it seems that the reason for 4.18-rc1's
+behavior is the fact that it's missing a call hw_phymode_configure()
+after usb_phy_init() and, AFAICT, the only reason it is not happening
+is because default image is being built without
+CONFIG_USB_CHIPIDEA_ULPI and CONFIG_USB_ULPI_BUS. Enabling those two
+options on 4.18-rc1, seem to fix the problem on both your U-Boot based
+image and my "special" Barebox setup.
 
+So AFAICT, this patch still fixes a valid issue (my use-case was net
+booting via USB-Ethernet dongle), but an additional patch enabling
+those two configuration options might be needed. Thoughts?
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Also, I don't have any i.MX53 HW, so I wasn't able to test the effects
+of enabling those two options there.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Thanks,
+Andrey Smirnov
