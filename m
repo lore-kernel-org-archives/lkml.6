@@ -2,210 +2,139 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4904C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F21DC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C6A24E68
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:43:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C6A24E68
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 7D11B24E62
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:57:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GYSHA2BL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D11B24E62
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751911AbeFXInx (ORCPT
+        id S1751959AbeFXI5L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 04:43:53 -0400
-Received: from mailout1.hostsharing.net ([83.223.95.204]:55769 "EHLO
-        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751089AbeFXInw (ORCPT
+        Sun, 24 Jun 2018 04:57:11 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:64051 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751582AbeFXI5K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 04:43:52 -0400
-X-Greylist: delayed 478 seconds by postgrey-1.27 at vger.kernel.org; Sun, 24 Jun 2018 04:43:52 EDT
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by mailout1.hostsharing.net (Postfix) with ESMTPS id 4044110029AF2;
-        Sun, 24 Jun 2018 10:35:53 +0200 (CEST)
-Received: from localhost (unknown [89.246.108.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by h08.hostsharing.net (Postfix) with ESMTPSA id F319D603E134;
-        Sun, 24 Jun 2018 10:35:52 +0200 (CEST)
-X-Mailbox-Line: From d72b41309f077c8d3bee6cc08ad3662d50b5d22a Mon Sep 17 00:00:00 2001
-Message-Id: <d72b41309f077c8d3bee6cc08ad3662d50b5d22a.1529828292.git.lukas@wunner.de>
-In-Reply-To: <32fc25aa35ecef4b2692f57687bb7fc2a57230e2.1529828292.git.lukas@wunner.de>
-References: <32fc25aa35ecef4b2692f57687bb7fc2a57230e2.1529828292.git.lukas@wunner.de>
-From:   Lukas Wunner <lukas@wunner.de>
-Date:   Sun, 24 Jun 2018 10:35:30 +0200
-Subject: [PATCH v2 2/2] genirq: Synchronize only with single thread on
- free_irq()
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+        Sun, 24 Jun 2018 04:57:10 -0400
+Received: from mail-vk0-f49.google.com (mail-vk0-f49.google.com [209.85.213.49]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w5O8v5Ja032666;
+        Sun, 24 Jun 2018 17:57:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5O8v5Ja032666
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1529830626;
+        bh=hCbj/YoFpi46cDjMGu1pcESpJ3SXvUqJBVK143TE5RU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=GYSHA2BLKJG1LkStUo84igDLlxlnLSLCSKkJ7qcsTkL3y5h2wLqxrG2I5uR24Hnwa
+         D0Eutffjv90PRXSgaond0ly4vHd6lv5owf9wCbBNtMxL3MDm5cusujVaoNCzLb7YtM
+         6aas+O+xMBAsWAlyORCMe62WoRwdmWD1Jcuvi0vLCGvEQ6KDqdDsYKMD/KjbqnaCxg
+         JmrYziKy+4iKsddwmDm4dDB0iZ46AgY/HSHy1QbOu8f79BBh5AqQSFK1tBZxRT4Uno
+         EmMb8pR++7fOK8Cq6wCogR3wmqpLbwi385sb3stIkXvalGl9tLDk9Ql5V/sOBqZxW3
+         TIN4IeEuOENBg==
+X-Nifty-SrcIP: [209.85.213.49]
+Received: by mail-vk0-f49.google.com with SMTP id o138-v6so6213038vkd.3;
+        Sun, 24 Jun 2018 01:57:06 -0700 (PDT)
+X-Gm-Message-State: APt69E3B9kldDYqvuQ6wScFnVA0BgfAieJwoQiRAUwVJy1AjAn9M3wc5
+        2CeZLS4i5sT0s89qULbpNCntQWC66YIQd4DRA/I=
+X-Google-Smtp-Source: ADUXVKLhv00jRUAvh+pE99uLBUAXbKJGE0/hGiHzvVJyH4Ji9KhMTDFxLo4k9RAq71rIBUmaaJqEtNDlk/tCDRW+mVk=
+X-Received: by 2002:a1f:a945:: with SMTP id s66-v6mr5083645vke.54.1529830625404;
+ Sun, 24 Jun 2018 01:57:05 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 01:56:24
+ -0700 (PDT)
+In-Reply-To: <201806240006.eCGYTuNX%fengguang.wu@intel.com>
+References: <1529762169-13488-1-git-send-email-yamada.masahiro@socionext.com> <201806240006.eCGYTuNX%fengguang.wu@intel.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sun, 24 Jun 2018 17:56:24 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARv7VyPaew6XpRiYqh1YTapj-oErGuiq4rS1_BmEjC8Lw@mail.gmail.com>
+Message-ID: <CAK7LNARv7VyPaew6XpRiYqh1YTapj-oErGuiq4rS1_BmEjC8Lw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] kbuild: use 'include' directive to load auto.conf
+ from top Makefile
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When pciehp is converted to threaded IRQ handling, removal of unplugged
-devices below a PCIe hotplug port happens synchronously in the IRQ
-thread.  Removal of devices typically entails a call to free_irq() by
-their drivers.
+Hi.
 
-If those devices share their IRQ with the hotplug port, __free_irq()
-deadlocks because it calls synchronize_irq() to wait for all hard IRQ
-handlers as well as all threads sharing the IRQ to finish.
+2018-06-24 3:59 GMT+09:00 kbuild test robot <lkp@intel.com>:
+> Hi Masahiro,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on kbuild/for-next]
+> [also build test ERROR on v4.18-rc1 next-20180622]
+> [cannot apply to mmarek/for-next mmarek/rc-fixes]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Masahiro-Yamada/kbuild-use-include-directive-to-load-auto-conf-from-top-Makefile/20180623-220114
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
+> config: xtensa-nommu_kc705_defconfig (attached as .config)
+> compiler: xtensa-de212-elf-gcc (crosstool-NG crosstool-ng-1.23.0-307-g452ee331) 7.3.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.3.0 make.cross ARCH=xtensa
 
-Actually it's sufficient to wait only for the IRQ thread of the removed
-device, so call synchronize_hardirq() to wait for all hard IRQ handlers
-to finish, but no longer for any threads.  Compensate by rearranging the
-control flow in irq_wait_for_interrupt() such that the device's thread
-is allowed to run one last time after kthread_stop() has been called.
+This did not work for me
+because the make.cross script tries to download GCC 7.3.0 xtensa-linux
+but it is missing in the web site.
 
-kthread_stop() blocks until the IRQ thread has completed.  On completion
-the IRQ thread clears its oneshot thread_mask bit.  This is safe because
-__free_irq() holds the request_mutex, thereby preventing __setup_irq()
-from handing out the same oneshot thread_mask bit to a newly requested
-action.
+$ GCC_VERSION=7.3.0 make.cross ARCH=xtensa
+Cannot find xtensa-linux under
+https://download.01.org/0day-ci/cross-package check
+/tmp/crosstool-files
 
-Stack trace for posterity:
-    INFO: task irq/17-pciehp:94 blocked for more than 120 seconds.
-    schedule+0x28/0x80
-    synchronize_irq+0x6e/0xa0
-    __free_irq+0x15a/0x2b0
-    free_irq+0x33/0x70
-    pciehp_release_ctrl+0x98/0xb0
-    pcie_port_remove_service+0x2f/0x40
-    device_release_driver_internal+0x157/0x220
-    bus_remove_device+0xe2/0x150
-    device_del+0x124/0x340
-    device_unregister+0x16/0x60
-    remove_iter+0x1a/0x20
-    device_for_each_child+0x4b/0x90
-    pcie_port_device_remove+0x1e/0x30
-    pci_device_remove+0x36/0xb0
-    device_release_driver_internal+0x157/0x220
-    pci_stop_bus_device+0x7d/0xa0
-    pci_stop_bus_device+0x3d/0xa0
-    pci_stop_and_remove_bus_device+0xe/0x20
-    pciehp_unconfigure_device+0xb8/0x160
-    pciehp_disable_slot+0x84/0x130
-    pciehp_ist+0x158/0x190
-    irq_thread_fn+0x1b/0x50
-    irq_thread+0x143/0x1a0
-    kthread+0x111/0x130
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
----
-Changes v1 -> v2:
+I installed xtensa-de212-elf-gcc by hand,
+but I could not reproduce the error.
 
-* Add code comment explaining the significance of holding the
-  request_mutex in __free_irq() until after kthread_stop(),
-  add explanation to commit message as well. (Thomas Gleixner)
 
-* Update several code comments to refer to synchronize_hardirq()
-  or kthread_stop() instead of synchronize_irq().
+GCC_VERSION=7.2.0 make.cross ARCH=xtensa
+worked, but I could not reproduce the issue either.
+(the build terminated with a different error.)
 
- kernel/irq/manage.c | 33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 123a227d3357..9390f1595c50 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -790,9 +790,19 @@ static irqreturn_t irq_forced_secondary_handler(int irq, void *dev_id)
- 
- static int irq_wait_for_interrupt(struct irqaction *action)
- {
--	set_current_state(TASK_INTERRUPTIBLE);
-+	for (;;) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 
--	while (!kthread_should_stop()) {
-+		if (kthread_should_stop()) {
-+			/* may need to run one last time */
-+			if (test_and_clear_bit(IRQTF_RUNTHREAD,
-+					       &action->thread_flags)) {
-+				__set_current_state(TASK_RUNNING);
-+				return 0;
-+			}
-+			__set_current_state(TASK_RUNNING);
-+			return -1;
-+		}
- 
- 		if (test_and_clear_bit(IRQTF_RUNTHREAD,
- 				       &action->thread_flags)) {
-@@ -800,10 +810,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
- 			return 0;
- 		}
- 		schedule();
--		set_current_state(TASK_INTERRUPTIBLE);
- 	}
--	__set_current_state(TASK_RUNNING);
--	return -1;
- }
- 
- /*
-@@ -1024,7 +1031,7 @@ static int irq_thread(void *data)
- 	/*
- 	 * This is the regular exit path. __free_irq() is stopping the
- 	 * thread via kthread_stop() after calling
--	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
-+	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
- 	 * oneshot mask bit can be set.
- 	 */
- 	task_work_cancel(current, irq_thread_dtor);
-@@ -1241,7 +1248,7 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- 
- 	/*
- 	 * Protects against a concurrent __free_irq() call which might wait
--	 * for synchronize_irq() to complete without holding the optional
-+	 * for synchronize_hardirq() to complete without holding the optional
- 	 * chip bus lock and desc->lock. Also protects against handing out
- 	 * a recycled oneshot thread_mask bit while it's still in use by
- 	 * its previous owner.
-@@ -1612,11 +1619,11 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
- 	/*
- 	 * Drop bus_lock here so the changes which were done in the chip
- 	 * callbacks above are synced out to the irq chips which hang
--	 * behind a slow bus (I2C, SPI) before calling synchronize_irq().
-+	 * behind a slow bus (I2C, SPI) before calling synchronize_hardirq().
- 	 *
- 	 * Aside of that the bus_lock can also be taken from the threaded
- 	 * handler in irq_finalize_oneshot() which results in a deadlock
--	 * because synchronize_irq() would wait forever for the thread to
-+	 * because kthread_stop() would wait forever for the thread to
- 	 * complete, which is blocked on the bus lock.
- 	 *
- 	 * The still held desc->request_mutex() protects against a
-@@ -1628,7 +1635,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
- 	unregister_handler_proc(irq, action);
- 
- 	/* Make sure it's not being used on another CPU: */
--	synchronize_irq(irq);
-+	synchronize_hardirq(irq);
- 
- #ifdef CONFIG_DEBUG_SHIRQ
- 	/*
-@@ -1646,6 +1653,12 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
- 	}
- #endif
- 
-+	/*
-+	 * The action has already been removed above, but the thread writes
-+	 * its oneshot mask bit when it completes. Hold the request_mutex
-+	 * to prevent __setup_irq() from handing out the same bit to a
-+	 * newly requested action.
-+	 */
- 	if (action->thread) {
- 		kthread_stop(action->thread);
- 		put_task_struct(action->thread);
+Where can I see the full build log?
+
+
+> All errors (new ones prefixed by >>):
+>
+>>> Makefile:592: include/config/auto.conf: No such file or directory
+>    drivers/staging/mt7621-dts/Kconfig:4:warning: 'BUILTIN_DTB' has wrong type. 'select' only accept arguments of bool and tristate type
+>    <stdin>:1332:2: warning: #warning syscall io_pgetevents not implemented [-Wcpp]
+>    <stdin>:1335:2: warning: #warning syscall rseq not implemented [-Wcpp]
+>
+> vim +592 Makefile
+>
+>    590
+>    591  ifeq ($(dot-config),1)
+>  > 592  include include/config/auto.conf
+>    593  endif
+>    594
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+
+
 -- 
-2.17.1
-
+Best Regards
+Masahiro Yamada
