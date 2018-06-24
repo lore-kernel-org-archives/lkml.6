@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D66C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22BEC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A896824FF7
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A896824FF7
+	by mail.kernel.org (Postfix) with ESMTP id 6927824FFB
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:34:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6927824FFB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755090AbeFXPel (ORCPT
+        id S1755240AbeFXPet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:34:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59364 "EHLO
+        Sun, 24 Jun 2018 11:34:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59372 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751924AbeFXPej (ORCPT
+        with ESMTP id S1753244AbeFXPeq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:34:39 -0400
+        Sun, 24 Jun 2018 11:34:46 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED4F649F;
-        Sun, 24 Jun 2018 15:34:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB4A149F;
+        Sun, 24 Jun 2018 15:34:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, trevor.francis@46labs.com,
-        Paolo Abeni <pabeni@redhat.com>,
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 09/64] udp: fix rx queue len reported by diag and proc interface
-Date:   Sun, 24 Jun 2018 23:21:50 +0800
-Message-Id: <20180624142744.212559778@linuxfoundation.org>
+Subject: [PATCH 4.16 10/64] net: in virtio_net_hdr only add VLAN_HLEN to csum_start if payload holds vlan
+Date:   Sun, 24 Jun 2018 23:21:51 +0800
+Message-Id: <20180624142744.282615804@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -51,124 +50,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 6c206b20092a3623184cff9470dba75d21507874 ]
+[ Upstream commit fd3a88625844907151737fc3b4201676effa6d27 ]
 
-After commit 6b229cf77d68 ("udp: add batching to udp_rmem_release()")
-the sk_rmem_alloc field does not measure exactly anymore the
-receive queue length, because we batch the rmem release. The issue
-is really apparent only after commit 0d4a6608f68c ("udp: do rmem bulk
-free even if the rx sk queue is empty"): the user space can easily
-check for an empty socket with not-0 queue length reported by the 'ss'
-tool or the procfs interface.
+Tun, tap, virtio, packet and uml vector all use struct virtio_net_hdr
+to communicate packet metadata to userspace.
 
-We need to use a custom UDP helper to report the correct queue length,
-taking into account the forward allocation deficit.
+For skbuffs with vlan, the first two return the packet as it may have
+existed on the wire, inserting the VLAN tag in the user buffer.  Then
+virtio_net_hdr.csum_start needs to be adjusted by VLAN_HLEN bytes.
 
-Reported-by: trevor.francis@46labs.com
-Fixes: 6b229cf77d68 ("UDP: add batching to udp_rmem_release()")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Commit f09e2249c4f5 ("macvtap: restore vlan header on user read")
+added this feature to macvtap. Commit 3ce9b20f1971 ("macvtap: Fix
+csum_start when VLAN tags are present") then fixed up csum_start.
+
+Virtio, packet and uml do not insert the vlan header in the user
+buffer.
+
+When introducing virtio_net_hdr_from_skb to deduplicate filling in
+the virtio_net_hdr, the variant from macvtap which adds VLAN_HLEN was
+applied uniformly, breaking csum offset for packets with vlan on
+virtio and packet.
+
+Make insertion of VLAN_HLEN optional. Convert the callers to pass it
+when needed.
+
+Fixes: e858fae2b0b8f4 ("virtio_net: use common code for virtio_net_hdr and skb GSO conversion")
+Fixes: 1276f24eeef2 ("packet: use common code for virtio_net_hdr and skb GSO conversion")
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/transp_v6.h |   11 +++++++++--
- include/net/udp.h       |    5 +++++
- net/ipv4/udp.c          |    2 +-
- net/ipv4/udp_diag.c     |    2 +-
- net/ipv6/datagram.c     |    6 +++---
- net/ipv6/udp.c          |    3 ++-
- 6 files changed, 21 insertions(+), 8 deletions(-)
+ drivers/net/tap.c          |    5 ++++-
+ drivers/net/tun.c          |    3 ++-
+ drivers/net/virtio_net.c   |    3 ++-
+ include/linux/virtio_net.h |   11 ++++-------
+ net/packet/af_packet.c     |    4 ++--
+ 5 files changed, 14 insertions(+), 12 deletions(-)
 
---- a/include/net/transp_v6.h
-+++ b/include/net/transp_v6.h
-@@ -45,8 +45,15 @@ int ip6_datagram_send_ctl(struct net *ne
- 			  struct flowi6 *fl6, struct ipcm6_cookie *ipc6,
- 			  struct sockcm_cookie *sockc);
+--- a/drivers/net/tap.c
++++ b/drivers/net/tap.c
+@@ -774,13 +774,16 @@ static ssize_t tap_put_user(struct tap_q
+ 	int total;
  
--void ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp,
--			     __u16 srcp, __u16 destp, int bucket);
-+void __ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp,
-+			       __u16 srcp, __u16 destp, int rqueue, int bucket);
-+static inline void
-+ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp, __u16 srcp,
-+			__u16 destp, int bucket)
-+{
-+	__ip6_dgram_sock_seq_show(seq, sp, srcp, destp, sk_rmem_alloc_get(sp),
-+				  bucket);
-+}
- 
- #define LOOPBACK4_IPV6 cpu_to_be32(0x7f000006)
- 
---- a/include/net/udp.h
-+++ b/include/net/udp.h
-@@ -244,6 +244,11 @@ static inline __be16 udp_flow_src_port(s
- 	return htons((((u64) hash * (max - min)) >> 32) + min);
- }
- 
-+static inline int udp_rqueue_get(struct sock *sk)
-+{
-+	return sk_rmem_alloc_get(sk) - READ_ONCE(udp_sk(sk)->forward_deficit);
-+}
+ 	if (q->flags & IFF_VNET_HDR) {
++		int vlan_hlen = skb_vlan_tag_present(skb) ? VLAN_HLEN : 0;
+ 		struct virtio_net_hdr vnet_hdr;
 +
- /* net/ipv4/udp.c */
- void udp_destruct_sock(struct sock *sk);
- void skb_consume_udp(struct sock *sk, struct sk_buff *skb, int len);
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -2710,7 +2710,7 @@ static void udp4_format_sock(struct sock
- 		" %02X %08X:%08X %02X:%08lX %08X %5u %8d %lu %d %pK %d",
- 		bucket, src, srcp, dest, destp, sp->sk_state,
- 		sk_wmem_alloc_get(sp),
--		sk_rmem_alloc_get(sp),
-+		udp_rqueue_get(sp),
- 		0, 0L, 0,
- 		from_kuid_munged(seq_user_ns(f), sock_i_uid(sp)),
- 		0, sock_i_ino(sp),
---- a/net/ipv4/udp_diag.c
-+++ b/net/ipv4/udp_diag.c
-@@ -163,7 +163,7 @@ static int udp_diag_dump_one(struct sk_b
- static void udp_diag_get_info(struct sock *sk, struct inet_diag_msg *r,
- 		void *info)
+ 		vnet_hdr_len = READ_ONCE(q->vnet_hdr_sz);
+ 		if (iov_iter_count(iter) < vnet_hdr_len)
+ 			return -EINVAL;
+ 
+ 		if (virtio_net_hdr_from_skb(skb, &vnet_hdr,
+-					    tap_is_little_endian(q), true))
++					    tap_is_little_endian(q), true,
++					    vlan_hlen))
+ 			BUG();
+ 
+ 		if (copy_to_iter(&vnet_hdr, sizeof(vnet_hdr), iter) !=
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -2062,7 +2062,8 @@ static ssize_t tun_put_user(struct tun_s
+ 			return -EINVAL;
+ 
+ 		if (virtio_net_hdr_from_skb(skb, &gso,
+-					    tun_is_little_endian(tun), true)) {
++					    tun_is_little_endian(tun), true,
++					    vlan_hlen)) {
+ 			struct skb_shared_info *sinfo = skb_shinfo(skb);
+ 			pr_err("unexpected GSO type: "
+ 			       "0x%x, gso_size %d, hdr_len %d\n",
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1358,7 +1358,8 @@ static int xmit_skb(struct send_queue *s
+ 		hdr = skb_vnet_hdr(skb);
+ 
+ 	if (virtio_net_hdr_from_skb(skb, &hdr->hdr,
+-				    virtio_is_little_endian(vi->vdev), false))
++				    virtio_is_little_endian(vi->vdev), false,
++				    0))
+ 		BUG();
+ 
+ 	if (vi->mergeable_rx_bufs)
+--- a/include/linux/virtio_net.h
++++ b/include/linux/virtio_net.h
+@@ -58,7 +58,8 @@ static inline int virtio_net_hdr_to_skb(
+ static inline int virtio_net_hdr_from_skb(const struct sk_buff *skb,
+ 					  struct virtio_net_hdr *hdr,
+ 					  bool little_endian,
+-					  bool has_data_valid)
++					  bool has_data_valid,
++					  int vlan_hlen)
  {
--	r->idiag_rqueue = sk_rmem_alloc_get(sk);
-+	r->idiag_rqueue = udp_rqueue_get(sk);
- 	r->idiag_wqueue = sk_wmem_alloc_get(sk);
- }
+ 	memset(hdr, 0, sizeof(*hdr));   /* no info leak */
  
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -1025,8 +1025,8 @@ exit_f:
- }
- EXPORT_SYMBOL_GPL(ip6_datagram_send_ctl);
+@@ -83,12 +84,8 @@ static inline int virtio_net_hdr_from_sk
  
--void ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp,
--			     __u16 srcp, __u16 destp, int bucket)
-+void __ip6_dgram_sock_seq_show(struct seq_file *seq, struct sock *sp,
-+			       __u16 srcp, __u16 destp, int rqueue, int bucket)
- {
- 	const struct in6_addr *dest, *src;
+ 	if (skb->ip_summed == CHECKSUM_PARTIAL) {
+ 		hdr->flags = VIRTIO_NET_HDR_F_NEEDS_CSUM;
+-		if (skb_vlan_tag_present(skb))
+-			hdr->csum_start = __cpu_to_virtio16(little_endian,
+-				skb_checksum_start_offset(skb) + VLAN_HLEN);
+-		else
+-			hdr->csum_start = __cpu_to_virtio16(little_endian,
+-				skb_checksum_start_offset(skb));
++		hdr->csum_start = __cpu_to_virtio16(little_endian,
++			skb_checksum_start_offset(skb) + vlan_hlen);
+ 		hdr->csum_offset = __cpu_to_virtio16(little_endian,
+ 				skb->csum_offset);
+ 	} else if (has_data_valid &&
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2037,7 +2037,7 @@ static int packet_rcv_vnet(struct msghdr
+ 		return -EINVAL;
+ 	*len -= sizeof(vnet_hdr);
  
-@@ -1042,7 +1042,7 @@ void ip6_dgram_sock_seq_show(struct seq_
- 		   dest->s6_addr32[2], dest->s6_addr32[3], destp,
- 		   sp->sk_state,
- 		   sk_wmem_alloc_get(sp),
--		   sk_rmem_alloc_get(sp),
-+		   rqueue,
- 		   0, 0L, 0,
- 		   from_kuid_munged(seq_user_ns(seq), sock_i_uid(sp)),
- 		   0,
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -1473,7 +1473,8 @@ int udp6_seq_show(struct seq_file *seq,
- 		struct inet_sock *inet = inet_sk(v);
- 		__u16 srcp = ntohs(inet->inet_sport);
- 		__u16 destp = ntohs(inet->inet_dport);
--		ip6_dgram_sock_seq_show(seq, v, srcp, destp, bucket);
-+		__ip6_dgram_sock_seq_show(seq, v, srcp, destp,
-+					  udp_rqueue_get(v), bucket);
- 	}
- 	return 0;
- }
+-	if (virtio_net_hdr_from_skb(skb, &vnet_hdr, vio_le(), true))
++	if (virtio_net_hdr_from_skb(skb, &vnet_hdr, vio_le(), true, 0))
+ 		return -EINVAL;
+ 
+ 	return memcpy_to_msg(msg, (void *)&vnet_hdr, sizeof(vnet_hdr));
+@@ -2304,7 +2304,7 @@ static int tpacket_rcv(struct sk_buff *s
+ 	if (do_vnet) {
+ 		if (virtio_net_hdr_from_skb(skb, h.raw + macoff -
+ 					    sizeof(struct virtio_net_hdr),
+-					    vio_le(), true)) {
++					    vio_le(), true, 0)) {
+ 			spin_lock(&sk->sk_receive_queue.lock);
+ 			goto drop_n_account;
+ 		}
 
 
