@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98740C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35238C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D20D25054
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D20D25054
+	by mail.kernel.org (Postfix) with ESMTP id EB6CC25058
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB6CC25058
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755859AbeFXPko (ORCPT
+        id S1755881AbeFXPkw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:40:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59930 "EHLO
+        Sun, 24 Jun 2018 11:40:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59938 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755321AbeFXPkn (ORCPT
+        with ESMTP id S1755661AbeFXPkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:40:43 -0400
+        Sun, 24 Jun 2018 11:40:51 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D27C49F;
-        Sun, 24 Jun 2018 15:40:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 167B949F;
+        Sun, 24 Jun 2018 15:40:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        stable@vger.kernel.org,
+        Alvaro Gamez Machado <alvaro.gamez@hazent.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 05/70] net: dsa: add error handling for pskb_trim_rcsum
-Date:   Sun, 24 Jun 2018 23:21:57 +0800
-Message-Id: <20180624142740.793660001@linuxfoundation.org>
+Subject: [PATCH 4.17 06/70] net: phy: dp83822: use BMCR_ANENABLE instead of BMSR_ANEGCAPABLE for DP83620
+Date:   Sun, 24 Jun 2018 23:21:58 +0800
+Message-Id: <20180624142740.872536245@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -50,33 +51,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
 
-[ Upstream commit 349b71d6f427ff8211adf50839dbbff3f27c1805 ]
+[ Upstream commit b718e8c8f4f5920aaddc2e52d5e32f494c91129c ]
 
-When pskb_trim_rcsum fails, the lack of error-handling code may
-cause unexpected results.
+DP83620 register set is compatible with the DP83848, but it also supports
+100base-FX. When the hardware is configured such as that fiber mode is
+enabled, autonegotiation is not possible.
 
-This patch adds error-handling code after calling pskb_trim_rcsum.
+The chip, however, doesn't expose this information via BMSR_ANEGCAPABLE.
+Instead, this bit is always set high, even if the particular hardware
+configuration makes it so that auto negotiation is not possible [1]. Under
+these circumstances, the phy subsystem keeps trying for autonegotiation to
+happen, without success.
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Hereby, we inspect BMCR_ANENABLE bit after genphy_config_init, which on
+reset is set to 0 when auto negotiation is disabled, and so we use this
+value instead of BMSR_ANEGCAPABLE.
+
+[1] https://e2e.ti.com/support/interface/ethernet/f/903/p/697165/2571170
+
+Signed-off-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dsa/tag_trailer.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/phy/dp83848.c |   35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
 
---- a/net/dsa/tag_trailer.c
-+++ b/net/dsa/tag_trailer.c
-@@ -75,7 +75,8 @@ static struct sk_buff *trailer_rcv(struc
- 	if (!skb->dev)
- 		return NULL;
- 
--	pskb_trim_rcsum(skb, skb->len - 4);
-+	if (pskb_trim_rcsum(skb, skb->len - 4))
-+		return NULL;
- 
- 	return skb;
+--- a/drivers/net/phy/dp83848.c
++++ b/drivers/net/phy/dp83848.c
+@@ -74,6 +74,25 @@ static int dp83848_config_intr(struct ph
+ 	return phy_write(phydev, DP83848_MICR, control);
  }
+ 
++static int dp83848_config_init(struct phy_device *phydev)
++{
++	int err;
++	int val;
++
++	err = genphy_config_init(phydev);
++	if (err < 0)
++		return err;
++
++	/* DP83620 always reports Auto Negotiation Ability on BMSR. Instead,
++	 * we check initial value of BMCR Auto negotiation enable bit
++	 */
++	val = phy_read(phydev, MII_BMCR);
++	if (!(val & BMCR_ANENABLE))
++		phydev->autoneg = AUTONEG_DISABLE;
++
++	return 0;
++}
++
+ static struct mdio_device_id __maybe_unused dp83848_tbl[] = {
+ 	{ TI_DP83848C_PHY_ID, 0xfffffff0 },
+ 	{ NS_DP83848C_PHY_ID, 0xfffffff0 },
+@@ -83,7 +102,7 @@ static struct mdio_device_id __maybe_unu
+ };
+ MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
+ 
+-#define DP83848_PHY_DRIVER(_id, _name)				\
++#define DP83848_PHY_DRIVER(_id, _name, _config_init)		\
+ 	{							\
+ 		.phy_id		= _id,				\
+ 		.phy_id_mask	= 0xfffffff0,			\
+@@ -92,7 +111,7 @@ MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
+ 		.flags		= PHY_HAS_INTERRUPT,		\
+ 								\
+ 		.soft_reset	= genphy_soft_reset,		\
+-		.config_init	= genphy_config_init,		\
++		.config_init	= _config_init,			\
+ 		.suspend	= genphy_suspend,		\
+ 		.resume		= genphy_resume,		\
+ 								\
+@@ -102,10 +121,14 @@ MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
+ 	}
+ 
+ static struct phy_driver dp83848_driver[] = {
+-	DP83848_PHY_DRIVER(TI_DP83848C_PHY_ID, "TI DP83848C 10/100 Mbps PHY"),
+-	DP83848_PHY_DRIVER(NS_DP83848C_PHY_ID, "NS DP83848C 10/100 Mbps PHY"),
+-	DP83848_PHY_DRIVER(TI_DP83620_PHY_ID, "TI DP83620 10/100 Mbps PHY"),
+-	DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY"),
++	DP83848_PHY_DRIVER(TI_DP83848C_PHY_ID, "TI DP83848C 10/100 Mbps PHY",
++			   genphy_config_init),
++	DP83848_PHY_DRIVER(NS_DP83848C_PHY_ID, "NS DP83848C 10/100 Mbps PHY",
++			   genphy_config_init),
++	DP83848_PHY_DRIVER(TI_DP83620_PHY_ID, "TI DP83620 10/100 Mbps PHY",
++			   dp83848_config_init),
++	DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY",
++			   genphy_config_init),
+ };
+ module_phy_driver(dp83848_driver);
+ 
 
 
