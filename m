@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1AFC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88AB4C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7687250FA
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:52:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7687250FA
+	by mail.kernel.org (Postfix) with ESMTP id 3FFD9250FA
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:52:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFD9250FA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934299AbeFXPwB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:52:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33544 "EHLO
+        id S934311AbeFXPwI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:52:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33556 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934006AbeFXPv7 (ORCPT
+        with ESMTP id S934006AbeFXPwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:51:59 -0400
+        Sun, 24 Jun 2018 11:52:06 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 618862C;
-        Sun, 24 Jun 2018 15:51:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 519652C;
+        Sun, 24 Jun 2018 15:52:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kevin Wangtao <kevin.wangtao@hisilicon.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.9 31/39] cpufreq: Fix new policy initialization during limits updates via sysfs
-Date:   Sun, 24 Jun 2018 23:24:18 +0800
-Message-Id: <20180624152355.485153660@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.9 32/39] libata: zpodd: make arrays cdb static, reduces object code size
+Date:   Sun, 24 Jun 2018 23:24:19 +0800
+Message-Id: <20180624152355.581870354@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624152352.038950449@linuxfoundation.org>
 References: <20180624152352.038950449@linuxfoundation.org>
@@ -51,50 +49,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tao Wang <kevin.wangtao@hisilicon.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit c7d1f119c48f64bebf0fa1e326af577c6152fe30 upstream.
+commit 795ef788145ed2fa023efdf11e8d5d7bedc21462 upstream.
 
-If the policy limits are updated via cpufreq_update_policy() and
-subsequently via sysfs, the limits stored in user_policy may be
-set incorrectly.
+Don't populate the arrays cdb on the stack, instead make them static.
+Makes the object code smaller by 230 bytes:
 
-For example, if both min and max are set via sysfs to the maximum
-available frequency, user_policy.min and user_policy.max will also
-be the maximum.  If a policy notifier triggered by
-cpufreq_update_policy() lowers both the min and the max at this
-point, that change is not reflected by the user_policy limits, so
-if the max is updated again via sysfs to the same lower value,
-then user_policy.max will be lower than user_policy.min which
-shouldn't happen.  In particular, if one of the policy CPUs is
-then taken offline and back online, cpufreq_set_policy() will
-fail for it due to a failing limits check.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   3797	    240	      0	   4037	    fc5	drivers/ata/libata-zpodd.o
 
-To prevent that from happening, initialize the min and max fields
-of the new_policy object to the ones stored in user_policy that
-were previously set via sysfs.
+After:
+   text	   data	    bss	    dec	    hex	filename
+   3407	    400	      0	   3807	    edf	drivers/ata/libata-zpodd.o
 
-Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-[ rjw: Subject & changelog ]
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cpufreq.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/ata/libata-zpodd.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -657,6 +657,8 @@ static ssize_t store_##file_name					\
- 	struct cpufreq_policy new_policy;				\
- 									\
- 	memcpy(&new_policy, policy, sizeof(*policy));			\
-+	new_policy.min = policy->user_policy.min;			\
-+	new_policy.max = policy->user_policy.max;			\
- 									\
- 	ret = sscanf(buf, "%u", &new_policy.object);			\
- 	if (ret != 1)							\
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -34,7 +34,7 @@ struct zpodd {
+ static int eject_tray(struct ata_device *dev)
+ {
+ 	struct ata_taskfile tf;
+-	const char cdb[] = {  GPCMD_START_STOP_UNIT,
++	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
+ 		0, 0, 0,
+ 		0x02,     /* LoEj */
+ 		0, 0, 0, 0, 0, 0, 0,
+@@ -55,7 +55,7 @@ static enum odd_mech_type zpodd_get_mech
+ 	unsigned int ret;
+ 	struct rm_feature_desc *desc = (void *)(buf + 8);
+ 	struct ata_taskfile tf;
+-	char cdb[] = {  GPCMD_GET_CONFIGURATION,
++	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
+ 			2,      /* only 1 feature descriptor requested */
+ 			0, 3,   /* 3, removable medium feature */
+ 			0, 0, 0,/* reserved */
 
 
