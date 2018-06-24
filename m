@@ -2,148 +2,123 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DBCC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C353C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3926925348
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:40:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E14822534C
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:43:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLpmI0z2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3926925348
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfRuSVII"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E14822534C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752127AbeFXWk1 (ORCPT
+        id S1752030AbeFXWm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 18:40:27 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34087 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751625AbeFXWkY (ORCPT
+        Sun, 24 Jun 2018 18:42:58 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44262 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbeFXWm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 18:40:24 -0400
-Received: by mail-it0-f68.google.com with SMTP id y127-v6so10511169itd.1;
-        Sun, 24 Jun 2018 15:40:23 -0700 (PDT)
+        Sun, 24 Jun 2018 18:42:56 -0400
+Received: by mail-pf0-f194.google.com with SMTP id x23-v6so1612040pfn.11;
+        Sun, 24 Jun 2018 15:42:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/dmAH43kyX4umm/xRhYyqJXINAz95gfLlRxOCncoMkg=;
-        b=kLpmI0z2TCJWRI09ltCrLDLp3vgMsuiw/WP3aPZFPZ1n+KwReQjXHpTmaapEKg7HjH
-         bu9J2komdWTxPsLpiphDKBiZ9JW3zpmbXVsR1tH+1zF7+HbUU4qRoVmim9ekMecHy8Tv
-         p8OlK27FW9r5QJxXeY0sPS7+WKaw1v9WTQMiKVkMmP2jg4YjtPpp9o1hSh8tGOg3Wn45
-         /mzIlZCvBSTp0ROiMDaPwPc66KUMgI8NbbR5AAujW4gY6HLsoJ8pM8spygDNzVpWseOb
-         hCFxJ09552opR/PdFD+ZkhVreaK1Jc9VCFOsrpQ7aGmYJo8ignzufdYCsmyCIvu3b/Ht
-         soSA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=NPutboYjtowQQoHeP3+FySHvWM/4wSc0drJuKwrN/Ns=;
+        b=OfRuSVIILKggptsC7V51Q4ATDC4xNgPocY6T/VZ3wTsg8psRNHbhGsm+yz/mM0qG/d
+         Mi/Kjs0yFTzs2afBNsDH7wQ/YbObf4UpvzqQ2xK4fJPz4SzaU3z05YwmBFohasWBjvdm
+         mr+mx7LjBvb39oa2BQFS7aPKwm9Qrp5aLeVTUHAn0TpvRdzTirofJYOEhEc0Sm8bUVwr
+         KV55zAyjpP2+nYy6LXKborUPFxIxJEuF7RroaEbhDAgxePnMRGXZF0Fqkhppq1gIZHF8
+         sfoWXJDDYuWHNdN+5pbGDfxHd3bpgkBvvkayydXkdhaRt62erFYwiIE4mu9VdUnf+Zmk
+         WURw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/dmAH43kyX4umm/xRhYyqJXINAz95gfLlRxOCncoMkg=;
-        b=m8XveFu+qrwT7l+7FWFuEnfDS0t97A5tBTn4dGQHOgiIpPMpzhTvTRvIk4xxJ3b+wM
-         zvSc3ELHMLOpX/MBX54U7PYGeURoqsTmv7U5Tk/WtaFBbn+bo8aX9esV3rn703v7kEKO
-         Yyeqsz2F/iWXGc0adM1YMO3sVve1hSdg4KNlTOd5P0+/tuZ91lJ45I/H3wFMlytV4xES
-         IotKq8fwQKcXi1aqUwQvg5+YkmcVz1+siU+Jtn2cmZcTeNpThSL5IyGWoFBDhSphKCzS
-         Wu8MIQLRLLgEQxyb2GHaY9xhxh4YaHXymdLpo29t7q7OT15evDYlHVFjiDBxnbTFUnk5
-         XZeg==
-X-Gm-Message-State: APt69E2ZvWfhvNPruvOxtWklRja04WB+Zu5K9XruJh1za74rjHRGvpv1
-        BzHhUevGTIfdfnm8/ly9dIfx68HqUoyWDVVoYbdbhTgv
-X-Google-Smtp-Source: ADUXVKItmvFHsrcn1ewpDukkFzt3iOahy1U1CmctzWLzpJLfs1wzTgkY24bpn5buuZyhAaxp9Dqpp/aEBbR7xjr9u1Y=
-X-Received: by 2002:a24:a501:: with SMTP id k1-v6mr8037223itf.79.1529880023075;
- Sun, 24 Jun 2018 15:40:23 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=NPutboYjtowQQoHeP3+FySHvWM/4wSc0drJuKwrN/Ns=;
+        b=khEFhlRuMOC9bu4ZFShpBdyh4XC1V9dtfvyp87b5XuqYmTFUjVI7J7sYuK6QUTDA9O
+         i0TzuXXomoeVSvHqmJaMypAf/Rbzj9NlkPEZ3b5RqfMWmLKjU4gdWcutt4xVndrGUfHt
+         EjufZUsmpvRGtC1Lth5oDYsgqLJQ5RgqvcFAKg/acDA/frjusMJWivNyrlNNWJxt1495
+         AFtdoH5s2rPc+C8K2ZcpjKcuLdLBcp6z7TSAp53MHw1d4G1BT0u2jAZ7C/RVGhR0MtnZ
+         ynn+tOcMTV+Et5fSYhfJ3zWMIhY2PYMu6F6BI321HzBnUzhyLrJCJ6+L/95s5gUNqP+B
+         0BFQ==
+X-Gm-Message-State: APt69E07EAzSXK/Rmuv0g7Sq4X73CZEn/hzU6iHJincof2BpY5A88v+u
+        Sg2EZHBLjtgQ3DGMpRcNgsYMVyIM
+X-Google-Smtp-Source: ADUXVKLKUa9GlWRcKECwT7Z385/K29oNFXJGGCapJW1vPMeGGlty/ADtMgnX0vh6IuOanhctnXJL/g==
+X-Received: by 2002:aa7:864d:: with SMTP id a13-v6mr10413266pfo.247.1529880176052;
+        Sun, 24 Jun 2018 15:42:56 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id k10-v6sm34844763pfj.29.2018.06.24.15.42.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 24 Jun 2018 15:42:54 -0700 (PDT)
+Date:   Sun, 24 Jun 2018 15:42:52 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] sh: make use of for_each_node_by_type()
+Message-ID: <20180624224252.GA220395@dtor-ws>
 MIME-Version: 1.0
-References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
- <CAOMZO5AyAegbvUtX42by99mU8yQfi91bmhJfd9iqu1Ak0dEHiw@mail.gmail.com>
- <CAOMZO5DJj=oQfsB-vNP=81HCiy-69j-5U+Km9P6LxGpnLx9xzg@mail.gmail.com>
- <CAHQ1cqHxq+RM1nNHECY75Cojd_kxu1ERLe6+MhMLUa5kb10r8w@mail.gmail.com>
- <CAOMZO5B98O9XA8GhdWxJZ6DFgS=O+smHURm8v5jEirj31tuUhg@mail.gmail.com>
- <CAHQ1cqELs4LaQkmPiPjXQuF17+7PBsEtbmSt8iveLqRv+4bgfQ@mail.gmail.com> <CAOMZO5CumdNSP6iTfgXPdmpcZwh7YmBstUpAmb3A1QAf1UWJdw@mail.gmail.com>
-In-Reply-To: <CAOMZO5CumdNSP6iTfgXPdmpcZwh7YmBstUpAmb3A1QAf1UWJdw@mail.gmail.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Sun, 24 Jun 2018 15:40:11 -0700
-Message-ID: <CAHQ1cqHpNvZGAfFKrp-OiZevsha5CBwJsw8GT+uhgNSfEUejkw@mail.gmail.com>
-Subject: Re: [PATCH] usb: chipidea: Fix ULPI on imx51
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Peter Chen <peter.chen@nxp.com>, linux-usb@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 9:27 AM Fabio Estevam <festevam@gmail.com> wrote:
->
-> Hi Andrey,
->
-> On Thu, Jun 21, 2018 at 6:44 PM, Andrey Smirnov
-> <andrew.smirnov@gmail.com> wrote:
->
-> > I just finished experimenting with it on RDU1 and Babbage boards and I
-> > can't reproduce the hang that you describe against 4.18-rc1. At this
-> > point I wonder if it's the bootloader that is a variable that plays
-> > into this. I was booting both boards with 2018.06.0 version of barebox
-> > + the custom patches that can be found here
-> > https://github.com/ndreys/barebox/commits/rdu1-netboot. Note that the
-> > last patch in that branch/stack was added as a part of this
-> > investigation, but even before it, I was able to boot Linux just fine,
-> > albeit without working USB.
->
-> Thanks for investigating this issue.
->
-> Yes, t is possible that the difference in behaviour that we see could
-> be related to the fact we use different bootloaders.
->
-> In order to make things easier, I am sharing a Buildroot image for
-> imx51-babbage that contains U-Boot 2018.05 + kernel 4.17.2:
-> https://www.dropbox.com/s/yevnu4y1zdchnbt/sdcard.img?dl=0
->
-> Please flash it directly to the SD card via dd and boot it.
->
-> You will notice that it will boot normally. Then please copy a
-> 4.18-rc1 zImage into the first SD card partition and you will notice
-> the hang.
->
+Instead of open-coding the loop, let's use canned macro.
 
-It's definitely the bootloader, or more specifically whether or not it
-initialized/used USB before booting the kernel. Some interesting
-highlights:
+Also make sure we are not leaking "cpus" node reference.
 
- - On your "good" 4.17.2 based image, if you interrupt U-Boot, do "usb
-start" (optionally "usb stop") and then "boot", you'll get the hang
-that I was trying to fix with my patch.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
- - Things are exact opposite with 4.18-rc1 and doing the above would
-_prevent_ the hang and the image would boot fine.
+ arch/sh/boards/of-generic.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
- - Disabling USB in Barebox based boot "stack" gets it to behave the
-same way as U-boot from your image (hanging when booting 4.18-rc1)
+diff --git a/arch/sh/boards/of-generic.c b/arch/sh/boards/of-generic.c
+index 46b2481eec903..26789ad281936 100644
+--- a/arch/sh/boards/of-generic.c
++++ b/arch/sh/boards/of-generic.c
+@@ -56,15 +56,15 @@ const struct of_cpu_method __cpu_method_of_table_sentinel
+ 
+ static void sh_of_smp_probe(void)
+ {
+-	struct device_node *np = 0;
+-	const char *method = 0;
++	struct device_node *np;
++	const char *method = NULL;
+ 	const struct of_cpu_method *m = __cpu_method_of_table;
+ 
+ 	pr_info("SH generic board support: scanning for cpus\n");
+ 
+ 	init_cpu_possible(cpumask_of(0));
+ 
+-	while ((np = of_find_node_by_type(np, "cpu"))) {
++	for_each_node_by_type(np, "cpu") {
+ 		const __be32 *cell = of_get_property(np, "reg", NULL);
+ 		u64 id = -1;
+ 		if (cell) id = of_read_number(cell, of_n_addr_cells(np));
+@@ -80,6 +80,7 @@ static void sh_of_smp_probe(void)
+ 	if (!method) {
+ 		np = of_find_node_by_name(NULL, "cpus");
+ 		of_property_read_string(np, "enable-method", &method);
++		of_node_put(np);
+ 	}
+ 
+ 	pr_info("CPU enable method: %s\n", method);
+-- 
+2.18.0.rc2.346.g013aa6912e-goog
 
-Digging more into code it seems that the reason for 4.18-rc1's
-behavior is the fact that it's missing a call hw_phymode_configure()
-after usb_phy_init() and, AFAICT, the only reason it is not happening
-is because default image is being built without
-CONFIG_USB_CHIPIDEA_ULPI and CONFIG_USB_ULPI_BUS. Enabling those two
-options on 4.18-rc1, seem to fix the problem on both your U-Boot based
-image and my "special" Barebox setup.
 
-So AFAICT, this patch still fixes a valid issue (my use-case was net
-booting via USB-Ethernet dongle), but an additional patch enabling
-those two configuration options might be needed. Thoughts?
-
-Also, I don't have any i.MX53 HW, so I wasn't able to test the effects
-of enabling those two options there.
-
-Thanks,
-Andrey Smirnov
+-- 
+Dmitry
