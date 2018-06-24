@@ -6,39 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4DEC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BE3C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F8F624F80
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F8F624F80
+	by mail.kernel.org (Postfix) with ESMTP id 0783A24F81
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:27:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0783A24F81
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeFXP0x (ORCPT
+        id S1752811AbeFXP1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:26:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58746 "EHLO
+        Sun, 24 Jun 2018 11:27:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58756 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751849AbeFXP0v (ORCPT
+        with ESMTP id S1751849AbeFXP06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:26:51 -0400
+        Sun, 24 Jun 2018 11:26:58 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA94092F;
-        Sun, 24 Jun 2018 15:26:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B32792B;
+        Sun, 24 Jun 2018 15:26:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        shankarapailoor <shankarapailoor@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Lorenzo Colitti <lorenzo@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 07/52] socket: close race condition between sock_close() and sockfs_setattr()
-Date:   Sun, 24 Jun 2018 23:21:00 +0800
-Message-Id: <20180624142744.749974395@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 25/52] ALSA: hda/conexant - Add fixup for HP Z2 G4 workstation
+Date:   Sun, 24 Jun 2018 23:21:18 +0800
+Message-Id: <20180624142746.018845699@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -55,90 +49,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 6d8c50dcb029872b298eea68cc6209c866fd3e14 ]
+commit f16041df4c360eccacfe90f96673b37829e4c959 upstream.
 
-fchownat() doesn't even hold refcnt of fd until it figures out
-fd is really needed (otherwise is ignored) and releases it after
-it resolves the path. This means sock_close() could race with
-sockfs_setattr(), which leads to a NULL pointer dereference
-since typically we set sock->sk to NULL in ->release().
+HP Z2 G4 requires the same workaround as other HP machines that have
+no mic-pin detection.
 
-As pointed out by Al, this is unique to sockfs. So we can fix this
-in socket layer by acquiring inode_lock in sock_close() and
-checking against NULL in sockfs_setattr().
-
-sock_release() is called in many places, only the sock_close()
-path matters here. And fortunately, this should not affect normal
-sock_close() as it is only called when the last fd refcnt is gone.
-It only affects sock_close() with a parallel sockfs_setattr() in
-progress, which is not common.
-
-Fixes: 86741ec25462 ("net: core: Add a UID field to struct sock.")
-Reported-by: shankarapailoor <shankarapailoor@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Lorenzo Colitti <lorenzo@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/socket.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
 
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -538,7 +538,10 @@ static int sockfs_setattr(struct dentry
- 	if (!err && (iattr->ia_valid & ATTR_UID)) {
- 		struct socket *sock = SOCKET_I(d_inode(dentry));
- 
--		sock->sk->sk_uid = iattr->ia_uid;
-+		if (sock->sk)
-+			sock->sk->sk_uid = iattr->ia_uid;
-+		else
-+			err = -ENOENT;
- 	}
- 
- 	return err;
-@@ -588,12 +591,16 @@ EXPORT_SYMBOL(sock_alloc);
-  *	an inode not a file.
-  */
- 
--void sock_release(struct socket *sock)
-+static void __sock_release(struct socket *sock, struct inode *inode)
- {
- 	if (sock->ops) {
- 		struct module *owner = sock->ops->owner;
- 
-+		if (inode)
-+			inode_lock(inode);
- 		sock->ops->release(sock);
-+		if (inode)
-+			inode_unlock(inode);
- 		sock->ops = NULL;
- 		module_put(owner);
- 	}
-@@ -608,6 +615,11 @@ void sock_release(struct socket *sock)
- 	}
- 	sock->file = NULL;
- }
-+
-+void sock_release(struct socket *sock)
-+{
-+	__sock_release(sock, NULL);
-+}
- EXPORT_SYMBOL(sock_release);
- 
- void __sock_tx_timestamp(__u16 tsflags, __u8 *tx_flags)
-@@ -1122,7 +1134,7 @@ static int sock_mmap(struct file *file,
- 
- static int sock_close(struct inode *inode, struct file *filp)
- {
--	sock_release(SOCKET_I(inode));
-+	__sock_release(SOCKET_I(inode), inode);
- 	return 0;
- }
- 
+---
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -965,6 +965,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1043, 0x138d, "Asus", CXT_FIXUP_HEADPHONE_MIC_PIN),
+ 	SND_PCI_QUIRK(0x152d, 0x0833, "OLPC XO-1.5", CXT_FIXUP_OLPC_XO),
+ 	SND_PCI_QUIRK(0x17aa, 0x20f2, "Lenovo T400", CXT_PINCFG_LENOVO_TP410),
 
 
