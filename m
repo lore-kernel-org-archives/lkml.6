@@ -3,37 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C3CC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6FCC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B794525121
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:54:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B794525121
+	by mail.kernel.org (Postfix) with ESMTP id 0341325149
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:56:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0341325149
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934522AbeFXPyF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:54:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33710 "EHLO
+        id S934154AbeFXP4p (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:56:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33358 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933919AbeFXPyB (ORCPT
+        with ESMTP id S932339AbeFXPtz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:54:01 -0400
+        Sun, 24 Jun 2018 11:49:55 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74AF386A;
-        Sun, 24 Jun 2018 15:54:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAB5749F;
+        Sun, 24 Jun 2018 15:49:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        Simon Horman <simon.horman@netronome.com>,
+        stable@vger.kernel.org, Xiangning Yu <yuxiangning@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 17/39] net/sched: act_simple: fix parsing of TCA_DEF_DATA
-Date:   Sun, 24 Jun 2018 23:24:04 +0800
-Message-Id: <20180624152353.937670246@linuxfoundation.org>
+Subject: [PATCH 4.9 15/39] bonding: re-evaluate force_primary when the primary slave name changes
+Date:   Sun, 24 Jun 2018 23:24:02 +0800
+Message-Id: <20180624152353.723760122@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624152352.038950449@linuxfoundation.org>
 References: <20180624152352.038950449@linuxfoundation.org>
@@ -50,88 +49,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Xiangning Yu <yuxiangning@gmail.com>
 
-[ Upstream commit 8d499533e0bc02d44283dbdab03142b599b8ba16 ]
+[ Upstream commit eb55bbf865d9979098c6a7a17cbdb41237ece951 ]
 
-use nla_strlcpy() to avoid copying data beyond the length of TCA_DEF_DATA
-netlink attribute, in case it is less than SIMP_MAX_DATA and it does not
-end with '\0' character.
+There is a timing issue under active-standy mode, when bond_enslave() is
+called, bond->params.primary might not be initialized yet.
 
-v2: fix errors in the commit message, thanks Hangbin Liu
+Any time the primary slave string changes, bond->force_primary should be
+set to true to make sure the primary becomes the active slave.
 
-Fixes: fa1b1cff3d06 ("net_cls_act: Make act_simple use of netlink policy.")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Signed-off-by: Xiangning Yu <yuxiangning@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_simple.c |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ drivers/net/bonding/bond_options.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sched/act_simple.c
-+++ b/net/sched/act_simple.c
-@@ -55,22 +55,22 @@ static void tcf_simp_release(struct tc_a
- 	kfree(d->tcfd_defdata);
- }
- 
--static int alloc_defdata(struct tcf_defact *d, char *defdata)
-+static int alloc_defdata(struct tcf_defact *d, const struct nlattr *defdata)
- {
- 	d->tcfd_defdata = kzalloc(SIMP_MAX_DATA, GFP_KERNEL);
- 	if (unlikely(!d->tcfd_defdata))
- 		return -ENOMEM;
--	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
-+	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
- 	return 0;
- }
- 
--static void reset_policy(struct tcf_defact *d, char *defdata,
-+static void reset_policy(struct tcf_defact *d, const struct nlattr *defdata,
- 			 struct tc_defact *p)
- {
- 	spin_lock_bh(&d->tcf_lock);
- 	d->tcf_action = p->action;
- 	memset(d->tcfd_defdata, 0, SIMP_MAX_DATA);
--	strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
-+	nla_strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
- 	spin_unlock_bh(&d->tcf_lock);
- }
- 
-@@ -89,7 +89,6 @@ static int tcf_simp_init(struct net *net
- 	struct tcf_defact *d;
- 	bool exists = false;
- 	int ret = 0, err;
--	char *defdata;
- 
- 	if (nla == NULL)
- 		return -EINVAL;
-@@ -112,8 +111,6 @@ static int tcf_simp_init(struct net *net
- 		return -EINVAL;
- 	}
- 
--	defdata = nla_data(tb[TCA_DEF_DATA]);
--
- 	if (!exists) {
- 		ret = tcf_hash_create(tn, parm->index, est, a,
- 				      &act_simp_ops, bind, false);
-@@ -121,7 +118,7 @@ static int tcf_simp_init(struct net *net
- 			return ret;
- 
- 		d = to_defact(*a);
--		ret = alloc_defdata(d, defdata);
-+		ret = alloc_defdata(d, tb[TCA_DEF_DATA]);
- 		if (ret < 0) {
- 			tcf_hash_cleanup(*a, est);
- 			return ret;
-@@ -135,7 +132,7 @@ static int tcf_simp_init(struct net *net
- 		if (!ovr)
- 			return -EEXIST;
- 
--		reset_policy(d, defdata, parm);
-+		reset_policy(d, tb[TCA_DEF_DATA], parm);
- 	}
- 
- 	if (ret == ACT_P_CREATED)
+--- a/drivers/net/bonding/bond_options.c
++++ b/drivers/net/bonding/bond_options.c
+@@ -1114,6 +1114,7 @@ static int bond_option_primary_set(struc
+ 				    slave->dev->name);
+ 			rcu_assign_pointer(bond->primary_slave, slave);
+ 			strcpy(bond->params.primary, slave->dev->name);
++			bond->force_primary = true;
+ 			bond_select_active_slave(bond);
+ 			goto out;
+ 		}
 
 
