@@ -2,270 +2,131 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B656C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16ADBC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4003D24D9B
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4003D24D9B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+	by mail.kernel.org (Postfix) with ESMTP id AB98524D9B
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:52:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWhjC6IS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB98524D9B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752231AbeFXCsY (ORCPT
+        id S1752182AbeFXCwl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 22:48:24 -0400
-Received: from p3plsmtpa12-07.prod.phx3.secureserver.net ([68.178.252.236]:33020
-        "EHLO p3plsmtpa12-07.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751989AbeFXCsW (ORCPT
+        Sat, 23 Jun 2018 22:52:41 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:41043 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752048AbeFXCwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 22:48:22 -0400
-Received: from [192.168.0.67] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id Wv4ffWHh92R3tWv4ffjdTt; Sat, 23 Jun 2018 19:48:22 -0700
-Subject: Re: [Patch v2 14/15] CIFS: Add support for direct I/O write
-To:     longli@microsoft.com, Steve French <sfrench@samba.org>,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-References: <20180530194807.31657-1-longli@linuxonhyperv.com>
- <20180530194807.31657-15-longli@linuxonhyperv.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <9162de67-fc5d-26e9-5882-26377194a2ff@talpey.com>
-Date:   Sat, 23 Jun 2018 22:48:22 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Sat, 23 Jun 2018 22:52:38 -0400
+Received: by mail-ot0-f194.google.com with SMTP id d19-v6so11556199oti.8
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Jun 2018 19:52:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FO/gRy5T3cS848/CG7NpvWJdRDnaZ0kWCEJ+EJPbD5Q=;
+        b=JWhjC6ISyzt0ZwJ31vW/HE6r5kgd9cdrgnGOtPYeZW38XOn+B+ZSPCx1zEZ2uXXsXL
+         3cEajQnrDzojXE9Iy5JZS6vuDwS+o7YizGqb7tiO4jt0QxyCeaUXrG5grSdD5VuCh7Hn
+         KOq3uHTahrrJ+pXy+xUPlUwshv546PzuMAYIGzr5EFjGgCEqWYXRUE8RvH8gL088ZLtb
+         JdXufKg2pOFih04+Wj37h4GvJp+S/bBFuwESaNtafSW8+njDiVpLnfG6aABDBvdIkH5M
+         Ozi2dOzVbbKVhonFYdXxyGjj8m+wQSHLE03RSpHLyrqV5ymLVX1+FovtrusGesCQx6Cc
+         WbgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FO/gRy5T3cS848/CG7NpvWJdRDnaZ0kWCEJ+EJPbD5Q=;
+        b=LHaUYmu2oVomfO/8UPWw4vTgHMPfuqptmmdO007ALPosjZ+1RXsU6ilxRa8rh9dnuQ
+         xCuxGelFeNmCcGIddPZkk9DyyzidIF9G1Lle65bRdOhOTuSu+hSnmO8mA2SyEEBGBTjs
+         3leekxo6Lk4fZpYWu3o6rQq4fl38ysePMlPiLX/9IdD2oh1SLZGdUxZ/iqkpl3kN8dpo
+         ibpeUYBfnT61pUXNBS/+IrKNqfLZqq0K5LgUDXhKjulmLyJpK+7CtWsXGjaQU8bUWgUO
+         tOpEHUVGF55Bl3xn3jzDZvD2UE/NArloC0wRR5GWk+rds289xzJbTHSOZL1BJ6KeGBsX
+         KR1A==
+X-Gm-Message-State: APt69E1mUtq2dIvHQV/KohnvRyTd9OymKIELwAIpftOJmNCIc4HiDpN/
+        /FzF0fDzHUztUc5oKvrknXeUKQ==
+X-Google-Smtp-Source: AAOMgped11UPbLmFEdLM2p0qVnyg7CXVp7N2jEYNSXt4IR1Z2YP5LVXtZdajG7tTGJ+ln9mKsTxWAA==
+X-Received: by 2002:a9d:2774:: with SMTP id r107-v6mr1515260ota.93.1529808757869;
+        Sat, 23 Jun 2018 19:52:37 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id r40-v6sm10880228otr.62.2018.06.23.19.52.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 23 Jun 2018 19:52:36 -0700 (PDT)
+Subject: Re: m68k boot failure in -next bisected to 'xarray: Replace
+ exceptional entries'
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Josef Bacik <jbacik@fb.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+References: <20180622184246.GA21226@roeck-us.net>
+ <20180622210519.GA18630@bombadil.infradead.org>
+ <20180622223335.GA12581@roeck-us.net>
+ <20180624011703.GH18630@bombadil.infradead.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <a62d8a6a-0376-2cbe-a34c-13e1242f06c6@roeck-us.net>
+Date:   Sat, 23 Jun 2018 19:52:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180530194807.31657-15-longli@linuxonhyperv.com>
+In-Reply-To: <20180624011703.GH18630@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOCQQs4NZyWZznVTowBcHHcKbu3GKU+qf4aqP2vLfOh3rxErfEdiNhC09TVpLiTeT0FRpSAwFvN8Ing6f+iNOkB85uQJkVFJxCr2ENaC1HHrYNvjsBFa
- aS6V7S5axvxinKmbqF1DpFoPn4HE+SfZzKaY4zmlZ4qWNoiCJYXMy5QNn8bt5akEvCBxlAb1AM3OB9ELzmmnMv9W4ZLLjTwQL99ihCXNfdzpo6EgcirGg2mZ
- pPucyteNCSZd3ivsgwMhzL+hlX+5E6HwReTeCKpo2uwY3ZNR/WmDWwdNbuN+CRcLsSdI/drjRDPJ2aJDUfS4MD1uF0IFvz22fLul94KjQ8rJy3o8NWvVq5TS
- pFCzk+uD
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/30/2018 3:48 PM, Long Li wrote:
-> From: Long Li <longli@microsoft.com>
+On 06/23/2018 06:17 PM, Matthew Wilcox wrote:
+> On Fri, Jun 22, 2018 at 03:33:35PM -0700, Guenter Roeck wrote:
+>> It may be odd that fs/quota/netlink.c:quota_genl_family is not word
+>> aligned, but on the other side I don't think there is a rule that
+>> the function parameter to genl_register_family() - or the second
+>> parameter of idr_alloc() - must be word aligned. Am I missing
+>> something ? After all, it could be a pointer to the nth element
+>> of a string, or the caller could on purpose allocate IDRs for
+>> (ptr), (ptr + 1), and so on.
 > 
-> Implement the function for direct I/O write. It doesn't support AIO, which
-> will be implemented in a follow up patch.
+> This is probably going to cure the problem for you (apply on top
+> of the existing radix tree / IDR changes).
 > 
-> Signed-off-by: Long Li <longli@microsoft.com>
-> ---
->   fs/cifs/cifsfs.h |   1 +
->   fs/cifs/file.c   | 165 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
->   2 files changed, 166 insertions(+)
+> I realised when I was reviewing the patch that it's no good; if you
+> call idr_replace() with a radix_tree_is_internal_node(), then you'll
+> still get a crash.  I'm going to have to disable the optimisation of
+> shrinking the tree all the way into the head for the IDR.  But this
+> will probably get m68k working again.
 > 
-> diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
-> index 7fba9aa..e9c5103 100644
-> --- a/fs/cifs/cifsfs.h
-> +++ b/fs/cifs/cifsfs.h
-> @@ -105,6 +105,7 @@ extern ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to);
->   extern ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to);
->   extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to);
->   extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from);
-> +extern ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from);
->   extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from);
->   extern int cifs_lock(struct file *, int, struct file_lock *);
->   extern int cifs_fsync(struct file *, loff_t, loff_t, int);
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index e6e6f24..8c385b1 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -2461,6 +2461,35 @@ cifs_uncached_writedata_release(struct kref *refcount)
->   
->   static void collect_uncached_write_data(struct cifs_aio_ctx *ctx);
->   
-> +static void cifs_direct_writedata_release(struct kref *refcount)
-> +{
-> +	int i;
-> +	struct cifs_writedata *wdata = container_of(refcount,
-> +					struct cifs_writedata, refcount);
-> +
-> +	for (i = 0; i < wdata->nr_pages; i++)
-> +		put_page(wdata->pages[i]);
-> +
-> +	cifs_writedata_release(refcount);
-> +}
-> +
-> +static void cifs_direct_writev_complete(struct work_struct *work)
-> +{
-> +	struct cifs_writedata *wdata = container_of(work,
-> +					struct cifs_writedata, work);
-> +	struct inode *inode = d_inode(wdata->cfile->dentry);
-> +	struct cifsInodeInfo *cifsi = CIFS_I(inode);
-> +
-> +	spin_lock(&inode->i_lock);
-> +	cifs_update_eof(cifsi, wdata->offset, wdata->bytes);
-> +	if (cifsi->server_eof > inode->i_size)
-> +		i_size_write(inode, cifsi->server_eof);
-> +	spin_unlock(&inode->i_lock);
-> +
-> +	complete(&wdata->done);
-> +	kref_put(&wdata->refcount, cifs_direct_writedata_release);
-> +}
-> +
->   static void
->   cifs_uncached_writev_complete(struct work_struct *work)
->   {
-> @@ -2703,6 +2732,142 @@ static void collect_uncached_write_data(struct cifs_aio_ctx *ctx)
->   		complete(&ctx->done);
->   }
->   
-> +ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	struct file *file = iocb->ki_filp;
-> +	ssize_t total_written = 0;
-> +	struct cifsFileInfo *cfile;
-> +	struct cifs_tcon *tcon;
-> +	struct cifs_sb_info *cifs_sb;
-> +	struct TCP_Server_Info *server;
-> +	pid_t pid;
-> +	unsigned long nr_pages;
-> +	loff_t offset = iocb->ki_pos;
-> +	size_t len = iov_iter_count(from);
-> +	int rc;
-> +	struct cifs_writedata *wdata;
-> +
-> +	/*
-> +	 * iov_iter_get_pages_alloc doesn't work with ITER_KVEC.
-> +	 * In this case, fall back to non-direct write function.
-> +	 */
-> +	if (from->type & ITER_KVEC) {
-> +		cifs_dbg(FYI, "use non-direct cifs_user_writev for kvec I/O\n");
-> +		return cifs_user_writev(iocb, from);
-> +	}
-> +
-> +	rc = generic_write_checks(iocb, from);
-> +	if (rc <= 0)
-> +		return rc;
-> +
-> +	cifs_sb = CIFS_FILE_SB(file);
-> +	cfile = file->private_data;
-> +	tcon = tlink_tcon(cfile->tlink);
-> +	server = tcon->ses->server;
-> +
-> +	if (!server->ops->async_writev)
-> +		return -ENOSYS;
-> +
-> +	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
-> +		pid = cfile->pid;
-> +	else
-> +		pid = current->tgid;
-> +
-> +	do {
-> +		unsigned int wsize, credits;
-> +		struct page **pagevec;
-> +		size_t start;
-> +		ssize_t cur_len;
-> +
-> +		rc = server->ops->wait_mtu_credits(server, cifs_sb->wsize,
-> +						   &wsize, &credits);
-> +		if (rc)
-> +			break;
-> +
-> +		cur_len = iov_iter_get_pages_alloc(
-> +				from, &pagevec, wsize, &start);
-> +		if (cur_len < 0) {
-> +			cifs_dbg(VFS,
-> +				"direct_writev couldn't get user pages "
-> +				"(rc=%zd) iter type %d iov_offset %lu count"
-> +				" %lu\n",
-> +				cur_len, from->type,
-> +				from->iov_offset, from->count);
-> +			dump_stack();
-> +			break;
-> +		}
-> +		if (cur_len < 0)
-> +			break;
 
-This cur_len < 0 test is redundant with the prior if(), delete.
-> +
-> +		nr_pages = (cur_len + start + PAGE_SIZE - 1) / PAGE_SIZE;
+It doesn't crash anymore, but there is still a backtrace.
 
-Am I misreading, or will this return be one more page than needed? If
-start (the first byte offset) is > 0, nr_pages will already be one.
-And if cur_len is 4KB, even if start is 0, nr_pages will be two.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at lib/idr.c:250 idr_get_next+0x62/0x82
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.18.0-rc1-next-20180622-mac-00001-g6731a81057be-dirty #1
+Stack from 07c19e28:
+         07c19e28 0036d5b2 000180d6 00000000 0036e0d6 0055a040 00000000 000020e8
+         07c19eb0 002b5326 0001816a 0036d5b5 000000fa 002b5388 00000009 00000000
+         00000000 00340b1d 002b5388 0036d5b5 000000fa 00000401 0036e0d6 80000000
+         00000000 00036fa0 0036ddc0 07c19eb0 00246164 003abf1c 07c19eb0 00036fa0
+         0036e0ce 07c19f8c 00000011 00246f04 0036e0d6 003abf34 00000400 00000006
+         0055a040 00000000 000020e8 00000000 00036fa0 003ff8e0 003f751c 07c19f8c
+Call Trace: [<000180d6>] __warn+0xc0/0xc2
+  [<000020e8>] do_one_initcall+0x0/0x140
+  [<002b5326>] idr_get_next+0x0/0x82
+  [<0001816a>] warn_slowpath_null+0x26/0x2c
+  [<002b5388>] idr_get_next+0x62/0x82
+  [<002b5388>] idr_get_next+0x62/0x82
+  [<00036fa0>] printk+0x0/0x18
+  [<00246164>] genl_family_find_byname+0x1c/0x4c
+  [<00036fa0>] printk+0x0/0x18
+  [<00246f04>] genl_register_family+0x74/0x55c
+  [<000020e8>] do_one_initcall+0x0/0x140
 
-> +
-> +		wdata = cifs_writedata_direct_alloc(pagevec,
-> +					     cifs_direct_writev_complete);
-> +		if (!wdata) {
-> +			rc = -ENOMEM;
-> +			add_credits_and_wake_if(server, credits, 0);
-> +			break;
-> +		}
-> +
-> +		wdata->nr_pages = nr_pages;
-> +		wdata->page_offset = start;
-> +		wdata->pagesz = PAGE_SIZE;
-> +		wdata->tailsz =
-> +			nr_pages > 1 ?
-> +			cur_len - (PAGE_SIZE - start) -
-> +				(nr_pages - 2) * PAGE_SIZE :
-> +			cur_len;
-> +
-> +		wdata->sync_mode = WB_SYNC_ALL;
-> +		wdata->offset = (__u64)offset;
-> +		wdata->cfile = cifsFileInfo_get(cfile);
-> +		wdata->pid = pid;
-> +		wdata->bytes = cur_len;
-> +		wdata->credits = credits;
-> +
-> +		rc = 0;
-> +		if (wdata->cfile->invalidHandle)
-> +			rc = cifs_reopen_file(wdata->cfile, false);
-> +
-> +		if (!rc)
-> +			rc = server->ops->async_writev(wdata,
-> +					cifs_direct_writedata_release);
-> +
-> +		if (rc) {
-> +			add_credits_and_wake_if(server, wdata->credits, 0);
-> +			kref_put(&wdata->refcount,
-> +				 cifs_direct_writedata_release);
-> +			if (rc == -EAGAIN)
-> +				continue;
-> +			break;
-> +		}
-
-Same comments as for previous patch re the if (rc) ladder, and
-the break/continues both being better expressed as careful goto's.
-
-> +
-> +		wait_for_completion(&wdata->done);
-> +		if (wdata->result) {
-> +			rc = wdata->result;
-> +			kref_put(&wdata->refcount,
-> +					cifs_direct_writedata_release);
-> +			if (rc == -EAGAIN)
-> +				continue;
-> +			break;
-> +		}
-> +
-> +		kref_put(&wdata->refcount, cifs_direct_writedata_release);
-> +
-> +		iov_iter_advance(from, cur_len);
-> +		total_written += cur_len;
-> +		offset += cur_len;
-> +		len -= cur_len;
-> +	} while (len);
-> +
-> +	if (unlikely(!total_written))
-> +		return rc;
-> +
-> +	iocb->ki_pos += total_written;
-> +	return total_written;
-> +
-> +}
-> +
->   ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from)
->   {
->   	struct file *file = iocb->ki_filp;
-> 
+Guenter
