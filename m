@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EECC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BB5C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C21FA250B4
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21FA250B4
+	by mail.kernel.org (Postfix) with ESMTP id 97058250B5
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97058250B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933814AbeFXPre (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:47:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33176 "EHLO
+        id S933846AbeFXPrm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:47:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33186 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPrb (ORCPT
+        with ESMTP id S932073AbeFXPrj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:47:31 -0400
+        Sun, 24 Jun 2018 11:47:39 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C5B9B2C;
-        Sun, 24 Jun 2018 15:47:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53F732C;
+        Sun, 24 Jun 2018 15:47:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
+        stable@vger.kernel.org,
+        "Artem S. Tashkinov" <t.artem@mailcity.com>,
+        Chen Yu <yu.c.chen@intel.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.17 45/70] cpufreq: ti-cpufreq: Fix an incorrect error return value
-Date:   Sun, 24 Jun 2018 23:22:37 +0800
-Message-Id: <20180624142743.285452055@linuxfoundation.org>
+Subject: [PATCH 4.17 46/70] cpufreq: governors: Fix long idle detection logic in load calculation
+Date:   Sun, 24 Jun 2018 23:22:38 +0800
+Message-Id: <20180624142743.352108030@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -50,37 +52,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Suman Anna <s-anna@ti.com>
+From: Chen Yu <yu.c.chen@intel.com>
 
-commit e5d295b06d69a1924665a16a4987be475addd00f upstream.
+commit 7592019634f8473f0b0973ce79297183077bdbc2 upstream.
 
-Commit 05829d9431df (cpufreq: ti-cpufreq: kfree opp_data when
-failure) has fixed a memory leak in the failure path, however
-the patch returned a positive value on get_cpu_device() failure
-instead of the previous negative value. Fix this incorrect error
-return value properly.
+According to current code implementation, detecting the long
+idle period is done by checking if the interval between two
+adjacent utilization update handlers is long enough. Although
+this mechanism can detect if the idle period is long enough
+(no utilization hooks invoked during idle period), it might
+not cover a corner case: if the task has occupied the CPU
+for too long which causes no context switches during that
+period, then no utilization handler will be launched until this
+high prio task is scheduled out. As a result, the idle_periods
+field might be calculated incorrectly because it regards the
+100% load as 0% and makes the conservative governor who uses
+this field confusing.
 
-Fixes: 05829d9431df (cpufreq: ti-cpufreq: kfree opp_data when failure)
-Cc: 4.14+ <stable@vger.kernel.org> # v4.14+
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Change the detection to compare the idle_time with sampling_rate
+directly.
+
+Reported-by: Artem S. Tashkinov <t.artem@mailcity.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: All applicable <stable@vger.kernel.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/ti-cpufreq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/cpufreq/cpufreq_governor.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -226,7 +226,7 @@ static int ti_cpufreq_probe(struct platf
- 	opp_data->cpu_dev = get_cpu_device(0);
- 	if (!opp_data->cpu_dev) {
- 		pr_err("%s: Failed to get device for CPU0\n", __func__);
--		ret = ENODEV;
-+		ret = -ENODEV;
- 		goto free_opp_data;
- 	}
+--- a/drivers/cpufreq/cpufreq_governor.c
++++ b/drivers/cpufreq/cpufreq_governor.c
+@@ -165,7 +165,7 @@ unsigned int dbs_update(struct cpufreq_p
+ 			 * calls, so the previous load value can be used then.
+ 			 */
+ 			load = j_cdbs->prev_load;
+-		} else if (unlikely(time_elapsed > 2 * sampling_rate &&
++		} else if (unlikely((int)idle_time > 2 * sampling_rate &&
+ 				    j_cdbs->prev_load)) {
+ 			/*
+ 			 * If the CPU had gone completely idle and a task has
+@@ -185,10 +185,8 @@ unsigned int dbs_update(struct cpufreq_p
+ 			 * clear prev_load to guarantee that the load will be
+ 			 * computed again next time.
+ 			 *
+-			 * Detecting this situation is easy: the governor's
+-			 * utilization update handler would not have run during
+-			 * CPU-idle periods.  Hence, an unusually large
+-			 * 'time_elapsed' (as compared to the sampling rate)
++			 * Detecting this situation is easy: an unusually large
++			 * 'idle_time' (as compared to the sampling rate)
+ 			 * indicates this scenario.
+ 			 */
+ 			load = j_cdbs->prev_load;
+@@ -217,8 +215,8 @@ unsigned int dbs_update(struct cpufreq_p
+ 			j_cdbs->prev_load = load;
+ 		}
  
+-		if (time_elapsed > 2 * sampling_rate) {
+-			unsigned int periods = time_elapsed / sampling_rate;
++		if (unlikely((int)idle_time > 2 * sampling_rate)) {
++			unsigned int periods = idle_time / sampling_rate;
+ 
+ 			if (periods < idle_periods)
+ 				idle_periods = periods;
 
 
