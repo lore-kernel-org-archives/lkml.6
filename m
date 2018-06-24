@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F295C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDBFC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F9C124F93
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F9C124F93
+	by mail.kernel.org (Postfix) with ESMTP id 2508324F95
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2508324F95
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754278AbeFXP2D (ORCPT
+        id S1754322AbeFXP2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:28:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58828 "EHLO
+        Sun, 24 Jun 2018 11:28:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58838 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752342AbeFXP2B (ORCPT
+        with ESMTP id S1754290AbeFXP2J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:28:01 -0400
+        Sun, 24 Jun 2018 11:28:09 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 598722C;
-        Sun, 24 Jun 2018 15:27:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90B7249F;
+        Sun, 24 Jun 2018 15:28:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+5c74af81c547738e1684@syzkaller.appspotmail.com,
-        syzbot+709f2810a6a05f11d4d3@syzkaller.appspotmail.com,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Watson <davejwatson@fb.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 11/52] tls: fix use-after-free in tls_push_record
-Date:   Sun, 24 Jun 2018 23:21:04 +0800
-Message-Id: <20180624142745.045398920@linuxfoundation.org>
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.14 12/52] NFSv4.1: Fix up replays of interrupted requests
+Date:   Sun, 24 Jun 2018 23:21:05 +0800
+Message-Id: <20180624142745.138767678@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -54,150 +52,328 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
-[ Upstream commit a447da7d00410278c90d3576782a43f8b675d7be ]
+commit 3be0f80b5fe9c16eca2d538f799b94ca8aa59433 upstream.
 
-syzkaller managed to trigger a use-after-free in tls like the
-following:
+If the previous request on a slot was interrupted before it was
+processed by the server, then our slot sequence number may be out of whack,
+and so we try the next operation using the old sequence number.
 
-  BUG: KASAN: use-after-free in tls_push_record.constprop.15+0x6a2/0x810 [tls]
-  Write of size 1 at addr ffff88037aa08000 by task a.out/2317
+The problem with this, is that not all servers check to see that the
+client is replaying the same operations as previously when they decide
+to go to the replay cache, and so instead of the expected error of
+NFS4ERR_SEQ_FALSE_RETRY, we get a replay of the old reply, which could
+(if the operations match up) be mistaken by the client for a new reply.
 
-  CPU: 3 PID: 2317 Comm: a.out Not tainted 4.17.0+ #144
-  Hardware name: LENOVO 20FBCTO1WW/20FBCTO1WW, BIOS N1FET47W (1.21 ) 11/28/2016
-  Call Trace:
-   dump_stack+0x71/0xab
-   print_address_description+0x6a/0x280
-   kasan_report+0x258/0x380
-   ? tls_push_record.constprop.15+0x6a2/0x810 [tls]
-   tls_push_record.constprop.15+0x6a2/0x810 [tls]
-   tls_sw_push_pending_record+0x2e/0x40 [tls]
-   tls_sk_proto_close+0x3fe/0x710 [tls]
-   ? tcp_check_oom+0x4c0/0x4c0
-   ? tls_write_space+0x260/0x260 [tls]
-   ? kmem_cache_free+0x88/0x1f0
-   inet_release+0xd6/0x1b0
-   __sock_release+0xc0/0x240
-   sock_close+0x11/0x20
-   __fput+0x22d/0x660
-   task_work_run+0x114/0x1a0
-   do_exit+0x71a/0x2780
-   ? mm_update_next_owner+0x650/0x650
-   ? handle_mm_fault+0x2f5/0x5f0
-   ? __do_page_fault+0x44f/0xa50
-   ? mm_fault_error+0x2d0/0x2d0
-   do_group_exit+0xde/0x300
-   __x64_sys_exit_group+0x3a/0x50
-   do_syscall_64+0x9a/0x300
-   ? page_fault+0x8/0x30
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+To fix this, we attempt to send a COMPOUND containing only the SEQUENCE op
+in order to resync our slot sequence number.
 
-This happened through fault injection where aead_req allocation in
-tls_do_encryption() eventually failed and we returned -ENOMEM from
-the function. Turns out that the use-after-free is triggered from
-tls_sw_sendmsg() in the second tls_push_record(). The error then
-triggers a jump to waiting for memory in sk_stream_wait_memory()
-resp. returning immediately in case of MSG_DONTWAIT. What follows is
-the trim_both_sgl(sk, orig_size), which drops elements from the sg
-list added via tls_sw_sendmsg(). Now the use-after-free gets triggered
-when the socket is being closed, where tls_sk_proto_close() callback
-is invoked. The tls_complete_pending_work() will figure that there's
-a pending closed tls record to be flushed and thus calls into the
-tls_push_pending_closed_record() from there. ctx->push_pending_record()
-is called from the latter, which is the tls_sw_push_pending_record()
-from sw path. This again calls into tls_push_record(). And here the
-tls_fill_prepend() will panic since the buffer address has been freed
-earlier via trim_both_sgl(). One way to fix it is to move the aead
-request allocation out of tls_do_encryption() early into tls_push_record().
-This means we don't prep the tls header and advance state to the
-TLS_PENDING_CLOSED_RECORD before allocation which could potentially
-fail happened. That fixes the issue on my side.
-
-Fixes: 3c4d7559159b ("tls: kernel TLS support")
-Reported-by: syzbot+5c74af81c547738e1684@syzkaller.appspotmail.com
-Reported-by: syzbot+709f2810a6a05f11d4d3@syzkaller.appspotmail.com
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Dave Watson <davejwatson@fb.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Olga Kornievskaia <olga.kornievskaia@gmail.com>
+[olga.kornievskaia@gmail.com: fix an Oops]
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/tls/tls_sw.c |   26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
 
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -211,18 +211,12 @@ static void tls_free_both_sg(struct sock
+---
+ fs/nfs/nfs4_fs.h  |    2 
+ fs/nfs/nfs4proc.c |  150 +++++++++++++++++++++++++++++++++++++-----------------
+ 2 files changed, 104 insertions(+), 48 deletions(-)
+
+--- a/fs/nfs/nfs4_fs.h
++++ b/fs/nfs/nfs4_fs.h
+@@ -465,7 +465,7 @@ extern void nfs_increment_open_seqid(int
+ extern void nfs_increment_lock_seqid(int status, struct nfs_seqid *seqid);
+ extern void nfs_release_seqid(struct nfs_seqid *seqid);
+ extern void nfs_free_seqid(struct nfs_seqid *seqid);
+-extern int nfs4_setup_sequence(const struct nfs_client *client,
++extern int nfs4_setup_sequence(struct nfs_client *client,
+ 				struct nfs4_sequence_args *args,
+ 				struct nfs4_sequence_res *res,
+ 				struct rpc_task *task);
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -96,6 +96,10 @@ static int nfs4_do_setattr(struct inode
+ 			    struct nfs_open_context *ctx, struct nfs4_label *ilabel,
+ 			    struct nfs4_label *olabel);
+ #ifdef CONFIG_NFS_V4_1
++static struct rpc_task *_nfs41_proc_sequence(struct nfs_client *clp,
++		struct rpc_cred *cred,
++		struct nfs4_slot *slot,
++		bool is_privileged);
+ static int nfs41_test_stateid(struct nfs_server *, nfs4_stateid *,
+ 		struct rpc_cred *);
+ static int nfs41_free_stateid(struct nfs_server *, const nfs4_stateid *,
+@@ -641,13 +645,14 @@ static int nfs40_sequence_done(struct rp
+ 
+ #if defined(CONFIG_NFS_V4_1)
+ 
+-static void nfs41_sequence_free_slot(struct nfs4_sequence_res *res)
++static void nfs41_release_slot(struct nfs4_slot *slot)
+ {
+ 	struct nfs4_session *session;
+ 	struct nfs4_slot_table *tbl;
+-	struct nfs4_slot *slot = res->sr_slot;
+ 	bool send_new_highest_used_slotid = false;
+ 
++	if (!slot)
++		return;
+ 	tbl = slot->table;
+ 	session = tbl->session;
+ 
+@@ -673,13 +678,18 @@ static void nfs41_sequence_free_slot(str
+ 		send_new_highest_used_slotid = false;
+ out_unlock:
+ 	spin_unlock(&tbl->slot_tbl_lock);
+-	res->sr_slot = NULL;
+ 	if (send_new_highest_used_slotid)
+ 		nfs41_notify_server(session->clp);
+ 	if (waitqueue_active(&tbl->slot_waitq))
+ 		wake_up_all(&tbl->slot_waitq);
  }
  
- static int tls_do_encryption(struct tls_context *tls_ctx,
--			     struct tls_sw_context *ctx, size_t data_len,
--			     gfp_t flags)
-+			     struct tls_sw_context *ctx,
-+			     struct aead_request *aead_req,
-+			     size_t data_len)
- {
--	unsigned int req_size = sizeof(struct aead_request) +
--		crypto_aead_reqsize(ctx->aead_send);
--	struct aead_request *aead_req;
- 	int rc;
- 
--	aead_req = kzalloc(req_size, flags);
--	if (!aead_req)
--		return -ENOMEM;
--
- 	ctx->sg_encrypted_data[0].offset += tls_ctx->prepend_size;
- 	ctx->sg_encrypted_data[0].length -= tls_ctx->prepend_size;
- 
-@@ -235,7 +229,6 @@ static int tls_do_encryption(struct tls_
- 	ctx->sg_encrypted_data[0].offset -= tls_ctx->prepend_size;
- 	ctx->sg_encrypted_data[0].length += tls_ctx->prepend_size;
- 
--	kfree(aead_req);
- 	return rc;
- }
- 
-@@ -244,8 +237,14 @@ static int tls_push_record(struct sock *
- {
- 	struct tls_context *tls_ctx = tls_get_ctx(sk);
- 	struct tls_sw_context *ctx = tls_sw_ctx(tls_ctx);
-+	struct aead_request *req;
- 	int rc;
- 
-+	req = kzalloc(sizeof(struct aead_request) +
-+		      crypto_aead_reqsize(ctx->aead_send), sk->sk_allocation);
-+	if (!req)
-+		return -ENOMEM;
++static void nfs41_sequence_free_slot(struct nfs4_sequence_res *res)
++{
++	nfs41_release_slot(res->sr_slot);
++	res->sr_slot = NULL;
++}
 +
- 	sg_mark_end(ctx->sg_plaintext_data + ctx->sg_plaintext_num_elem - 1);
- 	sg_mark_end(ctx->sg_encrypted_data + ctx->sg_encrypted_num_elem - 1);
- 
-@@ -261,15 +260,14 @@ static int tls_push_record(struct sock *
- 	tls_ctx->pending_open_record_frags = 0;
- 	set_bit(TLS_PENDING_CLOSED_RECORD, &tls_ctx->flags);
- 
--	rc = tls_do_encryption(tls_ctx, ctx, ctx->sg_plaintext_size,
--			       sk->sk_allocation);
-+	rc = tls_do_encryption(tls_ctx, ctx, req, ctx->sg_plaintext_size);
- 	if (rc < 0) {
- 		/* If we are called from write_space and
- 		 * we fail, we need to set this SOCK_NOSPACE
- 		 * to trigger another write_space in the future.
+ static int nfs41_sequence_process(struct rpc_task *task,
+ 		struct nfs4_sequence_res *res)
+ {
+@@ -707,13 +717,6 @@ static int nfs41_sequence_process(struct
+ 	/* Check the SEQUENCE operation status */
+ 	switch (res->sr_status) {
+ 	case 0:
+-		/* If previous op on slot was interrupted and we reused
+-		 * the seq# and got a reply from the cache, then retry
+-		 */
+-		if (task->tk_status == -EREMOTEIO && interrupted) {
+-			++slot->seq_nr;
+-			goto retry_nowait;
+-		}
+ 		/* Update the slot's sequence and clientid lease timer */
+ 		slot->seq_done = 1;
+ 		clp = session->clp;
+@@ -747,16 +750,16 @@ static int nfs41_sequence_process(struct
+ 		 * The slot id we used was probably retired. Try again
+ 		 * using a different slot id.
  		 */
- 		set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
--		return rc;
-+		goto out_req;
++		if (slot->seq_nr < slot->table->target_highest_slotid)
++			goto session_recover;
+ 		goto retry_nowait;
+ 	case -NFS4ERR_SEQ_MISORDERED:
+ 		/*
+ 		 * Was the last operation on this sequence interrupted?
+ 		 * If so, retry after bumping the sequence number.
+ 		 */
+-		if (interrupted) {
+-			++slot->seq_nr;
+-			goto retry_nowait;
+-		}
++		if (interrupted)
++			goto retry_new_seq;
+ 		/*
+ 		 * Could this slot have been previously retired?
+ 		 * If so, then the server may be expecting seq_nr = 1!
+@@ -765,10 +768,11 @@ static int nfs41_sequence_process(struct
+ 			slot->seq_nr = 1;
+ 			goto retry_nowait;
+ 		}
+-		break;
++		goto session_recover;
+ 	case -NFS4ERR_SEQ_FALSE_RETRY:
+-		++slot->seq_nr;
+-		goto retry_nowait;
++		if (interrupted)
++			goto retry_new_seq;
++		goto session_recover;
+ 	default:
+ 		/* Just update the slot sequence no. */
+ 		slot->seq_done = 1;
+@@ -778,6 +782,11 @@ out:
+ 	dprintk("%s: Error %d free the slot \n", __func__, res->sr_status);
+ out_noaction:
+ 	return ret;
++session_recover:
++	nfs4_schedule_session_recovery(session, res->sr_status);
++	goto retry_nowait;
++retry_new_seq:
++	++slot->seq_nr;
+ retry_nowait:
+ 	if (rpc_restart_call_prepare(task)) {
+ 		nfs41_sequence_free_slot(res);
+@@ -854,6 +863,17 @@ static const struct rpc_call_ops nfs41_c
+ 	.rpc_call_done = nfs41_call_sync_done,
+ };
+ 
++static void
++nfs4_sequence_process_interrupted(struct nfs_client *client,
++		struct nfs4_slot *slot, struct rpc_cred *cred)
++{
++	struct rpc_task *task;
++
++	task = _nfs41_proc_sequence(client, cred, slot, true);
++	if (!IS_ERR(task))
++		rpc_put_task_async(task);
++}
++
+ #else	/* !CONFIG_NFS_V4_1 */
+ 
+ static int nfs4_sequence_process(struct rpc_task *task, struct nfs4_sequence_res *res)
+@@ -874,9 +894,34 @@ int nfs4_sequence_done(struct rpc_task *
+ }
+ EXPORT_SYMBOL_GPL(nfs4_sequence_done);
+ 
++static void
++nfs4_sequence_process_interrupted(struct nfs_client *client,
++		struct nfs4_slot *slot, struct rpc_cred *cred)
++{
++	WARN_ON_ONCE(1);
++	slot->interrupted = 0;
++}
++
+ #endif	/* !CONFIG_NFS_V4_1 */
+ 
+-int nfs4_setup_sequence(const struct nfs_client *client,
++static
++void nfs4_sequence_attach_slot(struct nfs4_sequence_args *args,
++		struct nfs4_sequence_res *res,
++		struct nfs4_slot *slot)
++{
++	if (!slot)
++		return;
++	slot->privileged = args->sa_privileged ? 1 : 0;
++	args->sa_slot = slot;
++
++	res->sr_slot = slot;
++	res->sr_timestamp = jiffies;
++	res->sr_status_flags = 0;
++	res->sr_status = 1;
++
++}
++
++int nfs4_setup_sequence(struct nfs_client *client,
+ 			struct nfs4_sequence_args *args,
+ 			struct nfs4_sequence_res *res,
+ 			struct rpc_task *task)
+@@ -894,30 +939,29 @@ int nfs4_setup_sequence(const struct nfs
+ 		task->tk_timeout = 0;
  	}
  
- 	free_sg(sk, ctx->sg_plaintext_data, &ctx->sg_plaintext_num_elem,
-@@ -284,6 +282,8 @@ static int tls_push_record(struct sock *
- 		tls_err_abort(sk);
+-	spin_lock(&tbl->slot_tbl_lock);
+-	/* The state manager will wait until the slot table is empty */
+-	if (nfs4_slot_tbl_draining(tbl) && !args->sa_privileged)
+-		goto out_sleep;
+-
+-	slot = nfs4_alloc_slot(tbl);
+-	if (IS_ERR(slot)) {
+-		/* Try again in 1/4 second */
+-		if (slot == ERR_PTR(-ENOMEM))
+-			task->tk_timeout = HZ >> 2;
+-		goto out_sleep;
+-	}
+-	spin_unlock(&tbl->slot_tbl_lock);
+-
+-	slot->privileged = args->sa_privileged ? 1 : 0;
+-	args->sa_slot = slot;
++	for (;;) {
++		spin_lock(&tbl->slot_tbl_lock);
++		/* The state manager will wait until the slot table is empty */
++		if (nfs4_slot_tbl_draining(tbl) && !args->sa_privileged)
++			goto out_sleep;
++
++		slot = nfs4_alloc_slot(tbl);
++		if (IS_ERR(slot)) {
++			/* Try again in 1/4 second */
++			if (slot == ERR_PTR(-ENOMEM))
++				task->tk_timeout = HZ >> 2;
++			goto out_sleep;
++		}
++		spin_unlock(&tbl->slot_tbl_lock);
  
- 	tls_advance_record_sn(sk, tls_ctx);
-+out_req:
-+	kfree(req);
- 	return rc;
+-	res->sr_slot = slot;
+-	if (session) {
+-		res->sr_timestamp = jiffies;
+-		res->sr_status_flags = 0;
+-		res->sr_status = 1;
++		if (likely(!slot->interrupted))
++			break;
++		nfs4_sequence_process_interrupted(client,
++				slot, task->tk_msg.rpc_cred);
+ 	}
+ 
++	nfs4_sequence_attach_slot(args, res, slot);
++
+ 	trace_nfs4_setup_sequence(session, args);
+ out_start:
+ 	rpc_call_start(task);
+@@ -8151,6 +8195,7 @@ static const struct rpc_call_ops nfs41_s
+ 
+ static struct rpc_task *_nfs41_proc_sequence(struct nfs_client *clp,
+ 		struct rpc_cred *cred,
++		struct nfs4_slot *slot,
+ 		bool is_privileged)
+ {
+ 	struct nfs4_sequence_data *calldata;
+@@ -8164,15 +8209,18 @@ static struct rpc_task *_nfs41_proc_sequ
+ 		.callback_ops = &nfs41_sequence_ops,
+ 		.flags = RPC_TASK_ASYNC | RPC_TASK_TIMEOUT,
+ 	};
++	struct rpc_task *ret;
+ 
++	ret = ERR_PTR(-EIO);
+ 	if (!atomic_inc_not_zero(&clp->cl_count))
+-		return ERR_PTR(-EIO);
++		goto out_err;
++
++	ret = ERR_PTR(-ENOMEM);
+ 	calldata = kzalloc(sizeof(*calldata), GFP_NOFS);
+-	if (calldata == NULL) {
+-		nfs_put_client(clp);
+-		return ERR_PTR(-ENOMEM);
+-	}
++	if (calldata == NULL)
++		goto out_put_clp;
+ 	nfs4_init_sequence(&calldata->args, &calldata->res, 0);
++	nfs4_sequence_attach_slot(&calldata->args, &calldata->res, slot);
+ 	if (is_privileged)
+ 		nfs4_set_sequence_privileged(&calldata->args);
+ 	msg.rpc_argp = &calldata->args;
+@@ -8180,7 +8228,15 @@ static struct rpc_task *_nfs41_proc_sequ
+ 	calldata->clp = clp;
+ 	task_setup_data.callback_data = calldata;
+ 
+-	return rpc_run_task(&task_setup_data);
++	ret = rpc_run_task(&task_setup_data);
++	if (IS_ERR(ret))
++		goto out_err;
++	return ret;
++out_put_clp:
++	nfs_put_client(clp);
++out_err:
++	nfs41_release_slot(slot);
++	return ret;
  }
  
+ static int nfs41_proc_async_sequence(struct nfs_client *clp, struct rpc_cred *cred, unsigned renew_flags)
+@@ -8190,7 +8246,7 @@ static int nfs41_proc_async_sequence(str
+ 
+ 	if ((renew_flags & NFS4_RENEW_TIMEOUT) == 0)
+ 		return -EAGAIN;
+-	task = _nfs41_proc_sequence(clp, cred, false);
++	task = _nfs41_proc_sequence(clp, cred, NULL, false);
+ 	if (IS_ERR(task))
+ 		ret = PTR_ERR(task);
+ 	else
+@@ -8204,7 +8260,7 @@ static int nfs4_proc_sequence(struct nfs
+ 	struct rpc_task *task;
+ 	int ret;
+ 
+-	task = _nfs41_proc_sequence(clp, cred, true);
++	task = _nfs41_proc_sequence(clp, cred, NULL, true);
+ 	if (IS_ERR(task)) {
+ 		ret = PTR_ERR(task);
+ 		goto out;
 
 
