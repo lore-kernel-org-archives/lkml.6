@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BB5C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F07B5C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97058250B5
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97058250B5
+	by mail.kernel.org (Postfix) with ESMTP id AFEA8250B5
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFEA8250B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933846AbeFXPrm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:47:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33186 "EHLO
+        id S933863AbeFXPru (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:47:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPrj (ORCPT
+        with ESMTP id S932073AbeFXPrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:47:39 -0400
+        Sun, 24 Jun 2018 11:47:47 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53F732C;
-        Sun, 24 Jun 2018 15:47:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 688E22C;
+        Sun, 24 Jun 2018 15:47:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Artem S. Tashkinov" <t.artem@mailcity.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.17 46/70] cpufreq: governors: Fix long idle detection logic in load calculation
-Date:   Sun, 24 Jun 2018 23:22:38 +0800
-Message-Id: <20180624142743.352108030@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.17 47/70] libata: zpodd: small read overflow in eject_tray()
+Date:   Sun, 24 Jun 2018 23:22:39 +0800
+Message-Id: <20180624142743.397971514@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -52,71 +49,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen Yu <yu.c.chen@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 7592019634f8473f0b0973ce79297183077bdbc2 upstream.
+commit 18c9a99bce2a57dfd7e881658703b5d7469cc7b9 upstream.
 
-According to current code implementation, detecting the long
-idle period is done by checking if the interval between two
-adjacent utilization update handlers is long enough. Although
-this mechanism can detect if the idle period is long enough
-(no utilization hooks invoked during idle period), it might
-not cover a corner case: if the task has occupied the CPU
-for too long which causes no context switches during that
-period, then no utilization handler will be launched until this
-high prio task is scheduled out. As a result, the idle_periods
-field might be calculated incorrectly because it regards the
-100% load as 0% and makes the conservative governor who uses
-this field confusing.
+We read from the cdb[] buffer in ata_exec_internal_sg().  It has to be
+ATAPI_CDB_LEN (16) bytes long, but this buffer is only 12 bytes.
 
-Change the detection to compare the idle_time with sampling_rate
-directly.
-
-Reported-by: Artem S. Tashkinov <t.artem@mailcity.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 213342053db5 ("libata: handle power transition of ODD")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cpufreq_governor.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/ata/libata-zpodd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/cpufreq/cpufreq_governor.c
-+++ b/drivers/cpufreq/cpufreq_governor.c
-@@ -165,7 +165,7 @@ unsigned int dbs_update(struct cpufreq_p
- 			 * calls, so the previous load value can be used then.
- 			 */
- 			load = j_cdbs->prev_load;
--		} else if (unlikely(time_elapsed > 2 * sampling_rate &&
-+		} else if (unlikely((int)idle_time > 2 * sampling_rate &&
- 				    j_cdbs->prev_load)) {
- 			/*
- 			 * If the CPU had gone completely idle and a task has
-@@ -185,10 +185,8 @@ unsigned int dbs_update(struct cpufreq_p
- 			 * clear prev_load to guarantee that the load will be
- 			 * computed again next time.
- 			 *
--			 * Detecting this situation is easy: the governor's
--			 * utilization update handler would not have run during
--			 * CPU-idle periods.  Hence, an unusually large
--			 * 'time_elapsed' (as compared to the sampling rate)
-+			 * Detecting this situation is easy: an unusually large
-+			 * 'idle_time' (as compared to the sampling rate)
- 			 * indicates this scenario.
- 			 */
- 			load = j_cdbs->prev_load;
-@@ -217,8 +215,8 @@ unsigned int dbs_update(struct cpufreq_p
- 			j_cdbs->prev_load = load;
- 		}
- 
--		if (time_elapsed > 2 * sampling_rate) {
--			unsigned int periods = time_elapsed / sampling_rate;
-+		if (unlikely((int)idle_time > 2 * sampling_rate)) {
-+			unsigned int periods = idle_time / sampling_rate;
- 
- 			if (periods < idle_periods)
- 				idle_periods = periods;
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -35,7 +35,7 @@ struct zpodd {
+ static int eject_tray(struct ata_device *dev)
+ {
+ 	struct ata_taskfile tf;
+-	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
++	static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_START_STOP_UNIT,
+ 		0, 0, 0,
+ 		0x02,     /* LoEj */
+ 		0, 0, 0, 0, 0, 0, 0,
 
 
