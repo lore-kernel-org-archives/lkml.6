@@ -2,123 +2,130 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C353C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1783C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E14822534C
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAF0B25352
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 22:45:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfRuSVII"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E14822534C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="li02eAdm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAF0B25352
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeFXWm6 (ORCPT
+        id S1752240AbeFXWpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 18:42:58 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44262 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750997AbeFXWm4 (ORCPT
+        Sun, 24 Jun 2018 18:45:06 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:56238 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751945AbeFXWpC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 18:42:56 -0400
-Received: by mail-pf0-f194.google.com with SMTP id x23-v6so1612040pfn.11;
-        Sun, 24 Jun 2018 15:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=NPutboYjtowQQoHeP3+FySHvWM/4wSc0drJuKwrN/Ns=;
-        b=OfRuSVIILKggptsC7V51Q4ATDC4xNgPocY6T/VZ3wTsg8psRNHbhGsm+yz/mM0qG/d
-         Mi/Kjs0yFTzs2afBNsDH7wQ/YbObf4UpvzqQ2xK4fJPz4SzaU3z05YwmBFohasWBjvdm
-         mr+mx7LjBvb39oa2BQFS7aPKwm9Qrp5aLeVTUHAn0TpvRdzTirofJYOEhEc0Sm8bUVwr
-         KV55zAyjpP2+nYy6LXKborUPFxIxJEuF7RroaEbhDAgxePnMRGXZF0Fqkhppq1gIZHF8
-         sfoWXJDDYuWHNdN+5pbGDfxHd3bpgkBvvkayydXkdhaRt62erFYwiIE4mu9VdUnf+Zmk
-         WURw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=NPutboYjtowQQoHeP3+FySHvWM/4wSc0drJuKwrN/Ns=;
-        b=khEFhlRuMOC9bu4ZFShpBdyh4XC1V9dtfvyp87b5XuqYmTFUjVI7J7sYuK6QUTDA9O
-         i0TzuXXomoeVSvHqmJaMypAf/Rbzj9NlkPEZ3b5RqfMWmLKjU4gdWcutt4xVndrGUfHt
-         EjufZUsmpvRGtC1Lth5oDYsgqLJQ5RgqvcFAKg/acDA/frjusMJWivNyrlNNWJxt1495
-         AFtdoH5s2rPc+C8K2ZcpjKcuLdLBcp6z7TSAp53MHw1d4G1BT0u2jAZ7C/RVGhR0MtnZ
-         ynn+tOcMTV+Et5fSYhfJ3zWMIhY2PYMu6F6BI321HzBnUzhyLrJCJ6+L/95s5gUNqP+B
-         0BFQ==
-X-Gm-Message-State: APt69E07EAzSXK/Rmuv0g7Sq4X73CZEn/hzU6iHJincof2BpY5A88v+u
-        Sg2EZHBLjtgQ3DGMpRcNgsYMVyIM
-X-Google-Smtp-Source: ADUXVKLKUa9GlWRcKECwT7Z385/K29oNFXJGGCapJW1vPMeGGlty/ADtMgnX0vh6IuOanhctnXJL/g==
-X-Received: by 2002:aa7:864d:: with SMTP id a13-v6mr10413266pfo.247.1529880176052;
-        Sun, 24 Jun 2018 15:42:56 -0700 (PDT)
-Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
-        by smtp.gmail.com with ESMTPSA id k10-v6sm34844763pfj.29.2018.06.24.15.42.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 24 Jun 2018 15:42:54 -0700 (PDT)
-Date:   Sun, 24 Jun 2018 15:42:52 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] sh: make use of for_each_node_by_type()
-Message-ID: <20180624224252.GA220395@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Sun, 24 Jun 2018 18:45:02 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 1BD0D8364E;
+        Mon, 25 Jun 2018 10:44:59 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1529880299;
+        bh=kBq5H60Y0BQYRQGG4JDfLIKp0eP+BvPKeCq1BOdRxwc=;
+        h=From:To:Cc:Subject:Date;
+        b=li02eAdmrmYuUwxKGSBaQPG1Y+ODynyrSkWOt3uRPDhjzu7sj84qSugSawjH8I5+V
+         5DSUwz0cY5JamtrnCpNSEQxUy3MsFjztylxygbaJ4kCxs7Tc4/LLWdQ5VKpvzMJTiz
+         JgbyLnmTFPnhVWdNm8XBVzVkfQLE6ejUM9dyPlGM=
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5b301ee50000>; Mon, 25 Jun 2018 10:44:58 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 17DC713EE1C;
+        Mon, 25 Jun 2018 10:44:57 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id A582A1E2626; Mon, 25 Jun 2018 10:44:53 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Date:   Mon, 25 Jun 2018 10:44:42 +1200
+Message-Id: <20180624224448.21872-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of open-coding the loop, let's use canned macro.
+Hi,
 
-Also make sure we are not leaking "cpus" node reference.
+I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chip
+to one of our boards which uses the Marvell NFCv2 controller.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+This particular chip is a bit odd in that the datasheet states support
+for ONFI 1.0 but the revision number field is 00 00. It also is marked
+ABAFA but reports internally as ABAGA. Finally it has internal 8-bit ECC
+which cannot be disabled.
 
- arch/sh/boards/of-generic.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+The existing test in micron_supports_on_die_ecc() determines that on-die
+ECC is supported but not mandatory but I know for this chip it is
+mandatory despite what set_features returns.
 
-diff --git a/arch/sh/boards/of-generic.c b/arch/sh/boards/of-generic.c
-index 46b2481eec903..26789ad281936 100644
---- a/arch/sh/boards/of-generic.c
-+++ b/arch/sh/boards/of-generic.c
-@@ -56,15 +56,15 @@ const struct of_cpu_method __cpu_method_of_table_sentinel
- 
- static void sh_of_smp_probe(void)
- {
--	struct device_node *np = 0;
--	const char *method = 0;
-+	struct device_node *np;
-+	const char *method = NULL;
- 	const struct of_cpu_method *m = __cpu_method_of_table;
- 
- 	pr_info("SH generic board support: scanning for cpus\n");
- 
- 	init_cpu_possible(cpumask_of(0));
- 
--	while ((np = of_find_node_by_type(np, "cpu"))) {
-+	for_each_node_by_type(np, "cpu") {
- 		const __be32 *cell = of_get_property(np, "reg", NULL);
- 		u64 id = -1;
- 		if (cell) id = of_read_number(cell, of_n_addr_cells(np));
-@@ -80,6 +80,7 @@ static void sh_of_smp_probe(void)
- 	if (!method) {
- 		np = of_find_node_by_name(NULL, "cpus");
- 		of_property_read_string(np, "enable-method", &method);
-+		of_node_put(np);
- 	}
- 
- 	pr_info("CPU enable method: %s\n", method);
+In order for this to work I need to set nand-ecc-mode = "on-die" in my
+dts. Ideally I'd like it to be automatic based on what the hardware can
+support but that may be asking too much at the moment.
+
+Here's a dump of the parameter page from the chip I have
+
+00000000: 4f 4e 46 49 00 00 18 00 3f 00 00 00 00 00 00 00 ONFI....?.......
+00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00000020: 4d 49 43 52 4f 4e 20 20 20 20 20 20 4d 54 32 39  MICRON MT29
+00000030: 46 31 47 30 38 41 42 41 47 41 57 50 20 20 20 20  F1G08ABAGAWP    
+00000040: 2c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ,...............
+00000050: 00 08 00 00 80 00 00 02 00 00 20 00 40 00 00 00  ..........  .@...
+00000060: 00 04 00 00 01 22 01 14 00 01 05 08 00 00 04 00 ....."..........
+00000070: 08 01 0e 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00000080: 08 3f 00 3f 00 58 02 10 27 46 00 64 00 00 00 00 .?.?.X..'F.d....
+00000090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000a0: 00 00 00 00 01 00 00 00 00 02 04 80 01 81 04 03 ................
+000000b0: 02 01 1e 90 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 85 a6 ................
+
+Series changes in v3:
+- No longer RFC
+- dropped "mtd: rawnand: micron: add ONFI_FEATURE_ON_DIE_ECC to supported
+  features" which Boris has already picked up
+- dropped "mtd: rawnand: marvell: Support page size of 2048 with 8-bit ECC"
+  since I can't test it.
+
+Series changes in v4:
+- based on top of http://patchwork.ozlabs.org/patch/932006/
+
+Series changes in v5:
+- address review comments from Boris on patches 5 and 6
+
+Series changes in v6:
+- Update commit message on 6/6
+
+Chris Packham (6):
+  mtd: rawnand: marvell: Handle on-die ECC
+  mtd: rawnand: add manufacturer fixup for ONFI parameter page
+  mtd: rawnand: add defines for ONFI version bits
+  mtd: rawnand: micron: add fixup for ONFI revision
+  mtd: rawnand: micron: support 8/512 on-die ECC
+  mtd: rawnand: micron: detect forced on-die ECC
+
+ drivers/mtd/nand/raw/marvell_nand.c |   1 +
+ drivers/mtd/nand/raw/nand_base.c    |  14 +--
+ drivers/mtd/nand/raw/nand_micron.c  | 129 +++++++++++++++++++++++-----
+ include/linux/mtd/rawnand.h         |  14 +++
+ 4 files changed, 131 insertions(+), 27 deletions(-)
+
 -- 
-2.18.0.rc2.346.g013aa6912e-goog
+2.18.0
 
-
--- 
-Dmitry
