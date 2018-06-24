@@ -5,47 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A991EC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 06:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAC0C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5965D208FC
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 06:43:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5965D208FC
+	by mail.kernel.org (Postfix) with ESMTP id 6E10B24DEF
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:09:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E10B24DEF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751600AbeFXGnz (ORCPT
+        id S1751570AbeFXHJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 02:43:55 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44665 "EHLO
+        Sun, 24 Jun 2018 03:09:36 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44704 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751371AbeFXGny (ORCPT
+        with ESMTP id S1750713AbeFXHJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 02:43:54 -0400
+        Sun, 24 Jun 2018 03:09:35 -0400
 Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1fWykK-0002Sw-CT; Sun, 24 Jun 2018 08:43:36 +0200
-Date:   Sun, 24 Jun 2018 08:43:35 +0200 (CEST)
+        id 1fWz93-0002cc-J3; Sun, 24 Jun 2018 09:09:09 +0200
+Date:   Sun, 24 Jun 2018 09:09:09 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-cc:     Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 02/16] x86/split_lock: Handle #AC exception for split
- lock in kernel mode
-In-Reply-To: <20180624011738.GI18979@romley-ivt3.sc.intel.com>
-Message-ID: <alpine.DEB.2.21.1806240838510.8650@nanos.tec.linutronix.de>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com> <1527435965-202085-3-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1806212301590.1591@nanos.tec.linutronix.de> <20180623042033.GF18979@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806231108540.8650@nanos.tec.linutronix.de> <20180623150521.GG18979@romley-ivt3.sc.intel.com> <alpine.DEB.2.21.1806240245160.8650@nanos.tec.linutronix.de> <20180624011738.GI18979@romley-ivt3.sc.intel.com>
+To:     syzbot <syzbot+a4eb8c7766952a1ca872@syzkaller.appspotmail.com>
+cc:     ast@kernel.org, daniel@iogearbox.net,
+        David Miller <davem@davemloft.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, kuznet@ms2.inr.ac.ru,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        x86@kernel.org, yoshfuji@linux-ipv6.org,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: BUG: unable to handle kernel paging request in
+ bpf_int_jit_compile
+In-Reply-To: <000000000000d48c8e056f5b6c67@google.com>
+Message-ID: <alpine.DEB.2.21.1806240849150.8650@nanos.tec.linutronix.de>
+References: <000000000000d48c8e056f5b6c67@google.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -57,29 +53,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Jun 2018, Fenghua Yu wrote:
-
-> On Sun, Jun 24, 2018 at 02:55:08AM +0200, Thomas Gleixner wrote:
-> > On Sat, 23 Jun 2018, Fenghua Yu wrote:
-> > > On Sat, Jun 23, 2018 at 11:17:03AM +0200, Thomas Gleixner wrote:
-> > > > On Fri, 22 Jun 2018, Fenghua Yu wrote:
-> > It's not treated as failure. The firmware simply does not have an handler
-> > for #AC installed and dies. I hope you yelled at the firmware people
-> > already.
+On Sat, 23 Jun 2018, syzbot wrote:
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a4eb8c7766952a1ca872@syzkaller.appspotmail.com
 > 
-> I think firmware does handle the split lock in its #AC handler because
-> firmware shows the following log and system hangs:
-> 
-> !!!! IA32 Exception Type - 11(#AC - Alignment Check)  CPU Apic ID - 00000014!
-> !
-> ExceptionData - 00000000
-> EIP  - 6A9DB6C3, CS  - 00000010, EFLAGS - 00010006
-> ...
+> RAX: ffffffffffffffda RBX: 0000000001429914 RCX: 0000000000455a99
+> RDX: 0000000000000048 RSI: 0000000020000240 RDI: 0000000000000005
+> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
+> R13: 00000000004bb7d5 R14: 00000000004c8508 R15: 0000000000000023
+> BUG: unable to handle kernel paging request at ffffffffa0008002
+> PGD 8e6d067 P4D 8e6d067 PUD 8e6e063 PMD 1b4528067 PTE 1d433d161
+> Oops: 0003 [#1] SMP KASAN
+> CPU: 1 PID: 4811 Comm: syz-executor0 Not tainted 4.18.0-rc1+ #114
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+> 01/01/2011
+> RIP: 0010:bpf_jit_binary_lock_ro include/linux/filter.h:703 [inline]
+> RIP: 0010:bpf_int_jit_compile+0xc36/0xf30 arch/x86/net/bpf_jit_comp.c:1168
 
-They even have a handler which makes the thing die, but never bothered to
-enable #AC in the first place. So the handler is there to catch the case
-that an operating system dares to enable #AC. Thank god, I don't have to
-review that source code.
+static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+{
+        WARN_ON_ONCE(set_memory_ro((unsigned long)hdr, hdr->pages));
+}
+
+Qualitee. set_memory_ro() has legitimate reasons to fail, but sure it does
+not most of the time.
+
+So instead of implementing proper error handling, this adds complete bogus
+wrappers. Hell, set_memory_*() have stub functions which return 0 for the
+CONFIG_ARCH_HAS_SET_MEMORY=n case.
+
+The unlock function is even more hilarious:
+
+static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
+{
+        if (fp->locked) {
+                WARN_ON_ONCE(set_memory_rw((unsigned long)fp, fp->pages));
+                /* In case set_memory_rw() fails, we want to be the first
+                 * to crash here instead of some random place later on.
+                 */
+                fp->locked = 0;
+        }
+}
+
+Great approach for a facility, which deals with untrusted user space
+stuff. Yeah. I know. The BPF mantra is: "Performance first"
+
+I'm really tempted to make the BPF config switch depend on BROKEN. 
 
 Thanks,
 
