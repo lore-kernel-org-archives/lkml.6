@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0AAC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EDAC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C67A02415C
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C67A02415C
+	by mail.kernel.org (Postfix) with ESMTP id 38416241A1
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:28:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38416241A1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754527AbeFXP2s (ORCPT
+        id S1754542AbeFXP2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:28:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58880 "EHLO
+        Sun, 24 Jun 2018 11:28:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58888 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751894AbeFXP2q (ORCPT
+        with ESMTP id S1751894AbeFXP2x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:28:46 -0400
+        Sun, 24 Jun 2018 11:28:53 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 510C22C;
-        Sun, 24 Jun 2018 15:28:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 39D1D2C;
+        Sun, 24 Jun 2018 15:28:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sachin Prabhu <sprabhu@redhat.com>,
-        Steve French <smfrench@gmail.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.14 31/52] smb3: on reconnect set PreviousSessionId field
-Date:   Sun, 24 Jun 2018 23:21:24 +0800
-Message-Id: <20180624142746.347926845@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Artem S. Tashkinov" <t.artem@mailcity.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 40/52] cpufreq: governors: Fix long idle detection logic in load calculation
+Date:   Sun, 24 Jun 2018 23:21:33 +0800
+Message-Id: <20180624142746.828800690@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -51,34 +53,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Chen Yu <yu.c.chen@intel.com>
 
-commit b2adf22fdfba85a6701c481faccdbbb3a418ccfc upstream.
+commit 7592019634f8473f0b0973ce79297183077bdbc2 upstream.
 
-The server detects reconnect by the (non-zero) value in PreviousSessionId
-of SMB2/SMB3 SessionSetup request, but this behavior regressed due
-to commit 166cea4dc3a4f66f020cfb9286225ecd228ab61d
-("SMB2: Separate RawNTLMSSP authentication from SMB2_sess_setup")
+According to current code implementation, detecting the long
+idle period is done by checking if the interval between two
+adjacent utilization update handlers is long enough. Although
+this mechanism can detect if the idle period is long enough
+(no utilization hooks invoked during idle period), it might
+not cover a corner case: if the task has occupied the CPU
+for too long which causes no context switches during that
+period, then no utilization handler will be launched until this
+high prio task is scheduled out. As a result, the idle_periods
+field might be calculated incorrectly because it regards the
+100% load as 0% and makes the conservative governor who uses
+this field confusing.
 
-CC: Stable <stable@vger.kernel.org>
-CC: Sachin Prabhu <sprabhu@redhat.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Change the detection to compare the idle_time with sampling_rate
+directly.
+
+Reported-by: Artem S. Tashkinov <t.artem@mailcity.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/cpufreq/cpufreq_governor.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -1182,6 +1182,7 @@ SMB2_sess_setup(const unsigned int xid,
- 	sess_data->ses = ses;
- 	sess_data->buf0_type = CIFS_NO_BUFFER;
- 	sess_data->nls_cp = (struct nls_table *) nls_cp;
-+	sess_data->previous_session = ses->Suid;
+--- a/drivers/cpufreq/cpufreq_governor.c
++++ b/drivers/cpufreq/cpufreq_governor.c
+@@ -165,7 +165,7 @@ unsigned int dbs_update(struct cpufreq_p
+ 			 * calls, so the previous load value can be used then.
+ 			 */
+ 			load = j_cdbs->prev_load;
+-		} else if (unlikely(time_elapsed > 2 * sampling_rate &&
++		} else if (unlikely((int)idle_time > 2 * sampling_rate &&
+ 				    j_cdbs->prev_load)) {
+ 			/*
+ 			 * If the CPU had gone completely idle and a task has
+@@ -185,10 +185,8 @@ unsigned int dbs_update(struct cpufreq_p
+ 			 * clear prev_load to guarantee that the load will be
+ 			 * computed again next time.
+ 			 *
+-			 * Detecting this situation is easy: the governor's
+-			 * utilization update handler would not have run during
+-			 * CPU-idle periods.  Hence, an unusually large
+-			 * 'time_elapsed' (as compared to the sampling rate)
++			 * Detecting this situation is easy: an unusually large
++			 * 'idle_time' (as compared to the sampling rate)
+ 			 * indicates this scenario.
+ 			 */
+ 			load = j_cdbs->prev_load;
+@@ -217,8 +215,8 @@ unsigned int dbs_update(struct cpufreq_p
+ 			j_cdbs->prev_load = load;
+ 		}
  
- 	while (sess_data->func)
- 		sess_data->func(sess_data);
+-		if (time_elapsed > 2 * sampling_rate) {
+-			unsigned int periods = time_elapsed / sampling_rate;
++		if (unlikely((int)idle_time > 2 * sampling_rate)) {
++			unsigned int periods = idle_time / sampling_rate;
+ 
+ 			if (periods < idle_periods)
+ 				idle_periods = periods;
 
 
