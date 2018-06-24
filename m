@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B44EC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9540BC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA43124FDD
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA43124FDD
+	by mail.kernel.org (Postfix) with ESMTP id 4EDAD24FDE
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:33:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDAD24FDE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754998AbeFXPdB (ORCPT
+        id S1755018AbeFXPdI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:33:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59236 "EHLO
+        Sun, 24 Jun 2018 11:33:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59246 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754598AbeFXPc6 (ORCPT
+        with ESMTP id S1754716AbeFXPdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:32:58 -0400
+        Sun, 24 Jun 2018 11:33:06 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6AAB049F;
-        Sun, 24 Jun 2018 15:32:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69F232C;
+        Sun, 24 Jun 2018 15:33:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.16 20/64] Btrfs: fix clone vs chattr NODATASUM race
-Date:   Sun, 24 Jun 2018 23:22:01 +0800
-Message-Id: <20180624142744.966094791@linuxfoundation.org>
+        stable@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Julian Anastasov <ja@ssi.bg>, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 03/64] ipv6: allow PMTU exceptions to local routes
+Date:   Sun, 24 Jun 2018 23:21:44 +0800
+Message-Id: <20180624142743.833882848@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -51,67 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Julian Anastasov <ja@ssi.bg>
 
-commit b5c40d598f5408bd0ca22dfffa82f03cd9433f23 upstream.
+[ Upstream commit 0975764684487bf3f7a47eef009e750ea41bd514 ]
 
-In btrfs_clone_files(), we must check the NODATASUM flag while the
-inodes are locked. Otherwise, it's possible that btrfs_ioctl_setflags()
-will change the flags after we check and we can end up with a party
-checksummed file.
+IPVS setups with local client and remote tunnel server need
+to create exception for the local virtual IP. What we do is to
+change PMTU from 64KB (on "lo") to 1460 in the common case.
 
-The race window is only a few instructions in size, between the if and
-the locks which is:
-
-3834         if (S_ISDIR(src->i_mode) || S_ISDIR(inode->i_mode))
-3835                 return -EISDIR;
-
-where the setflags must be run and toggle the NODATASUM flag (provided
-the file size is 0).  The clone will block on the inode lock, segflags
-takes the inode lock, changes flags, releases log and clone continues.
-
-Not impossible but still needs a lot of bad luck to hit unintentionally.
-
-Fixes: 0e7b824c4ef9 ("Btrfs: don't make a file partly checksummed through file clone")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ update changelog ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Suggested-by: Martin KaFai Lau <kafai@fb.com>
+Fixes: 45e4fd26683c ("ipv6: Only create RTF_CACHE routes after encountering pmtu exception")
+Fixes: 7343ff31ebf0 ("ipv6: Don't create clones of host routes.")
+Signed-off-by: Julian Anastasov <ja@ssi.bg>
+Acked-by: David Ahern <dsahern@gmail.com>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/btrfs/ioctl.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ net/ipv6/route.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -3837,11 +3837,6 @@ static noinline int btrfs_clone_files(st
- 	    src->i_sb != inode->i_sb)
- 		return -EXDEV;
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -2077,9 +2077,6 @@ static void __ip6_rt_update_pmtu(struct
+ 	const struct in6_addr *daddr, *saddr;
+ 	struct rt6_info *rt6 = (struct rt6_info *)dst;
  
--	/* don't make the dst file partly checksummed */
--	if ((BTRFS_I(src)->flags & BTRFS_INODE_NODATASUM) !=
--	    (BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM))
--		return -EINVAL;
+-	if (rt6->rt6i_flags & RTF_LOCAL)
+-		return;
 -
- 	if (S_ISDIR(src->i_mode) || S_ISDIR(inode->i_mode))
- 		return -EISDIR;
+ 	if (dst_metric_locked(dst, RTAX_MTU))
+ 		return;
  
-@@ -3851,6 +3846,13 @@ static noinline int btrfs_clone_files(st
- 		inode_lock(src);
- 	}
- 
-+	/* don't make the dst file partly checksummed */
-+	if ((BTRFS_I(src)->flags & BTRFS_INODE_NODATASUM) !=
-+	    (BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM)) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
- 	/* determine range to clone */
- 	ret = -EINVAL;
- 	if (off + len > src->i_size || off + len < off)
 
 
