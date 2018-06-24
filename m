@@ -5,131 +5,277 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E58C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7133AC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F01DD24E18
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F01DD24E18
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2ECE624E1E
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:33:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ECE624E1E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752196AbeFXHdC (ORCPT
+        id S1752254AbeFXHd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 03:33:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36454 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751352AbeFXHdA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 03:33:00 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5O7TI0R124216
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 03:32:59 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jt3p9d4hs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 03:32:58 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <benh@au1.ibm.com>;
-        Sun, 24 Jun 2018 08:32:57 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 24 Jun 2018 08:32:55 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5O7WsLm32702686
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 24 Jun 2018 07:32:54 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B39C4C04E;
-        Sun, 24 Jun 2018 08:32:50 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 18F0F4C04A;
-        Sun, 24 Jun 2018 08:32:50 +0100 (BST)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 24 Jun 2018 08:32:50 +0100 (BST)
-Received: from pasglop (unknown [9.192.185.131])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        Sun, 24 Jun 2018 03:33:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45824 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751926AbeFXHbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 03:31:42 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id C3F37A01E9;
-        Sun, 24 Jun 2018 17:32:50 +1000 (AEST)
-Subject: DMA mappings and crossing boundaries
-From:   Benjamin Herrenschmidt <benh@au1.ibm.com>
-Reply-To: benh@au1.ibm.com
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Russell Currey <ruscur@au1.ibm.com>,
-        Jens Axboe <jens.axboe@oracle.com>
-Date:   Sun, 24 Jun 2018 17:32:50 +1000
-Organization: IBM Australia
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18062407-4275-0000-0000-000002913805
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062407-4276-0000-0000-00003798908D
-Message-Id: <2d752386b82481bc53080fcee1a3dcd474dbeef2.camel@au1.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-24_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=695 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806240093
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E269821CC;
+        Sun, 24 Jun 2018 07:31:41 +0000 (UTC)
+Received: from llong.com (ovpn-116-26.phx2.redhat.com [10.3.116.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4AE5C17796;
+        Sun, 24 Jun 2018 07:31:32 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v11 4/9] cpuset: Allow changes to cpus in a partition root
+Date:   Sun, 24 Jun 2018 15:30:35 +0800
+Message-Id: <1529825440-9574-5-git-send-email-longman@redhat.com>
+In-Reply-To: <1529825440-9574-1-git-send-email-longman@redhat.com>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sun, 24 Jun 2018 07:31:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Folks !
+The previous patch introduces a new partition flag, but won't allow
+changes made to "cpuset.cpus" once the flag is on. That may be too
+restrictive in some use cases. So this restiction is now relaxed to
+allow changes made to the "cpuset.cpus" file with some constraints:
 
-So due work around issues with devices having to strict limitations in
-DMA address bits (GPUs ugh....) on POWER, we've been playing with a
-mechanism that does dynamic mapping in the IOMMU but using a very large
-IOMMU page size (256M on POWER8 and 1G on POWER9) for performances.
+ 1) The new set of cpus must still be exclusive.
+ 2) Newly added cpus must be a subset of the parent effective_cpus.
+ 3) None of the deleted cpus can be one of those allocated to a child
+    partition roots, if present.
 
-Now, with such page size, we can't just pop out new entries for every
-DMA map, we need to try to re-use entries for mappings in the same
-"area". 
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst |  9 ++++
+ kernel/cgroup/cpuset.c                  | 80 ++++++++++++++++++++++++++-------
+ 2 files changed, 72 insertions(+), 17 deletions(-)
 
-We've prototypes something using refcounts on the entires. It does
-imply some locking which is potentially problematic, and we'll be
-looking at options there long run, but it works... so far.
-
-My worry is that it will fail if we ever get a mapping request (or
-coherent allocation request) that spawns one of those giant pages
-boundaries. At least our current implementation.
-
-AFAIK, dma_alloc_coherent() is defined (Documentation/DMA-API-
-HOWTO.txt) as always allocating to the next power-of-2 order, so we
-should never have the problem unless we allocate a single chunk larger
-than the IOMMU page size.
-
-For dma_map_sg() however, if a request that has a single "entry"
-spawning such a boundary, we need to ensure that the result mapping is
-2 contiguous "large" iommu pages as well.
-
-However, that doesn't fit well with us re-using existing mappings since
-they may already exist and either not be contiguous, or partially exist
-with no free hole around them.
-
-Now, we *could* possibly construe a way to solve this by detecting this
-case and just allocating another "pair" (or set if we cross even more
-pages) of IOMMU pages elsewhere, thus partially breaking our re-use
-scheme.
-
-But while doable, this introduce some serious complexity in the
-implementation, which I would very much like to avoid.
-
-So I was wondering if you guys thought that was ever likely to happen ?
-Do you see reasonable cases where dma_map_sg() would be called with a
-list in which a single entry crosses a 256M or 1G boundary ?
-
-Cheers,
-Ben.
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 24a7133..5f3170f 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1617,6 +1617,15 @@ Cpuset Interface Files
+         its child partition root cgroups.  There must be at least one cpu
+         left in the parent partition root cgroup.
+ 
++	In a partition root, changes to "cpuset.cpus" is allowed as long
++	as the first condition above as well as the following two
++	additional conditions are true.
++
++	1) Any added CPUs must be a proper subset of the parent's
++	   "cpuset.cpus.effective".
++	2) No CPU that has been distributed to child partition roots is
++	   is deleted.
++
+ 
+ Device controller
+ -----------------
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index e902f54..3a646a9 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -957,6 +957,9 @@ static void update_cpumasks_hier(struct cpuset *cs, struct cpumask *new_cpus)
+ 
+ 		spin_lock_irq(&callback_lock);
+ 		cpumask_copy(cp->effective_cpus, new_cpus);
++		if (cp->nr_reserved)
++			cpumask_andnot(cp->effective_cpus, cp->effective_cpus,
++				       cp->reserved_cpus);
+ 		spin_unlock_irq(&callback_lock);
+ 
+ 		WARN_ON(!is_in_v2_mode() &&
+@@ -984,23 +987,25 @@ static void update_cpumasks_hier(struct cpuset *cs, struct cpumask *new_cpus)
+ /**
+  * update_reserved_cpumask - update the reserved_cpus mask of parent cpuset
+  * @cpuset:  The cpuset that requests CPU reservation
+- * @delmask: The old reserved cpumask to be removed from the parent
+- * @addmask: The new reserved cpumask to be added to the parent
++ * @oldmask: The old reserved cpumask to be removed from the parent
++ * @newmask: The new reserved cpumask to be added to the parent
+  * Return: 0 if successful, an error code otherwise
+  *
+  * Changes to the reserved CPUs are not allowed if any of CPUs changing
+  * state are in any of the child cpusets of the parent except the requesting
+  * child.
+  *
+- * If the sched.partition flag changes, either the delmask (0=>1) or the
+- * addmask (1=>0) will be NULL.
++ * If the sched.partition flag changes, either the oldmask (0=>1) or the
++ * newmask (1=>0) will be NULL.
+  *
+  * Called with cpuset_mutex held.
+  */
+ static int update_reserved_cpumask(struct cpuset *cpuset,
+-	struct cpumask *delmask, struct cpumask *addmask)
++	struct cpumask *oldmask, struct cpumask *newmask)
+ {
+ 	int retval;
++	int adding, deleting;
++	cpumask_var_t addmask, delmask;
+ 	struct cpuset *parent = parent_cs(cpuset);
+ 	struct cpuset *sibling;
+ 	struct cgroup_subsys_state *pos_css;
+@@ -1011,15 +1016,15 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
+ 	 * The new cpumask, if present, must not be empty.
+ 	 */
+ 	if (!is_partition_root(parent) ||
+-	   (addmask && cpumask_empty(addmask)))
++	   (newmask && cpumask_empty(newmask)))
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * The delmask, if present, must be a subset of parent's reserved
++	 * The oldmask, if present, must be a subset of parent's reserved
+ 	 * CPUs.
+ 	 */
+-	if (delmask && !cpumask_empty(delmask) && (!parent->nr_reserved ||
+-		       !cpumask_subset(delmask, parent->reserved_cpus))) {
++	if (oldmask && !cpumask_empty(oldmask) && (!parent->nr_reserved ||
++		       !cpumask_subset(oldmask, parent->reserved_cpus))) {
+ 		WARN_ON_ONCE(1);
+ 		return -EINVAL;
+ 	}
+@@ -1028,9 +1033,16 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
+ 	 * A sched.partition state change is not allowed if there are
+ 	 * online children.
+ 	 */
+-	if (css_has_online_children(&cpuset->css))
++	if ((!oldmask || !newmask) && css_has_online_children(&cpuset->css))
+ 		return -EBUSY;
+ 
++	if (!zalloc_cpumask_var(&addmask, GFP_KERNEL))
++		return -ENOMEM;
++	if (!zalloc_cpumask_var(&delmask, GFP_KERNEL)) {
++		free_cpumask_var(addmask);
++		return -ENOMEM;
++	}
++
+ 	if (!old_count) {
+ 		if (!zalloc_cpumask_var(&parent->reserved_cpus, GFP_KERNEL)) {
+ 			retval = -ENOMEM;
+@@ -1040,12 +1052,29 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
+ 	}
+ 
+ 	retval = -EBUSY;
++	adding = deleting = false;
++	/*
++	 * addmask = newmask & ~oldmask
++	 * delmask = oldmask & ~newmask
++	 */
++	if (oldmask && newmask) {
++		adding   = cpumask_andnot(addmask, newmask, oldmask);
++		deleting = cpumask_andnot(delmask, oldmask, newmask);
++		if (!adding && !deleting)
++			goto out_ok;
++	} else if (newmask) {
++		adding = true;
++		cpumask_copy(addmask, newmask);
++	} else if (oldmask) {
++		deleting = true;
++		cpumask_copy(delmask, oldmask);
++	}
+ 
+ 	/*
+ 	 * The cpus to be added must be a proper subset of the parent's
+ 	 * effective_cpus mask but not in the reserved_cpus mask.
+ 	 */
+-	if (addmask) {
++	if (adding) {
+ 		if (!cpumask_subset(addmask, parent->effective_cpus) ||
+ 		     cpumask_equal(addmask, parent->effective_cpus))
+ 			goto out;
+@@ -1055,6 +1084,15 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
+ 	}
+ 
+ 	/*
++	 * For cpu changes in a partition root, cpu deletion isn't allowed
++	 * if any of the deleted CPUs is in reserved_cpus (distributed
++	 * to child partition roots).
++	 */
++	if (oldmask && newmask && cpuset->nr_reserved && deleting &&
++	    cpumask_intersects(delmask, cpuset->reserved_cpus))
++		goto out;
++
++	/*
+ 	 * Check if any CPUs in addmask or delmask are in the effective_cpus
+ 	 * of a sibling cpuset. The implied cpu_exclusive of a partition
+ 	 * root will ensure there are no overlap in cpus_allowed.
+@@ -1063,10 +1101,10 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
+ 	cpuset_for_each_child(sibling, pos_css, parent) {
+ 		if ((sibling == cpuset) || !(sibling->css.flags & CSS_ONLINE))
+ 			continue;
+-		if (addmask &&
++		if (adding &&
+ 		    cpumask_intersects(sibling->effective_cpus, addmask))
+ 			goto out_unlock;
+-		if (delmask &&
++		if (deleting &&
+ 		    cpumask_intersects(sibling->effective_cpus, delmask))
+ 			goto out_unlock;
+ 	}
+@@ -1078,13 +1116,13 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
+ 	 * and newly deleted ones will be added back if they are online.
+ 	 */
+ 	spin_lock_irq(&callback_lock);
+-	if (addmask) {
++	if (adding) {
+ 		cpumask_or(parent->reserved_cpus,
+ 			   parent->reserved_cpus, addmask);
+ 		cpumask_andnot(parent->effective_cpus,
+ 			       parent->effective_cpus, addmask);
+ 	}
+-	if (delmask) {
++	if (deleting) {
+ 		cpumask_andnot(parent->reserved_cpus,
+ 			       parent->reserved_cpus, delmask);
+ 		cpumask_or(parent->effective_cpus,
+@@ -1093,8 +1131,12 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
+ 
+ 	parent->nr_reserved = cpumask_weight(parent->reserved_cpus);
+ 	spin_unlock_irq(&callback_lock);
++
++out_ok:
+ 	retval = 0;
+ out:
++	free_cpumask_var(addmask);
++	free_cpumask_var(delmask);
+ 	if (old_count && !parent->nr_reserved)
+ 		free_cpumask_var(parent->reserved_cpus);
+ 
+@@ -1146,8 +1188,12 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+ 	if (retval < 0)
+ 		return retval;
+ 
+-	if (is_partition_root(cs))
+-		return -EBUSY;
++	if (is_partition_root(cs)) {
++		retval = update_reserved_cpumask(cs, cs->cpus_allowed,
++						 trialcs->cpus_allowed);
++		if (retval < 0)
++			return retval;
++	}
+ 
+ 	spin_lock_irq(&callback_lock);
+ 	cpumask_copy(cs->cpus_allowed, trialcs->cpus_allowed);
+-- 
+1.8.3.1
 
