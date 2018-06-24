@@ -2,125 +2,159 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DDFC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B26C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 03:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DADAF24D9C
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 02:57:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADAF24D9C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id 59C1324D9E
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 03:02:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="vwFpO9v4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C1324D9E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752223AbeFXC5C (ORCPT
+        id S1752269AbeFXDCF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Jun 2018 22:57:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33549 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752048AbeFXC5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Jun 2018 22:57:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4CF01AB34;
-        Sun, 24 Jun 2018 02:56:59 +0000 (UTC)
-Date:   Sat, 23 Jun 2018 19:56:51 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     syzbot <syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, ebiederm@xmission.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux@dominikbrodowski.net, manfred@colorfullife.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        dave@stgolabs.net
-Subject: ipc/msg: zalloc struct msg_queue when creating a new msq
-Message-ID: <20180624025651.bvjlcfulbmycz5bf@linux-r8p5>
-References: <000000000000e403b3056e76c786@google.com>
+        Sat, 23 Jun 2018 23:02:05 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:43882 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752113AbeFXDCE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Jun 2018 23:02:04 -0400
+Received: by mail-pg0-f67.google.com with SMTP id a14-v6so4576301pgw.10
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Jun 2018 20:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=92ry53j5zijOF9aqo904mXvJZY7mEqZyxe2rok6cO/s=;
+        b=vwFpO9v4qxQGhwqgbihUaNGieqFQ51X/ihTEGzfoSEkTnNULpDcqa2kpIScqF9iI+g
+         E96l3/d/IMc3dPU9D0bwH59HxhP3hYdtJpZ0TwUkAP9QK4jXOBQmNYR7fDss2KH6lLjr
+         kkCUs4sNYVjop3+ImmaA3XJVSTLAyDFqfovoA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=92ry53j5zijOF9aqo904mXvJZY7mEqZyxe2rok6cO/s=;
+        b=cjqstPvAX9MAh8DE+p/+an2WKnExix2PUz/v9G5sBb3jeOAVDdytjsA1Jkzd16zCQU
+         +ltCk8kpGX2WY+1T5dQLMSujv/S/l9tCEfKSgOBwPkh+MdADOdW6rp48PV1vRodYLk/I
+         48aNC8LvDk+mu+OFJEnAcdQj07K1EV+aFaomREsZ+EbFL4VnWGVTRn77rH9DUlkRavO5
+         Zh/kXjtN2XbYp4/zNb+mbi+p7FzOHk/4AvRL4vWYk03MqulL3YuQj2SHOb/jIsirRLmL
+         pw1DsG6Spe6njOkJDoZd7bHauiM2OoOmA4vBOwFrjsKwu4ayvdlnNKwGMcTyiTr40VKh
+         JPoA==
+X-Gm-Message-State: APt69E3K2rtTAY4wVtguB0jdLmbI5on2mj+Q3qG/DEvWlqGygQyRmG1J
+        K94N0GY/tzG/LFgR4Karj4l9Iw3igh0=
+X-Google-Smtp-Source: ADUXVKLXVu9SUM6vzycBGBz+Eo36mdGV9zk722lwBUh5OTfyShjhEanOizAT8e6O2ygbyLPNTUoqyw==
+X-Received: by 2002:a65:4587:: with SMTP id o7-v6mr6277288pgq.386.1529809323738;
+        Sat, 23 Jun 2018 20:02:03 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id v78-v6sm23476688pfd.64.2018.06.23.20.02.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 23 Jun 2018 20:02:02 -0700 (PDT)
+Date:   Sat, 23 Jun 2018 20:02:01 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Byungchul Park <max.byungchul.park@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        jiangshanlai@gmail.com, josh@joshtriplett.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com, luto@kernel.org
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
+ rcu_dynticks
+Message-ID: <20180624030201.GA161749@joelaf.mtv.corp.google.com>
+References: <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
+ <20180620164902.GW3593@linux.vnet.ibm.com>
+ <20180622055659.GA255098@joelaf.mtv.corp.google.com>
+ <20180622132843.GN3593@linux.vnet.ibm.com>
+ <20180622181916.GA13628@joelaf.mtv.corp.google.com>
+ <20180622205813.GV3593@linux.vnet.ibm.com>
+ <20180622170042.4adfbe21@gandalf.local.home>
+ <20180622211600.GX3593@linux.vnet.ibm.com>
+ <20180623154839.GA12939@joelaf.mtv.corp.google.com>
+ <20180623175634.GI3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000e403b3056e76c786@google.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180623175634.GI3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following splat was reported around the msg_queue structure
-which can have uninitialized fields left over after newque().
-Future syscalls which make use of the msq id (now valid) can thus
-make KMSAN complain because not all fields are explicitly initialized
-and we have the padding as well. This is internal to the kernel,
-hence no bogus leaks.
+On Sat, Jun 23, 2018 at 10:56:34AM -0700, Paul E. McKenney wrote:
+> On Sat, Jun 23, 2018 at 08:48:39AM -0700, Joel Fernandes wrote:
+> > On Fri, Jun 22, 2018 at 02:16:00PM -0700, Paul E. McKenney wrote:
+> > > On Fri, Jun 22, 2018 at 05:00:42PM -0400, Steven Rostedt wrote:
+> > > > On Fri, 22 Jun 2018 13:58:13 -0700
+> > > > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> > > > 
+> > > > > Something like this:
+> > > > > 
+> > > > > 	IRQ entered
+> > > > > 
+> > > > > And never exited.  Ever.  I actually saw this in 2011.
+> > > > 
+> > > > I still believe this was actually a bug. And perhaps you made the RCU
+> > > > code robust enough to handle this bug ;-)
+> > > 
+> > > Welcome to my world!
+> > > 
+> > > But I recall it being used in several places, so if it was a bug, it
+> > > was an intentional bug.  Probably the worst kind.
+> > > 
+> > > Sort of like nested NMIs and interrupts within NMI handlers.  ;-)
+> > > 
+> > > > > Or something like this:
+> > > > > 
+> > > > > 	IRQ exited
+> > > > > 
+> > > > > Without a corresponding IRQ enter.
+> > > > > 
+> > > > > The current code handles both of these situations, at least assuming
+> > > > > that the interrupt entry/exit happens during a non-idle period.
+> > > > > 
+> > > > > > > So why this function-call structure?  Well, you see, NMI handlers can
+> > > > > > > take what appear to RCU to be normal interrupts...
+> > > > > > > 
+> > > > > > > (And I just added that fun fact to Requirements.html.)  
+> > > > > > 
+> > > > > > Yes, I'll definitely go through all the interrupt requirements in the doc and
+> > > > > > thanks for referring me to it.  
+> > > > > 
+> > > > > My concern may well be obsolete.  It would be good if it was!  ;-)
+> > > > 
+> > > > I'd love to mandate that irq_enter() must be paired with irq_exit(). I
+> > > > don't really see any rationale for it to be otherwise. If there is a
+> > > > case, perhaps it needs to be fixed.
+> > > 
+> > > Given that the usermode helpers now look to be common code using
+> > > workqueues, kthreads, and calls to do_execve(), it might well be that
+> > > the days of half-interrupts are behind us.
+> > > 
+> > > But how to actually validate this?  My offer of adding a WARN_ON_ONCE()
+> > > and waiting a few years still stands, but perhaps you have a better
+> > > approach.
+> > 
+> > Hi Paul, I am Ok with adding a warning for a couple of releases if you and
+> > others are Ok with it, how about something like this? Feel free to use the
+> > diff as a starting point or a different approach if you/others prefer
+> > something else. Thanks.
+> 
+> A few years rather than a few releases, but yes.  ;-)
+> The checks would need to go just before the "crowbar" stores.  
 
-==================================================================
-BUG: KMSAN: uninit-value in do_msgrcv+0x509/0x1e30 ipc/msg.c:1048
-CPU: 0 PID: 4528 Comm: syz-executor852 Not tainted 4.17.0-rc5+ #103
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
-  __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
-  do_msgrcv+0x509/0x1e30 ipc/msg.c:1048
-  ksys_msgrcv ipc/msg.c:1184 [inline]
-  __do_sys_msgrcv ipc/msg.c:1190 [inline]
-  __se_sys_msgrcv ipc/msg.c:1187 [inline]
-  __x64_sys_msgrcv+0x160/0x1b0 ipc/msg.c:1187
-  do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x4459b9
-RSP: 002b:00007f0d57662db8 EFLAGS: 00000297 ORIG_RAX: 0000000000000046
-RAX: ffffffffffffffda RBX: 00000000006dac54 RCX: 00000000004459b9
-RDX: 00000000000000d0 RSI: 0000000020000000 RDI: 0000000000260007
-RBP: 00000000006dac50 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000000
-R13: 00007ffd5ab7e25f R14: 00007f0d576639c0 R15: 0000000000000006
+Ok. I guess that would work too.
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
-  __kmalloc_node+0xe25/0x11f0 mm/slub.c:3865
-  kmalloc_node include/linux/slab.h:554 [inline]
-  kvmalloc_node+0x197/0x2f0 mm/util.c:421
-  kvmalloc include/linux/mm.h:550 [inline]
-  newque+0xb4/0x7d0 ipc/msg.c:139
-  ipcget_new ipc/util.c:315 [inline]
-  ipcget+0x27b/0xd90 ipc/util.c:653
-  ksys_msgget ipc/msg.c:289 [inline]
-  __do_sys_msgget ipc/msg.c:294 [inline]
-  __se_sys_msgget ipc/msg.c:292 [inline]
-  __x64_sys_msgget+0x14c/0x1d0 ipc/msg.c:292
-  do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-==================================================================
+> I will put something together after Byungchul's patches in this area have
+> had time to burn in for a few days.
 
-Fix this by simply zero init the whole structure, something that
-sysvsems also do; this is safe as it's a nop, having no secondary
-effect afaict.
+Sounds great, thanks!
 
-Reported-by: syzbot <syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com>
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- ipc/msg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/ipc/msg.c b/ipc/msg.c
-index 62545ce19173..da81b374f9fd 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -136,7 +136,7 @@ static int newque(struct ipc_namespace *ns, struct ipc_params *params)
- 	key_t key = params->key;
- 	int msgflg = params->flg;
- 
--	msq = kvmalloc(sizeof(*msq), GFP_KERNEL);
-+	msq = kvzalloc(sizeof(*msq), GFP_KERNEL);
- 	if (unlikely(!msq))
- 		return -ENOMEM;
- 
--- 
-2.16.4
+ - Joel
 
