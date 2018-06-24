@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC77CC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 645A9C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 765BF25100
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:52:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765BF25100
+	by mail.kernel.org (Postfix) with ESMTP id 1F1B225100
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1B225100
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934337AbeFXPwX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:52:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33572 "EHLO
+        id S934350AbeFXPwa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:52:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934019AbeFXPwV (ORCPT
+        with ESMTP id S934000AbeFXPw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:52:21 -0400
+        Sun, 24 Jun 2018 11:52:27 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E77BE2C;
-        Sun, 24 Jun 2018 15:52:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5310C2C;
+        Sun, 24 Jun 2018 15:52:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Richard W.M. Jones" <rjones@redhat.com>,
-        Lorenzo Dalrio <lorenzo.dalrio@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.9 34/39] libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
-Date:   Sun, 24 Jun 2018 23:24:21 +0800
-Message-Id: <20180624152355.855197965@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Evgeniy Polyakov <zbr@ioremap.net>
+Subject: [PATCH 4.9 35/39] w1: mxc_w1: Enable clock before calling clk_get_rate() on it
+Date:   Sun, 24 Jun 2018 23:24:22 +0800
+Message-Id: <20180624152355.955768000@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624152352.038950449@linuxfoundation.org>
 References: <20180624152352.038950449@linuxfoundation.org>
@@ -51,56 +50,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
 
-commit 2cfce3a86b64b53f0a70e92a6a659c720c319b45 upstream.
+commit 955bc61328dc0a297fb3baccd84e9d3aee501ed8 upstream.
 
-Commit 184add2ca23c ("libata: Apply NOLPM quirk for SanDisk
-SD7UB3Q*G1001 SSDs") disabled LPM for SanDisk SD7UB3Q*G1001 SSDs.
+According to the API, you may only call clk_get_rate() after actually
+enabling it.
 
-This has lead to several reports of users of that SSD where LPM
-was working fine and who know have a significantly increased idle
-power consumption on their laptops.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Likely there is another problem on the T450s from the original
-reporter which gets exposed by the uncore reaching deeper sleep
-states (higher PC-states) due to LPM being enabled. The problem as
-reported, a hardfreeze about once a day, already did not sound like
-it would be caused by LPM and the reports of the SSD working fine
-confirm this. The original reporter is ok with dropping the quirk.
-
-A X250 user has reported the same hard freeze problem and for him
-the problem went away after unrelated updates, I suspect some GPU
-driver stack changes fixed things.
-
-TL;DR: The original reporters problem were triggered by LPM but not
-an LPM issue, so drop the quirk for the SSD in question.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1583207
-Cc: stable@vger.kernel.org
-Cc: Richard W.M. Jones <rjones@redhat.com>
-Cc: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
-Reported-by: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Acked-by: "Richard W.M. Jones" <rjones@redhat.com>
+Fixes: a5fd9139f74c ("w1: add 1-wire master driver for i.MX27 / i.MX31")
+Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/w1/masters/mxc_w1.c |   20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4426,9 +4426,6 @@ static const struct ata_blacklist_entry
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
- 						ATA_HORKAGE_NOLPM, },
+--- a/drivers/w1/masters/mxc_w1.c
++++ b/drivers/w1/masters/mxc_w1.c
+@@ -113,6 +113,10 @@ static int mxc_w1_probe(struct platform_
+ 	if (IS_ERR(mdev->clk))
+ 		return PTR_ERR(mdev->clk);
  
--	/* Sandisk devices which are known to not handle LPM well */
--	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
++	err = clk_prepare_enable(mdev->clk);
++	if (err)
++		return err;
++
+ 	clkrate = clk_get_rate(mdev->clk);
+ 	if (clkrate < 10000000)
+ 		dev_warn(&pdev->dev,
+@@ -126,12 +130,10 @@ static int mxc_w1_probe(struct platform_
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	mdev->regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(mdev->regs))
+-		return PTR_ERR(mdev->regs);
 -
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+-	err = clk_prepare_enable(mdev->clk);
+-	if (err)
+-		return err;
++	if (IS_ERR(mdev->regs)) {
++		err = PTR_ERR(mdev->regs);
++		goto out_disable_clk;
++	}
+ 
+ 	/* Software reset 1-Wire module */
+ 	writeb(MXC_W1_RESET_RST, mdev->regs + MXC_W1_RESET);
+@@ -147,8 +149,12 @@ static int mxc_w1_probe(struct platform_
+ 
+ 	err = w1_add_master_device(&mdev->bus_master);
+ 	if (err)
+-		clk_disable_unprepare(mdev->clk);
++		goto out_disable_clk;
++
++	return 0;
+ 
++out_disable_clk:
++	clk_disable_unprepare(mdev->clk);
+ 	return err;
+ }
+ 
 
 
