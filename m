@@ -3,39 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9D4C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A021C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F32BB25026
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:37:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F32BB25026
+	by mail.kernel.org (Postfix) with ESMTP id 29BD425026
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:38:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29BD425026
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755643AbeFXPhz (ORCPT
+        id S1755664AbeFXPiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:37:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59694 "EHLO
+        Sun, 24 Jun 2018 11:38:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59704 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755621AbeFXPhw (ORCPT
+        with ESMTP id S1751852AbeFXPh7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:37:52 -0400
+        Sun, 24 Jun 2018 11:37:59 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF8A22C;
-        Sun, 24 Jun 2018 15:37:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E0402C;
+        Sun, 24 Jun 2018 15:37:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shirish Pargaonkar <shirishpargaonkar@gmail.com>,
-        Noah Morrison <noah.morrison@rubrik.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.16 34/64] cifs: For SMB2 security informaion query, check for minimum sized security descriptor instead of sizeof FileAllInformation class
-Date:   Sun, 24 Jun 2018 23:22:15 +0800
-Message-Id: <20180624142745.925621061@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.16 35/64] nbd: fix nbd device deletion
+Date:   Sun, 24 Jun 2018 23:22:16 +0800
+Message-Id: <20180624142746.000237250@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -52,60 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shirish Pargaonkar <shirishpargaonkar@gmail.com>
+From: Josef Bacik <jbacik@fb.com>
 
-commit ee25c6dd7b05113783ce1f4fab6b30fc00d29b8d upstream.
+commit 8364da4751cf22201d74933d5e634176f44ed407 upstream.
 
-Validate_buf () function checks for an expected minimum sized response
-passed to query_info() function.
-For security information, the size of a security descriptor can be
-smaller (one subauthority, no ACEs) than the size of the structure
-that defines FileInfoClass of FileAllInformation.
+This fixes a use after free bug, we shouldn't be doing disk->queue right
+after we do del_gendisk(disk).  Save the queue and do the cleanup after
+the del_gendisk.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199725
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Shirish Pargaonkar <shirishpargaonkar@gmail.com>
-Reviewed-by: Noah Morrison <noah.morrison@rubrik.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Fixes: c6a4759ea0c9 ("nbd: add device refcounting")
+cc: stable@vger.kernel.org
+Signed-off-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsacl.h |   14 ++++++++++++++
- fs/cifs/smb2pdu.c |    3 +--
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ drivers/block/nbd.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/cifsacl.h
-+++ b/fs/cifs/cifsacl.h
-@@ -98,4 +98,18 @@ struct cifs_ace {
- 	struct cifs_sid sid; /* ie UUID of user or group who gets these perms */
- } __attribute__((packed));
- 
-+/*
-+ * Minimum security identifier can be one for system defined Users
-+ * and Groups such as NULL SID and World or Built-in accounts such
-+ * as Administrator and Guest and consists of
-+ * Revision + Num (Sub)Auths + Authority + Domain (one Subauthority)
-+ */
-+#define MIN_SID_LEN  (1 + 1 + 6 + 4) /* in bytes */
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -173,9 +173,12 @@ static const struct device_attribute pid
+ static void nbd_dev_remove(struct nbd_device *nbd)
+ {
+ 	struct gendisk *disk = nbd->disk;
++	struct request_queue *q;
 +
-+/*
-+ * Minimum security descriptor can be one without any SACL and DACL and can
-+ * consist of revision, type, and two sids of minimum size for owner and group
-+ */
-+#define MIN_SEC_DESC_LEN  (sizeof(struct cifs_ntsd) + (2 * MIN_SID_LEN))
-+
- #endif /* _CIFSACL_H */
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2271,8 +2271,7 @@ SMB2_query_acl(const unsigned int xid, s
- 
- 	return query_info(xid, tcon, persistent_fid, volatile_fid,
- 			  0, SMB2_O_INFO_SECURITY, additional_info,
--			  SMB2_MAX_BUFFER_SIZE,
--			  sizeof(struct smb2_file_all_info), data, plen);
-+			  SMB2_MAX_BUFFER_SIZE, MIN_SEC_DESC_LEN, data, plen);
- }
- 
- int
+ 	if (disk) {
++		q = disk->queue;
+ 		del_gendisk(disk);
+-		blk_cleanup_queue(disk->queue);
++		blk_cleanup_queue(q);
+ 		blk_mq_free_tag_set(&nbd->tag_set);
+ 		disk->private_data = NULL;
+ 		put_disk(disk);
 
 
