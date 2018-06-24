@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66449C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D248C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288D925076
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:42:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288D925076
+	by mail.kernel.org (Postfix) with ESMTP id E3F9D25076
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:42:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F9D25076
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755692AbeFXPmi (ORCPT
+        id S1756112AbeFXPmp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:42:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60074 "EHLO
+        Sun, 24 Jun 2018 11:42:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755228AbeFXPmf (ORCPT
+        with ESMTP id S1755637AbeFXPmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:42:35 -0400
+        Sun, 24 Jun 2018 11:42:43 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D3472C;
-        Sun, 24 Jun 2018 15:42:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7944D2C;
+        Sun, 24 Jun 2018 15:42:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 30/70] ALSA: hda/conexant - Add fixup for HP Z2 G4 workstation
-Date:   Sun, 24 Jun 2018 23:22:22 +0800
-Message-Id: <20180624142742.357036909@linuxfoundation.org>
+        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.17 31/70] ALSA: hda - Handle kzalloc() failure in snd_hda_attach_pcm_stream()
+Date:   Sun, 24 Jun 2018 23:22:23 +0800
+Message-Id: <20180624142742.408164561@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -49,30 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Bo Chen <chenbo@pdx.edu>
 
-commit f16041df4c360eccacfe90f96673b37829e4c959 upstream.
+commit a3aa60d511746bd6c0d0366d4eb90a7998bcde8b upstream.
 
-HP Z2 G4 requires the same workaround as other HP machines that have
-no mic-pin detection.
+When 'kzalloc()' fails in 'snd_hda_attach_pcm_stream()', a new pcm instance is
+created without setting its operators via 'snd_pcm_set_ops()'. Following
+operations on the new pcm instance can trigger kernel null pointer dereferences
+and cause kernel oops.
 
+This bug was found with my work on building a gray-box fault-injection tool for
+linux-kernel-module binaries. A kernel null pointer dereference was confirmed
+from line 'substream->ops->open()' in function 'snd_pcm_open_substream()' in
+file 'sound/core/pcm_native.c'.
+
+This patch fixes the bug by calling 'snd_device_free()' in the error handling
+path of 'kzalloc()', which removes the new pcm instance from the snd card before
+returns with an error code.
+
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/hda_controller.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -965,6 +965,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1043, 0x138d, "Asus", CXT_FIXUP_HEADPHONE_MIC_PIN),
- 	SND_PCI_QUIRK(0x152d, 0x0833, "OLPC XO-1.5", CXT_FIXUP_OLPC_XO),
- 	SND_PCI_QUIRK(0x17aa, 0x20f2, "Lenovo T400", CXT_PINCFG_LENOVO_TP410),
+--- a/sound/pci/hda/hda_controller.c
++++ b/sound/pci/hda/hda_controller.c
+@@ -748,8 +748,10 @@ int snd_hda_attach_pcm_stream(struct hda
+ 		return err;
+ 	strlcpy(pcm->name, cpcm->name, sizeof(pcm->name));
+ 	apcm = kzalloc(sizeof(*apcm), GFP_KERNEL);
+-	if (apcm == NULL)
++	if (apcm == NULL) {
++		snd_device_free(chip->card, pcm);
+ 		return -ENOMEM;
++	}
+ 	apcm->chip = chip;
+ 	apcm->pcm = pcm;
+ 	apcm->codec = codec;
 
 
