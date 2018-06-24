@@ -2,122 +2,160 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF88C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 21:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBB8C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 21:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD96D25311
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 21:09:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9os9GYx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD96D25311
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 328CC25318
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 21:12:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328CC25318
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751924AbeFXVJY (ORCPT
+        id S1751943AbeFXVMs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 17:09:24 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:36960 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751575AbeFXVJW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 17:09:22 -0400
-Received: by mail-ot0-f194.google.com with SMTP id u6-v6so4762231otk.4;
-        Sun, 24 Jun 2018 14:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=fsuYDlw81AyLGe1Z07MKZyAcA5R+PLvqrvGFwygfRAQ=;
-        b=c9os9GYxygyi79SLpul+WIf16qhldMFSdrh02StcqJz6VjL4WvfpJXE5DQN/RPEPyQ
-         Q7+8rif5E6b/pr+EZyy5JrV3pyO3C9JFF8f3o+aQaKG/BRVKUSfL22qoGp1+usB46n+M
-         ZTk3k38QaSgN0wzeKG5NPoerKgNUX5J921V0SDwn+xAY38p2LGXcfCC50q8eoJJew6LY
-         55b7xWmZmK+0Ly8zt/rzIKKeu87KmCm6PuaDpQfDIJkxvGIeQAi7d15ZoXGlHmK1jf1N
-         8WL8Du9zjsDiMoYnWn56paTZiAec/1GMtvuA8Lyg7QfA76VN/OgbueI6W8mFl8bK3PVD
-         GQ3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=fsuYDlw81AyLGe1Z07MKZyAcA5R+PLvqrvGFwygfRAQ=;
-        b=EWzF50uG1mXdil/FgOL9/YV2WfsKADx0Ys9Mgz3E7QKYRGU6bgFrFF+LqjMNZbEdVU
-         O20kC/HiH8gwN7i6KcQVz0BVW2NFwk5/VnYWlT8Oi7H2EvlOddm6qmiaGEZfb4+f0rPM
-         da1UP/TWIgbzG/OVKIgGufPZwEOE7HGjMJrm53s8USgkdaZiG8bJnwK10QmdrlSiTTdI
-         m8kv4kTp/UDrbyzgRGzfJ9a7J+2EfOhS4rQjzzPtcIkJd2lT/oRYVBzl1+jKz0g7j3Xc
-         x/o21D9I+bNswmBdongyitZRzBxnSJ2oq+C8t9HG1NfM2ecMgBv2weLcR+HkdYUu/soo
-         F0TA==
-X-Gm-Message-State: APt69E0ze9lW7kj+jGmLQ2J/BoCdlFdL9rxGBeK3rAH8Wbkb/MwlU7dp
-        l1hEsN7aYJVFc/dMDzIFhQdWBC7/a8NqhOqMCHE=
-X-Google-Smtp-Source: AAOMgpcOnAkjTAuiz602ClF6U3Z0UvNz7QZrLtYJ7UGzU9vsnif0vF6Y68zurXgX47jic6I0DiCyRAaZGXAuofzWUTc=
-X-Received: by 2002:a9d:1012:: with SMTP id h18-v6mr5613349ote.364.1529874561522;
- Sun, 24 Jun 2018 14:09:21 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 14:09:20
- -0700 (PDT)
-In-Reply-To: <20180620172226.15012-4-ulf.hansson@linaro.org>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org> <20180620172226.15012-4-ulf.hansson@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sun, 24 Jun 2018 23:09:20 +0200
-X-Google-Sender-Auth: 9qq7Fp2Jfb9Ad0OKz4cE5AMijFE
-Message-ID: <CAJZ5v0i52JTFbvBBaDyNHCnTz3UMW00NiodFpzS5m614D++9uA@mail.gmail.com>
-Subject: Re: [PATCH v8 03/26] PM / Domains: Add generic data pointer to
- genpd_power_state struct
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 24 Jun 2018 17:12:48 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48385 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751575AbeFXVMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 17:12:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2018 14:12:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,267,1526367600"; 
+   d="scan'208";a="51888189"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.43])
+  by orsmga008.jf.intel.com with ESMTP; 24 Jun 2018 14:12:45 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [char-misc-next 1/2] mei: add optional timeout to internal bus recv
+Date:   Mon, 25 Jun 2018 00:11:40 +0300
+Message-Id: <20180624211141.7681-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 7:22 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> From: Lina Iyer <lina.iyer@linaro.org>
->
-> Let's add a data pointer to the genpd_power_state struct, to allow
-> platforms to store per state specific data.
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-Can you please fold it into a patch actually using this pointer?
+Add optional timeout to internal bus recv function to
+enable break out of internal flows in case of no answer from FW.
 
-> Cc: Lina Iyer <ilina@codeaurora.org>
-> Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
-> Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  include/linux/pm_domain.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 9206a4fef9ac..27fca748344a 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -44,6 +44,7 @@ struct genpd_power_state {
->         s64 residency_ns;
->         struct fwnode_handle *fwnode;
->         ktime_t idle_time;
-> +       void *data;
->  };
->
->  struct genpd_lock_ops;
-> --
-> 2.17.1
->
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/misc/mei/bus-fixup.c |  2 +-
+ drivers/misc/mei/bus.c       | 36 ++++++++++++++++++++++++++----------
+ drivers/misc/mei/mei_dev.h   |  2 +-
+ 3 files changed, 28 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/misc/mei/bus-fixup.c b/drivers/misc/mei/bus-fixup.c
+index 0208c4b027c5..b17c46a43812 100644
+--- a/drivers/misc/mei/bus-fixup.c
++++ b/drivers/misc/mei/bus-fixup.c
+@@ -266,7 +266,7 @@ static int mei_nfc_if_version(struct mei_cl *cl,
+ 		return -ENOMEM;
+ 
+ 	ret = 0;
+-	bytes_recv = __mei_cl_recv(cl, (u8 *)reply, if_version_length, 0);
++	bytes_recv = __mei_cl_recv(cl, (u8 *)reply, if_version_length, 0, 0);
+ 	if (bytes_recv < if_version_length) {
+ 		dev_err(bus->dev, "Could not read IF version\n");
+ 		ret = -EIO;
+diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
+index b1133739fb4b..7bba62a72921 100644
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -116,11 +116,12 @@ ssize_t __mei_cl_send(struct mei_cl *cl, u8 *buf, size_t length,
+  * @buf: buffer to receive
+  * @length: buffer length
+  * @mode: io mode
++ * @timeout: recv timeout, 0 for infinite timeout
+  *
+  * Return: read size in bytes of < 0 on error
+  */
+ ssize_t __mei_cl_recv(struct mei_cl *cl, u8 *buf, size_t length,
+-		      unsigned int mode)
++		      unsigned int mode, unsigned long timeout)
+ {
+ 	struct mei_device *bus;
+ 	struct mei_cl_cb *cb;
+@@ -158,13 +159,28 @@ ssize_t __mei_cl_recv(struct mei_cl *cl, u8 *buf, size_t length,
+ 
+ 		mutex_unlock(&bus->device_lock);
+ 
+-		if (wait_event_interruptible(cl->rx_wait,
+-				(!list_empty(&cl->rd_completed)) ||
+-				(!mei_cl_is_connected(cl)))) {
+-
+-			if (signal_pending(current))
+-				return -EINTR;
+-			return -ERESTARTSYS;
++		if (timeout) {
++			rets = wait_event_interruptible_timeout
++					(cl->rx_wait,
++					(!list_empty(&cl->rd_completed)) ||
++					(!mei_cl_is_connected(cl)),
++					msecs_to_jiffies(timeout));
++			if (rets == 0)
++				return -ETIME;
++			if (rets < 0) {
++				if (signal_pending(current))
++					return -EINTR;
++				return -ERESTARTSYS;
++			}
++		} else {
++			if (wait_event_interruptible
++					(cl->rx_wait,
++					(!list_empty(&cl->rd_completed)) ||
++					(!mei_cl_is_connected(cl)))) {
++				if (signal_pending(current))
++					return -EINTR;
++				return -ERESTARTSYS;
++			}
+ 		}
+ 
+ 		mutex_lock(&bus->device_lock);
+@@ -231,7 +247,7 @@ ssize_t mei_cldev_recv_nonblock(struct mei_cl_device *cldev, u8 *buf,
+ {
+ 	struct mei_cl *cl = cldev->cl;
+ 
+-	return __mei_cl_recv(cl, buf, length, MEI_CL_IO_RX_NONBLOCK);
++	return __mei_cl_recv(cl, buf, length, MEI_CL_IO_RX_NONBLOCK, 0);
+ }
+ EXPORT_SYMBOL_GPL(mei_cldev_recv_nonblock);
+ 
+@@ -248,7 +264,7 @@ ssize_t mei_cldev_recv(struct mei_cl_device *cldev, u8 *buf, size_t length)
+ {
+ 	struct mei_cl *cl = cldev->cl;
+ 
+-	return __mei_cl_recv(cl, buf, length, 0);
++	return __mei_cl_recv(cl, buf, length, 0, 0);
+ }
+ EXPORT_SYMBOL_GPL(mei_cldev_recv);
+ 
+diff --git a/drivers/misc/mei/mei_dev.h b/drivers/misc/mei/mei_dev.h
+index be9c48415da9..4058ab5ad2d8 100644
+--- a/drivers/misc/mei/mei_dev.h
++++ b/drivers/misc/mei/mei_dev.h
+@@ -317,7 +317,7 @@ void mei_cl_bus_dev_fixup(struct mei_cl_device *dev);
+ ssize_t __mei_cl_send(struct mei_cl *cl, u8 *buf, size_t length,
+ 		      unsigned int mode);
+ ssize_t __mei_cl_recv(struct mei_cl *cl, u8 *buf, size_t length,
+-		      unsigned int mode);
++		      unsigned int mode, unsigned long timeout);
+ bool mei_cl_bus_rx_event(struct mei_cl *cl);
+ bool mei_cl_bus_notify_event(struct mei_cl *cl);
+ void mei_cl_bus_remove_devices(struct mei_device *bus);
+-- 
+2.14.4
+
