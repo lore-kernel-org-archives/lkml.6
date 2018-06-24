@@ -2,123 +2,119 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F05D9C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48A4C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B41FF21711
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:29:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41FF21711
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
+	by mail.kernel.org (Postfix) with ESMTP id 5F1B124F11
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 13:30:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PK1yN1Xw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F1B124F11
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeFXN3s (ORCPT
+        id S1752021AbeFXNaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 09:29:48 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:47665 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751812AbeFXN3q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 09:29:46 -0400
-Received: from localhost ([2.166.249.57]) by mrelayeu.kundenserver.de
- (mreue104 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 0MJkO4-1fVybz2FvA-0018N5; Sun, 24 Jun 2018 15:29:03 +0200
-Date:   Sun, 24 Jun 2018 15:28:59 +0200
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        davem@davemloft.net, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, linus.walleij@linaro.org,
-        rdunlap@infradead.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: hx711: add data-ready-delay-ns property in DT
-Message-ID: <20180624132858.GA2296@imap.1und1.de>
-References: <20180623185420.GA17842@arbeit>
- <20180624141048.7628eaac@archlinux>
+        Sun, 24 Jun 2018 09:30:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751812AbeFXNaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 09:30:15 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E6B121757;
+        Sun, 24 Jun 2018 13:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529847014;
+        bh=bfxRwGucqRMkZtimip+w9UZe95MVG0/AJGR8zbC00LQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PK1yN1XwFJh2283UZocjR15/xO1EMDs8SvPeVkGG7audMZGWmGrT/pdUoroK5R0i6
+         pwQnE3zHisEj+FIiTTIJOr8m141AZItzc7vy743k2W/xXrat/7fINxs3k1jG58KNYW
+         P5c0kkew4ZwATIlxlvRG7MK55Gr5EXkrKuosPI7A=
+Date:   Sun, 24 Jun 2018 14:30:09 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        freeman.liu@spreadtrum.com, Mark Brown <broonie@kernel.org>,
+        DTML <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] iio: adc: Add Spreadtrum SC27XX PMICs ADC
+ support
+Message-ID: <20180624143009.48cf14f8@archlinux>
+In-Reply-To: <CAMz4kuJUeDjTVJqNc4cNv=LwR1HkuFap4vBF7CCcrxNqnTHa-A@mail.gmail.com>
+References: <900586c7a4ce55818ab330c738f306c7452191ef.1529550463.git.baolin.wang@linaro.org>
+        <95836d610301133ffdac1efa86d7daf4cecb97b7.1529550463.git.baolin.wang@linaro.org>
+        <20180622151338.00003622@huawei.com>
+        <CAMz4kuJUeDjTVJqNc4cNv=LwR1HkuFap4vBF7CCcrxNqnTHa-A@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180624141048.7628eaac@archlinux>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Provags-ID: V03:K1:y2K/o9gEk8XAxeAexWpFDbvvrhDTa/m5BQZ2WcEiz1LV/ya93K1
- 4WTlIbUOKjNstvejnrT8SRt09wnQ1h22cKlb6kONS9yFVswcz2P5PS/FSF8UaltgzW+g79B
- vNcK9xezVG2U+Mm2aAgXYCagRMuW1iZWYK+8A2c0iCFYGtdgr2bYkM5cGZg7sFlDhn/5vYJ
- EIkVxLTcdyL9zRoO/N68g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:G7pSkKFD+7Y=:qFnj9/wyEAKXkgd2MvItNT
- auoGcI3dYo9r4srl3fEQwhBCicKYesfqtICFPuoBz4myCN/nQ/Uv/ZPaHFOqtJfhQlAGkRmQD
- xRm7MOKkXAU8/x31EhbqnmYA4uZBJw+0sqxb4IC8y/aLfCGvqVFEtylIF4YMm6zxZU1GBr963
- BbeWgxDe12PmjC8QTXHHDahuQdaumGDqzsraUNuI4jfb86P2P1NhhSMHz/+R4aGcM39veAH2Z
- bZCuHCPNC/4uM4QmIEPuSMpesY3RKJPQNrtOZg4DQbME3vwIvs/e+H/KgFSRFGAZUU+oC5j2P
- OmZ1ul9ML2SlibxPgMRkdAv7mgb3A0GE8J7MckEmo8Otjz/i0qmdT+MPuxVNUU6BtMGUoDZi4
- FZRmxJu20/54g9i4vGo1i/iprU2HawxiZllj/rWwP/LltIK5JiBZSUCOzQy/2UuDyy5pAltAj
- /mDnTsVbnkL8fWXIn/ZEKyT5OoGkUkXWQjioxn4XBiVF6qFeknpJXDkiVD/DB8rAvBrICi8xs
- V7kEfGFnrXABsrFl2aPjO04lMVgyGyi+uvan5gZcb4bEVJo0r+ki9ZU9qMUL7rERBnmCWXkJg
- p3vnN6A905Eg1sZZ7qmKJHtAtkNq/p2ZDxWVbm2CfWVbhKzdUZoyLljNV7Au1aHbxwIuamfwX
- CtKgByLgItlyuimp5A6J5Ev3Yw5EBqYQvRtppUAi44wV+t5NDZ5z8Th43XZYIok+MDQ0=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
+On Sun, 24 Jun 2018 17:13:00 +0800
+Baolin Wang <baolin.wang@linaro.org> wrote:
 
-Jonathan Cameron <jic23@kernel.org> schrieb am Sun, 24. Jun 14:10:
-> On Sat, 23 Jun 2018 20:54:21 +0200
-> Andreas Klinger <ak@it-klinger.de> wrote:
+> Hi Jonathan,
 > 
-> > add data-ready-delay-ns property for hx711 ADC
-> > this is the delay after rising PD_SCK until DOUT is read and assumed to be
-> > ready
-> > 
-> > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-> 
-> One unconnected change.  I'm not sure it's wrong as such but it should not
-> be in this patch.
-> 
-> > ---
-> >  Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> > index b3629405f568..8c9bcaa4d750 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> > +++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> > @@ -8,11 +8,18 @@ Required properties:
-> >  		See Documentation/devicetree/bindings/gpio/gpio.txt
-> >   - avdd-supply:	Definition of the regulator used as analog supply
+> On 22 June 2018 at 22:13, Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
+> > On Thu, 21 Jun 2018 11:14:05 +0800
+> > Baolin Wang <baolin.wang@linaro.org> wrote:
 > >  
-> > +Optional properties:
-> > + - data-ready-delay-ns:	additional delay in nanoseconds between rising of
-> > +			PD_SCK until DOUT is ready
-> > +			should be less then maximum PD_SCK high time which
-> > +			is 50000 in the datasheet
-> > +
-> >  Example:
-> > -weight@0 {
-> > +weight {
+> >> From: Freeman Liu <freeman.liu@spreadtrum.com>
+> >>
+> >> The Spreadtrum SC27XX PMICs ADC controller contains 32 channels,
+> >> which is used to sample voltages with 12 bits conversion.
+> >>
+> >> [Baolin Wang did lots of improvements]
+> >>
+> >> Signed-off-by: Freeman Liu <freeman.liu@spreadtrum.com>
+> >> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>  
+> >
+> > One trivial missed bit of cleanup inline.  I'll sort that
+> > when applying if no one else points anything out before I get back to my
+> > development machine.  
+> 
+> Thanks.
 
-The device tree compiler (dtc) gives a warning if there is no reg = <...>
-setting. That's why i changed it to be without @0.
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.
 
-Should i create an individual patch for this change in this series or
-create another patch which is unrelated to this series?
+Thanks,
 
-Andreas
+Jonathan
 
 > 
-> Change has nothing to do with this patch...
+> >> +
+> >> +     indio_dev->dev.parent = &pdev->dev;
+> >> +     indio_dev->name = dev_name(&pdev->dev);
+> >> +     indio_dev->modes = INDIO_DIRECT_MODE;
+> >> +     indio_dev->info = &sc27xx_info;
+> >> +     indio_dev->channels = sc27xx_channels;
+> >> +     indio_dev->num_channels = ARRAY_SIZE(sc27xx_channels);
+> >> +     ret = devm_iio_device_register(&pdev->dev, indio_dev);
+> >> +     if (ret) {
+> >> +             dev_err(&pdev->dev, "could not register iio (ADC)");
+> >> +             return ret;
+> >> +     }
+> >> +
+> >> +     platform_set_drvdata(pdev, indio_dev);  
+> >
+> > Why?  Looks like this is left over from when we had a remove.  
 > 
-> >  	compatible = "avia,hx711";
-> >  	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
-> >  	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
-> >  	avdd-suppy = <&avdd>;
-> > +	data-ready-delay-ns = <1000>;
-> >  };
-> >  
+> Sorry, I missed to remove this redundant code.
 > 
 
--- 
