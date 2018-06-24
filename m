@@ -2,81 +2,88 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAD8C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9370BC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAE422514B
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:57:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNfu8Fdc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAE422514B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CF942516E
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:59:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CF942516E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934041AbeFXPt3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:49:29 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:40639 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933776AbeFXPt1 (ORCPT
+        id S1755087AbeFXP71 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:59:27 -0400
+Received: from smtprelay0113.hostedemail.com ([216.40.44.113]:60894 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754881AbeFXP7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:49:27 -0400
-Received: by mail-wm0-f52.google.com with SMTP id z13-v6so1174573wma.5
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 08:49:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EgUExKtWL+4VbBNTArlGIkTBm4c1vQoGzCgog1xJi2E=;
-        b=TNfu8Fdc+rDVlDD8D3jfLmuo2p6lzPzMIYheoxDsC3YbIY7fJpGMssn6Xh4fkX8dOE
-         PL8KMfDjVtC5hf+xB/yieG2d+IEmcZERZOMkThrLI9Uw+uKL/KaXM8KRMwRYNuq/2/a0
-         vaKjhg/M856Gg6e4vQjE1jekbz8DgFBSIPQBvCtJlvE5XhnmqfZme5tRhaqfKDEWvSSb
-         7rhqUt2HmfoxsInmDmqPviT4xXtfVs4SD8qkoGAc7+yOgKwvW6naJSQFUT95Vm4fTV/n
-         EKixdtXfmpI34mTYFJRNKXQO9xG+jV4EkIU/aire7UabKRkxiNgKzA04khYGe/o2Rt1r
-         h3Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EgUExKtWL+4VbBNTArlGIkTBm4c1vQoGzCgog1xJi2E=;
-        b=sx7c9jhz9efAmrfmB+yCgCfN1SjqGlRAwfCBHv5bk22Sspz/djaVRA9UwnOCf/4SeL
-         nzOsknjPL4E8aO+PZjIt0Z5voxwiv724xxnD3sz8Q/Pd7MuV+BH9sNfQD+5QKGA5TTch
-         5D3Oo+zdVt6zCBgNGC0IPA4XofpnL8uG+hDa970dcvUHVP3YLF00wicdGqV2O4qO15KS
-         5xYbwp0aT++HnM+oPMKdV9bftBUjh5L3QHTklg5g57lP42udATLwlVRESv8KSo79jgEd
-         cr3L9R185o164CEES8OslSLJcHQV0a3/OAs9ius90T6q97+VzYKs8oMA2fpKp/6wNf7+
-         T6bw==
-X-Gm-Message-State: APt69E2WGZPNAqpCbbImfTpuSYFYccOEKtjaN4yMFO8mcgq4exm4Tbbg
-        nRWP4hORXtffajiYYc8QyFw=
-X-Google-Smtp-Source: ADUXVKI4sBgT3aLfUoEEFB4W5xyoZ6wt7yFqhhjLVkKjxQnNzeeohfLdHnB1KaAeVLiYmtyzAyA7xA==
-X-Received: by 2002:a1c:944f:: with SMTP id w76-v6mr276028wmd.105.1529855366736;
-        Sun, 24 Jun 2018 08:49:26 -0700 (PDT)
-Received: from xux707-tw (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
-        by smtp.gmail.com with ESMTPSA id j10-v6sm24905427wrr.47.2018.06.24.08.49.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 24 Jun 2018 08:49:25 -0700 (PDT)
-Date:   Sun, 24 Jun 2018 16:49:26 +0100
-From:   John Whitmore <arigead@gmail.com>
-To:     John Whitmore <johnfwhitmore@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH v3 3/8] staging: rtl8192u: User memset to initialize
- memory, instead of loop.
-Message-ID: <20180624154924.65gtd6aqfbzl5t63@xux707-tw>
-References: <20180624154027.27654-1-johnfwhitmore@gmail.com>
- <20180624154027.27654-4-johnfwhitmore@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180624154027.27654-4-johnfwhitmore@gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        Sun, 24 Jun 2018 11:59:25 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id B436F181D341D;
+        Sun, 24 Jun 2018 15:59:24 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: ball06_8c383ae65800a
+X-Filterd-Recvd-Size: 1939
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 24 Jun 2018 15:59:23 +0000 (UTC)
+Message-ID: <ed1a3747023af619d547e1ef7d593fd25b3abcb7.camel@perches.com>
+Subject: Re: [PATCH v3 7/8] staging: rtl8192u: Correct if statement - Coding
+ Style
+From:   Joe Perches <joe@perches.com>
+To:     John Whitmore <johnfwhitmore@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org
+Date:   Sun, 24 Jun 2018 08:59:22 -0700
+In-Reply-To: <20180624153454.27356-8-johnfwhitmore@gmail.com>
+References: <20180624153454.27356-1-johnfwhitmore@gmail.com>
+         <20180624153454.27356-8-johnfwhitmore@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry having difficulty getting the full v3 patch set sent using git
-send-email. Only one seems to be going out. Sorry about the noise.
+On Sun, 2018-06-24 at 16:34 +0100, John Whitmore wrote:
+> Corrected the coding style of if statement.
+[]
+> diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+[]
+> @@ -732,7 +732,7 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+>  	   section of code.
+>  	if(IS_UNDER_11N_AES_MODE(Adapter))
+>  	{
+> -		posRT2RTAgg->Octet[5] |=RT_HT_CAP_USE_AMPDU;
+> +		posRT2RTAgg->Octet[5] |= RT_HT_CAP_USE_AMPDU;
+>  	}else
+>  	{
+>  		posRT2RTAgg->Octet[5] &= 0xfb;
+
+Rather than doing individual patches for each line
+with a whitespace issue, I think it'd be better to
+do a single driver wide patch.
+
+Perhaps use a tool like:
+
+$ git ls-files drivers/staging/rtl8192u |
+  xargs ./scripts/checkpatch.pl -f --fix-inplace --types=spacing
+
+where:
+
+$ git diff -w drivers/staging/rtl8192u/
+
+should not show a single difference.
+
+Then compile and commit that as a single patch with
+something like "use a more typical spacing style"
+as the commit message.
+
