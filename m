@@ -6,32 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A68C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB099C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8A6C250AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A6C250AE
+	by mail.kernel.org (Postfix) with ESMTP id 7F6FD250B3
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:47:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6FD250B3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933726AbeFXPrE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:47:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33122 "EHLO
+        id S933755AbeFXPrL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:47:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPrB (ORCPT
+        with ESMTP id S932073AbeFXPrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:47:01 -0400
+        Sun, 24 Jun 2018 11:47:08 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4AED49F;
-        Sun, 24 Jun 2018 15:46:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45CBB49F;
+        Sun, 24 Jun 2018 15:47:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 4.17 63/70] iwlwifi: fw: harden page loading code
-Date:   Sun, 24 Jun 2018 23:22:55 +0800
-Message-Id: <20180624142744.420941452@linuxfoundation.org>
+        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Roman Pen <roman.penyaev@profitbricks.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.17 42/70] blk-mq: reinit q->tag_set_list entry only after grace period
+Date:   Sun, 24 Jun 2018 23:22:34 +0800
+Message-Id: <20180624142743.099167594@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -48,141 +53,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Roman Pen <roman.penyaev@profitbricks.com>
 
-commit 9039d985811d5b109b58b202b7594fd24e433fed upstream.
+commit a347c7ad8edf4c5685154f3fdc3c12fc1db800ba upstream.
 
-The page loading code trusts the data provided in the firmware images
-a bit too much and may cause a buffer overflow or copy unknown data if
-the block sizes don't match what we expect.
+It is not allowed to reinit q->tag_set_list list entry while RCU grace
+period has not completed yet, otherwise the following soft lockup in
+blk_mq_sched_restart() happens:
 
-To prevent potential problems, harden the code by checking if the
-sizes we are copying are what we expect.
+[ 1064.252652] watchdog: BUG: soft lockup - CPU#12 stuck for 23s! [fio:9270]
+[ 1064.254445] task: ffff99b912e8b900 task.stack: ffffa6d54c758000
+[ 1064.254613] RIP: 0010:blk_mq_sched_restart+0x96/0x150
+[ 1064.256510] Call Trace:
+[ 1064.256664]  <IRQ>
+[ 1064.256824]  blk_mq_free_request+0xea/0x100
+[ 1064.256987]  msg_io_conf+0x59/0xd0 [ibnbd_client]
+[ 1064.257175]  complete_rdma_req+0xf2/0x230 [ibtrs_client]
+[ 1064.257340]  ? ibtrs_post_recv_empty+0x4d/0x70 [ibtrs_core]
+[ 1064.257502]  ibtrs_clt_rdma_done+0xd1/0x1e0 [ibtrs_client]
+[ 1064.257669]  ib_create_qp+0x321/0x380 [ib_core]
+[ 1064.257841]  ib_process_cq_direct+0xbd/0x120 [ib_core]
+[ 1064.258007]  irq_poll_softirq+0xb7/0xe0
+[ 1064.258165]  __do_softirq+0x106/0x2a2
+[ 1064.258328]  irq_exit+0x92/0xa0
+[ 1064.258509]  do_IRQ+0x4a/0xd0
+[ 1064.258660]  common_interrupt+0x7a/0x7a
+[ 1064.258818]  </IRQ>
 
+Meanwhile another context frees other queue but with the same set of
+shared tags:
+
+[ 1288.201183] INFO: task bash:5910 blocked for more than 180 seconds.
+[ 1288.201833] bash            D    0  5910   5820 0x00000000
+[ 1288.202016] Call Trace:
+[ 1288.202315]  schedule+0x32/0x80
+[ 1288.202462]  schedule_timeout+0x1e5/0x380
+[ 1288.203838]  wait_for_completion+0xb0/0x120
+[ 1288.204137]  __wait_rcu_gp+0x125/0x160
+[ 1288.204287]  synchronize_sched+0x6e/0x80
+[ 1288.204770]  blk_mq_free_queue+0x74/0xe0
+[ 1288.204922]  blk_cleanup_queue+0xc7/0x110
+[ 1288.205073]  ibnbd_clt_unmap_device+0x1bc/0x280 [ibnbd_client]
+[ 1288.205389]  ibnbd_clt_unmap_dev_store+0x169/0x1f0 [ibnbd_client]
+[ 1288.205548]  kernfs_fop_write+0x109/0x180
+[ 1288.206328]  vfs_write+0xb3/0x1a0
+[ 1288.206476]  SyS_write+0x52/0xc0
+[ 1288.206624]  do_syscall_64+0x68/0x1d0
+[ 1288.206774]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+What happened is the following:
+
+1. There are several MQ queues with shared tags.
+2. One queue is about to be freed and now task is in
+   blk_mq_del_queue_tag_set().
+3. Other CPU is in blk_mq_sched_restart() and loops over all queues in
+   tag list in order to find hctx to restart.
+
+Because linked list entry was modified in blk_mq_del_queue_tag_set()
+without proper waiting for a grace period, blk_mq_sched_restart()
+never ends, spining in list_for_each_entry_rcu_rr(), thus soft lockup.
+
+Fix is simple: reinit list entry after an RCU grace period elapsed.
+
+Fixes: Fixes: 705cda97ee3a ("blk-mq: Make it safe to use RCU to iterate over blk_mq_tag_set.tag_list")
 Cc: stable@vger.kernel.org
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-block@vger.kernel.org
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/fw/paging.c |   49 ++++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 8 deletions(-)
+ block/blk-mq.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/fw/paging.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/paging.c
-@@ -8,6 +8,7 @@
-  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018        Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of version 2 of the GNU General Public License as
-@@ -30,6 +31,7 @@
-  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018        Intel Corporation
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -163,7 +165,7 @@ static int iwl_alloc_fw_paging_mem(struc
- static int iwl_fill_paging_mem(struct iwl_fw_runtime *fwrt,
- 			       const struct fw_img *image)
- {
--	int sec_idx, idx;
-+	int sec_idx, idx, ret;
- 	u32 offset = 0;
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2473,7 +2473,6 @@ static void blk_mq_del_queue_tag_set(str
  
- 	/*
-@@ -190,17 +192,23 @@ static int iwl_fill_paging_mem(struct iw
- 	 */
- 	if (sec_idx >= image->num_sec - 1) {
- 		IWL_ERR(fwrt, "Paging: Missing CSS and/or paging sections\n");
--		iwl_free_fw_paging(fwrt);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err;
+ 	mutex_lock(&set->tag_list_lock);
+ 	list_del_rcu(&q->tag_set_list);
+-	INIT_LIST_HEAD(&q->tag_set_list);
+ 	if (list_is_singular(&set->tag_list)) {
+ 		/* just transitioned to unshared */
+ 		set->flags &= ~BLK_MQ_F_TAG_SHARED;
+@@ -2481,8 +2480,8 @@ static void blk_mq_del_queue_tag_set(str
+ 		blk_mq_update_tag_set_depth(set, false);
  	}
- 
- 	/* copy the CSS block to the dram */
- 	IWL_DEBUG_FW(fwrt, "Paging: load paging CSS to FW, sec = %d\n",
- 		     sec_idx);
- 
-+	if (image->sec[sec_idx].len > fwrt->fw_paging_db[0].fw_paging_size) {
-+		IWL_ERR(fwrt, "CSS block is larger than paging size\n");
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
- 	memcpy(page_address(fwrt->fw_paging_db[0].fw_paging_block),
- 	       image->sec[sec_idx].data,
--	       fwrt->fw_paging_db[0].fw_paging_size);
-+	       image->sec[sec_idx].len);
- 	dma_sync_single_for_device(fwrt->trans->dev,
- 				   fwrt->fw_paging_db[0].fw_paging_phys,
- 				   fwrt->fw_paging_db[0].fw_paging_size,
-@@ -221,6 +229,14 @@ static int iwl_fill_paging_mem(struct iw
- 	for (idx = 1; idx < fwrt->num_of_paging_blk; idx++) {
- 		struct iwl_fw_paging *block = &fwrt->fw_paging_db[idx];
- 
-+		if (block->fw_paging_size > image->sec[sec_idx].len - offset) {
-+			IWL_ERR(fwrt,
-+				"Paging: paging size is larger than remaining data in block %d\n",
-+				idx);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
- 		memcpy(page_address(block->fw_paging_block),
- 		       image->sec[sec_idx].data + offset,
- 		       block->fw_paging_size);
-@@ -231,19 +247,32 @@ static int iwl_fill_paging_mem(struct iw
- 
- 		IWL_DEBUG_FW(fwrt,
- 			     "Paging: copied %d paging bytes to block %d\n",
--			     fwrt->fw_paging_db[idx].fw_paging_size,
--			     idx);
-+			     block->fw_paging_size, idx);
-+
-+		offset += block->fw_paging_size;
- 
--		offset += fwrt->fw_paging_db[idx].fw_paging_size;
-+		if (offset > image->sec[sec_idx].len) {
-+			IWL_ERR(fwrt,
-+				"Paging: offset goes over section size\n");
-+			ret = -EINVAL;
-+			goto err;
-+		}
- 	}
- 
- 	/* copy the last paging block */
- 	if (fwrt->num_of_pages_in_last_blk > 0) {
- 		struct iwl_fw_paging *block = &fwrt->fw_paging_db[idx];
- 
-+		if (image->sec[sec_idx].len - offset > block->fw_paging_size) {
-+			IWL_ERR(fwrt,
-+				"Paging: last block is larger than paging size\n");
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
- 		memcpy(page_address(block->fw_paging_block),
- 		       image->sec[sec_idx].data + offset,
--		       FW_PAGING_SIZE * fwrt->num_of_pages_in_last_blk);
-+		       image->sec[sec_idx].len - offset);
- 		dma_sync_single_for_device(fwrt->trans->dev,
- 					   block->fw_paging_phys,
- 					   block->fw_paging_size,
-@@ -255,6 +284,10 @@ static int iwl_fill_paging_mem(struct iw
- 	}
- 
- 	return 0;
-+
-+err:
-+	iwl_free_fw_paging(fwrt);
-+	return ret;
+ 	mutex_unlock(&set->tag_list_lock);
+-
+ 	synchronize_rcu();
++	INIT_LIST_HEAD(&q->tag_set_list);
  }
  
- static int iwl_save_fw_paging(struct iwl_fw_runtime *fwrt,
+ static void blk_mq_add_queue_tag_set(struct blk_mq_tag_set *set,
 
 
