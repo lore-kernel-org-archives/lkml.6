@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1775C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D98C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A97642510E
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:53:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97642510E
+	by mail.kernel.org (Postfix) with ESMTP id A577E25112
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:53:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A577E25112
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934446AbeFXPxZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:53:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33662 "EHLO
+        id S934464AbeFXPxd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:53:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33676 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933919AbeFXPxW (ORCPT
+        with ESMTP id S933919AbeFXPxb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:53:22 -0400
+        Sun, 24 Jun 2018 11:53:31 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4DC42C;
-        Sun, 24 Jun 2018 15:53:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E906A49F;
+        Sun, 24 Jun 2018 15:53:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaco Kroon <jaco@uls.co.za>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger@dilger.ca>
-Subject: [PATCH 4.9 22/39] ext4: fix fencepost error in check for inode count overflow during resize
-Date:   Sun, 24 Jun 2018 23:24:09 +0800
-Message-Id: <20180624152354.480673614@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
+Subject: [PATCH 4.9 23/39] driver core: Dont ignore class_dir_create_and_add() failure.
+Date:   Sun, 24 Jun 2018 23:24:10 +0800
+Message-Id: <20180624152354.595160626@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624152352.038950449@linuxfoundation.org>
 References: <20180624152352.038950449@linuxfoundation.org>
@@ -50,37 +50,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 4f2f76f751433908364ccff82f437a57d0e6e9b7 upstream.
+commit 84d0c27d6233a9ba0578b20f5a09701eb66cee42 upstream.
 
-ext4_resize_fs() has an off-by-one bug when checking whether growing of
-a filesystem will not overflow inode count. As a result it allows a
-filesystem with 8192 inodes per group to grow to 64TB which overflows
-inode count to 0 and makes filesystem unusable. Fix it.
+syzbot is hitting WARN() at kernfs_add_one() [1].
+This is because kernfs_create_link() is confused by previous device_add()
+call which continued without setting dev->kobj.parent field when
+get_device_parent() failed by memory allocation fault injection.
+Fix this by propagating the error from class_dir_create_and_add() to
+the calllers of get_device_parent().
 
-Cc: stable@vger.kernel.org
-Fixes: 3f8a6411fbada1fa482276591e037f3b1adcf55b
-Reported-by: Jaco Kroon <jaco@uls.co.za>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+[1] https://syzkaller.appspot.com/bug?id=fae0fb607989ea744526d1c082a5b8de6529116f
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/core.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -1903,7 +1903,7 @@ retry:
- 		return 0;
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -759,7 +759,7 @@ class_dir_create_and_add(struct class *c
  
- 	n_group = ext4_get_group_number(sb, n_blocks_count - 1);
--	if (n_group > (0xFFFFFFFFUL / EXT4_INODES_PER_GROUP(sb))) {
-+	if (n_group >= (0xFFFFFFFFUL / EXT4_INODES_PER_GROUP(sb))) {
- 		ext4_warning(sb, "resize would cause inodes_count overflow");
- 		return -EINVAL;
+ 	dir = kzalloc(sizeof(*dir), GFP_KERNEL);
+ 	if (!dir)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	dir->class = class;
+ 	kobject_init(&dir->kobj, &class_dir_ktype);
+@@ -769,7 +769,7 @@ class_dir_create_and_add(struct class *c
+ 	retval = kobject_add(&dir->kobj, parent_kobj, "%s", class->name);
+ 	if (retval < 0) {
+ 		kobject_put(&dir->kobj);
+-		return NULL;
++		return ERR_PTR(retval);
  	}
+ 	return &dir->kobj;
+ }
+@@ -1076,6 +1076,10 @@ int device_add(struct device *dev)
+ 
+ 	parent = get_device(dev->parent);
+ 	kobj = get_device_parent(dev, parent);
++	if (IS_ERR(kobj)) {
++		error = PTR_ERR(kobj);
++		goto parent_error;
++	}
+ 	if (kobj)
+ 		dev->kobj.parent = kobj;
+ 
+@@ -1174,6 +1178,7 @@ done:
+ 	kobject_del(&dev->kobj);
+  Error:
+ 	cleanup_glue_dir(dev, glue_dir);
++parent_error:
+ 	put_device(parent);
+ name_error:
+ 	kfree(dev->p);
+@@ -1991,6 +1996,11 @@ int device_move(struct device *dev, stru
+ 	device_pm_lock();
+ 	new_parent = get_device(new_parent);
+ 	new_parent_kobj = get_device_parent(dev, new_parent);
++	if (IS_ERR(new_parent_kobj)) {
++		error = PTR_ERR(new_parent_kobj);
++		put_device(new_parent);
++		goto out;
++	}
+ 
+ 	pr_debug("device: '%s': %s: moving to '%s'\n", dev_name(dev),
+ 		 __func__, new_parent ? dev_name(new_parent) : "<NULL>");
 
 
