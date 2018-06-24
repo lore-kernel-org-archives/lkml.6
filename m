@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D597C43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4F3C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB60D24E11
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:31:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB60D24E11
+	by mail.kernel.org (Postfix) with ESMTP id 8028724E14
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 07:31:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8028724E14
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751984AbeFXHbu (ORCPT
+        id S1752014AbeFXHbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 03:31:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43172 "EHLO mx1.redhat.com"
+        Sun, 24 Jun 2018 03:31:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53886 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750737AbeFXHbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 03:31:46 -0400
+        id S1750737AbeFXHbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 03:31:50 -0400
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D73843082A43;
-        Sun, 24 Jun 2018 07:31:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7AA513DE3D;
+        Sun, 24 Jun 2018 07:31:50 +0000 (UTC)
 Received: from llong.com (ovpn-116-26.phx2.redhat.com [10.3.116.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DF1DF17796;
-        Sun, 24 Jun 2018 07:31:41 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 37F3B17796;
+        Sun, 24 Jun 2018 07:31:46 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -41,117 +41,99 @@ Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Juri Lelli <juri.lelli@redhat.com>,
         Patrick Bellasi <patrick.bellasi@arm.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v11 5/9] cpuset: Make sure that partition flag work properly with CPU hotplug
-Date:   Sun, 24 Jun 2018 15:30:36 +0800
-Message-Id: <1529825440-9574-6-git-send-email-longman@redhat.com>
+Subject: [PATCH v11 6/9] cpuset: Make generate_sched_domains() recognize reserved_cpus
+Date:   Sun, 24 Jun 2018 15:30:37 +0800
+Message-Id: <1529825440-9574-7-git-send-email-longman@redhat.com>
 In-Reply-To: <1529825440-9574-1-git-send-email-longman@redhat.com>
 References: <1529825440-9574-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Sun, 24 Jun 2018 07:31:46 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sun, 24 Jun 2018 07:31:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there is a cpu hotplug event (CPU online or offline), the partitions
-may need to be reconfigured and regenerated. So code is added to
-the hotplug functions to make them work with new reserved_cpus mask to
-compute the right effective_cpus for each of the affected cpusets.
+The generate_sched_domains() function is modified to make it work
+correctly with the newly introduced reserved_cpus mask for schedule
+domains generation.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++++
- kernel/cgroup/cpuset.c                  | 26 ++++++++++++++++++++++++--
- 2 files changed, 34 insertions(+), 2 deletions(-)
+ kernel/cgroup/cpuset.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 5f3170f..f4efa40 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1626,6 +1626,16 @@ Cpuset Interface Files
- 	2) No CPU that has been distributed to child partition roots is
- 	   is deleted.
- 
-+	When all the CPUs allocated to a partition are offlined, the
-+	partition will be temporaily gone and all the tasks in it will
-+	be migrated to another one that belongs to the parent of the
-+	partition root.  This is a destructive operation and all the
-+	existing CPU affinity that is narrower than the cpuset itself
-+	will be lost.
-+
-+	When any of those offlined CPUs is onlined again, a new partition
-+	will be re-created and the tasks will be migrated back.
-+
- 
- Device controller
- -----------------
 diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 3a646a9..e118dd8 100644
+index e118dd8..e545848 100644
 --- a/kernel/cgroup/cpuset.c
 +++ b/kernel/cgroup/cpuset.c
-@@ -900,7 +900,8 @@ static void update_tasks_cpumask(struct cpuset *cs)
-  * @parent: the parent cpuset
-  *
-  * If the parent has reserved CPUs, include them in the list of allowable
-- * CPUs in computing the new effective_cpus mask.
-+ * CPUs in computing the new effective_cpus mask. The cpu_active_mask is
-+ * used to mask off cpus that are to be offlined.
-  */
- static void compute_effective_cpumask(struct cpumask *new_cpus,
- 				      struct cpuset *cs, struct cpuset *parent)
-@@ -909,6 +910,7 @@ static void compute_effective_cpumask(struct cpumask *new_cpus,
- 		cpumask_or(new_cpus, parent->effective_cpus,
- 			   parent->reserved_cpus);
- 		cpumask_and(new_cpus, new_cpus, cs->cpus_allowed);
-+		cpumask_and(new_cpus, new_cpus, cpu_active_mask);
- 	} else {
- 		cpumask_and(new_cpus, cs->cpus_allowed, parent->effective_cpus);
+@@ -672,13 +672,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
+ 	int ndoms = 0;		/* number of sched domains in result */
+ 	int nslot;		/* next empty doms[] struct cpumask slot */
+ 	struct cgroup_subsys_state *pos_css;
++	bool root_load_balance = is_sched_load_balance(&top_cpuset);
+ 
+ 	doms = NULL;
+ 	dattr = NULL;
+ 	csa = NULL;
+ 
+ 	/* Special case for the 99% of systems with one, full, sched domain */
+-	if (is_sched_load_balance(&top_cpuset)) {
++	if (root_load_balance && !top_cpuset.nr_reserved) {
+ 		ndoms = 1;
+ 		doms = alloc_sched_domains(ndoms);
+ 		if (!doms)
+@@ -701,6 +702,8 @@ static int generate_sched_domains(cpumask_var_t **domains,
+ 	csn = 0;
+ 
+ 	rcu_read_lock();
++	if (root_load_balance)
++		csa[csn++] = &top_cpuset;
+ 	cpuset_for_each_descendant_pre(cp, pos_css, &top_cpuset) {
+ 		if (cp == &top_cpuset)
+ 			continue;
+@@ -711,6 +714,9 @@ static int generate_sched_domains(cpumask_var_t **domains,
+ 		 * parent's cpus, so just skip them, and then we call
+ 		 * update_domain_attr_tree() to calc relax_domain_level of
+ 		 * the corresponding sched domain.
++		 *
++		 * If root is load-balancing, we can skip @cp if it
++		 * is a subset of the root's effective_cpus.
+ 		 */
+ 		if (!cpumask_empty(cp->cpus_allowed) &&
+ 		    !(is_sched_load_balance(cp) &&
+@@ -718,11 +724,16 @@ static int generate_sched_domains(cpumask_var_t **domains,
+ 					 housekeeping_cpumask(HK_FLAG_DOMAIN))))
+ 			continue;
+ 
++		if (root_load_balance &&
++		    cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
++			continue;
++
+ 		if (is_sched_load_balance(cp))
+ 			csa[csn++] = cp;
+ 
+-		/* skip @cp's subtree */
+-		pos_css = css_rightmost_descendant(pos_css);
++		/* skip @cp's subtree if not a partition root */
++		if (!is_partition_root(cp))
++			pos_css = css_rightmost_descendant(pos_css);
  	}
-@@ -2562,9 +2564,17 @@ static void cpuset_hotplug_update_tasks(struct cpuset *cs)
- 		goto retry;
- 	}
+ 	rcu_read_unlock();
  
--	cpumask_and(&new_cpus, cs->cpus_allowed, parent_cs(cs)->effective_cpus);
-+	compute_effective_cpumask(&new_cpus, cs, parent_cs(cs));
- 	nodes_and(new_mems, cs->mems_allowed, parent_cs(cs)->effective_mems);
+@@ -850,7 +861,12 @@ static void rebuild_sched_domains_locked(void)
+ 	 * passing doms with offlined cpu to partition_sched_domains().
+ 	 * Anyways, hotplug work item will rebuild sched domains.
+ 	 */
+-	if (!cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
++	if (!top_cpuset.nr_reserved &&
++	    !cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
++		goto out;
++
++	if (top_cpuset.nr_reserved &&
++	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
+ 		goto out;
  
-+	if (cs->nr_reserved) {
-+		/*
-+		 * Some of the CPUs may have been distributed to child
-+		 * partition roots. So we need skip those when computing the
-+		 * real effective cpus.
-+		 */
-+		cpumask_andnot(&new_cpus, &new_cpus, cs->reserved_cpus);
-+	}
- 	cpus_updated = !cpumask_equal(&new_cpus, cs->effective_cpus);
- 	mems_updated = !nodes_equal(new_mems, cs->effective_mems);
- 
-@@ -2614,6 +2624,11 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 	cpumask_copy(&new_cpus, cpu_active_mask);
- 	new_mems = node_states[N_MEMORY];
- 
-+	/*
-+	 * If reserved_cpus is populated, it is likely that the check below
-+	 * will produce a false positive on cpus_updated when the cpu list
-+	 * isn't changed. It is extra work, but it is better to be safe.
-+	 */
- 	cpus_updated = !cpumask_equal(top_cpuset.effective_cpus, &new_cpus);
- 	mems_updated = !nodes_equal(top_cpuset.effective_mems, new_mems);
- 
-@@ -2622,6 +2637,13 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 		spin_lock_irq(&callback_lock);
- 		if (!on_dfl)
- 			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
-+		/*
-+		 * Make sure that the reserved cpus aren't in the
-+		 * effective cpus.
-+		 */
-+		if (top_cpuset.nr_reserved)
-+			cpumask_andnot(&new_cpus, &new_cpus,
-+					top_cpuset.reserved_cpus);
- 		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
- 		spin_unlock_irq(&callback_lock);
- 		/* we don't mess with cpumasks of tasks in top_cpuset */
+ 	/* Generate domain masks and attrs */
 -- 
 1.8.3.1
 
