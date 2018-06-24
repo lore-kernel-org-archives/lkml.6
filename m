@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C159FC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8919C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC3D250AB
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC3D250AB
+	by mail.kernel.org (Postfix) with ESMTP id 6DE82250AC
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:46:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE82250AC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933706AbeFXPqn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:46:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32892 "EHLO
+        id S932960AbeFXPqu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:46:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33022 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932073AbeFXPql (ORCPT
+        with ESMTP id S932073AbeFXPqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:46:41 -0400
+        Sun, 24 Jun 2018 11:46:47 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBD5649F;
-        Sun, 24 Jun 2018 15:46:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90ACF86D;
+        Sun, 24 Jun 2018 15:46:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Vikas Shivappa <vikas.shivappa@linux.intel.com>
-Subject: [PATCH 4.17 60/70] x86/intel_rdt: Enable CMT and MBM on new Skylake stepping
-Date:   Sun, 24 Jun 2018 23:22:52 +0800
-Message-Id: <20180624142744.219231390@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.17 61/70] media: uvcvideo: Prevent setting unavailable flags
+Date:   Sun, 24 Jun 2018 23:22:53 +0800
+Message-Id: <20180624142744.272910329@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -51,37 +52,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Luck <tony.luck@intel.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-commit 1d9f3e20a56d33e55748552aeec597f58542f92d upstream.
+commit 0dc68cabdb626e33d02561529e6a4c681b72a784 upstream.
 
-New stepping of Skylake has fixes for cache occupancy and memory
-bandwidth monitoring.
+The addition of an extra operation to use the GET_INFO command
+overwrites all existing flags from the uvc_ctrls table. This includes
+setting all controls as supporting GET_MIN, GET_MAX, GET_RES, and
+GET_DEF regardless of whether they do or not.
 
-Update the code to enable these by default on newer steppings.
+Move the initialisation of these control capabilities directly to the
+uvc_ctrl_fill_xu_info() call where they were originally located in that
+use case, and ensure that the new functionality in uvc_ctrl_get_flags()
+will only set flags based on their reported capability from the GET_INFO
+call.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: stable@vger.kernel.org # v4.14
-Cc: Vikas Shivappa <vikas.shivappa@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180608160732.9842-1-tony.luck@intel.com
+Fixes: 859086ae3636 ("media: uvcvideo: Apply flags from device to actual properties")
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Tested-by: Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel_rdt.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/usb/uvc/uvc_ctrl.c |   17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -821,6 +821,8 @@ static __init void rdt_quirks(void)
- 	case INTEL_FAM6_SKYLAKE_X:
- 		if (boot_cpu_data.x86_stepping <= 4)
- 			set_rdt_options("!cmt,!mbmtotal,!mbmlocal,!l3cat");
-+		else
-+			set_rdt_options("!l3cat");
- 	}
- }
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -1607,14 +1607,12 @@ static int uvc_ctrl_get_flags(struct uvc
+ 	ret = uvc_query_ctrl(dev, UVC_GET_INFO, ctrl->entity->id, dev->intfnum,
+ 			     info->selector, data, 1);
+ 	if (!ret)
+-		info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
+-			    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF
+-			    | (data[0] & UVC_CONTROL_CAP_GET ?
+-			       UVC_CTRL_FLAG_GET_CUR : 0)
+-			    | (data[0] & UVC_CONTROL_CAP_SET ?
+-			       UVC_CTRL_FLAG_SET_CUR : 0)
+-			    | (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
+-			       UVC_CTRL_FLAG_AUTO_UPDATE : 0);
++		info->flags |= (data[0] & UVC_CONTROL_CAP_GET ?
++				UVC_CTRL_FLAG_GET_CUR : 0)
++			    |  (data[0] & UVC_CONTROL_CAP_SET ?
++				UVC_CTRL_FLAG_SET_CUR : 0)
++			    |  (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
++				UVC_CTRL_FLAG_AUTO_UPDATE : 0);
  
+ 	kfree(data);
+ 	return ret;
+@@ -1689,6 +1687,9 @@ static int uvc_ctrl_fill_xu_info(struct
+ 
+ 	info->size = le16_to_cpup((__le16 *)data);
+ 
++	info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
++		    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF;
++
+ 	ret = uvc_ctrl_get_flags(dev, ctrl, info);
+ 	if (ret < 0) {
+ 		uvc_trace(UVC_TRACE_CONTROL,
 
 
