@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC835C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AE3C43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C3F24FFE
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C3F24FFE
+	by mail.kernel.org (Postfix) with ESMTP id 9456625002
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:35:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9456625002
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755284AbeFXPfL (ORCPT
+        id S1755299AbeFXPfT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:35:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59398 "EHLO
+        Sun, 24 Jun 2018 11:35:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754958AbeFXPfI (ORCPT
+        with ESMTP id S1754259AbeFXPfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:35:08 -0400
+        Sun, 24 Jun 2018 11:35:15 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F199E49F;
-        Sun, 24 Jun 2018 15:35:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 657F749F;
+        Sun, 24 Jun 2018 15:35:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
+        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Roman Pen <roman.penyaev@profitbricks.com>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 37/64] nbd: use bd_set_size when updating disk size
-Date:   Sun, 24 Jun 2018 23:22:18 +0800
-Message-Id: <20180624142746.138975525@linuxfoundation.org>
+Subject: [PATCH 4.16 38/64] blk-mq: reinit q->tag_set_list entry only after grace period
+Date:   Sun, 24 Jun 2018 23:22:19 +0800
+Message-Id: <20180624142746.192170408@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142743.613370789@linuxfoundation.org>
 References: <20180624142743.613370789@linuxfoundation.org>
@@ -50,53 +54,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Roman Pen <roman.penyaev@profitbricks.com>
 
-commit 9e2b19675d1338d2a38e99194756f2db44a081df upstream.
+commit a347c7ad8edf4c5685154f3fdc3c12fc1db800ba upstream.
 
-When we stopped relying on the bdev everywhere I broke updating the
-block device size on the fly, which ceph relies on.  We can't just do
-set_capacity, we also have to do bd_set_size so things like parted will
-notice the device size change.
+It is not allowed to reinit q->tag_set_list list entry while RCU grace
+period has not completed yet, otherwise the following soft lockup in
+blk_mq_sched_restart() happens:
 
-Fixes: 29eaadc ("nbd: stop using the bdev everywhere")
-cc: stable@vger.kernel.org
-Signed-off-by: Josef Bacik <jbacik@fb.com>
+[ 1064.252652] watchdog: BUG: soft lockup - CPU#12 stuck for 23s! [fio:9270]
+[ 1064.254445] task: ffff99b912e8b900 task.stack: ffffa6d54c758000
+[ 1064.254613] RIP: 0010:blk_mq_sched_restart+0x96/0x150
+[ 1064.256510] Call Trace:
+[ 1064.256664]  <IRQ>
+[ 1064.256824]  blk_mq_free_request+0xea/0x100
+[ 1064.256987]  msg_io_conf+0x59/0xd0 [ibnbd_client]
+[ 1064.257175]  complete_rdma_req+0xf2/0x230 [ibtrs_client]
+[ 1064.257340]  ? ibtrs_post_recv_empty+0x4d/0x70 [ibtrs_core]
+[ 1064.257502]  ibtrs_clt_rdma_done+0xd1/0x1e0 [ibtrs_client]
+[ 1064.257669]  ib_create_qp+0x321/0x380 [ib_core]
+[ 1064.257841]  ib_process_cq_direct+0xbd/0x120 [ib_core]
+[ 1064.258007]  irq_poll_softirq+0xb7/0xe0
+[ 1064.258165]  __do_softirq+0x106/0x2a2
+[ 1064.258328]  irq_exit+0x92/0xa0
+[ 1064.258509]  do_IRQ+0x4a/0xd0
+[ 1064.258660]  common_interrupt+0x7a/0x7a
+[ 1064.258818]  </IRQ>
+
+Meanwhile another context frees other queue but with the same set of
+shared tags:
+
+[ 1288.201183] INFO: task bash:5910 blocked for more than 180 seconds.
+[ 1288.201833] bash            D    0  5910   5820 0x00000000
+[ 1288.202016] Call Trace:
+[ 1288.202315]  schedule+0x32/0x80
+[ 1288.202462]  schedule_timeout+0x1e5/0x380
+[ 1288.203838]  wait_for_completion+0xb0/0x120
+[ 1288.204137]  __wait_rcu_gp+0x125/0x160
+[ 1288.204287]  synchronize_sched+0x6e/0x80
+[ 1288.204770]  blk_mq_free_queue+0x74/0xe0
+[ 1288.204922]  blk_cleanup_queue+0xc7/0x110
+[ 1288.205073]  ibnbd_clt_unmap_device+0x1bc/0x280 [ibnbd_client]
+[ 1288.205389]  ibnbd_clt_unmap_dev_store+0x169/0x1f0 [ibnbd_client]
+[ 1288.205548]  kernfs_fop_write+0x109/0x180
+[ 1288.206328]  vfs_write+0xb3/0x1a0
+[ 1288.206476]  SyS_write+0x52/0xc0
+[ 1288.206624]  do_syscall_64+0x68/0x1d0
+[ 1288.206774]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+What happened is the following:
+
+1. There are several MQ queues with shared tags.
+2. One queue is about to be freed and now task is in
+   blk_mq_del_queue_tag_set().
+3. Other CPU is in blk_mq_sched_restart() and loops over all queues in
+   tag list in order to find hctx to restart.
+
+Because linked list entry was modified in blk_mq_del_queue_tag_set()
+without proper waiting for a grace period, blk_mq_sched_restart()
+never ends, spining in list_for_each_entry_rcu_rr(), thus soft lockup.
+
+Fix is simple: reinit list entry after an RCU grace period elapsed.
+
+Fixes: Fixes: 705cda97ee3a ("blk-mq: Make it safe to use RCU to iterate over blk_mq_tag_set.tag_list")
+Cc: stable@vger.kernel.org
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-block@vger.kernel.org
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/nbd.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ block/blk-mq.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -234,9 +234,18 @@ static void nbd_size_clear(struct nbd_de
- static void nbd_size_update(struct nbd_device *nbd)
- {
- 	struct nbd_config *config = nbd->config;
-+	struct block_device *bdev = bdget_disk(nbd->disk, 0);
-+
- 	blk_queue_logical_block_size(nbd->disk->queue, config->blksize);
- 	blk_queue_physical_block_size(nbd->disk->queue, config->blksize);
- 	set_capacity(nbd->disk, config->bytesize >> 9);
-+	if (bdev) {
-+		if (bdev->bd_disk)
-+			bd_set_size(bdev, config->bytesize);
-+		else
-+			bdev->bd_invalidated = 1;
-+		bdput(bdev);
-+	}
- 	kobject_uevent(&nbd_to_dev(nbd)->kobj, KOBJ_CHANGE);
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2513,7 +2513,6 @@ static void blk_mq_del_queue_tag_set(str
+ 
+ 	mutex_lock(&set->tag_list_lock);
+ 	list_del_rcu(&q->tag_set_list);
+-	INIT_LIST_HEAD(&q->tag_set_list);
+ 	if (list_is_singular(&set->tag_list)) {
+ 		/* just transitioned to unshared */
+ 		set->flags &= ~BLK_MQ_F_TAG_SHARED;
+@@ -2521,8 +2520,8 @@ static void blk_mq_del_queue_tag_set(str
+ 		blk_mq_update_tag_set_depth(set, false);
+ 	}
+ 	mutex_unlock(&set->tag_list_lock);
+-
+ 	synchronize_rcu();
++	INIT_LIST_HEAD(&q->tag_set_list);
  }
  
-@@ -1114,7 +1123,6 @@ static int nbd_start_device_ioctl(struct
- 	if (ret)
- 		return ret;
- 
--	bd_set_size(bdev, config->bytesize);
- 	if (max_part)
- 		bdev->bd_invalidated = 1;
- 	mutex_unlock(&nbd->config_lock);
+ static void blk_mq_add_queue_tag_set(struct blk_mq_tag_set *set,
 
 
