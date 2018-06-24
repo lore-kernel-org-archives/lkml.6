@@ -6,34 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB26FC43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4DEC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1B0E24F80
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B0E24F80
+	by mail.kernel.org (Postfix) with ESMTP id 3F8F624F80
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F8F624F80
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751859AbeFXP0q (ORCPT
+        id S1752731AbeFXP0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:26:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58732 "EHLO
+        Sun, 24 Jun 2018 11:26:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58746 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbeFXP0o (ORCPT
+        with ESMTP id S1751849AbeFXP0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:26:44 -0400
+        Sun, 24 Jun 2018 11:26:51 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE43192F;
-        Sun, 24 Jun 2018 15:26:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA94092F;
+        Sun, 24 Jun 2018 15:26:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 24/52] ALSA: hda/realtek - Enable mic-mute hotkey for several Lenovo AIOs
-Date:   Sun, 24 Jun 2018 23:21:17 +0800
-Message-Id: <20180624142745.941353851@linuxfoundation.org>
+        stable@vger.kernel.org,
+        shankarapailoor <shankarapailoor@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 07/52] socket: close race condition between sock_close() and sockfs_setattr()
+Date:   Sun, 24 Jun 2018 23:21:00 +0800
+Message-Id: <20180624142744.749974395@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142744.234164867@linuxfoundation.org>
 References: <20180624142744.234164867@linuxfoundation.org>
@@ -50,46 +55,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 986376b68dcc95bb7df60ad30c2353c1f7578fa5 upstream.
+[ Upstream commit 6d8c50dcb029872b298eea68cc6209c866fd3e14 ]
 
-We have several Lenovo AIOs like M810z, M820z and M920z, they have
-the same design for mic-mute hotkey and led and they use the same
-codec with the same pin configuration, so use the pin conf table to
-apply fix to all of them.
+fchownat() doesn't even hold refcnt of fd until it figures out
+fd is really needed (otherwise is ignored) and releases it after
+it resolves the path. This means sock_close() could race with
+sockfs_setattr(), which leads to a NULL pointer dereference
+since typically we set sock->sk to NULL in ->release().
 
-Fixes: 29693efcea0f ("ALSA: hda - Fix micmute hotkey problem for a lenovo AIO machine")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+As pointed out by Al, this is unique to sockfs. So we can fix this
+in socket layer by acquiring inode_lock in sock_close() and
+checking against NULL in sockfs_setattr().
+
+sock_release() is called in many places, only the sock_close()
+path matters here. And fortunately, this should not affect normal
+sock_close() as it is only called when the last fd refcnt is gone.
+It only affects sock_close() with a parallel sockfs_setattr() in
+progress, which is not common.
+
+Fixes: 86741ec25462 ("net: core: Add a UID field to struct sock.")
+Reported-by: shankarapailoor <shankarapailoor@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Lorenzo Colitti <lorenzo@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/hda/patch_realtek.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/socket.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6439,7 +6439,6 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
- 	SND_PCI_QUIRK(0x17aa, 0x3138, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
- 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
--	SND_PCI_QUIRK(0x17aa, 0x3112, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
- 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
- 	SND_PCI_QUIRK(0x17aa, 0x3978, "IdeaPad Y410P", ALC269_FIXUP_NO_SHUTUP),
-@@ -6610,6 +6609,11 @@ static const struct snd_hda_pin_quirk al
- 		{0x12, 0x90a60140},
- 		{0x14, 0x90170110},
- 		{0x21, 0x02211020}),
-+	SND_HDA_PIN_QUIRK(0x10ec0235, 0x17aa, "Lenovo", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
-+		{0x12, 0x90a60140},
-+		{0x14, 0x90170110},
-+		{0x19, 0x02a11030},
-+		{0x21, 0x02211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0236, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		{0x12, 0x90a60140},
- 		{0x14, 0x90170150},
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -538,7 +538,10 @@ static int sockfs_setattr(struct dentry
+ 	if (!err && (iattr->ia_valid & ATTR_UID)) {
+ 		struct socket *sock = SOCKET_I(d_inode(dentry));
+ 
+-		sock->sk->sk_uid = iattr->ia_uid;
++		if (sock->sk)
++			sock->sk->sk_uid = iattr->ia_uid;
++		else
++			err = -ENOENT;
+ 	}
+ 
+ 	return err;
+@@ -588,12 +591,16 @@ EXPORT_SYMBOL(sock_alloc);
+  *	an inode not a file.
+  */
+ 
+-void sock_release(struct socket *sock)
++static void __sock_release(struct socket *sock, struct inode *inode)
+ {
+ 	if (sock->ops) {
+ 		struct module *owner = sock->ops->owner;
+ 
++		if (inode)
++			inode_lock(inode);
+ 		sock->ops->release(sock);
++		if (inode)
++			inode_unlock(inode);
+ 		sock->ops = NULL;
+ 		module_put(owner);
+ 	}
+@@ -608,6 +615,11 @@ void sock_release(struct socket *sock)
+ 	}
+ 	sock->file = NULL;
+ }
++
++void sock_release(struct socket *sock)
++{
++	__sock_release(sock, NULL);
++}
+ EXPORT_SYMBOL(sock_release);
+ 
+ void __sock_tx_timestamp(__u16 tsflags, __u8 *tx_flags)
+@@ -1122,7 +1134,7 @@ static int sock_mmap(struct file *file,
+ 
+ static int sock_close(struct inode *inode, struct file *filp)
+ {
+-	sock_release(SOCKET_I(inode));
++	__sock_release(SOCKET_I(inode), inode);
+ 	return 0;
+ }
+ 
 
 
