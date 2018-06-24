@@ -2,376 +2,122 @@ Return-Path: <SRS0=DzqL=JK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DC4C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91DAC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99CC425294
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:31:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99CC425294
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=CARNet.hr
+	by mail.kernel.org (Postfix) with ESMTP id 586DB252A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 16:41:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586DB252A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ccbib.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751858AbeFXQbs (ORCPT
+        id S1752116AbeFXQlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 12:31:48 -0400
-Received: from mail.CARNet.hr ([161.53.123.6]:40167 "EHLO mail.carnet.hr"
+        Sun, 24 Jun 2018 12:41:32 -0400
+Received: from h1.radempa.de ([176.9.142.194]:40595 "EHLO mail.cosmopool.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750713AbeFXQbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 12:31:47 -0400
-Received: from [2001:b68:ff:12::131] (port=56676 helo=gavran.carpriv.carnet.hr)
-        by mail.carnet.hr with esmtps (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <Valentin.Vidic@CARNet.hr>)
-        id 1fX7vS-0007A8-Jy; Sun, 24 Jun 2018 18:31:43 +0200
-Received: by gavran.carpriv.carnet.hr (Postfix, from userid 1000)
-        id 722A923A9E; Sun, 24 Jun 2018 18:31:42 +0200 (CEST)
-From:   Valentin Vidic <Valentin.Vidic@CARNet.hr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
-        Marcus Wolf <linux@Wolf-Entwicklungen.de>,
-        =?UTF-8?q?Luca=20S=C3=B6the?= <luca@acul.me>,
-        Marcin Ciupak <marcin.s.ciupak@gmail.com>,
-        Michael Panzlaff <michael.panzlaff@fau.de>,
-        Derek Robson <robsonde@gmail.com>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Hugo Lefeuvre <hle@owl.eu.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Joe Perches <joe@perches.com>,
-        Valentin Vidic <Valentin.Vidic@CARNet.hr>
-Date:   Sun, 24 Jun 2018 18:31:38 +0200
-Message-Id: <20180624163138.30976-1-Valentin.Vidic@CARNet.hr>
-X-Mailer: git-send-email 2.18.0.rc2
-In-Reply-To: <20180624162505.29600-1-Valentin.Vidic@CARNet.hr>
-References: <20180624094245.23741-1-Valentin.Vidic@CARNet.hr>
-X-SA-Exim-Connect-IP: 2001:b68:ff:12::131
-Subject: [PATCH v3] staging: pi433: replace simple switch statements
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+        id S1750864AbeFXQla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 12:41:30 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Sun, 24 Jun 2018 12:41:29 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.cosmopool.net (Postfix) with ESMTP id BF50E9011A7;
+        Sun, 24 Jun 2018 18:34:47 +0200 (CEST)
+Received: from mail.cosmopool.net ([127.0.0.1])
+        by localhost (mail.your-server.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id LFTug78XZQTu; Sun, 24 Jun 2018 18:34:44 +0200 (CEST)
+Received: from stardust.g4.wien.funkfeuer.at (77.117.167.127.wireless.dyn.drei.com [77.117.167.127])
+        by mail.cosmopool.net (Postfix) with ESMTPSA id 6746C9009D1;
+        Sun, 24 Jun 2018 18:34:43 +0200 (CEST)
+Received: from lambda by stardust.g4.wien.funkfeuer.at with local (Exim 4.89)
+        (envelope-from <harald@ccbib.org>)
+        id 1fX7yK-0000OC-HA; Sun, 24 Jun 2018 18:34:40 +0200
+From:   Harald Geyer <harald@ccbib.org>
+To:     Icenowy Zheng <icenowy@aosc.io>
+cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>, info@olimex.com,
+        linux-wireless@vger.kernel.org
+Subject: Re: [PATCHv2 5/5] arm64: allwinner: a64: Add support for TERES-I laptop
+In-reply-to: <a7011fe78d171658742406bf01d50b7e3d7eaf1d.camel@aosc.io>
+References: <20180315162510.11669-1-harald@ccbib.org> <20180315162510.11669-6-harald@ccbib.org> <a7011fe78d171658742406bf01d50b7e3d7eaf1d.camel@aosc.io>
+Comments: In-reply-to Icenowy Zheng <icenowy@aosc.io>
+   message dated "Sat, 23 Jun 2018 00:27:21 +0800."
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-ID: <1498.1529858080.1@stardust.g4.wien.funkfeuer.at>
+Content-Transfer-Encoding: 8bit
+Date:   Sun, 24 Jun 2018 18:34:40 +0200
+Message-Id: <E1fX7yK-0000OC-HA@stardust.g4.wien.funkfeuer.at>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use const array to map switch cases to resulting values.
+Icenowy Zheng writes:
+> 在 2018-03-15四的 16:25 +0000，Harald Geyer写道：
+> > +&mmc1 {
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&mmc1_pins>;
+> > +	vmmc-supply = <&reg_aldo2>;
+> > +	vqmmc-supply = <&reg_dldo4>;
+> > +	mmc-pwrseq = <&wifi_pwrseq>;
+> > +	bus-width = <4>;
+> > +	non-removable;
+> > +	status = "okay";
+> > +
+> > +	rtl8723bs: wifi@1 {
+> > +		reg = <1>;
+> > +		interrupt-parent = <&r_pio>;
+> > +		interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>; /* PL3 */
+> > +		interrupt-names = "host-wake";
+> > +	};
+> 
+> I think this node has some problem:
 
-Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
----
-v2: use correct type for const arrays
-v3: add missing static keyword for af_map
+Thanks for the heads up! Admittedly, I simply copied this node from
+sun50i-a64-olinuxino.dts and since it worked, didn't look into it in
+too much detail.
 
- drivers/staging/pi433/rf69.c | 233 ++++++++++++++---------------------
- 1 file changed, 93 insertions(+), 140 deletions(-)
+> - This device node has no binding. The "host-wake" interrupt is part of
+>  Broadcom SDIO Wi-Fi binding, rather than a generic one.
 
-diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index 90280e9b006d..341d6901a801 100644
---- a/drivers/staging/pi433/rf69.c
-+++ b/drivers/staging/pi433/rf69.c
-@@ -111,27 +111,22 @@ static inline int rf69_read_mod_write(struct spi_device *spi, u8 reg,
- 
- int rf69_set_mode(struct spi_device *spi, enum mode mode)
- {
--	switch (mode) {
--	case transmit:
--		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
--					   OPMODE_MODE_TRANSMIT);
--	case receive:
--		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
--					   OPMODE_MODE_RECEIVE);
--	case synthesizer:
--		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
--					   OPMODE_MODE_SYNTHESIZER);
--	case standby:
--		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
--					   OPMODE_MODE_STANDBY);
--	case mode_sleep:
--		return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
--					   OPMODE_MODE_SLEEP);
--	default:
-+	static const u8 mode_map[] = {
-+		[transmit] = OPMODE_MODE_TRANSMIT,
-+		[receive] = OPMODE_MODE_RECEIVE,
-+		[synthesizer] = OPMODE_MODE_SYNTHESIZER,
-+		[standby] = OPMODE_MODE_STANDBY,
-+		[mode_sleep] = OPMODE_MODE_SLEEP,
-+	};
-+
-+	if (unlikely(mode >= ARRAY_SIZE(mode_map))) {
- 		dev_dbg(&spi->dev, "set: illegal input param");
- 		return -EINVAL;
- 	}
- 
-+	return rf69_read_mod_write(spi, REG_OPMODE, MASK_OPMODE_MODE,
-+				   mode_map[mode]);
-+
- 	// we are using packet mode, so this check is not really needed
- 	// but waiting for mode ready is necessary when going from sleep because the FIFO may not be immediately available from previous mode
- 	//while (_mode == RF69_MODE_SLEEP && (READ_REG(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // Wait for ModeReady
-@@ -145,19 +140,19 @@ int rf69_set_data_mode(struct spi_device *spi, u8 data_mode)
- 
- int rf69_set_modulation(struct spi_device *spi, enum modulation modulation)
- {
--	switch (modulation) {
--	case OOK:
--		return rf69_read_mod_write(spi, REG_DATAMODUL,
--					   MASK_DATAMODUL_MODULATION_TYPE,
--					   DATAMODUL_MODULATION_TYPE_OOK);
--	case FSK:
--		return rf69_read_mod_write(spi, REG_DATAMODUL,
--					   MASK_DATAMODUL_MODULATION_TYPE,
--					   DATAMODUL_MODULATION_TYPE_FSK);
--	default:
-+	static const u8 modulation_map[] = {
-+		[OOK] = DATAMODUL_MODULATION_TYPE_OOK,
-+		[FSK] = DATAMODUL_MODULATION_TYPE_FSK,
-+	};
-+
-+	if (unlikely(modulation >= ARRAY_SIZE(modulation_map))) {
- 		dev_dbg(&spi->dev, "set: illegal input param");
- 		return -EINVAL;
- 	}
-+
-+	return rf69_read_mod_write(spi, REG_DATAMODUL,
-+				   MASK_DATAMODUL_MODULATION_TYPE,
-+				   modulation_map[modulation]);
- }
- 
- static enum modulation rf69_get_modulation(struct spi_device *spi)
-@@ -373,43 +368,30 @@ int rf69_set_output_power_level(struct spi_device *spi, u8 power_level)
- 
- int rf69_set_pa_ramp(struct spi_device *spi, enum pa_ramp pa_ramp)
- {
--	switch (pa_ramp) {
--	case ramp3400:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_3400);
--	case ramp2000:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_2000);
--	case ramp1000:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_1000);
--	case ramp500:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_500);
--	case ramp250:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_250);
--	case ramp125:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_125);
--	case ramp100:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_100);
--	case ramp62:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_62);
--	case ramp50:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_50);
--	case ramp40:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_40);
--	case ramp31:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_31);
--	case ramp25:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_25);
--	case ramp20:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_20);
--	case ramp15:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_15);
--	case ramp12:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_12);
--	case ramp10:
--		return rf69_write_reg(spi, REG_PARAMP, PARAMP_10);
--	default:
-+	static const u8 pa_ramp_map[] = {
-+		[ramp3400] = PARAMP_3400,
-+		[ramp2000] = PARAMP_2000,
-+		[ramp1000] = PARAMP_1000,
-+		[ramp500] = PARAMP_500,
-+		[ramp250] = PARAMP_250,
-+		[ramp125] = PARAMP_125,
-+		[ramp100] = PARAMP_100,
-+		[ramp62] = PARAMP_62,
-+		[ramp50] = PARAMP_50,
-+		[ramp40] = PARAMP_40,
-+		[ramp31] = PARAMP_31,
-+		[ramp25] = PARAMP_25,
-+		[ramp20] = PARAMP_20,
-+		[ramp15] = PARAMP_15,
-+		[ramp10] = PARAMP_10,
-+	};
-+
-+	if (unlikely(pa_ramp >= ARRAY_SIZE(pa_ramp_map))) {
- 		dev_dbg(&spi->dev, "set: illegal input param");
- 		return -EINVAL;
- 	}
-+
-+	return rf69_write_reg(spi, REG_PARAMP, pa_ramp_map[pa_ramp]);
- }
- 
- int rf69_set_antenna_impedance(struct spi_device *spi,
-@@ -428,32 +410,23 @@ int rf69_set_antenna_impedance(struct spi_device *spi,
- 
- int rf69_set_lna_gain(struct spi_device *spi, enum lna_gain lna_gain)
- {
--	switch (lna_gain) {
--	case automatic:
--		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
--					   LNA_GAIN_AUTO);
--	case max:
--		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
--					   LNA_GAIN_MAX);
--	case max_minus_6:
--		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
--					   LNA_GAIN_MAX_MINUS_6);
--	case max_minus_12:
--		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
--					   LNA_GAIN_MAX_MINUS_12);
--	case max_minus_24:
--		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
--					   LNA_GAIN_MAX_MINUS_24);
--	case max_minus_36:
--		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
--					   LNA_GAIN_MAX_MINUS_36);
--	case max_minus_48:
--		return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
--					   LNA_GAIN_MAX_MINUS_48);
--	default:
-+	static const u8 lna_gain_map[] = {
-+		[automatic] = LNA_GAIN_AUTO,
-+		[max] = LNA_GAIN_MAX,
-+		[max_minus_6] = LNA_GAIN_MAX_MINUS_6,
-+		[max_minus_12] = LNA_GAIN_MAX_MINUS_12,
-+		[max_minus_24] = LNA_GAIN_MAX_MINUS_24,
-+		[max_minus_36] = LNA_GAIN_MAX_MINUS_36,
-+		[max_minus_48] = LNA_GAIN_MAX_MINUS_48,
-+	};
-+
-+	if (unlikely(lna_gain >= ARRAY_SIZE(lna_gain_map))) {
- 		dev_dbg(&spi->dev, "set: illegal input param");
- 		return -EINVAL;
- 	}
-+
-+	return rf69_read_mod_write(spi, REG_LNA, MASK_LNA_GAIN,
-+				   lna_gain_map[lna_gain]);
- }
- 
- static int rf69_set_bandwidth_intern(struct spi_device *spi, u8 reg,
-@@ -516,43 +489,24 @@ int rf69_set_bandwidth_during_afc(struct spi_device *spi,
- int rf69_set_ook_threshold_dec(struct spi_device *spi,
- 			       enum threshold_decrement threshold_decrement)
- {
--	switch (threshold_decrement) {
--	case dec_every8th:
--		return rf69_read_mod_write(spi, REG_OOKPEAK,
--					   MASK_OOKPEAK_THRESDEC,
--					   OOKPEAK_THRESHDEC_EVERY_8TH);
--	case dec_every4th:
--		return rf69_read_mod_write(spi, REG_OOKPEAK,
--					   MASK_OOKPEAK_THRESDEC,
--					   OOKPEAK_THRESHDEC_EVERY_4TH);
--	case dec_every2nd:
--		return rf69_read_mod_write(spi, REG_OOKPEAK,
--					   MASK_OOKPEAK_THRESDEC,
--					   OOKPEAK_THRESHDEC_EVERY_2ND);
--	case dec_once:
--		return rf69_read_mod_write(spi, REG_OOKPEAK,
--					   MASK_OOKPEAK_THRESDEC,
--					   OOKPEAK_THRESHDEC_ONCE);
--	case dec_twice:
--		return rf69_read_mod_write(spi, REG_OOKPEAK,
--					   MASK_OOKPEAK_THRESDEC,
--					   OOKPEAK_THRESHDEC_TWICE);
--	case dec_4times:
--		return rf69_read_mod_write(spi, REG_OOKPEAK,
--					   MASK_OOKPEAK_THRESDEC,
--					   OOKPEAK_THRESHDEC_4_TIMES);
--	case dec_8times:
--		return rf69_read_mod_write(spi, REG_OOKPEAK,
--					   MASK_OOKPEAK_THRESDEC,
--					   OOKPEAK_THRESHDEC_8_TIMES);
--	case dec_16times:
--		return rf69_read_mod_write(spi, REG_OOKPEAK,
--					   MASK_OOKPEAK_THRESDEC,
--					   OOKPEAK_THRESHDEC_16_TIMES);
--	default:
-+	static const u8 td_map[] = {
-+		[dec_every8th] = OOKPEAK_THRESHDEC_EVERY_8TH,
-+		[dec_every4th] = OOKPEAK_THRESHDEC_EVERY_4TH,
-+		[dec_every2nd] = OOKPEAK_THRESHDEC_EVERY_2ND,
-+		[dec_once] = OOKPEAK_THRESHDEC_ONCE,
-+		[dec_twice] = OOKPEAK_THRESHDEC_TWICE,
-+		[dec_4times] = OOKPEAK_THRESHDEC_4_TIMES,
-+		[dec_8times] = OOKPEAK_THRESHDEC_8_TIMES,
-+		[dec_16times] = OOKPEAK_THRESHDEC_16_TIMES,
-+	};
-+
-+	if (unlikely(threshold_decrement >= ARRAY_SIZE(td_map))) {
- 		dev_dbg(&spi->dev, "set: illegal input param");
- 		return -EINVAL;
- 	}
-+
-+	return rf69_read_mod_write(spi, REG_OOKPEAK, MASK_OOKPEAK_THRESDEC,
-+				   td_map[threshold_decrement]);
- }
- 
- int rf69_set_dio_mapping(struct spi_device *spi, u8 dio_number, u8 value)
-@@ -749,23 +703,21 @@ int rf69_disable_crc(struct spi_device *spi)
- int rf69_set_address_filtering(struct spi_device *spi,
- 			       enum address_filtering address_filtering)
- {
--	switch (address_filtering) {
--	case filtering_off:
--		return rf69_read_mod_write(spi, REG_PACKETCONFIG1,
--					   MASK_PACKETCONFIG1_ADDRESSFILTERING,
--					   PACKETCONFIG1_ADDRESSFILTERING_OFF);
--	case node_address:
--		return rf69_read_mod_write(spi, REG_PACKETCONFIG1,
--					   MASK_PACKETCONFIG1_ADDRESSFILTERING,
--					   PACKETCONFIG1_ADDRESSFILTERING_NODE);
--	case node_or_broadcast_address:
--		return rf69_read_mod_write(spi, REG_PACKETCONFIG1,
--					   MASK_PACKETCONFIG1_ADDRESSFILTERING,
--					   PACKETCONFIG1_ADDRESSFILTERING_NODEBROADCAST);
--	default:
-+	static const u8 af_map[] = {
-+		[filtering_off] = PACKETCONFIG1_ADDRESSFILTERING_OFF,
-+		[node_address] = PACKETCONFIG1_ADDRESSFILTERING_NODE,
-+		[node_or_broadcast_address] =
-+			PACKETCONFIG1_ADDRESSFILTERING_NODEBROADCAST,
-+	};
-+
-+	if (unlikely(address_filtering >= ARRAY_SIZE(af_map))) {
- 		dev_dbg(&spi->dev, "set: illegal input param");
- 		return -EINVAL;
- 	}
-+
-+	return rf69_read_mod_write(spi, REG_PACKETCONFIG1,
-+				   MASK_PACKETCONFIG1_ADDRESSFILTERING,
-+				   af_map[address_filtering]);
- }
- 
- int rf69_set_payload_length(struct spi_device *spi, u8 payload_length)
-@@ -824,17 +776,18 @@ int rf69_set_fifo_threshold(struct spi_device *spi, u8 threshold)
- 
- int rf69_set_dagc(struct spi_device *spi, enum dagc dagc)
- {
--	switch (dagc) {
--	case normal_mode:
--		return rf69_write_reg(spi, REG_TESTDAGC, DAGC_NORMAL);
--	case improve:
--		return rf69_write_reg(spi, REG_TESTDAGC, DAGC_IMPROVED_LOWBETA0);
--	case improve_for_low_modulation_index:
--		return rf69_write_reg(spi, REG_TESTDAGC, DAGC_IMPROVED_LOWBETA1);
--	default:
-+	static const u8 dagc_map[] = {
-+		[normal_mode] = DAGC_NORMAL,
-+		[improve] = DAGC_IMPROVED_LOWBETA0,
-+		[improve_for_low_modulation_index] = DAGC_IMPROVED_LOWBETA1,
-+	};
-+
-+	if (unlikely(dagc >= ARRAY_SIZE(dagc_map))) {
- 		dev_dbg(&spi->dev, "set: illegal input param");
- 		return -EINVAL;
- 	}
-+
-+	return rf69_write_reg(spi, REG_TESTDAGC, dagc_map[dagc]);
- }
- 
- /*-------------------------------------------------------------------------*/
--- 
-2.18.0.rc2
+I think the general mmc and interrupts bindings apply. And the mmc binding
+clearly states that for sub-nodes a compatible string is optional.
 
+However I just realized that the 'interrupt-names' property is not part
+of the general interrupts binding, so I guess at least this property should
+be removed.
+
+> - Without the interrupt this device node isn't needed, as RTL8723BS has
+> MAC eFUSE and doesn't need a MAC in device tree.
+
+Indeed. I wasn't aware of this, but I just tested and the device probes
+fine without the subnode present. I think the devicetree is mainly for
+information which cannot be probed, so maybe the subnode should just get
+removed.
+
+> In order to solve the problems. I suggest either drop this device node
+> or make a generic "sdio-wifi" device tree binding. Personally I prefer
+> the latter, as it's more accurate device representation.
+> 
+> If such a device tree binding is added, I think it should contain the
+> "host-wake" interrupt and a "local-mac-address" property. Both can be
+> ignored by the driver. (This interrupt can be needed if a more card-
+> ventor-neutral name is found.)
+
+I don't feel qualified to comment on this. If you want to propose such
+a patch and fix above node accordingly, I won't object. Otherwise I'll
+just send a patch to remove the subnode.
+
+Thanks,
+Harald
