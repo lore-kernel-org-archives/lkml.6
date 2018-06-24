@@ -6,34 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB425C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F209FC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 752F225049
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 752F225049
+	by mail.kernel.org (Postfix) with ESMTP id B52D82504B
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:40:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B52D82504B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932242AbeFXPkC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:40:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59874 "EHLO
+        id S1755830AbeFXPkJ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 24 Jun 2018 11:40:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59882 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932203AbeFXPj7 (ORCPT
+        with ESMTP id S1755228AbeFXPkH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:39:59 -0400
+        Sun, 24 Jun 2018 11:40:07 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6FD349F;
-        Sun, 24 Jun 2018 15:39:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB52A92F;
+        Sun, 24 Jun 2018 15:40:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Watson <davejwatson@fb.com>,
+        stable@vger.kernel.org,
+        shankarapailoor <shankarapailoor@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 10/70] tls: fix waitall behavior in tls_sw_recvmsg
-Date:   Sun, 24 Jun 2018 23:22:02 +0800
-Message-Id: <20180624142741.104630205@linuxfoundation.org>
+Subject: [PATCH 4.17 11/70] socket: close race condition between sock_close() and sockfs_setattr()
+Date:   Sun, 24 Jun 2018 23:22:03 +0800
+Message-Id: <20180624142741.179636849@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -50,60 +55,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 06030dbaf3b6c5801dcdb7fe4fbab3b91c8da84a ]
+[ Upstream commit 6d8c50dcb029872b298eea68cc6209c866fd3e14 ]
 
-Current behavior in tls_sw_recvmsg() is to wait for incoming tls
-messages and copy up to exactly len bytes of data that the user
-provided. This is problematic in the sense that i) if no packet
-is currently queued in strparser we keep waiting until one has been
-processed and pushed into tls receive layer for tls_wait_data() to
-wake up and push the decrypted bits to user space. Given after
-tls decryption, we're back at streaming data, use sock_rcvlowat()
-hint from tcp socket instead. Retain current behavior with MSG_WAITALL
-flag and otherwise use the hint target for breaking the loop and
-returning to application. This is done if currently no ctx->recv_pkt
-is ready, otherwise continue to process it from our strparser
-backlog.
+fchownat() doesn't even hold refcnt of fd until it figures out
+fd is really needed (otherwise is ignored) and releases it after
+it resolves the path. This means sock_close() could race with
+sockfs_setattr(), which leads to a NULL pointer dereference
+since typically we set sock->sk to NULL in ->release().
 
-Fixes: c46234ebb4d1 ("tls: RX path for ktls")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Dave Watson <davejwatson@fb.com>
+As pointed out by Al, this is unique to sockfs. So we can fix this
+in socket layer by acquiring inode_lock in sock_close() and
+checking against NULL in sockfs_setattr().
+
+sock_release() is called in many places, only the sock_close()
+path matters here. And fortunately, this should not affect normal
+sock_close() as it is only called when the last fd refcnt is gone.
+It only affects sock_close() with a parallel sockfs_setattr() in
+progress, which is not common.
+
+Fixes: 86741ec25462 ("net: core: Add a UID field to struct sock.")
+Reported-by: shankarapailoor <shankarapailoor@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Lorenzo Colitti <lorenzo@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tls/tls_sw.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/socket.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -755,7 +755,7 @@ int tls_sw_recvmsg(struct sock *sk,
- 	struct sk_buff *skb;
- 	ssize_t copied = 0;
- 	bool cmsg = false;
--	int err = 0;
-+	int target, err = 0;
- 	long timeo;
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -537,7 +537,10 @@ static int sockfs_setattr(struct dentry
+ 	if (!err && (iattr->ia_valid & ATTR_UID)) {
+ 		struct socket *sock = SOCKET_I(d_inode(dentry));
  
- 	flags |= nonblock;
-@@ -765,6 +765,7 @@ int tls_sw_recvmsg(struct sock *sk,
+-		sock->sk->sk_uid = iattr->ia_uid;
++		if (sock->sk)
++			sock->sk->sk_uid = iattr->ia_uid;
++		else
++			err = -ENOENT;
+ 	}
  
- 	lock_sock(sk);
+ 	return err;
+@@ -586,12 +589,16 @@ EXPORT_SYMBOL(sock_alloc);
+  *	an inode not a file.
+  */
  
-+	target = sock_rcvlowat(sk, flags & MSG_WAITALL, len);
- 	timeo = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
- 	do {
- 		bool zc = false;
-@@ -857,6 +858,9 @@ fallback_to_reg_recv:
- 					goto recv_end;
- 			}
- 		}
-+		/* If we have a new message from strparser, continue now. */
-+		if (copied >= target && !ctx->recv_pkt)
-+			break;
- 	} while (len);
+-void sock_release(struct socket *sock)
++static void __sock_release(struct socket *sock, struct inode *inode)
+ {
+ 	if (sock->ops) {
+ 		struct module *owner = sock->ops->owner;
  
- recv_end:
++		if (inode)
++			inode_lock(inode);
+ 		sock->ops->release(sock);
++		if (inode)
++			inode_unlock(inode);
+ 		sock->ops = NULL;
+ 		module_put(owner);
+ 	}
+@@ -605,6 +612,11 @@ void sock_release(struct socket *sock)
+ 	}
+ 	sock->file = NULL;
+ }
++
++void sock_release(struct socket *sock)
++{
++	__sock_release(sock, NULL);
++}
+ EXPORT_SYMBOL(sock_release);
+ 
+ void __sock_tx_timestamp(__u16 tsflags, __u8 *tx_flags)
+@@ -1146,7 +1158,7 @@ static int sock_mmap(struct file *file,
+ 
+ static int sock_close(struct inode *inode, struct file *filp)
+ {
+-	sock_release(SOCKET_I(inode));
++	__sock_release(SOCKET_I(inode), inode);
+ 	return 0;
+ }
+ 
 
 
