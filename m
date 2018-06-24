@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05182C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEAFC43144
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0F722506C
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:42:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F722506C
+	by mail.kernel.org (Postfix) with ESMTP id 343B025076
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 15:42:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343B025076
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756073AbeFXPmX (ORCPT
+        id S1756084AbeFXPma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 11:42:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60054 "EHLO
+        Sun, 24 Jun 2018 11:42:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60066 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755228AbeFXPmU (ORCPT
+        with ESMTP id S1755228AbeFXPm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 11:42:20 -0400
+        Sun, 24 Jun 2018 11:42:28 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30A662C;
-        Sun, 24 Jun 2018 15:42:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E78812C;
+        Sun, 24 Jun 2018 15:42:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Peres <martin.peres@free.fr>,
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 28/70] ALSA: usb-audio: Disable the quirk for Nura headset
-Date:   Sun, 24 Jun 2018 23:22:20 +0800
-Message-Id: <20180624142742.235160641@linuxfoundation.org>
+Subject: [PATCH 4.17 29/70] ALSA: hda/realtek - Enable mic-mute hotkey for several Lenovo AIOs
+Date:   Sun, 24 Jun 2018 23:22:21 +0800
+Message-Id: <20180624142742.308805622@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180624142740.481662434@linuxfoundation.org>
 References: <20180624142740.481662434@linuxfoundation.org>
@@ -50,51 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 5ebf6b1e459606d7fbf4fc67d2c28a6540953d93 upstream.
+commit 986376b68dcc95bb7df60ad30c2353c1f7578fa5 upstream.
 
-The commit 33193dca671c ("ALSA: usb-audio: Add a quirk for Nura's
-first gen headset") added a quirk for Nura headset with USB ID
-0a12:1243, with a hope that it doesn't conflict with others.
-Unfortunately, other devices (e.g. Philips Wecall) with the very same
-ID got broken by this change, spewing an error like:
-  usb 2-1.8.2: 2:1: cannot set freq 48000 to ep 0x3
+We have several Lenovo AIOs like M810z, M820z and M920z, they have
+the same design for mic-mute hotkey and led and they use the same
+codec with the same pin configuration, so use the pin conf table to
+apply fix to all of them.
 
-Until we find a proper solution, fix the regression at first by
-disabling the added quirk entry.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199905
-Fixes: 33193dca671c ("ALSA: usb-audio: Add a quirk for Nura's first gen headset")
-Reviewed-by: Martin Peres <martin.peres@free.fr>
+Fixes: 29693efcea0f ("ALSA: hda - Fix micmute hotkey problem for a lenovo AIO machine")
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/quirks-table.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/pci/hda/patch_realtek.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3277,6 +3277,10 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
- 	}
- },
- 
-+/* disabled due to regression for other devices;
-+ * see https://bugzilla.kernel.org/show_bug.cgi?id=199905
-+ */
-+#if 0
- {
- 	/*
- 	 * Nura's first gen headphones use Cambridge Silicon Radio's vendor
-@@ -3324,6 +3328,7 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
- 		}
- 	}
- },
-+#endif /* disabled */
- 
- {
- 	/*
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6580,7 +6580,6 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x3138, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+-	SND_PCI_QUIRK(0x17aa, 0x3112, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3978, "IdeaPad Y410P", ALC269_FIXUP_NO_SHUTUP),
+@@ -6752,6 +6751,11 @@ static const struct snd_hda_pin_quirk al
+ 		{0x1b, 0x01111010},
+ 		{0x1e, 0x01451130},
+ 		{0x21, 0x02211020}),
++	SND_HDA_PIN_QUIRK(0x10ec0235, 0x17aa, "Lenovo", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
++		{0x12, 0x90a60140},
++		{0x14, 0x90170110},
++		{0x19, 0x02a11030},
++		{0x21, 0x02211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0236, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		{0x12, 0x90a60140},
+ 		{0x14, 0x90170110},
 
 
