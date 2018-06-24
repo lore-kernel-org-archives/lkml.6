@@ -6,38 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E94DC43144
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4904C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C65A24E56
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:35:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C65A24E56
+	by mail.kernel.org (Postfix) with ESMTP id 84C6A24E68
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Jun 2018 08:43:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C6A24E68
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeFXIfk (ORCPT
+        id S1751911AbeFXInx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 04:35:40 -0400
-Received: from mailout3.hostsharing.net ([176.9.242.54]:38451 "EHLO
-        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750984AbeFXIfi (ORCPT
+        Sun, 24 Jun 2018 04:43:53 -0400
+Received: from mailout1.hostsharing.net ([83.223.95.204]:55769 "EHLO
+        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751089AbeFXInw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 04:35:38 -0400
+        Sun, 24 Jun 2018 04:43:52 -0400
+X-Greylist: delayed 478 seconds by postgrey-1.27 at vger.kernel.org; Sun, 24 Jun 2018 04:43:52 EDT
 Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by mailout3.hostsharing.net (Postfix) with ESMTPS id 050F8101E69BB;
-        Sun, 24 Jun 2018 10:35:37 +0200 (CEST)
+        by mailout1.hostsharing.net (Postfix) with ESMTPS id 4044110029AF2;
+        Sun, 24 Jun 2018 10:35:53 +0200 (CEST)
 Received: from localhost (unknown [89.246.108.87])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by h08.hostsharing.net (Postfix) with ESMTPSA id 92574603E134;
-        Sun, 24 Jun 2018 10:35:36 +0200 (CEST)
-X-Mailbox-Line: From 32fc25aa35ecef4b2692f57687bb7fc2a57230e2 Mon Sep 17 00:00:00 2001
-Message-Id: <32fc25aa35ecef4b2692f57687bb7fc2a57230e2.1529828292.git.lukas@wunner.de>
+        by h08.hostsharing.net (Postfix) with ESMTPSA id F319D603E134;
+        Sun, 24 Jun 2018 10:35:52 +0200 (CEST)
+X-Mailbox-Line: From d72b41309f077c8d3bee6cc08ad3662d50b5d22a Mon Sep 17 00:00:00 2001
+Message-Id: <d72b41309f077c8d3bee6cc08ad3662d50b5d22a.1529828292.git.lukas@wunner.de>
+In-Reply-To: <32fc25aa35ecef4b2692f57687bb7fc2a57230e2.1529828292.git.lukas@wunner.de>
+References: <32fc25aa35ecef4b2692f57687bb7fc2a57230e2.1529828292.git.lukas@wunner.de>
 From:   Lukas Wunner <lukas@wunner.de>
-Date:   Sun, 24 Jun 2018 10:35:18 +0200
-Subject: [PATCH v2 1/2] genirq: Update code comments wrt recycled thread_mask
+Date:   Sun, 24 Jun 2018 10:35:30 +0200
+Subject: [PATCH v2 2/2] genirq: Synchronize only with single thread on
+ free_irq()
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     Bjorn Helgaas <bhelgaas@google.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
@@ -47,71 +51,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously a race existed between __free_irq() and __setup_irq() wherein
-the thread_mask of a just removed action could be handed out to a newly
-added action and the freed irq thread would then tread on the oneshot
-mask bit of the newly added irq thread in irq_finalize_oneshot():
+When pciehp is converted to threaded IRQ handling, removal of unplugged
+devices below a PCIe hotplug port happens synchronously in the IRQ
+thread.  Removal of devices typically entails a call to free_irq() by
+their drivers.
 
-time
- |  __free_irq()
- |    raw_spin_lock_irqsave(&desc->lock, flags);
- |    <remove action from linked list>
- |    raw_spin_unlock_irqrestore(&desc->lock, flags);
- |
- |  __setup_irq()
- |    raw_spin_lock_irqsave(&desc->lock, flags);
- |    <traverse linked list to determine oneshot mask bit>
- |    raw_spin_unlock_irqrestore(&desc->lock, flags);
- |
- |  irq_thread() of freed irq (__free_irq() waits in synchronize_irq())
- |    irq_thread_fn()
- |      irq_finalize_oneshot()
- |        raw_spin_lock_irq(&desc->lock);
- |        desc->threads_oneshot &= ~action->thread_mask;
- |        raw_spin_unlock_irq(&desc->lock);
- v
+If those devices share their IRQ with the hotplug port, __free_irq()
+deadlocks because it calls synchronize_irq() to wait for all hard IRQ
+handlers as well as all threads sharing the IRQ to finish.
 
-The race was known at least since 2012 when it was documented in a code
-comment by commit e04268b0effc ("genirq: Remove paranoid warnons and
-bogus fixups").
+Actually it's sufficient to wait only for the IRQ thread of the removed
+device, so call synchronize_hardirq() to wait for all hard IRQ handlers
+to finish, but no longer for any threads.  Compensate by rearranging the
+control flow in irq_wait_for_interrupt() such that the device's thread
+is allowed to run one last time after kthread_stop() has been called.
 
-But it wasn't until 2017 that it was fixed by commit 9114014cf4e6
-("genirq: Add mutex to irq desc to serialize request/free_irq()"),
-apparently inadvertantly so because the race is neither mentioned in the
-commit message nor was the code comment updated.  Make up for that.
+kthread_stop() blocks until the IRQ thread has completed.  On completion
+the IRQ thread clears its oneshot thread_mask bit.  This is safe because
+__free_irq() holds the request_mutex, thereby preventing __setup_irq()
+from handing out the same oneshot thread_mask bit to a newly requested
+action.
 
+Stack trace for posterity:
+    INFO: task irq/17-pciehp:94 blocked for more than 120 seconds.
+    schedule+0x28/0x80
+    synchronize_irq+0x6e/0xa0
+    __free_irq+0x15a/0x2b0
+    free_irq+0x33/0x70
+    pciehp_release_ctrl+0x98/0xb0
+    pcie_port_remove_service+0x2f/0x40
+    device_release_driver_internal+0x157/0x220
+    bus_remove_device+0xe2/0x150
+    device_del+0x124/0x340
+    device_unregister+0x16/0x60
+    remove_iter+0x1a/0x20
+    device_for_each_child+0x4b/0x90
+    pcie_port_device_remove+0x1e/0x30
+    pci_device_remove+0x36/0xb0
+    device_release_driver_internal+0x157/0x220
+    pci_stop_bus_device+0x7d/0xa0
+    pci_stop_bus_device+0x3d/0xa0
+    pci_stop_and_remove_bus_device+0xe/0x20
+    pciehp_unconfigure_device+0xb8/0x160
+    pciehp_disable_slot+0x84/0x130
+    pciehp_ist+0x158/0x190
+    irq_thread_fn+0x1b/0x50
+    irq_thread+0x143/0x1a0
+    kthread+0x111/0x130
+
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
 ---
- kernel/irq/manage.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Changes v1 -> v2:
+
+* Add code comment explaining the significance of holding the
+  request_mutex in __free_irq() until after kthread_stop(),
+  add explanation to commit message as well. (Thomas Gleixner)
+
+* Update several code comments to refer to synchronize_hardirq()
+  or kthread_stop() instead of synchronize_irq().
+
+ kernel/irq/manage.c | 33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
 diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 591cfe901162..123a227d3357 100644
+index 123a227d3357..9390f1595c50 100644
 --- a/kernel/irq/manage.c
 +++ b/kernel/irq/manage.c
-@@ -1025,10 +1025,7 @@ static int irq_thread(void *data)
+@@ -790,9 +790,19 @@ static irqreturn_t irq_forced_secondary_handler(int irq, void *dev_id)
+ 
+ static int irq_wait_for_interrupt(struct irqaction *action)
+ {
+-	set_current_state(TASK_INTERRUPTIBLE);
++	for (;;) {
++		set_current_state(TASK_INTERRUPTIBLE);
+ 
+-	while (!kthread_should_stop()) {
++		if (kthread_should_stop()) {
++			/* may need to run one last time */
++			if (test_and_clear_bit(IRQTF_RUNTHREAD,
++					       &action->thread_flags)) {
++				__set_current_state(TASK_RUNNING);
++				return 0;
++			}
++			__set_current_state(TASK_RUNNING);
++			return -1;
++		}
+ 
+ 		if (test_and_clear_bit(IRQTF_RUNTHREAD,
+ 				       &action->thread_flags)) {
+@@ -800,10 +810,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
+ 			return 0;
+ 		}
+ 		schedule();
+-		set_current_state(TASK_INTERRUPTIBLE);
+ 	}
+-	__set_current_state(TASK_RUNNING);
+-	return -1;
+ }
+ 
+ /*
+@@ -1024,7 +1031,7 @@ static int irq_thread(void *data)
+ 	/*
  	 * This is the regular exit path. __free_irq() is stopping the
  	 * thread via kthread_stop() after calling
- 	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
--	 * oneshot mask bit can be set. We cannot verify that as we
--	 * cannot touch the oneshot mask at this point anymore as
--	 * __setup_irq() might have given out currents thread_mask
--	 * again.
-+	 * oneshot mask bit can be set.
+-	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
++	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
+ 	 * oneshot mask bit can be set.
  	 */
  	task_work_cancel(current, irq_thread_dtor);
- 	return 0;
-@@ -1245,7 +1242,9 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+@@ -1241,7 +1248,7 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+ 
  	/*
  	 * Protects against a concurrent __free_irq() call which might wait
- 	 * for synchronize_irq() to complete without holding the optional
--	 * chip bus lock and desc->lock.
-+	 * chip bus lock and desc->lock. Also protects against handing out
-+	 * a recycled oneshot thread_mask bit while it's still in use by
-+	 * its previous owner.
- 	 */
- 	mutex_lock(&desc->request_mutex);
+-	 * for synchronize_irq() to complete without holding the optional
++	 * for synchronize_hardirq() to complete without holding the optional
+ 	 * chip bus lock and desc->lock. Also protects against handing out
+ 	 * a recycled oneshot thread_mask bit while it's still in use by
+ 	 * its previous owner.
+@@ -1612,11 +1619,11 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
+ 	/*
+ 	 * Drop bus_lock here so the changes which were done in the chip
+ 	 * callbacks above are synced out to the irq chips which hang
+-	 * behind a slow bus (I2C, SPI) before calling synchronize_irq().
++	 * behind a slow bus (I2C, SPI) before calling synchronize_hardirq().
+ 	 *
+ 	 * Aside of that the bus_lock can also be taken from the threaded
+ 	 * handler in irq_finalize_oneshot() which results in a deadlock
+-	 * because synchronize_irq() would wait forever for the thread to
++	 * because kthread_stop() would wait forever for the thread to
+ 	 * complete, which is blocked on the bus lock.
+ 	 *
+ 	 * The still held desc->request_mutex() protects against a
+@@ -1628,7 +1635,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
+ 	unregister_handler_proc(irq, action);
  
+ 	/* Make sure it's not being used on another CPU: */
+-	synchronize_irq(irq);
++	synchronize_hardirq(irq);
+ 
+ #ifdef CONFIG_DEBUG_SHIRQ
+ 	/*
+@@ -1646,6 +1653,12 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
+ 	}
+ #endif
+ 
++	/*
++	 * The action has already been removed above, but the thread writes
++	 * its oneshot mask bit when it completes. Hold the request_mutex
++	 * to prevent __setup_irq() from handing out the same bit to a
++	 * newly requested action.
++	 */
+ 	if (action->thread) {
+ 		kthread_stop(action->thread);
+ 		put_task_struct(action->thread);
 -- 
 2.17.1
 
