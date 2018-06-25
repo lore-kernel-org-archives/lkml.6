@@ -2,132 +2,124 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0349C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC45CC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28F27208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:54:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0969208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:55:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IAgSrfe0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F27208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hSZ/oHav"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0969208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934202AbeFYXya (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 19:54:30 -0400
-Received: from mail-bl2nam02on0106.outbound.protection.outlook.com ([104.47.38.106]:30592
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932073AbeFYXy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 19:54:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u+viHju/IRLTyhdU2JPEFKpxTVkRQR/75SQFlfwYywg=;
- b=IAgSrfe08aJwu3eIDODlcyj6EYNydsaBM/iF0g4cuxRcfWWIQl8WzADPClfSVd8zeBEec2LzpOj2rdmugvUEnf+bpVEjaRauzbnutfIuzZc38/KYSJtfKxtqZY+DlneVKqREoM3PVQy50RXTbi0+05DVhsa10/RZJ0qyQDmgMR8=
-Received: from SN6PR2101MB1120.namprd21.prod.outlook.com (52.132.117.161) by
- SN6PR2101MB1053.namprd21.prod.outlook.com (52.132.115.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.2; Mon, 25 Jun 2018 23:54:26 +0000
-Received: from SN6PR2101MB1120.namprd21.prod.outlook.com
- ([fe80::35a3:57b:9c0:9732]) by SN6PR2101MB1120.namprd21.prod.outlook.com
- ([fe80::35a3:57b:9c0:9732%4]) with mapi id 15.20.0930.005; Mon, 25 Jun 2018
- 23:54:26 +0000
-From:   "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "x86@kernel.org" <x86@kernel.org>
-CC:     "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>
-Subject: RE: [PATCH 2/4] x86/hyper-v: use 'fast' hypercall for HVCALL_SEND_IPI
-Thread-Topic: [PATCH 2/4] x86/hyper-v: use 'fast' hypercall for
- HVCALL_SEND_IPI
-Thread-Index: AQHUCktgwcjn6tsgfU+Yh/WE3ggTO6RxqpVQ
-Date:   Mon, 25 Jun 2018 23:54:25 +0000
-Message-ID: <SN6PR2101MB11206D0596EDAF0B020E50DFDC4A0@SN6PR2101MB1120.namprd21.prod.outlook.com>
-References: <20180622170625.30688-1-vkuznets@redhat.com>
- <20180622170625.30688-3-vkuznets@redhat.com>
-In-Reply-To: <20180622170625.30688-3-vkuznets@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-06-25T23:54:24.3619386Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR2101MB1053;7:/ikVf8FEda82AUIa9ZbYa3oND1Go2fiSRGEfXJBMNxWCilAlHlleUNblsk+v5RmNhqcVWmuYIKvPmfA8Vw8YuEnMq6P2hbAsA6Su58yRNTnuZopgHc99/17xMTNPe1b9zJVJWUvlQu+bYNbhY0tHbs6N52rUPu6/vOGJqpNPyhZAqaaSPveu6XZ9WpPLsFYLNG/zci3xUk1sRRnJeP+xthKQqTiKZ1Jz/+2lfu+2KbuN5tKpfQUceSYRrR4VURdv
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 92abfe91-c00d-401b-7387-08d5daf6fb96
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7193020);SRVR:SN6PR2101MB1053;
-x-ms-traffictypediagnostic: SN6PR2101MB1053:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michael.H.Kelley@microsoft.com; 
-x-microsoft-antispam-prvs: <SN6PR2101MB105311FB406F3C79E6AF8F1EDC4A0@SN6PR2101MB1053.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(2018427008)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:SN6PR2101MB1053;BCL:0;PCL:0;RULEID:;SRVR:SN6PR2101MB1053;
-x-forefront-prvs: 0714841678
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(376002)(39860400002)(346002)(189003)(199004)(13464003)(74316002)(476003)(33656002)(11346002)(305945005)(446003)(4326008)(7736002)(478600001)(72206003)(10290500003)(14454004)(25786009)(97736004)(55016002)(86612001)(8936002)(86362001)(6116002)(3846002)(6436002)(76176011)(66066001)(7696005)(9686003)(26005)(186003)(53546011)(6506007)(68736007)(102836004)(8676002)(53936002)(81156014)(81166006)(229853002)(107886003)(6246003)(99286004)(2900100001)(316002)(22452003)(54906003)(5660300001)(110136005)(2501003)(8990500004)(5250100002)(105586002)(106356001)(256004)(486006)(2906002)(10090500001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB1053;H:SN6PR2101MB1120.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: sAPpxa1kdOFCP8a6vF51yYBggDtne4x1DGQ/A1Fa7oqVrepcPbEefg3Jp2iWpUO5xcb4zWoe6yH1nAiE2YH31zXD3ME0CJNjnd3MoAJNPG6P6U/XIy86UnYdKh4N7S25dSrgNHYT9ovNgYumUiBr+d7sS7mx6ONk9hVV16+TWB6UtWAyoD0jrHIcYHjvvedUijakrXbeP2+G3JDa84JMM63QI8QLfODg7E5xvOPNG/8yf3iGjrdhvZOdZSb49U8izEiLs8i8Q8KJeaD4aa9qPLXLWEFcQPTFMEOVv+8WPPYYwkTyuRzja2iPPeL9qsrXlql4Y+910SfSTqcRcAUt1ELcb2g9TRZv3a7/BSd9u0o=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1755760AbeFYXzK (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 19:55:10 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44888 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754330AbeFYXzI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 19:55:08 -0400
+Received: by mail-pf0-f196.google.com with SMTP id x23-v6so3263456pfn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 16:55:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=7t5j5UuxjuFVdTcRTOTfuLSfrBlPZS2OMCHOy6tkSjA=;
+        b=hSZ/oHavsD1cbhdH2/OMfQo/RO5jJWGMFzxdt9l16o1YIwmQkxP/9CfT0lwDCEyRHM
+         avdxws49lKsUMgM4O8PYZmN/wfaUGQxwXd5l2wgb94dkfDNHaefY2PXijOSO4+UCuSee
+         CFKKXZ7RjtFXyeGY3p4A2C4Fil/IXAJN6BNgA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=7t5j5UuxjuFVdTcRTOTfuLSfrBlPZS2OMCHOy6tkSjA=;
+        b=gLyCaj8iOvxARC+y4OKVSY5T4IfyyR3Q9SWplr3r/1gFapbNk7k7pBOJ+27oweA1xM
+         PzA3MhyU5GJjnPERqKiqy6TPIiM8X4asw+P+w+iCvZgeb1scEGNGWMkPn1v6KD4s1ubS
+         Ul/R62A944+tfzg0mxGWp/TZ3XFFMclpFGodJh+hDanB+jwYCpjrFd1pKusp0WI+afxf
+         HklbcjUqxIYC63lCALFg9Pa9j1IOiinxlseMebkKcYhRN0QBUDM1O89GFZzSEX0Q4A1v
+         Cw+F3JTnk3kiwCqr6znheqnhdFZkdWZ8Fe+2A/WJ/R5F8+SZSbHC1oJG5pw0wLlx9v+S
+         TAXQ==
+X-Gm-Message-State: APt69E3IZ8M9K/2G6hQs/PU6AjAr7y/RLqxe3wND5eTQ9pXD52u0AY8p
+        JtwxPsv7lTPk72Bgcujq21Xd8vPm7ls=
+X-Google-Smtp-Source: ADUXVKJ/i/zuwcOr9ICgo3I2ZMwG+qGTD/nuEaOX6+UdEhjLPh6m0J51lk2nV3md5wT2GlvLVdyVjg==
+X-Received: by 2002:a65:620b:: with SMTP id d11-v6mr1307618pgv.429.1529970907826;
+        Mon, 25 Jun 2018 16:55:07 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id u1-v6sm180101pfn.59.2018.06.25.16.55.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 16:55:06 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 16:55:05 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Dave Watson <davejwatson@fb.com>
+Cc:     Boris Pismenny <borisp@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net/tls: Remove VLA usage on nonce
+Message-ID: <20180625235505.GA22661@beast>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92abfe91-c00d-401b-7387-08d5daf6fb96
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2018 23:54:25.9450
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB1053
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Sent: Friday, June 22, 2018 10:06 AM
-> To: x86@kernel.org
-> Cc: devel@linuxdriverproject.org; linux-kernel@vger.kernel.org; KY Sriniv=
-asan
-> <kys@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>; Stephen Hemm=
-inger
-> <sthemmin@microsoft.com>; Thomas Gleixner <tglx@linutronix.de>; Ingo Moln=
-ar
-> <mingo@redhat.com>; H. Peter Anvin <hpa@zytor.com>; Tianyu Lan
-> <Tianyu.Lan@microsoft.com>; Michael Kelley (EOSG) <Michael.H.Kelley@micro=
-soft.com>
-> Subject: [PATCH 2/4] x86/hyper-v: use 'fast' hypercall for HVCALL_SEND_IP=
-I
->=20
-> Current Hyper-V TLFS (v5.0b) claims that HvCallSendSyntheticClusterIpi
-> hypercall can't be 'fast' (passing parameters through registers) but
-> apparently this is not true, Windows always uses 'fast' version. We can
-> do the same in Linux too.
->=20
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+It looks like the prior VLA removal, commit b16520f7493d ("net/tls: Remove
+VLA usage"), and a new VLA addition, commit c46234ebb4d1e ("tls: RX path
+for ktls"), passed in the night. This removes the newly added VLA, which
+happens to have its bounds based on the same max value.
 
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ net/tls/tls_sw.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index f127fac88acf..3e0b64549552 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -941,7 +941,7 @@ static int tls_read_size(struct strparser *strp, struct sk_buff *skb)
+ {
+ 	struct tls_context *tls_ctx = tls_get_ctx(strp->sk);
+ 	struct tls_sw_context_rx *ctx = tls_sw_ctx_rx(tls_ctx);
+-	char header[tls_ctx->rx.prepend_size];
++	char header[TLS_HEADER_SIZE + MAX_IV_SIZE];
+ 	struct strp_msg *rxm = strp_msg(skb);
+ 	size_t cipher_overhead;
+ 	size_t data_len = 0;
+@@ -951,6 +951,12 @@ static int tls_read_size(struct strparser *strp, struct sk_buff *skb)
+ 	if (rxm->offset + tls_ctx->rx.prepend_size > skb->len)
+ 		return 0;
+ 
++	/* Sanity-check size of on-stack buffer. */
++	if (WARN_ON(tls_ctx->rx.prepend_size > sizeof(header))) {
++		ret = -EINVAL;
++		goto read_failure;
++	}
++
+ 	/* Linearize header to local buffer */
+ 	ret = skb_copy_bits(skb, rxm->offset, header, tls_ctx->rx.prepend_size);
+ 
+@@ -1111,7 +1117,7 @@ int tls_set_sw_offload(struct sock *sk, struct tls_context *ctx, int tx)
+ 	}
+ 
+ 	/* Sanity-check the IV size for stack allocations. */
+-	if (iv_size > MAX_IV_SIZE) {
++	if (iv_size > MAX_IV_SIZE || nonce_size > MAX_IV_SIZE) {
+ 		rc = -EINVAL;
+ 		goto free_priv;
+ 	}
+-- 
+2.17.1
+
+
+-- 
+Kees Cook
+Pixel Security
