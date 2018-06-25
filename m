@@ -2,154 +2,198 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFDAC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67577C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 844542557F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:01:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 844542557F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id 210E02558C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:02:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210E02558C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752980AbeFYIBp (ORCPT
+        id S1752596AbeFYICm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:01:45 -0400
-Received: from mout.perfora.net ([74.208.4.197]:37051 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752383AbeFYIBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:01:43 -0400
-Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
- mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LlWiH-1g8LsW3Lx1-00bKFT; Mon, 25 Jun 2018 10:01:20 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     netdev@vger.kernel.org
-Cc:     Oliver Neukum <oneukum@suse.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-usb@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Dean Jenkins <Dean_Jenkins@mentor.com>,
-        linux-kernel@vger.kernel.org,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH] net: usb: asix: allow optionally getting mac address from device tree
-Date:   Mon, 25 Jun 2018 10:01:08 +0200
-Message-Id: <20180625080108.32441-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-X-Provags-ID: V03:K1:mBelHOJuJGy25FR5K74iFAqsUeFxOA6/igAVHPv7IClje9hiKC9
- dmzMEFLQlVIElNsMSdSIq6kKindjqwID+pKbGZoc2g7TpbUocvyeYQ+0lZe+XF1lsxm86Eh
- JhP4IH8z6PqnrBjvL6/aH6QaCQWPirrbh5tCLSObXC5XXHY+uYWaj+zrj5fP7cw2JDL9ypZ
- x1ai6ZmK4TMt1HnUL5iLg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:J6gzLOGem30=:yLXExeUf8MXRyQUYT33e8b
- mtVa2QVEZrQolDZ4qYdTFV+9C0MfiGm27Kfb5DpghDJVMEaDkcvA6ZvgSG355wf4gCPARUDHp
- Hbeov0OKikcP+Lh67d7RyaCm7FIjL/9n+pa7fPiC5z1ZFtWXSdX90QQCKOhj9vNFMHZU/bpAj
- Rskb4N6k+td5UYeLJO/3bDCqlKXQKrX0ujZn4+LyyiJEdmX56pOTxFedUiFNs3q7SZmxEjywd
- xsdtOTN5PgUQWqZjUxKODoum4DJee1GzOucyGQhCUE7lzxUKFaEQR5N2eMKA/eQTpnXE9pWIi
- Jy2bWoVJDIkUqlVuuFVswlX4HAfQbcXoUwyxboNDVGkYXwLkYnbjO2z5OZJjDVWLGdi5kQ4xV
- bwwlU836z2UOYG3re2YrM4Vk5ruMsK1w+8JUGDIU752Dfr7mZsz/Tls/fkMin/Z0s9kM9zb46
- kw0d8nPqhbDsOhsyXRb2NEASv+DM5AfnGuY3OI8iWq8I+ZOApm++mRAUNvUzMYsAqPyyMkItH
- Et2wllfMWONsvVnw6Wh/vA+FZXb/9u+zH3UaM5XbCDwx7tEelwuJNb0HDs02dbiRuEodO0xvT
- bYFJxfwHLPbRG24VkTRTwxQPbjRxXxP3gmQyvj5+K7N4zbsHE2c6lItFrGWkxLolPrD1Pkavc
- 1oy0mNniM5cCyHdmeorR/idGv9mRgE9qnG2x0P7gFcpAUb9yWFu8hzfzXOVRlifZzbjA=
+        Mon, 25 Jun 2018 04:02:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56488 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752289AbeFYICf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 04:02:35 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5P7wtCN024666
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 04:02:35 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jtq9buksu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 04:02:35 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 25 Jun 2018 09:02:33 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Jun 2018 09:02:30 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5P82TBp28835894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Jun 2018 08:02:29 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7256711C064;
+        Mon, 25 Jun 2018 09:02:24 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1CEFA11C05C;
+        Mon, 25 Jun 2018 09:02:24 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.152.224.43])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Jun 2018 09:02:24 +0100 (BST)
+Subject: Re: [qemu-s390x] s390 qemu boot failure in -next
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     linux-s390@vger.kernel.org, Thomas Huth <thuth@redhat.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-kernel@vger.kernel.org, qemu-devel <qemu-devel@nongnu.org>,
+        qemu-s390x <qemu-s390x@nongnu.org>
+References: <20180622194736.GA5794@roeck-us.net>
+ <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
+ <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Mon, 25 Jun 2018 10:02:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18062508-0012-0000-0000-000002832007
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062508-0013-0000-0000-000020B477B4
+Message-Id: <947bbba3-dcd0-7f5b-1d92-b41be764c2f5@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806250095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-For Embedded use where e.g. AX88772B chips may be used without external
-EEPROMs the boot loader may choose to pass the MAC address to be used
-via device tree. Therefore, allow for optionally getting the MAC
-address from device tree data e.g. as follows (excerpt from a T30 based
-board, local-mac-address to be filled in by boot loader):
 
-/* EHCI instance 1: USB2_DP/N -> AX88772B */
-usb@7d004000 {
-	status = "okay";
-	#address-cells = <1>;
-	#size-cells = <0>;
-	asix@1 {
-		reg = <1>;
-		local-mac-address = [00 00 00 00 00 00];
-	};
-};
+On 06/25/2018 09:27 AM, Christian Borntraeger wrote:
+> Also adding QEMU.
+> 
+> On 06/25/2018 09:10 AM, Christian Borntraeger wrote:
+>>
+>>
+>> On 06/22/2018 09:47 PM, Guenter Roeck wrote:
+>>> Hi,
+>>>
+>>> starting with commit 's390/boot: make head.S and als.c be part of the
+>>> decompressor only' in -next, s390 immages no longer boot in qemu.
+>>> As far as I can see, the reason is that the command line is no longer
+>>> passed from qemu to the kernel, which results in a panic because the
+>>> root file system can not be mounted.
+>>>
+>>> Was this change made on purpose ? If so, is there a way to get qemu
+>>> back to working ?
+>>
+>> Certainly not on purpose.
+>>
+>> Vasily, I can reproduce this with KVM and an external kernel boot of the vmlinux file (the elf file)
+>>
+>> e.g.
+>>
+>> qemu-system-s390 -enable-kvm -nographic -kernel vmlinux -append "this string no longer is command line"
+>>
+>> The compressed image (bzImage) seems to work fine though.
+>>
+>> This seems to be an unfortunate side effect of QEMUs ways to "guess" its Linux (checking for start
+>> address 0x10000, which is no longer true for the vmlinux file). With the pure vmlinux elf file
+>> the load address is 0x100000 as there is no unpacker.
+>>
+>> Guenter, can you check if arch/s390/boot/bzImage works for you as a workaround?
+> 
+> Something like this in QEMU 
+> 
+> diff --git a/hw/s390x/ipl.c b/hw/s390x/ipl.c
+> index f278036fa7..14153ce880 100644
+> --- a/hw/s390x/ipl.c
+> +++ b/hw/s390x/ipl.c
+> @@ -187,11 +187,13 @@ static void s390_ipl_realize(DeviceState *dev, Error **errp)
+>           */
+>          if (pentry == KERN_IMAGE_START || pentry == 0x800) {
+>              ipl->start_addr = KERN_IMAGE_START;
+> -            /* Overwrite parameters in the kernel image, which are "rom" */
+> -            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
+>          } else {
+>              ipl->start_addr = pentry;
+>          }
+> +       if (ipl->cmdline) {
+> +            /* If there is a command line, put it in the right place */
+> +            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
+> +       }
+>  
+>          if (ipl->initrd) {
+>              ram_addr_t initrd_offset;
+> 
+> would put the command line in no matter what the start address is.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
- drivers/net/usb/asix.h         |  1 +
- drivers/net/usb/asix_devices.c | 39 ++++++++++++++++++++++++---------------
- 2 files changed, 25 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/net/usb/asix.h b/drivers/net/usb/asix.h
-index 9a4171b90947..c8161960cef2 100644
---- a/drivers/net/usb/asix.h
-+++ b/drivers/net/usb/asix.h
-@@ -37,6 +37,7 @@
- #include <linux/usb/usbnet.h>
- #include <linux/slab.h>
- #include <linux/if_vlan.h>
-+#include <linux/of_net.h>
- 
- #define DRIVER_VERSION "22-Dec-2011"
- #define DRIVER_NAME "asix"
-diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-index 3d4f7959dabb..a88d65dfc64c 100644
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -690,25 +690,34 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
- 	u8 buf[ETH_ALEN], chipcode = 0;
- 	u32 phyid;
- 	struct asix_common_private *priv;
-+	const u8 *mac_addr;
- 
--	usbnet_get_endpoints(dev,intf);
-+	usbnet_get_endpoints(dev, intf);
- 
--	/* Get the MAC address */
--	if (dev->driver_info->data & FLAG_EEPROM_MAC) {
--		for (i = 0; i < (ETH_ALEN >> 1); i++) {
--			ret = asix_read_cmd(dev, AX_CMD_READ_EEPROM, 0x04 + i,
--					    0, 2, buf + i * 2, 0);
--			if (ret < 0)
--				break;
--		}
-+	/* Maybe the boot loader passed the MAC address via device tree */
-+	mac_addr = of_get_mac_address(dev->udev->dev.of_node);
-+	if (mac_addr) {
-+		memcpy(buf, mac_addr, ETH_ALEN);
- 	} else {
--		ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID,
--				0, 0, ETH_ALEN, buf, 0);
--	}
-+		/* Try getting the MAC address from EEPROM */
-+		if (dev->driver_info->data & FLAG_EEPROM_MAC) {
-+			for (i = 0; i < (ETH_ALEN >> 1); i++) {
-+				ret = asix_read_cmd(dev, AX_CMD_READ_EEPROM,
-+						    0x04 + i, 0, 2, buf + i * 2,
-+						    0);
-+				if (ret < 0)
-+					break;
-+			}
-+		} else {
-+			ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID,
-+					    0, 0, ETH_ALEN, buf, 0);
-+		}
- 
--	if (ret < 0) {
--		netdev_dbg(dev->net, "Failed to read MAC address: %d\n", ret);
--		return ret;
-+		if (ret < 0) {
-+			netdev_dbg(dev->net, "Failed to read MAC address: %d\n",
-+				   ret);
-+			return ret;
-+		}
- 	}
- 
- 	asix_set_netdev_dev_addr(dev, buf);
--- 
-2.14.4
+Ideally we would do 2 changes:
+- change QEMU to add a commandline to 10480 if specified
+- have a way to fix the kernel elf file to still boot with older QEMUs 
 
