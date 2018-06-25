@@ -7,68 +7,69 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203B6C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45D6C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C795A26244
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A12F26245
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:48:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lnO6g/Id"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C795A26244
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P5qMXypd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A12F26245
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934575AbeFYWsE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:48:04 -0400
-Received: from mail-it0-f74.google.com ([209.85.214.74]:53915 "EHLO
-        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932113AbeFYWlJ (ORCPT
+        id S934070AbeFYWs1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:48:27 -0400
+Received: from mail-it0-f73.google.com ([209.85.214.73]:39278 "EHLO
+        mail-it0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754586AbeFYWlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:41:09 -0400
-Received: by mail-it0-f74.google.com with SMTP id h195-v6so4884271itb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:09 -0700 (PDT)
+        Mon, 25 Jun 2018 18:41:01 -0400
+Received: by mail-it0-f73.google.com with SMTP id o7-v6so9191582itf.4
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:date:in-reply-to:message-id:references:subject:from:to
          :cc;
-        bh=lCTxE5lz0L47Pc05K8/9m/ry5J3JMywUVuCnYE96NS0=;
-        b=lnO6g/IdbWSCN8e5QY+u5ZUmgm8HjsN0UqEy7Db1oroVaZvQbE2COyhlWKarF4hjGk
-         4jq2WgDHpxhflPw/XLbGBnaTyt24Y5lJDbzY3/I8qq14UsdxBQYXE7LVB0cPYySerrcR
-         3t/RgXsewHBsgrOo7LapcSVesPiz9B3K0QIAqhVQAFWsDZ38RE82ODXGRpsUonuEVUoS
-         r+Agyq+K/OugM+erLr+iMazyeJDGjvSgqqKDY9Fr4w/qUdCcZvAMAqhQEaznM/PKgO3A
-         HvkxkuvN96PEOa0nFh6d9KCM8L3e1wsRLkjaWGkOcADwhZZaI7Y9GTPDsO8BEjVMA05L
-         avbQ==
+        bh=k64qpDQWoxqYXhctTCfAYQx6Gdl1qzC7yPWOjOPOVJY=;
+        b=P5qMXypdbngYS/RnDB8D4hzLx9UbIhEe1XEuRdvO6NvZEsh1HNUol+M35decdWXYrs
+         5gJE4ol9giVxngYsHrMT5V0BFEEJFqke6nyB6mGaU09DFT4tT9qlBgbNa6dcnq6pmjMM
+         QSCkfWWrEtOPh6Zaj5LJma5K80VQNKN9eDIQ3lxH6j1k+SZsArFd2oWspYvlDg8Ry5Cf
+         zg0acyOPhNa66uzPExAWK+Znqbgnu/c1YV/ySGKuHeWuOfWxkYXbm2dFaaA8UsxgVm7E
+         zUOIgQAnLipl+ug+tBg7Pv7JF1VPdgrwn2rS1z1f+H80oEUQQ9t0sbIDcM8lERhE0DVW
+         lnww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id
          :references:subject:from:to:cc;
-        bh=lCTxE5lz0L47Pc05K8/9m/ry5J3JMywUVuCnYE96NS0=;
-        b=b6nRghA/WBqCKiQ//Lu5eVEs4TrlfOgwfvjpTDcZddEkPgpbGposUn8bOtPVLRiIEX
-         0LP+VAnQY+fFO+YVaDXgvGk42vpAq9uf/esWgsyGyO31LWnKYJbhsx554PKGB8zgxcay
-         xAjO4/98rk5a9bavDV5VC6JBggfl7ZuwHZcmhzX5DI0FU1aIGyjmN9l66HRbuuHLtcJz
-         TprR0UrbT2xFonnbptZJyWwRWodnSTXLD9q4/92QOuwJ/KUrtt/A+B67PgW8wg2Wm1fP
-         mJoXXSOZytTHJufuwpm6aKatgWh3zfb4Rs7xJXUUJHJTC1HFtq5Zp4SjXIGZuzycuKv8
-         4W3A==
-X-Gm-Message-State: APt69E32gDobfIn1S3fpN6E1gm19f6I/tUGCeL1Uf8LCH5jiEtYnN4mt
-        ZT5Ng+xMgbu0LEwbQEE9Kphh8/LJESpHxg==
-X-Google-Smtp-Source: AAOMgpd4tZ9cGQvZmf2ZyxpLZ+yF9MAsCnCppU/Ftd7kOb3DNAVrK0GkCq/iob8uqaABFEa2ovUqGiMvDlnNaw==
+        bh=k64qpDQWoxqYXhctTCfAYQx6Gdl1qzC7yPWOjOPOVJY=;
+        b=HBtRzkPcy/TFtzdC/55DB4p9nwNd/N8nhb2UGma4uMutqpvjNBPh2Pa8NUDnw01gnn
+         4SkSm6d/jIoQqWXGTnSgYy71ZbOiSRVU8C4xB2oJu07az28MqCyB7cyuTSJCV/ecsfh0
+         XewHsiGkqZtTMQ2KWr32uEAWr/LTnwTb1RSz3RgnWKKdixFnqLo6xzO7Wl+AzU2AZhX4
+         KdWBjH/Rpc1gc+H3PIekJfS3H5mxlu3LMSSPUhpsnLJhNKlJp4a2e8sZWyC9OWDbpJ0b
+         3wouxnwlbUBdOVCc/b/VAFUekI8+kDEkRlr4qy0vcEcrFxIcGw3cn7FyCvHMYtvSIm31
+         hOwQ==
+X-Gm-Message-State: APt69E2VCgJzWfi+vwgxY90Aip2tLhuH4JIU8vYy2BBoIRks5GS6LBs3
+        i9H3gtsCoOkFtIgLOma4fRqm7T0nbWzx2A==
+X-Google-Smtp-Source: AAOMgpfB3hq193GzaZUZSz0CnJ4gWsBK7SzjKke8rf14Sop8IgvMK1bj/2EXWel0PE8fWLPjBGw6EH77Q/Dfuw==
 MIME-Version: 1.0
-X-Received: by 2002:a24:74d0:: with SMTP id o199-v6mr1175909itc.11.1529966468641;
- Mon, 25 Jun 2018 15:41:08 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 15:38:53 -0700
+X-Received: by 2002:a24:5dd4:: with SMTP id w203-v6mr1226821ita.27.1529966461160;
+ Mon, 25 Jun 2018 15:41:01 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:38:51 -0700
 In-Reply-To: <20180625224014.134829-1-thgarnie@google.com>
-Message-Id: <20180625224014.134829-6-thgarnie@google.com>
+Message-Id: <20180625224014.134829-4-thgarnie@google.com>
 References: <20180625224014.134829-1-thgarnie@google.com>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v5 05/27] x86: relocate_kernel - Adapt assembly for PIE support
+Subject: [PATCH v5 03/27] x86: Use symbol name in jump table for PIE support
 From:   Thomas Garnier <thgarnie@google.com>
 To:     kernel-hardening@lists.openwall.com
 Cc:     Thomas Garnier <thgarnie@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,36 +77,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible.
+Replace the %c constraint with %P. The %c is incompatible with PIE
+because it implies an immediate value whereas %P reference a symbol.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/kernel/relocate_kernel_64.S | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/jump_label.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 11eda21eb697..a7227dfe1a2b 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -208,9 +208,11 @@ identity_mapped:
- 	movq	%rax, %cr3
- 	lea	PAGE_SIZE(%r8), %rsp
- 	call	swap_pages
--	movq	$virtual_mapped, %rax
--	pushq	%rax
--	ret
-+	jmp	*virtual_mapped_addr(%rip)
-+
-+	/* Absolute value for PIE support */
-+virtual_mapped_addr:
-+	.quad virtual_mapped
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index 8c0de4282659..dfdcdc39604a 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -37,9 +37,9 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+ 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
++		_ASM_PTR "1b, %l[l_yes], %P0 \n\t"
+ 		".popsection \n\t"
+-		: :  "i" (key), "i" (branch) : : l_yes);
++		: :  "X" (&((char *)key)[branch]) : : l_yes);
  
- virtual_mapped:
- 	movq	RSP(%r8), %rsp
+ 	return false;
+ l_yes:
+@@ -53,9 +53,9 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
+ 		"2:\n\t"
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
++		_ASM_PTR "1b, %l[l_yes], %P0 \n\t"
+ 		".popsection \n\t"
+-		: :  "i" (key), "i" (branch) : : l_yes);
++		: :  "X" (&((char *)key)[branch]) : : l_yes);
+ 
+ 	return false;
+ l_yes:
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
