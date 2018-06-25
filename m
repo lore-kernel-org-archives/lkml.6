@@ -2,87 +2,98 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8F3C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A747C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ADFD25530
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:32:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12B9D25530
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:34:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aA0SUllj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ADFD25530
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FHsHdFdg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B9D25530
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeFYHc4 (ORCPT
+        id S1752540AbeFYHeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 03:32:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45214 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751631AbeFYHcz (ORCPT
+        Mon, 25 Jun 2018 03:34:10 -0400
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:34578 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752462AbeFYHeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 03:32:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PBoGhVkgWYUIk3bBP0fqjg5MBz1BZqi9g6zFYvCLoS0=; b=aA0SUlljz1mn9p8MP55/Xajx9
-        5tIhpLjgqK9jDn7lcV2Dm90lp7W0Q7xrt2XN5dZwqPm1MWYgJqfjIxEK+yG6Ej0vHXxqkBJbHaiEa
-        oEun85AE+dqaDFdBV/f1gE1wVlLP4pNwBPGo4xuE6yf+Sq9t667dvDq4f1IR2vakYWcbsqWAGBD0G
-        ClCWl9jEw966mwEOHiFAiN7YtOFW8jrH/vswZVnZ/zpby4SmRdbMHzqGbZ1++R+v+sFgnLtJTVAqD
-        PFsKqrWVnQHMz+Hl1dka+fZSz2wzFDvU8loMKjxrtSeIOn+X704vipDm4s/zUcazFNXbMWqrYd57Z
-        A53pwZXww==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXLzE-00065s-U4; Mon, 25 Jun 2018 07:32:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8ED402029FA0A; Mon, 25 Jun 2018 09:32:29 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 09:32:29 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-Message-ID: <20180625073229.GR2494@hirez.programming.kicks-ass.net>
-References: <20180622080928.GB7601@arm.com>
- <Pine.LNX.4.44L0.1806221337440.1454-100000@iolanthe.rowland.org>
+        Mon, 25 Jun 2018 03:34:08 -0400
+Received: by mail-wr0-f171.google.com with SMTP id a12-v6so12540843wro.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 00:34:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Z3iEYKdPzUIaqgrIQXnQlNikaGL6QxHuYNuyrCN3HIw=;
+        b=FHsHdFdgioaprZSd1GPBc0G4BwrH4kXSIpttW0agBaZD3j6ROu7hLGUNoW3+I/jtVY
+         r5NcjT5axIYnT6CUwuLs55s61LeXjlBR7nUdEGCYT/qcSpGMBevCyvTRjAskCa07Usoi
+         F7ue6AE7z00/1Jt31NjwuQ0E9hasgv5rZOp8A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Z3iEYKdPzUIaqgrIQXnQlNikaGL6QxHuYNuyrCN3HIw=;
+        b=grn/g+KFwFn+u/D1xSuvWpL5278H8TTp/nR92EI7twn8QJb5eKKRbQpO1ySjvjoQFs
+         6+OgygOgCdhGEjD19IkdAv2fY0tYJW4dWQvaM5do1erwgpli70DCreQdpUgpEmmy23hn
+         6BQQIp/96M6X5EfkJAah4KQk4AxyUnJuoGXVJ2WC3NElx6ufDX9UZFDUAxsY7kpTD/Km
+         zFgxrXfdIVW/X//8jgau3TNgxkbE9wXsMftlXZPBRlc8tK+006jEKWI+o8c7ISViLVkN
+         Ku+PyVnXJfNSGYsugTjGBR8mRUssNOlt4By3DXiioDwBEdQ/MwVW0PMU3zm+28bmL+LF
+         KM6w==
+X-Gm-Message-State: APt69E2Ri8NStyU/kd5fpCmsr0W/A5aalAsmM6LWMUg8Txo9zmykTYJt
+        GWfrD6dJ0teykIMtC9vmXHNH1A==
+X-Google-Smtp-Source: ADUXVKIgfvM9eGspltAYFJrssWqluAXKqitmthBzlvOfx67oEnqXkbHKEl2P1IRcBnssVDvjKzfCSw==
+X-Received: by 2002:adf:8650:: with SMTP id 16-v6mr9637775wrw.73.1529912047092;
+        Mon, 25 Jun 2018 00:34:07 -0700 (PDT)
+Received: from [192.168.8.101] ([37.169.34.115])
+        by smtp.googlemail.com with ESMTPSA id f133-v6sm7779496wme.42.2018.06.25.00.34.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 00:34:06 -0700 (PDT)
+Subject: Re: Add system timer driver for Mediatek SoCs
+To:     Stanley Chu <stanley.chu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
+References: <1529910601-15005-1-git-send-email-stanley.chu@mediatek.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <dd36b094-b11c-e6ef-a0fc-b039785e74f2@linaro.org>
+Date:   Mon, 25 Jun 2018 09:34:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1806221337440.1454-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1529910601-15005-1-git-send-email-stanley.chu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 25/06/2018 09:09, Stanley Chu wrote:
+> This patch adds a new driver for system timer on the Mediatek SoCs.
 
-I have yet to digest the rest of the discussion, however:
+Please elaborate why we need yet another timer.
 
-On Fri, Jun 22, 2018 at 02:09:04PM -0400, Alan Stern wrote:
-> The LKMM uses the same CAT code for acquire/release and lock/unlock.
-> (In essence, it considers a lock to be an acquire and an unlock to be a
-> release; everything else follows from that.)  Treating one differently
-> from the other in these tests would require some significant changes.
-> It wouldn't be easy.
+Is this timer present on all Mediatek platform ? Does it always co-exist
+with the existing one ?
 
-That is problematic, acquire+release are very much simpler operations
-than lock+unlock.
 
-At the very least, lock includes a control-dependency, where acquire
-does not.
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
