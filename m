@@ -2,115 +2,100 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29884C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C24AC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D883E25931
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:38:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pXHeYBO8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D883E25931
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F93E208EB
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:39:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F93E208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933667AbeFYMiO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:38:14 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38284 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932246AbeFYMiM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:38:12 -0400
-Received: by mail-wm0-f67.google.com with SMTP id 69-v6so9812133wmf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 05:38:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wgIH8PdUl/HVoojcQE/mTChqZCGnvafYX8gGSbuBM1c=;
-        b=pXHeYBO8jihvg9RFBR7fs+RlxrbbWjyRW8rybnWzMmLTVEDR/0xd7459E6nhg1jBCW
-         vMtu5z7Sle7DOu8A2aKmlZaHw0bsEURnJn2TywcvM95fiPCnr9IL9hMGxxAsnHLMa0yV
-         BZcg570bCmPn02LYURsyBsKrNAt9s4xRasj3qGBcL3P3FbbG+Xm+XVixD0X1Gk0cBRaR
-         Ip9boZ77jlhBTewEdOGWTzXd34WiRAPHN+R5z4tvwxs9sP0gEDODCDICCp40mq6i07Ke
-         6EQWr+AWTX/uy0Q9wMnjWssdqxqts1pjSXiLxO69Hh6lhLBdasmQqke+whAKTj+OCNGY
-         781A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wgIH8PdUl/HVoojcQE/mTChqZCGnvafYX8gGSbuBM1c=;
-        b=IrAbp8RzstlOcNZACN1OG3jmmq6l3o6n6MKFmdT9AkGQ024EEcgJaHkqt38FXXekdO
-         wit/H3N+wvCN36Ny0r52Xw4wsP/mtf+HQx/JVu9uZOw2p0VkMLnz8GnSK9kgFYdAlcSk
-         Sg1wUoIRNWtOzSYfV5GbgruX9rAoL4q9GpyJQfdsVUmgLHZvV+T0P4e9Gjcg1vBlXIiK
-         gBg3IV0DlIH686JAMfpGOFY5/bRUye8KKub8TTmqPVrNgWrtA3lPs3NvCwPERflweJQQ
-         8tuCTNHTJwPxRa1fveMJgJnwI87GgRHuJAkG5ocZHrS18KejQpG9TGxkIEvpr8ZaaN0V
-         wysw==
-X-Gm-Message-State: APt69E38xB0+U7PFmSw/cZoiMVPq59jRGkYRyTU0b8zYJMztSTJcXc6b
-        7OM9O2N6Yiad3vYSkO0TrN4=
-X-Google-Smtp-Source: AAOMgpdofQQm4SIs8unlNWP+baHU/vhLQ8B553BZyYK56V7OBMzQXKoCS04zAU5wMIAmpahhJW6Rjw==
-X-Received: by 2002:a1c:afc3:: with SMTP id y186-v6mr848335wme.87.1529930291796;
-        Mon, 25 Jun 2018 05:38:11 -0700 (PDT)
-Received: from dvyukov-z840.muc.corp.google.com ([2a00:79e0:15:10:8971:4ae9:dd1c:10e])
-        by smtp.gmail.com with ESMTPSA id b6-v6sm9752534wro.52.2018.06.25.05.38.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 05:38:10 -0700 (PDT)
-From:   Dmitry Vyukov <dvyukov@gmail.com>
-To:     tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, sergey.senozhatsky.work@gmail.com
-Cc:     Dmitry Vyukov <dvyukov@google.com>
-Subject: [PATCH v2] arch/x86: get rid of KERN_CONT in show_fault_oops()
-Date:   Mon, 25 Jun 2018 14:38:08 +0200
-Message-Id: <20180625123808.227417-1-dvyukov@gmail.com>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
+        id S933693AbeFYMjM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:39:12 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:41974 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932246AbeFYMjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 08:39:10 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 100BE20000A;
+        Mon, 25 Jun 2018 14:39:09 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D0587200079;
+        Mon, 25 Jun 2018 14:39:08 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 4599840C72;
+        Mon, 25 Jun 2018 05:39:08 -0700 (MST)
+Received: from titan.ap.freescale.net ([10.192.208.233])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w5PCd34L025070;
+        Mon, 25 Jun 2018 05:39:04 -0700
+From:   Yangbo Lu <yangbo.lu@nxp.com>
+To:     netdev@vger.kernel.org, madalin.bucur@nxp.com,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v4, 00/10] Support DPAA PTP clock and timestamping
+Date:   Mon, 25 Jun 2018 20:37:06 +0800
+Message-Id: <20180625123716.28993-1-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Vyukov <dvyukov@google.com>
+This patchset is to support DPAA FMAN PTP clock and HW timestamping.
+It had been verified on both ARM platform and PPC platform.
+- The patch #1 to patch #5 are to support DPAA FMAN 1588 timer in
+  ptp_qoriq driver.
+- The patch #6 to patch #10 are to add HW timestamping support in
+  DPAA ethernet driver.
 
-KERN_CONT leads to split lines in kernel output
-and complicates useful changes to printk like
-printing context before each line.
+Yangbo Lu (10):
+  fsl/fman: share the event interrupt
+  ptp: support DPAA FMan 1588 timer in ptp_qoriq
+  dt-binding: ptp_qoriq: add DPAA FMan support
+  powerpc/mpc85xx: move ptp timer out of fman in dts
+  arm64: dts: fsl: move ptp timer out of fman
+  fsl/fman: add set_tstamp interface
+  fsl/fman_port: support getting timestamp
+  fsl/fman: define frame description command UPD
+  dpaa_eth: add support for hardware timestamping
+  dpaa_eth: add the get_ts_info interface for ethtool
 
-Only acceptable use of continuations is basically
-boot-time testing.
-
-Get rid of it.
-
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-
----
-
-Changes since v1:
- - use pr_alert() instead of printk(KERN_ALERT)
----
- arch/x86/mm/fault.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 9a84a0d08727..b9ceeaadde48 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -671,13 +671,9 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
- 			printk(smep_warning, from_kuid(&init_user_ns, current_uid()));
- 	}
- 
--	printk(KERN_ALERT "BUG: unable to handle kernel ");
--	if (address < PAGE_SIZE)
--		printk(KERN_CONT "NULL pointer dereference");
--	else
--		printk(KERN_CONT "paging request");
--
--	printk(KERN_CONT " at %px\n", (void *) address);
-+	pr_alert("BUG: unable to handle kernel %s at %px\n",
-+		(address < PAGE_SIZE ? "NULL pointer dereference" :
-+		"paging request"), (void *) address);
- 
- 	dump_pagetable(address);
- }
--- 
-2.18.0.rc2.346.g013aa6912e-goog
+ Documentation/devicetree/bindings/net/fsl-fman.txt |   25 +-----
+ .../devicetree/bindings/ptp/ptp-qoriq.txt          |   15 +++-
+ arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi   |   14 ++-
+ arch/powerpc/boot/dts/fsl/qoriq-fman-0.dtsi        |   14 ++-
+ arch/powerpc/boot/dts/fsl/qoriq-fman-1.dtsi        |   14 ++-
+ arch/powerpc/boot/dts/fsl/qoriq-fman3-0.dtsi       |   14 ++-
+ arch/powerpc/boot/dts/fsl/qoriq-fman3-1.dtsi       |   14 ++-
+ arch/powerpc/boot/dts/fsl/qoriq-fman3l-0.dtsi      |   14 ++-
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c     |   88 ++++++++++++++++-
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.h     |    3 +
+ drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c |   39 ++++++++
+ drivers/net/ethernet/freescale/fman/fman.c         |    3 +-
+ drivers/net/ethernet/freescale/fman/fman.h         |    1 +
+ drivers/net/ethernet/freescale/fman/fman_dtsec.c   |   27 +++++
+ drivers/net/ethernet/freescale/fman/fman_dtsec.h   |    1 +
+ drivers/net/ethernet/freescale/fman/fman_memac.c   |    5 +
+ drivers/net/ethernet/freescale/fman/fman_memac.h   |    1 +
+ drivers/net/ethernet/freescale/fman/fman_port.c    |   12 +++
+ drivers/net/ethernet/freescale/fman/fman_port.h    |    2 +
+ drivers/net/ethernet/freescale/fman/fman_tgec.c    |   21 ++++
+ drivers/net/ethernet/freescale/fman/fman_tgec.h    |    1 +
+ drivers/net/ethernet/freescale/fman/mac.c          |    3 +
+ drivers/net/ethernet/freescale/fman/mac.h          |    1 +
+ drivers/ptp/Kconfig                                |    2 +-
+ drivers/ptp/ptp_qoriq.c                            |  104 ++++++++++++-------
+ include/linux/fsl/ptp_qoriq.h                      |   38 ++++++--
+ 26 files changed, 361 insertions(+), 115 deletions(-)
 
