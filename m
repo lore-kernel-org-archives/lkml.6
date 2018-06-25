@@ -1,244 +1,218 @@
 Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A58C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B57F7C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 027A226244
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:56:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027A226244
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 63AD426257
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:56:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mnetxetd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63AD426257
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755780AbeFYW4C (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:56:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40064 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755090AbeFYWz6 (ORCPT
+        id S932507AbeFYW4P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:56:15 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34025 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932174AbeFYW4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:55:58 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PMmqgJ044589
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 18:55:58 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96prt0y-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 18:55:58 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 25 Jun 2018 18:55:57 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 18:55:52 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5PMtprX14942504
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jun 2018 22:55:51 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A26A5B206B;
-        Mon, 25 Jun 2018 18:55:46 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8240BB2064;
-        Mon, 25 Jun 2018 18:55:46 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Jun 2018 18:55:46 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D318316CA093; Mon, 25 Jun 2018 15:57:56 -0700 (PDT)
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 1/5] torture: Use a single build directory for torture scenarios
-Date:   Mon, 25 Jun 2018 15:57:51 -0700
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180625225735.GA11793@linux.vnet.ibm.com>
-References: <20180625225735.GA11793@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18062522-2213-0000-0000-000002BFD89E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052304; UDB=6.00539450; IPR=6.00830229;
- MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-25 22:55:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062522-2214-0000-0000-00005A9B6F32
-Message-Id: <20180625225755.12839-1-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=889 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806250259
+        Mon, 25 Jun 2018 18:56:12 -0400
+Received: by mail-pl0-f66.google.com with SMTP id z9-v6so676915plo.1;
+        Mon, 25 Jun 2018 15:56:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aFmZ+9nj9Fzer412y/y2HUmYZnLtfG6x9XhTViIwmdE=;
+        b=Mnetxetd/D7bqfkht3SFT8qUG2GnWBwXgaIVrV+NkEHSkTTi0G3RSx2554JEnwzK0i
+         hVlXcFFYwz7mJYKc/hoXGJ5lc6opJr5XnILgFpo+2TnbBfxhxUBL8ZkQLA0OFpAvqUJa
+         Y5hr9Y2IHCi7Mm+L3sRRfhlorrIzd9+45euXpTEOUBBRZ/8RmLVZMFuVTfqaplflBAA/
+         NzLwz3DJDdLhOrH2jiszAd4qRJ73T99Y9Grb2LVTWUSuGDFf3NPySXGE5FkAukpJiI55
+         vn2PtPEyw0ly9GYKSjF3Qf14KeuIbNGwd9sXdggFc6B5U0VVxh7UAiAtvpDlEnC5Uv/T
+         Oq/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aFmZ+9nj9Fzer412y/y2HUmYZnLtfG6x9XhTViIwmdE=;
+        b=X/JQmPH2MYAzGWMPDEqA5hRtGfZdF9qVlg+co15VzL0RRNY7ASNy8nfcYC0OS/CCUS
+         itdf4ulP46qDb3tN5obzmGTwQk5NpatotgWTY2SiPjmvhjfxXWmGlaOPL92IHL2kffHS
+         vXd4XBvvbb3wlIZ3zKlpiJ+k9ZBTKK6VMbq38XLco16Dk89es6LYyP61Nq4FtR/LNFqT
+         OEU/pnlXUbYtncDCUK0MNCZv5vTZvoacAX5aKSIROpVZAlZonB0i4pBVgG8Ye1ZvpYJV
+         +bf30q9c4ZB7gKU970PQyInicjETi6m6u7XvgaLPC2v+o7Enz5q4StY+FqIDth/O+92k
+         9rQg==
+X-Gm-Message-State: APt69E3h4eRry1FYJq6FpCu5Ye9ttS3mP2Nsj2ilh/VneaR1mJjj7ENg
+        DWn9rq0AKcrKyS+gF3AgMrg=
+X-Google-Smtp-Source: ADUXVKJ1JySm+f3MpPKeB3BDn03vyvIdLZ1AXBl7V3pD1j6QI1pyfybx2aRGnYsh8P8l/JoUkX4mng==
+X-Received: by 2002:a17:902:7896:: with SMTP id q22-v6mr13838478pll.243.1529967371959;
+        Mon, 25 Jun 2018 15:56:11 -0700 (PDT)
+Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
+        by smtp.gmail.com with ESMTPSA id g70-v6sm99342pfc.107.2018.06.25.15.56.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 15:56:11 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:56:09 -0700
+From:   Eric Biggers <ebiggers3@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        qat-linux@intel.com, linux-kernel@vger.kernel.org,
+        dm-devel@redhat.com, linux-crypto@vger.kernel.org,
+        Lars Persson <larper@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>
+Subject: Re: [dm-devel] [PATCH v2 10/11] crypto: ahash: Remove VLA usage for
+ AHASH_REQUEST_ON_STACK
+Message-ID: <20180625225609.GA181665@gmail.com>
+References: <20180625211026.15819-1-keescook@chromium.org>
+ <20180625211026.15819-11-keescook@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625211026.15819-11-keescook@chromium.org>
+User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The torture scripting currently builds each kernel from a set of parallel
-runs in its own build directory.  This can waste quite a bit of space when
-running large numbers of concurrent scenarios, and pointlessly given that
-the builds are run sequentially (albeit with a largish -j number passed to
-"make").  This commit therefore places all build-command output in the
-results directory, then does all builds in a single "b1" build directory.
+On Mon, Jun 25, 2018 at 02:10:25PM -0700, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this caps
+> the ahash request size similar to the other limits and adds a sanity
+> check at registration. Unfortunately, these reqsizes can be huge. Looking
+> at all callers of crypto_ahash_set_reqsize(), the largest appears to be
+> 664 bytes, based on a combination of manual inspection and pahole output:
+> 
+> 4       dcp_sha_req_ctx
+> 40      crypto4xx_ctx
+> 52      hash_req_ctx
+> 80      ahash_request
+> 88      rk_ahash_rctx
+> 104     sun4i_req_ctx
+> 200     mcryptd_hash_request_ctx
+> 216     safexcel_ahash_req
+> 228     sha1_hash_ctx
+> 228     sha256_hash_ctx
+> 248     img_hash_request_ctx
+> 252     mtk_sha_reqctx
+> 276     sahara_sha_reqctx
+> 304     mv_cesa_ahash_req
+> 316     iproc_reqctx_s
+> 320     caam_hash_state
+> 320     qce_sha_reqctx
+> 356     sha512_hash_ctx
+> 384     ahash_req_ctx
+> 400     chcr_ahash_req_ctx
+> 416     stm32_hash_request_ctx
+> 432     talitos_ahash_req_ctx
+> 462     atmel_sha_reqctx
+> 496     ccp_aes_cmac_req_ctx
+> 616     ccp_sha_req_ctx
+> 664     artpec6_hash_request_context
+> 
+> So, this chooses 720 as a larger "round" number for the max.
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Biggers <ebiggers@google.com>
+> Cc: Tim Chen <tim.c.chen@linux.intel.com>
+> Cc: Rabin Vincent <rabinv@axis.com>
+> Cc: Lars Persson <larper@axis.com>
+> Cc: linux-crypto@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  include/crypto/hash.h          | 3 ++-
+>  include/crypto/internal/hash.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+> index 5d79e2f0936e..b550077c4767 100644
+> --- a/include/crypto/hash.h
+> +++ b/include/crypto/hash.h
+> @@ -66,10 +66,11 @@ struct ahash_request {
+>  
+>  #define AHASH_MAX_DIGESTSIZE	512
+>  #define AHASH_MAX_STATESIZE	512
+> +#define AHASH_MAX_REQSIZE	720
+>  
+>  #define AHASH_REQUEST_ON_STACK(name, ahash) \
+>  	char __##name##_desc[sizeof(struct ahash_request) + \
+> -		crypto_ahash_reqsize(ahash)] CRYPTO_MINALIGN_ATTR; \
+> +		AHASH_MAX_REQSIZE] CRYPTO_MINALIGN_ATTR; \
+>  	struct ahash_request *name = (void *)__##name##_desc
+>  
+>  /**
+> diff --git a/include/crypto/internal/hash.h b/include/crypto/internal/hash.h
+> index a0b0ad9d585e..d96ae5f52125 100644
+> --- a/include/crypto/internal/hash.h
+> +++ b/include/crypto/internal/hash.h
+> @@ -142,6 +142,7 @@ static inline struct ahash_alg *__crypto_ahash_alg(struct crypto_alg *alg)
+>  static inline void crypto_ahash_set_reqsize(struct crypto_ahash *tfm,
+>  					    unsigned int reqsize)
+>  {
+> +	BUG_ON(reqsize > AHASH_MAX_REQSIZE);
+>  	tfm->reqsize = reqsize;
+>  }
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- .../selftests/rcutorture/bin/configinit.sh    | 26 +++++++++----------
- .../selftests/rcutorture/bin/kvm-build.sh     | 11 ++++----
- .../rcutorture/bin/kvm-test-1-run.sh          |  5 ++--
- tools/testing/selftests/rcutorture/bin/kvm.sh |  2 +-
- 4 files changed, 22 insertions(+), 22 deletions(-)
+This isn't accounting for the cases where a hash algorithm is "wrapped" with
+another one, which increases the request size.  For example, "sha512_mb" ends up
+with a request size of
 
-diff --git a/tools/testing/selftests/rcutorture/bin/configinit.sh b/tools/testing/selftests/rcutorture/bin/configinit.sh
-index c15f270e121d..65541c21a544 100755
---- a/tools/testing/selftests/rcutorture/bin/configinit.sh
-+++ b/tools/testing/selftests/rcutorture/bin/configinit.sh
-@@ -1,6 +1,6 @@
- #!/bin/bash
- #
--# Usage: configinit.sh config-spec-file [ build output dir ]
-+# Usage: configinit.sh config-spec-file build-output-dir results-dir
- #
- # Create a .config file from the spec file.  Run from the kernel source tree.
- # Exits with 0 if all went well, with 1 if all went well but the config
-@@ -40,20 +40,18 @@ mkdir $T
- 
- c=$1
- buildloc=$2
-+resdir=$3
- builddir=
--if test -n $buildloc
-+if echo $buildloc | grep -q '^O='
- then
--	if echo $buildloc | grep -q '^O='
-+	builddir=`echo $buildloc | sed -e 's/^O=//'`
-+	if test ! -d $builddir
- 	then
--		builddir=`echo $buildloc | sed -e 's/^O=//'`
--		if test ! -d $builddir
--		then
--			mkdir $builddir
--		fi
--	else
--		echo Bad build directory: \"$buildloc\"
--		exit 2
-+		mkdir $builddir
- 	fi
-+else
-+	echo Bad build directory: \"$buildloc\"
-+	exit 2
- fi
- 
- sed -e 's/^\(CONFIG[0-9A-Z_]*\)=.*$/grep -v "^# \1" |/' < $c > $T/u.sh
-@@ -61,12 +59,12 @@ sed -e 's/^\(CONFIG[0-9A-Z_]*=\).*$/grep -v \1 |/' < $c >> $T/u.sh
- grep '^grep' < $T/u.sh > $T/upd.sh
- echo "cat - $c" >> $T/upd.sh
- make mrproper
--make $buildloc distclean > $builddir/Make.distclean 2>&1
--make $buildloc $TORTURE_DEFCONFIG > $builddir/Make.defconfig.out 2>&1
-+make $buildloc distclean > $resdir/Make.distclean 2>&1
-+make $buildloc $TORTURE_DEFCONFIG > $resdir/Make.defconfig.out 2>&1
- mv $builddir/.config $builddir/.config.sav
- sh $T/upd.sh < $builddir/.config.sav > $builddir/.config
- cp $builddir/.config $builddir/.config.new
--yes '' | make $buildloc oldconfig > $builddir/Make.oldconfig.out 2> $builddir/Make.oldconfig.err
-+yes '' | make $buildloc oldconfig > $resdir/Make.oldconfig.out 2> $resdir/Make.oldconfig.err
- 
- # verify new config matches specification.
- configcheck.sh $builddir/.config $c
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-build.sh b/tools/testing/selftests/rcutorture/bin/kvm-build.sh
-index 34d126734cde..9115fcdb5617 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-build.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-build.sh
-@@ -2,7 +2,7 @@
- #
- # Build a kvm-ready Linux kernel from the tree in the current directory.
- #
--# Usage: kvm-build.sh config-template build-dir
-+# Usage: kvm-build.sh config-template build-dir resdir
- #
- # This program is free software; you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
-@@ -29,6 +29,7 @@ then
- 	exit 1
- fi
- builddir=${2}
-+resdir=${3}
- 
- T=${TMPDIR-/tmp}/test-linux.sh.$$
- trap 'rm -rf $T' 0
-@@ -41,19 +42,19 @@ CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_CONSOLE=y
- ___EOF___
- 
--configinit.sh $T/config O=$builddir
-+configinit.sh $T/config O=$builddir $resdir
- retval=$?
- if test $retval -gt 1
- then
- 	exit 2
- fi
- ncpus=`cpus2use.sh`
--make O=$builddir -j$ncpus $TORTURE_KMAKE_ARG > $builddir/Make.out 2>&1
-+make O=$builddir -j$ncpus $TORTURE_KMAKE_ARG > $resdir/Make.out 2>&1
- retval=$?
--if test $retval -ne 0 || grep "rcu[^/]*": < $builddir/Make.out | egrep -q "Stop|Error|error:|warning:" || egrep -q "Stop|Error|error:" < $builddir/Make.out
-+if test $retval -ne 0 || grep "rcu[^/]*": < $resdir/Make.out | egrep -q "Stop|Error|error:|warning:" || egrep -q "Stop|Error|error:" < $resdir/Make.out
- then
- 	echo Kernel build error
--	egrep "Stop|Error|error:|warning:" < $builddir/Make.out
-+	egrep "Stop|Error|error:|warning:" < $resdir/Make.out
- 	echo Run aborted.
- 	exit 3
- fi
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-index c5b0f94341d9..f7247ee00514 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-@@ -98,14 +98,15 @@ then
- 	ln -s $base_resdir/.config $resdir  # for kvm-recheck.sh
- 	# Arch-independent indicator
- 	touch $resdir/builtkernel
--elif kvm-build.sh $T/Kc2 $builddir
-+elif kvm-build.sh $T/Kc2 $builddir $resdir
- then
- 	# Had to build a kernel for this test.
- 	QEMU="`identify_qemu $builddir/vmlinux`"
- 	BOOT_IMAGE="`identify_boot_image $QEMU`"
--	cp $builddir/Make*.out $resdir
- 	cp $builddir/vmlinux $resdir
- 	cp $builddir/.config $resdir
-+	cp $builddir/Module.symvers $resdir > /dev/null || :
-+	cp $builddir/System.map $resdir > /dev/null || :
- 	if test -n "$BOOT_IMAGE"
- 	then
- 		cp $builddir/$BOOT_IMAGE $resdir
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm.sh b/tools/testing/selftests/rcutorture/bin/kvm.sh
-index 56610dbbdf73..5a7a62d76a50 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm.sh
-@@ -347,7 +347,7 @@ function dump(first, pastlast, batchnum)
- 	print "needqemurun="
- 	jn=1
- 	for (j = first; j < pastlast; j++) {
--		builddir=KVM "/b" jn
-+		builddir=KVM "/b1"
- 		cpusr[jn] = cpus[j];
- 		if (cfrep[cf[j]] == "") {
- 			cfr[jn] = cf[j];
--- 
-2.17.1
+	sizeof(struct ahash_request) +
+	sizeof(struct mcryptd_hash_request_ctx) +
+	sizeof(struct ahash_request) + 
+	sizeof(struct sha512_hash_ctx)
 
+	== 808 bytes, on x86_64 with CONFIG_DEBUG_SG enabled.
+
+	(Note also that structure sizes can vary depending on the architecture
+	 and the kernel config.)
+
+So, with the self-tests enabled your new BUG_ON() is hit on boot:
+
+------------[ cut here ]------------
+kernel BUG at ./include/crypto/internal/hash.h:145!
+invalid opcode: 0000 [#1] SMP PTI
+CPU: 4 PID: 337 Comm: cryptomgr_test Not tainted 4.18.0-rc2-00048-gda396e1e8ca5 #11
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+RIP: 0010:mcryptd_hash_init_tfm+0x36/0x40 crypto/mcryptd.c:289
+Code: 01 00 00 e8 0c 05 fd ff 48 3d 00 f0 ff ff 77 18 48 89 43 40 8b 40 40 05 c8 00 00 00 3d d0 02 00 00 77 07 89 43 f8 31 c0 5b c3 <0f> 0b 0f 1f 84 00 00 00 00 00 80 7f 0c 00 74 01 c3 65 8b 05 d2 e2 
+RSP: 0000:ffffb180c0dafc50 EFLAGS: 00010202
+RAX: 00000000000002d8 RBX: ffffa1867c9267c8 RCX: ffffffffb66f5ef0
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffa1867c927c48
+RBP: ffffa1867c926780 R08: 0000000000000001 R09: ffffa1867c927c00
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: ffffa1867c9c6848 R14: ffffa1867c9c6848 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffffa1867fd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000035c10001 CR4: 00000000001606e0
+Call Trace:
+ crypto_create_tfm+0x86/0xd0 crypto/api.c:475
+ crypto_alloc_tfm+0x4b/0xb0 crypto/api.c:543
+ mcryptd_alloc_ahash+0x6f/0xb0 crypto/mcryptd.c:603
+ sha512_mb_async_init_tfm+0x1a/0x50 arch/x86/crypto/sha512-mb/sha512_mb.c:724
+ crypto_create_tfm+0x86/0xd0 crypto/api.c:475
+ crypto_alloc_tfm+0x4b/0xb0 crypto/api.c:543
+ __alg_test_hash+0x1c/0x90 crypto/testmgr.c:1799
+ alg_test_hash+0x6b/0x100 crypto/testmgr.c:1841
+ alg_test.part.5+0x119/0x2a0 crypto/testmgr.c:3687
+ cryptomgr_test+0x3b/0x40 crypto/algboss.c:223
+ kthread+0x114/0x130 kernel/kthread.c:240
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Modules linked in:
+---[ end trace d726be03a53bddb5 ]---
