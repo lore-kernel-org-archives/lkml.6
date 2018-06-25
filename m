@@ -2,108 +2,98 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC800C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A65BC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55A91255AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:18:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A91255AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BBA3C256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:19:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i9xlBCgh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBA3C256E1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752423AbeFYQSp (ORCPT
+        id S1755134AbeFYQTf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:18:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32958 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751513AbeFYQSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:18:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BA9D7A9;
-        Mon, 25 Jun 2018 09:18:43 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CDD23F5AD;
-        Mon, 25 Jun 2018 09:18:42 -0700 (PDT)
-Subject: Re: [PATCH] PCI: shpchp: Fix probing logic inversion
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180621164715.28160-1-marc.zyngier@arm.com>
- <20180625140122.GF108993@bhelgaas-glaptop.roam.corp.google.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <62eb1a4b-2ec9-b472-a277-33ddc5952348@arm.com>
-Date:   Mon, 25 Jun 2018 17:18:40 +0100
+        Mon, 25 Jun 2018 12:19:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51146 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752988AbeFYQTc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 12:19:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3neHh90zitVJZIoBUTMvE86AKqERBnhi3I1BwWG/k4M=; b=i9xlBCghUfnG90IdoM4Mv3Ysx
+        v3QuPOEkPYKtQAKv/yOwrHjDxnCNSoQx+8qcIv00qHSeIcoObC0vFNS9HAh7zklu4UDJ0JfiIgCuw
+        8OAuSmXkZJ2ikEXsyp9fnr8o6hqd+tZpk1ntfrULHOqFFwIhbG1hcI3QD6ufWDbAPCQ+7YR49namY
+        W+mNFE413L8bYNj3FcYgB7BwSYbUSeMIuU2jN+zfJ+7dViXsy7VoI74ylH73ZXtV8Gqo1dtGAL8Kv
+        zRCU3VfrSmapDh2+gad36bLonofhizzCHgh1hVq2knVVMbagiz8N7oXS50wbbz3gfTnoJSTW/kFum
+        l5BTuLl9A==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXUDD-0002ej-An; Mon, 25 Jun 2018 16:19:31 +0000
+Subject: Re: linux-next: Tree for Jun 25 (efi_64.c)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180625154317.7a55dd19@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c75cfdf9-fc2c-52c3-81a4-8584923b85a7@infradead.org>
+Date:   Mon, 25 Jun 2018 09:19:29 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180625140122.GF108993@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20180625154317.7a55dd19@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn, Mika,
-
-On 25/06/18 15:01, Bjorn Helgaas wrote:
-> Hi Marc,
+On 06/24/2018 10:43 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Sorry we broke this!
-
-No worries, gave me a chance to stare at something else! ;-)
-
+> Changes since 20180622:
 > 
-> On Thu, Jun 21, 2018 at 05:47:15PM +0100, Marc Zyngier wrote:
->> Until recently, shpc_probe() would bail out pretty early in the
->> absence of the SHPC capability. A logic change in the way the
->> driver now checks that capability makes it go and probe the
->> firmware anyway, with ugly consequences if the system is not
->> ACPI based (my arm64 ThunderX is DT driven, and explodes in
->> a spectacular way after getting a NULL root bridge from the
->> non-existent ACPI tables...).
->>
->> Take this opportunity to move the call to shpchp_is_native()
->> back into shpc_probe(), making it clear that a non-ACPI system
->> is not expected to use this driver.
-> 
-> But a non-ACPI system *should* be able to use SHPC.
 
-Yeah, I only realized that once Mika pointed it out.
+on x86_64: (randconfig)
 
-> Here's my understanding of how it should work.  On an ACPI system,
-> 
->   - If firmware has _OSC, the OS calls it to request permission to
->     manage the SHPC.  If _OSC grants permission, it should also
->     configure the hardware (interrupts, etc) to give the OS.
->     
->   - If there's no _OSC, shpchp assumes it's allowed to manage the
->     SHPC, and it calls OSHP to configure the hardware appropriately.
-> 
-> On a non-ACPI system, shpchp assumes there's no firmware involved at
-> all, so it can manage the SHPC without doing anything special.
-> 
-> I see Mika has already posted a patch similar to the first one
-> below; I think either of those should fix the problem you're seeing.
+  CC      arch/x86/platform/efi/efi_64.o
+In file included from ../include/linux/kernel.h:10:0,
+                 from ../arch/x86/platform/efi/efi_64.c:21:
+../arch/x86/platform/efi/efi_64.c: In function 'efi_sync_low_kernel_mappings':
+../include/linux/compiler.h:319:20: error: call to '__compiletime_assert_277' declared with attribute error: BUILD_BUG_ON failed: p4d_index(EFI_VA_END) != p4d_index(MODULES_END)
+    prefix ## suffix();    \
+                    ^
+../include/linux/compiler.h:327:2: note: in expansion of macro '__compiletime_assert'
+  __compiletime_assert(condition, msg, prefix, suffix)
+  ^
+../include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^
+../include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
+ #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                     ^
+../include/linux/build_bug.h:69:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+  ^
+../arch/x86/platform/efi/efi_64.c:277:2: note: in expansion of macro 'BUILD_BUG_ON'
+  BUILD_BUG_ON(p4d_index(EFI_VA_END) != p4d_index(MODULES_END));
+  ^
+../scripts/Makefile.build:317: recipe for target 'arch/x86/platform/efi/efi_64.o' failed
+make[4]: *** [arch/x86/platform/efi/efi_64.o] Error 1
 
-Absolutely. With this early exit when root is NULL, my test box is back
-up and running.
 
-> The second is an attempt to clean things up so they make a
-> little more sense.
 
-I haven't tried that second patch yet, but from reading it, it
-definitely helps making sense of this driver.
-
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+~Randy
