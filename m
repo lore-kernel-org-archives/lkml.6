@@ -7,69 +7,73 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083CEC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C992C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31D426208
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D128026208
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NJmelMs3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31D426208
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GSLXlgty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D128026208
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934309AbeFYWlg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:41:36 -0400
-Received: from mail-yb0-f201.google.com ([209.85.213.201]:41972 "EHLO
-        mail-yb0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933969AbeFYWlb (ORCPT
+        id S1754803AbeFYWll (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:41:41 -0400
+Received: from mail-yw0-f201.google.com ([209.85.161.201]:48726 "EHLO
+        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934290AbeFYWlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:41:31 -0400
-Received: by mail-yb0-f201.google.com with SMTP id f22-v6so11089037ybg.8
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:31 -0700 (PDT)
+        Mon, 25 Jun 2018 18:41:36 -0400
+Received: by mail-yw0-f201.google.com with SMTP id r139-v6so6568318ywg.15
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:date:in-reply-to:message-id:references:subject:from:to
          :cc;
-        bh=0C+LMsVRbCpktsH0OP9a+VzlFglDWVu/5NfSR7InwoA=;
-        b=NJmelMs3JGtjo0UodVP9ZvMLU2naSvRRF6ul/wNI+nvw1kYD4d/FeJOkctM1L+ujmi
-         nNdwDfA2g1lvMv5rhiua2hAIu01gPwi594rBxnQFldPmIiTYb8ZtP5tCHIcJNTM7a/gk
-         xWqhO9NHeoMbTX1210jR6embXbfGT9aIseMhanbCJWiGEdq37FxHM+BULPGuyzfb/1vc
-         xq6aQdpxS/dfE6TOtvnPhOG3wOvkg+Un1Y5V/I2w6BkatD48/M2EXKo7uSVWUhB8lnEX
-         0lDwyyjuiI9U1PBfbwK8tydil2pVenBkzUN8c9RHwZRqLtLLnjWrARpjkobbxGpu2j9e
-         yJxg==
+        bh=NIPEmqmnOXra8uvQ64ajNS/5EX567TxV9Xg06pgki5I=;
+        b=GSLXlgty1C0zCiAPDiBXJgVxjg5Ob/4RN53OdT/fYqGw81Z5Z2e/DzZMA82UfmDBPw
+         wMTDfOyrflRSK8R80krDOjY9nHUja8Y2vDFd1yIqs3xRqNo/RQMuCC9MrmHzGbL65mTT
+         wwUrccK5GB7Bk1jSTp2Qlsymo80sPMEhLRB3gtJDWltIHRvPBZHrGxWfxfKpGbi7jOkc
+         nR3bv8MaAW8XZ3hDc2xKCJ9t+VT6WUp5N+0oG7TVTnBqy3OBhQ2/z4bLpwoMuxoxC8qq
+         ypnlViTXIdaXDxUH4QOanDngD46zjZ0knJcEsjGS4KvjEHwLk8jk9CSr+tCXm+YgidoO
+         Ki1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id
          :references:subject:from:to:cc;
-        bh=0C+LMsVRbCpktsH0OP9a+VzlFglDWVu/5NfSR7InwoA=;
-        b=UKbw44CGrg4CwCuprUfPsZ5VS55t6PsY3fNz8bEhcopFYhMrc6C9mdjY2j2HcXbRB2
-         suthoASEda4HaMBPYMHmVwH4bAYaFHfwhe+94kbF2KZfPpGNMckqH7wsLSev19nvhTXK
-         +SS0RDH1S8GWpnqNO/2YiOBT7wpHvuy3xres1SDuTxW1U8vCoKgdgfTCsYF6qpbQHyUQ
-         M5xDCqYrswDAzSk47T7pPWf0ZXdb3mC6aANLjfEy99xs1ZzXunv8WAS+37aR75+5bpOQ
-         I4bJXUrS3kQVJjXwmgQ9ffOYMLy0Lkl0U/L+Ln8WKDu1cN8kAvugSUZRXwznjxp4M3Zy
-         YJTw==
-X-Gm-Message-State: APt69E2GzznuxwK4HD40GkGYO+dsEg0dM1Obu1YUYERJO+yVr0J7vE7s
-        pQWXn6NpYM/TZ4LvLN+aR5hn7oPWzZBo8A==
-X-Google-Smtp-Source: ADUXVKIqVXM+wU3CsSYuZh3Q3Rse4uFmsl2JSdtyT/nKDKD1dMt/UNALHxq+X17U14i7wnlfDhbXw3/LXjBKsQ==
+        bh=NIPEmqmnOXra8uvQ64ajNS/5EX567TxV9Xg06pgki5I=;
+        b=RqbjkMWE4VEuITY+916oiUCWeH7BIUJxgry4B8FfM6X+ckrkFd6SUQ4w7baPtpUyG3
+         tdVczBurKR3k1t7XdHsIKuGYoYbuUaA2OpopSFRhGL0NrSmgrBGHG+Dsz2pCOgZSVBBQ
+         DsgJA7qG06Lo1gaXck/puIHfQsUZQMUcDU6XqwXIHizdKiLupMudOrr7kwlYS0dvATZ1
+         nJuNyBzAFqB6yskBV/J01X3NGRXagSdUrBfqR+AbEPFfnxCUykM4YuwteoR0rr8odgAx
+         W9eIu44to/7PmAOCY/Yg2i27UNvqv5AyALV8ipn4E9Nkyijii1OKBl8ZPCogP4KSzhVx
+         F0jg==
+X-Gm-Message-State: APt69E3sTigZxijWwHd+dqfnKLve5Y1YnHNdYXajvjjjEToicJ9DGZHj
+        nVLAHO6Jpe7II7CIdjuNE5U196SA8tnGoA==
+X-Google-Smtp-Source: ADUXVKJIgcPzismgVd98v6Lw4Ey7Z4F5fVTg6Y3w5t/9+IeZEhx42xqCTvqpqB8NdeUoxH2eZxeniLMNy/OhHQ==
 MIME-Version: 1.0
-X-Received: by 2002:a25:9d8b:: with SMTP id v11-v6mr3853301ybp.51.1529966490949;
- Mon, 25 Jun 2018 15:41:30 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 15:39:00 -0700
+X-Received: by 2002:a25:ba8c:: with SMTP id s12-v6mr4019098ybg.6.1529966495833;
+ Mon, 25 Jun 2018 15:41:35 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:39:01 -0700
 In-Reply-To: <20180625224014.134829-1-thgarnie@google.com>
-Message-Id: <20180625224014.134829-13-thgarnie@google.com>
+Message-Id: <20180625224014.134829-14-thgarnie@google.com>
 References: <20180625224014.134829-1-thgarnie@google.com>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v5 12/27] x86/paravirt: Adapt assembly for PIE support
+Subject: [PATCH v5 13/27] x86/boot/64: Build head64.c as mcmodel large when
+ PIE is enabled
 From:   Thomas Garnier <thgarnie@google.com>
 To:     kernel-hardening@lists.openwall.com
 Cc:     Thomas Garnier <thgarnie@google.com>,
-        Juergen Gross <jgross@suse.com>,
-        Alok Kataria <akataria@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,50 +81,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if PIE is enabled, switch the paravirt assembly constraints to be
-compatible. The %c/i constrains generate smaller code so is kept by
-default.
+The __startup_64 function assumes all symbols have relocated addresses
+instead of the current boot virtual address. PIE generated code favor
+relative addresses making all virtual and physical address math incorrect.
+If PIE is enabled, build head64.c as mcmodel large instead to ensure absolute
+references on all memory access. Add a global __force_order variable required
+when using a large model with read_cr* functions.
+
+To build head64.c as mcmodel=large, disable the retpoline gcc flags.
+This code is used at early boot and removed later, it doesn't need
+retpoline mitigation.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/include/asm/paravirt_types.h | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/x86/kernel/Makefile | 6 ++++++
+ arch/x86/kernel/head64.c | 3 +++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 180bc0bff0fb..140747a98d94 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -337,9 +337,17 @@ extern struct pv_lock_ops pv_lock_ops;
- #define PARAVIRT_PATCH(x)					\
- 	(offsetof(struct paravirt_patch_template, x) / sizeof(void *))
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 02d6f5cf4e70..0f6da4b216e0 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -22,6 +22,12 @@ CFLAGS_REMOVE_early_printk.o = -pg
+ CFLAGS_REMOVE_head64.o = -pg
+ endif
  
-+#ifdef CONFIG_X86_PIE
-+#define paravirt_opptr_call "a"
-+#define paravirt_opptr_type "p"
-+#else
-+#define paravirt_opptr_call "c"
-+#define paravirt_opptr_type "i"
-+#endif
++ifdef CONFIG_X86_PIE
++# Remove PIE and retpoline flags that are incompatible with mcmodel=large
++CFLAGS_REMOVE_head64.o += -fPIE -mindirect-branch=thunk-extern -mindirect-branch-register
++CFLAGS_head64.o = -mcmodel=large
++endif
 +
- #define paravirt_type(op)				\
- 	[paravirt_typenum] "i" (PARAVIRT_PATCH(op)),	\
--	[paravirt_opptr] "i" (&(op))
-+	[paravirt_opptr] paravirt_opptr_type (&(op))
- #define paravirt_clobber(clobber)		\
- 	[paravirt_clobber] "i" (clobber)
+ KASAN_SANITIZE_head$(BITS).o				:= n
+ KASAN_SANITIZE_dumpstack.o				:= n
+ KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 8047379e575a..49df0386098c 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -62,6 +62,9 @@ EXPORT_SYMBOL(vmemmap_base);
  
-@@ -395,7 +403,7 @@ int paravirt_disable_iospace(void);
-  */
- #define PARAVIRT_CALL					\
- 	ANNOTATE_RETPOLINE_SAFE				\
--	"call *%c[paravirt_opptr];"
-+	"call *%" paravirt_opptr_call "[paravirt_opptr];"
+ #define __head	__section(.head.text)
  
- /*
-  * These macros are intended to wrap calls through one of the paravirt
++/* Required for read_cr3 when building as PIE */
++unsigned long __force_order;
++
+ static void __head *fixup_pointer(void *ptr, unsigned long physaddr)
+ {
+ 	return ptr - (void *)_text + (void *)physaddr;
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
