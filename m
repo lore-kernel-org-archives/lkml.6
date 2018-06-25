@@ -2,277 +2,530 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02711C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D77C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87713244E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B148F245D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:34:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UMSbfvvf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87713244E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B6AUrJXj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B148F245D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754943AbeFYQdk (ORCPT
+        id S1755134AbeFYQeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:33:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43096 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751958AbeFYQdi (ORCPT
+        Mon, 25 Jun 2018 12:34:20 -0400
+Received: from mail-yb0-f202.google.com ([209.85.213.202]:37070 "EHLO
+        mail-yb0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754682AbeFYQeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:33:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bad/G5DDLrWAZOUdYmoQYIyINNBA/1tkdw6ALSwVV1E=; b=UMSbfvvfz67s4sX1kC8HYtrw5
-        +xIVdEzAD3xQAicFzsuuPsooL6jP6KNWg+9s9wXXIYQSpq5MrHfgRCtpoUen0Jgi3oBGXHzrGWLX7
-        7g8QGOzx82WA1HwUBLD/LXZ763Crgtp/CG0AgIl5CsJqIf7BnoJNcRAGBpi2h7LKN2INOMKvAvcWQ
-        mn9cJhrJ2ODj5Js3WcIA1oetnBmiKn9n44sqsQ6DIuSBVJLVGWpj1WfafA2d363XT6VF5//u6Q33v
-        R7leJcyp7NDFPmVk7A+2oVD28MH8W765yYQEFco63IBLdJ3n4Y5meB9+1qiT7NWgn2yeuZJhe19/v
-        dsvnXKw1A==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXUQq-00024Q-EY; Mon, 25 Jun 2018 16:33:36 +0000
-Subject: Re: [PATCH] x86-64: use 32-bit XOR to zero registers
-To:     Jan Beulich <JBeulich@suse.com>, mingo@elte.hu, tglx@linutronix.de,
-        hpa@zytor.com
-Cc:     linux-kernel@vger.kernel.org
-References: <5B30C32902000078001CD6D5@prv1-mh.provo.novell.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a68a703f-5d74-a2eb-4b26-0fe3e6e48705@infradead.org>
-Date:   Mon, 25 Jun 2018 09:33:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 25 Jun 2018 12:34:18 -0400
+Received: by mail-yb0-f202.google.com with SMTP id u10-v6so5068304ybp.4
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 09:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=Hiq40fPDMkVFLv3LCZ1BRZNd0Pdx+YdHs8ULPnrRbvo=;
+        b=B6AUrJXjlq/esbudg+M04pkQPbUXB2mgFjD0GCnM+C1i/OApKg4/7USqonTsMdDtGX
+         t4b1uMA3CSLJ+1u0tCxnrQE6P83+0PWxlwaOIYIwz5eWzS4Pd4YEEMeXtUv1dX+wliAF
+         cdZ3hYOaVTSIZbJnsBFNimp+/4GeLuHSyPiSEOuJ6pGKhqByhRanpLJE7SjcqSpsF+EK
+         jtVFwCBDTbYc2etKM8IRiIWKn2Lw4NZRO7ZufSVoZQ3WRo588lUxk4kr1bbLXCjqfVB0
+         WiJx5iyevxgWUvQCMMvQrAyQSLPM0GsAbPRP96g0kSiK5uhTgLUuely5mSuYVRCqWFkA
+         QJlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=Hiq40fPDMkVFLv3LCZ1BRZNd0Pdx+YdHs8ULPnrRbvo=;
+        b=JEOLLbX4QiX3U2VxEhR13sBvcHz3ns8nkp2EITvn1k6oeU2X+fcavBCZbanDkLeZne
+         vg1VUDcPaGLNupnzN9aQ7O0VjlZyE8EMy2uRSi0souB+UjKJsjpQB+XWIDlgQaYEB9Y3
+         0fmkyFS8GircEQI2EAFFU+pTgwYvI5lGyMepux/7VdxRSNXzdIz02a2+51hJ/WUJLVOT
+         B/YqB7nTe0ZCRIhr/whdbXLVHbnxSGGEMhg88Yg6a+MmSGclW6xPl7lMpV02XtatcnUS
+         6pYJ0IXr326mY8qTUrHBqSqJPVx2JgKtfVe8ytOLyE+1V/d3ctOWeT0n4K4Png0+TuW3
+         a94w==
+X-Gm-Message-State: APt69E3SKo6zY/Y+5sny7/VWESnUMNfSXFOCJJRC7FBGxCiqr2Sj7xky
+        clHHu0DeG3gz0litKC5KI0QwPXyLVg==
+X-Google-Smtp-Source: AAOMgpfkXi9F9QayRi3Hshl2KkAJmnXp6Ifyt2uBcSlkARQZU7I9FUPSgmMeeatZiBq94qfvqsnW7d0UmA==
 MIME-Version: 1.0
-In-Reply-To: <5B30C32902000078001CD6D5@prv1-mh.provo.novell.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a0d:ee84:: with SMTP id x126-v6mr1423963ywe.204.1529944457238;
+ Mon, 25 Jun 2018 09:34:17 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 18:34:10 +0200
+Message-Id: <20180625163410.216168-1-jannh@google.com>
+X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
+Subject: [PATCH] sys: don't hold uts_sem while accessing userspace memory
+From:   Jann Horn <jannh@google.com>
+To:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, jannh@google.com
+Cc:     linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        security@kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/25/2018 03:25 AM, Jan Beulich wrote:
-> Some Intel CPUs don't recognize 64-bit XORs as zeroing idioms - use
-> 32-bit ones instead.
+Holding uts_sem as a writer while accessing userspace memory allows a
+namespace admin to stall all processes that attempt to take uts_sem.
+Instead, move data through stack buffers and don't access userspace memory
+while uts_sem is held.
 
-Hmph.  Is that considered a bug (errata)?
+Cc: stable@vger.kernel.org
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ arch/alpha/kernel/osf_sys.c      | 51 ++++++++---------
+ arch/sparc/kernel/sys_sparc_32.c | 22 +++++---
+ arch/sparc/kernel/sys_sparc_64.c | 20 ++++---
+ kernel/sys.c                     | 95 +++++++++++++++-----------------
+ kernel/utsname_sysctl.c          | 41 ++++++++------
+ 5 files changed, 119 insertions(+), 110 deletions(-)
 
-URL/references?
-
-Are these changes really only zeroing the lower 32 bits of the register?
-and that's all that the code cares about?
-
-thanks.
-
-> Signed-off-by: Jan Beulich <jbeulich@suse.com>
-> ---
->  arch/x86/crypto/aegis128-aesni-asm.S     |    2 +-
->  arch/x86/crypto/aegis128l-aesni-asm.S    |    2 +-
->  arch/x86/crypto/aegis256-aesni-asm.S     |    2 +-
->  arch/x86/crypto/aesni-intel_asm.S        |    8 ++++----
->  arch/x86/crypto/aesni-intel_avx-x86_64.S |    4 ++--
->  arch/x86/crypto/morus1280-avx2-asm.S     |    2 +-
->  arch/x86/crypto/morus1280-sse2-asm.S     |    2 +-
->  arch/x86/crypto/morus640-sse2-asm.S      |    2 +-
->  arch/x86/crypto/sha1_ssse3_asm.S         |    2 +-
->  arch/x86/kernel/head_64.S                |    2 +-
->  arch/x86/kernel/paravirt_patch_64.c      |    2 +-
->  arch/x86/lib/memcpy_64.S                 |    2 +-
->  arch/x86/power/hibernate_asm_64.S        |    2 +-
->  13 files changed, 17 insertions(+), 17 deletions(-)
-> 
-> --- 4.18-rc2/arch/x86/crypto/aegis128-aesni-asm.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/aegis128-aesni-asm.S
-> @@ -75,7 +75,7 @@
->   *   %r9
->   */
->  __load_partial:
-> -	xor %r9, %r9
-> +	xor %r9d, %r9d
->  	pxor MSG, MSG
->  
->  	mov LEN, %r8
-> --- 4.18-rc2/arch/x86/crypto/aegis128l-aesni-asm.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/aegis128l-aesni-asm.S
-> @@ -66,7 +66,7 @@
->   *   %r9
->   */
->  __load_partial:
-> -	xor %r9, %r9
-> +	xor %r9d, %r9d
->  	pxor MSG0, MSG0
->  	pxor MSG1, MSG1
->  
-> --- 4.18-rc2/arch/x86/crypto/aegis256-aesni-asm.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/aegis256-aesni-asm.S
-> @@ -59,7 +59,7 @@
->   *   %r9
->   */
->  __load_partial:
-> -	xor %r9, %r9
-> +	xor %r9d, %r9d
->  	pxor MSG, MSG
->  
->  	mov LEN, %r8
-> --- 4.18-rc2/arch/x86/crypto/aesni-intel_asm.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/aesni-intel_asm.S
-> @@ -258,7 +258,7 @@ ALL_F:      .octa 0xffffffffffffffffffff
->  .macro GCM_INIT Iv SUBKEY AAD AADLEN
->  	mov \AADLEN, %r11
->  	mov %r11, AadLen(%arg2) # ctx_data.aad_length = aad_length
-> -	xor %r11, %r11
-> +	xor %r11d, %r11d
->  	mov %r11, InLen(%arg2) # ctx_data.in_length = 0
->  	mov %r11, PBlockLen(%arg2) # ctx_data.partial_block_length = 0
->  	mov %r11, PBlockEncKey(%arg2) # ctx_data.partial_block_enc_key = 0
-> @@ -286,7 +286,7 @@ ALL_F:      .octa 0xffffffffffffffffffff
->  	movdqu HashKey(%arg2), %xmm13
->  	add %arg5, InLen(%arg2)
->  
-> -	xor %r11, %r11 # initialise the data pointer offset as zero
-> +	xor %r11d, %r11d # initialise the data pointer offset as zero
->  	PARTIAL_BLOCK %arg3 %arg4 %arg5 %r11 %xmm8 \operation
->  
->  	sub %r11, %arg5		# sub partial block data used
-> @@ -702,7 +702,7 @@ _no_extra_mask_1_\@:
->  
->  	# GHASH computation for the last <16 Byte block
->  	GHASH_MUL \AAD_HASH, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xmm6
-> -	xor	%rax,%rax
-> +	xor	%eax, %eax
->  
->  	mov	%rax, PBlockLen(%arg2)
->  	jmp	_dec_done_\@
-> @@ -737,7 +737,7 @@ _no_extra_mask_2_\@:
->  
->  	# GHASH computation for the last <16 Byte block
->  	GHASH_MUL \AAD_HASH, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xmm6
-> -	xor	%rax,%rax
-> +	xor	%eax, %eax
->  
->  	mov	%rax, PBlockLen(%arg2)
->  	jmp	_encode_done_\@
-> --- 4.18-rc2/arch/x86/crypto/aesni-intel_avx-x86_64.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/aesni-intel_avx-x86_64.S
-> @@ -463,7 +463,7 @@ _get_AAD_rest_final\@:
->  
->  _get_AAD_done\@:
->  	# initialize the data pointer offset as zero
-> -	xor     %r11, %r11
-> +	xor     %r11d, %r11d
->  
->  	# start AES for num_initial_blocks blocks
->  	mov     arg5, %rax                     # rax = *Y0
-> @@ -1770,7 +1770,7 @@ _get_AAD_rest_final\@:
->  
->  _get_AAD_done\@:
->  	# initialize the data pointer offset as zero
-> -	xor     %r11, %r11
-> +	xor     %r11d, %r11d
->  
->  	# start AES for num_initial_blocks blocks
->  	mov     arg5, %rax                     # rax = *Y0
-> --- 4.18-rc2/arch/x86/crypto/morus1280-avx2-asm.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/morus1280-avx2-asm.S
-> @@ -113,7 +113,7 @@ ENDPROC(__morus1280_update_zero)
->   *   %r9
->   */
->  __load_partial:
-> -	xor %r9, %r9
-> +	xor %r9d, %r9d
->  	vpxor MSG, MSG, MSG
->  
->  	mov %rcx, %r8
-> --- 4.18-rc2/arch/x86/crypto/morus1280-sse2-asm.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/morus1280-sse2-asm.S
-> @@ -235,7 +235,7 @@ ENDPROC(__morus1280_update_zero)
->   *   %r9
->   */
->  __load_partial:
-> -	xor %r9, %r9
-> +	xor %r9d, %r9d
->  	pxor MSG_LO, MSG_LO
->  	pxor MSG_HI, MSG_HI
->  
-> --- 4.18-rc2/arch/x86/crypto/morus640-sse2-asm.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/morus640-sse2-asm.S
-> @@ -113,7 +113,7 @@ ENDPROC(__morus640_update_zero)
->   *   %r9
->   */
->  __load_partial:
-> -	xor %r9, %r9
-> +	xor %r9d, %r9d
->  	pxor MSG, MSG
->  
->  	mov %rcx, %r8
-> --- 4.18-rc2/arch/x86/crypto/sha1_ssse3_asm.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/crypto/sha1_ssse3_asm.S
-> @@ -96,7 +96,7 @@
->  	# cleanup workspace
->  	mov	$8, %ecx
->  	mov	%rsp, %rdi
-> -	xor	%rax, %rax
-> +	xor	%eax, %eax
->  	rep stosq
->  
->  	mov	%rbp, %rsp		# deallocate workspace
-> --- 4.18-rc2/arch/x86/kernel/head_64.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/kernel/head_64.S
-> @@ -235,7 +235,7 @@ ENTRY(secondary_startup_64)
->  	 *		address given in m16:64.
->  	 */
->  	pushq	$.Lafter_lret	# put return address on stack for unwinder
-> -	xorq	%rbp, %rbp	# clear frame pointer
-> +	xorl	%ebp, %ebp	# clear frame pointer
->  	movq	initial_code(%rip), %rax
->  	pushq	$__KERNEL_CS	# set correct cs
->  	pushq	%rax		# target address in negative space
-> --- 4.18-rc2/arch/x86/kernel/paravirt_patch_64.c
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/kernel/paravirt_patch_64.c
-> @@ -20,7 +20,7 @@ DEF_NATIVE(, mov64, "mov %rdi, %rax");
->  
->  #if defined(CONFIG_PARAVIRT_SPINLOCKS)
->  DEF_NATIVE(pv_lock_ops, queued_spin_unlock, "movb $0, (%rdi)");
-> -DEF_NATIVE(pv_lock_ops, vcpu_is_preempted, "xor %rax, %rax");
-> +DEF_NATIVE(pv_lock_ops, vcpu_is_preempted, "xor %eax, %eax");
->  #endif
->  
->  unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len)
-> --- 4.18-rc2/arch/x86/lib/memcpy_64.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/lib/memcpy_64.S
-> @@ -256,7 +256,7 @@ ENTRY(__memcpy_mcsafe)
->  
->  	/* Copy successful. Return zero */
->  .L_done_memcpy_trap:
-> -	xorq %rax, %rax
-> +	xorl %eax, %eax
->  	ret
->  ENDPROC(__memcpy_mcsafe)
->  EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
-> --- 4.18-rc2/arch/x86/power/hibernate_asm_64.S
-> +++ 4.18-rc2-x86_64-32bit-XOR/arch/x86/power/hibernate_asm_64.S
-> @@ -137,7 +137,7 @@ ENTRY(restore_registers)
->  	/* Saved in save_processor_state. */
->  	lgdt	saved_context_gdt_desc(%rax)
->  
-> -	xorq	%rax, %rax
-> +	xorl	%eax, %eax
->  
->  	/* tell the hibernation core that we've just restored the memory */
->  	movq	%rax, in_suspend(%rip)
-> 
-> 
-> 
-
-
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index 6e921754c8fc..2a5c768df335 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -530,24 +530,19 @@ SYSCALL_DEFINE4(osf_mount, unsigned long, typenr, const char __user *, path,
+ SYSCALL_DEFINE1(osf_utsname, char __user *, name)
+ {
+ 	int error;
++	char tmp[5 * 32];
+ 
+ 	down_read(&uts_sem);
+-	error = -EFAULT;
+-	if (copy_to_user(name + 0, utsname()->sysname, 32))
+-		goto out;
+-	if (copy_to_user(name + 32, utsname()->nodename, 32))
+-		goto out;
+-	if (copy_to_user(name + 64, utsname()->release, 32))
+-		goto out;
+-	if (copy_to_user(name + 96, utsname()->version, 32))
+-		goto out;
+-	if (copy_to_user(name + 128, utsname()->machine, 32))
+-		goto out;
++	memcpy(tmp + 0 * 32, utsname()->sysname, 32);
++	memcpy(tmp + 1 * 32, utsname()->nodename, 32);
++	memcpy(tmp + 2 * 32, utsname()->release, 32);
++	memcpy(tmp + 3 * 32, utsname()->version, 32);
++	memcpy(tmp + 4 * 32, utsname()->machine, 32);
++	up_read(&uts_sem);
+ 
+-	error = 0;
+- out:
+-	up_read(&uts_sem);	
+-	return error;
++	if (copy_to_user(name, tmp, sizeof(tmp)))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ SYSCALL_DEFINE0(getpagesize)
+@@ -567,18 +562,21 @@ SYSCALL_DEFINE2(osf_getdomainname, char __user *, name, int, namelen)
+ {
+ 	int len, err = 0;
+ 	char *kname;
++	char tmp[32];
+ 
+-	if (namelen > 32)
++	if (namelen < 0 || namelen > 32)
+ 		namelen = 32;
+ 
+ 	down_read(&uts_sem);
+ 	kname = utsname()->domainname;
+ 	len = strnlen(kname, namelen);
+-	if (copy_to_user(name, kname, min(len + 1, namelen)))
+-		err = -EFAULT;
++	len = min(len + 1, namelen);
++	memcpy(tmp, kname, len);
+ 	up_read(&uts_sem);
+ 
+-	return err;
++	if (copy_to_user(name, tmp, len))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ /*
+@@ -739,13 +737,14 @@ SYSCALL_DEFINE3(osf_sysinfo, int, command, char __user *, buf, long, count)
+ 	};
+ 	unsigned long offset;
+ 	const char *res;
+-	long len, err = -EINVAL;
++	long len;
++	char tmp[__NEW_UTS_LEN + 1];
+ 
+ 	offset = command-1;
+ 	if (offset >= ARRAY_SIZE(sysinfo_table)) {
+ 		/* Digital UNIX has a few unpublished interfaces here */
+ 		printk("sysinfo(%d)", command);
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	down_read(&uts_sem);
+@@ -753,13 +752,11 @@ SYSCALL_DEFINE3(osf_sysinfo, int, command, char __user *, buf, long, count)
+ 	len = strlen(res)+1;
+ 	if ((unsigned long)len > (unsigned long)count)
+ 		len = count;
+-	if (copy_to_user(buf, res, len))
+-		err = -EFAULT;
+-	else
+-		err = 0;
++	memcpy(tmp, res, len);
+ 	up_read(&uts_sem);
+- out:
+-	return err;
++	if (copy_to_user(buf, tmp, len))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ SYSCALL_DEFINE5(osf_getsysinfo, unsigned long, op, void __user *, buffer,
+diff --git a/arch/sparc/kernel/sys_sparc_32.c b/arch/sparc/kernel/sys_sparc_32.c
+index 7f3d9c59719a..452e4d080855 100644
+--- a/arch/sparc/kernel/sys_sparc_32.c
++++ b/arch/sparc/kernel/sys_sparc_32.c
+@@ -197,23 +197,27 @@ SYSCALL_DEFINE5(rt_sigaction, int, sig,
+ 
+ SYSCALL_DEFINE2(getdomainname, char __user *, name, int, len)
+ {
+- 	int nlen, err;
+- 	
++	int nlen, err;
++	char tmp[__NEW_UTS_LEN + 1];
++
+ 	if (len < 0)
+ 		return -EINVAL;
+ 
+- 	down_read(&uts_sem);
+- 	
++	down_read(&uts_sem);
++
+ 	nlen = strlen(utsname()->domainname) + 1;
+ 	err = -EINVAL;
+ 	if (nlen > len)
+-		goto out;
++		goto out_unlock;
++	memcpy(tmp, utsname()->domainname, nlen);
+ 
+-	err = -EFAULT;
+-	if (!copy_to_user(name, utsname()->domainname, nlen))
+-		err = 0;
++	up_read(&uts_sem);
+ 
+-out:
++	if (copy_to_user(name, tmp, nlen))
++		return -EFAULT;
++	return 0;
++
++out_unlock:
+ 	up_read(&uts_sem);
+ 	return err;
+ }
+diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
+index 63baa8aa9414..274ed0b9b3e0 100644
+--- a/arch/sparc/kernel/sys_sparc_64.c
++++ b/arch/sparc/kernel/sys_sparc_64.c
+@@ -519,23 +519,27 @@ asmlinkage void sparc_breakpoint(struct pt_regs *regs)
+ 
+ SYSCALL_DEFINE2(getdomainname, char __user *, name, int, len)
+ {
+-        int nlen, err;
++	int nlen, err;
++	char tmp[__NEW_UTS_LEN + 1];
+ 
+ 	if (len < 0)
+ 		return -EINVAL;
+ 
+- 	down_read(&uts_sem);
+- 	
++	down_read(&uts_sem);
++
+ 	nlen = strlen(utsname()->domainname) + 1;
+ 	err = -EINVAL;
+ 	if (nlen > len)
+-		goto out;
++		goto out_unlock;
++	memcpy(tmp, utsname()->domainname, nlen);
++
++	up_read(&uts_sem);
+ 
+-	err = -EFAULT;
+-	if (!copy_to_user(name, utsname()->domainname, nlen))
+-		err = 0;
++	if (copy_to_user(name, tmp, nlen))
++		return -EFAULT;
++	return 0;
+ 
+-out:
++out_unlock:
+ 	up_read(&uts_sem);
+ 	return err;
+ }
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 38509dc1f77b..69b9a37ecf0d 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1237,18 +1237,19 @@ static int override_release(char __user *release, size_t len)
+ 
+ SYSCALL_DEFINE1(newuname, struct new_utsname __user *, name)
+ {
+-	int errno = 0;
++	struct new_utsname tmp;
+ 
+ 	down_read(&uts_sem);
+-	if (copy_to_user(name, utsname(), sizeof *name))
+-		errno = -EFAULT;
++	memcpy(&tmp, utsname(), sizeof(tmp));
+ 	up_read(&uts_sem);
++	if (copy_to_user(name, &tmp, sizeof(tmp)))
++		return -EFAULT;
+ 
+-	if (!errno && override_release(name->release, sizeof(name->release)))
+-		errno = -EFAULT;
+-	if (!errno && override_architecture(name))
+-		errno = -EFAULT;
+-	return errno;
++	if (override_release(name->release, sizeof(name->release)))
++		return -EFAULT;
++	if (override_architecture(name))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ #ifdef __ARCH_WANT_SYS_OLD_UNAME
+@@ -1257,55 +1258,46 @@ SYSCALL_DEFINE1(newuname, struct new_utsname __user *, name)
+  */
+ SYSCALL_DEFINE1(uname, struct old_utsname __user *, name)
+ {
+-	int error = 0;
++	struct old_utsname tmp;
+ 
+ 	if (!name)
+ 		return -EFAULT;
+ 
+ 	down_read(&uts_sem);
+-	if (copy_to_user(name, utsname(), sizeof(*name)))
+-		error = -EFAULT;
++	memcpy(&tmp, utsname(), sizeof(tmp));
+ 	up_read(&uts_sem);
++	if (copy_to_user(name, &tmp, sizeof(tmp)))
++		return -EFAULT;
+ 
+-	if (!error && override_release(name->release, sizeof(name->release)))
+-		error = -EFAULT;
+-	if (!error && override_architecture(name))
+-		error = -EFAULT;
+-	return error;
++	if (override_release(name->release, sizeof(name->release)))
++		return -EFAULT;
++	if (override_architecture(name))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ SYSCALL_DEFINE1(olduname, struct oldold_utsname __user *, name)
+ {
+-	int error;
++	struct oldold_utsname tmp = {};
+ 
+ 	if (!name)
+ 		return -EFAULT;
+-	if (!access_ok(VERIFY_WRITE, name, sizeof(struct oldold_utsname)))
+-		return -EFAULT;
+ 
+ 	down_read(&uts_sem);
+-	error = __copy_to_user(&name->sysname, &utsname()->sysname,
+-			       __OLD_UTS_LEN);
+-	error |= __put_user(0, name->sysname + __OLD_UTS_LEN);
+-	error |= __copy_to_user(&name->nodename, &utsname()->nodename,
+-				__OLD_UTS_LEN);
+-	error |= __put_user(0, name->nodename + __OLD_UTS_LEN);
+-	error |= __copy_to_user(&name->release, &utsname()->release,
+-				__OLD_UTS_LEN);
+-	error |= __put_user(0, name->release + __OLD_UTS_LEN);
+-	error |= __copy_to_user(&name->version, &utsname()->version,
+-				__OLD_UTS_LEN);
+-	error |= __put_user(0, name->version + __OLD_UTS_LEN);
+-	error |= __copy_to_user(&name->machine, &utsname()->machine,
+-				__OLD_UTS_LEN);
+-	error |= __put_user(0, name->machine + __OLD_UTS_LEN);
++	memcpy(&tmp.sysname, &utsname()->sysname, __OLD_UTS_LEN);
++	memcpy(&tmp.nodename, &utsname()->nodename, __OLD_UTS_LEN);
++	memcpy(&tmp.release, &utsname()->release, __OLD_UTS_LEN);
++	memcpy(&tmp.version, &utsname()->version, __OLD_UTS_LEN);
++	memcpy(&tmp.machine, &utsname()->machine, __OLD_UTS_LEN);
+ 	up_read(&uts_sem);
++	if (copy_to_user(name, &tmp, sizeof(tmp)))
++		return -EFAULT;
+ 
+-	if (!error && override_architecture(name))
+-		error = -EFAULT;
+-	if (!error && override_release(name->release, sizeof(name->release)))
+-		error = -EFAULT;
+-	return error ? -EFAULT : 0;
++	if (override_architecture(name))
++		return -EFAULT;
++	if (override_release(name->release, sizeof(name->release)))
++		return -EFAULT;
++	return 0;
+ }
+ #endif
+ 
+@@ -1319,17 +1311,18 @@ SYSCALL_DEFINE2(sethostname, char __user *, name, int, len)
+ 
+ 	if (len < 0 || len > __NEW_UTS_LEN)
+ 		return -EINVAL;
+-	down_write(&uts_sem);
+ 	errno = -EFAULT;
+ 	if (!copy_from_user(tmp, name, len)) {
+-		struct new_utsname *u = utsname();
++		struct new_utsname *u;
+ 
++		down_write(&uts_sem);
++		u = utsname();
+ 		memcpy(u->nodename, tmp, len);
+ 		memset(u->nodename + len, 0, sizeof(u->nodename) - len);
+ 		errno = 0;
+ 		uts_proc_notify(UTS_PROC_HOSTNAME);
++		up_write(&uts_sem);
+ 	}
+-	up_write(&uts_sem);
+ 	return errno;
+ }
+ 
+@@ -1337,8 +1330,9 @@ SYSCALL_DEFINE2(sethostname, char __user *, name, int, len)
+ 
+ SYSCALL_DEFINE2(gethostname, char __user *, name, int, len)
+ {
+-	int i, errno;
++	int i;
+ 	struct new_utsname *u;
++	char tmp[__NEW_UTS_LEN + 1];
+ 
+ 	if (len < 0)
+ 		return -EINVAL;
+@@ -1347,11 +1341,11 @@ SYSCALL_DEFINE2(gethostname, char __user *, name, int, len)
+ 	i = 1 + strlen(u->nodename);
+ 	if (i > len)
+ 		i = len;
+-	errno = 0;
+-	if (copy_to_user(name, u->nodename, i))
+-		errno = -EFAULT;
++	memcpy(tmp, u->nodename, i);
+ 	up_read(&uts_sem);
+-	return errno;
++	if (copy_to_user(name, tmp, i))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ #endif
+@@ -1370,17 +1364,18 @@ SYSCALL_DEFINE2(setdomainname, char __user *, name, int, len)
+ 	if (len < 0 || len > __NEW_UTS_LEN)
+ 		return -EINVAL;
+ 
+-	down_write(&uts_sem);
+ 	errno = -EFAULT;
+ 	if (!copy_from_user(tmp, name, len)) {
+-		struct new_utsname *u = utsname();
++		struct new_utsname *u;
+ 
++		down_write(&uts_sem);
++		u = utsname();
+ 		memcpy(u->domainname, tmp, len);
+ 		memset(u->domainname + len, 0, sizeof(u->domainname) - len);
+ 		errno = 0;
+ 		uts_proc_notify(UTS_PROC_DOMAINNAME);
++		up_write(&uts_sem);
+ 	}
+-	up_write(&uts_sem);
+ 	return errno;
+ }
+ 
+diff --git a/kernel/utsname_sysctl.c b/kernel/utsname_sysctl.c
+index 233cd8fc6910..258033d62cb3 100644
+--- a/kernel/utsname_sysctl.c
++++ b/kernel/utsname_sysctl.c
+@@ -18,7 +18,7 @@
+ 
+ #ifdef CONFIG_PROC_SYSCTL
+ 
+-static void *get_uts(struct ctl_table *table, int write)
++static void *get_uts(struct ctl_table *table)
+ {
+ 	char *which = table->data;
+ 	struct uts_namespace *uts_ns;
+@@ -26,21 +26,9 @@ static void *get_uts(struct ctl_table *table, int write)
+ 	uts_ns = current->nsproxy->uts_ns;
+ 	which = (which - (char *)&init_uts_ns) + (char *)uts_ns;
+ 
+-	if (!write)
+-		down_read(&uts_sem);
+-	else
+-		down_write(&uts_sem);
+ 	return which;
+ }
+ 
+-static void put_uts(struct ctl_table *table, int write, void *which)
+-{
+-	if (!write)
+-		up_read(&uts_sem);
+-	else
+-		up_write(&uts_sem);
+-}
+-
+ /*
+  *	Special case of dostring for the UTS structure. This has locks
+  *	to observe. Should this be in kernel/sys.c ????
+@@ -50,13 +38,34 @@ static int proc_do_uts_string(struct ctl_table *table, int write,
+ {
+ 	struct ctl_table uts_table;
+ 	int r;
++	char tmp_data[__NEW_UTS_LEN + 1];
++
+ 	memcpy(&uts_table, table, sizeof(uts_table));
+-	uts_table.data = get_uts(table, write);
++	uts_table.data = tmp_data;
++
++	/*
++	 * Buffer the value in tmp_data so that proc_dostring() can be called
++	 * without holding any locks.
++	 * We also need to read the original value in the write==1 case to
++	 * support partial writes.
++	 */
++	down_read(&uts_sem);
++	memcpy(tmp_data, get_uts(table), sizeof(tmp_data));
++	up_read(&uts_sem);
+ 	r = proc_dostring(&uts_table, write, buffer, lenp, ppos);
+-	put_uts(table, write, uts_table.data);
+ 
+-	if (write)
++	if (write) {
++		/*
++		 * Write back the new value.
++		 * Note that, since we dropped uts_sem, the result can
++		 * theoretically be incorrect if there are two parallel writes
++		 * at non-zero offsets to the same sysctl.
++		 */
++		down_write(&uts_sem);
++		memcpy(get_uts(table), tmp_data, sizeof(tmp_data));
++		up_write(&uts_sem);
+ 		proc_sys_poll_notify(table->poll);
++	}
+ 
+ 	return r;
+ }
 -- 
-~Randy
+2.18.0.rc2.346.g013aa6912e-goog
+
