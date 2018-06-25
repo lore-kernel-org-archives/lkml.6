@@ -6,65 +6,64 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DFEC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E92DC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D4EA25C2A
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:13:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4320725C26
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:13:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="Wd0MTVkD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D4EA25C2A
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="QDpJkXwS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4320725C26
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934828AbeFYPM5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:12:57 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46526 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934776AbeFYPMv (ORCPT
+        id S934864AbeFYPNE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 11:13:04 -0400
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:44856 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934821AbeFYPM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:12:51 -0400
-Received: by mail-qt0-f196.google.com with SMTP id h5-v6so12210603qtm.13
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:12:50 -0700 (PDT)
+        Mon, 25 Jun 2018 11:12:57 -0400
+Received: by mail-qt0-f178.google.com with SMTP id 92-v6so7779705qta.11
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:12:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vfNRWwh46Tv2e1n+AhCODq/AfAwHegq14TUJjZix/bA=;
-        b=Wd0MTVkDgMVujmI9Af+XnEiBhnamNEyKfc14OHaLFsfJR4TSALylO1FU4Esol0VBm5
-         qphJW/lbBOcCu+099vzK8reND80p4JgEXPNCpvk2rsvjrVB7sLJ9VU70fgIhZtBXZxJi
-         e4JhcJrmq1qqDuS1fiNwA2+qw8T9YUrge4PqInC2KH0JyPP0wiWV258qLSzWstn9O/Ad
-         R4wMHrbpXbgy15OMhLcGomQH7i8bExA2kM8QCXsBO/EJJYVXNy2yZL+9EFEYD9+gAkTM
-         Dd1wI8LTphVz1PcvdBUiwg86JiQ1+ZkbaIz3CuUDvcI+QAUdM2Ns+zO1Y7im1n8pvMXo
-         dBUA==
+        h=from:to:subject:date:message-id:in-reply-to:references;
+        bh=NHcNBLt5ikQuPglpTXQpEK1D++BE2qcXd62TWaCzit4=;
+        b=QDpJkXwSoAvhbZwWnraybuZJ57ldlR6M3ni96XApWyHihD9WfyYcLqxJ3s56rC7mJ9
+         U0SGdPBwi5uR0t0ZNkiv07avsJfW6ITuh9KgxnAV53u8OkQdu1CSPwMa/YjA5uwDC8Ak
+         4aVa6H4G/c9q22IkgquaP3YWBbSts8fSg1veQOanZgMfoeqD2XVYdEtBRVoA34/iHgSp
+         gYVE2ZQkJNwyk6Dg2Lc/f2DXhOoT180X+7v86ngd3kcBPjkkDM/OlQsbNf0UkwqiXIsN
+         tGR+30hOQbugPMKLy0h/IB+w+0RNE95MyYj0EUI/y62xeCEYNfMyrlrSSfEjZqDyamCX
+         A1ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=vfNRWwh46Tv2e1n+AhCODq/AfAwHegq14TUJjZix/bA=;
-        b=Fl8xZYwbbKxwdRV1ic7KZr18fb/BpQjsH6cOLQvIuj4p+/0qJ1rTa+w+OYXOx0a869
-         1zxylCm6ngdpCl7t4FI/99nyBsAogPAMq6G68LTZH5aIsvOWThQDzW+KtNYyRnFBFDB6
-         lDczXfgc7P68P/BBnds4VwumkrC2UjrLl4bslZzaBn/anl3txIj7s6opIIRahPlbpMhd
-         YEJCGiqemE+raYTK3wWYxJLxV+Et4u+0fn03kc91LCHiiTkc2hrB6syCPhGSf+G7WlQU
-         g5R19DPJqVCUw6eoz8pVtMOehq6yzIGdVAO0x7LFX2tJDm0NGBpTYG21FJA7wQgN6kiI
-         EtJw==
-X-Gm-Message-State: APt69E3hAC2fD8K+I8ZU5tzCW6NapF/x0FS67aVctspbA2CFaPjB494E
-        BCniwYUNmk3MwUJM2phGYBBBJg==
-X-Google-Smtp-Source: ADUXVKKR2JcHhLzfmScguMjIfLG6Qq3YYVCDxim8sIjCl26Kvj5sMh7EwL2Fd7q/hB6hELs/wA846A==
-X-Received: by 2002:ac8:27e1:: with SMTP id x30-v6mr11213960qtx.51.1529939570390;
-        Mon, 25 Jun 2018 08:12:50 -0700 (PDT)
+        bh=NHcNBLt5ikQuPglpTXQpEK1D++BE2qcXd62TWaCzit4=;
+        b=mfvXBTCCtKqj/Rbydsdq6LA02Q5WWTd9oxZRHgM4sMomb7V7xlwQGu50SCx86TNG/c
+         31tt8HzZE7Y+axdt3TC436cgmzqjKCI080G/5sE9G1IVuMBqW10ANe4T+p/Ud39dHgWI
+         vpfYcdYLhvwiISkQd8g2jWcDPdJc2jam32oi8oQy5WMHl9whFe6YwDoJsLsuFsj7zXFe
+         AbrQLaluyDids+mNqvjpPimqIZCbKsdvVQnEN3Nytc+B/koY98u0fQXqkeWuHTOY8siY
+         zXvndbANhL1/lRTgYsxxDEGUZdn+ijtJz8ixOngpRbSIboUvSuOh/ezCSDDirE1/H/7o
+         LEeg==
+X-Gm-Message-State: APt69E0V0lJTXMI7/LUhffBG4agD7yUn1XJKjbF5ucAfP+XHnpMSE+Ho
+        r2PpZikGGt4i/oUCTYfGa7B50A==
+X-Google-Smtp-Source: ADUXVKIZqIFFOYehWM79SqoRlt5ZI/r/NhWi1nhPPC6QFRVqOBA4CnOJJ2A1B6vuh9MG8GXcHDbQWQ==
+X-Received: by 2002:aed:3cc3:: with SMTP id e3-v6mr7920680qtf.356.1529939576124;
+        Mon, 25 Jun 2018 08:12:56 -0700 (PDT)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id s39-v6sm12284147qts.42.2018.06.25.08.12.49
+        by smtp.gmail.com with ESMTPSA id j20-v6sm260732qtc.71.2018.06.25.08.12.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 08:12:49 -0700 (PDT)
+        Mon, 25 Jun 2018 08:12:55 -0700 (PDT)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     axboe@kernel.dk, linux-block@vger.kernel.org, kernel-team@fb.com,
         akpm@linux-foundation.org, hannes@cmpxchg.org,
         linux-kernel@vger.kernel.org, tj@kernel.org,
         linux-fsdevel@vger.kernel.org
-Cc:     Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 03/15] blk-cgroup: allow controllers to output their own stats
-Date:   Mon, 25 Jun 2018 11:12:31 -0400
-Message-Id: <20180625151243.2132-4-josef@toxicpanda.com>
+Subject: [PATCH 07/15] memcontrol: schedule throttling if we are congested
+Date:   Mon, 25 Jun 2018 11:12:35 -0400
+Message-Id: <20180625151243.2132-8-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180625151243.2132-1-josef@toxicpanda.com>
 References: <20180625151243.2132-1-josef@toxicpanda.com>
@@ -73,128 +72,270 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+From: Tejun Heo <tj@kernel.org>
 
-blk-iolatency has a few stats that it would like to print out, and
-instead of adding a bunch of crap to the generic code just provide a
-helper so that controllers can add stuff to the stat line if they want
-to.
+Memory allocations can induce swapping via kswapd or direct reclaim.  If
+we are having IO done for us by kswapd and don't actually go into direct
+reclaim we may never get scheduled for throttling.  So instead check to
+see if our cgroup is congested, and if so schedule the throttling.
+Before we return to user space the throttling stuff will only throttle
+if we actually required it.
 
-Hide it behind a boot option since it changes the output of io.stat from
-normal, and these stats are only interesting to developers.
-
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Josef Bacik <jbacik@fb.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- block/blk-cgroup.c         | 49 +++++++++++++++++++++++++++++++++++++++++++---
- include/linux/blk-cgroup.h |  3 +++
- 2 files changed, 49 insertions(+), 3 deletions(-)
+ include/linux/memcontrol.h | 13 +++++++++++++
+ include/linux/swap.h       | 11 ++++++++++-
+ mm/huge_memory.c           |  6 +++---
+ mm/memcontrol.c            | 13 +++++++++++++
+ mm/memory.c                | 11 ++++++-----
+ mm/shmem.c                 | 10 +++++-----
+ mm/swapfile.c              | 31 +++++++++++++++++++++++++++++++
+ 7 files changed, 81 insertions(+), 14 deletions(-)
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index eb85cb87c40f..b3460f623fca 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -50,6 +50,8 @@ static struct blkcg_policy *blkcg_policy[BLKCG_MAX_POLS];
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index d99b71bc2c66..4d2e7f35f2dc 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -290,6 +290,9 @@ bool mem_cgroup_low(struct mem_cgroup *root, struct mem_cgroup *memcg);
+ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
+ 			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
+ 			  bool compound);
++int mem_cgroup_try_charge_delay(struct page *page, struct mm_struct *mm,
++			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
++			  bool compound);
+ void mem_cgroup_commit_charge(struct page *page, struct mem_cgroup *memcg,
+ 			      bool lrucare, bool compound);
+ void mem_cgroup_cancel_charge(struct page *page, struct mem_cgroup *memcg,
+@@ -745,6 +748,16 @@ static inline int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
+ 	return 0;
+ }
  
- static LIST_HEAD(all_blkcgs);		/* protected by blkcg_pol_mutex */
- 
-+static bool blkcg_debug_stats = false;
++static inline int mem_cgroup_try_charge_delay(struct page *page,
++					      struct mm_struct *mm,
++					      gfp_t gfp_mask,
++					      struct mem_cgroup **memcgp,
++					      bool compound)
++{
++	*memcgp = NULL;
++	return 0;
++}
 +
- static bool blkcg_policy_enabled(struct request_queue *q,
- 				 const struct blkcg_policy *pol)
+ static inline void mem_cgroup_commit_charge(struct page *page,
+ 					    struct mem_cgroup *memcg,
+ 					    bool lrucare, bool compound)
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 2417d288e016..12725a4d82f0 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -629,7 +629,6 @@ static inline int mem_cgroup_swappiness(struct mem_cgroup *memcg)
+ 
+ 	return memcg->swappiness;
+ }
+-
+ #else
+ static inline int mem_cgroup_swappiness(struct mem_cgroup *mem)
  {
-@@ -954,13 +956,25 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+@@ -637,6 +636,16 @@ static inline int mem_cgroup_swappiness(struct mem_cgroup *mem)
+ }
+ #endif
  
- 	hlist_for_each_entry_rcu(blkg, &blkcg->blkg_list, blkcg_node) {
- 		const char *dname;
-+		char *buf;
- 		struct blkg_rwstat rwstat;
- 		u64 rbytes, wbytes, rios, wios;
-+		size_t size = seq_get_buf(sf, &buf), off = 0;
-+		int i;
-+		bool has_stats = false;
- 
- 		dname = blkg_dev_name(blkg);
- 		if (!dname)
- 			continue;
- 
-+		/*
-+		 * Hooray string manipulation, count is the size written NOT
-+		 * INCLUDING THE \0, so size is now count+1 less than what we
-+		 * had before, but we want to start writing the next bit from
-+		 * the \0 so we only add count to buf.
-+		 */
-+		off += scnprintf(buf+off, size-off, "%s ", dname);
++#if defined(CONFIG_SWAP) && defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
++extern void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg, int node,
++					 gfp_t gfp_mask);
++#else
++static inline void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg,
++						int node, gfp_t gfp_mask)
++{
++}
++#endif
 +
- 		spin_lock_irq(blkg->q->queue_lock);
+ #ifdef CONFIG_MEMCG_SWAP
+ extern void mem_cgroup_swapout(struct page *page, swp_entry_t entry);
+ extern int mem_cgroup_try_charge_swap(struct page *page, swp_entry_t entry);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index a3a1815f8e11..9812ddad9961 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -555,7 +555,7 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
  
- 		rwstat = blkg_rwstat_recursive_sum(blkg, NULL,
-@@ -975,9 +989,35 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+ 	VM_BUG_ON_PAGE(!PageCompound(page), page);
  
- 		spin_unlock_irq(blkg->q->queue_lock);
- 
--		if (rbytes || wbytes || rios || wios)
--			seq_printf(sf, "%s rbytes=%llu wbytes=%llu rios=%llu wios=%llu\n",
--				   dname, rbytes, wbytes, rios, wios);
-+		if (rbytes || wbytes || rios || wios) {
-+			has_stats = true;
-+			off += scnprintf(buf+off, size-off,
-+					 "rbytes=%llu wbytes=%llu rios=%llu wios=%llu",
-+					 rbytes, wbytes, rios, wios);
-+		}
-+
-+		if (!blkcg_debug_stats)
-+			goto next;
-+
-+		mutex_lock(&blkcg_pol_mutex);
-+		for (i = 0; i < BLKCG_MAX_POLS; i++) {
-+			struct blkcg_policy *pol = blkcg_policy[i];
-+			size_t written;
-+
-+			if (!blkg->pd[i] || !pol->pd_stat_fn)
-+				continue;
-+
-+			written = pol->pd_stat_fn(blkg->pd[i], buf+off, size-off);
-+			if (written)
-+				has_stats = true;
-+			off += written;
-+		}
-+		mutex_unlock(&blkcg_pol_mutex);
-+next:
-+		if (has_stats) {
-+			off += scnprintf(buf+off, size-off, "\n");
-+			seq_commit(sf, off);
-+		}
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
++	if (mem_cgroup_try_charge_delay(page, vma->vm_mm, gfp, &memcg, true)) {
+ 		put_page(page);
+ 		count_vm_event(THP_FAULT_FALLBACK);
+ 		return VM_FAULT_FALLBACK;
+@@ -1145,7 +1145,7 @@ static int do_huge_pmd_wp_page_fallback(struct vm_fault *vmf, pmd_t orig_pmd,
+ 		pages[i] = alloc_page_vma_node(GFP_HIGHUSER_MOVABLE, vma,
+ 					       vmf->address, page_to_nid(page));
+ 		if (unlikely(!pages[i] ||
+-			     mem_cgroup_try_charge(pages[i], vma->vm_mm,
++			     mem_cgroup_try_charge_delay(pages[i], vma->vm_mm,
+ 				     GFP_KERNEL, &memcg, false))) {
+ 			if (pages[i])
+ 				put_page(pages[i]);
+@@ -1315,7 +1315,7 @@ int do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ 		goto out;
  	}
  
- 	rcu_read_unlock();
-@@ -1547,3 +1587,6 @@ void blkcg_policy_unregister(struct blkcg_policy *pol)
- 	mutex_unlock(&blkcg_pol_register_mutex);
+-	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
++	if (unlikely(mem_cgroup_try_charge_delay(new_page, vma->vm_mm,
+ 					huge_gfp, &memcg, true))) {
+ 		put_page(new_page);
+ 		split_huge_pmd(vma, vmf->pmd, vmf->address);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 2bd3df3d101a..5fffd28477c7 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5458,6 +5458,19 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(blkcg_policy_unregister);
+ 
++int mem_cgroup_try_charge_delay(struct page *page, struct mm_struct *mm,
++			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
++			  bool compound)
++{
++	struct mem_cgroup *memcg;
++	int ret;
 +
-+module_param(blkcg_debug_stats, bool, 0644);
-+MODULE_PARM_DESC(blkcg_debug_stats, "True if you want debug stats, false if not");
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 69aa71dc0c04..b41292726c0f 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -148,6 +148,8 @@ typedef void (blkcg_pol_online_pd_fn)(struct blkg_policy_data *pd);
- typedef void (blkcg_pol_offline_pd_fn)(struct blkg_policy_data *pd);
- typedef void (blkcg_pol_free_pd_fn)(struct blkg_policy_data *pd);
- typedef void (blkcg_pol_reset_pd_stats_fn)(struct blkg_policy_data *pd);
-+typedef size_t (blkcg_pol_stat_pd_fn)(struct blkg_policy_data *pd, char *buf,
-+				      size_t size);
++	ret = mem_cgroup_try_charge(page, mm, gfp_mask, memcgp, compound);
++	memcg = *memcgp;
++	mem_cgroup_throttle_swaprate(memcg, page_to_nid(page), gfp_mask);
++	return ret;
++}
++
+ /**
+  * mem_cgroup_commit_charge - commit a page charge
+  * @page: page to charge
+diff --git a/mm/memory.c b/mm/memory.c
+index 01f5464e0fd2..d0eea6d33b18 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2494,7 +2494,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+ 		cow_user_page(new_page, old_page, vmf->address, vma);
+ 	}
  
- struct blkcg_policy {
- 	int				plid;
-@@ -167,6 +169,7 @@ struct blkcg_policy {
- 	blkcg_pol_offline_pd_fn		*pd_offline_fn;
- 	blkcg_pol_free_pd_fn		*pd_free_fn;
- 	blkcg_pol_reset_pd_stats_fn	*pd_reset_stats_fn;
-+	blkcg_pol_stat_pd_fn		*pd_stat_fn;
- };
+-	if (mem_cgroup_try_charge(new_page, mm, GFP_KERNEL, &memcg, false))
++	if (mem_cgroup_try_charge_delay(new_page, mm, GFP_KERNEL, &memcg, false))
+ 		goto oom_free_new;
  
- extern struct blkcg blkcg_root;
+ 	__SetPageUptodate(new_page);
+@@ -2994,8 +2994,8 @@ int do_swap_page(struct vm_fault *vmf)
+ 		goto out_page;
+ 	}
+ 
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, GFP_KERNEL,
+-				&memcg, false)) {
++	if (mem_cgroup_try_charge_delay(page, vma->vm_mm, GFP_KERNEL,
++					&memcg, false)) {
+ 		ret = VM_FAULT_OOM;
+ 		goto out_page;
+ 	}
+@@ -3156,7 +3156,8 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	if (!page)
+ 		goto oom;
+ 
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, GFP_KERNEL, &memcg, false))
++	if (mem_cgroup_try_charge_delay(page, vma->vm_mm, GFP_KERNEL, &memcg,
++					false))
+ 		goto oom_free_page;
+ 
+ 	/*
+@@ -3652,7 +3653,7 @@ static int do_cow_fault(struct vm_fault *vmf)
+ 	if (!vmf->cow_page)
+ 		return VM_FAULT_OOM;
+ 
+-	if (mem_cgroup_try_charge(vmf->cow_page, vma->vm_mm, GFP_KERNEL,
++	if (mem_cgroup_try_charge_delay(vmf->cow_page, vma->vm_mm, GFP_KERNEL,
+ 				&vmf->memcg, false)) {
+ 		put_page(vmf->cow_page);
+ 		return VM_FAULT_OOM;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 9d6c7e595415..a96af5690864 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1219,8 +1219,8 @@ int shmem_unuse(swp_entry_t swap, struct page *page)
+ 	 * the shmem_swaplist_mutex which might hold up shmem_writepage().
+ 	 * Charged back to the user (not to caller) when swap account is used.
+ 	 */
+-	error = mem_cgroup_try_charge(page, current->mm, GFP_KERNEL, &memcg,
+-			false);
++	error = mem_cgroup_try_charge_delay(page, current->mm, GFP_KERNEL,
++					    &memcg, false);
+ 	if (error)
+ 		goto out;
+ 	/* No radix_tree_preload: swap entry keeps a place for page in tree */
+@@ -1697,7 +1697,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 				goto failed;
+ 		}
+ 
+-		error = mem_cgroup_try_charge(page, charge_mm, gfp, &memcg,
++		error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
+ 				false);
+ 		if (!error) {
+ 			error = shmem_add_to_page_cache(page, mapping, index,
+@@ -1803,7 +1803,7 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
+ 		if (sgp == SGP_WRITE)
+ 			__SetPageReferenced(page);
+ 
+-		error = mem_cgroup_try_charge(page, charge_mm, gfp, &memcg,
++		error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
+ 				PageTransHuge(page));
+ 		if (error)
+ 			goto unacct;
+@@ -2276,7 +2276,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+ 	__SetPageSwapBacked(page);
+ 	__SetPageUptodate(page);
+ 
+-	ret = mem_cgroup_try_charge(page, dst_mm, gfp, &memcg, false);
++	ret = mem_cgroup_try_charge_delay(page, dst_mm, gfp, &memcg, false);
+ 	if (ret)
+ 		goto out_release;
+ 
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index cc2cf04d9018..2a74c76dec1f 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3725,6 +3725,37 @@ static void free_swap_count_continuations(struct swap_info_struct *si)
+ 	}
+ }
+ 
++#if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
++void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg, int node,
++				  gfp_t gfp_mask)
++{
++	struct swap_info_struct *si, *next;
++	if (!(gfp_mask & __GFP_IO) || !memcg)
++		return;
++
++	if (!blk_cgroup_congested())
++		return;
++
++	/*
++	 * We've already scheduled a throttle, avoid taking the global swap
++	 * lock.
++	 */
++	if (current->throttle_queue)
++		return;
++
++	spin_lock(&swap_avail_lock);
++	plist_for_each_entry_safe(si, next, &swap_avail_heads[node],
++				  avail_lists[node]) {
++		if (si->bdev) {
++			blkcg_schedule_throttle(bdev_get_queue(si->bdev),
++						true);
++			break;
++		}
++	}
++	spin_unlock(&swap_avail_lock);
++}
++#endif
++
+ static int __init swapfile_init(void)
+ {
+ 	int nid;
 -- 
 2.14.3
 
