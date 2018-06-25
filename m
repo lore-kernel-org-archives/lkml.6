@@ -2,177 +2,128 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CF5C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982FBC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60BDC2616F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:15:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BDC2616F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D1A326170
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:20:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="EeVBPunv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1A326170
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755621AbeFYVPJ (ORCPT
+        id S1752488AbeFYVUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 17:15:09 -0400
-Received: from g9t5008.houston.hpe.com ([15.241.48.72]:47534 "EHLO
-        g9t5008.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752488AbeFYVPG (ORCPT
+        Mon, 25 Jun 2018 17:20:07 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:59370 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751593AbeFYVUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 17:15:06 -0400
-Received: from G2W6311.americas.hpqcorp.net (g2w6311.austin.hp.com [16.197.64.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g9t5008.houston.hpe.com (Postfix) with ESMTPS id C373E57;
-        Mon, 25 Jun 2018 21:15:05 +0000 (UTC)
-Received: from G9W8676.americas.hpqcorp.net (16.220.49.23) by
- G2W6311.americas.hpqcorp.net (16.197.64.53) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 25 Jun 2018 21:15:06 +0000
-Received: from G1W8106.americas.hpqcorp.net (16.193.72.61) by
- G9W8676.americas.hpqcorp.net (16.220.49.23) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 25 Jun 2018 21:15:05 +0000
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (15.241.52.10) by
- G1W8106.americas.hpqcorp.net (16.193.72.61) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3 via Frontend Transport; Mon, 25 Jun 2018 21:15:05 +0000
-Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.22) by
- AT5PR8401MB1137.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.137) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.19; Mon, 25 Jun 2018 21:15:03 +0000
-Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::51c9:8d4d:952d:94c8]) by AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::51c9:8d4d:952d:94c8%5]) with mapi id 15.20.0884.024; Mon, 25 Jun 2018
- 21:15:03 +0000
-From:   "Kani, Toshi" <toshi.kani@hpe.com>
-To:     "mhocko@kernel.org" <mhocko@kernel.org>
+        Mon, 25 Jun 2018 17:20:03 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 3B9E410C1464;
+        Mon, 25 Jun 2018 14:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1529961603; bh=saf8fRtTxU45QiD4+55ZIbWG4CA0f6rr3pBr+Gc3YJ0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=EeVBPunvSwSL9IO76fk+wnDhrTa1tNGOlXOybUSlUizdI5NtEZsIDWi/kd+lwnxvq
+         I4qtQG7PXE7ZaV2mcVVHa/tPJAup1GAzOI8Pm2EjNl8gfDTedQl2wsvcDzg3gx8V0T
+         EHf7ZrfvyCEIzixKo6YAflSnPHgpnlKOzlveKDW7kWfChtDqZTVl9PkJHQK4+Fnh5Y
+         JV2Y/JXtokOSR32RWCv0fHCtHboatA1GC6sjMaxdtNLI2yfgLD/G9cMnKo/g+Ihjj4
+         HgzamJXHv78+YVisCMMsE251Pz3FFZnBz6U2DUguYwLbDBk9VLhY0Ki813ZpD7qG78
+         Ed1qIE9NCqhgQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1.internal.synopsys.com [10.12.239.235])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 25E115891;
+        Mon, 25 Jun 2018 14:20:03 -0700 (PDT)
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 25 Jun 2018 14:20:02 -0700
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 26 Jun 2018 02:49:59 +0530
+Received: from [10.9.129.32] (10.9.129.32) by IN01WEHTCA.internal.synopsys.com
+ (10.144.199.243) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun
+ 2018 02:49:59 +0530
+Subject: Re: [PATCH v2] ARC: Improve cmpxchg syscall implementation
+To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>
-Subject: Re: [PATCH v3 0/3] fix free pmd/pte page handlings on x86
-Thread-Topic: [PATCH v3 0/3] fix free pmd/pte page handlings on x86
-Thread-Index: AQHUC73/TYYF8RoO3UmhiJVFAtgPVKRxEVsAgAAx7QCAADfbgA==
-Date:   Mon, 25 Jun 2018 21:15:03 +0000
-Message-ID: <1529961187.14039.206.camel@hpe.com>
-References: <20180516233207.1580-1-toshi.kani@hpe.com>
-         <alpine.DEB.2.21.1806241516410.8650@nanos.tec.linutronix.de>
-         <1529938470.14039.134.camel@hpe.com>
-         <20180625175225.GQ28965@dhcp22.suse.cz>
-In-Reply-To: <20180625175225.GQ28965@dhcp22.suse.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=toshi.kani@hpe.com; 
-x-originating-ip: [15.219.163.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AT5PR8401MB1137;7:vkW5d7aDMReFxkM6/HpJTiPzEGualuk44Sx3C/q1fosOM6nz4rf2o7LPhrEJ+m+APhe5A3mPjZRtRbwodWrQLj2UfaKc8zxV93MCrltUhob93ZwkNa+NANazkac35zovBRTi5Zz75X15WNXwc8k34BwaVP8spgdfYOPeZ/xSZ736aFo1GP4JkyBUnX8YOf+GL6LFFlsrl4uRLqWA2jjAETesczTOV5vP6oSk2kRi5ruCPzcg7Agf4Cdslbw/2Qy/
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c56de95b-de55-4235-2932-08d5dae0b7b2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB1137;
-x-ms-traffictypediagnostic: AT5PR8401MB1137:
-x-microsoft-antispam-prvs: <AT5PR8401MB11373A2F23E4A23FB0E98EC6824A0@AT5PR8401MB1137.NAMPRD84.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(17755550239193);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AT5PR8401MB1137;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB1137;
-x-forefront-prvs: 0714841678
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(136003)(39860400002)(376002)(396003)(199004)(189003)(8936002)(81166006)(6246003)(1730700003)(2900100001)(81156014)(53936002)(6486002)(6436002)(68736007)(66066001)(229853002)(5640700003)(478600001)(256004)(97736004)(14454004)(2351001)(6512007)(103116003)(93886005)(316002)(54906003)(476003)(2616005)(6116002)(102836004)(2906002)(486006)(106356001)(6506007)(5250100002)(105586002)(2501003)(6916009)(3846002)(186003)(26005)(76176011)(7736002)(99286004)(4326008)(36756003)(305945005)(7416002)(25786009)(446003)(5660300001)(14444005)(86362001)(8676002)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB1137;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hpe.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: dHH2EOFD1K17/juU8VwGTcX3UA5EGQv/z52se6/4gBQ1JIhZcSg0t2OxttyxVTXZj9l7phRCjf4K/0U0xiyLonalTvKd/GOdeRDbnwG6vP4j56A/9NSUjiLQweV2ag/HvCnuMTvAcpDLJezxNaSb1vu4cVtmu5qxOI8VtUGWwysPPY0Jb1r7rJoRgh2hgBMPV6fIAtGZ7LR1PpMCby7vL+PbCU/j58ClvZjuuW11TNUNTHdUBOUra1tWLAgh/EbfFcdVnw/xxxCZzVWRkQ11bez83AzLRSBrn9CnFs4vl4o8T3QWswcLFYYmHWiB1OMC0XDVyXbWBzz6sjLzWW5DkRUDEud9l5zNVoORj+NTAFU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B9CA7751DBCA9E48979D3B542B81D95F@NAMPRD84.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "jcmvbkbc@gmail.com" <jcmvbkbc@gmail.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+References: <20180619142205.20493-1-abrodkin@synopsys.com>
+ <bc488b10-cd54-2ef8-46d6-d6c8dc20f799@synopsys.com>
+ <6fb4e79964418dec9f1216dabaacfb59a8937134.camel@synopsys.com>
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ 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
+ i91ThhqBJlyU6MVUa6vZNv8E
+Message-ID: <e7a02f0a-314c-ecac-97bd-d6d27168d54a@synopsys.com>
+Date:   Mon, 25 Jun 2018 14:19:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: c56de95b-de55-4235-2932-08d5dae0b7b2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2018 21:15:03.0687
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB1137
-X-OriginatorOrg: hpe.com
+In-Reply-To: <6fb4e79964418dec9f1216dabaacfb59a8937134.camel@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.9.129.32]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTA2LTI1IGF0IDE5OjUzICswMjAwLCBNaWNoYWwgSG9ja28gd3JvdGU6DQo+
-IE9uIE1vbiAyNS0wNi0xOCAxNDo1NjoyNiwgS2FuaSBUb3NoaW1pdHN1IHdyb3RlOg0KPiA+IE9u
-IFN1biwgMjAxOC0wNi0yNCBhdCAxNToxOSArMDIwMCwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0K
-PiA+ID4gT24gV2VkLCAxNiBNYXkgMjAxOCwgVG9zaGkgS2FuaSB3cm90ZToNCj4gPiA+IA0KPiA+
-ID4gPiBUaGlzIHNlcmllcyBmaXhlcyB0d28gaXNzdWVzIGluIHRoZSB4ODYgaW9yZW1hcCBmcmVl
-IHBhZ2UgaGFuZGxpbmdzDQo+ID4gPiA+IGZvciBwdWQvcG1kIG1hcHBpbmdzLg0KPiA+ID4gPiAN
-Cj4gPiA+ID4gUGF0Y2ggMDEgZml4ZXMgQlVHX09OIG9uIHg4Ni1QQUUgcmVwb3J0ZWQgYnkgSm9l
-cmcuICBJdCBkaXNhYmxlcw0KPiA+ID4gPiB0aGUgZnJlZSBwYWdlIGhhbmRsaW5nIG9uIHg4Ni1Q
-QUUuDQo+ID4gPiA+IA0KPiA+ID4gPiBQYXRjaCAwMi0wMyBmaXhlcyBhIHBvc3NpYmxlIGlzc3Vl
-IHdpdGggc3BlY3VsYXRpb24gd2hpY2ggY2FuIGNhdXNlDQo+ID4gPiA+IHN0YWxlIHBhZ2UtZGly
-ZWN0b3J5IGNhY2hlLg0KPiA+ID4gPiAgLSBQYXRjaCAwMiBpcyBmcm9tIENoaW50YW4ncyB2OSAw
-MS8wNCBwYXRjaCBbMV0sIHdoaWNoIGFkZHMgYSBuZXcgYXJnDQo+ID4gPiA+ICAgICdhZGRyJywg
-d2l0aCBteSBtZXJnZSBjaGFuZ2UgdG8gcGF0Y2ggMDEuDQo+ID4gPiA+ICAtIFBhdGNoIDAzIGFk
-ZHMgYSBUTEIgcHVyZ2UgKElOVkxQRykgdG8gcHVyZ2UgcGFnZS1zdHJ1Y3R1cmUgY2FjaGVzDQo+
-ID4gPiA+ICAgIHRoYXQgbWF5IGJlIGNhY2hlZCBieSBzcGVjdWxhdGlvbi4gIFNlZSB0aGUgcGF0
-Y2ggZGVzY3JpcHRpb25zIGZvcg0KPiA+ID4gPiAgICBtb3JlIGRldGFsLg0KPiA+ID4gDQo+ID4g
-PiBUb3NoaSwgSm9lcmcsIE1pY2hhbCENCj4gPiANCj4gPiBIaSBUaG9tYXMsDQo+ID4gDQo+ID4g
-VGhhbmtzIGZvciBjaGVja2luZy4gSSB3YXMgYWJvdXQgdG8gcGluZyBhcyB3ZWxsLg0KPiA+IA0K
-PiA+ID4gSSdtIGZhaWxpbmcgdG8gZmluZCBhIGNvbmNsdXNpb24gb2YgdGhpcyBkaXNjdXNzaW9u
-LiBDYW4gd2UgZmluYWxseSBtYWtlDQo+ID4gPiBzb21lIHByb2dyZXNzIHdpdGggdGhhdD8NCj4g
-PiANCj4gPiBJIGhhdmUgbm90IGhlYXJkIGZyb20gSm9lcmcgc2luY2UgSSBsYXN0IHJlcGxpZWQg
-dG8gaGlzIGNvbW1lbnRzIHRvDQo+ID4gUGF0Y2ggMy8zIC0tIEkgZGlkIG15IGJlc3QgdG8gZXhw
-bGFpbiB0aGF0IHRoZXJlIHdhcyBubyBpc3N1ZSBpbiB0aGUNCj4gPiBzaW5nbGUgcGFnZSBhbGxv
-Y2F0aW9uIGluIHB1ZF9mcmVlX3BtZF9wYWdlKCkuICBGcm9tIG15IHBlcnNwZWN0aXZlLCB0aGUN
-Cj4gPiAgdjMgc2VyaWVzIGlzIGdvb2QgdG8gZ28uDQo+IA0KPiBXZWxsLCBJIGFkbWl0IHRoYXQg
-dGhpcyBub3QgbXkgYXJlYSBidXQgSSBhZ3JlZSB3aXRoIEpvZXJnIHRoYXQNCj4gYWxsb2NhdGlu
-ZyBtZW1vcnkgaW5zaWRlIGFmdW5jdGlvbiB0aGF0IGlzIHN1cHBvc2VkIHRvIGZyZWUgcGFnZSB0
-YWJsZQ0KPiBpcyBmYXIgZnJvbSBpZGVhbC4gTW9yZSBzbyB0aGF0IHRoZSBhbGxvY2F0aW9uIGlz
-IGhhcmRjb2RlZCBHRlBfS0VSTkVMLg0KPiBXZSBhbHJlYWR5IGhhdmUgdGhpcyBhbnRpcGF0dGVy
-biBpbiBmdW5jdGlvbnMgdG8gYWxsb2NhdGUgcGFnZSB0YWJsZXMNCj4gYW5kIGl0IGhhcyB0dXJu
-ZWQgdG8gYmUgbWFpbnRlbmFuY2UgUElUQSBsb25ndGVybS4gU28gaWYgdGhlcmUgaXMgYSB3YXkN
-Cj4gYXJvdW5kIHRoYXQgdGhlbiBJIHdvdWxkIHN0cm9uZ2x5IHN1Z2dlc3QgZmluZGluZyBhIGRp
-ZmZlcmVudCBzb2x1dGlvbi4NCj4gDQo+IFdoZXRoZXIgdGhhdCBpcyBzdWZmaWNpZW50IHRvIGRp
-dGNoIHRoZSB3aG9sZSBzZXJpZXMgaXMgbm90IG15IGNhbGwNCj4gdGhvdWdoLg0KDQpJJ2QgYWdy
-ZWUgaWYgdGhpcyBjb2RlIGlzIGluIGEgbWVtb3J5IGZyZWUgcGF0aC4gIEhvd2V2ZXIsIHRoaXMg
-Y29kZSBpcw0KaW4gdGhlIGlvcmVtYXAoKSBwYXRoLCB3aGljaCBpcyBleHBlY3RlZCB0byBhbGxv
-Y2F0ZSBuZXcgcGFnZShzKS4NCg0KRm9yIGV4YW1wbGUsIHNldHRpbmcgYSBmcmVzaCBQVUQgbWFw
-IGFsbG9jYXRlcyBhIG5ldyBwYWdlIHRvIHNldHVwIHBhZ2UNCnRhYmxlcyBhcyBmb2xsb3dzOg0K
-DQogIGlvcmVtYXBfcHVkX3JhbmdlKCkNCiAgICBwdWRfYWxsb2MoKQ0KICAgICAgX19wdWRfYWxs
-b2MoKQ0KICAgICAgICBwdWRfYWxsb2Nfb25lKCkNCiAgICAgICAgICBnZXRfemVyb2VkX3BhZ2Uo
-KSB3aXRoIEdGUF9LRVJORUwNCiAgICAgICAgICAgIF9fZ2V0X2ZyZWVfcGFnZXMoKSB3aXRoIEdG
-UF9LRVJORUwgfCBfX0dGUF9aRVJPDQoNCkluIGEgcmFyZSBjYXNlLCBhIFBVRCBtYXAgaXMgc2V0
-IHRvIGEgcHJldmlvdXNseS11c2VkLWZvci1QTUQgcmFuZ2UsDQp3aGljaCBsZWFkcyB0byBjYWxs
-IHB1ZF9mcmVlX3BtZF9wYWdlKCkgdG8gZnJlZSB1cCB0aGUgcGFnZSBjb25zaXN0aW5nDQpvZiBj
-bGVhcmVkIFBNRCBlbnRyaWVzLiAgVG8gbWFuYWdlIHRoaXMgcHJvY2VkdXJlLCBwdWRfZnJlZV9w
-bWRfcGFnZSgpDQp0ZW1wb3JhcnkgYWxsb2NhdGVzIGEgcGFnZSB0byBzYXZlIHRoZSBjbGVhcmVk
-IFBNRCBlbnRyaWVzIGFzIGZvbGxvd3M6DQoNCiAgaW9yZW1hcF9wdWRfcmFuZ2UoKQ0KICAgIHB1
-ZF9mcmVlX3BtZF9wYWdlKCkNCiAgICAgIF9fZ2V0X2ZyZWVfcGFnZSgpIHdpdGggR0ZQX0tFUk5F
-TA0KDQpUaGVzZSBkZXRhaWxzIGFyZSBhbGwgaW50ZXJuYWwgdG8gdGhlIGlvcmVtYXAoKSBjYWxs
-ZXJzLCB3aG8gc2hvdWxkDQphbHdheXMgZXhwZWN0IHRoYXQgaW9yZW1hcCgpIGFsbG9jYXRlcyBw
-YWdlcyBmb3Igc2V0dGluZyBwYWdlIHRhYmxlcy4NCg0KQXMgZm9yIHBvc3NpYmxlIHBlcmZvcm1h
-bmNlIGltcGxpY2F0aW9ucyBhc3NvY2lhdGVkIHdpdGggdGhpcyBwYWdlDQphbGxvY2F0aW9uLCBw
-bWRfZnJlZV9wdGVfcGFnZSgpIGFuZCBwdWRfZnJlZV9wbWRfcGFnZSgpIGFyZSB2ZXJ5DQpkaWZm
-ZXJlbnQgaW4gdGVybXMgb2YgaG93IGxpa2VseSB0aGV5IGNhbiBiZSBjYWxsZWQuDQoNCnBtZF9m
-cmVlX3B0ZV9wYWdlKCksIHdoaWNoIGRvZXMgbm90IGFsbG9jYXRlIGEgcGFnZSwgZ2V0cyBjYWxs
-ZWQNCm11bHRpcGxlIHRpbWVzIGR1cmluZyBub3JtYWwgYm9vdCBvbiBteSB0ZXN0IHN5c3RlbXMu
-ICBNeSBpb3JlbWFwIHRlc3RzDQpjYXVzZSB0aGlzIGZ1bmN0aW9uIGJlIGNhbGxlZCBxdWl0ZSBm
-cmVxdWVudGx5LiAgVGhpcyBpcyBiZWNhdXNlIDRLQiBhbmQNCjJNQiB2YWRkciBhbGxvY2F0aW9u
-IGNvbWVzIGZyb20gc2ltaWxhciB2bWFsbG9jIHJhbmdlcy4gDQoNCnB1ZF9mcmVlX3BtZF9wYWdl
-KCksIHdoaWNoIGFsbG9jYXRlcyBhIHBhZ2UsIHNlZW1zIHRvIGJlIG5ldmVyIGNhbGxlZA0KdW5k
-ZXIgbm9ybWFsIGNpcmN1bXN0YW5jZXMsIGF0IGxlYXN0IEkgd2FzIG5vdCBhYmxlIHRvIHdpdGgg
-bXkgaW9yZW1hcA0KdGVzdHMuICBJIGZvdW5kIHRoYXQgMUdCIHZhZGRyIGFsbG9jYXRpb24gZG9l
-cyBub3Qgc2hhcmUgd2l0aCA0S0IvMk1CDQpyYW5nZXMuICBJIGhhZCB0byBoYWNrIHRoZSBhbGxv
-Y2F0aW9uIGNvZGUgdG8gZm9yY2UgdGhlbSBzaGFyZWQgdG8gdGVzdA0KdGhpcyBmdW5jdGlvbi4g
-IEhlbmNlLCB0aGlzIG1lbW9yeSBhbGxvY2F0aW9uIGRvZXMgbm90IGhhdmUgYW55DQppbXBsaWNh
-dGlvbnMgaW4gcGVyZm9ybWFuY2UuDQoNCkxhc3RseSwgZm9yIHRoZSBjb2RlIG1haW50ZW5hbmNl
-LCBJIGJlbGlldmUgdGhpcyBtZW1vcnkgYWxsb2NhdGlvbiBrZWVwcw0KdGhlIGNvZGUgbXVjaCBz
-aW1wbGVyIHRoYW4gaXQgd291bGQgb3RoZXJ3aXNlIG5lZWQgdG8gbWFuYWdlIGEgc3BlY2lhbA0K
-cGFnZSBsaXN0Lg0KDQpUaGFua3MsDQotVG9zaGkNCg==
+On 06/25/2018 02:11 PM, Alexey Brodkin wrote:
+>> OK ?
+> Sure, care to update the commit log or want me to resend?
+
+I've fixed this up locally and removed a bunch of compile warnings as well.
+
+-Vineet
