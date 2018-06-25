@@ -2,121 +2,150 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D50C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A40A8C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A12E2586F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:59:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A12E2586F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 5E5F225888
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5F225888
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932981AbeFYL7Q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 07:59:16 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39022 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932569AbeFYL7P (ORCPT
+        id S933051AbeFYMEo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:04:44 -0400
+Received: from mailoutvs36.siol.net ([185.57.226.227]:47648 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932884AbeFYMEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 07:59:15 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1306C80383; Mon, 25 Jun 2018 13:59:14 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 13:59:13 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3][RFC] Introduce the in-kernel hibernation encryption
-Message-ID: <20180625115913.GD17001@amd>
-References: <cover.1529486870.git.yu.c.chen@intel.com>
- <20180621085332.GA21807@amd>
- <CAJZ5v0izS8CNzhsd_bjB40xTkZxaxh13NtHsJi9LYXEr84MoMA@mail.gmail.com>
- <20180621191443.GB14623@amd>
- <CAJZ5v0gHPRa-9btfCCYEDDphZrEy8DTrXjsn57MoKMAu7sKMEA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="JwB53PgKC5A7+0Ej"
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gHPRa-9btfCCYEDDphZrEy8DTrXjsn57MoKMAu7sKMEA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 25 Jun 2018 08:04:42 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 53AF052020C;
+        Mon, 25 Jun 2018 14:04:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id wvW9dfObqYSb; Mon, 25 Jun 2018 14:04:38 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 8C879520286;
+        Mon, 25 Jun 2018 14:04:38 +0200 (CEST)
+Received: from localhost.localdomain (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id 4F61052020C;
+        Mon, 25 Jun 2018 14:04:34 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc:     airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 00/24] Add support for R40 HDMI pipeline
+Date:   Mon, 25 Jun 2018 14:02:40 +0200
+Message-Id: <20180625120304.7543-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series adds support for R40 HDMI pipeline. It is a bit special
+than other already supported pipelines because it has additional unit
+called TCON TOP responsible for relationship configuration between
+mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+and TV TCONs, TV encoder clock settings and pin muxing between LCD
+and TV encoders.
 
---JwB53PgKC5A7+0Ej
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+However, it seems that TCON TOP will become a norm, since newer
+Allwinner SoCs like H6 also have this unit.
 
+I tested different possible configurations:
+- mixer0 <> TCON-TV0 <> HDMI
+- mixer0 <> TCON-TV1 <> HDMI
+- mixer1 <> TCON-TV0 <> HDMI
+- mixer1 <> TCON-TV1 <> HDMI
 
+Please review.
 
-> > Well, AFAICT in this case userland has the key and encrypted data are
-> > on disk. That does not seem to be improvement.
->=20
-> Not really.
->=20
-> With the encryption in the kernel, if the kernel is careful enough,
-> use space will not be able to read the image even if it knows the
-> passphrase, unless it can also add itself to the initramfs image
-> loaded by the restore kernel, which (at least) can be made way more
-> difficult than simply reading the plain-text image data via an I/F
-> readily provided by the kernel.
+Best regards,
+Jernej
 
-I still do not see the improvement. If you are root, you can modify
-the initramfs and decrypt the data.
+Changes from v2:
+- Collected tags
+- Exported drm_crtc_port_mask() symbol
+- Removed TCON TOP reset name
+- TCON TOP gates have now right parents
+- updated TCON TOP bindings
+- dropped new TCON quirk due TCON TOP rework
 
-Please explain in the changelog how this is better than existing solution.
+Changes from v1:
+- Split DT bindings patch and updated description
+- Split HDMI PHY patch
+- Move header file from TCON TOP patch to dt bindings patch
+- Added Rob reviewed-by tag
+- Used clk_hw_register_gate() instead of custom gate registration code
+- Reworked TCON TOP to be part of of-graph. Because of that, a lot of
+  new patches were added.
+- Droped mixer index quirk patch
+- Reworked TCON support for TCON TOP
+- Updated commit messages
 
-> >> Besides, the user space part of what you are calling uswsusp has not
-> >> been actively maintained for years now and honestly I don't know how
-> >> many users of it there are.
-> >
-> > I'd assume distros want progress bars so they still use it?
->=20
-> I'd rather not speak for distros, but if hibernation images are
-> written to fast storage, progress bars are not that useful any more.
-> They are not used on Windows any more, for one.
->=20
-> > Anyway, there's solution for encrypted hibernation.
->=20
-> Which is suboptimal and you know it.
+Jernej Skrabec (24):
+  clk: sunxi-ng: r40: Add minimal rate for video PLLs
+  clk: sunxi-ng: r40: Allow setting parent rate to display related
+    clocks
+  clk: sunxi-ng: r40: Export video PLLs
+  dt-bindings: display: sunxi-drm: Add TCON TOP description
+  drm/sun4i: Add TCON TOP driver
+  drm/sun4i: Fix releasing node when enumerating enpoints
+  drm/sun4i: Split out code for enumerating endpoints in output port
+  drm/sun4i: Add support for traversing graph with TCON TOP
+  drm/sun4i: Don't skip TCONs if they don't have channel 0
+  drm/sun4i: tcon: Generalize engine search algorithm
+  drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
+  drm/sun4i: Don't check for panel or bridge on TV TCONs
+  dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
+  drm/sun4i: Add support for R40 mixers
+  dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
+  drm/sun4i: Enable DW HDMI PHY clock
+  drm/sun4i: Don't change clock bits in DW HDMI PHY driver
+  drm/sun4i: DW HDMI PHY: Add support for second PLL
+  drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
+    driver
+  drm/sun4i: Add support for A64 HDMI PHY
+  drm: of: Export drm_crtc_port_mask()
+  drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
+  ARM: dts: sun8i: r40: Add HDMI pipeline
+  ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
 
-If this is better, please explain how in the changelog.
+ .../bindings/display/sunxi/sun4i-drm.txt      |  62 +++-
+ .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  45 +++
+ arch/arm/boot/dts/sun8i-r40.dtsi              | 269 ++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c          |  58 ++--
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h          |   8 +-
+ drivers/gpu/drm/drm_of.c                      |   5 +-
+ drivers/gpu/drm/sun4i/Makefile                |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c             | 121 +++++--
+ drivers/gpu/drm/sun4i/sun4i_tcon.c            |  66 ++--
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  46 ++-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   8 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c        |  54 +++-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c    |  90 ++++--
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           |  24 ++
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c        | 300 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.h        |  40 +++
+ include/drm/drm_of.h                          |   8 +
+ include/dt-bindings/clock/sun8i-r40-ccu.h     |   4 +
+ include/dt-bindings/clock/sun8i-tcon-top.h    |  11 +
+ 19 files changed, 1100 insertions(+), 122 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+ create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
 
-> > If Intel wants to invent different solution for that, and put it into k=
-ernel, they
-> > should explain what the advantages are, relative to existing solution.
->=20
-> I'm not sure what "they" is supposed to mean here, but the advantages
-> are quite clear to me: better security and reduced syscall overhead.
+-- 
+2.18.0
 
-Better security against which attack?
-
-Syscall overhead is not a problem for hibernation, and you know it.
-
-		    	  	      		       Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---JwB53PgKC5A7+0Ej
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsw2REACgkQMOfwapXb+vL5WgCdEZn9n38yd3VV3SBZCeMULHhV
-O2YAnjoj7kfQr0rzXiX99zLDo1lPSv1v
-=oRsa
------END PGP SIGNATURE-----
-
---JwB53PgKC5A7+0Ej--
