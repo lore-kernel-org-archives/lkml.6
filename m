@@ -2,149 +2,103 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EE0C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 01:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8124C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 01:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37698253B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 01:18:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AfW8RzDY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37698253B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 74742253AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 01:26:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74742253AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeFYBS5 (ORCPT
+        id S1752378AbeFYB0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 21:18:57 -0400
-Received: from ozlabs.org ([203.11.71.1]:33865 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752288AbeFYBSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 21:18:55 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41DWXX0Tncz9s2t;
-        Mon, 25 Jun 2018 11:18:50 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529889533;
-        bh=/pMPHrS+SPoPLbYbQyjqPRoyD+SeQpY5Ef59lUdH0Po=;
-        h=Date:From:To:Cc:Subject:From;
-        b=AfW8RzDYrKi3Xyhr+MX7p5EYXtyw9qy5uPNw8K2k1D3zlDBnq7VxQ484NYveYjS1w
-         Qwjo5VL64EY9T5sMIb/vsgTQm3V0NgWCiqzMn13ZT/PkTBhw4k/KRK/t1Zf6YI2ul8
-         9JBdulebTEFSKXUWGHM9PQX6dRpA8fHBP1wa2DVc41/qPHZMtIN2PViTz+PBzg7CKt
-         KrBehT4v0bvVEXuMmJn2MGOdvDEv7PvGEWMiBYQm5Uv86HjYV4GRQMZk4l1fCxF8dS
-         P5G9dvoT3lxD4STKApPlXTN3UlJUICqWEtdRJZRG2rxXqyz57eP/vP0lCA/CyLVlE0
-         WyHAMkLFJJtqw==
-Date:   Mon, 25 Jun 2018 11:18:50 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Sun, 24 Jun 2018 21:26:37 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:47877 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751979AbeFYB0d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Jun 2018 21:26:33 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fXGH0-0006FA-0T; Sun, 24 Jun 2018 19:26:30 -0600
+Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fXGGz-00025O-5y; Sun, 24 Jun 2018 19:26:29 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: linux-next: build failure after merging the drm tree
-Message-ID: <20180625111850.63faef0e@canb.auug.org.au>
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Paul Eggert <eggert@cs.ucla.edu>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+References: <20180420120605.1612248-1-arnd@arndb.de>
+        <20180420120605.1612248-2-arnd@arndb.de>
+        <20180621154915.GA31947@gmail.com>
+        <CAK8P3a1QYTfRNQt2+a29BpvgYM_pnSFrO=NBvVo=BdUa2q9ngQ@mail.gmail.com>
+        <20180621161121.GB7222@gmail.com>
+        <CAK8P3a1mx16S+DhEMQA6WBJ7efdhN5YaKKVHU6n+E6kfifM-Qg@mail.gmail.com>
+        <20180622021636.GA11266@gmail.com> <87a7rm3eb5.fsf@xmission.com>
+        <20180624071258.GB29407@gmail.com>
+Date:   Sun, 24 Jun 2018 20:26:08 -0500
+In-Reply-To: <20180624071258.GB29407@gmail.com> (Ingo Molnar's message of
+        "Sun, 24 Jun 2018 09:12:58 +0200")
+Message-ID: <87y3f31wsv.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WLb.geg72bz9i5VfY541+6s"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-XM-SPF: eid=1fXGGz-00025O-5y;;;mid=<87y3f31wsv.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19jKo//4z23LDvKo7/SFoIT9ujafb4vVVs=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2 2/2] rusage: allow 64-bit times ru_utime/ru_stime
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WLb.geg72bz9i5VfY541+6s
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Ingo Molnar <mingo@kernel.org> writes:
 
-Hi all,
+> * Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+>> The trouble with attributes is that means you can't filter your system
+>> call arguments with seccomp. [...]
+>
+> There's nothing keeping seccomp from securely fetching those arguments and 
+> extending filtering to them as well ...
+>
+> Allowing that would make sense for a lot of other system calls as
+> well.
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Possibly.  The challenge is that if the fetch for the kernel to use
+those arguments is different from the fetch of seccomp to test those
+arguments you have a time of test vs time of use race.
 
-samples/vfio-mdev/mbochs.c:827:3: error: 'struct dma_buf_ops' has no member=
- named 'map_atomic'
-  .map_atomic   =3D mbochs_kmap_atomic_dmabuf,
-   ^~~~~~~~~~
-samples/vfio-mdev/mbochs.c:827:18: error: positional initialization of fiel=
-d in 'struct' declared with 'designated_init' attribute [-Werror=3Ddesignat=
-ed-init]
-  .map_atomic   =3D mbochs_kmap_atomic_dmabuf,
-                  ^~~~~~~~~~~~~~~~~~~~~~~~~
-samples/vfio-mdev/mbochs.c:827:18: note: (near initialization for 'mbochs_d=
-mabuf_ops')
-samples/vfio-mdev/mbochs.c:827:18: error: initialization from incompatible =
-pointer type [-Werror=3Dincompatible-pointer-types]
-samples/vfio-mdev/mbochs.c:827:18: note: (near initialization for 'mbochs_d=
-mabuf_ops.unmap')
+Given the location of the seccomp hook at the kernel user space border
+there is no easy way for seccomp to share the fetch with the system
+call itself.
 
-Caused by commit
+So I don't see how seccomp could perform the fetch securely.
 
-  f664a5269542 ("dma-buf: remove kmap_atomic interface")
-
-interacting with commit
-
-  a5e6e6505f38 ("sample: vfio bochs vbe display (host device for bochs-drm)=
-")
-
-from Linus' tree (v4.18-rc1).
-
-I added the following just to disable the sample code until it can
-be repaired.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 25 Jun 2018 11:11:38 +1000
-Subject: [PATCH] sample: disable the VFIO mdpy example mediated device samp=
-le code
-
-it was broken by the removal of the dmap-buf kmap_atomic interface.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- samples/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/samples/Kconfig b/samples/Kconfig
-index bd133efc1a56..84bf618ad628 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -135,6 +135,7 @@ config SAMPLE_VFIO_MDEV_MDPY_FB
- config SAMPLE_VFIO_MDEV_MBOCHS
- 	tristate "Build VFIO mdpy example mediated device sample code -- loadable=
- modules only"
- 	depends on VFIO_MDEV_DEVICE && m
-+	depends on BROKEN
- 	select DMA_SHARED_BUFFER
- 	help
- 	  Build a virtual display sample driver for use as a VFIO
---=20
-2.17.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WLb.geg72bz9i5VfY541+6s
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlswQvoACgkQAVBC80lX
-0GzRkwf/cwZJX+DiR/pNP2SxV4eJJ0BkGE3n81a19SNLhDIQkgtQZtb1Qw9DRjwD
-xpNmtzyA9QB0SSv4mBQhkiypVvDyC7rdDDT1jW4UZGc4lC0QGHGI3UJvVSiQRMM9
-twlCJE8AlqrP+1OFYFExq/XaRpojn7D2sdR+yhsGDBFmG1J/LerO1U2opk9jSoP7
-unjEiUKm9l7K9xaG2NRWgp8gZGzeoNLPQU794DtWK/BQwRpyQIVFh3jtTKSTqn2F
-U2agrBriz58YFGiigGYVSxg+BUgBky/bg5Y5wDgy24dFeW7V2RzQ0srKagIwlmoC
-X5ks+fbfBYDRsYcJVzBtCgKw9N3GQA==
-=uPil
------END PGP SIGNATURE-----
-
---Sig_/WLb.geg72bz9i5VfY541+6s--
+Eric
