@@ -2,101 +2,147 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF72DC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E726C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B287B25610
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:41:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B287B25610
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C173225610
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:41:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jK7W2CEZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C173225610
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754671AbeFYIld (ORCPT
+        id S1754694AbeFYIlp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:41:33 -0400
-Received: from mga09.intel.com ([134.134.136.24]:60641 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754563AbeFYIlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 04:41:45 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:45711 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754624AbeFYIlc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 04:41:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 01:41:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,269,1526367600"; 
-   d="scan'208";a="66995679"
-Received: from keunhyun-mobl1.amr.corp.intel.com (HELO [192.168.4.139]) ([10.255.29.56])
-  by fmsmga001.fm.intel.com with ESMTP; 25 Jun 2018 01:41:28 -0700
-To:     Andy Lutomirski <luto@kernel.org>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "Li, Philip" <philip.li@intel.com>,
-        "Ye, Xiaolong" <xiaolong.ye@intel.com>,
-        Li Zhijian <zhijianx.li@intel.com>
-From:   Li Zhijian <zhijianx.li@intel.com>
-Subject: test_syscall_vdso_32 [FAIL]
-Message-ID: <0d78b5b4-710e-1b41-46e1-74003ca1381e@intel.com>
-Date:   Mon, 25 Jun 2018 16:41:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+Received: by mail-ot0-f196.google.com with SMTP id k3-v6so604690otl.12;
+        Mon, 25 Jun 2018 01:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=PGGtDpIu/n7/5FO6CMf4EyCnfYJq4k/kvJOwCglszZ0=;
+        b=jK7W2CEZufSqCgfLFZ/1BgK7wxFOSD+gY0Q1qibJZc4BcxYxXceYJpEbBXkWaPp5HH
+         5LVo7SSZ7hRP0Ga3w4pSS1dgpz/2FpDndC8cHPFc3wF0THTiOXYSa611FWkt9rhgDlO6
+         anEG3NqJFTKNy/MnXmcss0gwzf4DMi/JOWQ8ZZLFXESmI5JJlDZjz5K3BgI2SwM9D/j5
+         2abwr/EIrhYrsEjb8eJjjwg2H9mLRF7vIPmguMIt+lqvo1WZRKXav1sFdq0fHLFkn5MY
+         xLHmrplu0CLXTFHpnvs75eyRLx5BYyqQGx27FWq5I/kdsodA3EJ6kcqVloBAeAr51J8u
+         osIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=PGGtDpIu/n7/5FO6CMf4EyCnfYJq4k/kvJOwCglszZ0=;
+        b=ZswAXeY41wP9O6HMASZcysL2PIJk/2CZrwKW3zO2Un06wiX/o/6l/RKwUEffJxBOaW
+         /7k94gIDiECNyFoZMsoW8YSmE8s5fWucdbo0YLCCH0gh9sQ+KorY8e9jW0KMWR/N9brS
+         rORBAsKOJ3CPzYzJTHh1rHGhrxxbxknuavpNE4pTihp0QaEUV0XbfGNmP0viGKSUNaTU
+         yEb2Ge0msjcI0OFX4mkAdzwhVfJzP0RU4BUVfwM2MAP2wuAYKYU5kXtIXYwSJb3sHhs0
+         UL7GplAiIH8BUoGmbyJkCnCPH5OP2lYVpgKReBwmD152N24A7srEcnR6x9OXsNVk7H9I
+         J9CA==
+X-Gm-Message-State: APt69E1IhI1EzRXu5OyPvXo7B7XaKiJIkaBjwvik5alR5CFxV8pm8mwy
+        q/E4UZpeLv3C+97oH1My9jm7gvwJZSF2QuqpKN4=
+X-Google-Smtp-Source: ADUXVKJckqPdsFyVOIEYrwIYzF0VvyFYGmMuizjlSIdObhhJxMH40UIJycMvtLyie29WP/znuUpTph+hLJYzc2yN7u0=
+X-Received: by 2002:a9d:cc7:: with SMTP id o7-v6mr6469528otd.291.1529916092079;
+ Mon, 25 Jun 2018 01:41:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 01:41:31
+ -0700 (PDT)
+In-Reply-To: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
+References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 25 Jun 2018 10:41:31 +0200
+X-Google-Sender-Auth: baAiExcTC2AlCtH_08MP_0KMhIE
+Message-ID: <CAJZ5v0gv9jWyKvhYXrL2a8CqdhrWsNDJ59EDci_ezmfku-2_Ww@mail.gmail.com>
+Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle injection framework
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Tue, Jun 19, 2018 at 3:23 PM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
 
-Intel 0Day noticed that test_syscall_vdso_32 failed since 8bb2610bc4967f19672444a7b0407367f1540028(x86/entry/64/compat: Preserve r8-r11 in int $0x80)
+[cut]
 
-2018-06-25 14:23:00 make run_tests -C x86
-make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-8bb2610bc4967f19672444a7b0407367f1540028/tools/testing/selftests/x86'
-gcc -m32 -o /usr/src/linux-selftests-x86_64-rhel-7.2-8bb2610bc4967f19672444a7b0407367f1540028/tools/testing/selftests/x86/test_syscall_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_syscall_vdso.c thunks_32.S -lrt -ldl -lm
-TAP version 13
-selftests: test_syscall_vdso_32
-========================================
-[RUN]	Executing 6-argument 32-bit syscall via VDSO
-[WARN]	Flags before=0000000000200ed7 id 0 00 o d i s z 0 a 0 p 1 c
-[WARN]	Flags  after=0000000000200606 id 0 00 d i 0 0 p 1
-[WARN]	Flags change=00000000000008d1 0 00 o s z 0 a 0 0 c
-[OK]	Arguments are preserved across syscall
-[NOTE]	R11 has changed:0000000000200606 - assuming clobbered by SYSRET insn
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Executing 6-argument 32-bit syscall via INT 80
-[OK]	Arguments are preserved across syscall
-[FAIL]	R8 has changed:0000000000000000
-[FAIL]	R9 has changed:0000000000000000
-[FAIL]	R10 has changed:0000000000000000
-[FAIL]	R11 has changed:0000000000000000
-[RUN]	Executing 6-argument 32-bit syscall via VDSO
-[WARN]	Flags before=0000000000200ed7 id 0 00 o d i s z 0 a 0 p 1 c
-[WARN]	Flags  after=0000000000200606 id 0 00 d i 0 0 p 1
-[WARN]	Flags change=00000000000008d1 0 00 o s z 0 a 0 0 c
-[OK]	Arguments are preserved across syscall
-[NOTE]	R11 has changed:0000000000200606 - assuming clobbered by SYSRET insn
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Executing 6-argument 32-bit syscall via INT 80
-[OK]	Arguments are preserved across syscall
-[FAIL]	R8 has changed:0000000000000000
-[FAIL]	R9 has changed:0000000000000000
-[FAIL]	R10 has changed:0000000000000000
-[FAIL]	R11 has changed:0000000000000000
-[RUN]	Running tests under ptrace
-not ok 1..1 selftests:  test_syscall_vdso_32 [FAIL]
-make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-8bb2610bc4967f19672444a7b0407367f1540028/tools/testing/selftests/x86'
+One more thing.
 
-This commit changed the testcase expected behavior, but looks it doesn't work as expected.
-so want to consult whether 0Day missed something(special configurations) to this case ?
+> +/**
+> + * idle_injection_register - idle injection init routine
+> + * @cpumask: the list of CPUs managed by the idle injection device
+> + *
+> + * This is the initialization function in charge of creating the
+> + * initializing of the timer and allocate the structures. It does not
+> + * starts the idle injection cycles.
+> + *
+> + * Return: NULL if an allocation fails.
+> + */
+> +struct idle_injection_device *idle_injection_register(struct cpumask *cpumask)
+> +{
+> +       struct idle_injection_device *ii_dev;
+> +       int cpu, cpu_rb;
+> +
+> +       ii_dev = kzalloc(sizeof(*ii_dev) + cpumask_size(), GFP_KERNEL);
+> +       if (!ii_dev)
+> +               return NULL;
+> +
+> +       cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
+> +       hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> +       ii_dev->timer.function = idle_injection_wakeup_fn;
+> +
+> +       for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
+> +
+> +               if (per_cpu(idle_injection_device, cpu)) {
+> +                       pr_err("cpu%d is already registered\n", cpu);
 
-if more details are needed, please let me know.
+If you print something like this, it should be clear what it is about
+and what piece of code it comes from as there will be no context
+around it it the log.
 
+> +                       goto out_rollback_per_cpu;
 
-Thanks
+Shorten the label perhaps?
 
+> +               }
+> +
+> +               per_cpu(idle_injection_device, cpu) = ii_dev;
+> +       }
+> +
+> +       return ii_dev;
+> +
+> +out_rollback_per_cpu:
+> +       for_each_cpu(cpu_rb, to_cpumask(ii_dev->cpumask)) {
+> +               if (cpu == cpu_rb)
+> +                       break;
+> +               per_cpu(idle_injection_device, cpu_rb) = NULL;
+> +       }
+> +
+> +       kfree(ii_dev);
+> +
+> +       return NULL;
+> +}
+> +
