@@ -2,99 +2,85 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE48C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBAEC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A988261A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:47:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="D4n6DL3X";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B0CHOeCP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A988261A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C147261A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C147261A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752600AbeFYVrV (ORCPT
+        id S1753095AbeFYVrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 17:47:21 -0400
-Received: from mail-yw0-f182.google.com ([209.85.161.182]:38268 "EHLO
-        mail-yw0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751556AbeFYVrU (ORCPT
+        Mon, 25 Jun 2018 17:47:25 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:39344 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752558AbeFYVrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 17:47:20 -0400
-Received: by mail-yw0-f182.google.com with SMTP id w13-v6so5325261ywa.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 14:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=pwo/4mDDv+A0X05OMt9xnH8uvlL36hkxWaWHUGkFd1k=;
-        b=D4n6DL3XokJSB+wBE6vskEz76M0So+qwpypvHJjkS/sgaFk5WxWWhnC8Z8Mpn3Jj4F
-         xOv65hANAss1LSSMI7vgZMMrI3OBV1vLhqm8WefIos1t30+CmTinX9b4QBv4EnVXefJE
-         NHw06SAOaz46IhXaWAEroqgUkkfp/ET8qLxAykWmrGSAahWXLikWPPITmBY1xTIy+Oc/
-         jKutis9McyHw6hWrfHf6c2DpNWVMyvh4BeJaok04vlUglx2CfVh3Hwjsc94mDU3Lm1tE
-         /mpDxtA53PQallP3JEfBhdSQJfAvD1rfD1fo+uHXEopsA3XJMfr/3umBscPBNwzDQxKf
-         zGxg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=pwo/4mDDv+A0X05OMt9xnH8uvlL36hkxWaWHUGkFd1k=;
-        b=B0CHOeCP2m5EjSCJsB60q7cWtjNoFsVhKAbqoCBiFU2SQLnWkbZF49iQLQE4nLSc7U
-         4WLCdOAxcVYvT3SX16NosLinNoIGxe4HiK+A8dXbAZH8UnzMBFDByv0Vvgm6t0L7lBex
-         wGwb84apaLSUxAhcE5hXK2fY+wrVpL8nmQE3w=
+        Mon, 25 Jun 2018 17:47:21 -0400
+Received: by mail-yb0-f194.google.com with SMTP id k127-v6so680728ybk.6;
+        Mon, 25 Jun 2018 14:47:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=pwo/4mDDv+A0X05OMt9xnH8uvlL36hkxWaWHUGkFd1k=;
-        b=XiCYFyk6X9crRfw9lnVCFAJ8PQtB66Jaxnlr4jdft/75+PWehl5OH2q763uC0/O8ax
-         ECSqi3xbLq/O4p9GMgWwejs/EgioT3sc9HfGECB+pSl4cEIyStGMnzVeRlAtF0/JP0ui
-         vWknGVPD8R25FxlVNV1GnejivaA/c7Y1OW4TY2l8ZXa1ZsR/xuCmI7Sj8m3czPkUGLPg
-         R6VEn5V4RGB5lCnRQBa+2qZnF8G75T1Poeojpj0sTQ3zfREoVqt/yC1OqWD7xFYkHWvz
-         0a2xM1CvwsTRbgtL4PSJwSeEIeeQ4Kn43bD8Pm51//VUdcqE78s8ELuC9ddyMfqVKV7U
-         sH3w==
-X-Gm-Message-State: APt69E1ydE4hQ7sqLdTbveB7UrUFVpxIoCXM/r4T4BTCAtEgIYoMImVy
-        HIbM3OOHGE2OTLK9lYs3aK/IZpBhANWDkV34ffLOqw==
-X-Google-Smtp-Source: ADUXVKJrvovdP7akTuvWC+9PF/eZILVrBOaQWMmK85S9jzGGn1vuXo/ndmVU8Jo0xhFeGnygV1w0DlTNBfPxtyCEkZs=
-X-Received: by 2002:a81:8a81:: with SMTP id a123-v6mr6663831ywg.95.1529963239444;
- Mon, 25 Jun 2018 14:47:19 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nc4wvdFOcwyxSZK7gYT0hLc64n0XYlj3bleUSvqigVU=;
+        b=d0rM4mgdz27hdSPj2oTkg0KjICIwfXJ1Iwmn2HQ6TFbgXmuo0FlhvtbfXv6lCzthpM
+         Mz2DcDAYYDCvW8RSDhKqTjldlNwDFpCJlybfgn2r9CILuPY7oTBnoSHwgISL/VDZf/Q7
+         BiBKzoDmDA0/PrGGa0ec2OWbAznO1TKvYye1URTMdc+yG6uziHN5aWcl0NLGLl391z0M
+         LLiUz054/+N4H2yA9r2QrNWOer/ODtvwuTGRXpG5dTRIf+RwDmwIhY1ZTLdPCwjkH+9W
+         QRBR5++ixTsjDF9bBHBL8p1Xeoov6ehUnmfZMPQYHJcOy4ZEBjAMDr9wdO1zQOiBXATV
+         8glw==
+X-Gm-Message-State: APt69E2NaXznSsfjcxnLXxNI6NXCjKblaNUJ5lWs1amzKzgQxuXlLN+8
+        pPY19pojR8yVKNolOHvbCQ==
+X-Google-Smtp-Source: ADUXVKJ8/O9dt+QP8smaOHWhEGrZna8CYEDs0vrv9sz+1VF+RQzsyWcP/khuDvNAk2Ev0CzJhrqSkw==
+X-Received: by 2002:a25:1942:: with SMTP id 63-v6mr7085358ybz.424.1529963240964;
+        Mon, 25 Jun 2018 14:47:20 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id i187-v6sm8817976ywi.53.2018.06.25.14.47.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 14:47:20 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:47:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH 16/19] mmc: mmci: add DT bindings for STM32 sdmmc
+Message-ID: <20180625214718.GA28647@rob-hp-laptop>
+References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com>
+ <1528809280-31116-17-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 14:47:18
- -0700 (PDT)
-In-Reply-To: <CACO55tuUROCr14Eq-Yn_OcD21QBjfa33b0Oj4oAthEz5NHHhrA@mail.gmail.com>
-References: <20180524172436.GA17738@beast> <CACO55ttzvFZqUjXNut5n0ENR9e2+N2WfWnKnjfaWgNesspQ9UA@mail.gmail.com>
- <CAGXu5jL3GyJxd9EJ=gKb+SY98t2h2Q4VMt0b0fYt8KBBuP2_9Q@mail.gmail.com> <CACO55tuUROCr14Eq-Yn_OcD21QBjfa33b0Oj4oAthEz5NHHhrA@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 25 Jun 2018 14:47:18 -0700
-X-Google-Sender-Auth: CDwtXILfnGGeFvwldSTMYGMXqHc
-Message-ID: <CAGXu5jKuK687hg6JkToiRaMpOV=rOLJgkcNU51ZXnSzqKvojhg@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH] drm/nouveau/secboot/acr: Remove VLA usage
-To:     Karol Herbst <kherbst@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Ben Skeggs <bskeggs@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528809280-31116-17-git-send-email-ludovic.Barre@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 2:40 PM, Karol Herbst <kherbst@redhat.com> wrote:
-> Your patch is fine as it is though, because it doesn't add a new
-> issue, it just showed us there is a potential one. We should keep that
-> in mind and see how we want to fix that up. I can imagine that this
-> might cause some issues in some places, maybe it is totally fine.
+On Tue, Jun 12, 2018 at 03:14:37PM +0200, Ludovic Barre wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
+> 
+> STM32 sdmmc variant has support to:
+> -Indicate signal directions (only one property
+> for d0dir, d123dir, cmd_dir)
+> -Select command and data phase relation.
+> -Select "clock in" from an external driver.
+> 
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/mmci.txt | 9 +++++++++
 
-Okay, thanks! Who can take the patch into their tree?
+Acked-by: Rob Herring <robh@kernel.org>
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+>  drivers/mmc/host/mmci.c                        | 6 ++++++
+>  2 files changed, 15 insertions(+)
