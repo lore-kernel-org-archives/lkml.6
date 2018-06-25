@@ -2,122 +2,126 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB10C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B17CC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82940254F0
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:56:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82940254F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BE2EB25500
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:06:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hui9thMT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2EB25500
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeFYG4P (ORCPT
+        id S1752139AbeFYHG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 02:56:15 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34793 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752273AbeFYG4L (ORCPT
+        Mon, 25 Jun 2018 03:06:58 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:39901 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750825AbeFYHG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 02:56:11 -0400
-Received: by mail-wr0-f193.google.com with SMTP id a12-v6so12427289wro.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 23:56:10 -0700 (PDT)
+        Mon, 25 Jun 2018 03:06:56 -0400
+Received: by mail-ot0-f194.google.com with SMTP id l15-v6so13923924oth.6;
+        Mon, 25 Jun 2018 00:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=78B80lqyCdaQRIOd9eZdeAeKlDrLBqCZ2fqi/kCkAxg=;
+        b=Hui9thMTnMsXrFn48UNyY66H6wdf7nlPrhtPXzlYxqgCh7ZRAfFn513BtqKboc67Nm
+         EFNTIv2Md2im1Qf98Z6ceWL5PGi8RdVBmjP5uicNnHUYj/mO9zhhZNuDXLlYclm5+m+7
+         H6debFCEVjLf4zyarTRAbEqXF7CdQzffvp6kGZmeC9rdBVx2/LxKZhyeqN1RUdr8BWZI
+         U39eOahEqG/K8k3kvaauWiLnfaLlnWt7Yq69SOwgGe0LbkFpmCknjoLOKMzrM+MHpYtl
+         9O4K/NnRwLa5svjzjiLmG/WeL8wXXAwXkYFqwystQWlxrpadQe3bEOaJ3ztBLbgoDyNk
+         5KVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nXgUbtaQjmaxHVJj2ZCmCg0JnadMHF9auX4+FXJv9HA=;
-        b=TSIOHjHK4aDCcwNDZVenaWYdmSDEnxqWxTmzY0gs/6hnIw5dDX2na+4jpW42D74oKs
-         S1hvbiN+fLSLmAQWt/nTp8FZ2wvAT1qGwKRWu0IUfiO5MVKGK5j9MMwd85mlYhsBDdBi
-         5QU6qJFpg1Ee1N8NoY9D5rhcAdSvgLEB3IOGl9qYOXX6T3Kn6B/Uc8GNBre3wwv5qELW
-         /Y+AwWXkLN0Ev1r6P2yecRxLTEocr+owIgw2dHoSnIs+aKZvhiZY9CRp5fp8HKpmbhky
-         HWs5TlJ9VFRC1JKfQMG/x2RP3zmzjBhNASXCb+UCOG9G4ef1KQ0PFie20PNmMsDBqqD1
-         bxwQ==
-X-Gm-Message-State: APt69E2+NW9Yx1pyivDZxtsiumH9gTeyJx55q0W8bX7Yr2OsKs5l6Y4C
-        4loFRRZTesyIGI1RjP8KAPfk0w==
-X-Google-Smtp-Source: AAOMgpfuNUqs9P1+WxSIQOqltjwXJBgetGEBRp5zml510kh3VBAvqTA7EAZk6tWQzl/FsoFARYc9xQ==
-X-Received: by 2002:adf:d4c5:: with SMTP id w5-v6mr8643203wrk.185.1529909769924;
-        Sun, 24 Jun 2018 23:56:09 -0700 (PDT)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id u204-v6sm3299992wmd.7.2018.06.24.23.56.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 24 Jun 2018 23:56:09 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-audit@redhat.com,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH -next v2] cred: conditionally declare groups-related functions
-Date:   Mon, 25 Jun 2018 08:55:32 +0200
-Message-Id: <20180625065532.7268-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=78B80lqyCdaQRIOd9eZdeAeKlDrLBqCZ2fqi/kCkAxg=;
+        b=kFaew9/nG3asGPoQNEVye8KQ9PdaSi9HadZNid3OR1Yxkei3mEyQWRG/Rz4LKqCcwK
+         seRE9o+wvElfU1RXgbLeEa8LTcZJvcOEdHtuuVMivvSwfFxjmKKNrD+ZkKBClsZkf0Yh
+         KxNE/sxRD2BrWv128hJh1k00tEdXEr1cxF37RBrULGP00YjSegRopnaPglUniqnXibHf
+         qtf3s7VYhIA9tgBBstuBeISFn3Kh2IuS/oVNxmtHwW2jjBVkHld88NRVB+PSUKjH8iPu
+         mw+B07ulOfZ0N0HtbqHLC5fgpsYLa3j68I+XocuHQJvEsHZGPzpgMIlR+mtnpS9gcTvJ
+         BMSQ==
+X-Gm-Message-State: APt69E1yZUgv+1H1VJKrZml3rGLtExyjkzsTscOezPG9j+eBoG0Pe5V5
+        KxuMwNh8OOjiyehxr5oEfpU0rUDzt6OCpzK86tw=
+X-Google-Smtp-Source: AAOMgpdpblxReLFkv6Wcjd7ED80xvs6g2v6xT3n+ezHKJ8p/yIoMjcXT+SE21CYNJ7BkJjc8Hpr6mDJLx5Z7ibh21cc=
+X-Received: by 2002:a9d:3e4c:: with SMTP id h12-v6mr2258284otg.150.1529910415720;
+ Mon, 25 Jun 2018 00:06:55 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 00:06:55
+ -0700 (PDT)
+In-Reply-To: <20180621190401.GA14623@amd>
+References: <cover.1529486870.git.yu.c.chen@intel.com> <78af30838d0bac69bdd6e138b659bcbb8464fd13.1529486870.git.yu.c.chen@intel.com>
+ <20180621090142.GB21807@amd> <CAJZ5v0hDhsxwU4X6_dCqc7P5GaTtpBeMUeJTHo9YJ8QtWinYfg@mail.gmail.com>
+ <20180621190401.GA14623@amd>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 25 Jun 2018 09:06:55 +0200
+X-Google-Sender-Auth: WME9OwgT7KMAl3G4qd1G6uReTgo
+Message-ID: <CAJZ5v0jQQ7neWDc_cy5ZJPVJp155BLF7fQFmeNJ3Nn0Jho7AeA@mail.gmail.com>
+Subject: Re: [PATCH 3/3][RFC] tools: create power/crypto utility
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Chen Yu <yu.c.chen@intel.com>, "Ted Ts'o" <tytso@mit.edu>,
+        Len Brown <len.brown@intel.com>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Denis Kenzior <denkenz@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The groups-related functions declared in include/linux/cred.h are
-defined in kernel/groups.c, which is compiled only when
-CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
-CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-CONFIG_MULTIUSER might be disabled.
+On Thu, Jun 21, 2018 at 9:04 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Thu 2018-06-21 14:10:06, Rafael J. Wysocki wrote:
+>> On Thu, Jun 21, 2018 at 11:01 AM, Pavel Machek <pavel@ucw.cz> wrote:
+>> >
+>> >
+>> > On Wed 2018-06-20 17:40:51, Chen Yu wrote:
+>> >> crypto_hibernate is a user-space utility to generate
+>> >> 512bits AES key and pass it to the kernel via ioctl
+>> >> for hibernation encryption.(We can also add the key
+>> >> into kernel via keyctl if necessary, but currently
+>> >> using ioctl seems to be more straightforward as we
+>> >> need both the key and salt transit).
+>> >
+>> > Ah, here you go:
+>> >
+>> > https://en.wikipedia.org/wiki/Uswsusp
+>>
+>> No, not really.
+>>
+>> > It can already do encryption. If you see problems there, patches will
+>> > be gladly accepted to fix them.
+>>
+>> By whom?
+>
+> By me.
 
-This patch also adds a fallback for groups_search(). Currently this
-function is only called from kernel/groups.c itself and
-keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
-audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
-function in -next, so the fallback will be needed to avoid compilation
-errors or ugly workarounds.
+Well, OK
 
-See also:
-https://lkml.org/lkml/2018/6/20/670
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
+Where's the repository the patches will go to when you accept them?
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- include/linux/cred.h | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+>> > If you want to maintain uswsusp in kernel tree, I guess that would be
+>> > an option, too.
+>>
+>> No, it isn't an option due to the dependencies on crypto libraries.
+>
+> Why not?
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 631286535d0f..7eed6101c791 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
- 
- extern int in_group_p(kgid_t);
- extern int in_egroup_p(kgid_t);
-+extern int groups_search(const struct group_info *, kgid_t);
-+
-+extern int set_current_groups(struct group_info *);
-+extern void set_groups(struct cred *, struct group_info *);
-+extern bool may_setgroups(void);
-+extern void groups_sort(struct group_info *);
- #else
- static inline void groups_free(struct group_info *group_info)
- {
-@@ -78,12 +84,11 @@ static inline int in_egroup_p(kgid_t grp)
- {
-         return 1;
- }
-+static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-+{
-+	return 1;
-+}
- #endif
--extern int set_current_groups(struct group_info *);
--extern void set_groups(struct cred *, struct group_info *);
--extern int groups_search(const struct group_info *, kgid_t);
--extern bool may_setgroups(void);
--extern void groups_sort(struct group_info *);
- 
- /*
-  * The security context of a task
--- 
-2.17.1
+You need a specific set of devel libraries for the utilities to build
+and that need not be present on all systems I suppose?
 
+Besides, s2disk is currently tangled with s2ram which is obsolete, so
+I'd rather not.
