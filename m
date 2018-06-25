@@ -3,173 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192B9C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E21C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E252560D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:36:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E252560D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C5B8625603
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:40:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B8625603
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754311AbeFYIgm (ORCPT
+        id S1754331AbeFYIkh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:36:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46802 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751469AbeFYIgk (ORCPT
+        Mon, 25 Jun 2018 04:40:37 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:41807 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752575AbeFYIkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:36:40 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5P8Y1sm064767
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 04:36:40 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jtuxbtpkn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 04:36:39 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
-        Mon, 25 Jun 2018 09:36:38 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 09:36:35 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5P8aYXo21758188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jun 2018 08:36:34 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7E79F52054;
-        Mon, 25 Jun 2018 09:36:30 +0100 (BST)
-Received: from localhost (unknown [9.152.212.171])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 323F25204E;
-        Mon, 25 Jun 2018 09:36:30 +0100 (BST)
-Date:   Mon, 25 Jun 2018 10:36:33 +0200
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Cornelia Huck <cohuck@redhat.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-s390x <qemu-s390x@nongnu.org>,
-        qemu-devel <qemu-devel@nongnu.org>,
-        Thomas Huth <thuth@redhat.com>
-Subject: Re: s390 qemu boot failure in -next
-References: <20180622194736.GA5794@roeck-us.net>
- <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
- <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
- <20180625100548.64222dad.cohuck@redhat.com>
+        Mon, 25 Jun 2018 04:40:35 -0400
+Received: by mail-ua0-f194.google.com with SMTP id a5-v6so8085276uao.8;
+        Mon, 25 Jun 2018 01:40:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=f+WLbWLC9i5pzqwLOMCTbuHNa/67+8zYYTajmlwAKPE=;
+        b=g8o3vVuimZBOYpAlo6pb2zoJelC6yPFdfpete+lsZFDTMPOIKjdRhb5hWyPGBen/Gx
+         cf3KXirFldTwNqyjVkyhV/WJxjk4qWImj3/9v2zN5eIttNoPZLOhZkOXlZKwwF+xeLDg
+         5ltRWTBG3tmtSPJrVuKR4gHEgBH7hEwWuWChFjBeCrnDtgco2r93dZVxLXdsS+GslLqY
+         Oko/rqHmOSZITrSe2iXhevXW8+GPSmw0itEtRwTj2Jticpr/Y3rRP9nB31oDo+eCvdsg
+         5q/yGD01//UYJZCEWO9u8eYu/E8nFmVxwCKgWVbo09xefGJnF+swUjSn/lcWv2A2SK26
+         h34Q==
+X-Gm-Message-State: APt69E0HCTrVnR1FnvcYRXRX3EC/n84wdIDX6D2ivZt396UPQryAnSJa
+        zfKDj8t0V4CqlujF6k16MimUZwyK2ZRJvTVRRlA=
+X-Google-Smtp-Source: ADUXVKKkUEIGuc1z64yyhklkJn+33uvUlho4Yzb8XuYiJu5QnwW08up7RKfQECLUT6+535BeBJC6oA/29nLoZtJCmfM=
+X-Received: by 2002:ab0:5922:: with SMTP id n31-v6mr7850319uad.114.1529916034784;
+ Mon, 25 Jun 2018 01:40:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180625100548.64222dad.cohuck@redhat.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18062508-0028-0000-0000-000002D48E28
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062508-0029-0000-0000-0000238BEB67
-Message-Id: <your-ad-here.call-01529915788-ext-6027@work.hours>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=877 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806250102
+References: <20180425154602.GA8546@bombadil.infradead.org> <CAMuHMdXt11A-3wZ2uhxF9WE-3+=VV-AbQhpXrkxnV_nwa+E4tA@mail.gmail.com>
+ <CAOmrzkKunsjZzwpj9gtovKwXVkj1kTt81ea1zmB7BCDtZz409g@mail.gmail.com>
+ <1910962.ItDVNtUG5Q@merkaba> <2491cfa6-c227-9c91-6630-f56d86cd80e5@gmail.com>
+In-Reply-To: <2491cfa6-c227-9c91-6630-f56d86cd80e5@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 25 Jun 2018 10:40:23 +0200
+Message-ID: <CAMuHMdXC5F_p7HNuu274WmDMexzVhT_cRaGq-XOd4+wFNLiyCg@mail.gmail.com>
+Subject: Re: moving affs + RDB partition support to staging? (was: Re: Moving
+ unmaintained filesystems to staging)
+To:     Michael Schmitz <schmitzmic@gmail.com>
+Cc:     Martin Steigerwald <martin@lichtvoll.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Sterba <dsterba@suse.cz>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        jdow <jdow@earthlink.net>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change has been done on purpose. Uncompressed image is not going
-to be bootable any more. In future the decompressor phase would get
-more function (early memory detection as an example) and there is no
-chance to duplicate that code in uncompressed image as well (to keep it
-bootable on its own). The patch series commit messages contain more
-technical details.
+Hi Michael,
 
-For qemu either bzImage or arch/s390/boot/compressed/vmlinux should be
-used, which are bootable images.
+On Mon, Jun 25, 2018 at 9:53 AM Michael Schmitz <schmitzmic@gmail.com> wrote:
+> OK, I'll prepare a patch and submit it to linux-block for review. I'll
 
-But that's really confusing that uncompressed vmlinux is still kind
-of booting. May be we should discuss how to avoid this confusion
-(may be change uncompressed image enty point to a function doing
-disabled wait with badb007 or smth) and how to encourage people to use
-arch/s390/boot/compressed/vmlinux instead.
+Thanks a lot!
 
-On Mon, Jun 25, 2018 at 10:05:48AM +0200, Cornelia Huck wrote:
-> On Mon, 25 Jun 2018 09:27:59 +0200
-> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
-> 
-> > Also adding QEMU.
-> > 
-> > On 06/25/2018 09:10 AM, Christian Borntraeger wrote:
-> > > 
-> > > 
-> > > On 06/22/2018 09:47 PM, Guenter Roeck wrote:  
-> > >> Hi,
-> > >>
-> > >> starting with commit 's390/boot: make head.S and als.c be part of the
-> > >> decompressor only' in -next, s390 immages no longer boot in qemu.
-> > >> As far as I can see, the reason is that the command line is no longer
-> > >> passed from qemu to the kernel, which results in a panic because the
-> > >> root file system can not be mounted.
-> > >>
-> > >> Was this change made on purpose ? If so, is there a way to get qemu
-> > >> back to working ?  
-> > > 
-> > > Certainly not on purpose.
-> > > 
-> > > Vasily, I can reproduce this with KVM and an external kernel boot of the vmlinux file (the elf file)
-> > > 
-> > > e.g.
-> > > 
-> > > qemu-system-s390 -enable-kvm -nographic -kernel vmlinux -append "this string no longer is command line"
-> > > 
-> > > The compressed image (bzImage) seems to work fine though.
-> > > 
-> > > This seems to be an unfortunate side effect of QEMUs ways to "guess" its Linux (checking for start
-> > > address 0x10000, which is no longer true for the vmlinux file). With the pure vmlinux elf file
-> > > the load address is 0x100000 as there is no unpacker.
-> 
-> Do we consider these locations to be an exported interface, or is it
-> just QEMU guessing?
-> 
-> > > 
-> > > Guenter, can you check if arch/s390/boot/bzImage works for you as a workaround?  
-> > 
-> > Something like this in QEMU 
-> > 
-> > diff --git a/hw/s390x/ipl.c b/hw/s390x/ipl.c
-> > index f278036fa7..14153ce880 100644
-> > --- a/hw/s390x/ipl.c
-> > +++ b/hw/s390x/ipl.c
-> > @@ -187,11 +187,13 @@ static void s390_ipl_realize(DeviceState *dev, Error **errp)
-> >           */
-> >          if (pentry == KERN_IMAGE_START || pentry == 0x800) {
-> >              ipl->start_addr = KERN_IMAGE_START;
-> > -            /* Overwrite parameters in the kernel image, which are "rom" */
-> > -            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
-> >          } else {
-> >              ipl->start_addr = pentry;
-> >          }
-> > +       if (ipl->cmdline) {
-> > +            /* If there is a command line, put it in the right place */
-> > +            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
-> > +       }
-> 
-> Check for the magic Linux string (like in the non-elf case) first?
-> 
-> >  
-> >          if (ipl->initrd) {
-> >              ram_addr_t initrd_offset;
-> > 
-> > would put the command line in no matter what the start address is.
-> 
-> I'm for putting that one in (and backporting it to qemu-stable). It's a
-> bit worrying, though, that our ipl code is so fragile...
-> 
+> have to refer to your testing back in 2012 since all I can test is
+> whether the patch still allows partition tables on small disks to be
+> recognized at this time (unless Adrian has a 2 TB disk and a SATA-SCSI
+> bridge to test this properly on).
 
+Sparse file and loopback mounting with losetup --partscan?
+
+> Am 24.06.18 um 21:06 schrieb Martin Steigerwald:
+> > Michael Schmitz - 27.04.18, 04:11:
+> >> test results at https://bugzilla.kernel.org/show_bug.cgi?id=43511
+> >> indicate the RDB parser bug is fixed by the patch given there, so if
+> >> Martin now submits the patch, all should be well?
+> > Ok, better be honest than having anyone waiting for it:
+> >
+> > I do not care enough about this, in order to motivate myself preparing
+> > the a patch from Joanne Dow´s fix.
+> >
+> > I am not even using my Amiga boxes anymore, not even the Sam440ep which
+> > I still have in my apartment.
+> >
+> > So RDB support in Linux it remains broken for disks larger 2 TB, unless
+> > someone else does.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
