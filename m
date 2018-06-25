@@ -2,161 +2,83 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1EAC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13936C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D10EC25FEF
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:55:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QP4Nv9E/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10EC25FEF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C459826001
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:03:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C459826001
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964960AbeFYRzO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:55:14 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35157 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964841AbeFYRzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:55:12 -0400
-Received: by mail-pf0-f193.google.com with SMTP id c22-v6so6802600pfi.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 10:55:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=jTjKqLdRDB82ECu3mQSszSPSwzzkxmGseAQgiMc+WvI=;
-        b=QP4Nv9E/f1dTI+f8040+yR+BxbfaWab2FoAfy0j2qMgEuBbzZsNlX3reDZMpcm6XiK
-         qLaoH9OpHeRElvWehZzoQeSI0pU7j5wKXQl18zNloyzM+Bgw/X327Ms+W/+sOZt1pyiH
-         gcuNVZwgS2fDXmukSE6SfIfXPJ104DBIZO19V9N+xWqg4cRCQIPhhNRws9Y0pwvTY7Xx
-         bTc3q7KDZcfVgt313reSQr2mvA0G1wbXdMnaq4rXFoLv+RT/7OuVjmNea5X9/UUSAK/Z
-         jKkUt+RLaoaKu+xlEsW+ICM5byrXmcZEpC13cC5w6P9LGEhyeZc5H8bxFxMowCUaiF6C
-         hzDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=jTjKqLdRDB82ECu3mQSszSPSwzzkxmGseAQgiMc+WvI=;
-        b=M47oN5cOxDm9H8wDFmpsotWCxE8aJYo9bYZm4Nn6B2BY30MuAJvj25dyGpxbzhBVpC
-         ZPk1lcSrdA6kqHmltPiCwfl9UDv1qVXgaO4iUTibBonIEbLLvkoYfWL3SQRyTVmvw1GX
-         M0zoLkVlHjpVewWvu0MegZT3W2KiC+xqhm1XTklRjPvMWFX9v+wneO6qHfwa9MlGT8g2
-         ujrWcM/THJ4NSqFA7H74QWRrZwNQnivU1U+klWQqrRcJW6ZvEMbnWaVOPV2FSHHahE9T
-         xsjrIJYKSK403uwJArm8BgB+F74ery+f5c+mx2oUy+fuzEQdIsUdzAV/Njox1fFhp4t/
-         8/JA==
-X-Gm-Message-State: APt69E2qfF0wVu9tFERA0+UzBN8KIEdqj7H9BtdbE28+OAB2c/OcrgnF
-        +a0nCAGD4kTTru25o3SFyj4=
-X-Google-Smtp-Source: ADUXVKKWnKtpYm2UNprkrzOHzUyrdrgMoYtMGnccM55zolpPd+aOF8j0L3cojbHRELG+QP2VfKtDKQ==
-X-Received: by 2002:a62:9652:: with SMTP id c79-v6mr14153130pfe.114.1529949312327;
-        Mon, 25 Jun 2018 10:55:12 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([49.205.217.204])
-        by smtp.gmail.com with ESMTPSA id z12-v6sm18618708pgu.57.2018.06.25.10.55.10
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 25 Jun 2018 10:55:10 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 23:27:37 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     willy@infradead.org, luto@amacapital.net, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com,
-        sabyasachi.linux@gmail.com
-Subject: [PATCH v2] x86/vdso: Change return type to vm_fault_t for fault
- handlers
-Message-ID: <20180625175737.GA20042@jordon-HP-15-Notebook-PC>
+        id S964879AbeFYSDY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 14:03:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49909 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964834AbeFYSDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 14:03:23 -0400
+Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr03-ext.fm.intel.com [192.55.54.38])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w5PI0kqt1280295
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Mon, 25 Jun 2018 11:00:47 -0700
+Subject: Re: [PATCH v4 7/7] x86/vdso: Move out the CPU number store
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com>
+ <1529536506-26237-8-git-send-email-chang.seok.bae@intel.com>
+ <alpine.DEB.2.21.1806221714260.2402@nanos.tec.linutronix.de>
+ <80C1F514-1B4D-4CDC-BD46-6C3AA9601446@amacapital.net>
+ <alpine.DEB.2.21.1806221817280.2402@nanos.tec.linutronix.de>
+ <C9BB696F3A938947B10DCAD29FAB8FFA66BDB78B@CRSMSX101.amr.corp.intel.com>
+ <CALCETrU5yUFiY09yqzbZV3gYyMyqGPBPs2n31PRNkhyYZsNrgA@mail.gmail.com>
+ <alpine.DEB.2.21.1806251739450.1821@nanos.tec.linutronix.de>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <e006b351-a2d7-e269-4e1f-d5ffa67d25d6@zytor.com>
+Date:   Mon, 25 Jun 2018 11:00:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <alpine.DEB.2.21.1806251739450.1821@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for both fault handler
-vdso_fault() and vvar_fault(). Previously vm_insert_pfn()
-returns err which has to mapped into VM_FAULT_* type.
-The new function vmf_insert_pfn() will replace this
-inefficiency by returning correct VM_FAULT_* type.
+On 06/25/18 08:40, Thomas Gleixner wrote:
+> On Fri, 22 Jun 2018, Andy Lutomirski wrote:
+> 
+>> On Fri, Jun 22, 2018 at 11:02 AM Bae, Chang Seok
+>> <chang.seok.bae@intel.com> wrote:
+>>>
+>>>> Still setup_cpu_number() sucks.
+>>>
+>>> How about setup_cpu_and_node_number()?
+>>
+>> setup_fast_cpu_node_nr()?  setup_cpunr_regs()?  I don't have any
+>> brilliant ideas.  Thomas?
+> 
+> It's really hard to find a good one. setup_cpu_node_cache() might work, but
+> it's not brilliant either.
+> 
 
-See the following commit:
+Since this applies to the getcpu(2) system call (in addition to the
+kernel usage), perhaps setup_getcpu()?
 
-  1c8f422059ae ("mm: change return type to vm_fault_t")
-  b3ec9f33acb8 ("mm: change return type to vm_fault_t")
-
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
-
-v2: Updated the change log
-
- arch/x86/entry/vdso/vma.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 5b8b556..3679885 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -39,7 +39,7 @@ void __init init_vdso_image(const struct vdso_image *image)
- 
- struct linux_binprm;
- 
--static int vdso_fault(const struct vm_special_mapping *sm,
-+static vm_fault_t vdso_fault(const struct vm_special_mapping *sm,
- 		      struct vm_area_struct *vma, struct vm_fault *vmf)
- {
- 	const struct vdso_image *image = vma->vm_mm->context.vdso_image;
-@@ -84,15 +84,15 @@ static int vdso_mremap(const struct vm_special_mapping *sm,
- 	return 0;
- }
- 
--static int vvar_fault(const struct vm_special_mapping *sm,
-+static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
- 		      struct vm_area_struct *vma, struct vm_fault *vmf)
- {
- 	const struct vdso_image *image = vma->vm_mm->context.vdso_image;
- 	long sym_offset;
--	int ret = -EFAULT;
-+	vm_fault_t ret = VM_FAULT_SIGBUS;
- 
- 	if (!image)
--		return VM_FAULT_SIGBUS;
-+		return ret;
- 
- 	sym_offset = (long)(vmf->pgoff << PAGE_SHIFT) +
- 		image->sym_vvar_start;
-@@ -105,10 +105,10 @@ static int vvar_fault(const struct vm_special_mapping *sm,
- 	 * the page past the end of the vvar mapping.
- 	 */
- 	if (sym_offset == 0)
--		return VM_FAULT_SIGBUS;
-+		return ret;
- 
- 	if (sym_offset == image->sym_vvar_page) {
--		ret = vm_insert_pfn(vma, vmf->address,
-+		ret = vmf_insert_pfn(vma, vmf->address,
- 				    __pa_symbol(&__vvar_page) >> PAGE_SHIFT);
- 	} else if (sym_offset == image->sym_pvclock_page) {
- 		struct pvclock_vsyscall_time_info *pvti =
-@@ -124,14 +124,11 @@ static int vvar_fault(const struct vm_special_mapping *sm,
- 		struct ms_hyperv_tsc_page *tsc_pg = hv_get_tsc_page();
- 
- 		if (tsc_pg && vclock_was_used(VCLOCK_HVCLOCK))
--			ret = vm_insert_pfn(vma, vmf->address,
-+			ret = vmf_insert_pfn(vma, vmf->address,
- 					    vmalloc_to_pfn(tsc_pg));
- 	}
- 
--	if (ret == 0 || ret == -EBUSY)
--		return VM_FAULT_NOPAGE;
--
--	return VM_FAULT_SIGBUS;
-+	return ret;
- }
- 
- static const struct vm_special_mapping vdso_mapping = {
--- 
-1.9.1
+	-hpa
 
