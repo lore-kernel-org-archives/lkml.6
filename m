@@ -2,108 +2,107 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B6EC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9636EC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D82FB25DA2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:01:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82FB25DA2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5913225DA1
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:01:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5913225DA1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754699AbeFYQBG (ORCPT
+        id S1755316AbeFYQBK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:01:06 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60549 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752031AbeFYQBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:01:04 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7E41A206A0; Mon, 25 Jun 2018 18:01:02 +0200 (CEST)
-Received: from localhost (unknown [88.128.82.118])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3DA7B20CF8;
-        Mon, 25 Jun 2018 18:00:52 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 18:00:52 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 0/7] Allwinner A64 DE2 CCU support with dedicated DE2
- bus driver
-Message-ID: <20180625160052.kgje2hnzwhfcm2i5@flea>
-References: <20180622122615.55836-1-icenowy@aosc.io>
+        Mon, 25 Jun 2018 12:01:10 -0400
+Received: from smtp-out4.electric.net ([192.162.216.184]:56007 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754716AbeFYQBH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 12:01:07 -0400
+Received: from 1fXTvJ-0001Gf-V3 by out4d.electric.net with emc1-ok (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1fXTvM-0001hf-T6; Mon, 25 Jun 2018 09:01:04 -0700
+Received: by emcmailer; Mon, 25 Jun 2018 09:01:04 -0700
+Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
+        by out4d.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1fXTvJ-0001Gf-V3; Mon, 25 Jun 2018 09:01:01 -0700
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 25 Jun 2018 17:02:40 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 25 Jun 2018 17:02:40 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Matthias Kaehlcke' <mka@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Joe Perches <joe@perches.com>
+Subject: RE: [PATCH v2] kvm: x86: mmu: Add cast to negated bitmasks in
+ update_permission_bitmask()
+Thread-Topic: [PATCH v2] kvm: x86: mmu: Add cast to negated bitmasks in
+ update_permission_bitmask()
+Thread-Index: AQHUCAN80F3SBShFI0K/KXIEJhRI5KRxK3VA
+Date:   Mon, 25 Jun 2018 16:02:40 +0000
+Message-ID: <ea5b51cbdb8a4a2fa8ef51e6de68d960@AcuMS.aculab.com>
+References: <20180619192504.180479-1-mka@chromium.org>
+In-Reply-To: <20180619192504.180479-1-mka@chromium.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wmxasll2s52fhhq4"
-Content-Disposition: inline
-In-Reply-To: <20180622122615.55836-1-icenowy@aosc.io>
-User-Agent: NeoMutt/20180512
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
+X-Virus-Status: Scanned by VirusSMART (c)
+X-Virus-Status: Scanned by VirusSMART (s)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Matthias Kaehlcke
+> Sent: 19 June 2018 20:25
+> To: Paolo Bonzini; Radim Krèmáø; Thomas Gleixner; H . Peter Anvin
+> Cc: x86@kernel.org; kvm@vger.kernel.org; linux-kernel@vger.kernel.org; Nick Desaulniers; Joe Perches;
+> Matthias Kaehlcke
+> Subject: [PATCH v2] kvm: x86: mmu: Add cast to negated bitmasks in update_permission_bitmask()
+> 
+> update_permission_bitmask() negates u8 bitmask values and assigns them
+> to variables of type u8. Since the MSB is set in the bitmask values the
+> compiler expands the negated values to int, which then is assigned to
+> an u8 variable. Cast the negated value back to u8.
+> 
+> This fixes several warnings like this when building with clang:
+> 
+> arch/x86/kvm/mmu.c:4266:39: error: implicit conversion from 'int' to 'u8'
+>   (aka 'unsigned char') changes value from -205 to 51 [-Werror,
+>   -Wconstant-conversion]
+>     u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
+>        ~~                               ^~
 
---wmxasll2s52fhhq4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Shoot the compiler writer - or turn off that warning.
+Or try 'w ^ 0xff'.
 
-Hi,
+	David
 
-On Fri, Jun 22, 2018 at 08:26:08PM +0800, Icenowy Zheng wrote:
-> This patchset tries to implement the Allwinner A64 DE2 as a bus driver,
-> in order to model the fact that the SRAM claim controls the access to
-> the whole DE2 memory space.
->=20
-> PATCH 1 and PATCH 4 are for the CCU part.
->=20
-> PATCH 2 is the device tree binding for the A64 DE2 bus, and PATCH 3
-> implements the bus driver.
->=20
-> PATCH 5 adds the DE2 CCU device tree node, with the DE2 bus node.
->=20
-> PATCH 6 and 7 are HDMI simplefb patches for A64. They're present as a
-> test to this patchset.
-
-Apart from the (minor) comments I made that can be fixed up while
-applying, I'm happy with those changes. I'd still like to get a review
-=66rom Rob, so I'll wait for it to apply them.
-
-Thanks a lot for working on this,
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---wmxasll2s52fhhq4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsxEbMACgkQ0rTAlCFN
-r3Tq8g/+NQ8s3Cp8SzJS6v7IGwwGTHxvAFSmlW96Ize2uROz7Ha1DF6hWp5w/yp6
-ugjXrcgyHbgWvOKJ4sdiLbyMgz1Dk5y+7pW0KFcDyDEtJq8SxVZerGv76i8SdjRd
-Ai64eIXqkZaiSq50VZBlfeJ6AcbKsTz1hqq94irICU/W5qE0mJivfgbySGDmFUuW
-NlAFXxVkxWfWBCdQGqrh+fUdUSgdULZCaOt6AwSh/pR17/HTkhk5JICQUTayfYyQ
-YygcTvPiStatCKabI+OnPcw+kaNb2Eqm1OkeM2g1Yx2QWTeLPuwOqvmPoE5UhRDs
-6Om7OBsLf8WHQ2KlMSxg2Z7MqRaqgAFW446nRsHHA4CNHeDUlfN+zxrlDt9Mf/tk
-lxr2DmN5JGywZeCiV0UhUo92xJ55fbEx4Gtqtn0Td+SR6mBRvvjcCqWqERKqbFVC
-YaMXGGWJ5bro70hi3WN98miDjaBUdpPQthtZ6gN3QeSkUsESHfiJ/rkONVt2BB/6
-5D1rd14JqpVeyE1ZPADBjnl4pR3S8o8HTKMAwziAZyu9qZ1fgUQQ2yY49rL/aCsI
-nafobbPsfISvjTOXUYoqcydvUEpi8HS+mBi523EuakeYjmCQyVWPZbH4woFqzARX
-GqHOR0Decy7z3F5nLL4hXHSBditzwj9rjLIpI793Hc9ot3JeXzY=
-=VZnJ
------END PGP SIGNATURE-----
-
---wmxasll2s52fhhq4--
