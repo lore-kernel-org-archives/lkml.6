@@ -2,122 +2,178 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06403C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E87C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB6B2262B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D28BD262B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:26:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GgtYaecb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB6B2262B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u30cTrUe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D28BD262B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932883AbeFYXZP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 19:25:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44080 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754207AbeFYXZM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 19:25:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PeMZQUvfUzbFmDayzJrOYU1TpyvbJicBz6oQIbqgi4A=; b=GgtYaecbs8SRAh5BSKMVgNh5m
-        o8QfHfZvSQvLmiZATjOq/M7Rok2/0tTXfjFwaPesAGQfFLe9+gF95VKMKmA63y/7yDKOi5n0WDys+
-        GrVSuZTNxr22g26RLKtMoasjx69a3Bysnyq7zopJsaLxEHKX33z0AviX6VhcneSV+leJToay2dV2p
-        urxN6809l5RpGA28qvnd124UxT6LSDVlLO/SA6TNHXVAMZYRn6ltmHXhCM25e16WzNB9Zu/HUIHNf
-        yKGMAAkS9knirlCtmGbJ8ku0ocprNMZ+ceRAtws9n0uBv+i9zSN/X08AON5bDeACsf4vurEEPRmxN
-        pOF/+Xlsg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXar5-0006XG-8M; Mon, 25 Jun 2018 23:25:07 +0000
-Subject: Re: [PATCH v5 15/27] compiler: Option to default to hidden symbols
-To:     Thomas Garnier <thgarnie@google.com>,
-        kernel-hardening@lists.openwall.com
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Borislav Petkov <bp@alien8.de>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christopher Li <sparse@chrisli.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Jason Baron <jbaron@akamai.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-sparse@vger.kernel.org
-References: <20180625224014.134829-1-thgarnie@google.com>
- <20180625224014.134829-16-thgarnie@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8486eb8b-e233-4e2f-e976-da7b4cefc673@infradead.org>
-Date:   Mon, 25 Jun 2018 16:25:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933263AbeFYX0h (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 19:26:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754586AbeFYX0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 19:26:35 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E87B262B1;
+        Mon, 25 Jun 2018 23:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529969194;
+        bh=emcMwZy0bSOnpe9SI6cFVvUPpvH+COyIyOgWx0OfuaM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u30cTrUehxQmTA+bJJlXZ2kd9knsSPsw/A/4c2amCo5jzVr+izMDx1rBYHXIH10NJ
+         rj95LrUCnf+XBWjxVK9NCUvHbO2FiUx3EWeRL/fPAtv1+o+k9NXfKyFIzkaAtWSJsd
+         YzDGyVUERQ0bbJb+Xlr/wg2N8DLOkq2QlHx0P410=
+Date:   Mon, 25 Jun 2018 18:26:33 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Rafal <uzg@wp.pl>
+Cc:     linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Huang Ying <ying.huang@intel.com>, Martin Mares <mj@ucw.cz>
+Subject: Re: Fwd: [Bug 199879] New: Very basic the Pci device is not resumed
+ from suspend mode
+Message-ID: <20180625232633.GB191076@bhelgaas-glaptop.roam.corp.google.com>
+References: <bug-199879-41252@https.bugzilla.kernel.org/>
+ <CAErSpo5U9D5kmYix2SbcJH_mW8urpmZcgN6Zh=FbGtLch+ACuA@mail.gmail.com>
+ <20180620211349.GB108993@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180625224014.134829-16-thgarnie@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620211349.GB108993@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/25/18 15:39, Thomas Garnier wrote:
-> Provide an option to default visibility to hidden except for key
-> symbols. This option is disabled by default and will be used by x86_64
-> PIE support to remove errors between compilation units.
+[+cc Rafael, Huang, Martin]
+
+On Wed, Jun 20, 2018 at 04:13:49PM -0500, Bjorn Helgaas wrote:
+> [+to Rafal]
 > 
-> The default visibility is also enabled for external symbols that are
-> compared as they maybe equals (start/end of sections). In this case,
-> older versions of GCC will remove the comparison if the symbols are
-> hidden. This issue exists at least on gcc 4.9 and before.
+> Sorry, I'm an idiot and forgot to include Rafal, the submitter, when I
+> forwarded this report to the mailing lists.
 > 
-> Signed-off-by: Thomas Garnier <thgarnie@google.com>
-> ---
+> I suspect that the config accessors used by lspci should temporarily
+> wake up devices that are asleep, instead of reporting 0xff data (or if
+> that's not feasible, maybe we should add a comment in the kernel and a
+> note in the lspci man page).
 
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 24b60536e26b..d4f90cc38ede 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1718,6 +1718,13 @@ config PROFILING
->  config TRACEPOINTS
->  	bool
->  
-> +#
-> +# Default to hidden visibility for all symbols.
-> +# Useful for Position Independent Code to reduce global references.
-> +#
-> +config DEFAULT_HIDDEN
-> +	bool
-> +
+The lspci output you attached
+(https://bugzilla.kernel.org/attachment.cgi?id=276771) shows this:
 
-I certainly would appreciate a better/more descriptive kconfig symbol name
-here.
+  01:00.0 3D controller: NVIDIA Corporation GK107M [GeForce GT 745M] (rev ff) (prog-if ff)
+	!!! Unknown header type 7f
 
->  source "arch/Kconfig"
->  
->  endmenu		# General setup
+I think that means the config reads are returning ~0 data (0xff),
+probably because the device is powered off and the config reads don't
+work.
 
+But I don't understand that because both proc_bus_pci_read() (for
+reads vis /proc) and pci_read_config() (for reads via /sys) call
+pci_config_pm_runtime_get(), and I thought that would wake up the
+device so we could read config space.
 
-thanks,
--- 
-~Randy
+Is it the intended behavior that lspci will show this sort of invalid
+data sometimes?  It's pretty confusing to users.  Or is there
+something wrong with the pci_config_pm_runtime_get() path in those
+config accessors?
+
+Bjorn
+
+> On Wed, May 30, 2018 at 07:41:35AM -0700, Bjorn Helgaas wrote:
+> > [+cc linux-pci, linux-kernel, linux-pm]
+> > 
+> > I'm not sure I understand the problem yet, so please correct me if I'm wrong:
+> > 
+> >   - Your system has both Nvidia and Intel graphics devices
+> > 
+> >   - When you use Intel graphics, lspci, lshw, and /proc/bus/pci for
+> > the Nvidia device show invalid data (0xff) after suspend/resume
+> > 
+> >   - When you use Nvidia graphics, suspend/resume doesn't work (instead
+> > of resuming, you just get a blank screen)
+> > 
+> > Can you attach the output of "sudo lspci -vv" to the bugzilla, please?
+> > 
+> > ---------- Forwarded message ---------
+> > From: <bugzilla-daemon@bugzilla.kernel.org>
+> > Date: Tue, May 29, 2018 at 1:29 PM
+> > Subject: [Bug 199879] New: Very basic the Pci device is not resumed
+> > from suspend mode
+> > To: <bhelgaas@google.com>
+> > 
+> > 
+> > https://bugzilla.kernel.org/show_bug.cgi?id=199879
+> > 
+> >             Bug ID: 199879
+> >            Summary: Very basic the Pci device is not resumed from suspend
+> >                     mode
+> >            Product: Drivers
+> >            Version: 2.5
+> >     Kernel Version: kernel-4.15.17
+> >           Hardware: x86-64
+> >                 OS: Linux
+> >               Tree: Mainline
+> >             Status: NEW
+> >           Severity: high
+> >           Priority: P1
+> >          Component: PCI
+> >           Assignee: drivers_pci@kernel-bugs.osdl.org
+> >           Reporter: uzg@wp.pl
+> >         Regression: No
+> > 
+> > Hi, I have problem with very basic device. Device pci-e not resume from
+> > suspend. Only sleep.
+> > 
+> > I have a problem with anyone interested in it, because everyone thinks it is
+> > the fault of the device drivers themselves. But this is not a problem.
+> > 
+> > This device is a basic device. I've already installed drivers on various
+> > hardware and it has always been ok, but not this time.
+> > 
+> > I'm an electronics technician. After diagnosing what I managed, in my opinion
+> > the device remains asleep.
+> > 
+> > Where does my application come from?
+> > I have multiuser mode and I do not use this device. After suspend lspci and
+> > lshw show normal data. Normal data is in /proc/bus/pci/...
+> > Next suspend and resume, and...
+> > lspci see hardware, but is error
+> > lshw see hardware as undefined device
+> > data in /proc/bus/pci/... is only 0xFF
+> > Hardware sleep, not work, not ready. This is bug.
+> > 
+> > But since the problem concerns the graphics card in the configuration with the
+> > second default Intel card, everyone thinks that this is another driver problem
+> > as always and nobody wants to take a look at it :(
+> > 
+> > The problem is easy to recognize. On the internet, I've seen a lot of
+> > unresolved problems in which I could see exactly what I found.
+> > 
+> > My hardware is Lenovo with NVidia and Intel Graphics. Problem is with NVidia. I
+> > tested Z710 and Z50-70. The first symptom of the problem is lspci in multiuser
+> > mode (or when is XServer with intel graphics). After suspend NVidia have e.g
+> > "rev. A1", after resume is "rev. FF". Next symptom lshw and /proc/bus/pci/...
+> > When system started with normal NVidia driver, system not resume and halt, only
+> > black screen.
+> > 
+> > There are many examples on the Internet with unsolved problems e.g
+> > https://www.lwks.com/index.php?option=com_kunena&func=view&catid=21&id=124374&Itemid=81
+> > 
+> > --
+> > You are receiving this mail because:
+> > You are watching the assignee of the bug.
