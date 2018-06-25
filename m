@@ -2,76 +2,153 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A54AC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86845C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6FAF23DD0
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:54:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6FAF23DD0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 340AD259B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:55:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 340AD259B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755521AbeFYMyH (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:54:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8729 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755429AbeFYMxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:53:34 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6996A2BF99394;
-        Mon, 25 Jun 2018 20:53:17 +0800 (CST)
-Received: from localhost.localdomain (10.143.28.90) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.382.0; Mon, 25 Jun 2018 20:53:10 +0800
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-To:     <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <james.morse@arm.com>, <gengdongjiu@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-Subject: [PATCH v5 0/2] support exception state migration and set VSESR_EL2 by user space
-Date:   Tue, 26 Jun 2018 04:58:27 +0800
-Message-ID: <1529960309-2513-1-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        id S932747AbeFYMzq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:55:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47043 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755350AbeFYMzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 08:55:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A13EBAF20;
+        Mon, 25 Jun 2018 12:55:43 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4C7F81E3629; Mon, 25 Jun 2018 14:55:40 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 14:55:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     jack@suse.cz, willy@infradead.org, baijiaju1990@gmail.com,
+        Eric Paris <eparis@redhat.com>, amir73il@gmail.com,
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] kernel: audit_tree: Fix a sleep-in-atomic-context bug
+Message-ID: <20180625125540.gmhupkrkjrhwtj2p@quack2.suse.cz>
+References: <20180621033245.10754-1-baijiaju1990@gmail.com>
+ <20180621042912.GA4967@bombadil.infradead.org>
+ <20180622092340.dzl2ea7tdkjdkdhg@quack2.suse.cz>
+ <CAHC9VhTPCmAXjZgo_i=M_Yo9pJXqUJAmAfL7+pYYb6cOSWw9Zw@mail.gmail.com>
+ <20180625092257.kyqnmn4ki7cuqkat@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625092257.kyqnmn4ki7cuqkat@quack2.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series patch is separated from https://www.spinics.net/lists/kvm/msg168917.html
+On Mon 25-06-18 11:22:57, Jan Kara wrote:
+> On Fri 22-06-18 14:56:09, Paul Moore wrote:
+> > On Fri, Jun 22, 2018 at 5:23 AM Jan Kara <jack@suse.cz> wrote:
+> > > On Wed 20-06-18 21:29:12, Matthew Wilcox wrote:
+> > > > On Thu, Jun 21, 2018 at 11:32:45AM +0800, Jia-Ju Bai wrote:
+> > > > > The kernel may sleep with holding a spinlock.
+> > > > > The function call paths (from bottom to top) in Linux-4.16.7 are:
+> > > > >
+> > > > > [FUNC] kmem_cache_alloc(GFP_KERNEL)
+> > > > > fs/notify/mark.c, 439:
+> > > > >             kmem_cache_alloc in fsnotify_attach_connector_to_object
+> > > > > fs/notify/mark.c, 520:
+> > > > >             fsnotify_attach_connector_to_object in fsnotify_add_mark_list
+> > > > > fs/notify/mark.c, 590:
+> > > > >             fsnotify_add_mark_list in fsnotify_add_mark_locked
+> > > > > kernel/audit_tree.c, 437:
+> > > > >             fsnotify_add_mark_locked in tag_chunk
+> > > > > kernel/audit_tree.c, 423:
+> > > > >             spin_lock in tag_chunk
+> > > >
+> > > > There are several locks here; your report would be improved by saying
+> > > > which one is the problem.  I'm assuming it's old_entry->lock.
+> > > >
+> > > >         spin_lock(&old_entry->lock);
+> > > > ...
+> > > >         if (fsnotify_add_inode_mark_locked(chunk_entry,
+> > > >                              old_entry->connector->inode, 1)) {
+> > > > ...
+> > > >         return fsnotify_add_mark_locked(mark, inode, NULL, allow_dups);
+> > > > ...
+> > > >         ret = fsnotify_add_mark_list(mark, inode, mnt, allow_dups);
+> > > > ...
+> > > >         if (inode)
+> > > >                 connp = &inode->i_fsnotify_marks;
+> > > >         conn = fsnotify_grab_connector(connp);
+> > > >         if (!conn) {
+> > > >                 err = fsnotify_attach_connector_to_object(connp, inode, mnt);
+> > > >
+> > > > It seems to me that this is safe because old_entry is looked up from
+> > > > fsnotify_find_mark, and it can't be removed while its lock is held.
+> > > > Therefore there's always a 'conn' returned from fsnotify_grab_connector(),
+> > > > and so this path will never be taken.
+> > > >
+> > > > But this code path is confusing to me, and I could be wrong.  Jan, please
+> > > > confirm my analysis is correct?
+> > >
+> > > Yes, you are correct. The presence of another mark in the list (and the
+> > > fact we pin it there using refcount & mark_mutex) guarantees we won't need
+> > > to allocate the connector. I agree the audit code's use of fsnotify would
+> > > deserve some cleanup.
+> > 
+> > I'm always open to suggestions and patches (hint, hint) from the
+> > fsnotify experts ;)
+> 
+> Yeah, I was looking into it on Friday and today :). Currently I've got a
+> bit stuck because I think I've found some races in audit_tree code and I
+> haven't yet decided how to fix them. E.g. am I right the following can
+> happen?
+> 
+> CPU1                                    CPU2
+> tag_chunk(inode, tree1)                 tag_chunk(inode, tree2)
+>   old_entry = fsnotify_find_mark();       old_entry = fsnotify_find_mark();
+>   old = container_of(old_entry);          old = container_of(old_entry);
+>   chunk = alloc_chunk(old->count + 1);    chunk = alloc_chunk(old->count + 1);
+>   mutex_lock(&group->mark_mutex);
+>   adds new mark
+>   replaces chunk
+>   old->dead = 1;
+>   mutex_unlock(&group->mark_mutex);
+>                                           mutex_lock(&group->mark_mutex);
+>                                           if (!(old_entry->flags &
+>                                                 FSNOTIFY_MARK_FLAG_ATTACHED)) {
+>                                             Check fails as old_entry is
+>                                             not yet destroyed
+>                                           adds new mark
+>                                           replaces old chunk again ->
+>                                             list corruption, lost refs, ...
+>                                           mutex_unlock(&group->mark_mutex);
+> 
+> Generally there's a bigger problem that audit_tree code can have multiple
+> marks attached to one inode but only one of them is the "valid" one (i.e.,
+> the one embedded in the latest chunk). This is only a temporary state until
+> fsnotify_destroy_mark() detaches the mark and then on last reference drop
+> we really remove the mark from inode's list but during that window it is
+> undefined which mark is returned from fsnotify_find_mark()...
+> 
+> So am I right the above can really happen or is there some higher level
+> synchronization I'm missing? If this can really happen, I think I'll need
+> to rework the code so that audit_tree has just one mark attached and
+> let it probably point to the current chunk.
 
-1. Detect whether KVM can set set guest SError syndrome
-2. Support to Set VSESR_EL2 and inject SError by user space.
-3. Support live migration to keep SError pending state and VSESR_EL2 value
+Also am I right to assume that if two tag_chunk() calls race, both try to
+add new fsnotify mark in create_chunk() and one of them fails, then the
+resulting ENOSPC error from create_chunk() is actually a bug? Because from
+looking at the code it seems that the desired functionality is that
+tag_chunk() should add 'tree' to the chunk, expanding chunk as needed.
 
-The user space patch is here: https://www.mail-archive.com/qemu-devel@nongnu.org/msg539534.html
-
-Dongjiu Geng (2):
-  arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
-  arm64: KVM: export the capability to set guest SError syndrome
-
- Documentation/virtual/kvm/api.txt    | 44 ++++++++++++++++++++++++++++++++----
- arch/arm64/include/asm/kvm_emulate.h |  5 ++++
- arch/arm64/include/asm/kvm_host.h    |  7 ++++++
- arch/arm64/include/uapi/asm/kvm.h    | 13 +++++++++++
- arch/arm64/kvm/guest.c               | 43 +++++++++++++++++++++++++++++++++++
- arch/arm64/kvm/inject_fault.c        |  6 ++---
- arch/arm64/kvm/reset.c               |  4 ++++
- include/uapi/linux/kvm.h             |  1 +
- virt/kvm/arm/arm.c                   | 21 +++++++++++++++++
- 9 files changed, 137 insertions(+), 7 deletions(-)
-
+								Honza
 -- 
-2.7.4
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
