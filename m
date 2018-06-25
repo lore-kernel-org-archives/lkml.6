@@ -3,108 +3,239 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC85C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B10C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E44625E97
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:01:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E44625E97
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4427D25EA9
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:05:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4427D25EA9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934033AbeFYRB5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:01:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52672 "EHLO mx1.redhat.com"
+        id S1755517AbeFYRFD (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:05:03 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8732 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932981AbeFYRBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:01:55 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E8BCB40C628C;
-        Mon, 25 Jun 2018 17:01:54 +0000 (UTC)
-Received: from [10.36.112.27] (ovpn-112-27.ams2.redhat.com [10.36.112.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C13022166B5D;
-        Mon, 25 Jun 2018 17:01:47 +0000 (UTC)
-Subject: Re: [PATCH v2] kvm: x86: mmu: Add cast to negated bitmasks in
- update_permission_bitmask()
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Matthias Kaehlcke <mka@chromium.org>, rkrcmar@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, joe@perches.com
-References: <20180619192504.180479-1-mka@chromium.org>
- <4dd99306-4fea-24b2-4bea-5b7927ea5e79@redhat.com>
- <CAKwvOdmmv9EtPB-jhwVruLASFve5d4h0+wx-6iY=ve=T9hbNdg@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <abc2fb26-d94c-09df-dfef-9ae1da558973@redhat.com>
-Date:   Mon, 25 Jun 2018 19:01:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752588AbeFYRFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 13:05:02 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C6E14885FF8DD;
+        Tue, 26 Jun 2018 01:04:46 +0800 (CST)
+Received: from localhost (10.202.226.43) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Tue, 26 Jun 2018
+ 01:04:46 +0800
+Date:   Mon, 25 Jun 2018 18:04:36 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     <osalvador@techadventures.net>
+CC:     <akpm@linux-foundation.org>, <mhocko@suse.com>, <vbabka@suse.cz>,
+        <pasha.tatashin@oracle.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 3/4] mm/memory_hotplug: Get rid of link_mem_sections
+Message-ID: <20180625180436.000049ac@huawei.com>
+In-Reply-To: <20180601125321.30652-4-osalvador@techadventures.net>
+References: <20180601125321.30652-1-osalvador@techadventures.net>
+        <20180601125321.30652-4-osalvador@techadventures.net>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdmmv9EtPB-jhwVruLASFve5d4h0+wx-6iY=ve=T9hbNdg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 25 Jun 2018 17:01:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 25 Jun 2018 17:01:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/2018 18:47, Nick Desaulniers wrote:
-> Here's an actual bug this warning caught applied to drivers/input/:
+On Fri, 1 Jun 2018 14:53:20 +0200
+<osalvador@techadventures.net> wrote:
+
+> From: Oscar Salvador <osalvador@suse.de>
 > 
-> dae1a432ab1f ("Input: mousedev - fix implicit conversion warning"):
-> https://patchwork.kernel.org/patch/9753771/
+> link_mem_sections() and walk_memory_range() share most of the code,
+> so we can use walk_memory_range() with a callback to register_mem_sect_under_node()
+> instead of using link_mem_sections().
 > 
+> To control whether the node id must be check, two new functions has been added:
+> 
+> register_mem_sect_under_node_nocheck_node()
+> and
+> register_mem_sect_under_node_check_node()
+> 
+> They both call register_mem_sect_under_node_check() with
+> the parameter check_nid set to true or false.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>  drivers/base/node.c  | 47 ++++++++++-------------------------------------
+>  include/linux/node.h | 21 +++++++++------------
+>  mm/memory_hotplug.c  |  8 ++++----
+>  3 files changed, 23 insertions(+), 53 deletions(-)
+> 
+> diff --git a/drivers/base/node.c b/drivers/base/node.c
+> index a5e821d09656..248c712e8de5 100644
+> --- a/drivers/base/node.c
+> +++ b/drivers/base/node.c
+> @@ -398,6 +398,16 @@ static int __ref get_nid_for_pfn(unsigned long pfn)
+>  	return pfn_to_nid(pfn);
+>  }
+>  
+> +int register_mem_sect_under_node_check_node(struct memory_block *mem_blk, void *nid)
+> +{
+> +	return register_mem_sect_under_node (mem_blk, *(int *)nid, true);
+> +}
+> +
+> +int register_mem_sect_under_node_nocheck_node(struct memory_block *mem_blk, void *nid)
+> +{
+> +	return register_mem_sect_under_node (mem_blk, *(int *)nid, false);
+> +}
+> +
+>  /* register memory section under specified node if it spans that node */
+>  int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
+>  				 bool check_nid)
+> @@ -490,43 +500,6 @@ int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+>  	return 0;
+>  }
+>  
+> -int link_mem_sections(int nid, unsigned long start_pfn, unsigned long nr_pages,
+> -		      bool check_nid)
+> -{
+> -	unsigned long end_pfn = start_pfn + nr_pages;
+> -	unsigned long pfn;
+> -	struct memory_block *mem_blk = NULL;
+> -	int err = 0;
+> -
+> -	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+> -		unsigned long section_nr = pfn_to_section_nr(pfn);
+> -		struct mem_section *mem_sect;
+> -		int ret;
+> -
+> -		if (!present_section_nr(section_nr))
+> -			continue;
+> -		mem_sect = __nr_to_section(section_nr);
+> -
+> -		/* same memblock ? */
+> -		if (mem_blk)
+> -			if ((section_nr >= mem_blk->start_section_nr) &&
+> -			    (section_nr <= mem_blk->end_section_nr))
+> -				continue;
+> -
+> -		mem_blk = find_memory_block_hinted(mem_sect, mem_blk);
+> -
+> -		ret = register_mem_sect_under_node(mem_blk, nid, check_nid);
+> -		if (!err)
+> -			err = ret;
+> -
+> -		/* discard ref obtained in find_memory_block() */
+> -	}
+> -
+> -	if (mem_blk)
+> -		kobject_put(&mem_blk->dev.kobj);
+> -	return err;
+> -}
+> -
+>  #ifdef CONFIG_HUGETLBFS
+>  /*
+>   * Handle per node hstate attribute [un]registration on transistions
+> diff --git a/include/linux/node.h b/include/linux/node.h
+> index 6d336e38d155..1158bea9be52 100644
+> --- a/include/linux/node.h
+> +++ b/include/linux/node.h
+> @@ -31,19 +31,11 @@ struct memory_block;
+>  extern struct node *node_devices[];
+>  typedef  void (*node_registration_func_t)(struct node *);
+>  
+> -#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_NUMA)
+> -extern int link_mem_sections(int nid, unsigned long start_pfn,
+> -			     unsigned long nr_pages, bool check_nid);
+> -#else
+> -static inline int link_mem_sections(int nid, unsigned long start_pfn,
+> -				    unsigned long nr_pages, bool check_nid)
+> -{
+> -	return 0;
+> -}
+> -#endif
+> -
+>  extern void unregister_node(struct node *node);
+>  #ifdef CONFIG_NUMA
+> +#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE)
+> +extern int register_mem_sect_under_node_check_node(struct memory_block *mem_blk, void *nid);
+> +#endif
+>  /* Core of the node registration - only memory hotplug should use this */
+>  extern int __register_one_node(int nid);
+>  
+> @@ -54,12 +46,17 @@ static inline int register_one_node(int nid)
+>  
+>  	if (node_online(nid)) {
+>  		struct pglist_data *pgdat = NODE_DATA(nid);
+> +		unsigned long start = pgdat->node_start_pfn;
+> +		unsigned long size = pgdat->node_spanned_pages;
+>  
+>  		error = __register_one_node(nid);
+>  		if (error)
+>  			return error;
+>  		/* link memory sections under this node */
+> -		error = link_mem_sections(nid, pgdat->node_start_pfn, pgdat->node_spanned_pages, true);
+> +#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE)
+> +		error = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
+> +					(void *)&nid, register_mem_sect_under_node_check_node);
+> +#endif
+Apologies, my previous testing was clearly garbage.
 
-How does the warning catch a bug there?  While I do prefer the code
-after the patch, wouldn't everything work just fine with "signed char
-ps2[6]".
+Looks like we take the node pfns then shift them again.  Result on my system is we only get as far as pfn 22
+which is still in the first memory block so rest of them are never successfully added.
+Replacing with 
 
-So it seems to me in that case (unlike KVM) the warning caught some ugly
-code, but not a bug.  (In fact if there was a bug, it should have been
-mentioned in the commit message, but it wasn't).
+error = walk_memory_range(start, start + size - 1, ...
 
-Paolo
+works much better and lets me test Lorenzo's patch which is what I was really trying to do today.
+
+Sorry again for the incorrect previous tested-by.
+
+Thanks,
+
+Jonathan
+
+
+>  	}
+>  
+>  	return error;
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index f84ef96175ab..ac21dc506b84 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -40,6 +40,8 @@
+>  
+>  #include "internal.h"
+>  
+> +extern int register_mem_sect_under_node_nocheck_node(struct memory_block *mem_blk, void *nid);
+> +
+>  /*
+>   * online_page_callback contains pointer to current page onlining function.
+>   * Initially it is generic_online_page(). If it is required it could be
+> @@ -1118,7 +1120,6 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+>  	u64 start, size;
+>  	bool new_node;
+>  	int ret;
+> -	unsigned long start_pfn, nr_pages;
+>  
+>  	start = res->start;
+>  	size = resource_size(res);
+> @@ -1157,9 +1158,8 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+>  	}
+>  
+>  	/* link memory sections under this node.*/
+> -	start_pfn = start >> PAGE_SHIFT;
+> -	nr_pages = size >> PAGE_SHIFT;
+> -	ret = link_mem_sections(nid, start_pfn, nr_pages, false);
+> +	ret = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
+> +				(void *)&nid, register_mem_sect_under_node_nocheck_node);
+>  	if (ret)
+>  		goto register_fail;
+>  
+
+
