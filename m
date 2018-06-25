@@ -2,116 +2,77 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C05C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2185FC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA9B4261C0
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:16:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA9B4261C0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id D1236261C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:16:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1236261C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754678AbeFYWQT (ORCPT
+        id S1754723AbeFYWQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:16:19 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55748 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752639AbeFYWQR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:16:17 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1B5608051B; Tue, 26 Jun 2018 00:16:16 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 00:16:15 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Chen Yu <yu.c.chen@intel.com>, Ted Ts'o <tytso@mit.edu>,
-        Len Brown <len.brown@intel.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Denis Kenzior <denkenz@gmail.com>
-Subject: Re: [PATCH 3/3][RFC] tools: create power/crypto utility
-Message-ID: <20180625221615.GA15249@amd>
-References: <cover.1529486870.git.yu.c.chen@intel.com>
- <78af30838d0bac69bdd6e138b659bcbb8464fd13.1529486870.git.yu.c.chen@intel.com>
- <20180621090142.GB21807@amd>
- <CAJZ5v0hDhsxwU4X6_dCqc7P5GaTtpBeMUeJTHo9YJ8QtWinYfg@mail.gmail.com>
- <20180621190401.GA14623@amd>
- <CAJZ5v0jQQ7neWDc_cy5ZJPVJp155BLF7fQFmeNJ3Nn0Jho7AeA@mail.gmail.com>
- <20180625115405.GB17001@amd>
- <CAJZ5v0jBh_0Uz54-Y2-qwdJNeD+KMpGEsH7q0XOdbCq5VCP1Ng@mail.gmail.com>
+        Mon, 25 Jun 2018 18:16:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752625AbeFYWQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 18:16:40 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81F21261C3;
+        Mon, 25 Jun 2018 22:16:39 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 18:16:38 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        joel@joelfernandes.org, Byungchul Park <byungchul.park@lge.com>,
+        byungchul park <max.byungchul.park@gmail.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
+ rcu_dynticks
+Message-ID: <20180625181638.7fb84df6@gandalf.local.home>
+In-Reply-To: <CALCETrVD6CxY0gDcfNfy8rNK74UZKnVvBJfiK7pLbZLiqgEbOg@mail.gmail.com>
+References: <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
+        <20180620164902.GW3593@linux.vnet.ibm.com>
+        <20180622055659.GA255098@joelaf.mtv.corp.google.com>
+        <20180622132843.GN3593@linux.vnet.ibm.com>
+        <20180622181916.GA13628@joelaf.mtv.corp.google.com>
+        <20180622143247.781028b1@gandalf.local.home>
+        <20180622200548.GA114655@joelaf.mtv.corp.google.com>
+        <20180625082824.GB21377@X58A-UD3R>
+        <20180625163951.GA52646@joelaf.mtv.corp.google.com>
+        <20180625162557.7140664c@gandalf.local.home>
+        <20180625204708.GS3593@linux.vnet.ibm.com>
+        <CALCETrVD6CxY0gDcfNfy8rNK74UZKnVvBJfiK7pLbZLiqgEbOg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jBh_0Uz54-Y2-qwdJNeD+KMpGEsH7q0XOdbCq5VCP1Ng@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 25 Jun 2018 13:47:45 -0700
+Andy Lutomirski <luto@kernel.org> wrote:
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+> As a straightforward example, NMI and MCE can nest inside each other.
 
-Hi!
+But I'm not sure how stable the machine becomes when MCE's start
+interrupting NMIs. Also, can MCE callbacks use RCU?
 
-> >> >> > If you want to maintain uswsusp in kernel tree, I guess that woul=
-d be
-> >> >> > an option, too.
-> >> >>
-> >> >> No, it isn't an option due to the dependencies on crypto libraries.
-> >> >
-> >> > Why not?
-> >>
-> >> You need a specific set of devel libraries for the utilities to build
-> >> and that need not be present on all systems I suppose?
-> >>
-> >> Besides, s2disk is currently tangled with s2ram which is obsolete, so
-> >> I'd rather not.
-> >
-> > Its not tangled.
->=20
-> Yes, it is.
+> IIRC we treat #DB somewhat NMI-ish-ly as well.
 
-I checked the Makefile, and it builds from separate sources. Yes, it
-is in one repository, but s2disk does not depend on s2ram (s2both does).
+And #DB is something I think we finally said shouldn't be done in NMIs,
+IIRC.
 
-Anyway... that's really besides a point.
-
-Interested parties can easily fix up the userland parts of uswsusp,
-change crypto, add or remove dependencies, move it to other hosting,
-or drop it and start again. Kernel interface is flexible enough. If
-Chen wants to move the s2disk encryption into kernel, it is his task
-to explain why that is neccessary.
-
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsxaa8ACgkQMOfwapXb+vJyFwCfWUccgGfheRduGC2ZOul4mXrL
-40oAoI1WWJXf10/e9kxVdLKXp09QFciq
-=NQCN
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
+-- Steve
