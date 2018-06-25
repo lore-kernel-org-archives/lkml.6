@@ -2,139 +2,135 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9643BC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69690C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A4A825C56
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:17:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="jB7fSr07"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A4A825C56
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A49C25C59
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:17:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A49C25C59
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935016AbeFYPRN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:17:13 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34618 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934789AbeFYPMw (ORCPT
+        id S964811AbeFYPR0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 11:17:26 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:36980 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934786AbeFYPRW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:12:52 -0400
-Received: by mail-qt0-f196.google.com with SMTP id b20-v6so3009249qtp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sWOwbpIrK9XPYUY4yEH5tX1tHsTGl4xJAX1+6iwXdZU=;
-        b=jB7fSr070T/e0zFuxECRud4VZ+8zDAPRJEb3hS+/Cm34D7/SF1tDfIxisVNmvCi98N
-         FlwutMCXmBs4wBN358HgNxbVGvCbUntmJR6/4R3S6Ngl1aaNK2ff/RVpB9zqu7uz+I4Q
-         rebUl6lPndZCBaA50iXj7FQ9YMbU9VNlPXJrxT53AAgQ/XqPll29V6zf1A6AZBO9zMbz
-         IM3qkQqEq6mu6NxkpACYiBTLNlxuU6EaWfrKxuSnqlm/SGBJkIN1hKFelbdQQqhw7X+r
-         F+YGD2lhBmJMRgU0DyZX+1rsidPC3LDUOMrdLvLpllFQvgkjiWDyRSzia+Ya75IEW9o+
-         U0dA==
+        Mon, 25 Jun 2018 11:17:22 -0400
+Received: by mail-yb0-f196.google.com with SMTP id r3-v6so1083803ybo.4;
+        Mon, 25 Jun 2018 08:17:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=sWOwbpIrK9XPYUY4yEH5tX1tHsTGl4xJAX1+6iwXdZU=;
-        b=dK+uaQS1qualoodf8NKVI7VAXggqxdm6I+njL0mTGgdzD6LzhOSZEMJDo7YHROSumN
-         1JqjDL+mjG++ErMdEm0h2EbQQ3lwWVc4ncRSC0fKi7hqD9a6lSTUQ4kslmdlsPuHOfuz
-         kFOTp1/7hQ36fBHK8EeLVRjB3LScPR9qcd060/9FjViNHNmiRMhtKVBp+2+dc83u3F/5
-         pkoO/oyUsIu5Yom++DOwpHirOOzEhdJ6urXrDdnz0qp/oTjxEuPK1LynswqEV8MEu2WV
-         dDk/B9twPZQrMJJhBTZHS3aiZhvjzkUeL/8Oq0u2Y2sm+Y9UDQK3WvIskj1tPox3NKW0
-         5cog==
-X-Gm-Message-State: APt69E1vpwrzQYFc1atI2cwPg9UBp7Dkyo5kXdgcNU7AcEvV3EvLA/iL
-        gu5qNvmjCSaQLqXNylzpErQSSA==
-X-Google-Smtp-Source: AAOMgpe2d+/Ghp1LBzUVajrorN9niV1WexKuHUqjRId7Oa7vuRQRyGo6rkmcHF9NfuYWxgORg119pA==
-X-Received: by 2002:ac8:2dc6:: with SMTP id q6-v6mr11152738qta.83.1529939571778;
-        Mon, 25 Jun 2018 08:12:51 -0700 (PDT)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id a197-v6sm6383888qkb.67.2018.06.25.08.12.51
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uY6sspnp3xrd09967ZnjcxoTTaZJHjU2+gLP9vpHum8=;
+        b=Sm6XfcIKte4AtArSBRYGWNwBeXmQhJnTCt+NuWraLnMJLCUkTJh6W4hRCrgIBqdR0u
+         XHoEKJzBUS+YYFBXr/RCdoXnhWJyiOe2rwBEofiLP+8+DHJxWhXVbGWrq4PYbo1rjJOD
+         dV1WxReE4Aqr5/X3B6bInSIBM8mzUMkHaA2Ql4eU7hXNq6o20rHavgovcHCJF7PiPO/S
+         C6fzSHqmAlYuNzrNGoy8q//aXQ2GNZNhg6IgW8atycNAA9Y8f7vIrmlLkyaoSyT0/WzW
+         o+YU7K4yl70Ri7GzU4Z17qe/aRPglKQzkRvx1LYITxWXBguDHIFYn3Yf8Z/K3joq4kCp
+         UjMQ==
+X-Gm-Message-State: APt69E0NpgvC6gMX/S8qDT34Pxrl4GiZnXxdGqTgDRVD302hkF9fGLhg
+        jiUAMo0qSB2fDXrp6ik7qQ==
+X-Google-Smtp-Source: ADUXVKL07Xj1eMP7philYqlxffYHFfqmqANp3z85lp8SsNikim9PBoHdFZxh/56gUD/1VRaXppXr9Q==
+X-Received: by 2002:a25:ca0b:: with SMTP id a11-v6mr6664482ybg.439.1529939841486;
+        Mon, 25 Jun 2018 08:17:21 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id q62-v6sm5755791ywg.2.2018.06.25.08.17.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 08:12:51 -0700 (PDT)
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     axboe@kernel.dk, linux-block@vger.kernel.org, kernel-team@fb.com,
-        akpm@linux-foundation.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 04/15] blk: introduce REQ_SWAP
-Date:   Mon, 25 Jun 2018 11:12:32 -0400
-Message-Id: <20180625151243.2132-5-josef@toxicpanda.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180625151243.2132-1-josef@toxicpanda.com>
-References: <20180625151243.2132-1-josef@toxicpanda.com>
+        Mon, 25 Jun 2018 08:17:20 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 09:17:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        linux-gpio@vger.kernel.org, linux-imx@nxp.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abel Vesa <abelvesa@linux.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: add binding for i.MX8MQ IOMUXC
+Message-ID: <20180625151719.GA16723@rob-hp-laptop>
+References: <1529680549-22079-1-git-send-email-abel.vesa@nxp.com>
+ <1529680549-22079-2-git-send-email-abel.vesa@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529680549-22079-2-git-send-email-abel.vesa@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+On Fri, Jun 22, 2018 at 06:15:48PM +0300, Abel Vesa wrote:
+> This adds the binding for the i.MX8MQ pin controller, in the same
+> fashion as earlier i.MX SoCs.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        | 32 ++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+> new file mode 100644
+> index 0000000..e1c405d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+> @@ -0,0 +1,32 @@
+> +* Freescale IMX8MQ IOMUX Controller
+> +
+> +Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
+> +for common binding part and usage.
+> +
+> +Required properties:
+> +- compatible: "fsl,imx8mq-iomuxc"
 
-Just like REQ_META, it's important to know the IO coming down is swap
-in order to guard against potential IO priority inversion issues with
-cgroups.  Add REQ_SWAP and use it for all swap IO, and add it to our
-bio_issue_as_root_blkg helper.
+reg?
 
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Acked-by: Tejun Heo <tj@kernel.org>
----
- include/linux/blk-cgroup.h | 2 +-
- include/linux/blk_types.h  | 3 ++-
- mm/page_io.c               | 2 +-
- 3 files changed, 4 insertions(+), 3 deletions(-)
+> +- fsl,pins: each entry consists of 6 integers and represents the mux and config
+> +  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
+> +  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
+> +  imx8mq-pinfunc.h under device tree source folder.  The last integer CONFIG is
+> +  the pad setting value like pull-up on this pin.  Please refer to i.MX8M Quad
+> +  Reference Manual for detailed CONFIG settings.
 
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index b41292726c0f..a8f9ba8f33a4 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -254,7 +254,7 @@ static inline struct blkcg *bio_blkcg(struct bio *bio)
-  */
- static inline bool bio_issue_as_root_blkg(struct bio *bio)
- {
--	return (bio->bi_opf & REQ_META);
-+	return (bio->bi_opf & (REQ_META | REQ_SWAP)) != 0;
- }
- 
- /**
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index ff181df8c195..4f7ba397d37d 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -327,7 +327,7 @@ enum req_flag_bits {
- 
- 	/* for driver use */
- 	__REQ_DRV,
--
-+	__REQ_SWAP,		/* swapping request. */
- 	__REQ_NR_BITS,		/* stops here */
- };
- 
-@@ -349,6 +349,7 @@ enum req_flag_bits {
- #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
- 
- #define REQ_DRV			(1ULL << __REQ_DRV)
-+#define REQ_SWAP		(1ULL << __REQ_SWAP)
- 
- #define REQ_FAILFAST_MASK \
- 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
-diff --git a/mm/page_io.c b/mm/page_io.c
-index b41cf9644585..a552cb37e220 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -338,7 +338,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
-+	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
- 	count_swpout_vm_event(page);
- 	set_page_writeback(page);
- 	unlock_page(page);
--- 
-2.14.3
+Needs to specify this is in sub-nodes.
 
+> +
+> +Examples:
+> +
+> +&uart1 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_uart1>;
+> +};
+> +
+> +iomuxc: iomuxc@30330000 {
+
+pinctrl@...
+
+> +        compatible = "fsl,imx8mq-iomuxc";
+> +        reg = <0x0 0x30330000 0x0 0x10000>;
+> +
+> +        pinctrl_uart1: uart1grp {
+> +                fsl,pins = <
+> +                        MX8MQ_IOMUXC_UART1_RXD_UART1_DCE_RX             0x49
+> +                        MX8MQ_IOMUXC_UART1_TXD_UART1_DCE_TX             0x49
+> +                >;
+> +        };
+> +};
+> -- 
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
