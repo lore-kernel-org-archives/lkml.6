@@ -6,236 +6,75 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B10C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2493C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4427D25EA9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4427D25EA9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 101D825EAB
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:05:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101D825EAB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755517AbeFYRFD (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:05:03 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8732 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752588AbeFYRFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:05:02 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C6E14885FF8DD;
-        Tue, 26 Jun 2018 01:04:46 +0800 (CST)
-Received: from localhost (10.202.226.43) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Tue, 26 Jun 2018
- 01:04:46 +0800
-Date:   Mon, 25 Jun 2018 18:04:36 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     <osalvador@techadventures.net>
-CC:     <akpm@linux-foundation.org>, <mhocko@suse.com>, <vbabka@suse.cz>,
-        <pasha.tatashin@oracle.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 3/4] mm/memory_hotplug: Get rid of link_mem_sections
-Message-ID: <20180625180436.000049ac@huawei.com>
-In-Reply-To: <20180601125321.30652-4-osalvador@techadventures.net>
-References: <20180601125321.30652-1-osalvador@techadventures.net>
-        <20180601125321.30652-4-osalvador@techadventures.net>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S934212AbeFYRFb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:05:31 -0400
+Received: from namei.org ([65.99.196.166]:32938 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934048AbeFYRFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 13:05:25 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w5PH5NUI029476;
+        Mon, 25 Jun 2018 17:05:23 GMT
+Date:   Tue, 26 Jun 2018 03:05:23 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>
+Subject: Re: [PULL] Smack: Mark inode instant in smack_task_to_inode
+In-Reply-To: <813ecc0b-4a9e-22c9-b893-504936bab342@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1806260304580.26153@namei.org>
+References: <813ecc0b-4a9e-22c9-b893-504936bab342@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Jun 2018 14:53:20 +0200
-<osalvador@techadventures.net> wrote:
+On Mon, 25 Jun 2018, Casey Schaufler wrote:
 
-> From: Oscar Salvador <osalvador@suse.de>
+> James, would you please pull this change for 4.18.
+
+I already have it queued for Linus, I'll send it up probably today.
+
 > 
-> link_mem_sections() and walk_memory_range() share most of the code,
-> so we can use walk_memory_range() with a callback to register_mem_sect_under_node()
-> instead of using link_mem_sections().
+> Al Viro's /proc clean-up in commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
+> created a regression in Smack xattr behavior in /proc. This fixes that problem
+> with a minimum of fuss.
 > 
-> To control whether the node id must be check, two new functions has been added:
 > 
-> register_mem_sect_under_node_nocheck_node()
-> and
-> register_mem_sect_under_node_check_node()
+> The following changes since commit 0f8983cf97d3327531b7843c831517cac3a1b9ed:
 > 
-> They both call register_mem_sect_under_node_check() with
-> the parameter check_nid set to true or false.
+>   Smack: Fix memory leak in smack_inode_getsecctx (2018-06-05 12:16:01 -0700)
 > 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> ---
->  drivers/base/node.c  | 47 ++++++++++-------------------------------------
->  include/linux/node.h | 21 +++++++++------------
->  mm/memory_hotplug.c  |  8 ++++----
->  3 files changed, 23 insertions(+), 53 deletions(-)
+> are available in the Git repository at:
 > 
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index a5e821d09656..248c712e8de5 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -398,6 +398,16 @@ static int __ref get_nid_for_pfn(unsigned long pfn)
->  	return pfn_to_nid(pfn);
->  }
->  
-> +int register_mem_sect_under_node_check_node(struct memory_block *mem_blk, void *nid)
-> +{
-> +	return register_mem_sect_under_node (mem_blk, *(int *)nid, true);
-> +}
-> +
-> +int register_mem_sect_under_node_nocheck_node(struct memory_block *mem_blk, void *nid)
-> +{
-> +	return register_mem_sect_under_node (mem_blk, *(int *)nid, false);
-> +}
-> +
->  /* register memory section under specified node if it spans that node */
->  int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
->  				 bool check_nid)
-> @@ -490,43 +500,6 @@ int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
->  	return 0;
->  }
->  
-> -int link_mem_sections(int nid, unsigned long start_pfn, unsigned long nr_pages,
-> -		      bool check_nid)
-> -{
-> -	unsigned long end_pfn = start_pfn + nr_pages;
-> -	unsigned long pfn;
-> -	struct memory_block *mem_blk = NULL;
-> -	int err = 0;
-> -
-> -	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
-> -		unsigned long section_nr = pfn_to_section_nr(pfn);
-> -		struct mem_section *mem_sect;
-> -		int ret;
-> -
-> -		if (!present_section_nr(section_nr))
-> -			continue;
-> -		mem_sect = __nr_to_section(section_nr);
-> -
-> -		/* same memblock ? */
-> -		if (mem_blk)
-> -			if ((section_nr >= mem_blk->start_section_nr) &&
-> -			    (section_nr <= mem_blk->end_section_nr))
-> -				continue;
-> -
-> -		mem_blk = find_memory_block_hinted(mem_sect, mem_blk);
-> -
-> -		ret = register_mem_sect_under_node(mem_blk, nid, check_nid);
-> -		if (!err)
-> -			err = ret;
-> -
-> -		/* discard ref obtained in find_memory_block() */
-> -	}
-> -
-> -	if (mem_blk)
-> -		kobject_put(&mem_blk->dev.kobj);
-> -	return err;
-> -}
-> -
->  #ifdef CONFIG_HUGETLBFS
->  /*
->   * Handle per node hstate attribute [un]registration on transistions
-> diff --git a/include/linux/node.h b/include/linux/node.h
-> index 6d336e38d155..1158bea9be52 100644
-> --- a/include/linux/node.h
-> +++ b/include/linux/node.h
-> @@ -31,19 +31,11 @@ struct memory_block;
->  extern struct node *node_devices[];
->  typedef  void (*node_registration_func_t)(struct node *);
->  
-> -#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_NUMA)
-> -extern int link_mem_sections(int nid, unsigned long start_pfn,
-> -			     unsigned long nr_pages, bool check_nid);
-> -#else
-> -static inline int link_mem_sections(int nid, unsigned long start_pfn,
-> -				    unsigned long nr_pages, bool check_nid)
-> -{
-> -	return 0;
-> -}
-> -#endif
-> -
->  extern void unregister_node(struct node *node);
->  #ifdef CONFIG_NUMA
-> +#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE)
-> +extern int register_mem_sect_under_node_check_node(struct memory_block *mem_blk, void *nid);
-> +#endif
->  /* Core of the node registration - only memory hotplug should use this */
->  extern int __register_one_node(int nid);
->  
-> @@ -54,12 +46,17 @@ static inline int register_one_node(int nid)
->  
->  	if (node_online(nid)) {
->  		struct pglist_data *pgdat = NODE_DATA(nid);
-> +		unsigned long start = pgdat->node_start_pfn;
-> +		unsigned long size = pgdat->node_spanned_pages;
->  
->  		error = __register_one_node(nid);
->  		if (error)
->  			return error;
->  		/* link memory sections under this node */
-> -		error = link_mem_sections(nid, pgdat->node_start_pfn, pgdat->node_spanned_pages, true);
-> +#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE)
-> +		error = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
-> +					(void *)&nid, register_mem_sect_under_node_check_node);
-> +#endif
-Apologies, my previous testing was clearly garbage.
+>   git://github.com/cschaufler/next-smack smack-for-4.18
+> 
+> for you to fetch changes up to aabfe8e2d9f49153bafefc82d10bcb6e1e12828d:
+> 
+>   Smack: Mark inode instant in smack_task_to_inode (2018-06-22 13:55:28 -0700)
+> 
+> ----------------------------------------------------------------
+> Casey Schaufler (1):
+>       Smack: Mark inode instant in smack_task_to_inode
+> 
+>  security/smack/smack_lsm.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Looks like we take the node pfns then shift them again.  Result on my system is we only get as far as pfn 22
-which is still in the first memory block so rest of them are never successfully added.
-Replacing with 
-
-error = walk_memory_range(start, start + size - 1, ...
-
-works much better and lets me test Lorenzo's patch which is what I was really trying to do today.
-
-Sorry again for the incorrect previous tested-by.
-
-Thanks,
-
-Jonathan
-
-
->  	}
->  
->  	return error;
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index f84ef96175ab..ac21dc506b84 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -40,6 +40,8 @@
->  
->  #include "internal.h"
->  
-> +extern int register_mem_sect_under_node_nocheck_node(struct memory_block *mem_blk, void *nid);
-> +
->  /*
->   * online_page_callback contains pointer to current page onlining function.
->   * Initially it is generic_online_page(). If it is required it could be
-> @@ -1118,7 +1120,6 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
->  	u64 start, size;
->  	bool new_node;
->  	int ret;
-> -	unsigned long start_pfn, nr_pages;
->  
->  	start = res->start;
->  	size = resource_size(res);
-> @@ -1157,9 +1158,8 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
->  	}
->  
->  	/* link memory sections under this node.*/
-> -	start_pfn = start >> PAGE_SHIFT;
-> -	nr_pages = size >> PAGE_SHIFT;
-> -	ret = link_mem_sections(nid, start_pfn, nr_pages, false);
-> +	ret = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
-> +				(void *)&nid, register_mem_sect_under_node_nocheck_node);
->  	if (ret)
->  		goto register_fail;
->  
-
+-- 
+James Morris
+<jmorris@namei.org>
 
