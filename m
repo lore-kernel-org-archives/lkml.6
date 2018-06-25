@@ -2,87 +2,100 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B12C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAADAC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9ED6256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:41:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9ED6256E1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 63FB3256E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:42:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="k2vhN5tX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63FB3256E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754928AbeFYJlQ (ORCPT
+        id S1754970AbeFYJm4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:41:16 -0400
-Received: from mga03.intel.com ([134.134.136.65]:61801 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754378AbeFYJlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:41:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 02:41:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,269,1526367600"; 
-   d="scan'208";a="66080172"
-Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.42])
-  by fmsmga004.fm.intel.com with ESMTP; 25 Jun 2018 02:41:09 -0700
-Message-ID: <73b7e4e3712074b73f4ac8211699d24dfdced6bf.camel@linux.intel.com>
-Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
- launch enclave
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nathaniel McCallum <npmccallum@redhat.com>,
-        sean.j.christopherson@intel.com
-Cc:     jethro@fortanix.com, luto@kernel.org,
-        Neil Horman <nhorman@redhat.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, intel-sgx-kernel-dev@lists.01.org, hpa@zytor.com,
-        dvhart@infradead.org, tglx@linutronix.de, andy@infradead.org,
-        Peter Jones <pjones@redhat.com>
-Date:   Mon, 25 Jun 2018 12:41:08 +0300
-In-Reply-To: <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
-References: <20180608171216.26521-14-jarkko.sakkinen@linux.intel.com>
-         <CALCETrW3aZJMMm1GqgPm-cOD3p7JvKxLj7j85KJwfNW2iHTj4A@mail.gmail.com>
-         <CALCETrVp1ZhrxF5bQDSaZpLucS88tErejj5JC6Jb0fB5etWRbA@mail.gmail.com>
-         <20180611115255.GC22164@hmswarspite.think-freely.org>
-         <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
-         <20180612174535.GE19168@hmswarspite.think-freely.org>
-         <CALCETrV-4D-M2ap1EFHQiQerYf_XgwLmBAx5WMvcCUefOODjOA@mail.gmail.com>
-         <CAOASepN9t3jF4ajfKLG_odTZddOvXjY_DqLQhRPWhJ-imtjkgg@mail.gmail.com>
-         <e3f8e5b9-aa1e-20da-37ac-3c3caafa66bc@fortanix.com>
-         <b5c81504-83cd-8150-ebe4-41355026590f@fortanix.com>
-         <20180620210158.GA24328@linux.intel.com>
-         <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 25 Jun 2018 05:42:56 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:49246 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754682AbeFYJmz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 05:42:55 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0785825AD81;
+        Mon, 25 Jun 2018 19:42:53 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1529919773; bh=cW27WSAX65/IVhvtrTb0tZysls7O9dLXoAtnW3D4q4Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k2vhN5tX8Ia6z9WAvr8dVdY02JwnvC9nSpng/wQygOgwoYm4K3x+AecrLV+TIR9tI
+         CC+27VYq5tf8DKmCCBPR8hfvI77tXB8SvWSQMLaoUIyEvjDgdMEZlkpAo2Kh4PFL22
+         wNI0M50ZKgr0R8MiJIkmubVSz+Fx+ghXFqp6z32I=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id F391D940660; Mon, 25 Jun 2018 11:42:50 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 11:42:50 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
+ driver
+Message-ID: <20180625094249.b6dwnraqruicmo2u@verge.net.au>
+References: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1529915110-5867-3-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdVarwq26Jr=YN+zBDrHjQf-Q+u3L6oRNiSKh-hxuwOsrA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVarwq26Jr=YN+zBDrHjQf-Q+u3L6oRNiSKh-hxuwOsrA@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-21 at 08:32 -0400, Nathaniel McCallum wrote:
-> This implies that it should be possible to create MSR activation (and
-> an embedded launch enclave?) entirely as a UEFI module. The kernel
-> would still get to manage who has access to /dev/sgx and other
-> important non-cryptographic policy details. Users would still be able
-> to control the cryptographic policy details (via BIOS Secure Boot
-> configuration that exists today). Distributions could still control
-> cryptographic policy details via signing of the UEFI module with their
-> own Secure Boot key (or using something like shim). The UEFI module
-> (and possibly the external launch enclave) could be distributed via
-> linux-firmware.
+On Mon, Jun 25, 2018 at 11:24:48AM +0200, Geert Uytterhoeven wrote:
+> Hi Michel,
 > 
-> Andy/Neil, does this work for you?
+> On Mon, Jun 25, 2018 at 10:31 AM Michel Pollet
+> <michel.pollet@bp.renesas.com> wrote:
+> > The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
+> > requires a special enable method to get it started.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  arch/arm/mach-shmobile/Makefile        |  1 +
+> >  arch/arm/mach-shmobile/smp-r9a06g032.c | 96 ++++++++++++++++++++++++++++++++++
+> >  2 files changed, 97 insertions(+)
+> >  create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+> 
+> Given this doesn't depend on anything under arch/arm/mach-shmobile/,
+> perhaps this should be moved to drivers/soc/renesas/ (and renamed to
+> r9a06g032-smp.c for consistency) instead?
+> 
+> Simon: what do you think?
 
-Nothing against having UEFI module for MSR activation step.
-
-And we would move the existing in-kernel LE to firmware so that it is
-avaible for locked-in-to-non-Intel-values case? 
-
-/Jarkko
+Yes, I think that would be nice.
