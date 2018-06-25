@@ -2,115 +2,106 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8ACFC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F117C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A39A025461
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:09:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="neOA11xm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39A025461
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 24AF425466
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:20:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24AF425466
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752041AbeFYFJb (ORCPT
+        id S1751513AbeFYFUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 01:09:31 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41201 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751080AbeFYFJ3 (ORCPT
+        Mon, 25 Jun 2018 01:20:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37954 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751067AbeFYFUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 01:09:29 -0400
-Received: by mail-ot0-f195.google.com with SMTP id d19-v6so13669592oti.8;
-        Sun, 24 Jun 2018 22:09:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=H3BHhImraftB/8/PC119Ykcp+BYpWiefnn4OGWXm4cI=;
-        b=neOA11xmZyM9irlykqs82AM+Uu4KFG2FJuwYliVR5BM5kXHnmyxm5s9OghlWZRlCWO
-         I2vYBueX4qS3u7pLsBg7886RyDKFa5il8CA9MPnGjAUghEqxHwlzuo0TIK0hkS8D3Dqq
-         IRzvBSa6+5EAaPfUXfqJuSNgpCIbLJ7pzmlCL6pOe9DBs6VEW2d1kxsSpPvkd7FGVDEJ
-         tVHv9dLlb398MM9TnUhCEIoF4w3tcLWKbmZq063EFD3uTvTxo6Yay7grBouzNs4JKGJb
-         lIRHkg44ibYizyIeSHtYO6K1jICacJ+iUq8mm0+BHOC4qUMIDYTB/QXGeCrGl5LL1xQo
-         LD5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=H3BHhImraftB/8/PC119Ykcp+BYpWiefnn4OGWXm4cI=;
-        b=ARuEXaliF+qz4+teXR9Zmt+I3FdXCe1wvF9MNLIeVbPSuS1rZEakuLibZS6/UEOPOC
-         N9EsIxMZvn/p+RmJr+vpxgWl/CVkBHbAa/nc+j83z1EtJDoPewD8bYWXWpEfbV0QZwX2
-         Q8+sMM+qpvv+pRzCnx5NLQj+V7Jh5Gm2xK0fQ9YJIeEoJi8F86Llq8o/VyehFKpEk9YC
-         FzLLxtqd93DL/B3bKixiek4C4dE7k1I8ALF28MORr2YXOQQN+HZQav7UxxkTxAlG9UOw
-         uXU5mks93afHp7dxv3wflkATqeKws67tW4il6bSIzx7UyTbJCRfp9i4DLlNgcm9ce/Xo
-         1X/g==
-X-Gm-Message-State: APt69E3KlpzPiBc0zTvjUWBPRjFHGX/HkpK9eTZXhART7tQTvzYx+54y
-        8hp2WSFxKEubdfQJTBHFebmrDEv+twZxPbXWlCX3YA==
-X-Google-Smtp-Source: AAOMgpfXzvnzPZpusHUKAiVbsQ3V6z8ExbvGj7Bvqs0cQQMgewKciNDB2UXqsSt8gawElWZeQV2/tRoF1xRdWgT1tjo=
-X-Received: by 2002:a9d:508a:: with SMTP id b10-v6mr435519oth.262.1529903368716;
- Sun, 24 Jun 2018 22:09:28 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:4b10:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 22:09:28
- -0700 (PDT)
-In-Reply-To: <20180622200053.4957-1-ahiliation@gmail.com>
-References: <20180622200053.4957-1-ahiliation@gmail.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Sun, 24 Jun 2018 22:09:28 -0700
-Message-ID: <CAPhsuW66EoOKmgbVHa8Hrs=RVjwBxa-Mcb2+=gLpYFPUPg6C6A@mail.gmail.com>
-Subject: Re: [PATCH] selftests: bpf: notification about privilege required to
- run test_lwt_seg6local.sh testing script
-To:     Jeffrin Jose T <ahiliation@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, shuah@kernel.org,
-        Networking <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Jun 2018 01:20:16 -0400
+Received: from 1.general.khfeng.uk.vpn ([10.172.196.174] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fXJv7-0004eB-Ka; Mon, 25 Jun 2018 05:20:10 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     mathias.nyman@intel.com
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] usb: xhci: dbc: Don't decrement runtime PM counter if DBC is not started
+Date:   Mon, 25 Jun 2018 13:20:04 +0800
+Message-Id: <20180625052004.15298-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 1:00 PM, Jeffrin Jose T <ahiliation@gmail.com> wrote:
-> This test_lwt_seg6local.sh will execute with root privilege.
->
-> This patch is atleast used to notify the user about the privilege
-> required related to smooth execution of the script.
->
-> Signed-off-by: Jeffrin Jose T (Rajagiri SET) <ahiliation@gmail.com>
+pm_runtime_put_sync() gets called everytime in xhci_dbc_stop().
 
-Acked-by: Song Liu <songliubraving@fb.com>
+If dbc is not started, this makes the runtime PM counter incorrectly
+becomes 0, and calls autosuspend function. Then we'll keep seeing this:
+[54664.762220] xhci_hcd 0000:00:14.0: Root hub is not suspended
 
-> ---
->  tools/testing/selftests/bpf/test_lwt_seg6local.sh | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/tools/testing/selftests/bpf/test_lwt_seg6local.sh b/tools/testing/selftests/bpf/test_lwt_seg6local.sh
-> index 1c77994b5e71..30575577a8b2 100755
-> --- a/tools/testing/selftests/bpf/test_lwt_seg6local.sh
-> +++ b/tools/testing/selftests/bpf/test_lwt_seg6local.sh
-> @@ -21,6 +21,15 @@
->  # An UDP datagram is sent from fb00::1 to fb00::6. The test succeeds if this
->  # datagram can be read on NS6 when binding to fb00::6.
->
-> +# Kselftest framework requirement - SKIP code is 4.
-> +ksft_skip=4
-> +
-> +msg="skip all tests:"
-> +if [ $UID != 0 ]; then
-> +    echo $msg please run this as root >&2
-> +    exit $ksft_skip
-> +fi
-> +
->  TMP_FILE="/tmp/selftest_lwt_seg6local.txt"
->
->  cleanup()
-> --
-> 2.17.0
->
+So only calls pm_runtime_put_sync() when dbc was started.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/usb/host/xhci-dbgcap.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-dbgcap.c b/drivers/usb/host/xhci-dbgcap.c
+index 1fbfd89d0a0f..387f124a8334 100644
+--- a/drivers/usb/host/xhci-dbgcap.c
++++ b/drivers/usb/host/xhci-dbgcap.c
+@@ -508,16 +508,18 @@ static int xhci_do_dbc_start(struct xhci_hcd *xhci)
+ 	return 0;
+ }
+ 
+-static void xhci_do_dbc_stop(struct xhci_hcd *xhci)
++static int xhci_do_dbc_stop(struct xhci_hcd *xhci)
+ {
+ 	struct xhci_dbc		*dbc = xhci->dbc;
+ 
+ 	if (dbc->state == DS_DISABLED)
+-		return;
++		return -1;
+ 
+ 	writel(0, &dbc->regs->control);
+ 	xhci_dbc_mem_cleanup(xhci);
+ 	dbc->state = DS_DISABLED;
++
++	return 0;
+ }
+ 
+ static int xhci_dbc_start(struct xhci_hcd *xhci)
+@@ -544,6 +546,7 @@ static int xhci_dbc_start(struct xhci_hcd *xhci)
+ 
+ static void xhci_dbc_stop(struct xhci_hcd *xhci)
+ {
++	int ret;
+ 	unsigned long		flags;
+ 	struct xhci_dbc		*dbc = xhci->dbc;
+ 	struct dbc_port		*port = &dbc->port;
+@@ -556,10 +559,11 @@ static void xhci_dbc_stop(struct xhci_hcd *xhci)
+ 		xhci_dbc_tty_unregister_device(xhci);
+ 
+ 	spin_lock_irqsave(&dbc->lock, flags);
+-	xhci_do_dbc_stop(xhci);
++	ret = xhci_do_dbc_stop(xhci);
+ 	spin_unlock_irqrestore(&dbc->lock, flags);
+ 
+-	pm_runtime_put_sync(xhci_to_hcd(xhci)->self.controller);
++	if (!ret)
++		pm_runtime_put_sync(xhci_to_hcd(xhci)->self.controller);
+ }
+ 
+ static void
+-- 
+2.17.0
+
