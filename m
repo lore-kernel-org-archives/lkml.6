@@ -3,45 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561C2C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97F9C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 137AE25D1F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137AE25D1F
+	by mail.kernel.org (Postfix) with ESMTP id 9143425D1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9143425D1F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754296AbeFYPpC (ORCPT
+        id S1753200AbeFYPpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:45:02 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59815 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751631AbeFYPn7 (ORCPT
+        Mon, 25 Jun 2018 11:45:01 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49127 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750994AbeFYPn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 11:43:59 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5PFcbAu018483;
-        Mon, 25 Jun 2018 17:43:22 +0200
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5PFdPIV018471;
+        Mon, 25 Jun 2018 17:43:20 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2ju0hc8sx2-1
+        by mx07-00178001.pphosted.com with ESMTP id 2jtujuaccv-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 25 Jun 2018 17:43:22 +0200
+        Mon, 25 Jun 2018 17:43:20 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7FED038;
-        Mon, 25 Jun 2018 15:43:21 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 635CB2872;
-        Mon, 25 Jun 2018 15:43:21 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 25 Jun
- 2018 17:43:21 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 79DCF34;
+        Mon, 25 Jun 2018 15:43:19 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 61F6D2872;
+        Mon, 25 Jun 2018 15:43:19 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 25 Jun
+ 2018 17:43:19 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 25 Jun
- 2018 17:43:21 +0200
+ 2018 17:43:18 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -52,9 +52,9 @@ CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V5 5/5] ARM: dts: stm32: update iwdg with lsi clock name for stm32f429
-Date:   Mon, 25 Jun 2018 17:43:03 +0200
-Message-ID: <1529941383-8653-6-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V5 3/5] ARM: dts: stm32: add iwdg2 support for stm32mp157c
+Date:   Mon, 25 Jun 2018 17:43:01 +0200
+Message-ID: <1529941383-8653-4-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
 References: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
@@ -70,25 +70,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch updates iwdg watchdog to use lsi clock name.
+This patch adds independent watchdog support for stm32mp157c.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- arch/arm/boot/dts/stm32f429.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/stm32mp157c.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index ede77e0..39ea13a 100644
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -310,6 +310,7 @@
- 			compatible = "st,stm32-iwdg";
- 			reg = <0x40003000 0x400>;
- 			clocks = <&clk_lsi>;
-+			clock-names = "lsi";
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 7d17538..95cc166 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -784,6 +784,14 @@
  			status = "disabled";
  		};
  
++		iwdg2: watchdog@5a002000 {
++			compatible = "st,stm32mp1-iwdg";
++			reg = <0x5a002000 0x400>;
++			clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
++			clock-names = "pclk", "lsi";
++			status = "disabled";
++		};
++
+ 		usbphyc: usbphyc@5a006000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.7.4
 
