@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE541C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FD1C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D5B8249F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:23:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C99E24788
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:23:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxVibJky"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D5B8249F9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="umf6TeNz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C99E24788
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751798AbeFYFXk (ORCPT
+        id S1752009AbeFYFXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 01:23:40 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:34787 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751365AbeFYFXi (ORCPT
+        Mon, 25 Jun 2018 01:23:45 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35170 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751365AbeFYFXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 01:23:38 -0400
-Received: by mail-pg0-f65.google.com with SMTP id q4-v6so5567020pgr.1;
-        Sun, 24 Jun 2018 22:23:38 -0700 (PDT)
+        Mon, 25 Jun 2018 01:23:42 -0400
+Received: by mail-pl0-f68.google.com with SMTP id k1-v6so6261644plt.2;
+        Sun, 24 Jun 2018 22:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Uzhd6exg4mqiosMFZpw005mH+F6FZFOmY7NdD7oZDNg=;
-        b=hxVibJkyd4aLdrt4k1HHfhVr0Ny1PIcuMU9cPI7BvbRzrqLGo8qPnzYEU0YfK+1eCT
-         I8Iwy2rMd1feX2q+vQagz2FwzZGNbg74a6pKLFjK7SbiaYZBLWKZ/ZQ5eMBwZadwVFzH
-         ZcM+5uGfoPabUdBGc2czqLD1BQNrNcGbOpFepec/YujfFNaZgdP7kHlSgYObe16BAcsc
-         WyeSi2ShmtqtFhnzLJwvcHa9jw0EBfR4xkIv+QJiKC7oGQlNBzyV11jw2XZmwznZ40QC
-         a6E+Y8w5gquLgotBgBatw0ZQ9eQ5WXjrERc5OajBWYhkr50yivqL8wp8PGvC4eju7wan
-         M4JA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2PgFlR5DMr1n4DFmL2/H8moGaIFk/PpLJOyse2SJBv4=;
+        b=umf6TeNz8pdVNSjULAQ780+NK6Itk49rDOHKSz7YIR+WjivI3EPRuYcAVznP5lLHAC
+         MBCFdxAXREokKGKd7xDVdKzhAm0k9pfOtFa+U0HssAz6Yn6lignHjW2eTxl08xGKruj7
+         RoDuxe6nsYvEMhf3YrWIe6DdkJ72Toai1/EryITFGUkQAm1m8tOih597lD/A/cVCww6c
+         pglvHxN54IC6sh/+pRLCRvqjc9glNGrTOTZW8fXwBT37peq9R1RbxjAlNXUARMy1O+XW
+         23quwSBtxrUOAEZ3HNwM0cvKJIyglRGHBPXIZM4tM6HFrg4rUXaUOR+FYqHZi/PNhqzP
+         KkKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Uzhd6exg4mqiosMFZpw005mH+F6FZFOmY7NdD7oZDNg=;
-        b=mWX8avSmN2jhdoz5FykUSafnb3u2Fm+YpfV+8CUvwcYu4CROjb/j9DN7goBi05QiPa
-         q6DPhORrPujjDT/stc2kOUkAw1eJoYXAc+TDhFgSG1mEp+SwiHAzxcuOneHNtwjdVMPH
-         oBuaUyLg1ABw9w/Gcu6k8neO9th0D1apE+qbyu9q8QiHADU73FUYcNmjCTeXJjxc0slh
-         yJ945lvmBKiFLFfXBnv/PlMhq2NkhMGGk7HpNE99WFS/HMGQwH1sfn8da7juarCioJJK
-         8y+BkH5bccGnzf7lJmZJ5hVR6ucqXIWScOcnp4jkZAiclkudNMVeZQPN8VRl6JENDwBe
-         phVQ==
-X-Gm-Message-State: APt69E0LClJjIKmHMmNKdp/mBt6l7e+KQEIpawDT/UEBDvyu2fX4ewJy
-        IysiUQH8XL/qTlegQrdjlgwm
-X-Google-Smtp-Source: ADUXVKJ8Mgp6+HJyTDm4J4aRKXEiABJxhxaZvCYC+n6wU9WIbS0ZPHYJirj4ZH1veVt8NwppQcK1zQ==
-X-Received: by 2002:a63:3f05:: with SMTP id m5-v6mr6508368pga.51.1529904218189;
-        Sun, 24 Jun 2018 22:23:38 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2PgFlR5DMr1n4DFmL2/H8moGaIFk/PpLJOyse2SJBv4=;
+        b=iwOGUoxr17UUXn4McJD6XohXjZOFKeGQz3fRNeerN/1ASpasI4+SS6UsmthJbZ9q3N
+         y8w8Q2/jJyz/+ivjnvHzHQYoCVYeTRpR6A9kVtezsIs2yrxbcqG0UKfAiD1YHkHovGdo
+         QP4KX9pWR3HJrcIIFavKJKjVJeeQpevHj482NsGrQ4UPOH2T+FPjXJiiC1mxbz0rmHXo
+         rf5gTaiORNRoi0M6hiPSc2qw16gAqF1Z+JAfSbTXVxjf3aPQPKCkVKoX29LGZ/Hz/zNj
+         tSNx93iadDxcHT7JA0/YiuqTKpaRU8a6koj376KKLHmZANhMsLj5zvH8DC+IxT4QnW27
+         eE9Q==
+X-Gm-Message-State: APt69E193wyNHKSBrJPz/PYk0cSZbhKfBMQZ6eG1nzoMJR/AY8pzYcUM
+        H777Z5/fq2yNEUUgrysvDQZg
+X-Google-Smtp-Source: ADUXVKJLsNj4bsfceFwgHnlLYF8MT9TTZMfziMsFLzWdmB/McK2tf1LaLSFJs1QVQj6zGXZOLhMCmA==
+X-Received: by 2002:a17:902:43a4:: with SMTP id j33-v6mr10957060pld.118.1529904221664;
+        Sun, 24 Jun 2018 22:23:41 -0700 (PDT)
 Received: from mylaptop.nay.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k71-v6sm1835936pga.62.2018.06.24.22.23.34
+        by smtp.gmail.com with ESMTPSA id k71-v6sm1835936pga.62.2018.06.24.22.23.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 22:23:37 -0700 (PDT)
+        Sun, 24 Jun 2018 22:23:41 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -66,45 +67,19 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         Bjorn Helgaas <helgaas@kernel.org>,
         Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 0/3] drivers/base: bugfix for supplier<-consumer ordering in device_kset
-Date:   Mon, 25 Jun 2018 13:23:04 +0800
-Message-Id: <1529904187-18673-1-git-send-email-kernelfans@gmail.com>
+Subject: [PATCH 1/3] drivers/base: introduce some help routines for reordering a group of dev
+Date:   Mon, 25 Jun 2018 13:23:05 +0800
+Message-Id: <1529904187-18673-2-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529904187-18673-1-git-send-email-kernelfans@gmail.com>
+References: <1529904187-18673-1-git-send-email-kernelfans@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 52cdbdd49853 ("driver core: correct device's shutdown order")
-places an assumption of supplier<-consumer order on the process of probe.
-But it turns out to break down the parent <- child order in some scene.
-E.g in pci, a bridge is enabled by pci core, and behind it, the devices
-have been probed. Then comes the bridge's module, which enables extra
-feature(such as hotplug) on this bridge.
-This will break the parent<-children order and cause failure when
-"kexec -e" in some scenario.
-
-I tried to fix this issue in pci subsystem, and it turns out to be wrong.
-Thanks to Christoph Hellwig, he enlightens me that it should be a bug in
-driver core.
-
-To ease the review, I organize the patch as the following
-[3/3] reflects the root cause of this bug. if [2/3] is not acceptable,
-we still need some way to fix it.
-[2/3] introduce a algorithm to reorder device
-[1/3] some trivial help routine
-
-
-Pingfan Liu (3):
-  drivers/base: introduce some help routines for reordering a group of
-    dev
-  drivers/base: reorder consumer and its children behind suppliers
-  drivers/base: only reordering consumer device when probing
-
- drivers/base/base.h |   1 +
- drivers/base/core.c | 135 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/base/dd.c   |   9 +---
- 3 files changed, 138 insertions(+), 7 deletions(-)
+This patch introduce some help routines used by next patch. It aims to
+ease reviewing, while the next patch will concentrate on algorithm.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Grygorii Strashko <grygorii.strashko@ti.com>
@@ -113,6 +88,60 @@ Cc: Bjorn Helgaas <helgaas@kernel.org>
 Cc: Dave Young <dyoung@redhat.com>
 Cc: linux-pci@vger.kernel.org
 Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+---
+ drivers/base/core.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 36622b5..8113d2c 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -123,6 +123,44 @@ static int device_is_dependent(struct device *dev, void *target)
+ 	return ret;
+ }
+ 
++struct pos_info {
++	struct device *pos;
++	struct device *tail;
++};
++
++/* caller takes the devices_kset->list_lock */
++static int descendants_reorder_after_pos(struct device *dev,
++	void *data)
++{
++	struct device *pos;
++	struct pos_info *p = data;
++
++	pos = p->pos;
++	pr_debug("devices_kset: Moving %s after %s\n",
++		 dev_name(dev), dev_name(pos));
++	device_for_each_child(dev, p, descendants_reorder_after_pos);
++	/* children at the tail */
++	list_move(&dev->kobj.entry, &pos->kobj.entry);
++	/* record the right boundary of the section */
++	if (p->tail == NULL)
++		p->tail = dev;
++	return 0;
++}
++
++/* iterate over an open section */
++#define list_opensect_for_each_reverse(cur, left, right)	\
++	for (cur = right->prev; cur == left; cur = cur->prev)
++
++static bool is_consumer(struct device *query, struct device *supplier)
++{
++	struct device_link *link;
++	/* todo, lock protection */
++	list_for_each_entry(link, &supplier->links.consumers, s_node)
++		if (link->consumer == query)
++			return true;
++	return false;
++}
++
+ static int device_reorder_to_tail(struct device *dev, void *not_used)
+ {
+ 	struct device_link *link;
 -- 
 2.7.4
 
