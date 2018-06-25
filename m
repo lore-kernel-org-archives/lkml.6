@@ -2,71 +2,105 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECE8C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4227C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 447BA2598B
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:52:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447BA2598B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AE81C259A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:53:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE81C259A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755419AbeFYMwK (ORCPT
+        id S1755421AbeFYMx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:52:10 -0400
-Received: from mga18.intel.com ([134.134.136.126]:55908 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752109AbeFYMwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:52:08 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 05:52:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,270,1526367600"; 
-   d="scan'208";a="61023959"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga002.fm.intel.com with SMTP; 25 Jun 2018 05:52:05 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 25 Jun 2018 15:52:04 +0300
-Date:   Mon, 25 Jun 2018 15:52:04 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: shpchp: Fix probing logic inversion
-Message-ID: <20180625125204.GH2558@lahna.fi.intel.com>
-References: <20180621164715.28160-1-marc.zyngier@arm.com>
+        Mon, 25 Jun 2018 08:53:27 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47968 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752109AbeFYMx0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 08:53:26 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5PCnUps032619;
+        Mon, 25 Jun 2018 14:52:37 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2jtuju9n3a-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 25 Jun 2018 14:52:37 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 86ED938;
+        Mon, 25 Jun 2018 12:52:36 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4CC94160B;
+        Mon, 25 Jun 2018 12:52:36 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.51) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 25 Jun
+ 2018 14:52:35 +0200
+Subject: Re: [PATCH V4 2/4] watchdog: stm32: add pclk feature for stm32mp1
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Ludovic BARRE <ludovic.barre@st.com>
+CC:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1529571737-3552-1-git-send-email-ludovic.Barre@st.com>
+ <1529571737-3552-3-git-send-email-ludovic.Barre@st.com>
+ <20180621165335.GA4563@roeck-us.net>
+ <0bfe0082-2134-2d3b-322f-cd6c193a9974@st.com>
+ <3f65a889-f625-9521-ea09-bcf7b5b24927@roeck-us.net>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <b5f62568-ff2f-4a04-212e-a952bf009c88@st.com>
+Date:   Mon, 25 Jun 2018 14:52:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621164715.28160-1-marc.zyngier@arm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <3f65a889-f625-9521-ea09-bcf7b5b24927@roeck-us.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 05:47:15PM +0100, Marc Zyngier wrote:
-> Until recently, shpc_probe() would bail out pretty early in the
-> absence of the SHPC capability. A logic change in the way the
-> driver now checks that capability makes it go and probe the
-> firmware anyway, with ugly consequences if the system is not
-> ACPI based (my arm64 ThunderX is DT driven, and explodes in
-> a spectacular way after getting a NULL root bridge from the
-> non-existent ACPI tables...).
+Hi Guenter,
 
-Could you share log from the failure? I would like to understand a bit
-better where it crashes and why.
 
-> Take this opportunity to move the call to shpchp_is_native()
-> back into shpc_probe(), making it clear that a non-ACPI system
-> is not expected to use this driver.
+>> But you are right I forgot to change stm32f429.dtsi.
+>> If I add a commit for stm32f429.dtsi, it's Ok for you ?
+>>
+> 
+> Not really. You are imposing a personal preference on others,
+> and you would make stm32f429.dtsi inconsistent since it doesn't
+> use clock names for anything else.This in turn means that people
+> will have an endless source of irritation since they will need
+> a clock name for this node but not for others.
 
-It is fine to use SHPC in non-ACPI systems. However, in ACPI systems we
-should negotiate whether it is the OS or the firmware who handles it.
+Why? This kind of implementation depends on each driver. Isn't ?
+
+Or do you mean that if iwdg driver uses this implementation (clock name 
+usage) all nodes inside stm32f429.dtsi should follow the same 
+implementation ?
+
+> 
+> You will have to get the arm and DT maintainers to agree on this change.
+
+As this patch makes easier integration of new platform, I agree with 
+Ludovic proposition.
+
+
+regards
+Alex
+
+> 
+> Thanks,
+> Guenter
