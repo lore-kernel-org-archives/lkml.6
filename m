@@ -2,161 +2,209 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E2BC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE96C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3759E25DF4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:15:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ihcEn1mw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3759E25DF4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4695F25DF7
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:15:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4695F25DF7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755126AbeFYQPM (ORCPT
+        id S1755285AbeFYQPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:15:12 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42912 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752574AbeFYQPK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:15:10 -0400
-Received: by mail-wr0-f194.google.com with SMTP id w10-v6so14276596wrk.9
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 09:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=34gELoRXu+CysP2xcjDDjb9xIR9pBEFyEyD/YumLD1E=;
-        b=ihcEn1mw3fPFcEQermEomkyYUu5wTftiYfnL1wO0v/pYOIr7rvzwsSNhprQWYihM2P
-         zHRhx/VWUTwqHbsvFqmot6QcGlt+1eg6vrmS5IJZDCoQE84wCq4ROgJcEkZnjtfSAJdQ
-         fn9Hsq3QH/zj+XbUg2byK1yIIeFyqydgw1A+c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=34gELoRXu+CysP2xcjDDjb9xIR9pBEFyEyD/YumLD1E=;
-        b=qVTBEPh/ioXI0pQLxDQQFz/07XLzHLtmPmnLrkgCqQRsiAahJQQhAmUVtOwSuEtB68
-         9DtVnAXhOenRsFqErVcJHL2M6Hwo8X2+o7JEQe/szSda4SsPYrvYiKVscgTnbeDlCWvC
-         54oA1Qam+oeXMqEP1TWKuOTh61tA/m3X3J35WFffGIwfgeSw9vaaHn9RxVpOrRkrsjr+
-         hpx0KErHgjJX1HFEP4l+OpdX4Iltc6adGvtQoJmIoZGAa55yj8sofaexMsKdTCiljPUk
-         QOQGX6OUZU1QY857M8z0Rtbm4rXBORzPz3L+qh8Za77na5J3lhluWDlG4kUAdC5Za5U/
-         JCKw==
-X-Gm-Message-State: APt69E1cE/frkaCFoqu9D1dI7eA77be8+xbDJbaO0dHFixib5UTMoLXW
-        yGz50KGtFC8VHMmIqu8q3Pm9QA==
-X-Google-Smtp-Source: AAOMgpeMB0IwErndRiptcJWnk0y06xFUpwGgxcADZ5F7JL0etZrdrXkNQDhWcgIvSrRCwvyIeQJumQ==
-X-Received: by 2002:adf:fa07:: with SMTP id m7-v6mr11275174wrr.228.1529943308937;
-        Mon, 25 Jun 2018 09:15:08 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id 74-v6sm14981612wmt.31.2018.06.25.09.15.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 09:15:08 -0700 (PDT)
-Subject: Re: [PATCH 1/2] slimbus: stream: add stream support
-To:     Stephen Boyd <sboyd@kernel.org>, broonie@kernel.org,
-        gregkh@linuxfoundation.org
-Cc:     sdharia@quicinc.com, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
-        ctatlor97@gmail.com, vkoul@kernel.org
-References: <20180621134009.27116-1-srinivas.kandagatla@linaro.org>
- <20180621134009.27116-2-srinivas.kandagatla@linaro.org>
- <152994313712.143105.4349052596355647972@swboyd.mtv.corp.google.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <990d582d-4cfb-f6f3-6ca5-a54daef8b88c@linaro.org>
-Date:   Mon, 25 Jun 2018 17:15:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 25 Jun 2018 12:15:36 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33045 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753170AbeFYQPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 12:15:34 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id ADD3D20719; Mon, 25 Jun 2018 18:15:32 +0200 (CEST)
+Received: from localhost (unknown [88.128.82.118])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 67234203D9;
+        Mon, 25 Jun 2018 18:15:22 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 18:15:22 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 7/9] media: cedrus: Move IRQ maintainance to
+ cedrus_dec_ops
+Message-ID: <20180625161522.mwl3bhiuly4bkdsh@flea>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+ <20180613140714.1686-8-maxime.ripard@bootlin.com>
+ <a2e1e0a85e0cd650d27eb02dc58d438d6a750929.camel@bootlin.com>
+ <b222fae80b1b212fdc5171a39b9a761527931eb0.camel@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <152994313712.143105.4349052596355647972@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qyx4ykt4a7rmjdmf"
+Content-Disposition: inline
+In-Reply-To: <b222fae80b1b212fdc5171a39b9a761527931eb0.camel@bootlin.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Stephen for review,
 
-On 25/06/18 17:12, Stephen Boyd wrote:
-> Quoting Srinivas Kandagatla (2018-06-21 06:40:08)
->> new file mode 100644
->> index 000000000000..f8af9474d286
->> --- /dev/null
->> +++ b/drivers/slimbus/stream.c
->> @@ -0,0 +1,493 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright (c) 2018, Linaro Limited
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/errno.h>
->> +#include <linux/slab.h>
->> +#include <linux/list.h>
->> +#include <linux/slimbus.h>
->> +#include "slimbus.h"
->> +
->> +/**
->> + * struct segdist_code - Segment Distributions code from
->> + *     Table 20 of SLIMbus Specs Version 2.0
->> + *
->> + * @ratem: Channel Rate Multipler(Segments per Superframe)
->> + * @seg_interval: Number of slots between the first Slot of Segment
->> + *             and the first slot of the next  consecutive Segment.
->> + * @segdist_code: Segment Distribution Code SD[11:0]
->> + * @seg_offset_mask: Segment offset mask in SD[11:0]
->> + * @segdist_codes: List of all possible Segmet Distribution codes.
->> + */
->> +static struct segdist_code {
-> 
-> const?
-> 
-Yep, Will fix this and presence rate in next version.!
+--qyx4ykt4a7rmjdmf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +       int ratem;
->> +       int seg_interval;
->> +       int segdist_code;
->> +       u32 seg_offset_mask;
->> +
->> +} segdist_codes[] = {
->> +       {1,     1536,   0x200,   0xdff},
->> +       {2,     768,    0x100,   0xcff},
->> +       {4,     384,    0x080,   0xc7f},
->> +       {8,     192,    0x040,   0xc3f},
->> +       {16,    96,     0x020,   0xc1f},
->> +       {32,    48,     0x010,   0xc0f},
->> +       {64,    24,     0x008,   0xc07},
->> +       {128,   12,     0x004,   0xc03},
->> +       {256,   6,      0x002,   0xc01},
->> +       {512,   3,      0x001,   0xc00},
->> +       {3,     512,    0xe00,   0x1ff},
->> +       {6,     256,    0xd00,   0x0ff},
->> +       {12,    128,    0xc80,   0x07f},
->> +       {24,    64,     0xc40,   0x03f},
->> +       {48,    32,     0xc20,   0x01f},
->> +       {96,    16,     0xc10,   0x00f},
->> +       {192,   8,      0xc08,   0x007},
->> +       {364,   4,      0xc04,   0x003},
->> +       {768,   2,      0xc02,   0x001},
->> +};
->> +
->> +/**
->> + * struct slim_presence_rate - Presense Rate table for all Natural Frequencies
->> + *     The Presense rate of a constant bitrate stram is mean flow rate of the
->> + *     stream expressed in occupied Segments of that Data Channel per second.
->> + *     Table 66 from SLIMbus 2.0 Specs
->> + *
->> + * @rate: data rate
->> + * @pr_code: presence rate code PR[6:0]
->> + * @prate_table: All possible presence rate code for Natural Frequencies
->> + */
->> +static struct slim_presence_rate {
-> 
-> const?
-> 
->> +       int rate;
->> +       int pr_code;
->> +} prate_table[] = {
+On Mon, Jun 25, 2018 at 04:18:51PM +0200, Paul Kocialkowski wrote:
+> Hi,
+>=20
+> On Thu, 2018-06-21 at 17:35 +0200, Paul Kocialkowski wrote:
+> > Hi,
+> >=20
+> > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> > > The IRQ handler up until now was hardcoding the use of the MPEG engin=
+e to
+> > > read the interrupt status, clear it and disable the interrupts.
+> > >=20
+> > > Obviously, that won't work really well with the introduction of new c=
+odecs
+> > > that use a separate engine with a separate register set.
+> > >=20
+> > > In order to make this more future proof, introduce new decodec operat=
+ions
+> > > to deal with the interrupt management. The only one missing is the on=
+e to
+> > > enable the interrupts in the first place, but that's taken care of by=
+ the
+> > > trigger hook for now.
+> >=20
+> > Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>=20
+> Scratch that for now, I just thought of something here (see below).
+>=20
+> > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > ---
+> > >  .../sunxi/cedrus/sunxi_cedrus_common.h        |  9 +++++
+> > >  .../platform/sunxi/cedrus/sunxi_cedrus_hw.c   | 21 ++++++------
+> > >  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 33 +++++++++++++++++=
+++
+> > >  3 files changed, 53 insertions(+), 10 deletions(-)
+> > >=20
+> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.=
+h b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > index c2e2c92d103b..a2a507eb9fc9 100644
+> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > @@ -108,7 +108,16 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer=
+(const struct vb2_buffer *p)
+> > >  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
+> > >  }
+> > > =20
+> > > +enum sunxi_cedrus_irq_status {
+> > > +	SUNXI_CEDRUS_IRQ_NONE,
+> > > +	SUNXI_CEDRUS_IRQ_ERROR,
+> > > +	SUNXI_CEDRUS_IRQ_OK,
+> > > +};
+> > > +
+> > >  struct sunxi_cedrus_dec_ops {
+> > > +	void (*irq_clear)(struct sunxi_cedrus_ctx *ctx);
+> > > +	void (*irq_disable)(struct sunxi_cedrus_ctx *ctx);
+> > > +	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx =
+*ctx);
+> > >  	void (*setup)(struct sunxi_cedrus_ctx *ctx,
+> > >  		      struct sunxi_cedrus_run *run);
+> > >  	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
+> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/=
+drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > > index bb46a01214e0..6b97cbd2834e 100644
+> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > > @@ -77,27 +77,28 @@ static irqreturn_t sunxi_cedrus_ve_irq(int irq, v=
+oid *dev_id)
+> > >  	struct sunxi_cedrus_ctx *ctx;
+> > >  	struct sunxi_cedrus_buffer *src_buffer, *dst_buffer;
+> > >  	struct vb2_v4l2_buffer *src_vb, *dst_vb;
+> > > +	enum sunxi_cedrus_irq_status status;
+> > >  	unsigned long flags;
+> > > -	unsigned int value, status;
+> > > =20
+> > >  	spin_lock_irqsave(&dev->irq_lock, flags);
+> > > =20
+> > > -	/* Disable MPEG interrupts and stop the MPEG engine */
+> > > -	value =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL);
+> > > -	sunxi_cedrus_write(dev, value & (~0xf), VE_MPEG_CTRL);
+> > > -
+> > > -	status =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS);
+> > > -	sunxi_cedrus_write(dev, 0x0000c00f, VE_MPEG_STATUS);
+> > > -	sunxi_cedrus_engine_disable(dev);
+> > > -
+> > >  	ctx =3D v4l2_m2m_get_curr_priv(dev->m2m_dev);
+> > >  	if (!ctx) {
+> > >  		pr_err("Instance released before the end of transaction\n");
+> > >  		spin_unlock_irqrestore(&dev->irq_lock, flags);
+> > > =20
+> > > -		return IRQ_HANDLED;
+> > > +		return IRQ_NONE;
+> > >  	}
+> > > =20
+> > > +	status =3D dev->dec_ops[ctx->current_codec]->irq_status(ctx);
+> > > +	if (status =3D=3D SUNXI_CEDRUS_IRQ_NONE) {
+> > > +		spin_unlock_irqrestore(&dev->irq_lock, flags);
+> > > +		return IRQ_NONE;
+> > > +	}
+> > > +
+> > > +	dev->dec_ops[ctx->current_codec]->irq_disable(ctx);
+> > > +	dev->dec_ops[ctx->current_codec]->irq_clear(ctx);
+> > > +
+> > >  	src_vb =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+> > >  	dst_vb =3D v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+>=20
+> Later in that file, there is still some checking that the first bit of
+> status is set:
+>=20
+> 	/* First bit of MPEG_STATUS indicates success. */
+> 	if (ctx->job_abort || !(status & 0x01))
+>=20
+> So !(status & 0x01) must be replaced with status !=3D CEDRUS_IRQ_OK.
+>=20
+> It seems that was working "by accident", with CEDRUS_IRQ_OK probably
+> being set by the compiler to 0x03.
+
+Yeah, I noticed this already and this was fixed for the v2 :)
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--qyx4ykt4a7rmjdmf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsxFRkACgkQ0rTAlCFN
+r3SrMw/9HmqawhTZFcHTcROC+crAmaUslZ8EeAaPttZqq8nYOralYl13u+igSKED
+O8Vcp2+wil1g1SlepwQY8i+ddUdmOjrweO6WVyMD95L7h5NpwCFdf0ylCc/0GtUO
+05to9TIjfaOI7RBwja9hp7DUqu4rZSy9r65Jo02SuNpKVTEAxgZrtsdwlLekYggn
+kWubslA9Rb340V4LD6IN0bUMvMKLtoro5vOjchcoVR8iDfdX8lq49dAKaI/kihgY
+iJbyDBRUtws4petqYLQ7oEurT5L0a0EfP1dXaevpo+zIhGAuFdEqFHYGvycpeB9S
+O9XiG3qUcZD70mq+I6OZ1B+PqFX9gL56H7sl+Z7rThWUG3c7FEtKQ3oN1LjmFPk9
+MMNTGhy2DsqvlaZCr5eX6P6B6Sl2HxLtrji+GchOX7y7jcswCH1G1XqsQQxISCwB
+zGGj3dcHh8BifTn5+bWVE0asSLgYZFIlv41k8pbO7Rk2kELtj5tFewyVBWi1wUcA
+HAdHFGCml9EctSZe0SWAUZlkKPd4UI6mNPdsg5bnzO0tmQzB0RYBgVj+Zf+6ejfW
+v8St2CCkLdAFr9EzA/ft3QUWqbowimf+m69KCAJX14tBvlw006MvWRg8fDDcHJsL
+r7vqoelpJxxdUe+GeO9MTf2O5CbKOu65z9bv5jgCslrwPuMdtXg=
+=IHma
+-----END PGP SIGNATURE-----
+
+--qyx4ykt4a7rmjdmf--
