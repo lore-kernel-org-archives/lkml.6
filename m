@@ -2,146 +2,89 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB42EC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D3AC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 973A024054
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:43:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C4532434A
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:44:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SqkUo6TC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973A024054
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mYEq7MxO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4532434A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934172AbeFYNni (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:43:38 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46040 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933985AbeFYNng (ORCPT
+        id S934181AbeFYNoV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:44:21 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42176 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933144AbeFYNoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:43:36 -0400
-Received: from avalon.localnet (p010035.dynamic.ppp.asahi-net.or.jp [221.113.10.35])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E8E2C1ABB;
-        Mon, 25 Jun 2018 15:43:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1529934214;
-        bh=JC5rDIDU3jYI5BGI7o4vG3cbgr77Z+B/cEewApjdO/E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SqkUo6TC5+g2Neu/ofnKk2kPJIXFsm4KtRJSz9piU0emTWI4RtvFRw7eZpSS+k8xw
-         6HsV5e5sobi3s+pRIKwIAulJKky7Kq9gUY+hWTkx9lkKDZoWLz7jrS+lgp3KqZBMR0
-         Ay2gC1svrT1N7jWuuIYQ9un/9T/FTiQRoISMPbo0=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Daniel Graefe <daniel.graefe@fau.de>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@i4.cs.fau.de,
-        Roman Sommer <roman.sommer@fau.de>
-Subject: Re: [PATCH] staging: media: omap4iss: Added SPDX license identifiers
-Date:   Mon, 25 Jun 2018 16:43:52 +0300
-Message-ID: <4457555.NGJh9sI2kl@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1529932892-9036-1-git-send-email-daniel.graefe@fau.de>
-References: <1529932892-9036-1-git-send-email-daniel.graefe@fau.de>
+        Mon, 25 Jun 2018 09:44:20 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5PDhfmb053447;
+        Mon, 25 Jun 2018 13:43:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=U/W9wW0A2OB3STQ+uiD1A0aL3wqAjz1EcSPd1m1+81M=;
+ b=mYEq7MxO4aQlZAQmESQCIC61DwtQGZH7idgnVSjxD7KegvF/QeYjeKQowO870kqHpFcJ
+ GmCuDp21IcEm6PrMQQpvulXaxvqsVgCuYHFnCr5jT8Z0MWyHAgSeMtfOXF74FELarTRb
+ feUxn7N26bU6GCtjwjwJLz49PbKnjxpBh00TuaqBxH9exoTwcVQFXcA9kAImAIbTylXe
+ X7+JgbVJSsTPOKDYhVg6s9E2OtkqvtzFSdRWFu3k18kISXiesoES9auevUWeBCcGWlPQ
+ BDgJJEZ6WDdQty8+5k2kYAYep+VelWwPTghNqew2G+/nj2veUdjiLzRXLgPKjdD/Q9+t GA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2jt7mpau7e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Jun 2018 13:43:41 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5PDhfEb012150
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Jun 2018 13:43:41 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5PDheEF025898;
+        Mon, 25 Jun 2018 13:43:40 GMT
+Received: from mwanda (/197.157.0.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 25 Jun 2018 06:43:39 -0700
+Date:   Mon, 25 Jun 2018 16:43:29 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     marcus.wolf@smarthome-wolf.de
+Cc:     Valentin.Vidic@CARNet.hr, devel@driverdev.osuosl.org,
+        robsonde@gmail.com, michael.panzlaff@fau.de, hle@owl.eu.com,
+        gregkh@linuxfoundation.org, luca@acul.me,
+        linux-kernel@vger.kernel.org, marcin.s.ciupak@gmail.com,
+        linux@Wolf-Entwicklungen.de, simon@nikanor.nu, joe@perches.com
+Subject: Re: [PATCH v3] staging: pi433: replace simple switch statements
+Message-ID: <20180625134329.wdbu5o73qzqhbjto@mwanda>
+References: <20180624094245.23741-1-Valentin.Vidic@CARNet.hr>
+ <20180624163138.30976-1-Valentin.Vidic@CARNet.hr>
+ <20180625123554.dlpgejqmjm7haak4@mwanda>
+ <20180625132758.D724A2CE0120@dd39320.kasserver.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625132758.D724A2CE0120@dd39320.kasserver.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8934 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=362
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806250161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+If there are going to be actual users in the specific near term then
+that's fine.  Otherwise if we're talking a year out, then it's too far
+away to predict what will happen a year from now so we should delete
+the dead weight.
 
-Thank you for the patch.
-
-On Monday, 25 June 2018 16:21:32 EEST Daniel Graefe wrote:
-> Added missing SPDX license identifiers to all files of the omap4iss
-> driver.
-> 
-> Most files already have license texts which clearly state them to be
-> licensed under GPL 2.0 or later. SPDX identifiers were added accordingly.
-> 
-> Some files do not have any license text. SPDX identifiers for GPL 2.0
-> were added to them, in accordance with the default license of the
-> kernel.
-> 
-> Signed-off-by: Daniel Graefe <daniel.graefe@fau.de>
-> Signed-off-by: Roman Sommer <roman.sommer@fau.de>
-> ---
->  drivers/staging/media/omap4iss/Kconfig       | 2 ++
->  drivers/staging/media/omap4iss/Makefile      | 3 +++
->  drivers/staging/media/omap4iss/iss.c         | 1 +
->  drivers/staging/media/omap4iss/iss.h         | 1 +
->  drivers/staging/media/omap4iss/iss_csi2.c    | 1 +
->  drivers/staging/media/omap4iss/iss_csi2.h    | 1 +
->  drivers/staging/media/omap4iss/iss_csiphy.c  | 1 +
->  drivers/staging/media/omap4iss/iss_csiphy.h  | 1 +
->  drivers/staging/media/omap4iss/iss_ipipe.c   | 1 +
->  drivers/staging/media/omap4iss/iss_ipipe.h   | 1 +
->  drivers/staging/media/omap4iss/iss_ipipeif.c | 1 +
->  drivers/staging/media/omap4iss/iss_ipipeif.h | 1 +
->  drivers/staging/media/omap4iss/iss_regs.h    | 1 +
->  drivers/staging/media/omap4iss/iss_resizer.c | 1 +
->  drivers/staging/media/omap4iss/iss_resizer.h | 1 +
->  drivers/staging/media/omap4iss/iss_video.c   | 1 +
->  drivers/staging/media/omap4iss/iss_video.h   | 1 +
->  17 files changed, 20 insertions(+)
-> 
-> diff --git a/drivers/staging/media/omap4iss/Kconfig
-> b/drivers/staging/media/omap4iss/Kconfig index dddd273..841cc0b 100644
-> --- a/drivers/staging/media/omap4iss/Kconfig
-> +++ b/drivers/staging/media/omap4iss/Kconfig
-> @@ -1,3 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
->  config VIDEO_OMAP4
->  	tristate "OMAP 4 Camera support"
->  	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && I2C
-> diff --git a/drivers/staging/media/omap4iss/Makefile
-> b/drivers/staging/media/omap4iss/Makefile index a716ce9..e64d489 100644
-> --- a/drivers/staging/media/omap4iss/Makefile
-> +++ b/drivers/staging/media/omap4iss/Makefile
-> @@ -1,4 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
->  # Makefile for OMAP4 ISS driver
-> +#
-> 
->  omap4-iss-objs += \
->  	iss.o iss_csi2.o iss_csiphy.o iss_ipipeif.o iss_ipipe.o iss_resizer.o
-> iss_video.o diff --git a/drivers/staging/media/omap4iss/iss.c
-> b/drivers/staging/media/omap4iss/iss.c index b1036ba..0c41939 100644
-> --- a/drivers/staging/media/omap4iss/iss.c
-> +++ b/drivers/staging/media/omap4iss/iss.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-
-The SPDX identifier used for "GPL v2.0 or later" in the kernel is GPL-2.0+, as 
-documented in Documentation/process/license-rules.rst. I'm aware that that 
-identifier has been deprecated by the FSF in favour of the GPL-2.0-or-later 
-identifier, but until Documentation/process/license-rules.rst gets updated, 
-please use GPL-2.0+.
-
->  /*
->   * TI OMAP4 ISS V4L2 Driver
->   *
-
-Could you please remove the boilerplate license text, as it's not needed 
-anymore ?
-
-Those two comments apply to all the other files.
-
-[snip$
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
+regards,
+dan carpenter
 
