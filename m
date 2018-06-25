@@ -2,161 +2,186 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4864C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8420BC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0B1216F3
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:13:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29744218E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:16:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="AT4BzfOt";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T/ixsBMe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0B1216F3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eqhgU38p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29744218E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932523AbeFYXNg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 19:13:36 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:39042 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752939AbeFYXNc (ORCPT
+        id S1755097AbeFYXQt (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 19:16:49 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35538 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752606AbeFYXQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 19:13:32 -0400
-Received: by mail-yb0-f196.google.com with SMTP id k127-v6so753512ybk.6
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 16:13:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=2I/TSRshrHUJp/sKcK1TeJxvZIG63wO38KwuqhdzdqM=;
-        b=AT4BzfOtTSj1SooXe/+N3QdTtOgmXphOhHdAMKZPjBuBRCE0j6pxdmnMJk59FC2B8+
-         650E7jvJQW+lUyhMUR2sUKhR5ASmtAUtaG+QadgFk3ASstEMleISwyH3O383Q/hvUdlw
-         elNH9df42llvkOnRl7k2MCRSmJqrHt4c+nicR8Gxg37CkYdoDfYs3eSnIyPZ1sZMq4t/
-         WpsqMtFIwe6jun1UML5zlpTum65hoHmoBTLVdUHjME4xmd+/NI+PNxy5jedgY6DoFkQd
-         N20VVM9+fzx2x2Ad8N6svDRGoQedmjY572OD3bhv7pZpoe7PZAowb1La4hnSP02MAtDG
-         j3eg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=2I/TSRshrHUJp/sKcK1TeJxvZIG63wO38KwuqhdzdqM=;
-        b=T/ixsBMe1AuNcWd3JaJXxAXw96JmXyTmh4muUsLRqdnwJ4bwsjh1Hgm96tkToPiGg/
-         YSZBUa2GwITmjvQcUINvvfpQfvUzEeGdsCdbw5ECJAgY/xa5CExL3CWMd0MErCa69Zzr
-         MFMtw4ibSgdsAV9KMiuZsGohuAZVb1GhHN234=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=2I/TSRshrHUJp/sKcK1TeJxvZIG63wO38KwuqhdzdqM=;
-        b=ADwuuXSK/SJmsvwW6MrVN1q+ddLb5hDF4lKMiFvC9u1g0fD7of28i3UvKR3dKerP3F
-         66zQiXG9bACTA97hIMhyLQ4tmS93zBWZpH9081FUA38Fcl1BfDmd95NGD+fHcCm4388E
-         XH+CRK7hRga5tZ00y5yxiNR6flMkBjuAZP0bMLKc6CUlkacbo0b0Kmu0NEYOMFTG0Do8
-         eW4Hyb+HweLWLPmfcC7sTNY/tsVKOt/t6JDlQpMg6uv1NX/Tya5TvFinQagef+CLvGW+
-         0iLnrTJzJppf/5NniWDPgoZY2YliH9Ct5QRS5+zhd3ZxTLXvNL6WQzbCSHDVTNlMQ7B3
-         hrFg==
-X-Gm-Message-State: APt69E2HSowJ8zAo8wYJ24/NJufATm7G0dcB0kemuSdpzjaRtJQ72zmW
-        rNryz9oNRDh0T+2cz1iojj+ImUrTst1LBLfhS0rvjw==
-X-Google-Smtp-Source: ADUXVKKrVP0oMUqzl8j5kzAuoOLiIULWVDGYkHhvQFkeeemSUV6alYwFh4PQ6qLVxTFHqf+eaO36awq/lzjT3Xez+Ls=
-X-Received: by 2002:a5b:b4e:: with SMTP id b14-v6mr7596340ybr.463.1529968411904;
- Mon, 25 Jun 2018 16:13:31 -0700 (PDT)
+        Mon, 25 Jun 2018 19:16:47 -0400
+X-Greylist: delayed 377 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Jun 2018 19:16:47 EDT
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5PN9720034308;
+        Mon, 25 Jun 2018 18:09:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1529968147;
+        bh=JdcMAQgPmshjiCkKkFeHhwKQvvMCsM2p4t7bR2UDqXU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=eqhgU38pVaXpENVsAGKZXk2x6T8JhQ5GqVkp8nO5uJyEYHQnRBcDlzrKFpXZbEKr8
+         cCYX8S767+3cQae0OjFSkFDv5c1CQKLgKFYlVZt8lduHyyb2OmXgxy2bhDHLz62E/R
+         HG0UQdTawpyK3NfcIsNBemsK+F61tau0Zb3Pxf84=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5PN97M8011002;
+        Mon, 25 Jun 2018 18:09:07 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 25
+ Jun 2018 18:09:07 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 25 Jun 2018 18:09:07 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5PN97ZY026248;
+        Mon, 25 Jun 2018 18:09:07 -0500
+Subject: Re: [PATCH 07/14] net: davinci_emac: use nvmem to retrieve the mac
+ address
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <netdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180625155025.12567-1-brgl@bgdev.pl>
+ <20180625155025.12567-8-brgl@bgdev.pl>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <590fd122-1c13-8958-7e84-dbc5c5ea65f3@ti.com>
+Date:   Mon, 25 Jun 2018 18:09:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 16:13:31
- -0700 (PDT)
-In-Reply-To: <20180625225609.GA181665@gmail.com>
-References: <20180625211026.15819-1-keescook@chromium.org> <20180625211026.15819-11-keescook@chromium.org>
- <20180625225609.GA181665@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 25 Jun 2018 16:13:31 -0700
-X-Google-Sender-Auth: lZz4HLcLOw5dCHXQdCTjtbWayFQ
-Message-ID: <CAGXu5j+XG7y1RGMLt_=cDyiXxVhQX78_6VdHG3qwzdcwt8n7vw@mail.gmail.com>
-Subject: Re: [dm-devel] [PATCH v2 10/11] crypto: ahash: Remove VLA usage for AHASH_REQUEST_ON_STACK
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        qat-linux@intel.com, LKML <linux-kernel@vger.kernel.org>,
-        dm-devel@redhat.com, linux-crypto <linux-crypto@vger.kernel.org>,
-        Lars Persson <larper@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180625155025.12567-8-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 3:56 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Mon, Jun 25, 2018 at 02:10:25PM -0700, Kees Cook wrote:
->> In the quest to remove all stack VLA usage from the kernel[1], this caps
->> the ahash request size similar to the other limits and adds a sanity
->> check at registration. Unfortunately, these reqsizes can be huge. Looking
->> at all callers of crypto_ahash_set_reqsize(), the largest appears to be
->> 664 bytes, based on a combination of manual inspection and pahole output:
->>
->> 4       dcp_sha_req_ctx
->> 40      crypto4xx_ctx
->> 52      hash_req_ctx
->> 80      ahash_request
->> 88      rk_ahash_rctx
->> 104     sun4i_req_ctx
->> 200     mcryptd_hash_request_ctx
->> 216     safexcel_ahash_req
->> 228     sha1_hash_ctx
->> 228     sha256_hash_ctx
->> 248     img_hash_request_ctx
->> 252     mtk_sha_reqctx
->> 276     sahara_sha_reqctx
->> 304     mv_cesa_ahash_req
->> 316     iproc_reqctx_s
->> 320     caam_hash_state
->> 320     qce_sha_reqctx
->> 356     sha512_hash_ctx
->> 384     ahash_req_ctx
->> 400     chcr_ahash_req_ctx
->> 416     stm32_hash_request_ctx
->> 432     talitos_ahash_req_ctx
->> 462     atmel_sha_reqctx
->> 496     ccp_aes_cmac_req_ctx
->> 616     ccp_sha_req_ctx
->> 664     artpec6_hash_request_context
->>
->> So, this chooses 720 as a larger "round" number for the max.
->>
->
-> This isn't accounting for the cases where a hash algorithm is "wrapped" with
-> another one, which increases the request size.  For example, "sha512_mb" ends up
-> with a request size of
->
->         sizeof(struct ahash_request) +
->         sizeof(struct mcryptd_hash_request_ctx) +
->         sizeof(struct ahash_request) +
->         sizeof(struct sha512_hash_ctx)
->
->         == 808 bytes, on x86_64 with CONFIG_DEBUG_SG enabled.
->
->         (Note also that structure sizes can vary depending on the architecture
->          and the kernel config.)
->
-> So, with the self-tests enabled your new BUG_ON() is hit on boot:
 
-Ugh, right. Wow, that _really_ gets big. Which are likely to wrap
-which others? Looks like software case plus hardware case? i.e.
-mcryptd_hash_request_ctx with artpec6_hash_request_context is the
-largest we could get? So: 80 + 80 + 200 + 664 ? Oh, hilarious. That
-comes exactly to 1024. :P
 
-So ... 1024?
+On 06/25/2018 10:50 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> All users which store the MAC address in EEPROM now register relevant
+> nvmem cells. Switch to retrieving the MAC address over the nvmem
+> framework.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   drivers/net/ethernet/ti/davinci_emac.c | 29 +++++++++++++++++---------
+>   1 file changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+> index a1a6445b5a7e..22c2322e46be 100644
+> --- a/drivers/net/ethernet/ti/davinci_emac.c
+> +++ b/drivers/net/ethernet/ti/davinci_emac.c
+> @@ -67,7 +67,7 @@
+>   #include <linux/of_irq.h>
+>   #include <linux/of_net.h>
+>   #include <linux/mfd/syscon.h>
+> -
+> +#include <linux/nvmem-consumer.h>
+>   #include <asm/irq.h>
+>   #include <asm/page.h>
+>   
+> @@ -1696,7 +1696,6 @@ davinci_emac_of_get_pdata(struct platform_device *pdev, struct emac_priv *priv)
+>   	const struct of_device_id *match;
+>   	const struct emac_platform_data *auxdata;
+>   	struct emac_platform_data *pdata = NULL;
+> -	const u8 *mac_addr;
+>   
+>   	if (!IS_ENABLED(CONFIG_OF) || !pdev->dev.of_node)
+>   		return dev_get_platdata(&pdev->dev);
+> @@ -1708,12 +1707,6 @@ davinci_emac_of_get_pdata(struct platform_device *pdev, struct emac_priv *priv)
+>   	np = pdev->dev.of_node;
+>   	pdata->version = EMAC_VERSION_2;
+>   
+> -	if (!is_valid_ether_addr(pdata->mac_addr)) {
+> -		mac_addr = of_get_mac_address(np);
+> -		if (mac_addr)
+> -			ether_addr_copy(pdata->mac_addr, mac_addr);
+> -	}
+> -
 
--Kees
+Not sure it is correct. of_get_mac_address() is called when board data doesn't
+provide MAC address with expectation that MAC address is defined in DT (usually by u-boot).
+Standard DT properties for MAC address "local-mac-address" and "mac-address".
+
+So, you can't just drop it and replace with nvmem.
+
+Two options are here:
+1) try to read MAC-address from nvmem then try DT (as it's now)
+2) try to read DT then try nvmem [then random MAC | fail]
+
+
+>   	of_property_read_u32(np, "ti,davinci-ctrl-reg-offset",
+>   			     &pdata->ctrl_reg_offset);
+>   
+> @@ -1783,7 +1776,9 @@ static int davinci_emac_probe(struct platform_device *pdev)
+>   	struct cpdma_params dma_params;
+>   	struct clk *emac_clk;
+>   	unsigned long emac_bus_frequency;
+> -
+> +	struct nvmem_cell *cell;
+> +	void *mac_addr;
+> +	size_t mac_addr_len;
+>   
+>   	/* obtain emac clock from kernel */
+>   	emac_clk = devm_clk_get(&pdev->dev, NULL);
+> @@ -1815,8 +1810,22 @@ static int davinci_emac_probe(struct platform_device *pdev)
+>   		goto err_free_netdev;
+>   	}
+>   
+> +	cell = nvmem_cell_get(&pdev->dev, "mac-address");
+> +	if (!IS_ERR(cell)) {
+> +		mac_addr = nvmem_cell_read(cell, &mac_addr_len);
+> +		if (!IS_ERR(mac_addr)) {
+> +			if (is_valid_ether_addr(mac_addr)) {
+> +				dev_info(&pdev->dev,
+> +					 "Read MAC addr from EEPROM: %pM\n",
+> +					 mac_addr);
+> +				memcpy(priv->mac_addr, mac_addr, ETH_ALEN);
+> +			}
+> +			kfree(mac_addr);
+> +		}
+> +		nvmem_cell_put(cell);
+> +	}
+> +
+>   	/* MAC addr and PHY mask , RMII enable info from platform_data */
+> -	memcpy(priv->mac_addr, pdata->mac_addr, ETH_ALEN);
+>   	priv->phy_id = pdata->phy_id;
+>   	priv->rmii_en = pdata->rmii_en;
+>   	priv->version = pdata->version;
+> 
 
 -- 
-Kees Cook
-Pixel Security
+regards,
+-grygorii
