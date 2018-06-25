@@ -2,272 +2,87 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B891C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A35C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D112C25AED
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:01:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1vvlB8L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D112C25AED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id ABB5225AE5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:02:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABB5225AE5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934130AbeFYOB2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 10:01:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52902 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933587AbeFYOB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:01:26 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9109925AE5;
-        Mon, 25 Jun 2018 14:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529935286;
-        bh=UzVy9+fN4NN+4RWpMOLB/uOyAp6f0UMz+7UFawqguS0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L1vvlB8LXu3Q/Q/GptektwPwLfcLub0QLV0OoFFAY+UB4Vry2fU9O99l7c9MazCYP
-         eYYvl3iYx+OSpX/gp0GJfWTLGaWxCbuiqALfu3UL9rSOzabmGDFDtuDS+KK6CXpuaX
-         qlwCJeCDyxG3KqNXb9UdBe8xsM3GL3ASdQOoYhfs=
-Date:   Mon, 25 Jun 2018 09:01:22 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: shpchp: Fix probing logic inversion
-Message-ID: <20180625140122.GF108993@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180621164715.28160-1-marc.zyngier@arm.com>
+        id S934164AbeFYOCX convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 10:02:23 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:17668 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755531AbeFYOCW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 10:02:22 -0400
+Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
+ killer.
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        <linux-mm@kvack.org>, <rientjes@google.com>,
+        <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180620115531.GL13685@dhcp22.suse.cz>
+ <3d27f26e-68ba-d3c0-9518-cebeb2689aec@sony.com>
+ <20180625130756.GK28965@dhcp22.suse.cz>
+From:   peter enderborg <peter.enderborg@sony.com>
+Message-ID: <4c6f9bd5-e959-c0bd-53db-988e07644754@sony.com>
+Date:   Mon, 25 Jun 2018 16:02:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621164715.28160-1-marc.zyngier@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180625130756.GK28965@dhcp22.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On 06/25/2018 03:07 PM, Michal Hocko wrote:
+> On Mon 25-06-18 15:03:40, peter enderborg wrote:
+>> On 06/20/2018 01:55 PM, Michal Hocko wrote:
+>>> On Wed 20-06-18 20:20:38, Tetsuo Handa wrote:
+>>>> Sleeping with oom_lock held can cause AB-BA lockup bug because
+>>>> __alloc_pages_may_oom() does not wait for oom_lock. Since
+>>>> blocking_notifier_call_chain() in out_of_memory() might sleep, sleeping
+>>>> with oom_lock held is currently an unavoidable problem.
+>>> Could you be more specific about the potential deadlock? Sleeping while
+>>> holding oom lock is certainly not nice but I do not see how that would
+>>> result in a deadlock assuming that the sleeping context doesn't sleep on
+>>> the memory allocation obviously.
+>> It is a mutex you are supposed to be able to sleep.  It's even exported.
+> What do you mean? oom_lock is certainly not exported for general use. It
+> is not local to oom_killer.c just because it is needed in other _mm_
+> code.
+>  
 
-Sorry we broke this!
+It  is in the oom.h file include/linux/oom.h, if it that sensitive it should
+be in mm/ and a documented note about the special rules. It is only used
+in drivers/tty/sysrq.c and that be replaced by a help function in mm that
+do the  oom stuff.
 
-On Thu, Jun 21, 2018 at 05:47:15PM +0100, Marc Zyngier wrote:
-> Until recently, shpc_probe() would bail out pretty early in the
-> absence of the SHPC capability. A logic change in the way the
-> driver now checks that capability makes it go and probe the
-> firmware anyway, with ugly consequences if the system is not
-> ACPI based (my arm64 ThunderX is DT driven, and explodes in
-> a spectacular way after getting a NULL root bridge from the
-> non-existent ACPI tables...).
+
+>>>> As a preparation for not to sleep with oom_lock held, this patch brings
+>>>> OOM notifier callbacks to outside of OOM killer, with two small behavior
+>>>> changes explained below.
+>>> Can we just eliminate this ugliness and remove it altogether? We do not
+>>> have that many notifiers. Is there anything fundamental that would
+>>> prevent us from moving them to shrinkers instead?
+>>
+>> @Hocko Do you remember the lowmemorykiller from android? Some things
+>> might not be the right thing for shrinkers.
+> Just that lmk did it wrong doesn't mean others have to follow.
 >
-> Take this opportunity to move the call to shpchp_is_native()
-> back into shpc_probe(), making it clear that a non-ACPI system
-> is not expected to use this driver.
+If all you have is a hammer, everything looks like a nail. (I don’t argument that it was right)
+But if you don’t have a way to interact with the memory system we will get attempts like lmk. 
+Oom notifiers and vmpressure is for this task better than shrinkers.
 
-But a non-ACPI system *should* be able to use SHPC.
-
-Here's my understanding of how it should work.  On an ACPI system,
-
-  - If firmware has _OSC, the OS calls it to request permission to
-    manage the SHPC.  If _OSC grants permission, it should also
-    configure the hardware (interrupts, etc) to give the OS.
-    
-  - If there's no _OSC, shpchp assumes it's allowed to manage the
-    SHPC, and it calls OSHP to configure the hardware appropriately.
-
-On a non-ACPI system, shpchp assumes there's no firmware involved at
-all, so it can manage the SHPC without doing anything special.
-
-I see Mika has already posted a patch similar to the first one
-below; I think either of those should fix the problem you're seeing.
-
-The second is an attempt to clean things up so they make a
-little more sense.
-
-Bjorn
-
-
-commit 7780896578a93fdec2b345def554355168cceee4
-Author: Bjorn Helgaas <bhelgaas@google.com>
-Date:   Mon Jun 25 08:17:33 2018 -0500
-
-    PCI: shpchp: Manage SHPC unconditionally on non-ACPI systems
-    
-    If CONFIG_ACPI=y but the current hardware/firmware platform doesn't support
-    ACPI, acpi_get_hp_hw_control_from_firmware() is implemented and causes a
-    NULL pointer dereference  because acpi_pci_find_root() returns NULL.
-    
-    If acpi_pci_find_root() returns NULL, it means there's no ACPI host bridge
-    device (PNP0A03 or PNP0A08), and the OS is always allowed to manage the
-    SHPC, so return success in that case.
-
-diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
-index 3979f89b250a..912d0de29caa 100644
---- a/drivers/pci/hotplug/acpi_pcihp.c
-+++ b/drivers/pci/hotplug/acpi_pcihp.c
-@@ -87,8 +87,17 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
- 		return 0;
- 
- 	/* If _OSC exists, we should not evaluate OSHP */
-+
-+	/*
-+	 * If there's no ACPI host bridge (i.e., ACPI support is compiled
-+	 * into the kernel but the hardware platform doesn't support ACPI),
-+	 * there's nothing to do here.
-+	 */
- 	host = pci_find_host_bridge(pdev->bus);
- 	root = acpi_pci_find_root(ACPI_HANDLE(&host->dev));
-+	if (!root)
-+		return 0;
-+
- 	if (root->osc_support_set)
- 		goto no_control;
- 
-
-commit 82ca61ebf1e38bc05753d38103791f48f6a09d91
-Author: Bjorn Helgaas <bhelgaas@google.com>
-Date:   Fri Jun 22 17:48:11 2018 -0500
-
-    PCI: shpchp: Separate existence of SHPC and permission to use it
-    
-    The shpchp driver registers for all PCI bridge devices.  Its probe method
-    should fail if either (1) the bridge doesn't have an SHPC or (2) the OS
-    isn't allowed to use it.
-    
-    Separate these two tests into:
-    
-      - A new shpc_capable() that looks for the SHPC hardware and is applicable
-        on all systems, and
-    
-      - A simplified acpi_get_hp_hw_control_from_firmware() that we call only
-        when we already know an SHPC exists and there may be ACPI methods to
-        either request permission to use it (_OSC) or transfer control to the
-        OS (OSHP).
-
-diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
-index 912d0de29caa..bd7358bcb2ea 100644
---- a/drivers/pci/hotplug/acpi_pcihp.c
-+++ b/drivers/pci/hotplug/acpi_pcihp.c
-@@ -74,20 +74,6 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
- 	acpi_handle chandle, handle;
- 	struct acpi_buffer string = { ACPI_ALLOCATE_BUFFER, NULL };
- 
--	/*
--	 * Per PCI firmware specification, we should run the ACPI _OSC
--	 * method to get control of hotplug hardware before using it. If
--	 * an _OSC is missing, we look for an OSHP to do the same thing.
--	 * To handle different BIOS behavior, we look for _OSC on a root
--	 * bridge preferentially (according to PCI fw spec). Later for
--	 * OSHP within the scope of the hotplug controller and its parents,
--	 * up to the host bridge under which this controller exists.
--	 */
--	if (shpchp_is_native(pdev))
--		return 0;
--
--	/* If _OSC exists, we should not evaluate OSHP */
--
- 	/*
- 	 * If there's no ACPI host bridge (i.e., ACPI support is compiled
- 	 * into the kernel but the hardware platform doesn't support ACPI),
-@@ -98,9 +84,25 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
- 	if (!root)
- 		return 0;
- 
--	if (root->osc_support_set)
--		goto no_control;
-+	/*
-+	 * If _OSC exists, it determines whether we're allowed to manage
-+	 * the SHPC.  We executed it while enumerating the host bridge.
-+	 */
-+	if (root->osc_support_set) {
-+		if (host->native_shpc_hotplug)
-+			return 0;
-+		return -ENODEV;
-+	}
- 
-+	/*
-+	 * In the absence of _OSC, we're always allowed to manage the SHPC.
-+	 * However, if an OSHP method is present, we must execute it so the
-+	 * firmware can transfer control to the OS, e.g., direct interrupts
-+	 * to the OS instead of to the firmware.
-+	 *
-+	 * N.B. The PCI Firmware Spec (r3.2, sec 4.8) does not endorse
-+	 * searching up the ACPI hierarchy, so the loops below are suspect.
-+	 */
- 	handle = ACPI_HANDLE(&pdev->dev);
- 	if (!handle) {
- 		/*
-@@ -129,7 +131,7 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
- 		if (ACPI_FAILURE(status))
- 			break;
- 	}
--no_control:
-+
- 	pci_info(pdev, "Cannot get control of SHPC hotplug\n");
- 	kfree(string.pointer);
- 	return -ENODEV;
-diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
-index e91be287f292..7eb44fdc4445 100644
---- a/drivers/pci/hotplug/shpchp_core.c
-+++ b/drivers/pci/hotplug/shpchp_core.c
-@@ -270,11 +270,30 @@ static int get_adapter_status(struct hotplug_slot *hotplug_slot, u8 *value)
- 	return 0;
- }
- 
-+static bool shpc_capable(struct pci_dev *bridge)
-+{
-+	/*
-+	 * It is assumed that AMD GOLAM chips support SHPC but they do not
-+	 * have SHPC capability.
-+	 */
-+	if (bridge->vendor == PCI_VENDOR_ID_AMD &&
-+	    bridge->device == PCI_DEVICE_ID_AMD_GOLAM_7450)
-+		return true;
-+
-+	if (pci_find_capability(bridge, PCI_CAP_ID_SHPC))
-+		return true;
-+
-+	return false;
-+}
-+
- static int shpc_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	int rc;
- 	struct controller *ctrl;
- 
-+	if (!shpc_capable(pdev))
-+		return -ENODEV;
-+
- 	if (acpi_get_hp_hw_control_from_firmware(pdev))
- 		return -ENODEV;
- 
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index 65113b6eed14..b10dd6caeda1 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -408,17 +408,6 @@ bool shpchp_is_native(struct pci_dev *bridge)
- 	if (!IS_ENABLED(CONFIG_HOTPLUG_PCI_SHPC))
- 		return false;
- 
--	/*
--	 * It is assumed that AMD GOLAM chips support SHPC but they do not
--	 * have SHPC capability.
--	 */
--	if (bridge->vendor == PCI_VENDOR_ID_AMD &&
--	    bridge->device == PCI_DEVICE_ID_AMD_GOLAM_7450)
--		return true;
--
--	if (!pci_find_capability(bridge, PCI_CAP_ID_SHPC))
--		return false;
--
- 	host = pci_find_host_bridge(bridge->bus);
- 	return host->native_shpc_hotplug;
- }
