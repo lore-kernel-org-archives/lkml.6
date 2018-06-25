@@ -2,113 +2,88 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17407C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA96C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C2B25903
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:29:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="EJSjviAf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C2B25903
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 91EEF25900
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:30:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91EEF25900
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933465AbeFYM3A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:29:00 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55832 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755340AbeFYM25 (ORCPT
+        id S933581AbeFYMab (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:30:31 -0400
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:39476 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933130AbeFYMa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:28:57 -0400
-Received: by mail-wm0-f65.google.com with SMTP id v16-v6so9064356wmh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 05:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dQNcDwnOwnVEUXUmhf9ZvVWo7Vy7a/wJ3xoDGr4k8Ko=;
-        b=EJSjviAfDN2q0grzWsKolvdEiEUwFJxvn5E+WgWubX2I99aUCkz+IKXvhiTdvqnSwS
-         GLw+V9OpdU/RTcgcpK4M822Ky7R6cr66Jn6yhspE3fvPtW1pmVv9m1A71CJqaRiG7Oi8
-         0BfPj+v4yXX10k7fdavybUbF9HiZNVbJzkqEY=
+        Mon, 25 Jun 2018 08:30:29 -0400
+Received: by mail-ed1-f49.google.com with SMTP id w14-v6so5297520eds.6;
+        Mon, 25 Jun 2018 05:30:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dQNcDwnOwnVEUXUmhf9ZvVWo7Vy7a/wJ3xoDGr4k8Ko=;
-        b=B5JafsD27/N24mQ7s02ecqQtB3nuvUjLkTYsRf97qZTBqH/qrnPQDMks7SsxYepW0F
-         bHaV0axZRZq687yaAp6Fhv9If00HZkAZXW3RB1GMCmPWN92kok7Ooq9jvE/7lX6QW7tU
-         llmdpyu+0JazSwXTZJ14bMGUoB5UTaek1tHNZMcvr1989ufyNzAzMmos8BJtUzY3vPzD
-         L2hdZzz36VSiM10cG5W4wK9sZj4IfOhnMgMyvQf8o5gVy7y92vN+rDOVU2KkMTdfP4PB
-         5zyYBvbMRFk8gZieVr3dnBYXILs5tbxgUIkFO8f3/BbVU+U8xNHS6MvHpjQKw9Fu+hLg
-         FE0w==
-X-Gm-Message-State: APt69E3JVdWrSyhKJN8O/wX5SZeyZx7stmUr1EUP+GI+6If+1XQpko80
-        brlPr8+YfMjqhnQWrkZkOo8I91o+
-X-Google-Smtp-Source: AAOMgpegZP14RZ5j63a8gc3HEPmEP3qLCl7gvyUa1YarJl4bnMXQtuN0LnLvpluUN8V9kkLqA9wBUQ==
-X-Received: by 2002:a1c:d004:: with SMTP id h4-v6mr842177wmg.151.1529929736757;
-        Mon, 25 Jun 2018 05:28:56 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id z14-v6sm14238801wrm.49.2018.06.25.05.28.55
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3Fqaokd9YoXMPbABdPp8PrThI284lwaAHGOAtLScEqU=;
+        b=bwbcyXHHj7cp5xnya/TXOhS9uHyfVyhK69qlDqP/68q4XG29E64PYCEKftIBinBOHo
+         Iwbb22LD94vinvnDjhdlkgFJXFuFCXHpqX8ISrgTd+Z7akgHqyBX7m1Zx6pc/hBU8ED6
+         rch6OAKjNW6EyocCej11MUz21AD5vuDZQtt2afLcu7ZDWfo4iicZsRJK2GJzGuGVKPtj
+         gV+fd8azsStkeGYOQVKB1a2hH2zLUgoeQugqZrijlxK5yh3XGR6czq1JuVN6w0Tlz6Wd
+         GsbcxWy0S2M2Sd1XOD3b6cTe2bZXvGWsk0eM8stakEt4K+5dCkZWfvTsdQKc3doIeygi
+         hfVA==
+X-Gm-Message-State: APt69E3/zcpCOPLgFKh/L74tLqX4iah/2aXnM041/Cl3Nxx+ZiQZRhF6
+        UxPNKkVomieHYy9wlwn6Lc3GEfx6
+X-Google-Smtp-Source: ADUXVKIy+0XNFTTrjLfjKwwyq8MW2KRFenuA7md93t6yjw3TN5nStlOPnVxaKuWCnogMa263YA4ZZA==
+X-Received: by 2002:a50:d690:: with SMTP id r16-v6mr2582158edi.259.1529929827904;
+        Mon, 25 Jun 2018 05:30:27 -0700 (PDT)
+Received: from mail-wm0-f50.google.com (mail-wm0-f50.google.com. [74.125.82.50])
+        by smtp.gmail.com with ESMTPSA id f25-v6sm6834884edd.87.2018.06.25.05.30.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 05:28:56 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 14:28:50 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] doc: Update wake_up() & co. memory-barrier guarantees
-Message-ID: <20180625122850.GA14561@andrea>
-References: <20180625095031.GX2494@hirez.programming.kicks-ass.net>
- <1529918258-7295-1-git-send-email-andrea.parri@amarulasolutions.com>
- <2779.1529928765@warthog.procyon.org.uk>
+        Mon, 25 Jun 2018 05:30:26 -0700 (PDT)
+Received: by mail-wm0-f50.google.com with SMTP id 69-v6so9783670wmf.3;
+        Mon, 25 Jun 2018 05:30:26 -0700 (PDT)
+X-Received: by 2002:a1c:850c:: with SMTP id h12-v6mr872405wmd.116.1529929826578;
+ Mon, 25 Jun 2018 05:30:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2779.1529928765@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 05:30:06
+ -0700 (PDT)
+In-Reply-To: <20180625120304.7543-4-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-4-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 25 Jun 2018 20:30:06 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64itH+8HEE0OVx+ys4fKg31pZcS3m0WUguH=Ny-t347ww@mail.gmail.com>
+Message-ID: <CAGb2v64itH+8HEE0OVx+ys4fKg31pZcS3m0WUguH=Ny-t347ww@mail.gmail.com>
+Subject: Re: [PATCH v3 03/24] clk: sunxi-ng: r40: Export video PLLs
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 01:12:45PM +0100, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > So yes, I suppose we're entirely suck with the full memory barrier
-> > semantics like that. But I still find it easier to think of it like a
-> > RELEASE that pairs with the ACQUIRE of waking up, such that the task
-> > is guaranteed to observe it's own wake condition.
-> > 
-> > And maybe that is the thing I'm missing here. These comments only state
-> > that it does in fact imply a full memory barrier, but do not explain
-> > why, should it?
-> 
-> I think because RELEASE and ACQUIRE concepts didn't really exist in Linux at
-> the time I wrote the doc, so the choices were read/readdep, write or full.
-> 
-> Since this document defines the *minimum* you can expect rather than what the
-> kernel actually gives you, I think it probably makes sense to switch to
-> RELEASE and ACQUIRE here.
+On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> Video PLLs need to be referenced in R40 DT as possible HDMI PHY parent.
+>
+> Export them.
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-RELEASE and ACQUIRE are not enough in SB.  Can you elaborate?
-
-  Andrea
-
-
-> 
-> David
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
