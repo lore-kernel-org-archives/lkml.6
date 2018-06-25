@@ -2,98 +2,101 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A15C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C57B1C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADFB725D1F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADFB725D1F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 80A4825D36
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="bjOAnH6z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80A4825D36
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752263AbeFYPn6 (ORCPT
+        id S1754547AbeFYPpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:43:58 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:56374 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750994AbeFYPnz (ORCPT
+        Mon, 25 Jun 2018 11:45:50 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:57979 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752589AbeFYPpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:43:55 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5PFcSEJ029715;
-        Mon, 25 Jun 2018 17:43:21 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2ju0n98rjn-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 25 Jun 2018 17:43:21 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9560834;
-        Mon, 25 Jun 2018 15:43:20 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6F2C82873;
-        Mon, 25 Jun 2018 15:43:20 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 25 Jun
- 2018 17:43:20 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 25 Jun
- 2018 17:43:19 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-watchdog@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V5 4/5] ARM: dts: stm32: add iwdg2 support for stm32mp157c-ed1
-Date:   Mon, 25 Jun 2018 17:43:02 +0200
-Message-ID: <1529941383-8653-5-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
-References: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
+        Mon, 25 Jun 2018 11:45:46 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 9867524E02F0;
+        Mon, 25 Jun 2018 08:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1529941545; bh=/EvjsKBpQJE8zgRTkHQjyauoHH4Db5JOX+Ic6lDVcAA=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=bjOAnH6zF5Btp11XOTGz7+Zo+2ZF0z9nvOvIIPLDZCXX2Ag2N0WqKe2wrKYwEbQxq
+         SqyfN4lRrniUIkUtpY1ojMccFPTmsNWltKh3RMrINrjerjy7GiRufVbfZB/QHliYdA
+         ePFwtC5oY393SR1lst+q9UgPV6eZse2GzowT1r1kxUzLPNkiKxxuM/uU3onukMrcnI
+         EMH6PLnhsq0AUVaLJ08+xk3PhLI3u14VB1vSdvld/6rW7J078whYn/3p6c9WyuDsH3
+         0rSNurkw+LQ8YVOI1l8XZwVOA70FCxO8Pm12cHxPNingBIgAXj9dIBOd/ZDJKfhwKj
+         Y1lETXRoWfGZw==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 993523461;
+        Mon, 25 Jun 2018 08:45:44 -0700 (PDT)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 25 Jun 2018 08:45:44 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
+ 25 Jun 2018 17:45:41 +0200
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "hch@lst.de" <hch@lst.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [RFC] ARC: allow to use IOC and non-IOC DMA devices
+ simultaneously
+Thread-Topic: [RFC] ARC: allow to use IOC and non-IOC DMA devices
+ simultaneously
+Thread-Index: AQHUBKiNKzhGZzesPUyAsKt+FXE7PaRmg2uAgAW8xACABMwZAA==
+Date:   Mon, 25 Jun 2018 15:45:40 +0000
+Message-ID: <456ab2264aa42d575e7ca5d28d34466aea082f14.camel@synopsys.com>
+References: <20180615125819.527-1-Eugeniy.Paltsev@synopsys.com>
+         <563bd0ab-e40c-f9ad-4e9c-dbf5b13358b5@synopsys.com>
+         <1529677805.31605.28.camel@synopsys.com>
+In-Reply-To: <1529677805.31605.28.camel@synopsys.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.9.128.69]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <46EF566A114CC7499888C8D82F3672F4@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_07:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
-
-This patch activates independent watchdog support for
-stm32mp157c board.
-
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- arch/arm/boot/dts/stm32mp157c-ed1.dts | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-index ae33653..8af263a 100644
---- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-@@ -68,6 +68,11 @@
- 	status = "okay";
- };
- 
-+&iwdg2 {
-+	timeout-sec = <32>;
-+	status = "okay";
-+};
-+
- &uart4 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart4_pins_a>;
--- 
-2.7.4
-
+SGkgRXVnZW5peSwNCg0KT24gRnJpLCAyMDE4LTA2LTIyIGF0IDE2OjMwICswMjAwLCBFdWdlbml5
+IFBhbHRzZXYgd3JvdGU6DQo+IEhpIFZpbmVldCwgQ2hyaXN0b3BoLA0KPiB0aGFua3MgZm9yIHJl
+c3BvbmRpbmcuDQoNCltzbmlwXQ0KDQo+ID4gPiAoQlRXOiBjdXJyZW50IEFSQyBkbWFfbm9uY29o
+ZXJlbnRfb3BzIGltcGxlbWVudGF0aW9uIGFsc28gaGFzIHNhbWUNCj4gPiA+IHByb2JsZW0gaWYg
+SU9DIGFuZCBISUdITUVNIGFyZSBlbmFibGVkLikNCj4gPiANCj4gPiBDYW4gd2UgaGlnaGxpZ2h0
+IHRoaXMgZmFjdCwgYWRkIGVycm9yIHByaW50cyBzb21ld2hlcmUgPw0KPiANCj4gVGhlIGVhc2ll
+c3Qgc29sdXRpb24gaXMgdG8gcGFuaWMgaWYgYm90aCBJT0MgYW5kIFpPTkVfSElHSE1FTSBlbmFi
+bGVkLg0KDQpJIGRvbid0IHRoaW5rIGl0J3MgdGhlIGJlc3QgaWRlYSAtIEkgd291bGQgZXhwZWN0
+IHRvIGdldCBQQUU0MCBlbmFibGVkDQpieSBkZWZhdWx0IG9yIGF0IGxlYXN0IHRvIGJlIHVzZWQg
+cXVpdGUgb2Z0ZW4gb24gYm90aCBBWFMxMDMgYW5kIEhTREsNCmFuZCBzbyByZXN0cmljdGluZyB1
+c2FnZSBvZiBJT0Mgb24gc3VjaCBjb25maWd1cmF0aW9ucyB3aWxsIGJlIHF1aXRlDQpjb25mdXNp
+bmcuDQoNClRoYXQgc2FpZCB3ZSBuZWVkIHRvIGZpZ3VyZSBvdXQgaG93IHRvIGdldCBJT0MgKyBI
+SUdITUVNL1BBRSB3b3JraW5nDQpyZWxpYWJseSBpZiB0aGF0J3MgcG9zc2libGUgYXQgYWxsLg0K
+DQpDaHJpc3RvcGgsIGRvIHlvdSB0aGluayBpZiB0aGlzIGlzIGRvYWJsZT8NClRoZSBtYWluIGNv
+bmNlcm4gaGVyZSBpczogc29tZSByYW5kb20gZGF0YSBidWZmZXIgbWlnaHQgYmUgYWxsb2NhdGVk
+DQppbiBhbnkgYXZhaWxhYmxlIG1lbW9yeSBbYW5kIGluIEhJR0hNRU0vUEFFIGlmIGl0IGV4aXN0
+cyBlc3NlbnRpYWxseV0gYW5kDQp3aGVuIGl0IGNvbWVzIHRvIERNQSBleGNoYW5nZSB0aGF0IGlu
+dm9sdmVzIHRoYXQgYnVmZmVyIHdoYXQgc2hvdWxkIHdlIGRvPw0KDQpUaGUgb25seSB0aGluZyBJ
+IG1heSB0aGluayBvZiBjb3VsZCBiZSBhIGJvdW5jZS1idWZmZXIgaW4gWk9ORV9OT1JNQUwuDQpJ
+cyBpdCB1c2VkIGJ5IGFueWJvZHk/IEFyZSB0aGVyZSBhbnkgYmV0dGVyIGlkZWFzPyANCg0KLUFs
+ZXhleQ==
