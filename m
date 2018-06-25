@@ -2,129 +2,116 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EABC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAADC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B84D25C91
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:21:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B84D25C91
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 96A9D25C99
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:22:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MNSUkjrK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96A9D25C99
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755588AbeFYPVy (ORCPT
+        id S1755649AbeFYPWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:21:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35624 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750794AbeFYPVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:21:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id EB611AC4A;
-        Mon, 25 Jun 2018 15:21:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7BD581E3629; Mon, 25 Jun 2018 17:21:50 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 17:21:50 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180625152150.jnf5suiubecfppcl@quack2.suse.cz>
-References: <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
- <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
- <0e6053b3-b78c-c8be-4fab-e8555810c732@nvidia.com>
- <20180619082949.wzoe42wpxsahuitu@quack2.suse.cz>
- <20180619090255.GA25522@bombadil.infradead.org>
- <20180619104142.lpilc6esz7w3a54i@quack2.suse.cz>
- <70001987-3938-d33e-11e0-de5b19ca3bdf@nvidia.com>
- <20180620120824.bghoklv7qu2z5wgy@quack2.suse.cz>
- <151edbf3-66ff-df0c-c1cc-5998de50111e@nvidia.com>
- <20180621163036.jvdbsv3t2lu34pdl@quack2.suse.cz>
+        Mon, 25 Jun 2018 11:22:08 -0400
+Received: from mail-qt0-f201.google.com ([209.85.216.201]:38845 "EHLO
+        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755601AbeFYPWG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:22:06 -0400
+Received: by mail-qt0-f201.google.com with SMTP id v14-v6so10552736qto.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=O1Fezu9CqPlSNth+F+Z5QgItPWD//dFu45UefS0Ip0U=;
+        b=MNSUkjrKTvoBT9WvJC+sAVKgRhNVF0W49Oe3CFl8nygMV4knSd9Qwhaye2ypG9m+7Z
+         VfIqQAlF5eDch+dbxVjThkRaWLISsUEn45YXBq4C7evXchCN4yvVYBjbSjeeYep68i0Y
+         UN8NyKB3a8cLBaHFAgLMVTQCkuIDE9lFdBIZR5K0/ylyHcZybicJv+duApBH3IGylYBl
+         3Qv1bHqA9d2I8dYLLeXkrmcHZQSwTkOUecAFCd3CHm5TPWjmsrrsixJNr1AqexBflRVW
+         k/jxPYnIG2r9cbCznZ4eiDXAxdJKzOLU32auxaiYamVVb5Yu/Uq3LHGUHnAVPKfkyHtv
+         o6AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=O1Fezu9CqPlSNth+F+Z5QgItPWD//dFu45UefS0Ip0U=;
+        b=II9pc73fQgzeoLQfdmCA0XZHhHj8GWonwlUQcy8wa6jJqQYhjgnGzUEoLNRvgFNp0R
+         8JwFESjW+tvmg1PTQ/sIeMEKjaDZnCAb8dSbj5Qkoe8SmvkcSZSuVveQQm8MRo8MT3IR
+         DUX1bgMtvYKmNmKdNYqYbceHUIjvSQYKw6ZLrEflsj5yO6B/RPMm8betA8KlVW4fdn9o
+         bknfV05B7WfWORZYzmb6IyAPbu26W0xjGIrd0dM6Bxi/huGOylQ69M2JrcOS1YCqWMr4
+         fu/AD8OeouGJZfAKGhvwhRNmsLw1pqGNVWXLtd3XMJLVp7S5piaZBfxvO3A8lufd99W/
+         fSGA==
+X-Gm-Message-State: APt69E1l9cA0xE/ZhQa1xqVTfjvCKlSdZ+JRF4GYS+YalkpOAf3aVWID
+        aNWtlPti2bh+eu9a5cHnGQsPtoei0A==
+X-Google-Smtp-Source: AAOMgpf1YV5qYdTbrCw5ldOjL6YU2RorW1PseeXs95UxNzAiVzUi3ymq97GBBUdUWMLhBXAdHFgK5xvjyQ==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621163036.jvdbsv3t2lu34pdl@quack2.suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+X-Received: by 2002:a0c:e5d1:: with SMTP id u17-v6mr7286521qvm.0.1529940125595;
+ Mon, 25 Jun 2018 08:22:05 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 17:22:00 +0200
+Message-Id: <20180625152200.200145-1-jannh@google.com>
+X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
+Subject: [PATCH net] netfilter: nf_log: don't hold nf_log_mutex during user access
+From:   Jann Horn <jannh@google.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        jannh@google.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        security@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 21-06-18 18:30:36, Jan Kara wrote:
-> On Wed 20-06-18 15:55:41, John Hubbard wrote:
-> > On 06/20/2018 05:08 AM, Jan Kara wrote:
-> > > On Tue 19-06-18 11:11:48, John Hubbard wrote:
-> > >> On 06/19/2018 03:41 AM, Jan Kara wrote:
-> > >>> On Tue 19-06-18 02:02:55, Matthew Wilcox wrote:
-> > >>>> On Tue, Jun 19, 2018 at 10:29:49AM +0200, Jan Kara wrote:
-> > [...]
-> > >>> I'm also still pondering the idea of inserting a "virtual" VMA into vma
-> > >>> interval tree in the inode - as the GUP references are IMHO closest to an
-> > >>> mlocked mapping - and that would achieve all the functionality we need as
-> > >>> well. I just didn't have time to experiment with it.
-> > >>
-> > >> How would this work? Would it have the same virtual address range? And how
-> > >> does it avoid the problems we've been discussing? Sorry to be a bit slow
-> > >> here. :)
-> > > 
-> > > The range covered by the virtual mapping would be the one sent to
-> > > get_user_pages() to get page references. And then we would need to teach
-> > > page_mkclean() to check for these virtual VMAs and block / skip / report
-> > > (different situations would need different behavior) such page. But this
-> > > second part is the same regardless how we identify a page that is pinned by
-> > > get_user_pages().
-> > 
-> > 
-> > OK. That neatly avoids the need a new page flag, I think. But of course it is 
-> > somewhat more extensive to implement. Sounds like something to keep in mind,
-> > in case it has better tradeoffs than the direction I'm heading so far.
-> 
-> Yes, the changes needed are somewhat more intrusive. I'm looking into this
-> approach now to see how the result will look like...
+The old code would indefinitely block other users of nf_log_mutex if
+a userspace access in proc_dostring() blocked e.g. due to a userfaultfd
+region. Fix it by moving proc_dostring() out of the locked region.
 
-I've spent some time on this. There are two obstacles with my approach of
-putting special entry into inode's VMA tree:
+This is a followup to commit 266d07cb1c9a ("netfilter: nf_log: fix
+sleeping function called from invalid context"), which changed this code
+from using rcu_read_lock() to taking nf_log_mutex.
 
-1) If I want to place this special entry in inode's VMA tree, I either need
-to allocate full VMA, somehow initiate it so that it's clear it's a special
-"pinned" range, not a VMA => uses unnecessarily too much memory, it is
-ugly. Another solution I was hoping for was that I would factor out some
-common bits of vm_area_struct (pgoff, rb_node, ..) into a structure common
-for VMA and the locked range => doable but causes a lot of churn as VMAs
-are accessed (and modified!) at hundreds of places in the kernel. Some
-accessor functions would help to reduce the churn a bit but then stuff like
-vma_set_pgoff(vma, pgoff) isn't exactly beautiful either.
+Fixes: 266d07cb1c9a ("netfilter: nf_log: fix sleeping function calle[...]")
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ net/netfilter/nf_log.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-2) Some users of GUP (e.g. direct IO) get a block of pages and then put
-references to these pages at different times and in random order -
-basically when IO for given page is completed, reference is dropped and one
-GUP call can acquire page references for pages which end up in multiple
-different bios (we don't know in advance). This makes is difficult to
-implement counterpart to GUP to 'unpin' a range of pages - we'd either have
-to support partial unpins (and splitting of pinned ranges and all such fun)
-or just have to track internally in how many pages are still pinned in the
-originally pinned range and release the pin once all individual pages are
-unpinned but then it's difficult to e.g. get to this internal structure
-from IO completion callback where we only have the bio.
-
-So I think the Matthew's idea of removing pinned pages from LRU is
-definitely worth trying to see how complex that would end up being. Did you
-get to looking into it? If not, I can probably find some time to try that
-out.
-
-								Honza
+diff --git a/net/netfilter/nf_log.c b/net/netfilter/nf_log.c
+index 426457047578..95b92954b896 100644
+--- a/net/netfilter/nf_log.c
++++ b/net/netfilter/nf_log.c
+@@ -442,14 +442,17 @@ static int nf_log_proc_dostring(struct ctl_table *table, int write,
+ 		rcu_assign_pointer(net->nf.nf_loggers[tindex], logger);
+ 		mutex_unlock(&nf_log_mutex);
+ 	} else {
++		struct ctl_table tmp = *table;
++
++		tmp.data = buf;
+ 		mutex_lock(&nf_log_mutex);
+ 		logger = nft_log_dereference(net->nf.nf_loggers[tindex]);
+ 		if (!logger)
+-			table->data = "NONE";
++			strlcpy(buf, "NONE", sizeof(buf));
+ 		else
+-			table->data = logger->name;
+-		r = proc_dostring(table, write, buffer, lenp, ppos);
++			strlcpy(buf, logger->name, sizeof(buf));
+ 		mutex_unlock(&nf_log_mutex);
++		r = proc_dostring(&tmp, write, buffer, lenp, ppos);
+ 	}
+ 
+ 	return r;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.18.0.rc2.346.g013aa6912e-goog
+
