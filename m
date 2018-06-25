@@ -3,58 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DBEC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC700C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A178C25A0F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62C8625A18
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:15:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="P3pFQWtA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A178C25A0F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="KkSCU5gL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C8625A18
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755488AbeFYNPV (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:15:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36112 "EHLO
+        id S933724AbeFYNPk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:15:40 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36640 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752930AbeFYNPU (ORCPT
+        with ESMTP id S1755558AbeFYNPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:15:20 -0400
+        Mon, 25 Jun 2018 09:15:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=uQBWZtDJXw8EZJ8rZa1ben12K2srLySBmZeYh7nYdbc=; b=P3pFQWtAVgIR
-        d2DVKD42jnhPpQH4V+OBWWjl1oHBZ3Y3bUE5FgwmeO6jr8ZR02ZLhsWH+PQiIDEgauWCKGehQa+7c
-        29ut/HF1r1T908V7b7TWTDuRonWQWALiJnp6qr7NALRn+GSvognIpKIJi1vUWMcWLDhFTonIGZVKE
-        qXipM=;
+        List-Archive; bh=jBIZxG66Fl3PV8AVlIgYJDyR11j0hCMHNUW9eojQLz0=; b=KkSCU5gLL+Zi
+        WQhf1W2/TXr+kMEdf4JRts5Yjryg6mkArPQq0bUVQrWVvoQHm71vo5X2DeZsKNEZlS3eTtqvWGCvR
+        KTKWS25zL8KbWgc8t11am8ypg3FB+sOR3ViORvxUGJWyPqcCHuSj1PpRjQQu5pjYTP6eSg/IfJRuE
+        DITa8=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fXRKs-0007rF-4E; Mon, 25 Jun 2018 13:15:14 +0000
+        id 1fXRKt-0007rI-WB; Mon, 25 Jun 2018 13:15:16 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fXRKr-0008HO-Bk; Mon, 25 Jun 2018 14:15:13 +0100
+        id 1fXRKt-0008Il-HJ; Mon, 25 Jun 2018 14:15:15 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+To:     Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     Daniel Mack <daniel@zonque.org>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Bhumika Goyal <bhumirks@gmail.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: cx20442: Don't ignore regulator_get() errors." to the asoc tree
-In-Reply-To:  <20180624181441.6975-1-jmkrzyszt@gmail.com>
-Message-Id: <E1fXRKr-0008HO-Bk@debutante>
-Date:   Mon, 25 Jun 2018 14:15:13 +0100
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        alsa-devel@alsa-project.org, netdev@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ARM: pxa: change SSP DMA channels allocation" to the asoc tree
+In-Reply-To:  <20180524070703.11901-14-robert.jarzmik@free.fr>
+Message-Id: <E1fXRKt-0008Il-HJ@debutante>
+Date:   Mon, 25 Jun 2018 14:15:15 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: cx20442: Don't ignore regulator_get() errors.
+   ARM: pxa: change SSP DMA channels allocation
 
 has been applied to the asoc tree at
 
@@ -87,62 +95,117 @@ to this mail.
 Thanks,
 Mark
 
-From 50c678772a0b3f9dc6b04262f27e2c373fe03a4d Mon Sep 17 00:00:00 2001
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Date: Sun, 24 Jun 2018 20:14:41 +0200
-Subject: [PATCH] ASoC: cx20442: Don't ignore regulator_get() errors.
+From cd31b80736852d34bc1072f3e579a6fd73a244e7 Mon Sep 17 00:00:00 2001
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Date: Sun, 17 Jun 2018 19:02:17 +0200
+Subject: [PATCH] ARM: pxa: change SSP DMA channels allocation
 
-In its current shape, the driver just ignores errors returned by
-regulator_get() at component_probe().  This doesn't hurt on Amstrad
-Delta board as long as it registers the codec device at late_initcall,
-when the regulator which depends on basic-mmio-gpio device (probed as
-late as at dev_initcall) is already available.  Otherwise the driver
-may end up trying to control a codec which is not powered up.
+Now the dma_slave_map is available for PXA architecture, switch the SSP
+device to it.
 
-Remove that dependency on initialization order by handling the error.
-If the regulator is not yet available and -ENODEV is returned, convert
-it to -EPROBE_DEFER to get another chance.
+This specifically means that :
+- for platform data based machines, the DMA requestor channels are
+  extracted from the slave map, where pxa-ssp-dai.<N> is a 1-1 match to
+  ssp.<N>, and the channels are either "rx" or "tx".
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+- for device tree platforms, the dma node should be hooked into the
+  pxa2xx-ac97 or pxa-ssp-dai node.
+
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Acked-by: Daniel Mack <daniel@zonque.org>
 ---
- sound/soc/codecs/cx20442.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ arch/arm/plat-pxa/ssp.c    | 47 --------------------------------------
+ include/linux/pxa2xx_ssp.h |  2 --
+ sound/soc/pxa/pxa-ssp.c    |  5 ++--
+ 3 files changed, 2 insertions(+), 52 deletions(-)
 
-diff --git a/sound/soc/codecs/cx20442.c b/sound/soc/codecs/cx20442.c
-index 07dd33b09596..ab174b5114dc 100644
---- a/sound/soc/codecs/cx20442.c
-+++ b/sound/soc/codecs/cx20442.c
-@@ -362,8 +362,27 @@ static int cx20442_component_probe(struct snd_soc_component *component)
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index ba13f793fbce..ed36dcab80f1 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -127,53 +127,6 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+ 	if (IS_ERR(ssp->clk))
+ 		return PTR_ERR(ssp->clk);
+ 
+-	if (dev->of_node) {
+-		struct of_phandle_args dma_spec;
+-		struct device_node *np = dev->of_node;
+-		int ret;
+-
+-		/*
+-		 * FIXME: we should allocate the DMA channel from this
+-		 * context and pass the channel down to the ssp users.
+-		 * For now, we lookup the rx and tx indices manually
+-		 */
+-
+-		/* rx */
+-		ret = of_parse_phandle_with_args(np, "dmas", "#dma-cells",
+-						 0, &dma_spec);
+-
+-		if (ret) {
+-			dev_err(dev, "Can't parse dmas property\n");
+-			return -ENODEV;
+-		}
+-		ssp->drcmr_rx = dma_spec.args[0];
+-		of_node_put(dma_spec.np);
+-
+-		/* tx */
+-		ret = of_parse_phandle_with_args(np, "dmas", "#dma-cells",
+-						 1, &dma_spec);
+-		if (ret) {
+-			dev_err(dev, "Can't parse dmas property\n");
+-			return -ENODEV;
+-		}
+-		ssp->drcmr_tx = dma_spec.args[0];
+-		of_node_put(dma_spec.np);
+-	} else {
+-		res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-		if (res == NULL) {
+-			dev_err(dev, "no SSP RX DRCMR defined\n");
+-			return -ENODEV;
+-		}
+-		ssp->drcmr_rx = res->start;
+-
+-		res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+-		if (res == NULL) {
+-			dev_err(dev, "no SSP TX DRCMR defined\n");
+-			return -ENODEV;
+-		}
+-		ssp->drcmr_tx = res->start;
+-	}
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (res == NULL) {
+ 		dev_err(dev, "no memory resource defined\n");
+diff --git a/include/linux/pxa2xx_ssp.h b/include/linux/pxa2xx_ssp.h
+index 8461b18e4608..03a7ca46735b 100644
+--- a/include/linux/pxa2xx_ssp.h
++++ b/include/linux/pxa2xx_ssp.h
+@@ -212,8 +212,6 @@ struct ssp_device {
+ 	int		type;
+ 	int		use_count;
+ 	int		irq;
+-	int		drcmr_rx;
+-	int		drcmr_tx;
+ 
+ 	struct device_node	*of_node;
+ };
+diff --git a/sound/soc/pxa/pxa-ssp.c b/sound/soc/pxa/pxa-ssp.c
+index 6fc986080130..0b441338bdd4 100644
+--- a/sound/soc/pxa/pxa-ssp.c
++++ b/sound/soc/pxa/pxa-ssp.c
+@@ -105,9 +105,8 @@ static int pxa_ssp_startup(struct snd_pcm_substream *substream,
+ 	dma = kzalloc(sizeof(struct snd_dmaengine_dai_dma_data), GFP_KERNEL);
+ 	if (!dma)
  		return -ENOMEM;
+-
+-	dma->filter_data = substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
+-				&ssp->drcmr_tx : &ssp->drcmr_rx;
++	dma->chan_name = substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
++		"tx" : "rx";
  
- 	cx20442->por = regulator_get(component->dev, "POR");
--	if (IS_ERR(cx20442->por))
--		dev_warn(component->dev, "failed to get the regulator");
-+	if (IS_ERR(cx20442->por)) {
-+		int err = PTR_ERR(cx20442->por);
-+
-+		dev_warn(component->dev, "failed to get POR supply (%d)", err);
-+		/*
-+		 * When running on a non-dt platform and requested regulator
-+		 * is not available, regulator_get() never returns
-+		 * -EPROBE_DEFER as it is not able to justify if the regulator
-+		 * may still appear later.  On the other hand, the board can
-+		 * still set full constraints flag at late_initcall in order
-+		 * to instruct regulator_get() to return a dummy one if
-+		 * sufficient.  Hence, if we get -ENODEV here, let's convert
-+		 * it to -EPROBE_DEFER and wait for the board to decide or
-+		 * let Deferred Probe infrastructure handle this error.
-+		 */
-+		if (err == -ENODEV)
-+			err = -EPROBE_DEFER;
-+		kfree(cx20442);
-+		return err;
-+	}
-+
- 	cx20442->tty = NULL;
+ 	snd_soc_dai_set_dma_data(cpu_dai, substream, dma);
  
- 	snd_soc_component_set_drvdata(component, cx20442);
 -- 
 2.18.0.rc2
 
