@@ -2,102 +2,317 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F36AFC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418FDC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC645255CA
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:21:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhOSa3gH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC645255CA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C4A4B255D1
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:22:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A4B255D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754264AbeFYIU7 (ORCPT
+        id S1754295AbeFYIWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:20:59 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:45731 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751949AbeFYIU4 (ORCPT
+        Mon, 25 Jun 2018 04:22:06 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:41218 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752237AbeFYIWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:20:56 -0400
-Received: by mail-ot0-f196.google.com with SMTP id k3-v6so548963otl.12;
-        Mon, 25 Jun 2018 01:20:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=kX3BEvfJ1dm99UbUcDiQfNqwfKVPN6ayJA/GHX7RFZA=;
-        b=PhOSa3gHWvjn7mXCCeX+pEvTZxWmLamX/4fJR7vC2/rNSiJTNAh+1qFKBELeKFBjIs
-         CGN+7jXQc7pYeXbialRPcirYVSsaNoe4JRaQ2HjoPNQxeBRnmrnCIFlEpHEtaxtBE0TL
-         EDgB6KRmF9W8WXJCrepcLrvU5xW7zrAROTpVEJcJv7hfrkhpcxtnqdiC+cbjTGy7K88t
-         r50N9kk1zKKm4ou7cBHIu+mEo9zjNCY4CBrhqvGBJSmJyOujDbRIYzosy5+b4YYObXIr
-         A+5FlSO6ERZIh8Li23kfmXPcS22F8VWqix6iNoxtgV7/J6hSKUr9mooBMk7UyuxW1ZXt
-         TCEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=kX3BEvfJ1dm99UbUcDiQfNqwfKVPN6ayJA/GHX7RFZA=;
-        b=qlVMAPuM8lMHDN9v5sHINB04NntX95cBagIjjkb6+bEhTD6zF2VHdczsIhGWUHTpJX
-         NhS27VN3Vy7wnhNH+fk7r47QJ3YsAPhCHJdpyBYuVjfLmkIu3w47wyfvSQML0AFjZC38
-         gQCtngiu2tziq6xP0YSdFsFRQzfD9Jhzwqo3VvJS1DYa2wc/JopvNGnG2WB5XiMiY9Tt
-         uNCtdicsg6kivazGPTNcn0xxvsca0c9yU2Edzd0e3Am8EaCDv4EZd7f2gcvigvqTI97d
-         JEgdVkBU+yLsnQy+WAXa6yUpMGScSewOpowWyqFj2UBO6v4ip/sdrW+zL1nzQ1r+/dQ5
-         VVyg==
-X-Gm-Message-State: APt69E35kcRaMKdnzHzr8EGmvLrOub0clysVSp2Mz58nhTHDOvMngIyl
-        n/cBxE7H1+MuZz90aWnBedlAE9+knlovu5CL8n8=
-X-Google-Smtp-Source: AAOMgpeuX5wlPoHDlRkH8Dy4iVl9liAA5IAQa9jDYnhlRzxT+daLBYy2JpUuzJhlkmGnoVwIDf7fJm/BdTVDmwZ27kA=
-X-Received: by 2002:a9d:1012:: with SMTP id h18-v6mr6381061ote.364.1529914855822;
- Mon, 25 Jun 2018 01:20:55 -0700 (PDT)
+        Mon, 25 Jun 2018 04:22:04 -0400
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.53 with ESMTP; 25 Jun 2018 17:22:02 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
+        by 156.147.1.121 with ESMTP; 25 Jun 2018 17:22:02 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Mon, 25 Jun 2018 17:21:54 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com, joel@joelfernandes.org
+Subject: Re: [PATCH] rcu: Refactor rcu_{nmi,irq}_{enter,exit}()
+Message-ID: <20180625082154.GA21377@X58A-UD3R>
+References: <1529647926-24427-1-git-send-email-byungchul.park@lge.com>
+ <20180622062351.GC17010@X58A-UD3R>
+ <20180623174954.GA3584@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 01:20:55
- -0700 (PDT)
-In-Reply-To: <fc2ef4e9-7ec8-c644-9495-e33f000531b2@linaro.org>
-References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
- <20180620043415.57yvgzlye4l7wdqy@vireshk-i7> <fc2ef4e9-7ec8-c644-9495-e33f000531b2@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 25 Jun 2018 10:20:55 +0200
-X-Google-Sender-Auth: 81lq_wQ7gV8dVRVlOUb6FQjLb8A
-Message-ID: <CAJZ5v0gBC_ZzUBJcNEmeAbDLrJA6K9SqohS0GXtUANKc4o+T_g@mail.gmail.com>
-Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle injection framework
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180623174954.GA3584@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On Sat, Jun 23, 2018 at 10:49:54AM -0700, Paul E. McKenney wrote:
+> On Fri, Jun 22, 2018 at 03:23:51PM +0900, Byungchul Park wrote:
+> > On Fri, Jun 22, 2018 at 03:12:06PM +0900, Byungchul Park wrote:
+> > > When passing through irq or NMI contexts, the current code uses
+> > > ->dynticks_nmi_nesting to detect if it's in the ourmost at the moment.
+> > > 
+> > > Here, the thing is that all the related functions, rcu_irq_enter(),
+> > > rcu_nmi_enter(), rcu_irq_exit() and rcu_nmi_exit() are carrying out
+> > > the check within each under the following call relationship so there
+> > > must be redundant conditional branches:
+> > > 
+> > >    rcu_irq_enter()
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> > >       rcu_nmi_enter()
+> > >          /* A conditional branch with ->dynticks_nmi_nesting */
+> >                                                ^
+> >                                   Precisely, ->dynticks
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> > > 
+> > >    rcu_irq_exit()
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> > >       rcu_nmi_exit()
+> > >          /* A conditional branch with ->dynticks_nmi_nesting */
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> > > 
+> > >    rcu_nmi_enter()
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> >                                                ^
+> >                                   Precisely, ->dynticks
+> > > 
+> > >    rcu_nmi_exit()
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> > > 
+> > > In order to make the code more readable and remove redundant
+> > > conditional branches, we need to refactor rcu_{nmi,irq}_{enter,exit}()
+> > > so they use a common function for each like:
+> > > 
+> > >    rcu_irq_enter() inlining rcu_nmi_enter_common(irq)
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> >                                                ^
+> >                                   Precisely, ->dynticks
+> > > 
+> > >    rcu_irq_exit() inlining rcu_nmi_exit_common(irq)
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> > > 
+> > >    rcu_nmi_enter() inlining rcu_nmi_enter_common(nmi)
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> >                                                ^
+> >                                   Precisely, ->dynticks
+> > > 
+> > >    rcu_nmi_exit() inlining rcu_nmi_exit_common(nmi)
+> > >       /* A conditional branch with ->dynticks_nmi_nesting */
+> 
+> I queued this for testing and further review, updating the commit log
+> as follows.  Please let me know if I messed up something.
 
-On Mon, Jun 25, 2018 at 12:40 AM, Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> Hi Rafael,
->
-> do you think this patch is acceptable for merging ?
+Much better. Thanks a lot.
 
-Well, it needs a bit of work still IMO, but let me comment on the patch itself.
-
-Also, can you point me to the code using it that you have, please?
-I'd like to try to switch powerclamp over to it.
-
-Thanks,
-Rafael
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit 5e5ea52645b197fb7ae2f59f7927079b91e91aa0
+> Author: Byungchul Park <byungchul.park@lge.com>
+> Date:   Fri Jun 22 15:12:06 2018 +0900
+> 
+>     rcu: Refactor rcu_{nmi,irq}_{enter,exit}()
+>     
+>     When entering or exiting irq or NMI handlers, the current code uses
+>     ->dynticks_nmi_nesting to detect if it is in the outermost handler,
+>     that is, the one interrupting or returning to an RCU-idle context (the
+>     idle loop or nohz_full usermode execution).  When entering the outermost
+>     handler via an interrupt (as opposed to NMI), it is necessary to invoke
+>     rcu_dynticks_task_exit() just before the CPU is marked non-idle from an
+>     RCU perspective and to invoke rcu_cleanup_after_idle() just after the
+>     CPU is marked non-idle.  Similarly, when exiting the outermost handler
+>     via an interrupt, it is necessary to invoke rcu_prepare_for_idle() just
+>     before marking the CPU idle and to invoke rcu_dynticks_task_enter()
+>     just after marking the CPU idle.
+>     
+>     The decision to execute these four functions is currently taken in
+>     rcu_irq_enter() and rcu_irq_exit() as follows:
+>     
+>        rcu_irq_enter()
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>           rcu_nmi_enter()
+>              /* A conditional branch with ->dynticks */
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>        rcu_irq_exit()
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>           rcu_nmi_exit()
+>              /* A conditional branch with ->dynticks_nmi_nesting */
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>        rcu_nmi_enter()
+>           /* A conditional branch with ->dynticks */
+>     
+>        rcu_nmi_exit()
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>     This works, but the conditional branches in rcu_irq_enter() and
+>     rcu_irq_exit() are redundant with those in rcu_nmi_enter() and
+>     rcu_nmi_exit(), respectively.  Redundant branches are not something
+>     we want in the to/from-idle fastpaths, so this commit refactors
+>     rcu_{nmi,irq}_{enter,exit}() so they use a common inlined function passed
+>     a constant argument as follows:
+>     
+>        rcu_irq_enter() inlining rcu_nmi_enter_common(irq=true)
+>           /* A conditional branch with ->dynticks */
+>     
+>        rcu_irq_exit() inlining rcu_nmi_exit_common(irq=true)
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>        rcu_nmi_enter() inlining rcu_nmi_enter_common(irq=false)
+>           /* A conditional branch with ->dynticks */
+>     
+>        rcu_nmi_exit() inlining rcu_nmi_exit_common(irq=false)
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>     The combination of the constant function argument and the inlining allows
+>     the compiler to discard the conditionals that previously controlled
+>     execution of rcu_dynticks_task_exit(), rcu_cleanup_after_idle(),
+>     rcu_prepare_for_idle(), and rcu_dynticks_task_enter().  This reduces both
+>     the to-idle and from-idle path lengths by two conditional branches each,
+>     and improves readability as well.
+>     
+>     Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>     Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 8788ddbc0d13..4ed74f10c852 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -773,17 +773,17 @@ void rcu_user_enter(void)
+>  #endif /* CONFIG_NO_HZ_FULL */
+>  
+>  /**
+> - * rcu_nmi_exit - inform RCU of exit from NMI context
+> + * rcu_nmi_exit_common - inform RCU of exit from NMI context
+>   *
+>   * If we are returning from the outermost NMI handler that interrupted an
+>   * RCU-idle period, update rdtp->dynticks and rdtp->dynticks_nmi_nesting
+>   * to let the RCU grace-period handling know that the CPU is back to
+>   * being RCU-idle.
+>   *
+> - * If you add or remove a call to rcu_nmi_exit(), be sure to test
+> + * If you add or remove a call to rcu_nmi_exit_common(), be sure to test
+>   * with CONFIG_RCU_EQS_DEBUG=y.
+>   */
+> -void rcu_nmi_exit(void)
+> +static __always_inline void rcu_nmi_exit_common(bool irq)
+>  {
+>  	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+>  
+> @@ -809,7 +809,22 @@ void rcu_nmi_exit(void)
+>  	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
+>  	trace_rcu_dyntick(TPS("Startirq"), rdtp->dynticks_nmi_nesting, 0, rdtp->dynticks);
+>  	WRITE_ONCE(rdtp->dynticks_nmi_nesting, 0); /* Avoid store tearing. */
+> +
+> +	if (irq)
+> +		rcu_prepare_for_idle();
+> +
+>  	rcu_dynticks_eqs_enter();
+> +
+> +	if (irq)
+> +		rcu_dynticks_task_enter();
+> +}
+> +
+> +/**
+> + * rcu_nmi_exit - inform RCU of exit from NMI context
+> + */
+> +void rcu_nmi_exit(void)
+> +{
+> +	rcu_nmi_exit_common(false);
+>  }
+>  
+>  /**
+> @@ -833,14 +848,8 @@ void rcu_nmi_exit(void)
+>   */
+>  void rcu_irq_exit(void)
+>  {
+> -	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+> -
+>  	lockdep_assert_irqs_disabled();
+> -	if (rdtp->dynticks_nmi_nesting == 1)
+> -		rcu_prepare_for_idle();
+> -	rcu_nmi_exit();
+> -	if (rdtp->dynticks_nmi_nesting == 0)
+> -		rcu_dynticks_task_enter();
+> +	rcu_nmi_exit_common(true);
+>  }
+>  
+>  /*
+> @@ -923,7 +932,7 @@ void rcu_user_exit(void)
+>  #endif /* CONFIG_NO_HZ_FULL */
+>  
+>  /**
+> - * rcu_nmi_enter - inform RCU of entry to NMI context
+> + * rcu_nmi_enter_common - inform RCU of entry to NMI context
+>   *
+>   * If the CPU was idle from RCU's viewpoint, update rdtp->dynticks and
+>   * rdtp->dynticks_nmi_nesting to let the RCU grace-period handling know
+> @@ -931,10 +940,10 @@ void rcu_user_exit(void)
+>   * long as the nesting level does not overflow an int.  (You will probably
+>   * run out of stack space first.)
+>   *
+> - * If you add or remove a call to rcu_nmi_enter(), be sure to test
+> + * If you add or remove a call to rcu_nmi_enter_common(), be sure to test
+>   * with CONFIG_RCU_EQS_DEBUG=y.
+>   */
+> -void rcu_nmi_enter(void)
+> +static __always_inline void rcu_nmi_enter_common(bool irq)
+>  {
+>  	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+>  	long incby = 2;
+> @@ -951,7 +960,15 @@ void rcu_nmi_enter(void)
+>  	 * period (observation due to Andy Lutomirski).
+>  	 */
+>  	if (rcu_dynticks_curr_cpu_in_eqs()) {
+> +
+> +		if (irq)
+> +			rcu_dynticks_task_exit();
+> +
+>  		rcu_dynticks_eqs_exit();
+> +
+> +		if (irq)
+> +			rcu_cleanup_after_idle();
+> +
+>  		incby = 1;
+>  	}
+>  	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
+> @@ -962,6 +979,14 @@ void rcu_nmi_enter(void)
+>  	barrier();
+>  }
+>  
+> +/**
+> + * rcu_nmi_enter - inform RCU of entry to NMI context
+> + */
+> +void rcu_nmi_enter(void)
+> +{
+> +	rcu_nmi_enter_common(false);
+> +}
+> +
+>  /**
+>   * rcu_irq_enter - inform RCU that current CPU is entering irq away from idle
+>   *
+> @@ -986,14 +1011,8 @@ void rcu_nmi_enter(void)
+>   */
+>  void rcu_irq_enter(void)
+>  {
+> -	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+> -
+>  	lockdep_assert_irqs_disabled();
+> -	if (rdtp->dynticks_nmi_nesting == 0)
+> -		rcu_dynticks_task_exit();
+> -	rcu_nmi_enter();
+> -	if (rdtp->dynticks_nmi_nesting == 1)
+> -		rcu_cleanup_after_idle();
+> +	rcu_nmi_enter_common(true);
+>  }
+>  
+>  /*
