@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61752C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E5AC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23D04257CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:01:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23D04257CB
+	by mail.kernel.org (Postfix) with ESMTP id 8ADA3257CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:02:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ADA3257CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933030AbeFYLBp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 07:01:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54584 "EHLO
+        id S933108AbeFYLCB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 07:02:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54550 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932280AbeFYLAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 07:00:09 -0400
+        id S932134AbeFYLAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 07:00:05 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7F9B22C8;
-        Mon, 25 Jun 2018 04:00:08 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7216815AD;
+        Mon, 25 Jun 2018 04:00:04 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2D0CB3F73D;
-        Mon, 25 Jun 2018 04:00:07 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CB4453F73D;
+        Mon, 25 Jun 2018 04:00:02 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
         peterz@infradead.org, boqun.feng@gmail.com
@@ -34,9 +34,9 @@ Cc:     Mark Rutland <mark.rutland@arm.com>,
         Dmitry Vyukov <dvyukov@google.com>,
         "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCHv2 04/11] atomics/treewide: instrument xchg()
-Date:   Mon, 25 Jun 2018 11:59:45 +0100
-Message-Id: <20180625105952.3756-5-mark.rutland@arm.com>
+Subject: [PATCHv2 02/11] atomics/x86: reduce arch_cmpxchg64*() instrumentation
+Date:   Mon, 25 Jun 2018 11:59:43 +0100
+Message-Id: <20180625105952.3756-3-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180625105952.3756-1-mark.rutland@arm.com>
 References: <20180625105952.3756-1-mark.rutland@arm.com>
@@ -45,10 +45,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While we instrument atomic*() and cmpxchg(), we missed xchg().
+Currently x86's arch_cmpxchg64() and arch_cmpxchg64_local() are
+instrumented twice, as they call into instrumented atomics rather than
+their arch_ equivalents.
 
-Let's add instrumentation for xchg(), fixing up x86 to implement
-arch_xchg().
+A call to cmpxchg64() results in:
+
+  cmpxchg64()
+    kasan_check_write()
+    arch_cmpxchg64()
+      cmpxchg()
+        kasan_check_write()
+        arch_cmpxchg()
+
+Let's fix this up and call the arch_ equivalents, resulting in:
+
+  cmpxchg64()
+    kasan_check_write()
+    arch_cmpxchg64()
+      arch_cmpxchg()
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Boqun Feng <boqun.feng@gmail.com>
@@ -59,69 +74,29 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/x86/include/asm/atomic.h             | 2 +-
- arch/x86/include/asm/atomic64_64.h        | 2 +-
- arch/x86/include/asm/cmpxchg.h            | 2 +-
- include/asm-generic/atomic-instrumented.h | 7 +++++++
- 4 files changed, 10 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/cmpxchg_64.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
-index 823fd2f320cf..b143717b92b3 100644
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -202,7 +202,7 @@ static __always_inline bool arch_atomic_try_cmpxchg(atomic_t *v, int *old, int n
- 
- static inline int arch_atomic_xchg(atomic_t *v, int new)
- {
--	return xchg(&v->counter, new);
-+	return arch_xchg(&v->counter, new);
- }
- 
- static inline void arch_atomic_and(int i, atomic_t *v)
-diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
-index 849f1c566a11..4343d9b4f30e 100644
---- a/arch/x86/include/asm/atomic64_64.h
-+++ b/arch/x86/include/asm/atomic64_64.h
-@@ -188,7 +188,7 @@ static __always_inline bool arch_atomic64_try_cmpxchg(atomic64_t *v, s64 *old, l
- 
- static inline long arch_atomic64_xchg(atomic64_t *v, long new)
- {
--	return xchg(&v->counter, new);
-+	return arch_xchg(&v->counter, new);
- }
- 
- static inline void arch_atomic64_and(long i, atomic64_t *v)
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index e3efd8a06066..a55d79b233d3 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -75,7 +75,7 @@ extern void __add_wrong_size(void)
-  * use "asm volatile" and "memory" clobbers to prevent gcc from moving
-  * information around.
-  */
--#define xchg(ptr, v)	__xchg_op((ptr), (v), xchg, "")
-+#define arch_xchg(ptr, v)	__xchg_op((ptr), (v), xchg, "")
- 
- /*
-  * Atomic compare and exchange.  Compare OLD with MEM, if identical,
-diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-index c7c3e4cdd942..53481b6eacdf 100644
---- a/include/asm-generic/atomic-instrumented.h
-+++ b/include/asm-generic/atomic-instrumented.h
-@@ -408,6 +408,13 @@ static __always_inline bool atomic64_add_negative(s64 i, atomic64_t *v)
- }
- #endif
- 
-+#define xchg(ptr, new)							\
-+({									\
-+	typeof(ptr) __ai_ptr = (ptr);					\
-+	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
-+	arch_xchg(__ai_ptr, (new));					\
-+})
-+
- #define cmpxchg(ptr, old, new)						\
+diff --git a/arch/x86/include/asm/cmpxchg_64.h b/arch/x86/include/asm/cmpxchg_64.h
+index bfca3b346c74..072e5459fe2f 100644
+--- a/arch/x86/include/asm/cmpxchg_64.h
++++ b/arch/x86/include/asm/cmpxchg_64.h
+@@ -10,13 +10,13 @@ static inline void set_64bit(volatile u64 *ptr, u64 val)
+ #define arch_cmpxchg64(ptr, o, n)					\
  ({									\
- 	typeof(ptr) __ai_ptr = (ptr);					\
+ 	BUILD_BUG_ON(sizeof(*(ptr)) != 8);				\
+-	cmpxchg((ptr), (o), (n));					\
++	arch_cmpxchg((ptr), (o), (n));					\
+ })
+ 
+ #define arch_cmpxchg64_local(ptr, o, n)					\
+ ({									\
+ 	BUILD_BUG_ON(sizeof(*(ptr)) != 8);				\
+-	cmpxchg_local((ptr), (o), (n));					\
++	arch_cmpxchg_local((ptr), (o), (n));				\
+ })
+ 
+ #define system_has_cmpxchg_double() boot_cpu_has(X86_FEATURE_CX16)
 -- 
 2.11.0
 
