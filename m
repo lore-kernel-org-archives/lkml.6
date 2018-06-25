@@ -2,201 +2,182 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671A4C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D9FC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA6724FD3
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA6724FD3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7936C25BFD
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:02:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMAT2LC2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7936C25BFD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934642AbeFYPAn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:00:43 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:46971 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934575AbeFYPAj (ORCPT
+        id S934682AbeFYPCe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 11:02:34 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39446 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934559AbeFYPCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:00:39 -0400
-Received: by mail-ot0-f196.google.com with SMTP id v24-v6so15363485otk.13
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:00:38 -0700 (PDT)
+        Mon, 25 Jun 2018 11:02:32 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w14-v6so5621608eds.6;
+        Mon, 25 Jun 2018 08:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=22OIQb10kqTqRJuaMCr7SwA2etVCY7ZBtMSIlXhP3+Y=;
+        b=OMAT2LC2xROMaseeY6EzPsWer1HgpTaEiaPtU5aDtgfxcI5UUFuze3fJm/Ucm6ArMW
+         zzRYcdfCa46CBwMcJCAXvmZf+M1ovn5rPLWFwwF9pV66yA++PVqPfMiecvQyodMd81rR
+         GYdRSucSzsoRIiaGnxDPaDlb+rG15OMiZMwMcuznuWOMlEOP9Mvw2CgOS8UMNFhJN6Ob
+         JgVFvjPaivvzreUAGZpyrCXyp4nuaD2DMz/36skcq3D/vDeW//JFL6I+UaLFHQ7+Sv9Z
+         zMiCN0DznENy8kb7YOt145ozaTqoWwYTVVubZcrS2TztKQ2ezn+rxt+yog78qwCIhS59
+         sjGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=z6O0ISdK3m2j53R8xvBKVVz+RSUDTuxZtPNbqmUAhWE=;
-        b=tsiIOeNNWCcBMdngaFr1FhQtjbsfjOVvjW1+9eRf6lfagqC0zmsmMTXKjAJQC8F405
-         qOp/wDc1KdOlnHesd7jyw4RzrhPUBlzij1YgTiGxKQ+aa22mBOxOqBPGM6FtrxE3N4VF
-         pOTVzCY76nV848yHRH4/ohfjnIxzgWxNyxFGQ6KpD6joSJnTuTjUOi18nfQpCdbik9e2
-         4d94FczxQmbexBHhpBdy9D2xM4DKruFe1FZ94r/MVCES41Lie8uPNBE6mWWxQ08FIg2D
-         ivFwAXmVIpeoEo1bBYrIrm+7VPqwl3ZgxteZLyzfHzxmllUzeJk5wqkwNQuI391q758P
-         p3NQ==
-X-Gm-Message-State: APt69E3Y2e/Dzu4xp++/o2PSZ+mAMKXEsFBttxyVtxd+2TF7ZNrYp0ca
-        c7a7dmQyCevwnmMHMK/7SBt2vUnGvpvJ0KD8zH3U/A==
-X-Google-Smtp-Source: AAOMgpdZCUnaPbEXnV726N9oy6zGtAeWrQnB5awvjFT07RAhJCYtgQoVTJuT1NDyXcbWR704LiYpyaCwGsVzFoB6G34=
-X-Received: by 2002:a9d:624:: with SMTP id 33-v6mr4533543otn.327.1529938838133;
- Mon, 25 Jun 2018 08:00:38 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=22OIQb10kqTqRJuaMCr7SwA2etVCY7ZBtMSIlXhP3+Y=;
+        b=pDtW3elwpo6vEdkQXrJTzLWBH9i1pCdO6+2BX1vN3SsglH2alfiP1KdwjVm5zr0Opz
+         yM0yMhrbw0HeQzRrPTBXcA/QLIa4NC5cF7b7i0AKSQV3zqWw3JRMXLRmjEewAFrjMPTP
+         WTYYT2xzWtthccI0MWfLlTYF5oKHyPj2jItSEodJY32c68BZyiXZMv74gu7uXMODrr+g
+         i1rmA/xALksQEffp/HY3+NgYETho1JD4JNtbhwFAFOH4gziilgZEau4KP/u/lYeki6Uy
+         I1gxjb1z/IqB0raZdBZbnMlUbYkjAkL2Wf+HX43yutZ5SK1HZvlM6RER630PuJR/EEmM
+         vZ/g==
+X-Gm-Message-State: APt69E1k8ldvTXdZbgrQwDUcvuMSMUiL43/0DBqT8brt6culpQAlUhPC
+        6tSKUU/EofX5wYUCpuOUZAO+mNJJ
+X-Google-Smtp-Source: ADUXVKL4LMkRQZWFMlL2dtjmOHnlvu4iLTJjj9Oce1LvivoedqC7ghc/4w9EuduRJ1KUm9V9CDDp4A==
+X-Received: by 2002:a50:b8a4:: with SMTP id l33-v6mr12181834ede.273.1529938950535;
+        Mon, 25 Jun 2018 08:02:30 -0700 (PDT)
+Received: from ziggy.stardust ([37.223.136.20])
+        by smtp.gmail.com with ESMTPSA id o2-v6sm652768edd.84.2018.06.25.08.02.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 08:02:29 -0700 (PDT)
+Subject: Re: [PATCH v1 7/7] arm64: dts: mt7622: add EINT support to pinctrl
+To:     sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1526835466.git.sean.wang@mediatek.com>
+ <f896f79ebfa9a262c89fdeed89cf086220ca051d.1526835466.git.sean.wang@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <e6747e99-78b6-ed8c-d6fa-cab2f7398fcf@gmail.com>
+Date:   Mon, 25 Jun 2018 17:02:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a9d:2b2c:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 08:00:37
- -0700 (PDT)
-In-Reply-To: <20180621190721.bdr42xmp6f2uba7x@pburton-laptop>
-References: <20180316143855.29838-1-neelx@redhat.com> <20180621190721.bdr42xmp6f2uba7x@pburton-laptop>
-From:   Daniel Vacek <neelx@redhat.com>
-Date:   Mon, 25 Jun 2018 17:00:37 +0200
-Message-ID: <CACjP9X9mSg0LM=JvWHPzMUsG_y9UHinC6aJnpPLE==5xR4MnHw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "mm: page_alloc: skip over regions of invalid pfns
- where possible"
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <f896f79ebfa9a262c89fdeed89cf086220ca051d.1526835466.git.sean.wang@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 9:07 PM, Paul Burton <paul.burton@mips.com> wrote:
-> Hi Daniel,
->
-> Hmm... I only just noticed this because you CC'd an email address that
-> is no longer functional. I presume you're not using .mailmap, which
-> would have given you my current email address.
 
-Hi Paul,
 
-  I do not remember exactly but I guess I used either get_maintainers
-script or the email from your commit. I'm sorry for the inconvenience.
+On 20/05/18 19:01, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> Add EINT support to pinctrl and set those GPIO keys as interrupt-driven
+> keys.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
 
-> On Fri, Mar 16, 2018 at 03:38:55PM +0100, Daniel Vacek wrote:
->> This reverts commit b92df1de5d289c0b5d653e72414bf0850b8511e0. The commit
->> is meant to be a boot init speed up skipping the loop in memmap_init_zone()
->> for invalid pfns. But given some specific memory mapping on x86_64 (or more
->> generally theoretically anywhere but on arm with CONFIG_HAVE_ARCH_PFN_VALID)
->
-> My patch definitely wasn't ARM-specific & I have never tested it on ARM.
-> It was motivated by a MIPS platform with an extremely sparse memory map.
-> Could you explain why you think it depends on ARM or
-> CONFIG_HAVE_ARCH_PFN_VALID?
+Merged,
 
-  Hopefully explained further below.
+Thanks!
 
->> the implementation also skips valid pfns which is plain wrong and causes
->> 'kernel BUG at mm/page_alloc.c:1389!'
->
-> Which VM_BUG_ON is that? I don't see one on line 1389 as of commit
-> b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns where
-> possible") or any mainline final release since.
-
-  The report was from RHEL kernel actually. But it still applied to
-upstream tree. It was this one
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/page_alloc.c?id=274a1ff0704bc8fef76dbe2d6fb197ddbc23f380#n1913
-later changed with commit 3e04040df6d4 which I believe does not really
-change or improve much anything, unfortunately...
-
->> crash> log | grep -e BUG -e RIP -e Call.Trace -e move_freepages_block -e rmqueue -e freelist -A1
->> kernel BUG at mm/page_alloc.c:1389!
->> invalid opcode: 0000 [#1] SMP
->> --
->> RIP: 0010:[<ffffffff8118833e>]  [<ffffffff8118833e>] move_freepages+0x15e/0x160
->> RSP: 0018:ffff88054d727688  EFLAGS: 00010087
->> --
->> Call Trace:
->>  [<ffffffff811883b3>] move_freepages_block+0x73/0x80
->>  [<ffffffff81189e63>] __rmqueue+0x263/0x460
->>  [<ffffffff8118c781>] get_page_from_freelist+0x7e1/0x9e0
->>  [<ffffffff8118caf6>] __alloc_pages_nodemask+0x176/0x420
->> --
->> RIP  [<ffffffff8118833e>] move_freepages+0x15e/0x160
->>  RSP <ffff88054d727688>
->>
->> crash> page_init_bug -v | grep RAM
->> <struct resource 0xffff88067fffd2f8>          1000 -        9bfff       System RAM (620.00 KiB)
->> <struct resource 0xffff88067fffd3a0>        100000 -     430bffff       System RAM (  1.05 GiB = 1071.75 MiB = 1097472.00 KiB)
->> <struct resource 0xffff88067fffd410>      4b0c8000 -     4bf9cfff       System RAM ( 14.83 MiB = 15188.00 KiB)
->> <struct resource 0xffff88067fffd480>      4bfac000 -     646b1fff       System RAM (391.02 MiB = 400408.00 KiB)
->> <struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff       System RAM (480.00 KiB)
->> <struct resource 0xffff88067fffd640>     100000000 -    67fffffff       System RAM ( 22.00 GiB)
->>
->> crash> page_init_bug | head -6
->> <struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff       System RAM (480.00 KiB)
->> <struct page 0xffffea0001ede200>   1fffff00000000  0 <struct pglist_data 0xffff88047ffd9000> 1 <struct zone 0xffff88047ffd9800> DMA32          4096    1048575
->> <struct page 0xffffea0001ede200> 505736 505344 <struct page 0xffffea0001ed8000> 505855 <struct page 0xffffea0001edffc0>
->> <struct page 0xffffea0001ed8000>                0  0 <struct pglist_data 0xffff88047ffd9000> 0 <struct zone 0xffff88047ffd9000> DMA               1       4095
->> <struct page 0xffffea0001edffc0>   1fffff00000400  0 <struct pglist_data 0xffff88047ffd9000> 1 <struct zone 0xffff88047ffd9800> DMA32          4096    1048575
->> BUG, zones differ!
->>
->> crash> kmem -p 77fff000 78000000 7b5ff000 7b600000 7b787000 7b788000
->>       PAGE        PHYSICAL      MAPPING       INDEX CNT FLAGS
->> ffffea0001e00000  78000000                0        0  0 0
->> ffffea0001ed7fc0  7b5ff000                0        0  0 0
->> ffffea0001ed8000  7b600000                0        0  0 0       <<<<
->> ffffea0001ede1c0  7b787000                0        0  0 0
->> ffffea0001ede200  7b788000                0        0  1 1fffff00000000
->
-> I'm not really sure what I'm looking at here. I presume you're saying
-> that memmap_init_zone() didn't initialize the struct page for
-> phys=0x7b788000?
-
-  Quite the opposite. It's the first one which gets correctly
-initialized as it is the start of next usable range as returned by
-memblock_next_valid_pfn(). Though early_pfn_valid() returns true for
-all frames in this section starting with 0x78000 (at least on x86
-where it is based on the memsection implementation) so the next valid
-pfn should correctly be frame 0x78000 instead of 0x7b788. The crash
-was caused by accessing page 0xffffea0001ed8000 (covering phys
-0x7b600000) as move_freepages_block() aligns the start_pfn to
-pageblock_nr_pages before calling move_freepages().
-
-  The arm implementation of early_pfn_valid() is actually based on
-memblock and returns false for frames 0x78000 through 0x7b787 hence I
-thought you based the memblock_next_valid_pfn() implementation on this
-ARM semantics enabled by CONFIG_HAVE_ARCH_PFN_VALID instead of the
-generic early_pfn_valid() version based on memory sections
-implementation.
-
-  When I am thinking about it now, instead of reverting it could also
-have been #ifdefed on CONFIG_HAVE_ARCH_PFN_VALID. That way ARM could
-still use the advantage but not MIPS I believe.
-
-> Could you describe the memblock region list, and what ranges
-> memmap_init_zone() skipped over?
-
-  I guess that's already explained above. The memblock regions matched
-the usable 'System RAM' ranges as dumped from iomem resources in my
-commit message, IIRC. Let me dump the data if I can still find it.
-
-crash> memblock.memory.cnt,memory.regions memblock
-  memory.cnt = 0x7,
-  memory.regions = 0xffffffff81af1140 <memblock_memory_init_regions>
-
-crash> memblock_region.base,size,flags,nid
-memblock_memory_init_regions 7 | sed 's/^  /\t/' | paste - - - - - |
-column -ts'     '
-base = 0x1000       size = 0x9b000      flags = 0x0  nid = 0x0
-base = 0x100000     size = 0x42fc0000   flags = 0x0  nid = 0x0
-base = 0x4b0c8000   size = 0xed5000     flags = 0x0  nid = 0x0
-base = 0x4bfac000   size = 0x18706000   flags = 0x0  nid = 0x0
-base = 0x7b788000   size = 0x78000      flags = 0x0  nid = 0x0
-base = 0x100000000  size = 0x380000000  flags = 0x0  nid = 0x0
-base = 0x480000000  size = 0x200000000  flags = 0x0  nid = 0x1
-
-  Yeah, so it matches with the node break added.
-
-> Thanks,
->     Paul
-
-Thank you for looking into it! If you have any further questions, just
-drop me an email. And have a nice day.
-
---nX
+>  arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 2 +-
+>  arch/arm64/boot/dts/mediatek/mt7622.dtsi     | 8 +++++++-
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+> index b783764..1ff003e 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+> @@ -34,7 +34,7 @@
+>  	};
+>  
+>  	gpio-keys {
+> -		compatible = "gpio-keys-polled";
+> +		compatible = "gpio-keys";
+>  		poll-interval = <100>;
+>  
+>  		factory {
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> index 9213c96..e2c5450 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> @@ -286,9 +286,15 @@
+>  
+>  	pio: pinctrl@10211000 {
+>  		compatible = "mediatek,mt7622-pinctrl";
+> -		reg = <0 0x10211000 0 0x1000>;
+> +		reg = <0 0x10211000 0 0x1000>,
+> +		      <0 0x10005000 0 0x1000>;
+> +		reg-names = "base", "eint";
+>  		gpio-controller;
+>  		#gpio-cells = <2>;
+> +		interrupt-controller;
+> +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-parent = <&gic>;
+> +		#interrupt-cells = <2>;
+>  	};
+>  
+>  	watchdog: watchdog@10212000 {
+> 
