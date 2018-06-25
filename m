@@ -2,146 +2,161 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 576CAC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD81C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E620F25490
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80CAF25490
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:54:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YTuOkxZg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E620F25490
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i4d9ab7a";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SgbPxAPd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80CAF25490
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752202AbeFYFyG (ORCPT
+        id S1752246AbeFYFyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 01:54:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50898 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752194AbeFYFyG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 01:54:06 -0400
-Received: from mail-he1eur01on0043.outbound.protection.outlook.com ([104.47.0.43]:21225
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751984AbeFYFyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 01:54:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GT4Rr7uB79H8hhlcXBud13f262PmzTOmhTS3XgaduI0=;
- b=YTuOkxZgHt6Zhi7yfEGa5MV/SZQfPP5HGPjoA5lm5HAZJGifQ9ywxcr6TrlSIn7MHAr/aZ6kjNdCUtLYrDTfDlirzgtYR3Zc8JauoDlT65ZF8+xPbKsc2OMq117UUzGg0INmcU2kzcJVgJaC69R5ZuuEK7qGro2Vm0tQUXrKRSc=
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com (10.163.7.13) by
- AM3PR04MB1250.eurprd04.prod.outlook.com (10.163.6.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.22; Mon, 25 Jun 2018 05:53:59 +0000
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7]) by AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7%6]) with mapi id 15.20.0884.023; Mon, 25 Jun 2018
- 05:53:59 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Robin Gong <yibin.gong@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
-Thread-Topic: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
-Thread-Index: AQHUDD3lRelNZaT6s0KCSbdeyjhmZKRweO5w
-Date:   Mon, 25 Jun 2018 05:53:59 +0000
-Message-ID: <AM3PR04MB13150F33BC062890B4E87477F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1529930051-14122-1-git-send-email-yibin.gong@nxp.com>
-In-Reply-To: <1529930051-14122-1-git-send-email-yibin.gong@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1250;7:yPcE6D3Dx/d5lnqjS8t84c7gL4PoDOh+59ZLSBkSIRxWTGraVogK39VkHf1hxsxD5c0zqAMWfdoN7trk1LHSxvY2a6YY990I8XNVr8HjSXPDJF4B92I+ZtqHNPt22+9UWrfhBJnFLMxR2353Oc0U6d33EYlTNPYcf+DOBJMO1+f9Oq501ECrOwl6pl5H+z+oGpNRIGO3XZUi8+3bYu8fPRLs+UNYl9/pmqcWTZ75/+Gpj5UAjfjAuoAW8r8WwzLc
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 5db5e635-3bf2-4d16-3f34-08d5da600c04
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1250;
-x-ms-traffictypediagnostic: AM3PR04MB1250:
-x-microsoft-antispam-prvs: <AM3PR04MB125002E4622FC71EC1B65477F54A0@AM3PR04MB1250.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1250;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1250;
-x-forefront-prvs: 0714841678
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39380400002)(396003)(366004)(39860400002)(189003)(199004)(13464003)(44832011)(6246003)(25786009)(33656002)(76176011)(476003)(9686003)(7696005)(6436002)(97736004)(229853002)(486006)(99286004)(446003)(11346002)(2906002)(55016002)(53936002)(4326008)(2900100001)(8936002)(66066001)(305945005)(74316002)(81166006)(81156014)(6506007)(7736002)(59450400001)(106356001)(3280700002)(8676002)(54906003)(53546011)(110136005)(102836004)(316002)(105586002)(3660700001)(478600001)(2201001)(5660300001)(5250100002)(6116002)(14454004)(2501003)(26005)(68736007)(86362001)(3846002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1250;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: iOSk9+52tRZf7cujLhGZ8KAT14abZFQkImf3Juo4rIzGBmZVmMqociwlKNAs8DNYH7BLZ3D73HGyoG4E8SP+clldt5PtVusDGOmrbWHMzjWnwNgPX4ECdX1NNN/VFRNOtnXW+O1O2dviaJSkkNl6sghSCIbRkmQFSjddyJuvwlTdtG253DjPbyi4mrLtZMQaiPuBylK69CdQxmLAwUFhJ1HflzzL5rZOb0uTbHj2HrtzBN9W1JJMVPUAYy1dvoMMRq2Y8QYT4tjaIUgeivN/+tdx53NBkIGXUwU674uRGuBXVO5ge3ADHgP3mCH6a2hkyGjJNQ3AwbURbP7LDdhPuH8XDiCbwuldwNbtyVj5CLI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 24E26600ED; Mon, 25 Jun 2018 05:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529906046;
+        bh=R3IgmCXxAWbrytAsiDcPPKYrSy4/nZiBPwkhf5mRVos=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=i4d9ab7azurfbNd/1TNdbzS7JAy8IvF0MKmBqbQirRji3Hmxc16fKoVYjza4jy2gm
+         IueIr92Nu9AMeLcSXo04l4sna3rAXvKSGZRJGOEdCocimKUPtgNb6Va1wiVWyNc+Uc
+         yYhWxlkHZ2HE8RcEfkEtCaayp+v3sz0grx0DVVdY=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 55C13600ED;
+        Mon, 25 Jun 2018 05:54:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529906045;
+        bh=R3IgmCXxAWbrytAsiDcPPKYrSy4/nZiBPwkhf5mRVos=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SgbPxAPdR2fN4pAEppxU6rhfT/DUtUQR5OrJO+aXueXW7/Cq5V7W2WvbzcX5SbzXv
+         UqcwY6jYgOEzRCUa95yeK4dFfzxB4TQkhdrg3pIwpVDJkDRc4Kg0byid387GIlCHPN
+         lAquqIPhDJDQvc0CbvVADAs6vJ5EHs7+mIGq3yeA=
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5db5e635-3bf2-4d16-3f34-08d5da600c04
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2018 05:53:59.5019
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1250
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 25 Jun 2018 11:24:05 +0530
+From:   kgunda@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     jingoohan1@gmail.com, lee.jones@linaro.org,
+        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH V3 5/7] backlight: qcom-wled: Add support for WLED4
+ peripheral
+In-Reply-To: <20180622230903.GM3402@tuxbook-pro>
+References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
+ <1529406822-15379-6-git-send-email-kgunda@codeaurora.org>
+ <20180620051417.GI15126@tuxbook-pro>
+ <27aa7ff8f7e0cd8fdca5d3ee17bb1ef4@codeaurora.org>
+ <20180622230903.GM3402@tuxbook-pro>
+Message-ID: <b40a7640af6a99bfbcb0b21025dafd38@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Anson Huang <anson.huang@nxp.com>
-
-I also saw such issue on i.MX6SLL evk board, and also sent out patch for i.=
-MX6SLL.
-
-Anson Huang
-Best Regards!
-
-
-> -----Original Message-----
-> From: Robin Gong
-> Sent: Monday, June 25, 2018 8:34 PM
-> To: shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
-> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
-> Anson Huang <anson.huang@nxp.com>
-> Cc: linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> linux-kernel@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> Subject: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
->=20
-> SW4 is one power rail for LPDDR2 on i.mx6sl-evk, so it should be kept alw=
-ays on.
-> But it's disabled after switch disabled interface implemented in pfuze dr=
-iver
-> 'commit 5fe156f1cab4
-> ("regulator: pfuze100: add enable/disable for switch")'.Thus, it breaks k=
-ernel
-> bootup. Add 'regulator-always-on' for SW4.
->=20
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> ---
->  arch/arm/boot/dts/imx6sl-evk.dts | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/arm/boot/dts/imx6sl-evk.dts
-> b/arch/arm/boot/dts/imx6sl-evk.dts
-> index 37e792f..798df66 100644
-> --- a/arch/arm/boot/dts/imx6sl-evk.dts
-> +++ b/arch/arm/boot/dts/imx6sl-evk.dts
-> @@ -199,6 +199,7 @@
->  			sw4_reg: sw4 {
->  				regulator-min-microvolt =3D <800000>;
->  				regulator-max-microvolt =3D <3300000>;
-> +				regulator-always-on;
->  			};
->=20
->  			swbst_reg: swbst {
+On 2018-06-23 04:39, Bjorn Andersson wrote:
+> On Wed 20 Jun 04:00 PDT 2018, kgunda@codeaurora.org wrote:
+> 
+>> On 2018-06-20 10:44, Bjorn Andersson wrote:
+>> > On Tue 19 Jun 04:13 PDT 2018, Kiran Gunda wrote:
+>> >
+>> > > WLED4 peripheral is present on some PMICs like pmi8998 and
+>> > > pm660l. It has a different register map and configurations
+>> > > are also different. Add support for it.
+>> > >
+>> > > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> > > ---
+>> > >  drivers/video/backlight/qcom-wled.c | 635
+>> > > ++++++++++++++++++++++++++++--------
+>> > >  1 file changed, 503 insertions(+), 132 deletions(-)
+>> >
+>> > Split this further into a patch that does structural preparation of
+>> > WLED3 support and then an addition of WLED4, the mixture makes parts of
+>> > this patch almost impossible to review. Please find some comments below.
+>> >
+>> Sure. I will split it in the next series.
+> 
+> Thanks!
+> 
+>> > >
+>> > > diff --git a/drivers/video/backlight/qcom-wled.c
+>> > > b/drivers/video/backlight/qcom-wled.c
+>> > [..]
+>> > >
+>> > >  /* WLED3 sink registers */
+>> > >  #define WLED3_SINK_REG_SYNC				0x47
+>> >
+>> > Drop the 3 from this if it's common between the two.
+>> >
+>> > > -#define  WLED3_SINK_REG_SYNC_MASK			0x07
+>> > > +#define  WLED3_SINK_REG_SYNC_MASK			GENMASK(2, 0)
+>> > > +#define  WLED4_SINK_REG_SYNC_MASK			GENMASK(3, 0)
+>> > >  #define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
+>> > >  #define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
+>> > >  #define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
+>> > > +#define  WLED4_SINK_REG_SYNC_LED4			BIT(3)
+>> > >  #define  WLED3_SINK_REG_SYNC_ALL			0x07
+>> > > +#define  WLED4_SINK_REG_SYNC_ALL			0x0f
+>> > >  #define  WLED3_SINK_REG_SYNC_CLEAR			0x00
+>> > >
+>> > [..]
+>> > > +static int wled4_set_brightness(struct wled *wled, u16 brightness)
+>> >
+>> > Afaict this is identical to wled3_set_brightness() with the exception
+>> > that there's a minimum brightness and the base address for the
+>> > brightness registers are different.
+>> >
+>> > I would suggest that you add a min_brightness to wled and that you
+>> > figure out a way to carry the brightness base register address; and by
+>> > that you squash these two functions.
+>> >
+>> There are four different parameters. 1) minimum brightness 2) WLED 
+>> base
+>> addresses
+>> 3) Brightness base addresses 4) the brightness sink registers address
+>> offsets also
+>> different for wled 3 and wled4. (in wled3 0x40, 0x42, 0x44, where as 
+>> in
+>> wled4 0x57, 0x67, 0x77, 0x87).
+>> 
+> 
+> Sorry, I must have gotten lost in the defines, I see the difference
+> between the two register layouts now. If you retain the old mechanism 
+> of
+> doing the math openly in the function this would have been obvious.
+> 
+>> Irrelevant to this patch, but wled5 has some more extra registers to
+>> set the brightness.  Keeping this in mind, it is better to have
+>> separate functions? Otherwise we will have to use the version checks
+>> in the wled_set_brightness function, if we have the common function.
+> 
+> Okay, so it sounds reasonable to split this out to some degree.
+> 
+> Regards,
+> Bjorn
 > --
-> 2.7.4
-
+Thanks for that !
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
