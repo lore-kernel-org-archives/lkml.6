@@ -2,107 +2,143 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA43C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71331C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E7FE25F77
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BCF125C71
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:41:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JBiFTIX5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E7FE25F77
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCTQtV7h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BCF125C71
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964874AbeFYRlO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:41:14 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:41927 "EHLO vps0.lunn.ch"
+        id S964892AbeFYRlS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:41:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934594AbeFYRlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:41:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=4ncWY3yoIqsTZRzrosMOkhlxCNbdz7udtVserh4e9v4=;
-        b=JBiFTIX5qNZZpg0r1H0njY7t5YDxgjJ72O08If/8bCzVaxfUuhobMAAaMS6hbo74ln16UW9lnJwfm+4Tq3K4707NRNEN1/0TvcNyAqI3ciVhdv+cE/E9grBk8RuoYK8ASjrD/2TcLr3mg59Eqrp6tVJjuiHh6krO/+dHcWEapyI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fXVTU-0004ig-C1; Mon, 25 Jun 2018 19:40:24 +0200
-Date:   Mon, 25 Jun 2018 19:40:24 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 00/14] ARM: davinci: step towards removing
- at24_platform_data
-Message-ID: <20180625174024.GB17417@lunn.ch>
-References: <20180625155025.12567-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625155025.12567-1-brgl@bgdev.pl>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S964864AbeFYRlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 13:41:14 -0400
+Received: from jouet.infradead.org (unknown [177.79.80.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCD4625F72;
+        Mon, 25 Jun 2018 17:41:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529948473;
+        bh=h2z7PRKV7SScB7DzjwA2LqRDYCdBpyOx5JeNFIzyOR0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OCTQtV7hfHFglL7k/xxkWx9bMbSsOInZ+sjFwSrFlaIOEiN/njuVHxDN4QGwayTQO
+         NMAoZKiYCx3MoecZmJ39NnK9gZCikUtT0CyjUj1Xh8TktoJ9L2dTrzGQk1dMyLg8GZ
+         Ic7uG8M0eEpOB/f6lwXk5kVePbWsj76N90zKs0nY=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 04/19] perf tests: Add event parsing error handling to parse events test
+Date:   Mon, 25 Jun 2018 14:40:30 -0300
+Message-Id: <20180625174045.25765-5-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180625174045.25765-1-acme@kernel.org>
+References: <20180625174045.25765-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 05:50:11PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Since I took over maintainership of the at24 driver I've been working
-> towards removing at24_platform_data in favor for device properties.
-> 
-> DaVinci is the only platform that's still using it - all other users
-> have already been converted.
-> 
-> One of the obstacles in case of DaVinci is removing the setup() callback
-> from the pdata struct, the only user of which are some davinci boards.
+From: Jiri Olsa <jolsa@kernel.org>
 
-Hi Bartosz
+Add missing error handling for parse_events calls in test_event function
+that led to following segfault on s390:
 
-Nice code.
+  running test 52 'intel_pt//u'
+  perf: Segmentation fault
+  ...
+  /lib64/libc.so.6(vasprintf+0xe6) [0x3fffca3f106]
+  /lib64/libc.so.6(asprintf+0x46) [0x3fffca1aa96]
+  ./perf(parse_events_add_pmu+0xb8) [0x80132088]
+  ./perf(parse_events_parse+0xc62) [0x8019529a]
+  ./perf(parse_events+0x98) [0x801341c0]
+  ./perf(test__parse_events+0x48) [0x800cd140]
+  ./perf(cmd_test+0x26a) [0x800bd44a]
+  test child interrupted
 
-I've got a platform i want to add sometime soon using the at24. I
-noticed you doing the cleanup, so i avoided the setup() call. But
-using it would of helped...
+Adding the struct parse_events_error argument to parse_events call. Also
+adding parse_events_print_error to get more details on the parsing
+failures, like:
 
-My platform is x86 based, so no device tree. I instantiate a number of
-AT24 devices from a platform driver, and then add nvmem cells so i can
-access data in these eeproms. This new code will make this simpler.
+  # perf test 6 -v
+  running test 52 'intel_pt//u'failed to parse event 'intel_pt//u', err 1, str 'Cannot find PMU `intel_pt'. Missing kernel support?'
+  event syntax error: 'intel_pt//u'
+                       \___ Cannot find PMU `intel_pt'. Missing kernel support?
 
-> The only board that's still using this callback is now mityomapl138.
-> Unfortunately it stores more info in EEPROM than just the MAC address
-> and will require some more work. Unfortunately I don't have access
-> to this board so I can't test any actual solutions on a live hardware.
+Committer note:
 
-Depending on what i find in the EEPROM, i need to instantiate other
-i2c devices. So i have the problem of knowing when the EEPROM has
-actually probed and i can use the nvmem API to retrieve the contents.
+Use named initializers in the struct parse_events_error variable to
+avoid breaking the build on centos5, 6 and others with a similar gcc:
 
-What i have done so far, is registers a bus notifier on i2c_bus_type,
-and look for BUS_NOTIFY_BOUND_DRIVER. I can then check if the i2c
-client in the notifier is the at24 client. But when i then add more
-i2c clients from inside the notifier i get lockdep splats. They are
-false positives, but it does suggest it is not a good idea to do this.
+  cc1: warnings being treated as errors
+  tests/parse-events.c: In function 'test_event':
+  tests/parse-events.c:1696: error: missing initializer
+  tests/parse-events.c:1696: error: (near initialization for 'err.str')
 
-So it would be good to have some sort of recommended alternative to
-the setup() callback. Ideally it would be specific to a particular
-at24, and safe to call other i2c functions from.
+Reported-by: Kim Phillips <kim.phillips@arm.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Kim Phillips <kim.phillips@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Link: http://lkml.kernel.org/r/20180611093422.1005-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/parse-events.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Do you have any ideas?
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index 7d4077068454..9751e7563a45 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -1686,6 +1686,7 @@ static struct terms_test test__terms[] = {
+ 
+ static int test_event(struct evlist_test *e)
+ {
++	struct parse_events_error err = { .idx = 0, };
+ 	struct perf_evlist *evlist;
+ 	int ret;
+ 
+@@ -1693,10 +1694,11 @@ static int test_event(struct evlist_test *e)
+ 	if (evlist == NULL)
+ 		return -ENOMEM;
+ 
+-	ret = parse_events(evlist, e->name, NULL);
++	ret = parse_events(evlist, e->name, &err);
+ 	if (ret) {
+-		pr_debug("failed to parse event '%s', err %d\n",
+-			 e->name, ret);
++		pr_debug("failed to parse event '%s', err %d, str '%s'\n",
++			 e->name, ret, err.str);
++		parse_events_print_error(&err, e->name);
+ 	} else {
+ 		ret = e->check(evlist);
+ 	}
+-- 
+2.14.3
 
-   Andrew
