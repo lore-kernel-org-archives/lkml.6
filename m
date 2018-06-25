@@ -2,137 +2,105 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FF7C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52833C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D88259D4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:00:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D88259D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 06FB3259D4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:01:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BrIjbdD0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FB3259D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755509AbeFYNAC (ORCPT
+        id S1755515AbeFYNBP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:00:02 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:62739 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752462AbeFYNAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:00:00 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41Dq5N0Kszz9tvV8;
-        Mon, 25 Jun 2018 14:59:52 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id fJUnT0KEzHqN; Mon, 25 Jun 2018 14:59:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41Dq5M6ZL8z9tvTy;
-        Mon, 25 Jun 2018 14:59:51 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5880F8B7C4;
-        Mon, 25 Jun 2018 14:59:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id yQ-P65uSUlrL; Mon, 25 Jun 2018 14:59:59 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.35])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1AB178B7A0;
-        Mon, 25 Jun 2018 14:59:59 +0200 (CEST)
-Subject: Re: [PATCH v2 1/2] crypto: Fix -Wstringop-truncation warnings
-To:     Stafford Horne <shorne@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
-        Eric Biggers <ebiggers3@gmail.com>,
-        linux-crypto@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-References: <20180625124538.21051-1-shorne@gmail.com>
- <20180625124538.21051-2-shorne@gmail.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <2588342c-50da-a75b-3e51-32e3d931644c@c-s.fr>
-Date:   Mon, 25 Jun 2018 14:59:58 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 25 Jun 2018 09:01:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51768 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755411AbeFYNBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:01:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vZX8jYOWO3a90wCemC9ahigb6/SmMgNRcEPmtmnRURA=; b=BrIjbdD0n6DazM0FFELolQaJK
+        UaThofzbBDfyhs8G4Y2GcOy0M6UZshi2mResO8ysfJRYnnXHhtJ2uGSROhq0K4irQtyqGg041BH6A
+        ovobXxSSva84nB2yTNmkANVzHlExmg/gYUsY2bW2Nn7lpl7v6CqvaacYcl1e3tq2Cr+I6xdbp5CMD
+        JTScTXz/JZBnOH1IBgY5bIpz2Xe8HLtWJYAbSo87GN9BoYSQCXsu3V+G6rxHOB6vYksjJwsEOStMq
+        MRs0gUWb9j4IBN0VlggU6iY+oKPXeT90eIMI6rKnBLKh2PwRLVFQJQmFH+54NbWUcSmPjxOQL1Ago
+        VTtMwMEgg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXR6z-0000CJ-6F; Mon, 25 Jun 2018 13:00:53 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A72F92029F1DB; Mon, 25 Jun 2018 15:00:51 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 15:00:51 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] doc: Update wake_up() & co. memory-barrier guarantees
+Message-ID: <20180625130051.GA2494@hirez.programming.kicks-ass.net>
+References: <20180625095031.GX2494@hirez.programming.kicks-ass.net>
+ <1529918258-7295-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <2779.1529928765@warthog.procyon.org.uk>
+ <20180625122850.GA14561@andrea>
 MIME-Version: 1.0
-In-Reply-To: <20180625124538.21051-2-shorne@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625122850.GA14561@andrea>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 25/06/2018 à 14:45, Stafford Horne a écrit :
-> As of GCC 9.0.0 the build is reporting warnings like:
+On Mon, Jun 25, 2018 at 02:28:50PM +0200, Andrea Parri wrote:
+> On Mon, Jun 25, 2018 at 01:12:45PM +0100, David Howells wrote:
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> > 
+> > > So yes, I suppose we're entirely suck with the full memory barrier
+> > > semantics like that. But I still find it easier to think of it like a
+> > > RELEASE that pairs with the ACQUIRE of waking up, such that the task
+> > > is guaranteed to observe it's own wake condition.
+> > > 
+> > > And maybe that is the thing I'm missing here. These comments only state
+> > > that it does in fact imply a full memory barrier, but do not explain
+> > > why, should it?
+> > 
+> > I think because RELEASE and ACQUIRE concepts didn't really exist in Linux at
+> > the time I wrote the doc, so the choices were read/readdep, write or full.
+> > 
+> > Since this document defines the *minimum* you can expect rather than what the
+> > kernel actually gives you, I think it probably makes sense to switch to
+> > RELEASE and ACQUIRE here.
 > 
->      crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
->      crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
->        strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
->        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->         sizeof(rblkcipher.geniv));
->         ~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> This means the strnycpy might create a non null terminated string.  Fix this by
-> explicitly performing '\0' termination.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Cc: Eric Biggers <ebiggers3@gmail.com>
-> Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
-> Signed-off-by: Stafford Horne <shorne@gmail.com>
-> ---
->   crypto/ablkcipher.c | 2 ++
->   crypto/blkcipher.c  | 1 +
->   2 files changed, 3 insertions(+)
-> 
-> diff --git a/crypto/ablkcipher.c b/crypto/ablkcipher.c
-> index d880a4897159..1edb5000d783 100644
-> --- a/crypto/ablkcipher.c
-> +++ b/crypto/ablkcipher.c
-> @@ -373,6 +373,7 @@ static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
->   	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
->   	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
->   		sizeof(rblkcipher.geniv));
+> RELEASE and ACQUIRE are not enough in SB.  Can you elaborate?
 
-Is it worth copying something we are going to discard at the following 
-line ? Shouldn't you limit the copy to      sizeof(rblkcipher.geniv) - 1   ?
+I prefer RELEASE vs wait-condition and treat task->state as an internal
+matter. Also note how the set_current_task() comment is fairly vague on
+what exact barriers are used. It just states 'sufficient'.
 
-> +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
->   
->   	rblkcipher.blocksize = alg->cra_blocksize;
->   	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
-> @@ -447,6 +448,7 @@ static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
->   	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
->   	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
->   		sizeof(rblkcipher.geniv));
+Maybe I should just give up and accept smp_mb(), but strictly speaking
+that is overkill, but it is the only sufficient barrier we currently
+have.
 
-Same comment here.
-
-Christophe
-
-> +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
->   
->   	rblkcipher.blocksize = alg->cra_blocksize;
->   	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
-> diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
-> index 01c0d4aa2563..dd4dcab3766a 100644
-> --- a/crypto/blkcipher.c
-> +++ b/crypto/blkcipher.c
-> @@ -512,6 +512,7 @@ static int crypto_blkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
->   	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
->   	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
->   		sizeof(rblkcipher.geniv));
-> +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
->   
->   	rblkcipher.blocksize = alg->cra_blocksize;
->   	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
-> 
