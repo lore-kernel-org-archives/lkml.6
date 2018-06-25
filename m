@@ -2,126 +2,115 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8698FC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF06C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9FD25496
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:02:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QeV6MbiR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9FD25496
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 18B70254AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:14:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B70254AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeFYGCE (ORCPT
+        id S1752228AbeFYGOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 02:02:04 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39931 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751921AbeFYGCC (ORCPT
+        Mon, 25 Jun 2018 02:14:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38434 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751984AbeFYGOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 02:02:02 -0400
-Received: by mail-io0-f196.google.com with SMTP id f1-v6so11364680ioh.6
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 23:02:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bjxGr0QkxYa6s4tcjWsIujVLOjLRhcrhhQCmdHM1mO4=;
-        b=QeV6MbiR3z6iGt6eFDSSyGBQI7mogAwc43FurRDvEYCJHUAa0MgcugZHNxUitx65aE
-         IShCj4TgN5xSv7mh1j0gj57lClIR4kprIUvL0jG4fIdU86fsKohZFvb8Fjpxnf8p2zZC
-         1fd4i3xmcTAqjHhT8BMcE13rWZcoTFpDfPd/8=
+        Mon, 25 Jun 2018 02:14:47 -0400
+Received: from mail-wm0-f72.google.com ([74.125.82.72])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <chia-lin.kao@canonical.com>)
+        id 1fXKly-0006kG-8R
+        for linux-kernel@vger.kernel.org; Mon, 25 Jun 2018 06:14:46 +0000
+Received: by mail-wm0-f72.google.com with SMTP id 76-v6so3572107wmw.3
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 23:14:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=bjxGr0QkxYa6s4tcjWsIujVLOjLRhcrhhQCmdHM1mO4=;
-        b=bOgqIfnBIEIr6axb61Vv76XQKXtIEdd3WsNJ3XB6zs0ookz/Brrs6XdjJXc6wpsG38
-         eOAwyU/ty6TEd1RDNDnPOPhcu3q722TVZx0UGmnXiVnCtlu2StNaSvpCY0hKlJHlyFSY
-         hiwrN7mW1ltE3yn6+ItLOJz5b8wY467ajXt3Yi3PJ5kIlZINdpYW6bjsYCC4lAbw/ur9
-         4Kmz3BiEn4UIkJHnpdYvoqVslpc16NCkOMTsHYA3b/DJ+OKNrapSGq3vAFS9p8BhQrrg
-         4elTUNjaLHzf7j94TFhS+7s2gtToD4V8qg9NflOlJXTlDWVpnDIQ66/U54BW4eisANBK
-         +3SA==
-X-Gm-Message-State: APt69E14U+OMCPasCMRRKahbJkm8O3raTlb5Y2YccxlKCWYFWfu2r/7Y
-        wKO/3/o3hKEPIbGS8z0yyTSVoFfOFdw8xIQs0IoaAg==
-X-Google-Smtp-Source: AAOMgpfMctzqgyBiGiLzgAdlon7Y2Y+GTB9INfC10h2AnClkdhRHT+nL+Lx6MixgwntieHwZ1usD4MutJ141rolzgE4=
-X-Received: by 2002:a6b:5d09:: with SMTP id r9-v6mr5507634iob.170.1529906521697;
- Sun, 24 Jun 2018 23:02:01 -0700 (PDT)
+        bh=4O38+L5vlaGclk+ddCGH5+NZDuv6qPo2X507gDOrvC4=;
+        b=Y3WZkLLwEuScgu+blQDwWrwXTdlA+rq9qAAGIdXi+mBjIBS3JN+1my3V9KG42jyKy1
+         PyqRb24/zbDOkUAlkpuV0QQ10JAqfP3HTFuLdwcHhWCSdnyaj4GLY25KMHvxim4k2AAs
+         e/KNGwjxp7ZcPKxtUU883vAXTOZkLEIA1y88mU99kS+vKQzdrvty+jxDtl9LJugFbk6J
+         GOtEQegiz61/73qidl6pVBBY3YOrriglqRYFmG0MM1k+zqfZfNAz9YxCrTKKTSYDCi3y
+         omRvbDVSZhB+vSOFoyU6+yuUeOn2an4Iqr0HkIfiY5xJVC5Y35EdFznce/E+Zapxk/oN
+         RKNg==
+X-Gm-Message-State: APt69E0QAwU8s1v49AQlq2voa5kJpYhaaIYeT6/VmerfCHRR7ocn+8Gc
+        8RuXF+xAqqwbkKzl2PBv//YPELq8aJnAk8s143AXdm3wyuj+Yma29mXqF3D0jXojBxku/F24PHB
+        yCnRSWQVJCCMcLCwasLFG5ocINnGAusMLNMxZSW0Mah5YiqZNBF6IilSvTQ==
+X-Received: by 2002:a5d:4a92:: with SMTP id o18-v6mr8207735wrq.132.1529907285961;
+        Sun, 24 Jun 2018 23:14:45 -0700 (PDT)
+X-Google-Smtp-Source: AAOMgpezUTUMFNGJp6ceJldTJEpfLwsEACrC27YU8gUdsN5vY5GS/E1R/E1w/p1XbPp4U1ATafazoo+Xw6ZI2ibTGto=
+X-Received: by 2002:a5d:4a92:: with SMTP id o18-v6mr8207718wrq.132.1529907285599;
+ Sun, 24 Jun 2018 23:14:45 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 23:02:01
+Received: by 2002:a1c:bc55:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 23:14:44
  -0700 (PDT)
-In-Reply-To: <1529891271-24319-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1529891271-24319-1-git-send-email-sai.praneeth.prakhya@intel.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 25 Jun 2018 08:02:01 +0200
-Message-ID: <CAKv+Gu_xK9WSVPx-gfy=vNjUsrT8aChofghjDbQPJaHPkS7bnw@mail.gmail.com>
-Subject: Re: [PATCH] efi: Remove the declaration of efi_late_init() as the
- function is unused
-To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Young <dyoung@redhat.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>
+In-Reply-To: <20180621203745.GA50452@dtor-ws>
+References: <20180621201207.178426-1-delco@chromium.org> <20180621203745.GA50452@dtor-ws>
+From:   AceLan Kao <acelan.kao@canonical.com>
+Date:   Mon, 25 Jun 2018 14:14:44 +0800
+Message-ID: <CAFv23QnUnQdkf5my2cgik-iQ2hG+Q8B0jonjGaRan2shyea+kw@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: intel-vbtn: Ignore extraneous events from
+ tablet mode
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Matt Delco <delco@chromium.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.or>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 June 2018 at 03:47, Sai Praneeth Prakhya
-<sai.praneeth.prakhya@intel.com> wrote:
-> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
->
-> Commit 7b0a911478c74 (efi/x86: Move the EFI BGRT init code to early
-> init code), removed the implementation and all the references to
-> efi_late_init() but the function is still declared at
-> include/linux/efi.h. Hence, remove the unnecessary declaration.
->
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Cc: Lee Chun-Yi <jlee@suse.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> Cc: Ricardo Neri <ricardo.neri@intel.com>
-> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-> Cc: Matt Fleming <matt@codeblueprint.co.uk>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+There is a v2 patch.
+Please ignore this one.
 
-Thanks Sai
-
-Queued in efi/next
-
-> ---
->  include/linux/efi.h | 2 --
->  1 file changed, 2 deletions(-)
+2018-06-22 4:37 GMT+08:00 Dmitry Torokhov <dmitry.torokhov@gmail.com>:
+> On Thu, Jun 21, 2018 at 01:12:07PM -0700, Matt Delco wrote:
+>> The Dell laptop I have has an ACPI that sends 0xCB and 0xCC on entering
+>> tablet mode.  On exiting tablet mode it sends 0xCA and 0xCD.  This
+>> change has the driver ignore 0xCA and 0xCB.
+>>
+>> Signed-off-by: Matt Delco <delco@chromium.org>
 >
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 56add823f190..ae47be636b98 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -988,14 +988,12 @@ extern void efi_memmap_walk (efi_freemem_callback_t callback, void *arg);
->  extern void efi_gettimeofday (struct timespec64 *ts);
->  extern void efi_enter_virtual_mode (void);     /* switch EFI to virtual mode, if possible */
->  #ifdef CONFIG_X86
-> -extern void efi_late_init(void);
->  extern void efi_free_boot_services(void);
->  extern efi_status_t efi_query_variable_store(u32 attributes,
->                                              unsigned long size,
->                                              bool nonblocking);
->  extern void efi_find_mirror(void);
->  #else
-> -static inline void efi_late_init(void) {}
->  static inline void efi_free_boot_services(void) {}
+> This looks good to me.
 >
->  static inline efi_status_t efi_query_variable_store(u32 attributes,
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>
+>> ---
+>>  drivers/platform/x86/intel-vbtn.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
+>> index c13780b8dabb..4c6f2bb1d1ac 100644
+>> --- a/drivers/platform/x86/intel-vbtn.c
+>> +++ b/drivers/platform/x86/intel-vbtn.c
+>> @@ -38,8 +38,10 @@ static const struct key_entry intel_vbtn_keymap[] = {
+>>       { KE_IGNORE, 0xC7, { KEY_VOLUMEDOWN } },        /* volume-down key release */
+>>       { KE_KEY,    0xC8, { KEY_ROTATE_LOCK_TOGGLE } },        /* rotate-lock key press */
+>>       { KE_KEY,    0xC9, { KEY_ROTATE_LOCK_TOGGLE } },        /* rotate-lock key release */
+>> -     { KE_SW,     0xCC, { .sw = { SW_TABLET_MODE, 1 } } },   /* Tablet */
+>> -     { KE_SW,     0xCD, { .sw = { SW_TABLET_MODE, 0 } } },   /* Laptop */
+>> +     { KE_IGNORE, 0xCA, { KEY_UNKNOWN } },                   /* Laptop key press */
+>> +     { KE_IGNORE, 0xCB, { KEY_UNKNOWN } },                   /* Tablet key press */
+>> +     { KE_SW,     0xCC, { .sw = { SW_TABLET_MODE, 1 } } },   /* Tablet key release */
+>> +     { KE_SW,     0xCD, { .sw = { SW_TABLET_MODE, 0 } } },   /* Laptop key release */
+>>       { KE_END },
+>>  };
+>>
+>> --
+>> 2.18.0.rc2.346.g013aa6912e-goog
+>>
+>
 > --
-> 2.7.4
->
+> Dmitry
