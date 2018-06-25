@@ -2,306 +2,159 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB38AC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513B7C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE3825505
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:10:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE3825505
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AD4025507
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:10:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD4025507
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752492AbeFYHK1 (ORCPT
+        id S1752508AbeFYHKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 03:10:27 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:11306 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751821AbeFYHKL (ORCPT
+        Mon, 25 Jun 2018 03:10:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59780 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751080AbeFYHKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 03:10:11 -0400
-X-UUID: a6a016b012364c07841b394bcee82e31-20180625
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1003648160; Mon, 25 Jun 2018 15:10:06 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 25 Jun 2018 15:10:03 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 25 Jun 2018 15:10:03 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH 2/2] clocksource/drivers/mtk_systimer: Add support for Mediatek SoCs
-Date:   Mon, 25 Jun 2018 15:10:01 +0800
-Message-ID: <1529910601-15005-3-git-send-email-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1529910601-15005-1-git-send-email-stanley.chu@mediatek.com>
-References: <1529910601-15005-1-git-send-email-stanley.chu@mediatek.com>
+        Mon, 25 Jun 2018 03:10:52 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5P79REC032435
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 03:10:52 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jtqww88j5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 03:10:51 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 25 Jun 2018 08:10:49 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Jun 2018 08:10:47 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5P7AkTF31719560
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Jun 2018 07:10:46 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 14233A4053;
+        Mon, 25 Jun 2018 08:10:41 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D2340A405D;
+        Mon, 25 Jun 2018 08:10:40 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.152.224.43])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Jun 2018 08:10:40 +0100 (BST)
+Subject: Re: s390 qemu boot failure in -next
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180622194736.GA5794@roeck-us.net>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ xsFNBE6cPPgBEAC2VpALY0UJjGmgAmavkL/iAdqul2/F9ONz42K6NrwmT+SI9CylKHIX+fdf
+ J34pLNJDmDVEdeb+brtpwC9JEZOLVE0nb+SR83CsAINJYKG3V1b3Kfs0hydseYKsBYqJTN2j
+ CmUXDYq9J7uOyQQ7TNVoQejmpp5ifR4EzwIFfmYDekxRVZDJygD0wL/EzUr8Je3/j548NLyL
+ 4Uhv6CIPf3TY3/aLVKXdxz/ntbLgMcfZsDoHgDk3lY3r1iwbWwEM2+eYRdSZaR4VD+JRD7p8
+ 0FBadNwWnBce1fmQp3EklodGi5y7TNZ/CKdJ+jRPAAnw7SINhSd7PhJMruDAJaUlbYaIm23A
+ +82g+IGe4z9tRGQ9TAflezVMhT5J3ccu6cpIjjvwDlbxucSmtVi5VtPAMTLmfjYp7VY2Tgr+
+ T92v7+V96jAfE3Zy2nq52e8RDdUo/F6faxcumdl+aLhhKLXgrozpoe2nL0Nyc2uqFjkjwXXI
+ OBQiaqGeWtxeKJP+O8MIpjyGuHUGzvjNx5S/592TQO3phpT5IFWfMgbu4OreZ9yekDhf7Cvn
+ /fkYsiLDz9W6Clihd/xlpm79+jlhm4E3xBPiQOPCZowmHjx57mXVAypOP2Eu+i2nyQrkapaY
+ IdisDQfWPdNeHNOiPnPS3+GhVlPcqSJAIWnuO7Ofw1ZVOyg/jwARAQABzTRDaHJpc3RpYW4g
+ Qm9ybnRyYWVnZXIgKElCTSkgPGJvcm50cmFlZ2VyQGRlLmlibS5jb20+wsF4BBMBAgAiBQJO
+ nDz4AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRARe7yAtaYcfOYVD/9sqc6ZdYKD
+ bmDIvc2/1LL0g7OgiA8pHJlYN2WHvIhUoZUIqy8Sw2EFny/nlpPVWfG290JizNS2LZ0mCeGZ
+ 80yt0EpQNR8tLVzLSSr0GgoY0lwsKhAnx3p3AOrA8WXsPL6prLAu3yJI5D0ym4MJ6KlYVIjU
+ ppi4NLWz7ncA2nDwiIqk8PBGxsjdc/W767zOOv7117rwhaGHgrJ2tLxoGWj0uoH3ZVhITP1z
+ gqHXYaehPEELDV36WrSKidTarfThCWW0T3y4bH/mjvqi4ji9emp1/pOWs5/fmd4HpKW+44tD
+ Yt4rSJRSa8lsXnZaEPaeY3nkbWPcy3vX6qafIey5d8dc8Uyaan39WslnJFNEx8cCqJrC77kI
+ vcnl65HaW3y48DezrMDH34t3FsNrSVv5fRQ0mbEed8hbn4jguFAjPt4az1xawSp0YvhzwATJ
+ YmZWRMa3LPx/fAxoolq9cNa0UB3D3jmikWktm+Jnp6aPeQ2Db3C0cDyxcOQY/GASYHY3KNra
+ z8iwS7vULyq1lVhOXg1EeSm+lXQ1Ciz3ub3AhzE4c0ASqRrIHloVHBmh4favY4DEFN19Xw1p
+ 76vBu6QjlsJGjvROW3GRKpLGogQTLslbjCdIYyp3AJq2KkoKxqdeQYm0LZXjtAwtRDbDo71C
+ FxS7i/qfvWJv8ie7bE9A6Wsjn87BTQROnDz4ARAAmPI1e8xB0k23TsEg8O1sBCTXkV8HSEq7
+ JlWz7SWyM8oFkJqYAB7E1GTXV5UZcr9iurCMKGSTrSu3ermLja4+k0w71pLxws859V+3z1jr
+ nhB3dGzVZEUhCr3EuN0t8eHSLSMyrlPL5qJ11JelnuhToT6535cLOzeTlECc51bp5Xf6/XSx
+ SMQaIU1nDM31R13o98oRPQnvSqOeljc25aflKnVkSfqWSrZmb4b0bcWUFFUKVPfQ5Z6JEcJg
+ Hp7qPXHW7+tJTgmI1iM/BIkDwQ8qe3Wz8R6rfupde+T70NiId1M9w5rdo0JJsjKAPePKOSDo
+ RX1kseJsTZH88wyJ30WuqEqH9zBxif0WtPQUTjz/YgFbmZ8OkB1i+lrBCVHPdcmvathknAxS
+ bXL7j37VmYNyVoXez11zPYm+7LA2rvzP9WxR8bPhJvHLhKGk2kZESiNFzP/E4r4Wo24GT4eh
+ YrDo7GBHN82V4O9JxWZtjpxBBl8bH9PvGWBmOXky7/bP6h96jFu9ZYzVgIkBP3UYW+Pb1a+b
+ w4A83/5ImPwtBrN324bNUxPPqUWNW0ftiR5b81ms/rOcDC/k/VoN1B+IHkXrcBf742VOLID4
+ YP+CB9GXrwuF5KyQ5zEPCAjlOqZoq1fX/xGSsumfM7d6/OR8lvUPmqHfAzW3s9n4lZOW5Jfx
+ bbkAEQEAAcLBXwQYAQIACQUCTpw8+AIbDAAKCRARe7yAtaYcfPzbD/9WNGVf60oXezNzSVCL
+ hfS36l/zy4iy9H9rUZFmmmlBufWOATjiGAXnn0rr/Jh6Zy9NHuvpe3tyNYZLjB9pHT6mRZX7
+ Z1vDxeLgMjTv983TQ2hUSlhRSc6e6kGDJyG1WnGQaqymUllCmeC/p9q5m3IRxQrd0skfdN1V
+ AMttRwvipmnMduy5SdNayY2YbhWLQ2wS3XHJ39a7D7SQz+gUQfXgE3pf3FlwbwZhRtVR3z5u
+ aKjxqjybS3Ojimx4NkWjidwOaUVZTqEecBV+QCzi2oDr9+XtEs0m5YGI4v+Y/kHocNBP0myd
+ pF3OoXvcWdTb5atk+OKcc8t4TviKy1WCNujC+yBSq3OM8gbmk6NwCwqhHQzXCibMlVF9hq5a
+ FiJb8p4QKSVyLhM8EM3HtiFqFJSV7F+h+2W0kDyzBGyE0D8z3T+L3MOj3JJJkfCwbEbTpk4f
+ n8zMboekuNruDw1OADRMPlhoWb+g6exBWx/YN4AY9LbE2KuaScONqph5/HvJDsUldcRN3a5V
+ RGIN40QWFVlZvkKIEkzlzqpAyGaRLhXJPv/6tpoQaCQQoSAc5Z9kM/wEd9e2zMeojcWjUXgg
+ oWj8A/wY4UXExGBu+UCzzP/6sQRpBiPFgmqPTytrDo/gsUGqjOudLiHQcMU+uunULYQxVghC
+ syiRa+UVlsKmx1hsEg==
+Date:   Mon, 25 Jun 2018 09:10:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20180622194736.GA5794@roeck-us.net>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18062507-0020-0000-0000-0000029E8AF5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062507-0021-0000-0000-000020EAFA8B
+Message-Id: <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=762 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806250085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a new clock event for the timer
-found on the Mediatek SoCs.
 
-The Mediatek System Timer has several 32-bit timers.
-Only one timer is used by this driver as a clock event
-supporting oneshot events.
 
-The System Timer can be run with two clocks. A 13 MHz system
-clock and the RTC clock running at 32 KHz. This implementation
-uses the system clock with no clock source divider.
+On 06/22/2018 09:47 PM, Guenter Roeck wrote:
+> Hi,
+> 
+> starting with commit 's390/boot: make head.S and als.c be part of the
+> decompressor only' in -next, s390 immages no longer boot in qemu.
+> As far as I can see, the reason is that the command line is no longer
+> passed from qemu to the kernel, which results in a panic because the
+> root file system can not be mounted.
+> 
+> Was this change made on purpose ? If so, is there a way to get qemu
+> back to working ?
 
-The interrupts are shared between the different timers.
-We just enable one interrupt for the clock event. The clock
-event timer is used by all cores.
+Certainly not on purpose.
 
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
----
- drivers/clocksource/Kconfig        |   13 ++-
- drivers/clocksource/Makefile       |    1 +
- drivers/clocksource/mtk_systimer.c |  177 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 189 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clocksource/mtk_systimer.c
+Vasily, I can reproduce this with KVM and an external kernel boot of the vmlinux file (the elf file)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index dec0dd8..362c110 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -442,12 +442,21 @@ config SYS_SUPPORTS_SH_CMT
-         bool
- 
- config MTK_TIMER
--	bool "Mediatek timer driver" if COMPILE_TEST
-+	bool "Mediatek general purpose timer driver" if COMPILE_TEST
- 	depends on HAS_IOMEM
- 	select TIMER_OF
- 	select CLKSRC_MMIO
- 	help
--	  Support for Mediatek timer driver.
-+	  Support for Mediatek General Purpose Timer (GPT) driver.
-+
-+config MTK_TIMER_SYSTIMER
-+	bool "Mediatek system timer driver" if COMPILE_TEST
-+	depends on HAS_IOMEM
-+	select TIMER_OF
-+	select CLKSRC_MMIO
-+	help
-+	  Support for Mediatek System Timer (sys_timer) driver used as
-+	  a clock event supporting oneshot events.
- 
- config SPRD_TIMER
- 	bool "Spreadtrum timer driver" if EXPERT
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 00caf37..cdd34b2 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -50,6 +50,7 @@ obj-$(CONFIG_FSL_FTM_TIMER)	+= fsl_ftm_timer.o
- obj-$(CONFIG_VF_PIT_TIMER)	+= vf_pit_timer.o
- obj-$(CONFIG_CLKSRC_QCOM)	+= qcom-timer.o
- obj-$(CONFIG_MTK_TIMER)		+= mtk_timer.o
-+obj-$(CONFIG_MTK_TIMER_SYSTIMER)	+= mtk_systimer.o
- obj-$(CONFIG_CLKSRC_PISTACHIO)	+= time-pistachio.o
- obj-$(CONFIG_CLKSRC_TI_32K)	+= timer-ti-32k.o
- obj-$(CONFIG_CLKSRC_NPS)	+= timer-nps.o
-diff --git a/drivers/clocksource/mtk_systimer.c b/drivers/clocksource/mtk_systimer.c
-new file mode 100644
-index 0000000..06e74ce
---- /dev/null
-+++ b/drivers/clocksource/mtk_systimer.c
-@@ -0,0 +1,177 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+//  Copyright (C) 2018 MediaTek Inc.
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/irq.h>
-+#include <linux/interrupt.h>
-+#include <linux/irqreturn.h>
-+#include <linux/jiffies.h>
-+#include <linux/clockchips.h>
-+#include <linux/clocksource.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <clocksource/arm_arch_timer.h>
-+
-+#define STMR_CLKEVT_DEFAULT_RATE  (13000000)
-+
-+/* registers */
-+#define STMR_CON                  (0x0)
-+#define STMR_VAL                  (0x4)
-+
-+/* STMR_CON */
-+#define STMR_CON_EN               BIT(0)
-+#define STMR_CON_IRQ_EN           BIT(1)
-+#define STMR_CON_IRQ_CLR          BIT(4)
-+
-+struct mtk_stmr_clkevt_device {
-+	void __iomem *base;
-+	struct clock_event_device dev;
-+};
-+
-+static inline struct mtk_stmr_clkevt_device*
-+	to_mtk_clkevt_device(struct clock_event_device *c)
-+{
-+	return container_of(c, struct mtk_stmr_clkevt_device, dev);
-+}
-+
-+static void mtk_stmr_reset(struct mtk_stmr_clkevt_device *evt)
-+{
-+	/* Clear IRQ */
-+	writel(STMR_CON_IRQ_CLR | STMR_CON_EN, evt->base + STMR_CON);
-+
-+	/* Reset counter */
-+	writel(0, evt->base + STMR_VAL);
-+
-+	/* Disable timer */
-+	writel(0, evt->base + STMR_CON);
-+}
-+
-+static void mtk_stmr_ack_irq(struct mtk_stmr_clkevt_device *evt)
-+{
-+	mtk_stmr_reset(evt);
-+}
-+
-+static irqreturn_t mtk_stmr_handler(int irq, void *priv)
-+{
-+	struct mtk_stmr_clkevt_device *evt = priv;
-+
-+	mtk_stmr_ack_irq(evt);
-+	evt->dev.event_handler(&evt->dev);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int mtk_stmr_clkevt_next_event(unsigned long ticks,
-+				      struct clock_event_device *dev)
-+{
-+	struct mtk_stmr_clkevt_device *evt = to_mtk_clkevt_device(dev);
-+
-+	/*
-+	 * reset timer first because we do not expect interrupt is triggered
-+	 * by old compare value.
-+	 */
-+	mtk_stmr_reset(evt);
-+
-+	writel(STMR_CON_EN, evt->base + STMR_CON);
-+
-+	writel(ticks, evt->base + STMR_VAL);
-+
-+	writel(STMR_CON_EN | STMR_CON_IRQ_EN, evt->base + STMR_CON);
-+
-+	return 0;
-+}
-+
-+static int mtk_stmr_clkevt_shutdown(struct clock_event_device *dev)
-+{
-+	struct mtk_stmr_clkevt_device *evt = to_mtk_clkevt_device(dev);
-+
-+	mtk_stmr_reset(evt);
-+
-+	return 0;
-+}
-+
-+static int mtk_stmr_clkevt_resume(struct clock_event_device *clk)
-+{
-+	return mtk_stmr_clkevt_shutdown(clk);
-+}
-+
-+static int mtk_stmr_clkevt_oneshot(struct clock_event_device *clk)
-+{
-+	return 0;
-+}
-+
-+static int __init mtk_stmr_init(struct device_node *node)
-+{
-+	struct mtk_stmr_clkevt_device *evt;
-+	struct resource res;
-+	u32 freq;
-+
-+	evt = kzalloc(sizeof(*evt), GFP_KERNEL);
-+	if (!evt)
-+		return -ENOMEM;
-+
-+	evt->dev.name = "mtk-clkevt";
-+	evt->dev.shift = 32;
-+	evt->dev.rating = 300;
-+	evt->dev.features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
-+	evt->dev.set_state_shutdown = mtk_stmr_clkevt_shutdown;
-+	evt->dev.set_state_oneshot = mtk_stmr_clkevt_oneshot;
-+	evt->dev.tick_resume = mtk_stmr_clkevt_resume;
-+	evt->dev.set_next_event = mtk_stmr_clkevt_next_event;
-+	evt->dev.cpumask = cpu_possible_mask;
-+
-+	evt->base = of_iomap(node, 0);
-+	if (IS_ERR(evt->base)) {
-+		pr_err("Can't get resource\n");
-+		goto err_kzalloc;
-+	}
-+
-+	mtk_stmr_reset(evt);
-+
-+	evt->dev.irq = irq_of_parse_and_map(node, 0);
-+	if (evt->dev.irq <= 0) {
-+		pr_err("Can't parse IRQ\n");
-+		goto err_mem;
-+	}
-+
-+	if (of_property_read_u32(node, "clock-frequency", &freq)) {
-+		pr_err("Can't get clk rate\n");
-+		freq = STMR_CLKEVT_DEFAULT_RATE;
-+	}
-+
-+	evt->dev.mult = div_sc(freq, NSEC_PER_SEC, evt->dev.shift);
-+	evt->dev.max_delta_ns = clockevent_delta2ns(0xffffffff, &evt->dev);
-+	evt->dev.min_delta_ns = clockevent_delta2ns(3, &evt->dev);
-+
-+	clockevents_register_device(&evt->dev);
-+
-+	if (request_irq(evt->dev.irq, mtk_stmr_handler,
-+			IRQF_TIMER | IRQF_IRQPOLL |
-+			IRQF_TRIGGER_HIGH | IRQF_PERCPU,
-+			"mtk-clkevt", evt)) {
-+		pr_err("failed to setup irq %d\n", evt->dev.irq);
-+		goto err_mem;
-+	}
-+
-+	pr_info("mtk_stmr: base=0x%lx, irq=%d, freq=%d, hz=%d\n",
-+		(unsigned long)evt->base, evt->dev.irq, freq, HZ);
-+
-+	return 0;
-+
-+err_mem:
-+	iounmap(evt->base);
-+	of_address_to_resource(node, 0, &res);
-+	release_mem_region(res.start, resource_size(&res));
-+err_kzalloc:
-+	kfree(evt);
-+
-+	return -EINVAL;
-+}
-+
-+TIMER_OF_DECLARE(mtk_systimer, "mediatek,sys_timer", mtk_stmr_init);
--- 
-1.7.9.5
+e.g.
+
+qemu-system-s390 -enable-kvm -nographic -kernel vmlinux -append "this string no longer is command line"
+
+The compressed image (bzImage) seems to work fine though.
+
+This seems to be an unfortunate side effect of QEMUs ways to "guess" its Linux (checking for start
+address 0x10000, which is no longer true for the vmlinux file). With the pure vmlinux elf file
+the load address is 0x100000 as there is no unpacker.
+
+Guenter, can you check if arch/s390/boot/bzImage works for you as a workaround?
+
 
