@@ -6,134 +6,75 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92C0C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F101C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713EC254D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:42:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713EC254D8
+	by mail.kernel.org (Postfix) with ESMTP id DC1B1254E7
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:43:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC1B1254E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752545AbeFYGmj (ORCPT
+        id S1752558AbeFYGnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 02:42:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42186 "EHLO
+        Mon, 25 Jun 2018 02:43:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42204 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752490AbeFYGmh (ORCPT
+        with ESMTP id S1752462AbeFYGnO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 02:42:37 -0400
+        Mon, 25 Jun 2018 02:43:14 -0400
 Received: from localhost (unknown [106.38.54.61])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69B562C;
-        Mon, 25 Jun 2018 06:42:36 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 14:42:32 +0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] Input: cros_ec_keyb - Switch to SPDX identifier.
-Message-ID: <20180625064232.GB4233@kroah.com>
-References: <20180605175429.9072-1-enric.balletbo@collabora.com>
- <20180605175429.9072-6-enric.balletbo@collabora.com>
- <CAOMZO5ByhMV9_gRHLmGiSNJtCvKEOk==ZMz2O2=tokZh2ps4xg@mail.gmail.com>
- <7085d0bb-557c-0796-d3ae-756e000a7950@collabora.com>
- <20180625015717.GA30408@kroah.com>
- <5926a3f2-3646-f9e1-619a-255e619f41f0@collabora.com>
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB6C92C;
+        Mon, 25 Jun 2018 06:43:12 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 14:43:09 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.9 00/39] 4.9.110-stable review
+Message-ID: <20180625064309.GC4233@kroah.com>
+References: <20180624152352.038950449@linuxfoundation.org>
+ <CA+G9fYvEfPc09E9oBEd4fB2Ya1jdXB9cmfAy_x2-u_bPgPdA5Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5926a3f2-3646-f9e1-619a-255e619f41f0@collabora.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYvEfPc09E9oBEd4fB2Ya1jdXB9cmfAy_x2-u_bPgPdA5Q@mail.gmail.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 08:23:38AM +0200, Enric Balletbo i Serra wrote:
-> Hi Grek,
+On Mon, Jun 25, 2018 at 10:36:47AM +0530, Naresh Kamboju wrote:
+> On 24 June 2018 at 20:53, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > This is the start of the stable review cycle for the 4.9.110 release.
+> > There are 39 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Tue Jun 26 15:23:25 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.110-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> On 25/06/18 03:57, Greg KH wrote:
-> > On Tue, Jun 05, 2018 at 08:14:24PM +0200, Enric Balletbo i Serra wrote:
-> >> Hi Fabio,
-> >>
-> >> On 05/06/18 20:04, Fabio Estevam wrote:
-> >>> Hi Enric,
-> >>>
-> >>> On Tue, Jun 5, 2018 at 2:54 PM, Enric Balletbo i Serra
-> >>> <enric.balletbo@collabora.com> wrote:
-> >>>> Adopt the SPDX license identifier headers to ease license compliance
-> >>>> management.
-> >>>>
-> >>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >>>> ---
-> >>>>
-> >>>> Changes in v2:
-> >>>> - [6/9] Do not remove last paragraph.
-> >>>>
-> >>>>  drivers/input/keyboard/cros_ec_keyb.c | 34 ++++++++++-----------------
-> >>>>  1 file changed, 12 insertions(+), 22 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-> >>>> index 79eb29550c34..91b2839c12df 100644
-> >>>> --- a/drivers/input/keyboard/cros_ec_keyb.c
-> >>>> +++ b/drivers/input/keyboard/cros_ec_keyb.c
-> >>>> @@ -1,25 +1,15 @@
-> >>>> -/*
-> >>>> - * ChromeOS EC keyboard driver
-> >>>> - *
-> >>>> - * Copyright (C) 2012 Google, Inc
-> >>>> - *
-> >>>> - * This software is licensed under the terms of the GNU General Public
-> >>>> - * License version 2, as published by the Free Software Foundation, and
-> >>>
-> >>> Original text says GPL-2.0...
-> >>>
-> >>>> - * may be copied, distributed, and modified under those terms.
-> >>>> - *
-> >>>> - * This program is distributed in the hope that it will be useful,
-> >>>> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> >>>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> >>>> - * GNU General Public License for more details.
-> >>>> - *
-> >>>> - * This driver uses the Chrome OS EC byte-level message-based protocol for
-> >>>> - * communicating the keyboard state (which keys are pressed) from a keyboard EC
-> >>>> - * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-> >>>> - * but everything else (including deghosting) is done here.  The main
-> >>>> - * motivation for this is to keep the EC firmware as simple as possible, since
-> >>>> - * it cannot be easily upgraded and EC flash/IRAM space is relatively
-> >>>> - * expensive.
-> >>>> - */
-> >>>> +// SPDX-License-Identifier: GPL-2.0+
-> >>>
-> >>> but here you add a GPL-2.0+ type.
-> >>>
-> >>
-> >> Right, but the module license is set to GPL which means GNU Public License v2 or
-> >> later, see [1]. So, there is a mismatch. In such cases I assumed GPL-2.0+ as the
-> >> default. These mismatches are common so I think that should be fine for the
-> >> authors, if someone is disagree just let me know and I will change.
-> > 
-> > NO!
-> > 
-> > The license text is what you need to follow as almost everyone gets the
-> > MODULE_LICENSE() stuff wrong.  You can not follow the MODULE_LICENSE
-> > marking for determining GPLv2 vs. GPLv2+ at this point in time.  After
-> > we get the SPDX stuff all cleaned up then we can go and fix up the
-> > MODULE_LICENSE mismatch.
-> > 
-> > So again, always defer to the license text in the file, NOT the
-> > MODULE_LICENSE() marking.
-> > 
-> 
-> Many thanks for your feedback, Dmitry already told me that I was doing wrong
-> this and I sent another version following the license text, so this patchset was
-> superseded for v3 [1].
-> 
-> [1] https://patchwork.ozlabs.org/cover/925906/
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm and x86_64.
 
-Ah, good, sorry for the noise then, I didn't see that series.
+THanks for testing this and letting me know.
 
 greg k-h
