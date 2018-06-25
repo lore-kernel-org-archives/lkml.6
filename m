@@ -6,82 +6,103 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD00C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0386EC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2D9258D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:12:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2D9258D7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A550A258E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:17:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A550A258E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933346AbeFYMMw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:12:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42452 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753283AbeFYMMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:12:50 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 754104001388;
-        Mon, 25 Jun 2018 12:12:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-238.rdu2.redhat.com [10.10.120.238])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 15184111DCED;
-        Mon, 25 Jun 2018 12:12:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180625095031.GX2494@hirez.programming.kicks-ass.net>
-References: <20180625095031.GX2494@hirez.programming.kicks-ass.net> <1529918258-7295-1-git-send-email-andrea.parri@amarulasolutions.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     dhowells@redhat.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] doc: Update wake_up() & co. memory-barrier guarantees
+        id S933196AbeFYMRJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:17:09 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39703 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932965AbeFYMRH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 08:17:07 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5PCDb9e001396;
+        Mon, 25 Jun 2018 14:16:40 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2jtvaps8mg-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 25 Jun 2018 14:16:40 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7430A3A;
+        Mon, 25 Jun 2018 12:16:38 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4FF2C12B1;
+        Mon, 25 Jun 2018 12:16:38 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.48) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 25 Jun
+ 2018 14:16:37 +0200
+Subject: Re: [PATCH 1/1] ARM: dts: stm32: Add HASH support on stm32mp157c
+To:     Lionel Debieve <lionel.debieve@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180514100034.10282-1-lionel.debieve@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <e830c0ab-409a-7d6c-b654-9640f0fe36fd@st.com>
+Date:   Mon, 25 Jun 2018 14:16:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2778.1529928765.1@warthog.procyon.org.uk>
-Date:   Mon, 25 Jun 2018 13:12:45 +0100
-Message-ID: <2779.1529928765@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 25 Jun 2018 12:12:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 25 Jun 2018 12:12:49 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+In-Reply-To: <20180514100034.10282-1-lionel.debieve@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra <peterz@infradead.org> wrote:
+Hi Lionel,
 
-> So yes, I suppose we're entirely suck with the full memory barrier
-> semantics like that. But I still find it easier to think of it like a
-> RELEASE that pairs with the ACQUIRE of waking up, such that the task
-> is guaranteed to observe it's own wake condition.
+On 05/14/2018 12:00 PM, Lionel Debieve wrote:
+> This patch add HASH instance of the stm32mp157c SoC
 > 
-> And maybe that is the thing I'm missing here. These comments only state
-> that it does in fact imply a full memory barrier, but do not explain
-> why, should it?
+> Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
+> ---
+>   arch/arm/boot/dts/stm32mp157c.dtsi | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+> index b66f673b5038..cb39fb6d9960 100644
+> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+> @@ -702,6 +702,18 @@
+>   			status = "disabled";
+>   		};
+>   
+> +		hash1: hash@54002000 {
+> +			compatible = "st,stm32f756-hash";
+> +			reg = <0x54002000 0x400>;
+> +			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&rcc HASH1>;
+> +			resets = <&rcc HASH1_R>;
+> +			dmas = <&mdma1 31 0x10 0x1000A02 0x0 0x0 0x0>;
+> +			dma-names = "in";
+> +			dma-maxburst = <2>;
+> +			status = "disabled";
+> +		};
+> +
+>   		rng1: rng@54003000 {
+>   			compatible = "st,stm32-rng";
+>   			reg = <0x54003000 0x400>;
+> 
 
-I think because RELEASE and ACQUIRE concepts didn't really exist in Linux at
-the time I wrote the doc, so the choices were read/readdep, write or full.
+Applied on stm32-next.
 
-Since this document defines the *minimum* you can expect rather than what the
-kernel actually gives you, I think it probably makes sense to switch to
-RELEASE and ACQUIRE here.
-
-David
+Thanks.
+Alex
