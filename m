@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88371C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 439D8C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A6C3257BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:00:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6C3257BE
+	by mail.kernel.org (Postfix) with ESMTP id 096D7257BF
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:00:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 096D7257BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932249AbeFYLAF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 07:00:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54536 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755242AbeFYLAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 07:00:02 -0400
+        id S932339AbeFYLAK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 07:00:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:54564 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755314AbeFYLAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 07:00:06 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B8971529;
-        Mon, 25 Jun 2018 04:00:02 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6992D22C7;
+        Mon, 25 Jun 2018 04:00:06 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DEC9A3F73D;
-        Mon, 25 Jun 2018 04:00:00 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 38C9A3F73D;
+        Mon, 25 Jun 2018 04:00:05 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
         peterz@infradead.org, boqun.feng@gmail.com
-Cc:     Peter Hurley <peter@hurleysoftware.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCHv2 01/11] atomic/tty: Fix up atomic abuse in ldsem
-Date:   Mon, 25 Jun 2018 11:59:42 +0100
-Message-Id: <20180625105952.3756-2-mark.rutland@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: [PATCHv2 03/11] atomics: simplify cmpxchg() instrumentation
+Date:   Mon, 25 Jun 2018 11:59:44 +0100
+Message-Id: <20180625105952.3756-4-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180625105952.3756-1-mark.rutland@arm.com>
 References: <20180625105952.3756-1-mark.rutland@arm.com>
@@ -43,265 +43,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+Currently we define some fairly verbose wrappers for the cmpxchg()
+family so that we can pass a pointer and size into kasan_check_write().
 
-Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
-working after making the atomic_long interface type safe.
+The wrapper duplicate the size-switching logic necessary in arch code,
+and only work for scalar types. On some architectures, (cmp)xchg are
+used on non-scalar types, and thus the instrumented wrappers need to be
+able to handle this.
 
-Needing casts is bad form, which made me look at the code. There are no
-ld_semaphore::count users outside of these functions so there is no
-reason why it can not be an atomic_long_t in the first place, obviating
-the need for this cast.
+We could take the type-punning logic form {READ,WRITE}_ONCE(), but this
+makes the wrappers even more verbose, and requires several local
+variables in the macros.
 
-That also ensures the loads use atomic_long_read(), which implies (at
-least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+Instead, let's simplify the wrappers into simple macros which:
 
-When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
-very thin (the only difference is not changing *old on success, which
-most callers don't seem to care about).
+ * snapshot the pointer into a single local variable, called __ai_ptr to
+   avoid conflicts with variables in the scope of the caller.
 
-So rework the whole thing to use atomic_long_t and its accessors
-directly.
+ * call kasan_check_read() on __ai_ptr.
 
-While there, fixup all the horrible comment styles.
+ * invoke the arch_ function, passing the original arguments, bar
+   __ai_ptr being substituted for ptr.
 
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+There should be no functional change as a result of this patch.
+
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
 ---
- drivers/tty/tty_ldsem.c   | 82 ++++++++++++++++++++---------------------------
- include/linux/tty_ldisc.h |  4 +--
- 2 files changed, 37 insertions(+), 49 deletions(-)
+ include/asm-generic/atomic-instrumented.h | 100 +++++-------------------------
+ 1 file changed, 15 insertions(+), 85 deletions(-)
 
-diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
-index 37a91b3df980..0c98d88f795a 100644
---- a/drivers/tty/tty_ldsem.c
-+++ b/drivers/tty/tty_ldsem.c
-@@ -74,28 +74,6 @@ struct ldsem_waiter {
- 	struct task_struct *task;
- };
- 
--static inline long ldsem_atomic_update(long delta, struct ld_semaphore *sem)
--{
--	return atomic_long_add_return(delta, (atomic_long_t *)&sem->count);
--}
--
--/*
-- * ldsem_cmpxchg() updates @*old with the last-known sem->count value.
-- * Returns 1 if count was successfully changed; @*old will have @new value.
-- * Returns 0 if count was not changed; @*old will have most recent sem->count
-- */
--static inline int ldsem_cmpxchg(long *old, long new, struct ld_semaphore *sem)
--{
--	long tmp = atomic_long_cmpxchg(&sem->count, *old, new);
--	if (tmp == *old) {
--		*old = new;
--		return 1;
--	} else {
--		*old = tmp;
--		return 0;
--	}
--}
--
- /*
-  * Initialize an ldsem:
-  */
-@@ -109,7 +87,7 @@ void __init_ldsem(struct ld_semaphore *sem, const char *name,
- 	debug_check_no_locks_freed((void *)sem, sizeof(*sem));
- 	lockdep_init_map(&sem->dep_map, name, key, 0);
+diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
+index 3c64e95d5ed0..c7c3e4cdd942 100644
+--- a/include/asm-generic/atomic-instrumented.h
++++ b/include/asm-generic/atomic-instrumented.h
+@@ -408,109 +408,39 @@ static __always_inline bool atomic64_add_negative(s64 i, atomic64_t *v)
+ }
  #endif
--	sem->count = LDSEM_UNLOCKED;
-+	atomic_long_set(&sem->count, LDSEM_UNLOCKED);
- 	sem->wait_readers = 0;
- 	raw_spin_lock_init(&sem->wait_lock);
- 	INIT_LIST_HEAD(&sem->read_wait);
-@@ -122,16 +100,17 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
- 	struct task_struct *tsk;
- 	long adjust, count;
  
--	/* Try to grant read locks to all readers on the read wait list.
-+	/*
-+	 * Try to grant read locks to all readers on the read wait list.
- 	 * Note the 'active part' of the count is incremented by
- 	 * the number of readers before waking any processes up.
- 	 */
- 	adjust = sem->wait_readers * (LDSEM_ACTIVE_BIAS - LDSEM_WAIT_BIAS);
--	count = ldsem_atomic_update(adjust, sem);
-+	count = atomic_long_add_return(adjust, &sem->count);
- 	do {
- 		if (count > 0)
- 			break;
--		if (ldsem_cmpxchg(&count, count - adjust, sem))
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count - adjust))
- 			return;
- 	} while (1);
- 
-@@ -148,14 +127,15 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
- 
- static inline int writer_trylock(struct ld_semaphore *sem)
- {
--	/* only wake this writer if the active part of the count can be
-+	/*
-+	 * Only wake this writer if the active part of the count can be
- 	 * transitioned from 0 -> 1
- 	 */
--	long count = ldsem_atomic_update(LDSEM_ACTIVE_BIAS, sem);
-+	long count = atomic_long_add_return(LDSEM_ACTIVE_BIAS, &sem->count);
- 	do {
- 		if ((count & LDSEM_ACTIVE_MASK) == LDSEM_ACTIVE_BIAS)
- 			return 1;
--		if (ldsem_cmpxchg(&count, count - LDSEM_ACTIVE_BIAS, sem))
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count - LDSEM_ACTIVE_BIAS))
- 			return 0;
- 	} while (1);
- }
-@@ -205,12 +185,16 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
- 	/* set up my own style of waitqueue */
- 	raw_spin_lock_irq(&sem->wait_lock);
- 
--	/* Try to reverse the lock attempt but if the count has changed
-+	/*
-+	 * Try to reverse the lock attempt but if the count has changed
- 	 * so that reversing fails, check if there are are no waiters,
--	 * and early-out if not */
-+	 * and early-out if not
-+	 */
- 	do {
--		if (ldsem_cmpxchg(&count, count + adjust, sem))
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count + adjust)) {
-+			count += adjust;
- 			break;
-+		}
- 		if (count > 0) {
- 			raw_spin_unlock_irq(&sem->wait_lock);
- 			return sem;
-@@ -243,12 +227,14 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
- 	__set_current_state(TASK_RUNNING);
- 
- 	if (!timeout) {
--		/* lock timed out but check if this task was just
-+		/*
-+		 * Lock timed out but check if this task was just
- 		 * granted lock ownership - if so, pretend there
--		 * was no timeout; otherwise, cleanup lock wait */
-+		 * was no timeout; otherwise, cleanup lock wait.
-+		 */
- 		raw_spin_lock_irq(&sem->wait_lock);
- 		if (waiter.task) {
--			ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
-+			atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
- 			list_del(&waiter.list);
- 			raw_spin_unlock_irq(&sem->wait_lock);
- 			put_task_struct(waiter.task);
-@@ -273,11 +259,13 @@ down_write_failed(struct ld_semaphore *sem, long count, long timeout)
- 	/* set up my own style of waitqueue */
- 	raw_spin_lock_irq(&sem->wait_lock);
- 
--	/* Try to reverse the lock attempt but if the count has changed
-+	/*
-+	 * Try to reverse the lock attempt but if the count has changed
- 	 * so that reversing fails, check if the lock is now owned,
--	 * and early-out if so */
-+	 * and early-out if so.
-+	 */
- 	do {
--		if (ldsem_cmpxchg(&count, count + adjust, sem))
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count + adjust))
- 			break;
- 		if ((count & LDSEM_ACTIVE_MASK) == LDSEM_ACTIVE_BIAS) {
- 			raw_spin_unlock_irq(&sem->wait_lock);
-@@ -303,7 +291,7 @@ down_write_failed(struct ld_semaphore *sem, long count, long timeout)
- 	}
- 
- 	if (!locked)
--		ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
-+		atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
- 	list_del(&waiter.list);
- 	raw_spin_unlock_irq(&sem->wait_lock);
- 
-@@ -324,7 +312,7 @@ static int __ldsem_down_read_nested(struct ld_semaphore *sem,
- 
- 	lockdep_acquire_read(sem, subclass, 0, _RET_IP_);
- 
--	count = ldsem_atomic_update(LDSEM_READ_BIAS, sem);
-+	count = atomic_long_add_return(LDSEM_READ_BIAS, &sem->count);
- 	if (count <= 0) {
- 		lock_stat(sem, contended);
- 		if (!down_read_failed(sem, count, timeout)) {
-@@ -343,7 +331,7 @@ static int __ldsem_down_write_nested(struct ld_semaphore *sem,
- 
- 	lockdep_acquire(sem, subclass, 0, _RET_IP_);
- 
--	count = ldsem_atomic_update(LDSEM_WRITE_BIAS, sem);
-+	count = atomic_long_add_return(LDSEM_WRITE_BIAS, &sem->count);
- 	if ((count & LDSEM_ACTIVE_MASK) != LDSEM_ACTIVE_BIAS) {
- 		lock_stat(sem, contended);
- 		if (!down_write_failed(sem, count, timeout)) {
-@@ -370,10 +358,10 @@ int __sched ldsem_down_read(struct ld_semaphore *sem, long timeout)
-  */
- int ldsem_down_read_trylock(struct ld_semaphore *sem)
- {
--	long count = sem->count;
-+	long count = atomic_long_read(&sem->count);
- 
- 	while (count >= 0) {
--		if (ldsem_cmpxchg(&count, count + LDSEM_READ_BIAS, sem)) {
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_READ_BIAS)) {
- 			lockdep_acquire_read(sem, 0, 1, _RET_IP_);
- 			lock_stat(sem, acquired);
- 			return 1;
-@@ -396,10 +384,10 @@ int __sched ldsem_down_write(struct ld_semaphore *sem, long timeout)
-  */
- int ldsem_down_write_trylock(struct ld_semaphore *sem)
- {
--	long count = sem->count;
-+	long count = atomic_long_read(&sem->count);
- 
- 	while ((count & LDSEM_ACTIVE_MASK) == 0) {
--		if (ldsem_cmpxchg(&count, count + LDSEM_WRITE_BIAS, sem)) {
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_WRITE_BIAS)) {
- 			lockdep_acquire(sem, 0, 1, _RET_IP_);
- 			lock_stat(sem, acquired);
- 			return 1;
-@@ -417,7 +405,7 @@ void ldsem_up_read(struct ld_semaphore *sem)
- 
- 	lockdep_release(sem, 1, _RET_IP_);
- 
--	count = ldsem_atomic_update(-LDSEM_READ_BIAS, sem);
-+	count = atomic_long_add_return(-LDSEM_READ_BIAS, &sem->count);
- 	if (count < 0 && (count & LDSEM_ACTIVE_MASK) == 0)
- 		ldsem_wake(sem);
- }
-@@ -431,7 +419,7 @@ void ldsem_up_write(struct ld_semaphore *sem)
- 
- 	lockdep_release(sem, 1, _RET_IP_);
- 
--	count = ldsem_atomic_update(-LDSEM_WRITE_BIAS, sem);
-+	count = atomic_long_add_return(-LDSEM_WRITE_BIAS, &sem->count);
- 	if (count < 0)
- 		ldsem_wake(sem);
- }
-diff --git a/include/linux/tty_ldisc.h b/include/linux/tty_ldisc.h
-index 1ef64d4ad887..840894ca3fc0 100644
---- a/include/linux/tty_ldisc.h
-+++ b/include/linux/tty_ldisc.h
-@@ -119,13 +119,13 @@
- 
- #include <linux/fs.h>
- #include <linux/wait.h>
+-static __always_inline unsigned long
+-cmpxchg_size(volatile void *ptr, unsigned long old, unsigned long new, int size)
+-{
+-	kasan_check_write(ptr, size);
+-	switch (size) {
+-	case 1:
+-		return arch_cmpxchg((u8 *)ptr, (u8)old, (u8)new);
+-	case 2:
+-		return arch_cmpxchg((u16 *)ptr, (u16)old, (u16)new);
+-	case 4:
+-		return arch_cmpxchg((u32 *)ptr, (u32)old, (u32)new);
+-	case 8:
+-		BUILD_BUG_ON(sizeof(unsigned long) != 8);
+-		return arch_cmpxchg((u64 *)ptr, (u64)old, (u64)new);
+-	}
+-	BUILD_BUG();
+-	return 0;
+-}
 -
-+#include <linux/atomic.h>
+ #define cmpxchg(ptr, old, new)						\
+ ({									\
+-	((__typeof__(*(ptr)))cmpxchg_size((ptr), (unsigned long)(old),	\
+-		(unsigned long)(new), sizeof(*(ptr))));			\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
++	arch_cmpxchg(__ai_ptr, (old), (new));				\
+ })
+ 
+-static __always_inline unsigned long
+-sync_cmpxchg_size(volatile void *ptr, unsigned long old, unsigned long new,
+-		  int size)
+-{
+-	kasan_check_write(ptr, size);
+-	switch (size) {
+-	case 1:
+-		return arch_sync_cmpxchg((u8 *)ptr, (u8)old, (u8)new);
+-	case 2:
+-		return arch_sync_cmpxchg((u16 *)ptr, (u16)old, (u16)new);
+-	case 4:
+-		return arch_sync_cmpxchg((u32 *)ptr, (u32)old, (u32)new);
+-	case 8:
+-		BUILD_BUG_ON(sizeof(unsigned long) != 8);
+-		return arch_sync_cmpxchg((u64 *)ptr, (u64)old, (u64)new);
+-	}
+-	BUILD_BUG();
+-	return 0;
+-}
+-
+ #define sync_cmpxchg(ptr, old, new)					\
+ ({									\
+-	((__typeof__(*(ptr)))sync_cmpxchg_size((ptr),			\
+-		(unsigned long)(old), (unsigned long)(new),		\
+-		sizeof(*(ptr))));					\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
++	arch_sync_cmpxchg(__ai_ptr, (old), (new));			\
+ })
+ 
+-static __always_inline unsigned long
+-cmpxchg_local_size(volatile void *ptr, unsigned long old, unsigned long new,
+-		   int size)
+-{
+-	kasan_check_write(ptr, size);
+-	switch (size) {
+-	case 1:
+-		return arch_cmpxchg_local((u8 *)ptr, (u8)old, (u8)new);
+-	case 2:
+-		return arch_cmpxchg_local((u16 *)ptr, (u16)old, (u16)new);
+-	case 4:
+-		return arch_cmpxchg_local((u32 *)ptr, (u32)old, (u32)new);
+-	case 8:
+-		BUILD_BUG_ON(sizeof(unsigned long) != 8);
+-		return arch_cmpxchg_local((u64 *)ptr, (u64)old, (u64)new);
+-	}
+-	BUILD_BUG();
+-	return 0;
+-}
+-
+ #define cmpxchg_local(ptr, old, new)					\
+ ({									\
+-	((__typeof__(*(ptr)))cmpxchg_local_size((ptr),			\
+-		(unsigned long)(old), (unsigned long)(new),		\
+-		sizeof(*(ptr))));					\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
++	arch_cmpxchg_local(__ai_ptr, (old), (new));			\
+ })
+ 
+-static __always_inline u64
+-cmpxchg64_size(volatile u64 *ptr, u64 old, u64 new)
+-{
+-	kasan_check_write(ptr, sizeof(*ptr));
+-	return arch_cmpxchg64(ptr, old, new);
+-}
+-
+ #define cmpxchg64(ptr, old, new)					\
+ ({									\
+-	((__typeof__(*(ptr)))cmpxchg64_size((ptr), (u64)(old),		\
+-		(u64)(new)));						\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
++	arch_cmpxchg64(__ai_ptr, (old), (new));				\
+ })
+ 
+-static __always_inline u64
+-cmpxchg64_local_size(volatile u64 *ptr, u64 old, u64 new)
+-{
+-	kasan_check_write(ptr, sizeof(*ptr));
+-	return arch_cmpxchg64_local(ptr, old, new);
+-}
+-
+ #define cmpxchg64_local(ptr, old, new)					\
+ ({									\
+-	((__typeof__(*(ptr)))cmpxchg64_local_size((ptr), (u64)(old),	\
+-		(u64)(new)));						\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
++	arch_cmpxchg64_local(__ai_ptr, (old), (new));			\
+ })
  
  /*
-  * the semaphore definition
-  */
- struct ld_semaphore {
--	long			count;
-+	atomic_long_t		count;
- 	raw_spinlock_t		wait_lock;
- 	unsigned int		wait_readers;
- 	struct list_head	read_wait;
 -- 
 2.11.0
 
