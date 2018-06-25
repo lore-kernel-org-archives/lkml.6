@@ -2,335 +2,138 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97414C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 03:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA90C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 04:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B26125417
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 03:52:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B26125417
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 4FC1A2542D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 04:06:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC1A2542D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753131AbeFYDwH convert rfc822-to-8bit (ORCPT
+        id S1750918AbeFYEGr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 23:52:07 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46578 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752605AbeFYDwF (ORCPT
+        Mon, 25 Jun 2018 00:06:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58158 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750792AbeFYEGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 23:52:05 -0400
-Received: by mail-ed1-f67.google.com with SMTP id r17-v6so4478353edo.13;
-        Sun, 24 Jun 2018 20:52:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6H/kr/FZu4SVngWwkfImJSvM8QtEmLUODyDpFIcEQEY=;
-        b=HBR/m26zN5Nr739Oiz6ZrM0iFHlQAdBWOwJ9JJZ/XeamOG351SmjVhgmFIs0TLf7fd
-         OuY33d9Fw2kmBvZa+xyVLEOi9lO2NQjpCu7VOd62uPZOI/gsI7b1P4qE/37rb6o5DvFi
-         dgwD7dJGSu4RMm1g4LP4EuBZEKKDed2xsB9ioWrBszQrKAqiLwXW7SHXWUAVzJVWzjRo
-         H29a7FNPMfUVgrSECtn2ee1Ibr3rXoB1i8SBO6H7Dcg+Lpd9OE6F4Mkox+ffE5ijLIGT
-         5ssSdYjAfb+PYDrhswaOisqeWEhjOkCzxxBiy7vh6gko27zHepQD8WcTbrORFR/n1Dg6
-         iyLg==
-X-Gm-Message-State: APt69E2RH2E7eRJpUBElK/mITJZ4zoohQ1nupd2MQM5nA98nIV9ZneaV
-        gsPe6tj8gijLjGZYOJTqrDKzbEH5
-X-Google-Smtp-Source: ADUXVKJoovm+De9wl3mKyLlKo23HBpuF6KWMrKH9WicCw6qryiMIz+VdNgQAKutlZ+dFWiL7XaLTnQ==
-X-Received: by 2002:a50:f4ba:: with SMTP id s55-v6mr9837419edm.262.1529898723358;
-        Sun, 24 Jun 2018 20:52:03 -0700 (PDT)
-Received: from mail-wr0-f181.google.com (mail-wr0-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id i62-v6sm68963edi.10.2018.06.24.20.52.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 20:52:02 -0700 (PDT)
-Received: by mail-wr0-f181.google.com with SMTP id a12-v6so12086609wro.1;
-        Sun, 24 Jun 2018 20:52:01 -0700 (PDT)
-X-Received: by 2002:adf:f98a:: with SMTP id f10-v6mr8531237wrr.105.1529898721577;
- Sun, 24 Jun 2018 20:52:01 -0700 (PDT)
+        Mon, 25 Jun 2018 00:06:46 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5P43vYK059834
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 00:06:46 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jtqvgt3s9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 00:06:45 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 25 Jun 2018 00:06:44 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Jun 2018 00:06:40 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5P46deZ66453748
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Jun 2018 04:06:39 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3604AB2065;
+        Mon, 25 Jun 2018 00:06:35 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1409EB2064;
+        Mon, 25 Jun 2018 00:06:35 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.148.28])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Jun 2018 00:06:35 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 474A016C4004; Sun, 24 Jun 2018 21:08:44 -0700 (PDT)
+Date:   Sun, 24 Jun 2018 21:08:44 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>, byungchul.park@lge.com
+Subject: Re: [RFC] doc: Improve rcu_dynticks::dynticks documentation
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180624193451.250855-1-joel@joelfernandes.org>
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 20:51:41
- -0700 (PDT)
-In-Reply-To: <4758026.sMRKe6aTTs@jernej-laptop>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <CAGb2v64iB8FP1Nf+vZM2wd6wzNLxWYrCP78D-rOUg881RPNpEA@mail.gmail.com>
- <2366311.u3CXHO0a4d@jernej-laptop> <4758026.sMRKe6aTTs@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 25 Jun 2018 11:51:41 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67wVpAKk-5kSpnbnBXz7DkHToPa6bwuRBnsfHovw74HVQ@mail.gmail.com>
-Message-ID: <CAGb2v67wVpAKk-5kSpnbnBXz7DkHToPa6bwuRBnsfHovw74HVQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support
- for tcon-top gate
-To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180624193451.250855-1-joel@joelfernandes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062504-2213-0000-0000-000002BF7C7A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009251; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01051935; UDB=6.00539227; IPR=6.00829908;
+ MB=3.00021843; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-25 04:06:43
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062504-2214-0000-0000-00005A992719
+Message-Id: <20180625040844.GL3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806250047
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 3:52 AM, Jernej Škrabec
-<jernej.skrabec@gmail.com> wrote:
-> Dne četrtek, 21. junij 2018 ob 17:35:45 CEST je Jernej Škrabec napisal(a):
->> Dne četrtek, 21. junij 2018 ob 03:23:27 CEST je Chen-Yu Tsai napisal(a):
->> > On Thu, Jun 21, 2018 at 3:37 AM, Jernej Škrabec <jernej.skrabec@siol.net>
->>
->> wrote:
->> > > Dne sobota, 16. junij 2018 ob 07:48:38 CEST je Chen-Yu Tsai napisal(a):
->> > >> On Sat, Jun 16, 2018 at 1:33 AM, Jernej Škrabec
->> > >> <jernej.skrabec@siol.net>
->> > >
->> > > wrote:
->> > >> > Dne petek, 15. junij 2018 ob 19:13:17 CEST je Chen-Yu Tsai
-> napisal(a):
->> > >> >> On Sat, Jun 16, 2018 at 12:41 AM, Jernej Škrabec
->> > >> >>
->> > >> >> <jernej.skrabec@siol.net> wrote:
->> > >> >> > Hi,
->> > >> >> >
->> > >> >> > Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard
->>
->> napisal(a):
->> > >> >> >> Hi,
->> > >> >> >>
->> > >> >> >> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
->> > >> >> >> > TV TCONs connected to TCON TOP have to enable additional gate
->> > >> >> >> > in
->> > >> >> >> > order
->> > >> >> >> > to work.
->> > >> >> >> >
->> > >> >> >> > Add support for such TCONs.
->> > >> >> >> >
->> > >> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> > >> >> >> > ---
->> > >> >> >> >
->> > >> >> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
->> > >> >> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
->> > >> >> >> >  2 files changed, 15 insertions(+)
->> > >> >> >> >
->> > >> >> >> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > >> >> >> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index
->> > >> >> >> > 08747fc3ee71..0afb5a94a414
->> > >> >> >> > 100644
->> > >> >> >> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > >> >> >> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > >> >> >> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct
->> > >> >> >> > device
->> > >> >> >> > *dev,
->> > >> >> >> >
->> > >> >> >> >             dev_err(dev, "Couldn't get the TCON bus clock\n");
->> > >> >> >> >             return PTR_ERR(tcon->clk);
->> > >> >> >> >
->> > >> >> >> >     }
->> > >> >> >> >
->> > >> >> >> > +
->> > >> >> >> > +   if (tcon->quirks->has_tcon_top_gate) {
->> > >> >> >> > +           tcon->top_clk = devm_clk_get(dev, "tcon-top");
->> > >> >> >> > +           if (IS_ERR(tcon->top_clk)) {
->> > >> >> >> > +                   dev_err(dev, "Couldn't get the TCON TOP bus
->> > >> >> >> > clock\n");
->> > >> >> >> > +                   return PTR_ERR(tcon->top_clk);
->> > >> >> >> > +           }
->> > >> >> >> > +           clk_prepare_enable(tcon->top_clk);
->> > >> >> >> > +   }
->> > >> >> >> > +
->> > >> >> >>
->> > >> >> >> Is it required for the TCON itself to operate, or does the TCON
->> > >> >> >> requires the TCON TOP, which in turn requires that clock to be
->> > >> >> >> functional?
->> > >> >> >>
->> > >> >> >> I find it quite odd to have a clock that isn't meant for a
->> > >> >> >> particular
->> > >> >> >> device to actually be wired to another device. I'm not saying
->> > >> >> >> this
->> > >> >> >> isn't the case, but it would be a first.
->> > >> >> >
->> > >> >> > Documentation doesn't say much about that gate. I did few tests
->> > >> >> > and
->> > >> >> > TCON
->> > >> >> > registers can be read and written even if TCON TOP TV TCON gate is
->> > >> >> > disabled. However, there is no image, as expected.
->> > >> >>
->> > >> >> The R40 manual does include it in the diagram, on page 504. There's
->> > >> >> also
->> > >> >> a
->> > >> >> mux to select whether the clock comes directly from the CCU or the
->> > >> >> TV
->> > >> >> encoder (a feedback mode?). I assume this is the gate you are
->> > >> >> referring
->> > >> >> to
->> > >> >> here, in which case it is not a bus clock, but rather the TCON
->> > >> >> module
->> > >> >> or
->> > >> >> channel clock, strangely routed.
->> > >> >>
->> > >> >> > More interestingly, I enabled test pattern directly in TCON to
->> > >> >> > eliminate
->> > >> >> > influence of the mixer. As soon as I disabled that gate, test
->> > >> >> > pattern
->> > >> >> > on
->> > >> >> > HDMI screen was gone, which suggest that this gate influences
->> > >> >> > something
->> > >> >> > inside TCON.
->> > >> >> >
->> > >> >> > Another test I did was that I moved enable/disable gate code to
->> > >> >> > sun4i_tcon_channel_set_status() and it worked just as well.
->> > >> >> >
->> > >> >> > I'll ask AW engineer what that gate actually does, but from what I
->> > >> >> > saw,
->> > >> >> > I
->> > >> >> > would say that most appropriate location to enable/disable TCON
->> > >> >> > TOP
->> > >> >> > TV
->> > >> >> > TCON
->> > >> >> > gate is TCON driver. Alternatively, TCON TOP driver could check if
->> > >> >> > any
->> > >> >> > TV
->> > >> >> > TCON is in use and enable appropriate gate. However, that doesn't
->> > >> >> > sound
->> > >> >> > right to me for some reason.
->> > >> >>
->> > >> >> If what I said above it true, then yes, the appropriate location to
->> > >> >> enable
->> > >> >> it is the TCON driver, but moreover, the representation of the clock
->> > >> >> tree
->> > >> >> should be fixed such that the TCON takes the clock from the TCON TOP
->> > >> >> as
->> > >> >> its
->> > >> >> channel/ module clock instead. That way you don't need this patch,
->> > >> >> but
->> > >> >> you'd add another for all the clock routing.
->> > >> >
->> > >> > Can you be more specific? I not sure what you mean here.
->> > >>
->> > >> For clock related properties in the device tree:
->> > >>
->> > >> &tcon_top {
->> > >>
->> > >>     clocks = <&ccu CLK_BUS_TCON_TOP>,
->> > >>
->> > >>              <&ccu CLK_TCON_TV0>,
->> > >>              <&tve0>,
->> > >>              <&ccu CLK_TCON_TV1>,
->> > >>              <&tve1>;
->> > >>
->> > >>     clock-names = "bus", "tcon-tv0", "tve0", "tcon-tv1", "tve1";
->> > >>     clock-output-names = "tcon-top-tv0", "tcon-top-tv1";
->> > >>
->> > >> };
->> > >>
->> > >> &tcon_tv0 {
->> > >>
->> > >>     clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>'
->> > >>     clock-names = "ahb", "tcon-ch1";
->> > >>
->> > >> };
->> > >>
->> > >> A diagram would look like:
->> > >>                    | This part is TCON TOP |
->> > >>
->> > >>                    v                       v
->> > >>
->> > >> CCU CLK_TCON_TV0 --|----\                  |
->> > >>
->> > >>                    |     mux ---- gate ----|-- TCON_TV0
->> > >>
->> > >> TVE0 --------------|----/                  |
->> > >>
->> > >> And the same goes for TCON_TV1 and TVE1.
->> > >>
->> > >> The user manual is a bit lacking on how TVE outputs a clock though.
->> > >
->> > > I didn't yet received any response on HW details from AW till now, but I
->> > > would like to post new version of patches soon.
->> > >
->> > > While chaining like you described could be implemented easily, I don't
->> > > think it really represents HW as it is. Tests showed that these two
->> > > clocks are independent, otherwise register writes/reads wouldn't be
->> > > possible with tcon- top gate disabled. I chose tcon-top bus clock as a
->> > > parent becase if it is not enabled, it simply won't work.
->> >
->> > AFAIK with the TCONs, even when the TCON channel clock (not the bus clock)
->> > is disabled, register accesses still work.
->>
->> You're right, I just tested that.
->>
->> > I'm saying that the TCON TOP
->> > gate is downstream from the TCON channel clock in the CCU. These are not
->> > related to the TCON bus clock in the CCU, which affects register access.
->> >
->> > Did Allwinner provide any information regarding the hierarchy of the
->> > clocks?
->> No reponse for now.
->>
->> > > However, if everyone feels chaining is the best way to implement it,
->> > > I'll
->> > > do it.
->> >
->> > I would like to get it right and match actual hardware. My proposal is
->> > based on my understanding from the diagrams in the user manual.
->>
->> So for now, your explanation is the most reasonable. Should we go ahead and
->> implement your idea?
->>
->> Please note that H6 has TCON-TOP too, but it has only one LCD TCON and one
->> TV TCON instead of two of each kind. That means we will have hole in
->> indices (tcon_lcd0 is 1, tcon_tv0 is 3, which is aligned with R40) and
->> different TCON- TOP binding (no tcon_tv1 channel clock), but setup is
->> exactly the same.
->
-> I just noticed issue with this proposal. If we have following clock chain for
-> HDMI, everythings is ok:
->
-> TCON-TV0 -> TCON-TOP-TV0
->
-> TCON TV sets TCON-TOP-TV0 clock rate, which in turn sets TCON-TV0 clock and
-> everything works.
->
-> However, when TVE will be configured, it would look like this:
->
-> TVE0 -> TCON-TOP-TV0
->
-> TVE driver will set TVE0 clock to 216 MHz and TCON TV would set TCON-TOP-TV0
-> rate which in turn sets TVE0 clock to something like 13.5 MHz (or whatever is
-> the right clock rate for PAL and NTSC). As you can see, same clock is set to
-> two different rates by two different drivers.
->
-> It *might* still work, since encoders set clock rate after TCON (at least that
-> is my experience for HDMI pipeline), but that is still wrong.
->
-> To overcome above issue, I would stick to original proposal with additional
-> clock specified in TCON TV DT node. That way TCON driver would always set
-> clock rate to TCON-TV0 clock. If TVE0 is enabled, TCON wouldn't interfere with
-> setting clock rate, because TCON-TV0 clock would be decoupled in TCON-TOP mux.
->
-> What do you think?
+On Sun, Jun 24, 2018 at 12:34:51PM -0700, Joel Fernandes wrote:
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> 
+> The very useful RCU Data-Structures describes that the dynticks counter
+> of the rcu_dynticks data structure is incremented when we transitions to
+> or from dynticks-idle mode. However it doesn't mention that it is also
+> incremented due to transitions to and from user mode which for dynticks
+> purposes is an extended quiescent state.
+> 
+> I found this with tracing calls to rcu_dynticks_eqs_enter which can also
+> happen from rcu_user_enter. Lets add this information to the
+> Data-Structures document.
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-I think this is the wrong representation, and worse, you are trying to work
-around software issues with it.
+Good addition, queued, thank you!
 
-So to confirm some details, the TVE expects 216 MHz clock, and it expects the
-TCON to run and output data at 216 MHz as well. Is that correct?
+							Thanx, Paul
 
-Would any settings for the TCON differ between when HDMI or TVE is used?
+> ---
+>  .../RCU/Design/Data-Structures/Data-Structures.html       | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/RCU/Design/Data-Structures/Data-Structures.html b/Documentation/RCU/Design/Data-Structures/Data-Structures.html
+> index f5120a00f511..50be87e59937 100644
+> --- a/Documentation/RCU/Design/Data-Structures/Data-Structures.html
+> +++ b/Documentation/RCU/Design/Data-Structures/Data-Structures.html
+> @@ -1227,9 +1227,11 @@ to overflow the counter, this approach corrects the
+>  CPU enters the idle loop from process context.
+> 
+>  </p><p>The <tt>-&gt;dynticks</tt> field counts the corresponding
+> -CPU's transitions to and from dyntick-idle mode, so that this counter
+> -has an even value when the CPU is in dyntick-idle mode and an odd
+> -value otherwise.
+> +CPU's transitions to and from either dyntick-idle or user mode, so
+> +that this counter has an even value when the CPU is in dyntick-idle
+> +mode or user mode and an odd value otherwise. The transitions to/from
+> +user mode need to be counted for user mode adaptive-ticks support
+> +(see timers/NO_HZ.txt).
+> 
+>  </p><p>The <tt>-&gt;rcu_need_heavy_qs</tt> field is used
+>  to record the fact that the RCU core code would really like to
+> -- 
+> 2.18.0.rc2.346.g013aa6912e-goog
+> 
 
-Does TVE and TCON run at 216 MHz regardless of resolution? I kind of doubt it.
-It might be expecting 297 MHz for PC resolutions.
-
-I think these kinds of quirks should be handled in the software, instead of
-being papered over.
-
-ChenYu
