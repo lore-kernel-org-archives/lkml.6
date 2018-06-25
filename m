@@ -2,100 +2,105 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAADAC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 767D3C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63FB3256E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A3C7256E7
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:44:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="k2vhN5tX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63FB3256E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D6R2v5T1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A3C7256E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754970AbeFYJm4 (ORCPT
+        id S1755099AbeFYJoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:42:56 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:49246 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754682AbeFYJmz (ORCPT
+        Mon, 25 Jun 2018 05:44:19 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40132 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754900AbeFYJoP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:42:55 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 0785825AD81;
-        Mon, 25 Jun 2018 19:42:53 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1529919773; bh=cW27WSAX65/IVhvtrTb0tZysls7O9dLXoAtnW3D4q4Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k2vhN5tX8Ia6z9WAvr8dVdY02JwnvC9nSpng/wQygOgwoYm4K3x+AecrLV+TIR9tI
-         CC+27VYq5tf8DKmCCBPR8hfvI77tXB8SvWSQMLaoUIyEvjDgdMEZlkpAo2Kh4PFL22
-         wNI0M50ZKgr0R8MiJIkmubVSz+Fx+ghXFqp6z32I=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id F391D940660; Mon, 25 Jun 2018 11:42:50 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 11:42:50 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michel Pollet <michel.pollet@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+        Mon, 25 Jun 2018 05:44:15 -0400
+Received: by mail-pl0-f66.google.com with SMTP id t6-v6so1197891plo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 02:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=32YkUrj/SMuieMECwMviK/ZgojPxyfUEvTgxK/9SUPU=;
+        b=D6R2v5T1/cclrGNeh/4etb7I1bNwZsdmCV6jo6GRP5Ye2xA8DGAiae8tc9CfFIsoqz
+         a6SVNU2KLtqPyjfqmv5BDh9fTbFkAM5zvPLxnukTOlliQt5HEZiYZRHPbToYf4/XH2nz
+         XK0NX6cdWNiL2LwP4uotRQfd8d/K31NneRDZA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=32YkUrj/SMuieMECwMviK/ZgojPxyfUEvTgxK/9SUPU=;
+        b=SehtQ+Vk2w6KmY15dyia0aWh9F0Pt1wttRrlQTZjUTmIOFs00RUciQzxGZOoVOMUDh
+         9Ln/uSFWnPODqFhPCimXeipEDJ+4mXxBLEagRVGv6Gc16g/GDoe6f5kmFKpYYSsFtTBA
+         lB4x/Av9gwjErNHfC6Hc7uRVIeEoQI+IFRY+cp/S3NMQnWalyIIg1AfipG41OUXLsokJ
+         Mg4Bmo4kx2xMJagvKRHUeo72ub6mhWATULEJigSj5zrDv8HxcCPKI/W677YV7e5rhVdn
+         sx7nMmkb8k4r9an0wy6mFBTXh3OxY8wM6cq2yb8yeEcPpJKH/BQzkXQbHzc82gOiYtiZ
+         6yPw==
+X-Gm-Message-State: APt69E0Z0D5GpXGFUNZtm4QAza+f4kHR/6SxpuguWvUZoSNGWHOOJFXV
+        1gvEYBZC5tB80iFs+FUzp+IkZQ==
+X-Google-Smtp-Source: ADUXVKLyeuc2wJt4hbVA7k/fPotm2mIF8tRMtpT0GantSxnKBUWJ4xYYBm+uF9HrCbEAZ6UkzO5CLQ==
+X-Received: by 2002:a17:902:42a3:: with SMTP id h32-v6mr11555841pld.72.1529919854411;
+        Mon, 25 Jun 2018 02:44:14 -0700 (PDT)
+Received: from localhost ([122.172.108.70])
+        by smtp.gmail.com with ESMTPSA id b83-v6sm38398307pfe.159.2018.06.25.02.44.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 02:44:13 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:14:11 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
- driver
-Message-ID: <20180625094249.b6dwnraqruicmo2u@verge.net.au>
-References: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
- <1529915110-5867-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdVarwq26Jr=YN+zBDrHjQf-Q+u3L6oRNiSKh-hxuwOsrA@mail.gmail.com>
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180625094411.ubklcaxvd7hvuind@vireshk-i7>
+References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
+ <CAJZ5v0iyS7wUx5sYnyhZxhRD7EMEWyKzcpBu7vXUGxuwM4+prw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVarwq26Jr=YN+zBDrHjQf-Q+u3L6oRNiSKh-hxuwOsrA@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAJZ5v0iyS7wUx5sYnyhZxhRD7EMEWyKzcpBu7vXUGxuwM4+prw@mail.gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 11:24:48AM +0200, Geert Uytterhoeven wrote:
-> Hi Michel,
+On 25-06-18, 10:23, Rafael J. Wysocki wrote:
+> On Tue, Jun 19, 2018 at 3:23 PM, Daniel Lezcano
+> > +void idle_injection_get_duration(struct idle_injection_device *ii_dev,
+> > +                                unsigned int *run_duration_ms,
+> > +                                unsigned int *idle_duration_ms)
+> > +{
+> > +       *run_duration_ms = READ_ONCE(ii_dev->run_duration_ms);
+> > +       *idle_duration_ms = READ_ONCE(ii_dev->idle_duration_ms);
 > 
-> On Mon, Jun 25, 2018 at 10:31 AM Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
-> > The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-> > requires a special enable method to get it started.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> >  arch/arm/mach-shmobile/Makefile        |  1 +
-> >  arch/arm/mach-shmobile/smp-r9a06g032.c | 96 ++++++++++++++++++++++++++++++++++
-> >  2 files changed, 97 insertions(+)
-> >  create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
-> 
-> Given this doesn't depend on anything under arch/arm/mach-shmobile/,
-> perhaps this should be moved to drivers/soc/renesas/ (and renamed to
-> r9a06g032-smp.c for consistency) instead?
-> 
-> Simon: what do you think?
+> Should you check the arguments against NULL before attempting to
+> dereference them?  If not, then why not?
 
-Yes, I think that would be nice.
+I would vote with a NO. This is a mandatory parameter and not filling it in with
+a valid pointer is a BUG really. I don't see a reason why we should prevent the
+kernel from crashing if such a mistake happens :)
+
+-- 
+viresh
