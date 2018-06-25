@@ -2,141 +2,96 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB1FC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAEDC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93C0726129
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:15:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IWdbohPy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C0726129
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EAB4A2612A
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:15:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB4A2612A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754559AbeFYWPH (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:15:07 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44787 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752625AbeFYWPB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:15:01 -0400
-Received: by mail-wr0-f194.google.com with SMTP id p12-v6so13540000wrn.11
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UvrXs+qy2Fcrq2CTMnh6Wrp6q/WoLGsOa/5BXS7bfio=;
-        b=IWdbohPyql8LRd+qLmyU30LbItFAN4DrSnpcHajZCFGN2sCr88lBn69Xw+NRzvZcfJ
-         56hgks8z3EQyy9kiWbhVKpnOp4miph5BVNnldNksOMcXdtLdawqWtKW++jOk3lBLr/2m
-         raQ7G4ZTsW6RrvIuvXeTWwfcDzW9rlRBc6N/s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UvrXs+qy2Fcrq2CTMnh6Wrp6q/WoLGsOa/5BXS7bfio=;
-        b=R6pC8cY/Y2HlWuL+SjlQFmKMoqzYgqYteThgf8mOprDT+kGR6OmDiUAdIOWjralFGW
-         kP9417rL8+TWOWKPzVRrmEa6YtlrCaIQeN6XLepvhlQA0icbR+1y/FDvzyBUC5Zdgjfb
-         WO58Xgvbt82H1eHrO/fmqkXD1jY/T/B2vuCfcxefVbu0UfYu9gqgsfhr2/ex7KXaOpbv
-         CJnGf9zzILeYheWlM/UUs8YTpEkRBU3CxQmv/MLGf+1G+zuxoJpmBTOyM1BOi38X1oZx
-         dRGYHy9/Ex8szzZ5eQ3qILLWvHQZz1cikE6zAvIG9T1QEUTGdye0L8DQcxFWDjN3MwL7
-         Ueag==
-X-Gm-Message-State: APt69E1sJrtc7czW7ZthZocacmBKXj+yNOdpvtIBOmFM0+31d2jUrQxd
-        /apCtqZogzkog3sDMplYcNIByA==
-X-Google-Smtp-Source: AAOMgpctfneSrUpnUUgmf1Ui98MhqmSK6ILUwKH/6zY6Qjx4zJEjd5WXX3jL6YwUx7uM3teNO2rURg==
-X-Received: by 2002:adf:e987:: with SMTP id h7-v6mr11256393wrm.102.1529964899694;
-        Mon, 25 Jun 2018 15:14:59 -0700 (PDT)
-Received: from ?IPv6:2001:41d0:fe90:b800:7ce3:d1ec:2b62:6452? ([2001:41d0:fe90:b800:7ce3:d1ec:2b62:6452])
-        by smtp.googlemail.com with ESMTPSA id d14-v6sm50407wro.24.2018.06.25.15.14.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 15:14:58 -0700 (PDT)
-Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle injection
- framework
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
- <CAJZ5v0iyS7wUx5sYnyhZxhRD7EMEWyKzcpBu7vXUGxuwM4+prw@mail.gmail.com>
- <98f43bb6-9ab5-2f79-05f2-be68a0f7f88e@linaro.org>
- <CAJZ5v0gv_y9DfEsqq_46D5hi3SA+UYy7cUoaCwb3_+HtRadDOg@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <dd30daab-caf6-91d6-2f72-998f640f85ae@linaro.org>
-Date:   Tue, 26 Jun 2018 00:15:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932198AbeFYWP0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:15:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754583AbeFYWPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 18:15:25 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDA7A2612A;
+        Mon, 25 Jun 2018 22:15:23 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 18:15:22 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Byungchul Park <max.byungchul.park@gmail.com>,
+        jiangshanlai@gmail.com, josh@joshtriplett.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com, luto@kernel.org
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
+ rcu_dynticks
+Message-ID: <20180625181522.53b5d296@gandalf.local.home>
+In-Reply-To: <20180625204708.GS3593@linux.vnet.ibm.com>
+References: <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
+        <20180620164902.GW3593@linux.vnet.ibm.com>
+        <20180622055659.GA255098@joelaf.mtv.corp.google.com>
+        <20180622132843.GN3593@linux.vnet.ibm.com>
+        <20180622181916.GA13628@joelaf.mtv.corp.google.com>
+        <20180622143247.781028b1@gandalf.local.home>
+        <20180622200548.GA114655@joelaf.mtv.corp.google.com>
+        <20180625082824.GB21377@X58A-UD3R>
+        <20180625163951.GA52646@joelaf.mtv.corp.google.com>
+        <20180625162557.7140664c@gandalf.local.home>
+        <20180625204708.GS3593@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gv_y9DfEsqq_46D5hi3SA+UYy7cUoaCwb3_+HtRadDOg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/2018 23:55, Rafael J. Wysocki wrote:
-> On Mon, Jun 25, 2018 at 1:52 PM, Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->> On 25/06/2018 10:23, Rafael J. Wysocki wrote:
->>
->> [ ... ]
->>
->>>> + * It is up to the user of this framework to provide a lock at an
->>>> + * upper level to prevent stupid things to happen, like starting while
->>>> + * we are unregistering.
->>>> + */
->>>
->>> The English above and elsewhere needs some polishing IMO, but I can
->>> take care of that. :-)
->>
->> I can give a try and if you are still unhappy, you change them in a
->> better way.
+On Mon, 25 Jun 2018 13:47:08 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+
+> On Mon, Jun 25, 2018 at 04:25:57PM -0400, Steven Rostedt wrote:
+> > On Mon, 25 Jun 2018 09:39:51 -0700
+> > Joel Fernandes <joel@joelfernandes.org> wrote:
+> >   
+> > > For whatever its worth, I made some notes of what I understood from reading
+> > > the code and old posts because I was sure I would otherwise forget
+> > > everything:
+> > > http://www.joelfernandes.org/linuxinternals/2018/06/15/rcu-dynticks.html  
+> > 
+> > Nice write up. I may point some people to this ;-)
+> > 
+> > Anyway "complications due to nested NMIs (yes NMIs can nest!)"
+> > 
+> > What arch allows for NMIs to nest. Because we don't let that happen on
+> > x86, and there's code that I know of that is called by NMIs that is not
+> > re-entrant, and can crash if we allow for NMIs to nest. For example
+> > "in_nmi()" will not show that we are in_nmi() if we allow for nesting
+> > of NMIs. It has a single bit that gets incremented when we enter NMI
+> > code, and cleared when we leave it.  
 > 
-> Well, I could tell you what I would write, but then it'll take less
-> time and effort if I just write it myself. :-)
+> Last I checked with Andy Lutomirski, there are a number of things that,
+> though not NMIs, act like NMIs and that can interrupt each others'
+> handlers.  This is on x86.
+>
 
-Ok.
+Perhaps things like MCEs, but they don't call nmi_enter(). And usually
+when something does, it probably puts the machine into an unstable
+state. Getting RCU right, may be the least of the worries.
 
->> [ ... ]
->>
->>>> +static void idle_injection_setup(unsigned int cpu)
->>>> +{
->>>> +       struct sched_param param = { .sched_priority = MAX_USER_RT_PRIO / 2 };
->>>> +
->>>> +       set_freezable();
->>>
->>> Why do you need set_freezable() here?
->>
->> We don't want to continue injecting idle cycles when the system is
->> suspended.
-> 
-> And where's the corresponding try_to_freeze() called?
+You may want to ask Andy if there's legitimate interruptions of NMIs
+that doesn't mean "please reboot as soon as possible"?
 
-Yes, it is missing. I suppose try_to_freeze() should be put at the
-beginning of the idle_inject_fn() function, right ?
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+-- Steve
