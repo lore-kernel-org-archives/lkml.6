@@ -2,100 +2,126 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDC6C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68509C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 716752628F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B80D26291
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="rDR6Xaiw";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iZTtBxvc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716752628F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gOpOaUtE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B80D26291
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933778AbeFYXGh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 19:06:37 -0400
-Received: from mail-yb0-f176.google.com ([209.85.213.176]:45465 "EHLO
-        mail-yb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932275AbeFYXGd (ORCPT
+        id S934117AbeFYXHL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 19:07:11 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:40745 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932629AbeFYXHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 19:06:33 -0400
-Received: by mail-yb0-f176.google.com with SMTP id h127-v6so1941593ybg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 16:06:32 -0700 (PDT)
+        Mon, 25 Jun 2018 19:07:09 -0400
+Received: by mail-pg0-f68.google.com with SMTP id w8-v6so6719448pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 16:07:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=eop/DBCHSK7vIVtzlE+XGY3Qm48ozfC3dEid989Fwyc=;
-        b=rDR6XaiwTajxB5gKJDaJp3nYSjFAidBR+V/UCFF3Hbz2mjRQqpnh72hk8SpbY3Rdc5
-         UgMXq5emxPT5YVj1xDC4lFYC/gW1gOIhGFJwlvmTqkvyeSv0UpL0XOvxgyFnqmPplVL7
-         lA/soTDuFQlXegiv4zekmm4DsMRyLiDKYr74kRF37NYLqxRF/VgD2uE7iLRLKjB8OHbM
-         Q1VGzfwhUB7zJL2g1yaDW3xSEnsORhrchnqVLbJqz0voZ8wy4k1VVdtkQeMt9jger0WF
-         fYPxSzf11/KSPFTE8zaphKUF6gbXrGbOWZmH/1pQpcEvQoeQEO67GEz/WrzQkUuaGkHG
-         VIVg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=eop/DBCHSK7vIVtzlE+XGY3Qm48ozfC3dEid989Fwyc=;
-        b=iZTtBxvcsEp6dPCwBlRYQ1+gLBQSUTD5a+Rp2B6l5avrvb7IBa/PoEB9rp61lmHv39
-         Mw2Wpjnhb0HS947n0SBQC3PGLdreN+aOf+HptHAC6CIEKAITNMYUdpowCnFzv6Tshi4Q
-         msl2x1SGO+VgvO6NOUOLlcKYLZaKtZylLMqZE=
+        h=from:to:cc:subject:date:message-id;
+        bh=TlrWWiQPCjtC68tVmQ7b4F+X4V3UVnh2azcLgqQiihM=;
+        b=gOpOaUtEyQm5hxkLy4fzL4zVrzBvd1+vaggtcqxOR/FT2wdnfXV8ipNwp8sbqJeiG6
+         /SA+8YFQMHKnds9lrpq2qiyFRAJVDFJ/l/kaugd+SZp8sl+zqvSyh69vJ3khxE3vZy4/
+         L/EzZo8d67oIjiOBLf1ar7eN16junnNtYW8GhAWFlcmOPEPiNMdm6l9rj6QlnPBKBFrb
+         r7p8qwt5laYAYibUqOP02gUmVo+m9DoxcmReTyPDZAYPQRni/miJTW8awwzUPilLfJmh
+         vMWhdiSiLuqPCuhCogSkBnlbYBhbkKZxtRNV0VnVX+UnTgol1OCmPB9caNSlIbp3Twcy
+         7YmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=eop/DBCHSK7vIVtzlE+XGY3Qm48ozfC3dEid989Fwyc=;
-        b=cifzqFejynxIJaXVpzoVkbht7/6EB1tBre8pHd4JH518jRsscMmmFA5038TzfksFFy
-         jgh883G+WEGz38b1KnsH9mQ6CRDWr1Q1UXUWHStJCsK3Y/vugL/ndrzg2OKUdQe/TREW
-         8I/z5qHLoSkTyPH423s6ksw/Eu52cZEgMqOXMSrhR61pHk4WS/W9+fKENluI4FrTvP7y
-         VQFD4JPcstd+i9Y/SZhGvnEXSQyxVQQD4AOCtfSXcBlNU7cwJiNoP88Y0RdyNPFk7Gc3
-         A5RuSDXok3sQqNTXBDommaomZ8BijMa79hN2TE8RVcHDckQ2XftX63RFP8n+5jbQ5Spp
-         Yz5Q==
-X-Gm-Message-State: APt69E0nT47of9YUEZrGpxr1nt/EoWi6Ij+ZmeaNPzrmoQFLY8z5Kb7E
-        ZGhbZ1xT4ETs4mwBoEZqhCD9odRZVj5bJ6FY9ipgUg==
-X-Google-Smtp-Source: ADUXVKLlP13hdTJdC/S3dt21IR5y6u3+uxk31POhT2myajfMPYmPNkjd+j8/lsKLo+UEk6wOJxZdGcR7l0rjN46QJHM=
-X-Received: by 2002:a25:ce8b:: with SMTP id x133-v6mr7183915ybe.118.1529967992227;
- Mon, 25 Jun 2018 16:06:32 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 16:06:31
- -0700 (PDT)
-In-Reply-To: <4d9f90abbf87539d3588f88117806f76c6826030.camel@perches.com>
-References: <20180625211026.15819-1-keescook@chromium.org> <20180625211026.15819-2-keescook@chromium.org>
- <4d9f90abbf87539d3588f88117806f76c6826030.camel@perches.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 25 Jun 2018 16:06:31 -0700
-X-Google-Sender-Auth: lYpVXxwbGr_Gwtg8GXsIN5hUXgY
-Message-ID: <CAGXu5j+PE9WpeO7eSX87uxrtwybBbX=J+F9d9H7sdoXAcWjUEw@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] crypto: xcbc: Remove VLA usage
-To:     Joe Perches <joe@perches.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TlrWWiQPCjtC68tVmQ7b4F+X4V3UVnh2azcLgqQiihM=;
+        b=MInowPidgd2UoRQKSP8dq9rmdFOm3vZTJc4v2gevjHxGpzAPtT5lVCE3DBmSxBOPGE
+         VXisx2J1MzHeohbH/UXdo0f1sYlQvjhiGIzUWP7m4I3GLhbQh/BXwamy1K6/n+U/8Zmv
+         fzf0IqukHOD1QSc+T8U4gTVQir3FTkUI+F+5fIaU0zjsUlOvjxrMWwNnFm+GLHUeTEkq
+         5J0kWn1FpLH1qBPR1GUhXuj0vso+pbNPGi0FA4kUPN/4Y3fUbzgbQqX3PBZuUymPfU0d
+         iQt/wDY7a1qcGJUgmYaUXfsKCQeQPKDCNRqFwDVBvECN9E3jzgbDDQtQ+9MURsiRfW+9
+         NaVg==
+X-Gm-Message-State: APt69E2d12i2JUmqQQGEYxJaCbRO8EubIGp/m5iA/zxYoOfZioiwJ66O
+        zPPRNpTfX5Y/RYaWKO3RxVqPxw==
+X-Google-Smtp-Source: ADUXVKI4qqi/bvY9Kt3EEaXJl3r/a0KPjRNcAXENL3yClnEDlQFSJQBHDM/1dvsVCzLY1lxgKSftbw==
+X-Received: by 2002:a63:342:: with SMTP id 63-v6mr11937257pgd.290.1529968028618;
+        Mon, 25 Jun 2018 16:07:08 -0700 (PDT)
+Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
+        by smtp.gmail.com with ESMTPSA id p73-v6sm116657pfa.142.2018.06.25.16.07.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 16:07:07 -0700 (PDT)
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH v7 0/2] Directed kmem charging
+Date:   Mon, 25 Jun 2018 16:06:57 -0700
+Message-Id: <20180625230659.139822-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 2:23 PM, Joe Perches <joe@perches.com> wrote:
->  warning-3 += -Wswitch-default
+The Linux kernel's memory cgroup allows limiting the memory usage of
+the jobs running on the system to provide isolation between the jobs.
+All the kernel memory allocated in the context of the job and marked
+with __GFP_ACCOUNT will also be included in the memory usage and be
+limited by the job's limit.
 
-This reminds me, though. Should _this_ one get moved to warning-1?
+The kernel memory can only be charged to the memcg of the process in
+whose context kernel memory was allocated. However there are cases where
+the allocated kernel memory should be charged to the memcg different
+from the current processes's memcg. This patch series contains two such
+concrete use-cases i.e. fsnotify and buffer_head.
 
-$ git log next-20180625 --no-merges --grep 'mark expected switch
-fall-through' --oneline | wc -l
-129
+The fsnotify event objects can consume a lot of system memory for large
+or unlimited queues if there is either no or slow listener. The events
+are allocated in the context of the event producer. However they should
+be charged to the event consumer. Similarly the buffer_head objects can
+be allocated in a memcg different from the memcg of the page for which
+buffer_head objects are being allocated.
 
-Gustavo, have you checked recently how many of these are left? Maybe
-we can move this to default too?
+To solve this issue, this patch series introduces mechanism to charge
+kernel memory to a given memcg. In case of fsnotify events, the memcg of
+the consumer can be used for charging and for buffer_head, the memcg of
+the page can be charged. For directed charging, the caller can use the
+scope API memalloc_[un]use_memcg() to specify the memcg to charge for
+all the __GFP_ACCOUNT allocations within the scope.
 
--Kees
+Shakeel Butt (2):
+  fs: fsnotify: account fsnotify metadata to kmemcg
+  fs, mm: account buffer_head to kmemcg
+
+ fs/buffer.c                          | 15 ++++++-
+ fs/notify/dnotify/dnotify.c          |  5 ++-
+ fs/notify/fanotify/fanotify.c        | 17 ++++++--
+ fs/notify/fanotify/fanotify_user.c   |  5 ++-
+ fs/notify/group.c                    |  4 ++
+ fs/notify/inotify/inotify_fsnotify.c | 15 ++++++-
+ fs/notify/inotify/inotify_user.c     |  5 ++-
+ include/linux/fsnotify_backend.h     | 12 ++++--
+ include/linux/memcontrol.h           | 14 +++++++
+ include/linux/sched.h                |  3 ++
+ include/linux/sched/mm.h             | 41 +++++++++++++++++++
+ kernel/fork.c                        |  3 ++
+ mm/memcontrol.c                      | 60 ++++++++++++++++++++++++++--
+ 13 files changed, 182 insertions(+), 17 deletions(-)
 
 -- 
-Kees Cook
-Pixel Security
+2.18.0.rc2.346.g013aa6912e-goog
+
