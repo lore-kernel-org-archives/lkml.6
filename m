@@ -2,116 +2,187 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAADC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD899C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96A9D25C99
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:22:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MNSUkjrK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96A9D25C99
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 81FDE25C99
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:22:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FDE25C99
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755649AbeFYPWI (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:22:08 -0400
-Received: from mail-qt0-f201.google.com ([209.85.216.201]:38845 "EHLO
-        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755601AbeFYPWG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:22:06 -0400
-Received: by mail-qt0-f201.google.com with SMTP id v14-v6so10552736qto.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=O1Fezu9CqPlSNth+F+Z5QgItPWD//dFu45UefS0Ip0U=;
-        b=MNSUkjrKTvoBT9WvJC+sAVKgRhNVF0W49Oe3CFl8nygMV4knSd9Qwhaye2ypG9m+7Z
-         VfIqQAlF5eDch+dbxVjThkRaWLISsUEn45YXBq4C7evXchCN4yvVYBjbSjeeYep68i0Y
-         UN8NyKB3a8cLBaHFAgLMVTQCkuIDE9lFdBIZR5K0/ylyHcZybicJv+duApBH3IGylYBl
-         3Qv1bHqA9d2I8dYLLeXkrmcHZQSwTkOUecAFCd3CHm5TPWjmsrrsixJNr1AqexBflRVW
-         k/jxPYnIG2r9cbCznZ4eiDXAxdJKzOLU32auxaiYamVVb5Yu/Uq3LHGUHnAVPKfkyHtv
-         o6AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=O1Fezu9CqPlSNth+F+Z5QgItPWD//dFu45UefS0Ip0U=;
-        b=II9pc73fQgzeoLQfdmCA0XZHhHj8GWonwlUQcy8wa6jJqQYhjgnGzUEoLNRvgFNp0R
-         8JwFESjW+tvmg1PTQ/sIeMEKjaDZnCAb8dSbj5Qkoe8SmvkcSZSuVveQQm8MRo8MT3IR
-         DUX1bgMtvYKmNmKdNYqYbceHUIjvSQYKw6ZLrEflsj5yO6B/RPMm8betA8KlVW4fdn9o
-         bknfV05B7WfWORZYzmb6IyAPbu26W0xjGIrd0dM6Bxi/huGOylQ69M2JrcOS1YCqWMr4
-         fu/AD8OeouGJZfAKGhvwhRNmsLw1pqGNVWXLtd3XMJLVp7S5piaZBfxvO3A8lufd99W/
-         fSGA==
-X-Gm-Message-State: APt69E1l9cA0xE/ZhQa1xqVTfjvCKlSdZ+JRF4GYS+YalkpOAf3aVWID
-        aNWtlPti2bh+eu9a5cHnGQsPtoei0A==
-X-Google-Smtp-Source: AAOMgpf1YV5qYdTbrCw5ldOjL6YU2RorW1PseeXs95UxNzAiVzUi3ymq97GBBUdUWMLhBXAdHFgK5xvjyQ==
+        id S934888AbeFYPWO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 11:22:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48600 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934591AbeFYPWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:22:11 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B5489401C96A;
+        Mon, 25 Jun 2018 15:22:10 +0000 (UTC)
+Received: from crecklin.bos.csb (dhcp-17-195.bos.redhat.com [10.18.17.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1809C2166B5D;
+        Mon, 25 Jun 2018 15:22:10 +0000 (UTC)
+Subject: Re: [PATCH] add param that allows bootline control of hardened
+ usercopy
+From:   Christoph von Recklinghausen <crecklin@redhat.com>
+To:     keescook@chromium.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <1529939300-27461-1-git-send-email-crecklin@redhat.com>
+Organization: Red Hat
+Message-ID: <d110c9af-cb68-5a3c-bc70-0c7650edb0d4@redhat.com>
+Date:   Mon, 25 Jun 2018 11:22:09 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Received: by 2002:a0c:e5d1:: with SMTP id u17-v6mr7286521qvm.0.1529940125595;
- Mon, 25 Jun 2018 08:22:05 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 17:22:00 +0200
-Message-Id: <20180625152200.200145-1-jannh@google.com>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH net] netfilter: nf_log: don't hold nf_log_mutex during user access
-From:   Jann Horn <jannh@google.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        jannh@google.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        security@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1529939300-27461-1-git-send-email-crecklin@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 25 Jun 2018 15:22:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 25 Jun 2018 15:22:10 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The old code would indefinitely block other users of nf_log_mutex if
-a userspace access in proc_dostring() blocked e.g. due to a userfaultfd
-region. Fix it by moving proc_dostring() out of the locked region.
+Add correct address for linux-mm
 
-This is a followup to commit 266d07cb1c9a ("netfilter: nf_log: fix
-sleeping function called from invalid context"), which changed this code
-from using rcu_read_lock() to taking nf_log_mutex.
+On 06/25/2018 11:08 AM, Chris von Recklinghausen wrote:
+> Enabling HARDENED_USER_COPY causes measurable regressions in the
+> networking performances, up to 8% under UDP flood.
+>
+> A generic distro may want to enable HARDENED_USER_COPY in their default
+> kernel config, but at the same time, such distro may want to be able to
+> avoid the performance penalties in with the default configuration and
+> enable the stricter check on a per-boot basis.
+>
+> This change adds a config variable and a boot parameter to conditionally
+> enable HARDENED_USER_COPY at boot time, and switch HUC to off if
+> HUC_DEFAULT_OFF is set.
+>
+> Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
+> ---
+>  .../admin-guide/kernel-parameters.rst         |  2 ++
+>  .../admin-guide/kernel-parameters.txt         |  3 ++
+>  include/linux/thread_info.h                   |  7 +++++
+>  mm/usercopy.c                                 | 28 +++++++++++++++++++
+>  security/Kconfig                              | 10 +++++++
+>  5 files changed, 50 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentation/admin-guide/kernel-parameters.rst
+> index b8d0bc07ed0a..c3035038e3ae 100644
+> --- a/Documentation/admin-guide/kernel-parameters.rst
+> +++ b/Documentation/admin-guide/kernel-parameters.rst
+> @@ -100,6 +100,8 @@ parameter is applicable::
+>  	FB	The frame buffer device is enabled.
+>  	FTRACE	Function tracing enabled.
+>  	GCOV	GCOV profiling is enabled.
+> +	HUC	Hardened usercopy is enabled
+> +	HUCF	Hardened usercopy disabled at boot
+>  	HW	Appropriate hardware is enabled.
+>  	IA-64	IA-64 architecture is enabled.
+>  	IMA     Integrity measurement architecture is enabled.
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index efc7aa7a0670..cd3354bc14d3 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -816,6 +816,9 @@
+>  	disable=	[IPV6]
+>  			See Documentation/networking/ipv6.txt.
+>  
+> +	enable_hardened_usercopy [HUC,HUCF]
+> +			Enable hardened usercopy checks
+> +
+>  	disable_radix	[PPC]
+>  			Disable RADIX MMU mode on POWER9
+>  
+> diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+> index 8d8821b3689a..140a36cc1c2c 100644
+> --- a/include/linux/thread_info.h
+> +++ b/include/linux/thread_info.h
+> @@ -109,12 +109,19 @@ static inline int arch_within_stack_frames(const void * const stack,
+>  #endif
+>  
+>  #ifdef CONFIG_HARDENED_USERCOPY
+> +#include <linux/jump_label.h>
+> +
+> +DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
+> +
+>  extern void __check_object_size(const void *ptr, unsigned long n,
+>  					bool to_user);
+>  
+>  static __always_inline void check_object_size(const void *ptr, unsigned long n,
+>  					      bool to_user)
+>  {
+> +	if (static_branch_likely(&bypass_usercopy_checks))
+> +		return;
+> +
+>  	if (!__builtin_constant_p(n))
+>  		__check_object_size(ptr, n, to_user);
+>  }
+> diff --git a/mm/usercopy.c b/mm/usercopy.c
+> index e9e9325f7638..ce3996da1b2e 100644
+> --- a/mm/usercopy.c
+> +++ b/mm/usercopy.c
+> @@ -279,3 +279,31 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+>  	check_kernel_text_object((const unsigned long)ptr, n, to_user);
+>  }
+>  EXPORT_SYMBOL(__check_object_size);
+> +
+> +DEFINE_STATIC_KEY_FALSE(bypass_usercopy_checks);
+> +EXPORT_SYMBOL(bypass_usercopy_checks);
+> +
+> +#ifdef CONFIG_HUC_DEFAULT_OFF
+> +#define HUC_DEFAULT false
+> +#else
+> +#define HUC_DEFAULT true
+> +#endif
+> +
+> +static bool enable_huc_atboot = HUC_DEFAULT;
+> +
+> +static int __init parse_enable_usercopy(char *str)
+> +{
+> +	enable_huc_atboot = true;
+> +	return 1;
+> +}
+> +
+> +static int __init set_enable_usercopy(void)
+> +{
+> +	if (enable_huc_atboot == false)
+> +		static_branch_enable(&bypass_usercopy_checks);
+> +	return 1;
+> +}
+> +
+> +__setup("enable_hardened_usercopy", parse_enable_usercopy);
+> +
+> +late_initcall(set_enable_usercopy);
+> diff --git a/security/Kconfig b/security/Kconfig
+> index c4302067a3ad..a6173897b85c 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -189,6 +189,16 @@ config HARDENED_USERCOPY_PAGESPAN
+>  	  been removed. This config is intended to be used only while
+>  	  trying to find such users.
+>  
+> +config HUC_DEFAULT_OFF
+> +	bool "allow CONFIG_HARDENED_USERCOPY to be configured but disabled"
+> +	depends on HARDENED_USERCOPY
+> +	help
+> +	  When CONFIG_HARDENED_USERCOPY is enabled, disable its
+> +	  functionality unless it is enabled via at boot time
+> +	  via the "enable_hardened_usercopy" boot parameter. This allows
+> +	  the functionality of hardened usercopy to be present but not
+> +	  impact performance unless it is needed.
+> +
+>  config FORTIFY_SOURCE
+>  	bool "Harden common str/mem functions against buffer overflows"
+>  	depends on ARCH_HAS_FORTIFY_SOURCE
 
-Fixes: 266d07cb1c9a ("netfilter: nf_log: fix sleeping function calle[...]")
-Signed-off-by: Jann Horn <jannh@google.com>
----
- net/netfilter/nf_log.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/net/netfilter/nf_log.c b/net/netfilter/nf_log.c
-index 426457047578..95b92954b896 100644
---- a/net/netfilter/nf_log.c
-+++ b/net/netfilter/nf_log.c
-@@ -442,14 +442,17 @@ static int nf_log_proc_dostring(struct ctl_table *table, int write,
- 		rcu_assign_pointer(net->nf.nf_loggers[tindex], logger);
- 		mutex_unlock(&nf_log_mutex);
- 	} else {
-+		struct ctl_table tmp = *table;
-+
-+		tmp.data = buf;
- 		mutex_lock(&nf_log_mutex);
- 		logger = nft_log_dereference(net->nf.nf_loggers[tindex]);
- 		if (!logger)
--			table->data = "NONE";
-+			strlcpy(buf, "NONE", sizeof(buf));
- 		else
--			table->data = logger->name;
--		r = proc_dostring(table, write, buffer, lenp, ppos);
-+			strlcpy(buf, logger->name, sizeof(buf));
- 		mutex_unlock(&nf_log_mutex);
-+		r = proc_dostring(&tmp, write, buffer, lenp, ppos);
- 	}
- 
- 	return r;
--- 
-2.18.0.rc2.346.g013aa6912e-goog
 
