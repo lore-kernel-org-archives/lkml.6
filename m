@@ -2,144 +2,146 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BE3C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE121C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D523255AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60F62255B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:13:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6514pAv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D523255AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BeqZgfbK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60F62255B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeFYIK0 (ORCPT
+        id S1752611AbeFYINH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:10:26 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36271 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751930AbeFYIKX (ORCPT
+        Mon, 25 Jun 2018 04:13:07 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46671 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752169AbeFYINE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:10:23 -0400
-Received: by mail-wm0-f65.google.com with SMTP id u18-v6so4374265wmc.1;
-        Mon, 25 Jun 2018 01:10:22 -0700 (PDT)
+        Mon, 25 Jun 2018 04:13:04 -0400
+Received: by mail-ed1-f66.google.com with SMTP id r17-v6so4817195edo.13
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 01:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/LmTsA7OwGFpaYgLJtu7N/VhLl6dwTJzAhQvona3+vY=;
-        b=G6514pAvWh159L081kPPqAakFw+aUW3flqbDwZJRdmWGfd3uwZK4niCKBFyyOmnyb1
-         D8gZYb7AbsVZlvDwDxsgKrUkdTfRFV+9yoKKuWcsEwMkmC0t22Zbgyu5S4PEliDFExs5
-         cxlgEXvodxHmpKE5A+fzrXeVgO7BWTZ3tELTBdAtKMgGk/WTVJj3oO0nQuIXFTX9g8M2
-         jwQXYRWY/GlYM2gTBvoM72gM3jnDJ3jVGd9AoXeG0lHNNM9H7Fhx0DS3M6MAl7qTcjFn
-         xnWpthlAWFVFxq0EddIj/bLBxfkBewRBwuDERwKF6Tu/+0m2Ym3G2dNIK2RNZicn0Feq
-         gIfw==
+        d=broadcom.com; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=Lrz7IDNN9F6q91QElEF4wxXygs3JeL6JpR2/QXjkpx0=;
+        b=BeqZgfbKNAM3+jiwy+ncd2N0Jsj/9eRsxVciYi9jmkrVt/djooDVpC8Kin0GBgyk17
+         WGJ/jJR6BrvT7n5wAprBPiNdGuQR1BskCxRv5+bgEUUIjG/XLjq7Gh336DG8mfzvPKdQ
+         ucodnU32ZK75IFcyMPiZZco0DVsQ+611mjS3A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=/LmTsA7OwGFpaYgLJtu7N/VhLl6dwTJzAhQvona3+vY=;
-        b=VuTwVqjK4aVf1mWcXK3Vdp1MhlH/i4v8pqBiQnYQTT82/fMhw9zEL2Xyvt5D8hkFS/
-         72Pff+3BXh7UG4jKoBd+2qy1YRzdEH2V9/9tvE45GBgL0BIiEKjiXhIDSwKIHP+IweNZ
-         KjbZYT3Lis2HPbJyW9b+adf7J7j5RCgtaej08Bdfj98ohBYWiUUua7JFzyCdtzA3cOKo
-         d5r0R9zKMK5UvKmEt36nWich3sZo5F0jLhlTDYg/UCLzTqd6r+9YaUJzkSXnzAQCyrbv
-         fcoSeSNJi3A1Bve+BDp6or1aWaltoGGDS1W8hol4kn3X0Rfh1zinAaikP88gcIrW6OuP
-         wY6A==
-X-Gm-Message-State: APt69E1tKUBuEStwZNSkFu6dn57W3FZhyKPRE+3v3vdXrWRfMhkleoEk
-        AIMxOFLeMSOJSIUHYNwbFzk=
-X-Google-Smtp-Source: AAOMgpc1mq6Pr9u66kF1saHBXKG5fk9OrvmywV5YzmeKUWNYIX+R2cazvvmh5zHSOP5tv7TCA6xL4Q==
-X-Received: by 2002:a1c:8ec1:: with SMTP id q184-v6mr154642wmd.48.1529914222087;
-        Mon, 25 Jun 2018 01:10:22 -0700 (PDT)
-Received: from [192.168.10.150] ([82.84.124.111])
-        by smtp.googlemail.com with ESMTPSA id k12-v6sm9471826wrr.40.2018.06.25.01.10.19
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=Lrz7IDNN9F6q91QElEF4wxXygs3JeL6JpR2/QXjkpx0=;
+        b=FRazLEfRhhaxhL3fWmrRkRtJhFbmJT8R0uJmB05Wde+P0ASLHy2/2KMfTPtsRPoo18
+         +Ki9OLgJKtA46D7HxIDe3EBZZve1EkPRteyFKPQ/PgnL1R/oS1xgPSLPV+GBvopvJVIg
+         R5KZWKlZZpBumOhCIbwGvPKqG9nz5ALTDHqWVwN2p0GftO51MTXy3jbJoFjSmLJgdqQW
+         hiADZnuVjqdu6tYaFAuGOP4f2mfu3FD4lRMBngxjcAa7M3IoToZK3tAK9I9fJqOl/G4o
+         68DhfcN+fztf37RF3GYYKipViq6o/gFXiZmEIQQLM0aZF5gaZRf3ac/7XdMqnYHeilLz
+         Ocxg==
+X-Gm-Message-State: APt69E20i15l7qMLRYa0h1SBPwJDdLlqZ+Wv759AugBKhmWBjTePHfbw
+        FYD/E3WGFPBgE2u6W/tiGV26kQ==
+X-Google-Smtp-Source: ADUXVKJJixqUvLOf8xFa6P83H4MxjfbDK4gzMWoMkGo+22HTDE6R9LxC+7y/DvY5DJNBkHHuBUjyBQ==
+X-Received: by 2002:a50:b4e2:: with SMTP id x31-v6mr10401988edd.155.1529914383148;
+        Mon, 25 Jun 2018 01:13:03 -0700 (PDT)
+Received: from [10.176.68.125] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id v8-v6sm6595988edr.48.2018.06.25.01.13.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 01:10:21 -0700 (PDT)
-Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-mm@kvack.org, Andrea Arcangeli <aarcange@redhat.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <20180622150242.16558-1-mhocko@kernel.org>
- <d617fc1d-28a7-3441-7465-bedf4dc69976@redhat.com>
- <20180625075715.GA28965@dhcp22.suse.cz>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-Message-ID: <e7f3289e-3ee3-3f02-1947-9e4327e1a864@redhat.com>
-Date:   Mon, 25 Jun 2018 10:10:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 25 Jun 2018 01:13:02 -0700 (PDT)
+Subject: Re: [PATCHv2 5/5] arm64: allwinner: a64: Add support for TERES-I
+ laptop
+To:     Icenowy Zheng <icenowy@aosc.io>, Harald Geyer <harald@ccbib.org>
+References: <20180315162510.11669-1-harald@ccbib.org>
+ <20180315162510.11669-6-harald@ccbib.org>
+ <a7011fe78d171658742406bf01d50b7e3d7eaf1d.camel@aosc.io>
+ <E1fX7yK-0000OC-HA@stardust.g4.wien.funkfeuer.at>
+ <5B309D37.80207@broadcom.com> <1CF519CD-D44E-4959-8951-27CE710E0984@aosc.io>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>, info@olimex.com,
+        linux-wireless@vger.kernel.org
+From:   Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5B30A40D.3070509@broadcom.com>
+Date:   Mon, 25 Jun 2018 10:13:01 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180625075715.GA28965@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1CF519CD-D44E-4959-8951-27CE710E0984@aosc.io>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/2018 09:57, Michal Hocko wrote:
-> On Sun 24-06-18 10:11:21, Paolo Bonzini wrote:
->> On 22/06/2018 17:02, Michal Hocko wrote:
->>> @@ -7215,6 +7216,8 @@ void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
->>>  	apic_address = gfn_to_hva(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
->>>  	if (start <= apic_address && apic_address < end)
->>>  		kvm_make_all_cpus_request(kvm, KVM_REQ_APIC_PAGE_RELOAD);
->>> +
->>> +	return 0;
+On 6/25/2018 9:47 AM, Icenowy Zheng wrote:
+>
+>
+> 于 2018年6月25日 GMT+08:00 下午3:43:51, Arend van Spriel <arend.vanspriel@broadcom.com> 写到:
+>> On 6/24/2018 6:34 PM, Harald Geyer wrote:
+>>> Icenowy Zheng writes:
+>>>>> 在 2018-03-15四的 16:25 +0000，Harald Geyer写道：
+>>>>>>> +&mmc1 {
+>>>>>>> +	pinctrl-names = "default";
+>>>>>>> +	pinctrl-0 = <&mmc1_pins>;
+>>>>>>> +	vmmc-supply = <&reg_aldo2>;
+>>>>>>> +	vqmmc-supply = <&reg_dldo4>;
+>>>>>>> +	mmc-pwrseq = <&wifi_pwrseq>;
+>>>>>>> +	bus-width = <4>;
+>>>>>>> +	non-removable;
+>>>>>>> +	status = "okay";
+>>>>>>> +
+>>>>>>> +	rtl8723bs: wifi@1 {
+>>>>>>> +		reg = <1>;
+>>>>>>> +		interrupt-parent = <&r_pio>;
+>>>>>>> +		interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>; /* PL3 */
+>>>>>>> +		interrupt-names = "host-wake";
+>>>>>>> +	};
 >>
->> This is wrong, gfn_to_hva can sleep.
-> 
-> Hmm, I have tried to crawl the call chain and haven't found any
-> sleepable locks taken. Maybe I am just missing something.
-> __kvm_memslots has a complex locking assert. I do not see we would take
-> slots_lock anywhere from the notifier call path. IIUC that means that
-> users_count has to be zero at that time. I have no idea how that is
-> guaranteed.
+>> [...]
+>>
+>>>>> - This device node has no binding. The "host-wake" interrupt is
+>> part of
+>>>>>   Broadcom SDIO Wi-Fi binding, rather than a generic one.
+>>> I think the general mmc and interrupts bindings apply. And the mmc
+>> binding
+>>> clearly states that for sub-nodes a compatible string is optional.
+>>>
+>>> However I just realized that the 'interrupt-names' property is not
+>> part
+>>> of the general interrupts binding, so I guess at least this property
+>> should
+>>> be removed.
+>>
+>> Indeed. If the device just used the SDIO interrupt this is not needed.
+>> The Broadcom device can use either SDIO interrupt or a so-called
+>> out-of-band host-wake interrupt, which is what the above represents.
+>
+> RTL8....S is also capable of use OOB interrupt.
 
-Nevermind, ENOCOFFEE.  This is gfn_to_hva, not gfn_to_pfn.  It only
-needs SRCU.
+Ok. Is it also in-place in this TERES-I laptop? Anyway, if RTL8...S does 
+not have a binding specification there is not much to do about it. In my 
+opinion it does not make sense to add it to the generic mmc/sdio binding 
+as this interrupt does not involve the mmc/sdio hardware hence the term 
+OOB. There is generic wifi binding net/wireless/ieee80211.txt in which 
+this could be added. Obviously it would just be a binding and no 
+guarantee that the actual device driver supports it so the RTL driver 
+would need modification for that.
 
-Paolo
+Regards,
+Arend
+
