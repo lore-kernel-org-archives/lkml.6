@@ -2,123 +2,109 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B447C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB29C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB56425700
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:47:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kCacVio0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB56425700
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C819925701
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:49:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C819925701
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755012AbeFYJrr (ORCPT
+        id S1755046AbeFYJth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:47:47 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:34569 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754632AbeFYJrp (ORCPT
+        Mon, 25 Jun 2018 05:49:37 -0400
+Received: from mail09.linbit.com ([212.69.161.110]:60767 "EHLO
+        mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754786AbeFYJtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:47:45 -0400
-Received: by mail-vk0-f66.google.com with SMTP id q135-v6so7487520vkh.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 02:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=p28S+3O3IU5zBFNjNfvagvG7+EPZifgLSU4gxg5Y9WE=;
-        b=kCacVio0KVe3JHK3wLnkFmdCwNSTmVuSUiYbpjUM8kkqe3ET8QqCQrRtxfcj4fJPxW
-         cyEMiSepipr82ZJJl5BJ+2gJX0weMJBQPIrkcrw6bBlEj4lyHHIBmFuayOC2HCSxp5tW
-         CkPxRePysZITTDCbdO7qlrXABiE5YdsU1myRtib2PWbQyMoTYvAJ0dGG1AGtxXtKBkmm
-         8HW2zpaDh7LHOrZ/qo1JllVbVAAPS1C21v+OA7tKpiqVu9rEe5fo3vZ5CS9VFC/XISaA
-         5czz6PIJ0Cm+D3ILjadDtp+fqLr9DU+k64utCptIZx8XTvQGE0p8N8kK31jcQv77Dmux
-         tW9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=p28S+3O3IU5zBFNjNfvagvG7+EPZifgLSU4gxg5Y9WE=;
-        b=sMcucMeTzZs5WIG6I5oaJ4NKiiCUPVcI4fesajzGBZQuz6E74ZKZ1HPw0l8C//MZa4
-         f2rPErf1MqZ8D2eHp+6g56/bq359sYY8adUUzeW1+aWlbeRUQQDkUMjIkijvwBrzEws1
-         HG2YKcZD8RGZTZbM/Q+31IS4YAIGD73OtCBLpnQjlzcCL27MtM5hIxAlSJ0mrMa+CDTY
-         UOUycmzd/wPDmJ6vqjP0Q6lJq75pH3DTmfZZAAmn/OHwQS3UTozIi1vdW89PDwKm5ZjO
-         IA/hVx9bokW5w68+XREF8Am5hAH/bWwMorjbm81pVKPSOQI6WfAMUufgzV497tlFAk9H
-         E5Zw==
-X-Gm-Message-State: APt69E3X4lrDQbhk3v4d50fpz0PoduLG5vh7QkUQvZLl8SzXw1IJdRkG
-        hPSxa9Zx9yCUAs3DFo/vluo6wWGae31Z79kKQiE=
-X-Google-Smtp-Source: ADUXVKLpO6dQS0OBxtD2Hy7Ti2A1yuZ2MK/KDOmoT8KKyTcgjCx7Dum8HKiSIu2rqfq/7exsFlGDPjk2lDfgdDetac4=
-X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr6904663vkd.15.1529920064976;
- Mon, 25 Jun 2018 02:47:44 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 02:47:44
- -0700 (PDT)
-In-Reply-To: <20180622102800.4p6wabmte4yf4rtp@mwanda>
-References: <20180621182155.27769-1-michael.straube@posteo.de> <20180622102800.4p6wabmte4yf4rtp@mwanda>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 25 Jun 2018 12:47:44 +0300
-Message-ID: <CAHp75VeASBAsBrrq65qhkAGXHoSE8Hg-9dSGcgjT2bNND-1MBw@mail.gmail.com>
-Subject: Re: [PATCH] staging: rtl8723bs: fix brace coding style issues
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Michael Straube <michael.straube@posteo.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Jun 2018 05:49:36 -0400
+X-Greylist: delayed 581 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Jun 2018 05:49:35 EDT
+Received: from soda.linbit (212-186-191-219.static.upcbusiness.at [212.186.191.219])
+        by mail09.linbit.com (LINBIT Mail Daemon) with ESMTP id 0A4031012A9A;
+        Mon, 25 Jun 2018 11:39:52 +0200 (CEST)
+From:   Lars Ellenberg <lars.ellenberg@linbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>
+Subject: [PATCH] drbd: fix access after free
+Date:   Mon, 25 Jun 2018 11:39:52 +0200
+Message-Id: <20180625093952.20220-1-lars.ellenberg@linbit.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 1:28 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Thu, Jun 21, 2018 at 08:21:55PM +0200, Michael Straube wrote:
->> Remove braces from single line if statements.
->> Also fix a comparsion to NULL in one of the conditions.
->> Issues found by checkpatch.
->>
->> Signed-off-by: Michael Straube <michael.straube@posteo.de>
->> ---
->>  drivers/staging/rtl8723bs/core/rtw_debug.c | 6 ++----
->>  1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/staging/rtl8723bs/core/rtw_debug.c b/drivers/staging/rtl8723bs/core/rtw_debug.c
->> index f852fde47350..2244ed72ab9c 100644
->> --- a/drivers/staging/rtl8723bs/core/rtw_debug.c
->> +++ b/drivers/staging/rtl8723bs/core/rtw_debug.c
->> @@ -618,9 +618,8 @@ ssize_t proc_set_wait_hiq_empty(struct file *file, const char __user *buffer, si
->>       if (count < 1)
->>               return -EFAULT;
->>
->> -     if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp))) {
->> +     if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp)))
->>               sscanf(tmp, "%u", &g_wait_hiq_empty);
->> -     }
->
->
-> The original code is kind of bad.  The NULL check isn't required.
-> The sscanf call should have error checking.  The error code is wrong if
-> the copy from user fails.  The tmp buffer isn't NUL terminated.
->
->         if (copy_from_user(tmp, buffer, sizeof(tmp)))
->                 return -EFAULT;
->         tmp[sizeof(tmp) - 1] = '\0';
->
->         if (sscanf(tmp, "%u", &g_wait_hiq_empty) != 1)
->                 return -EINVAL;
->
->         return count;
+We have
+  struct drbd_requests { ... struct bio *private_bio;  ... }
+to hold a bio clone for local submission.
 
-Shouldn't this be
+On local IO completion, we put that bio, and in case we want to use the
+result later, we overload that member to hold the ERR_PTR() of the
+completion result,
 
-kstrtouint_from_user()
+Which, before v4.3, used to be the passed in "int error",
+so we could first bio_put(), then assign.
 
-instead of all those lines?
+v4.3-rc1~100^2~21 4246a0b63bd8 block: add a bi_error field to struct bio
+changed that:
+  	bio_put(req->private_bio);
+ -	req->private_bio = ERR_PTR(error);
+ +	req->private_bio = ERR_PTR(bio->bi_error);
 
+Which introduces an access after free,
+because it was non obvious that req->private_bio == bio.
+
+Impact of that was mostly unnoticable, because we only use that value
+in a multiple-failure case, and even then map any "unexpected" error
+code to EIO, so worst case we could potentially mask a more specific
+error with EIO in a multiple failure case.
+
+Unless the pointed to memory region was unmapped, as is the case with
+CONFIG_DEBUG_PAGEALLOC, in which case this results in
+
+  BUG: unable to handle kernel paging request
+
+v4.13-rc1~70^2~75 4e4cbee93d56 block: switch bios to blk_status_t
+changes it further to
+  	bio_put(req->private_bio);
+  	req->private_bio = ERR_PTR(blk_status_to_errno(bio->bi_status));
+
+And blk_status_to_errno() now contains a WARN_ON_ONCE() for unexpected
+values, which catches this "sometimes", if the memory has been reused
+quickly enough for other things.
+
+Should also go into stable since 4.3, with the trivial change around 4.13.
+
+Cc: stable@vger.kernel.org
+Fixes: 4246a0b63bd8 block: add a bi_error field to struct bio
+Reported-by: Sarah Newman <srn@prgmr.com>
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+---
+ drivers/block/drbd/drbd_worker.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
+index 1476cb3439f4..5e793dd7adfb 100644
+--- a/drivers/block/drbd/drbd_worker.c
++++ b/drivers/block/drbd/drbd_worker.c
+@@ -282,8 +282,8 @@ void drbd_request_endio(struct bio *bio)
+ 		what = COMPLETED_OK;
+ 	}
+ 
+-	bio_put(req->private_bio);
+ 	req->private_bio = ERR_PTR(blk_status_to_errno(bio->bi_status));
++	bio_put(bio);
+ 
+ 	/* not req_mod(), we need irqsave here! */
+ 	spin_lock_irqsave(&device->resource->req_lock, flags);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
+
