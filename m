@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D04C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 195BAC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CF7024D9F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C96F624D9F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jRzh8Rl3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF7024D9F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ISXAMyz9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96F624D9F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935140AbeFYTs5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 15:48:57 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38347 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755652AbeFYTsW (ORCPT
+        id S935119AbeFYTsz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 15:48:55 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39550 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934970AbeFYTsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 15:48:22 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a5-v6so6154027edt.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 12:48:21 -0700 (PDT)
+        Mon, 25 Jun 2018 15:48:25 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w14-v6so6142283eds.6
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 12:48:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iLVhnU7LLoCaW4lOc7bzsWA0oIfhsKCR8yo/rG/4vtQ=;
-        b=jRzh8Rl354+2+iZbrVEHzLsd1duus/ZS5O6jIQ+p1pxzC9wHX+zuj+94kLUJpY1yrm
-         QKHL7b+HP248NHwrZNO8xoyz5VJ2BIkET+81pbCDsdIfbRxaW5TGOKXQwu+wtfMNKs+A
-         mtOrBdtKl78Omr5rkKAedrxrDDwx7qzzXGFI8=
+        bh=j7GMIIGaIORm8b6LjrnaeSpizBl5u4j6T5VX4NtEKP0=;
+        b=ISXAMyz9HG6X03+UdeNNU20+QgDeyaDqi+YBQBdK8+sHi72oOUZ/a02YoFUn1nlpYb
+         1xHA+/a6/qy7i6I/Is/IVe6y+g5hDKXgIIwDrByr/Xag9f0qFxLY+QOYQXdwaRA/wk3R
+         nlIiR6W7//92ZEu1fsbsPx7G3HyBEmbNhzduo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iLVhnU7LLoCaW4lOc7bzsWA0oIfhsKCR8yo/rG/4vtQ=;
-        b=iHeJ46PR5dhEHGeXjgEBt5DC73QwYgEGNLaeuL1tM8CIapA/ppn8WhvGTh4zIMGAdJ
-         AK9hBzhOKnntyJuEHO1m/M6OWKFcHPhXdPCFzyF02pvAaCMLNSO6Hf/I1zXgErDbG3P/
-         HXY+rhlI9e798gyKu6L+iOaPwXAOnlXNt27Ayg6JN5gT/o7nqPDtMZjeXVMhH1mi4aWn
-         /kRuTl+HBcWzW43Q2NnWsP579KjfQ0QFvznEXvOq1vZXUuyapYwxM2d5dhfl/AxoLFIY
-         RaXlW820mDCJI2JJ47Wc/mKelhehAa8i+mhnfZa1vhAHknWnibBsuMF3+Qsv7wAYKgPP
-         bpSA==
-X-Gm-Message-State: APt69E0qk6XcdJbSXNnQX6w3yPKLTeILR5jAWkaV0jng70WDlD667oG/
-        NxMOBwk4mFmXjeqfLZ5OEw/TKw==
-X-Google-Smtp-Source: ADUXVKK7PC8VGam7EvSijqQzXYNCE3gP1QpK1+fe6O98jRqF/S0S9iKdi80eS+oz+GYnNhp4Ct9J4A==
-X-Received: by 2002:a50:a985:: with SMTP id n5-v6mr12610487edc.263.1529956101299;
-        Mon, 25 Jun 2018 12:48:21 -0700 (PDT)
+        bh=j7GMIIGaIORm8b6LjrnaeSpizBl5u4j6T5VX4NtEKP0=;
+        b=Qx0sVmAbwWG9PWU2v9Bhf8/G99qbZruE9wKi2I/ofgZAOo//3dGUeKCFd2vYem+YfK
+         4qIEAhsvoImp7o7W4NJ1G5V6j/GRtTigT6RGE1Ao0KFYGD1jHVdVHQtT45dNYq0FoSgS
+         +liHVYQTFdzFVTCAilqbj6qiobmQHDgsvIA3HHASImLWBieFLSwF687wQ4L2Gl4MqLC1
+         ix5g+JMNgFcj68UVQTN92842yVemak5Hds1lNL0N99idcpc3mWb3i7hCEIvpDylZt/Ca
+         ZrhzDfCrTIAQtEFTPkI6+8y7et0JCqlQa04QdzUHPqX+qrD5dU0BmC9Rwsm7T/5FCqfZ
+         5MAg==
+X-Gm-Message-State: APt69E137PnwdJhf2aehc6uT9ESp1C0cFSihvm/GGhElplHymKaTvPnT
+        8ZpXO4CnhzDECHFCRzoJfcsuYg==
+X-Google-Smtp-Source: ADUXVKJh52zOIELRCuMdsbGRf6ecEdowqEX6rlI4EBwK5HdiSlDKtQhz6vePPx4Zrx4SzqtSZZpE9w==
+X-Received: by 2002:aa7:d992:: with SMTP id u18-v6mr12610229eds.300.1529956102893;
+        Mon, 25 Jun 2018 12:48:22 -0700 (PDT)
 Received: from localhost.localdomain (146-241-36-97.dyn.eolo.it. [146.241.36.97])
-        by smtp.gmail.com with ESMTPSA id d11-v6sm17553edh.61.2018.06.25.12.48.19
+        by smtp.gmail.com with ESMTPSA id d11-v6sm17553edh.61.2018.06.25.12.48.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 12:48:20 -0700 (PDT)
+        Mon, 25 Jun 2018 12:48:22 -0700 (PDT)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         ulf.hansson@linaro.org, broonie@kernel.org,
         linus.walleij@linaro.org, bfq-iosched@googlegroups.com,
         oleksandr@natalenko.name, Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX 1/4] block, bfq: add/remove entity weights correctly
-Date:   Mon, 25 Jun 2018 21:48:03 +0200
-Message-Id: <20180625194806.7619-2-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX 2/4] block, bfq: do not expire a queue that will deserve dispatch plugging
+Date:   Mon, 25 Jun 2018 21:48:04 +0200
+Message-Id: <20180625194806.7619-3-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180625194806.7619-1-paolo.valente@linaro.org>
 References: <20180625194806.7619-1-paolo.valente@linaro.org>
@@ -70,203 +70,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To keep I/O throughput high as often as possible, BFQ performs
-I/O-dispatch plugging (aka device idling) only when beneficial exactly
-for throughput, or when needed for service guarantees (low latency,
-fairness). An important case where the latter condition holds is when
-the scenario is 'asymmetric' in terms of weights: i.e., when some
-bfq_queue or whole group of queues has a higher weight, and thus has
-to receive more service, than other queues or groups. Without dispatch
-plugging, lower-weight queues/groups may unjustly steal bandwidth to
-higher-weight queues/groups.
+For some bfq_queues, BFQ plugs I/O dispatching when the queue becomes
+idle, and keeps the plug until a new request of the queue arrives, or
+a timeout fires. BFQ does so either to boost throughput or to preserve
+service guarantees for the queue.
 
-To detect asymmetric scenarios, BFQ checks some sufficient
-conditions. One of these conditions is that active groups have
-different weights. BFQ controls this condition by maintaining a
-special set of unique weights of active groups
-(group_weights_tree). To this purpose, in the function
-bfq_active_insert/bfq_active_extract BFQ adds/removes the weight of a
-group to/from this set.
+More precisely, for such a queue, plugging starts when the queue
+happens to have either no request enqueued, or no request in flight,
+that is, no request already dispatched but not yet completed.
 
-Unfortunately, the function bfq_active_extract may happen to be
-invoked also for a group that is still active (to preserve the correct
-update of the next queue to serve, see comments in function
-bfq_no_longer_next_in_service() for details). In this case, removing
-the weight of the group makes the set group_weights_tree
-inconsistent. Service-guarantee violations follow.
+On the opposite end, BFQ may happen to expire a queue with no request
+enqueued, without doing any plugging, if the queue still has some
+request in flight. Unfortunately, such a premature expiration causes
+the queue to lose its chance to enjoy dispatch plugging a moment
+later, i.e., when its in-flight requests finally get completed. This
+breaks service guarantees for the queue.
 
-This commit addresses this issue by moving group_weights_tree
-insertions from their previous location (in bfq_active_insert) into
-the function __bfq_activate_entity, and by moving group_weights_tree
-extractions from bfq_active_extract to when the entity that represents
-a group remains throughly idle, i.e., with no request either enqueued
-or dispatched.
+This commit prevents BFQ from expiring an empty queue if the latter
+still has in-flight requests.
 
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.c | 45 +++++++++++++++++++++++++++++++++++++++++----
- block/bfq-iosched.h |  7 +++++--
- block/bfq-wf2q.c    | 24 +++++++++++++-----------
- 3 files changed, 59 insertions(+), 17 deletions(-)
+ block/bfq-iosched.c | 36 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 3 deletions(-)
 
 diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 495b9ddb3355..3f32e88c7e9b 100644
+index 3f32e88c7e9b..4fd4f1996498 100644
 --- a/block/bfq-iosched.c
 +++ b/block/bfq-iosched.c
-@@ -742,8 +742,9 @@ void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_entity *entity,
-  * See the comments to the function bfq_weights_tree_add() for considerations
-  * about overhead.
-  */
--void bfq_weights_tree_remove(struct bfq_data *bfqd, struct bfq_entity *entity,
--			     struct rb_root *root)
-+void __bfq_weights_tree_remove(struct bfq_data *bfqd,
-+			       struct bfq_entity *entity,
-+			       struct rb_root *root)
- {
- 	if (!entity->weight_counter)
- 		return;
-@@ -759,6 +760,43 @@ void bfq_weights_tree_remove(struct bfq_data *bfqd, struct bfq_entity *entity,
- 	entity->weight_counter = NULL;
- }
+@@ -3597,8 +3597,14 @@ static struct bfq_queue *bfq_select_queue(struct bfq_data *bfqd)
  
-+/*
-+ * Invoke __bfq_weights_tree_remove on bfqq and all its inactive
-+ * parent entities.
-+ */
-+void bfq_weights_tree_remove(struct bfq_data *bfqd,
-+			     struct bfq_queue *bfqq)
-+{
-+	struct bfq_entity *entity = bfqq->entity.parent;
-+
-+	__bfq_weights_tree_remove(bfqd, &bfqq->entity,
-+				  &bfqd->queue_weights_tree);
-+
-+	for_each_entity(entity) {
-+		struct bfq_sched_data *sd = entity->my_sched_data;
-+
-+		if (sd->next_in_service || sd->in_service_entity) {
+ 	bfq_log_bfqq(bfqd, bfqq, "select_queue: already in-service queue");
+ 
++	/*
++	 * Do not expire bfqq for budget timeout if bfqq may be about
++	 * to enjoy device idling. The reason why, in this case, we
++	 * prevent bfqq from expiring is the same as in the comments
++	 * on the case where bfq_bfqq_must_idle() returns true, in
++	 * bfq_completed_request().
++	 */
+ 	if (bfq_may_expire_for_budg_timeout(bfqq) &&
+-	    !bfq_bfqq_wait_request(bfqq) &&
+ 	    !bfq_bfqq_must_idle(bfqq))
+ 		goto expire;
+ 
+@@ -4674,8 +4680,32 @@ static void bfq_completed_request(struct bfq_queue *bfqq, struct bfq_data *bfqd)
+ 	 * or if we want to idle in case it has no pending requests.
+ 	 */
+ 	if (bfqd->in_service_queue == bfqq) {
+-		if (bfqq->dispatched == 0 && bfq_bfqq_must_idle(bfqq)) {
+-			bfq_arm_slice_timer(bfqd);
++		if (bfq_bfqq_must_idle(bfqq)) {
++			if (bfqq->dispatched == 0)
++				bfq_arm_slice_timer(bfqd);
 +			/*
-+			 * entity is still active, because either
-+			 * next_in_service or in_service_entity is not
-+			 * NULL (see the comments on the definition of
-+			 * next_in_service for details on why
-+			 * in_service_entity must be checked too).
++			 * If we get here, we do not expire bfqq, even
++			 * if bfqq was in budget timeout or had no
++			 * more requests (as controlled in the next
++			 * conditional instructions). The reason for
++			 * not expiring bfqq is as follows.
 +			 *
-+			 * As a consequence, the weight of entity is
-+			 * not to be removed. In addition, if entity
-+			 * is active, then its parent entities are
-+			 * active as well, and thus their weights are
-+			 * not to be removed either. In the end, this
-+			 * loop must stop here.
++			 * Here bfqq->dispatched > 0 holds, but
++			 * bfq_bfqq_must_idle() returned true. This
++			 * implies that, even if no request arrives
++			 * for bfqq before bfqq->dispatched reaches 0,
++			 * bfqq will, however, not be expired on the
++			 * completion event that causes bfqq->dispatch
++			 * to reach zero. In contrast, on this event,
++			 * bfqq will start enjoying device idling
++			 * (I/O-dispatch plugging).
++			 *
++			 * But, if we expired bfqq here, bfqq would
++			 * not have the chance to enjoy device idling
++			 * when bfqq->dispatched finally reaches
++			 * zero. This would expose bfqq to violation
++			 * of its reserved service guarantees.
 +			 */
-+			break;
-+		}
-+		__bfq_weights_tree_remove(bfqd, entity,
-+					  &bfqd->group_weights_tree);
-+	}
-+}
-+
- /*
-  * Return expired entry, or NULL to just start from scratch in rbtree.
-  */
-@@ -4582,8 +4620,7 @@ static void bfq_completed_request(struct bfq_queue *bfqq, struct bfq_data *bfqd)
- 		 */
- 		bfqq->budget_timeout = jiffies;
- 
--		bfq_weights_tree_remove(bfqd, &bfqq->entity,
--					&bfqd->queue_weights_tree);
-+		bfq_weights_tree_remove(bfqd, bfqq);
- 	}
- 
- 	now_ns = ktime_get_ns();
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index 0f712e03b035..a8a2e5aca4d4 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -827,8 +827,11 @@ struct bfq_data *bic_to_bfqd(struct bfq_io_cq *bic);
- void bfq_pos_tree_add_move(struct bfq_data *bfqd, struct bfq_queue *bfqq);
- void bfq_weights_tree_add(struct bfq_data *bfqd, struct bfq_entity *entity,
- 			  struct rb_root *root);
--void bfq_weights_tree_remove(struct bfq_data *bfqd, struct bfq_entity *entity,
--			     struct rb_root *root);
-+void __bfq_weights_tree_remove(struct bfq_data *bfqd,
-+			       struct bfq_entity *entity,
-+			       struct rb_root *root);
-+void bfq_weights_tree_remove(struct bfq_data *bfqd,
-+			     struct bfq_queue *bfqq);
- void bfq_bfqq_expire(struct bfq_data *bfqd, struct bfq_queue *bfqq,
- 		     bool compensate, enum bfqq_expiration reason);
- void bfq_put_queue(struct bfq_queue *bfqq);
-diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
-index 4498c43245e2..58cf38fcee05 100644
---- a/block/bfq-wf2q.c
-+++ b/block/bfq-wf2q.c
-@@ -499,9 +499,6 @@ static void bfq_active_insert(struct bfq_service_tree *st,
- 	if (bfqq)
- 		list_add(&bfqq->bfqq_list, &bfqq->bfqd->active_list);
- #ifdef CONFIG_BFQ_GROUP_IOSCHED
--	else /* bfq_group */
--		bfq_weights_tree_add(bfqd, entity, &bfqd->group_weights_tree);
--
- 	if (bfqg != bfqd->root_group)
- 		bfqg->active_entities++;
- #endif
-@@ -601,10 +598,6 @@ static void bfq_active_extract(struct bfq_service_tree *st,
- 	if (bfqq)
- 		list_del(&bfqq->bfqq_list);
- #ifdef CONFIG_BFQ_GROUP_IOSCHED
--	else /* bfq_group */
--		bfq_weights_tree_remove(bfqd, entity,
--					&bfqd->group_weights_tree);
--
- 	if (bfqg != bfqd->root_group)
- 		bfqg->active_entities--;
- #endif
-@@ -799,7 +792,7 @@ __bfq_entity_update_weight_prio(struct bfq_service_tree *old_st,
- 		if (prev_weight != new_weight) {
- 			root = bfqq ? &bfqd->queue_weights_tree :
- 				      &bfqd->group_weights_tree;
--			bfq_weights_tree_remove(bfqd, entity, root);
-+			__bfq_weights_tree_remove(bfqd, entity, root);
- 		}
- 		entity->weight = new_weight;
- 		/*
-@@ -971,7 +964,7 @@ static void bfq_update_fin_time_enqueue(struct bfq_entity *entity,
-  * one of its children receives a new request.
-  *
-  * Basically, this function updates the timestamps of entity and
-- * inserts entity into its active tree, ater possibly extracting it
-+ * inserts entity into its active tree, after possibly extracting it
-  * from its idle tree.
-  */
- static void __bfq_activate_entity(struct bfq_entity *entity,
-@@ -1015,6 +1008,16 @@ static void __bfq_activate_entity(struct bfq_entity *entity,
- 		entity->on_st = true;
- 	}
- 
-+#ifdef BFQ_GROUP_IOSCHED_ENABLED
-+	if (!bfq_entity_to_bfqq(entity)) { /* bfq_group */
-+		struct bfq_group *bfqg =
-+			container_of(entity, struct bfq_group, entity);
-+
-+		bfq_weights_tree_add(bfqg->bfqd, entity,
-+				     &bfqd->group_weights_tree);
-+	}
-+#endif
-+
- 	bfq_update_fin_time_enqueue(entity, st, backshifted);
- }
- 
-@@ -1664,8 +1667,7 @@ void bfq_del_bfqq_busy(struct bfq_data *bfqd, struct bfq_queue *bfqq,
- 	bfqd->busy_queues--;
- 
- 	if (!bfqq->dispatched)
--		bfq_weights_tree_remove(bfqd, &bfqq->entity,
--					&bfqd->queue_weights_tree);
-+		bfq_weights_tree_remove(bfqd, bfqq);
- 
- 	if (bfqq->wr_coeff > 1)
- 		bfqd->wr_busy_queues--;
+ 			return;
+ 		} else if (bfq_may_expire_for_budg_timeout(bfqq))
+ 			bfq_bfqq_expire(bfqd, bfqq, false,
 -- 
 2.16.1
 
