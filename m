@@ -2,143 +2,143 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52842C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB1CC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6C0125FFC
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B47F2600C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:16:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="l9DCRP+R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C0125FFC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uQP7AO/2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B47F2600C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964879AbeFYSKN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 14:10:13 -0400
-Received: from mail.efficios.com ([167.114.142.138]:53990 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933990AbeFYSKM (ORCPT
+        id S964879AbeFYSQh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 14:16:37 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:36856 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934772AbeFYSQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 14:10:12 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 5DAF71C2C34;
-        Mon, 25 Jun 2018 14:10:11 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id M_baklF6yqF3; Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id B64D81C2C31;
-        Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B64D81C2C31
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1529950210;
-        bh=CB7yFnDG6eH60Hxcx8Ee25ITsW8xCkrtpUFF1WSD7G4=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=l9DCRP+RaxuQ41GHTfLytl1PyKgaa82+hekGpM3lKTe8I5kev3GF11oARmXDyFcwr
-         7jQF8tYWHZAjciHWC49zVnNXp8stPkeY8FpG4gxzQ0a+mnzW68Y/fwigK0jRLtWaWr
-         CnkLSqGU/tbyhnxAMHmM5YKq1M8Ln4fmGS7nevi5Rt8V0xn74OqRuZ2BtmSIydRadD
-         DAZ/OSzOP4B/OAv8t0Omf33bZ8yrfQrLYE3FtrBJa7CPbBYRLuV4SxDpFo4QktzCTN
-         6ax7WTYj5yTIxqUp8YEIDSi6feRVy+8KzKgfjvetD39zEy0/2jIsmXbYewYpy6WOWx
-         Mf7jS/YfmPTiQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 3vp_32iBWNDr; Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 9EBE71C2C2A;
-        Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
-Date:   Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        peter maydell <peter.maydell@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Message-ID: <501929863.3051.1529950210436.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1529949285-11013-4-git-send-email-will.deacon@arm.com>
-References: <1529949285-11013-1-git-send-email-will.deacon@arm.com> <1529949285-11013-4-git-send-email-will.deacon@arm.com>
-Subject: Re: [PATCH 3/3] rseq/selftests: Add support for arm64
+        Mon, 25 Jun 2018 14:16:35 -0400
+Received: by mail-ot0-f196.google.com with SMTP id c15-v6so16122603otl.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 11:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CONBH8n6eVeoBUtGmJgHd1C1ub/CJQXsEchm4r49+R8=;
+        b=uQP7AO/2rIodoSCmqpttu3oscEyl2xsamUfxN/FtcrL//4nSVtelRMVUlEMnquaPPD
+         aRt6MaQ9mqPAsusFfrEWg7RAFtHQJNW5XIguR7qg70SbCzkzg9Jd9c4clEoXLSNHw3eC
+         TSfMTA/bz8AB/ih3jBqmKgxS/U5YIJ0xccuz3RukSCeRM+IS6/B7UvC9hEN1Y/W6Gj7Q
+         bgssrkQxyPW6lLaPELj24jakCGpNcZuHRc5ZuQvvJz2ntrmptMV4OLb8jmIQDB9lwFMY
+         otqyqzXNOsfRg692S89ThPGQeUv6spyltb5Sh/cQhd/dfnTZ0YooKUNnEN2GVoXuo/bN
+         ZkSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CONBH8n6eVeoBUtGmJgHd1C1ub/CJQXsEchm4r49+R8=;
+        b=icwopYJ6ixSYxr/I8PgcC2qXiYCSO/8qTvzBEAZ0g1aGxz4i343hRZG5sS7zbh9n7p
+         0jmXRZG0LdmSpfWTsAhN5AMMYZN8v/VkB1h+Il8wV48AJhlgjofudAhMKjpS565eS7rN
+         uZG1Uf1V0RZXSXj2yY7Tf60n+3WCQsPir7xbzBY6Z13+m19mvP8Aymmpz7OVYCr9TIzC
+         He3NlmxG68oONE+1UQhAyGnopVGnErEFpqcokTxCl8qZEobZlR8m1Pmgl/rR+xfUL5Wx
+         YpU3IHIhG/XPzLPis2c1WJ8e8m9AUEzO/1AX4YD+SVuTiTamOeomjXuDp8CoCKj8Zk91
+         pfFg==
+X-Gm-Message-State: APt69E1l7u0CTe+KKB8PoodJyX8lPCVrV+Wps/2eSDecDT4L63f4JN+z
+        0aOMxY8bYSK79pIUkZV65JcHRyxLWi1TpQ042DFNBg==
+X-Google-Smtp-Source: AAOMgpcO4f+dgjKZChioLsJlGzwIqO3JkDTXHClYPUvpjqqULfKgxFr9yqDNlokwE8LwusKDvdKgsT1FsXmUdNxTi4s=
+X-Received: by 2002:a9d:350a:: with SMTP id o10-v6mr7597420otc.247.1529950594409;
+ Mon, 25 Jun 2018 11:16:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq/selftests: Add support for arm64
-Thread-Index: yP7vNsKbxoqvvCxYacs6zXLc8e16Qw==
+References: <20180625163410.216168-1-jannh@google.com> <20180625164109.GF30522@ZenIV.linux.org.uk>
+In-Reply-To: <20180625164109.GF30522@ZenIV.linux.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 25 Jun 2018 20:16:22 +0200
+Message-ID: <CAG48ez2i2Dpy5TLTjtLiGKdkFDYLGURqAGoTDbETaBGf5SgxPw@mail.gmail.com>
+Subject: Re: [PATCH] sys: don't hold uts_sem while accessing userspace memory
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        "David S. Miller" <davem@davemloft.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        security@kernel.org, Christoph Hellwig <hch@infradead.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 25, 2018, at 1:54 PM, Will Deacon will.deacon@arm.com wrote:
+On Mon, Jun 25, 2018 at 6:41 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Mon, Jun 25, 2018 at 06:34:10PM +0200, Jann Horn wrote:
+>
+> > +     char tmp[32];
+> >
+> > -     if (namelen > 32)
+> > +     if (namelen < 0 || namelen > 32)
+> >               namelen = 32;
+> >
+> >       down_read(&uts_sem);
+> >       kname = utsname()->domainname;
+> >       len = strnlen(kname, namelen);
+> > -     if (copy_to_user(name, kname, min(len + 1, namelen)))
+> > -             err = -EFAULT;
+> > +     len = min(len + 1, namelen);
+> > +     memcpy(tmp, kname, len);
+> >       up_read(&uts_sem);
+> >
+> > -     return err;
+> > +     if (copy_to_user(name, tmp, len))
+> > +             return -EFAULT;
+>
+> Infoleak, and similar in a lot of other places.
 
-[...]
+I don't see a problem. copy_to_user() copies "len" bytes from "tmp".
+The preceding memcpy() filled exactly those bytes, so I'm not leaking
+stack memory. And "len" is bounded to "namelen", which is bounded to
+32, which is smaller than __NEW_UTS_LEN, so I'm not leaking memory
+from outside the bounds of utsname()->domainname.
+And the contents of the "struct new_utsname" are completely
+user-accessible (including bytes behind null terminators); you can see
+that e.g. sys_newuname() copies the whole struct to userspace; this
+seems to be intentional, if you e.g. look at how sys_sethostname() is
+implemented.
+I went over this function with a fine comb and didn't spot anything wrong:
 
-> +#define __RSEQ_ASM_DEFINE_TABLE(label, version, flags, start_ip,		\
-> +				post_commit_offset, abort_ip)			\
-> +	"	.pushsection	__rseq_table, \"aw\"\n"				\
-> +	"	.balign	32\n"							\
-> +	__rseq_str(label) ":\n"							\
-> +	"	.long	" __rseq_str(version) ", " __rseq_str(flags) "\n"	\
-> +	"	.quad	" __rseq_str(start_ip) ", "				\
-> +			  __rseq_str(post_commit_offset) ", "			\
-> +			  __rseq_str(abort_ip) "\n"				\
-> +	"	.popsection\n"
-> +
-> +#define RSEQ_ASM_DEFINE_TABLE(label, start_ip, post_commit_ip, abort_ip)	\
-> +	__RSEQ_ASM_DEFINE_TABLE(label, 0x0, 0x0, start_ip,			\
-> +				(post_commit_ip - start_ip), abort_ip)
-> +
-> +#define RSEQ_ASM_STORE_RSEQ_CS(label, cs_label, rseq_cs)			\
-> +	RSEQ_INJECT_ASM(1)							\
-> +	"	adrp	" RSEQ_ASM_TMP_REG ", " __rseq_str(cs_label) "\n"	\
-> +	"	add	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
-> +			", :lo12:" __rseq_str(cs_label) "\n"			\
-> +	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(rseq_cs) "]\n"	\
-> +	__rseq_str(label) ":\n"
-> +
-> +#define RSEQ_ASM_DEFINE_ABORT(label, abort_label)				\
-> +	"	.pushsection	__rseq_failure, \"ax\"\n"			\
-> +	"	.long 	"	__rseq_str(RSEQ_SIG) "\n"			\
-> +	__rseq_str(label) ":\n"							\
-> +	"	b	%l[" __rseq_str(abort_label) "]\n"			\
-> +	"	.popsection\n"
+SYSCALL_DEFINE2(osf_getdomainname, char __user *, name, int, namelen)
+{
+        int len, err = 0;
+        char *kname;
+        char tmp[32];
 
-Thanks Will for porting rseq to arm64 !
+        if (namelen < 0 || namelen > 32)
+                namelen = 32;
+        // namelen in range 0..32
 
-I notice you are using the instructions
+        down_read(&uts_sem);
+        kname = utsname()->domainname;
+        // kname points to a 65-byte buffer that userspace is permitted to read
+        len = strnlen(kname, namelen); // strnlen() is bounded to
+first 32 bytes of 65-byte buffer
+        // len is in range 0..32
+        len = min(len + 1, namelen);
+        // min([0..32] + 1, [0..32]) = min([1..33], [0..32]) is in range 0..32
+        memcpy(tmp, kname, len); // writes up to `len` bytes into tmp;
+len<=32, sizeof(tmp)==32; len<=32, sizeof(utsname()->domainname)>32
+        // userspace is permitted to read first `len` bytes of `tmp`
+        up_read(&uts_sem);
 
-  adrp
-  add
-  str
+        if (copy_to_user(name, tmp, len)) // first `len` bytes of
+`tmp` are exposed to userspace
+                return -EFAULT;
+        return 0;
+}
 
-to implement RSEQ_ASM_STORE_RSEQ_CS(). Did you compare
-performance-wise with an approach using a literal pool
-near the instruction pointer like I did on arm32 ?
-
-With that approach, this ends up being simply
-
-  adr
-  str
-
-which provides significantly better performance on my test
-platform over loading a pointer targeting a separate data
-section.
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Can you please explain why there is an infoleak here?
