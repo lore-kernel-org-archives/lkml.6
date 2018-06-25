@@ -2,204 +2,113 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A35BC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACDFC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 109F12553B
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:46:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 109F12553B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 3A84B25548
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:47:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sCEA80Vz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A84B25548
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752569AbeFYHqB convert rfc822-to-8bit (ORCPT
+        id S1752570AbeFYHry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 03:46:01 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:54234 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752078AbeFYHqA (ORCPT
+        Mon, 25 Jun 2018 03:47:54 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:35064 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751949AbeFYHrw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 03:46:00 -0400
-Received: from localhost (unknown [211.231.11.194])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2336B136D8226;
-        Mon, 25 Jun 2018 00:45:58 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 16:45:57 +0900 (KST)
-Message-Id: <20180625.164557.200926270412915979.davem@davemloft.net>
-To:     torvalds@linux-foundation.org
-CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 25 Jun 2018 00:46:00 -0700 (PDT)
+        Mon, 25 Jun 2018 03:47:52 -0400
+Received: by mail-pf0-f195.google.com with SMTP id c22-v6so6079352pfi.2;
+        Mon, 25 Jun 2018 00:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=f4hcntd6PgzM0ED4wp0pnKQjnH1BulT92YS8BqUhI00=;
+        b=sCEA80VzrHO9qVYaIAKyF3qVPb5asDYvu2QUZ87La0NNC7Fdcplj4IOChNVg3Sypg1
+         lqaXvjHTbxy3wZpXlZFFN8o5rw5FPc4SrPDSKz9MVtQ/IL+ElnhhvVeejBuYnT3iQIws
+         sRCynsWvpSFhJpXq0WBzw/bZJuVX+y9Crob9w7zyVPbrD7y3RcuYwxeQYXTHF+YpMu9q
+         DDonCZblI4GbfVxth/+KaRWUFrHBW2saaHc7FpiwHlCKb7WFJqjXTJycjgSw3tBZvy22
+         NpHHyA+gdf8PXlomwSI44SN14krO4v7A3UsVsqtR93OVaWQ/WDnCV+udfoOJLd7DwVWg
+         F3GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=f4hcntd6PgzM0ED4wp0pnKQjnH1BulT92YS8BqUhI00=;
+        b=BR06xIrG/UEC6m28wX7Kew+yPwDutGJ/GCLG7dO1cnn85diaQ6boEVNX+AL4/YpxNj
+         iH2RlcUkVH2PP7vmnkbjhbFvAO0FDq5lMsfOxWPicA5rLKTQ6U8/jfkP6ScQRNAlUD/v
+         Cu/bAqMf1rFJtbO1mjryyApCY36pGIZL1M5ymz9BcphMn6XNrZPNDDPxaC0A6IsRQd62
+         +Nkg9hdXi7dc0snoCDl2p0sA6I7XFr/bjnOvyQVs463j8twSPqsCwkDV5kqqsvZuz3Xj
+         x681oFVPqlFTFKmgh6WtChYkeB15+koEotJbolj7zY/co8hZhYu4MXw8XxAHR1Ar7Blz
+         AZxA==
+X-Gm-Message-State: APt69E0A6AGwXF2CIhUbjcOPNn/HO7KVfLJpkQGCor/rv+v5N6saBAvm
+        OC7JhwDv+DRIpi/AC5l9JIBk
+X-Google-Smtp-Source: ADUXVKKOXOnCcuNXOHfZYzESLjGs/I3vGi0FxOxeF42124VpyxVmQOyZojpE5Iab+/hPV1dSGcLpuQ==
+X-Received: by 2002:a62:4653:: with SMTP id t80-v6mr11728833pfa.58.1529912872117;
+        Mon, 25 Jun 2018 00:47:52 -0700 (PDT)
+Received: from mylaptop.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id p12-v6sm27350460pfi.175.2018.06.25.00.47.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 00:47:51 -0700 (PDT)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCHv2 0/2] drivers/base: bugfix for supplier<-consumer ordering in device_kset
+Date:   Mon, 25 Jun 2018 15:47:37 +0800
+Message-Id: <1529912859-10475-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+commit 52cdbdd49853 ("driver core: correct device's shutdown order")
+places an assumption of supplier<-consumer order on the process of probe.
+But it turns out to break down the parent <- child order in some scene.
+E.g in pci, a bridge is enabled by pci core, and behind it, the devices
+have been probed. Then comes the bridge's module, which enables extra
+feature(such as hotplug) on this bridge.
+This will break the parent<-children order and cause failure when
+"kexec -e" in some scenario.
 
-1) Fix netpoll OOPS in r8169, from Ville Syrjälä.
+I tried to fix this issue in pci subsystem, and it turns out to be wrong.
+Thanks to Christoph Hellwig, he enlightens me that it should be a bug in
+driver core.
 
-2) Fix bpf instruction alignment on powerpc et al., from
-   Eric Dumazet.
+note: This series has some lock issue, should be fixed in next version
 
-3) Don't ignore IFLA_MTU attribute when creating new ipvlan
-   links.  From Xin Long.
+v1 -> v2:
+  refragment
 
-4) Fix use after free in AF_PACKET, from Eric Dumazet.
+Pingfan Liu (2):
+  drivers/base: only reordering consumer device when probing
+  drivers/base: reorder consumer and its children behind suppliers
 
-5) Mis-matched RTNL unlock in xen-netfront, from Ross
-   Lagerwall.
+ drivers/base/base.h |   1 +
+ drivers/base/core.c | 135 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/base/dd.c   |   9 +---
+ 3 files changed, 138 insertions(+), 7 deletions(-)
 
-6) Fix VSOCK loopback on big-endian, from Claudio Imbrenda.
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-pci@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+-- 
+2.7.4
 
-7) Missing RX buffer offset correction when computing DMA
-   addresses in mvneta driver, from Antoine Tenart.
-
-8) Fix crashes in DCCP's ccid3_hc_rx_send_feedback, from Eric
-   Dumazet.
-
-Please pull, thanks a lot!
-
-The following changes since commit 1abd8a8f39cd9a2925149000056494523c85643a:
-
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2018-06-21 07:22:30 +0900)
-
-are available in the Git repository at:
-
-  gitolite@ra.kernel.org:/pub/scm/linux/kernel/git/davem/net.git 
-
-for you to fetch changes up to 829eb05365ff06e8adc23f2541597d0cc3c18348:
-
-  sfc: make function efx_rps_hash_bucket static (2018-06-24 23:08:25 +0900)
-
-----------------------------------------------------------------
-Aleksander Morgado (1):
-      qmi_wwan: add support for the Dell Wireless 5821e module
-
-Anders Roxell (2):
-      selftests: net: add config fragments
-      selftests: net: add tcp_inq to gitignore
-
-Antoine Tenart (3):
-      net: mscc: fix the injection header
-      net: mvneta: fix the Rx desc DMA address in the Rx path
-      net: mscc: make sparse happy
-
-Bartosz Golaszewski (1):
-      net: davinci_emac: match the mdio device against its compatible if possible
-
-Claudio Imbrenda (1):
-      VSOCK: fix loopback on big-endian systems
-
-Colin Ian King (2):
-      net: ethernet: ti: davinci_cpdma: make function cpdma_desc_pool_create static
-      sfc: make function efx_rps_hash_bucket static
-
-Cong Wang (1):
-      net_sched: remove a bogus warning in hfsc
-
-David S. Miller (2):
-      Merge branch 'xen-netfront-fixes'
-      Merge branch 'dccp-fixes-around-rx_tstamp_last_feedback'
-
-Eric Dumazet (4):
-      bpf: enforce correct alignment for instructions
-      net/packet: fix use-after-free
-      net: dccp: avoid crash in ccid3_hc_rx_send_feedback()
-      net: dccp: switch rx_tstamp_last_feedback to monotonic clock
-
-Ganesh Goudar (1):
-      cxgb4: when disabling dcb set txq dcb priority to 0
-
-Geert Uytterhoeven (2):
-      MAINTAINERS: Add file patterns for dsa device tree bindings
-      net: Remove depends on HAS_DMA in case of platform dependency
-
-Hangbin Liu (1):
-      ipv6: mcast: fix unsolicited report interval after receiving querys
-
-Harini Katakam (1):
-      net: macb: Fix ptp time adjustment for large negative delta
-
-Jason Wang (1):
-      vhost_net: validate sock before trying to put its fd
-
-Marcelo Ricardo Leitner (1):
-      sctp: fix erroneous inc of snmp SctpFragUsrMsgs
-
-Matteo Croce (1):
-      bpfilter: fix user mode helper cross compilation
-
-Paolo Abeni (1):
-      cls_flower: fix use after free in flower S/W path
-
-Ross Lagerwall (2):
-      xen-netfront: Fix mismatched rtnl_unlock
-      xen-netfront: Update features after registering netdev
-
-Tobin C. Harding (4):
-      Documentation: e100: Use correct heading adornment
-      Documentation: e1000: Use correct heading adornment
-      Documentation: e100: Fix docs build error
-      Documentation: e1000: Fix docs build error
-
-Vakul Garg (2):
-      strparser: Don't schedule in workqueue in paused state
-      strparser: Corrected typo in documentation.
-
-Ville Syrjälä (1):
-      r8169: Fix netpoll oops
-
-Xin Long (1):
-      ipvlan: fix IFLA_MTU ignored on NEWLINK
-
- Documentation/networking/e100.rst               | 112 ++++++++++++++++++++++++++++++++++++++++++++++++++------------------------------------------------
- Documentation/networking/e1000.rst              |  76 +++++++++++++++++++++++++++++++++---------------------------------
- Documentation/networking/strparser.txt          |   2 +-
- MAINTAINERS                                     |   1 +
- drivers/net/ethernet/amd/Kconfig                |   2 +-
- drivers/net/ethernet/apm/xgene-v2/Kconfig       |   1 -
- drivers/net/ethernet/apm/xgene/Kconfig          |   1 -
- drivers/net/ethernet/arc/Kconfig                |   6 ++++--
- drivers/net/ethernet/broadcom/Kconfig           |   2 --
- drivers/net/ethernet/cadence/macb_ptp.c         |   5 +----
- drivers/net/ethernet/calxeda/Kconfig            |   2 +-
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |   2 +-
- drivers/net/ethernet/hisilicon/Kconfig          |   2 +-
- drivers/net/ethernet/marvell/Kconfig            |   8 +++----
- drivers/net/ethernet/marvell/mvneta.c           |   2 +-
- drivers/net/ethernet/mellanox/mlxsw/Kconfig     |   2 +-
- drivers/net/ethernet/mscc/ocelot.c              |  11 +++++-----
- drivers/net/ethernet/realtek/r8169.c            |   2 +-
- drivers/net/ethernet/renesas/Kconfig            |   2 --
- drivers/net/ethernet/sfc/efx.c                  |   1 +
- drivers/net/ethernet/ti/davinci_cpdma.c         |   2 +-
- drivers/net/ethernet/ti/davinci_emac.c          |   4 ++++
- drivers/net/ipvlan/ipvlan_main.c                |   3 ++-
- drivers/net/usb/qmi_wwan.c                      |   1 +
- drivers/net/wireless/broadcom/brcm80211/Kconfig |   1 -
- drivers/net/wireless/quantenna/qtnfmac/Kconfig  |   2 +-
- drivers/net/xen-netfront.c                      |  11 +++++-----
- drivers/vhost/net.c                             |   3 ++-
- include/linux/filter.h                          |   4 +++-
- net/bpfilter/Makefile                           |   2 +-
- net/dccp/ccids/ccid3.c                          |  16 +++++++-------
- net/ipv6/mcast.c                                |   9 +++++---
- net/packet/af_packet.c                          |  16 +++++++-------
- net/sched/cls_flower.c                          |  21 +++++++++++++++----
- net/sched/sch_hfsc.c                            |   4 ++--
- net/sctp/chunk.c                                |   4 +++-
- net/strparser/strparser.c                       |   5 +----
- net/vmw_vsock/virtio_transport.c                |   2 +-
- tools/testing/selftests/net/.gitignore          |   1 +
- tools/testing/selftests/net/config              |   2 ++
- 40 files changed, 190 insertions(+), 165 deletions(-)
