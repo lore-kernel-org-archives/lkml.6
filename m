@@ -2,207 +2,126 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9B5C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A70C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C06225918
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:32:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C06225918
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A7B725919
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:33:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7B725919
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933647AbeFYMai (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:30:38 -0400
-Received: from mga06.intel.com ([134.134.136.31]:29967 "EHLO mga06.intel.com"
+        id S933552AbeFYMc7 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:32:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46503 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933130AbeFYMae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:30:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 05:30:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,270,1526367600"; 
-   d="scan'208";a="67044094"
-Received: from devel-ww.sh.intel.com ([10.239.48.110])
-  by fmsmga001.fm.intel.com with ESMTP; 25 Jun 2018 05:30:31 -0700
-From:   Wei Wang <wei.w.wang@intel.com>
-To:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        akpm@linux-foundation.org
-Cc:     torvalds@linux-foundation.org, pbonzini@redhat.com,
-        wei.w.wang@intel.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, peterx@redhat.com
-Subject: [PATCH v34 0/4] Virtio-balloon: support free page reporting
-Date:   Mon, 25 Jun 2018 20:05:08 +0800
-Message-Id: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S932387AbeFYMc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 08:32:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D1EE220719; Mon, 25 Jun 2018 14:32:56 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8E261203D9;
+        Mon, 25 Jun 2018 14:32:56 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 14:32:56 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Message-ID: <20180625143256.6b7bf802@xps13>
+In-Reply-To: <20180624224448.21872-1-chris.packham@alliedtelesis.co.nz>
+References: <20180624224448.21872-1-chris.packham@alliedtelesis.co.nz>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series is separated from the previous "Virtio-balloon
-Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,  
-implemented by this series enables the virtio-balloon driver to report
-hints of guest free pages to the host. It can be used to accelerate live
-migration of VMs. Here is an introduction of this usage:
+Hi Chris,
 
-Live migration needs to transfer the VM's memory from the source machine
-to the destination round by round. For the 1st round, all the VM's memory
-is transferred. From the 2nd round, only the pieces of memory that were
-written by the guest (after the 1st round) are transferred. One method
-that is popularly used by the hypervisor to track which part of memory is
-written is to write-protect all the guest memory.
+On Mon, 25 Jun 2018 10:44:42 +1200, Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
 
-This feature enables the optimization by skipping the transfer of guest
-free pages during VM live migration. It is not concerned that the memory
-pages are used after they are given to the hypervisor as a hint of the
-free pages, because they will be tracked by the hypervisor and transferred
-in the subsequent round if they are used and written.
+> Hi,
+> 
+> I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chip
+> to one of our boards which uses the Marvell NFCv2 controller.
+> 
+> This particular chip is a bit odd in that the datasheet states support
+> for ONFI 1.0 but the revision number field is 00 00. It also is marked
+> ABAFA but reports internally as ABAGA. Finally it has internal 8-bit ECC
+> which cannot be disabled.
+> 
+> The existing test in micron_supports_on_die_ecc() determines that on-die
+> ECC is supported but not mandatory but I know for this chip it is
+> mandatory despite what set_features returns.
+> 
+> In order for this to work I need to set nand-ecc-mode = "on-die" in my
+> dts. Ideally I'd like it to be automatic based on what the hardware can
+> support but that may be asking too much at the moment.
+> 
+> Here's a dump of the parameter page from the chip I have
+> 
+> 00000000: 4f 4e 46 49 00 00 18 00 3f 00 00 00 00 00 00 00 ONFI....?.......
+> 00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+> 00000020: 4d 49 43 52 4f 4e 20 20 20 20 20 20 4d 54 32 39  MICRON MT29
+> 00000030: 46 31 47 30 38 41 42 41 47 41 57 50 20 20 20 20  F1G08ABAGAWP    
+> 00000040: 2c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ,...............
+> 00000050: 00 08 00 00 80 00 00 02 00 00 20 00 40 00 00 00  ..........  .@...
+> 00000060: 00 04 00 00 01 22 01 14 00 01 05 08 00 00 04 00 ....."..........
+> 00000070: 08 01 0e 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+> 00000080: 08 3f 00 3f 00 58 02 10 27 46 00 64 00 00 00 00 .?.?.X..'F.d....
+> 00000090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+> 000000a0: 00 00 00 00 01 00 00 00 00 02 04 80 01 81 04 03 ................
+> 000000b0: 02 01 1e 90 00 00 00 00 00 00 00 00 00 00 00 00 ................
+> 000000c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+> 000000d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+> 000000e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+> 000000f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 85 a6 ................
+> 
+> Series changes in v3:
+> - No longer RFC
+> - dropped "mtd: rawnand: micron: add ONFI_FEATURE_ON_DIE_ECC to supported
+>   features" which Boris has already picked up
+> - dropped "mtd: rawnand: marvell: Support page size of 2048 with 8-bit ECC"
+>   since I can't test it.
+> 
+> Series changes in v4:
+> - based on top of http://patchwork.ozlabs.org/patch/932006/
+> 
+> Series changes in v5:
+> - address review comments from Boris on patches 5 and 6
+> 
+> Series changes in v6:
+> - Update commit message on 6/6
+> 
+> Chris Packham (6):
+>   mtd: rawnand: marvell: Handle on-die ECC
+>   mtd: rawnand: add manufacturer fixup for ONFI parameter page
+>   mtd: rawnand: add defines for ONFI version bits
+>   mtd: rawnand: micron: add fixup for ONFI revision
+>   mtd: rawnand: micron: support 8/512 on-die ECC
+>   mtd: rawnand: micron: detect forced on-die ECC
+> 
+>  drivers/mtd/nand/raw/marvell_nand.c |   1 +
+>  drivers/mtd/nand/raw/nand_base.c    |  14 +--
+>  drivers/mtd/nand/raw/nand_micron.c  | 129 +++++++++++++++++++++++-----
+>  include/linux/mtd/rawnand.h         |  14 +++
+>  4 files changed, 131 insertions(+), 27 deletions(-)
+> 
 
-* Tests
-- Test Environment
-    Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-    Guest: 8G RAM, 4 vCPU
-    Migration setup: migrate_set_speed 100G, migrate_set_downtime 2 second
+Applied to nand/next, I just changed the way you aligned/not aligned
+some lines to respect the 80 columns rule.
 
-- Test Results
-    - Idle Guest Live Migration Time (results are averaged over 10 runs):
-        - Optimization v.s. Legacy = 284ms vs 1757ms --> ~84% reduction
-    - Guest with Linux Compilation Workload (make bzImage -j4):
-        - Live Migration Time (average)
-          Optimization v.s. Legacy = 1402ms v.s. 2528ms --> ~44% reduction
-        - Linux Compilation Time
-          Optimization v.s. Legacy = 5min6s v.s. 5min12s
-          --> no obvious difference
-
-ChangeLog:
-v33->v34:
-    - mm:
-        - add a new API max_free_page_blocks, which estimates the max
-          number of free page blocks that a free page list may have
-        - get_from_free_page_list: store addresses to multiple arrays,
-          instead of just one array. This removes the limitation of being
-          able to report only 2TB free memory (the largest array memory
-          that can be allocated on x86 is 4MB, which can store 2^19
-          addresses of 4MB free page blocks).
-    - virtio-balloon:
-        - Allocate multiple arrays to load free page hints;
-        - Use the same method in v32 to do guest/host interaction, the
-          differeces are
-              - the hints are tranferred array by array, instead of
-                one by one.
-	      - send the free page block size of a hint along with the cmd
-                id to host, so that host knows each address represents e.g.
-                a 4MB memory in our case. 
-v32->v33:
-    - mm/get_from_free_page_list: The new implementation to get free page
-      hints based on the suggestions from Linus:
-      https://lkml.org/lkml/2018/6/11/764
-      This avoids the complex call chain, and looks more prudent.
-    - virtio-balloon: 
-      - use a fix-sized buffer to get free page hints;
-      - remove the cmd id related interface. Now host can just send a free
-        page hint command to the guest (via the host_cmd config register)
-        to start the reporting. Currentlty the guest reports only the max
-        order free page hints to host, which has generated similar good
-        results as before. But the interface used by virtio-balloon to
-        report can support reporting more orders in the future when there
-        is a need.
-v31->v32:
-    - virtio-balloon:
-        - rename cmd_id_use to cmd_id_active;
-        - report_free_page_func: detach used buffers after host sends a vq
-          interrupt, instead of busy waiting for used buffers.
-v30->v31:
-    - virtio-balloon:
-        - virtio_balloon_send_free_pages: return -EINTR rather than 1 to
-          indicate an active stop requested by host; and add more
-          comments to explain about access to cmd_id_received without
-          locks;
-        -  add_one_sg: add TODO to comments about possible improvement.
-v29->v30:
-    - mm/walk_free_mem_block: add cond_sched() for each order
-v28->v29:
-    - mm/page_poison: only expose page_poison_enabled(), rather than more
-      changes did in v28, as we are not 100% confident about that for now.
-    - virtio-balloon: use a separate buffer for the stop cmd, instead of
-      having the start and stop cmd use the same buffer. This avoids the
-      corner case that the start cmd is overridden by the stop cmd when
-      the host has a delay in reading the start cmd.
-v27->v28:
-    - mm/page_poison: Move PAGE_POISON to page_poison.c and add a function
-      to expose page poison val to kernel modules.
-v26->v27:
-    - add a new patch to expose page_poisoning_enabled to kernel modules
-    - virtio-balloon: set poison_val to 0xaaaaaaaa, instead of 0xaa
-v25->v26: virtio-balloon changes only
-    - remove kicking free page vq since the host now polls the vq after
-      initiating the reporting
-    - report_free_page_func: detach all the used buffers after sending
-      the stop cmd id. This avoids leaving the detaching burden (i.e.
-      overhead) to the next cmd id. Detaching here isn't considered
-      overhead since the stop cmd id has been sent, and host has already
-      moved formard.
-v24->v25:
-    - mm: change walk_free_mem_block to return 0 (instead of true) on
-          completing the report, and return a non-zero value from the
-          callabck, which stops the reporting.
-    - virtio-balloon:
-        - use enum instead of define for VIRTIO_BALLOON_VQ_INFLATE etc.
-        - avoid __virtio_clear_bit when bailing out;
-        - a new method to avoid reporting the some cmd id to host twice
-        - destroy_workqueue can cancel free page work when the feature is
-          negotiated;
-        - fail probe when the free page vq size is less than 2.
-v23->v24:
-    - change feature name VIRTIO_BALLOON_F_FREE_PAGE_VQ to
-      VIRTIO_BALLOON_F_FREE_PAGE_HINT
-    - kick when vq->num_free < half full, instead of "= half full"
-    - replace BUG_ON with bailing out
-    - check vb->balloon_wq in probe(), if null, bail out
-    - add a new feature bit for page poisoning
-    - solve the corner case that one cmd id being sent to host twice
-v22->v23:
-    - change to kick the device when the vq is half-way full;
-    - open-code batch_free_page_sg into add_one_sg;
-    - change cmd_id from "uint32_t" to "__virtio32";
-    - reserver one entry in the vq for the driver to send cmd_id, instead
-      of busywaiting for an available entry;
-    - add "stop_update" check before queue_work for prudence purpose for
-      now, will have a separate patch to discuss this flag check later;
-    - init_vqs: change to put some variables on stack to have simpler
-      implementation;
-    - add destroy_workqueue(vb->balloon_wq);
-v21->v22:
-    - add_one_sg: some code and comment re-arrangement
-    - send_cmd_id: handle a cornercase
-
-For previous ChangeLog, please reference
-https://lwn.net/Articles/743660/
-
-
-
-Wei Wang (4):
-  mm: support to get hints of free page blocks
-  virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-  mm/page_poison: expose page_poisoning_enabled to kernel modules
-  virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
-
- drivers/virtio/virtio_balloon.c     | 357 ++++++++++++++++++++++++++++++++----
- include/linux/mm.h                  |   3 +
- include/uapi/linux/virtio_balloon.h |  14 ++
- mm/page_alloc.c                     |  82 +++++++++
- mm/page_poison.c                    |   6 +
- 5 files changed, 426 insertions(+), 36 deletions(-)
-
--- 
-2.7.4
-
+Thanks,
+Miquèl
