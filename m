@@ -2,214 +2,317 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72774C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC22C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2195E25B93
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:38:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QsipTKrb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PF5NHaUY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2195E25B93
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E1DBC25BA6
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:42:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1DBC25BA6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934426AbeFYOiY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 10:38:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45070 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934255AbeFYOiW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:38:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0C899607EB; Mon, 25 Jun 2018 14:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529937502;
-        bh=RKTkE/Zd7Ena1Eu/mNuudsmwbEvsSuGs5VPkan1DAn8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QsipTKrb0H5kdR9ACTxhWboGM3Ne1NThHQFDyowlT10zGH6qRK68eNOIkS1UKRxgV
-         gzliFrZRI5c4mjOPe8wTn/1nKVaM3qYTC3kvyvHn6p+dgtkg7Npukt+o8XgABVguKi
-         l08BPLrW/Upy9cYBCV/kMpnLy6OE5U/BkxMq+EEU=
-Received: from [10.204.79.100] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S934423AbeFYOmd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 10:42:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50536 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934266AbeFYOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 10:42:31 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3D0EC60376;
-        Mon, 25 Jun 2018 14:38:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529937500;
-        bh=RKTkE/Zd7Ena1Eu/mNuudsmwbEvsSuGs5VPkan1DAn8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PF5NHaUYIQjXZw26trACD1tEMgO4rIlVp0W8cEBBNW/KjC+fGa4W+4IJ1/4xDbp5X
-         WEZFnHDcXKI8x9TmRnQyUvPf/9OwpvSA1bTY06caSQgATQjzO+OEnm3eo10Dk5zvqD
-         89JlxZ7mYrm2tgD6IBSx2zMVsDGiSpVoiDswyrXI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D0EC60376
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-Subject: Re: [PATCH v2] time: Fix sleeptime injection for non-stop clocksource
- & persistent clock
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     john.stultz@linaro.org, linux-kernel@vger.kernel.org,
-        neeraju@codeaurora.org, gkohli@codeaurora.org,
-        cpandya@codeaurora.org
-References: <1527680699-16068-1-git-send-email-mojha@codeaurora.org>
- <alpine.DEB.2.21.1806222312340.1589@nanos.tec.linutronix.de>
-From:   Mukesh Ojha <mojha@codeaurora.org>
-Message-ID: <e869c2ec-90fa-27e2-975c-a92469f56dac@codeaurora.org>
-Date:   Mon, 25 Jun 2018 20:08:13 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mx1.redhat.com (Postfix) with ESMTPS id 205EA7C6A9;
+        Mon, 25 Jun 2018 14:42:31 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 069982026D5B;
+        Mon, 25 Jun 2018 14:42:31 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5PEgUU0022730;
+        Mon, 25 Jun 2018 10:42:30 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5PEgURr022726;
+        Mon, 25 Jun 2018 10:42:30 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 25 Jun 2018 10:42:30 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     jing xia <jing.xia.mail@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+In-Reply-To: <20180625141434.GO28965@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1806251037250.17405@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1806181003560.4201@file01.intranet.prod.int.rdu2.redhat.com> <20180619104312.GD13685@dhcp22.suse.cz> <alpine.LRH.2.02.1806191228110.25656@file01.intranet.prod.int.rdu2.redhat.com> <20180622090151.GS10465@dhcp22.suse.cz>
+ <20180622090935.GT10465@dhcp22.suse.cz> <alpine.LRH.2.02.1806220845190.8072@file01.intranet.prod.int.rdu2.redhat.com> <20180622130524.GZ10465@dhcp22.suse.cz> <alpine.LRH.2.02.1806221447050.2717@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180625090957.GF28965@dhcp22.suse.cz> <alpine.LRH.2.02.1806250941380.11092@file01.intranet.prod.int.rdu2.redhat.com> <20180625141434.GO28965@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1806222312340.1589@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 25 Jun 2018 14:42:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 25 Jun 2018 14:42:31 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-Thanks you very much for your time and reply.
 
 
-On 6/23/2018 2:57 AM, Thomas Gleixner wrote:
-> On Wed, 30 May 2018, Mukesh Ojha wrote:
->> Currently, for both non-stop clocksource and persistent clock
->> there is a corner case, when a driver failed to go suspend mode.
->> rtc_resume() injects the sleeptime as timekeeping_rtc_skipresume()
->> returned 'false'(sleeptime_injected=false) due to which we can
->> see mismatch in timestamps between system clock and other timers.
->>
->> Fix this by updating sleeptime_injected=true for both non-stop
->> clocksource and persistent clock.
->>
->> Success case:
->> ------------
->>                                           {sleeptime_injected=true}
->> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() =>
->>    rtc_resume()
->>
->> Failure case:
->> ------------
->>               {failure in sleep path} {sleeptime_injected=false}
->> rtc_suspend()          =>            rtc_resume()
-> I can see the problem.
->
->> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
->> ---
->> Changes in v2:
->>   * Updated the commit text.
->>   * Removed extra variable and used the earlier static
->>     variable 'sleeptime_injected'.
->>
->>   kernel/time/timekeeping.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
->> index 49cbcee..2754c1b 100644
->> --- a/kernel/time/timekeeping.c
->> +++ b/kernel/time/timekeeping.c
->> @@ -1610,6 +1610,17 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
->>    */
->>   bool timekeeping_rtc_skipresume(void)
->>   {
->> +	struct timekeeper *tk = &tk_core.timekeeper;
->> +	/*
->> +	 * This is to ensure that we don't end up injecting
->> +	 * the sleeptime via rtc_resume() for non-stop clocksource
->> +	 * when we fail to sleep.
->> +	 */
->> +	if (!sleeptime_injected)
->> +		sleeptime_injected = ((tk->tkr_mono.clock->flags &
->> +			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
->> +			(persistent_clock_exists)) ? true : false;
-> But this is really a horrible hack. The right thing to do is to keep track
-> whether timekeeping_suspend() has been reached in the first place. There is
-> a very simple way to do that. Uncompiled and completely untested patch
-> below, but you get the idea.
+On Mon, 25 Jun 2018, Michal Hocko wrote:
 
-Yeah, missed completely the fact that the issue can also come where only 
-clocksource is RTC.
-> Thanks,
->
-> 	tglx
->
-> 8<-------------------
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index 4786df904c22..32ae9aea61c3 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -1510,8 +1510,20 @@ void __weak read_boot_clock64(struct timespec64 *ts)
->   	ts->tv_nsec = 0;
->   }
->   
-> -/* Flag for if timekeeping_resume() has injected sleeptime */
-> -static bool sleeptime_injected;
-> +/*
-> + * Flag reflecting whether timekeeping_resume() has injected sleeptime.
-> + *
-> + * The flag starts of true and is only cleared when a suspend reaches
-> + * timekeeping_suspend(), timekeeping_resume() sets it when the timekeeper
-> + * clocksource is not stopping across suspend and has been used to update
-> + * sleep time. If the timekeeper clocksource has stopped then the flag
-> + * stays false and is used by the RTC resume code to decide whether sleep
-> + * time must be injected and if so the flag gets set then.
-> + *
-> + * If a suspend fails before reaching timekeeping_resume() then the flag
-> + * stays true and prevents erroneous sleeptime injection.
-> + */
-> +static bool sleeptime_injected = true;
+> > And the throttling in dm-bufio prevents kswapd from making forward 
+> > progress, causing this situation...
+> 
+> Which is what we have PF_THROTTLE_LESS for. Geez, do we have to go in
+> circles like that? Are you even listening?
+> 
+> [...]
+> 
+> > And so what do you want to do to prevent block drivers from sleeping?
+> 
+> use the existing means we have.
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-This will prevent first sleep failure.
+So - do you want this patch?
 
->   
->   /* Flag for if there is a persistent clock on this platform */
->   static bool persistent_clock_exists;
-> @@ -1646,6 +1658,8 @@ void timekeeping_inject_sleeptime64(struct timespec64 *delta)
->   	raw_spin_lock_irqsave(&timekeeper_lock, flags);
->   	write_seqcount_begin(&tk_core.seq);
->   
-> +	sleeptime_injected = true;
+There is no behavior difference between changing the allocator (so that it 
+implies PF_THROTTLE_LESS for block drivers) and chaning all the block 
+drivers to explicitly set PF_THROTTLE_LESS.
 
-This will prevent further extra sleeptime injection if sleep fails 
-(valid for RTC only).
-Looks good!
+But if you insist that the allocator can't be changed, we have to repeat 
+the same code over and over again in the block drivers.
 
-> +
->   	timekeeping_forward_now(tk);
->   
->   	__timekeeping_inject_sleeptime(tk, delta);
-> @@ -1671,7 +1685,6 @@ void timekeeping_resume(void)
->   	struct timespec64 ts_new, ts_delta;
->   	u64 cycle_now;
->   
-> -	sleeptime_injected = false;
->   	read_persistent_clock64(&ts_new);
->   
->   	clockevents_resume();
-> @@ -1743,6 +1756,8 @@ int timekeeping_suspend(void)
->   	if (timekeeping_suspend_time.tv_sec || timekeeping_suspend_time.tv_nsec)
->   		persistent_clock_exists = true;
->   
-> +	sleeptime_injected = false;
+Mikulas
 
-I did not get the exact valid point of moving it from 
-`timekeeping_suspend` to `timekeeping_resume`.
-Although it will not have any side effect.
 
-> +
->   	raw_spin_lock_irqsave(&timekeeper_lock, flags);
->   	write_seqcount_begin(&tk_core.seq);
->   	timekeeping_forward_now(tk);
->
 
-Thanks for the change;  will check and update.
+---
+ block/bio.c                   |    4 ++++
+ drivers/md/dm-bufio.c         |   14 +++++++++++---
+ drivers/md/dm-crypt.c         |    8 ++++++++
+ drivers/md/dm-integrity.c     |    4 ++++
+ drivers/md/dm-kcopyd.c        |    3 +++
+ drivers/md/dm-verity-target.c |    4 ++++
+ drivers/md/dm-writecache.c    |    4 ++++
+ mm/mempool.c                  |    4 ++++
+ 8 files changed, 42 insertions(+), 3 deletions(-)
 
-Cheers,
-Mukesh
+Index: linux-2.6/mm/mempool.c
+===================================================================
+--- linux-2.6.orig/mm/mempool.c	2018-06-25 16:32:19.210000000 +0200
++++ linux-2.6/mm/mempool.c	2018-06-25 16:32:19.200000000 +0200
+@@ -369,6 +369,7 @@ void *mempool_alloc(mempool_t *pool, gfp
+ 	unsigned long flags;
+ 	wait_queue_entry_t wait;
+ 	gfp_t gfp_temp;
++	unsigned old_flags;
+ 
+ 	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
+ 	might_sleep_if(gfp_mask & __GFP_DIRECT_RECLAIM);
+@@ -381,7 +382,10 @@ void *mempool_alloc(mempool_t *pool, gfp
+ 
+ repeat_alloc:
+ 
++	old_flags = current->flags & PF_LESS_THROTTLE;
++	current->flags |= PF_LESS_THROTTLE;
+ 	element = pool->alloc(gfp_temp, pool->pool_data);
++	current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 	if (likely(element != NULL))
+ 		return element;
+ 
+Index: linux-2.6/block/bio.c
+===================================================================
+--- linux-2.6.orig/block/bio.c	2018-06-25 16:32:19.210000000 +0200
++++ linux-2.6/block/bio.c	2018-06-25 16:32:19.200000000 +0200
+@@ -217,6 +217,7 @@ fallback:
+ 	} else {
+ 		struct biovec_slab *bvs = bvec_slabs + *idx;
+ 		gfp_t __gfp_mask = gfp_mask & ~(__GFP_DIRECT_RECLAIM | __GFP_IO);
++		unsigned old_flags;
+ 
+ 		/*
+ 		 * Make this allocation restricted and don't dump info on
+@@ -229,7 +230,10 @@ fallback:
+ 		 * Try a slab allocation. If this fails and __GFP_DIRECT_RECLAIM
+ 		 * is set, retry with the 1-entry mempool
+ 		 */
++		old_flags = current->flags & PF_LESS_THROTTLE;
++		current->flags |= PF_LESS_THROTTLE;
+ 		bvl = kmem_cache_alloc(bvs->slab, __gfp_mask);
++		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 		if (unlikely(!bvl && (gfp_mask & __GFP_DIRECT_RECLAIM))) {
+ 			*idx = BVEC_POOL_MAX;
+ 			goto fallback;
+Index: linux-2.6/drivers/md/dm-bufio.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-bufio.c	2018-06-25 16:32:19.210000000 +0200
++++ linux-2.6/drivers/md/dm-bufio.c	2018-06-25 16:32:19.200000000 +0200
+@@ -356,6 +356,7 @@ static void __cache_size_refresh(void)
+ static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
+ 			       unsigned char *data_mode)
+ {
++	void *ptr;
+ 	if (unlikely(c->slab_cache != NULL)) {
+ 		*data_mode = DATA_MODE_SLAB;
+ 		return kmem_cache_alloc(c->slab_cache, gfp_mask);
+@@ -363,9 +364,14 @@ static void *alloc_buffer_data(struct dm
+ 
+ 	if (c->block_size <= KMALLOC_MAX_SIZE &&
+ 	    gfp_mask & __GFP_NORETRY) {
++		unsigned old_flags;
+ 		*data_mode = DATA_MODE_GET_FREE_PAGES;
+-		return (void *)__get_free_pages(gfp_mask,
++		old_flags = current->flags & PF_LESS_THROTTLE;
++		current->flags |= PF_LESS_THROTTLE;
++		ptr = (void *)__get_free_pages(gfp_mask,
+ 						c->sectors_per_block_bits - (PAGE_SHIFT - SECTOR_SHIFT));
++		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
++		return ptr;
+ 	}
+ 
+ 	*data_mode = DATA_MODE_VMALLOC;
+@@ -381,8 +387,10 @@ static void *alloc_buffer_data(struct dm
+ 	 */
+ 	if (gfp_mask & __GFP_NORETRY) {
+ 		unsigned noio_flag = memalloc_noio_save();
+-		void *ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+-
++		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
++		current->flags |= PF_LESS_THROTTLE;
++		ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
++		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 		memalloc_noio_restore(noio_flag);
+ 		return ptr;
+ 	}
+Index: linux-2.6/drivers/md/dm-integrity.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-integrity.c	2018-06-25 16:32:19.210000000 +0200
++++ linux-2.6/drivers/md/dm-integrity.c	2018-06-25 16:32:52.600000000 +0200
+@@ -1317,6 +1317,7 @@ static void integrity_metadata(struct wo
+ 	int r;
+ 
+ 	if (ic->internal_hash) {
++		unsigned old_flags;
+ 		struct bvec_iter iter;
+ 		struct bio_vec bv;
+ 		unsigned digest_size = crypto_shash_digestsize(ic->internal_hash);
+@@ -1330,8 +1331,11 @@ static void integrity_metadata(struct wo
+ 		if (unlikely(ic->mode == 'R'))
+ 			goto skip_io;
+ 
++		old_flags = current->flags & PF_LESS_THROTTLE;
++		current->flags |= PF_LESS_THROTTLE;
+ 		checksums = kmalloc((PAGE_SIZE >> SECTOR_SHIFT >> ic->sb->log2_sectors_per_block) * ic->tag_size + extra_space,
+ 				    GFP_NOIO | __GFP_NORETRY | __GFP_NOWARN);
++		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 		if (!checksums)
+ 			checksums = checksums_onstack;
+ 
+Index: linux-2.6/drivers/md/dm-kcopyd.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-kcopyd.c	2018-06-25 16:32:19.210000000 +0200
++++ linux-2.6/drivers/md/dm-kcopyd.c	2018-06-25 16:32:19.200000000 +0200
+@@ -245,7 +245,10 @@ static int kcopyd_get_pages(struct dm_kc
+ 	*pages = NULL;
+ 
+ 	do {
++		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
++		current->flags |= PF_LESS_THROTTLE;
+ 		pl = alloc_pl(__GFP_NOWARN | __GFP_NORETRY | __GFP_KSWAPD_RECLAIM);
++		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 		if (unlikely(!pl)) {
+ 			/* Use reserved pages */
+ 			pl = kc->pages;
+Index: linux-2.6/drivers/md/dm-verity-target.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-verity-target.c	2018-06-25 16:32:19.210000000 +0200
++++ linux-2.6/drivers/md/dm-verity-target.c	2018-06-25 16:32:19.200000000 +0200
+@@ -596,9 +596,13 @@ no_prefetch_cluster:
+ static void verity_submit_prefetch(struct dm_verity *v, struct dm_verity_io *io)
+ {
+ 	struct dm_verity_prefetch_work *pw;
++	unsigned old_flags;
+ 
++	old_flags = current->flags & PF_LESS_THROTTLE;
++	current->flags |= PF_LESS_THROTTLE;
+ 	pw = kmalloc(sizeof(struct dm_verity_prefetch_work),
+ 		GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
++	current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 
+ 	if (!pw)
+ 		return;
+Index: linux-2.6/drivers/md/dm-writecache.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-writecache.c	2018-06-25 16:32:19.210000000 +0200
++++ linux-2.6/drivers/md/dm-writecache.c	2018-06-25 16:32:19.200000000 +0200
+@@ -1467,6 +1467,7 @@ static void __writecache_writeback_pmem(
+ 	unsigned max_pages;
+ 
+ 	while (wbl->size) {
++		unsigned old_flags;
+ 		wbl->size--;
+ 		e = container_of(wbl->list.prev, struct wc_entry, lru);
+ 		list_del(&e->lru);
+@@ -1480,6 +1481,8 @@ static void __writecache_writeback_pmem(
+ 		bio_set_dev(&wb->bio, wc->dev->bdev);
+ 		wb->bio.bi_iter.bi_sector = read_original_sector(wc, e);
+ 		wb->page_offset = PAGE_SIZE;
++		old_flags = current->flags & PF_LESS_THROTTLE;
++		current->flags |= PF_LESS_THROTTLE;
+ 		if (max_pages <= WB_LIST_INLINE ||
+ 		    unlikely(!(wb->wc_list = kmalloc(max_pages * sizeof(struct wc_entry *),
+ 						     GFP_NOIO | __GFP_NORETRY |
+@@ -1487,6 +1490,7 @@ static void __writecache_writeback_pmem(
+ 			wb->wc_list = wb->wc_list_inline;
+ 			max_pages = WB_LIST_INLINE;
+ 		}
++		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 
+ 		BUG_ON(!wc_add_block(wb, e, GFP_NOIO));
+ 
+Index: linux-2.6/drivers/md/dm-crypt.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-crypt.c	2018-06-25 16:32:19.210000000 +0200
++++ linux-2.6/drivers/md/dm-crypt.c	2018-06-25 16:33:55.810000000 +0200
+@@ -2181,12 +2181,16 @@ static void *crypt_page_alloc(gfp_t gfp_
+ {
+ 	struct crypt_config *cc = pool_data;
+ 	struct page *page;
++	unsigned old_flags;
+ 
+ 	if (unlikely(percpu_counter_compare(&cc->n_allocated_pages, dm_crypt_pages_per_client) >= 0) &&
+ 	    likely(gfp_mask & __GFP_NORETRY))
+ 		return NULL;
+ 
++	old_flags = current->flags & PF_LESS_THROTTLE;
++	current->flags |= PF_LESS_THROTTLE;
+ 	page = alloc_page(gfp_mask);
++	current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 	if (likely(page != NULL))
+ 		percpu_counter_add(&cc->n_allocated_pages, 1);
+ 
+@@ -2893,7 +2897,10 @@ static int crypt_map(struct dm_target *t
+ 
+ 	if (cc->on_disk_tag_size) {
+ 		unsigned tag_len = cc->on_disk_tag_size * (bio_sectors(bio) >> cc->sector_shift);
++		unsigned old_flags;
+ 
++		old_flags = current->flags & PF_LESS_THROTTLE;
++		current->flags |= PF_LESS_THROTTLE;
+ 		if (unlikely(tag_len > KMALLOC_MAX_SIZE) ||
+ 		    unlikely(!(io->integrity_metadata = kmalloc(tag_len,
+ 				GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN)))) {
+@@ -2902,6 +2909,7 @@ static int crypt_map(struct dm_target *t
+ 			io->integrity_metadata = mempool_alloc(&cc->tag_pool, GFP_NOIO);
+ 			io->integrity_metadata_from_pool = true;
+ 		}
++		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
+ 	}
+ 
+ 	if (crypt_integrity_aead(cc))
