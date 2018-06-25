@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B45C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C1CC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEE2B257C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:00:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE2B257C3
+	by mail.kernel.org (Postfix) with ESMTP id 5A57F257C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A57F257C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932758AbeFYLAi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 07:00:38 -0400
-Received: from foss.arm.com ([217.140.101.70]:54654 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932340AbeFYLAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 07:00:23 -0400
+        id S932578AbeFYLAW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 07:00:22 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54610 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932340AbeFYLAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 07:00:15 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D6B922C7;
-        Mon, 25 Jun 2018 04:00:23 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE9952379;
+        Mon, 25 Jun 2018 04:00:14 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E0B8C3F73D;
-        Mon, 25 Jun 2018 04:00:21 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8AC5C3F73D;
+        Mon, 25 Jun 2018 04:00:13 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
         peterz@infradead.org, boqun.feng@gmail.com
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCHv2 11/11] arm64: use instrumented atomics
-Date:   Mon, 25 Jun 2018 11:59:52 +0100
-Message-Id: <20180625105952.3756-12-mark.rutland@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCHv2 07/11] atomics: add common header generation files
+Date:   Mon, 25 Jun 2018 11:59:48 +0100
+Message-Id: <20180625105952.3756-8-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180625105952.3756-1-mark.rutland@arm.com>
 References: <20180625105952.3756-1-mark.rutland@arm.com>
@@ -43,644 +42,1206 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the generic atomic headers provide instrumented wrappers of all
-the atomics implemented by arm64, let's migrate arm64 over to these.
+To minimize repetition, to allow for future rework, and to ensure
+regularity of the various atomic APIs, we'd like to automatically
+generate (the bulk of) a number of headers related to atomics.
 
-The additional instrumentation will help to find bugs (e.g. when fuzzing
-with Syzkaller).
+This patch adds the infrastructure to do so, leaving actual conversion
+of headers to subsequent patches. This infrastructure consists of:
 
-Mostly this change involes adding an arch_ prefix to a number of
-function names and macro definitions. Due to the way we call the LL/SC
-atomics via the LSE atomic wrappers, this requires adding an arch_
-prefix to some arm64-specific atomic primitives.
+* atomics.tbl - a table describing the functions in the atomics API,
+  with names, prototypes, and metadata describing the variants that
+  exist (e.g fetch/return, acquire/release/relaxed). Note that the
+  return type is dependent on the particular variant.
 
-Some unusual whitespace in the cmpxchg wrappers is fixed up as part of
-the change.
+* atomic-tbl.sh - a library of routines useful for dealing with
+  atomics.tbl (e.g. querying which variants exist, or generating
+  argument/parameter lists for a given function variant).
+
+* gen-atomic-fallback.sh - a script which generates a header of
+  fallbacks, covering cases where architecture omit certain functions
+  (e.g. omitting relaxed variants).
+
+* gen-atomic-long.sh - a script which generates wrappers providing the
+  atomic_long API atomic of the relevant atomic or atomic64 API,
+  ensuring the APIs are consistent.
+
+* gen-atomic-instrumented.sh - a script which generates atomic* wrappers
+  atop of arch_atomic* functions, with automatically generated KASAN
+  instrumentation.
+
+* fallbacks/* - a set of fallback implementations for atomics, which
+  should be used when no implementation of a given atomic is provided.
+  These are used by gen-atomic-fallback.sh to generate fallbacks, and
+  these are also used by other scripts to determine the set of optional
+  atomics (as required to generate preprocessor guards correctly).
+
+  Fallbacks may use the following variables:
+
+  ${atomic}     atomic prefix: atomic/atomic64/atomic_long, which can be
+		used to derive the atomic type, and to prefix functions
+
+  ${int}        integer type: int/s64/long
+
+  ${pfx}        variant prefix, e.g. fetch_
+
+  ${name}       base function name, e.g. add
+
+  ${sfx}        variant suffix, e.g. _return
+
+  ${order}      order suffix, e.g. _relaxed
+
+  ${atomicname} full name, e.g. atomic64_fetch_add_relaxed
+
+  ${ret}        return type of the function, e.g. void
+
+  ${retstmt}    a return statement (with a trailing space), unless the
+                variant returns void
+
+  ${params}     parameter list for the function declaration, e.g.
+                "int i, atomic_t *v"
+
+  ${args}       argument list for invoking the function, e.g. "i, v"
+
+  ... for clarity, ${ret}, ${retstmt}, ${params}, and ${args} are
+  open-coded for fallbacks where these do not vary, or are critical to
+  understanding the logic of the fallback.
+
+The MAINTAINERS entry for the atomic infrastructure is updated to cover
+the new scripts.
+
+There should be no functional change as a result of this patch.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/atomic.h      | 237 ++++++++++++++++++-----------------
- arch/arm64/include/asm/atomic_lse.h  |  51 ++++----
- arch/arm64/include/asm/cmpxchg.h     | 106 ++++++++--------
- arch/arm64/include/asm/lse.h         |   2 +-
- arch/arm64/include/asm/sync_bitops.h |  16 +--
- 5 files changed, 212 insertions(+), 200 deletions(-)
+ MAINTAINERS                                  |   1 +
+ scripts/atomic/atomic-tbl.sh                 | 186 +++++++++++++++++++++++++++
+ scripts/atomic/atomics.tbl                   |  41 ++++++
+ scripts/atomic/fallbacks/acquire             |   9 ++
+ scripts/atomic/fallbacks/add_negative        |  16 +++
+ scripts/atomic/fallbacks/add_unless          |  16 +++
+ scripts/atomic/fallbacks/andnot              |   7 +
+ scripts/atomic/fallbacks/dec                 |   7 +
+ scripts/atomic/fallbacks/dec_and_test        |  15 +++
+ scripts/atomic/fallbacks/dec_if_positive     |  15 +++
+ scripts/atomic/fallbacks/dec_unless_positive |  14 ++
+ scripts/atomic/fallbacks/fence               |  11 ++
+ scripts/atomic/fallbacks/fetch_add_unless    |  23 ++++
+ scripts/atomic/fallbacks/inc                 |   7 +
+ scripts/atomic/fallbacks/inc_and_test        |  15 +++
+ scripts/atomic/fallbacks/inc_not_zero        |  14 ++
+ scripts/atomic/fallbacks/inc_unless_negative |  14 ++
+ scripts/atomic/fallbacks/read_acquire        |   7 +
+ scripts/atomic/fallbacks/release             |   8 ++
+ scripts/atomic/fallbacks/set_release         |   7 +
+ scripts/atomic/fallbacks/sub_and_test        |  16 +++
+ scripts/atomic/fallbacks/try_cmpxchg         |  11 ++
+ scripts/atomic/gen-atomic-fallback.sh        | 180 ++++++++++++++++++++++++++
+ scripts/atomic/gen-atomic-instrumented.sh    | 181 ++++++++++++++++++++++++++
+ scripts/atomic/gen-atomic-long.sh            |  98 ++++++++++++++
+ 25 files changed, 919 insertions(+)
+ create mode 100755 scripts/atomic/atomic-tbl.sh
+ create mode 100644 scripts/atomic/atomics.tbl
+ create mode 100644 scripts/atomic/fallbacks/acquire
+ create mode 100644 scripts/atomic/fallbacks/add_negative
+ create mode 100644 scripts/atomic/fallbacks/add_unless
+ create mode 100644 scripts/atomic/fallbacks/andnot
+ create mode 100644 scripts/atomic/fallbacks/dec
+ create mode 100644 scripts/atomic/fallbacks/dec_and_test
+ create mode 100644 scripts/atomic/fallbacks/dec_if_positive
+ create mode 100644 scripts/atomic/fallbacks/dec_unless_positive
+ create mode 100644 scripts/atomic/fallbacks/fence
+ create mode 100644 scripts/atomic/fallbacks/fetch_add_unless
+ create mode 100644 scripts/atomic/fallbacks/inc
+ create mode 100644 scripts/atomic/fallbacks/inc_and_test
+ create mode 100644 scripts/atomic/fallbacks/inc_not_zero
+ create mode 100644 scripts/atomic/fallbacks/inc_unless_negative
+ create mode 100644 scripts/atomic/fallbacks/read_acquire
+ create mode 100644 scripts/atomic/fallbacks/release
+ create mode 100644 scripts/atomic/fallbacks/set_release
+ create mode 100644 scripts/atomic/fallbacks/sub_and_test
+ create mode 100644 scripts/atomic/fallbacks/try_cmpxchg
+ create mode 100755 scripts/atomic/gen-atomic-fallback.sh
+ create mode 100755 scripts/atomic/gen-atomic-instrumented.sh
+ create mode 100755 scripts/atomic/gen-atomic-long.sh
 
-diff --git a/arch/arm64/include/asm/atomic.h b/arch/arm64/include/asm/atomic.h
-index 9bca54dda75c..1f4e9ee641c9 100644
---- a/arch/arm64/include/asm/atomic.h
-+++ b/arch/arm64/include/asm/atomic.h
-@@ -42,124 +42,131 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index edf3cf5ea691..6615a29ed5c1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2514,6 +2514,7 @@ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ F:	arch/*/include/asm/atomic*.h
+ F:	include/*/atomic*.h
++F:	scripts/atomic/
  
- #define ATOMIC_INIT(i)	{ (i) }
- 
--#define atomic_read(v)			READ_ONCE((v)->counter)
--#define atomic_set(v, i)		WRITE_ONCE(((v)->counter), (i))
--
--#define atomic_add_return_relaxed	atomic_add_return_relaxed
--#define atomic_add_return_acquire	atomic_add_return_acquire
--#define atomic_add_return_release	atomic_add_return_release
--#define atomic_add_return		atomic_add_return
--
--#define atomic_sub_return_relaxed	atomic_sub_return_relaxed
--#define atomic_sub_return_acquire	atomic_sub_return_acquire
--#define atomic_sub_return_release	atomic_sub_return_release
--#define atomic_sub_return		atomic_sub_return
--
--#define atomic_fetch_add_relaxed	atomic_fetch_add_relaxed
--#define atomic_fetch_add_acquire	atomic_fetch_add_acquire
--#define atomic_fetch_add_release	atomic_fetch_add_release
--#define atomic_fetch_add		atomic_fetch_add
--
--#define atomic_fetch_sub_relaxed	atomic_fetch_sub_relaxed
--#define atomic_fetch_sub_acquire	atomic_fetch_sub_acquire
--#define atomic_fetch_sub_release	atomic_fetch_sub_release
--#define atomic_fetch_sub		atomic_fetch_sub
--
--#define atomic_fetch_and_relaxed	atomic_fetch_and_relaxed
--#define atomic_fetch_and_acquire	atomic_fetch_and_acquire
--#define atomic_fetch_and_release	atomic_fetch_and_release
--#define atomic_fetch_and		atomic_fetch_and
--
--#define atomic_fetch_andnot_relaxed	atomic_fetch_andnot_relaxed
--#define atomic_fetch_andnot_acquire	atomic_fetch_andnot_acquire
--#define atomic_fetch_andnot_release	atomic_fetch_andnot_release
--#define atomic_fetch_andnot		atomic_fetch_andnot
--
--#define atomic_fetch_or_relaxed		atomic_fetch_or_relaxed
--#define atomic_fetch_or_acquire		atomic_fetch_or_acquire
--#define atomic_fetch_or_release		atomic_fetch_or_release
--#define atomic_fetch_or			atomic_fetch_or
--
--#define atomic_fetch_xor_relaxed	atomic_fetch_xor_relaxed
--#define atomic_fetch_xor_acquire	atomic_fetch_xor_acquire
--#define atomic_fetch_xor_release	atomic_fetch_xor_release
--#define atomic_fetch_xor		atomic_fetch_xor
--
--#define atomic_xchg_relaxed(v, new)	xchg_relaxed(&((v)->counter), (new))
--#define atomic_xchg_acquire(v, new)	xchg_acquire(&((v)->counter), (new))
--#define atomic_xchg_release(v, new)	xchg_release(&((v)->counter), (new))
--#define atomic_xchg(v, new)		xchg(&((v)->counter), (new))
--
--#define atomic_cmpxchg_relaxed(v, old, new)				\
--	cmpxchg_relaxed(&((v)->counter), (old), (new))
--#define atomic_cmpxchg_acquire(v, old, new)				\
--	cmpxchg_acquire(&((v)->counter), (old), (new))
--#define atomic_cmpxchg_release(v, old, new)				\
--	cmpxchg_release(&((v)->counter), (old), (new))
--#define atomic_cmpxchg(v, old, new)	cmpxchg(&((v)->counter), (old), (new))
--
--#define atomic_andnot			atomic_andnot
-+#define arch_atomic_read(v)			READ_ONCE((v)->counter)
-+#define arch_atomic_set(v, i)			WRITE_ONCE(((v)->counter), (i))
+ ATTO EXPRESSSAS SAS/SATA RAID SCSI DRIVER
+ M:	Bradley Grove <linuxdrivers@attotech.com>
+diff --git a/scripts/atomic/atomic-tbl.sh b/scripts/atomic/atomic-tbl.sh
+new file mode 100755
+index 000000000000..34275b4ff8a0
+--- /dev/null
++++ b/scripts/atomic/atomic-tbl.sh
+@@ -0,0 +1,186 @@
++#!/bin/sh
 +
-+#define arch_atomic_add_return_relaxed		arch_atomic_add_return_relaxed
-+#define arch_atomic_add_return_acquire		arch_atomic_add_return_acquire
-+#define arch_atomic_add_return_release		arch_atomic_add_return_release
-+#define arch_atomic_add_return			arch_atomic_add_return
++# helpers for dealing with atomics.tbl
 +
-+#define arch_atomic_sub_return_relaxed		arch_atomic_sub_return_relaxed
-+#define arch_atomic_sub_return_acquire		arch_atomic_sub_return_acquire
-+#define arch_atomic_sub_return_release		arch_atomic_sub_return_release
-+#define arch_atomic_sub_return			arch_atomic_sub_return
++#meta_in(meta, match)
++meta_in()
++{
++	case "$1" in
++	[$2]) return 0;;
++	esac
 +
-+#define arch_atomic_fetch_add_relaxed		arch_atomic_fetch_add_relaxed
-+#define arch_atomic_fetch_add_acquire		arch_atomic_fetch_add_acquire
-+#define arch_atomic_fetch_add_release		arch_atomic_fetch_add_release
-+#define arch_atomic_fetch_add			arch_atomic_fetch_add
++	return 1
++}
 +
-+#define arch_atomic_fetch_sub_relaxed		arch_atomic_fetch_sub_relaxed
-+#define arch_atomic_fetch_sub_acquire		arch_atomic_fetch_sub_acquire
-+#define arch_atomic_fetch_sub_release		arch_atomic_fetch_sub_release
-+#define arch_atomic_fetch_sub			arch_atomic_fetch_sub
++#meta_has_ret(meta)
++meta_has_ret()
++{
++	meta_in "$1" "bBiIfFlR"
++}
 +
-+#define arch_atomic_fetch_and_relaxed		arch_atomic_fetch_and_relaxed
-+#define arch_atomic_fetch_and_acquire		arch_atomic_fetch_and_acquire
-+#define arch_atomic_fetch_and_release		arch_atomic_fetch_and_release
-+#define arch_atomic_fetch_and			arch_atomic_fetch_and
++#meta_has_acquire(meta)
++meta_has_acquire()
++{
++	meta_in "$1" "BFIlR"
++}
 +
-+#define arch_atomic_fetch_andnot_relaxed	arch_atomic_fetch_andnot_relaxed
-+#define arch_atomic_fetch_andnot_acquire	arch_atomic_fetch_andnot_acquire
-+#define arch_atomic_fetch_andnot_release	arch_atomic_fetch_andnot_release
-+#define arch_atomic_fetch_andnot		arch_atomic_fetch_andnot
++#meta_has_release(meta)
++meta_has_release()
++{
++	meta_in "$1" "BFIRs"
++}
 +
-+#define arch_atomic_fetch_or_relaxed		arch_atomic_fetch_or_relaxed
-+#define arch_atomic_fetch_or_acquire		arch_atomic_fetch_or_acquire
-+#define arch_atomic_fetch_or_release		arch_atomic_fetch_or_release
-+#define arch_atomic_fetch_or			arch_atomic_fetch_or
++#meta_has_relaxed(meta)
++meta_has_relaxed()
++{
++	meta_in "$1" "BFIR"
++}
 +
-+#define arch_atomic_fetch_xor_relaxed		arch_atomic_fetch_xor_relaxed
-+#define arch_atomic_fetch_xor_acquire		arch_atomic_fetch_xor_acquire
-+#define arch_atomic_fetch_xor_release		arch_atomic_fetch_xor_release
-+#define arch_atomic_fetch_xor			arch_atomic_fetch_xor
++#find_fallback_template(pfx, name, sfx, order)
++find_fallback_template()
++{
++	local pfx="$1"; shift
++	local name="$1"; shift
++	local sfx="$1"; shift
++	local order="$1"; shift
 +
-+#define arch_atomic_xchg_relaxed(v, new) \
-+	arch_xchg_relaxed(&((v)->counter), (new))
-+#define arch_atomic_xchg_acquire(v, new) \
-+	arch_xchg_acquire(&((v)->counter), (new))
-+#define arch_atomic_xchg_release(v, new) \
-+	arch_xchg_release(&((v)->counter), (new))
-+#define arch_atomic_xchg(v, new) \
-+	arch_xchg(&((v)->counter), (new))
++	local base=""
++	local file=""
 +
-+#define arch_atomic_cmpxchg_relaxed(v, old, new) \
-+	arch_cmpxchg_relaxed(&((v)->counter), (old), (new))
-+#define arch_atomic_cmpxchg_acquire(v, old, new) \
-+	arch_cmpxchg_acquire(&((v)->counter), (old), (new))
-+#define arch_atomic_cmpxchg_release(v, old, new) \
-+	arch_cmpxchg_release(&((v)->counter), (old), (new))
-+#define arch_atomic_cmpxchg(v, old, new) \
-+	arch_cmpxchg(&((v)->counter), (old), (new))
++	# We may have fallbacks for a specific case (e.g. read_acquire()), or
++	# an entire class, e.g. *inc*().
++	#
++	# Start at the most specific, and fall back to the most general. Once
++	# we find a specific fallback, don't bother looking for more.
++	for base in "${pfx}${name}${sfx}${order}" "${name}"; do
++		file="${ATOMICDIR}/fallbacks/${base}"
 +
-+#define arch_atomic_andnot			arch_atomic_andnot
- 
- /*
-- * 64-bit atomic operations.
-+ * 64-bit arch_atomic operations.
-  */
--#define ATOMIC64_INIT			ATOMIC_INIT
--#define atomic64_read			atomic_read
--#define atomic64_set			atomic_set
--
--#define atomic64_add_return_relaxed	atomic64_add_return_relaxed
--#define atomic64_add_return_acquire	atomic64_add_return_acquire
--#define atomic64_add_return_release	atomic64_add_return_release
--#define atomic64_add_return		atomic64_add_return
--
--#define atomic64_sub_return_relaxed	atomic64_sub_return_relaxed
--#define atomic64_sub_return_acquire	atomic64_sub_return_acquire
--#define atomic64_sub_return_release	atomic64_sub_return_release
--#define atomic64_sub_return		atomic64_sub_return
--
--#define atomic64_fetch_add_relaxed	atomic64_fetch_add_relaxed
--#define atomic64_fetch_add_acquire	atomic64_fetch_add_acquire
--#define atomic64_fetch_add_release	atomic64_fetch_add_release
--#define atomic64_fetch_add		atomic64_fetch_add
--
--#define atomic64_fetch_sub_relaxed	atomic64_fetch_sub_relaxed
--#define atomic64_fetch_sub_acquire	atomic64_fetch_sub_acquire
--#define atomic64_fetch_sub_release	atomic64_fetch_sub_release
--#define atomic64_fetch_sub		atomic64_fetch_sub
--
--#define atomic64_fetch_and_relaxed	atomic64_fetch_and_relaxed
--#define atomic64_fetch_and_acquire	atomic64_fetch_and_acquire
--#define atomic64_fetch_and_release	atomic64_fetch_and_release
--#define atomic64_fetch_and		atomic64_fetch_and
--
--#define atomic64_fetch_andnot_relaxed	atomic64_fetch_andnot_relaxed
--#define atomic64_fetch_andnot_acquire	atomic64_fetch_andnot_acquire
--#define atomic64_fetch_andnot_release	atomic64_fetch_andnot_release
--#define atomic64_fetch_andnot		atomic64_fetch_andnot
--
--#define atomic64_fetch_or_relaxed	atomic64_fetch_or_relaxed
--#define atomic64_fetch_or_acquire	atomic64_fetch_or_acquire
--#define atomic64_fetch_or_release	atomic64_fetch_or_release
--#define atomic64_fetch_or		atomic64_fetch_or
--
--#define atomic64_fetch_xor_relaxed	atomic64_fetch_xor_relaxed
--#define atomic64_fetch_xor_acquire	atomic64_fetch_xor_acquire
--#define atomic64_fetch_xor_release	atomic64_fetch_xor_release
--#define atomic64_fetch_xor		atomic64_fetch_xor
--
--#define atomic64_xchg_relaxed		atomic_xchg_relaxed
--#define atomic64_xchg_acquire		atomic_xchg_acquire
--#define atomic64_xchg_release		atomic_xchg_release
--#define atomic64_xchg			atomic_xchg
--
--#define atomic64_cmpxchg_relaxed	atomic_cmpxchg_relaxed
--#define atomic64_cmpxchg_acquire	atomic_cmpxchg_acquire
--#define atomic64_cmpxchg_release	atomic_cmpxchg_release
--#define atomic64_cmpxchg		atomic_cmpxchg
--
--#define atomic64_andnot			atomic64_andnot
--
--#define atomic64_dec_if_positive	atomic64_dec_if_positive
-+#define ATOMIC64_INIT				ATOMIC_INIT
-+#define arch_atomic64_read			arch_atomic_read
-+#define arch_atomic64_set			arch_atomic_set
++		if [ -f "${file}" ]; then
++			printf "${file}"
++			break
++		fi
++	done
++}
 +
-+#define arch_atomic64_add_return_relaxed	arch_atomic64_add_return_relaxed
-+#define arch_atomic64_add_return_acquire	arch_atomic64_add_return_acquire
-+#define arch_atomic64_add_return_release	arch_atomic64_add_return_release
-+#define arch_atomic64_add_return		arch_atomic64_add_return
++#gen_ret_type(meta, int)
++gen_ret_type() {
++	local meta="$1"; shift
++	local int="$1"; shift
 +
-+#define arch_atomic64_sub_return_relaxed	arch_atomic64_sub_return_relaxed
-+#define arch_atomic64_sub_return_acquire	arch_atomic64_sub_return_acquire
-+#define arch_atomic64_sub_return_release	arch_atomic64_sub_return_release
-+#define arch_atomic64_sub_return		arch_atomic64_sub_return
++	case "${meta}" in
++	[sv]) printf "void";;
++	[bB]) printf "bool";;
++	[aiIfFlR]) printf "${int}";;
++	esac
++}
 +
-+#define arch_atomic64_fetch_add_relaxed		arch_atomic64_fetch_add_relaxed
-+#define arch_atomic64_fetch_add_acquire		arch_atomic64_fetch_add_acquire
-+#define arch_atomic64_fetch_add_release		arch_atomic64_fetch_add_release
-+#define arch_atomic64_fetch_add			arch_atomic64_fetch_add
++#gen_ret_stmt(meta)
++gen_ret_stmt()
++{
++	if meta_has_ret "${meta}"; then
++		printf "return ";
++	fi
++}
 +
-+#define arch_atomic64_fetch_sub_relaxed		arch_atomic64_fetch_sub_relaxed
-+#define arch_atomic64_fetch_sub_acquire		arch_atomic64_fetch_sub_acquire
-+#define arch_atomic64_fetch_sub_release		arch_atomic64_fetch_sub_release
-+#define arch_atomic64_fetch_sub			arch_atomic64_fetch_sub
++# gen_param_name(arg)
++gen_param_name()
++{
++	# strip off the leading 'c' for 'cv'
++	local name="${1#c}"
++	printf "${name#*:}"
++}
 +
-+#define arch_atomic64_fetch_and_relaxed		arch_atomic64_fetch_and_relaxed
-+#define arch_atomic64_fetch_and_acquire		arch_atomic64_fetch_and_acquire
-+#define arch_atomic64_fetch_and_release		arch_atomic64_fetch_and_release
-+#define arch_atomic64_fetch_and			arch_atomic64_fetch_and
++# gen_param_type(arg, int, atomic)
++gen_param_type()
++{
++	local type="${1%%:*}"; shift
++	local int="$1"; shift
++	local atomic="$1"; shift
 +
-+#define arch_atomic64_fetch_andnot_relaxed	arch_atomic64_fetch_andnot_relaxed
-+#define arch_atomic64_fetch_andnot_acquire	arch_atomic64_fetch_andnot_acquire
-+#define arch_atomic64_fetch_andnot_release	arch_atomic64_fetch_andnot_release
-+#define arch_atomic64_fetch_andnot		arch_atomic64_fetch_andnot
++	case "${type}" in
++	i) type="${int} ";;
++	p) type="${int} *";;
++	v) type="${atomic}_t *";;
++	cv) type="const ${atomic}_t *";;
++	esac
 +
-+#define arch_atomic64_fetch_or_relaxed		arch_atomic64_fetch_or_relaxed
-+#define arch_atomic64_fetch_or_acquire		arch_atomic64_fetch_or_acquire
-+#define arch_atomic64_fetch_or_release		arch_atomic64_fetch_or_release
-+#define arch_atomic64_fetch_or			arch_atomic64_fetch_or
++	printf "${type}"
++}
 +
-+#define arch_atomic64_fetch_xor_relaxed		arch_atomic64_fetch_xor_relaxed
-+#define arch_atomic64_fetch_xor_acquire		arch_atomic64_fetch_xor_acquire
-+#define arch_atomic64_fetch_xor_release		arch_atomic64_fetch_xor_release
-+#define arch_atomic64_fetch_xor			arch_atomic64_fetch_xor
++#gen_param(arg, int, atomic)
++gen_param()
++{
++	local arg="$1"; shift
++	local int="$1"; shift
++	local atomic="$1"; shift
++	local name="$(gen_param_name "${arg}")"
++	local type="$(gen_param_type "${arg}" "${int}" "${atomic}")"
 +
-+#define arch_atomic64_xchg_relaxed		arch_atomic_xchg_relaxed
-+#define arch_atomic64_xchg_acquire		arch_atomic_xchg_acquire
-+#define arch_atomic64_xchg_release		arch_atomic_xchg_release
-+#define arch_atomic64_xchg			arch_atomic_xchg
++	printf "${type}${name}"
++}
 +
-+#define arch_atomic64_cmpxchg_relaxed		arch_atomic_cmpxchg_relaxed
-+#define arch_atomic64_cmpxchg_acquire		arch_atomic_cmpxchg_acquire
-+#define arch_atomic64_cmpxchg_release		arch_atomic_cmpxchg_release
-+#define arch_atomic64_cmpxchg			arch_atomic_cmpxchg
++#gen_params(int, atomic, arg...)
++gen_params()
++{
++	local int="$1"; shift
++	local atomic="$1"; shift
 +
-+#define arch_atomic64_andnot			arch_atomic64_andnot
++	while [ "$#" -gt 0 ]; do
++		gen_param "$1" "${int}" "${atomic}"
++		[ "$#" -gt 1 ] && printf ", "
++		shift;
++	done
++}
 +
-+#define arch_atomic64_dec_if_positive		arch_atomic64_dec_if_positive
++#gen_args(arg...)
++gen_args()
++{
++	while [ "$#" -gt 0 ]; do
++		printf "$(gen_param_name "$1")"
++		[ "$#" -gt 1 ] && printf ", "
++		shift;
++	done
++}
 +
-+#include <asm-generic/atomic-instrumented.h>
- 
- #endif
- #endif
-diff --git a/arch/arm64/include/asm/atomic_lse.h b/arch/arm64/include/asm/atomic_lse.h
-index f9b0b09153e0..1c974568d963 100644
---- a/arch/arm64/include/asm/atomic_lse.h
-+++ b/arch/arm64/include/asm/atomic_lse.h
-@@ -27,7 +27,7 @@
- 
- #define __LL_SC_ATOMIC(op)	__LL_SC_CALL(atomic_##op)
- #define ATOMIC_OP(op, asm_op)						\
--static inline void atomic_##op(int i, atomic_t *v)			\
-+static inline void arch_atomic_##op(int i, atomic_t *v)			\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -47,7 +47,7 @@ ATOMIC_OP(add, stadd)
- #undef ATOMIC_OP
- 
- #define ATOMIC_FETCH_OP(name, mb, op, asm_op, cl...)			\
--static inline int atomic_fetch_##op##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_fetch_##op##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -79,7 +79,7 @@ ATOMIC_FETCH_OPS(add, ldadd)
- #undef ATOMIC_FETCH_OPS
- 
- #define ATOMIC_OP_ADD_RETURN(name, mb, cl...)				\
--static inline int atomic_add_return##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_add_return##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -105,7 +105,7 @@ ATOMIC_OP_ADD_RETURN(        , al, "memory")
- 
- #undef ATOMIC_OP_ADD_RETURN
- 
--static inline void atomic_and(int i, atomic_t *v)
-+static inline void arch_atomic_and(int i, atomic_t *v)
- {
- 	register int w0 asm ("w0") = i;
- 	register atomic_t *x1 asm ("x1") = v;
-@@ -123,7 +123,7 @@ static inline void atomic_and(int i, atomic_t *v)
- }
- 
- #define ATOMIC_FETCH_OP_AND(name, mb, cl...)				\
--static inline int atomic_fetch_and##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_fetch_and##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -149,7 +149,7 @@ ATOMIC_FETCH_OP_AND(        , al, "memory")
- 
- #undef ATOMIC_FETCH_OP_AND
- 
--static inline void atomic_sub(int i, atomic_t *v)
-+static inline void arch_atomic_sub(int i, atomic_t *v)
- {
- 	register int w0 asm ("w0") = i;
- 	register atomic_t *x1 asm ("x1") = v;
-@@ -167,7 +167,7 @@ static inline void atomic_sub(int i, atomic_t *v)
- }
- 
- #define ATOMIC_OP_SUB_RETURN(name, mb, cl...)				\
--static inline int atomic_sub_return##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_sub_return##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -195,7 +195,7 @@ ATOMIC_OP_SUB_RETURN(        , al, "memory")
- #undef ATOMIC_OP_SUB_RETURN
- 
- #define ATOMIC_FETCH_OP_SUB(name, mb, cl...)				\
--static inline int atomic_fetch_sub##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_fetch_sub##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -224,7 +224,7 @@ ATOMIC_FETCH_OP_SUB(        , al, "memory")
- 
- #define __LL_SC_ATOMIC64(op)	__LL_SC_CALL(atomic64_##op)
- #define ATOMIC64_OP(op, asm_op)						\
--static inline void atomic64_##op(long i, atomic64_t *v)			\
-+static inline void arch_atomic64_##op(long i, atomic64_t *v)		\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -244,7 +244,7 @@ ATOMIC64_OP(add, stadd)
- #undef ATOMIC64_OP
- 
- #define ATOMIC64_FETCH_OP(name, mb, op, asm_op, cl...)			\
--static inline long atomic64_fetch_##op##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_fetch_##op##name(long i, atomic64_t *v)\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -276,7 +276,7 @@ ATOMIC64_FETCH_OPS(add, ldadd)
- #undef ATOMIC64_FETCH_OPS
- 
- #define ATOMIC64_OP_ADD_RETURN(name, mb, cl...)				\
--static inline long atomic64_add_return##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_add_return##name(long i, atomic64_t *v)\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -302,7 +302,7 @@ ATOMIC64_OP_ADD_RETURN(        , al, "memory")
- 
- #undef ATOMIC64_OP_ADD_RETURN
- 
--static inline void atomic64_and(long i, atomic64_t *v)
-+static inline void arch_atomic64_and(long i, atomic64_t *v)
- {
- 	register long x0 asm ("x0") = i;
- 	register atomic64_t *x1 asm ("x1") = v;
-@@ -320,7 +320,7 @@ static inline void atomic64_and(long i, atomic64_t *v)
- }
- 
- #define ATOMIC64_FETCH_OP_AND(name, mb, cl...)				\
--static inline long atomic64_fetch_and##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_fetch_and##name(long i, atomic64_t *v)	\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -346,7 +346,7 @@ ATOMIC64_FETCH_OP_AND(        , al, "memory")
- 
- #undef ATOMIC64_FETCH_OP_AND
- 
--static inline void atomic64_sub(long i, atomic64_t *v)
-+static inline void arch_atomic64_sub(long i, atomic64_t *v)
- {
- 	register long x0 asm ("x0") = i;
- 	register atomic64_t *x1 asm ("x1") = v;
-@@ -364,7 +364,7 @@ static inline void atomic64_sub(long i, atomic64_t *v)
- }
- 
- #define ATOMIC64_OP_SUB_RETURN(name, mb, cl...)				\
--static inline long atomic64_sub_return##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_sub_return##name(long i, atomic64_t *v)\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -392,7 +392,7 @@ ATOMIC64_OP_SUB_RETURN(        , al, "memory")
- #undef ATOMIC64_OP_SUB_RETURN
- 
- #define ATOMIC64_FETCH_OP_SUB(name, mb, cl...)				\
--static inline long atomic64_fetch_sub##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_fetch_sub##name(long i, atomic64_t *v)	\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -418,7 +418,7 @@ ATOMIC64_FETCH_OP_SUB(        , al, "memory")
- 
- #undef ATOMIC64_FETCH_OP_SUB
- 
--static inline long atomic64_dec_if_positive(atomic64_t *v)
-+static inline long arch_atomic64_dec_if_positive(atomic64_t *v)
- {
- 	register long x0 asm ("x0") = (long)v;
- 
-@@ -447,9 +447,10 @@ static inline long atomic64_dec_if_positive(atomic64_t *v)
- #define __LL_SC_CMPXCHG(op)	__LL_SC_CALL(__cmpxchg_case_##op)
- 
- #define __CMPXCHG_CASE(w, sz, name, mb, cl...)				\
--static inline unsigned long __cmpxchg_case_##name(volatile void *ptr,	\
--						  unsigned long old,	\
--						  unsigned long new)	\
-+static inline unsigned long						\
-+arch___cmpxchg_case_##name(volatile void *ptr,				\
-+			   unsigned long old,				\
-+			   unsigned long new)				\
- {									\
- 	register unsigned long x0 asm ("x0") = (unsigned long)ptr;	\
- 	register unsigned long x1 asm ("x1") = old;			\
-@@ -493,11 +494,11 @@ __CMPXCHG_CASE(x,  ,  mb_8, al, "memory")
- #define __LL_SC_CMPXCHG_DBL(op)	__LL_SC_CALL(__cmpxchg_double##op)
- 
- #define __CMPXCHG_DBL(name, mb, cl...)					\
--static inline long __cmpxchg_double##name(unsigned long old1,		\
--					 unsigned long old2,		\
--					 unsigned long new1,		\
--					 unsigned long new2,		\
--					 volatile void *ptr)		\
-+static inline long arch___cmpxchg_double##name(unsigned long old1,	\
-+					       unsigned long old2,	\
-+					       unsigned long new1,	\
-+					       unsigned long new2,	\
-+					       volatile void *ptr)	\
- {									\
- 	unsigned long oldval1 = old1;					\
- 	unsigned long oldval2 = old2;					\
-diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
-index 3b0938281541..5efb546f1a82 100644
---- a/arch/arm64/include/asm/cmpxchg.h
-+++ b/arch/arm64/include/asm/cmpxchg.h
-@@ -110,31 +110,31 @@ __XCHG_GEN(_mb)
- })
- 
- /* xchg */
--#define xchg_relaxed(...)	__xchg_wrapper(    , __VA_ARGS__)
--#define xchg_acquire(...)	__xchg_wrapper(_acq, __VA_ARGS__)
--#define xchg_release(...)	__xchg_wrapper(_rel, __VA_ARGS__)
--#define xchg(...)		__xchg_wrapper( _mb, __VA_ARGS__)
--
--#define __CMPXCHG_GEN(sfx)						\
--static inline unsigned long __cmpxchg##sfx(volatile void *ptr,		\
--					   unsigned long old,		\
--					   unsigned long new,		\
--					   int size)			\
--{									\
--	switch (size) {							\
--	case 1:								\
--		return __cmpxchg_case##sfx##_1(ptr, (u8)old, new);	\
--	case 2:								\
--		return __cmpxchg_case##sfx##_2(ptr, (u16)old, new);	\
--	case 4:								\
--		return __cmpxchg_case##sfx##_4(ptr, old, new);		\
--	case 8:								\
--		return __cmpxchg_case##sfx##_8(ptr, old, new);		\
--	default:							\
--		BUILD_BUG();						\
--	}								\
--									\
--	unreachable();							\
-+#define arch_xchg_relaxed(...)	__xchg_wrapper(    , __VA_ARGS__)
-+#define arch_xchg_acquire(...)	__xchg_wrapper(_acq, __VA_ARGS__)
-+#define arch_xchg_release(...)	__xchg_wrapper(_rel, __VA_ARGS__)
-+#define arch_xchg(...)		__xchg_wrapper( _mb, __VA_ARGS__)
++#gen_proto_order_variants(meta, pfx, name, sfx, ...)
++gen_proto_order_variants()
++{
++	local meta="$1"; shift
++	local pfx="$1"; shift
++	local name="$1"; shift
++	local sfx="$1"; shift
 +
-+#define __CMPXCHG_GEN(sfx)							\
-+static inline unsigned long __cmpxchg##sfx(volatile void *ptr,			\
-+					   unsigned long old,			\
-+					   unsigned long new,			\
-+					   int size)				\
-+{										\
-+	switch (size) {								\
-+	case 1:									\
-+		return arch___cmpxchg_case##sfx##_1(ptr, (u8)old, new);		\
-+	case 2:									\
-+		return arch___cmpxchg_case##sfx##_2(ptr, (u16)old, new);	\
-+	case 4:									\
-+		return arch___cmpxchg_case##sfx##_4(ptr, old, new);		\
-+	case 8:									\
-+		return arch___cmpxchg_case##sfx##_8(ptr, old, new);		\
-+	default:								\
-+		BUILD_BUG();							\
-+	}									\
-+										\
-+	unreachable();								\
- }
- 
- __CMPXCHG_GEN()
-@@ -154,18 +154,18 @@ __CMPXCHG_GEN(_mb)
- })
- 
- /* cmpxchg */
--#define cmpxchg_relaxed(...)	__cmpxchg_wrapper(    , __VA_ARGS__)
--#define cmpxchg_acquire(...)	__cmpxchg_wrapper(_acq, __VA_ARGS__)
--#define cmpxchg_release(...)	__cmpxchg_wrapper(_rel, __VA_ARGS__)
--#define cmpxchg(...)		__cmpxchg_wrapper( _mb, __VA_ARGS__)
--#define cmpxchg_local		cmpxchg_relaxed
-+#define arch_cmpxchg_relaxed(...)	__cmpxchg_wrapper(    , __VA_ARGS__)
-+#define arch_cmpxchg_acquire(...)	__cmpxchg_wrapper(_acq, __VA_ARGS__)
-+#define arch_cmpxchg_release(...)	__cmpxchg_wrapper(_rel, __VA_ARGS__)
-+#define arch_cmpxchg(...)		__cmpxchg_wrapper( _mb, __VA_ARGS__)
-+#define arch_cmpxchg_local		arch_cmpxchg_relaxed
- 
- /* cmpxchg64 */
--#define cmpxchg64_relaxed	cmpxchg_relaxed
--#define cmpxchg64_acquire	cmpxchg_acquire
--#define cmpxchg64_release	cmpxchg_release
--#define cmpxchg64		cmpxchg
--#define cmpxchg64_local		cmpxchg_local
-+#define arch_cmpxchg64_relaxed		arch_cmpxchg_relaxed
-+#define arch_cmpxchg64_acquire		arch_cmpxchg_acquire
-+#define arch_cmpxchg64_release		arch_cmpxchg_release
-+#define arch_cmpxchg64			arch_cmpxchg
-+#define arch_cmpxchg64_local		arch_cmpxchg_local
- 
- /* cmpxchg_double */
- #define system_has_cmpxchg_double()     1
-@@ -177,24 +177,28 @@ __CMPXCHG_GEN(_mb)
- 	VM_BUG_ON((unsigned long *)(ptr2) - (unsigned long *)(ptr1) != 1);	\
- })
- 
--#define cmpxchg_double(ptr1, ptr2, o1, o2, n1, n2) \
--({\
--	int __ret;\
--	__cmpxchg_double_check(ptr1, ptr2); \
--	__ret = !__cmpxchg_double_mb((unsigned long)(o1), (unsigned long)(o2), \
--				     (unsigned long)(n1), (unsigned long)(n2), \
--				     ptr1); \
--	__ret; \
-+#define arch_cmpxchg_double(ptr1, ptr2, o1, o2, n1, n2)			\
-+({									\
-+	int __ret;							\
-+	__cmpxchg_double_check(ptr1, ptr2);				\
-+	__ret = !arch___cmpxchg_double_mb((unsigned long)(o1),		\
-+					  (unsigned long)(o2),		\
-+					  (unsigned long)(n1),		\
-+					  (unsigned long)(n2),		\
-+					  ptr1);			\
-+	__ret;								\
- })
- 
--#define cmpxchg_double_local(ptr1, ptr2, o1, o2, n1, n2) \
--({\
--	int __ret;\
--	__cmpxchg_double_check(ptr1, ptr2); \
--	__ret = !__cmpxchg_double((unsigned long)(o1), (unsigned long)(o2), \
--				  (unsigned long)(n1), (unsigned long)(n2), \
--				  ptr1); \
--	__ret; \
-+#define arch_cmpxchg_double_local(ptr1, ptr2, o1, o2, n1, n2)		\
-+({									\
-+	int __ret;							\
-+	__cmpxchg_double_check(ptr1, ptr2);				\
-+	__ret = !arch___cmpxchg_double((unsigned long)(o1),		\
-+				       (unsigned long)(o2),		\
-+				       (unsigned long)(n1),		\
-+				       (unsigned long)(n2),		\
-+				       ptr1);				\
-+	__ret;								\
- })
- 
- #define __CMPWAIT_CASE(w, sz, name)					\
-diff --git a/arch/arm64/include/asm/lse.h b/arch/arm64/include/asm/lse.h
-index 8262325e2fc6..70b7cd8b8d16 100644
---- a/arch/arm64/include/asm/lse.h
-+++ b/arch/arm64/include/asm/lse.h
-@@ -47,7 +47,7 @@ __asm__(".arch_extension	lse");
- #else	/* __ASSEMBLER__ */
- 
- #define __LL_SC_INLINE		static inline
--#define __LL_SC_PREFIX(x)	x
-+#define __LL_SC_PREFIX(x)	arch_##x
- #define __LL_SC_EXPORT(x)
- 
- #define ARM64_LSE_ATOMIC_INSN(llsc, lse)	llsc
-diff --git a/arch/arm64/include/asm/sync_bitops.h b/arch/arm64/include/asm/sync_bitops.h
-index eee31a9f72a5..e9c1a02c2154 100644
---- a/arch/arm64/include/asm/sync_bitops.h
-+++ b/arch/arm64/include/asm/sync_bitops.h
-@@ -15,13 +15,13 @@
-  * ops which are SMP safe even on a UP kernel.
-  */
- 
--#define sync_set_bit(nr, p)            set_bit(nr, p)
--#define sync_clear_bit(nr, p)          clear_bit(nr, p)
--#define sync_change_bit(nr, p)         change_bit(nr, p)
--#define sync_test_and_set_bit(nr, p)   test_and_set_bit(nr, p)
--#define sync_test_and_clear_bit(nr, p) test_and_clear_bit(nr, p)
--#define sync_test_and_change_bit(nr, p)        test_and_change_bit(nr, p)
--#define sync_test_bit(nr, addr)                test_bit(nr, addr)
--#define sync_cmpxchg                   cmpxchg
-+#define sync_set_bit(nr, p)			set_bit(nr, p)
-+#define sync_clear_bit(nr, p)			clear_bit(nr, p)
-+#define sync_change_bit(nr, p)			change_bit(nr, p)
-+#define sync_test_and_set_bit(nr, p)		test_and_set_bit(nr, p)
-+#define sync_test_and_clear_bit(nr, p)		test_and_clear_bit(nr, p)
-+#define sync_test_and_change_bit(nr, p)		test_and_change_bit(nr, p)
-+#define sync_test_bit(nr, addr)			test_bit(nr, addr)
-+#define arch_sync_cmpxchg			arch_cmpxchg
- 
- #endif
++	gen_proto_order_variant "${meta}" "${pfx}" "${name}" "${sfx}" "" "$@"
++
++	if meta_has_acquire "${meta}"; then
++		gen_proto_order_variant "${meta}" "${pfx}" "${name}" "${sfx}" "_acquire" "$@"
++	fi
++	if meta_has_release "${meta}"; then
++		gen_proto_order_variant "${meta}" "${pfx}" "${name}" "${sfx}" "_release" "$@"
++	fi
++	if meta_has_relaxed "${meta}"; then
++		gen_proto_order_variant "${meta}" "${pfx}" "${name}" "${sfx}" "_relaxed" "$@"
++	fi
++}
++
++#gen_proto_variants(meta, name, ...)
++gen_proto_variants()
++{
++	local meta="$1"; shift
++	local name="$1"; shift
++	local pfx=""
++	local sfx=""
++
++	meta_in "${meta}" "fF" && pfx="fetch_"
++	meta_in "${meta}" "R" && sfx="_return"
++
++	gen_proto_order_variants "${meta}" "${pfx}" "${name}" "${sfx}" "$@"
++}
++
++#gen_proto(meta, ...)
++gen_proto() {
++	local meta="$1"; shift
++	for m in $(echo "${meta}" | fold -w1); do
++		gen_proto_variants "${m}" "$@"
++	done
++}
+diff --git a/scripts/atomic/atomics.tbl b/scripts/atomic/atomics.tbl
+new file mode 100644
+index 000000000000..fbee2f6190d9
+--- /dev/null
++++ b/scripts/atomic/atomics.tbl
+@@ -0,0 +1,41 @@
++# name	meta	args...
++#
++# Where meta contains a string of variants to generate.
++# Upper-case implies _{acquire,release,relaxed} variants.
++# Valid meta values are:
++# * B/b	- bool: returns bool
++# * v	- void: returns void
++# * I/i	- int: returns base type
++# * R	- return: returns base type (has _return variants)
++# * F/f	- fetch: returns base type (has fetch_ variants)
++# * l	- load: returns base type (has _acquire order variant)
++# * s	- store: returns void (has _release order variant)
++#
++# Where args contains list of type[:name], where type is:
++# * cv	- const pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
++# * v	- pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
++# * i	- base type (int/s64/long)
++# * p	- pointer to base type (int/s64/long)
++#
++read			l	cv
++set			s	v	i
++add			vRF	i	v
++sub			vRF	i	v
++inc			vRF	v
++dec			vRF	v
++and			vF	i	v
++andnot			vF	i	v
++or			vF	i	v
++xor			vF	i	v
++xchg			I	v	i
++cmpxchg			I	v	i:old	i:new
++try_cmpxchg		B	v	p:old	i:new
++sub_and_test		b	i	v
++dec_and_test		b	v
++inc_and_test		b	v
++add_negative		b	i	v
++add_unless		fb	v	i:a	i:u
++inc_not_zero		b	v
++inc_unless_negative	b	v
++dec_unless_positive	b	v
++dec_if_positive		i	v
+diff --git a/scripts/atomic/fallbacks/acquire b/scripts/atomic/fallbacks/acquire
+new file mode 100644
+index 000000000000..e38871e64db6
+--- /dev/null
++++ b/scripts/atomic/fallbacks/acquire
+@@ -0,0 +1,9 @@
++cat <<EOF
++static inline ${ret}
++${atomic}_${pfx}${name}${sfx}_acquire(${params})
++{
++	${ret} ret = ${atomic}_${pfx}${name}${sfx}_relaxed(${args});
++	__atomic_acquire_fence();
++	return ret;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/add_negative b/scripts/atomic/fallbacks/add_negative
+new file mode 100644
+index 000000000000..e6f4815637de
+--- /dev/null
++++ b/scripts/atomic/fallbacks/add_negative
+@@ -0,0 +1,16 @@
++cat <<EOF
++/**
++ * ${atomic}_add_negative - add and test if negative
++ * @i: integer value to add
++ * @v: pointer of type ${atomic}_t
++ *
++ * Atomically adds @i to @v and returns true
++ * if the result is negative, or false when
++ * result is greater than or equal to zero.
++ */
++static inline bool
++${atomic}_add_negative(${int} i, ${atomic}_t *v)
++{
++	return ${atomic}_add_return(i, v) < 0;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/add_unless b/scripts/atomic/fallbacks/add_unless
+new file mode 100644
+index 000000000000..792533885fbf
+--- /dev/null
++++ b/scripts/atomic/fallbacks/add_unless
+@@ -0,0 +1,16 @@
++cat << EOF
++/**
++ * ${atomic}_add_unless - add unless the number is already a given value
++ * @v: pointer of type ${atomic}_t
++ * @a: the amount to add to v...
++ * @u: ...unless v is equal to u.
++ *
++ * Atomically adds @a to @v, if @v was not already @u.
++ * Returns true if the addition was done.
++ */
++static inline bool
++${atomic}_add_unless(${atomic}_t *v, ${int} a, ${int} u)
++{
++	return ${atomic}_fetch_add_unless(v, a, u) != u;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/andnot b/scripts/atomic/fallbacks/andnot
+new file mode 100644
+index 000000000000..9f3a3216b5e3
+--- /dev/null
++++ b/scripts/atomic/fallbacks/andnot
+@@ -0,0 +1,7 @@
++cat <<EOF
++static inline ${ret}
++${atomic}_${pfx}andnot${sfx}${order}(${int} i, ${atomic}_t *v)
++{
++	${retstmt}${atomic}_${pfx}and${sfx}${order}(~i, v);
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/dec b/scripts/atomic/fallbacks/dec
+new file mode 100644
+index 000000000000..10bbc82be31d
+--- /dev/null
++++ b/scripts/atomic/fallbacks/dec
+@@ -0,0 +1,7 @@
++cat <<EOF
++static inline ${ret}
++${atomic}_${pfx}dec${sfx}${order}(${atomic}_t *v)
++{
++	${retstmt}${atomic}_${pfx}sub${sfx}${order}(1, v);
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/dec_and_test b/scripts/atomic/fallbacks/dec_and_test
+new file mode 100644
+index 000000000000..0ce7103b3df2
+--- /dev/null
++++ b/scripts/atomic/fallbacks/dec_and_test
+@@ -0,0 +1,15 @@
++cat <<EOF
++/**
++ * ${atomic}_dec_and_test - decrement and test
++ * @v: pointer of type ${atomic}_t
++ *
++ * Atomically decrements @v by 1 and
++ * returns true if the result is 0, or false for all other
++ * cases.
++ */
++static inline bool
++${atomic}_dec_and_test(${atomic}_t *v)
++{
++	return ${atomic}_dec_return(v) == 0;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/dec_if_positive b/scripts/atomic/fallbacks/dec_if_positive
+new file mode 100644
+index 000000000000..c52eacec43c8
+--- /dev/null
++++ b/scripts/atomic/fallbacks/dec_if_positive
+@@ -0,0 +1,15 @@
++cat <<EOF
++static inline ${ret}
++${atomic}_dec_if_positive(${atomic}_t *v)
++{
++	${int} dec, c = ${atomic}_read(v);
++
++	do {
++		dec = c - 1;
++		if (unlikely(dec < 0))
++			break;
++	} while (!${atomic}_try_cmpxchg(v, &c, dec));
++
++	return dec;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/dec_unless_positive b/scripts/atomic/fallbacks/dec_unless_positive
+new file mode 100644
+index 000000000000..8a2578f14268
+--- /dev/null
++++ b/scripts/atomic/fallbacks/dec_unless_positive
+@@ -0,0 +1,14 @@
++cat <<EOF
++static inline bool
++${atomic}_dec_unless_positive(${atomic}_t *v)
++{
++	${int} c = ${atomic}_read(v);
++
++	do {
++		if (unlikely(c > 0))
++			return false;
++	} while (!${atomic}_try_cmpxchg(v, &c, c - 1));
++
++	return true;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/fence b/scripts/atomic/fallbacks/fence
+new file mode 100644
+index 000000000000..2129f68d6a48
+--- /dev/null
++++ b/scripts/atomic/fallbacks/fence
+@@ -0,0 +1,11 @@
++cat <<EOF
++static inline ${ret}
++${atomic}_${pfx}${name}${sfx}(${params})
++{
++	${ret} ret;
++	__atomic_pre_fence();
++	ret = ${atomic}_${pfx}${name}${sfx}_relaxed(${args});
++	__atomic_post_fence();
++	return ret;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/fetch_add_unless b/scripts/atomic/fallbacks/fetch_add_unless
+new file mode 100644
+index 000000000000..d2c091db7eae
+--- /dev/null
++++ b/scripts/atomic/fallbacks/fetch_add_unless
+@@ -0,0 +1,23 @@
++cat << EOF
++/**
++ * ${atomic}_fetch_add_unless - add unless the number is already a given value
++ * @v: pointer of type ${atomic}_t
++ * @a: the amount to add to v...
++ * @u: ...unless v is equal to u.
++ *
++ * Atomically adds @a to @v, so long as @v was not already @u.
++ * Returns original value of @v
++ */
++static inline ${int}
++${atomic}_fetch_add_unless(${atomic}_t *v, ${int} a, ${int} u)
++{
++	${int} c = ${atomic}_read(v);
++
++	do {
++		if (unlikely(c == u))
++			break;
++	} while (!${atomic}_try_cmpxchg(v, &c, c + a));
++
++	return c;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/inc b/scripts/atomic/fallbacks/inc
+new file mode 100644
+index 000000000000..f866b3ad2353
+--- /dev/null
++++ b/scripts/atomic/fallbacks/inc
+@@ -0,0 +1,7 @@
++cat <<EOF
++static inline ${ret}
++${atomic}_${pfx}inc${sfx}${order}(${atomic}_t *v)
++{
++	${retstmt}${atomic}_${pfx}add${sfx}${order}(1, v);
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/inc_and_test b/scripts/atomic/fallbacks/inc_and_test
+new file mode 100644
+index 000000000000..4e2068869f7e
+--- /dev/null
++++ b/scripts/atomic/fallbacks/inc_and_test
+@@ -0,0 +1,15 @@
++cat <<EOF
++/**
++ * ${atomic}_inc_and_test - increment and test
++ * @v: pointer of type ${atomic}_t
++ *
++ * Atomically increments @v by 1
++ * and returns true if the result is zero, or false for all
++ * other cases.
++ */
++static inline bool
++${atomic}_inc_and_test(${atomic}_t *v)
++{
++	return ${atomic}_inc_return(v) == 0;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/inc_not_zero b/scripts/atomic/fallbacks/inc_not_zero
+new file mode 100644
+index 000000000000..a7c45c8d107c
+--- /dev/null
++++ b/scripts/atomic/fallbacks/inc_not_zero
+@@ -0,0 +1,14 @@
++cat <<EOF
++/**
++ * ${atomic}_inc_not_zero - increment unless the number is zero
++ * @v: pointer of type ${atomic}_t
++ *
++ * Atomically increments @v by 1, if @v is non-zero.
++ * Returns true if the increment was done.
++ */
++static inline bool
++${atomic}_inc_not_zero(${atomic}_t *v)
++{
++	return ${atomic}_add_unless(v, 1, 0);
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/inc_unless_negative b/scripts/atomic/fallbacks/inc_unless_negative
+new file mode 100644
+index 000000000000..0c266e71dbd4
+--- /dev/null
++++ b/scripts/atomic/fallbacks/inc_unless_negative
+@@ -0,0 +1,14 @@
++cat <<EOF
++static inline bool
++${atomic}_inc_unless_negative(${atomic}_t *v)
++{
++	${int} c = ${atomic}_read(v);
++
++	do {
++		if (unlikely(c < 0))
++			return false;
++	} while (!${atomic}_try_cmpxchg(v, &c, c + 1));
++
++	return true;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/read_acquire b/scripts/atomic/fallbacks/read_acquire
+new file mode 100644
+index 000000000000..75863b5203f7
+--- /dev/null
++++ b/scripts/atomic/fallbacks/read_acquire
+@@ -0,0 +1,7 @@
++cat <<EOF
++static inline ${ret}
++${atomic}_read_acquire(const ${atomic}_t *v)
++{
++	return smp_load_acquire(&(v)->counter);
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/release b/scripts/atomic/fallbacks/release
+new file mode 100644
+index 000000000000..3f628a3802d9
+--- /dev/null
++++ b/scripts/atomic/fallbacks/release
+@@ -0,0 +1,8 @@
++cat <<EOF
++static inline ${ret}
++${atomic}_${pfx}${name}${sfx}_release(${params})
++{
++	__atomic_release_fence();
++	${retstmt}${atomic}_${pfx}${name}${sfx}_relaxed(${args});
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/set_release b/scripts/atomic/fallbacks/set_release
+new file mode 100644
+index 000000000000..45bb5e0cfc08
+--- /dev/null
++++ b/scripts/atomic/fallbacks/set_release
+@@ -0,0 +1,7 @@
++cat <<EOF
++static inline void
++${atomic}_set_release(${atomic}_t *v, ${int} i)
++{
++	smp_store_release(&(v)->counter, i);
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/sub_and_test b/scripts/atomic/fallbacks/sub_and_test
+new file mode 100644
+index 000000000000..289ef17a2d7a
+--- /dev/null
++++ b/scripts/atomic/fallbacks/sub_and_test
+@@ -0,0 +1,16 @@
++cat <<EOF
++/**
++ * ${atomic}_sub_and_test - subtract value from variable and test result
++ * @i: integer value to subtract
++ * @v: pointer of type ${atomic}_t
++ *
++ * Atomically subtracts @i from @v and returns
++ * true if the result is zero, or false for all
++ * other cases.
++ */
++static inline bool
++${atomic}_sub_and_test(${int} i, ${atomic}_t *v)
++{
++	return ${atomic}_sub_return(i, v) == 0;
++}
++EOF
+diff --git a/scripts/atomic/fallbacks/try_cmpxchg b/scripts/atomic/fallbacks/try_cmpxchg
+new file mode 100644
+index 000000000000..4ed85e2f5378
+--- /dev/null
++++ b/scripts/atomic/fallbacks/try_cmpxchg
+@@ -0,0 +1,11 @@
++cat <<EOF
++static inline bool
++${atomic}_try_cmpxchg${order}(${atomic}_t *v, ${int} *old, ${int} new)
++{
++	${int} r, o = *old;
++	r = ${atomic}_cmpxchg${order}(v, o, new);
++	if (unlikely(r != o))
++		*old = r;
++	return likely(r == o);
++}
++EOF
+diff --git a/scripts/atomic/gen-atomic-fallback.sh b/scripts/atomic/gen-atomic-fallback.sh
+new file mode 100755
+index 000000000000..708266608bca
+--- /dev/null
++++ b/scripts/atomic/gen-atomic-fallback.sh
+@@ -0,0 +1,180 @@
++#!/bin/sh
++
++ATOMICDIR=$(dirname $0)
++
++. ${ATOMICDIR}/atomic-tbl.sh
++
++#gen_template_fallback(template, meta, pfx, name, sfx, order, atomic, int, args...)
++gen_template_fallback()
++{
++	local template="$1"; shift
++	local meta="$1"; shift
++	local pfx="$1"; shift
++	local name="$1"; shift
++	local sfx="$1"; shift
++	local order="$1"; shift
++	local atomic="$1"; shift
++	local int="$1"; shift
++
++	local atomicname="${atomic}_${pfx}${name}${sfx}${order}"
++
++	local ret="$(gen_ret_type "${meta}" "${int}")"
++	local retstmt="$(gen_ret_stmt "${meta}")"
++	local params="$(gen_params "${int}" "${atomic}" "$@")"
++	local args="$(gen_args "$@")"
++
++	if [ ! -z "${template}" ]; then
++		printf "#ifndef ${atomicname}\n"
++		. ${template}
++		printf "#define ${atomicname} ${atomicname}\n"
++		printf "#endif\n\n"
++	fi
++}
++
++#gen_proto_fallback(meta, pfx, name, sfx, order, atomic, int, args...)
++gen_proto_fallback()
++{
++	local meta="$1"; shift
++	local pfx="$1"; shift
++	local name="$1"; shift
++	local sfx="$1"; shift
++	local order="$1"; shift
++
++	local tmpl="$(find_fallback_template "${pfx}" "${name}" "${sfx}" "${order}")"
++	gen_template_fallback "${tmpl}" "${meta}" "${pfx}" "${name}" "${sfx}" "${order}" "$@"
++}
++
++#gen_basic_fallbacks(basename)
++gen_basic_fallbacks()
++{
++	local basename="$1"; shift
++cat << EOF
++#define ${basename}_acquire ${basename}
++#define ${basename}_release ${basename}
++#define ${basename}_relaxed ${basename}
++EOF
++}
++
++#gen_proto_order_variants(meta, pfx, name, sfx, atomic, int, args...)
++gen_proto_order_variants()
++{
++	local meta="$1"; shift
++	local pfx="$1"; shift
++	local name="$1"; shift
++	local sfx="$1"; shift
++	local atomic="$1"
++
++	local basename="${atomic}_${pfx}${name}${sfx}"
++
++	local template="$(find_fallback_template "${pfx}" "${name}" "${sfx}" "${order}")"
++
++	# If we don't have relaxed atomics, then we don't bother with ordering fallbacks
++	# read_acquire and set_release need to be templated, though
++	if ! meta_has_relaxed "${meta}"; then
++		gen_proto_fallback "${meta}" "${pfx}" "${name}" "${sfx}" "" "$@"
++
++		if meta_has_acquire "${meta}"; then
++			gen_proto_fallback "${meta}" "${pfx}" "${name}" "${sfx}" "_acquire" "$@"
++		fi
++
++		if meta_has_release "${meta}"; then
++			gen_proto_fallback "${meta}" "${pfx}" "${name}" "${sfx}" "_release" "$@"
++		fi
++
++		return
++	fi
++
++	printf "#ifndef ${basename}_relaxed\n"
++
++	if [ ! -z "${template}" ]; then
++		printf "#ifdef ${basename}\n"
++	fi
++
++	gen_basic_fallbacks "${basename}"
++
++	if [ ! -z "${template}" ]; then
++		printf "#endif /* ${atomic}_${pfx}${name}${sfx} */\n\n"
++		gen_proto_fallback "${meta}" "${pfx}" "${name}" "${sfx}" "" "$@"
++		gen_proto_fallback "${meta}" "${pfx}" "${name}" "${sfx}" "_acquire" "$@"
++		gen_proto_fallback "${meta}" "${pfx}" "${name}" "${sfx}" "_release" "$@"
++		gen_proto_fallback "${meta}" "${pfx}" "${name}" "${sfx}" "_relaxed" "$@"
++	fi
++
++	printf "#else /* ${basename}_relaxed */\n\n"
++
++	gen_template_fallback "${ATOMICDIR}/fallbacks/acquire"  "${meta}" "${pfx}" "${name}" "${sfx}" "_acquire" "$@"
++	gen_template_fallback "${ATOMICDIR}/fallbacks/release"  "${meta}" "${pfx}" "${name}" "${sfx}" "_release" "$@"
++	gen_template_fallback "${ATOMICDIR}/fallbacks/fence"  "${meta}" "${pfx}" "${name}" "${sfx}" "" "$@"
++
++	printf "#endif /* ${basename}_relaxed */\n\n"
++}
++
++gen_xchg_fallbacks()
++{
++	local xchg="$1"; shift
++cat <<EOF
++#ifndef ${xchg}_relaxed
++#define ${xchg}_relaxed		${xchg}
++#define ${xchg}_acquire		${xchg}
++#define ${xchg}_release		${xchg}
++#else /* ${xchg}_relaxed */
++
++#ifndef ${xchg}_acquire
++#define ${xchg}_acquire(...) \\
++	__atomic_op_acquire(${xchg}, __VA_ARGS__)
++#endif
++
++#ifndef ${xchg}_release
++#define ${xchg}_release(...) \\
++	__atomic_op_release(${xchg}, __VA_ARGS__)
++#endif
++
++#ifndef ${xchg}
++#define ${xchg}(...) \\
++	__atomic_op_fence(${xchg}, __VA_ARGS__)
++#endif
++
++#endif /* ${xchg}_relaxed */
++
++EOF
++}
++
++cat << EOF
++// SPDX-License-Identifier: GPL-2.0
++
++// Generated by $0
++// DO NOT MODIFY THIS FILE DIRECTLY
++
++#ifndef _LINUX_ATOMIC_FALLBACK_H
++#define _LINUX_ATOMIC_FALLBACK_H
++
++EOF
++
++for xchg in "xchg" "cmpxchg" "cmpxchg64"; do
++	gen_xchg_fallbacks "${xchg}"
++done
++
++grep '^[a-z]' "$1" | while read name meta args; do
++	gen_proto "${meta}" "${name}" "atomic" "int" ${args}
++done
++
++cat <<EOF
++#define atomic_cond_read_acquire(v, c) smp_cond_load_acquire(&(v)->counter, (c))
++#define atomic_cond_read_relaxed(v, c) smp_cond_load_relaxed(&(v)->counter, (c))
++
++#ifdef CONFIG_GENERIC_ATOMIC64
++#include <asm-generic/atomic64.h>
++#endif
++
++EOF
++
++grep '^[a-z]' "$1" | while read name meta args; do
++	gen_proto "${meta}" "${name}" "atomic64" "s64" ${args}
++done
++
++cat <<EOF
++#define atomic64_cond_read_acquire(v, c) smp_cond_load_acquire(&(v)->counter, (c))
++#define atomic64_cond_read_relaxed(v, c) smp_cond_load_relaxed(&(v)->counter, (c))
++
++#endif /* _LINUX_ATOMIC_FALLBACK_H */
++EOF
+diff --git a/scripts/atomic/gen-atomic-instrumented.sh b/scripts/atomic/gen-atomic-instrumented.sh
+new file mode 100755
+index 000000000000..2ae3c4ffd44b
+--- /dev/null
++++ b/scripts/atomic/gen-atomic-instrumented.sh
+@@ -0,0 +1,181 @@
++#!/bin/sh
++
++ATOMICDIR=$(dirname $0)
++
++. ${ATOMICDIR}/atomic-tbl.sh
++
++#gen_param_check(arg)
++gen_param_check()
++{
++	local arg="$1"; shift
++	local type="${arg%%:*}"
++	local name="$(gen_param_name "${arg}")"
++	local rw="write"
++
++	case "${type#c}" in
++	i) return;;
++	esac
++
++	# We don't write to constant parameters
++	[ ${type#c} != ${type} ] && rw="read"
++
++	printf "\tkasan_check_${rw}(${name}, sizeof(*${name}));\n"
++}
++
++#gen_param_check(arg...)
++gen_params_checks()
++{
++	while [ "$#" -gt 0 ]; do
++		gen_param_check "$1"
++		shift;
++	done
++}
++
++# gen_guard(meta, atomic, pfx, name, sfx, order)
++gen_guard()
++{
++	local meta="$1"; shift
++	local atomic="$1"; shift
++	local pfx="$1"; shift
++	local name="$1"; shift
++	local sfx="$1"; shift
++	local order="$1"; shift
++
++	local atomicname="arch_${atomic}_${pfx}${name}${sfx}${order}"
++
++	local template="$(find_fallback_template "${pfx}" "${name}" "${sfx}" "${order}")"
++
++	# We definitely need a preprocessor symbol for this atomic if it is an
++	# ordering variant, or if there's a generic fallback.
++	if [ ! -z "${order}" ] || [ ! -z "${template}" ]; then
++		printf "defined(${atomicname})"
++		return
++	fi
++
++	# If this is a base variant, but a relaxed variant *may* exist, then we
++	# only have a preprocessor symbol if the relaxed variant isn't defined
++	if meta_has_relaxed "${meta}"; then
++		printf "!defined(${atomicname}_relaxed) || defined(${atomicname})"
++	fi
++}
++
++#gen_proto_order_variant(meta, pfx, name, sfx, order, atomic, int, arg...)
++gen_proto_order_variant()
++{
++	local meta="$1"; shift
++	local pfx="$1"; shift
++	local name="$1"; shift
++	local sfx="$1"; shift
++	local order="$1"; shift
++	local atomic="$1"; shift
++	local int="$1"; shift
++
++	local atomicname="${atomic}_${pfx}${name}${sfx}${order}"
++
++	local guard="$(gen_guard "${meta}" "${atomic}" "${pfx}" "${name}" "${sfx}" "${order}")"
++
++	local ret="$(gen_ret_type "${meta}" "${int}")"
++	local params="$(gen_params "${int}" "${atomic}" "$@")"
++	local checks="$(gen_params_checks "$@")"
++	local args="$(gen_args "$@")"
++	local retstmt="$(gen_ret_stmt "${meta}")"
++
++	[ ! -z "${guard}" ] && printf "#if ${guard}\n"
++
++cat <<EOF
++static inline ${ret}
++${atomicname}(${params})
++{
++${checks}
++	${retstmt}arch_${atomicname}(${args});
++}
++#define ${atomicname} ${atomicname}
++EOF
++
++	[ ! -z "${guard}" ] && printf "#endif\n"
++
++	printf "\n"
++}
++
++gen_xchg()
++{
++	local xchg="$1"; shift
++	local mult="$1"; shift
++
++cat <<EOF
++#define ${xchg}(ptr, ...)						\\
++({									\\
++	typeof(ptr) __ai_ptr = (ptr);					\\
++	kasan_check_write(__ai_ptr, ${mult}sizeof(*__ai_ptr));		\\
++	arch_${xchg}(__ai_ptr, __VA_ARGS__);				\\
++})
++EOF
++}
++
++gen_optional_xchg()
++{
++	local name="$1"; shift
++	local sfx="$1"; shift
++	local guard="defined(arch_${name}${sfx})"
++
++	[ -z "${sfx}" ] && guard="!defined(arch_${name}_relaxed) || defined(arch_${name})"
++
++	printf "#if ${guard}\n"
++	gen_xchg "${name}${sfx}" ""
++	printf "#endif\n\n"
++}
++
++cat << EOF
++// SPDX-License-Identifier: GPL-2.0
++
++// Generated by $0
++// DO NOT MODIFY THIS FILE DIRECTLY
++
++/*
++ * This file provides wrappers with KASAN instrumentation for atomic operations.
++ * To use this functionality an arch's atomic.h file needs to define all
++ * atomic operations with arch_ prefix (e.g. arch_atomic_read()) and include
++ * this file at the end. This file provides atomic_read() that forwards to
++ * arch_atomic_read() for actual atomic operation.
++ * Note: if an arch atomic operation is implemented by means of other atomic
++ * operations (e.g. atomic_read()/atomic_cmpxchg() loop), then it needs to use
++ * arch_ variants (i.e. arch_atomic_read()/arch_atomic_cmpxchg()) to avoid
++ * double instrumentation.
++ */
++#ifndef _ASM_GENERIC_ATOMIC_INSTRUMENTED_H
++#define _ASM_GENERIC_ATOMIC_INSTRUMENTED_H
++
++#include <linux/build_bug.h>
++#include <linux/kasan-checks.h>
++
++EOF
++
++grep '^[a-z]' "$1" | while read name meta args; do
++	gen_proto "${meta}" "${name}" "atomic" "int" ${args}
++done
++
++grep '^[a-z]' "$1" | while read name meta args; do
++	gen_proto "${meta}" "${name}" "atomic64" "s64" ${args}
++done
++
++for xchg in "xchg" "cmpxchg" "cmpxchg64"; do
++	for order in "" "_acquire" "_release" "_relaxed"; do
++		gen_optional_xchg "${xchg}" "${order}"
++	done
++done
++
++for xchg in "cmpxchg_local" "cmpxchg64_local" "sync_cmpxchg"; do
++	gen_xchg "${xchg}" ""
++	printf "\n"
++done
++
++gen_xchg "cmpxchg_double" "2 * "
++
++printf "\n\n"
++
++gen_xchg "cmpxchg_double_local" "2 * "
++
++cat <<EOF
++
++#endif /* _ASM_GENERIC_ATOMIC_INSTRUMENTED_H */
++EOF
+diff --git a/scripts/atomic/gen-atomic-long.sh b/scripts/atomic/gen-atomic-long.sh
+new file mode 100755
+index 000000000000..f0fa03330404
+--- /dev/null
++++ b/scripts/atomic/gen-atomic-long.sh
+@@ -0,0 +1,98 @@
++#!/bin/sh
++
++ATOMICDIR=$(dirname $0)
++
++. ${ATOMICDIR}/atomic-tbl.sh
++
++#gen_cast(arg, int, atomic)
++gen_cast()
++{
++	local arg="$1"; shift
++	local int="$1"; shift
++	local atomic="$1"; shift
++
++	[ "${arg%%:*}" = "p" ] || return
++
++	printf "($(gen_param_type "${arg}" "${int}" "${atomic}"))"
++}
++
++#gen_args_cast(int, atomic, arg...)
++gen_args_cast()
++{
++	local int="$1"; shift
++	local atomic="$1"; shift
++
++	while [ "$#" -gt 0 ]; do
++		local cast="$(gen_cast "$1" "${int}" "${atomic}")"
++		local arg="$(gen_param_name "$1")"
++		printf "${cast}${arg}"
++		[ "$#" -gt 1 ] && printf ", "
++		shift;
++	done
++}
++
++#gen_proto_order_variant(meta, pfx, name, sfx, order, atomic, int, arg...)
++gen_proto_order_variant()
++{
++	local meta="$1"; shift
++	local name="$1$2$3$4"; shift; shift; shift; shift
++	local atomic="$1"; shift
++	local int="$1"; shift
++
++	local ret="$(gen_ret_type "${meta}" "long")"
++	local params="$(gen_params "long" "atomic_long" "$@")"
++	local argscast="$(gen_args_cast "${int}" "${atomic}" "$@")"
++	local retstmt="$(gen_ret_stmt "${meta}")"
++
++cat <<EOF
++static inline ${ret}
++atomic_long_${name}(${params})
++{
++	${retstmt}${atomic}_${name}(${argscast});
++}
++
++EOF
++}
++
++cat << EOF
++// SPDX-License-Identifier: GPL-2.0
++
++// Generated by $0
++// DO NOT MODIFY THIS FILE DIRECTLY
++
++#ifndef _ASM_GENERIC_ATOMIC_LONG_H
++#define _ASM_GENERIC_ATOMIC_LONG_H
++
++#include <asm/types.h>
++
++#ifdef CONFIG_64BIT
++typedef atomic64_t atomic_long_t;
++#define ATOMIC_LONG_INIT(i)		ATOMIC64_INIT(i)
++#define atomic_long_cond_read_acquire	atomic64_cond_read_acquire
++#else
++typedef atomic_t atomic_long_t;
++#define ATOMIC_LONG_INIT(i)		ATOMIC_INIT(i)
++#define atomic_long_cond_read_acquire	atomic_cond_read_acquire
++#endif
++
++#ifdef CONFIG_64BIT
++
++EOF
++
++grep '^[a-z]' "$1" | while read name meta args; do
++	gen_proto "${meta}" "${name}" "atomic64" "s64" ${args}
++done
++
++cat <<EOF
++#else /* CONFIG_64BIT */
++
++EOF
++
++grep '^[a-z]' "$1" | while read name meta args; do
++	gen_proto "${meta}" "${name}" "atomic" "int" ${args}
++done
++
++cat <<EOF
++#endif /* CONFIG_64BIT */
++#endif /* _ASM_GENERIC_ATOMIC_LONG_H */
++EOF
 -- 
 2.11.0
 
