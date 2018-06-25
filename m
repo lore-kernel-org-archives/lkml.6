@@ -2,168 +2,269 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9CAC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF225C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B8C255D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:27:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B8C255D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D298255DD
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:28:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNZYzsm9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D298255DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754296AbeFYI1d (ORCPT
+        id S1754339AbeFYI2F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:27:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54968 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752169AbeFYI1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:27:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C4C9681A4EA0;
-        Mon, 25 Jun 2018 08:27:30 +0000 (UTC)
-Received: from [10.36.116.31] (ovpn-116-31.ams2.redhat.com [10.36.116.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D4D152166BA0;
-        Mon, 25 Jun 2018 08:27:27 +0000 (UTC)
-Subject: Re: [qemu-s390x] s390 qemu boot failure in -next
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc:     linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-kernel@vger.kernel.org, qemu-devel <qemu-devel@nongnu.org>,
-        qemu-s390x <qemu-s390x@nongnu.org>
-References: <20180622194736.GA5794@roeck-us.net>
- <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
- <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
- <947bbba3-dcd0-7f5b-1d92-b41be764c2f5@de.ibm.com>
-From:   Thomas Huth <thuth@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=thuth@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7416298e-8f8a-fa1a-759f-da6526eab6ca@redhat.com>
-Date:   Mon, 25 Jun 2018 10:27:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 25 Jun 2018 04:28:05 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:40674 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753274AbeFYI2D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 04:28:03 -0400
+Received: by mail-ot0-f195.google.com with SMTP id w9-v6so14133412otj.7;
+        Mon, 25 Jun 2018 01:28:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=2ixDhwYHQnqdP3egs3USYqM72inpAjpB/V6+/DH9gCc=;
+        b=VNZYzsm9T+2zCqFBrVYG6XduEtaOOyHJhw3x/8TJxfvnOAqlk2/QT+OiB0KWHLFHl2
+         njluDjjimHpiYlWPri+NeOKUAjrIeqgwypW+0v+vxAM5/oEMPWO9X4SL2nIHmeYk+XdW
+         UWKvIbzm098a6dRFczSoCL85oWykPoKWyPgYnX6skGw0zZE7h/79+mHmaeO0EVJyr3jc
+         jSfpmphHZP9eetQNgX8IiW13UpPvmwI2+RYC/xcPtvh1FVG/kPt+EiI6LAYfGmydlR2D
+         8SalhG1u2BSN+yuyhsrzRReRwkLE9oET2sfIv5IimRp6piFAv1BpDPmBbNWdrT7JVfJz
+         Wc3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=2ixDhwYHQnqdP3egs3USYqM72inpAjpB/V6+/DH9gCc=;
+        b=jKVSvAVbwRWgGjv8N+YQVc4sf1h81lWkR+hOgMx7FOL+aY/iExGQFyMVDte8iHf7/l
+         FPUi5uCpLwiarGHaYdkl+iMGgtXQFAKoBpYGlLGdnU9oGf7j8zLVN2N4PIoLLFB0v0Ra
+         J5lakjlKhfsHFZh+eVvrTAj3OEqwO7c3qh5eACohpjz7bKcZlbfJXLEvmqpJZJMeKu0Y
+         D+pwnf4p/6tEpxotj9oVHfiURvmAIbbubJ9THCSCfvdPIbPMKo8gguENSnV/Uxl7ehXf
+         wNgY8idpPE7n+MvkDP+vjExbnRWqfZnPBSdYwunJ2ke4PKHekVNt0Xkr+bp6K2h5qlxB
+         S5RA==
+X-Gm-Message-State: APt69E2M7hv0WM/Ynh/xsURRbkwndNIuIj0G4OC0AYs9zcii6/28/9cC
+        7JAkKqfedMSrfLOEbf+eljhhEW1Cnw7v9e4BkZk=
+X-Google-Smtp-Source: AAOMgpeBGuTU7RDLJZrVijacjrGeNkh+vsvwMIayVCJSfyKlXcz3mXhBQp/jxEDKr4yFz2KrTRBD+E4Ohyvh8MdIQj8=
+X-Received: by 2002:a9d:1012:: with SMTP id h18-v6mr6390219ote.364.1529915282925;
+ Mon, 25 Jun 2018 01:28:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <947bbba3-dcd0-7f5b-1d92-b41be764c2f5@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 25 Jun 2018 08:27:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 25 Jun 2018 08:27:30 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'thuth@redhat.com' RCPT:''
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 01:28:02
+ -0700 (PDT)
+In-Reply-To: <CAJZ5v0iyS7wUx5sYnyhZxhRD7EMEWyKzcpBu7vXUGxuwM4+prw@mail.gmail.com>
+References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org> <CAJZ5v0iyS7wUx5sYnyhZxhRD7EMEWyKzcpBu7vXUGxuwM4+prw@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 25 Jun 2018 10:28:02 +0200
+X-Google-Sender-Auth: 1uPCZwUVBwcRD1jDbv-pv4M6QQk
+Message-ID: <CAJZ5v0h167FajNB7rvzaRSFcpLBWTj-MXUmN0vjXqSCpuM5m+Q@mail.gmail.com>
+Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle injection framework
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.06.2018 10:02, Christian Borntraeger wrote:
-> 
-> 
-> On 06/25/2018 09:27 AM, Christian Borntraeger wrote:
->> Also adding QEMU.
+On Mon, Jun 25, 2018 at 10:23 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Tue, Jun 19, 2018 at 3:23 PM, Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>> Initially, the cpu_cooling device for ARM was changed by adding a new
+>> policy inserting idle cycles. The intel_powerclamp driver does a
+>> similar action.
 >>
->> On 06/25/2018 09:10 AM, Christian Borntraeger wrote:
->>>
->>>
->>> On 06/22/2018 09:47 PM, Guenter Roeck wrote:
->>>> Hi,
->>>>
->>>> starting with commit 's390/boot: make head.S and als.c be part of the
->>>> decompressor only' in -next, s390 immages no longer boot in qemu.
->>>> As far as I can see, the reason is that the command line is no longer
->>>> passed from qemu to the kernel, which results in a panic because the
->>>> root file system can not be mounted.
->>>>
->>>> Was this change made on purpose ? If so, is there a way to get qemu
->>>> back to working ?
->>>
->>> Certainly not on purpose.
->>>
->>> Vasily, I can reproduce this with KVM and an external kernel boot of the vmlinux file (the elf file)
->>>
->>> e.g.
->>>
->>> qemu-system-s390 -enable-kvm -nographic -kernel vmlinux -append "this string no longer is command line"
->>>
->>> The compressed image (bzImage) seems to work fine though.
->>>
->>> This seems to be an unfortunate side effect of QEMUs ways to "guess" its Linux (checking for start
->>> address 0x10000, which is no longer true for the vmlinux file). With the pure vmlinux elf file
->>> the load address is 0x100000 as there is no unpacker.
->>>
->>> Guenter, can you check if arch/s390/boot/bzImage works for you as a workaround?
+>> Instead of implementing idle injections privately in the cpu_cooling
+>> device, move the idle injection code in a dedicated framework and give
+>> the opportunity to other frameworks to make use of it.
 >>
->> Something like this in QEMU 
+>> The framework relies on the smpboot kthreads which handles via its
+>> main loop the common code for hotplugging and [un]parking.
 >>
->> diff --git a/hw/s390x/ipl.c b/hw/s390x/ipl.c
->> index f278036fa7..14153ce880 100644
->> --- a/hw/s390x/ipl.c
->> +++ b/hw/s390x/ipl.c
->> @@ -187,11 +187,13 @@ static void s390_ipl_realize(DeviceState *dev, Error **errp)
->>           */
->>          if (pentry == KERN_IMAGE_START || pentry == 0x800) {
->>              ipl->start_addr = KERN_IMAGE_START;
->> -            /* Overwrite parameters in the kernel image, which are "rom" */
->> -            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
->>          } else {
->>              ipl->start_addr = pentry;
->>          }
->> +       if (ipl->cmdline) {
->> +            /* If there is a command line, put it in the right place */
->> +            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
+>> This code was previously tested with the cpu cooling device and went
+>> through several iterations. It results now in split code and API
+>> exported in the header file. It was tested with the cpu cooling device
+>> with success.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> Cc: Eduardo Valentin <edubezval@gmail.com>
+>> Cc: Javi Merino <javi.merino@kernel.org>
+>> Cc: Leo Yan <leo.yan@linaro.org>
+>> Cc: Kevin Wangtao <kevin.wangtao@linaro.org>
+>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+>> Cc: Rui Zhang <rui.zhang@intel.com>
+>> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
+>> ---
+>>
+>> V9:
+>>    - Unconditionnally reset the should_run flag for all kthreads
+>>      belonging to the cpumask and remove the park() callback (Viresh Kumar)
+>>    - Fix up the typos in the comments (Viresh Kumar)
+>>
+>> V8:
+>>    - Rollback only what was modified
+>>    - Add the park() callback to reset the should_run flag
+>>
+>> V7:
+>>    - Replace count approach by htimer_forward and restart (Peter Zijlstra)
+>>    - Wait for task inactive when stopping the idle injections
+>>    - Changed the comments and description
+>>
+>> V6:
+>>    - Move count to wake up function (Viresh Kumar)
+>>    - Split atomic/non-atomic context to wake up tasks
+>>    - Add the park callback to handle unplug/inject race
+>>    - Replace atomic by READ_ONCE and WRITE_ONCE (Peter Zijlstra)
+>>
+>> V5:
+>>    - Move init_completion in the init function (Viresh Kumar)
+>>    - Increment task count in the wakeup function (Viresh Kumar)
+>>    - Remove rollback at init time (Viresh Kumar)
+>>
+>> V4:
+>>    - Wait for completion when stopping (Viresh Kumar)
+>>    - Check init already done and rollback (Viresh Kumar)
+>>
+>> V3:
+>>    - Fixed typos (Viresh Kumar)
+>>    - Removed extra blank line (Viresh Kumar)
+>>    - Added full stop (Viresh Kumar)
+>>    - Fixed Return kerneldoc format (Viresh Kumar)
+>>    - Fixed multiple kthreads initialization (Viresh Kumar)
+>>    - Fixed rollbacking the actions in the unregister function (Viresh Kumar)
+>>    - Make idle injection kthreads name hardcoded
+>>    - Kthreads are created in the initcall process
+>>
+>>  V2: Fixed checkpatch warnings
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>  drivers/powercap/Kconfig          |  10 ++
+>>  drivers/powercap/Makefile         |   1 +
+>>  drivers/powercap/idle_injection.c | 362 ++++++++++++++++++++++++++++++++++++++
+>>  include/linux/idle_injection.h    |  29 +++
+>>  4 files changed, 402 insertions(+)
+>>  create mode 100644 drivers/powercap/idle_injection.c
+>>  create mode 100644 include/linux/idle_injection.h
+>>
+>> diff --git a/drivers/powercap/Kconfig b/drivers/powercap/Kconfig
+>> index 85727ef..a767ef2 100644
+>> --- a/drivers/powercap/Kconfig
+>> +++ b/drivers/powercap/Kconfig
+>> @@ -29,4 +29,14 @@ config INTEL_RAPL
+>>           controller, CPU core (Power Plance 0), graphics uncore (Power Plane
+>>           1), etc.
+>>
+>> +config IDLE_INJECTION
+>> +       bool "Idle injection framework"
+>> +       depends on CPU_IDLE
+>> +       default n
+>> +       help
+>> +         This enables support for the idle injection framework. It
+>> +         provides a way to force idle periods on a set of specified
+>> +         CPUs for power capping. Idle period can be injected
+>> +         synchronously on a set of specified CPUs or alternatively
+>> +         on a per CPU basis.
+>>  endif
+>> diff --git a/drivers/powercap/Makefile b/drivers/powercap/Makefile
+>> index 0a21ef3..c3bbfee 100644
+>> --- a/drivers/powercap/Makefile
+>> +++ b/drivers/powercap/Makefile
+>> @@ -1,2 +1,3 @@
+>>  obj-$(CONFIG_POWERCAP) += powercap_sys.o
+>>  obj-$(CONFIG_INTEL_RAPL) += intel_rapl.o
+>> +obj-$(CONFIG_IDLE_INJECTION) += idle_injection.o
+>> diff --git a/drivers/powercap/idle_injection.c b/drivers/powercap/idle_injection.c
+>> new file mode 100644
+>> index 0000000..50ce348
+>> --- /dev/null
+>> +++ b/drivers/powercap/idle_injection.c
+>> @@ -0,0 +1,362 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright 2018 Linaro Limited
+>> + *
+>> + * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> + *
+>> + * The idle injection framework proposes a way to force a cpu to enter
+>> + * an idle state during a specified amount of time for a specified
+>> + * period.
+>> + *
+>> + * It relies on the smpboot kthreads which handles, via its main loop,
+>> + * the common code for hotplugging and [un]parking.
+>> + *
+>> + * At init time, all the kthreads are created.
+>> + *
+>> + * A cpumask is specified as parameter for the idle injection
+>> + * registering function. The kthreads will be synchronized regarding
+>> + * this cpumask.
+>> + *
+>> + * The idle + run duration is specified via the helpers and then the
+>> + * idle injection can be started at this point.
+>> + *
+>> + * A kthread will call play_idle() with the specified idle duration
+>> + * from above.
+>> + *
+>> + * A timer is set after waking up all the tasks, to the next idle
+>> + * injection cycle.
+>> + *
+>> + * The task handling the timer interrupt will wakeup all the kthreads
+>> + * belonging to the cpumask.
+>> + *
+>> + * Stopping the idle injection is synchronous, when the function
+>> + * returns, there is the guarantee there is no more idle injection
+>> + * kthread in activity.
+>> + *
+>> + * It is up to the user of this framework to provide a lock at an
+>> + * upper level to prevent stupid things to happen, like starting while
+>> + * we are unregistering.
+>> + */
+>
+> The English above and elsewhere needs some polishing IMO, but I can
+> take care of that. :-)
+>
+>> +#define pr_fmt(fmt) "ii_dev: " fmt
+>> +
+>> +#include <linux/cpu.h>
+>> +#include <linux/freezer.h>
+>> +#include <linux/hrtimer.h>
+>> +#include <linux/kthread.h>
+>> +#include <linux/sched.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/smpboot.h>
+>> +
+>> +#include <uapi/linux/sched/types.h>
+>> +
+>> +/**
+>> + * struct idle_injection_thread - task on/off switch structure
+>> + * @tsk: a pointer to a task_struct injecting the idle cycles
+>> + * @should_run: a integer used as a boolean by the smpboot kthread API
+>> + */
+>> +struct idle_injection_thread {
+>> +       struct task_struct *tsk;
+>> +       int should_run;
+>> +};
 
-You definitely need to check for rom_ptr() != NULL first before calling
-strcpy. Otherwise QEMU segfaults in case the user tried to load a kernel
-to a different location.
-
-See also:
-https://lists.gnu.org/archive/html/qemu-devel/2018-06/msg04227.html
-
- Thomas
+Besides, if you don't mind, I would shorten idle_injection_ prefix
+everywhere to idle_inject_ which is shorter and carries the same
+information IMO.
