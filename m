@@ -2,141 +2,101 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81657C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E25C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C58325B23
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:12:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z60spNcJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C58325B23
+	by mail.kernel.org (Postfix) with ESMTP id 6D7F125B25
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:12:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D7F125B25
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934261AbeFYOMV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 10:12:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58288 "EHLO mail.kernel.org"
+        id S934324AbeFYOMt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 10:12:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54801 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934014AbeFYOMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:12:20 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5CE325B23;
-        Mon, 25 Jun 2018 14:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529935940;
-        bh=VfNNxvp6ThM1ZItBxPzRPhE/30unO3suc1Kge+4iWuA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=z60spNcJ21ph5q1DhSO6fs/fLCLIoflFQ5lOiNC/wX6i6/MGjI0IRIBRHBzWOf+8h
-         CYLxM+0Q33muWbyfz4vNK4vAHRzl2Ep0ciy8RI39OBQYP8EorQvLi++e/5wPv/fUYW
-         d89/t2zTxQpJJQzhq7fMeg9TCN7efdej3IDb7YUk=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 73C471401E5; Mon, 25 Jun 2018 11:12:17 -0300 (-03)
-Date:   Mon, 25 Jun 2018 11:12:17 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Yury Norov <ynorov@caviumnetworks.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        David Ahern <dsahern@gmail.com>,
-        David Carrillo-Cisneros <davidcc@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: Re: [PATCH 2/2] bitmap: sync tools with new bitmap allocation API
-Message-ID: <20180625141217.GW20477@kernel.org>
-References: <20180623073502.16321-1-ynorov@caviumnetworks.com>
- <20180623073502.16321-2-ynorov@caviumnetworks.com>
- <20180624213103.GA166241@dtor-ws>
+        id S934014AbeFYOMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 10:12:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 1313FADCC;
+        Mon, 25 Jun 2018 14:12:47 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 16:12:46 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     peter enderborg <peter.enderborg@sony.com>
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-mm@kvack.org, rientjes@google.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
+ killer.
+Message-ID: <20180625141246.GN28965@dhcp22.suse.cz>
+References: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180620115531.GL13685@dhcp22.suse.cz>
+ <3d27f26e-68ba-d3c0-9518-cebeb2689aec@sony.com>
+ <20180625130756.GK28965@dhcp22.suse.cz>
+ <9a14d554-6470-e0d6-19cc-1ecec17a47c7@sony.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180624213103.GA166241@dtor-ws>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9a14d554-6470-e0d6-19cc-1ecec17a47c7@sony.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sun, Jun 24, 2018 at 02:31:03PM -0700, Dmitry Torokhov escreveu:
-> On Sat, Jun 23, 2018 at 10:35:02AM +0300, Yury Norov wrote:
-> > On top of next-20180622 and Andy Shevchenko series:
-> > https://lkml.org/lkml/2018/6/18/841
-> > 
-> > The series mentioned above introduces helpers for bitmap allocation.
-> > tools/ has its own bitmap_alloc() which differs from bitmap_alloc()
-> > proposed in new kernel API, and is equivalent to bitmap_zalloc().
-> > In this series tools is switched to new API.
-> > 
-> > This is RFC because I didn't find counterpart free() call to some
-> > bitmap_zalloc()'s. So I didn't convert them to bitmap_free(). Could
-> > someone point me out? The functions are:
-> > setup_nodes();
-> > do_read_bitmap(); // Free is called, but only in fail path.
+On Mon 25-06-18 16:04:04, peter enderborg wrote:
+> On 06/25/2018 03:07 PM, Michal Hocko wrote:
 > 
-> Yes, because if we succeed we effectively return allocated bitmap to the
-> caller. You'd need to trace upwards and see how it all gets cleaned up.
-> But given that this is userspace and is not expected to be long-lived,
-> maybe nobody bothered freeing memory and we instead rely on the kernel
-> to clean it all up when process terminates.
-
-But neverthless these should be fixed, we can't rule out having some
-long lived 'perf top' like tool, etc.
-
-I.e. when you find missing the delete/free counterpart calls to
-new/alloc operations, please send fixes.
-
-- Arnaldo
- 
-> Thanks.
-> 
-> > memory_node__read();
-> > 
-> > Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
-> > ---
-> >  tools/include/linux/bitmap.h | 19 +++++++++++++++----
-> >  tools/perf/builtin-c2c.c     | 10 +++++-----
-> >  tools/perf/tests/bitmap.c    |  4 ++--
-> >  tools/perf/tests/mem2node.c  |  4 ++--
-> >  tools/perf/util/header.c     |  6 +++---
-> >  5 files changed, 27 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
-> > index 48c208437bbd..b9b85b94c937 100644
-> > --- a/tools/include/linux/bitmap.h
-> > +++ b/tools/include/linux/bitmap.h
-> > @@ -98,12 +98,23 @@ static inline int test_and_set_bit(int nr, unsigned long *addr)
-> >  }
+> > On Mon 25-06-18 15:03:40, peter enderborg wrote:
+> >> On 06/20/2018 01:55 PM, Michal Hocko wrote:
+> >>> On Wed 20-06-18 20:20:38, Tetsuo Handa wrote:
+> >>>> Sleeping with oom_lock held can cause AB-BA lockup bug because
+> >>>> __alloc_pages_may_oom() does not wait for oom_lock. Since
+> >>>> blocking_notifier_call_chain() in out_of_memory() might sleep, sleeping
+> >>>> with oom_lock held is currently an unavoidable problem.
+> >>> Could you be more specific about the potential deadlock? Sleeping while
+> >>> holding oom lock is certainly not nice but I do not see how that would
+> >>> result in a deadlock assuming that the sleeping context doesn't sleep on
+> >>> the memory allocation obviously.
+> >> It is a mutex you are supposed to be able to sleep.  It's even exported.
+> > What do you mean? oom_lock is certainly not exported for general use. It
+> > is not local to oom_killer.c just because it is needed in other _mm_
+> > code.
 > >  
-> >  /**
-> > - * bitmap_alloc - Allocate bitmap
-> > - * @nbits: Number of bits
-> > + * Allocation and deallocation of bitmap.
-> >   */
-> > -static inline unsigned long *bitmap_alloc(int nbits)
-> > +static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
 > 
-> This makes absolutely no sense for userspace API. What gfp_t even means
-> here?
-> 
-> If you want to introduce bitmap_zalloc and bitmap_free it is fine but
-> adding dummy parameters to match kernel API exactly is a folly.
-> 
-> Thanks.
-> 
-> -- 
-> Dmitry
+> It  is in the oom.h file include/linux/oom.h, if it that sensitive it should
+> be in mm/ and a documented note about the special rules. It is only used
+> in drivers/tty/sysrq.c and that be replaced by a help function in mm that
+> do the  oom stuff.
+
+Well, there are many things defined in kernel header files and not meant
+for wider use. Using random locks is generally discouraged I would say
+unless you are sure you know what you are doing. We could do some more
+work to hide internals for sure, though.
+ 
+> >>>> As a preparation for not to sleep with oom_lock held, this patch brings
+> >>>> OOM notifier callbacks to outside of OOM killer, with two small behavior
+> >>>> changes explained below.
+> >>> Can we just eliminate this ugliness and remove it altogether? We do not
+> >>> have that many notifiers. Is there anything fundamental that would
+> >>> prevent us from moving them to shrinkers instead?
+> >> @Hocko Do you remember the lowmemorykiller from android? Some things
+> >> might not be the right thing for shrinkers.
+> > Just that lmk did it wrong doesn't mean others have to follow.
+> >
+> If all you have is a hammer, everything looks like a nail. (I don’t argument that it was right)
+> But if you don’t have a way to interact with the memory system we will get attempts like lmk. 
+> Oom notifiers and vmpressure is for this task better than shrinkers.
+
+A lack of feature should be a trigger for a discussion rather than a
+quick hack that seems to work for a particular usecase and live out of
+tree, then get to staging and hope it will fix itself. Seriously, the
+kernel development is not a nail hammering.
+-- 
+Michal Hocko
+SUSE Labs
