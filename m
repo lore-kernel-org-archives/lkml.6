@@ -2,97 +2,79 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8A1C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A23C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1096325FDB
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:53:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1096325FDB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F1CA22577F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:54:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CA22577F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964848AbeFYRxR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:53:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47759 "EHLO mx2.suse.de"
+        id S964868AbeFYRyL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:54:11 -0400
+Received: from foss.arm.com ([217.140.101.70]:35020 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934849AbeFYRxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:53:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 09D56AE90;
-        Mon, 25 Jun 2018 17:53:15 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 19:53:12 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kani, Toshi" <toshi.kani@hpe.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>
-Subject: Re: [PATCH v3 0/3] fix free pmd/pte page handlings on x86
-Message-ID: <20180625175225.GQ28965@dhcp22.suse.cz>
-References: <20180516233207.1580-1-toshi.kani@hpe.com>
- <alpine.DEB.2.21.1806241516410.8650@nanos.tec.linutronix.de>
- <1529938470.14039.134.camel@hpe.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529938470.14039.134.camel@hpe.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1755509AbeFYRyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 13:54:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B79080D;
+        Mon, 25 Jun 2018 10:54:09 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E12C93F5AD;
+        Mon, 25 Jun 2018 10:54:08 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 473FE1AE2DA5; Mon, 25 Jun 2018 18:54:46 +0100 (BST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de,
+        mathieu.desnoyers@efficios.com, peterz@infradead.org,
+        paulmck@linux.vnet.ibm.com, boqun.feng@gmail.com,
+        catalin.marinas@arm.com, peter.maydell@linaro.org,
+        mark.rutland@arm.com, Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 0/3] Support rseq on arm64
+Date:   Mon, 25 Jun 2018 18:54:42 +0100
+Message-Id: <1529949285-11013-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 25-06-18 14:56:26, Kani Toshimitsu wrote:
-> On Sun, 2018-06-24 at 15:19 +0200, Thomas Gleixner wrote:
-> > On Wed, 16 May 2018, Toshi Kani wrote:
-> > 
-> > > This series fixes two issues in the x86 ioremap free page handlings
-> > > for pud/pmd mappings.
-> > > 
-> > > Patch 01 fixes BUG_ON on x86-PAE reported by Joerg.  It disables
-> > > the free page handling on x86-PAE.
-> > > 
-> > > Patch 02-03 fixes a possible issue with speculation which can cause
-> > > stale page-directory cache.
-> > >  - Patch 02 is from Chintan's v9 01/04 patch [1], which adds a new arg
-> > >    'addr', with my merge change to patch 01.
-> > >  - Patch 03 adds a TLB purge (INVLPG) to purge page-structure caches
-> > >    that may be cached by speculation.  See the patch descriptions for
-> > >    more detal.
-> > 
-> > Toshi, Joerg, Michal!
-> 
-> Hi Thomas,
-> 
-> Thanks for checking. I was about to ping as well.
-> 
-> > I'm failing to find a conclusion of this discussion. Can we finally make
-> > some progress with that?
-> 
-> I have not heard from Joerg since I last replied to his comments to
-> Patch 3/3 -- I did my best to explain that there was no issue in the
-> single page allocation in pud_free_pmd_page().  From my perspective, the
->  v3 series is good to go.
+Hi all,
 
-Well, I admit that this not my area but I agree with Joerg that
-allocating memory inside afunction that is supposed to free page table
-is far from ideal. More so that the allocation is hardcoded GFP_KERNEL.
-We already have this antipattern in functions to allocate page tables
-and it has turned to be maintenance PITA longterm. So if there is a way
-around that then I would strongly suggest finding a different solution.
+This patch wires up rseq for native and compat tasks under arm64. Both
+have been tested with the selftests and they pass successfully on my Seattle
+box.
 
-Whether that is sufficient to ditch the whole series is not my call
-though.
+Cheers,
+
+Will
+
+--->8
+
+Will Deacon (3):
+  arm64: rseq: Implement backend rseq calls and select HAVE_RSEQ
+  asm-generic: unistd.h: Wire up sys_rseq
+  rseq/selftests: Add support for arm64
+
+ arch/arm64/Kconfig                        |   1 +
+ arch/arm64/include/asm/unistd.h           |   2 +-
+ arch/arm64/include/asm/unistd32.h         |   2 +
+ arch/arm64/kernel/entry.S                 |   2 +
+ arch/arm64/kernel/ptrace.c                |   2 +
+ arch/arm64/kernel/signal.c                |   3 +
+ include/uapi/asm-generic/unistd.h         |   4 +-
+ tools/testing/selftests/rseq/param_test.c |  20 +
+ tools/testing/selftests/rseq/rseq-arm64.h | 594 ++++++++++++++++++++++++++++++
+ tools/testing/selftests/rseq/rseq.h       |   2 +
+ 10 files changed, 630 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/rseq/rseq-arm64.h
+
 -- 
-Michal Hocko
-SUSE Labs
+2.1.4
+
