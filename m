@@ -2,317 +2,98 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC22C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4FDC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1DBC25BA6
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:42:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1DBC25BA6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1AA6425BB2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:44:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUaeJijA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA6425BB2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934423AbeFYOmd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 10:42:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50536 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934266AbeFYOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:42:31 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 205EA7C6A9;
-        Mon, 25 Jun 2018 14:42:31 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 069982026D5B;
-        Mon, 25 Jun 2018 14:42:31 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5PEgUU0022730;
-        Mon, 25 Jun 2018 10:42:30 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5PEgURr022726;
-        Mon, 25 Jun 2018 10:42:30 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 25 Jun 2018 10:42:30 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     jing xia <jing.xia.mail@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: dm bufio: Reduce dm_bufio_lock contention
-In-Reply-To: <20180625141434.GO28965@dhcp22.suse.cz>
-Message-ID: <alpine.LRH.2.02.1806251037250.17405@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1806181003560.4201@file01.intranet.prod.int.rdu2.redhat.com> <20180619104312.GD13685@dhcp22.suse.cz> <alpine.LRH.2.02.1806191228110.25656@file01.intranet.prod.int.rdu2.redhat.com> <20180622090151.GS10465@dhcp22.suse.cz>
- <20180622090935.GT10465@dhcp22.suse.cz> <alpine.LRH.2.02.1806220845190.8072@file01.intranet.prod.int.rdu2.redhat.com> <20180622130524.GZ10465@dhcp22.suse.cz> <alpine.LRH.2.02.1806221447050.2717@file01.intranet.prod.int.rdu2.redhat.com>
- <20180625090957.GF28965@dhcp22.suse.cz> <alpine.LRH.2.02.1806250941380.11092@file01.intranet.prod.int.rdu2.redhat.com> <20180625141434.GO28965@dhcp22.suse.cz>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S934477AbeFYOoN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 10:44:13 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:46814 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934266AbeFYOoL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 10:44:11 -0400
+Received: by mail-pg0-f67.google.com with SMTP id q14-v6so2394039pgt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 07:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wAxkockyx9gMPQLmB6/Vm3NmsK9KNWvbEYu/V1et7Oo=;
+        b=nUaeJijAAg3Qej/WljMkZ5Yj9bfQtVsQKABb4VHL6GzfRX9PWx5o2ca8V/FUDniMRO
+         wAkSDz2zxd1rPHi6UfPLWd+iPl7F60zX6wdLaznh0EklLCG505RA9ixw4R+j9zk7Mw7e
+         vpy9IQy0N3rnr2AZkJubmoQ9C5l0fjG8baHpqfrqwtPNKyQHcEJl8QslEWwNnt4r5SVC
+         aoKezaSL/k6D5aR/eHnkwm6F1gBlVrq4ZTRUmr9u9gYaF9yp1PpgRpFbqpGURRoY5fdx
+         ZoX33fICMJnB91PAO3eiYjCod6EfIP1NNrnbNJUcnvnV5op7O6MS/Co2qFlugJguyfkJ
+         uyTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wAxkockyx9gMPQLmB6/Vm3NmsK9KNWvbEYu/V1et7Oo=;
+        b=BJj+lH2PQUb2WMF7YHm4PmgSz+w2OxbRbn3vYIf6YAxqMsjpKWiYFuaH3HWdMn5/RP
+         /JxZAqwIwVFMLbMaYVBxObgWTzDc2cWA/mI0U6jTJ8SZ9omAGyDuWQij+jz0CMSb/IAG
+         /BLx3bDAlzYvbjh+6OTqauentsc10BUuJF1fm5cRPOzRArZq5vORgR1zWLSaV2Yypv4I
+         eW/r02+5JLeGC1vlvInN0jHLzltXMOS8gGo27WwNmwI/vMJ0zlF0DaA1Rk24WZIURnEO
+         nb13YQnxVXMi44s6IHvByw5sZO5CeOPZRJtAx++u7xbySzQTtNwDXbBJrCRc+9VVUKda
+         p51g==
+X-Gm-Message-State: APt69E1Ln6Crv1BwIisTdjjCB6C3PeOKSDeXM/wRQCMB1CJtIcPfqDQH
+        UNnb9Xu3FrbEzTtwsABcm0iRm7/E
+X-Google-Smtp-Source: ADUXVKLPGgF/7xXhLvy9DtpU4RADj/9U+HHKvq3VTtJ4W+ir+9uKnVvpsmrcMbBLrBAHR9chaUUwYw==
+X-Received: by 2002:a65:448a:: with SMTP id l10-v6mr6212688pgq.382.1529937850790;
+        Mon, 25 Jun 2018 07:44:10 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id d65-v6sm24809051pfj.20.2018.06.25.07.44.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 07:44:09 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 23:44:07 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Namit Gupta <gupta.namit@samsung.com>,
+        sergey.senozhatsky@gmail.com, linux-kernel@vger.kernel.org,
+        pankaj.m@samsung.com, a.sahrawat@samsung.com,
+        himanshu.m@samsung.com
+Subject: Re: [PATCH] printk: remove unnecessary kmalloc() from syslog during
+ clear
+Message-ID: <20180625144407.GB443@tigerII.localdomain>
+References: <CGME20180620135951epcas5p3bd2a8f25ec689ca333bce861b527dba2@epcas5p3.samsung.com>
+ <20180620135951epcas5p3bd2a8f25ec689ca333bce861b527dba2~54wyKcT0_3155531555epcas5p3y@epcas5p3.samsung.com>
+ <20180625133705.7zsg2rkw4xtyg6ie@pathway.suse.cz>
+ <20180625103704.49811ec1@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 25 Jun 2018 14:42:31 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 25 Jun 2018 14:42:31 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625103704.49811ec1@gandalf.local.home>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Mon, 25 Jun 2018, Michal Hocko wrote:
-
-> > And the throttling in dm-bufio prevents kswapd from making forward 
-> > progress, causing this situation...
+On (06/25/18 10:37), Steven Rostedt wrote:
 > 
-> Which is what we have PF_THROTTLE_LESS for. Geez, do we have to go in
-> circles like that? Are you even listening?
-> 
-> [...]
-> 
-> > And so what do you want to do to prevent block drivers from sleeping?
-> 
-> use the existing means we have.
-> -- 
-> Michal Hocko
-> SUSE Labs
+> Is IMHO rather ugly.
 
-So - do you want this patch?
+Either way works for me. So I'll leave it to you and Petr to decide :)
 
-There is no behavior difference between changing the allocator (so that it 
-implies PF_THROTTLE_LESS for block drivers) and chaning all the block 
-drivers to explicitly set PF_THROTTLE_LESS.
+> And the original patch has one more advantage. If buf and clear are
+> both NULL/zero, we don't take any locks.
 
-But if you insist that the allocator can't be changed, we have to repeat 
-the same code over and over again in the block drivers.
+But we never use syslog_print_all(buf = NULL, clear = false). It's either
+NULL/true [move forward clear idx, do not copy to user], or !NULL/use defined
+value [copy to user, move or don't move clear idx forward]
 
-Mikulas
-
-
-
----
- block/bio.c                   |    4 ++++
- drivers/md/dm-bufio.c         |   14 +++++++++++---
- drivers/md/dm-crypt.c         |    8 ++++++++
- drivers/md/dm-integrity.c     |    4 ++++
- drivers/md/dm-kcopyd.c        |    3 +++
- drivers/md/dm-verity-target.c |    4 ++++
- drivers/md/dm-writecache.c    |    4 ++++
- mm/mempool.c                  |    4 ++++
- 8 files changed, 42 insertions(+), 3 deletions(-)
-
-Index: linux-2.6/mm/mempool.c
-===================================================================
---- linux-2.6.orig/mm/mempool.c	2018-06-25 16:32:19.210000000 +0200
-+++ linux-2.6/mm/mempool.c	2018-06-25 16:32:19.200000000 +0200
-@@ -369,6 +369,7 @@ void *mempool_alloc(mempool_t *pool, gfp
- 	unsigned long flags;
- 	wait_queue_entry_t wait;
- 	gfp_t gfp_temp;
-+	unsigned old_flags;
- 
- 	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
- 	might_sleep_if(gfp_mask & __GFP_DIRECT_RECLAIM);
-@@ -381,7 +382,10 @@ void *mempool_alloc(mempool_t *pool, gfp
- 
- repeat_alloc:
- 
-+	old_flags = current->flags & PF_LESS_THROTTLE;
-+	current->flags |= PF_LESS_THROTTLE;
- 	element = pool->alloc(gfp_temp, pool->pool_data);
-+	current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 	if (likely(element != NULL))
- 		return element;
- 
-Index: linux-2.6/block/bio.c
-===================================================================
---- linux-2.6.orig/block/bio.c	2018-06-25 16:32:19.210000000 +0200
-+++ linux-2.6/block/bio.c	2018-06-25 16:32:19.200000000 +0200
-@@ -217,6 +217,7 @@ fallback:
- 	} else {
- 		struct biovec_slab *bvs = bvec_slabs + *idx;
- 		gfp_t __gfp_mask = gfp_mask & ~(__GFP_DIRECT_RECLAIM | __GFP_IO);
-+		unsigned old_flags;
- 
- 		/*
- 		 * Make this allocation restricted and don't dump info on
-@@ -229,7 +230,10 @@ fallback:
- 		 * Try a slab allocation. If this fails and __GFP_DIRECT_RECLAIM
- 		 * is set, retry with the 1-entry mempool
- 		 */
-+		old_flags = current->flags & PF_LESS_THROTTLE;
-+		current->flags |= PF_LESS_THROTTLE;
- 		bvl = kmem_cache_alloc(bvs->slab, __gfp_mask);
-+		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 		if (unlikely(!bvl && (gfp_mask & __GFP_DIRECT_RECLAIM))) {
- 			*idx = BVEC_POOL_MAX;
- 			goto fallback;
-Index: linux-2.6/drivers/md/dm-bufio.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-bufio.c	2018-06-25 16:32:19.210000000 +0200
-+++ linux-2.6/drivers/md/dm-bufio.c	2018-06-25 16:32:19.200000000 +0200
-@@ -356,6 +356,7 @@ static void __cache_size_refresh(void)
- static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
- 			       unsigned char *data_mode)
- {
-+	void *ptr;
- 	if (unlikely(c->slab_cache != NULL)) {
- 		*data_mode = DATA_MODE_SLAB;
- 		return kmem_cache_alloc(c->slab_cache, gfp_mask);
-@@ -363,9 +364,14 @@ static void *alloc_buffer_data(struct dm
- 
- 	if (c->block_size <= KMALLOC_MAX_SIZE &&
- 	    gfp_mask & __GFP_NORETRY) {
-+		unsigned old_flags;
- 		*data_mode = DATA_MODE_GET_FREE_PAGES;
--		return (void *)__get_free_pages(gfp_mask,
-+		old_flags = current->flags & PF_LESS_THROTTLE;
-+		current->flags |= PF_LESS_THROTTLE;
-+		ptr = (void *)__get_free_pages(gfp_mask,
- 						c->sectors_per_block_bits - (PAGE_SHIFT - SECTOR_SHIFT));
-+		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
-+		return ptr;
- 	}
- 
- 	*data_mode = DATA_MODE_VMALLOC;
-@@ -381,8 +387,10 @@ static void *alloc_buffer_data(struct dm
- 	 */
- 	if (gfp_mask & __GFP_NORETRY) {
- 		unsigned noio_flag = memalloc_noio_save();
--		void *ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
--
-+		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
-+		current->flags |= PF_LESS_THROTTLE;
-+		ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
-+		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 		memalloc_noio_restore(noio_flag);
- 		return ptr;
- 	}
-Index: linux-2.6/drivers/md/dm-integrity.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-integrity.c	2018-06-25 16:32:19.210000000 +0200
-+++ linux-2.6/drivers/md/dm-integrity.c	2018-06-25 16:32:52.600000000 +0200
-@@ -1317,6 +1317,7 @@ static void integrity_metadata(struct wo
- 	int r;
- 
- 	if (ic->internal_hash) {
-+		unsigned old_flags;
- 		struct bvec_iter iter;
- 		struct bio_vec bv;
- 		unsigned digest_size = crypto_shash_digestsize(ic->internal_hash);
-@@ -1330,8 +1331,11 @@ static void integrity_metadata(struct wo
- 		if (unlikely(ic->mode == 'R'))
- 			goto skip_io;
- 
-+		old_flags = current->flags & PF_LESS_THROTTLE;
-+		current->flags |= PF_LESS_THROTTLE;
- 		checksums = kmalloc((PAGE_SIZE >> SECTOR_SHIFT >> ic->sb->log2_sectors_per_block) * ic->tag_size + extra_space,
- 				    GFP_NOIO | __GFP_NORETRY | __GFP_NOWARN);
-+		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 		if (!checksums)
- 			checksums = checksums_onstack;
- 
-Index: linux-2.6/drivers/md/dm-kcopyd.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-kcopyd.c	2018-06-25 16:32:19.210000000 +0200
-+++ linux-2.6/drivers/md/dm-kcopyd.c	2018-06-25 16:32:19.200000000 +0200
-@@ -245,7 +245,10 @@ static int kcopyd_get_pages(struct dm_kc
- 	*pages = NULL;
- 
- 	do {
-+		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
-+		current->flags |= PF_LESS_THROTTLE;
- 		pl = alloc_pl(__GFP_NOWARN | __GFP_NORETRY | __GFP_KSWAPD_RECLAIM);
-+		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 		if (unlikely(!pl)) {
- 			/* Use reserved pages */
- 			pl = kc->pages;
-Index: linux-2.6/drivers/md/dm-verity-target.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-verity-target.c	2018-06-25 16:32:19.210000000 +0200
-+++ linux-2.6/drivers/md/dm-verity-target.c	2018-06-25 16:32:19.200000000 +0200
-@@ -596,9 +596,13 @@ no_prefetch_cluster:
- static void verity_submit_prefetch(struct dm_verity *v, struct dm_verity_io *io)
- {
- 	struct dm_verity_prefetch_work *pw;
-+	unsigned old_flags;
- 
-+	old_flags = current->flags & PF_LESS_THROTTLE;
-+	current->flags |= PF_LESS_THROTTLE;
- 	pw = kmalloc(sizeof(struct dm_verity_prefetch_work),
- 		GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
-+	current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 
- 	if (!pw)
- 		return;
-Index: linux-2.6/drivers/md/dm-writecache.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-writecache.c	2018-06-25 16:32:19.210000000 +0200
-+++ linux-2.6/drivers/md/dm-writecache.c	2018-06-25 16:32:19.200000000 +0200
-@@ -1467,6 +1467,7 @@ static void __writecache_writeback_pmem(
- 	unsigned max_pages;
- 
- 	while (wbl->size) {
-+		unsigned old_flags;
- 		wbl->size--;
- 		e = container_of(wbl->list.prev, struct wc_entry, lru);
- 		list_del(&e->lru);
-@@ -1480,6 +1481,8 @@ static void __writecache_writeback_pmem(
- 		bio_set_dev(&wb->bio, wc->dev->bdev);
- 		wb->bio.bi_iter.bi_sector = read_original_sector(wc, e);
- 		wb->page_offset = PAGE_SIZE;
-+		old_flags = current->flags & PF_LESS_THROTTLE;
-+		current->flags |= PF_LESS_THROTTLE;
- 		if (max_pages <= WB_LIST_INLINE ||
- 		    unlikely(!(wb->wc_list = kmalloc(max_pages * sizeof(struct wc_entry *),
- 						     GFP_NOIO | __GFP_NORETRY |
-@@ -1487,6 +1490,7 @@ static void __writecache_writeback_pmem(
- 			wb->wc_list = wb->wc_list_inline;
- 			max_pages = WB_LIST_INLINE;
- 		}
-+		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 
- 		BUG_ON(!wc_add_block(wb, e, GFP_NOIO));
- 
-Index: linux-2.6/drivers/md/dm-crypt.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-crypt.c	2018-06-25 16:32:19.210000000 +0200
-+++ linux-2.6/drivers/md/dm-crypt.c	2018-06-25 16:33:55.810000000 +0200
-@@ -2181,12 +2181,16 @@ static void *crypt_page_alloc(gfp_t gfp_
- {
- 	struct crypt_config *cc = pool_data;
- 	struct page *page;
-+	unsigned old_flags;
- 
- 	if (unlikely(percpu_counter_compare(&cc->n_allocated_pages, dm_crypt_pages_per_client) >= 0) &&
- 	    likely(gfp_mask & __GFP_NORETRY))
- 		return NULL;
- 
-+	old_flags = current->flags & PF_LESS_THROTTLE;
-+	current->flags |= PF_LESS_THROTTLE;
- 	page = alloc_page(gfp_mask);
-+	current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 	if (likely(page != NULL))
- 		percpu_counter_add(&cc->n_allocated_pages, 1);
- 
-@@ -2893,7 +2897,10 @@ static int crypt_map(struct dm_target *t
- 
- 	if (cc->on_disk_tag_size) {
- 		unsigned tag_len = cc->on_disk_tag_size * (bio_sectors(bio) >> cc->sector_shift);
-+		unsigned old_flags;
- 
-+		old_flags = current->flags & PF_LESS_THROTTLE;
-+		current->flags |= PF_LESS_THROTTLE;
- 		if (unlikely(tag_len > KMALLOC_MAX_SIZE) ||
- 		    unlikely(!(io->integrity_metadata = kmalloc(tag_len,
- 				GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN)))) {
-@@ -2902,6 +2909,7 @@ static int crypt_map(struct dm_target *t
- 			io->integrity_metadata = mempool_alloc(&cc->tag_pool, GFP_NOIO);
- 			io->integrity_metadata_from_pool = true;
- 		}
-+		current->flags = (current->flags & ~PF_LESS_THROTTLE) | old_flags;
- 	}
- 
- 	if (crypt_integrity_aead(cc))
+	-ss
