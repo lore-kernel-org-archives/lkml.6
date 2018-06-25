@@ -2,137 +2,152 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C33C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1FAC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 608DF25D8C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:58:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 608DF25D8C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 01B2524F9B
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:58:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B2524F9B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932084AbeFYP6W (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:58:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60298 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752146AbeFYP6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:58:18 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4F1CE206D8; Mon, 25 Jun 2018 17:58:16 +0200 (CEST)
-Received: from localhost (unknown [88.128.82.118])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 03923203D9;
-        Mon, 25 Jun 2018 17:58:05 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 17:58:05 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 3/7] bus: add bus driver for accessing Allwinner A64
- DE2
-Message-ID: <20180625155805.kds7bl3cburblwv6@flea>
-References: <20180622124540.56203-1-icenowy@aosc.io>
- <20180622124540.56203-2-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gl5ozc65ejgjb7yn"
-Content-Disposition: inline
-In-Reply-To: <20180622124540.56203-2-icenowy@aosc.io>
-User-Agent: NeoMutt/20180512
+        id S932438AbeFYP6m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 11:58:42 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:34477 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752501AbeFYP6P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:58:15 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w5PFt5Pa001562;
+        Mon, 25 Jun 2018 18:55:06 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id D255862FF9; Mon, 25 Jun 2018 18:55:05 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, jdelvare@suse.com,
+        linux@roeck-us.net, avifishman70@gmail.com, yuenn@google.com,
+        brendanhiggins@google.com, venture@google.com, joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v5 1/2] dt-binding: hwmon: Add NPCM7xx PWM and Fan controller documentation
+Date:   Mon, 25 Jun 2018 18:55:03 +0300
+Message-Id: <20180625155504.152079-2-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180625155504.152079-1-tmaimon77@gmail.com>
+References: <20180625155504.152079-1-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Added device tree binding documentation for Nuvoton BMC
+NPCM7xx Pulse Width Modulation (PWM)  and Fan tach controller.
+The PWM controller can support upto 8 PWM output ports.
+The Fan tach controller can support upto 16 tachometer inputs.
 
---gl5ozc65ejgjb7yn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+---
+ .../devicetree/bindings/hwmon/npcm750-pwm-fan.txt  | 84 ++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
 
-On Fri, Jun 22, 2018 at 08:45:36PM +0800, Icenowy Zheng wrote:
-> The "Display Engine 2.0" (usually called DE2) on the Allwinner A64 SoC
-> is different from the ones on other Allwinner SoCs. It requires a SRAM
-> region to be claimed, otherwise all DE2 subblocks won't be accessible.
->=20
-> Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
-> region when probing.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> No changes since v1.
->=20
->  drivers/bus/Kconfig      | 10 ++++++++
->  drivers/bus/Makefile     |  1 +
->  drivers/bus/sun50i-de2.c | 49 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 60 insertions(+)
->  create mode 100644 drivers/bus/sun50i-de2.c
->=20
-> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-> index d1c0b60e9326..1851112ccc29 100644
-> --- a/drivers/bus/Kconfig
-> +++ b/drivers/bus/Kconfig
-> @@ -103,6 +103,16 @@ config SIMPLE_PM_BUS
->  	  Controller (BSC, sometimes called "LBSC within Bus Bridge", or
->  	  "External Bus Interface") as found on several Renesas ARM SoCs.
-> =20
-> +config SUN50I_DE2_BUS
-> +	bool "Allwinner A64 DE2 Bus Driver"
-> +	  default ARM64
-> +	  depends on ARCH_SUNXI
-> +	  select SUNXI_SRAM
-> +	  help
+diff --git a/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+new file mode 100644
+index 000000000000..a9eacda34f92
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+@@ -0,0 +1,84 @@
++Nuvoton NPCM7xx PWM and Fan Tacho controller device driver
++
++The NPCM7xx has two identical Pulse-width modulation (PWM) controller modules,
++Each PWM module has four PWM controller outputs, Totally 8 PWM controller outputs.
++
++The NPCM7xx has eight identical Fan tachometer controller modules,
++Each Fan module has two Fan controller inputs, Totally 16 Fan controller inputs.
++
++Required properties for pwm-fan node:
++- compatible	: "nuvoton,npcm750-pwm-fan" for Poleg NPCM7XX.
++- reg 			: specifies physical base address and size of the registers.
++- reg-names 	: must contain:
++					* "pwm-base" for the PWM registers.
++ 					* "fan-base" for the Fan registers.
++- clocks		: phandle of reference clocks.
++- clock-names	: must contain
++					* "clk_apb3" for clock of PWM controller.
++ 					* "clk_apb4" for clock of Fan controller.
++- interrupts	: contain the Fan interrupts with flags for falling edge.
++- pinctrl-names	: a pinctrl state named "default" must be defined.
++- pinctrl-0 	: phandle referencing pin configuration of the PWM and Fan
++					controller ports.
++
++pwm subnode format:
++===================
++Under pwm subnode can be upto 8 child nodes, each child node representing a PWM channel.
++Each pwm subnode must have one PWM channel and atleast one Fan tach channel.
++
++For PWM channel can be configured cooling-levels to create cooling device.
++Cooling device could be bound to a thermal zone for the thermal control.
++
++Required properties for each child node:
++- pwm-ch : specify the PWM output channel.
++			integer value in the range 0 through 7, that represent
++			the PWM channel number that used.
++
++- fan-ch : specify the Fan input channel.
++			integer value in the range 0 through 15, that represent
++			the Fan channel number that used.
++
++			At least one Fan tach input channel is required
++
++Optional property for each child node:
++- cooling-levels: PWM duty cycle values in a range from 0 to 255
++                  which correspond to thermal cooling states.
++
++Examples:
++
++pwm_fan:pwm_fan_controller@103000 {
++	compatible = "nuvoton,npcm750-pwm-fan";
++	reg = <0x103000 0x2000>,
++		<0x180000 0x8000>;
++	reg-names = "pwm_base", "fan_base";
++	clocks = <&clk NPCM7XX_CLK_APB3>,
++		<&clk NPCM7XX_CLK_APB4>;
++	clock-names = "clk_apb3","clk_apb4";
++	interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm0_pins &pwm1_pins &pwm2_pins
++			&fanin0_pins &fanin1_pins &fanin2_pins
++			&fanin3_pins &fanin4_pins>;
++
++			pwm@0 {
++				pwm-ch = /bits/ 8 <0x00>;
++				fan-ch = /bits/ 8 <0x00 0x01>;
++				cooling-levels = <127 255>;
++				};
++			pwm@1 {
++				pwm-ch = /bits/ 8 <0x01>;
++				fan-ch = /bits/ 8 <0x02 0x03>;
++				};
++			pwm@2 {
++				pwm-ch = /bits/ 8 <0x02>;
++				fan-ch = /bits/ 8 <0x04>;
++				};
++
++};
+\ No newline at end of file
+-- 
+2.14.1
 
-The alignment here should be one tab.
-
-> +static int sun50i_de2_bus_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np =3D pdev->dev.of_node;
-> +	int ret;
-> +
-> +	ret =3D sunxi_sram_claim(&pdev->dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Error couldn't map SRAM to device\n");
-> +		return ret;
-> +	}
-> +
-> +	if (np)
-> +		of_platform_populate(np, NULL, NULL, &pdev->dev);
-
-Why do you need to test np here?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---gl5ozc65ejgjb7yn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsxEQ0ACgkQ0rTAlCFN
-r3Q7ghAAgafjNShKtVy1wF7ybhUEKPoF25teOrUO8ObOsgKgTaA+HeA0Iewg1w9c
-slPeaTq/WKnRrN3RKADWLA6oUnIOPctPVWraFxPgOeEVnETlMBSm7igtFUodoMk6
-W2qetFnSmWj7GgBVBCvX1G87qPyCHRHeyYgwWzvuAvApHedOjDZX1TFHoMuL9K+q
-grLOVyj6U+L9Yl38S0/wScGQ0qeiUYWYW+dUyE5tuFgso1tftQNHDj01U9m/Zavg
-+3cW6gbxQYBSzptkm0jaWxUJmCXGKZJYP2eNmnwkaT8HgmZMpq8AcxqKo6ES8jlq
-fhVKOTBOVl+kYaoGMpIxq5TI1GGlblo5LkKXsEnq+bE1BKYqSb3EY3npuzfbs8Px
-+JhITGKLpgYEytIj2rNf+5lyF4sueMizdVNIIpZuFlxI9BWW/gQ4OeOC5vdqI6ng
-fRocfixsnCsZoFsxCT3T/V0IUygTBiBDQRyOWx08sdaHTNg6fkfpwZI9TjH7urzm
-8PeNl+EA7STRUxEQchXwJZIwtt1ZA2EiY+U/eQVzbpXvcGKwwB0m3CxbGaUA8q82
-hVMBazQt9DMVak17XYFlU+dd/v5/+tibMb/z+qER4NiG0C3x/XEeqrB46gkyRloi
-HV7iUbhrb3D/jQAbVw81dwh01j2n1IYDpb/KAnJxyKxyAl87wug=
-=BUDh
------END PGP SIGNATURE-----
-
---gl5ozc65ejgjb7yn--
