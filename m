@@ -4,75 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CBAC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 636EBC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297CF26213
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1736B26213
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:42:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="URfh8ucV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297CF26213
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XFEwAkvd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1736B26213
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934571AbeFYWmI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:42:08 -0400
-Received: from mail-io0-f202.google.com ([209.85.223.202]:52798 "EHLO
-        mail-io0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932351AbeFYWl7 (ORCPT
+        id S934620AbeFYWmN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:42:13 -0400
+Received: from mail-yb0-f201.google.com ([209.85.213.201]:55457 "EHLO
+        mail-yb0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934572AbeFYWmJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:41:59 -0400
-Received: by mail-io0-f202.google.com with SMTP id n21-v6so13057252iob.19
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:59 -0700 (PDT)
+        Mon, 25 Jun 2018 18:42:09 -0400
+Received: by mail-yb0-f201.google.com with SMTP id y16-v6so2009482ybk.22
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:42:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:date:in-reply-to:message-id:references:subject:from:to
          :cc;
-        bh=JDe7omNGF3EhS1Wwn935GAPXMwY/I1wPiV41ZNKc+ik=;
-        b=URfh8ucVQbWWC7LKzOUu783w72U62KYdfnmIDP3rKVYheqbAW+MgjqjLl7ZE/91lfy
-         erUDfSfrmUrd9lcxra8yzLeBiwBRwlcuK34i5c7GBe5iMz72JRmTBTXUhyGdD/Qsty+b
-         Kcwx1WR6o+NprV28iDuUBv4KDBl9nBBo24SrV6J5hm+Urm99RWyuKw+XDK6SLsqhUO90
-         beOXEo9kO1yuls6OSOfiIw58ANYQVmM7mPmzCbqrJC7rfrkqhWISSpcJTJOhyoIsJL62
-         cBwfNQZkaw2HcluQLM6Zoadyu7jjDB9VKZ3eslI+TssWcFJ9VLxcmQqEKQIr+r9vxyYX
-         pb0Q==
+        bh=di1a+2IpeHvGipVB0LNFKlY88ZP9mtPFk4hb1bdjJ3g=;
+        b=XFEwAkvdcDd+pTY2WvROAMghiTBxG57BlW5nss82QtKbp7E1LAtNGYODcOl55snyQW
+         USJ95jbU45snVmet677M/BF8OWFmBCHxLwcmBEGrwKvTBp8U+ycdIMwgrZbPjyb5iRnp
+         xDG3SP7aH1umnwtjmFgNCV0mM1AzR4OF5KjEiaBo1qGqlg8K1aA9rjLiAFaa8uguRKN8
+         QTmiHnV47JU4HRwxc3hjdmWX930eJNIcVge2bRA4KYbHnlEjrZ5HSFxra9eaDyBnaird
+         /mpsKbrF6vJbNAej7N8YV7tTAF2eiLLCoIcmyOlRYSy5Sb4OfqpfGetjqEjOnS8ppV/s
+         g0CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id
          :references:subject:from:to:cc;
-        bh=JDe7omNGF3EhS1Wwn935GAPXMwY/I1wPiV41ZNKc+ik=;
-        b=MaD0GLMNRY0UtLiJ2yjbXal70lX5jQBL1mT6YiVTK1XIrARrvdekxSvReUlyz11HKd
-         aB9m4iw+NSpjlnoz9b0HdsjqcmLoDlqe86b01W7WPgawwKVZvHr7nzOPIPaE4uBQ0t/9
-         GDEymNoY7yCmaNZjgLqYhJdOsJGkVsutrZ36TqXqSsS6YCnMJy8Oq1RHtr6ULwZY+l+L
-         Z+cnMByvUXKOROUQ5xaqa9zzY59S8uLDw1RVK834GF1jt2y+GfJZ9zZfejM/kUyBpjck
-         WHNshEfsFl4FSy4mFXpWO48pbw2LfFi+sRsX956kkQTUN0u4xx/xPm92r5GFZ8bBXHhC
-         3M8Q==
-X-Gm-Message-State: APt69E3/3ycuIBjntFzHnLdBLduxDjkLub25eE570FkQvcFuH0WLYxgh
-        O7va1Qe2z/xAXYjG8zjqSSQtHZd83q9Asg==
-X-Google-Smtp-Source: AAOMgpcafAqwUr9zdDE+lnCGR+mD+hrmqfpzgn75GOsICJZdayq/2nQbMCl1jhMrQE6+JPqebA/0ZQqn/tn89Q==
+        bh=di1a+2IpeHvGipVB0LNFKlY88ZP9mtPFk4hb1bdjJ3g=;
+        b=JguCdVr95Nk+1e2oI1y5if/mE0MJ973xrxe6Y9Hk+jXL9vwJ/SBZqnzSeipl+sArUj
+         ZcPLJEQbiXDEXIn7QbGX8BjRbfLTUSSN65TKA1OccJ3BSVD4DgpoJpgFP/jPFwwNeITH
+         CwR9t41TT3RDYWtljlon44o0q9DyNDp438gINqkuLT5KcZ41YvzAZiTfmWPemuYawYMI
+         mbESYkNvWKQj/wm6B3mldq9KOtbuvqCXkNyn9LjIxJJ+IjcS2Hz/+pqBRY4MXb+6865U
+         Yh6amv+V9F0TWntE15SA9A64x5ApEmQXwcjzpWANmrS4016y088RWNQ48ELRYEUntKvh
+         5uWw==
+X-Gm-Message-State: APt69E0sln2SnGK4WpztDJ19l4RDUYI2v7UxR7XyyhLRC3saxNd3r2nE
+        HCd0xmL+KQD3Qf/MS5kdGuxVurLYJX1Eiw==
+X-Google-Smtp-Source: ADUXVKLzN1s8fYsNlgRqA0tF1PXlXiR8WocAmAa0gGKaY9LtWGM0+c679ifb6R2DwM8udHVkhXSRbscJM97x7A==
 MIME-Version: 1.0
-X-Received: by 2002:a24:5f84:: with SMTP id r126-v6mr1155993itb.42.1529966518814;
- Mon, 25 Jun 2018 15:41:58 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 15:39:04 -0700
+X-Received: by 2002:a25:2e0c:: with SMTP id u12-v6mr3925175ybu.27.1529966528225;
+ Mon, 25 Jun 2018 15:42:08 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:39:07 -0700
 In-Reply-To: <20180625224014.134829-1-thgarnie@google.com>
-Message-Id: <20180625224014.134829-17-thgarnie@google.com>
+Message-Id: <20180625224014.134829-20-thgarnie@google.com>
 References: <20180625224014.134829-1-thgarnie@google.com>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v5 16/27] compiler: Option to add PROVIDE_HIDDEN replacement
- for weak symbols
+Subject: [PATCH v5 19/27] kvm: Adapt assembly for PIE support
 From:   Thomas Garnier <thgarnie@google.com>
 To:     kernel-hardening@lists.openwall.com
 Cc:     Thomas Garnier <thgarnie@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,67 +77,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide an option to have a PROVIDE_HIDDEN (linker script) entry for
-each weak symbol. This option solves an error in x86_64 where the linker
-optimizes PIE generated code to be non-PIE because --emit-relocs was used
-instead of -pie (to reduce dynamic relocations).
+Change the assembly code to use only relative references of symbols for the
+kernel to be PIE compatible. The new __ASM_MOVABS macro is used to
+get the address of a symbol on both 32 and 64-bit with PIE support.
+
+Position Independent Executable (PIE) support will allow to extend the
+KASLR randomization range 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- init/Kconfig            |  7 +++++++
- scripts/link-vmlinux.sh | 14 ++++++++++++++
- 2 files changed, 21 insertions(+)
+ arch/x86/include/asm/kvm_host.h | 8 ++++++--
+ arch/x86/kernel/kvm.c           | 6 ++++--
+ arch/x86/kvm/svm.c              | 4 ++--
+ 3 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index d4f90cc38ede..2d7431a8b108 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1974,6 +1974,13 @@ config ASN1
- 	  inform it as to what tags are to be expected in a stream and what
- 	  functions to call on what tags.
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index c13cd28d9d1b..27370f4917a4 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1390,9 +1390,13 @@ asmlinkage void kvm_spurious_fault(void);
+ 	".pushsection .fixup, \"ax\" \n" \
+ 	"667: \n\t" \
+ 	cleanup_insn "\n\t"		      \
+-	"cmpb $0, kvm_rebooting \n\t"	      \
++	"cmpb $0, kvm_rebooting" __ASM_SEL(,(%%rip)) " \n\t" \
+ 	"jne 668b \n\t"      		      \
+-	__ASM_SIZE(push) " $666b \n\t"	      \
++	__ASM_SIZE(push) "$0 \n\t"		\
++	__ASM_SIZE(push) "%%" _ASM_AX " \n\t"		\
++	_ASM_MOVABS " $666b, %%" _ASM_AX "\n\t"	\
++	_ASM_MOV " %%" _ASM_AX ", " __ASM_SEL(4,8) "(%%" _ASM_SP ") \n\t" \
++	__ASM_SIZE(pop) "%%" _ASM_AX " \n\t"		\
+ 	"call kvm_spurious_fault \n\t"	      \
+ 	".popsection \n\t" \
+ 	_ASM_EXTABLE(666b, 667b)
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index a37bda38d205..761157c138c9 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -726,8 +726,10 @@ asm(
+ ".global __raw_callee_save___kvm_vcpu_is_preempted;"
+ ".type __raw_callee_save___kvm_vcpu_is_preempted, @function;"
+ "__raw_callee_save___kvm_vcpu_is_preempted:"
+-"movq	__per_cpu_offset(,%rdi,8), %rax;"
+-"cmpb	$0, " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rax);"
++"leaq	__per_cpu_offset(%rip), %rax;"
++"movq	(%rax,%rdi,8), %rax;"
++"addq	" __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rip), %rax;"
++"cmpb	$0, (%rax);"
+ "setne	%al;"
+ "ret;"
+ ".popsection");
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index f059a73f0fd0..cb78647d6383 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -707,12 +707,12 @@ static u32 svm_msrpm_offset(u32 msr)
  
-+config WEAK_PROVIDE_HIDDEN
-+	bool
-+	help
-+	  Generate linker script PROVIDE_HIDDEN entries for all weak symbols. It
-+	  allows to prevent non-PIE code being replaced by the linker if the
-+	  emit-relocs option is used instead of PIE (useful for x86_64 PIE).
-+
- source "kernel/Kconfig.locks"
- 
- config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 4bf811c09f59..f5d31119b9d7 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -142,6 +142,17 @@ kallsyms()
- 	${CC} ${aflags} -c -o ${2} ${afile}
+ static inline void clgi(void)
+ {
+-	asm volatile (__ex(SVM_CLGI));
++	asm volatile (__ex(SVM_CLGI) : :);
  }
  
-+gen_weak_provide_hidden()
-+{
-+        if [ -n "${CONFIG_WEAK_PROVIDE_HIDDEN}" ]; then
-+                local pattern="s/^\s\+ w \(\w\+\)$/PROVIDE_HIDDEN(\1 = .);/gp"
-+                echo -e "SECTIONS {\n. = _end;" > .tmp_vmlinux_hiddenld
-+                ${NM} ${1} | sed -n "${pattern}" >> .tmp_vmlinux_hiddenld
-+                echo "}" >> .tmp_vmlinux_hiddenld
-+                LDFLAGS_vmlinux="${LDFLAGS_vmlinux} -T .tmp_vmlinux_hiddenld"
-+        fi
-+}
-+
- # Create map file with all symbols from ${1}
- # See mksymap for additional details
- mksysmap()
-@@ -226,6 +237,9 @@ modpost_link vmlinux.o
- # modpost vmlinux.o to check for section mismatches
- ${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmlinux.o
+ static inline void stgi(void)
+ {
+-	asm volatile (__ex(SVM_STGI));
++	asm volatile (__ex(SVM_STGI) : :);
+ }
  
-+# Generate weak linker script
-+gen_weak_provide_hidden vmlinux.o
-+
- kallsymso=""
- kallsyms_vmlinux=""
- if [ -n "${CONFIG_KALLSYMS}" ]; then
+ static inline void invlpga(unsigned long addr, u32 asid)
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
