@@ -2,120 +2,161 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F418C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4864C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB5326294
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:07:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB5326294
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A0B1216F3
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:13:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="AT4BzfOt";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T/ixsBMe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0B1216F3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934312AbeFYXHk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 19:07:40 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40614 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934175AbeFYXHh (ORCPT
+        id S932523AbeFYXNg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 19:13:36 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:39042 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752939AbeFYXNc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 19:07:37 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PN4H66115663
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 19:07:37 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ju96rh3nk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 19:07:36 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 25 Jun 2018 19:07:36 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 19:07:30 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5PN7T1n3342704
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jun 2018 23:07:29 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A26DAB205F;
-        Mon, 25 Jun 2018 19:07:24 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 81FFFB2067;
-        Mon, 25 Jun 2018 19:07:24 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Jun 2018 19:07:24 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id CFF9E16CA094; Mon, 25 Jun 2018 16:09:34 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 16:09:34 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 1/4] srcu: Fix typos in __call_srcu() header
- comment
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180625224734.GA10860@linux.vnet.ibm.com>
- <20180625224758.11300-1-paulmck@linux.vnet.ibm.com>
- <b48dd53e-f032-3afb-cc48-f47db7e04ecd@infradead.org>
+        Mon, 25 Jun 2018 19:13:32 -0400
+Received: by mail-yb0-f196.google.com with SMTP id k127-v6so753512ybk.6
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 16:13:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=2I/TSRshrHUJp/sKcK1TeJxvZIG63wO38KwuqhdzdqM=;
+        b=AT4BzfOtTSj1SooXe/+N3QdTtOgmXphOhHdAMKZPjBuBRCE0j6pxdmnMJk59FC2B8+
+         650E7jvJQW+lUyhMUR2sUKhR5ASmtAUtaG+QadgFk3ASstEMleISwyH3O383Q/hvUdlw
+         elNH9df42llvkOnRl7k2MCRSmJqrHt4c+nicR8Gxg37CkYdoDfYs3eSnIyPZ1sZMq4t/
+         WpsqMtFIwe6jun1UML5zlpTum65hoHmoBTLVdUHjME4xmd+/NI+PNxy5jedgY6DoFkQd
+         N20VVM9+fzx2x2Ad8N6svDRGoQedmjY572OD3bhv7pZpoe7PZAowb1La4hnSP02MAtDG
+         j3eg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=2I/TSRshrHUJp/sKcK1TeJxvZIG63wO38KwuqhdzdqM=;
+        b=T/ixsBMe1AuNcWd3JaJXxAXw96JmXyTmh4muUsLRqdnwJ4bwsjh1Hgm96tkToPiGg/
+         YSZBUa2GwITmjvQcUINvvfpQfvUzEeGdsCdbw5ECJAgY/xa5CExL3CWMd0MErCa69Zzr
+         MFMtw4ibSgdsAV9KMiuZsGohuAZVb1GhHN234=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=2I/TSRshrHUJp/sKcK1TeJxvZIG63wO38KwuqhdzdqM=;
+        b=ADwuuXSK/SJmsvwW6MrVN1q+ddLb5hDF4lKMiFvC9u1g0fD7of28i3UvKR3dKerP3F
+         66zQiXG9bACTA97hIMhyLQ4tmS93zBWZpH9081FUA38Fcl1BfDmd95NGD+fHcCm4388E
+         XH+CRK7hRga5tZ00y5yxiNR6flMkBjuAZP0bMLKc6CUlkacbo0b0Kmu0NEYOMFTG0Do8
+         eW4Hyb+HweLWLPmfcC7sTNY/tsVKOt/t6JDlQpMg6uv1NX/Tya5TvFinQagef+CLvGW+
+         0iLnrTJzJppf/5NniWDPgoZY2YliH9Ct5QRS5+zhd3ZxTLXvNL6WQzbCSHDVTNlMQ7B3
+         hrFg==
+X-Gm-Message-State: APt69E2HSowJ8zAo8wYJ24/NJufATm7G0dcB0kemuSdpzjaRtJQ72zmW
+        rNryz9oNRDh0T+2cz1iojj+ImUrTst1LBLfhS0rvjw==
+X-Google-Smtp-Source: ADUXVKKrVP0oMUqzl8j5kzAuoOLiIULWVDGYkHhvQFkeeemSUV6alYwFh4PQ6qLVxTFHqf+eaO36awq/lzjT3Xez+Ls=
+X-Received: by 2002:a5b:b4e:: with SMTP id b14-v6mr7596340ybr.463.1529968411904;
+ Mon, 25 Jun 2018 16:13:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b48dd53e-f032-3afb-cc48-f47db7e04ecd@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062523-0072-0000-0000-000003745B4C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052308; UDB=6.00539452; IPR=6.00830233;
- MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-25 23:07:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062523-0073-0000-0000-0000487C3428
-Message-Id: <20180625230934.GT3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806250261
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 16:13:31
+ -0700 (PDT)
+In-Reply-To: <20180625225609.GA181665@gmail.com>
+References: <20180625211026.15819-1-keescook@chromium.org> <20180625211026.15819-11-keescook@chromium.org>
+ <20180625225609.GA181665@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 25 Jun 2018 16:13:31 -0700
+X-Google-Sender-Auth: lZz4HLcLOw5dCHXQdCTjtbWayFQ
+Message-ID: <CAGXu5j+XG7y1RGMLt_=cDyiXxVhQX78_6VdHG3qwzdcwt8n7vw@mail.gmail.com>
+Subject: Re: [dm-devel] [PATCH v2 10/11] crypto: ahash: Remove VLA usage for AHASH_REQUEST_ON_STACK
+To:     Eric Biggers <ebiggers3@gmail.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        qat-linux@intel.com, LKML <linux-kernel@vger.kernel.org>,
+        dm-devel@redhat.com, linux-crypto <linux-crypto@vger.kernel.org>,
+        Lars Persson <larper@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 03:53:34PM -0700, Randy Dunlap wrote:
-> On 06/25/18 15:47, Paul E. McKenney wrote:
-> > This commit simply changes some copy-pasta call_rcu() instances to
-> 
->                                        ^^^^^ cute :)
+On Mon, Jun 25, 2018 at 3:56 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> On Mon, Jun 25, 2018 at 02:10:25PM -0700, Kees Cook wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this caps
+>> the ahash request size similar to the other limits and adds a sanity
+>> check at registration. Unfortunately, these reqsizes can be huge. Looking
+>> at all callers of crypto_ahash_set_reqsize(), the largest appears to be
+>> 664 bytes, based on a combination of manual inspection and pahole output:
+>>
+>> 4       dcp_sha_req_ctx
+>> 40      crypto4xx_ctx
+>> 52      hash_req_ctx
+>> 80      ahash_request
+>> 88      rk_ahash_rctx
+>> 104     sun4i_req_ctx
+>> 200     mcryptd_hash_request_ctx
+>> 216     safexcel_ahash_req
+>> 228     sha1_hash_ctx
+>> 228     sha256_hash_ctx
+>> 248     img_hash_request_ctx
+>> 252     mtk_sha_reqctx
+>> 276     sahara_sha_reqctx
+>> 304     mv_cesa_ahash_req
+>> 316     iproc_reqctx_s
+>> 320     caam_hash_state
+>> 320     qce_sha_reqctx
+>> 356     sha512_hash_ctx
+>> 384     ahash_req_ctx
+>> 400     chcr_ahash_req_ctx
+>> 416     stm32_hash_request_ctx
+>> 432     talitos_ahash_req_ctx
+>> 462     atmel_sha_reqctx
+>> 496     ccp_aes_cmac_req_ctx
+>> 616     ccp_sha_req_ctx
+>> 664     artpec6_hash_request_context
+>>
+>> So, this chooses 720 as a larger "round" number for the max.
+>>
+>
+> This isn't accounting for the cases where a hash algorithm is "wrapped" with
+> another one, which increases the request size.  For example, "sha512_mb" ends up
+> with a request size of
+>
+>         sizeof(struct ahash_request) +
+>         sizeof(struct mcryptd_hash_request_ctx) +
+>         sizeof(struct ahash_request) +
+>         sizeof(struct sha512_hash_ctx)
+>
+>         == 808 bytes, on x86_64 with CONFIG_DEBUG_SG enabled.
+>
+>         (Note also that structure sizes can vary depending on the architecture
+>          and the kernel config.)
+>
+> So, with the self-tests enabled your new BUG_ON() is hit on boot:
 
-Glad you like it!  I was unable to determine if this copy-pasta
-constituted copy-spaghetti, copy-macaroni, copy-cannelloni, copy-rotelle,
-copy-linguini, copy-lasagne, or something else altogether.
+Ugh, right. Wow, that _really_ gets big. Which are likely to wrap
+which others? Looks like software case plus hardware case? i.e.
+mcryptd_hash_request_ctx with artpec6_hash_request_context is the
+largest we could get? So: 80 + 80 + 200 + 664 ? Oh, hilarious. That
+comes exactly to 1024. :P
 
-You all can decide for yourselves.  ;-)
+So ... 1024?
 
-							Thanx, Paul
+-Kees
 
-> > the correct call_srcu().
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > ---
-> >  kernel/rcu/srcutree.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> 
-> -- 
-> ~Randy
-> 
-
+-- 
+Kees Cook
+Pixel Security
