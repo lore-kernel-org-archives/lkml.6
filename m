@@ -2,125 +2,330 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BE8C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5170AC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 843DA2563D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54E92563E
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:56:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MUPm1eHY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 843DA2563D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="sscVSUbH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54E92563E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754579AbeFYI4U (ORCPT
+        id S1754719AbeFYI4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:56:20 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46386 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750919AbeFYI4S (ORCPT
+        Mon, 25 Jun 2018 04:56:51 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:40873 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754610AbeFYI4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:56:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N3lf4SlXfq0ZO0vCyrEw6Gaua8j5NFntXtt8b9BlZeE=; b=MUPm1eHYUvgDgrKiC2+oelLXl
-        +4mpoZO5X+7tQSDqKPXiv70JZ45ReVFEbvddVRyaoFcB3NV1Z5FQZoVqm+GA/78ivTBwg2PLFEwvA
-        tpJfRR7i1O+OEgFxqUtPzz0Y/YIVxXrBmroYcLopBDWiXSsy6RNBqZqZNhyNUqEvoigwU0jSQ1R2u
-        vsAn36wDar1pSJzKpEE/CZxzNzH/2DIZZRAGqwnb7brDDMn51JRa7Rw7MkhlHEQ4M9rjOYgR/mJpL
-        xzmnBtxWgzEPpdE2SGfmhHaFM+SQZsDnyPsG/RK0paJfU2NHnorryNgxEvafRtQBJoZhUNIGXW3E3
-        XdG6hQnng==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXNHn-0006Ye-8K; Mon, 25 Jun 2018 08:55:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E2BCB2029F1DB; Mon, 25 Jun 2018 10:55:43 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 10:55:43 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, prarit@redhat.com, feng.tang@intel.com,
-        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v12 10/11] sched: early boot clock
-Message-ID: <20180625085543.GT2494@hirez.programming.kicks-ass.net>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
- <20180621212518.19914-11-pasha.tatashin@oracle.com>
+        Mon, 25 Jun 2018 04:56:47 -0400
+Received: by mail-it0-f66.google.com with SMTP id 188-v6so11188373ita.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 01:56:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=j+i7kHPKtBxahNlNBJMLAammIcnZ9/AU8/UqJYQsEDw=;
+        b=sscVSUbHDLE6WDZgBJ29M9EYXTzqQmCH1UYok4LadoDJHlni1c2y2TaHC2RwgGgDQY
+         5vo3Pe2lNip6TKG0bpIzJX+90yhSdvbfsMd8JvQKaQv2lCcga4zCsIUBLjzPpqFNSaci
+         UWfjWJ4Dg/I201PNGIFxrMCPRyQZs1AKvCVHepTfdnd2xfHX8Q29+uaJKqKM62HP5w1/
+         80Gn6Tq37GDOcaHSrvjGIdURihABsbqTr37Ug/I0521F4zkSsjiXQZEfq90fiGmLLV9J
+         InZkdYbz7XdBGkSzh0vn6YFk0/rj8RimFrCmNjn+12GsBk6cS6kwmCKogJf6b9vad8ZS
+         hStg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=j+i7kHPKtBxahNlNBJMLAammIcnZ9/AU8/UqJYQsEDw=;
+        b=s5NNS/Nv0JmAgxyjYsyLByVHmmgTT81DMGOtFx5fOuT732pxrd+3tUL3iPOriZ12nu
+         Qsc6ghcGyr0ir1ee3hp98PuF+rBRJUmCmKybuPYTiz5635NamIxivDpKgV447uQh2iHT
+         5SEcgeWpWOQNDg03301mSRbvtFLa/Kn8D9ThpNEgu+rOv+5wz+Btm8VPBOISnHO00dKW
+         lW0PBzbw3NfOilYx6gB1w2Wm3xYmUFxuts1mCHHYQBWMZNUtJeolN9z/MXDX/MXAiI2L
+         0vjyC4M1Bb64Nr833Gx/jtceEz1CU2cZDPPT5lxdDLjAW0VNr+TF/LyrFH/gSo5RLBss
+         GdBw==
+X-Gm-Message-State: APt69E2Umz1YePpXqA75NW5Oj0S1w2BLtNNZ0Qq7P5yxdir285DY0N50
+        hRLG5soVKhz1Gt8mqqoUcwbR/MPxWI8ou2SlesDY1+IX
+X-Google-Smtp-Source: ADUXVKIvy8oU0HXm3SG5j/InVbJeNOQs+/GPSWQ+0ROPt/FbVUuS+tR/teVdpShqpOoAlSWYTAZDJ0CmCf/mt3nhoyc=
+X-Received: by 2002:a24:7a4b:: with SMTP id a72-v6mr172165itc.123.1529917007103;
+ Mon, 25 Jun 2018 01:56:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621212518.19914-11-pasha.tatashin@oracle.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a4f:4642:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 01:56:46
+ -0700 (PDT)
+In-Reply-To: <20180311123815.17916-4-ard.biesheuvel@linaro.org>
+References: <20180311123815.17916-1-ard.biesheuvel@linaro.org> <20180311123815.17916-4-ard.biesheuvel@linaro.org>
+From:   Martijn Coenen <maco@android.com>
+Date:   Mon, 25 Jun 2018 10:56:46 +0200
+Message-ID: <CAB0TPYGd1jQzgc2q+fJZif4LVQTPnOrD4b6w0YSAzgAB0oL86g@mail.gmail.com>
+Subject: Re: [PATCH v8 3/6] module: use relative references for __ksymtab entries
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Mackerras <paulus@samba.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 05:25:17PM -0400, Pavel Tatashin wrote:
-> Allow sched_clock() to be used before schec_clock_init() and
-> sched_clock_init_late() are called. This provides us with a way to get
-> early boot timestamps on machines with unstable clocks.
+Hi Ard,
 
-There are !x86 architectures that use this code and might not expect to
-have their sched_clock() called quite that early. Please verify.
+> --- a/arch/x86/include/asm/export.h
+> +++ /dev/null
+> @@ -1,5 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -#ifdef CONFIG_64BIT
+> -#define KSYM_ALIGN 16
+> -#endif
 
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> ---
->  kernel/sched/clock.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-> index 10c83e73837a..f034392b0f6c 100644
-> --- a/kernel/sched/clock.c
-> +++ b/kernel/sched/clock.c
-> @@ -205,6 +205,11 @@ void clear_sched_clock_stable(void)
->   */
->  static int __init sched_clock_init_late(void)
+Why remove the 16-byte alignment here? I was working on some other
+code and ran into this 16-byte alignment, but I'm not sure why it's
+needed on x86_64 in the first place. Possibly because the ABI requires
+the stack to be 16-byte aligned when using sse instructions?
+
+Thanks,
+Martijn
+
+> -#include <asm-generic/export.h>
+> diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+> index 719db1968d81..97ce606459ae 100644
+> --- a/include/asm-generic/export.h
+> +++ b/include/asm-generic/export.h
+> @@ -5,12 +5,10 @@
+>  #define KSYM_FUNC(x) x
+>  #endif
+>  #ifdef CONFIG_64BIT
+> -#define __put .quad
+>  #ifndef KSYM_ALIGN
+>  #define KSYM_ALIGN 8
+>  #endif
+>  #else
+> -#define __put .long
+>  #ifndef KSYM_ALIGN
+>  #define KSYM_ALIGN 4
+>  #endif
+> @@ -25,6 +23,16 @@
+>  #define KSYM(name) name
+>  #endif
+>
+> +.macro __put, val, name
+> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> +       .long   \val - ., \name - .
+> +#elif defined(CONFIG_64BIT)
+> +       .quad   \val, \name
+> +#else
+> +       .long   \val, \name
+> +#endif
+> +.endm
+> +
+>  /*
+>   * note on .section use: @progbits vs %progbits nastiness doesn't matter,
+>   * since we immediately emit into those sections anyway.
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index ab4711c63601..0a9328ea9dbd 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -280,6 +280,25 @@ unsigned long read_word_at_a_time(const void *addr)
+>
+>  #endif /* __KERNEL__ */
+>
+> +/*
+> + * Force the compiler to emit 'sym' as a symbol, so that we can reference
+> + * it from inline assembler. Necessary in case 'sym' could be inlined
+> + * otherwise, or eliminated entirely due to lack of references that are
+> + * visible to the compiler.
+> + */
+> +#define __ADDRESSABLE(sym) \
+> +       static void * const __attribute__((section(".discard"), used))  \
+> +               __PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
+> +
+> +/**
+> + * offset_to_ptr - convert a relative memory offset to an absolute pointer
+> + * @off:       the address of the 32-bit offset value
+> + */
+> +static inline void *offset_to_ptr(const int *off)
+> +{
+> +       return (void *)((unsigned long)off + *off);
+> +}
+> +
+>  #endif /* __ASSEMBLY__ */
+>
+>  #ifndef __optimize
+> diff --git a/include/linux/export.h b/include/linux/export.h
+> index 25005b55b079..04c78e6bfec9 100644
+> --- a/include/linux/export.h
+> +++ b/include/linux/export.h
+> @@ -24,12 +24,6 @@
+>  #define VMLINUX_SYMBOL_STR(x) __VMLINUX_SYMBOL_STR(x)
+>
+>  #ifndef __ASSEMBLY__
+> -struct kernel_symbol
+> -{
+> -       unsigned long value;
+> -       const char *name;
+> -};
+> -
+>  #ifdef MODULE
+>  extern struct module __this_module;
+>  #define THIS_MODULE (&__this_module)
+> @@ -60,17 +54,47 @@ extern struct module __this_module;
+>  #define __CRC_SYMBOL(sym, sec)
+>  #endif
+>
+> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> +#include <linux/compiler.h>
+> +/*
+> + * Emit the ksymtab entry as a pair of relative references: this reduces
+> + * the size by half on 64-bit architectures, and eliminates the need for
+> + * absolute relocations that require runtime processing on relocatable
+> + * kernels.
+> + */
+> +#define __KSYMTAB_ENTRY(sym, sec)                                      \
+> +       __ADDRESSABLE(sym)                                              \
+> +       asm("   .section \"___ksymtab" sec "+" #sym "\", \"a\"  \n"     \
+> +           "   .balign 8                                       \n"     \
+> +           VMLINUX_SYMBOL_STR(__ksymtab_##sym) ":              \n"     \
+> +           "   .long " VMLINUX_SYMBOL_STR(sym) "- .            \n"     \
+> +           "   .long " VMLINUX_SYMBOL_STR(__kstrtab_##sym) "- .\n"     \
+> +           "   .previous                                       \n")
+> +
+> +struct kernel_symbol {
+> +       int value_offset;
+> +       int name_offset;
+> +};
+> +#else
+> +#define __KSYMTAB_ENTRY(sym, sec)                                      \
+> +       static const struct kernel_symbol __ksymtab_##sym               \
+> +       __attribute__((section("___ksymtab" sec "+" #sym), used))       \
+> +       = { (unsigned long)&sym, __kstrtab_##sym }
+> +
+> +struct kernel_symbol {
+> +       unsigned long value;
+> +       const char *name;
+> +};
+> +#endif
+> +
+>  /* For every exported symbol, place a struct in the __ksymtab section */
+>  #define ___EXPORT_SYMBOL(sym, sec)                                     \
+>         extern typeof(sym) sym;                                         \
+>         __CRC_SYMBOL(sym, sec)                                          \
+>         static const char __kstrtab_##sym[]                             \
+> -       __attribute__((section("__ksymtab_strings"), aligned(1)))       \
+> +       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
+>         = VMLINUX_SYMBOL_STR(sym);                                      \
+> -       static const struct kernel_symbol __ksymtab_##sym               \
+> -       __used                                                          \
+> -       __attribute__((section("___ksymtab" sec "+" #sym), used))       \
+> -       = { (unsigned long)&sym, __kstrtab_##sym }
+> +       __KSYMTAB_ENTRY(sym, sec)
+>
+>  #if defined(__DISABLE_EXPORTS)
+>
+> diff --git a/kernel/module.c b/kernel/module.c
+> index ad2d420024f6..b4782cfbb79b 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -549,12 +549,30 @@ static bool check_symbol(const struct symsearch *syms,
+>         return true;
+>  }
+>
+> +static unsigned long kernel_symbol_value(const struct kernel_symbol *sym)
+> +{
+> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> +       return (unsigned long)offset_to_ptr(&sym->value_offset);
+> +#else
+> +       return sym->value;
+> +#endif
+> +}
+> +
+> +static const char *kernel_symbol_name(const struct kernel_symbol *sym)
+> +{
+> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+> +       return offset_to_ptr(&sym->name_offset);
+> +#else
+> +       return sym->name;
+> +#endif
+> +}
+> +
+>  static int cmp_name(const void *va, const void *vb)
 >  {
-> +	/* Transition to unstable clock from early clock */
-
-This is wrong... or at least it smells horribly.
-
-This is not the point where we transition from early to unstable, that
-is in fact in sched_clock_init.
-
-This function, sched_clock_init_late(), is where we attempt to
-transition from unstable to stable. And this is _waaaay_ after SMP init.
-
-> +	local_irq_disable();
-> +	__gtod_offset = sched_clock() + __sched_clock_offset - ktime_get_ns();
-> +	local_irq_enable();
-
-This might work in sched_clock_init(), which is pre-SMP.
-
->  	sched_clock_running = 2;
->  	/*
->  	 * Ensure that it is impossible to not do a static_key update.
-> @@ -350,8 +355,9 @@ u64 sched_clock_cpu(int cpu)
->  	if (sched_clock_stable())
->  		return sched_clock() + __sched_clock_offset;
->  
-> -	if (unlikely(!sched_clock_running))
-> -		return 0ull;
-> +	/* Use early clock until sched_clock_init_late() */
-> +	if (unlikely(sched_clock_running < 2))
-> +		return sched_clock() + __sched_clock_offset;
-
-And then this remains !sched_clock_running, except instead of 0, you
-then return sched_clock() + __sched_clock_offset;
-
->  	preempt_disable_notrace();
->  	scd = cpu_sdc(cpu);
-
-
+>         const char *a;
+>         const struct kernel_symbol *b;
+>         a = va; b = vb;
+> -       return strcmp(a, b->name);
+> +       return strcmp(a, kernel_symbol_name(b));
+>  }
+>
+>  static bool find_symbol_in_section(const struct symsearch *syms,
+> @@ -2198,7 +2216,7 @@ void *__symbol_get(const char *symbol)
+>                 sym = NULL;
+>         preempt_enable();
+>
+> -       return sym ? (void *)sym->value : NULL;
+> +       return sym ? (void *)kernel_symbol_value(sym) : NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(__symbol_get);
+>
+> @@ -2228,10 +2246,12 @@ static int verify_export_symbols(struct module *mod)
+>
+>         for (i = 0; i < ARRAY_SIZE(arr); i++) {
+>                 for (s = arr[i].sym; s < arr[i].sym + arr[i].num; s++) {
+> -                       if (find_symbol(s->name, &owner, NULL, true, false)) {
+> +                       if (find_symbol(kernel_symbol_name(s), &owner, NULL,
+> +                                       true, false)) {
+>                                 pr_err("%s: exports duplicate symbol %s"
+>                                        " (owned by %s)\n",
+> -                                      mod->name, s->name, module_name(owner));
+> +                                      mod->name, kernel_symbol_name(s),
+> +                                      module_name(owner));
+>                                 return -ENOEXEC;
+>                         }
+>                 }
+> @@ -2280,7 +2300,7 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
+>                         ksym = resolve_symbol_wait(mod, info, name);
+>                         /* Ok if resolved.  */
+>                         if (ksym && !IS_ERR(ksym)) {
+> -                               sym[i].st_value = ksym->value;
+> +                               sym[i].st_value = kernel_symbol_value(ksym);
+>                                 break;
+>                         }
+>
+> @@ -2540,7 +2560,7 @@ static int is_exported(const char *name, unsigned long value,
+>                 ks = lookup_symbol(name, __start___ksymtab, __stop___ksymtab);
+>         else
+>                 ks = lookup_symbol(name, mod->syms, mod->syms + mod->num_syms);
+> -       return ks != NULL && ks->value == value;
+> +       return ks != NULL && kernel_symbol_value(ks) == value;
+>  }
+>
+>  /* As per nm */
+> --
+> 2.15.1
+>
