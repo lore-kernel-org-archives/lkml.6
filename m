@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDF1C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0872DC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAFAF25A3F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0D6F25A3F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:18:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bOGtUz7+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAFAF25A3F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="I2c2cGXp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0D6F25A3F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933512AbeFYNPe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:15:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36502 "EHLO
+        id S934121AbeFYNSP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:18:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36574 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752930AbeFYNPc (ORCPT
+        with ESMTP id S1755530AbeFYNPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:15:32 -0400
+        Mon, 25 Jun 2018 09:15:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=xj1VRLiN0oeZWHaN6cRlrfD/LPVl1POuMH6QLBQDFYc=; b=bOGtUz7+TETp
-        74g5RsDUtopKkEOLuebsgV/rTWtVOlHghXORO/HyK9naJUXRUPoRFFtWHlaEn5yIU3mPk4MwxigpC
-        WwG5u+m5ysCau/pYfpWWsJlRte81413pbcgvyuw8f3pcbpa0MHFYloC/qU4TtH8MAXtU/1jTL77Ni
-        Hxer4=;
+        List-Archive; bh=FlUHWtkQYMAAxo+drzOHQaFKSyHrsSjJmmAl9k9bUwM=; b=I2c2cGXp+m/S
+        FpMqtb87xzYwKZ/0mSongXlVRBGcYHLaQbyOwb+K4eJO1CD90SAsDBF8nlRMG7b8zb65v1ug40MRK
+        4G9G+Wetv0vmgn+D5X9sIft46XMFSzEk7yBYj4wnRgYk7Zh/I75D6qBq/jWfzlIo8mLq7JxSSH6eZ
+        nWoUQ=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fXRKy-0007rb-Nt; Mon, 25 Jun 2018 13:15:20 +0000
+        id 1fXRKw-0007rS-Ie; Mon, 25 Jun 2018 13:15:18 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fXRKy-0008Lb-A6; Mon, 25 Jun 2018 14:15:20 +0100
+        id 1fXRKw-0008K7-4P; Mon, 25 Jun 2018 14:15:18 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Vinod Koul <vkoul@kernel.org>, Daniel Mack <daniel@zonque.org>,
+Cc:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
         Boris Brezillon <boris.brezillon@free-electrons.com>,
@@ -59,10 +59,10 @@ Cc:     Vinod Koul <vkoul@kernel.org>, Daniel Mack <daniel@zonque.org>,
         linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org,
         dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-media@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "dmaengine: pxa: document pxad_param" to the asoc tree
-In-Reply-To:  <20180524070703.11901-11-robert.jarzmik@free.fr>
-Message-Id: <E1fXRKy-0008Lb-A6@debutante>
-Date:   Mon, 25 Jun 2018 14:15:20 +0100
+Subject: Applied "ARM: pxa: remove the DMA IO resources" to the asoc tree
+In-Reply-To:  <20180524070703.11901-13-robert.jarzmik@free.fr>
+Message-Id: <E1fXRKw-0008K7-4P@debutante>
+Date:   Mon, 25 Jun 2018 14:15:18 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   dmaengine: pxa: document pxad_param
+   ARM: pxa: remove the DMA IO resources
 
 has been applied to the asoc tree at
 
@@ -95,40 +95,244 @@ to this mail.
 Thanks,
 Mark
 
-From b6d1a17f4729e4fda5740a855da91d202db2c118 Mon Sep 17 00:00:00 2001
+From b77ed2e6d61d40117272be1b2377c5dfd101e9cd Mon Sep 17 00:00:00 2001
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Sun, 17 Jun 2018 19:02:14 +0200
-Subject: [PATCH] dmaengine: pxa: document pxad_param
+Date: Sun, 17 Jun 2018 19:02:16 +0200
+Subject: [PATCH] ARM: pxa: remove the DMA IO resources
 
-Add some documentation for the pxad_param structure, and describe the
-contract behind the minimal required priority of a DMA channel.
+As the last driver using the former mechanism to acquire the DMA
+requestor line has be converted to the dma_slave_map, remove all these
+resources from the PXA devices.
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Vinod Koul <vkoul@kernel.org>
 ---
- include/linux/dma/pxa-dma.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/mach-pxa/devices.c | 136 ------------------------------------
+ 1 file changed, 136 deletions(-)
 
-diff --git a/include/linux/dma/pxa-dma.h b/include/linux/dma/pxa-dma.h
-index e56ec7af4fd7..9fc594f69eff 100644
---- a/include/linux/dma/pxa-dma.h
-+++ b/include/linux/dma/pxa-dma.h
-@@ -9,6 +9,15 @@ enum pxad_chan_prio {
- 	PXAD_PRIO_LOWEST,
+diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
+index 1e8915fc340d..5a16ea74e28a 100644
+--- a/arch/arm/mach-pxa/devices.c
++++ b/arch/arm/mach-pxa/devices.c
+@@ -60,16 +60,6 @@ static struct resource pxamci_resources[] = {
+ 		.end	= IRQ_MMC,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		.start	= 21,
+-		.end	= 21,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		.start	= 22,
+-		.end	= 22,
+-		.flags	= IORESOURCE_DMA,
+-	},
  };
  
-+/**
-+ * struct pxad_param - dma channel request parameters
-+ * @drcmr: requestor line number
-+ * @prio: minimal mandatory priority of the channel
-+ *
-+ * If a requested channel is granted, its priority will be at least @prio,
-+ * ie. if PXAD_PRIO_LOW is required, the requested channel will be either
-+ * PXAD_PRIO_LOW, PXAD_PRIO_NORMAL or PXAD_PRIO_HIGHEST.
-+ */
- struct pxad_param {
- 	unsigned int drcmr;
- 	enum pxad_chan_prio prio;
+ static u64 pxamci_dmamask = 0xffffffffUL;
+@@ -407,16 +397,6 @@ static struct resource pxa_ir_resources[] = {
+ 		.end	= 0x40700023,
+ 		.flags  = IORESOURCE_MEM,
+ 	},
+-	[5] = {
+-		.start  = 17,
+-		.end	= 17,
+-		.flags  = IORESOURCE_DMA,
+-	},
+-	[6] = {
+-		.start  = 18,
+-		.end	= 18,
+-		.flags  = IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa_device_ficp = {
+@@ -545,18 +525,6 @@ static struct resource pxa25x_resource_ssp[] = {
+ 		.end	= IRQ_SSP,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* DRCMR for RX */
+-		.start	= 13,
+-		.end	= 13,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		/* DRCMR for TX */
+-		.start	= 14,
+-		.end	= 14,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa25x_device_ssp = {
+@@ -583,18 +551,6 @@ static struct resource pxa25x_resource_nssp[] = {
+ 		.end	= IRQ_NSSP,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* DRCMR for RX */
+-		.start	= 15,
+-		.end	= 15,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		/* DRCMR for TX */
+-		.start	= 16,
+-		.end	= 16,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa25x_device_nssp = {
+@@ -621,18 +577,6 @@ static struct resource pxa25x_resource_assp[] = {
+ 		.end	= IRQ_ASSP,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* DRCMR for RX */
+-		.start	= 23,
+-		.end	= 23,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		/* DRCMR for TX */
+-		.start	= 24,
+-		.end	= 24,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa25x_device_assp = {
+@@ -751,18 +695,6 @@ static struct resource pxa27x_resource_ssp1[] = {
+ 		.end	= IRQ_SSP,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* DRCMR for RX */
+-		.start	= 13,
+-		.end	= 13,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		/* DRCMR for TX */
+-		.start	= 14,
+-		.end	= 14,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa27x_device_ssp1 = {
+@@ -789,18 +721,6 @@ static struct resource pxa27x_resource_ssp2[] = {
+ 		.end	= IRQ_SSP2,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* DRCMR for RX */
+-		.start	= 15,
+-		.end	= 15,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		/* DRCMR for TX */
+-		.start	= 16,
+-		.end	= 16,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa27x_device_ssp2 = {
+@@ -827,18 +747,6 @@ static struct resource pxa27x_resource_ssp3[] = {
+ 		.end	= IRQ_SSP3,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* DRCMR for RX */
+-		.start	= 66,
+-		.end	= 66,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		/* DRCMR for TX */
+-		.start	= 67,
+-		.end	= 67,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa27x_device_ssp3 = {
+@@ -895,16 +803,6 @@ static struct resource pxa3xx_resources_mci2[] = {
+ 		.end	= IRQ_MMC2,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		.start	= 93,
+-		.end	= 93,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		.start	= 94,
+-		.end	= 94,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa3xx_device_mci2 = {
+@@ -934,16 +832,6 @@ static struct resource pxa3xx_resources_mci3[] = {
+ 		.end	= IRQ_MMC3,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		.start	= 100,
+-		.end	= 100,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		.start	= 101,
+-		.end	= 101,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ struct platform_device pxa3xx_device_mci3 = {
+@@ -1021,18 +909,6 @@ static struct resource pxa3xx_resources_nand[] = {
+ 		.end	= IRQ_NAND,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* DRCMR for Data DMA */
+-		.start	= 97,
+-		.end	= 97,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		/* DRCMR for Command DMA */
+-		.start	= 99,
+-		.end	= 99,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ static u64 pxa3xx_nand_dma_mask = DMA_BIT_MASK(32);
+@@ -1066,18 +942,6 @@ static struct resource pxa3xx_resource_ssp4[] = {
+ 		.end	= IRQ_SSP4,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+-	[2] = {
+-		/* DRCMR for RX */
+-		.start	= 2,
+-		.end	= 2,
+-		.flags	= IORESOURCE_DMA,
+-	},
+-	[3] = {
+-		/* DRCMR for TX */
+-		.start	= 3,
+-		.end	= 3,
+-		.flags	= IORESOURCE_DMA,
+-	},
+ };
+ 
+ /*
 -- 
 2.18.0.rc2
 
