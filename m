@@ -3,48 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F42DC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 605DDC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE6F26045
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:56:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE6F26045
+	by mail.kernel.org (Postfix) with ESMTP id EE59226049
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE59226049
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965067AbeFYS4I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 14:56:08 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38880 "EHLO mail.bootlin.com"
+        id S965026AbeFYTBF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 15:01:05 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38916 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964859AbeFYS4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 14:56:07 -0400
+        id S964908AbeFYTBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 15:01:03 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3B1D7206D8; Mon, 25 Jun 2018 20:56:05 +0200 (CEST)
+        id 6C925206D8; Mon, 25 Jun 2018 21:01:01 +0200 (CEST)
 Received: from localhost (unknown [88.128.82.118])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D4E8E203B4;
-        Mon, 25 Jun 2018 20:56:04 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 20:56:04 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1F4C8203B4;
+        Mon, 25 Jun 2018 21:01:01 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 21:01:00 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 0/3] drm/panel: Add Ilitek ILI9881c controller driver
-Message-ID: <20180625185604.v2zwleb7gim63clp@flea>
-References: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 7/9] media: cedrus: Move IRQ maintainance to
+ cedrus_dec_ops
+Message-ID: <20180625190100.rlqbcafhktypotgj@flea>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+ <20180613140714.1686-8-maxime.ripard@bootlin.com>
+ <d8e471608643a014d0961c82256753e5fd0c5060.camel@bootlin.com>
+ <03f66b80b1a60c4fe62822b08eb5d97c0539aac0.camel@bootlin.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vz5rcg25iuvkhl63"
+        protocol="application/pgp-signature"; boundary="korxkvl2ni3lg3ka"
 Content-Disposition: inline
-In-Reply-To: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
+In-Reply-To: <03f66b80b1a60c4fe62822b08eb5d97c0539aac0.camel@bootlin.com>
 User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,26 +57,118 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---vz5rcg25iuvkhl63
+--korxkvl2ni3lg3ka
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 29, 2018 at 11:49:13AM +0200, Maxime Ripard wrote:
-> Hi,
+On Mon, Jun 25, 2018 at 05:49:58PM +0200, Paul Kocialkowski wrote:
+> On Mon, 2018-06-25 at 17:38 +0200, Paul Kocialkowski wrote:
+> > Hi,
+> >=20
+> > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> > > The IRQ handler up until now was hardcoding the use of the MPEG engin=
+e to
+> > > read the interrupt status, clear it and disable the interrupts.
+> > >=20
+> > > Obviously, that won't work really well with the introduction of new c=
+odecs
+> > > that use a separate engine with a separate register set.
+> > >=20
+> > > In order to make this more future proof, introduce new decodec operat=
+ions
+> > > to deal with the interrupt management. The only one missing is the on=
+e to
+> > > enable the interrupts in the first place, but that's taken care of by=
+ the
+> > > trigger hook for now.
+> >=20
+> > Here's another comment about an issue I just figured out.
+> >=20
+> > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > ---
+> > >  .../sunxi/cedrus/sunxi_cedrus_common.h        |  9 +++++
+> > >  .../platform/sunxi/cedrus/sunxi_cedrus_hw.c   | 21 ++++++------
+> > >  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 33 +++++++++++++++++=
+++
+> > >  3 files changed, 53 insertions(+), 10 deletions(-)
+> > >=20
+> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.=
+h b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > index c2e2c92d103b..a2a507eb9fc9 100644
+> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > @@ -108,7 +108,16 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer=
+(const struct vb2_buffer *p)
+> > >  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
+> > >  }
+> > > =20
+> > > +enum sunxi_cedrus_irq_status {
+> > > +	SUNXI_CEDRUS_IRQ_NONE,
+> > > +	SUNXI_CEDRUS_IRQ_ERROR,
+> > > +	SUNXI_CEDRUS_IRQ_OK,
+> > > +};
+> > > +
+> > >  struct sunxi_cedrus_dec_ops {
+> > > +	void (*irq_clear)(struct sunxi_cedrus_ctx *ctx);
+> > > +	void (*irq_disable)(struct sunxi_cedrus_ctx *ctx);
+> > > +	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx =
+*ctx);
+> > >  	void (*setup)(struct sunxi_cedrus_ctx *ctx,
+> > >  		      struct sunxi_cedrus_run *run);
+> > >  	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
+> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/=
+drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > > index bb46a01214e0..6b97cbd2834e 100644
+> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > > @@ -77,27 +77,28 @@ static irqreturn_t sunxi_cedrus_ve_irq(int irq, v=
+oid *dev_id)
+> > >  	struct sunxi_cedrus_ctx *ctx;
+> > >  	struct sunxi_cedrus_buffer *src_buffer, *dst_buffer;
+> > >  	struct vb2_v4l2_buffer *src_vb, *dst_vb;
+> > > +	enum sunxi_cedrus_irq_status status;
+> > >  	unsigned long flags;
+> > > -	unsigned int value, status;
+> > > =20
+> > >  	spin_lock_irqsave(&dev->irq_lock, flags);
+> > > =20
+> > > -	/* Disable MPEG interrupts and stop the MPEG engine */
+> > > -	value =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL);
+> > > -	sunxi_cedrus_write(dev, value & (~0xf), VE_MPEG_CTRL);
+> > > -
+> > > -	status =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS);
+> > > -	sunxi_cedrus_write(dev, 0x0000c00f, VE_MPEG_STATUS);
+> > > -	sunxi_cedrus_engine_disable(dev);
+> >=20
+> > This call was dropped from the code reorganization. What it intentional?
+> >=20
+> > IMO, it should be brought back to the irq_disable ops for MPEG2 (and the
+> > same probably applies to H264).
 >=20
-> Here is the next version of the patches to add the support for the Ilitek
-> ILI9881c panel controller.
+> Actually, this doesn't seem like the right place to put it.
 >=20
-> This used to be a part of the larger DSI support series for the Allwinner
-> SoCs whose patches have been since merged and are obviously not part of
-> this series anymore.
+> Looking at the sunxi_engine_enable function, explicitly passing the
+> codec as an argument and calling that function from each codec's code
+> feels strange.
 >=20
-> Let me know what you think,
-> Maxime
+> We should probably break down these functions
+> (sunxi_engine_enable/sunxi_engine_disable) into codec ops. The
+> start/stop couple seems like a good fit, but it brings up the following
+> question: do we want to disable the engine between each frame or not?
+>=20
+> I really don't know how significant the power saving benefits are and
+> what downsides there might be.
+>=20
+> What do you think?
 
-Applied the two first patches, with Linus' Reviewed-By and Daniel's
-Acked-by as discussed on IRC.
+If we don't need to disable it between each frames, then let's keep it
+enabled.
+
+Without any number, and considering the current state of power
+management (which is inexistent on this driver, and close to for the
+whole platform), wasting a bit of power if we do isn't really a big
+deal.
 
 Maxime
 
@@ -80,24 +177,24 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---vz5rcg25iuvkhl63
+--korxkvl2ni3lg3ka
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsxOsMACgkQ0rTAlCFN
-r3SjSg/+MP/Heix63tSoE21VIQnK+OW5TVMKyfAgwHikaJvH4LKl8NE05PBkJQ+h
-eA0P93i8Mi0Yh5Zq442jTSSHG3WZER43CACTAv8eppJpwzLzNeLi9gqrphxiVP7n
-k589CrMxr+GD7cl+Konw7up1WofySeNfod6/RWHymabSQIsOESiiiuqMDWYgZyZf
-zOHainY12wvX8GB7P8ns+czlyxzXoNkt7FLIUNF5Yf2lUM/fRREwF9XtG1/JAAh4
-vOtAQ94N7PVyhAPaKQzacZjgqeBJDk8z8n9MrRuCo3c4ByDzRTIW/B4hqtlRfla7
-vebFyVryuqjRqyxzj7lzEJvedb/cHFZ/E3ErARZUemSxmasyv1utRc9DelF02J2r
-ady8s6cDLEpH8xKkkSGDAdOcvgtwsvxDXHSZrXSok+4WXZkMauYsbSIId38OqMg+
-dnVGIxMnGLRt3cW5cVNTgSWih12WFZcIj+BGRHN0s9Mb2UIHGrGiNSZWLrm6T8U9
-q8aAMvvfHrzQVGfIfFYDZ4fu1VkHVroenjl3Xk7FtekNJCQSeR792TaEfte7cna2
-TPMPZCp609cSixKhX79SlXjBvj6mje3ZnEM5vnJfhgOE+dG++6iWzFX4A0WlG/eK
-Og/CG4IDkS/ET2IOKlxgDKDGyKUR72xBmftWsmiGvUnY4qsSVzs=
-=ZXyf
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsxO+sACgkQ0rTAlCFN
+r3Qg1w/+N913dfkZ13U/wsthm2EbOh2cvc6XHCyyBuXu9tXGFs/dGBD+ZfBAkqFJ
+U0xqV3+b8QM/CDSessCouy7A3vDJOX1mTk6/KuygmppUpZ+MSzOVie9izTaZm1Hb
+qgdMWsYO7F6j6HjS9E8cz0Cf+IE324a0//23kx9QycUyKEAKGGzQWjIfuHf/WsMc
+10EFXGRE5WXHrPxvwDyFxRgFveG2aFoVa8aS2w4CrhQrUn+cvpIcBmQgFcrw+fbO
+YPV90ZOK95U24htjliwalwB/OhNu7lfAjz6HbFbbv9uF6NAaFzhP0VolpvAhgCOu
+CiXJ9SUHIJCp5FIPHbBO5OTkbo65O09gBKGndT5wZbm2YzPYKrpsmlyuORoejhMY
+zvwGFmB0/4noFQYN22yJrLql+fDXxFLjXtxgiAqLguYXciY8rc6QV/c6NAWQCotH
+9TcYCW1mGEz3th6VNZt2sYRxMpWhZmNkNbjdPRAqDgAWYkfxfHG0sn4rmQPRVuyQ
+LdZRiw2Mhkt2PBCOL57pEufY62KbSS879UOfcrI/MzAryU239JoxfP8pPBEq9S0W
+RGkNxVECK4pJDRamM0FhLgZSkCRKaNbZbwbBjjtRs96uyjoiqFWk5qZy7VrT6oYF
+BewN1Ww/TLl9mbrENOWhf6DO2H3MqkO22WVwaAb+4yzzNaK/3Ak=
+=0Y6Z
 -----END PGP SIGNATURE-----
 
---vz5rcg25iuvkhl63--
+--korxkvl2ni3lg3ka--
