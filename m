@@ -2,187 +2,137 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD9EC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FF7C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F2D259D1
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:59:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F2D259D1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F1D88259D4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:00:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D88259D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755492AbeFYM7H (ORCPT
+        id S1755509AbeFYNAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:59:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56368 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755221AbeFYM7F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:59:05 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PCwY2s110844
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:59:05 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju00q2fxv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:59:04 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Mon, 25 Jun 2018 13:59:02 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 13:59:00 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5PCwxk232833662
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jun 2018 12:58:59 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3639FAE056;
-        Mon, 25 Jun 2018 13:58:55 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EED7DAE051;
-        Mon, 25 Jun 2018 13:58:54 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Jun 2018 13:58:54 +0100 (BST)
-From:   Thomas Richter <tmricht@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH 4/4 v3] perf stat: Add transaction flag (-T) support for s390
-Date:   Mon, 25 Jun 2018 14:58:56 +0200
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18062512-0028-0000-0000-000002D4A84B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062512-0029-0000-0000-0000238C0715
-Message-Id: <20180625125856.20262-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806250151
+        Mon, 25 Jun 2018 09:00:02 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:62739 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752462AbeFYNAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:00:00 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41Dq5N0Kszz9tvV8;
+        Mon, 25 Jun 2018 14:59:52 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id fJUnT0KEzHqN; Mon, 25 Jun 2018 14:59:51 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41Dq5M6ZL8z9tvTy;
+        Mon, 25 Jun 2018 14:59:51 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5880F8B7C4;
+        Mon, 25 Jun 2018 14:59:59 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id yQ-P65uSUlrL; Mon, 25 Jun 2018 14:59:59 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.35])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1AB178B7A0;
+        Mon, 25 Jun 2018 14:59:59 +0200 (CEST)
+Subject: Re: [PATCH v2 1/2] crypto: Fix -Wstringop-truncation warnings
+To:     Stafford Horne <shorne@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
+        Eric Biggers <ebiggers3@gmail.com>,
+        linux-crypto@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20180625124538.21051-1-shorne@gmail.com>
+ <20180625124538.21051-2-shorne@gmail.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <2588342c-50da-a75b-3e51-32e3d931644c@c-s.fr>
+Date:   Mon, 25 Jun 2018 14:59:58 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180625124538.21051-2-shorne@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-perf stat command line flag -T to display transaction counters is
-currently supported for x86 only.
-Add support for s390. It is based on the metrics flag -M transaction
-using the architecture dependend json files. This requires a metric
-named "transaction" in the json files for the platform.
 
-v2 --> v3:
-Introduce new function metricgroup__has_metric() to check for
-the existance of a metric named transaction.
 
-As suggested by Andi Kleen, this is the new approach to support
-transactions counters. Other architectures will follow.
+Le 25/06/2018 à 14:45, Stafford Horne a écrit :
+> As of GCC 9.0.0 the build is reporting warnings like:
+> 
+>      crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
+>      crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+>        strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+>        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>         sizeof(rblkcipher.geniv));
+>         ~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> This means the strnycpy might create a non null terminated string.  Fix this by
+> explicitly performing '\0' termination.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: Eric Biggers <ebiggers3@gmail.com>
+> Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
+> Signed-off-by: Stafford Horne <shorne@gmail.com>
+> ---
+>   crypto/ablkcipher.c | 2 ++
+>   crypto/blkcipher.c  | 1 +
+>   2 files changed, 3 insertions(+)
+> 
+> diff --git a/crypto/ablkcipher.c b/crypto/ablkcipher.c
+> index d880a4897159..1edb5000d783 100644
+> --- a/crypto/ablkcipher.c
+> +++ b/crypto/ablkcipher.c
+> @@ -373,6 +373,7 @@ static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+>   	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
+>   	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+>   		sizeof(rblkcipher.geniv));
 
-Output before:
-[root@p23lp27 perf]# ./perf stat -T -- sleep 1
-Cannot set up transaction events
-[root@p23lp27 perf]#
+Is it worth copying something we are going to discard at the following 
+line ? Shouldn't you limit the copy to      sizeof(rblkcipher.geniv) - 1   ?
 
-Output after:
-[root@s35lp76 perf]# ./perf stat -T -- ~/mytesttx 1 >/tmp/111
+> +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+>   
+>   	rblkcipher.blocksize = alg->cra_blocksize;
+>   	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+> @@ -447,6 +448,7 @@ static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+>   	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
+>   	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
+>   		sizeof(rblkcipher.geniv));
 
- Performance counter stats for '/root/mytesttx 1':
+Same comment here.
 
-                 1      tx_c_tend           #     13.0 transaction
-                 1      tx_nc_tend
-                11      tx_nc_tabort
-                 0      tx_c_tabort_special
-                 0      tx_c_tabort_no_special
+Christophe
 
-       0.001070109 seconds time elapsed
-
-[root@s35lp76 perf]#
-
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
----
- tools/perf/builtin-stat.c     | 12 ++++++++++++
- tools/perf/util/metricgroup.c | 23 +++++++++++++++++++++++
- tools/perf/util/metricgroup.h |  1 +
- 3 files changed, 36 insertions(+)
-
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index a4f662a462c6..e309279e7b04 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -2425,6 +2425,18 @@ static int add_default_attributes(void)
- 	if (transaction_run) {
- 		struct parse_events_error errinfo;
- 
-+		/* Handle -T as -M transaction. Once platform specific metrics
-+		 * support has been added to the json files, all archictures
-+		 * will use this approach. To determine transaction support
-+		 * on an architecture test for such a metric name.
-+		 */
-+		if (metricgroup__has_metric("transaction")) {
-+			struct option opt = { .value = &evsel_list };
-+
-+			return metricgroup__parse_groups(&opt, "transaction",
-+							 &metric_events);
-+		}
-+
- 		if (pmu_have_event("cpu", "cycles-ct") &&
- 		    pmu_have_event("cpu", "el-start"))
- 			err = parse_events(evsel_list, transaction_attrs,
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index 1ddc3d1d0147..90cff5226ecc 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -490,3 +490,26 @@ int metricgroup__parse_groups(const struct option *opt,
- 	metricgroup__free_egroups(&group_list);
- 	return ret;
- }
-+
-+bool metricgroup__has_metric(const char *metric)
-+{
-+	struct pmu_events_map *map = perf_pmu__find_map(NULL);
-+	struct pmu_event *pe;
-+	int i;
-+
-+	if (!map)
-+		return false;
-+
-+	for (i = 0; ; i++) {
-+		pe = &map->table[i];
-+
-+		if (!pe->name && !pe->metric_group && !pe->metric_name)
-+			break;
-+		if (!pe->metric_expr)
-+			continue;
-+		if (match_metric(pe->metric_group, metric) ||
-+		    match_metric(pe->metric_name, metric))
-+			return true;
-+	}
-+	return false;
-+}
-diff --git a/tools/perf/util/metricgroup.h b/tools/perf/util/metricgroup.h
-index 06854e125ee7..8a155dba0581 100644
---- a/tools/perf/util/metricgroup.h
-+++ b/tools/perf/util/metricgroup.h
-@@ -28,4 +28,5 @@ int metricgroup__parse_groups(const struct option *opt,
- 			struct rblist *metric_events);
- 
- void metricgroup__print(bool metrics, bool groups, char *filter, bool raw);
-+bool metricgroup__has_metric(const char *metric);
- #endif
--- 
-2.14.3
-
+> +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+>   
+>   	rblkcipher.blocksize = alg->cra_blocksize;
+>   	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+> diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
+> index 01c0d4aa2563..dd4dcab3766a 100644
+> --- a/crypto/blkcipher.c
+> +++ b/crypto/blkcipher.c
+> @@ -512,6 +512,7 @@ static int crypto_blkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+>   	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
+>   	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
+>   		sizeof(rblkcipher.geniv));
+> +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+>   
+>   	rblkcipher.blocksize = alg->cra_blocksize;
+>   	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
+> 
