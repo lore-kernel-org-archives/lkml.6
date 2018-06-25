@@ -2,261 +2,135 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE653C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E90C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FBAA25832
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CC1A25846
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:42:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ik+VDWm0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FBAA25832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvejrRrz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC1A25846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932587AbeFYLj5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 07:39:57 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:50867 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932333AbeFYLjx (ORCPT
+        id S932507AbeFYLm1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 07:42:27 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42828 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755221AbeFYLmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 07:39:53 -0400
-Received: by mail-it0-f65.google.com with SMTP id u4-v6so11931699itg.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 04:39:52 -0700 (PDT)
+        Mon, 25 Jun 2018 07:42:23 -0400
+Received: by mail-lj1-f196.google.com with SMTP id k20-v6so4156327ljk.9;
+        Mon, 25 Jun 2018 04:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=e2lFn7USDatSKo+34aMjecwPwvfdgnz8msfCvGg8K2Y=;
-        b=Ik+VDWm0KZlMSquL4CJZrTCHNLqWPscQs/ig3uZug28/1EbsWlEYq/sg47dH5tcHdE
-         hNW1Ug0e+KRCPSOQV0QDD+OmaDdjO+R7spmXEsJ1uzQtTCsKICXJRQ2k55nbMOv/hTUV
-         /Wp3n17VxmUovG5lFmztA6dyECOAOdnvoPBYHe4qL6SG7gikm5KDOh/7UlVL2MSMfviu
-         gvenoPifJZDb9BLaVFN0YcDKvqN9T8LFV6aotvsRuIarJQap724Wphuz0qammEnKosSW
-         zy06peQctUUirMX138fGnQQSOXbpIZARlJR2Ra9iFnQ8fEAh5Wa0EoNS1n0dnPw/E1PQ
-         aIgw==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=6hlT0mqRWwlI55/1CgfXza99Gq2RVTPAG6JywVGqXNQ=;
+        b=CvejrRrz5fDAQl1tO7OGSPYhhsT5VdWcgPRac+0liL19qPr9L3b4Oq6XQGYeR7f3ZJ
+         lXGYM+GrPOMsyqcmTMh/srVfjLwqbuSGGCjVMAXxd7LsO8mt4Lvzr/wJGXOEgh0of18c
+         v6WcbnTZO8mIqZDCo/Z6/prb3keQXMSVkJGkhEJREcW2fzIgxGVECpUabquOV+KldNCi
+         tnjZJxDmVvKY03PWpshSLEEJCwDWWI5TgZy7VzX/8cv083gJ6U8eUpbBXZNM71jBXQU4
+         D/GiAxWaGYYBDt++27YCOZNSZiDaezaql6ZSpMeyoJW0qeRAu67a0u0UdMHgJ2uruPbd
+         150Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=e2lFn7USDatSKo+34aMjecwPwvfdgnz8msfCvGg8K2Y=;
-        b=EdxpLxYESMVOLAeHzNOfxU0G+rW5reMAtnHUa4HRAZBhkTnY0lTExFsak7rW22iJ74
-         DRUH/xI6ARLRw2Y63pIj2X9UchRLvFcPvxBDo1KkToAfHHGT0dxYLJFUoslW6dzefvXo
-         1GloZ9zu1/SD9cynvQb2HX0XdX3iUuy3vw7Lg0eozbPiFvDSTJAY0iQ/LPoLLdN5U9dV
-         ygw6x4a2P2DTF68HY55B2FdGUoRS1pSJOz4ZJtzXhHjQ1fWjN5+vtQQYydan5u8OZ3K+
-         cvQltcWyAe58KXAY1X5FucdPGNDtpDXxmzaMt3z6J9ZTvpwUn1qgeFCYj1BIE2UMcVqN
-         IQng==
-X-Gm-Message-State: APt69E1u7k0VoaVnMs2EVdTeIpYwgudKimOpviyXZccnrmitgq094GfG
-        YzkJTcWn5r1Q89P5QBejQng=
-X-Google-Smtp-Source: ADUXVKKO/fAv+GKaOKLGOFp6WtTo8ZwSxB6/Tw1x/nHQhBuf7m8tqYWjSx2IS1XOeMTcq4Pk1fTX0w==
-X-Received: by 2002:a02:7157:: with SMTP id n23-v6mr9058231jaf.94.1529926792497;
-        Mon, 25 Jun 2018 04:39:52 -0700 (PDT)
-Received: from toy.corp.qihoo.net ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id 200-v6sm3719207itw.4.2018.06.25.04.39.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 04:39:52 -0700 (PDT)
-From:   Jun Yao <yaojun8558363@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        ard.biesheuvel@linaro.org, james.morse@arm.com,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 2/2] arm64/mm: Move {tramp_pg_dir, swapper_pg_dir} to .rodata section
-Date:   Mon, 25 Jun 2018 19:39:21 +0800
-Message-Id: <20180625113921.21854-3-yaojun8558363@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180625113921.21854-1-yaojun8558363@gmail.com>
-References: <20180625113921.21854-1-yaojun8558363@gmail.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=6hlT0mqRWwlI55/1CgfXza99Gq2RVTPAG6JywVGqXNQ=;
+        b=Gtng3UvcTI+1Bgv3g67sykjI7bL8EHRIpIDruvjoUiCxPL01M4f3gOSPPXH+FMz+ip
+         WG6LYzfi79p87llFZevRMbltn0gXRxkEZuA6nZg9u7DF0vAkJWYs5UPMwYrBMweSKGwy
+         YO7+T82IN9VVdPqgn9Jjf6kb0AilPABDk4LpYsDQubEv32EiVrXgehZ+DJnYylrt43YI
+         ZFPC0iY05n4ekoxmC9CFpaP9qCYGzT34/gtbOquTLa9rHXjmbKFN22SBddF9RI8LWodH
+         qhjwzdoct1fZ/doQTvnmu/8xfjfMMb6Ppv5BJCniWsP47BmnIP98juDY2Pv7HTfZzj/U
+         2wtQ==
+X-Gm-Message-State: APt69E0727PU2K42ld7AahsSyHiqiLapC5EepHEvwnP6aoNlMdr3iZIh
+        YgHc+RxBlhp8j9USuUYZ5TNtOl2ebsgYkFMzWGI=
+X-Google-Smtp-Source: ADUXVKJdxGFht+DgeKsE7e3oGYIGkMxAHCXGtzh3dZqWGZMbg74ua0P+wvHIO6OzVhbsKXx/6J2O4TjQMdRDIFH+60w=
+X-Received: by 2002:a2e:545a:: with SMTP id y26-v6mr6063971ljd.19.1529926941027;
+ Mon, 25 Jun 2018 04:42:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:41cf:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 04:42:19
+ -0700 (PDT)
+In-Reply-To: <87a7rm3eb5.fsf@xmission.com>
+References: <20180420120605.1612248-1-arnd@arndb.de> <20180420120605.1612248-2-arnd@arndb.de>
+ <20180621154915.GA31947@gmail.com> <CAK8P3a1QYTfRNQt2+a29BpvgYM_pnSFrO=NBvVo=BdUa2q9ngQ@mail.gmail.com>
+ <20180621161121.GB7222@gmail.com> <CAK8P3a1mx16S+DhEMQA6WBJ7efdhN5YaKKVHU6n+E6kfifM-Qg@mail.gmail.com>
+ <20180622021636.GA11266@gmail.com> <87a7rm3eb5.fsf@xmission.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 25 Jun 2018 13:42:19 +0200
+X-Google-Sender-Auth: z10Bwy0VD0jQIiIyunPTnbqKeO4
+Message-ID: <CAK8P3a0G-MHA=buSL3Ymp3=-+=qgJWw1N3NtPQNr9wmpXV2cmA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rusage: allow 64-bit times ru_utime/ru_stime
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Paul Eggert <eggert@cs.ucla.edu>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_ARM64_VA_BITS_36/CONFIG_ARM64_VA_BITS_39/
-CONFIG_ARM64_VA_BITS_42 are selected, a block-mapping can be
-written to swapper_pg_dir. To defend 'KSMA', we move swapper_pg_dir
-to .rodata section when these configurations are selected. At the
-same time, we update swapper_pg_dir by fixmap.
+On Fri, Jun 22, 2018 at 7:45 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> Ingo Molnar <mingo@kernel.org> writes:
+>
+> So I suspect the simplest thing to do would be to set a flag in the
+> idtype member of waitid that says give me rusage64 and then we would
+> be done.
 
-Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
----
- arch/arm64/include/asm/fixmap.h  |  1 +
- arch/arm64/include/asm/pgalloc.h | 33 ++++++++++++++++++++++++++++++++
- arch/arm64/include/asm/pgtable.h |  5 +++++
- arch/arm64/kernel/head.S         |  6 +++---
- arch/arm64/kernel/vmlinux.lds.S  | 23 ++++++++++++++++++++++
- arch/arm64/mm/mmu.c              |  6 ++++++
- 6 files changed, 71 insertions(+), 3 deletions(-)
+It would have to be a flag in both the 'idtype' field of waitid(), and also
+'who' field of getrusage(), which unfortunately uses a separate set of
+flags. Not hard to do, but still a bit more complexity.
 
-diff --git a/arch/arm64/include/asm/fixmap.h b/arch/arm64/include/asm/fixmap.h
-index 62908eeedcdc..881784b43965 100644
---- a/arch/arm64/include/asm/fixmap.h
-+++ b/arch/arm64/include/asm/fixmap.h
-@@ -83,6 +83,7 @@ enum fixed_addresses {
- 	FIX_PTE,
- 	FIX_PMD,
- 	FIX_PUD,
-+	FIX_SWAPPER,
- 
- 	__end_of_fixed_addresses
- };
-diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
-index 2e05bcd944c8..62512ad9c310 100644
---- a/arch/arm64/include/asm/pgalloc.h
-+++ b/arch/arm64/include/asm/pgalloc.h
-@@ -49,6 +49,22 @@ static inline void __pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
- 
- static inline void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmdp)
- {
-+#ifdef CONFIG_ARM64_VA_BITS_39
-+	if (mm == &init_mm) {
-+		pud_t *pud;
-+		unsigned long offset;
-+		extern spinlock_t pgdir_lock;
-+
-+		spin_lock(&pgdir_lock);
-+		pud = (pud_t *)swapper_set_fixmap();
-+		offset = (unsigned long)pudp - (unsigned long)swapper_pg_dir;
-+		pud = (pud_t *)((unsigned long)pud + offset);
-+		__pud_populate(pud, __pa(pmdp), PMD_TYPE_TABLE);
-+		swapper_clear_fixmap();
-+		spin_unlock(&pgdir_lock);
-+		return;
-+	}
-+#endif
- 	__pud_populate(pudp, __pa(pmdp), PMD_TYPE_TABLE);
- }
- #else
-@@ -142,6 +158,23 @@ pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmdp, pte_t *ptep)
- 	/*
- 	 * The pmd must be loaded with the physical address of the PTE table
- 	 */
-+#if defined(CONFIG_ARM64_VA_BITS_42) || \
-+	defined(CONFIG_ARM64_VA_BITS_36)
-+	if (mm == &init_mm) {
-+		pmd_t *pmd;
-+		unsigned long offset;
-+		extern spinlock_t pgdir_lock;
-+
-+		spin_lock(&pgdir_lock);
-+		pmd = (pmd_t *)swapper_set_fixmap();
-+		offset = (unsigned long)pmdp - (unsigned long)swapper_pg_dir;
-+		pmd = (pmd_t *)((unsigned long)pmd + offset);
-+		__pmd_populate(pmd, __pa(ptep), PMD_TYPE_TABLE);
-+		swapper_clear_fixmap();
-+		spin_unlock(&pgdir_lock);
-+		return;
-+	}
-+#endif
- 	__pmd_populate(pmdp, __pa(ptep), PMD_TYPE_TABLE);
- }
- 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index b2435e8b975b..85743ea0709b 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -592,6 +592,11 @@ static inline phys_addr_t pgd_page_paddr(pgd_t pgd)
- /* to find an entry in a kernel page-table-directory */
- #define pgd_offset_k(addr)	pgd_offset(&init_mm, addr)
- 
-+#define swapper_set_fixmap() \
-+	set_fixmap_offset(FIX_SWAPPER, __pa_symbol(swapper_pg_dir))
-+
-+#define swapper_clear_fixmap()	clear_fixmap(FIX_SWAPPER)
-+
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
- {
- 	const pteval_t mask = PTE_USER | PTE_PXN | PTE_UXN | PTE_RDONLY |
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index 9677deb7b6c7..9db187024b44 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -300,7 +300,7 @@ __create_page_tables:
- 	 * dirty cache lines being evicted.
- 	 */
- 	adrp	x0, idmap_pg_dir
--	adrp	x1, swapper_pg_end
-+	adrp	x1, idmap_pg_end
- 	sub	x1, x1, x0
- 	bl	__inval_dcache_area
- 
-@@ -313,7 +313,7 @@ __create_page_tables:
- 	 * Clear the idmap and init page tables.
- 	 */
- 	adrp	x0, idmap_pg_dir
--	adrp	x1, swapper_pg_end
-+	adrp	x1, idmap_pg_end
- 	sub	x1, x1, x0
- 	clear_pages x0, x1
- 
-@@ -404,7 +404,7 @@ __create_page_tables:
- 	 * tables again to remove any speculatively loaded cache lines.
- 	 */
- 	adrp	x0, idmap_pg_dir
--	adrp	x1, swapper_pg_end
-+	adrp	x1, idmap_pg_end
- 	sub	x1, x1, x0
- 	dmb	sy
- 	bl	__inval_dcache_area
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index b0e4255fcba4..db72c4680f1d 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -219,6 +219,28 @@ SECTIONS
- 	. = ALIGN(PAGE_SIZE);
- 	idmap_pg_dir = .;
- 	. += IDMAP_DIR_SIZE;
-+	idmap_pg_end = .;
-+
-+#if defined(CONFIG_ARM64_VA_BITS_39) || \
-+	defined(CONFIG_ARM64_VA_BITS_36) || \
-+	defined(CONFIG_ARM64_VA_BITS_42)
-+	.rodata : {
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+		. = ALIGN(PAGE_SIZE);
-+		tramp_pg_dir = .;
-+		. += PAGE_SIZE;
-+#endif
-+
-+#ifdef CONFIG_ARM64_SW_TTBR0_PAN
-+		reserved_ttbr0 = .;
-+		. += RESERVED_TTBR0_SIZE;
-+#endif
-+		swapper_pg_dir = .;
-+		. += PAGE_SIZE;
-+		swapper_pg_end = .;
-+	}
-+
-+#else
- 
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
- 	tramp_pg_dir = .;
-@@ -232,6 +254,7 @@ SECTIONS
- 	swapper_pg_dir = .;
- 	. += PAGE_SIZE;
- 	swapper_pg_end = .;
-+#endif
- 
- 	__pecoff_data_size = ABSOLUTE(. - __initdata_begin);
- 	_end = .;
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index a3b5f1dffb84..fbaf3e9b4a43 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -66,6 +66,12 @@ static pte_t bm_pte[PTRS_PER_PTE] __page_aligned_bss;
- static pmd_t bm_pmd[PTRS_PER_PMD] __page_aligned_bss __maybe_unused;
- static pud_t bm_pud[PTRS_PER_PUD] __page_aligned_bss __maybe_unused;
- 
-+#if defined(CONFIG_ARM64_VA_BITS_39) || \
-+	defined(CONFIG_ARM64_VA_BITS_36) || \
-+	defined(CONFIG_ARM64_VA_BITS_42)
-+DEFINE_SPINLOCK(pgdir_lock);
-+#endif
-+
- pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- 			      unsigned long size, pgprot_t vma_prot)
- {
--- 
-2.17.1
+> Alternately we could use the low bits of the resource usage
+> pointer.  Assuming we don't want to introduce another syscall that is.
+> I really don't see much incremental extensibility potential in the wait
+> or rusage interface right now.
 
+This is also my conclusion after looking at how various other
+operating systems implement getrusage() and wait4() today.
+It seems that this is one of the most stable APIs, everyone uses
+exactly the same structure layout (Linux/x32 being one exception,
+they have the 64-bit Linux compatible layout using __s64 instead of
+long members).
+
+For the other ~20 system calls we introduce for y2038, the general
+idea has been to stay mostly compatible with the source level interface,
+just using a new syscall number. statx() is a notable exception here,
+with clock_adjtime() and getitimer()/setitimer() still being undecided.
+
+If we don't do an extensible layout or any other new fields, there
+are still the open questions about whether any types should change:
+
+- changing everything to 64-bit would allow sharing the kernel
+  code between compat and native
+- changing only __old_kernel_timeval to new 64-bit timeval would
+  be the simplest user space change (only the syscall number
+  changes with sizeof(time_t)), avoiding an extra copy thorough
+  the user space stack.
+- changing timeval to (64-bit) timespec would seem the most
+  sensible update, since it avoids the silly nanosecond-to-
+  microsecond conversion in the kernel (glibc would still need
+  to do it for compatibility). This is what I'm considering for
+  getitimer/setitimer,  too.
+
+         Arnd
