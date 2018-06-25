@@ -2,310 +2,152 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30178C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9193C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAA87246A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:37:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAA87246A0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8881F25E5B
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:37:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qb9TX39S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8881F25E5B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933391AbeFYQhH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:37:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:33280 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932235AbeFYQhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:37:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F14580D;
-        Mon, 25 Jun 2018 09:37:05 -0700 (PDT)
-Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 237793F5AD;
-        Mon, 25 Jun 2018 09:37:04 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] arm64/mm: Introduce init_pg_dir
-To:     Jun Yao <yaojun8558363@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-References: <20180625113921.21854-1-yaojun8558363@gmail.com>
- <20180625113921.21854-2-yaojun8558363@gmail.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <82797340-00a2-b3b5-981c-a049ca755db5@arm.com>
-Date:   Mon, 25 Jun 2018 17:37:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933647AbeFYQhZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 12:37:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43674 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932438AbeFYQhW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 12:37:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eMnUeejIFi+eaZLwGbCxGh0dPP1cnNKWEKY7p6Mk9+8=; b=Qb9TX39SdDViDOEIz548EQ8XH
+        WzdWHUDPlWOI10jdd9jInWpp9yRsp9L1jDzt+oGQsIX3bFBcapmJhfVNXSwyjaK5bXgIooN2S1CyU
+        yHBicuKCTeCJRC9cUKflotSWpX98AteLrRmHAf4o+hgs8dxv+WOiFMlqnyBMBr2apG5KPjN78QdMd
+        gYklW2wIPgoaKnd3hYQNmowxpXVSKmJwJQAGiZs51gnqzqFg6Og4dU/xT3F0XUYcpVCCLGr14jvUQ
+        umVyGabIBX91wxtrwCg/Nb+zCgnianfyvjVERiERzpSTVVY8oX/f8/SQoCA8w4W748C4I5Z53LAPH
+        hN7ASS5hA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXUUF-0003aq-LI; Mon, 25 Jun 2018 16:37:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 621C42029FA0A; Mon, 25 Jun 2018 18:37:05 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 18:37:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] doc: Update wake_up() & co. memory-barrier guarantees
+Message-ID: <20180625163705.GE2494@hirez.programming.kicks-ass.net>
+References: <1529918258-7295-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <20180625095031.GX2494@hirez.programming.kicks-ass.net>
+ <20180625105618.GA12676@andrea>
+ <20180625123121.GY2494@hirez.programming.kicks-ass.net>
+ <20180625131643.GA15126@andrea>
+ <20180625141830.GC2494@hirez.programming.kicks-ass.net>
+ <20180625145611.GA16333@andrea>
 MIME-Version: 1.0
-In-Reply-To: <20180625113921.21854-2-yaojun8558363@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625145611.GA16333@andrea>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jun,
+On Mon, Jun 25, 2018 at 04:56:11PM +0200, Andrea Parri wrote:
 
-On 25/06/18 12:39, Jun Yao wrote:
-> We setup initial page tables in init_pg_dir, which is a reserved
-> area of the __initdata section. And in paging_init(), we no
-> longer need a temporary top-level and we can setup final page
-> tables in swapper_pg_dir directly.
+> Ah, before sending v2, I'd really appreciate some comments on the XXXs
+> I've added to wait_woken() as I'm not sure I understand the pattern in
+> questions.
 
-This patch is doing quite a lot. Some ideas on how to break it up below.
+Oh man, lemme see if I can remember how all that was supposed to work.
 
+So the basic idea was that we cannot rely on the normal task->state
+rules because testing @condition can schedule itself. So instead we add
+more state. But then we need to ensure that if we either don't loose a
+wake or loose the wakeup state.
 
->  arch/arm64/include/asm/fixmap.h   |  1 -
->  arch/arm64/include/asm/pgtable.h  |  5 ++--
->  arch/arm64/kernel/head.S          | 46 +++++++++++++++++++++++--------
+> For example, the second comment says:
+> 
+>   /*
+>    * The below implies an smp_mb(), it too pairs with the smp_wmb() from
+>    * woken_wake_function() such that we must either observe the wait
+>    * condition being true _OR_ WQ_FLAG_WOKEN such that we will not miss
+>    * an event.
+>    */
+> 
+> From this I understand:
+> 
+>    wq_entry->flags &= ~WQ_FLAG_WOKEN;      condition = true;
+>    smp_mb() // B                           smp_wmb(); // C
+>    [next iteration of the loop]            wq_entry->flags |= WQ_FLAG_WOKEN;
+>    if (condition)
+>       break;
+> 
+>    BUG_ON(!condition && !(wq_entry->flags & WQ_FLAG_WOKEN))
 
-You missed an enable_mmu() caller in sleep.S
+Right, basically if we get a spurious wakeup and our ttwu() 'fails', we
+must either see condition on the next iteration, or ensure the next
+iteration doesn't sleep, so we'll loop around and test condition yet
+again.
 
+> IOW, this is an R-like pattern: if this is the case, the smp_wmb() does
+> _not_ prevent the BUG_ON() from firing; according to LKMM (and powerpc)
+> a full barrier would be needed.
 
->  arch/arm64/kernel/vmlinux.lds.S   |  3 +-
->  arch/arm64/mm/mmu.c               | 30 ++++----------------
+Hmmm, how come? store-store collision? Yes I suppose you're right.
 
->  include/asm-generic/vmlinux.lds.h |  5 ++++
->  mm/init-mm.c                      |  2 +-
+> Same RFC for the first comment:
+> 
+>   /*
+>    * The above implies an smp_mb(), which matches with the smp_wmb() from
+>    * woken_wake_function() such that if we observe WQ_FLAG_WOKEN we must
+>    * also observe all state before the wakeup.
+>    */
+> 
+> What is the corresponding snippet & BUG_ON()?
 
-We shouldn't need to modify these files as they affect other architectures too.
+The comment there suggest:
 
+	if (condition)
+		break;
 
-> diff --git a/arch/arm64/include/asm/fixmap.h b/arch/arm64/include/asm/fixmap.h
-> index ec1e6d6fa14c..62908eeedcdc 100644
-> --- a/arch/arm64/include/asm/fixmap.h
-> +++ b/arch/arm64/include/asm/fixmap.h
-> @@ -83,7 +83,6 @@ enum fixed_addresses {
->  	FIX_PTE,
->  	FIX_PMD,
->  	FIX_PUD,
-> -	FIX_PGD,
-
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 7c4c8f318ba9..b2435e8b975b 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -592,9 +592,6 @@ static inline phys_addr_t pgd_page_paddr(pgd_t pgd)
->  /* to find an entry in a kernel page-table-directory */
->  #define pgd_offset_k(addr)	pgd_offset(&init_mm, addr)
->  
-> -#define pgd_set_fixmap(addr)	((pgd_t *)set_fixmap_offset(FIX_PGD, addr))
-> -#define pgd_clear_fixmap()	clear_fixmap(FIX_PGD)
-
-I think we want to keep these for pgd_populate() once the top level entry is
-read only. Linux's folding means the PUD or PMD levels may be called PGD so that
-the top level type is always the same.
-
-
->  static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->  {
->  	const pteval_t mask = PTE_USER | PTE_PXN | PTE_UXN | PTE_RDONLY |
-> @@ -718,6 +715,8 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
->  }
->  #endif
->  
-> +extern pgd_t init_pg_dir[PTRS_PER_PGD];
-> +extern pgd_t init_pg_end[];
-
-Please mark these with __initdata so that tools like sparse can catch code
-trying to access these once they've been freed.
+	set_current_state(UNINTERRUPTIBLE);		condition = true;
+	/* smp_mb() */					smp_wmb();
+							wq_entry->flags |= WQ_FLAG_WOKEN;
+	if (!wq_entry->flags & WQ_FLAG_WOKEN)
+		schedule();
 
 
->  extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
->  extern pgd_t swapper_pg_end[];
->  extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index b0853069702f..9677deb7b6c7 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -276,6 +276,15 @@ ENDPROC(preserve_boot_args)
->  	populate_entries \tbl, \count, \istart, \iend, \flags, #SWAPPER_BLOCK_SIZE, \tmp
->  	.endm
->  
-> +	.macro clear_pages, start, size
-> +1:	stp	xzr, xzr, [\start], #16
-> +	stp	xzr, xzr, [\start], #16
-> +	stp	xzr, xzr, [\start], #16
-> +	stp	xzr, xzr, [\start], #16
-> +	subs	\size, \size, #64
-> +	b.ne	1b
-> +	.endm
-
-Could this go in arch/arm64/include/asm/assembler.h along with the other
-assembly macros. We may want to use it elsewhere.
-
-(Nit: This isn't really clearing pages, its more of a range.)
+	BUG_ON((wq_entry->flags & WQ_FLAG_WOKEN) && !condition);
 
 
->  /*
->   * Setup the initial page tables. We only setup the barest amount which is
->   * required to get the kernel running. The following sections are required:
+But looking at that now, I think that's wrong. Because the the purpose
+was that, if we don't do the try_to_wake_up(), our task still needs to
+observe the condition store.
 
-
-
-> @@ -373,7 +387,7 @@ __create_page_tables:
->  	/*
->  	 * Map the kernel image (starting with PHYS_OFFSET).
->  	 */
-> -	adrp	x0, swapper_pg_dir
-> +	adrp	x0, init_pg_dir
->  	mov_q	x5, KIMAGE_VADDR + TEXT_OFFSET	// compile time __va(_text)
->  	add	x5, x5, x23			// add KASLR displacement
->  	mov	x4, PTRS_PER_PGD
-> @@ -386,7 +400,7 @@ __create_page_tables:
->  
->  	/*
->  	 * Since the page tables have been populated with non-cacheable
-> -	 * accesses (MMU disabled), invalidate the idmap and swapper page
-> +	 * accesses (MMU disabled), invalidate the idmap and init page
->  	 * tables again to remove any speculatively loaded cache lines.
->  	 */
->  	adrp	x0, idmap_pg_dir
-> @@ -395,6 +409,12 @@ __create_page_tables:
->  	dmb	sy
->  	bl	__inval_dcache_area
->  
-> +	adrp	x0, init_pg_dir
-> +	adrp	x1, init_pg_end
-> +	sub	x1, x1, x0
-
-> +	dmb	sy
-
-I think this barrier is to ensure the writes from map_memory happen before we
-start invalidating the corresponding cache area, so that any newly cached data
-after the invalidate must read the data map_memory wrote.
-
-We shouldn't need a second one here.
-
-
-> +	bl	__inval_dcache_area
-> +
->  	ret	x28
->  ENDPROC(__create_page_tables)
->  	.ltorg
-> @@ -706,6 +726,7 @@ secondary_startup:
->  	 * Common entry point for secondary CPUs.
->  	 */
->  	bl	__cpu_setup			// initialise processor
-> +	adr_l   x26, swapper_pg_dir
-
-We know this is page aligned, the adrp that you removed from __enable_mmu is enough.
-
-
->  	bl	__enable_mmu
->  	ldr	x8, =__secondary_switched
->  	br	x8
-> @@ -748,6 +769,7 @@ ENDPROC(__secondary_switched)
->   * Enable the MMU.
->   *
->   *  x0  = SCTLR_EL1 value for turning on the MMU.
-> + *  x26 = TTBR1_EL1 value for turning on the MMU.
-
-(Nit: I'd prefer these functions kept to the PCS wherever possible. Yes this
-means shuffling some registers which is noisy, but if this is broken up into
-smaller patches it should be tolerable)
-
-
->   *
->   * Returns to the caller via x30/lr. This requires the caller to be covered
->   * by the .idmap.text section.
-> @@ -762,7 +784,7 @@ ENTRY(__enable_mmu)
->  	b.ne	__no_granule_support
->  	update_early_cpu_boot_status 0, x1, x2
->  	adrp	x1, idmap_pg_dir
-> -	adrp	x2, swapper_pg_dir
-> +	mov	x2, x26
->  	phys_to_ttbr x3, x1
->  	phys_to_ttbr x4, x2
->  	msr	ttbr0_el1, x3			// load TTBR0
-
-
-> diff --git a/mm/init-mm.c b/mm/init-mm.c
-> index f94d5d15ebc0..08a0eed00667 100644
-> --- a/mm/init-mm.c
-> +++ b/mm/init-mm.c
-> @@ -17,7 +17,7 @@
->
->  struct mm_struct init_mm = {
->  	.mm_rb		= RB_ROOT,
-> -	.pgd		= swapper_pg_dir,
-> +	.pgd		= init_pg_dir,
->  	.mm_users	= ATOMIC_INIT(2),
->  	.mm_count	= ATOMIC_INIT(1),
->  	.mmap_sem	= __RWSEM_INITIALIZER(init_mm.mmap_sem),
->
-
-We really can't do this, it breaks other architectures that don't have an
-'init_pg_dir', and code to shuffle to 'swapper_pg_dir' once they've done
-paging_init().
-
-We can keep the change entirely in arch/arm64 if we set init_mm.pgd to
-init_pg_dir before we call early_fixmap_init() in kaslr_early_init() and
-setup_arch(). You already switch it back in paging_init().
-
-
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 2dbb2c9f1ec1..a3b5f1dffb84 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -628,34 +628,14 @@ static void __init map_kernel(pgd_t *pgdp)
->   */
->  void __init paging_init(void)
->  {
-> -	phys_addr_t pgd_phys = early_pgtable_alloc();
-> -	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
-> -
-> -	map_kernel(pgdp);
-> -	map_mem(pgdp);
-> -
->  	/*
-> -	 * We want to reuse the original swapper_pg_dir so we don't have to
-> -	 * communicate the new address to non-coherent secondaries in
-> -	 * secondary_entry, and so cpu_switch_mm can generate the address with
-> -	 * adrp+add rather than a load from some global variable.
-> -	 *
-> -	 * To do this we need to go via a temporary pgd.
-> +	 * Setup final page tables in swapper_pg_dir.
->  	 */
-> -	cpu_replace_ttbr1(__va(pgd_phys));
-> -	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
-> -	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
-> +	map_kernel(swapper_pg_dir);
-> +	map_mem(swapper_pg_dir);
->  
-> -	pgd_clear_fixmap();
-> -	memblock_free(pgd_phys, PAGE_SIZE);
-> -
-> -	/*
-> -	 * We only reuse the PGD from the swapper_pg_dir, not the pud + pmd
-> -	 * allocated with it.
-> -	 */
-> -	memblock_free(__pa_symbol(swapper_pg_dir) + PAGE_SIZE,
-> -		      __pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir)
-> -		      - PAGE_SIZE);
-> +	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
-> +	init_mm.pgd = swapper_pg_dir;
->  }
-
-This is difficult to follow because this patch is doing too much. I think you
-could break it into four:
-1. Create init_pg_dir, its linker-script changes and boiler-plate
-clearing/cleaning/invalidating in head.S. Nothing will use it yet.
-2. Make enable_mmu() take the physical address of the ttbr1 page as an argument.
-3. Switch head.S to create page tables in init_pg_dir, and trim paging_init as
-above.
-4. Changes to the linker script and paging_init() to make swapper_pg_dir smaller
-so we don't need to memblock_free() it.
-
-This way the page table generation changes and the
-boiler-plate-setup/final-cleanup are in separate patches.
-
-
-Thanks,
-
-James
+But for that we need a barrier between the wq_entry->flags load and the
+second condition test, which would (again) be B, not A.
