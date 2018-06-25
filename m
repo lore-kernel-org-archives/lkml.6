@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D142C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B410C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D84C925D44
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E6825D49
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:51:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="HFDYj4Zu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84C925D44
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jbE1U9Yi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E6825D49
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeFYPvV (ORCPT
+        id S1754900AbeFYPvl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:51:21 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55750 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752146AbeFYPvT (ORCPT
+        Mon, 25 Jun 2018 11:51:41 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34587 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754682AbeFYPvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:51:19 -0400
-Received: by mail-wm0-f66.google.com with SMTP id v16-v6so90630wmv.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:51:18 -0700 (PDT)
+        Mon, 25 Jun 2018 11:51:35 -0400
+Received: by mail-wr0-f195.google.com with SMTP id a12-v6so14223293wro.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:51:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=9fzHNjiGATqEOUXqqqbwuHzguTrEkvz1GEPFdZZGcwY=;
-        b=HFDYj4Zu1sxFJyDrEAbwObqijXKb6F1r8Xn3gvOtyJC1sVldSrWC3rPfHYlAabW92v
-         gL305DEAOsIqd4UpNX2qE7hCT9NFt+x0i33x6Wc3JNGhvVOw8BVGyMMx3+XTzWUcw2iU
-         r6VzpPPqw6bZQLkRuLTPI5E3izYN6ggwkNjxFApX8w+d8+RNq/Dj6fmsZ+KdF1oBS8Pu
-         IRlgjyM9MIWBia2Kw7lm8Wd0ji6jKRbC/Y5vNG4CPXmjIC8bZlROWdi/LmVJoMH3p6F9
-         14OHqOVzvDJlyppS1YIa1XEj6aaHsY2QX2YLA6lIGo7Qk2nwwXcrEMq/LXKBrBsz96uY
-         ufJA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=YRVJnNJ2ae2CGqrvnfy5XFewS/vJWfahXE5VW7+PeLI=;
+        b=jbE1U9YiHksGbbwZ6BIvlpe3jMU17bsQsH+zTgWDCOxjRSo4ZDEAfqIACi//AthD1N
+         /u8Zxfb7XLoM8olSVcZ4ppLnq/Nqhk5tdKlixrAyvc1vLRyV9aA223BH8eqMgB3tyNIa
+         B+CbJI9qhNQ/LNuzgSKhXkGjwwe+T+3i/yV9SVd3DxKqtKmzIfRWL6obVjD0GxU8S8C2
+         hs1KN0r/dIJrgcfEpg3R5M+riiM+QDv2Om95hhxDAxIwdUxZW/DBmXshJsNJRfa13uW+
+         yJpJCdFnVUUayKaBFgQ7gqdSR5/Hrdis/BTQINK+vfhGEaLcvj0fE0A7woMoYvfAhO96
+         O10g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9fzHNjiGATqEOUXqqqbwuHzguTrEkvz1GEPFdZZGcwY=;
-        b=iywUN3cNgLXyW0wB1KqhZztBYOxYMS7SxtQkwc6fhP82tq9hhGNV3Qmik5lFEt+9Gk
-         jiv7u4OaS0Cs0psMw4dIhXda9sdPE7jrzm1znRTAMSgx6BT8HW7E/s7SO/sJNO1xJVbk
-         3NksdPZ3hMo1RveH2zDPXj5KeH68DQaAk5nCV+/XfJYgy8T86nO4HB77DqwKmBT4+gIZ
-         uiRkhEa9bGIflQaWo8muaRB2Y0mYJNBN2iof55zAQ1MBtLGTdG5qD4mVPu9NueqHhD0e
-         p7v6ZUGzFHYvzb7QA8HjWkIuqQbv2nDB2q+f6gUM8TR/d6ZEFZPxzlRIHCMb4LPZirgj
-         1FyQ==
-X-Gm-Message-State: APt69E0pTvM8Af53qa5VP97tGWuancqZP0IQPye05p09PuaBC1oztTWo
-        vIM9SNrx0fFu9OWa/FzWnV52kA==
-X-Google-Smtp-Source: ADUXVKJpJBQYiYTnDw3SabalOm4erQW9ZL13hAFxLDhYiZ3HgPs7/rZ0eusibTj4qSqPUWEN8nrJDA==
-X-Received: by 2002:a1c:3610:: with SMTP id d16-v6mr1517092wma.126.1529941877916;
-        Mon, 25 Jun 2018 08:51:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=YRVJnNJ2ae2CGqrvnfy5XFewS/vJWfahXE5VW7+PeLI=;
+        b=jHusGnUzZoAwvMAinFEiwur5Vaqf9uhbnlhd64Q6VSZBpAVQ1kqrvFZMAR+h9vQDBk
+         wajpXc3OjuU6SGFKb35d5pztAW3bBPP2zmvyEYevoTNsl/+oT0en8g1nvJUi/faV1XlE
+         40GBUwghHsmkr43Mi7CANkZAOOLYNfJy9ZHJet7oU04unp8bW+eJUai9EialdC52ioga
+         khddvPjdR+0M8s7XhBix0tNzcRORYAMj2cy2cUA4ADvc9j+wow5aeXr/8uVY7vXFk2+U
+         P9TXPV/yUU3Fd2nG0x75j3MAq3Z2V8YWnqqgTsoF8XnhoSl/yHndw1A7cC+GRMIZT4Ze
+         38nw==
+X-Gm-Message-State: APt69E26GIccDQCVynVZvtjmH6teYBWXDLf8Mx11AJYJ8RJhVVFPwFEA
+        3FscbwevV7Tiwwk34ID+JTd8RA==
+X-Google-Smtp-Source: ADUXVKLin2kWqL3YQT71MaMPUiSjPRw3T7K/RVzcNwXB4exeppV/9jYbPpIQ8Z0dPv6OtH5IpCpeiQ==
+X-Received: by 2002:adf:e311:: with SMTP id b17-v6mr11083088wrj.158.1529941894771;
+        Mon, 25 Jun 2018 08:51:34 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id x16-v6sm3523737wro.13.2018.06.25.08.51.16
+        by smtp.gmail.com with ESMTPSA id x16-v6sm3523737wro.13.2018.06.25.08.51.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 08:51:17 -0700 (PDT)
+        Mon, 25 Jun 2018 08:51:34 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -71,10 +72,12 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 00/14] ARM: davinci: step towards removing at24_platform_data
-Date:   Mon, 25 Jun 2018 17:50:11 +0200
-Message-Id: <20180625155025.12567-1-brgl@bgdev.pl>
+Subject: [PATCH 12/14] ARM: davinci: dm646x-evm: use device properties for at24 eeprom
+Date:   Mon, 25 Jun 2018 17:50:23 +0200
+Message-Id: <20180625155025.12567-13-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180625155025.12567-1-brgl@bgdev.pl>
+References: <20180625155025.12567-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -82,56 +85,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Since I took over maintainership of the at24 driver I've been working
-towards removing at24_platform_data in favor for device properties.
+We want to work towards phasing out the at24_platform_data structure.
+There are few users and its contents can be represented using generic
+device properties. Using device properties only will allow us to
+significantly simplify the at24 configuration code.
 
-DaVinci is the only platform that's still using it - all other users
-have already been converted.
+Remove the at24_platform_data structure and replace it with an array
+of property entries. Drop the byte_len/size property, as the model name
+already implies the EEPROM's size.
 
-One of the obstacles in case of DaVinci is removing the setup() callback
-from the pdata struct, the only user of which are some davinci boards.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-dm646x-evm.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Most boards use the EEPROM to store the MAC address. This series adds
-support for cell lookups to the nvmem framework, registers relevant
-cells for all users, converts the davinci_emac driver to using them
-and replaces at24_platform_data with device properties.
-
-The only board that's still using this callback is now mityomapl138.
-Unfortunately it stores more info in EEPROM than just the MAC address
-and will require some more work. Unfortunately I don't have access
-to this board so I can't test any actual solutions on a live hardware.
-
-Tested on a dm365-evm board.
-
-Bartosz Golaszewski (14):
-  nvmem: add support for cell lookups
-  ARM: davinci: dm365-evm: use nvmem lookup for mac address
-  ARM: davinci: dm644-evm: use nvmem lookup for mac address
-  ARM: davinci: dm646x-evm: use nvmem lookup for mac address
-  ARM: davinci: da830-evm: use nvmem lookup for mac address
-  ARM: davinci: mityomapl138: add nvmem cells lookup entries
-  net: davinci_emac: use nvmem to retrieve the mac address
-  ARM: davinci: mityomapl138: don't read the MAC address from machine
-    code
-  ARM: davinci: dm365-evm: use device properties for at24 eeprom
-  ARM: davinci: da830-evm: use device properties for at24 eeprom
-  ARM: davinci: dm644x-evm: use device properties for at24 eeprom
-  ARM: davinci: dm646x-evm: use device properties for at24 eeprom
-  ARM: davinci: sffsdr: fix the at24 eeprom device name
-  ARM: davinci: sffsdr: use device properties for at24 eeprom
-
- arch/arm/mach-davinci/board-da830-evm.c    | 25 +++++++---
- arch/arm/mach-davinci/board-dm365-evm.c    | 25 +++++++---
- arch/arm/mach-davinci/board-dm644x-evm.c   | 24 ++++++---
- arch/arm/mach-davinci/board-dm646x-evm.c   | 25 +++++++---
- arch/arm/mach-davinci/board-mityomapl138.c | 30 +++++++++---
- arch/arm/mach-davinci/board-sffsdr.c       | 13 +++--
- drivers/net/ethernet/ti/davinci_emac.c     | 29 +++++++----
- drivers/nvmem/core.c                       | 57 +++++++++++++++++++++-
- include/linux/nvmem-consumer.h             |  6 +++
- include/linux/nvmem-provider.h             |  6 +++
- 10 files changed, 182 insertions(+), 58 deletions(-)
-
+diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
+index 4c82d38033b6..8c585e7be180 100644
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -22,7 +22,7 @@
+ #include <linux/gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/i2c.h>
+-#include <linux/platform_data/at24.h>
++#include <linux/property.h>
+ #include <linux/platform_data/pcf857x.h>
+ 
+ #include <media/i2c/tvp514x.h>
+@@ -320,12 +320,9 @@ static struct nvmem_cell_lookup dm646x_evm_mac_address_cell = {
+ 	.nvmem_name = "1-00500",
+ };
+ 
+-static struct at24_platform_data eeprom_info = {
+-	.byte_len       = (256*1024) / 8,
+-	.page_size      = 64,
+-	.flags          = AT24_FLAG_ADDR16,
+-	.setup          = davinci_get_mac_addr,
+-	.context	= (void *)0x7f00,
++static const struct property_entry eeprom_properties[] = {
++	PROPERTY_ENTRY_U32("pagesize", 64),
++	{ }
+ };
+ #endif
+ 
+@@ -396,7 +393,7 @@ static void evm_init_cpld(void)
+ static struct i2c_board_info __initdata i2c_info[] =  {
+ 	{
+ 		I2C_BOARD_INFO("24c256", 0x50),
+-		.platform_data  = &eeprom_info,
++		.properties  = eeprom_properties,
+ 	},
+ 	{
+ 		I2C_BOARD_INFO("pcf8574a", 0x38),
 -- 
 2.17.1
 
