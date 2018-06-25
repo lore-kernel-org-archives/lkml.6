@@ -2,161 +2,126 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD81C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8698FC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80CAF25490
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E9FD25496
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:02:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i4d9ab7a";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SgbPxAPd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80CAF25490
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QeV6MbiR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9FD25496
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeFYFyL (ORCPT
+        id S1752174AbeFYGCE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 01:54:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50898 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752194AbeFYFyG (ORCPT
+        Mon, 25 Jun 2018 02:02:04 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39931 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751921AbeFYGCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 01:54:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 24E26600ED; Mon, 25 Jun 2018 05:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529906046;
-        bh=R3IgmCXxAWbrytAsiDcPPKYrSy4/nZiBPwkhf5mRVos=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=i4d9ab7azurfbNd/1TNdbzS7JAy8IvF0MKmBqbQirRji3Hmxc16fKoVYjza4jy2gm
-         IueIr92Nu9AMeLcSXo04l4sna3rAXvKSGZRJGOEdCocimKUPtgNb6Va1wiVWyNc+Uc
-         yYhWxlkHZ2HE8RcEfkEtCaayp+v3sz0grx0DVVdY=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 55C13600ED;
-        Mon, 25 Jun 2018 05:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529906045;
-        bh=R3IgmCXxAWbrytAsiDcPPKYrSy4/nZiBPwkhf5mRVos=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SgbPxAPdR2fN4pAEppxU6rhfT/DUtUQR5OrJO+aXueXW7/Cq5V7W2WvbzcX5SbzXv
-         UqcwY6jYgOEzRCUa95yeK4dFfzxB4TQkhdrg3pIwpVDJkDRc4Kg0byid387GIlCHPN
-         lAquqIPhDJDQvc0CbvVADAs6vJ5EHs7+mIGq3yeA=
+        Mon, 25 Jun 2018 02:02:02 -0400
+Received: by mail-io0-f196.google.com with SMTP id f1-v6so11364680ioh.6
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 23:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=bjxGr0QkxYa6s4tcjWsIujVLOjLRhcrhhQCmdHM1mO4=;
+        b=QeV6MbiR3z6iGt6eFDSSyGBQI7mogAwc43FurRDvEYCJHUAa0MgcugZHNxUitx65aE
+         IShCj4TgN5xSv7mh1j0gj57lClIR4kprIUvL0jG4fIdU86fsKohZFvb8Fjpxnf8p2zZC
+         1fd4i3xmcTAqjHhT8BMcE13rWZcoTFpDfPd/8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=bjxGr0QkxYa6s4tcjWsIujVLOjLRhcrhhQCmdHM1mO4=;
+        b=bOgqIfnBIEIr6axb61Vv76XQKXtIEdd3WsNJ3XB6zs0ookz/Brrs6XdjJXc6wpsG38
+         eOAwyU/ty6TEd1RDNDnPOPhcu3q722TVZx0UGmnXiVnCtlu2StNaSvpCY0hKlJHlyFSY
+         hiwrN7mW1ltE3yn6+ItLOJz5b8wY467ajXt3Yi3PJ5kIlZINdpYW6bjsYCC4lAbw/ur9
+         4Kmz3BiEn4UIkJHnpdYvoqVslpc16NCkOMTsHYA3b/DJ+OKNrapSGq3vAFS9p8BhQrrg
+         4elTUNjaLHzf7j94TFhS+7s2gtToD4V8qg9NflOlJXTlDWVpnDIQ66/U54BW4eisANBK
+         +3SA==
+X-Gm-Message-State: APt69E14U+OMCPasCMRRKahbJkm8O3raTlb5Y2YccxlKCWYFWfu2r/7Y
+        wKO/3/o3hKEPIbGS8z0yyTSVoFfOFdw8xIQs0IoaAg==
+X-Google-Smtp-Source: AAOMgpfMctzqgyBiGiLzgAdlon7Y2Y+GTB9INfC10h2AnClkdhRHT+nL+Lx6MixgwntieHwZ1usD4MutJ141rolzgE4=
+X-Received: by 2002:a6b:5d09:: with SMTP id r9-v6mr5507634iob.170.1529906521697;
+ Sun, 24 Jun 2018 23:02:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 25 Jun 2018 11:24:05 +0530
-From:   kgunda@codeaurora.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     jingoohan1@gmail.com, lee.jones@linaro.org,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH V3 5/7] backlight: qcom-wled: Add support for WLED4
- peripheral
-In-Reply-To: <20180622230903.GM3402@tuxbook-pro>
-References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
- <1529406822-15379-6-git-send-email-kgunda@codeaurora.org>
- <20180620051417.GI15126@tuxbook-pro>
- <27aa7ff8f7e0cd8fdca5d3ee17bb1ef4@codeaurora.org>
- <20180622230903.GM3402@tuxbook-pro>
-Message-ID: <b40a7640af6a99bfbcb0b21025dafd38@codeaurora.org>
-X-Sender: kgunda@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 23:02:01
+ -0700 (PDT)
+In-Reply-To: <1529891271-24319-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1529891271-24319-1-git-send-email-sai.praneeth.prakhya@intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 25 Jun 2018 08:02:01 +0200
+Message-ID: <CAKv+Gu_xK9WSVPx-gfy=vNjUsrT8aChofghjDbQPJaHPkS7bnw@mail.gmail.com>
+Subject: Re: [PATCH] efi: Remove the declaration of efi_late_init() as the
+ function is unused
+To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Young <dyoung@redhat.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-23 04:39, Bjorn Andersson wrote:
-> On Wed 20 Jun 04:00 PDT 2018, kgunda@codeaurora.org wrote:
-> 
->> On 2018-06-20 10:44, Bjorn Andersson wrote:
->> > On Tue 19 Jun 04:13 PDT 2018, Kiran Gunda wrote:
->> >
->> > > WLED4 peripheral is present on some PMICs like pmi8998 and
->> > > pm660l. It has a different register map and configurations
->> > > are also different. Add support for it.
->> > >
->> > > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> > > ---
->> > >  drivers/video/backlight/qcom-wled.c | 635
->> > > ++++++++++++++++++++++++++++--------
->> > >  1 file changed, 503 insertions(+), 132 deletions(-)
->> >
->> > Split this further into a patch that does structural preparation of
->> > WLED3 support and then an addition of WLED4, the mixture makes parts of
->> > this patch almost impossible to review. Please find some comments below.
->> >
->> Sure. I will split it in the next series.
-> 
-> Thanks!
-> 
->> > >
->> > > diff --git a/drivers/video/backlight/qcom-wled.c
->> > > b/drivers/video/backlight/qcom-wled.c
->> > [..]
->> > >
->> > >  /* WLED3 sink registers */
->> > >  #define WLED3_SINK_REG_SYNC				0x47
->> >
->> > Drop the 3 from this if it's common between the two.
->> >
->> > > -#define  WLED3_SINK_REG_SYNC_MASK			0x07
->> > > +#define  WLED3_SINK_REG_SYNC_MASK			GENMASK(2, 0)
->> > > +#define  WLED4_SINK_REG_SYNC_MASK			GENMASK(3, 0)
->> > >  #define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
->> > >  #define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
->> > >  #define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
->> > > +#define  WLED4_SINK_REG_SYNC_LED4			BIT(3)
->> > >  #define  WLED3_SINK_REG_SYNC_ALL			0x07
->> > > +#define  WLED4_SINK_REG_SYNC_ALL			0x0f
->> > >  #define  WLED3_SINK_REG_SYNC_CLEAR			0x00
->> > >
->> > [..]
->> > > +static int wled4_set_brightness(struct wled *wled, u16 brightness)
->> >
->> > Afaict this is identical to wled3_set_brightness() with the exception
->> > that there's a minimum brightness and the base address for the
->> > brightness registers are different.
->> >
->> > I would suggest that you add a min_brightness to wled and that you
->> > figure out a way to carry the brightness base register address; and by
->> > that you squash these two functions.
->> >
->> There are four different parameters. 1) minimum brightness 2) WLED 
->> base
->> addresses
->> 3) Brightness base addresses 4) the brightness sink registers address
->> offsets also
->> different for wled 3 and wled4. (in wled3 0x40, 0x42, 0x44, where as 
->> in
->> wled4 0x57, 0x67, 0x77, 0x87).
->> 
-> 
-> Sorry, I must have gotten lost in the defines, I see the difference
-> between the two register layouts now. If you retain the old mechanism 
-> of
-> doing the math openly in the function this would have been obvious.
-> 
->> Irrelevant to this patch, but wled5 has some more extra registers to
->> set the brightness.  Keeping this in mind, it is better to have
->> separate functions? Otherwise we will have to use the version checks
->> in the wled_set_brightness function, if we have the common function.
-> 
-> Okay, so it sounds reasonable to split this out to some degree.
-> 
-> Regards,
-> Bjorn
+On 25 June 2018 at 03:47, Sai Praneeth Prakhya
+<sai.praneeth.prakhya@intel.com> wrote:
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+>
+> Commit 7b0a911478c74 (efi/x86: Move the EFI BGRT init code to early
+> init code), removed the implementation and all the references to
+> efi_late_init() but the function is still declared at
+> include/linux/efi.h. Hence, remove the unnecessary declaration.
+>
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Cc: Lee Chun-Yi <jlee@suse.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+> Cc: Ricardo Neri <ricardo.neri@intel.com>
+> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+> Cc: Matt Fleming <matt@codeblueprint.co.uk>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
+Thanks Sai
+
+Queued in efi/next
+
+> ---
+>  include/linux/efi.h | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 56add823f190..ae47be636b98 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -988,14 +988,12 @@ extern void efi_memmap_walk (efi_freemem_callback_t callback, void *arg);
+>  extern void efi_gettimeofday (struct timespec64 *ts);
+>  extern void efi_enter_virtual_mode (void);     /* switch EFI to virtual mode, if possible */
+>  #ifdef CONFIG_X86
+> -extern void efi_late_init(void);
+>  extern void efi_free_boot_services(void);
+>  extern efi_status_t efi_query_variable_store(u32 attributes,
+>                                              unsigned long size,
+>                                              bool nonblocking);
+>  extern void efi_find_mirror(void);
+>  #else
+> -static inline void efi_late_init(void) {}
+>  static inline void efi_free_boot_services(void) {}
+>
+>  static inline efi_status_t efi_query_variable_store(u32 attributes,
 > --
-Thanks for that !
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 2.7.4
+>
