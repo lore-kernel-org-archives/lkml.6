@@ -2,86 +2,109 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38490C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EEEC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:16:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBFBA23D50
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBFBA23D50
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 76B9225687
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:16:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76B9225687
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755027AbeFYJPC (ORCPT
+        id S1754889AbeFYJQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:15:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56455 "EHLO mx2.suse.de"
+        Mon, 25 Jun 2018 05:16:09 -0400
+Received: from mga18.intel.com ([134.134.136.126]:47736 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755008AbeFYJO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:14:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 24B59AB43;
-        Mon, 25 Jun 2018 09:14:57 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 11:14:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        ldufour@linux.vnet.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
- large mapping
-Message-ID: <20180625091455.GH28965@dhcp22.suse.cz>
-References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
- <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
- <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
- <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
- <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
- <20180620071817.GJ13685@dhcp22.suse.cz>
- <c184031d-b1db-503e-1a32-7963b4bf3de0@linux.alibaba.com>
- <94bdfcf0-68ea-404c-a60f-362f677884b6@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94bdfcf0-68ea-404c-a60f-362f677884b6@linux.alibaba.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1754683AbeFYJQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 05:16:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 02:16:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,269,1526367600"; 
+   d="scan'208";a="52654289"
+Received: from jsakkine-mobl1.tm.intel.com (HELO sfriis-mobl.ger.corp.intel.com) ([10.237.50.42])
+  by orsmga006.jf.intel.com with ESMTP; 25 Jun 2018 02:16:04 -0700
+Message-ID: <b9c2c1866be84dc96ce1186c5242820f290517e0.camel@linux.intel.com>
+Subject: Re: [PATCH v11 08/13] x86, sgx: added ENCLS wrappers
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        x86@kernel.org, platform-driver-x86@vger.kernel.org
+Cc:     dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>,
+        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
+Date:   Mon, 25 Jun 2018 12:16:03 +0300
+In-Reply-To: <1529500355.9779.51.camel@intel.com>
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+         <20180608171216.26521-9-jarkko.sakkinen@linux.intel.com>
+         <1529500355.9779.51.camel@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 22-06-18 18:01:08, Yang Shi wrote:
-> Yes, this is true but I guess what Yang Shi meant was that an userspace
-> > > access racing with munmap is not well defined. You never know whether
-> > > you get your data, #PTF or SEGV because it depends on timing. The user
-> > > visible change might be that you lose content and get zero page instead
-> > > if you hit the race window while we are unmapping which was not possible
-> > > before. But whouldn't such an access pattern be buggy anyway? You need
-> > > some form of external synchronization AFAICS.
-> > > 
-> > > But maybe some userspace depends on "getting right data or get SEGV"
-> > > semantic. If we have to preserve that then we can come up with a VM_DEAD
-> > > flag set before we tear it down and force the SEGV on the #PF path.
-> > > Something similar we already do for MMF_UNSTABLE.
+On Wed, 2018-06-20 at 06:12 -0700, Sean Christopherson wrote:
+> On Fri, 2018-06-08 at 19:09 +0200, Jarkko Sakkinen wrote:
+> > This commit adds wrappers for Intel(R) SGX ENCLS opcode functionality.
 > > 
-> > Set VM_DEAD with read mmap_sem held? It should be ok since this is the
-> > only place to set this flag for this unique special case.
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/sgx.h | 198 +++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 198 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+> > index fa3e6e0eb8af..a2f727f85b91 100644
+> > --- a/arch/x86/include/asm/sgx.h
+> > +++ b/arch/x86/include/asm/sgx.h
+> > @@ -10,6 +10,10 @@
+> >  #ifndef _ASM_X86_SGX_H
+> >  #define _ASM_X86_SGX_H
+> >  
+> > +#include <asm/sgx_arch.h>
+> > +#include <asm/asm.h>
+> > +#include <linux/bitops.h>
+> > +#include <linux/err.h>
+> >  #include <linux/types.h>
+> >  
+> >  #define SGX_CPUID 0x12
+> > @@ -20,6 +24,200 @@ enum sgx_cpuid {
+> >  	SGX_CPUID_EPC_BANKS	= 2,
+> >  };
+> >  
+> > +enum sgx_commands {
 > 
-> BTW, it looks the vm flags have used up in 32 bit. If we really need
-> VM_DEAD, it should be for both 32-bit and 64-bit.
+> This should be something like "sgx_encls_leafs" and probably moved
+> to sgx_arch.h (as Dave alluded to, these are architectural values).
+> "sgx_commands" is not accurate (they're only the cpl0 "commands")
+> and will have collision issues in the future, e.g. with the ENCLV
+> instruction and its leafs.
+> 
+> > +	ECREATE	= 0x0,
+> > +	EADD	= 0x1,
+> > +	EINIT	= 0x2,
+> > +	EREMOVE	= 0x3,
+> > +	EDGBRD	= 0x4,
+> > +	EDGBWR	= 0x5,
+> > +	EEXTEND	= 0x6,
+> 
+> Even though it's not used in the code (yet...), I think ELDB,
+> leaf 0x7, should be defined here for completeness.
 
-Do we really need any special handling for 32b? Who is going to create
-GB mappings for all this to be worth doing?
+Sure.
 
--- 
-Michal Hocko
-SUSE Labs
+/Jarkko
