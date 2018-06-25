@@ -3,50 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8DDC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2C5C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4152E25F95
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:43:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C577C23FA5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:43:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="povdVLpy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4152E25F95
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tj7CRrlx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C577C23FA5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965030AbeFYRnQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:43:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55704 "EHLO mail.kernel.org"
+        id S964826AbeFYRn4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:43:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964991AbeFYRlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:41:47 -0400
+        id S964934AbeFYRlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 13:41:37 -0400
 Received: from jouet.infradead.org (unknown [177.79.80.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 820DE25F81;
-        Mon, 25 Jun 2018 17:41:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE46C25F7E;
+        Mon, 25 Jun 2018 17:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529948507;
-        bh=zVtXNaqei5q59DnqMoIhaLNOGTk8P9wzq+ILTneJ+0g=;
+        s=default; t=1529948496;
+        bh=RXxVhMVlz1lVCnnuVvr993HHqHuAg6QkVP/dbRI4Vmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=povdVLpyscUclaPMPpIodIquDFFhrQW0zDjNT9uQtGGcwoZZrCoqm6MLUKTE76TVG
-         4MOTuCiv54D3vd1AD07p1VTdRQu+7BokbcH7/CQ4Zj+NqYU397ng6E5DjN3W0HC5+t
-         108v7sKxUcVc2Rh6WmbeF+vIPbgOQFXlP3RNe8BI=
+        b=tj7CRrlxLfut8WWNt33/Buax9hVEX14uvl5UyPTsSWGD1SRbXlNCItis6oQj8xXmi
+         zI/WBpiVLVbt46Q233kmQXJJuvb2/r/qkmpJviQf1Y328GCecDz/K40cBq8AzMJX38
+         Gt1ICayRk6AEumbggcStvgaTiIoQOG0NrcOVXgmM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 13/19] perf alias: Remove trailing newline when reading sysfs files
-Date:   Mon, 25 Jun 2018 14:40:39 -0300
-Message-Id: <20180625174045.25765-14-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Leblond <eric@regit.org>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Subject: [PATCH 10/19] tools include uapi: Update if_link.h to pick IFLA_{BRPORT_ISOLATED,VXLAN_TTL_INHERIT}
+Date:   Mon, 25 Jun 2018 14:40:36 -0300
+Message-Id: <20180625174045.25765-11-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180625174045.25765-1-acme@kernel.org>
 References: <20180625174045.25765-1-acme@kernel.org>
@@ -55,46 +56,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Remove a trailing newline when reading sysfs file contents such as
-/sys/devices/cpum_cf/events/TX_NC_TEND.  This shows when verbose option
--v is used.
+The IFLA_BRPORT_ISOLATED and IFLA_VXLAN_TTL_INHERIT defines were added in:
 
-Output before:
+  7d850abd5f4e ("net: bridge: add support for port isolation")
+  72f6d71e491e ("vxlan: add ttl inherit support")
 
-  tx_nc_tend -> 'cpum_cf'/'event=0x008d
-  '/
+Pick them, silencing this build warning:
 
-Output after:
+  Warning: Kernel ABI header at 'tools/include/uapi/linux/if_link.h' differs from latest version at 'include/uapi/linux/if_link.h'
 
-  tx_nc_tend -> 'cpum_cf'/'event=0x8d'/
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180615101105.47047-1-tmricht@linux.ibm.com
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Eric Leblond <eric@regit.org>
+Cc: Hangbin Liu <liuhangbin@gmail.com>
+Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Link: https://lkml.kernel.org/n/tip-ezi5u0mmdqm0wfm0y2y8176r@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/pmu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/include/uapi/linux/if_link.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index d2fb597c9a8c..2738fc8d200d 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -303,6 +303,9 @@ static int perf_pmu__new_alias(struct list_head *list, char *dir, char *name, FI
- 
- 	buf[ret] = 0;
- 
-+	/* Remove trailing newline from sysfs file */
-+	rtrim(buf);
-+
- 	return __perf_pmu__new_alias(list, dir, name, NULL, buf, NULL, NULL, NULL,
- 				     NULL, NULL, NULL);
- }
+diff --git a/tools/include/uapi/linux/if_link.h b/tools/include/uapi/linux/if_link.h
+index 68699f654118..cf01b6824244 100644
+--- a/tools/include/uapi/linux/if_link.h
++++ b/tools/include/uapi/linux/if_link.h
+@@ -333,6 +333,7 @@ enum {
+ 	IFLA_BRPORT_BCAST_FLOOD,
+ 	IFLA_BRPORT_GROUP_FWD_MASK,
+ 	IFLA_BRPORT_NEIGH_SUPPRESS,
++	IFLA_BRPORT_ISOLATED,
+ 	__IFLA_BRPORT_MAX
+ };
+ #define IFLA_BRPORT_MAX (__IFLA_BRPORT_MAX - 1)
+@@ -516,6 +517,7 @@ enum {
+ 	IFLA_VXLAN_COLLECT_METADATA,
+ 	IFLA_VXLAN_LABEL,
+ 	IFLA_VXLAN_GPE,
++	IFLA_VXLAN_TTL_INHERIT,
+ 	__IFLA_VXLAN_MAX
+ };
+ #define IFLA_VXLAN_MAX	(__IFLA_VXLAN_MAX - 1)
 -- 
 2.14.3
 
