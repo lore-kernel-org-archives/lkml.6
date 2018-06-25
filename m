@@ -2,199 +2,181 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22D9C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA4AC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BC3A26114
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:00:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC3A26114
+	by mail.kernel.org (Postfix) with ESMTP id 8B8C026117
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:01:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8C026117
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965158AbeFYVAT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 17:00:19 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46980 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965068AbeFYVAR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 17:00:17 -0400
-Received: by mail-oi0-f66.google.com with SMTP id h79-v6so13848647oig.13
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 14:00:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oVYnNwZ01bw9lMxdRYVT4GeSQwCFeWequEOVblljMoo=;
-        b=BQ2d6MYpQgN82t0LZjKl7BFLNMjcENhuNkS2c+hK0oFf3UKbf/x1iR2GQ8w6F4+VlK
-         1MqS+frb1TnbS19r0x5vukULnu0B4W0Syf+sIcmJjglE6MNiEny9KtJyrPSIh+3bGj+0
-         Yng2hv3diGaRfsOiu1J8/EXCbP10ZYXc/PS6z+mKC+rS5CalzXoDRiO6ZiLdut+gJHDM
-         kLqAFlHHyI+KsHTczkMEvyUSfcqEzPJdMTB9AjkyMuB/+dm48KIHcKBjXy3l/YcVZ1pk
-         utA65Q2hN8MBwUm8cTcpUIfyvJl8isht2Kid32JqW/hAl+u7d/u6yAapfPEjHcgW5V+o
-         qXew==
-X-Gm-Message-State: APt69E0oNsY6HDmSh2jkKIVodPfdz04GjCcrxQGkzdWVulrvOwLyuvIt
-        Ec19GzGSDaJj0DDi17L+1AP4aY9VVgXZvG+tpRQHPA==
-X-Google-Smtp-Source: ADUXVKIb4cHGOx9yP/M9KcA/59dJV1Ef6wXL5Azft3xZ81LxOTFPcwkGXjlHH8DSw5hP80Z5zhkQbs8ewYhYmowP7+4=
-X-Received: by 2002:aca:3554:: with SMTP id c81-v6mr7228570oia.331.1529960416768;
- Mon, 25 Jun 2018 14:00:16 -0700 (PDT)
+        id S1752380AbeFYVB3 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 17:01:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52152 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751556AbeFYVB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 17:01:26 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ACF7E81A4E9F;
+        Mon, 25 Jun 2018 21:01:25 +0000 (UTC)
+Received: from krava (ovpn-204-34.brq.redhat.com [10.40.204.34])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6D6132026D5B;
+        Mon, 25 Jun 2018 21:01:22 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 23:01:21 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 4/4 v3] perf stat: Add transaction flag (-T) support for
+ s390
+Message-ID: <20180625210121.GA13952@krava>
+References: <20180625125856.20262-1-tmricht@linux.ibm.com>
+ <20180625145247.GY20477@kernel.org>
 MIME-Version: 1.0
-References: <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
- <20180612174535.GE19168@hmswarspite.think-freely.org> <CALCETrV-4D-M2ap1EFHQiQerYf_XgwLmBAx5WMvcCUefOODjOA@mail.gmail.com>
- <CAOASepN9t3jF4ajfKLG_odTZddOvXjY_DqLQhRPWhJ-imtjkgg@mail.gmail.com>
- <e3f8e5b9-aa1e-20da-37ac-3c3caafa66bc@fortanix.com> <b5c81504-83cd-8150-ebe4-41355026590f@fortanix.com>
- <20180620210158.GA24328@linux.intel.com> <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
- <20180621152903.GB1324@hmswarspite.think-freely.org> <CAOASepOPxte6aDHQB2dsd+VMPqWOuZZH4j8OKoqaHZ2cBsc38g@mail.gmail.com>
- <20180621212044.GA26021@linux.intel.com>
-In-Reply-To: <20180621212044.GA26021@linux.intel.com>
-From:   Nathaniel McCallum <npmccallum@redhat.com>
-Date:   Mon, 25 Jun 2018 17:00:05 -0400
-Message-ID: <CAOASepNwsXAj7FeD8xw+8AvQ3z=b9CG5zd-OSrg9zLC-nP_JWg@mail.gmail.com>
-Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
- launch enclave
-To:     sean.j.christopherson@intel.com
-Cc:     Neil Horman <nhorman@redhat.com>, jethro@fortanix.com,
-        luto@kernel.org, jarkko.sakkinen@linux.intel.com, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, intel-sgx-kernel-dev@lists.01.org, hpa@zytor.com,
-        dvhart@infradead.org, tglx@linutronix.de, andy@infradead.org,
-        Peter Jones <pjones@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625145247.GY20477@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 25 Jun 2018 21:01:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 25 Jun 2018 21:01:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 5:21 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Thu, Jun 21, 2018 at 03:11:18PM -0400, Nathaniel McCallum wrote:
-> > If this is acceptable for everyone, my hope is the following:
-> >
-> > 1. Intel would split the existing code into one of the following
-> > schemas (I don't care which):
-> >   A. three parts: UEFI module, FLC-only kernel driver and user-space
-> > launch enclave
-> >   B. two parts: UEFI module (including launch enclave) and FLC-only
-> > kernel driver
->
-> To make sure I understand correctly...
->
-> The UEFI module would lock the LE MSRs with a public key hardcoded
-> into both the UEFI module and the kernel at build time?
->
-> And for the kernel, it would only load its SGX driver if FLC is
-> supported and the MSRs are locked to the expected key?
->
-> IIUC, this approach will cause problems for virtualization.  Running
-> VMs with different LE keys would require the bare metal firmware to
-> configure the LE MSRs to be unlocked, which would effectively make
-> using SGX in the host OS mutually exlusive with exposing SGX to KVM
-> guests.  Theoretically it would be possible for KVM to emulate the
-> guest's LE and use the host's LE to generate EINIT tokens, but
-> emulating an enclave would likely require a massive amount of code
-> and/or complexity.
+On Mon, Jun 25, 2018 at 11:52:47AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Jun 25, 2018 at 02:58:56PM +0200, Thomas Richter escreveu:
+> > perf stat command line flag -T to display transaction counters is
+> > currently supported for x86 only.
+> > Add support for s390. It is based on the metrics flag -M transaction
+> > using the architecture dependend json files. This requires a metric
+> > named "transaction" in the json files for the platform.
+> 
+> You forgot to CC Andi in this post, Andi, is everything ok now? May I
+> have your reviewed-by or acked-by?
 
-How is this different from any other scenario where you lock the LE
-MSRs? Unless Intel provides hardware support between the LE MSRs and
-the VMX instructions, I don't see any way around this besides letting
-any launch enclave run.
+hu, I haven't got this one either.. will check
 
-> > 2. Intel would release a reproducible build of the GPL UEFI module
-> > sources signed with a SecureBoot trusted key and provide an
-> > acceptable[0] binary redistribution license.
-> >
-> > 3. The kernel community would agree to merge the kernel driver given
-> > the above criteria (and, obviously, acceptable kernel code).
-> >
-> > The question of how to distribute the UEFI module and possible launch
-> > enclave remains open. I see two options: independent distribution and
-> > bundling it in linux-firmware. The former may be a better
-> > technological fit since the UEFI module will likely need to be run
-> > before the kernel (and the boot loader; and shim). However, the latter
-> > has the benefit of already being a well-known entity to our downstream
-> > distributors. I could go either way on this.
->
-> Writing and locks the LE MSRs effectively needs to be done before
-> running the bootloader/kernel/etc...  Delaying activation would
-> require, at a minimum, leaving IA32_FEATURE_CONTROL unlocked since
-> IA32_FEATURE_CONTROL's SGX bits can't be set until SGX is activated.
->
-> > I know this plan is more work for everyone involved, but I think it
-> > manages to actually maximize both security and freedom.
-> >
-> > [0]: details here -
-> > https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/README#n19
-> > On Thu, Jun 21, 2018 at 11:29 AM Neil Horman <nhorman@redhat.com> wrote:
-> > >
-> > > On Thu, Jun 21, 2018 at 08:32:25AM -0400, Nathaniel McCallum wrote:
-> > > > On Wed, Jun 20, 2018 at 5:02 PM Sean Christopherson
-> > > > <sean.j.christopherson@intel.com> wrote:
-> > > > >
-> > > > > On Wed, Jun 20, 2018 at 11:39:00AM -0700, Jethro Beekman wrote:
-> > > > > > On 2018-06-20 11:16, Jethro Beekman wrote:
-> > > > > > > > This last bit is also repeated in different words in Table 35-2 and
-> > > > > > > > Section 42.2.2. The MSRs are *not writable* before the write-lock bit
-> > > > > > > > itself is locked. Meaning the MSRs are either locked with Intel's key
-> > > > > > > > hash, or not locked at all.
-> > > > > >
-> > > > > > Actually, this might be a documentation bug. I have some test hardware and I
-> > > > > > was able to configure the MSRs in the BIOS and then read the MSRs after boot
-> > > > > > like this:
-> > > > > >
-> > > > > > MSR 0x3a 0x0000000000040005
-> > > > > > MSR 0x8c 0x20180620aaaaaaaa
-> > > > > > MSR 0x8d 0x20180620bbbbbbbb
-> > > > > > MSR 0x8e 0x20180620cccccccc
-> > > > > > MSR 0x8f 0x20180620dddddddd
-> > > > > >
-> > > > > > Since this is not production hardware, it could also be a CPU bug of course.
-> > > > > >
-> > > > > > If it is indeed possible to configure AND lock the MSR values to non-Intel
-> > > > > > values, I'm very much in favor of Nathaniels proposal to treat the launch
-> > > > > > enclave like any other firmware blob.
-> > > > >
-> > > > > It's not a CPU or documentation bug (though the latter is arguable).
-> > > > > SGX has an activation step that is triggered by doing a WRMSR(0x7a)
-> > > > > with bit 0 set.  Until SGX is activated, the SGX related bits in
-> > > > > IA32_FEATURE_CONTROL cannot be set, i.e. SGX can't be enabled.  But,
-> > > > > the LE hash MSRs are fully writable prior to activation, e.g. to
-> > > > > allow firmware to lock down the LE key with a non-Intel value.
-> > > > >
-> > > > > So yes, it's possible to lock the MSRs to a non-Intel value.  The
-> > > > > obvious caveat is that whatever blob is used to write the MSRs would
-> > > > > need be executed prior to activation.
-> > > >
-> > > > This implies that it should be possible to create MSR activation (and
-> > > > an embedded launch enclave?) entirely as a UEFI module. The kernel
-> > > > would still get to manage who has access to /dev/sgx and other
-> > > > important non-cryptographic policy details. Users would still be able
-> > > > to control the cryptographic policy details (via BIOS Secure Boot
-> > > > configuration that exists today). Distributions could still control
-> > > > cryptographic policy details via signing of the UEFI module with their
-> > > > own Secure Boot key (or using something like shim). The UEFI module
-> > > > (and possibly the external launch enclave) could be distributed via
-> > > > linux-firmware.
-> > > >
-> > > > Andy/Neil, does this work for you?
-> > > >
-> > > I need some time to digest it.  Who in your mind is writing the UEFI module.  Is
-> > > that the firmware vendor or IHV?
-> > >
-> > > Neil
-> > >
-> > > > > As for the SDM, it's a documentation... omission?  SGX activation
-> > > > > is intentionally omitted from the SDM.  The intended usage model is
-> > > > > that firmware will always do the activation (if it wants SGX enabled),
-> > > > > i.e. post-firmware software will only ever "see" SGX as disabled or
-> > > > > in the fully activated state, and so the SDM doesn't describe SGX
-> > > > > behavior prior to activation.  I believe the activation process, or
-> > > > > at least what is required from firmware, is documented in the BIOS
-> > > > > writer's guide.
-> > > > >
-> > > > > > Jethro Beekman | Fortanix
-> > > > > >
-> > > > >
-> > > > >
+jirka
+
+> 
+> Thanks,
+> 
+> - Arnaldo
+>  
+> > v2 --> v3:
+> > Introduce new function metricgroup__has_metric() to check for
+> > the existance of a metric named transaction.
+> > 
+> > As suggested by Andi Kleen, this is the new approach to support
+> > transactions counters. Other architectures will follow.
+> > 
+> > Output before:
+> > [root@p23lp27 perf]# ./perf stat -T -- sleep 1
+> > Cannot set up transaction events
+> > [root@p23lp27 perf]#
+> > 
+> > Output after:
+> > [root@s35lp76 perf]# ./perf stat -T -- ~/mytesttx 1 >/tmp/111
+> > 
+> >  Performance counter stats for '/root/mytesttx 1':
+> > 
+> >                  1      tx_c_tend           #     13.0 transaction
+> >                  1      tx_nc_tend
+> >                 11      tx_nc_tabort
+> >                  0      tx_c_tabort_special
+> >                  0      tx_c_tabort_no_special
+> > 
+> >        0.001070109 seconds time elapsed
+> > 
+> > [root@s35lp76 perf]#
+> > 
+> > Suggested-by: Andi Kleen <ak@linux.intel.com>
+> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Suggested-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+> > Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+> > ---
+> >  tools/perf/builtin-stat.c     | 12 ++++++++++++
+> >  tools/perf/util/metricgroup.c | 23 +++++++++++++++++++++++
+> >  tools/perf/util/metricgroup.h |  1 +
+> >  3 files changed, 36 insertions(+)
+> > 
+> > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> > index a4f662a462c6..e309279e7b04 100644
+> > --- a/tools/perf/builtin-stat.c
+> > +++ b/tools/perf/builtin-stat.c
+> > @@ -2425,6 +2425,18 @@ static int add_default_attributes(void)
+> >  	if (transaction_run) {
+> >  		struct parse_events_error errinfo;
+> >  
+> > +		/* Handle -T as -M transaction. Once platform specific metrics
+> > +		 * support has been added to the json files, all archictures
+> > +		 * will use this approach. To determine transaction support
+> > +		 * on an architecture test for such a metric name.
+> > +		 */
+> > +		if (metricgroup__has_metric("transaction")) {
+> > +			struct option opt = { .value = &evsel_list };
+> > +
+> > +			return metricgroup__parse_groups(&opt, "transaction",
+> > +							 &metric_events);
+> > +		}
+> > +
+> >  		if (pmu_have_event("cpu", "cycles-ct") &&
+> >  		    pmu_have_event("cpu", "el-start"))
+> >  			err = parse_events(evsel_list, transaction_attrs,
+> > diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+> > index 1ddc3d1d0147..90cff5226ecc 100644
+> > --- a/tools/perf/util/metricgroup.c
+> > +++ b/tools/perf/util/metricgroup.c
+> > @@ -490,3 +490,26 @@ int metricgroup__parse_groups(const struct option *opt,
+> >  	metricgroup__free_egroups(&group_list);
+> >  	return ret;
+> >  }
+> > +
+> > +bool metricgroup__has_metric(const char *metric)
+> > +{
+> > +	struct pmu_events_map *map = perf_pmu__find_map(NULL);
+> > +	struct pmu_event *pe;
+> > +	int i;
+> > +
+> > +	if (!map)
+> > +		return false;
+> > +
+> > +	for (i = 0; ; i++) {
+> > +		pe = &map->table[i];
+> > +
+> > +		if (!pe->name && !pe->metric_group && !pe->metric_name)
+> > +			break;
+> > +		if (!pe->metric_expr)
+> > +			continue;
+> > +		if (match_metric(pe->metric_group, metric) ||
+> > +		    match_metric(pe->metric_name, metric))
+> > +			return true;
+> > +	}
+> > +	return false;
+> > +}
+> > diff --git a/tools/perf/util/metricgroup.h b/tools/perf/util/metricgroup.h
+> > index 06854e125ee7..8a155dba0581 100644
+> > --- a/tools/perf/util/metricgroup.h
+> > +++ b/tools/perf/util/metricgroup.h
+> > @@ -28,4 +28,5 @@ int metricgroup__parse_groups(const struct option *opt,
+> >  			struct rblist *metric_events);
+> >  
+> >  void metricgroup__print(bool metrics, bool groups, char *filter, bool raw);
+> > +bool metricgroup__has_metric(const char *metric);
+> >  #endif
+> > -- 
+> > 2.14.3
