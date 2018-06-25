@@ -2,130 +2,107 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D27C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B76C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEFAA258FF
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:25:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EDD4258FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:26:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JQ6sEoJI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEFAA258FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8kpTZm9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDD4258FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933423AbeFYMZb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:25:31 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:57754 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933191AbeFYMZa (ORCPT
+        id S933579AbeFYM0T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:26:19 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:46197 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933458AbeFYM0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:25:30 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5PCO21B059339;
-        Mon, 25 Jun 2018 12:25:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=sLChqYlp3FQphphvBoWlOT7gvc9i4CvqYc+XYHL6u2s=;
- b=JQ6sEoJINydWT7MKo4Micjhyg9DGkymUGxsxsdtvRhcZgQY+676zquZ798aRYzf/Hr8M
- fpr3AB8pWIrOOnebHbxJFm2JFw6Kzk/82IxQJ3bNEj4ecT4E6mCZOaWNWQ/cgeRWmGUg
- KKVgbCODoGqJTVgBMgsqpYecUW0m0atNb398Ew39bXMUz35o6Rs1/XCtgAONCJ+HJFYG
- pTKPZx67UXSUGMOzaHctPOfshyVD/ivEc64cJ8qUYSD5wl31rKT9QQLCPvCWt3NP5IYR
- aL0T7a1LqQPAPg03arg9+ahPVkp++oaC1PxfX7BKavwkNjfkgrX05jMLFbyXUfuqoXvC kQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2jt7natghu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Jun 2018 12:25:15 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5PCPDeo032481
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Jun 2018 12:25:14 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5PCPCXD004943;
-        Mon, 25 Jun 2018 12:25:13 GMT
-Received: from mwanda (/197.157.0.49)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 25 Jun 2018 05:25:12 -0700
-Date:   Mon, 25 Jun 2018 15:24:53 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Straube <michael.straube@posteo.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: rtl8723bs: fix brace coding style issues
-Message-ID: <20180625122453.souir6wzzyhbkj4m@mwanda>
-References: <20180621182155.27769-1-michael.straube@posteo.de>
- <20180622102800.4p6wabmte4yf4rtp@mwanda>
- <CAHp75VeASBAsBrrq65qhkAGXHoSE8Hg-9dSGcgjT2bNND-1MBw@mail.gmail.com>
+        Mon, 25 Jun 2018 08:26:17 -0400
+Received: by mail-oi0-f66.google.com with SMTP id h79-v6so12251475oig.13;
+        Mon, 25 Jun 2018 05:26:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=B3SnObRj48p2AGOmJCMAAoR+bKpze2dRSS86FxN2ZdM=;
+        b=G8kpTZm91pk/tlmEux97ICP7SmsTtFzzSLmpuwe4SLpWaVbZyGXvc3zWt6GmuoLfeS
+         xJmtt2Dzq0xBkNa6mv4FlqOKr/b+1GHkx51y5i7FEit9T8Jdhk6RCxa6srWxUm3l4DAY
+         lLEwld2Jfa52Q41oJfFfQ4BEf6UrMMZYwq3jW48jmoismv9IiMEH6gWConQHySNvqShX
+         YRrFUND3s2yUXGtmQgP7D3Zw5NGgqOiShUb8HaGPC4sUxTIcpinfXyLZ2MTNoO7Ad/Cu
+         BSDKIGasOHZ2P6rfDY64TkQmym0l5vEPg12CeWHhAI3RyqA1ePKLGRI1ERzBBPiPWJIy
+         aDpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=B3SnObRj48p2AGOmJCMAAoR+bKpze2dRSS86FxN2ZdM=;
+        b=sHBiMiUvjWQPw8/nBB4zCLEqCSWJ3CwZWMElpgOK/trs+bQoQSmS0qDnIZ1b24tm7+
+         mI+POW4qRtqOV68qIUaXgnDKqW3dyzulTM5Uy/RsL1qRqFFj+466P5yLwBKU7V32dpX3
+         UfXWpLe+cc059nLRBRKlPJrdImmeuheUihjI5VeE0huQd0Cjwe27T7zM/Hg7mPDGcoF3
+         YkYhtIxEY4Xs7OEqQ3B+5NUQ7wt+FeSUEDQvObtV1swZNmazG4qZ3g/TMTv0CbpRSfcu
+         Qby5PKOcfJk6rU0YXAKBSQGdDfA7z1SobF0FmXJ/dZGgRylKXoGxNYW8UnEJeUw93ksY
+         wO/w==
+X-Gm-Message-State: APt69E3w3mTPXMMr/VH9LFOBLA2J8sjwzAftEqTuMOE+LG3bYduowRgZ
+        g/SKvHDZKNSUYD8EsP1907hB+zuJUpBLuu9xH34=
+X-Google-Smtp-Source: AAOMgpeDRe1qey4f8k7tX5JB76ZFXbydieSBdlkJ6enn4xe9STxvG+lZOhRpqxwrmWZ5f56ZEJfW11u4Yo0JVSbgEPQ=
+X-Received: by 2002:aca:808:: with SMTP id 8-v6mr7067670oii.198.1529929577184;
+ Mon, 25 Jun 2018 05:26:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeASBAsBrrq65qhkAGXHoSE8Hg-9dSGcgjT2bNND-1MBw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8934 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806250145
+Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 05:26:16
+ -0700 (PDT)
+In-Reply-To: <20180625121813.rzqgzdbk6ue73eq4@earth.universe>
+References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
+ <CAOMZO5AyAegbvUtX42by99mU8yQfi91bmhJfd9iqu1Ak0dEHiw@mail.gmail.com>
+ <CAOMZO5DJj=oQfsB-vNP=81HCiy-69j-5U+Km9P6LxGpnLx9xzg@mail.gmail.com>
+ <CAHQ1cqHxq+RM1nNHECY75Cojd_kxu1ERLe6+MhMLUa5kb10r8w@mail.gmail.com>
+ <CAOMZO5B98O9XA8GhdWxJZ6DFgS=O+smHURm8v5jEirj31tuUhg@mail.gmail.com>
+ <CAHQ1cqELs4LaQkmPiPjXQuF17+7PBsEtbmSt8iveLqRv+4bgfQ@mail.gmail.com>
+ <CAOMZO5CumdNSP6iTfgXPdmpcZwh7YmBstUpAmb3A1QAf1UWJdw@mail.gmail.com>
+ <CAHQ1cqHpNvZGAfFKrp-OiZevsha5CBwJsw8GT+uhgNSfEUejkw@mail.gmail.com>
+ <CAOMZO5DAbooRgA+sHJa5EmEGy-CHW3FPydcOFtK5AqpdJzD7MQ@mail.gmail.com> <20180625121813.rzqgzdbk6ue73eq4@earth.universe>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 25 Jun 2018 09:26:16 -0300
+Message-ID: <CAOMZO5B_tVj8niY10m2Q1vnr3Az74pwX+BgTo0DaN+PdM4xTYg@mail.gmail.com>
+Subject: Re: [PATCH] usb: chipidea: Fix ULPI on imx51
+To:     Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Peter Chen <peter.chen@nxp.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 12:47:44PM +0300, Andy Shevchenko wrote:
-> On Fri, Jun 22, 2018 at 1:28 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > On Thu, Jun 21, 2018 at 08:21:55PM +0200, Michael Straube wrote:
-> >> Remove braces from single line if statements.
-> >> Also fix a comparsion to NULL in one of the conditions.
-> >> Issues found by checkpatch.
-> >>
-> >> Signed-off-by: Michael Straube <michael.straube@posteo.de>
-> >> ---
-> >>  drivers/staging/rtl8723bs/core/rtw_debug.c | 6 ++----
-> >>  1 file changed, 2 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/staging/rtl8723bs/core/rtw_debug.c b/drivers/staging/rtl8723bs/core/rtw_debug.c
-> >> index f852fde47350..2244ed72ab9c 100644
-> >> --- a/drivers/staging/rtl8723bs/core/rtw_debug.c
-> >> +++ b/drivers/staging/rtl8723bs/core/rtw_debug.c
-> >> @@ -618,9 +618,8 @@ ssize_t proc_set_wait_hiq_empty(struct file *file, const char __user *buffer, si
-> >>       if (count < 1)
-> >>               return -EFAULT;
-> >>
-> >> -     if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp))) {
-> >> +     if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp)))
-> >>               sscanf(tmp, "%u", &g_wait_hiq_empty);
-> >> -     }
-> >
-> >
-> > The original code is kind of bad.  The NULL check isn't required.
-> > The sscanf call should have error checking.  The error code is wrong if
-> > the copy from user fails.  The tmp buffer isn't NUL terminated.
-> >
-> >         if (copy_from_user(tmp, buffer, sizeof(tmp)))
-> >                 return -EFAULT;
-> >         tmp[sizeof(tmp) - 1] = '\0';
-> >
-> >         if (sscanf(tmp, "%u", &g_wait_hiq_empty) != 1)
-> >                 return -EINVAL;
-> >
-> >         return count;
-> 
-> Shouldn't this be
-> 
-> kstrtouint_from_user()
-> 
-> instead of all those lines?
+Hi Sebastian,
 
-I wasn't sure kstrtoint() was the exact same as sscanf()...  If so then
-sure.
+On Mon, Jun 25, 2018 at 9:18 AM, Sebastian Reichel
+<sebastian.reichel@collabora.co.uk> wrote:
 
-regards,
-dan carpenter
+> I still have access to the imx53 based PPD from General Electric.
+> But I don't understand what patch you want me to test. FWIW the
+> images I use(d) for testing already had CONFIG_USB_CHIPIDEA_ULPI
+> and CONFIG_USB_ULPI_BUS enabled.
 
+I was referring to the patch that enables CONFIG_USB_CHIPIDEA_ULPI and
+CONFIG_USB_ULPI_BUS.
+
+Will submit this change as suggested by Andrey.
+
+Regards,
+
+Fabio Estevam
