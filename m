@@ -2,224 +2,273 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B1DC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B558AC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA4F25F19
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:21:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA4F25F19
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 69C1525F1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:21:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6EbeAwu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C1525F1F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935034AbeFYRVk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:21:40 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:14163 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934275AbeFYRVg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:21:36 -0400
-X-IronPort-AV: E=Sophos;i="5.51,271,1526367600"; 
-   d="scan'208";a="15543498"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Jun 2018 10:21:35 -0700
-Received: from m19893.microchip.com (10.10.76.4) by
- chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 25 Jun 2018 10:21:34 -0700
-From:   Radu Pirea <radu.pirea@microchip.com>
-To:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v10 6/6] tty/serial: atmel: change the driver to work under at91-usart mfd
-Date:   Mon, 25 Jun 2018 20:22:30 +0300
-Message-ID: <20180625172230.29686-7-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180625172230.29686-1-radu.pirea@microchip.com>
-References: <20180625172230.29686-1-radu.pirea@microchip.com>
+        id S964843AbeFYRVv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:21:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934275AbeFYRVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 13:21:49 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53E8E25F1B;
+        Mon, 25 Jun 2018 17:21:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529947308;
+        bh=MnouLVhS1Jmpy7U8XV/1xiEkmsei6tlkbKf2tcwd8Z0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c6EbeAwubJ/CdkQaGpxbXiUha2ptk0lV0Rjg/OQmSOh3uSQ73zmQjr0TOsBR5Qk2l
+         tj1DjHcQH3YiH4Vbjkf658x+RQ9mkrXf/RofwCd9HRw47gpcG4IPYKcsRccBzOqIJP
+         QEcHJeAKuZQcPmabjAPBj6kTEhsB1X418p5b8V2c=
+Date:   Mon, 25 Jun 2018 12:21:46 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Guomin Chen <guomin.chen@suse.com>
+Cc:     Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Toshi Kani <toshi.kani@hpe.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joey Lee <JLee@suse.com>, Borislav Petkov <bp@suse.de>,
+        Takashi Iwai <tiwai@suse.de>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] resource: Fixed iomem resource release failed on
+ release_mem_region_adjustable() when memory node or cpu node hot-remove.
+Message-ID: <20180625172146.GA191076@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180622120138.5411-1-guomin.chen@suse.com>
+ <20180622231930.GA2834@bhelgaas-glaptop.roam.corp.google.com>
+ <SN1PR18MB2143CB9E209AC070DB0EC8029C740@SN1PR18MB2143.namprd18.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN1PR18MB2143CB9E209AC070DB0EC8029C740@SN1PR18MB2143.namprd18.prod.outlook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch modifies the place where resources and device tree properties
-are searched.
+On Sat, Jun 23, 2018 at 05:53:40AM +0000, Guomin Chen wrote:
+> Hi 
+> 	The report link for this issue is: https://bugzilla.suse.com/show_bug.cgi?id=1092687
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/tty/serial/Kconfig        |  1 +
- drivers/tty/serial/atmel_serial.c | 42 ++++++++++++++++++++-----------
- 2 files changed, 28 insertions(+), 15 deletions(-)
+If/when you update this patch, please include the URL in the commit log,
+e.g.,
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index df8bd0c7b97d..32886c304641 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -118,6 +118,7 @@ config SERIAL_ATMEL
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select SERIAL_CORE
- 	select SERIAL_MCTRL_GPIO if GPIOLIB
-+	select MFD_AT91_USART
- 	help
- 	  This enables the driver for the on-chip UARTs of the Atmel
- 	  AT91 processors.
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 8e4428725848..267d4d1de3f8 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -193,8 +193,7 @@ static struct console atmel_console;
- 
- #if defined(CONFIG_OF)
- static const struct of_device_id atmel_serial_dt_ids[] = {
--	{ .compatible = "atmel,at91rm9200-usart" },
--	{ .compatible = "atmel,at91sam9260-usart" },
-+	{ .compatible = "atmel,at91rm9200-usart-serial" },
- 	{ /* sentinel */ }
- };
- #endif
-@@ -915,6 +914,7 @@ static void atmel_tx_dma(struct uart_port *port)
- static int atmel_prepare_tx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
- 	int ret, nent;
-@@ -922,7 +922,7 @@ static int atmel_prepare_tx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
- 
--	atmel_port->chan_tx = dma_request_slave_channel(port->dev, "tx");
-+	atmel_port->chan_tx = dma_request_slave_channel(mfd_dev, "tx");
- 	if (atmel_port->chan_tx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for tx DMA transfers\n",
-@@ -1093,6 +1093,7 @@ static void atmel_rx_from_dma(struct uart_port *port)
- static int atmel_prepare_rx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	struct dma_async_tx_descriptor *desc;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
-@@ -1104,7 +1105,7 @@ static int atmel_prepare_rx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_CYCLIC, mask);
- 
--	atmel_port->chan_rx = dma_request_slave_channel(port->dev, "rx");
-+	atmel_port->chan_rx = dma_request_slave_channel(mfd_dev, "rx");
- 	if (atmel_port->chan_rx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for rx DMA transfers\n",
-@@ -2222,8 +2223,8 @@ static const char *atmel_type(struct uart_port *port)
-  */
- static void atmel_release_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	release_mem_region(port->mapbase, size);
- 
-@@ -2238,8 +2239,8 @@ static void atmel_release_port(struct uart_port *port)
-  */
- static int atmel_request_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	if (!request_mem_region(port->mapbase, size, "atmel_serial"))
- 		return -EBUSY;
-@@ -2341,27 +2342,28 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- {
- 	int ret;
- 	struct uart_port *port = &atmel_port->uart;
-+	struct platform_device *mpdev = to_platform_device(pdev->dev.parent);
- 
- 	atmel_init_property(atmel_port, pdev);
- 	atmel_set_ops(port);
- 
--	uart_get_rs485_mode(&pdev->dev, &port->rs485);
-+	uart_get_rs485_mode(&mpdev->dev, &port->rs485);
- 
- 	port->iotype		= UPIO_MEM;
- 	port->flags		= UPF_BOOT_AUTOCONF | UPF_IOREMAP;
- 	port->ops		= &atmel_pops;
- 	port->fifosize		= 1;
- 	port->dev		= &pdev->dev;
--	port->mapbase	= pdev->resource[0].start;
--	port->irq	= pdev->resource[1].start;
-+	port->mapbase		= mpdev->resource[0].start;
-+	port->irq		= mpdev->resource[1].start;
- 	port->rs485_config	= atmel_config_rs485;
--	port->membase	= NULL;
-+	port->membase		= NULL;
- 
- 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
- 
- 	/* for console, the clock could already be configured */
- 	if (!atmel_port->clk) {
--		atmel_port->clk = clk_get(&pdev->dev, "usart");
-+		atmel_port->clk = clk_get(&mpdev->dev, "usart");
- 		if (IS_ERR(atmel_port->clk)) {
- 			ret = PTR_ERR(atmel_port->clk);
- 			atmel_port->clk = NULL;
-@@ -2694,13 +2696,22 @@ static void atmel_serial_probe_fifos(struct atmel_uart_port *atmel_port,
- static int atmel_serial_probe(struct platform_device *pdev)
- {
- 	struct atmel_uart_port *atmel_port;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = pdev->dev.parent->of_node;
- 	void *data;
- 	int ret = -ENODEV;
- 	bool rs485_enabled;
- 
- 	BUILD_BUG_ON(ATMEL_SERIAL_RINGSIZE & (ATMEL_SERIAL_RINGSIZE - 1));
- 
-+	/*
-+	 * In device tree there is no node with "atmel,at91rm9200-usart-serial"
-+	 * as compatible string. This driver is probed by at91-usart mfd driver
-+	 * which is just a wrapper over the atmel_serial driver and
-+	 * spi-at91-usart driver. All attributes needed by this driver are
-+	 * found in of_node of parent.
-+	 */
-+	pdev->dev.of_node = np;
-+
- 	ret = of_alias_get_id(np, "serial");
- 	if (ret < 0)
- 		/* port id not found in platform data nor device-tree aliases:
-@@ -2836,6 +2847,7 @@ static int atmel_serial_remove(struct platform_device *pdev)
- 
- 	clk_put(atmel_port->clk);
- 	atmel_port->clk = NULL;
-+	pdev->dev.of_node = NULL;
- 
- 	return ret;
- }
-@@ -2846,7 +2858,7 @@ static struct platform_driver atmel_serial_driver = {
- 	.suspend	= atmel_serial_suspend,
- 	.resume		= atmel_serial_resume,
- 	.driver		= {
--		.name			= "atmel_usart",
-+		.name			= "atmel_usart_serial",
- 		.of_match_table		= of_match_ptr(atmel_serial_dt_ids),
- 	},
- };
--- 
-2.18.0
+  Link: https://bugzilla.suse.com/show_bug.cgi?id=1092687
 
+It would also be nice if you could make that report public so anybody can
+read it.
+
+> > -----Original Message-----
+> > From: Bjorn Helgaas [mailto:helgaas@kernel.org]
+> > Sent: 2018年6月23日 7:20
+> > To: Guomin Chen <guomin.chen@suse.com>
+> > Cc: Brijesh Singh <brijesh.singh@amd.com>; Tom Lendacky
+> > <thomas.lendacky@amd.com>; Yaowei Bai
+> > <baiyaowei@cmss.chinamobile.com>; Bjorn Helgaas <bhelgaas@google.com>;
+> > Toshi Kani <toshi.kani@hpe.com>; Dan Williams <dan.j.williams@intel.com>;
+> > Thomas Gleixner <tglx@linutronix.de>; Andrew Morton
+> > <akpm@linux-foundation.org>; Joey Lee <JLee@suse.com>; Borislav Petkov
+> > <bp@suse.de>; Takashi Iwai <tiwai@suse.de>; linux-efi@vger.kernel.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH 1/1] resource: Fixed iomem resource release failed on
+> > release_mem_region_adjustable() when memory node or cpu node
+> > hot-remove.
+> > 
+> > [+cc Toshi]
+> > 
+> > On Fri, Jun 22, 2018 at 08:01:38PM +0800, guomin chen wrote:
+> > > We've got a bug report indicating the hot-remove node resource release
+> > > failed,when the memory on this node is divided into several
+> > > sections.because the release_mem_region_adjustable() can only release
+> > > one resource that must be [start,end].
+> > 
+> > Can you please include a URL for the bug report?  That's useful for additional
+> > details and gives hints about how future changes in this area might be tested.
+> > 
+> > release_mem_region_adjustable() and the only call to it were added by Toshi
+> > (cc'd):
+> > 
+> >   825f787bb496 ("resource: add release_mem_region_adjustable()")
+> >   fe74ebb106a5 ("mm: change __remove_pages() to call
+> > release_mem_region_adjustable()")
+> > 
+> > > In my case, the BIOS supports faulty memory isolation. if BIOS
+> > > detected bad memory block, the BIOS will isolates this badblock.
+> > > And set this badblock memory to EfiUnusableMemory in EFI memory map
+> > > base on UEFI 2.7 spec.For example in my system, the memory range on
+> > > node2 is [mem 0x0000080000000000-0x00000807ffffffff].but the BIOS
+> > > detected the [8004e000000-8004e0fffff] is a badblock memory.
+> > > So the memory on node2 seem like this:
+> > >    		80000000000-8004dffffff : System RAM
+> > > 		8004e000000-8004e0fffff : Unusable memory
+> > > 		8004e100000-807ffffffff : System RAM
+> > >
+> > > Now, when offline the cpu node2,the kernel will try to release
+> > > ioresource [mem 0x0000080000000000-0x00000807ffffffff]. at this time,
+> > > the kernel will release failed,and output error message:
+> > > "Unable to release resource <0x0000080000000000-0x00000807ffffffff>
+> > > (-22)".
+> > > Because the release_mem_region_adjustable() can only release one
+> > > resource that must be [0x0000080000000000 , 0x00000807ffffffff].
+> > > but now,the iomem resource on node2 [0x0000080000000000,
+> > > 0x00000807ffffffff] are divided into three resources [80000000000-
+> > > 8004dffffff],[8004e000000-8004e0fffff]and[8004e100000-807ffffffff].
+> > >
+> > > This patch help to Release multiple iomem resources at once when node
+> > > hot-remove. Such as in above case, when hot-remove the cpu node2,the
+> > > kernel will try to release resource [0x0000080000000000-
+> > > 0x00000807ffffffff].And this patch will release three resources
+> > > [80000000000-8004dffffff],[8004e000000-8004e0fffff] and
+> > > [8004e100000-807ffffffff].
+> > >
+> > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > Cc: Brijesh Singh <brijesh.singh@amd.com>
+> > > Cc: Borislav Petkov <bp@suse.de>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> > > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > > Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+> > > Cc: Takashi Iwai <tiwai@suse.de>
+> > > Cc: Dan Williams <dan.j.williams@intel.com>
+> > > Cc: linux-efi@vger.kernel.org
+> > > Cc: linux-kernel@vger.kernel.org
+> > > Cc: Lee Chun-Yi <JLee@suse.com>
+> > > Signed-off-by: guomin chen <guomin.chen@suse.com>
+> > > ---
+> > >  kernel/resource.c | 73
+> > > ++++++++++++++++++++++++++++++++-----------------------
+> > >  1 file changed, 43 insertions(+), 30 deletions(-)
+> > >
+> > > diff --git a/kernel/resource.c b/kernel/resource.c index
+> > > 30e1bc68503b..959bcce4c405 100644
+> > > --- a/kernel/resource.c
+> > > +++ b/kernel/resource.c
+> > > @@ -1240,6 +1240,7 @@ int release_mem_region_adjustable(struct
+> > resource *parent,
+> > >  	struct resource *res;
+> > >  	struct resource *new_res;
+> > >  	resource_size_t end;
+> > > +	resource_size_t new_start = start;
+> > >  	int ret = -EINVAL;
+> > >
+> > >  	end = start + size - 1;
+> > > @@ -1257,7 +1258,7 @@ int release_mem_region_adjustable(struct
+> > resource *parent,
+> > >  			break;
+> > >
+> > >  		/* look for the next resource if it does not fit into */
+> > > -		if (res->start > start || res->end < end) {
+> > > +		if (res->end < new_start) {
+> > >  			p = &res->sibling;
+> > >  			continue;
+> > >  		}
+> > > @@ -1271,42 +1272,54 @@ int release_mem_region_adjustable(struct
+> > resource *parent,
+> > >  		}
+> > >
+> > >  		/* found the target resource; let's adjust accordingly */
+> > > -		if (res->start == start && res->end == end) {
+> > > +		if (res->start == new_start && res->end == end) {
+> > >  			/* free the whole entry */
+> > >  			*p = res->sibling;
+> > >  			free_resource(res);
+> > >  			ret = 0;
+> > > -		} else if (res->start == start && res->end != end) {
+> > > -			/* adjust the start */
+> > > -			ret = __adjust_resource(res, end + 1,
+> > > -						res->end - end);
+> > > -		} else if (res->start != start && res->end == end) {
+> > > -			/* adjust the end */
+> > > -			ret = __adjust_resource(res, res->start,
+> > > -						start - res->start);
+> > > +		} else if (res->end > end) {
+> > > +			if (res->start >= new_start) {
+> > > +				/* adjust the start */
+> > > +				ret = __adjust_resource(res, end + 1,
+> > > +							res->end - end);
+> > > +			} else {
+> > > +				/* split into two entries */
+> > > +				if (!new_res) {
+> > > +					ret = -ENOMEM;
+> > > +					break;
+> > > +				}
+> > > +				new_res->name = res->name;
+> > > +				new_res->start = end + 1;
+> > > +				new_res->end = res->end;
+> > > +				new_res->flags = res->flags;
+> > > +				new_res->desc = res->desc;
+> > > +				new_res->parent = res->parent;
+> > > +				new_res->sibling = res->sibling;
+> > > +				new_res->child = NULL;
+> > > +
+> > > +				ret = __adjust_resource(res, res->start,
+> > > +							new_start - res->start);
+> > > +				if (ret)
+> > > +					break;
+> > > +				res->sibling = new_res;
+> > > +				new_res = NULL;
+> > > +			}
+> > >  		} else {
+> > > -			/* split into two entries */
+> > > -			if (!new_res) {
+> > > -				ret = -ENOMEM;
+> > > -				break;
+> > > +			if (res->start < new_start) {
+> > > +				/* adjust the end */
+> > > +				ret = __adjust_resource(res, res->start,
+> > > +							new_start - res->start);
+> > > +				new_start = res->end+1;
+> > > +				p = &res->sibling;
+> > > +			} else {
+> > > +				new_start = res->end+1;
+> > > +				*p = res->sibling;
+> > > +				free_resource(res);
+> > > +				ret = 0;
+> > >  			}
+> > > -			new_res->name = res->name;
+> > > -			new_res->start = end + 1;
+> > > -			new_res->end = res->end;
+> > > -			new_res->flags = res->flags;
+> > > -			new_res->desc = res->desc;
+> > > -			new_res->parent = res->parent;
+> > > -			new_res->sibling = res->sibling;
+> > > -			new_res->child = NULL;
+> > > -
+> > > -			ret = __adjust_resource(res, res->start,
+> > > -						start - res->start);
+> > > -			if (ret)
+> > > -				break;
+> > > -			res->sibling = new_res;
+> > > -			new_res = NULL;
+> > > +			if (res->end < end)
+> > > +				continue;
+> > >  		}
+> > > -
+> > >  		break;
+> > >  	}
+> > >
+> > > --
+> > > 2.12.3
+> > >
+> 
