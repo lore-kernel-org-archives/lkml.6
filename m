@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9B3C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3DBC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 825692614F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9343A2614F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 21:10:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GsJrtRFx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 825692614F
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="In77wWpH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9343A2614F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752520AbeFYVKl (ORCPT
+        id S1755028AbeFYVKp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 17:10:41 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41062 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751597AbeFYVKh (ORCPT
+        Mon, 25 Jun 2018 17:10:45 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41877 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752319AbeFYVKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 17:10:37 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w8-v6so7408607ply.8
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 14:10:37 -0700 (PDT)
+        Mon, 25 Jun 2018 17:10:41 -0400
+Received: by mail-pf0-f196.google.com with SMTP id a11-v6so7017771pff.8
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 14:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qr59vqedVB5klU81m0iZ3WgC5xyfInatalEuZ2Xgijk=;
-        b=GsJrtRFxnd71zViqGxB+yJX/mgolSv08xivt744u7NcNz39pW0SgcG2o4mxzvceCNM
-         LY9bflwFGjR3p0PRSQG/KxCVedWPbnmYVpXvrIb7xbsZFQdyJBoUWoBZf7lic2fI4/am
-         zuKo3uKnAVzZG9HkfTEvesH/q8Eu7dn0YShxA=
+        bh=7ME0G7lTirc+Q70W7JaZqb0CVXH7ajkdRGsBwyVxDuE=;
+        b=In77wWpHfGgekfSot/fIO5Wv+8sozibFJpzjLHdh1tendjC/asJNa0+pV91T9fF9At
+         HIdAwY4KC5kGgiBJKyX0Qcaou6AeobvmgpMBBxLilJa4CxCs2+HNA2+lmBs2n5j9ZUnR
+         J+WKEaXWlAkhKpwSM3Mn9BxxOcx7FcShqPbl4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=qr59vqedVB5klU81m0iZ3WgC5xyfInatalEuZ2Xgijk=;
-        b=OtsSLTuZlOzFO/cGKZoeF2ZFRS3nMt6ecpzW8/nb7HrrLJGoV7cTZ6Ry/h+a9cN4uP
-         YtudBTaPdvFRNTjnMMtAjSyRrm/ZeFi7Jr/9zDnpy3Rp/Tneziz3OtE7djUtzIRzjPtS
-         FW1yYzxKrlP/XWySmupiDwPNT9DClCgh9672S08Y/rMqtJFOOAOKCqXCYXKfNdUJSIqW
-         SoQhfQidzMA0wFHHY4L+ebxdRmO4YZ7daFK1i4IK7t1d4OtEqo8mJ1rh0BUka7+qNuN0
-         QMsyHvnNfDNZsD251wDL/GUfn5UtqQP+jHxfTQLoGMLVy3Hl9/c+AqMnwkZew/cggCMj
-         Z76g==
-X-Gm-Message-State: APt69E1Xz58+dlQvsJFPv5cnL69/9oa2FkKK17Q9a8v488hzHGKuRgJ2
-        /00vhQDFAeRGJAkxCSQCPv9IHnzMB2U=
-X-Google-Smtp-Source: ADUXVKJ3T7GFvDEofInoLJlM4kjJ82G1eAtXdS7HKqXfS0Yuz9icf9Swmnv+fIoJLgTkmSS6WnP5tg==
-X-Received: by 2002:a17:902:788e:: with SMTP id q14-v6mr13775254pll.234.1529961037503;
-        Mon, 25 Jun 2018 14:10:37 -0700 (PDT)
+        bh=7ME0G7lTirc+Q70W7JaZqb0CVXH7ajkdRGsBwyVxDuE=;
+        b=PWH9tUocVnYxXB06ia101UMCG07uCu9kSl7skrmQ8A2NNFY0XCC81+9LYE225al6m6
+         S93o9U5tgL7Hp47zzt6tUrAeBx5EwvLIco9xWkz1R8bcgkytzXpeGSL2CnDafmhhBfx+
+         FMmxLphHh3mHPO/JUKHAK+KvYjmJSlgKpWkcif8bY4idftRRpJi9PmiA8mRjkxlVH6i8
+         8zoqS5q4hGsOlo2wm06yxbVIFNCVsFVQmYT5dUki0XixVeDJrsZUMlMjm1xIphBSeNc3
+         9MxxHuE/UgVIeKUXrN81zulHgP8J80pR0OUBhVnrGPRRp0fJt9auRBXXFUi3W4Qugewy
+         VDtw==
+X-Gm-Message-State: APt69E1r0pS5z51+w7c71zsvf6cQKwuhaGy00kGhadqyM1qSmsl7ZUN/
+        YWokZWWUOvkGMsTWyr+kLzy1aQ==
+X-Google-Smtp-Source: ADUXVKI/B3BZHOTsr0Xa7C4H8Z+6U6Wvv90RUPYXq8geA/bgV2J5ihEmPP4s0LNq0y76d2C8WmpoMA==
+X-Received: by 2002:aa7:8058:: with SMTP id y24-v6mr14553361pfm.148.1529961040629;
+        Mon, 25 Jun 2018 14:10:40 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id y2-v6sm11958636pfa.43.2018.06.25.14.10.35
+        by smtp.gmail.com with ESMTPSA id o13-v6sm10069589pgn.93.2018.06.25.14.10.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Mon, 25 Jun 2018 14:10:35 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -69,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Rabin Vincent <rabinv@axis.com>,
         Tim Chen <tim.c.chen@linux.intel.com>, qat-linux@intel.com,
         dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/11] crypto: cbc: Remove VLA usage
-Date:   Mon, 25 Jun 2018 14:10:17 -0700
-Message-Id: <20180625211026.15819-3-keescook@chromium.org>
+Subject: [PATCH v2 01/11] crypto: xcbc: Remove VLA usage
+Date:   Mon, 25 Jun 2018 14:10:16 -0700
+Message-Id: <20180625211026.15819-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180625211026.15819-1-keescook@chromium.org>
 References: <20180625211026.15819-1-keescook@chromium.org>
@@ -80,9 +80,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-uses the upper bounds on blocksize. Since this is always a cipher
-blocksize, use the existing cipher max blocksize.
+In the quest to remove all stack VLA usage from the kernel[1], this uses
+the maximum blocksize and adds a sanity check. For xcbc, the blocksize
+must always be 16, so use that, since it's already being enforced during
+instantiation.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
@@ -91,24 +92,43 @@ Cc: "David S. Miller" <davem@davemloft.net>
 Cc: linux-crypto@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/crypto/cbc.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ crypto/xcbc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/include/crypto/cbc.h b/include/crypto/cbc.h
-index f5b8bfc22e6d..47db0aac2ab9 100644
---- a/include/crypto/cbc.h
-+++ b/include/crypto/cbc.h
-@@ -113,7 +113,9 @@ static inline int crypto_cbc_decrypt_inplace(
- 	unsigned int bsize = crypto_skcipher_blocksize(tfm);
- 	unsigned int nbytes = walk->nbytes;
- 	u8 *src = walk->src.virt.addr;
--	u8 last_iv[bsize];
-+	u8 last_iv[MAX_CIPHER_BLOCKSIZE];
-+
-+	BUG_ON(bsize > sizeof(last_iv));
+diff --git a/crypto/xcbc.c b/crypto/xcbc.c
+index 25c75af50d3f..7aa03beed795 100644
+--- a/crypto/xcbc.c
++++ b/crypto/xcbc.c
+@@ -57,6 +57,8 @@ struct xcbc_desc_ctx {
+ 	u8 ctx[];
+ };
  
- 	/* Start of the last block. */
- 	src += nbytes - (nbytes & (bsize - 1)) - bsize;
++#define XCBC_BLOCKSIZE	16
++
+ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
+ 				     const u8 *inkey, unsigned int keylen)
+ {
+@@ -65,7 +67,10 @@ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
+ 	int bs = crypto_shash_blocksize(parent);
+ 	u8 *consts = PTR_ALIGN(&ctx->ctx[0], alignmask + 1);
+ 	int err = 0;
+-	u8 key1[bs];
++	u8 key1[XCBC_BLOCKSIZE];
++
++	if (WARN_ON(bs > sizeof(key1)))
++		return -EINVAL;
+ 
+ 	if ((err = crypto_cipher_setkey(ctx->child, inkey, keylen)))
+ 		return err;
+@@ -212,7 +217,7 @@ static int xcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 		return PTR_ERR(alg);
+ 
+ 	switch(alg->cra_blocksize) {
+-	case 16:
++	case XCBC_BLOCKSIZE:
+ 		break;
+ 	default:
+ 		goto out_put_alg;
 -- 
 2.17.1
 
