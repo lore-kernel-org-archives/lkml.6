@@ -2,125 +2,88 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C462BC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7508C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A66425AED
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:03:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A66425AED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6AAED25AF4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:04:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AAED25AF4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934222AbeFYODu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 10:03:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53332 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933997AbeFYODt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:03:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id ABBEDAEFE;
-        Mon, 25 Jun 2018 14:03:48 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 16:03:46 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Stefan Agner <stefan@agner.ch>, Joe Perches <joe@perches.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/memblock: add missing include <linux/bootmem.h> and
- #ifdef
-Message-ID: <20180625140346.GM28965@dhcp22.suse.cz>
-References: <20180622210542.2025-1-malat@debian.org>
+        id S934280AbeFYOEI convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 10:04:08 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:17882 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934238AbeFYOEG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 10:04:06 -0400
+Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
+ killer.
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        <linux-mm@kvack.org>, <rientjes@google.com>,
+        <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180620115531.GL13685@dhcp22.suse.cz>
+ <3d27f26e-68ba-d3c0-9518-cebeb2689aec@sony.com>
+ <20180625130756.GK28965@dhcp22.suse.cz>
+From:   peter enderborg <peter.enderborg@sony.com>
+Message-ID: <9a14d554-6470-e0d6-19cc-1ecec17a47c7@sony.com>
+Date:   Mon, 25 Jun 2018 16:04:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622210542.2025-1-malat@debian.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180625130756.GK28965@dhcp22.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 22-06-18 23:05:41, Mathieu Malaterre wrote:
-> Commit 26f09e9b3a06 ("mm/memblock: add memblock memory allocation apis")
-> introduced two new function definitions:
-> 
->   memblock_virt_alloc_try_nid_nopanic()
->   memblock_virt_alloc_try_nid()
-> 
-> Commit ea1f5f3712af ("mm: define memblock_virt_alloc_try_nid_raw")
-> introduced the following function definition:
-> 
->   memblock_virt_alloc_try_nid_raw()
-> 
-> This commit adds an include of header file <linux/bootmem.h> to provide
-> the missing function prototypes. Silence the following gcc warning
-> (W=1):
-> 
->   mm/memblock.c:1334:15: warning: no previous prototype for `memblock_virt_alloc_try_nid_raw' [-Wmissing-prototypes]
->   mm/memblock.c:1371:15: warning: no previous prototype for `memblock_virt_alloc_try_nid_nopanic' [-Wmissing-prototypes]
->   mm/memblock.c:1407:15: warning: no previous prototype for `memblock_virt_alloc_try_nid' [-Wmissing-prototypes]
-> 
-> As seen in commit 6cc22dc08a24 ("revert "mm/memblock: add missing include
-> <linux/bootmem.h>"") #ifdef blockers were missing which lead to compilation
-> failure on mips/ia64 where CONFIG_NO_BOOTMEM=n.
-> 
-> Suggested-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+On 06/25/2018 03:07 PM, Michal Hocko wrote:
 
-I was not aware of -Wmissing-prototypes
-
-> ---
->  mm/memblock.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 4c98672bc3e2..f4b6766d7907 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -20,6 +20,7 @@
->  #include <linux/kmemleak.h>
->  #include <linux/seq_file.h>
->  #include <linux/memblock.h>
-> +#include <linux/bootmem.h>
+> On Mon 25-06-18 15:03:40, peter enderborg wrote:
+>> On 06/20/2018 01:55 PM, Michal Hocko wrote:
+>>> On Wed 20-06-18 20:20:38, Tetsuo Handa wrote:
+>>>> Sleeping with oom_lock held can cause AB-BA lockup bug because
+>>>> __alloc_pages_may_oom() does not wait for oom_lock. Since
+>>>> blocking_notifier_call_chain() in out_of_memory() might sleep, sleeping
+>>>> with oom_lock held is currently an unavoidable problem.
+>>> Could you be more specific about the potential deadlock? Sleeping while
+>>> holding oom lock is certainly not nice but I do not see how that would
+>>> result in a deadlock assuming that the sleeping context doesn't sleep on
+>>> the memory allocation obviously.
+>> It is a mutex you are supposed to be able to sleep.  It's even exported.
+> What do you mean? oom_lock is certainly not exported for general use. It
+> is not local to oom_killer.c just because it is needed in other _mm_
+> code.
 >  
->  #include <asm/sections.h>
->  #include <linux/io.h>
-> @@ -1226,6 +1227,7 @@ phys_addr_t __init memblock_alloc_try_nid(phys_addr_t size, phys_addr_t align, i
->  	return memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
->  }
->  
-> +#if defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM)
 
-Why do you need CONFIG_HAVE_MEMBLOCK dependency?
-mm/Makefile says
-obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
+It  is in the oom.h file include/linux/oom.h, if it that sensitive it should
+be in mm/ and a documented note about the special rules. It is only used
+in drivers/tty/sysrq.c and that be replaced by a help function in mm that
+do the  oom stuff.
 
-so we even do not compile this code for !HAVE_MEMBLOCK AFAICS.
 
->  /**
->   * memblock_virt_alloc_internal - allocate boot memory block
->   * @size: size of memory block to be allocated in bytes
-> @@ -1433,6 +1435,7 @@ void * __init memblock_virt_alloc_try_nid(
->  	      (u64)max_addr);
->  	return NULL;
->  }
-> +#endif
->  
->  /**
->   * __memblock_free_early - free boot memory block
-> -- 
-> 2.11.0
+>>>> As a preparation for not to sleep with oom_lock held, this patch brings
+>>>> OOM notifier callbacks to outside of OOM killer, with two small behavior
+>>>> changes explained below.
+>>> Can we just eliminate this ugliness and remove it altogether? We do not
+>>> have that many notifiers. Is there anything fundamental that would
+>>> prevent us from moving them to shrinkers instead?
+>> @Hocko Do you remember the lowmemorykiller from android? Some things
+>> might not be the right thing for shrinkers.
+> Just that lmk did it wrong doesn't mean others have to follow.
+>
+If all you have is a hammer, everything looks like a nail. (I don’t argument that it was right)
+But if you don’t have a way to interact with the memory system we will get attempts like lmk. 
+Oom notifiers and vmpressure is for this task better than shrinkers.
 
--- 
-Michal Hocko
-SUSE Labs
+
