@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7D4C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663FFC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D00EC2588B
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:04:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D00EC2588B
+	by mail.kernel.org (Postfix) with ESMTP id 170A32588A
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:05:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 170A32588A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933302AbeFYME5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:04:57 -0400
-Received: from mailoutvs47.siol.net ([185.57.226.238]:47763 "EHLO
+        id S933432AbeFYMFB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:05:01 -0400
+Received: from mailoutvs37.siol.net ([185.57.226.228]:47804 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932444AbeFYMEy (ORCPT
+        with ESMTP id S933263AbeFYME5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:04:54 -0400
+        Mon, 25 Jun 2018 08:04:57 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 3F8B75202EC;
-        Mon, 25 Jun 2018 14:04:52 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id AC27A5208B4;
+        Mon, 25 Jun 2018 14:04:55 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 1QoWdm7oavQy; Mon, 25 Jun 2018 14:04:51 +0200 (CEST)
+        with ESMTP id nECC2axhFRU9; Mon, 25 Jun 2018 14:04:54 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 8969E52029A;
-        Mon, 25 Jun 2018 14:04:51 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id 79242520604;
+        Mon, 25 Jun 2018 14:04:54 +0200 (CEST)
 Received: from localhost.localdomain (unknown [194.152.15.144])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id B1B70520604;
-        Mon, 25 Jun 2018 14:04:48 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 9140C5208A2;
+        Mon, 25 Jun 2018 14:04:51 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
 Cc:     airlied@linux.ie, gustavo@padovan.org,
@@ -44,9 +44,9 @@ Cc:     airlied@linux.ie, gustavo@padovan.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v3 04/24] dt-bindings: display: sunxi-drm: Add TCON TOP description
-Date:   Mon, 25 Jun 2018 14:02:44 +0200
-Message-Id: <20180625120304.7543-5-jernej.skrabec@siol.net>
+Subject: [PATCH v3 05/24] drm/sun4i: Add TCON TOP driver
+Date:   Mon, 25 Jun 2018 14:02:45 +0200
+Message-Id: <20180625120304.7543-6-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
 References: <20180625120304.7543-1-jernej.skrabec@siol.net>
@@ -55,102 +55,393 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TCON TOP main purpose is to configure whole display pipeline. It
-determines relationships between mixers and TCONs, selects source TCON
-for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
-clock source and contains additional TV TCON and DSI gates.
+As already described in DT binding, TCON TOP is responsible for
+configuring display pipeline. In this initial driver focus is on HDMI
+pipeline, so TVE and LCD configuration is not implemented.
+
+Implemented features:
+- HDMI source selection
+- clock driver (TCON and DSI gating)
+- connecting mixers and TCONS
+
+Something similar also existed in previous SoCs, except that it was part
+of first TCON.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- .../bindings/display/sunxi/sun4i-drm.txt      | 56 +++++++++++++++++++
- include/dt-bindings/clock/sun8i-tcon-top.h    | 11 ++++
- 2 files changed, 67 insertions(+)
- create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
+ drivers/gpu/drm/sun4i/Makefile         |   3 +-
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 300 +++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.h |  40 ++++
+ 3 files changed, 342 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 3346c1e2a7a0..fe31b1510717 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -187,6 +187,62 @@ And on the A23, A31, A31s and A33, you need one more clock line:
-    - 'lvds-alt': An alternative clock source, separate from the TCON channel 0
-                  clock, that can be used to drive the LVDS clock
+diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+index 2589f4acd5ae..09fbfd6304ba 100644
+--- a/drivers/gpu/drm/sun4i/Makefile
++++ b/drivers/gpu/drm/sun4i/Makefile
+@@ -16,7 +16,8 @@ sun8i-drm-hdmi-y		+= sun8i_hdmi_phy_clk.o
  
-+TCON TOP
-+--------
-+
-+TCON TOPs main purpose is to configure whole display pipeline. It determines
-+relationships between mixers and TCONs, selects source TCON for HDMI, muxes
-+LCD and TV encoder GPIO output, selects TV encoder clock source and contains
-+additional TV TCON and DSI gates.
-+
-+It allows display pipeline to be configured in very different ways:
-+
-+                                / LCD0/LVDS0
-+                 / [0] TCON-LCD0
-+                 |              \ MIPI DSI
-+ mixer0          |
-+        \        / [1] TCON-LCD1 - LCD1/LVDS1
-+         TCON-TOP
-+        /        \ [2] TCON-TV0 [0] - TVE0/RGB
-+ mixer1          |                  \
-+                 |                   TCON-TOP - HDMI
-+                 |                  /
-+                 \ [3] TCON-TV1 [1] - TVE1/RGB
-+
-+Note that both TCON TOP references same physical unit. Both mixers can be
-+connected to any TCON.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun8i-r40-tcon-top
-+  - reg: base address and size of the memory-mapped region.
-+  - clocks: phandle to the clocks feeding the TCON TOP
-+    * bus: TCON TOP interface clock
-+    * tcon-tv0: TCON TV0 clock
-+    * tve0: TVE0 clock
-+    * tcon-tv1: TCON TV1 clock
-+    * tve1: TVE0 clock
-+    * dsi: MIPI DSI clock
-+  - clock-names: clock name mentioned above
-+  - resets: phandle to the reset line driving the TCON TOP
-+  - #clock-cells : must contain 1
-+  - clock-output-names: Names of clocks created for TCON TV0 channel clock,
-+    TCON TV1 channel clock and DSI channel clock, in that order.
-+
-+- ports: A ports node with endpoint definitions as defined in
-+    Documentation/devicetree/bindings/media/video-interfaces.txt. 6 ports should
-+    be defined:
-+    * port 0 is input for mixer0 mux
-+    * port 1 is output for mixer0 mux
-+    * port 2 is input for mixer1 mux
-+    * port 3 is output for mixer1 mux
-+    * port 4 is input for HDMI mux
-+    * port 5 is output for HDMI mux
-+    All output endpoints for mixer muxes and input endpoints for HDMI mux should
-+    have reg property with the id of the target TCON, as shown in above graph
-+    (0-3 for mixer muxes and 0-1 for HDMI mux). All ports should have only one
-+    endpoint connected to remote endpoint.
-+
- DRC
- ---
+ sun8i-mixer-y			+= sun8i_mixer.o sun8i_ui_layer.o \
+ 				   sun8i_vi_layer.o sun8i_ui_scaler.o \
+-				   sun8i_vi_scaler.o sun8i_csc.o
++				   sun8i_vi_scaler.o sun8i_csc.o \
++				   sun8i_tcon_top.o
  
-diff --git a/include/dt-bindings/clock/sun8i-tcon-top.h b/include/dt-bindings/clock/sun8i-tcon-top.h
+ sun4i-tcon-y			+= sun4i_crtc.o
+ sun4i-tcon-y			+= sun4i_dotclock.o
+diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
 new file mode 100644
-index 000000000000..25164d767835
+index 000000000000..8da0460e0028
 --- /dev/null
-+++ b/include/dt-bindings/clock/sun8i-tcon-top.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/* Copyright (C) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
++++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+@@ -0,0 +1,300 @@
++// SPDX-License-Identifier: GPL-2.0+
++/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
 +
-+#ifndef _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_
-+#define _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_
++#include <drm/drmP.h>
 +
-+#define CLK_TCON_TOP_TV0	0
-+#define CLK_TCON_TOP_TV1	1
-+#define CLK_TCON_TOP_DSI	2
++#include <dt-bindings/clock/sun8i-tcon-top.h>
 +
-+#endif /* _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_ */
++#include <linux/bitfield.h>
++#include <linux/component.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/of_graph.h>
++#include <linux/platform_device.h>
++
++#include "sun8i_tcon_top.h"
++
++static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
++					      int port_id)
++{
++	struct device_node *ep, *remote, *port;
++	struct of_endpoint endpoint;
++
++	port = of_graph_get_port_by_id(node, port_id);
++	if (!port)
++		return -ENOENT;
++
++	for_each_available_child_of_node(port, ep) {
++		remote = of_graph_get_remote_port_parent(ep);
++		if (!remote)
++			continue;
++
++		if (of_device_is_available(remote)) {
++			of_graph_parse_endpoint(ep, &endpoint);
++
++			of_node_put(remote);
++
++			return endpoint.id;
++		}
++
++		of_node_put(remote);
++	}
++
++	return -ENOENT;
++}
++
++static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
++						   struct clk *parent,
++						   void __iomem *regs,
++						   spinlock_t *lock,
++						   u8 bit, int name_index)
++{
++	const char *clk_name, *parent_name;
++	int ret;
++
++	parent_name = __clk_get_name(parent);
++	ret = of_property_read_string_index(dev->of_node,
++					    "clock-output-names", name_index,
++					    &clk_name);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return clk_hw_register_gate(dev, clk_name, parent_name,
++				    CLK_SET_RATE_PARENT,
++				    regs + TCON_TOP_GATE_SRC_REG,
++				    bit, 0, lock);
++};
++
++static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
++			       void *data)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct clk *dsi, *tcon_tv0, *tcon_tv1, *tve0, *tve1;
++	struct clk_hw_onecell_data *clk_data;
++	struct sun8i_tcon_top *tcon_top;
++	bool mixer0_unused = false;
++	struct resource *res;
++	void __iomem *regs;
++	int ret, i, id;
++	u32 val;
++
++	tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
++	if (!tcon_top)
++		return -ENOMEM;
++
++	clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
++				sizeof(*clk_data->hws) * CLK_NUM,
++				GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++	tcon_top->clk_data = clk_data;
++
++	spin_lock_init(&tcon_top->reg_lock);
++
++	tcon_top->rst = devm_reset_control_get(dev, NULL);
++	if (IS_ERR(tcon_top->rst)) {
++		dev_err(dev, "Couldn't get our reset line\n");
++		return PTR_ERR(tcon_top->rst);
++	}
++
++	tcon_top->bus = devm_clk_get(dev, "bus");
++	if (IS_ERR(tcon_top->bus)) {
++		dev_err(dev, "Couldn't get the bus clock\n");
++		return PTR_ERR(tcon_top->bus);
++	}
++
++	dsi = devm_clk_get(dev, "dsi");
++	if (IS_ERR(dsi)) {
++		dev_err(dev, "Couldn't get the dsi clock\n");
++		return PTR_ERR(dsi);
++	}
++
++	tcon_tv0 = devm_clk_get(dev, "tcon-tv0");
++	if (IS_ERR(tcon_tv0)) {
++		dev_err(dev, "Couldn't get the tcon-tv0 clock\n");
++		return PTR_ERR(tcon_tv0);
++	}
++
++	tcon_tv1 = devm_clk_get(dev, "tcon-tv1");
++	if (IS_ERR(tcon_tv1)) {
++		dev_err(dev, "Couldn't get the tcon-tv1 clock\n");
++		return PTR_ERR(tcon_tv1);
++	}
++
++	tve0 = devm_clk_get(dev, "tve0");
++	if (IS_ERR(tve0)) {
++		dev_err(dev, "Couldn't get the tve0 clock\n");
++		return PTR_ERR(tve0);
++	}
++
++	tve1 = devm_clk_get(dev, "tve1");
++	if (IS_ERR(tve1)) {
++		dev_err(dev, "Couldn't get the tve1 clock\n");
++		return PTR_ERR(tve1);
++	}
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
++
++	ret = reset_control_deassert(tcon_top->rst);
++	if (ret) {
++		dev_err(dev, "Could not deassert ctrl reset control\n");
++		return ret;
++	}
++
++	ret = clk_prepare_enable(tcon_top->bus);
++	if (ret) {
++		dev_err(dev, "Could not enable bus clock\n");
++		goto err_assert_reset;
++	}
++
++	val = 0;
++
++	/* check if HDMI mux output is connected */
++	if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
++		/* find HDMI input endpoint id, if it is connected at all*/
++		id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
++		if (id >= 0)
++			val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
++		else
++			DRM_DEBUG_DRIVER("TCON TOP HDMI input is not connected\n");
++	} else {
++		DRM_DEBUG_DRIVER("TCON TOP HDMI output is not connected\n");
++	}
++
++	writel(val, regs + TCON_TOP_GATE_SRC_REG);
++
++	val = 0;
++
++	/* process mixer0 mux output */
++	id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
++	if (id >= 0) {
++		val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
++	} else {
++		DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not connected\n");
++		mixer0_unused = true;
++	}
++
++	/* process mixer1 mux output */
++	id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
++	if (id >= 0) {
++		val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
++
++		/*
++		 * mixer0 mux has priority over mixer1 mux. We have to
++		 * make sure mixer0 doesn't overtake TCON from mixer1.
++		 */
++		if (mixer0_unused && id == 0)
++			val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
++	} else {
++		DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not connected\n");
++	}
++
++	writel(val, regs + TCON_TOP_PORT_SEL_REG);
++
++	/*
++	 * TCON TOP has two muxes, which select parent clock for each TCON TV
++	 * channel clock. Parent could be either TCON TV or TVE clock. For now
++	 * we leave this fixed to TCON TV, since TVE driver for R40 is not yet
++	 * implemented. Once it is, graph needs to be traversed to determine
++	 * if TVE is active on each TCON TV. If it is, mux should be switched
++	 * to TVE clock parent.
++	 */
++	clk_data->hws[CLK_TCON_TOP_TV0] =
++		sun8i_tcon_top_register_gate(dev, tcon_tv0, regs,
++					     &tcon_top->reg_lock,
++					     TCON_TOP_TCON_TV0_GATE, 0);
++
++	clk_data->hws[CLK_TCON_TOP_TV1] =
++		sun8i_tcon_top_register_gate(dev, tcon_tv1, regs,
++					     &tcon_top->reg_lock,
++					     TCON_TOP_TCON_TV1_GATE, 1);
++
++	clk_data->hws[CLK_TCON_TOP_DSI] =
++		sun8i_tcon_top_register_gate(dev, dsi, regs,
++					     &tcon_top->reg_lock,
++					     TCON_TOP_TCON_DSI_GATE, 2);
++
++	for (i = 0; i < CLK_NUM; i++)
++		if (IS_ERR(clk_data->hws[i])) {
++			ret = PTR_ERR(clk_data->hws[i]);
++			goto err_unregister_gates;
++		}
++
++	clk_data->num = CLK_NUM;
++
++	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
++				     clk_data);
++	if (ret)
++		goto err_unregister_gates;
++
++	dev_set_drvdata(dev, tcon_top);
++
++	return 0;
++
++err_unregister_gates:
++	for (i = 0; i < CLK_NUM; i++)
++		if (clk_data->hws[i])
++			clk_hw_unregister_gate(clk_data->hws[i]);
++	clk_disable_unprepare(tcon_top->bus);
++err_assert_reset:
++	reset_control_assert(tcon_top->rst);
++
++	return ret;
++}
++
++static void sun8i_tcon_top_unbind(struct device *dev, struct device *master,
++				  void *data)
++{
++	struct sun8i_tcon_top *tcon_top = dev_get_drvdata(dev);
++	struct clk_hw_onecell_data *clk_data = tcon_top->clk_data;
++	int i;
++
++	of_clk_del_provider(dev->of_node);
++	for (i = 0; i < CLK_NUM; i++)
++		clk_hw_unregister_gate(clk_data->hws[i]);
++
++	clk_disable_unprepare(tcon_top->bus);
++	reset_control_assert(tcon_top->rst);
++}
++
++static const struct component_ops sun8i_tcon_top_ops = {
++	.bind	= sun8i_tcon_top_bind,
++	.unbind	= sun8i_tcon_top_unbind,
++};
++
++static int sun8i_tcon_top_probe(struct platform_device *pdev)
++{
++	return component_add(&pdev->dev, &sun8i_tcon_top_ops);
++}
++
++static int sun8i_tcon_top_remove(struct platform_device *pdev)
++{
++	component_del(&pdev->dev, &sun8i_tcon_top_ops);
++
++	return 0;
++}
++
++/* sun4i_drv uses this list to check if a device node is a TCON TOP */
++const struct of_device_id sun8i_tcon_top_of_table[] = {
++	{ .compatible = "allwinner,sun8i-r40-tcon-top" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
++EXPORT_SYMBOL(sun8i_tcon_top_of_table);
++
++static struct platform_driver sun8i_tcon_top_platform_driver = {
++	.probe		= sun8i_tcon_top_probe,
++	.remove		= sun8i_tcon_top_remove,
++	.driver		= {
++		.name		= "sun8i-tcon-top",
++		.of_match_table	= sun8i_tcon_top_of_table,
++	},
++};
++module_platform_driver(sun8i_tcon_top_platform_driver);
++
++MODULE_AUTHOR("Jernej Skrabec <jernej.skrabec@siol.net>");
++MODULE_DESCRIPTION("Allwinner R40 TCON TOP driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.h b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+new file mode 100644
+index 000000000000..39838bbfeaee
+--- /dev/null
++++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
++
++#ifndef _SUN8I_TCON_TOP_H_
++#define _SUN8I_TCON_TOP_H_
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/reset.h>
++#include <linux/spinlock.h>
++
++#define TCON_TOP_TCON_TV_SETUP_REG	0x00
++
++#define TCON_TOP_PORT_SEL_REG		0x1C
++#define TCON_TOP_PORT_DE0_MSK			GENMASK(1, 0)
++#define TCON_TOP_PORT_DE1_MSK			GENMASK(5, 4)
++
++#define TCON_TOP_GATE_SRC_REG		0x20
++#define TCON_TOP_HDMI_SRC_MSK			GENMASK(29, 28)
++#define TCON_TOP_TCON_TV1_GATE			24
++#define TCON_TOP_TCON_TV0_GATE			20
++#define TCON_TOP_TCON_DSI_GATE			16
++
++#define CLK_NUM					3
++
++struct sun8i_tcon_top {
++	struct clk			*bus;
++	struct clk_hw_onecell_data	*clk_data;
++	struct reset_control		*rst;
++
++	/*
++	 * spinlock is used to synchronize access to same
++	 * register where multiple clock gates can be set.
++	 */
++	spinlock_t			reg_lock;
++};
++
++extern const struct of_device_id sun8i_tcon_top_of_table[];
++
++#endif /* _SUN8I_TCON_TOP_H_ */
 -- 
 2.18.0
 
