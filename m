@@ -2,149 +2,164 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1439C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CEFC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A41B42599F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A41B42599F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DABD25A92
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:40:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L74402jp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DABD25A92
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752513AbeFYNhI (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:37:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50583 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752124AbeFYNhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:37:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1AFB0AB34;
-        Mon, 25 Jun 2018 13:37:06 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 15:37:05 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Namit Gupta <gupta.namit@samsung.com>
-Cc:     sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, pankaj.m@samsung.com,
-        a.sahrawat@samsung.com, himanshu.m@samsung.com
-Subject: Re: [PATCH] printk: remove unnecessary kmalloc() from syslog during
- clear
-Message-ID: <20180625133705.7zsg2rkw4xtyg6ie@pathway.suse.cz>
-References: <CGME20180620135951epcas5p3bd2a8f25ec689ca333bce861b527dba2@epcas5p3.samsung.com>
- <20180620135951epcas5p3bd2a8f25ec689ca333bce861b527dba2~54wyKcT0_3155531555epcas5p3y@epcas5p3.samsung.com>
+        id S933920AbeFYNk0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:40:26 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40080 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755345AbeFYNkY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:40:24 -0400
+Received: by mail-pf0-f193.google.com with SMTP id z24-v6so6465428pfe.7;
+        Mon, 25 Jun 2018 06:40:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ebccYx03yS2XKmIL6Fqtm0lEKpMG2UJfyXAeajlli9c=;
+        b=L74402jpSY8Jr7JzfgUL4Hx2fByoK5dZ3xxcmCNtM7XTmrZe06ZvurOU6WozOYFvuk
+         fzXI6cvBQ3pDe7K4rIZpbWq0svkiJlPIXy+Lq9OH+oMXcvoD5TQJsIK90IgzkHamFD6o
+         n5KgijnTfn9WCHmGRaSMqS6Xq6UWSyUwwVs0OmNmFhlWN0k26rdr/Lf6MVQObY9XBDe7
+         JRx+7E+zdVJR1COLSsV7om9Qk255DiqxLjef2bAEF6hklV2/qBUvEUOgr4sLGy5mxCzs
+         q6uS5Eso2azjYC7hX/IMrD1FmAIY3qx7cn4ZQ2sLxNUo23R0Kyy+XXVtphUuSU/KouWx
+         UnHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ebccYx03yS2XKmIL6Fqtm0lEKpMG2UJfyXAeajlli9c=;
+        b=HA9He9odAGGXJ/zJvuxgILX3dzJf6RGNvcPkuK539pOhd06B4td/qChnN3XrRW67Q0
+         ps/ICWqRyXnucBBJcXtcEhglUDMLLftg0/vEgOCdVfvJaMYbVbth9V9fbGYMV+c9wkEu
+         BaLl/wVHV2RbV2+4S3S2aNz0xiebNCfTMBNJvPGfp9N5oe7xnsDvJkelgLOyhwCPCCb4
+         xJJIxiQpUvHbkP0v2QDD9oxbNkvDLZi9OZymOKJy7d+Z841E/jGVIxHw7gVfz7eO2J2N
+         nxQiJ+8pk3cQp9FtL9n338KjwJVNp3QAzsM7mpwiOFMZ0NQoLk04VRh2kRXZDwBfJkVz
+         gbrQ==
+X-Gm-Message-State: APt69E18io83+UZNseMI8KkuQkRVB0SAB2rErZKpqfyh+W1qYnXkWH4G
+        Af0Zl96uPLzH/mYiDGZaV5c=
+X-Google-Smtp-Source: ADUXVKJW4yQZxdz3/hchvfp4SUIayYH1E2FJO/u5UDWf1N9uphOh1Ffhkm7BIu3veIApHyFz1poR4A==
+X-Received: by 2002:a63:7e1a:: with SMTP id z26-v6mr10800562pgc.278.1529934023759;
+        Mon, 25 Jun 2018 06:40:23 -0700 (PDT)
+Received: from localhost (g134.124-44-9.ppp.wakwak.ne.jp. [124.44.9.134])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm21380170pfn.11.2018.06.25.06.40.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 06:40:23 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 22:40:21 +0900
+From:   Stafford Horne <shorne@gmail.com>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
+        Eric Biggers <ebiggers3@gmail.com>,
+        linux-crypto@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2 1/2] crypto: Fix -Wstringop-truncation warnings
+Message-ID: <20180625134021.GJ24595@lianli.shorne-pla.net>
+References: <20180625124538.21051-1-shorne@gmail.com>
+ <20180625124538.21051-2-shorne@gmail.com>
+ <2588342c-50da-a75b-3e51-32e3d931644c@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180620135951epcas5p3bd2a8f25ec689ca333bce861b527dba2~54wyKcT0_3155531555epcas5p3y@epcas5p3.samsung.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2588342c-50da-a75b-3e51-32e3d931644c@c-s.fr>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-06-20 19:26:19, Namit Gupta wrote:
-> When the request is only for clearing logs, there is no need for
-> allocation/deallocation. Only the indexes need to be reset and returned.
-> Rest of the patch is mostly made up of changes because of indention.
+On Mon, Jun 25, 2018 at 02:59:58PM +0200, Christophe LEROY wrote:
 > 
-> Signed-off-by: Namit Gupta <gupta.namit@samsung.com>
-> Signed-off-by: Himanshu Maithani <himanshu.m@samsung.com>
-
-> ---
->  kernel/printk/printk.c | 111 ++++++++++++++++++++++++++-----------------------
->  1 file changed, 60 insertions(+), 51 deletions(-)
 > 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 512f7c2..53952ce 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -1348,71 +1348,80 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
->  {
->  	char *text;
->  	int len = 0;
-> +	u64 next_seq;
-> +	u64 seq;
-> +	u32 idx;
-> +
-> +	if (!buf) {
-> +		if (clear) {
-> +			logbuf_lock_irq();
-> +			clear_seq = log_next_seq;
-> +			clear_idx = log_next_idx;
-> +			logbuf_unlock_irq();
+> Le 25/06/2018 à 14:45, Stafford Horne a écrit :
+> > As of GCC 9.0.0 the build is reporting warnings like:
+> > 
+> >      crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
+> >      crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+> >        strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+> >        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >         sizeof(rblkcipher.geniv));
+> >         ~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 
+> > This means the strnycpy might create a non null terminated string.  Fix this by
+> > explicitly performing '\0' termination.
+> > 
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Max Filippov <jcmvbkbc@gmail.com>
+> > Cc: Eric Biggers <ebiggers3@gmail.com>
+> > Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
+> > Signed-off-by: Stafford Horne <shorne@gmail.com>
+> > ---
+> >   crypto/ablkcipher.c | 2 ++
+> >   crypto/blkcipher.c  | 1 +
+> >   2 files changed, 3 insertions(+)
+> > 
+> > diff --git a/crypto/ablkcipher.c b/crypto/ablkcipher.c
+> > index d880a4897159..1edb5000d783 100644
+> > --- a/crypto/ablkcipher.c
+> > +++ b/crypto/ablkcipher.c
+> > @@ -373,6 +373,7 @@ static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+> >   	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
+> >   	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+> >   		sizeof(rblkcipher.geniv));
+> 
+> Is it worth copying something we are going to discard at the following line
+> ? Shouldn't you limit the copy to      sizeof(rblkcipher.geniv) - 1   ?
 
-I pushed a bit different version into printk.git, branch for-4.19,
-see below. It removes the code duplication. Also it keeps the original
-indentation. IMHO, it helped to better distinguish the code for printing
-and clearing.
+Hi,
 
-It is rather a cosmetic change, so I do not want you to resend
-Reviewed-by tags. But feel free to disagree and ask me to use
-the original variant.
+I thought about that, I just did it like this as I thought it might be easier to
+read and I noticed a few other areas in the kernel that did this way.  After a
+closer look I can see we have both patterns, perhaps we need a mcro/helper.
 
+I don't mind either way, I can fix, if the crypto maintainers want to adjust the
+patch that would work too.
 
-This is in printk.git now:
+-Stafford
 
-From 41cb6dcedd9257d51fd310bf9b2958d11d93aa2b Mon Sep 17 00:00:00 2001
-From: Namit Gupta <gupta.namit@samsung.com>
-Date: Mon, 25 Jun 2018 14:58:05 +0200
-Subject: [PATCH] printk: remove unnecessary kmalloc() from syslog during
-
-When the request is only for clearing logs, there is no need for
-allocation/deallocation. Only the indexes need to be reset and returned.
-Rest of the patch is mostly made up of changes because of indention.
-
-Link: http://lkml.kernel.org/r/20180620135951epcas5p3bd2a8f25ec689ca333bce861b527dba2~54wyKcT0_3155531555epcas5p3y@epcas5p3.samsung.com
-Cc: linux-kernel@vger.kernel.org
-Cc: pankaj.m@samsung.com
-Cc: a.sahrawat@samsung.com
-Signed-off-by: Namit Gupta <gupta.namit@samsung.com>
-Signed-off-by: Himanshu Maithani <himanshu.m@samsung.com>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-[pmladek@suse.com: Removed code duplication.]
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- kernel/printk/printk.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 247808333ba4..0fa2ca6fd8f9 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1350,12 +1350,14 @@ static int syslog_print(char __user *buf, int size)
- 
- static int syslog_print_all(char __user *buf, int size, bool clear)
- {
--	char *text;
-+	char *text = NULL;
- 	int len = 0;
- 
--	text = kmalloc(LOG_LINE_MAX + PREFIX_MAX, GFP_KERNEL);
--	if (!text)
--		return -ENOMEM;
-+	if (buf) {
-+		text = kmalloc(LOG_LINE_MAX + PREFIX_MAX, GFP_KERNEL);
-+		if (!text)
-+			return -ENOMEM;
-+	}
- 
- 	logbuf_lock_irq();
- 	if (buf) {
-@@ -1426,7 +1428,8 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 	}
- 	logbuf_unlock_irq();
- 
--	kfree(text);
-+	if (text)
-+		kfree(text);
- 	return len;
- }
- 
--- 
-2.13.7
+> > +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+> >   	rblkcipher.blocksize = alg->cra_blocksize;
+> >   	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+> > @@ -447,6 +448,7 @@ static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+> >   	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
+> >   	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
+> >   		sizeof(rblkcipher.geniv));
+> 
+> Same comment here.
+> 
+> Christophe
+> 
+> > +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+> >   	rblkcipher.blocksize = alg->cra_blocksize;
+> >   	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+> > diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
+> > index 01c0d4aa2563..dd4dcab3766a 100644
+> > --- a/crypto/blkcipher.c
+> > +++ b/crypto/blkcipher.c
+> > @@ -512,6 +512,7 @@ static int crypto_blkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+> >   	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
+> >   	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
+> >   		sizeof(rblkcipher.geniv));
+> > +	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+> >   	rblkcipher.blocksize = alg->cra_blocksize;
+> >   	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
+> > 
