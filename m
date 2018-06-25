@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32655C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF4DC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2F3826096
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:56:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7805226096
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:56:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FElmUAAn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2F3826096
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I5l+zteD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7805226096
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965117AbeFYT4A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 15:56:00 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42522 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965094AbeFYTz4 (ORCPT
+        id S965136AbeFYT4Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 15:56:24 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46344 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965048AbeFYTzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 15:55:56 -0400
-Received: by mail-wr0-f193.google.com with SMTP id w10-v6so14865858wrk.9
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 12:55:55 -0700 (PDT)
+        Mon, 25 Jun 2018 15:55:55 -0400
+Received: by mail-wr0-f196.google.com with SMTP id l14-v6so9802966wrq.13
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 12:55:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=v6cDwd+/4eCmk1MGKxYMdFTnaz1gvwnSx0DFbMN/pjg=;
-        b=FElmUAAnN+fKF7otS+Y51Dvw5/gIlaGZ1rJi8U+p8MnWXEEHAiKpNeQjNDVZID1Aw5
-         BlKhhr/Dsm82A5X9drgQfgsT4n2JzlB5QaBp78kij8Sm5/ZVwwqAtVW25dNbjzTUb4Hv
-         pdO/dQIyUyxoZeYKl3hCH0Hvc0cZ0nYAWoyg8=
+        bh=LKtII1UD6euL+L9WiOdbqv9eZt0vnFL0OuzsmpLoWpw=;
+        b=I5l+zteDLPVsIucfXHvKJbeVUX2QkVzZJkmjcFzOeEwhiDrm7k7HmM5BbBlZp6jy+A
+         wTz1DXQMlmBSiggKM31vuzIUhd7cVg1xiM+wb3a75usVzAg/u8fKec6D6aGz8Vb/NvDQ
+         7t4239dR9gvbXU2j51bysV/9Hiak5Huyvuja4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=v6cDwd+/4eCmk1MGKxYMdFTnaz1gvwnSx0DFbMN/pjg=;
-        b=poNDPlzIoYIJzGyy4wy9pNU0+vJqLqcPS3t1UXAoZE4LsNR+1k/Xdyqb5ToR8GEnnq
-         d/H6j0eKdgVdnu0nKINSk/v9C3x/ZxIvU/b1l4I3OWpXriO2gDBmickoKaGDVqJDs7Jh
-         H/H1rJ3cK+Y7gqtQY2IsLnwdec4K/SkzwTg625E+jUCldz7RPV4yT33aUj0Ne3QzLVfN
-         hZiy9AT5hrTGTkJOQVUTQPN7r9t1tsrc4Awe67wH1ftJs5RSA0tMP9vbrDzsgwRoaTSr
-         zw1zQACgBFpyQWvD8EpIHBdNZmpF/3GY7Gt8R4oe1GLlfPZ7IwlPnf/rm6Uf4BDssLuk
-         fT1Q==
-X-Gm-Message-State: APt69E2C1IX+KtGCe3dFGslnYFNeHlyDN9gCCGQ9f0g0kzrLmUVqrfPx
-        zfsZCEBH3ZnfGw/ze0IxHKimFw==
-X-Google-Smtp-Source: AAOMgpd2j2pPyApYQ7KKUPQTiKEDIS0kZBBoJo7mts5eIsKnqef1HURLvJXu2F/db1LC6OQB+7r2JA==
-X-Received: by 2002:adf:a706:: with SMTP id c6-v6mr11730299wrd.61.1529956555025;
-        Mon, 25 Jun 2018 12:55:55 -0700 (PDT)
+        bh=LKtII1UD6euL+L9WiOdbqv9eZt0vnFL0OuzsmpLoWpw=;
+        b=kWu8xtwu292IwT/wXaJoYYp3hXJmlATqD8et+fwle7AvXQoQHUVs7XOIKt20jWv/tg
+         unOzqH4G+9UsYdvtfCK2VxUumoS1nj80MaL9Fn001BH2fEBELATHYWHkMzfz3QvGosD6
+         hBzmKugOZDZOEO0YJko0EUXkJR02wPJUxVntGQfgr/7zSVks/O7mSJ1Y7pk6RxkzwxqT
+         H0in80i+E4zG9Z7g3TNy4POpxusbGX0mb2f4s1z4FHlHvVxgnEMG8QCxFYyoildSsOTJ
+         +qD+8zzKtrLTWXyUQzOx/Lp3paWMlMr+im6+0/c6OvIFU2T+6vUBHSrODei/yWH5mbjM
+         ZbDA==
+X-Gm-Message-State: APt69E31mMcVJVLlDDFobWLMjltyrz3iXGkFwVj35I2k/4TMcJMmxOo0
+        TQnhWqWUL/21uXbexj83qhZSYA==
+X-Google-Smtp-Source: AAOMgpdEnC/aFz+lNYxN5D5wJHIvw1rZjnGBV0wAoul4y1oRob4qaHfNy7MB4oNH8o4a3HF8tJSoRA==
+X-Received: by 2002:adf:ac66:: with SMTP id v93-v6mr3460980wrc.7.1529956553730;
+        Mon, 25 Jun 2018 12:55:53 -0700 (PDT)
 Received: from localhost.localdomain (146-241-36-97.dyn.eolo.it. [146.241.36.97])
-        by smtp.gmail.com with ESMTPSA id n18-v6sm29072897wrj.58.2018.06.25.12.55.53
+        by smtp.gmail.com with ESMTPSA id n18-v6sm29072897wrj.58.2018.06.25.12.55.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 12:55:54 -0700 (PDT)
+        Mon, 25 Jun 2018 12:55:52 -0700 (PDT)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         ulf.hansson@linaro.org, broonie@kernel.org,
         linus.walleij@linaro.org, bfq-iosched@googlegroups.com,
         oleksandr@natalenko.name, Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX RESEND 4/4] block, bfq: give a better name to bfq_bfqq_may_idle
-Date:   Mon, 25 Jun 2018 21:55:37 +0200
-Message-Id: <20180625195537.7769-5-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX RESEND 3/4] block, bfq: fix service being wrongly set to zero in case of preemption
+Date:   Mon, 25 Jun 2018 21:55:36 +0200
+Message-Id: <20180625195537.7769-4-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180625195537.7769-1-paolo.valente@linaro.org>
 References: <20180625195537.7769-1-paolo.valente@linaro.org>
@@ -70,81 +70,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The actual goal of the function bfq_bfqq_may_idle is to tell whether
-it is better to perform device idling (more precisely: I/O-dispatch
-plugging) for the input bfq_queue, either to boost throughput or to
-preserve service guarantees. This commit improves the name of the
-function accordingly.
+If
+- a bfq_queue Q preempts another queue, because one request of Q
+arrives in time,
+- but, after this preemption, Q is not the queue that is set in service,
+then Q->entity.service is set to 0 when Q is eventually set in
+service. But Q should have continued receiving service with its old
+budget (which is why preemption has occurred) and its old service.
+
+This commit addresses this issue by resetting service on queue real
+expiration.
 
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ block/bfq-iosched.c | 34 ++++++++++++++++++++++++++++------
+ block/bfq-wf2q.c    |  6 ------
+ 2 files changed, 28 insertions(+), 12 deletions(-)
 
 diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index d579cc8e0db6..41d9036b1822 100644
+index 4fd4f1996498..d579cc8e0db6 100644
 --- a/block/bfq-iosched.c
 +++ b/block/bfq-iosched.c
-@@ -634,7 +634,7 @@ static bool bfq_differentiated_weights(struct bfq_data *bfqd)
-  * The following function returns true if every queue must receive the
-  * same share of the throughput (this condition is used when deciding
-  * whether idling may be disabled, see the comments in the function
-- * bfq_bfqq_may_idle()).
-+ * bfq_better_to_idle()).
-  *
-  * Such a scenario occurs when:
-  * 1) all active queues have the same weight,
-@@ -3355,7 +3355,7 @@ static bool bfq_may_expire_for_budg_timeout(struct bfq_queue *bfqq)
-  * issues taken into account are not trivial. We discuss these issues
-  * individually while introducing the variables.
-  */
--static bool bfq_bfqq_may_idle(struct bfq_queue *bfqq)
-+static bool bfq_better_to_idle(struct bfq_queue *bfqq)
- {
- 	struct bfq_data *bfqd = bfqq->bfqd;
- 	bool rot_without_queueing =
-@@ -3588,19 +3588,19 @@ static bool bfq_bfqq_may_idle(struct bfq_queue *bfqq)
+@@ -1382,18 +1382,30 @@ static bool bfq_bfqq_update_budg_for_activation(struct bfq_data *bfqd,
+ 		 * remain unchanged after such an expiration, and the
+ 		 * following statement therefore assigns to
+ 		 * entity->budget the remaining budget on such an
+-		 * expiration. For clarity, entity->service is not
+-		 * updated on expiration in any case, and, in normal
+-		 * operation, is reset only when bfqq is selected for
+-		 * service (see bfq_get_next_queue).
++		 * expiration.
+ 		 */
+ 		entity->budget = min_t(unsigned long,
+ 				       bfq_bfqq_budget_left(bfqq),
+ 				       bfqq->max_budget);
+ 
++		/*
++		 * At this point, we have used entity->service to get
++		 * the budget left (needed for updating
++		 * entity->budget). Thus we finally can, and have to,
++		 * reset entity->service. The latter must be reset
++		 * because bfqq would otherwise be charged again for
++		 * the service it has received during its previous
++		 * service slot(s).
++		 */
++		entity->service = 0;
++
+ 		return true;
+ 	}
+ 
++	/*
++	 * We can finally complete expiration, by setting service to 0.
++	 */
++	entity->service = 0;
+ 	entity->budget = max_t(unsigned long, bfqq->max_budget,
+ 			       bfq_serv_to_charge(bfqq->next_rq, bfqq));
+ 	bfq_clear_bfqq_non_blocking_wait_rq(bfqq);
+@@ -3271,11 +3283,21 @@ void bfq_bfqq_expire(struct bfq_data *bfqd,
+ 	ref = bfqq->ref;
+ 	__bfq_bfqq_expire(bfqd, bfqq);
+ 
++	if (ref == 1) /* bfqq is gone, no more actions on it */
++		return;
++
+ 	/* mark bfqq as waiting a request only if a bic still points to it */
+-	if (ref > 1 && !bfq_bfqq_busy(bfqq) &&
++	if (!bfq_bfqq_busy(bfqq) &&
+ 	    reason != BFQQE_BUDGET_TIMEOUT &&
+-	    reason != BFQQE_BUDGET_EXHAUSTED)
++	    reason != BFQQE_BUDGET_EXHAUSTED) {
+ 		bfq_mark_bfqq_non_blocking_wait_rq(bfqq);
++		/*
++		 * Not setting service to 0, because, if the next rq
++		 * arrives in time, the queue will go on receiving
++		 * service with this same budget (as if it never expired)
++		 */
++	} else
++		entity->service = 0;
  }
  
  /*
-- * If the in-service queue is empty but the function bfq_bfqq_may_idle
-+ * If the in-service queue is empty but the function bfq_better_to_idle
-  * returns true, then:
-  * 1) the queue must remain in service and cannot be expired, and
-  * 2) the device must be idled to wait for the possible arrival of a new
-  *    request for the queue.
-- * See the comments on the function bfq_bfqq_may_idle for the reasons
-+ * See the comments on the function bfq_better_to_idle for the reasons
-  * why performing device idling is the best choice to boost the throughput
-- * and preserve service guarantees when bfq_bfqq_may_idle itself
-+ * and preserve service guarantees when bfq_better_to_idle itself
-  * returns true.
-  */
- static bool bfq_bfqq_must_idle(struct bfq_queue *bfqq)
- {
--	return RB_EMPTY_ROOT(&bfqq->sort_list) && bfq_bfqq_may_idle(bfqq);
-+	return RB_EMPTY_ROOT(&bfqq->sort_list) && bfq_better_to_idle(bfqq);
- }
+diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
+index 58cf38fcee05..dbc07b456059 100644
+--- a/block/bfq-wf2q.c
++++ b/block/bfq-wf2q.c
+@@ -1544,12 +1544,6 @@ struct bfq_queue *bfq_get_next_queue(struct bfq_data *bfqd)
+ 		entity = sd->next_in_service;
+ 		sd->in_service_entity = entity;
  
- /*
-@@ -3686,7 +3686,7 @@ static struct bfq_queue *bfq_select_queue(struct bfq_data *bfqd)
- 	 * may idle after their completion, then keep it anyway.
- 	 */
- 	if (bfq_bfqq_wait_request(bfqq) ||
--	    (bfqq->dispatched != 0 && bfq_bfqq_may_idle(bfqq))) {
-+	    (bfqq->dispatched != 0 && bfq_better_to_idle(bfqq))) {
- 		bfqq = NULL;
- 		goto keep_queue;
- 	}
-@@ -4734,7 +4734,7 @@ static void bfq_completed_request(struct bfq_queue *bfqq, struct bfq_data *bfqd)
- 					BFQQE_BUDGET_TIMEOUT);
- 		else if (RB_EMPTY_ROOT(&bfqq->sort_list) &&
- 			 (bfqq->dispatched == 0 ||
--			  !bfq_bfqq_may_idle(bfqq)))
-+			  !bfq_better_to_idle(bfqq)))
- 			bfq_bfqq_expire(bfqd, bfqq, false,
- 					BFQQE_NO_MORE_REQUESTS);
- 	}
+-		/*
+-		 * Reset the accumulator of the amount of service that
+-		 * the entity is about to receive.
+-		 */
+-		entity->service = 0;
+-
+ 		/*
+ 		 * If entity is no longer a candidate for next
+ 		 * service, then it must be extracted from its active
 -- 
 2.16.1
 
