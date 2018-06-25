@@ -2,191 +2,162 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9953BC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCE6C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54EDA25965
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:42:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54EDA25965
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C7ACE2596E
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:44:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NTe4P2I6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7ACE2596E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934006AbeFYMmu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:42:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45976 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933968AbeFYMmq (ORCPT
+        id S1755368AbeFYMoi (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:44:38 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:42582 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeFYMog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:42:46 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PCcx9e128207
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:42:45 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jty0cvkq7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:42:45 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 25 Jun 2018 13:42:43 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 13:42:40 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5PCgd7g34340952
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jun 2018 12:42:39 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D5D88AE04D;
-        Mon, 25 Jun 2018 13:42:34 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0BE57AE057;
-        Mon, 25 Jun 2018 13:42:32 +0100 (BST)
-Received: from bangoria.in.ibm.com (unknown [9.84.229.130])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Jun 2018 13:42:31 +0100 (BST)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     acme@kernel.org, jolsa@redhat.com
-Cc:     alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        dsahern@gmail.com, davidcc@google.com, ak@linux.intel.com,
-        yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v2 3/3] perf script/annotate: Fix crash caused by accessing feat_ops[HEADER_LAST_FEATURE]
-Date:   Mon, 25 Jun 2018 18:12:20 +0530
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180625124220.6434-1-ravi.bangoria@linux.ibm.com>
-References: <20180625124220.6434-1-ravi.bangoria@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18062512-0012-0000-0000-000002833BFD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062512-0013-0000-0000-000020B4955D
-Message-Id: <20180625124220.6434-4-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806250148
+        Mon, 25 Jun 2018 08:44:36 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5PChv6E074010;
+        Mon, 25 Jun 2018 12:43:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2017-10-26; bh=M3jqy7cZwyxuJWNB3w7cVQL4dbAPtRqH8u03LsdQJWc=;
+ b=NTe4P2I6ZqvTSc8LAiP9sYKJz2NGtlz256LA+L13Sp9H4J8BnoajzphceRFb1ya03s62
+ 1t9LgTGJjAwhjNocrtcsOE3x9BTN1xB28/Fn7wXVjjllFEu7OD0s7kzvGNE+f424IHgn
+ EVaXixVX8oW0beZnN8WVOAXZ9QPeziC0jAFpU/PFC8rPMTYOpqnQXSn9mRv3UQUOjpAi
+ 2+HfliIAjuuFGKgloM7d/zY3yHQwPdmqkTyhqEJ0xL7BGFiDqw3kk+eOJBtAycaj8GSp
+ QjwIneGeJbH1l+l6I58RXqYXUErwX2s2Vl6SXJsDXRK7CDw8taTPr297lfpgYy5Esiw+ IA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jt7natjm4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Jun 2018 12:43:57 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5PChttv026299
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Jun 2018 12:43:55 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5PChrpc007477;
+        Mon, 25 Jun 2018 12:43:53 GMT
+Received: from mwanda (/197.157.0.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 25 Jun 2018 05:43:52 -0700
+Date:   Mon, 25 Jun 2018 15:43:32 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, Tomer Maimon <tmaimon77@gmail.com>
+Cc:     kbuild-all@01.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        jdelvare@suse.com, linux@roeck-us.net, avifishman70@gmail.com,
+        yuenn@google.com, brendanhiggins@google.com, venture@google.com,
+        joel@jms.id.au, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>
+Subject: Re: [PATCH v4 2/2] hwmon: npcm750: add NPCM7xx PWM and Fan driver
+Message-ID: <20180625124332.e7oyxezasn374w4b@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180624124155.82412-3-tmaimon77@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8934 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806250149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-perf_event__process_feature() accesses feat_ops[HEADER_LAST_FEATURE]
-which is not defined and thus perf is crashing. HEADER_LAST_FEATURE
-is used as an end marker for the perf report but it's unused for
-perf script/annotate. Ignore HEADER_LAST_FEATURE for perf script/
-annotate.
+Hi Tomer,
 
-Before:
-  # ./perf record -o - ls | ./perf script
-  Segmentation fault (core dumped)
+I love your patch! Perhaps something to improve:
 
-After:
-  # ./perf record -o - ls | ./perf script
-  ls 7031 4392.099856:  250000 cpu-clock:uhH:  7f5e0ce7cd60
-  ls 7031 4392.100355:  250000 cpu-clock:uhH:  7f5e0c706ef7
+[auto build test WARNING on hwmon/hwmon-next]
+[also build test WARNING on v4.18-rc2 next-20180622]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Fixes: 57b5de463925 ("perf report: Support forced leader feature in pipe mode")
+url:    https://github.com/0day-ci/linux/commits/Tomer-Maimon/dt-binding-hwmon-Add-NPCM7xx-PWM-and-Fan-controller-documentation/20180624-205017
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+
+New smatch warnings:
+drivers/hwmon/npcm750-pwm-fan.c:261 npcm7xx_pwm_config_set() warn: inconsistent returns 'mutex:&data->pwm_lock[module]'.
+  Locked on:   line 245
+  Unlocked on: line 261
+
+Old smatch warnings:
+drivers/hwmon/npcm750-pwm-fan.c:836 npcm7xx_pwm_cz_set_cur_state() warn: potential spectre issue 'cdev->cooling_levels'
+
+# https://github.com/0day-ci/linux/commit/5ef6a0a11de5f3f0711993a20b13820cc0884c7e
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 5ef6a0a11de5f3f0711993a20b13820cc0884c7e
+vim +261 drivers/hwmon/npcm750-pwm-fan.c
+
+5ef6a0a1 Tomer Maimon 2018-06-24  210  
+5ef6a0a1 Tomer Maimon 2018-06-24  211  static int npcm7xx_pwm_config_set(struct npcm7xx_pwm_fan_data *data,
+5ef6a0a1 Tomer Maimon 2018-06-24  212  				  int channel, u16 val)
+5ef6a0a1 Tomer Maimon 2018-06-24  213  {
+5ef6a0a1 Tomer Maimon 2018-06-24  214  	u32 pwm_ch = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+5ef6a0a1 Tomer Maimon 2018-06-24  215  	u32 module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+5ef6a0a1 Tomer Maimon 2018-06-24  216  	u32 tmp_buf, ctrl_en_bit, env_bit;
+5ef6a0a1 Tomer Maimon 2018-06-24  217  
+5ef6a0a1 Tomer Maimon 2018-06-24  218  	/*
+5ef6a0a1 Tomer Maimon 2018-06-24  219  	 * Config PWM Comparator register for setting duty cycle
+5ef6a0a1 Tomer Maimon 2018-06-24  220  	 */
+5ef6a0a1 Tomer Maimon 2018-06-24  221  	mutex_lock(&data->pwm_lock[module]);
+5ef6a0a1 Tomer Maimon 2018-06-24  222  
+5ef6a0a1 Tomer Maimon 2018-06-24  223  	/* write new CMR value  */
+5ef6a0a1 Tomer Maimon 2018-06-24  224  	iowrite32(val, NPCM7XX_PWM_REG_CMRx(data->pwm_base, module, pwm_ch));
+5ef6a0a1 Tomer Maimon 2018-06-24  225  	tmp_buf = ioread32(NPCM7XX_PWM_REG_CR(data->pwm_base, module));
+5ef6a0a1 Tomer Maimon 2018-06-24  226  
+5ef6a0a1 Tomer Maimon 2018-06-24  227  	switch (pwm_ch) {
+5ef6a0a1 Tomer Maimon 2018-06-24  228  	case 0:
+5ef6a0a1 Tomer Maimon 2018-06-24  229  		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH0_EN_BIT;
+5ef6a0a1 Tomer Maimon 2018-06-24  230  		env_bit = NPCM7XX_PWM_CTRL_CH0_INV_BIT;
+5ef6a0a1 Tomer Maimon 2018-06-24  231  		break;
+5ef6a0a1 Tomer Maimon 2018-06-24  232  	case 1:
+5ef6a0a1 Tomer Maimon 2018-06-24  233  		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH1_EN_BIT;
+5ef6a0a1 Tomer Maimon 2018-06-24  234  		env_bit = NPCM7XX_PWM_CTRL_CH1_INV_BIT;
+5ef6a0a1 Tomer Maimon 2018-06-24  235  		break;
+5ef6a0a1 Tomer Maimon 2018-06-24  236  	case 2:
+5ef6a0a1 Tomer Maimon 2018-06-24  237  		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH2_EN_BIT;
+5ef6a0a1 Tomer Maimon 2018-06-24  238  		env_bit = NPCM7XX_PWM_CTRL_CH2_INV_BIT;
+5ef6a0a1 Tomer Maimon 2018-06-24  239  		break;
+5ef6a0a1 Tomer Maimon 2018-06-24  240  	case 3:
+5ef6a0a1 Tomer Maimon 2018-06-24  241  		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH3_EN_BIT;
+5ef6a0a1 Tomer Maimon 2018-06-24  242  		env_bit = NPCM7XX_PWM_CTRL_CH3_INV_BIT;
+5ef6a0a1 Tomer Maimon 2018-06-24  243  		break;
+5ef6a0a1 Tomer Maimon 2018-06-24  244  	default:
+5ef6a0a1 Tomer Maimon 2018-06-24  245  		return -ENODEV;
+                                                ^^^^^^^^^^^^^^
+5ef6a0a1 Tomer Maimon 2018-06-24  246  	}
+5ef6a0a1 Tomer Maimon 2018-06-24  247  
+5ef6a0a1 Tomer Maimon 2018-06-24  248  	if (val == 0) {
+5ef6a0a1 Tomer Maimon 2018-06-24  249  		/* Disable PWM */
+5ef6a0a1 Tomer Maimon 2018-06-24  250  		tmp_buf &= ~ctrl_en_bit;
+5ef6a0a1 Tomer Maimon 2018-06-24  251  		tmp_buf |= env_bit;
+5ef6a0a1 Tomer Maimon 2018-06-24  252  	} else {
+5ef6a0a1 Tomer Maimon 2018-06-24  253  		/* Enable PWM */
+5ef6a0a1 Tomer Maimon 2018-06-24  254  		tmp_buf |= ctrl_en_bit;
+5ef6a0a1 Tomer Maimon 2018-06-24  255  		tmp_buf &= ~env_bit;
+5ef6a0a1 Tomer Maimon 2018-06-24  256  	}
+5ef6a0a1 Tomer Maimon 2018-06-24  257  
+5ef6a0a1 Tomer Maimon 2018-06-24  258  	iowrite32(tmp_buf, NPCM7XX_PWM_REG_CR(data->pwm_base, module));
+5ef6a0a1 Tomer Maimon 2018-06-24  259  	mutex_unlock(&data->pwm_lock[module]);
+5ef6a0a1 Tomer Maimon 2018-06-24  260  
+5ef6a0a1 Tomer Maimon 2018-06-24 @261  	return 0;
+5ef6a0a1 Tomer Maimon 2018-06-24  262  }
+5ef6a0a1 Tomer Maimon 2018-06-24  263  
+
 ---
- tools/perf/builtin-annotate.c | 11 ++++++++++-
- tools/perf/builtin-report.c   |  3 ++-
- tools/perf/builtin-script.c   | 11 ++++++++++-
- tools/perf/util/header.c      |  2 +-
- 4 files changed, 23 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 5eb22cc56363..8180319285af 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -283,6 +283,15 @@ static int process_sample_event(struct perf_tool *tool,
- 	return ret;
- }
- 
-+static int process_feature_event(struct perf_tool *tool,
-+				 union perf_event *event,
-+				 struct perf_session *session)
-+{
-+	if (event->feat.feat_id < HEADER_LAST_FEATURE)
-+		return perf_event__process_feature(tool, event, session);
-+	return 0;
-+}
-+
- static int hist_entry__tty_annotate(struct hist_entry *he,
- 				    struct perf_evsel *evsel,
- 				    struct perf_annotate *ann)
-@@ -471,7 +480,7 @@ int cmd_annotate(int argc, const char **argv)
- 			.attr	= perf_event__process_attr,
- 			.build_id = perf_event__process_build_id,
- 			.tracing_data   = perf_event__process_tracing_data,
--			.feature	= perf_event__process_feature,
-+			.feature	= process_feature_event,
- 			.ordered_events = true,
- 			.ordering_requires_timestamps = true,
- 		},
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index cdb5b6949832..c04dc7b53797 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -217,7 +217,8 @@ static int process_feature_event(struct perf_tool *tool,
- 	}
- 
- 	/*
--	 * All features are received, we can force the
-+	 * (feat_id = HEADER_LAST_FEATURE) is the end marker which
-+	 * means all features are received, now we can force the
- 	 * group if needed.
- 	 */
- 	setup_forced_leader(rep, session->evlist);
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index ad2ac1300420..568ddfac3213 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3044,6 +3044,15 @@ int process_cpu_map_event(struct perf_tool *tool __maybe_unused,
- 	return set_maps(script);
- }
- 
-+static int process_feature_event(struct perf_tool *tool,
-+				 union perf_event *event,
-+				 struct perf_session *session)
-+{
-+	if (event->feat.feat_id < HEADER_LAST_FEATURE)
-+		return perf_event__process_feature(tool, event, session);
-+	return 0;
-+}
-+
- #ifdef HAVE_AUXTRACE_SUPPORT
- static int perf_script__process_auxtrace_info(struct perf_tool *tool,
- 					      union perf_event *event,
-@@ -3088,7 +3097,7 @@ int cmd_script(int argc, const char **argv)
- 			.attr		 = process_attr,
- 			.event_update   = perf_event__process_event_update,
- 			.tracing_data	 = perf_event__process_tracing_data,
--			.feature	 = perf_event__process_feature,
-+			.feature	 = process_feature_event,
- 			.build_id	 = perf_event__process_build_id,
- 			.id_index	 = perf_event__process_id_index,
- 			.auxtrace_info	 = perf_script__process_auxtrace_info,
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 59fcc790c865..653ff65aa2c3 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3464,7 +3464,7 @@ int perf_event__process_feature(struct perf_tool *tool,
- 		pr_warning("invalid record type %d in pipe-mode\n", type);
- 		return 0;
- 	}
--	if (feat == HEADER_RESERVED || feat > HEADER_LAST_FEATURE) {
-+	if (feat == HEADER_RESERVED || feat >= HEADER_LAST_FEATURE) {
- 		pr_warning("invalid record type %d in pipe-mode\n", type);
- 		return -1;
- 	}
--- 
-2.14.4
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
