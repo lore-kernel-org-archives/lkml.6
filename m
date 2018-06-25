@@ -2,143 +2,113 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4490C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 20:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C345AC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 20:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F53D260BD
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 20:12:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F53D260BD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=boehmwalder.at
+	by mail.kernel.org (Postfix) with ESMTP id 32E28260C7
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 20:15:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32E28260C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755708AbeFYUMv (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 16:12:51 -0400
-Received: from zimbra.linuxprofi.at ([93.83.54.199]:51222 "EHLO
-        zimbra.linuxprofi.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751745AbeFYUMt (ORCPT
+        id S934992AbeFYUPO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 16:15:14 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:60138 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754532AbeFYUPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 16:12:49 -0400
-X-Greylist: delayed 468 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Jun 2018 16:12:48 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.linuxprofi.at (Postfix) with ESMTP id 7840B2A4848;
-        Mon, 25 Jun 2018 22:05:00 +0200 (CEST)
-Received: from zimbra.linuxprofi.at ([127.0.0.1])
-        by localhost (zimbra.linuxprofi.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id u0F3Di_bc1DH; Mon, 25 Jun 2018 22:04:59 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.linuxprofi.at (Postfix) with ESMTP id CBE822A4849;
-        Mon, 25 Jun 2018 22:04:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.linuxprofi.at
-Received: from zimbra.linuxprofi.at ([127.0.0.1])
-        by localhost (zimbra.linuxprofi.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id FWIv6RV-JS1A; Mon, 25 Jun 2018 22:04:59 +0200 (CEST)
-Received: from localhost (unknown [193.170.135.207])
-        by zimbra.linuxprofi.at (Postfix) with ESMTPSA id 894232A4848;
-        Mon, 25 Jun 2018 22:04:59 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 22:04:48 +0200
-From:   Christoph =?utf-8?Q?B=C3=B6hmwalder?= <christoph@boehmwalder.at>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, shorne@gmail.com
-Subject: Re: [PATCH 2/3] dt-bindings: interrupt-controller: RISC-V local
- interrupt controller docs
-Message-ID: <20180625200448.26fvdv2tj3etmtlp@localhost>
-Mail-Followup-To: Palmer Dabbelt <palmer@sifive.com>, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, shorne@gmail.com
-References: <20180622232006.12158-1-palmer@sifive.com>
- <20180622232006.12158-3-palmer@sifive.com>
+        Mon, 25 Jun 2018 16:15:12 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fXXtH-0001Cs-AF; Mon, 25 Jun 2018 14:15:11 -0600
+Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fXXtF-0003uX-Ph; Mon, 25 Jun 2018 14:15:11 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        astrachan@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+References: <87muvr58ak.fsf@xmission.com>
+        <CA+55aFxTtemhGJweOKfATojapGzD-riaowDUSh65OA2pCB+w6Q@mail.gmail.com>
+Date:   Mon, 25 Jun 2018 15:14:49 -0500
+In-Reply-To: <CA+55aFxTtemhGJweOKfATojapGzD-riaowDUSh65OA2pCB+w6Q@mail.gmail.com>
+        (Linus Torvalds's message of "Wed, 20 Jun 2018 10:16:43 +0900")
+Message-ID: <87d0wetyh2.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180622232006.12158-3-palmer@sifive.com>
-User-Agent: NeoMutt/20180622-44-69ffa4
+Content-Type: text/plain
+X-XM-SPF: eid=1fXXtF-0003uX-Ph;;;mid=<87d0wetyh2.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+Hsha9jgDR8wAFFgGIVLiPonOrvAfkxyA=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [GIT PULL] userns fixes for 4.17-rc2
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 04:20:05PM -0700, Palmer Dabbelt wrote:
-> From: Palmer Dabbelt <palmer@dabbelt.com>
-> 
-> This patch adds documentation on the RISC-V local interrupt controller,
-> which is a per-hart interrupt controller that manages all interrupts
-> entering a RISC-V hart.  This interrupt controller is present on all
-> RISC-V systems.
-> 
-> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
-> ---
->  .../interrupt-controller/riscv,cpu-intc.txt        | 41 ++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-> new file mode 100644
-> index 000000000000..61900e2e3868
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-> @@ -0,0 +1,41 @@
-> +RISC-V Hart-Level Interrupt Controller (HLIC)
-> +---------------------------------------------
-> +
-> +RISC-V cores include Control Status Registers (CSRs) which are local to each
-> +hart and can be read or written by software. Some of these CSRs are used to
-> +control local interrupts connected to the core.  Every interrupt is ultimately
-> +routed through a hart's HLIC before it interrupts that hart.
-> +
-> +The RISC-V supervisor ISA manual specifies three interrupt sources that are
-> +attached to every HLIC: software interrupts, the timer interrupt, and external
-> +interrupts.  Software interrupts are used to send IPIs between cores.  The
-> +timer interrupt comes from an architecturally mandated real-time timer that is
-> +controller via SBI calls and CSR reads.  External interrupts connect all other
-> +device interrupts to the HLIC, which are routed via the platform-level
-> +interrupt controller (PLIC).
-> +
-> +All RISC-V systems that conform to the supervisor ISA specification are
-> +required to have a HLIC with these three interrupt sources present.  Since the
-> +interrupt map is defined by the ISA it's not listed in the HLIC's device tree
-> +entry, though external interrupt controllers (like the PLIC, for example) will
-> +need to define how their interrupts map to the relevant HLICs.
-> +
-> +Required properties:
-> +- compatible : "riscv,cpu-intc"
-> +- #interrupt-cells : should be <1>
-> +- interrupt-controller : Identifies the node as an interrupt controller
-> +
-> +Furthermore, this interrupt-controller MUST be embedded inside the cpu
-> +definition of the hart whose CSRs control these local interrupts.
-> +
-> +An example device tree entry for a HLIC is show below.
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-Spotted a typo here, "show" -> "shown".
+> On Tue, Jun 19, 2018 at 8:24 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> I stared at this code for quite a while and I finally concluded that the
+>> best course forward is to simply things and remove the internal kernel
+>> mount of proc.  The internal mount of proc is directly responsible for
+>> this regression and it has been the source of pain over the years.
+>
+> This is not the kind of patch that I'm willing to take outside the
+> merge window. This is *way* too subtle, and making sysctl do a
+> kern_mount()/kern_umount() seems odd.
 
-> +
-> +	cpu1: cpu@1 {
-> +		compatible = "riscv";
-> +		...
-> +		cpu1-intc: interrupt-controller {
-> +			#interrupt-cells = <1>;
-> +			compatible = "riscv,cpu-intc";
-> +			interrupt-controller;
-> +		};
-> +	};
-> -- 
-> 2.16.4
+I understand the feedback about breaking up the patch and the concern
+about the race with pid->count.
 
-Also, I've noticed that double spaces after punctuation are used pretty
-inconsistently throughout the document. Is that intended?
+I don't understand the feedback about only accepting something like this
+during the merge window.  The entire point of my change was to remove
+subtlety.  The code was very straight forward to test.
 
---
-Regards,
-Christoph
+This is a silent regression of a security feature so it is possible some
+people have upgraded their kernel and not noticed the regression but are
+affected by the information leak not honoring hidepid introduces.  That
+seems to me to be a candidate for stable and thus an rc kernel.
+
+Would you prefer a patch that does less towards fixing the root cause
+for now and to be backported to stable?
+
+> The pid->count test also looks potentially racy to me.
+
+The function proc_flush_task is already racy, it is just an optimization
+that needs to work the vast majority of the time or we get lots of stale
+useless cached dentries in proc.  So I don't think a little race
+between testing pid->count and someone accessing a proc inode matters.
+They could always perform the access after proc_flush_task is done
+and before unhash_process runs, and achieve the same effect.
+
+Though in retrospect my testing showed processes acessing proc self
+from libc or something so the pid->count optimization never really
+hit.  So it is probably better just to remove it.
+
+
+The kern_mount/kern_umount are definitely odd and not my favorite.  But
+the code does work.  It is my intention and hope that they can both the
+uml and the sysctl(2) code can both be removed.  I need to double check
+but I don't think there are even any enterprise kernels that enable
+sysctl(2) support in the kernel any more.
+
+Eric
