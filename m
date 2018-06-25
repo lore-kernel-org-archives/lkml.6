@@ -2,144 +2,190 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A98C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89055C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB38625D3C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:49:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RgO/cuxc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB38625D3C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B183525D3F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:50:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B183525D3F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752327AbeFYPtm (ORCPT
+        id S1752579AbeFYPuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:49:42 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:37129 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752409AbeFYPtk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:49:40 -0400
-Received: by mail-ot0-f193.google.com with SMTP id u6-v6so7398548otk.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NoS0ok1bAXskwpovG53rYkrEL1Xt1iCufkDRQQ4sxyQ=;
-        b=RgO/cuxcAzcvcvjteTEX92r591rYlFkOCb7wt3WoFC+spYOr2lZY4bgfySqpPljoL/
-         3a3SoOsb6V1WaVQluOivW4ZcOhWCk24TbOoaDD0h7kRSYSkevzOgzpiBzXOReCHym7cj
-         3UYtFTKx76i1hypyzH7S/aQWKMTT2jfR+AJx6HNoAgAu/02Hd2uzCYpGgLcdTRH/BrTX
-         ThhnDk/b3wC/pkKJd8m64ufhfXszMZDRBge7I2XO2+PSsT1GOAr0wuHSYu71yVoiikAk
-         eZCQWNTbuEjMqxITmjodM/3JRNFTeNzvC4/58NdO1r4enJIIzgnl63UFB698+Zgh4AM1
-         9Xsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NoS0ok1bAXskwpovG53rYkrEL1Xt1iCufkDRQQ4sxyQ=;
-        b=EKuJkat4OkgOvaZ/u6NXCdu9UC2KWXLIDiKsvIrwpfTYr77t4uzTR6Fn+Axek1fLYx
-         FCDMV4zkd9n2M2Y/c7vTGvCtdTWgPpD9A0tBMCAVlhLj05cwk/NRT8637IQR4qsReI9k
-         /RgtBhMnUClVYiSyNtrzFZJn2nuUuhlMoRM0PWHIz95SWhovmlNXhLCYcywhR3rgr3Dg
-         a0G/xisUXu4UX8CyGljWeCZX+YG3j9/MlyA96wfC7BFq8XAZ0a1lR8HMt5YNuwCliJmG
-         qrIAMCN/UudGInZXxZnxU+7//h+EjuRwT4TE2Ua5KDAEG1I1xHZ6vzT/WuDlho4soY9M
-         np9Q==
-X-Gm-Message-State: APt69E2bDXITAo6vIwhwcLeRUT2U2nj8FwVNgbCh9eNvZDKeNuHA2XZG
-        yVACApbeQf0n33cyO0wMel+SkKeKs4v6oEvbPUa/IzsuDL0=
-X-Google-Smtp-Source: ADUXVKJgEUVGUm1E5ywcLzYbMfnUBbtpQdxzftt+OzB0k98NUG+tATBBtUKAh5KcjlO12PA9osW6ynar3LNh0QUsmQo=
-X-Received: by 2002:a9d:7608:: with SMTP id k8-v6mr7406369otl.297.1529941779642;
- Mon, 25 Jun 2018 08:49:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAG48ez02K0N6h-nfbnY81QAZoX1_gi4DTxuHxf1bSYiifu2v7g@mail.gmail.com>
- <35b62e21e0de223acae0f9f468212ee9638c3544.camel@perches.com>
- <CAG48ez3ZD3+j2oBJ7XHW9ycbi9_H8QsKGg8A84tOTisjeZGgiw@mail.gmail.com> <8f2948baf460575cde975a2cb5d11b960e8ae30f.camel@perches.com>
-In-Reply-To: <8f2948baf460575cde975a2cb5d11b960e8ae30f.camel@perches.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 25 Jun 2018 17:49:28 +0200
-Message-ID: <CAG48ez2y_T5RfjF8sjM=vQBzoTBgeXenwMdc=-DB9XE-Vi73-w@mail.gmail.com>
-Subject: Re: checkpatch false positive (IMO): typo detected in truncated
- commit message
-To:     Joe Perches <joe@perches.com>
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Jun 2018 11:50:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59485 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752338AbeFYPuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:50:11 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B834C20DC1; Mon, 25 Jun 2018 17:50:08 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 515BD20CFE;
+        Mon, 25 Jun 2018 17:49:58 +0200 (CEST)
+Message-ID: <03f66b80b1a60c4fe62822b08eb5d97c0539aac0.camel@bootlin.com>
+Subject: Re: [PATCH 7/9] media: cedrus: Move IRQ maintainance to
+ cedrus_dec_ops
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     tfiga@chromium.org, posciak@chromium.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Mon, 25 Jun 2018 17:49:58 +0200
+In-Reply-To: <d8e471608643a014d0961c82256753e5fd0c5060.camel@bootlin.com>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+         <20180613140714.1686-8-maxime.ripard@bootlin.com>
+         <d8e471608643a014d0961c82256753e5fd0c5060.camel@bootlin.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-S/93xppYbRSGq2ywkVtP"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 5:37 PM Joe Perches <joe@perches.com> wrote:
->
-> On Mon, 2018-06-25 at 17:32 +0200, Jann Horn wrote:
-> > On Mon, Jun 25, 2018 at 5:23 PM Joe Perches <joe@perches.com> wrote:
-> > >
-> > > On Mon, 2018-06-25 at 17:22 +0200, Jann Horn wrote:
-> > > > Hello!
-> > > >
-> > > > I got the following message from checkpatch:
-> > > >
-> > > > =======
-> > > > $ scripts/checkpatch.pl
-> > > > 0001-netfilter-nf_log-don-t-hold-nf_log_mutex-during-user.patch
-> > > > WARNING: 'calle' may be misspelled - perhaps 'called'?
-> > > > #15:
-> > > > Fixes: 266d07cb1c9a ("netfilter: nf_log: fix sleeping function calle[...]")
-> > > >
-> > > > total: 0 errors, 1 warnings, 0 checks, 20 lines checked
-> > > >
-> > > > NOTE: For some of the reported defects, checkpatch may be able to
-> > > >       mechanically convert to the typical style using --fix or --fix-inplace.
-> > > >
-> > > > 0001-netfilter-nf_log-don-t-hold-nf_log_mutex-during-user.patch has
-> > > > style problems, please review.
-> > > >
-> > > > NOTE: If any of the errors are false positives, please report
-> > > >       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> > > > =======
-> > > >
-> > > > I believe that it is appropriate here to truncate the commit message
-> > > > of the fixed commit.
-> > >
-> > > It's not.
-> >
-> > Looking at a bunch of other recent commits, I'm guessing that the
-> > accepted format is to use the complete commit message, without
-> > linebreaks, even if it goes over 75 columns?
->
-> More common is to wrap the commit message on multiple lines.
 
-Really? Even in the "Fixes:" line?
+--=-S/93xppYbRSGq2ywkVtP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> For instance, the first commit match in -next:
->
-> $ git log --format=email --grep=commit -1
-> From 1421f2b6b1aac2379844ba27ba09b0dc37ec2daa Mon Sep 17 00:00:00 2001
-> From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Date: Fri, 15 Jun 2018 09:43:47 +1000
-> Subject: [PATCH] kernel/kexec_file.c: add walk_system_ram_res_rev()
->
-> This function, being a variant of walk_system_ram_res() introduced in
-> commit 8c86e70acead ("resource: provide new functions to walk through
-> resources"), walks through a list of all the resources of System RAM in
-> [...]
+On Mon, 2018-06-25 at 17:38 +0200, Paul Kocialkowski wrote:
+> Hi,
+>=20
+> On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> > The IRQ handler up until now was hardcoding the use of the MPEG engine =
+to
+> > read the interrupt status, clear it and disable the interrupts.
+> >=20
+> > Obviously, that won't work really well with the introduction of new cod=
+ecs
+> > that use a separate engine with a separate register set.
+> >=20
+> > In order to make this more future proof, introduce new decodec operatio=
+ns
+> > to deal with the interrupt management. The only one missing is the one =
+to
+> > enable the interrupts in the first place, but that's taken care of by t=
+he
+> > trigger hook for now.
+>=20
+> Here's another comment about an issue I just figured out.
+>=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > ---
+> >  .../sunxi/cedrus/sunxi_cedrus_common.h        |  9 +++++
+> >  .../platform/sunxi/cedrus/sunxi_cedrus_hw.c   | 21 ++++++------
+> >  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 33 +++++++++++++++++++
+> >  3 files changed, 53 insertions(+), 10 deletions(-)
+> >=20
+> > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h =
+b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > index c2e2c92d103b..a2a507eb9fc9 100644
+> > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > @@ -108,7 +108,16 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer(c=
+onst struct vb2_buffer *p)
+> >  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
+> >  }
+> > =20
+> > +enum sunxi_cedrus_irq_status {
+> > +	SUNXI_CEDRUS_IRQ_NONE,
+> > +	SUNXI_CEDRUS_IRQ_ERROR,
+> > +	SUNXI_CEDRUS_IRQ_OK,
+> > +};
+> > +
+> >  struct sunxi_cedrus_dec_ops {
+> > +	void (*irq_clear)(struct sunxi_cedrus_ctx *ctx);
+> > +	void (*irq_disable)(struct sunxi_cedrus_ctx *ctx);
+> > +	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx *c=
+tx);
+> >  	void (*setup)(struct sunxi_cedrus_ctx *ctx,
+> >  		      struct sunxi_cedrus_run *run);
+> >  	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
+> > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/dr=
+ivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > index bb46a01214e0..6b97cbd2834e 100644
+> > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> > @@ -77,27 +77,28 @@ static irqreturn_t sunxi_cedrus_ve_irq(int irq, voi=
+d *dev_id)
+> >  	struct sunxi_cedrus_ctx *ctx;
+> >  	struct sunxi_cedrus_buffer *src_buffer, *dst_buffer;
+> >  	struct vb2_v4l2_buffer *src_vb, *dst_vb;
+> > +	enum sunxi_cedrus_irq_status status;
+> >  	unsigned long flags;
+> > -	unsigned int value, status;
+> > =20
+> >  	spin_lock_irqsave(&dev->irq_lock, flags);
+> > =20
+> > -	/* Disable MPEG interrupts and stop the MPEG engine */
+> > -	value =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL);
+> > -	sunxi_cedrus_write(dev, value & (~0xf), VE_MPEG_CTRL);
+> > -
+> > -	status =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS);
+> > -	sunxi_cedrus_write(dev, 0x0000c00f, VE_MPEG_STATUS);
+> > -	sunxi_cedrus_engine_disable(dev);
+>=20
+> This call was dropped from the code reorganization. What it intentional?
+>=20
+> IMO, it should be brought back to the irq_disable ops for MPEG2 (and the
+> same probably applies to H264).
 
-I just grepped through Linus' tree for precedent on the "Fixes:" line;
-these are the first couple I found:
+Actually, this doesn't seem like the right place to put it.
 
-f5e350f021e04ea41d2e5d58487c33b05ba3d25b: overlong "Fixes:" line
-6c6da92808442908287fae8ebb0ca041a52469f4: overlong "Fixes:" line
-964d978433a4b9aa1368ff71227ca0027dd1e32f: overlong "Fixes:" line
-71c8fc0c96abf8e53e74ed4d891d671e585f9076: overlong "Fixes:" line
-b5b7dd647f2d21b93f734ce890671cd908e69b0a: overlong "Fixes:" line
+Looking at the sunxi_engine_enable function, explicitly passing the
+codec as an argument and calling that function from each codec's code
+feels strange.
 
-So it looks like the consensus is to use the full commit message
-without truncation or linebreaks there?
+We should probably break down these functions
+(sunxi_engine_enable/sunxi_engine_disable) into codec ops. The
+start/stop couple seems like a good fit, but it brings up the following
+question: do we want to disable the engine between each frame or not?
 
-The first commit I found that wraps the commit message there is
-6e88f01206edab0e5bc105d8f35fac10f4ee14c5, from June 8.
+I really don't know how significant the power saving benefits are and
+what downsides there might be.
+
+What do you think?
+
+>  Things still seem to work without it,
+> though, but there might be a difference in terms of standby VPU power
+> consumption.
+>=20
+> Cheers,
+>=20
+> Paul
+>=20
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-S/93xppYbRSGq2ywkVtP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsxDyYACgkQ3cLmz3+f
+v9EZIgf+KKr9aOA1Xzp33X+1o0igIfsRgBxlH/SisTL5M8kutZpvTQOIqsobpEd0
+0Ji6yXQT1/oiFMJ2NAhcxEc2UGLzPLl67GrqP2cbTsPYfU6d03Br2ZSpvwoEErDW
+Jfy8svJqsPpuJWNMzcj+wbwd5e5IkiX/8QcMMlMvZ29AToSfxczUF9snu3CiYlvY
+PUXd/q/lkGqAqCpQ4G349m/ivc0papnMt3OO+GSUg0oDlLdQpiqVJa7qn56o08MK
+tQeI0kLR4zpxcFFZyHlFCwNby7z1Uvs/3hqNEf5XwKRSP93sQS9/8gW4ISr3a5Yg
+6VtX3iT7OJjFKl2CAIBZbntCskvYDA==
+=AYNb
+-----END PGP SIGNATURE-----
+
+--=-S/93xppYbRSGq2ywkVtP--
+
