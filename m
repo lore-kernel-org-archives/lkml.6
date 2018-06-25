@@ -2,117 +2,145 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B43F1C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BB4C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E0D25AA9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:42:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E0D25AA9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D81325AB1
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:42:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mfA4f31q";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mfA4f31q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D81325AB1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755568AbeFYNka (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:40:30 -0400
-Received: from mga18.intel.com ([134.134.136.126]:58017 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933935AbeFYNk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:40:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 06:40:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,270,1526367600"; 
-   d="scan'208";a="67062416"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga001.fm.intel.com with ESMTP; 25 Jun 2018 06:40:24 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fXRjE-000Lgp-3Q; Mon, 25 Jun 2018 21:40:24 +0800
-Date:   Mon, 25 Jun 2018 21:39:29 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     kbuild-all@01.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dpcm: improve runtime update predictability
-Message-ID: <201806251940.hnjUV4rz%fengguang.wu@intel.com>
-References: <20180625082923.25636-1-jbrunet@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625082923.25636-1-jbrunet@baylibre.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S934215AbeFYNmv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:42:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43138 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755345AbeFYNk3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:40:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 952AA60791; Mon, 25 Jun 2018 13:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529934028;
+        bh=/qoVU1NSlTfNbRJtCaj1eKbbZC1ANROnlSaCSWOm1ok=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mfA4f31qj/id2TthuSK60uHsvnMf804jQ8OlJjK7U8or1S32xCqUAB2lKw5QYNl+S
+         qOjaQPTfmatXIxMtaBW3XGB5bmaRMFMsh2H9qcehk6PGh6buzjdJCebk9FWkp8C80u
+         +n5cp33BKu+vYsjAePcUJ9K0witbwmHirOmV062Y=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4494260A06;
+        Mon, 25 Jun 2018 13:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529934028;
+        bh=/qoVU1NSlTfNbRJtCaj1eKbbZC1ANROnlSaCSWOm1ok=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mfA4f31qj/id2TthuSK60uHsvnMf804jQ8OlJjK7U8or1S32xCqUAB2lKw5QYNl+S
+         qOjaQPTfmatXIxMtaBW3XGB5bmaRMFMsh2H9qcehk6PGh6buzjdJCebk9FWkp8C80u
+         +n5cp33BKu+vYsjAePcUJ9K0witbwmHirOmV062Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4494260A06
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v8 1/7] dt-bindings: net: bluetooth: Add device tree bindings for QTI chip wcn3990
+Date:   Mon, 25 Jun 2018 19:10:07 +0530
+Message-Id: <20180625134013.19684-2-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180625134013.19684-1-bgodavar@codeaurora.org>
+References: <20180625134013.19684-1-bgodavar@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
+This patch enables regulators for the Qualcomm Bluetooth wcn3990
+controller.
 
-I love your patch! Perhaps something to improve:
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+---
 
-[auto build test WARNING on asoc/for-next]
-[also build test WARNING on v4.18-rc2 next-20180625]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Changes in v8:
+    * Separated the optional entries between two chips
 
-url:    https://github.com/0day-ci/linux/commits/Jerome-Brunet/ASoC-dpcm-improve-runtime-update-predictability/20180625-172002
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+Changes in v7:
+    * no change.
 
+Changes in v6:
 
-sparse warnings: (new ones prefixed by >>)
+    * Changed the oper-speed to max-speed.
 
-   sound/soc/soc-pcm.c:357:32: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:357:32: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:367:32: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:367:32: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:417:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:417:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:418:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:418:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:419:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:419:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:420:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:420:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:435:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:435:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:436:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:436:28: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:445:24: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:445:24: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:446:24: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:446:24: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:447:24: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:447:24: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:448:24: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:448:24: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1194:39: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1194:39: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1750:41: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1750:41: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1752:41: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1752:41: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1774:36: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1774:36: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1775:36: sparse: expression using sizeof(void)
-   sound/soc/soc-pcm.c:1775:36: sparse: expression using sizeof(void)
->> sound/soc/soc-pcm.c:2600:5: sparse: symbol 'soc_dpcm_fe_runtime_update' was not declared. Should it be static?
+Changes in v5:
 
-Please review and possibly fold the followup patch.
+    * Added entry for oper-speed and init-speed.
 
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ .../bindings/net/qualcomm-bluetooth.txt       | 30 +++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+index 0ea18a53cc29..c2b09dd2bf31 100644
+--- a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
++++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+@@ -10,12 +10,23 @@ device the slave device is attached to.
+ Required properties:
+  - compatible: should contain one of the following:
+    * "qcom,qca6174-bt"
++   * "qcom,wcn3990-bt"
++
++Optional properties for compatible string qcom,qca6174-bt:
+ 
+-Optional properties:
+  - enable-gpios: gpio specifier used to enable chip
+  - clocks: clock provided to the controller (SUSCLK_32KHZ)
+ 
+-Example:
++Optional properties for compatible string qcom,wcn3990-bt:
++
++ - vddio-supply: Bluetooth VDD IO regulator handle.
++ - vddxtal-supply: Bluetooth VDD XTAL regulator handle.
++ - vddpa-supply: Bluetooth VDD PA regulator handle.
++ - vddldo-supply: Bluetooth VDD LDO regulator handle.
++ - vddcore-supply: Bluetooth VDD CORE regulator handle.
++ - max-speed: Maximum operating speed of the chip.
++
++Examples:
+ 
+ serial@7570000 {
+ 	label = "BT-UART";
+@@ -28,3 +39,18 @@ serial@7570000 {
+ 		clocks = <&divclk4>;
+ 	};
+ };
++
++serial@898000 {
++	label = "BT-UART";
++	status = "okay";
++
++	bluetooth {
++		compatible = "qcom,wcn3990-bt";
++		vddio-supply = <&pm8998_s3>;
++		vddxtal-supply = <&pm8998_s5>;
++		vddcore-supply = <&pm8998_l7>;
++		vddpa-supply = <&pm8998_l17>;
++		vddldo-supply = <&pm8998_l25>;
++		max-speed = <3200000>;
++	};
++};
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
