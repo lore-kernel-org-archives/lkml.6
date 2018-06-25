@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4440C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63044C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 789F525635
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:51:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 789F525635
+	by mail.kernel.org (Postfix) with ESMTP id 200D625637
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:51:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 200D625637
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754709AbeFYIvA (ORCPT
+        id S1754677AbeFYIu7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:51:00 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:29052 "EHLO
+        Mon, 25 Jun 2018 04:50:59 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:36860 "EHLO
         ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754253AbeFYIu6 (ORCPT
+        with ESMTP id S1754245AbeFYIu6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 04:50:58 -0400
 Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w5P8qXv9009388;
-        Mon, 25 Jun 2018 16:52:33 +0800 (GMT-8)
+        by ATCSQR.andestech.com with ESMTP id w5P8qhrk009416;
+        Mon, 25 Jun 2018 16:52:43 +0800 (GMT-8)
         (envelope-from zong@andestech.com)
 Received: from atcsqa06.andestech.com (10.0.1.85) by ATCPCS16.andestech.com
  (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Mon, 25 Jun 2018
- 16:49:50 +0800
+ 16:50:00 +0800
 From:   Zong Li <zong@andestech.com>
 To:     <palmer@sifive.com>, <hch@infradead.org>,
         <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <zongbox@gmail.com>
 CC:     Zong Li <zong@andestech.com>, <greentime@andestech.com>
-Subject: [PATCH v2 1/4] RISC-V: Add conditional macro for zone of DMA32
-Date:   Mon, 25 Jun 2018 16:49:37 +0800
-Message-ID: <3d8fcfce1e99fe1f07c11b535319164ee2511c02.1529915117.git.zong@andestech.com>
+Subject: [PATCH v2 3/4] RISC-V: Add definiion of extract symbol's index and type for 32-bit
+Date:   Mon, 25 Jun 2018 16:49:39 +0800
+Message-ID: <4c4def99db5e0392238947dc878c5018cc7aca3e.1529915117.git.zong@andestech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1529915117.git.zong@andestech.com>
 References: <cover.1529915117.git.zong@andestech.com>
@@ -45,33 +45,39 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.0.1.85]
 X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w5P8qXv9009388
+X-MAIL: ATCSQR.andestech.com w5P8qhrk009416
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DMA32 is for 64-bit usage.
+Use generic marco to get the index and type of symbol.
 
 Signed-off-by: Zong Li <zong@andestech.com>
 ---
- arch/riscv/mm/init.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/riscv/include/uapi/asm/elf.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index c77df8142be2..58a522f9bcc3 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -28,7 +28,9 @@ static void __init zone_sizes_init(void)
- {
- 	unsigned long max_zone_pfns[MAX_NR_ZONES] = { 0, };
+diff --git a/arch/riscv/include/uapi/asm/elf.h b/arch/riscv/include/uapi/asm/elf.h
+index 5cae4c30cd8e..1e0dfc36aab9 100644
+--- a/arch/riscv/include/uapi/asm/elf.h
++++ b/arch/riscv/include/uapi/asm/elf.h
+@@ -21,8 +21,13 @@ typedef struct user_regs_struct elf_gregset_t;
  
-+#ifdef CONFIG_ZONE_DMA32
- 	max_zone_pfns[ZONE_DMA32] = PFN_DOWN(min(4UL * SZ_1G, max_low_pfn));
+ typedef union __riscv_fp_state elf_fpregset_t;
+ 
+-#define ELF_RISCV_R_SYM(r_info) ((r_info) >> 32)
+-#define ELF_RISCV_R_TYPE(r_info) ((r_info) & 0xffffffff)
++#if __riscv_xlen == 64
++#define ELF_RISCV_R_SYM(r_info)		ELF64_R_SYM(r_info)
++#define ELF_RISCV_R_TYPE(r_info)	ELF64_R_TYPE(r_info)
++#else
++#define ELF_RISCV_R_SYM(r_info)		ELF32_R_SYM(r_info)
++#define ELF_RISCV_R_TYPE(r_info)	ELF32_R_TYPE(r_info)
 +#endif
- 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
  
- 	free_area_init_nodes(max_zone_pfns);
+ /*
+  * RISC-V relocation types
 -- 
 2.16.1
 
