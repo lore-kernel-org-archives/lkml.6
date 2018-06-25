@@ -2,116 +2,132 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32775C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383A8C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C8525DF7
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:15:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQ3DCVgi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C8525DF7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DFFFA25E04
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:16:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFFFA25E04
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755335AbeFYQPy (ORCPT
+        id S1755425AbeFYQQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:15:54 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33252 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752514AbeFYQPw (ORCPT
+        Mon, 25 Jun 2018 12:16:33 -0400
+Received: from smtprelay0106.hostedemail.com ([216.40.44.106]:51400 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751958AbeFYQQb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:15:52 -0400
-Received: by mail-lf0-f67.google.com with SMTP id b7-v6so4074674lfa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 09:15:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=YlqUJssjDb8lzobufeprd8vdQx/JcXvZ1MP3br1OLIQ=;
-        b=ZQ3DCVgiW9okNbnmw4D+boHZ1AeC31PEJLKnNGS5iGdbkK3nU8UIU1joLUu1XN9FFn
-         nKU2fkEYvFvDuNiMC5eT4FQ97kO/7+FqsmpuzIbF6olhbGdpqZXy/zRwu3M30xuOZEYH
-         XHFxizWLsv46i/VnIk6OxygA9QyASI9/uojZyUr2YLp6Zo/sNRQRYmEpatvDosoITqE0
-         iDJxQEBqXtAFhh0nbRH2W1mOJVVPrK6T3+981WckpndaJh+ZRPwZh3RseerDPoUqvXk1
-         5hc1Yh/3SEmtlmbiIDqtA5ZyXf/5u5+sIpWvArnZvCz+GxTCab2AeQe6i+U9pqSECGT+
-         XecQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=YlqUJssjDb8lzobufeprd8vdQx/JcXvZ1MP3br1OLIQ=;
-        b=SP+9PRuQz7WNX5AIyjL9jPyFIsFnBlMRnX4GwwJ2tcyQIW+iaoErof2ZPW6dxKsPxT
-         Ugohv8K1VbNfzyADbth1LtG8tJES+1m0HEiM3258Qv9rBB7mAAeYR2DpvBGnoqc3kqY5
-         7YA1d4fPwRU64JQWVUsagAAduF2H7cnE1xM4bpATDLDws9QsQDTitTVO3dZzvR8vohr2
-         tZBOcSXI9AnPxcyirAGDO3vIs5O5oalZwtSbybhtAnjBLyJ1HZnAC5xgYhu8HdAcobp5
-         9rYRLhkgldxrTXNFQ2BVRBx25Wyx/fdjTvKS6SqqOCNvWKJV6o2pRSvYtEuBKYKoAlUq
-         S5oQ==
-X-Gm-Message-State: APt69E3rD9v2sdBx6D05E9kB4RQEv7OpulMYDzy4UtoCqtO3tl1iNLBr
-        VgT9pzNUPAVIpr91hw1VQxUiQlTbSQB0hpqltk8=
-X-Google-Smtp-Source: ADUXVKIt70xPYek0BioyEnf9CnHK6YiWnMBBrYpOEdP89mWXnii3NqyGD+7zE9h73exyzbSFC+6ak5DYtAcWh9crl/w=
-X-Received: by 2002:a19:20c1:: with SMTP id g184-v6mr6580813lfg.96.1529943351117;
- Mon, 25 Jun 2018 09:15:51 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:2b43:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 09:15:50
- -0700 (PDT)
-In-Reply-To: <CALCETrU3dS5t714BYqkxEYgkbJaESK6NP1Rsn3xq3En38yjJzQ@mail.gmail.com>
-References: <20180625155750.GA14306@jordon-HP-15-Notebook-PC> <CALCETrU3dS5t714BYqkxEYgkbJaESK6NP1Rsn3xq3En38yjJzQ@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 25 Jun 2018 21:45:50 +0530
-Message-ID: <CAFqt6zZHo3frivz0Qjj7v2ifF-p+6530Bb8HZqO3iPrL9kemuA@mail.gmail.com>
-Subject: Re: [PATCH] x86/vdso: Change return type to vm_fault_t for fault handlers
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, brajeswar.linux@gmail.com,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Jun 2018 12:16:31 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id EC7211805B2E2;
+        Mon, 25 Jun 2018 16:16:30 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: bone01_38c3c91ea2c33
+X-Filterd-Recvd-Size: 4193
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 25 Jun 2018 16:16:29 +0000 (UTC)
+Message-ID: <263e7cee7dcc18db39f663cbc07b4985a1f8f891.camel@perches.com>
+Subject: Re: checkpatch false positive (IMO): typo detected in truncated
+ commit message
+From:   Joe Perches <joe@perches.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Andy Whitcroft <apw@canonical.com>,
+        kernel list <linux-kernel@vger.kernel.org>
+Date:   Mon, 25 Jun 2018 09:16:28 -0700
+In-Reply-To: <CAG48ez2y_T5RfjF8sjM=vQBzoTBgeXenwMdc=-DB9XE-Vi73-w@mail.gmail.com>
+References: <CAG48ez02K0N6h-nfbnY81QAZoX1_gi4DTxuHxf1bSYiifu2v7g@mail.gmail.com>
+         <35b62e21e0de223acae0f9f468212ee9638c3544.camel@perches.com>
+         <CAG48ez3ZD3+j2oBJ7XHW9ycbi9_H8QsKGg8A84tOTisjeZGgiw@mail.gmail.com>
+         <8f2948baf460575cde975a2cb5d11b960e8ae30f.camel@perches.com>
+         <CAG48ez2y_T5RfjF8sjM=vQBzoTBgeXenwMdc=-DB9XE-Vi73-w@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 9:41 PM, Andy Lutomirski <luto@amacapital.net> wrote:
-> On Mon, Jun 25, 2018 at 8:55 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->>
->> Use new return type vm_fault_t for fault handler. For
->> now, this is just documenting that the function returns
->> a VM_FAULT value rather than an errno. Once all instances
->> are converted, vm_fault_t will become a distinct type.
->
-> Whoa there..  Your commit message makes it sound like you're just
-> changing the return type, but:
->
->>                 if (tsc_pg && vclock_was_used(VCLOCK_HVCLOCK))
->> -                       ret = vm_insert_pfn(vma, vmf->address,
->> +                       ret = vmf_insert_pfn(vma, vmf->address,
->>                                             vmalloc_to_pfn(tsc_pg));
->>         }
->>
->> -       if (ret == 0 || ret == -EBUSY)
->> -               return VM_FAULT_NOPAGE;
->> -
->> -       return VM_FAULT_SIGBUS;
->> +       return ret;
->
-> You're refactoring the code, too.
->
-> Please fix your changelog.
+On Mon, 2018-06-25 at 17:49 +0200, Jann Horn wrote:
+> On Mon, Jun 25, 2018 at 5:37 PM Joe Perches <joe@perches.com> wrote:
+> > 
+> > On Mon, 2018-06-25 at 17:32 +0200, Jann Horn wrote:
+> > > On Mon, Jun 25, 2018 at 5:23 PM Joe Perches <joe@perches.com> wrote:
+> > > > 
+> > > > On Mon, 2018-06-25 at 17:22 +0200, Jann Horn wrote:
+> > > > > Hello!
+> > > > > 
+> > > > > I got the following message from checkpatch:
+> > > > > 
+> > > > > =======
+> > > > > $ scripts/checkpatch.pl
+> > > > > 0001-netfilter-nf_log-don-t-hold-nf_log_mutex-during-user.patch
+> > > > > WARNING: 'calle' may be misspelled - perhaps 'called'?
+> > > > > #15:
+> > > > > Fixes: 266d07cb1c9a ("netfilter: nf_log: fix sleeping function calle[...]")
+> > > > > 
+> > > > > total: 0 errors, 1 warnings, 0 checks, 20 lines checked
+> > > > > 
+> > > > > NOTE: For some of the reported defects, checkpatch may be able to
+> > > > >       mechanically convert to the typical style using --fix or --fix-inplace.
+> > > > > 
+> > > > > 0001-netfilter-nf_log-don-t-hold-nf_log_mutex-during-user.patch has
+> > > > > style problems, please review.
+> > > > > 
+> > > > > NOTE: If any of the errors are false positives, please report
+> > > > >       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+> > > > > =======
+> > > > > 
+> > > > > I believe that it is appropriate here to truncate the commit message
+> > > > > of the fixed commit.
+> > > > 
+> > > > It's not.
+> > > 
+> > > Looking at a bunch of other recent commits, I'm guessing that the
+> > > accepted format is to use the complete commit message, without
+> > > linebreaks, even if it goes over 75 columns?
+> > 
+> > More common is to wrap the commit message on multiple lines.
+> 
+> Really? Even in the "Fixes:" line?
+> 
+> > For instance, the first commit match in -next:
+> > 
+> > $ git log --format=email --grep=commit -1
+> > From 1421f2b6b1aac2379844ba27ba09b0dc37ec2daa Mon Sep 17 00:00:00 2001
+> > From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > Date: Fri, 15 Jun 2018 09:43:47 +1000
+> > Subject: [PATCH] kernel/kexec_file.c: add walk_system_ram_res_rev()
+> > 
+> > This function, being a variant of walk_system_ram_res() introduced in
+> > commit 8c86e70acead ("resource: provide new functions to walk through
+> > resources"), walks through a list of all the resources of System RAM in
+> > [...]
+> 
+> I just grepped through Linus' tree for precedent on the "Fixes:" line;
+> these are the first couple I found:
+> 
+> f5e350f021e04ea41d2e5d58487c33b05ba3d25b: overlong "Fixes:" line
+> 6c6da92808442908287fae8ebb0ca041a52469f4: overlong "Fixes:" line
+> 964d978433a4b9aa1368ff71227ca0027dd1e32f: overlong "Fixes:" line
+> 71c8fc0c96abf8e53e74ed4d891d671e585f9076: overlong "Fixes:" line
+> b5b7dd647f2d21b93f734ce890671cd908e69b0a: overlong "Fixes:" line
 
 
-I have mentioned it.
+> So it looks like the consensus is to use the full commit message
+> without truncation or linebreaks there?
 
-********************
-Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+Correct.
 
-Previously vm_insert_pfn() returns err which has to
-mapped into VM_FAULT_* type. The new function
-vmf_insert_pfn() will replace this inefficiency by
-returning VM_FAULT_* type.
-*********************
+I didn't notice your patch was for a fixes: line.
+Those are exempted from the long-line checkpatch test.
+
+
