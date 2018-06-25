@@ -2,103 +2,150 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33FFC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A050BC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A43E25E27
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:22:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLaO/ble"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A43E25E27
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5E6F725E2B
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:22:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6F725E2B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932291AbeFYQWH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:22:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752139AbeFYQWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:22:05 -0400
-Received: from localhost (unknown [223.226.41.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74BC825E27;
-        Mon, 25 Jun 2018 16:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529943725;
-        bh=fqBojp8kiTt2Av9Fe8SOF4Ar3/KfyiJHpFKRIRYaKoU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oLaO/bleZzQQWdTJH39+vrnd0TgKtMqmavKaBuIIDXYpoY5gpZMxfTDqA5Ptg3lEY
-         rb5+dNV9vXytYFBtBtEIlcO1HVJKM8tZFxYeOWCqPd9gz+rYBoDuNi2Nk6qAmBuEc8
-         gNUW+xbTXhngjGHkjUsLnN4cjaRPaeYgL54mqMoM=
-Date:   Mon, 25 Jun 2018 21:51:56 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     gregkh@linuxfoundation.org, broonie@kernel.org,
-        sdharia@quicinc.com, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
-        ctatlor97@gmail.com
-Subject: Re: [PATCH 1/2] slimbus: stream: add stream support
-Message-ID: <20180625162156.GC2404@vkoul-mobl>
-References: <20180621134009.27116-1-srinivas.kandagatla@linaro.org>
- <20180621134009.27116-2-srinivas.kandagatla@linaro.org>
- <20180622125050.GO27187@vkoul-mobl>
- <a922d359-2096-48ed-c442-affc5b0c4ccf@linaro.org>
+        id S932936AbeFYQWZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 12:22:25 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:37047 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932315AbeFYQWW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 12:22:22 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fXUFw-0001yR-RA; Mon, 25 Jun 2018 10:22:20 -0600
+Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fXUFv-0000Vm-T8; Mon, 25 Jun 2018 10:22:20 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Paul Eggert <eggert@cs.ucla.edu>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+References: <20180420120605.1612248-1-arnd@arndb.de>
+        <20180420120605.1612248-2-arnd@arndb.de>
+        <20180621154915.GA31947@gmail.com>
+        <CAK8P3a1QYTfRNQt2+a29BpvgYM_pnSFrO=NBvVo=BdUa2q9ngQ@mail.gmail.com>
+        <20180621161121.GB7222@gmail.com>
+        <CAK8P3a1mx16S+DhEMQA6WBJ7efdhN5YaKKVHU6n+E6kfifM-Qg@mail.gmail.com>
+        <20180622021636.GA11266@gmail.com> <87a7rm3eb5.fsf@xmission.com>
+        <20180624071258.GB29407@gmail.com> <87y3f31wsv.fsf@xmission.com>
+        <20180625091426.GA18351@gmail.com>
+Date:   Mon, 25 Jun 2018 11:21:59 -0500
+In-Reply-To: <20180625091426.GA18351@gmail.com> (Ingo Molnar's message of
+        "Mon, 25 Jun 2018 11:14:26 +0200")
+Message-ID: <874lhqzviw.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a922d359-2096-48ed-c442-affc5b0c4ccf@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-XM-SPF: eid=1fXUFv-0000Vm-T8;;;mid=<874lhqzviw.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19DE+0RRhL3Vnctfqo/Fy/WgIpins+Qfb0=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2 2/2] rusage: allow 64-bit times ru_utime/ru_stime
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-06-18, 11:11, Srinivas Kandagatla wrote:
+Ingo Molnar <mingo@kernel.org> writes:
 
-> > > +struct slim_stream_runtime *slim_stream_allocate(struct slim_device *dev,
-> > > +						 const char *name)
-> > > +{
-> > > +	struct slim_stream_runtime *rt;
-> > > +	unsigned long flags;
-> > > +
-> > > +	rt = kzalloc(sizeof(*rt), GFP_KERNEL);
-> > > +	if (!rt)
-> > > +		return ERR_PTR(-ENOMEM);
-> > > +
-> > > +	rt->name = kasprintf(GFP_KERNEL, "slim-%s", name);
-> > > +	if (!rt->name) {
-> > > +		kfree(rt);
-> > > +		return ERR_PTR(-ENOMEM);
-> > > +	}
-> > > +
-> > > +	rt->dev = dev;
-> > > +	rt->state = SLIM_STREAM_STATE_ALLOCATED;
-> > > +	spin_lock_irqsave(&dev->stream_list_lock, flags);
-> > > +	list_add_tail(&rt->node, &dev->stream_list);
-> > > +	spin_unlock_irqrestore(&dev->stream_list_lock, flags);
-> > 
-> > Any reason for _irqsave variant? Do you expect stream APIs to be called
-> > from ISR?We can move to non irqsave variant here, as i do not see a case
-> > where
-> this list would be interrupted from irq context.
+> * Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+>> Ingo Molnar <mingo@kernel.org> writes:
+>> 
+>> > * Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> >
+>> >> The trouble with attributes is that means you can't filter your system
+>> >> call arguments with seccomp. [...]
+>> >
+>> > There's nothing keeping seccomp from securely fetching those arguments and 
+>> > extending filtering to them as well ...
+>> >
+>> > Allowing that would make sense for a lot of other system calls as
+>> > well.
+>> 
+>> Possibly.  The challenge is that if the fetch for the kernel to use
+>> those arguments is different from the fetch of seccomp to test those
+>> arguments you have a time of test vs time of use race.
+>
+> Those fetched values should obviously then be used to call permitted
+> system calls.
 
-That's interesting can you please describe how?
-Also, won't it be modified from bottom half...
+Agreed.  To my knowledge no one has figured out how to make that work
+yet.  For the most part it has been unnecessary.
 
-> > > +/*
-> > > + * slim_stream_enable() - Enable a prepared SLIMbus Stream
-> > 
-> > Do you want to check if it is already prepared ..?
-> Yep, I think most of the code needs similar state machine check, I will add
-> this in next version.
+>> Given the location of the seccomp hook at the kernel user space border
+>> there is no easy way for seccomp to share the fetch with the system
+>> call itself.
+>> 
+>> So I don't see how seccomp could perform the fetch securely.
+>
+> Looks like more of a seccomp mis-design/mis-implementation than some fundamental 
+> problem.
 
-so if you are tying to snd stream states then I don't think you need a
-state machine here. ALSA already does that for you so you can skip it :D
+Frankly.  Given that there are some very good solutions in other
+operating systems, I think the misdesign is in unix/linux not providing
+a good answer to what to do when you need more than 6 arguments to a
+system call.
 
--- 
-~Vinod
+> Mis-designed security features should not hinder system call design.
+
+I certainly agree that seccomp should not be the sole reason for not
+doing something.  However there are lots of reasons to avoid
+extensibility in general.
+
+Excess extensibility has been the cause of more than one security issue.
+
+Lots of flexibility comes at the price of lots of conditional execution
+which tends to explode the test matrix of possibilities to test, with
+the result that some combinations are never thought about or tested
+because they don't make sense to combine.  Then someone with
+mischievious intent see that combination and thinks what happens when I
+do this.
+
+Further that conditional execution can frequently be the cause of slow
+code as well.
+
+So while there are many nice features of tagged values.  I don't think
+they are a general solution.  The lack of seccomp support (today) is
+just one downside among many.
+
+
+I do think it would be nice to have a general pattern for those
+system calls that require extensibility.  My gut feel says something
+like the L4 pseudo registers (to give a maxium request size)
+combined with something like netlink encoding would make a very
+nice template for making fast and flexible system calls.
+
+Eric
