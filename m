@@ -2,74 +2,198 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFABC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448D2C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0287125EF3
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:17:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YvZOsulk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0287125EF3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id 00A8D25EF5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:17:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00A8D25EF5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934339AbeFYRRF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:17:05 -0400
-Received: from sonic313-20.consmr.mail.bf2.yahoo.com ([74.6.133.194]:37854
-        "EHLO sonic313-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933917AbeFYRRE (ORCPT
+        id S934526AbeFYRRX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:17:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57984 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934129AbeFYRRW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:17:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1529947023; bh=036q4Cf9A35kAdaOIMoHmU/gdA5aUWv+IcPY7gqTQCo=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=YvZOsulkAHLU/SLWRGnoKc83FClteKY6eRgWCKSsq0Hlf9N82FJ5DsPx/HbefC7mcVtvRQATJALRCACbJROA50+pNzKev7uA3COTOrkve4x6/DtTsUUEaGgWXcHnMTJHMHmFzmmRZlHUcONkohDdTX7ehg3fcLYZpSQwbp4Fyq8jO9rxRzHjVHBlQufklOq1EijGqWtC/vYXp1+rqYcUaA6HQ6RkrQylsjOyRONfnSc2V3496RNOtG+Blg9Mmr4iDjR0pJMmbT5YDgLCYGnAYnqqbXwprk3KJh3jGjn1dkSG6lJ9XTcNcah2cdmWSFAKlSih1plSM+GXK1iwVchI+g==
-X-YMail-OSG: sTmQbzYVM1kVoN3J2_.jGFqZ7MD4ixquVfGJriiMLO0h74GaLxBSN2rNElI1Ict
- MB_aRHHigz_MvLHPYIG5WofQtWYcraLZL3l6f06aCmH03526If3xZJni6BFci_wXV6XIpSj7jHcn
- ynuYSBTFZ4uRbD2jr1S_60G8eeIfRW.O3q2CuOPAG1bBa9o9iCvR3p0FiaNyz5bCsqSzU9pXE3EJ
- Jhb_TCjSyBKKIVb1YO5C0n6LTOQxwqOtY7Mg8oSgjnZ1mUJiLIz.7j3LfkeCa7HiJojzsxd8jCYs
- 0luUe.iI_3Odsib6PKspy.p7zbLr6yNIrb2H_r49t6synY2DuDqeugHSUEgK3cSwhmBBKVirbH2p
- rSGKkYHc5SVmYXO8qhW1KEPEvnxFABILVSaHBBHiB4hQCxBillTRVRv4tiSrUtq68Vp6rZ7sddX3
- E30fJgxW_t2GAU4iabYLrPZDExR7oMImyH_KYfjhmw.YGl9lFg00tY.HPNOQiqnoqvsImTqk.hy4
- lWm9phf.dw1x5wsz25V2_GOORpSFqryLAzn5_x8rrKoY.BTPIsu460EpC.xrIusViazHiFNWvQFd
- Vj_eO3X51zrAohOguwFVzImNJ1yz2OqWkke4rBV4liYAjDcTU0M4zQXEAqQa790SJRYV_cw.SbIX
- ySTa6XogQjY0MvmeEPtIreyk5uoZeaXIgT9vxzr5WBJztZXEN1tXjTh4SSIep1fbbwDrCv3NZng3
- kypM4mg8DDxUVmwy8P3j_2v9b4O7E62eVUOHdm1iOqKm_UfphglZvCM9juF0WWDPr9cPvw_6nWTh
- pwoWUekRf.GclzTP8zo383EGXXaKYUUtMhe_B3nfjo317SFqCfbejLfPQVBk1.seX4PW7D2bBoC1
- 6FwHfIgN80YXyLLFI32eS7EY_nZJQ1LQOkyizpimOW1HIFKf5SwfnMfa93jmQv2_TlBpwBjFDKd2
- oVuh7YSmZvRIElQx_vaSB6RucKHE0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Mon, 25 Jun 2018 17:17:03 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp408.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 31e1c56e4daddbc8bbf1530586dc30f2;
-          Mon, 25 Jun 2018 17:17:00 +0000 (UTC)
-Subject: Re: [PULL] Smack: Mark inode instant in smack_task_to_inode
-To:     James Morris <jmorris@namei.org>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>
-References: <813ecc0b-4a9e-22c9-b893-504936bab342@schaufler-ca.com>
- <alpine.LRH.2.21.1806260304580.26153@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <a75c5550-4d35-8308-803b-36f4d778d243@schaufler-ca.com>
-Date:   Mon, 25 Jun 2018 10:16:58 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 25 Jun 2018 13:17:22 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PHEFL3130270
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 13:17:21 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ju267f51y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 13:17:21 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 25 Jun 2018 13:17:20 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Jun 2018 13:17:17 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5PHHGA414418296
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Jun 2018 17:17:16 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 528F6B205F;
+        Mon, 25 Jun 2018 13:17:11 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2179BB2064;
+        Mon, 25 Jun 2018 13:17:11 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Jun 2018 13:17:11 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C280E16C6A76; Mon, 25 Jun 2018 10:19:20 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 10:19:20 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Byungchul Park <byungchul.park@lge.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Byungchul Park <max.byungchul.park@gmail.com>,
+        jiangshanlai@gmail.com, josh@joshtriplett.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com, luto@kernel.org
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
+ rcu_dynticks
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180620145814.GQ3593@linux.vnet.ibm.com>
+ <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
+ <20180620164902.GW3593@linux.vnet.ibm.com>
+ <20180622055659.GA255098@joelaf.mtv.corp.google.com>
+ <20180622132843.GN3593@linux.vnet.ibm.com>
+ <20180622181916.GA13628@joelaf.mtv.corp.google.com>
+ <20180622143247.781028b1@gandalf.local.home>
+ <20180622200548.GA114655@joelaf.mtv.corp.google.com>
+ <20180625082824.GB21377@X58A-UD3R>
+ <20180625163951.GA52646@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1806260304580.26153@namei.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180625163951.GA52646@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062517-0060-0000-0000-000002824449
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009254; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052191; UDB=6.00539382; IPR=6.00830116;
+ MB=3.00021851; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-25 17:17:20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062517-0061-0000-0000-0000459267C7
+Message-Id: <20180625171920.GR3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806250200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/25/2018 10:05 AM, James Morris wrote:
-> On Mon, 25 Jun 2018, Casey Schaufler wrote:
->
->> James, would you please pull this change for 4.18.
-> I already have it queued for Linus, I'll send it up probably today.
+On Mon, Jun 25, 2018 at 09:39:51AM -0700, Joel Fernandes wrote:
+> On Mon, Jun 25, 2018 at 05:28:24PM +0900, Byungchul Park wrote:
+> > On Fri, Jun 22, 2018 at 01:05:48PM -0700, Joel Fernandes wrote:
+> > > On Fri, Jun 22, 2018 at 02:32:47PM -0400, Steven Rostedt wrote:
+> > > > On Fri, 22 Jun 2018 11:19:16 -0700
+> > > > Joel Fernandes <joel@joelfernandes.org> wrote:
+> > > > 
+> > > > > Sure. So in a later thread you mentioned "usermode helpers". I took a closer
+> > > > > look at that subsystem, and it seems you can execute usermode helpers from
+> > > > > atomic sections with help of UMH_NO_WAIT flag.
+> > > > > 
+> > > > > Then I checked where this flag is used and it turns out its from the
+> > > > > mce_work_trigger function in x86/kernel/cpu/mcheck/dev-mcelog.c which can be
+> > > > > called infact from an interrupt context (mce_notify_irq).
+> > > > > 
+> > > > > Is this the usecase you remember causing this weird transitions to userspace?
+> > > > 
+> > > > But this case still looks like it uses work queues, it just doesn't
+> > > > wait for the result.
+> > > > 
+> > > > I'll have to look at the code from what it looked like back in 2011, to
+> > > > see if there was an actual issue here back then.
+> > > 
+> > > Good point Steve. So I guess in the current kernel sources, there's no code
+> > > that uses UMH in IRQ context AFAICT. I'll go through the google group thread
+> > > Paul pointed as well to study the history of the problem a bit more.
+> > 
+> > Me too. Good discussion we had thanks to you, Joel.
+> 
+> No problem, thanks for the patch in the first place which triggered this
+> discussion.
+> 
+> For whatever its worth, I made some notes of what I understood from reading
+> the code and old posts because I was sure I would otherwise forget
+> everything:
+> http://www.joelfernandes.org/linuxinternals/2018/06/15/rcu-dynticks.html
+> 
+> Feel free to comment on that post directly (or here) if you feel something is
+> grossly wrong.
+> 
+> Again thank you and everyone for the discussion! ;-)
 
-Splendid. Thank you.
+Not a bad writeup!  A few comments, as usual...
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+	When I traced rdtp->dynticks_nesting, I could only find its
+	value to be either a 0 or a 1. However looking back at old kernel
+	sources, it appears that these can be nested becaues of so called
+	“half-interrupts”. I believe these are basically interrupts
+	that cause a transition to usermode due to usermode upcalls
+	(usermode helper subsystem). So a nesting situation could be
+	something like: 1. Transition from idle to process context which
+	makes dynticks_nesting == 1. Next, an interrupt comes in which
+	makes a usermode upcall. This usermode call now makes a system
+	call causing entry back into process context, which increments
+	the dynticks_nesting counter to 2. Such a crazy situation is
+	perhaps possible.
+
+The half-interrupts can instead cause ->dynticks_nmi_nesting to either
+fail to return to zero or to go negative, depending on which half of
+the interrupt was present.  I don't immediately recall the reason for
+allowing nested process-level entry/exit.  Might be another place to
+put a WARN_ON_ONCE(), as eliminating this capability would save another
+conditional branch.
+
+	Any time the rdtp->dynticks counter’s second-lowest most bit
+	is not set, we are in an EQS, and if its set, then we are not
+	(second lowest because lowest is reserved for something else as
+	of v4.18-rc1). This function is not useful to check if we’re
+	in an EQS from a timer tick though, because its possible the
+	timer tick interrupt entry caused an EQS exit which updated
+	the counter. IOW, the ‘dynticks’ counter is not capable of
+	checking if we had already exited the EQS before. To check if
+	we were in an EQS or not from the timer tick, we instead must
+	use dynticks_nesting counter. More on that later. The above
+	function is probably just useful to make sure that interrupt
+	entry/exit is properly updating the dynticks counter, and also
+	to make sure from non-interrupt context that RCU is in an EQS
+	(see rcu_gp_fqs function).
+
+You lost me on this one.  There is rcu_is_cpu_rrupt_from_idle(), but
+I am not sure what you are trying to achieve here, so I am not sure
+whether this function does what you want.
+
+	When dynticks_nesting is decremented to 0 (the outermost
+	process-context nesting level exit causes an eqs-entry), the
+	dynticks_nmi_nesting is reset to
+
+I think you want "0." at the end of this sentence.  Or maybe my browser
+is messing things up.
+
+							Thanx, Paul
 
