@@ -6,115 +6,95 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5250CC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072D3C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01386262B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:32:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44DD262BC
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:33:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yexXemgv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01386262B9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pj9iCsA+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44DD262BC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755570AbeFYXc3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 19:32:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35648 "EHLO mail.kernel.org"
+        id S933204AbeFYXdE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 19:33:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752998AbeFYXc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 19:32:27 -0400
-Received: from mail-wm0-f42.google.com (mail-wm0-f42.google.com [74.125.82.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1755174AbeFYXdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 19:33:02 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21066262BE
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 23:32:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC1F3262BB;
+        Mon, 25 Jun 2018 23:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529969547;
-        bh=9HRry7LWVFImHNvpLSVVmGzYeQdnNnK4yMiqVv9UAOY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=yexXemgvKyWmwh/9QfhAUTVyvJ2ZJkNvg4mkyWfN3z1E0UyiydKaY6JR5p0SmgghR
-         zf870uYD9AXtIdQR3xjV4QsRbvB+7ZqUfXCM2lmIPozjL5EKj/n7DvXrRoPVHKsoaA
-         pKOmlzAUQ5s83VvyN5IRgRxqDf0EoTEg3yFcR998=
-Received: by mail-wm0-f42.google.com with SMTP id i139-v6so4080171wmf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 16:32:27 -0700 (PDT)
-X-Gm-Message-State: APt69E1T01RwVOrsiwOEBYVQ7q2hIXWFERVgtmSHyz54Vy1bkZzdlqYd
-        csa2u/3tWyXU6sUZG7vrLTTWQbnHub6UB5p48LjRfg==
-X-Google-Smtp-Source: ADUXVKIGdiYEfkEDfHfMWuI4TkL/9r97hfYBUlwbj3ivNjOq0S1iVuNyet+pZC1RLXErOtRbIwT4urPbqOiAWwxrUHY=
-X-Received: by 2002:a1c:f902:: with SMTP id x2-v6mr2258221wmh.116.1529969545658;
- Mon, 25 Jun 2018 16:32:25 -0700 (PDT)
+        s=default; t=1529969581;
+        bh=NkeXatR3DqPumCspSYzPOLTnkwagrKv47JBr+OvNDzw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=pj9iCsA+gRcAVSeVSpnSVG/o8SwfijSRgeOro1ZyH3YrkP0EcaWCk9dGzpQBLmPk0
+         UVP/pbFKRQxIwVCIQkX0lxnVnbWyNMtFmHbxgxB058ngrzxCPS058sHkTwdvCPJ8fH
+         0Po8kREWNJjzGa8t0y1Hg+n1O7KT0/p6SylA+2D8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
- <20180620164902.GW3593@linux.vnet.ibm.com> <20180622055659.GA255098@joelaf.mtv.corp.google.com>
- <20180622132843.GN3593@linux.vnet.ibm.com> <20180622181916.GA13628@joelaf.mtv.corp.google.com>
- <20180622143247.781028b1@gandalf.local.home> <20180622200548.GA114655@joelaf.mtv.corp.google.com>
- <20180625082824.GB21377@X58A-UD3R> <20180625163951.GA52646@joelaf.mtv.corp.google.com>
- <20180625162557.7140664c@gandalf.local.home> <20180625204708.GS3593@linux.vnet.ibm.com>
- <20180625181522.53b5d296@gandalf.local.home>
-In-Reply-To: <20180625181522.53b5d296@gandalf.local.home>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 25 Jun 2018 16:32:13 -0700
-X-Gmail-Original-Message-ID: <CALCETrVCj_B=wCOsr5DLyFsL9Wc6AWUToLUD6Av=UosdVOrO1A@mail.gmail.com>
-Message-ID: <CALCETrVCj_B=wCOsr5DLyFsL9Wc6AWUToLUD6Av=UosdVOrO1A@mail.gmail.com>
-Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct rcu_dynticks
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        joel@joelfernandes.org, Byungchul Park <byungchul.park@lge.com>,
-        byungchul park <max.byungchul.park@gmail.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com,
-        Andrew Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        David Lechner <david@lechnology.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <3a6d0388-7915-8ea3-6ad6-38dc7ee06377@lechnology.com>
+Cc:     Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
+ <3a6d0388-7915-8ea3-6ad6-38dc7ee06377@lechnology.com>
+Message-ID: <152996958098.143105.4718477050150092384@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: davinci: cfgchip: testing the wrong variable
+Date:   Mon, 25 Jun 2018 16:33:00 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 3:15 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Mon, 25 Jun 2018 13:47:08 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
->
-> > On Mon, Jun 25, 2018 at 04:25:57PM -0400, Steven Rostedt wrote:
-> > > On Mon, 25 Jun 2018 09:39:51 -0700
-> > > Joel Fernandes <joel@joelfernandes.org> wrote:
-> > >
-> > > > For whatever its worth, I made some notes of what I understood from reading
-> > > > the code and old posts because I was sure I would otherwise forget
-> > > > everything:
-> > > > http://www.joelfernandes.org/linuxinternals/2018/06/15/rcu-dynticks.html
-> > >
-> > > Nice write up. I may point some people to this ;-)
-> > >
-> > > Anyway "complications due to nested NMIs (yes NMIs can nest!)"
-> > >
-> > > What arch allows for NMIs to nest. Because we don't let that happen on
-> > > x86, and there's code that I know of that is called by NMIs that is not
-> > > re-entrant, and can crash if we allow for NMIs to nest. For example
-> > > "in_nmi()" will not show that we are in_nmi() if we allow for nesting
-> > > of NMIs. It has a single bit that gets incremented when we enter NMI
-> > > code, and cleared when we leave it.
-> >
-> > Last I checked with Andy Lutomirski, there are a number of things that,
-> > though not NMIs, act like NMIs and that can interrupt each others'
-> > handlers.  This is on x86.
-> >
->
-> Perhaps things like MCEs, but they don't call nmi_enter(). And usually
-> when something does, it probably puts the machine into an unstable
-> state. Getting RCU right, may be the least of the worries.
->
-> You may want to ask Andy if there's legitimate interruptions of NMIs
-> that doesn't mean "please reboot as soon as possible"?
->
+Quoting David Lechner (2018-06-25 16:17:55)
+> On 06/02/2018 02:52 AM, Dan Carpenter wrote:
+> > There is a copy and paste bug here.  We should be testing "usb1" instead
+> > of "usb0".
+> > =
 
-Yes, sadly.  CPU A gets an NMI.  While processing it, CPU B has user
-code access a faulty NVDIMM address, causing CPU B to generate a
-machine check.  CPU A also gets a machine check because someone at
-Intel thought it was a good idea.  CPU A will mostly ignore the
-machine check, but it still happens.
+> > Fixes: 58e1e2d2cd89 ("clk: davinci: cfgchip: Add TI DA8XX USB PHY clock=
+s")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > =
 
-I think it's reasonable to say that nmi_enter() won't nest, but I
-don't see how we can avoid rcu_nmi_enter() nesting.
+> > diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/=
+da8xx-cfgchip.c
+> > index c971111d2601..20a120aa147e 100644
+> > --- a/drivers/clk/davinci/da8xx-cfgchip.c
+> > +++ b/drivers/clk/davinci/da8xx-cfgchip.c
+> > @@ -672,7 +672,7 @@ static int of_da8xx_usb_phy_clk_init(struct device =
+*dev, struct regmap *regmap)
+> >   =
+
+> >       usb1 =3D da8xx_cfgchip_register_usb1_clk48(dev, regmap);
+> >       if (IS_ERR(usb1)) {
+> > -             if (PTR_ERR(usb0) =3D=3D -EPROBE_DEFER)
+> > +             if (PTR_ERR(usb1) =3D=3D -EPROBE_DEFER)
+> >                       return -EPROBE_DEFER;
+> >   =
+
+> >               dev_warn(dev, "Failed to register usb1_clk48 (%ld)\n",
+> > =
+
+> =
+
+> Applied to https://github.com/dlech/linux/tree/clk-davinci-fixes
+> =
+
+
+Ok. I expect this will be coming in a PR soon? Usually I can pick up
+fixes just fine from the list and merge them on up to Linus, unless you
+feel the need to pick it into your development tree to base future
+development on.
+
