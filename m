@@ -2,101 +2,120 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C57B1C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C012CC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80A4825D36
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AE3125D21
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:46:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="bjOAnH6z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80A4825D36
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKtCRV/P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE3125D21
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754547AbeFYPpu (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:45:50 -0400
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:57979 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752589AbeFYPpq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:45:46 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 9867524E02F0;
-        Mon, 25 Jun 2018 08:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529941545; bh=/EvjsKBpQJE8zgRTkHQjyauoHH4Db5JOX+Ic6lDVcAA=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=bjOAnH6zF5Btp11XOTGz7+Zo+2ZF0z9nvOvIIPLDZCXX2Ag2N0WqKe2wrKYwEbQxq
-         SqyfN4lRrniUIkUtpY1ojMccFPTmsNWltKh3RMrINrjerjy7GiRufVbfZB/QHliYdA
-         ePFwtC5oY393SR1lst+q9UgPV6eZse2GzowT1r1kxUzLPNkiKxxuM/uU3onukMrcnI
-         EMH6PLnhsq0AUVaLJ08+xk3PhLI3u14VB1vSdvld/6rW7J078whYn/3p6c9WyuDsH3
-         0rSNurkw+LQ8YVOI1l8XZwVOA70FCxO8Pm12cHxPNingBIgAXj9dIBOd/ZDJKfhwKj
-         Y1lETXRoWfGZw==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 993523461;
-        Mon, 25 Jun 2018 08:45:44 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 25 Jun 2018 08:45:44 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
- 25 Jun 2018 17:45:41 +0200
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "hch@lst.de" <hch@lst.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [RFC] ARC: allow to use IOC and non-IOC DMA devices
- simultaneously
-Thread-Topic: [RFC] ARC: allow to use IOC and non-IOC DMA devices
- simultaneously
-Thread-Index: AQHUBKiNKzhGZzesPUyAsKt+FXE7PaRmg2uAgAW8xACABMwZAA==
-Date:   Mon, 25 Jun 2018 15:45:40 +0000
-Message-ID: <456ab2264aa42d575e7ca5d28d34466aea082f14.camel@synopsys.com>
-References: <20180615125819.527-1-Eugeniy.Paltsev@synopsys.com>
-         <563bd0ab-e40c-f9ad-4e9c-dbf5b13358b5@synopsys.com>
-         <1529677805.31605.28.camel@synopsys.com>
-In-Reply-To: <1529677805.31605.28.camel@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.9.128.69]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <46EF566A114CC7499888C8D82F3672F4@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        id S934790AbeFYPps (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 11:45:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752564AbeFYPpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:45:45 -0400
+Received: from mail-wm0-f42.google.com (mail-wm0-f42.google.com [74.125.82.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1241825D32
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:45:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529941545;
+        bh=LJwOq8gz2zs4btoUt0VoqtmOCNU45pg/YNKK+XUUgxI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cKtCRV/PUCTt7mPfGuYL50AtoJCZy6affn7lyJZ58l/pTBQww18jzUw6ovA7CEksE
+         7iDHHoS/lKCUocnWJiRNxs9TZ5HUB9jDnjCnCfo0uK/aZ0TVT1/XywE+Hw2r3m87FJ
+         svvaAM/C1HDzjVKnq2SZJG/M7nMh6RfPrD3yY94E=
+Received: by mail-wm0-f42.google.com with SMTP id z13-v6so4384417wma.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:45:44 -0700 (PDT)
+X-Gm-Message-State: APt69E2nE0kQ9QQPVGqwR2p8ppn2WS2ko2axpkF60ZiiS0P8jP/q5qop
+        ZhUrmRC6QAAqJyu9BeK+vxPmvkawrMPWfLzST8a4/A==
+X-Google-Smtp-Source: AAOMgpfd5dS6RyHjvmQJ9gaKAR7d7tbu3ZTdnMKDFZL+0V8IUcqQE1BQ6JE4jnmd9gxsAPEFcxIYea0QwiCk3lRoT9U=
+X-Received: by 2002:a1c:4a9d:: with SMTP id n29-v6mr1364207wmi.46.1529941543460;
+ Mon, 25 Jun 2018 08:45:43 -0700 (PDT)
 MIME-Version: 1.0
+References: <20180608171216.26521-14-jarkko.sakkinen@linux.intel.com>
+ <CALCETrW3aZJMMm1GqgPm-cOD3p7JvKxLj7j85KJwfNW2iHTj4A@mail.gmail.com>
+ <CALCETrVp1ZhrxF5bQDSaZpLucS88tErejj5JC6Jb0fB5etWRbA@mail.gmail.com>
+ <20180611115255.GC22164@hmswarspite.think-freely.org> <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
+ <20180612174535.GE19168@hmswarspite.think-freely.org> <CALCETrV-4D-M2ap1EFHQiQerYf_XgwLmBAx5WMvcCUefOODjOA@mail.gmail.com>
+ <CAOASepN9t3jF4ajfKLG_odTZddOvXjY_DqLQhRPWhJ-imtjkgg@mail.gmail.com>
+ <e3f8e5b9-aa1e-20da-37ac-3c3caafa66bc@fortanix.com> <b5c81504-83cd-8150-ebe4-41355026590f@fortanix.com>
+ <20180620210158.GA24328@linux.intel.com> <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
+ <73b7e4e3712074b73f4ac8211699d24dfdced6bf.camel@linux.intel.com>
+In-Reply-To: <73b7e4e3712074b73f4ac8211699d24dfdced6bf.camel@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 25 Jun 2018 08:45:31 -0700
+X-Gmail-Original-Message-ID: <CALCETrXos3b-VJxLCb1nwP1x2s5jiDmuQDWVahTVdXGxhqqsDw@mail.gmail.com>
+Message-ID: <CALCETrXos3b-VJxLCb1nwP1x2s5jiDmuQDWVahTVdXGxhqqsDw@mail.gmail.com>
+Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
+ launch enclave
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     npmccallum@redhat.com,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andrew Lutomirski <luto@kernel.org>, nhorman@redhat.com,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        intel-sgx-kernel-dev@lists.01.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andy@infradead.org,
+        Peter Jones <pjones@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRXVnZW5peSwNCg0KT24gRnJpLCAyMDE4LTA2LTIyIGF0IDE2OjMwICswMjAwLCBFdWdlbml5
-IFBhbHRzZXYgd3JvdGU6DQo+IEhpIFZpbmVldCwgQ2hyaXN0b3BoLA0KPiB0aGFua3MgZm9yIHJl
-c3BvbmRpbmcuDQoNCltzbmlwXQ0KDQo+ID4gPiAoQlRXOiBjdXJyZW50IEFSQyBkbWFfbm9uY29o
-ZXJlbnRfb3BzIGltcGxlbWVudGF0aW9uIGFsc28gaGFzIHNhbWUNCj4gPiA+IHByb2JsZW0gaWYg
-SU9DIGFuZCBISUdITUVNIGFyZSBlbmFibGVkLikNCj4gPiANCj4gPiBDYW4gd2UgaGlnaGxpZ2h0
-IHRoaXMgZmFjdCwgYWRkIGVycm9yIHByaW50cyBzb21ld2hlcmUgPw0KPiANCj4gVGhlIGVhc2ll
-c3Qgc29sdXRpb24gaXMgdG8gcGFuaWMgaWYgYm90aCBJT0MgYW5kIFpPTkVfSElHSE1FTSBlbmFi
-bGVkLg0KDQpJIGRvbid0IHRoaW5rIGl0J3MgdGhlIGJlc3QgaWRlYSAtIEkgd291bGQgZXhwZWN0
-IHRvIGdldCBQQUU0MCBlbmFibGVkDQpieSBkZWZhdWx0IG9yIGF0IGxlYXN0IHRvIGJlIHVzZWQg
-cXVpdGUgb2Z0ZW4gb24gYm90aCBBWFMxMDMgYW5kIEhTREsNCmFuZCBzbyByZXN0cmljdGluZyB1
-c2FnZSBvZiBJT0Mgb24gc3VjaCBjb25maWd1cmF0aW9ucyB3aWxsIGJlIHF1aXRlDQpjb25mdXNp
-bmcuDQoNClRoYXQgc2FpZCB3ZSBuZWVkIHRvIGZpZ3VyZSBvdXQgaG93IHRvIGdldCBJT0MgKyBI
-SUdITUVNL1BBRSB3b3JraW5nDQpyZWxpYWJseSBpZiB0aGF0J3MgcG9zc2libGUgYXQgYWxsLg0K
-DQpDaHJpc3RvcGgsIGRvIHlvdSB0aGluayBpZiB0aGlzIGlzIGRvYWJsZT8NClRoZSBtYWluIGNv
-bmNlcm4gaGVyZSBpczogc29tZSByYW5kb20gZGF0YSBidWZmZXIgbWlnaHQgYmUgYWxsb2NhdGVk
-DQppbiBhbnkgYXZhaWxhYmxlIG1lbW9yeSBbYW5kIGluIEhJR0hNRU0vUEFFIGlmIGl0IGV4aXN0
-cyBlc3NlbnRpYWxseV0gYW5kDQp3aGVuIGl0IGNvbWVzIHRvIERNQSBleGNoYW5nZSB0aGF0IGlu
-dm9sdmVzIHRoYXQgYnVmZmVyIHdoYXQgc2hvdWxkIHdlIGRvPw0KDQpUaGUgb25seSB0aGluZyBJ
-IG1heSB0aGluayBvZiBjb3VsZCBiZSBhIGJvdW5jZS1idWZmZXIgaW4gWk9ORV9OT1JNQUwuDQpJ
-cyBpdCB1c2VkIGJ5IGFueWJvZHk/IEFyZSB0aGVyZSBhbnkgYmV0dGVyIGlkZWFzPyANCg0KLUFs
-ZXhleQ==
+On Mon, Jun 25, 2018 at 2:41 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Thu, 2018-06-21 at 08:32 -0400, Nathaniel McCallum wrote:
+> > This implies that it should be possible to create MSR activation (and
+> > an embedded launch enclave?) entirely as a UEFI module. The kernel
+> > would still get to manage who has access to /dev/sgx and other
+> > important non-cryptographic policy details. Users would still be able
+> > to control the cryptographic policy details (via BIOS Secure Boot
+> > configuration that exists today). Distributions could still control
+> > cryptographic policy details via signing of the UEFI module with their
+> > own Secure Boot key (or using something like shim). The UEFI module
+> > (and possibly the external launch enclave) could be distributed via
+> > linux-firmware.
+> >
+> > Andy/Neil, does this work for you?
+>
+> Nothing against having UEFI module for MSR activation step.
+>
+> And we would move the existing in-kernel LE to firmware so that it is
+> avaible for locked-in-to-non-Intel-values case?
+>
+
+This is a hell of a lot of complexity.  To get it right we'd need an
+actual formal spec of what firmware is supposed to do and how it
+integrates with the kernel, and we'd need a reason why it's useful.
+
+I'm personally rather strongly in favor of the vastly simpler model in
+which we first merge SGX without LE support at all.  Instead we use
+the approach where we just twiddle the MSRs to launch normal enclaves
+without an init token at all, which is probably considerably faster
+and will remove several thousand lines of code.  If and when a bona
+fide use case for LE support shows up, we can work out the details and
+merge it.
+
+Right now, we're talking about a lot of design considerations, a lot
+of interoperability considerations, and a lot of code to support a use
+case that doesn't clearly exist.
+
+--Andy
