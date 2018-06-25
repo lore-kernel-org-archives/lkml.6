@@ -3,131 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 383A8C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC800C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFFFA25E04
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:16:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFFFA25E04
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 55A91255AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:18:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A91255AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755425AbeFYQQd (ORCPT
+        id S1752423AbeFYQSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:16:33 -0400
-Received: from smtprelay0106.hostedemail.com ([216.40.44.106]:51400 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751958AbeFYQQb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:16:31 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id EC7211805B2E2;
-        Mon, 25 Jun 2018 16:16:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bone01_38c3c91ea2c33
-X-Filterd-Recvd-Size: 4193
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 25 Jun 2018 16:16:29 +0000 (UTC)
-Message-ID: <263e7cee7dcc18db39f663cbc07b4985a1f8f891.camel@perches.com>
-Subject: Re: checkpatch false positive (IMO): typo detected in truncated
- commit message
-From:   Joe Perches <joe@perches.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Date:   Mon, 25 Jun 2018 09:16:28 -0700
-In-Reply-To: <CAG48ez2y_T5RfjF8sjM=vQBzoTBgeXenwMdc=-DB9XE-Vi73-w@mail.gmail.com>
-References: <CAG48ez02K0N6h-nfbnY81QAZoX1_gi4DTxuHxf1bSYiifu2v7g@mail.gmail.com>
-         <35b62e21e0de223acae0f9f468212ee9638c3544.camel@perches.com>
-         <CAG48ez3ZD3+j2oBJ7XHW9ycbi9_H8QsKGg8A84tOTisjeZGgiw@mail.gmail.com>
-         <8f2948baf460575cde975a2cb5d11b960e8ae30f.camel@perches.com>
-         <CAG48ez2y_T5RfjF8sjM=vQBzoTBgeXenwMdc=-DB9XE-Vi73-w@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Mon, 25 Jun 2018 12:18:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32958 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751513AbeFYQSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 12:18:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BA9D7A9;
+        Mon, 25 Jun 2018 09:18:43 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CDD23F5AD;
+        Mon, 25 Jun 2018 09:18:42 -0700 (PDT)
+Subject: Re: [PATCH] PCI: shpchp: Fix probing logic inversion
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180621164715.28160-1-marc.zyngier@arm.com>
+ <20180625140122.GF108993@bhelgaas-glaptop.roam.corp.google.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <62eb1a4b-2ec9-b472-a277-33ddc5952348@arm.com>
+Date:   Mon, 25 Jun 2018 17:18:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180625140122.GF108993@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-25 at 17:49 +0200, Jann Horn wrote:
-> On Mon, Jun 25, 2018 at 5:37 PM Joe Perches <joe@perches.com> wrote:
-> > 
-> > On Mon, 2018-06-25 at 17:32 +0200, Jann Horn wrote:
-> > > On Mon, Jun 25, 2018 at 5:23 PM Joe Perches <joe@perches.com> wrote:
-> > > > 
-> > > > On Mon, 2018-06-25 at 17:22 +0200, Jann Horn wrote:
-> > > > > Hello!
-> > > > > 
-> > > > > I got the following message from checkpatch:
-> > > > > 
-> > > > > =======
-> > > > > $ scripts/checkpatch.pl
-> > > > > 0001-netfilter-nf_log-don-t-hold-nf_log_mutex-during-user.patch
-> > > > > WARNING: 'calle' may be misspelled - perhaps 'called'?
-> > > > > #15:
-> > > > > Fixes: 266d07cb1c9a ("netfilter: nf_log: fix sleeping function calle[...]")
-> > > > > 
-> > > > > total: 0 errors, 1 warnings, 0 checks, 20 lines checked
-> > > > > 
-> > > > > NOTE: For some of the reported defects, checkpatch may be able to
-> > > > >       mechanically convert to the typical style using --fix or --fix-inplace.
-> > > > > 
-> > > > > 0001-netfilter-nf_log-don-t-hold-nf_log_mutex-during-user.patch has
-> > > > > style problems, please review.
-> > > > > 
-> > > > > NOTE: If any of the errors are false positives, please report
-> > > > >       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> > > > > =======
-> > > > > 
-> > > > > I believe that it is appropriate here to truncate the commit message
-> > > > > of the fixed commit.
-> > > > 
-> > > > It's not.
-> > > 
-> > > Looking at a bunch of other recent commits, I'm guessing that the
-> > > accepted format is to use the complete commit message, without
-> > > linebreaks, even if it goes over 75 columns?
-> > 
-> > More common is to wrap the commit message on multiple lines.
+Bjorn, Mika,
+
+On 25/06/18 15:01, Bjorn Helgaas wrote:
+> Hi Marc,
 > 
-> Really? Even in the "Fixes:" line?
+> Sorry we broke this!
+
+No worries, gave me a chance to stare at something else! ;-)
+
 > 
-> > For instance, the first commit match in -next:
-> > 
-> > $ git log --format=email --grep=commit -1
-> > From 1421f2b6b1aac2379844ba27ba09b0dc37ec2daa Mon Sep 17 00:00:00 2001
-> > From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > Date: Fri, 15 Jun 2018 09:43:47 +1000
-> > Subject: [PATCH] kernel/kexec_file.c: add walk_system_ram_res_rev()
-> > 
-> > This function, being a variant of walk_system_ram_res() introduced in
-> > commit 8c86e70acead ("resource: provide new functions to walk through
-> > resources"), walks through a list of all the resources of System RAM in
-> > [...]
+> On Thu, Jun 21, 2018 at 05:47:15PM +0100, Marc Zyngier wrote:
+>> Until recently, shpc_probe() would bail out pretty early in the
+>> absence of the SHPC capability. A logic change in the way the
+>> driver now checks that capability makes it go and probe the
+>> firmware anyway, with ugly consequences if the system is not
+>> ACPI based (my arm64 ThunderX is DT driven, and explodes in
+>> a spectacular way after getting a NULL root bridge from the
+>> non-existent ACPI tables...).
+>>
+>> Take this opportunity to move the call to shpchp_is_native()
+>> back into shpc_probe(), making it clear that a non-ACPI system
+>> is not expected to use this driver.
 > 
-> I just grepped through Linus' tree for precedent on the "Fixes:" line;
-> these are the first couple I found:
+> But a non-ACPI system *should* be able to use SHPC.
+
+Yeah, I only realized that once Mika pointed it out.
+
+> Here's my understanding of how it should work.  On an ACPI system,
 > 
-> f5e350f021e04ea41d2e5d58487c33b05ba3d25b: overlong "Fixes:" line
-> 6c6da92808442908287fae8ebb0ca041a52469f4: overlong "Fixes:" line
-> 964d978433a4b9aa1368ff71227ca0027dd1e32f: overlong "Fixes:" line
-> 71c8fc0c96abf8e53e74ed4d891d671e585f9076: overlong "Fixes:" line
-> b5b7dd647f2d21b93f734ce890671cd908e69b0a: overlong "Fixes:" line
+>   - If firmware has _OSC, the OS calls it to request permission to
+>     manage the SHPC.  If _OSC grants permission, it should also
+>     configure the hardware (interrupts, etc) to give the OS.
+>     
+>   - If there's no _OSC, shpchp assumes it's allowed to manage the
+>     SHPC, and it calls OSHP to configure the hardware appropriately.
+> 
+> On a non-ACPI system, shpchp assumes there's no firmware involved at
+> all, so it can manage the SHPC without doing anything special.
+> 
+> I see Mika has already posted a patch similar to the first one
+> below; I think either of those should fix the problem you're seeing.
 
+Absolutely. With this early exit when root is NULL, my test box is back
+up and running.
 
-> So it looks like the consensus is to use the full commit message
-> without truncation or linebreaks there?
+> The second is an attempt to clean things up so they make a
+> little more sense.
 
-Correct.
+I haven't tried that second patch yet, but from reading it, it
+definitely helps making sense of this driver.
 
-I didn't notice your patch was for a fixes: line.
-Those are exempted from the long-line checkpatch test.
+Thanks,
 
-
+	M.
+-- 
+Jazz is not dead. It just smells funny...
