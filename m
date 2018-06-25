@@ -2,136 +2,152 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BE8C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513F0C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 019032605C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:10:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1F82605C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:11:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ar4HYTpm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019032605C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJQejwNY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1F82605C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755649AbeFYTKD (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 15:10:03 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43734 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753182AbeFYTKB (ORCPT
+        id S934967AbeFYTLe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 15:11:34 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50693 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752718AbeFYTLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 15:10:01 -0400
-Received: by mail-pl0-f67.google.com with SMTP id c41-v6so7242088plj.10;
-        Mon, 25 Jun 2018 12:10:01 -0700 (PDT)
+        Mon, 25 Jun 2018 15:11:32 -0400
+Received: by mail-wm0-f66.google.com with SMTP id e16-v6so10458764wmd.0;
+        Mon, 25 Jun 2018 12:11:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=O1a0cy/xcGn31lKvYuILhBPYLowbWAOtvCNptJ/VlJI=;
-        b=ar4HYTpmZQ2vvOUJ7WP8a4Ll72wXwjy4upD32cgWn58AZKWdWQUNf19qb/1XBRiuCd
-         0ljrgMo2X5L6LZpEGpdg9kwJLziSQckrtcUbM1Jm1Yr47zylTf6thnsJOKAYpkqKcgg4
-         yJYM4oypDOhveUG+YQaSALP7QTSp2l+uNRVdA2E0qhgPBJ8P09ySaPQ+GAAQIp4UfX9k
-         indcRz1zrNrKhQfIvKJCuEXk6FVfpX6LB5duiLBjV7DW0Z8odDe27VxyvSoAc0DG7veW
-         XPzTz8r6n+H84sw40ajwshYI5Ui57HCViX4w2u7PGva6RpW9INrvFL7dcT+JQnR173jX
-         UtMA==
+        h=from:to:cc:subject:date:message-id;
+        bh=kYPHcw0afZAbcT0enjQcBJ+BrJljLcIcai6woZCLfx8=;
+        b=iJQejwNYkbVlnc8563W3THuDO89LR+nJ+OhuDQt1s+rn0MWCrx35H/dfDh3lfG5NMh
+         GHdJEZVaS0IcOhN3Qd2QTmgYfMhyg/jQdi74YTGUoIDc+80x7+z5YPgYlWCZDnKfKDir
+         XFGmA0uKa0TWy9+yZ43QOjioBf0nki9e8EmLOOc5vh6OTe6VrFJwymLK3B0fMezmPnJS
+         aIWWHi43W/pSYk9wZQqeW/TCOM411RxrQvBhfYYGcCT4iujj+wAlPc6ItvyEPzWJq8GY
+         ReJtOCWdi+WvtNP0biT/FlyDQnxYicueQ87e5X0N9ArW9O7Q6ceOd9tCXI4ScW6PPnIu
+         DnBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=O1a0cy/xcGn31lKvYuILhBPYLowbWAOtvCNptJ/VlJI=;
-        b=d2sIxm/REQHh7QOJjl4tF8TRO26gh/622Doh+X6Ib2uwtlXtJ8r+BrpDr1OmHQ3pMy
-         /znY2Fvl0Nn4vr5vla9oVsmfyYxVSB4yx/xSty/oNH9rCbLnuU1sptVqlmZs2vSWLzwL
-         rzSrkzgawB7SycmbTg9c+pvJGxZ9XDsU90Sim0ZdCkFHu1Ec3x7R/Tf1d3ldLrhBDsi3
-         v4cxBaLnAC8Fxn0kx1OxwozcGI+tSbHNe5UEX7DZhZd8NDDkXcVIcAa48igk4wpIa3KZ
-         fc+8suaJsz5jQWpykEB2sNZddschrj3Oajlik8JwAdb/IB6k4Bb6TeV1SmC6SoopkAXc
-         +VPA==
-X-Gm-Message-State: APt69E1fUlOQM5KutQQYNNgCvPToZFGGxgd1zycpM2A9FzkVrDTbpHWT
-        uUx3YMQ9v2OtrgC9vxnvqgaU+zRv
-X-Google-Smtp-Source: ADUXVKLIV25gWR14DYWcdTz2ZxaDOxJOT3jixWKyEvXBkUpK+Ld8b0DRGpzH5j0e8ctlqGBArqkIoA==
-X-Received: by 2002:a17:902:8d96:: with SMTP id v22-v6mr13525022plo.176.1529953800662;
-        Mon, 25 Jun 2018 12:10:00 -0700 (PDT)
-Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm8078178pfj.123.2018.06.25.12.09.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 12:09:59 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 12:09:57 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     linux-input@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: psmouse - fix button reporting for basic protocols
-Message-ID: <20180625190957.GA187975@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kYPHcw0afZAbcT0enjQcBJ+BrJljLcIcai6woZCLfx8=;
+        b=Rc7F35M/hpcMpH0Dlp/euEy5cEJnDgTCAm63SKOsnOOmiShOYHpSiz6C4wNCtbV5wN
+         5RBgmxXhR6ZHlHNkq/OSXA3BCuEJP5AFCx0Y/D4tmfgQbZ1LxqhGBzBDQ68eaU2+56pb
+         ATWGCJbyYeif5f0RGkJvZbqjdljNlWmwKC7P8od1apui3uebEogj1bpBflNytyCLiMR/
+         Kordwptp7mGEkzZU5OKLTk+iNiXs6p/MMZPfODaE7+qrseWw+e6GVjqgZeWbhRasRYNt
+         4BZHs2pJkFJT4kGNsVRMPra08poxIMPvJoy9/VsJ0iOKca6+hxwIiIlKy5ZW5UOHA4WS
+         hw7A==
+X-Gm-Message-State: APt69E04rGCgSwlX+tkzcbghxm75JZ+T6g0xADvv/QtiIIB8URIQSOZ7
+        zhRWIQjTMDKxpncgeJ7wPAc=
+X-Google-Smtp-Source: AAOMgpdLqKQe9WP7HeQe9MtQm6r4CLX5o6KPrz+9XPmmBOHRj0c5rUGhBLBv5Ug+g8DC1IXWOOpv7w==
+X-Received: by 2002:a1c:d287:: with SMTP id j129-v6mr1834635wmg.106.1529953890853;
+        Mon, 25 Jun 2018 12:11:30 -0700 (PDT)
+Received: from localhost.localdomain ([156.218.198.157])
+        by smtp.gmail.com with ESMTPSA id h193-v6sm14826152wmd.25.2018.06.25.12.11.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 12:11:29 -0700 (PDT)
+From:   Karim Eshapa <karim.eshapa@gmail.com>
+To:     lars@metafoo.de
+Cc:     Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Karim Eshapa <karim.eshapa@gmail.com>
+Subject: [PATCH v2] staging:iio:impedance-analyzer:ad5933: Macro replacement Cleanups.
+Date:   Mon, 25 Jun 2018 21:11:23 +0200
+Message-Id: <20180625191123.3685-1-karim.eshapa@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit ba667650c568 ("Input: psmouse - clean up code") was pretty
-brain-dead and broke extra buttons reporting for variety of PS/2 mice:
-Genius, Thinkmouse and Intellimouse Explorer. We need to actually inspect
-the data coming from the device when reporting events.
+Doing some macro replacement to start an array of structures
+so it can be reused by manipulating it with different values.
 
-Fixes: ba667650c568 ("Input: psmouse - clean up code")
-Reported-by: Jiri Slaby <jslaby@suse.cz>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Karim Eshapa <karim.eshapa@gmail.com>
 ---
- drivers/input/mouse/psmouse-base.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ .../staging/iio/impedance-analyzer/ad5933.c   | 57 +++++++------------
+ 1 file changed, 19 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
-index 5ff5b1952be0c..d3ff1fc09af71 100644
---- a/drivers/input/mouse/psmouse-base.c
-+++ b/drivers/input/mouse/psmouse-base.c
-@@ -192,8 +192,8 @@ psmouse_ret_t psmouse_process_byte(struct psmouse *psmouse)
- 			else
- 				input_report_rel(dev, REL_WHEEL, -wheel);
+diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+index 3bcf49466361..14df89510396 100644
+--- a/drivers/staging/iio/impedance-analyzer/ad5933.c
++++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+@@ -116,45 +116,26 @@ static struct ad5933_platform_data ad5933_default_pdata  = {
+ 	.vref_mv = 3300,
+ };
  
--			input_report_key(dev, BTN_SIDE,  BIT(4));
--			input_report_key(dev, BTN_EXTRA, BIT(5));
-+			input_report_key(dev, BTN_SIDE,  packet[3] & BIT(4));
-+			input_report_key(dev, BTN_EXTRA, packet[3] & BIT(5));
- 			break;
- 		}
- 		break;
-@@ -203,13 +203,13 @@ psmouse_ret_t psmouse_process_byte(struct psmouse *psmouse)
- 		input_report_rel(dev, REL_WHEEL, -(s8) packet[3]);
++#define AD5933_CHANNEL(_type, _extend_name, _info_mask_separate, _address, \
++		_scan_index, _realbits) { \
++	.type = (_type), \
++	.extend_name = (_extend_name), \
++	.info_mask_separate = (_info_mask_separate), \
++	.address = (_address), \
++	.scan_index = (_scan_index), \
++	.scan_type = { \
++		.sign = 's', \
++		.realbits = (_realbits), \
++		.storagebits = 16, \
++	}, \
++}
++
+ static const struct iio_chan_spec ad5933_channels[] = {
+-	{
+-		.type = IIO_TEMP,
+-		.indexed = 1,
+-		.channel = 0,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+-			BIT(IIO_CHAN_INFO_SCALE),
+-		.address = AD5933_REG_TEMP_DATA,
+-		.scan_index = -1,
+-		.scan_type = {
+-			.sign = 's',
+-			.realbits = 14,
+-			.storagebits = 16,
+-		},
+-	}, { /* Ring Channels */
+-		.type = IIO_VOLTAGE,
+-		.indexed = 1,
+-		.channel = 0,
+-		.extend_name = "real",
+-		.address = AD5933_REG_REAL_DATA,
+-		.scan_index = 0,
+-		.scan_type = {
+-			.sign = 's',
+-			.realbits = 16,
+-			.storagebits = 16,
+-		},
+-	}, {
+-		.type = IIO_VOLTAGE,
+-		.indexed = 1,
+-		.channel = 0,
+-		.extend_name = "imag",
+-		.address = AD5933_REG_IMAG_DATA,
+-		.scan_index = 1,
+-		.scan_type = {
+-			.sign = 's',
+-			.realbits = 16,
+-			.storagebits = 16,
+-		},
+-	},
++	AD5933_CHANNEL(IIO_TEMP, NULL, BIT(IIO_CHAN_INFO_RAW) |
++		BIT(IIO_CHAN_INFO_SCALE), AD5933_REG_TEMP_DATA, -1, 14),
++	/* Ring Channels */
++	AD5933_CHANNEL(IIO_VOLTAGE, "real", 0, AD5933_REG_REAL_DATA, 0, 16),
++	AD5933_CHANNEL(IIO_VOLTAGE, "imag", 0, AD5933_REG_IMAG_DATA, 1, 16),
+ };
  
- 		/* Extra buttons on Genius NewNet 3D */
--		input_report_key(dev, BTN_SIDE,  BIT(6));
--		input_report_key(dev, BTN_EXTRA, BIT(7));
-+		input_report_key(dev, BTN_SIDE,  packet[0] & BIT(6));
-+		input_report_key(dev, BTN_EXTRA, packet[0] & BIT(7));
- 		break;
- 
- 	case PSMOUSE_THINKPS:
- 		/* Extra button on ThinkingMouse */
--		input_report_key(dev, BTN_EXTRA, BIT(3));
-+		input_report_key(dev, BTN_EXTRA, packet[0] & BIT(3));
- 
- 		/*
- 		 * Without this bit of weirdness moving up gives wildly
-@@ -223,7 +223,7 @@ psmouse_ret_t psmouse_process_byte(struct psmouse *psmouse)
- 		 * Cortron PS2 Trackball reports SIDE button in the
- 		 * 4th bit of the first byte.
- 		 */
--		input_report_key(dev, BTN_SIDE, BIT(3));
-+		input_report_key(dev, BTN_SIDE, packet[0] & BIT(3));
- 		packet[0] |= BIT(3);
- 		break;
- 
+ static int ad5933_i2c_write(struct i2c_client *client, u8 reg, u8 len, u8 *data)
 -- 
-2.18.0.rc2.346.g013aa6912e-goog
+2.17.1
 
-
--- 
-Dmitry
