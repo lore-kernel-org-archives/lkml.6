@@ -2,126 +2,165 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C300C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7E5C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33CBB2577C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33CBB2577C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EA3F2577C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:37:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="d+chIf3F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA3F2577C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932074AbeFYKev (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 06:34:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58812 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755117AbeFYKes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 06:34:48 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 53EFB81A4EBE;
-        Mon, 25 Jun 2018 10:34:48 +0000 (UTC)
-Received: from [10.36.117.196] (ovpn-117-196.ams2.redhat.com [10.36.117.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 180F87C30;
-        Mon, 25 Jun 2018 10:34:45 +0000 (UTC)
-Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-mm@kvack.org, Andrea Arcangeli <aarcange@redhat.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <20180622150242.16558-1-mhocko@kernel.org>
- <d617fc1d-28a7-3441-7465-bedf4dc69976@redhat.com>
- <20180625075715.GA28965@dhcp22.suse.cz>
- <e7f3289e-3ee3-3f02-1947-9e4327e1a864@redhat.com>
- <20180625084529.GC28965@dhcp22.suse.cz>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <45e1a12c-280b-635a-fc76-716440f084ec@redhat.com>
-Date:   Mon, 25 Jun 2018 12:34:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180625084529.GC28965@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+        id S1755252AbeFYKhZ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 06:37:25 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:22832 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755094AbeFYKhW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 06:37:22 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie2.idc.renesas.com with ESMTP; 25 Jun 2018 19:37:20 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id C411B72C27;
+        Mon, 25 Jun 2018 19:37:20 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,270,1526310000"; 
+   d="scan'208";a="283517763"
+Received: from mail-os2jpn01lp0146.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.146])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 25 Jun 2018 19:37:20 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gIv0VjfbeeDoTq7BDQU2QfUj7inDTNdw/FWM/UvemIQ=;
+ b=d+chIf3Fm1k/Y95bBNWjUP2o7i92nV9A0C5+2aWm3qaZ19POc/SD+WoBQQVp44/2iikLtiQzFx3lKh9jCVW4ZsnUW8B6fyfflQG9rNvveY0A7i7Usm9L+HGpCk1vnPK1ayE1psMhtIOECQKUT7MNQzsYOlDbvNWnMfDEFZNA0mI=
+Received: from OSBPR01MB2054.jpnprd01.prod.outlook.com (52.134.240.151) by
+ OSBPR01MB2390.jpnprd01.prod.outlook.com (52.134.254.205) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.20; Mon, 25 Jun 2018 10:37:16 +0000
+Received: from OSBPR01MB2054.jpnprd01.prod.outlook.com
+ ([fe80::447e:f47f:acec:ce03]) by OSBPR01MB2054.jpnprd01.prod.outlook.com
+ ([fe80::447e:f47f:acec:ce03%4]) with mapi id 15.20.0884.024; Mon, 25 Jun 2018
+ 10:37:16 +0000
+From:   Michel Pollet <michel.pollet@bp.renesas.com>
+To:     Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v6 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
+ driver
+Thread-Topic: [PATCH v6 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
+ driver
+Thread-Index: AQHUDF7RL1Lhq029rkWX30yESIOF1qRws/sAgAAFCgCAAAN7kA==
+Date:   Mon, 25 Jun 2018 10:37:15 +0000
+Message-ID: <OSBPR01MB20545582133969454236476AD24A0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+References: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1529915110-5867-3-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdVarwq26Jr=YN+zBDrHjQf-Q+u3L6oRNiSKh-hxuwOsrA@mail.gmail.com>
+ <20180625094249.b6dwnraqruicmo2u@verge.net.au>
+In-Reply-To: <20180625094249.b6dwnraqruicmo2u@verge.net.au>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 25 Jun 2018 10:34:48 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 25 Jun 2018 10:34:48 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=michel.pollet@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;OSBPR01MB2390;7:whLL8cRa9Zxcn6SakjKrez69mK9un5EEA60MGyWHWF15RkNa2HIh9WuL7z6BuqVoQ/UQsgvEWY5WZbLItE/n4k7+moI8BAMB/8bFJS4G5LJDp8iJfapht5M6iUogo2IZC7K4tPRwXIrveTypl8Ob2lfhQ/ljP5M8f2DvXyxsdyZWL4O7M8V+E1DCmqjsa6S/cq+Le6QozruygyfWVc9sPD/8Ulnvi1BbonfW7qh4pxiteYmZedp2G5apr/1CLF0X;20:Fqhk7A7sTE/9MGohK3zlEVRbbzrTB9wN6gYVmEbvJnyNMPD0gaFVuHDoE6zM4gpsLfDoCKxETD80nSdZ48joQojBS/t7kW+U+EVWoPZuXZ1WjeO7nHSLoBiAKHML4FOE65vd1fPl0l59yOduiizDSjrK8pgW8aJSxbb7YQgaeCM=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: 3d5c1cab-2c6c-407e-2327-08d5da879ea8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2390;
+x-ms-traffictypediagnostic: OSBPR01MB2390:
+x-microsoft-antispam-prvs: <OSBPR01MB2390C117D03866969A3458D8D24A0@OSBPR01MB2390.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:OSBPR01MB2390;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2390;
+x-forefront-prvs: 0714841678
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(376002)(366004)(396003)(346002)(39860400002)(199004)(189003)(51444003)(6506007)(229853002)(74316002)(53936002)(66066001)(7736002)(81166006)(81156014)(305945005)(6436002)(8936002)(476003)(9686003)(55016002)(44832011)(5660300001)(7696005)(486006)(86362001)(26005)(106356001)(186003)(53546011)(102836004)(7416002)(39060400002)(3846002)(11346002)(6116002)(76176011)(446003)(316002)(478600001)(5250100002)(97736004)(54906003)(2906002)(33656002)(2900100001)(105586002)(6246003)(4326008)(110136005)(8676002)(99286004)(14454004)(3660700001)(3280700002)(25786009)(93886005)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2390;H:OSBPR01MB2054.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: JPK0sGsy6rHA/g0u+qLpI7+Fb3YDwhl18qOsCsc28xcHyMlHdLptxi6ctRC/aPfMriJchtkXnuUzYxj+tNhowvIh33Yjokr1F5OPSvpd1mPCkdPzPPLmtzz69514Ymjok81+SvdnFNuZZ7Il1hV5vpaqVNoEEmtLJSEjLm3YKHxNPfm0nrGqUOytmVwAQWJJxxkImLhXkYTlwYRR7O/4Ih0D71ZoLIFOmLsvf1YREb6sSIknvpmBxJmHP6GjAQPSN5jZ4Hi+QK++V/3oOjcS8CwLcXChOPKoCq7/huUeAEWYOhjFmr3Gek0+Vb0pox9eAMBZZEcd1pENA6a9n0T+gz/9YiLQj44R/JnhIluKDIk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d5c1cab-2c6c-407e-2327-08d5da879ea8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2018 10:37:15.8021
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2390
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/2018 10:45, Michal Hocko wrote:
-> On Mon 25-06-18 10:10:18, Paolo Bonzini wrote:
->> On 25/06/2018 09:57, Michal Hocko wrote:
->>> On Sun 24-06-18 10:11:21, Paolo Bonzini wrote:
->>>> On 22/06/2018 17:02, Michal Hocko wrote:
->>>>> @@ -7215,6 +7216,8 @@ void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
->>>>>  	apic_address = gfn_to_hva(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
->>>>>  	if (start <= apic_address && apic_address < end)
->>>>>  		kvm_make_all_cpus_request(kvm, KVM_REQ_APIC_PAGE_RELOAD);
->>>>> +
->>>>> +	return 0;
->>>>
->>>> This is wrong, gfn_to_hva can sleep.
->>>
->>> Hmm, I have tried to crawl the call chain and haven't found any
->>> sleepable locks taken. Maybe I am just missing something.
->>> __kvm_memslots has a complex locking assert. I do not see we would take
->>> slots_lock anywhere from the notifier call path. IIUC that means that
->>> users_count has to be zero at that time. I have no idea how that is
->>> guaranteed.
->>
->> Nevermind, ENOCOFFEE.  This is gfn_to_hva, not gfn_to_pfn.  It only
->> needs SRCU.
-> 
-> OK, so just the make sure I follow, the change above is correct?
 
-Yes.  It's only gfn_to_pfn that calls get_user_pages and therefore can
-sleep.
+On 25 June 2018 10:43, Simon wrote:
+>
+> On Mon, Jun 25, 2018 at 11:24:48AM +0200, Geert Uytterhoeven wrote:
+> > Hi Michel,
+> >
+> > On Mon, Jun 25, 2018 at 10:31 AM Michel Pollet
+> > <michel.pollet@bp.renesas.com> wrote:
+> > > The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot
+> > > time, it requires a special enable method to get it started.
+> > >
+> > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > >  arch/arm/mach-shmobile/Makefile        |  1 +
+> > >  arch/arm/mach-shmobile/smp-r9a06g032.c | 96
+> > > ++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 97 insertions(+)
+> > >  create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+> >
+> > Given this doesn't depend on anything under arch/arm/mach-shmobile/,
+> > perhaps this should be moved to drivers/soc/renesas/ (and renamed to
+> > r9a06g032-smp.c for consistency) instead?
+> >
+> > Simon: what do you think?
+>
+> Yes, I think that would be nice.
 
-Thanks,
+So, do you guys want me to try to integrate this with the subsystem there, =
+with
+The renesas-soc bits, or should I just plonk the driver in and change the m=
+akefile?
 
-Paolo
+Secondary question: is it to for me to repost with these changes ASAP?
+
+Cheers
+Michel
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
