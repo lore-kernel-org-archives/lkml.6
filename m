@@ -2,160 +2,109 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7F6C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4952C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6542601D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:50:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EwwEUgL5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6542601D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8CE7226035
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE7226035
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964991AbeFYSum (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S965023AbeFYSup (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 14:50:45 -0400
+Received: from mga14.intel.com ([192.55.52.115]:30329 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964944AbeFYSum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 14:50:42 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38851 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964944AbeFYSuj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 14:50:39 -0400
-Received: by mail-pg0-f67.google.com with SMTP id c9-v6so6460869pgf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 11:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YmcmqVK5vQQJaHprEKdnvikJqs8v7fFFBkpsamsILdw=;
-        b=EwwEUgL5rRcOWO7RPV4w9W/+mkxoLbyfCqXD5VTqqXeCP5sWx6ScbYwQ3qVQIeR011
-         xzb76LJCKOp3Lqwqc2hpnk0Or1Y/W6zBNg9c2DpKCkh6xsApBr+T510AOW794XaL8h9C
-         T03IQDgvfe//H1StMrurlQSjYcPw55q7gXu2k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YmcmqVK5vQQJaHprEKdnvikJqs8v7fFFBkpsamsILdw=;
-        b=P6o3z2Vm0D22MfDLp6AYc5Kd/PQZ0hQvYrnApncmmESVZvZ5LTwOAvEM67Dvl0AALN
-         xjZdDJiXJngrETOFXgrS57fWc4RKh261kJK98gMo7/kDpsqLumuxMUDAHwV87+h1v89y
-         9PbPDofKzzONkzve3iBF1ksiCerExn5nWayXUTvsioS1lvZLuDYXpsaCOvlGb78WYqch
-         edOnKKAa7Vwtc+/JuIIm33tqzYWKBuG0j6BuUlHhn8G5DK6z22hTEZ/qg22FexDmJssZ
-         dzrtEf86td15zHNFk/7Dfk37cIr2WPcFYeYTQDrTdD5DmDwxYhaknsPf59KEIobeydUX
-         4Cqw==
-X-Gm-Message-State: APt69E15+bJR06GNfhPmOUq/2YSV2mCSrzJx6XQzpqwLTiCiP8oD0LP+
-        7trBlAfLTt2bt0psGldjTlVd/w==
-X-Google-Smtp-Source: ADUXVKJ3EdbIp+jUdImo4WLxY+3udtoiDgQV4fX2/d9KCp/NcCIqjy/UojgCLBaS5zEzFIwpQsGUhg==
-X-Received: by 2002:a63:6d8b:: with SMTP id i133-v6mr6346068pgc.215.1529952639095;
-        Mon, 25 Jun 2018 11:50:39 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id z10-v6sm22099465pfh.83.2018.06.25.11.50.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 11:50:38 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 11:50:37 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 09/12] dt-bindings: PM / OPP: add opp-throttlers
- property
-Message-ID: <20180625185037.GE129942@google.com>
-References: <20180621015237.100100-1-mka@chromium.org>
- <20180621015237.100100-10-mka@chromium.org>
- <20180625153341.GB23270@rob-hp-laptop>
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 11:50:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,271,1526367600"; 
+   d="scan'208";a="211047509"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga004.jf.intel.com with ESMTP; 25 Jun 2018 11:50:42 -0700
+Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 25 Jun 2018 11:50:42 -0700
+Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
+ FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 25 Jun 2018 11:50:41 -0700
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.94]) by
+ hasmsx107.ger.corp.intel.com ([169.254.2.79]) with mapi id 14.03.0319.002;
+ Mon, 25 Jun 2018 21:50:38 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC:     "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
+Thread-Topic: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
+Thread-Index: AQHUC/10xIwob4M80Eit0g6kz8euiKRw97kAgABZtJA=
+Date:   Mon, 25 Jun 2018 18:50:38 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D953997@hasmsx108.ger.corp.intel.com>
+References: <20180624205202.6597-1-tomas.winkler@intel.com>
+ <19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
+In-Reply-To: <19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzI5N2FjMjAtNDZmMy00ZWUyLTk5ZTItYTJlYmU4NWNlNjE0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidGlBTFhhRHpoWVluYzRRSU4yS1wvVXozOUZVXC9GdjVmeVdaY0gwUzEwZUI3dlAzVWhBZkZRdFpiRlJYWnlvUFR3In0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.252.28.198]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180625153341.GB23270@rob-hp-laptop>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Mon, Jun 25, 2018 at 09:33:41AM -0600, Rob Herring wrote:
-> On Wed, Jun 20, 2018 at 06:52:34PM -0700, Matthias Kaehlcke wrote:
-> > The optional opp-throttlers property is used to configure the throttlers
-> > (see drivers/misc/throttler/*) that use a given OPP to throttle the
-> > corresponding device(s).
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > Reviewed-by: Brian Norris <briannorris@chromium.org>
-> > ---
-> > Changes in v4:
-> > - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
-> > 
-> > Changes in v3:
-> > - none
-> > 
-> > Changes in v2:
-> > - patch added to series
-> > ---
-> >  Documentation/devicetree/bindings/opp/opp.txt | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentation/devicetree/bindings/opp/opp.txt
-> > index c396c4c0af92..747e79740c75 100644
-> > --- a/Documentation/devicetree/bindings/opp/opp.txt
-> > +++ b/Documentation/devicetree/bindings/opp/opp.txt
-> > @@ -170,6 +170,9 @@ Optional properties:
-> >    functioning of the current device at the current OPP (where this property is
-> >    present).
-> >  
-> > +- opp-throttlers: Array with phandles of throttlers that use this OPP to
-> > +  throttle the corresponding device(s).
-> > +
-> 
-> I think it would be better to make this a boolean for each OPP entry and 
-> then add "operating-points-v2" property to the EC node to point to the 
-> OPP table.
-
-Thanks for your suggestion. "operating-points-v2" would have to be an
-array of phandles, a single thottler can have multiple throttling
-devices.
-
-> Unless there is some need for a different throttler for each OPP entry?
-
-Having the option to use different OPPs per throttler would be my
-preference. E.g. there could be configurations where one throttler
-only interacts with certain throttling devices and another one
-with others.
-
-I see another option to achieve this, if you don't like the reference
-to the throttlers in the OPPs. The throttler could have a list of OPPs
-(as phandles, not frequencies as in v1). The main inconvenient I see
-here is that the used OPPs would need a label, which they usually
-don't have. Maybe this is no soooo bad, since the label could be added
-at device level, only on devices that use a throttler, so it wouldn't
-clutter the platform .dts files.
-
-This could be a single array with all OPPs from different devices,
-or multiple arrays, one for each throttling device:
-
-throttler-opps-0 = <&cpu0_opp_03 &cpu0_opp_05>;
-throttler-opps-1 = <&gpu_opp_02 &gpu_opp_04>;
-
-My preference would be multiple arrays, because it's easier to read.
-
-What do you think?
-
-Thanks
-
-Matthias
+PiANCj4gT24gU3VuLCAyMDE4LTA2LTI0IGF0IDIzOjUyICswMzAwLCBUb21hcyBXaW5rbGVyIHdy
+b3RlOg0KPiA+IEZpeCB0cG0gcHR0IGluaXRpYWxpemF0aW9uIGVycm9yOg0KPiA+IHRwbSB0cG0w
+OiBBIFRQTSBlcnJvciAoMzc4KSBvY2N1cnJlZCBnZXQgdHBtIHBjciBhbGxvY2F0aW9uLg0KPiA+
+DQo+ID4gV2UgY2Fubm90IHVzZSBnb19pZGxlIGNtZF9yZWFkeSBjb21tYW5kcyB2aWEgcnVudGlt
+ZV9wbSBoYW5kbGVzIGFzDQo+ID4gd2l0aCB0aGUgaW50cm9kdWN0aW9uIG9mIGxvY2FsaXRpZXMg
+dGhpcyBpcyBubyBsb25nZXIgYW4gb3B0aW9uYWwNCj4gPiBmZWF0dXJlLCB3aGlsZSBydW50aW1l
+IHBtIGNhbiBiZSBub3QgZW5hYmxlZC4NCj4gPiBUaG91Z2ggY21kX3JlYWR5L2dvX2lkbGUgcHJv
+dmlkZXMgYSBwb3dlciBzYXZpbmcsIGl0J3MgYWxzbyBhIHBhcnQgb2YNCj4gPiBUUE0yIHByb3Rv
+Y29sIGFuZCBzaG91bGQgYmUgY2FsbGVkIGV4cGxpY2l0bHkuDQo+ID4gVGhpcyBwYXRjaCBleHBv
+c2VzIGNtZF9yZWFkL2dvX2lkbGUgdmlhIHRwbSBjbGFzcyBvcHMgYW5kIHJlbW92ZXMNCj4gPiBy
+dW50aW1lIHBtIHN1cHBvcnQgYXMgaXQgaXMgbm90IHVzZWQgYnkgYW55IGRyaXZlci4NCj4gPg0K
+PiA+IEEgbmV3IHRwbSB0cmFuc21pdCBmbGFnIGlzIGFkZGVkIFRQTV9UUkFOU01JVF9ORVNURUQs
+IHdoaWNoIGltcGxpZXMNCj4gPiBUUE1fVFJBTlNNSVRfVU5MT0NLRUQgYW5kIFRQTV9UUkFOU01J
+VF9SQVcuIEJvdGggYXJlIG5lZWRlZA0KPiB0byByZXNvbHZlDQo+ID4gdHBtIHNwYWNlcyBhbmQg
+bG9jYWxpdHkgcmVxdWVzdCByZWN1cnNpdmUgY2FsbHMgdG8gdHBtX3RyYW5zbWl0KCkuDQo+ID4N
+Cj4gPiBOZXcgd3JhcHBlcnMgYXJlIGFkZGVkIHRwbV9jbWRfcmVhZHkoKSBhbmQgdHBtX2dvX2lk
+bGUoKSB0bw0KPiBzdHJlYW1saW5lDQo+ID4gdHBtX3RyeV90cmFuc21pdCBjb2RlLg0KPiA+DQo+
+ID4gdHBtX2NyYiBubyBsb25nZXIgbmVlZHMgb3duIHBvd2VyIHNhdmluZyBmdW5jdGlvbnMgYW5k
+IGNhbiBkcm9wIHVzaW5nDQo+ID4gdHBtX3BtX3N1c3BlbmQvcmVzdW1lLg0KPiA+DQo+ID4gVGhp
+cyBwYXRjaCBjYW5ub3QgYmUgcmVhbGx5IHNlcGFyYXRlZCBmcm9tIHRoZSBsb2NhbGl0eSBmaXgu
+DQo+ID4gRml4ZXM6IDg4OGQ4NjdkZjQ0MSAodHBtOiBjbWRfcmVhZHkgY29tbWFuZCBjYW4gYmUg
+aXNzdWVkIG9ubHkgYWZ0ZXINCj4gPiBncmFudGluZw0KPiA+IGxvY2FsaXR5KQ0KPiA+DQo+ID4g
+Q2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBGaXhlczogODg4ZDg2N2RmNDQxICh0cG06
+IGNtZF9yZWFkeSBjb21tYW5kIGNhbiBiZSBpc3N1ZWQgb25seSBhZnRlcg0KPiA+IGdyYW50aW5n
+DQo+ID4gbG9jYWxpdHkpDQo+ID4gU2lnbmVkLW9mZi1ieTogVG9tYXMgV2lua2xlciA8dG9tYXMu
+d2lua2xlckBpbnRlbC5jb20+DQo+IA0KPiBQbGVhc2U6DQo+IA0KPiAxLiBSZW1vdmUgTkVTVEVE
+Lg0KPiAyLiBXaGVyZSB5b3UgbmVlZCBjYWxsIFJBVyB8IFVOTE9DS0VELg0KPiAzLiBEbyBub3Qg
+YWRkIF9fIHByZWZpeC4NCj4gDQo+IFNob3VsZCBiZSBzaW1wbGUgY2hhbmdlcyB0byBkby4NCg0K
+SXQgc2ltcGxlIHRvIGNoYW5nZSwgYnV0IGZpcnN0IHlvdSd2ZSBhbHJlYWR5IGFncmVlZCBvbiBO
+RVNURUQsIHNlY29uZCBJIHdvdWxkIGFwcHJlY2lhdGUgc29tZSByZWFzb25pbmcgYmVoaW5kIHlv
+dXIgcmVxdWVzdHMuDQpUaGVyZSBpcyBhIGxvZ2ljIGJlaGluZCB0aGlzIHdoeSBSQVcgaXMgaGlk
+ZGVuLCBpdCdzIGJlY2F1c2UgaXQgYWx3YXlzIGhhc3QgYmUgY291cGxlZCB3aXRoIFVOTE9DS0VE
+LCBhbmQgaGVuY2UgTkVTVEVEIGNvbnZlcnMgYm90aCwgaXQgZ2l2ZXMgY2xlYW5lciBBUEkuDQoN
+ClRoYW5rcw0KVG9tYXMNCg0K
