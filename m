@@ -2,141 +2,165 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D55BC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E17C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB59725D54
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91AE825D53
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:52:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ZvgJakj1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB59725D54
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DgsZg11p";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ga3vWhl/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91AE825D53
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754795AbeFYPvj (ORCPT
+        id S1755024AbeFYPwS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:51:39 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40391 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754670AbeFYPve (ORCPT
+        Mon, 25 Jun 2018 11:52:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34328 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754933AbeFYPwP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:51:34 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z13-v6so4404798wma.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vh5PxE8A0277G3WQQO6l1yJcncYmyUvGiKsoSO9LfR8=;
-        b=ZvgJakj1bHcDDAUUFEkkW5OK41/mJlFTGf35o60wpVivrpPDuQ6goUesHx3T1P5POA
-         cLCwK6CXBLxbPJng4xr+/7JLq0Orix8XQPqVBNdjqCpbSmkRAEqr8yXi1aMt2YTaXTop
-         x5es+EnwdS5HQsCoIZIqqIYRVUpTf0N0zDxozN9cZX+bblRonEgBzYDJtLeyGFRC1wVx
-         Xma/QNzodN8YK525n9b/GSjUIPlGetd3dvdFBmCkjVe63e33KV41ylUINiSlsNZCiU42
-         3dqD5FcXhv6pnRK48RuzDYrBFk8cysF1QYx79+/FS5VD9Up2cSbcJHr3Zj3QAPnArCVr
-         gfCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vh5PxE8A0277G3WQQO6l1yJcncYmyUvGiKsoSO9LfR8=;
-        b=uAnHA9fHVBnYINSacWkBFc3WgrfyvE+7N0s27qDyodZTG4SIJZvPAOheZ6wbUsBKdm
-         fnlYhMraY0ftE/+UB0OicKjtYo2pycQ4+wEpSWCqKBxggdzB83HS4kVPkBoLn9gWeJJo
-         NV38Ohu4nq9hH1goYimUQHOxozp2lK6gYGT80k3q+yLnVSaZkFcQ70t6OOzLnB0hFHOA
-         Dq4AJZkkq+T1mji60nE67LYfe5FiUwoR56oC7Fo3c4c2Mip3bbW+5MjaQvOxIRSTn2jq
-         HK7nQVeigyL7ZYi+P3il4gKn16gaKC70TJxQJfDwOh1ZmWm33FxBnkzOewj9+/3Bj7Gw
-         jgfQ==
-X-Gm-Message-State: APt69E1Wk97StI5pOnSxoTfe90FPjVsHjakTHbz534I0vKmiLdxlF3eY
-        wr4/sz2gS4X2/t3VgIDUVKnbdw==
-X-Google-Smtp-Source: AAOMgpdndumOYQRTXXyIxIT4lkYpViR+tOjIsL1WHolvA0c4uFF7rcSd7G7FBs/ZumocfiM87qq2ew==
-X-Received: by 2002:a1c:e846:: with SMTP id f67-v6mr1438396wmh.63.1529941893516;
-        Mon, 25 Jun 2018 08:51:33 -0700 (PDT)
-Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id x16-v6sm3523737wro.13.2018.06.25.08.51.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 08:51:32 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 11/14] ARM: davinci: dm644x-evm: use device properties for at24 eeprom
-Date:   Mon, 25 Jun 2018 17:50:22 +0200
-Message-Id: <20180625155025.12567-12-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180625155025.12567-1-brgl@bgdev.pl>
-References: <20180625155025.12567-1-brgl@bgdev.pl>
+        Mon, 25 Jun 2018 11:52:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 401AD60A06; Mon, 25 Jun 2018 15:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529941935;
+        bh=g2mHT8KOdbvdZB6kn6IuACZJ2Nh/O0wr22i1uqnadDs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DgsZg11pwDmPYEfFeHbYqI7SaCus1LeNX3hzAjbNCjZo1zFTh6hDTRgYSYcxQAEko
+         FIe6X2SBIna4HF5BEt9vcBgYSUOCNtbn4XTaCwEN/YZae9fSrCIYh5UDWUQ2NNsQEF
+         mcL6ucjqHTNRTAWjkHNLUJIWhtK0s6Ch/5eRGQ2E=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id C194D60131;
+        Mon, 25 Jun 2018 15:52:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529941934;
+        bh=g2mHT8KOdbvdZB6kn6IuACZJ2Nh/O0wr22i1uqnadDs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ga3vWhl/tLiW+79qMa4LGxOmmszSF7pgsdhM7uwdZWpks8Pudmb7zdg52g1n7Ryjh
+         cfkxKhCyiUBive/tETfMRwQZGI6WuEb/y2L+sxCp9StsLINBs1xLGp3oZAsQupx+Uv
+         uwFe/Or+wX/FcIVCfXzD1VVgw3i/apNczfFKd2jI=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 25 Jun 2018 11:52:14 -0400
+From:   okaya@codeaurora.org
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
+        Peter Jones <pjones@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH V2 2/2] efi/fb: Convert PCI bus address to resource if
+ translated by the bridge
+In-Reply-To: <CAKv+Gu96HQf0oJ1RC+wVU34FqqcCWrnDGag48vjNP_z86HhLBQ@mail.gmail.com>
+References: <1526653072-7153-1-git-send-email-okaya@codeaurora.org>
+ <1526653072-7153-2-git-send-email-okaya@codeaurora.org>
+ <20180619222921.GA90490@bhelgaas-glaptop.roam.corp.google.com>
+ <CAKv+Gu_voOZ7YUL8pckww4mTt4PVcu7y69mf-z7ZZe1bJ81Shw@mail.gmail.com>
+ <2a805337-c0b5-e134-7695-5a543ecaa26a@codeaurora.org>
+ <CAKv+Gu9HAJRHwjYLNjf+gg=1vFoFu3BJphifKKE-aR4o_MW84A@mail.gmail.com>
+ <CAKv+Gu-WXLXqHSmiS2MmAMXHLKK_kg+3EK6L2rvO0SzN-c0UMg@mail.gmail.com>
+ <37289a27-eb99-6a73-4d32-4a75edd11dcd@codeaurora.org>
+ <CAKv+Gu-bwCFhCKiA7P1amMLeBaSxsjk0d6aPjAr9nCvOBPJA6w@mail.gmail.com>
+ <CAKv+Gu96HQf0oJ1RC+wVU34FqqcCWrnDGag48vjNP_z86HhLBQ@mail.gmail.com>
+Message-ID: <7777f7bfead902f2f5175d48907fccec@codeaurora.org>
+X-Sender: okaya@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 2018-06-25 04:20, Ard Biesheuvel wrote:
+> On 22 June 2018 at 21:29, Ard Biesheuvel <ard.biesheuvel@linaro.org> 
+> wrote:
+>> On 22 June 2018 at 20:30, Sinan Kaya <okaya@codeaurora.org> wrote:
+>>> On 6/22/2018 2:01 PM, Ard Biesheuvel wrote:
+>>>>> Yes, it is part of the PCI I/O protocol definition. FrameBufferBase 
+>>>>> is
+>>>>> described as
+>>>>> 
+>>>>> """
+>>>>> Base address of graphics linear frame buffer. Info contains
+>>>>> information required to allow software to draw directly to the
+>>>>> frame buffer without using Blt().Offset zero in
+>>>>> FrameBufferBase represents the upper left pixel of the
+>>>>> display.
+>>>>> """
+>>>> I just tried AMD Radeon and NVidia graphics cards on a system with
+>>>> non-1:1 mapped MMIO windows, and in both cases, the GOP protocol
+>>>> structure is populated correctly, i.e., using the CPU address not 
+>>>> the
+>>>> PCIe address.
+>>>> 
+>>>> EDK2 only recently gained support for MMIO translation in the host
+>>>> bridge driver, so I so wonder if this is a platform issue rather 
+>>>> than
+>>>> a driver issue. It may be worth a try to dump the results of
+>>>> GetBarAttributes() of all PCI I/O protocol instances (either in UEFI
+>>>> or in the stub), to double check that the correct values are 
+>>>> returned.
+>>>> 
+>>> 
+>>> Thanks for checking out other platforms. I'll mark the issue as a 
+>>> BIOS
+>>> issue and bounce your feedback to the BIOS provider.
+>>> 
+>> 
+>> I screwed up my testing, unfortunately. Both the public AMD GOP driver
+>> I tried, and the Nvidia GT218 under x86 emulation break when using
+>> MMIO translation. However, GraphicsOutputDxe in the EDK2 tree gets it
+>> right, and uses PciIo->GetBarAttributes() to get the address of the
+>> framebuffer region, which will return the CPU address not the PCI
+>> address.
+>> 
+>>> Let's hold onto this patch for the moment.
+>>> 
+>> 
+>> Yes. I'd like to get this resolved as well, but if the drivers are
+>> dereferencing BAR values as CPU addresses, this is unlikely to be the
+>> only thing that is broken under outbound translation.
+> 
+> Note that this was fixed fairly recently in EDK2, so BIOS vendors
+> providing UEFI firmware for ARM platforms with outbound MMIO
+> translation should probably incorporate this EDK2 patch
+> 
+> commit dc080d3b61e570e7a3163fc24afa6f8388d0c0bf
+> Author: Heyi Guo <heyi.guo@linaro.org>
+> Date:   Thu Feb 8 11:13:27 2018 +0800
+> 
+>     MdeModulePkg/PciBus: return CPU address for GetBarAttributes
+> 
+>     According to UEFI spec 2.7, PciIo->GetBarAttributes should return 
+> host
+>     address (CPU view ddress) rather than device address (PCI view
+>     address), and
+>     device address = host address + address translation offset,
+>     so we subtract translation from device address before returning.
+> 
+> Note that this is not the only MMIO translation related change made by
+> Heyi Guo to the generic PCI host bridge and bus drivers, but given
+> that those did not support MMIO translation at all, I take it your
+> affected platforms will already have their own changes to accommodate
+> this.
 
-We want to work towards phasing out the at24_platform_data structure.
-There are few users and its contents can be represented using generic
-device properties. Using device properties only will allow us to
-significantly simplify the at24 configuration code.
+Platform has been doing mmio translation for quite a while. Because all 
+accesses go through pci io protocol, the rest of the UEFI never needed 
+to be aware of bar address or do direct access.
 
-Remove the at24_platform_data structure and replace it with an array
-of property entries. Drop the byte_len/size property, as the model name
-already implies the EEPROM's size.
+This is the first time I hear of direct access. Maybe, GOP is a special 
+case.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-dm644x-evm.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+I started copying your response to the bios vendor.
 
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index adbe8630ef19..5b26a8c5bbd8 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -16,8 +16,8 @@
- #include <linux/gpio/machine.h>
- #include <linux/i2c.h>
- #include <linux/platform_data/pcf857x.h>
--#include <linux/platform_data/at24.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/property.h>
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
-@@ -486,12 +486,8 @@ static struct nvmem_cell_lookup dm6446evm_mac_address_cell = {
- 	.nvmem_name = "1-00500",
- };
- 
--static struct at24_platform_data eeprom_info = {
--	.byte_len	= (256*1024) / 8,
--	.page_size	= 64,
--	.flags		= AT24_FLAG_ADDR16,
--	.setup          = davinci_get_mac_addr,
--	.context	= (void *)0x7f00,
-+static const struct property_entry eeprom_properties[] = {
-+	PROPERTY_ENTRY_U32("pagesize", 64),
- };
- 
- /*
-@@ -601,7 +597,7 @@ static struct i2c_board_info __initdata i2c_info[] =  {
- 	},
- 	{
- 		I2C_BOARD_INFO("24c256", 0x50),
--		.platform_data	= &eeprom_info,
-+		.properties = eeprom_properties,
- 	},
- 	{
- 		I2C_BOARD_INFO("tlv320aic33", 0x1b),
--- 
-2.17.1
-
+They are probably missing that patch. I will pass it along.
