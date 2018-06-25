@@ -2,183 +2,116 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D09C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E898C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D8026034
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D8026034
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 100892606D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 100892606D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934996AbeFYTUj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 15:20:39 -0400
-Received: from mga03.intel.com ([134.134.136.65]:22466 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755595AbeFYTUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 15:20:37 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 12:20:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,271,1526367600"; 
-   d="scan'208";a="240171130"
-Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
-  by fmsmga005.fm.intel.com with ESMTP; 25 Jun 2018 12:20:36 -0700
-Date:   Mon, 25 Jun 2018 13:20:36 -0600
-From:   Ross Zwisler <ross.zwisler@linux.intel.com>
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] dm: prevent DAX mounts if not supported
-Message-ID: <20180625192036.GA11672@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Mike Snitzer <snitzer@redhat.com>, Toshi Kani <toshi.kani@hpe.com>,
-        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-xfs@vger.kernel.org
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-5-ross.zwisler@linux.intel.com>
- <20180601215513.GA18712@redhat.com>
- <20180604231508.GA10666@linux.intel.com>
- <20180620151748.GA4847@redhat.com>
+        id S935032AbeFYTV1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 15:21:27 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39301 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934943AbeFYTV0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 15:21:26 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fXX3E-0005Eh-ND; Mon, 25 Jun 2018 21:21:24 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fXX3B-0003ou-Lk; Mon, 25 Jun 2018 21:21:21 +0200
+Date:   Mon, 25 Jun 2018 21:21:21 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Gavin Schenk <g.schenk@eckelmann.de>, kernel@pengutronix.de
+Subject: Re: [PATCH] RFC: siox: don't create a thread without starting it
+Message-ID: <20180625192121.k3hx32xbbhqkyfu4@pengutronix.de>
+References: <20180625102056.28468-1-u.kleine-koenig@pengutronix.de>
+ <20180625125105.GZ2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180620151748.GA4847@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180625125105.GZ2494@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 11:17:49AM -0400, Mike Snitzer wrote:
-> On Mon, Jun 04 2018 at  7:15pm -0400,
-> Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
-> 
-> > On Fri, Jun 01, 2018 at 05:55:13PM -0400, Mike Snitzer wrote:
-> > > On Tue, May 29 2018 at  3:51pm -0400,
-> > > Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
-> > > 
-> > > > Currently the code in dm_dax_direct_access() only checks whether the target
-> > > > type has a direct_access() operation defined, not whether the underlying
-> > > > block devices all support DAX.  This latter property can be seen by looking
-> > > > at whether we set the QUEUE_FLAG_DAX request queue flag when creating the
-> > > > DM device.
-> > > 
-> > > Wait... I thought DAX support was all or nothing?
-> > 
-> > Right, it is, and that's what I'm trying to capture.  The point of this series
-> > is to make sure that we don't use DAX thru DM if one of the DM members doesn't
-> > support DAX.
-> > 
-> > This is a bit tricky, though, because as you've pointed out there are a lot of
-> > elements that go into a block device actually supporting DAX.  
-> > 
-> > First, the block device has to have a direct_access() operation defined in its
-> > struct dax_operations table.  This is a static definition in the drivers,
-> > though, so it's necessary but not sufficient.  For example, the PMEM driver
-> > always defines a direct_access() operation, but depending on the mode of the
-> > namespace (raw, fsdax or sector) it may or may not support DAX.
-> > 
-> > The next step is that a driver needs to say that he block queue supports
-> > QUEUE_FLAG_DAX.  This again is necessary but not sufficient.  The PMEM driver
-> > currently sets this for all namespace modes, but I agree that this should be
-> > restricted to modes that support DAX.  Even once we do that, though, for the
-> > block driver this isn't fully sufficient.  We'd really like users to call
-> > bdev_dax_supported() so it can run some additional tests to make sure that DAX
-> > will work.
-> > 
-> > So, the real test that filesystems rely on is bdev_dax_suppported().
-> > 
-> > The trick is that with DM we need to verify each block device via
-> > bdev_dax_supported() just like a filesystem would, and then have some way of
-> > communicating the result of all those checks to the filesystem which is
-> > eventually mounted on the DM device.  At DAX mount time the filesystem will
-> > call bdev_dax_supported() on the DM device, but it'll really only check the
-> > first device.  
-> > 
-> > So, the strategy is to have DM manually check each member device via
-> > bdev_dax_supported() then if they all pass set QUEUE_FLAG_DAX.  This then
-> > becomes our one source of truth on whether or not a DM device supports DAX.
-> > When the filesystem mounts with DAX support it'll also run
-> > bdev_dax_supported(), but if we have QUEUE_FLAG_DAX set on the DM device, we
-> > know that this check will pass.
-> > 
-> > > > This is problematic if we have, for example, a dm-linear device made up of
-> > > > a PMEM namespace in fsdax mode followed by a ramdisk from BRD.
-> > > > QUEUE_FLAG_DAX won't be set on the dm-linear device's request queue, but
-> > > > we have a working direct_access() entry point and the first member of the
-> > > > dm-linear set *does* support DAX.
-> > > 
-> > > If you don't have a uniformly capable device then it is very dangerous
-> > > to advertise that the entire device has a certain capability.  That
-> > > completely bit me in the past with discard (because for every IO I
-> > > wasn't then checking if the destination device supported discards).
-> > >
-> > > It is all well and good that you're adding that check here.  But what I
-> > > don't like is how you're saying QUEUE_FLAG_DAX implies direct_access()
-> > > operation exists.. yet for raw PMEM namespaces we just discussed how
-> > > that is a lie.
-> > 
-> > QUEUE_FLAG_DAX does imply that direct_access() exits.  However, as discussed
-> > above for a given bdev we really do need to check bdev_dax_supported().
-> > 
-> > > SO this type of change showcases how the QUEUE_FLAG_DAX doesn't _really_
-> > > imply direct_access() exists.
-> > > 
-> > > > This allows the user to create a filesystem on the dm-linear device, and
-> > > > then mount it with DAX.  The filesystem's bdev_dax_supported() test will
-> > > > pass because it'll operate on the first member of the dm-linear device,
-> > > > which happens to be a fsdax PMEM namespace.
-> > > > 
-> > > > All DAX I/O will then fail to that dm-linear device because the lack of
-> > > > QUEUE_FLAG_DAX prevents fs_dax_get_by_bdev() from working.  This means that
-> > > > the struct dax_device isn't ever set in the filesystem, so
-> > > > dax_direct_access() will always return -EOPNOTSUPP.
-> > > 
-> > > Now you've lost me... these past 2 paragraphs.  Why can a user mount it
-> > > is DAX mode?  Because bdev_dax_supported() only accesses the first
-> > > portion (which happens to have DAX capabilities?)
-> > 
-> > Right.  bdev_dax_supported() runs all of its checks, and because they are
-> > running against the first block device in the dm set, they all pass.  But the
-> > overall DM device does not actually support DAX.
-> > 
-> > > Isn't this exactly why you should be checking for QUEUE_FLAG_DAX in the
-> > > caller (bdev_dax_supported)?  Why not use bdev_get_queue() and verify
-> > > QUEUE_FLAG_DAX is set in there?
-> > 
-> > I'll look into that for the next revision, thanks.
-> 
-> Have you made any progress on a new revision?
-> 
-> > > > By failing out of dm_dax_direct_access() if QUEUE_FLAG_DAX isn't set we let
-> > > > the filesystem know we don't support DAX at mount time.  The filesystem
-> > > > will then silently fall back and remove the dax mount option, causing it to
-> > > > work properly.
-> > > 
-> > > This shouldn't be needed.  Again, QUEUE_FLAG_DAX wasn't set.. so don't
-> > > allow code to falsely try operations that should've been gated by the
-> > > fact it wasn't set.
-> > 
-> > Right, the goal is to make QUEUE_FLAG_DAX our one source of truth for whether
-> > DM devices support DAX, and not have it half defined by that and half by the
-> > DM_TYPE_DAX_BIO_BASED.
-> 
-> My hope is that you can ignore the DM-internal book-keeping
-> (DM_TYPE_DAX_BIO_BASED) for now and just focus on fixing the real issue
-> of needing proper checking (as well as properly _not_ setting
-> QUEUE_FLAG_DAX in the case of pmem "raw").
-> 
-> Please advise, thanks Ross!
+Hello Peter,
 
-I'm back working on this, and will send out another revision in the next day
-or so.
+On Mon, Jun 25, 2018 at 02:51:05PM +0200, Peter Zijlstra wrote:
+> On Mon, Jun 25, 2018 at 12:20:56PM +0200, Uwe Kleine-König wrote:
+> > when I just boot without any other siox-related action. So the kthread (created
+> > in drivers/siox/siox-core.c:siox_master_register()) is never started.
+> > 
+> > While you could argue that there is little reason to not start the
+> > thread there also is little reason to actually do it.
+> 
+> Well, you really _should_ wake up the thread. That first wakeup really
+> is part of the whole 'create/setup' kthread pattern.
+
+ok
+
+> > peterz in #kernelnewbies said "[...] kernel/kthread.c:kthread() should
+> > really be using __set_current_state(TASK_IDLE), I suppose". This however
+> > seems to interfere with problems fixed in a076e4bca2fd ("freezer: fix
+> > kthread_create vs freezer theoretical race").
+> 
+> I don't think so, that patch has an issue with INTERRUPTIBLE, but IDLE
+> very much doesn't allow signals like INTERRUPTIBLE does.
+
+I don't think I can provide a good commit log for
+s/TASK_UNINTERRUPTIBLE/TASK_IDLE/ in kernel/kthread.c:kthread(). But I
+can confirm that this patch makes the warning go away, so if you want to
+address this, you can add my Tested-by:.
+ 
+> > So I wonder where the real problem is and how it can be fixed.
+> 
+> Without the first wakeup, the kthread will not run the provided function
+> and we can therefore argue the creation is incomplete. I really feel you
+> should just wake the thing up to land in your own wait-condition-loop.
+> 
+> That said, irrespective of the whole UNINTERRUPTIBLE/IDLE thing, I find
+> this construct fairly fragile. We rely on not getting any spurious
+> wakeups without a 'special' state.
+
+Well, if the thread is woken up unintentionally nothing happens (apart
+from the lock and the list that I moved in my patch that might not be
+initialized yet; this should be fixed for sure). It just enters the
+thread's own wait-condition-loop. So you could argue that the wakeup
+call is just overhead that isn't necessary until the thread is really
+needed. (I won't argue, I can accept your opinion and do the wakeup.)
+
+> The only reason this doesn't normally happen is because it's a new
+> task, but since it is already hashed, it might well be possible to
+> trick someone into sending a wakeup.
+
+Is this an ack for the RFC patch you replied to?
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
