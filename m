@@ -2,341 +2,348 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FC6C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB75BC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9275625CB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5086525CBE
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:30:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="MvT9KcO7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9275625CB9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkc+R0hz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5086525CBE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755655AbeFYPaY (ORCPT
+        id S1755684AbeFYPad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:30:24 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36483 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752251AbeFYPaB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:30:01 -0400
-Received: by mail-wr0-f193.google.com with SMTP id f16-v6so14147739wrm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:30:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=u4tKrqOBdXJ23Vx4TJ9XThLndhjqxmxnoJ7uc13SY2M=;
-        b=MvT9KcO7EUDKN3bxaVK336EsmfVFstsJZ0sfQqd3sw80H32Iw5PRNer6NDDVi8U860
-         Rf1qOFqmTbI9vjvoGZXqofk4X55tputlz53tzI5Sa6iQVuLNic04tZ/Fb5uFuZFm8Eky
-         yJH+ESu1R/8PPpG71FSFfCeuS0ToKlkRJhodl40h4mopsb2rwR6NWTTx32SBljzRhJ9O
-         7G8hiJ0E8RPenLp0x16oAJ1HqIRM7GhmraOylBfwgANdTjzVqqFAyqv2VMBG7w5FR1/5
-         Nemlu6w0qbHG4UsE+v3Nmay8coCZxqGGWqxuW+yOzMZsawg11SWje4xnIUiE4cm7q0/b
-         ejMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=u4tKrqOBdXJ23Vx4TJ9XThLndhjqxmxnoJ7uc13SY2M=;
-        b=Q/8+myHQ73Q12+5lPmar0ldzoGG5JvE3f9bvCkLi+xJRDB24GWgyk9mDBeMidcJHfz
-         AYR6Np3H+caqR+Tgo69hJZsGOcSmAd/sH9P8ZUUJjISZE/ejT9iAG7fIAizTfadXnC4Q
-         NABZFM/fvd6vwdYY7jz8lkTG3vkwuo0OIway9m2ojBhkVRUlnnwYmCpGl3T/K8u4CXiS
-         dkaxeTmxbjEOnh5+jYEeGJlBKjKN1uSwphLNEoPuXWO2uCovLx37FPymF+9SHQ5lxZBn
-         CchZ4TkeobAZy8Yf5opjSSKtVuED0JuzS7wSwDQxeUMmenQV0gl071tkVGPjErLmd/kf
-         +lVg==
-X-Gm-Message-State: APt69E0l/9NSyFN724+2gJRzSv/WvEh9LfZlatK7Mgn6GIKLlpetSfqv
-        J64TE30n5CXoZIQ37oCuXnNb/w==
-X-Google-Smtp-Source: AAOMgpcrIJQ+OFXsJq20PGKPAp307JCw6y/BCWG3/6M2ywfwk1sYK5kT7AR42vLkoQdn5jD47raRLw==
-X-Received: by 2002:adf:f342:: with SMTP id e2-v6mr7554739wrp.161.1529940600343;
-        Mon, 25 Jun 2018 08:30:00 -0700 (PDT)
-Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id l15-v6sm18829174wrs.95.2018.06.25.08.29.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 08:29:59 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 9/9] ARM: davinci: kill davinci_aemif_setup()
-Date:   Mon, 25 Jun 2018 17:29:20 +0200
-Message-Id: <20180625152920.11549-10-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
+        Mon, 25 Jun 2018 11:30:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755660AbeFYPaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:30:30 -0400
+Received: from localhost.localdomain (unknown [180.102.246.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8966C25CBC;
+        Mon, 25 Jun 2018 15:30:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529940630;
+        bh=9gGv3rz25fTnpTaFnP4zAjFDn0qE4EjeMkgUEHT+0tQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tkc+R0hzXAMWCmvLHILYGKlRkCdwZDk18rOXXF0zqWpkvoplGD6elLM3ZtQvFGlEQ
+         rwhL0I/UNRMm84haOtAX+yLi7OV19QZD0Kkt77pKZlwK79XUG6ck9bREpB14afjQi7
+         urnqiJhjeyBEglpALAhHMg0BBiF3SLyoQS7softg=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2 2/2] f2fs: fix to do sanity check with extra_attr feature
+Date:   Mon, 25 Jun 2018 23:29:49 +0800
+Message-Id: <20180625152949.4907-1-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-All users now register platform devices using the ti-aemif driver.
-Remove the handcrafted aemif API.
+If FI_EXTRA_ATTR is set in inode by fuzzing, inode.i_addr[0] will be
+parsed as inode.i_extra_isize, then in __recover_inline_status, inline
+data address will beyond boundary of page, result in accessing invalid
+memory.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+So in this condition, during reading inode page, let's do sanity check
+with EXTRA_ATTR feature of fs and extra_attr bit of inode, if they're
+inconsistent, deny to load this inode.
+
+- Overview
+Out-of-bound access in f2fs_iget() when mounting a corrupted f2fs image
+
+- Reproduce
+
+The following message will be got in KASAN build of 4.18 upstream kernel.
+[  819.392227] ==================================================================
+[  819.393901] BUG: KASAN: slab-out-of-bounds in f2fs_iget+0x736/0x1530
+[  819.395329] Read of size 4 at addr ffff8801f099c968 by task mount/1292
+
+[  819.397079] CPU: 1 PID: 1292 Comm: mount Not tainted 4.18.0-rc1+ #4
+[  819.397082] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  819.397088] Call Trace:
+[  819.397124]  dump_stack+0x7b/0xb5
+[  819.397154]  print_address_description+0x70/0x290
+[  819.397159]  kasan_report+0x291/0x390
+[  819.397163]  ? f2fs_iget+0x736/0x1530
+[  819.397176]  check_memory_region+0x139/0x190
+[  819.397182]  __asan_loadN+0xf/0x20
+[  819.397185]  f2fs_iget+0x736/0x1530
+[  819.397197]  f2fs_fill_super+0x1b4f/0x2b40
+[  819.397202]  ? f2fs_fill_super+0x1b4f/0x2b40
+[  819.397208]  ? f2fs_commit_super+0x1b0/0x1b0
+[  819.397227]  ? set_blocksize+0x90/0x140
+[  819.397241]  mount_bdev+0x1c5/0x210
+[  819.397245]  ? f2fs_commit_super+0x1b0/0x1b0
+[  819.397252]  f2fs_mount+0x15/0x20
+[  819.397256]  mount_fs+0x60/0x1a0
+[  819.397267]  ? alloc_vfsmnt+0x309/0x360
+[  819.397272]  vfs_kern_mount+0x6b/0x1a0
+[  819.397282]  do_mount+0x34a/0x18c0
+[  819.397300]  ? lockref_put_or_lock+0xcf/0x160
+[  819.397306]  ? copy_mount_string+0x20/0x20
+[  819.397318]  ? memcg_kmem_put_cache+0x1b/0xa0
+[  819.397324]  ? kasan_check_write+0x14/0x20
+[  819.397334]  ? _copy_from_user+0x6a/0x90
+[  819.397353]  ? memdup_user+0x42/0x60
+[  819.397359]  ksys_mount+0x83/0xd0
+[  819.397365]  __x64_sys_mount+0x67/0x80
+[  819.397388]  do_syscall_64+0x78/0x170
+[  819.397403]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  819.397422] RIP: 0033:0x7f54c667cb9a
+[  819.397424] Code: 48 8b 0d 01 c3 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ce c2 2b 00 f7 d8 64 89 01 48
+[  819.397483] RSP: 002b:00007ffd8f46cd08 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+[  819.397496] RAX: ffffffffffffffda RBX: 0000000000dfa030 RCX: 00007f54c667cb9a
+[  819.397498] RDX: 0000000000dfa210 RSI: 0000000000dfbf30 RDI: 0000000000e02ec0
+[  819.397501] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000013
+[  819.397503] R10: 00000000c0ed0000 R11: 0000000000000202 R12: 0000000000e02ec0
+[  819.397505] R13: 0000000000dfa210 R14: 0000000000000000 R15: 0000000000000003
+
+[  819.397866] Allocated by task 139:
+[  819.398702]  save_stack+0x46/0xd0
+[  819.398705]  kasan_kmalloc+0xad/0xe0
+[  819.398709]  kasan_slab_alloc+0x11/0x20
+[  819.398713]  kmem_cache_alloc+0xd1/0x1e0
+[  819.398717]  dup_fd+0x50/0x4c0
+[  819.398740]  copy_process.part.37+0xbed/0x32e0
+[  819.398744]  _do_fork+0x16e/0x590
+[  819.398748]  __x64_sys_clone+0x69/0x80
+[  819.398752]  do_syscall_64+0x78/0x170
+[  819.398756]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[  819.399097] Freed by task 159:
+[  819.399743]  save_stack+0x46/0xd0
+[  819.399747]  __kasan_slab_free+0x13c/0x1a0
+[  819.399750]  kasan_slab_free+0xe/0x10
+[  819.399754]  kmem_cache_free+0x89/0x1e0
+[  819.399757]  put_files_struct+0x132/0x150
+[  819.399761]  exit_files+0x62/0x70
+[  819.399766]  do_exit+0x47b/0x1390
+[  819.399770]  do_group_exit+0x86/0x130
+[  819.399774]  __x64_sys_exit_group+0x2c/0x30
+[  819.399778]  do_syscall_64+0x78/0x170
+[  819.399782]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[  819.400115] The buggy address belongs to the object at ffff8801f099c680
+                which belongs to the cache files_cache of size 704
+[  819.403234] The buggy address is located 40 bytes to the right of
+                704-byte region [ffff8801f099c680, ffff8801f099c940)
+[  819.405689] The buggy address belongs to the page:
+[  819.406709] page:ffffea0007c26700 count:1 mapcount:0 mapping:ffff8801f69a3340 index:0xffff8801f099d380 compound_mapcount: 0
+[  819.408984] flags: 0x2ffff0000008100(slab|head)
+[  819.409932] raw: 02ffff0000008100 ffffea00077fb600 0000000200000002 ffff8801f69a3340
+[  819.411514] raw: ffff8801f099d380 0000000080130000 00000001ffffffff 0000000000000000
+[  819.413073] page dumped because: kasan: bad access detected
+
+[  819.414539] Memory state around the buggy address:
+[  819.415521]  ffff8801f099c800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  819.416981]  ffff8801f099c880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  819.418454] >ffff8801f099c900: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+[  819.419921]                                                           ^
+[  819.421265]  ffff8801f099c980: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+[  819.422745]  ffff8801f099ca00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  819.424206] ==================================================================
+[  819.425668] Disabling lock debugging due to kernel taint
+[  819.457463] F2FS-fs (loop0): Mounted with checkpoint version = 3
+
+The kernel still mounts the image. If you run the following program on the mounted folder mnt,
+
+(poc.c)
+
+static void activity(char *mpoint) {
+
+  char *foo_bar_baz;
+  int err;
+
+  static int buf[8192];
+  memset(buf, 0, sizeof(buf));
+
+  err = asprintf(&foo_bar_baz, "%s/foo/bar/baz", mpoint);
+    int fd = open(foo_bar_baz, O_RDONLY, 0);
+  if (fd >= 0) {
+      read(fd, (char *)buf, 11);
+      close(fd);
+  }
+}
+
+int main(int argc, char *argv[]) {
+  activity(argv[1]);
+  return 0;
+}
+
+You can get kernel crash:
+[  819.457463] F2FS-fs (loop0): Mounted with checkpoint version = 3
+[  918.028501] BUG: unable to handle kernel paging request at ffffed0048000d82
+[  918.044020] PGD 23ffee067 P4D 23ffee067 PUD 23fbef067 PMD 0
+[  918.045207] Oops: 0000 [#1] SMP KASAN PTI
+[  918.046048] CPU: 0 PID: 1309 Comm: poc Tainted: G    B             4.18.0-rc1+ #4
+[  918.047573] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  918.049552] RIP: 0010:check_memory_region+0x5e/0x190
+[  918.050565] Code: f8 49 c1 e8 03 49 89 db 49 c1 eb 03 4d 01 cb 4d 01 c1 4d 8d 63 01 4c 89 c8 4d 89 e2 4d 29 ca 49 83 fa 10 7f 3d 4d 85 d2 74 32 <41> 80 39 00 75 23 48 b8 01 00 00 00 00 fc ff df 4d 01 d1 49 01 c0
+[  918.054322] RSP: 0018:ffff8801e3a1f258 EFLAGS: 00010202
+[  918.055400] RAX: ffffed0048000d82 RBX: ffff880240006c11 RCX: ffffffffb8867d14
+[  918.056832] RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff880240006c10
+[  918.058253] RBP: ffff8801e3a1f268 R08: 1ffff10048000d82 R09: ffffed0048000d82
+[  918.059717] R10: 0000000000000001 R11: ffffed0048000d82 R12: ffffed0048000d83
+[  918.061159] R13: ffff8801e3a1f390 R14: 0000000000000000 R15: ffff880240006c08
+[  918.062614] FS:  00007fac9732c700(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
+[  918.064246] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  918.065412] CR2: ffffed0048000d82 CR3: 00000001df77a000 CR4: 00000000000006f0
+[  918.066882] Call Trace:
+[  918.067410]  __asan_loadN+0xf/0x20
+[  918.068149]  f2fs_find_target_dentry+0xf4/0x270
+[  918.069083]  ? __get_node_page+0x331/0x5b0
+[  918.069925]  f2fs_find_in_inline_dir+0x24b/0x310
+[  918.070881]  ? f2fs_recover_inline_data+0x4c0/0x4c0
+[  918.071905]  ? unwind_next_frame.part.5+0x34f/0x490
+[  918.072901]  ? unwind_dump+0x290/0x290
+[  918.073695]  ? is_bpf_text_address+0xe/0x20
+[  918.074566]  __f2fs_find_entry+0x599/0x670
+[  918.075408]  ? kasan_unpoison_shadow+0x36/0x50
+[  918.076315]  ? kasan_kmalloc+0xad/0xe0
+[  918.077100]  ? memcg_kmem_put_cache+0x55/0xa0
+[  918.077998]  ? f2fs_find_target_dentry+0x270/0x270
+[  918.079006]  ? d_set_d_op+0x30/0x100
+[  918.079749]  ? __d_lookup_rcu+0x69/0x2e0
+[  918.080556]  ? __d_alloc+0x275/0x450
+[  918.081297]  ? kasan_check_write+0x14/0x20
+[  918.082135]  ? memset+0x31/0x40
+[  918.082820]  ? fscrypt_setup_filename+0x1ec/0x4c0
+[  918.083782]  ? d_alloc_parallel+0x5bb/0x8c0
+[  918.084640]  f2fs_find_entry+0xe9/0x110
+[  918.085432]  ? __f2fs_find_entry+0x670/0x670
+[  918.086308]  ? kasan_check_write+0x14/0x20
+[  918.087163]  f2fs_lookup+0x297/0x590
+[  918.087902]  ? f2fs_link+0x2b0/0x2b0
+[  918.088646]  ? legitimize_path.isra.29+0x61/0xa0
+[  918.089589]  __lookup_slow+0x12e/0x240
+[  918.090371]  ? may_delete+0x2b0/0x2b0
+[  918.091123]  ? __nd_alloc_stack+0xa0/0xa0
+[  918.091944]  lookup_slow+0x44/0x60
+[  918.092642]  walk_component+0x3ee/0xa40
+[  918.093428]  ? is_bpf_text_address+0xe/0x20
+[  918.094283]  ? pick_link+0x3e0/0x3e0
+[  918.095047]  ? in_group_p+0xa5/0xe0
+[  918.095771]  ? generic_permission+0x53/0x1e0
+[  918.096666]  ? security_inode_permission+0x1d/0x70
+[  918.097646]  ? inode_permission+0x7a/0x1f0
+[  918.098497]  link_path_walk+0x2a2/0x7b0
+[  918.099298]  ? apparmor_capget+0x3d0/0x3d0
+[  918.100140]  ? walk_component+0xa40/0xa40
+[  918.100958]  ? path_init+0x2e6/0x580
+[  918.101695]  path_openat+0x1bb/0x2160
+[  918.102471]  ? __save_stack_trace+0x92/0x100
+[  918.103352]  ? save_stack+0xb5/0xd0
+[  918.104070]  ? vfs_unlink+0x250/0x250
+[  918.104822]  ? save_stack+0x46/0xd0
+[  918.105538]  ? kasan_slab_alloc+0x11/0x20
+[  918.106370]  ? kmem_cache_alloc+0xd1/0x1e0
+[  918.107213]  ? getname_flags+0x76/0x2c0
+[  918.107997]  ? getname+0x12/0x20
+[  918.108677]  ? do_sys_open+0x14b/0x2c0
+[  918.109450]  ? __x64_sys_open+0x4c/0x60
+[  918.110255]  ? do_syscall_64+0x78/0x170
+[  918.111083]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  918.112148]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  918.113204]  ? f2fs_empty_inline_dir+0x1e0/0x1e0
+[  918.114150]  ? timespec64_trunc+0x5c/0x90
+[  918.114993]  ? wb_io_lists_depopulated+0x1a/0xc0
+[  918.115937]  ? inode_io_list_move_locked+0x102/0x110
+[  918.116949]  do_filp_open+0x12b/0x1d0
+[  918.117709]  ? may_open_dev+0x50/0x50
+[  918.118475]  ? kasan_kmalloc+0xad/0xe0
+[  918.119246]  do_sys_open+0x17c/0x2c0
+[  918.119983]  ? do_sys_open+0x17c/0x2c0
+[  918.120751]  ? filp_open+0x60/0x60
+[  918.121463]  ? task_work_run+0x4d/0xf0
+[  918.122237]  __x64_sys_open+0x4c/0x60
+[  918.123001]  do_syscall_64+0x78/0x170
+[  918.123759]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  918.124802] RIP: 0033:0x7fac96e3e040
+[  918.125537] Code: 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 83 3d 09 27 2d 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 7e e0 01 00 48 89 04 24
+[  918.129341] RSP: 002b:00007fff1b37f848 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+[  918.130870] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fac96e3e040
+[  918.132295] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000122d080
+[  918.133748] RBP: 00007fff1b37f9b0 R08: 00007fac9710bbd8 R09: 0000000000000001
+[  918.135209] R10: 000000000000069d R11: 0000000000000246 R12: 0000000000400c20
+[  918.136650] R13: 00007fff1b37fab0 R14: 0000000000000000 R15: 0000000000000000
+[  918.138093] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
+[  918.147924] CR2: ffffed0048000d82
+[  918.148619] ---[ end trace 4ce02f25ff7d3df5 ]---
+[  918.149563] RIP: 0010:check_memory_region+0x5e/0x190
+[  918.150576] Code: f8 49 c1 e8 03 49 89 db 49 c1 eb 03 4d 01 cb 4d 01 c1 4d 8d 63 01 4c 89 c8 4d 89 e2 4d 29 ca 49 83 fa 10 7f 3d 4d 85 d2 74 32 <41> 80 39 00 75 23 48 b8 01 00 00 00 00 fc ff df 4d 01 d1 49 01 c0
+[  918.154360] RSP: 0018:ffff8801e3a1f258 EFLAGS: 00010202
+[  918.155411] RAX: ffffed0048000d82 RBX: ffff880240006c11 RCX: ffffffffb8867d14
+[  918.156833] RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff880240006c10
+[  918.158257] RBP: ffff8801e3a1f268 R08: 1ffff10048000d82 R09: ffffed0048000d82
+[  918.159722] R10: 0000000000000001 R11: ffffed0048000d82 R12: ffffed0048000d83
+[  918.161149] R13: ffff8801e3a1f390 R14: 0000000000000000 R15: ffff880240006c08
+[  918.162587] FS:  00007fac9732c700(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
+[  918.164203] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  918.165356] CR2: ffffed0048000d82 CR3: 00000001df77a000 CR4: 00000000000006f0
+
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- arch/arm/mach-davinci/Makefile                |   2 +-
- arch/arm/mach-davinci/aemif.c                 | 218 ------------------
- .../linux/platform_data/mtd-davinci-aemif.h   |   1 -
- 3 files changed, 1 insertion(+), 220 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/aemif.c
+v2: fix to add missing parameter in format string.
+ fs/f2fs/inode.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
-index 8725d8bea567..93d271b4d84b 100644
---- a/arch/arm/mach-davinci/Makefile
-+++ b/arch/arm/mach-davinci/Makefile
-@@ -6,7 +6,7 @@
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 708f6722e574..e3fc1c046dea 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -202,6 +202,16 @@ static bool sanity_check_inode(struct inode *inode)
+ 			__func__, inode->i_ino);
+ 		return false;
+ 	}
++
++	if (f2fs_has_extra_attr(inode) &&
++			!f2fs_sb_has_extra_attr(sbi->sb)) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"%s: inode (ino=%lx) is with extra_attr, "
++			"but extra_attr feature is off",
++			__func__, inode->i_ino);
++		return false;
++	}
+ 	return true;
+ }
  
- # Common objects
- obj-y 					:= time.o serial.o usb.o \
--					   common.o sram.o aemif.o
-+					   common.o sram.o
+@@ -254,6 +264,11 @@ static int do_read_inode(struct inode *inode)
  
- obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
+ 	get_inline_info(inode, ri);
  
-diff --git a/arch/arm/mach-davinci/aemif.c b/arch/arm/mach-davinci/aemif.c
-deleted file mode 100644
-index e4ab3f3a2a1f..000000000000
---- a/arch/arm/mach-davinci/aemif.c
-+++ /dev/null
-@@ -1,218 +0,0 @@
--/*
-- * AEMIF support for DaVinci SoCs
-- *
-- * Copyright (C) 2010 Texas Instruments Incorporated. http://www.ti.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#include <linux/kernel.h>
--#include <linux/io.h>
--#include <linux/err.h>
--#include <linux/clk.h>
--#include <linux/module.h>
--#include <linux/time.h>
--
--#include <linux/platform_data/mtd-davinci-aemif.h>
--#include <linux/platform_data/mtd-davinci.h>
--
--/* Timing value configuration */
--
--#define TA(x)		((x) << 2)
--#define RHOLD(x)	((x) << 4)
--#define RSTROBE(x)	((x) << 7)
--#define RSETUP(x)	((x) << 13)
--#define WHOLD(x)	((x) << 17)
--#define WSTROBE(x)	((x) << 20)
--#define WSETUP(x)	((x) << 26)
--
--#define TA_MAX		0x3
--#define RHOLD_MAX	0x7
--#define RSTROBE_MAX	0x3f
--#define RSETUP_MAX	0xf
--#define WHOLD_MAX	0x7
--#define WSTROBE_MAX	0x3f
--#define WSETUP_MAX	0xf
--
--#define TIMING_MASK	(TA(TA_MAX) | \
--				RHOLD(RHOLD_MAX) | \
--				RSTROBE(RSTROBE_MAX) |	\
--				RSETUP(RSETUP_MAX) | \
--				WHOLD(WHOLD_MAX) | \
--				WSTROBE(WSTROBE_MAX) | \
--				WSETUP(WSETUP_MAX))
--
--static inline unsigned int davinci_aemif_readl(void __iomem *base, int offset)
--{
--	return readl_relaxed(base + offset);
--}
--
--static inline void davinci_aemif_writel(void __iomem *base,
--					int offset, unsigned long value)
--{
--	writel_relaxed(value, base + offset);
--}
--
--/*
-- * aemif_calc_rate - calculate timing data.
-- * @wanted: The cycle time needed in nanoseconds.
-- * @clk: The input clock rate in kHz.
-- * @max: The maximum divider value that can be programmed.
-- *
-- * On success, returns the calculated timing value minus 1 for easy
-- * programming into AEMIF timing registers, else negative errno.
-- */
--static int aemif_calc_rate(int wanted, unsigned long clk, int max)
--{
--	int result;
--
--	result = DIV_ROUND_UP((wanted * clk), NSEC_PER_MSEC) - 1;
--
--	pr_debug("%s: result %d from %ld, %d\n", __func__, result, clk, wanted);
--
--	/* It is generally OK to have a more relaxed timing than requested... */
--	if (result < 0)
--		result = 0;
--
--	/* ... But configuring tighter timings is not an option. */
--	else if (result > max)
--		result = -EINVAL;
--
--	return result;
--}
--
--/**
-- * davinci_aemif_setup_timing - setup timing values for a given AEMIF interface
-- * @t: timing values to be progammed
-- * @base: The virtual base address of the AEMIF interface
-- * @cs: chip-select to program the timing values for
-- * @clkrate: the AEMIF clkrate
-- *
-- * This function programs the given timing values (in real clock) into the
-- * AEMIF registers taking the AEMIF clock into account.
-- *
-- * This function does not use any locking while programming the AEMIF
-- * because it is expected that there is only one user of a given
-- * chip-select.
-- *
-- * Returns 0 on success, else negative errno.
-- */
--static int davinci_aemif_setup_timing(struct davinci_aemif_timing *t,
--					void __iomem *base, unsigned cs,
--					unsigned long clkrate)
--{
--	unsigned set, val;
--	int ta, rhold, rstrobe, rsetup, whold, wstrobe, wsetup;
--	unsigned offset = A1CR_OFFSET + cs * 4;
--
--	if (!t)
--		return 0;	/* Nothing to do */
--
--	clkrate /= 1000;	/* turn clock into kHz for ease of use */
--
--	ta	= aemif_calc_rate(t->ta, clkrate, TA_MAX);
--	rhold	= aemif_calc_rate(t->rhold, clkrate, RHOLD_MAX);
--	rstrobe	= aemif_calc_rate(t->rstrobe, clkrate, RSTROBE_MAX);
--	rsetup	= aemif_calc_rate(t->rsetup, clkrate, RSETUP_MAX);
--	whold	= aemif_calc_rate(t->whold, clkrate, WHOLD_MAX);
--	wstrobe	= aemif_calc_rate(t->wstrobe, clkrate, WSTROBE_MAX);
--	wsetup	= aemif_calc_rate(t->wsetup, clkrate, WSETUP_MAX);
--
--	if (ta < 0 || rhold < 0 || rstrobe < 0 || rsetup < 0 ||
--			whold < 0 || wstrobe < 0 || wsetup < 0) {
--		pr_err("%s: cannot get suitable timings\n", __func__);
--		return -EINVAL;
--	}
--
--	set = TA(ta) | RHOLD(rhold) | RSTROBE(rstrobe) | RSETUP(rsetup) |
--		WHOLD(whold) | WSTROBE(wstrobe) | WSETUP(wsetup);
--
--	val = __raw_readl(base + offset);
--	val &= ~TIMING_MASK;
--	val |= set;
--	__raw_writel(val, base + offset);
--
--	return 0;
--}
--
--/**
-- * davinci_aemif_setup - setup AEMIF interface by davinci_nand_pdata
-- * @pdev - link to platform device to setup settings for
-- *
-- * This function does not use any locking while programming the AEMIF
-- * because it is expected that there is only one user of a given
-- * chip-select.
-- *
-- * Returns 0 on success, else negative errno.
-- */
--int davinci_aemif_setup(struct platform_device *pdev)
--{
--	struct davinci_nand_pdata *pdata = dev_get_platdata(&pdev->dev);
--	uint32_t val;
--	unsigned long clkrate;
--	struct resource	*res;
--	void __iomem *base;
--	struct clk *clk;
--	int ret = 0;
--
--	clk = clk_get(&pdev->dev, "aemif");
--	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
--		dev_dbg(&pdev->dev, "unable to get AEMIF clock, err %d\n", ret);
--		return ret;
--	}
--
--	ret = clk_prepare_enable(clk);
--	if (ret < 0) {
--		dev_dbg(&pdev->dev, "unable to enable AEMIF clock, err %d\n",
--			ret);
--		goto err_put;
--	}
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	if (!res) {
--		dev_err(&pdev->dev, "cannot get IORESOURCE_MEM\n");
--		ret = -ENOMEM;
--		goto err;
--	}
--
--	base = ioremap(res->start, resource_size(res));
--	if (!base) {
--		dev_err(&pdev->dev, "ioremap failed for resource %pR\n", res);
--		ret = -ENOMEM;
--		goto err;
--	}
--
--	/*
--	 * Setup Async configuration register in case we did not boot
--	 * from NAND and so bootloader did not bother to set it up.
--	 */
--	val = davinci_aemif_readl(base, A1CR_OFFSET + pdata->core_chipsel * 4);
--	/*
--	 * Extended Wait is not valid and Select Strobe mode is not
--	 * used
--	 */
--	val &= ~(ACR_ASIZE_MASK | ACR_EW_MASK | ACR_SS_MASK);
--	if (pdata->options & NAND_BUSWIDTH_16)
--		val |= 0x1;
--
--	davinci_aemif_writel(base, A1CR_OFFSET + pdata->core_chipsel * 4, val);
--
--	clkrate = clk_get_rate(clk);
--
--	if (pdata->timing)
--		ret = davinci_aemif_setup_timing(pdata->timing, base,
--						 pdata->core_chipsel, clkrate);
--
--	if (ret < 0)
--		dev_dbg(&pdev->dev, "NAND timing values setup fail\n");
--
--	iounmap(base);
--err:
--	clk_disable_unprepare(clk);
--err_put:
--	clk_put(clk);
--	return ret;
--}
-diff --git a/include/linux/platform_data/mtd-davinci-aemif.h b/include/linux/platform_data/mtd-davinci-aemif.h
-index 97948ac2bb9b..a403dd51dacc 100644
---- a/include/linux/platform_data/mtd-davinci-aemif.h
-+++ b/include/linux/platform_data/mtd-davinci-aemif.h
-@@ -33,5 +33,4 @@ struct davinci_aemif_timing {
- 	u8	ta;
- };
++	if (!sanity_check_inode(inode)) {
++		f2fs_put_page(node_page, 1);
++		return -EINVAL;
++	}
++
+ 	fi->i_extra_isize = f2fs_has_extra_attr(inode) ?
+ 					le16_to_cpu(ri->i_extra_isize) : 0;
  
--int davinci_aemif_setup(struct platform_device *pdev);
- #endif
+@@ -335,10 +350,6 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 	ret = do_read_inode(inode);
+ 	if (ret)
+ 		goto bad_inode;
+-	if (!sanity_check_inode(inode)) {
+-		ret = -EINVAL;
+-		goto bad_inode;
+-	}
+ make_now:
+ 	if (ino == F2FS_NODE_INO(sbi)) {
+ 		inode->i_mapping->a_ops = &f2fs_node_aops;
 -- 
-2.17.1
+2.16.2.17.g38e79b1fd
 
