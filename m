@@ -6,183 +6,97 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D53FEC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D65C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F5E525562
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:52:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F5E525562
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DA7D225566
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:52:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7D225566
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753186AbeFYHv4 (ORCPT
+        id S1751631AbeFYHwg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 03:51:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35056 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751658AbeFYHvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 03:51:55 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 851557C6A9;
-        Mon, 25 Jun 2018 07:51:54 +0000 (UTC)
-Received: from plouf.banquise.eu.com (ovpn-117-99.ams2.redhat.com [10.36.117.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4DDC62166BA0;
-        Mon, 25 Jun 2018 07:51:53 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Richard Hughes <rhughes@redhat.com>,
-        Aaron Skomra <Aaron.Skomra@wacom.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH] power: remove possible deadlock when unregistering power_supply
-Date:   Mon, 25 Jun 2018 09:51:48 +0200
-Message-Id: <20180625075148.22140-1-benjamin.tissoires@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 25 Jun 2018 07:51:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 25 Jun 2018 07:51:54 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+        Mon, 25 Jun 2018 03:52:36 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:40243 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752149AbeFYHwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 03:52:34 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 5DCCB5DAFA;
+        Mon, 25 Jun 2018 07:52:27 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 15:47:18 +0800
+In-Reply-To: <5B309D37.80207@broadcom.com>
+References: <20180315162510.11669-1-harald@ccbib.org> <20180315162510.11669-6-harald@ccbib.org> <a7011fe78d171658742406bf01d50b7e3d7eaf1d.camel@aosc.io> <E1fX7yK-0000OC-HA@stardust.g4.wien.funkfeuer.at> <5B309D37.80207@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCHv2 5/5] arm64: allwinner: a64: Add support for TERES-I laptop
+To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Harald Geyer <harald@ccbib.org>
+CC:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>, info@olimex.com,
+        linux-wireless@vger.kernel.org
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <1CF519CD-D44E-4959-8951-27CE710E0984@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a device gets removed right after having registered a power_supply node,
-we might enter in a deadlock between the remove call (that has a lock on
-the parent device) and the deferred register work.
 
-Allow the deferred register work to exit without taking the lock when
-we are in the remove state.
 
-Stack trace on a Ubuntu 16.04:
+于 2018年6月25日 GMT+08:00 下午3:43:51, Arend van Spriel <arend.vanspriel@broadcom.com> 写到:
+>On 6/24/2018 6:34 PM, Harald Geyer wrote:
+>> Icenowy Zheng writes:
+>>> >在 2018-03-15四的 16:25 +0000，Harald Geyer写道：
+>>>> > >+&mmc1 {
+>>>> > >+	pinctrl-names = "default";
+>>>> > >+	pinctrl-0 = <&mmc1_pins>;
+>>>> > >+	vmmc-supply = <&reg_aldo2>;
+>>>> > >+	vqmmc-supply = <&reg_dldo4>;
+>>>> > >+	mmc-pwrseq = <&wifi_pwrseq>;
+>>>> > >+	bus-width = <4>;
+>>>> > >+	non-removable;
+>>>> > >+	status = "okay";
+>>>> > >+
+>>>> > >+	rtl8723bs: wifi@1 {
+>>>> > >+		reg = <1>;
+>>>> > >+		interrupt-parent = <&r_pio>;
+>>>> > >+		interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>; /* PL3 */
+>>>> > >+		interrupt-names = "host-wake";
+>>>> > >+	};
+>
+>[...]
+>
+>>> >- This device node has no binding. The "host-wake" interrupt is
+>part of
+>>> >  Broadcom SDIO Wi-Fi binding, rather than a generic one.
+>> I think the general mmc and interrupts bindings apply. And the mmc
+>binding
+>> clearly states that for sub-nodes a compatible string is optional.
+>>
+>> However I just realized that the 'interrupt-names' property is not
+>part
+>> of the general interrupts binding, so I guess at least this property
+>should
+>> be removed.
+>
+>Indeed. If the device just used the SDIO interrupt this is not needed. 
+>The Broadcom device can use either SDIO interrupt or a so-called 
+>out-of-band host-wake interrupt, which is what the above represents.
 
-[16072.109121] INFO: task kworker/u16:2:1180 blocked for more than 120 seconds.
-[16072.109127]       Not tainted 4.13.0-41-generic #46~16.04.1-Ubuntu
-[16072.109129] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[16072.109132] kworker/u16:2   D    0  1180      2 0x80000000
-[16072.109142] Workqueue: events_power_efficient power_supply_deferred_register_work
-[16072.109144] Call Trace:
-[16072.109152]  __schedule+0x3d6/0x8b0
-[16072.109155]  schedule+0x36/0x80
-[16072.109158]  schedule_preempt_disabled+0xe/0x10
-[16072.109161]  __mutex_lock.isra.2+0x2ab/0x4e0
-[16072.109166]  __mutex_lock_slowpath+0x13/0x20
-[16072.109168]  ? __mutex_lock_slowpath+0x13/0x20
-[16072.109171]  mutex_lock+0x2f/0x40
-[16072.109174]  power_supply_deferred_register_work+0x2b/0x50
-[16072.109179]  process_one_work+0x15b/0x410
-[16072.109182]  worker_thread+0x4b/0x460
-[16072.109186]  kthread+0x10c/0x140
-[16072.109189]  ? process_one_work+0x410/0x410
-[16072.109191]  ? kthread_create_on_node+0x70/0x70
-[16072.109194]  ret_from_fork+0x35/0x40
-[16072.109199] INFO: task test:2257 blocked for more than 120 seconds.
-[16072.109202]       Not tainted 4.13.0-41-generic #46~16.04.1-Ubuntu
-[16072.109204] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[16072.109206] test            D    0  2257   2256 0x00000004
-[16072.109208] Call Trace:
-[16072.109211]  __schedule+0x3d6/0x8b0
-[16072.109215]  schedule+0x36/0x80
-[16072.109218]  schedule_timeout+0x1f3/0x360
-[16072.109221]  ? check_preempt_curr+0x5a/0xa0
-[16072.109224]  ? ttwu_do_wakeup+0x1e/0x150
-[16072.109227]  wait_for_completion+0xb4/0x140
-[16072.109230]  ? wait_for_completion+0xb4/0x140
-[16072.109233]  ? wake_up_q+0x70/0x70
-[16072.109236]  flush_work+0x129/0x1e0
-[16072.109240]  ? worker_detach_from_pool+0xb0/0xb0
-[16072.109243]  __cancel_work_timer+0x10f/0x190
-[16072.109247]  ? device_del+0x264/0x310
-[16072.109250]  ? __wake_up+0x44/0x50
-[16072.109253]  cancel_delayed_work_sync+0x13/0x20
-[16072.109257]  power_supply_unregister+0x37/0xb0
-[16072.109260]  devm_power_supply_release+0x11/0x20
-[16072.109263]  release_nodes+0x110/0x200
-[16072.109266]  devres_release_group+0x7c/0xb0
-[16072.109274]  wacom_remove+0xc2/0x110 [wacom]
-[16072.109279]  hid_device_remove+0x6e/0xd0 [hid]
-[16072.109284]  device_release_driver_internal+0x158/0x210
-[16072.109288]  device_release_driver+0x12/0x20
-[16072.109291]  bus_remove_device+0xec/0x160
-[16072.109293]  device_del+0x1de/0x310
-[16072.109298]  hid_destroy_device+0x27/0x60 [hid]
-[16072.109303]  usbhid_disconnect+0x51/0x70 [usbhid]
-[16072.109308]  usb_unbind_interface+0x77/0x270
-[16072.109311]  device_release_driver_internal+0x158/0x210
-[16072.109315]  device_release_driver+0x12/0x20
-[16072.109318]  usb_driver_release_interface+0x77/0x80
-[16072.109321]  proc_ioctl+0x20f/0x250
-[16072.109325]  usbdev_do_ioctl+0x57f/0x1140
-[16072.109327]  ? __wake_up+0x44/0x50
-[16072.109331]  usbdev_ioctl+0xe/0x20
-[16072.109336]  do_vfs_ioctl+0xa4/0x600
-[16072.109339]  ? vfs_write+0x15a/0x1b0
-[16072.109343]  SyS_ioctl+0x79/0x90
-[16072.109347]  entry_SYSCALL_64_fastpath+0x24/0xab
-[16072.109349] RIP: 0033:0x7f20da807f47
-[16072.109351] RSP: 002b:00007ffc422ae398 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[16072.109353] RAX: ffffffffffffffda RBX: 00000000010b8560 RCX: 00007f20da807f47
-[16072.109355] RDX: 00007ffc422ae3a0 RSI: 00000000c0105512 RDI: 0000000000000009
-[16072.109356] RBP: 0000000000000000 R08: 00007ffc422ae3e0 R09: 0000000000000010
-[16072.109357] R10: 00000000000000a6 R11: 0000000000000246 R12: 0000000000000000
-[16072.109359] R13: 00000000010b8560 R14: 00007ffc422ae2e0 R15: 0000000000000000
+RTL8....S is also capable of use OOB interrupt.
 
-Reported-and-tested-by: Richard Hughes <rhughes@redhat.com>
-Tested-by: Aaron Skomra <Aaron.Skomra@wacom.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- drivers/power/supply/power_supply_core.c | 11 +++++++++--
- include/linux/power_supply.h             |  1 +
- 2 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-index feac7b066e6c..20a8c2a12199 100644
---- a/drivers/power/supply/power_supply_core.c
-+++ b/drivers/power/supply/power_supply_core.c
-@@ -14,6 +14,7 @@
- #include <linux/types.h>
- #include <linux/init.h>
- #include <linux/slab.h>
-+#include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/notifier.h>
- #include <linux/err.h>
-@@ -139,8 +140,13 @@ static void power_supply_deferred_register_work(struct work_struct *work)
- 	struct power_supply *psy = container_of(work, struct power_supply,
- 						deferred_register_work.work);
- 
--	if (psy->dev.parent)
--		mutex_lock(&psy->dev.parent->mutex);
-+	if (psy->dev.parent) {
-+		while (!mutex_trylock(&psy->dev.parent->mutex)) {
-+			if (psy->removing)
-+				return;
-+			msleep(10);
-+		}
-+	}
- 
- 	power_supply_changed(psy);
- 
-@@ -1071,6 +1077,7 @@ EXPORT_SYMBOL_GPL(devm_power_supply_register_no_ws);
- void power_supply_unregister(struct power_supply *psy)
- {
- 	WARN_ON(atomic_dec_return(&psy->use_cnt));
-+	psy->removing = true;
- 	cancel_work_sync(&psy->changed_work);
- 	cancel_delayed_work_sync(&psy->deferred_register_work);
- 	sysfs_remove_link(&psy->dev.kobj, "powers");
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index f0139b460a72..0a587526a916 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -251,6 +251,7 @@ struct power_supply {
- 	spinlock_t changed_lock;
- 	bool changed;
- 	bool initialized;
-+	bool removing;
- 	atomic_t use_cnt;
- #ifdef CONFIG_THERMAL
- 	struct thermal_zone_device *tzd;
--- 
-2.14.3
-
+>
+>Regards,
+>Arend
