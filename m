@@ -2,111 +2,134 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B020C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 01:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8A4C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 01:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16310253B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 01:36:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F23F253A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 01:40:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pbrmMlva"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16310253B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gsjC9Lvi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F23F253A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752510AbeFYBgR (ORCPT
+        id S1752498AbeFYBkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 21:36:17 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41016 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752351AbeFYBgP (ORCPT
+        Sun, 24 Jun 2018 21:40:20 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57778 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752153AbeFYBkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 21:36:15 -0400
-Received: by mail-pf0-f196.google.com with SMTP id a11-v6so5669629pff.8
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 18:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=meHRlJqg2ruAuLpLR74WKYY7dFkiXTRSc/OFcDRES2E=;
-        b=pbrmMlva5EmNAE7A2FPu0dndgOOYZ+A2VtbSRMuNU/KyJqjtWJsRbtVis5pwLHmqsb
-         hSCREA1gXzfZQZOc/13EU7n2CypBLp88o2CB4r6IVy3Irax6ifM+hzb8I6BGBAO96Fkj
-         tSxiMLCUuhoM/sxmXNTigYVIrzXA6c21KzZHmdqPFB1GRQM7z8etTo++DJ7TVJcd2Lxa
-         YE1H3p0hrtDzdxCxXWv6txOXMCBNCB9uRThc8HRQ82wBWkBK1tlBGxbEbqcT2HfpcBtS
-         M6ZxAO+ut7Qp7BL6V/Zj5GnTrI9L3BsEjNopoGhMUDEFyQ+DVpxVQvBGoGot3NSsFc4P
-         TuGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=meHRlJqg2ruAuLpLR74WKYY7dFkiXTRSc/OFcDRES2E=;
-        b=Zs4PTad4E+EiV2MfBfD9T1/4ZZ1bEPZpBBIoezHdoZy7tghXs2th/ajaKx8d0ouqk3
-         0r8OV9ROPDh4vfYAQCH6SXLUcLJFWCbKG8uiLLWGs7wAgSDqPIt8/Z+QLNcjFWHf1I8A
-         V2fJs5CSKtcpNZTVJogmRG20qUn7++QPD3kNW9i5KHOaJH1tfjho4Llo5LR+hZv5u6O2
-         ZF/+TBRl9T/iw4zeyITlq23WpsAB5DAX+RjUMmIuMpbpFOtIECeQBq0kZjDhyZQg5AnY
-         0f6sqlZiEIjxiwOxi5QbHyEl8ZtmMxbDnd+5MLwsb9DEpfJWl93cymOs5GaQSnoQGCq3
-         Qg9A==
-X-Gm-Message-State: APt69E3WZocz1F6HU1LAoxfUxFeeeFA8TxArGBJI92PQUaliq2m9skRe
-        SP1QkZlQXgVsQ8j+zd0Ecwf0wQ==
-X-Google-Smtp-Source: ADUXVKLtbBx06uJYNVcShaptU9srAPxQ+TDA11W3GzN+n/cdS9ePp90atXT0yGQ2KDNTt73/Hc8YSA==
-X-Received: by 2002:a63:714e:: with SMTP id b14-v6mr7340516pgn.73.1529890574708;
-        Sun, 24 Jun 2018 18:36:14 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm344449pfd.69.2018.06.24.18.36.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 18:36:13 -0700 (PDT)
-Subject: Re: m68k boot failure in -next bisected to 'xarray: Replace
- exceptional entries'
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Josef Bacik <jbacik@fb.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-References: <20180622184246.GA21226@roeck-us.net>
- <20180622210519.GA18630@bombadil.infradead.org>
- <20180622223335.GA12581@roeck-us.net>
- <20180624011703.GH18630@bombadil.infradead.org>
- <a62d8a6a-0376-2cbe-a34c-13e1242f06c6@roeck-us.net>
- <20180624032615.GA32667@bombadil.infradead.org>
- <31d75d3d-2184-6053-5283-f9fe3b10bf82@roeck-us.net>
- <20180624233937.GA3533@bombadil.infradead.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <755c8562-0989-8d8b-aac5-b8fac82702a1@roeck-us.net>
-Date:   Sun, 24 Jun 2018 18:36:12 -0700
+        Sun, 24 Jun 2018 21:40:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5P1e8JR134840;
+        Mon, 25 Jun 2018 01:40:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=IcWEY2ISOW9QUaFgQYEdXX5jRRAOQiHrNAoy2nR0UqY=;
+ b=gsjC9LviEYwv80JAkCUXRNpBFZUZuSxH6KIo9baFY4MR5M0j4a6WomNl03U/ol5jEVs+
+ x0rTi4/I2yfZpQAtyEUsk+pODQTSn0ng00n7jIxu7VVaqHAd1FQJ//1ZtEzjLafvTVlS
+ 5O3PLmfE7BYnnDuYos/tIIKXnQa/MBycjCiHhF36Gms9G6I8yLfnYdkKyY81Vypvun/s
+ XlHEkDrnDIKGJ/iU15w9NzcnDEvOTvay36kvcVi6Yj+dVEvOLO+YVG4iWe+tnKZTRupR
+ RSWJv0V8Ky+/gq2tFq6jl9R78doi3iGvAt9CrkZSVs4MDFSqO+N/h2kp6gUQQRTABEEZ Lw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2jt7mp8txa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Jun 2018 01:40:08 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5P1e7Nu020554
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Jun 2018 01:40:07 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5P1e651018024;
+        Mon, 25 Jun 2018 01:40:06 GMT
+Received: from [10.182.69.179] (/10.182.69.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 24 Jun 2018 18:40:06 -0700
+Subject: Re: [PATCH 5/5] nvme: use __blk_mq_complete_request in timeout path
+To:     Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>
+Cc:     axboe@kernel.dk, martin.petersen@oracle.com, keith.busch@intel.com,
+        josef@toxicpanda.com, ulf.hansson@linaro.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1529500964-28429-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1529500964-28429-6-git-send-email-jianchao.w.wang@oracle.com>
+ <20180620143956.GA20950@lst.de>
+ <42583ee2-fe9d-39da-b82a-38a27b03fdb3@oracle.com>
+ <1817441e-6810-ed40-a8fd-403742818aae@grimberg.me>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <cc93effe-8e97-d4a8-851e-33208cf837a7@oracle.com>
+Date:   Mon, 25 Jun 2018 09:40:29 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180624233937.GA3533@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1817441e-6810-ed40-a8fd-403742818aae@grimberg.me>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8934 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806250018
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/24/2018 04:39 PM, Matthew Wilcox wrote:
-> On Sat, Jun 23, 2018 at 09:01:37PM -0700, Guenter Roeck wrote:
->> Yes, that is much better:
->>
->> Build reference: next-20180622-1-g023ad92e94da
->>
->> Building mcf5208evb:m5208:m5208evb_defconfig:initrd ... running .... passed
->> Building q800:m68040:mac_defconfig:initrd ... running .... passed
->> Building q800:m68040:mac_defconfig:rootfs ... running .... passed
+
+
+On 06/25/2018 02:07 AM, Sagi Grimberg wrote:
 > 
-> great!  Here's a version which fixes idr_replace() too.
+>> Hi Christoph
+>>
+>> Thanks for your kindly response.
+>>
+>> On 06/20/2018 10:39 PM, Christoph Hellwig wrote:
+>>>> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+>>>> index 73a97fc..2a161f6 100644
+>>>> --- a/drivers/nvme/host/pci.c
+>>>> +++ b/drivers/nvme/host/pci.c
+>>>> @@ -1203,6 +1203,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
+>>>>           nvme_warn_reset(dev, csts);
+>>>>           nvme_dev_disable(dev, false);
+>>>>           nvme_reset_ctrl(&dev->ctrl);
+>>>> +        __blk_mq_complete_request(req);
+>>>>           return BLK_EH_DONE;
+>>>>       }
+>>>>   @@ -1213,6 +1214,11 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
+>>>>           dev_warn(dev->ctrl.device,
+>>>>                "I/O %d QID %d timeout, completion polled\n",
+>>>>                req->tag, nvmeq->qid);
+>>>> +        /*
+>>>> +         * nvme_end_request will invoke blk_mq_complete_request,
+>>>> +         * it will do nothing for this timed out request.
+>>>> +         */
+>>>> +        __blk_mq_complete_request(req);
+>>>
+>>> And this clearly is bogus.  We want to iterate over the tagetset
+>>> and cancel all requests, not do that manually here.
+>>>
+>>> That was the whole point of the original change.
+>>>
+>>
+>> For nvme-pci, we indeed have an issue that when nvme_reset_work->nvme_dev_disable returns, timeout path maybe still
+>> running and the nvme_dev_disable invoked by timeout path will race with the nvme_reset_work.
+>> However, the hole is still there right now w/o my changes, but just narrower.
+> 
+> Given the amount of fixes (and fixes of fixes) we had in the timeout handler, maybe it'd be a good idea to step back and take a another look?
+> 
+> Won't it be better to avoid disabling the device and return
+> BLK_EH_RESET_TIMER if we are not aborting in the timeout handler?
 > 
 
-Still passes:
+Yes, that would be an ideal status for nvme-pci.
+But we have to depend on the timeout handler to handle the timed out request from nvme_reset_work.
 
-Build reference: next-20180622-1-g374388bcb967
-
-Building mcf5208evb:m5208:m5208evb_defconfig:initrd ... running .... passed
-Building q800:m68040:mac_defconfig:initrd ... running .... passed
-Building q800:m68040:mac_defconfig:rootfs ... running .... passed
-
-Guenter
+Thanks
+Jianchao
