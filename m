@@ -2,177 +2,183 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3FAC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D09C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A41E02606D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:17:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A41E02606D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 24D8026034
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 19:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D8026034
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934992AbeFYTRl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 15:17:41 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:46135 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755637AbeFYTRk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 15:17:40 -0400
-Received: by mail-yb0-f195.google.com with SMTP id s14-v6so5604117ybp.13;
-        Mon, 25 Jun 2018 12:17:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z28XUjtEE33Yqr6rwj4JlSuJu1i5tF0RD0/8p+oakBs=;
-        b=XXKcuuvrW4YOK/ae27Qpb9/IkSmianIO9ngRmyoQ6wmf3DjNtDnYbtwTOQWzgVf76J
-         QpiT6HgFsp1/yk0YexmV0Dj4GKb0V5UItnUByt3/UFb29w+KJDUCgE8bOXj1PZ9KAuZK
-         FH/CJeQ1pjHro2GA6+Ai7v0WpoELKjyI04FMY8tb9giJgznBa5cq8XI3oBYhAAi96PK2
-         Wtf8urscXif4hoSWhwlEhFQdybwBUpN7aw0TMhmw7hwyuXSJrX7LOz8kkfjDWpgtpylt
-         ghcwZlXZhztcj4Z/5ac3DUKbXAH46TCWDnau4MXZ6fEFESudVP1Km9rG4dXlmBbNK5Yx
-         0C9Q==
-X-Gm-Message-State: APt69E31T1EFFfGyXrCdcxeaosxtoevycko5hsoBDAcpg0Q1eW++kJzN
-        Mg82u+3gqsg98Itr6xEWyw==
-X-Google-Smtp-Source: ADUXVKKHwiOfPpbH4D3/1ncWWLjgQjCFbqPjDLu1M/dZVTNCUzGbU8m7/Yhdoi4ajjbf6D71tMhXYw==
-X-Received: by 2002:a25:9742:: with SMTP id h2-v6mr7168792ybo.77.1529954259471;
-        Mon, 25 Jun 2018 12:17:39 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id q62-v6sm5938567ywg.2.2018.06.25.12.17.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 12:17:38 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 13:17:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rohit kumar <rohitkr@codeaurora.org>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, mark.rutland@arm.com,
-        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
-        srinivas.kandagatla@linaro.org, tiwai@suse.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] ASoC: qcom: dt-bindings: Add sdm845 machine
- bindings
-Message-ID: <20180625191737.GA13246@rob-hp-laptop>
-References: <1529578399-3633-1-git-send-email-rohitkr@codeaurora.org>
- <1529578399-3633-2-git-send-email-rohitkr@codeaurora.org>
+        id S934996AbeFYTUj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 15:20:39 -0400
+Received: from mga03.intel.com ([134.134.136.65]:22466 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755595AbeFYTUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 15:20:37 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 12:20:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,271,1526367600"; 
+   d="scan'208";a="240171130"
+Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
+  by fmsmga005.fm.intel.com with ESMTP; 25 Jun 2018 12:20:36 -0700
+Date:   Mon, 25 Jun 2018 13:20:36 -0600
+From:   Ross Zwisler <ross.zwisler@linux.intel.com>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] dm: prevent DAX mounts if not supported
+Message-ID: <20180625192036.GA11672@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Mike Snitzer <snitzer@redhat.com>, Toshi Kani <toshi.kani@hpe.com>,
+        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-xfs@vger.kernel.org
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-5-ross.zwisler@linux.intel.com>
+ <20180601215513.GA18712@redhat.com>
+ <20180604231508.GA10666@linux.intel.com>
+ <20180620151748.GA4847@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529578399-3633-2-git-send-email-rohitkr@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180620151748.GA4847@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 04:23:18PM +0530, Rohit kumar wrote:
-> Add devicetree bindings documentation file for SDM845 sound card.
+On Wed, Jun 20, 2018 at 11:17:49AM -0400, Mike Snitzer wrote:
+> On Mon, Jun 04 2018 at  7:15pm -0400,
+> Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
 > 
-> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-> ---
->  .../devicetree/bindings/sound/qcom,sdm845.txt      | 82 ++++++++++++++++++++++
->  1 file changed, 82 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/qcom,sdm845.txt
+> > On Fri, Jun 01, 2018 at 05:55:13PM -0400, Mike Snitzer wrote:
+> > > On Tue, May 29 2018 at  3:51pm -0400,
+> > > Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+> > > 
+> > > > Currently the code in dm_dax_direct_access() only checks whether the target
+> > > > type has a direct_access() operation defined, not whether the underlying
+> > > > block devices all support DAX.  This latter property can be seen by looking
+> > > > at whether we set the QUEUE_FLAG_DAX request queue flag when creating the
+> > > > DM device.
+> > > 
+> > > Wait... I thought DAX support was all or nothing?
+> > 
+> > Right, it is, and that's what I'm trying to capture.  The point of this series
+> > is to make sure that we don't use DAX thru DM if one of the DM members doesn't
+> > support DAX.
+> > 
+> > This is a bit tricky, though, because as you've pointed out there are a lot of
+> > elements that go into a block device actually supporting DAX.  
+> > 
+> > First, the block device has to have a direct_access() operation defined in its
+> > struct dax_operations table.  This is a static definition in the drivers,
+> > though, so it's necessary but not sufficient.  For example, the PMEM driver
+> > always defines a direct_access() operation, but depending on the mode of the
+> > namespace (raw, fsdax or sector) it may or may not support DAX.
+> > 
+> > The next step is that a driver needs to say that he block queue supports
+> > QUEUE_FLAG_DAX.  This again is necessary but not sufficient.  The PMEM driver
+> > currently sets this for all namespace modes, but I agree that this should be
+> > restricted to modes that support DAX.  Even once we do that, though, for the
+> > block driver this isn't fully sufficient.  We'd really like users to call
+> > bdev_dax_supported() so it can run some additional tests to make sure that DAX
+> > will work.
+> > 
+> > So, the real test that filesystems rely on is bdev_dax_suppported().
+> > 
+> > The trick is that with DM we need to verify each block device via
+> > bdev_dax_supported() just like a filesystem would, and then have some way of
+> > communicating the result of all those checks to the filesystem which is
+> > eventually mounted on the DM device.  At DAX mount time the filesystem will
+> > call bdev_dax_supported() on the DM device, but it'll really only check the
+> > first device.  
+> > 
+> > So, the strategy is to have DM manually check each member device via
+> > bdev_dax_supported() then if they all pass set QUEUE_FLAG_DAX.  This then
+> > becomes our one source of truth on whether or not a DM device supports DAX.
+> > When the filesystem mounts with DAX support it'll also run
+> > bdev_dax_supported(), but if we have QUEUE_FLAG_DAX set on the DM device, we
+> > know that this check will pass.
+> > 
+> > > > This is problematic if we have, for example, a dm-linear device made up of
+> > > > a PMEM namespace in fsdax mode followed by a ramdisk from BRD.
+> > > > QUEUE_FLAG_DAX won't be set on the dm-linear device's request queue, but
+> > > > we have a working direct_access() entry point and the first member of the
+> > > > dm-linear set *does* support DAX.
+> > > 
+> > > If you don't have a uniformly capable device then it is very dangerous
+> > > to advertise that the entire device has a certain capability.  That
+> > > completely bit me in the past with discard (because for every IO I
+> > > wasn't then checking if the destination device supported discards).
+> > >
+> > > It is all well and good that you're adding that check here.  But what I
+> > > don't like is how you're saying QUEUE_FLAG_DAX implies direct_access()
+> > > operation exists.. yet for raw PMEM namespaces we just discussed how
+> > > that is a lie.
+> > 
+> > QUEUE_FLAG_DAX does imply that direct_access() exits.  However, as discussed
+> > above for a given bdev we really do need to check bdev_dax_supported().
+> > 
+> > > SO this type of change showcases how the QUEUE_FLAG_DAX doesn't _really_
+> > > imply direct_access() exists.
+> > > 
+> > > > This allows the user to create a filesystem on the dm-linear device, and
+> > > > then mount it with DAX.  The filesystem's bdev_dax_supported() test will
+> > > > pass because it'll operate on the first member of the dm-linear device,
+> > > > which happens to be a fsdax PMEM namespace.
+> > > > 
+> > > > All DAX I/O will then fail to that dm-linear device because the lack of
+> > > > QUEUE_FLAG_DAX prevents fs_dax_get_by_bdev() from working.  This means that
+> > > > the struct dax_device isn't ever set in the filesystem, so
+> > > > dax_direct_access() will always return -EOPNOTSUPP.
+> > > 
+> > > Now you've lost me... these past 2 paragraphs.  Why can a user mount it
+> > > is DAX mode?  Because bdev_dax_supported() only accesses the first
+> > > portion (which happens to have DAX capabilities?)
+> > 
+> > Right.  bdev_dax_supported() runs all of its checks, and because they are
+> > running against the first block device in the dm set, they all pass.  But the
+> > overall DM device does not actually support DAX.
+> > 
+> > > Isn't this exactly why you should be checking for QUEUE_FLAG_DAX in the
+> > > caller (bdev_dax_supported)?  Why not use bdev_get_queue() and verify
+> > > QUEUE_FLAG_DAX is set in there?
+> > 
+> > I'll look into that for the next revision, thanks.
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,sdm845.txt b/Documentation/devicetree/bindings/sound/qcom,sdm845.txt
-> new file mode 100644
-> index 0000000..68feb08
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/qcom,sdm845.txt
-> @@ -0,0 +1,82 @@
-> +* Qualcomm Technologies Inc. SDM845 ASoC sound card driver
-> +
-> +This binding describes the SDM845 sound card, which uses qdsp for audio.
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "qcom,sdm845-sndcard"
-> +
-> +- qcom,audio-routing:
-
-Use just 'audio-routing'.
-
-> +	Usage: Optional
-> +	Value type: <stringlist>
-> +	Definition:  A list of the connections between audio components.
-> +		  Each entry is a pair of strings, the first being the
-> +		  connection's sink, the second being the connection's
-> +		  source. Valid names could be power supplies, MicBias
-> +		  of codec and the jacks on the board.
-> +
-> +- cdc-vdd-supply:
-> +	Usage: Optional
-> +	Value type: <phandle>
-> +	Definition: phandle of regulator supply required for codec vdd.
-
-The codec supply should be in the codec node.
-
-> +
-> += dailinks
-> +Each subnode of sndcard represents either a dailink, and subnodes of each
-> +dailinks would be cpu/codec/platform dais.
-> +
-> +- link-name:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: User friendly name for dai link
-> +
-> += CPU, PLATFORM, CODEC dais subnodes
-> +- cpu:
-> +	Usage: required
-> +	Value type: <subnode>
-> +	Definition: cpu dai sub-node
-> +
-> +- codec:
-> +	Usage: required
-> +	Value type: <subnode>
-> +	Definition: codec dai sub-node
-> +
-> +- platform:
-> +	Usage: Optional
-> +	Value type: <subnode>
-> +	Definition: platform dai sub-node
-> +
-> +- sound-dai:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: dai phandle/s and port of CPU/CODEC/PLATFORM node.
-> +
-> +Example:
-> +
-> +audio {
-> +	compatible = "qcom,sdm845-sndcard";
-> +	qcom,model = "sdm845-snd-card";
-
-Not documented. Just use 'model'.
-
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&pri_mi2s_active &pri_mi2s_ws_active>;
-> +	pinctrl-1 = <&pri_mi2s_sleep &pri_mi2s_ws_sleep>;
-> +
-> +	cdc-vdd-supply = <&pm8998_l14>;
-> +
-> +	mm1-dai-link {
-> +		link-name = "MultiMedia1";
-> +		cpu {
-> +			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
-> +		};
-> +	};
-> +
-> +	pri-mi2s-dai-link {
-> +		link-name = "PRI MI2S Playback";
-> +		cpu {
-> +			sound-dai = <&q6afedai PRIMARY_MI2S_RX>;
-> +		};
-> +
-> +		platform {
-> +			sound-dai = <&q6routing>;
-> +		};
-> +	};
-> +};
-> -- 
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-> is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> Have you made any progress on a new revision?
 > 
+> > > > By failing out of dm_dax_direct_access() if QUEUE_FLAG_DAX isn't set we let
+> > > > the filesystem know we don't support DAX at mount time.  The filesystem
+> > > > will then silently fall back and remove the dax mount option, causing it to
+> > > > work properly.
+> > > 
+> > > This shouldn't be needed.  Again, QUEUE_FLAG_DAX wasn't set.. so don't
+> > > allow code to falsely try operations that should've been gated by the
+> > > fact it wasn't set.
+> > 
+> > Right, the goal is to make QUEUE_FLAG_DAX our one source of truth for whether
+> > DM devices support DAX, and not have it half defined by that and half by the
+> > DM_TYPE_DAX_BIO_BASED.
+> 
+> My hope is that you can ignore the DM-internal book-keeping
+> (DM_TYPE_DAX_BIO_BASED) for now and just focus on fixing the real issue
+> of needing proper checking (as well as properly _not_ setting
+> QUEUE_FLAG_DAX in the case of pmem "raw").
+> 
+> Please advise, thanks Ross!
+
+I'm back working on this, and will send out another revision in the next day
+or so.
