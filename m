@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B21C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05488C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22DF925A99
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:40:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF48925A9A
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:40:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="U6x3Sbgn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VrUtp2JK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22DF925A99
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ht9RjAjb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b2MLVCYY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF48925A9A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755607AbeFYNkc (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:40:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43052 "EHLO
+        id S934038AbeFYNkl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:40:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43340 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933144AbeFYNk0 (ORCPT
+        with ESMTP id S1755611AbeFYNkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:40:26 -0400
+        Mon, 25 Jun 2018 09:40:36 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6B2DF607EB; Mon, 25 Jun 2018 13:40:25 +0000 (UTC)
+        id 7BA8460AD8; Mon, 25 Jun 2018 13:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529934025;
-        bh=gdqdoxZnD/dL8u/CA4IWtCMAT7CM63fj3LmfbqAMipQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=U6x3SbgnG8hCK2zqjxZet4uMuV0j0jPH9QX+J7uMrL4MZu3xo8mE9YLWEjmf3mJaI
-         f+k0tfjClpQ21m2UnjD2GO1t2nZv8bfXh5rnHhWQZ7LObaOtOVSEqXxVDRQjDDoKyi
-         X2CLLeaRLUGnF8O4GhSxv5bNGfLnnUIBJHQcQTNw=
+        s=default; t=1529934035;
+        bh=x7y1RuTMMeCbTld3SssK8denH9khodHFWWNnR0LSnag=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ht9RjAjbmzJk/1l91TdAMSgM2o8pA8/szJpXsMboo/M/C7VUKPQMImXxfwy6aWZ2Z
+         uCknG9J1sEpRgxMVg36/qXKp9QUL2X2xcJP3is0Q6fzEe6RZtwfMbUP35uZIzUJasI
+         DqKSYa9W0c7+MQbtUF7Z4Ypp/vNKteie9Kn+VEvY=
 Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id ED57760712;
-        Mon, 25 Jun 2018 13:40:21 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DB7326063F;
+        Mon, 25 Jun 2018 13:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529934024;
-        bh=gdqdoxZnD/dL8u/CA4IWtCMAT7CM63fj3LmfbqAMipQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VrUtp2JK2ZJe5FSpFZnkyRgbysOPKXwsIuGbyx3BHZGynBXw016S6LcD1oZN9Sg+y
-         3dUJL+M6+ZCPMITfmcskYKaQHshH5TkrLsRuKGfVZuglmIVQLl1Q7QCn0xsYCepxOC
-         5FC7yXuN17SC976My5145m8YN16WhrEfV0Bol4dI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED57760712
+        s=default; t=1529934034;
+        bh=x7y1RuTMMeCbTld3SssK8denH9khodHFWWNnR0LSnag=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=b2MLVCYYX81s4ZTxzAOGtgv5RZATfkeqYCPXtgXV6MLBZum9+xss/dMyJBbwFH0rh
+         QO5f0rtDQQ5wgUOzfuZtvBTtuEfJawJZYTa//0my20EnaT1BrbaLdWDsVEeFQ3y16x
+         DyXGqJqKECO4D7vDVWPKwqTPFwOCNPI2C0wiOcuE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB7326063F
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
 From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
@@ -57,108 +56,149 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
         hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v8 0/7] Enable Bluetooth functionality for WCN3990
-Date:   Mon, 25 Jun 2018 19:10:06 +0530
-Message-Id: <20180625134013.19684-1-bgodavar@codeaurora.org>
+Subject: [PATCH v8 3/7] Bluetooth: btqca: Redefine qca_uart_setup() to generic function.
+Date:   Mon, 25 Jun 2018 19:10:09 +0530
+Message-Id: <20180625134013.19684-4-bgodavar@codeaurora.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180625134013.19684-1-bgodavar@codeaurora.org>
+References: <20180625134013.19684-1-bgodavar@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These patches enables Bluetooth functinalties for new Qualcomm
-Bluetooth chip wnc3990. As this is latest chip with new features, 
-along with some common features to old chip "qcom,qca6174-bt".
-we have updated names of functions that are used for both the chips 
-to keep this generic and would help in future when we would have new 
-BT SoC.
+Redefinition of qca_uart_setup will help future Qualcomm Bluetooth
+SoC, to use the same function instead of duplicating the function.
+Added new arguments soc_type and soc_ver to the functions.
 
-The below are difference between new and old chips.
+These arguments will help to decide type of firmware files
+to be loaded into Bluetooth chip.
+soc_type holds the Bluetooth chip connected to APPS processor.
+soc_ver holds the Bluetooth chip version.
 
-*Power:
- *New chip: we use voltage regulators to turn on/off the chip and we 
-  must send a command on Tx line to turn on/off the chip completely.
- *Old chip: We turn on/off by setting a GPIO.
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+---
+Changes in v8:
+    * updated soc_type with enum.
 
- *Note: Turning on sequence differs between two chips.
+Changes in v7:
+    * initial patch
+    * redefined qca_uart_setup function to generic.
+---
+ drivers/bluetooth/btqca.c   | 23 ++++++++++++-----------
+ drivers/bluetooth/btqca.h   | 13 +++++++++++--
+ drivers/bluetooth/hci_qca.c |  3 ++-
+ 3 files changed, 25 insertions(+), 14 deletions(-)
 
-*Firmware download:
-  Only firmware file name differ from New and Old chip.
-  
-  So we reused some functions/structure/variables which are used for old 
-  chip to New chip by generic naming (may be future chips may use same functions).
-
- * As we have multiple changes for functions names,we have tested these patches 
-   on both chips.
-
-v8:
-  * Squashed [v7 2/8] and [v7 3/8] to one patch.
-  * updated functions to set and get the UART speeds.
-  * addressed review comments.
-
-v7:
-  * Renamed all the possible function of ROME to generic.
-  * updated with review comments for hci_qca and btqca
-  * fixed kbuild errors.
-  * created wrapper functions for re-usable blocks.
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index c5cf9cab438a..3b25be1be19c 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -327,9 +327,9 @@ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+ }
+ EXPORT_SYMBOL_GPL(qca_set_bdaddr_rome);
  
-v6:
-  * Hooked up qca_power to qca_serdev.
-  * renamed all the naming inconsistency functions with qca_*
-  * leveraged common code of ROME for wcn3990.
-  * created wrapper functions for re-usable blocks.
-  * updated function of _*regulator_enable and _*regualtor_disable.  
-  * removed redundant comments and functions.
-  * add code to derive the firmware files based on ROM Version.
-  * created new patch for common function of ROME and wcn3990.
-  * enables Qualcomm chip to operate at 3.2Mbps.
-  * updated names of functions that are used for both the chips to keep this generic. 
-
-v5:
-  * updated with review comments for hci_qca and btqca
+-int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate)
++int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
++		   enum qca_btsoc_type soc_type, u32 soc_ver)
+ {
+-	u32 rome_ver = 0;
+ 	struct rome_config config;
+ 	int err;
  
-v4:
-  * rebased all changes on top of bluetooth-next.
-  * addressed review comments.
-  * New patch created for firmware download.
-
-v3:
-  * Rebased all changes on top of bluetooth-next.
-  * dt-bindings: net: bluetooth: Add device tree bindings for QTI chip wcn3990
-    - added dt-binding snippet for bluetooth chip wcn3990.
-  * Bluetooth: Add support for wcn3990 soc.
-    - updated BT_INFO with bt_dev_info, where ever necessary.
-
-v2:
-   * Add support for wcn3990:
-    These changes are aligned as per serdev frame work.
-          We implemented these changes on top of https://patchwork.kernel.org/patch/10316093/
-        As this patch enable serdev for one of the Qualcomm BT chip.
-
-        The changes in the patch include.
-        - Adding support to voting up/down regulators for WCN3990.
-           - Bluetooth firmware download for wcn3990.
-
-  * Add device tree bindings for Atheros chips:
-          These changes are on top of https://patchwork.kernel.org/patch/10316097/.
-          - Description of device tree bindings.
-
-Balakrishna Godavarthi (7):
-  dt-bindings: net: bluetooth: Add device tree bindings for QTI chip
-    wcn3990
-  Bluetooth: btqca: Rename ROME specific functions to Generic functions
-  Bluetooth: btqca: Redefine qca_uart_setup() to generic function.
-  Bluetooth: hci_qca: Add wrapper functions for setting UART speed
-  Bluetooth: hci_qca: Enable 3.2 Mbps operating speed.
-  Bluetooth: btqca: Add wcn3990 firmware download support.
-  Bluetooth: hci_qca: Add support for Qualcomm Bluetooth chip wcn3990
-
- .../bindings/net/qualcomm-bluetooth.txt       |  30 +-
- drivers/bluetooth/btqca.c                     | 120 ++---
- drivers/bluetooth/btqca.h                     |  22 +-
- drivers/bluetooth/hci_qca.c                   | 434 +++++++++++++++---
- 4 files changed, 491 insertions(+), 115 deletions(-)
-
+@@ -337,19 +337,20 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate)
+ 
+ 	config.user_baud_rate = baudrate;
+ 
+-	/* Get QCA version information */
+-	err = qca_read_soc_version(hdev, &rome_ver);
+-	if (err < 0 || rome_ver == 0) {
+-		bt_dev_err(hdev, "QCA Failed to get version %d", err);
+-		return err;
++	if (!soc_ver) {
++		/* Get QCA version information */
++		err = qca_read_soc_version(hdev, &soc_ver);
++		if (err < 0 || soc_ver == 0) {
++			bt_dev_err(hdev, "QCA Failed to get version (%d)", err);
++			return err;
++		}
++		bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
+ 	}
+ 
+-	bt_dev_info(hdev, "QCA controller version 0x%08x", rome_ver);
+-
+ 	/* Download rampatch file */
+ 	config.type = TLV_TYPE_PATCH;
+ 	snprintf(config.fwname, sizeof(config.fwname), "qca/rampatch_%08x.bin",
+-		 rome_ver);
++		 soc_ver);
+ 	err = qca_download_firmware(hdev, &config);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "QCA Failed to download patch (%d)", err);
+@@ -359,7 +360,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate)
+ 	/* Download NVM configuration */
+ 	config.type = TLV_TYPE_NVM;
+ 	snprintf(config.fwname, sizeof(config.fwname), "qca/nvm_%08x.bin",
+-		 rome_ver);
++		 soc_ver);
+ 	err = qca_download_firmware(hdev, &config);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "QCA Failed to download NVM (%d)", err);
+diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
+index 5c9851b11838..24d6667eecf1 100644
+--- a/drivers/bluetooth/btqca.h
++++ b/drivers/bluetooth/btqca.h
+@@ -124,10 +124,18 @@ struct tlv_type_hdr {
+ 	__u8   data[0];
+ } __packed;
+ 
++enum qca_btsoc_type {
++	QCA_INVALID = -1,
++	QCA_AR3002,
++	QCA_ROME,
++	QCA_WCN3990
++};
++
+ #if IS_ENABLED(CONFIG_BT_QCA)
+ 
+ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+-int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate);
++int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
++		   enum qca_btsoc_type soc_type, u32 soc_ver);
+ int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version);
+ 
+ #else
+@@ -137,7 +145,8 @@ static inline int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdad
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate)
++static inline int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
++				 enum qca_btsoc_type soc_type, u32 soc_ver);
+ {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index d7b60669b656..fe62420ef838 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -929,6 +929,7 @@ static int qca_setup(struct hci_uart *hu)
+ 	struct qca_data *qca = hu->priv;
+ 	unsigned int speed, qca_baudrate = QCA_BAUDRATE_115200;
+ 	int ret;
++	int soc_ver = 0;
+ 
+ 	bt_dev_info(hdev, "ROME setup");
+ 
+@@ -966,7 +967,7 @@ static int qca_setup(struct hci_uart *hu)
+ 	}
+ 
+ 	/* Setup patch / NVM configurations */
+-	ret = qca_uart_setup(hdev, qca_baudrate);
++	ret = qca_uart_setup(hdev, qca_baudrate, QCA_ROME, soc_ver);
+ 	if (!ret) {
+ 		set_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+ 		qca_debugfs_init(hdev);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
