@@ -2,144 +2,148 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9856C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39E9C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C2425489
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5C402548C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:41:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VgfDwp4Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C2425489
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fXohHapR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C402548C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeFYFhW (ORCPT
+        id S1752098AbeFYFl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 01:37:22 -0400
-Received: from m50-138.163.com ([123.125.50.138]:47041 "EHLO m50-138.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751231AbeFYFhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 01:37:21 -0400
-X-Greylist: delayed 943 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Jun 2018 01:37:19 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=53DYconqiZzkaKPUw7
-        4tebksHRcgL5qM630kT/Eg2HE=; b=VgfDwp4ZjJhVVZV4XJv/LGImA5RGoifXkC
-        XJaTKgqjUlgc2fz+kl5mGd8+uTq1mVz2laqeYP2W36O5EF46ChTCp8f2IiVFUvHX
-        QU2UOv3020un/IthBpQEw2kxAPYvJABmZDiE9M4gHJO3ay1O50VgABraTPPzjG2Q
-        XL5sfCe/Q=
-Received: from localhost.localdomain (unknown [61.167.60.250])
-        by smtp1 (Coremail) with SMTP id C9GowAAnDo_AezBbQr5tBA--.35S2;
-        Mon, 25 Jun 2018 13:21:09 +0800 (CST)
-From:   LiuYang <yiqiaoxihui@163.com>
-To:     Joerg Roedel <joerg.roedel@amd.com>
-Cc:     mtosatti@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yiqiaoxihui <yiqiaoxihui@163.com>
-Subject: [PATCH] KVM: SVM: modify macro definition 'R' to 'R ' because of gcc-5+
-Date:   Mon, 25 Jun 2018 13:20:57 +0800
-Message-Id: <1529904057-112227-1-git-send-email-yiqiaoxihui@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: C9GowAAnDo_AezBbQr5tBA--.35S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAF1DKF4UXF47CFWfXr4DCFg_yoW5WFy8pF
-        WrGrsIka15tF13Ja47Jr1jkFWxWF1akrnrJr9IkFWfGF98Cr1xJr4q9rnrWrn8Xry8Z3Z3
-        AryYvF12va4jy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRGLviUUUUU=
-X-Originating-IP: [61.167.60.250]
-X-CM-SenderInfo: 51ltxtxr0lx3rl6rljoofrz/1tbiMwVwSlXlrCEqIQAAs6
+        Mon, 25 Jun 2018 01:41:26 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36966 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751353AbeFYFlY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 01:41:24 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v25-v6so3690876lji.4
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 22:41:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=15dkHlzOV3pHj48DfVqBEinwM+w4YJRFadLj5zjOaSU=;
+        b=fXohHapRB2z+xv7jNqdxUV+7ph+OEU/K6C0zZW1ezbgbPY5/HpCmWO7lkySj2Z5Gzn
+         Q2lTQKc7Zvwg54ie+LBd6dDZVl4oZyUwlaVEGIPsRM32LJ7oVvYaZELrH9LeQwBv11me
+         djFG/zLygh+6HkMQGU/GkfnBJksFm0zanZdKI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=15dkHlzOV3pHj48DfVqBEinwM+w4YJRFadLj5zjOaSU=;
+        b=X4DchMctKbJonobS8VPq4GwJOXz2IcR1e+N+pLYBNAWhTzmO27fn8+6cvGXYUmil9N
+         mRwrPpvbLQtPN96Oho/jV+ryebxVWw3lUiqLSpvbRYgtM38vG7bCM1otC/17xWTcg8Gq
+         V+eMVs/StEN+1vU7msyyZYaM+DgRsEebS2qApyj94ESuPls+f7GCd7u+QoTe7LDGTuAk
+         q/jVAz/X8803KU1EHTuyG6C+sFdXro0nOKEyRqh3pVienxqKOU+Dr6p61ZkPqaoBAtyP
+         qfo2TbeSKK37ItuVEu5B0MVW2BiJ3KQ8hWKS/juXin8XUKx0f/CQvzki4aE0Wsbyg6lR
+         pqrw==
+X-Gm-Message-State: APt69E2QExIuB9rgwdinYYEli/YUfwqjWwUHaTZu94zp6ggJYxW1o2D1
+        N8WEsQTxMGYwzGPESQPXpVjhsNStuW/araKxOmmj4zYm/7o=
+X-Google-Smtp-Source: ADUXVKKYtHUp4JB0gn9Pfq6pCEHVR1EDvx1kotMrCFYHBwHGmQBR97NICZY4rDcnLQ/ydoIfvkcDdnOe2uXkH9lqCyo=
+X-Received: by 2002:a2e:60:: with SMTP id 93-v6mr6909032lja.96.1529905283409;
+ Sun, 24 Jun 2018 22:41:23 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 22:41:22
+ -0700 (PDT)
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 25 Jun 2018 11:11:22 +0530
+Message-ID: <CA+G9fYu0E0fM+WaFim1WKup5BZvjtGZ_4ii5FhTUjNZEqaAuwA@mail.gmail.com>
+Subject: qemu-system-x86_64: mov_ss_trap_64 PANIC: double fault, error_code: 0x0
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Tinoco <rafael.tinoco@linaro.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yiqiaoxihui <yiqiaoxihui@163.com>
+Kselftest test case mov_ss_trap_64 is causing kernel panic on
+qemu-system-x86_64 and PASS on real x86_64 hardware.
 
-GCC 5.4.0 enables raw strings by default and they have higher priority
-than macros, thus R is interpreted incorrectly.
-Fix it by putting a space between macro R and a string literal.
+Test code snippet,
+main() {
+<>
+      printf("[RUN]\tMOV SS; CS CS INT3\n");
+      asm volatile ("mov %[ss], %%ss; .byte 0x2e, 0x2e; int3" :: [ss] "m" (ss));
+<>
+}
 
-Signed-off-by: yiqiaoxihui <yiqiaoxihui@163.com>
----
- arch/x86/kvm/svm.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+Linux version 4.17.3-rc1 (buildslave@lkft-01) (gcc version 6.2.1 20161016
+(Linaro GCC 6.2-2016.11)) #1 SMP Thu Jun 21 02:19:19 UTC 2018
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 506e4fe..dc328e1 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3676,13 +3676,13 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
-	local_irq_enable();
+This test was good on kernel 4.17.2
+good  git commit: 3816828a8cd06c5e0a0a9e0456013d61d979d975
 
-	asm volatile (
--		"push %%"R"bp; \n\t"
--		"mov %c[rbx](%[svm]), %%"R"bx \n\t"
--		"mov %c[rcx](%[svm]), %%"R"cx \n\t"
--		"mov %c[rdx](%[svm]), %%"R"dx \n\t"
--		"mov %c[rsi](%[svm]), %%"R"si \n\t"
--		"mov %c[rdi](%[svm]), %%"R"di \n\t"
--		"mov %c[rbp](%[svm]), %%"R"bp \n\t"
-+		"push %%"R "bp; \n\t"
-+		"mov %c[rbx](%[svm]), %%"R "bx \n\t"
-+		"mov %c[rcx](%[svm]), %%"R "cx \n\t"
-+		"mov %c[rdx](%[svm]), %%"R "dx \n\t"
-+		"mov %c[rsi](%[svm]), %%"R "si \n\t"
-+		"mov %c[rdi](%[svm]), %%"R "di \n\t"
-+		"mov %c[rbp](%[svm]), %%"R "bp \n\t"
- #ifdef CONFIG_X86_64
-		"mov %c[r8](%[svm]),  %%r8  \n\t"
-		"mov %c[r9](%[svm]),  %%r9  \n\t"
-@@ -3695,20 +3695,20 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
- #endif
+Bad on 4.17.3-rc1 (and stable-rc 4.14.52-rc1)
+Bad git commit: 894caab83aab21f120cde83eb5b969b99fcf8696
 
-		/* Enter guest mode */
--		"push %%"R"ax \n\t"
--		"mov %c[vmcb](%[svm]), %%"R"ax \n\t"
-+		"push %%"R "ax \n\t"
-+		"mov %c[vmcb](%[svm]), %%"R "ax \n\t"
-		__ex(SVM_VMLOAD) "\n\t"
-		__ex(SVM_VMRUN) "\n\t"
-		__ex(SVM_VMSAVE) "\n\t"
--		"pop %%"R"ax \n\t"
-+		"pop %%"R "ax \n\t"
+git repo:
+ https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
 
-		/* Save guest registers, load host registers */
--		"mov %%"R"bx, %c[rbx](%[svm]) \n\t"
--		"mov %%"R"cx, %c[rcx](%[svm]) \n\t"
--		"mov %%"R"dx, %c[rdx](%[svm]) \n\t"
--		"mov %%"R"si, %c[rsi](%[svm]) \n\t"
--		"mov %%"R"di, %c[rdi](%[svm]) \n\t"
--		"mov %%"R"bp, %c[rbp](%[svm]) \n\t"
-+		"mov %%"R "bx, %c[rbx](%[svm]) \n\t"
-+		"mov %%"R "cx, %c[rcx](%[svm]) \n\t"
-+		"mov %%"R "dx, %c[rdx](%[svm]) \n\t"
-+		"mov %%"R "si, %c[rsi](%[svm]) \n\t"
-+		"mov %%"R "di, %c[rdi](%[svm]) \n\t"
-+		"mov %%"R "bp, %c[rbp](%[svm]) \n\t"
- #ifdef CONFIG_X86_64
-		"mov %%r8,  %c[r8](%[svm]) \n\t"
-		"mov %%r9,  %c[r9](%[svm]) \n\t"
-@@ -3719,7 +3719,7 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
-		"mov %%r14, %c[r14](%[svm]) \n\t"
-		"mov %%r15, %c[r15](%[svm]) \n\t"
- #endif
--		"pop %%"R"bp"
-+		"pop %%"R "bp"
-		:
-		: [svm]"a"(svm),
-		  [vmcb]"i"(offsetof(struct vcpu_svm, vmcb_pa)),
-@@ -3740,7 +3740,7 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
-		  [r15]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R15]))
- #endif
-		: "cc", "memory"
--		, R"bx", R"cx", R"dx", R"si", R"di"
-+		, R "bx", R "cx", R "dx", R "si", R "di"
- #ifdef CONFIG_X86_64
-		, "r8", "r9", "r10", "r11" , "r12", "r13", "r14", "r15"
- #endif
---
-2.7.4
+qemu-system-x86_64 version 2.12.0
 
+steps to reproduce and test log,
++ cd tools/testing/selftests/x86
++ ./mov_ss_trap_64
+
+SS = 0x2b, &SS = 0x0x604188
+Set up a watchpoint
+DR0 = 604188, DR1 = 400a19, DR7 = 7000a
+[RUN] Read from watched memory (should get SIGTRAP)
+Got SIGTRAP with RIP=4008ea, EFLAGS.RF=0
+[RUN] MOV SS; INT3
+Got SIGTRAP with RIP=4008fb, EFLAGS.RF=0
+[RUN] MOV SS; INT 3
+Got SIGTRAP with RIP=40090d, EFLAGS.RF=0
+[RUN] M[   20.305426] PANIC: double fault, error_code: 0x0
+OV SS; CS CS INT3
+Got SIGTRAP with RIP=400920,[   20.308317] CPU: 3 PID: 2471 Comm:
+mov_ss_trap_64 Not tainted 4.17.3-rc1 #1
+ EFLAGS.RF=0
+[RUN] MOV SS; CSx14 INT3
+[   20.311664] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+ 1.10.2-1 04/01/2014
+[   20.314738] RIP: 0010:error_entry+0x32/0x100
+<trim>
+[   20.336649] Call Trace:
+[   20.337523]  <ENTRY_TRAMPOLINE>
+[   20.338507]  ? native_iret+0x7/0x7
+[   20.339611]  ? page_fault+0x8/0x30
+[   20.340693]  ? error_entry+0x86/0x100
+[   20.341871]  ? trace_hardirqs_off_caller+0x7/0xa0
+[   20.343212]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[   20.344554]  ? native_iret+0x7/0x7
+[   20.345647]  ? page_fault+0x8/0x30
+[   20.346716]  ? error_entry+0x86/0x100
+[   20.347853]  ? page_fault+0x8/0x30
+[   20.348920]  ? ist_enter+0x6/0xa0
+[   20.349961]  ? do_int3+0x34/0x120
+[   20.351095]  ? int3+0x14/0x20
+[   20.352047]  </ENTRY_TRAMPOLINE>
+[   20.353060] Code: 48 89 7c 24 08 52 31 d2 51 31 c9 50 41 50 45 31
+c0 41 51 45 31 c9 41 52 45 31 d2 41 53 45 31 db 53 31 db 55 31 ed 41
+54 45 31 e4 <41> 55 45 31 ed 41 56 45 31 f6 41 57 45 31 ff 56 48 8d 6c
+24 09
+[   20.357895] Kernel panic - not syncing: Machine halted.
+
+Bug ink,
+https://bugs.linaro.org/show_bug.cgi?id=3916
+
+Test case link,
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/tools/testing/selftests/x86/mov_ss_trap.c?h=linux-4.17.y
+
+Best regards
+Naresh Kamboju
