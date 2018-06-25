@@ -2,206 +2,130 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082D5C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D883C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5E94254A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:49:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E94254A7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 089BE25AD3
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:49:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZE4HAxWu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 089BE25AD3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933971AbeFYNtB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:49:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50586 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755345AbeFYNtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:49:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0B60C20703; Mon, 25 Jun 2018 15:48:58 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9E78820CFE;
-        Mon, 25 Jun 2018 15:48:47 +0200 (CEST)
-Message-ID: <0d20a3159ea710f47d1860a83b7c027116e8e97c.camel@bootlin.com>
-Subject: Re: [PATCH 6/9] media: cedrus: Add ops structure
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        tfiga@chromium.org, posciak@chromium.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Mon, 25 Jun 2018 15:48:48 +0200
-In-Reply-To: <20180625132933.tzr36vsucqsq3mmb@flea>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-         <20180613140714.1686-7-maxime.ripard@bootlin.com>
-         <939381a854760b1d54984ae0f534ec03312ec8e0.camel@bootlin.com>
-         <20180625132933.tzr36vsucqsq3mmb@flea>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-0NIUE1z8vrsnfV1Gs03l"
-X-Mailer: Evolution 3.28.2 
-Mime-Version: 1.0
+        id S934044AbeFYNtP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:49:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45698 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933983AbeFYNtO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:49:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rJrcEJWv2SyO0fTBpNPxZM6DdoMUkg2ZxTOUkjJVMJE=; b=ZE4HAxWupcHxqyybM5uNyvb0B
+        JQ9xniAbkNFd4TTcfZ6zuS1cNZyeTOH9cTNxMVaeEMqkNHuhbooaHK0t19Q1S588+T45/Vj6YMFN6
+        FHrA37oN3poenroLdIVZDWzHFNNa2IEVD8wb/JRrnM3eCv0/vQjfbge8KAwvQeRniD0piF7b9XYpl
+        VsrpCmnPWVq4vvY/Z8AkZ3/6bJnOD+gzSL/803I+feKIiwrVN5OG2swwpjOEeQEcfXkB8bmtsZ68N
+        MiYeNhh9zzHvimr2l1WomESWTUZGA6rpc9q+o5sqqmBsOt4hGExLr2DhskQiA8628/bEaWtbd6uAp
+        em+z6f5bw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXRrQ-0006TM-V2; Mon, 25 Jun 2018 13:48:53 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5EC722029F1DB; Mon, 25 Jun 2018 15:48:51 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 15:48:51 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     tglx@linutronix.de, Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v12 01/11] x86: text_poke() may access uninitialized
+ struct pages
+Message-ID: <20180625134851.GB2494@hirez.programming.kicks-ass.net>
+References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
+ <20180621212518.19914-2-pasha.tatashin@oracle.com>
+ <20180625081429.GS2494@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1806251038190.8650@nanos.tec.linutronix.de>
+ <20180625090915.GV2494@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1806251112460.8650@nanos.tec.linutronix.de>
+ <20180625092229.GW2494@hirez.programming.kicks-ass.net>
+ <CAGM2rebqeEwQfYBAQT=SNLceMQ1fruG2zMqQN6hM1JA_KedR0A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGM2rebqeEwQfYBAQT=SNLceMQ1fruG2zMqQN6hM1JA_KedR0A@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 25, 2018 at 08:32:41AM -0400, Pavel Tatashin wrote:
+> > It _should_ all work.. but scary, who knows where this early stuff ends
+> > up being used.
+> 
+> I have tested this patch
 
---=-0NIUE1z8vrsnfV1Gs03l
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Sure,.. but call me paranoid.
 
-Hi,
+> However, the other way to fix this bug is to change:
+> arch/x86/kernel/jump_label.c
+> 
+> -void arch_jump_label_transform(struct jump_entry *entry,
+> +void __ref arch_jump_label_transform(struct jump_entry *entry,
+>                                enum jump_label_type type)
+>  {
+> +       void *(*poker)(void *, const void *, size_t) = NULL;
+> +
+> +       if (unlikely(!after_bootmem))
+> +               poker = text_poke_early;
+> +
+>         mutex_lock(&text_mutex);
+> -       __jump_label_transform(entry, type, NULL, 0);
+> +       __jump_label_transform(entry, type, poker, 0);
+>         mutex_unlock(&text_mutex);
+>  }
 
-On Mon, 2018-06-25 at 15:29 +0200, Maxime Ripard wrote:
-> Hi!
->=20
-> On Thu, Jun 21, 2018 at 11:49:54AM +0200, Paul Kocialkowski wrote:
-> > Hi,
-> >=20
-> > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> > > In order to increase the number of codecs supported, we need to decou=
-ple
-> > > the MPEG2 only code that was there up until now and turn it into some=
-thing
-> > > a bit more generic.
-> > >=20
-> > > Do that by introducing an intermediate ops structure that would need =
-to be
-> > > filled by each supported codec. Start by implementing in that structu=
-re the
-> > > setup and trigger hooks that are currently the only functions being
-> > > implemented by codecs support.
-> > >=20
-> > > To do so, we need to store the current codec in use, which we do at
-> > > start_streaming time.
-> >=20
-> > With the comments below taken in account, this is:
-> >=20
-> > Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->=20
-> Thanks!
->=20
-> > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > ---
-> > >  .../platform/sunxi/cedrus/sunxi_cedrus.c      |  2 ++
-> > >  .../sunxi/cedrus/sunxi_cedrus_common.h        | 11 +++++++
-> > >  .../platform/sunxi/cedrus/sunxi_cedrus_dec.c  | 10 +++---
-> > >  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 11 +++++--
-> > >  .../sunxi/cedrus/sunxi_cedrus_mpeg2.h         | 33 -----------------=
---
-> > >  .../sunxi/cedrus/sunxi_cedrus_video.c         | 17 +++++++++-
-> > >  6 files changed, 42 insertions(+), 42 deletions(-)
-> > >  delete mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_=
-mpeg2.h
-> > >=20
-> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c b/dri=
-vers/media/platform/sunxi/cedrus/sunxi_cedrus.c
-> > > index ccd41d9a3e41..bc80480f5dfd 100644
-> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c
-> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c
-> > > @@ -244,6 +244,8 @@ static int sunxi_cedrus_probe(struct platform_dev=
-ice *pdev)
-> > >  	if (ret)
-> > >  		return ret;
-> > > =20
-> > > +	dev->dec_ops[SUNXI_CEDRUS_CODEC_MPEG2] =3D &sunxi_cedrus_dec_ops_mp=
-eg2;
-> > > +
-> > >  	ret =3D v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
-> > >  	if (ret)
-> > >  		goto unreg_media;
-> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.=
-h b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> > > index a5f83c452006..c2e2c92d103b 100644
-> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> > > @@ -75,6 +75,7 @@ struct sunxi_cedrus_ctx {
-> > >  	struct v4l2_pix_format_mplane src_fmt;
-> > >  	struct sunxi_cedrus_fmt *vpu_dst_fmt;
-> > >  	struct v4l2_pix_format_mplane dst_fmt;
-> > > +	enum sunxi_cedrus_codec current_codec;
-> >=20
-> > Nit: for consistency with the way things are named, "codec_current"
-> > probably makes more sense.
->=20
-> I'm not quite sure what you mean by consitency here. This structure
-> has 5 other variables with two words: vpu_src_fmt, src_fmt,
-> vpu_dst_fmt, dst_fmt and dst_bufs. codec_current would be going
-> against the consistency of that structure.
+No need to elide that mutex I think, by going through the normal
+static_key_enable() stuff you already take a whole bunch of them, and
+they should work early just fine (no contention etc.).
 
-Mhh, not sure what I meant after all regarding consistency. I was
-thinking in terms of name/qualifier, but it's clear that the structure
-for the names of already-existing elements has qualifiers first and name
-at the end, so "curent_codec" indeed fits best.
+Also, I think the better condition is @early_boot_irqs_disabled, until
+we enable IRQs for the first time, text_poke_early() should be fine. And
+once we enable interrupts, all that other crud should really be working.
 
-Sorry for the noise!
+This gives:
 
-> > IMO using the natural English order is fine for temporary variables, bu=
-t
-> >  less so for variables used in common parts like structures. This allow=
-s
-> > seeing "_" as a logical hierarchical delimiter that automatically makes
-> > us end up with consistent prefixes that can easily be grepped for and
-> > derived.
-> >=20
-> > But that's just my 2 cents, it's really not a big deal, especially in
-> > this case!
-> >=20
-> > >  	struct v4l2_ctrl_handler hdl;
-> > >  	struct v4l2_ctrl *ctrls[SUNXI_CEDRUS_CTRL_MAX];
-> > > @@ -107,6 +108,14 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer=
-(const struct vb2_buffer *p)
-> > >  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
-> > >  }
-> > > =20
-> > > +struct sunxi_cedrus_dec_ops {
-> > > +	void (*setup)(struct sunxi_cedrus_ctx *ctx,
-> > > +		      struct sunxi_cedrus_run *run);
-> > > +	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
-> >=20
-> > By the way, are we sure that these functions won't ever fail?
-> > I think this is the case for MPEG2 (there is virtually nothing to check
-> > for errors) but perhaps it's different for H264.
->=20
-> It won't fail either, and if we need to change it somewhere down the
-> line, it's quite easy to do.
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index e56c95be2808..425ba6102828 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -46,6 +46,9 @@ static void __jump_label_transform(struct jump_entry *entry,
+ 	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
+ 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
+ 
++	if (early_boot_irqs_disabled)
++		poker = text_poke_early;
++
+ 	if (type == JUMP_LABEL_JMP) {
+ 		if (init) {
+ 			/*
 
-Right, let's keep it that way then.
+> Also, modify text_poke_early to call sync_core().
 
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-0NIUE1z8vrsnfV1Gs03l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsw8sAACgkQ3cLmz3+f
-v9FkwAf/fw1tjLwFGOghickXiQz7CRqbY7gepneYN3d5MLmEk0/SeK9bNpHW7oXE
-aLJYa8YptZeuP00DzB59dNAgQPSvz7q+/ZpCFPsp6F9kQh4fToSvK+BLZihmbgTJ
-E6fmHW8uO6iOcdkTI5TfsDmyHyg5Zgv0pYunnb4uiLSEKUsrbTdOZOtCVm6SlCQJ
-x5QpRGRzAAHF9pk2zK/ZMtL2ygj99Vnis6n9RGymnGZ5j/LkN+9dW700HZ6F5THx
-JLKEZtvo/Ktxt9b3cZwyRuZXJbus3t7JX6DzJR31ZfcdTGweu1IPSS1jq6tqjRY2
-29tcnDNT7jStdYsrLfJfNzxP8XLL1A==
-=qfoR
------END PGP SIGNATURE-----
-
---=-0NIUE1z8vrsnfV1Gs03l--
-
+and that.
