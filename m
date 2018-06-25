@@ -2,94 +2,121 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 519A3C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21371C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0661C256E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:44:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0661C256E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D0718256F1
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:44:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bRPkIloe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0718256F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755065AbeFYJoR (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
+        id S932073AbeFYJoz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 05:44:55 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52693 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754998AbeFYJoR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 05:44:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:44020 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754839AbeFYJoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:44:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 02:44:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,269,1526367600"; 
-   d="scan'208";a="59953095"
-Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.42])
-  by FMSMGA003.fm.intel.com with ESMTP; 25 Jun 2018 02:44:04 -0700
-Message-ID: <0a639f45119451143be8d8cf9c7f0041d8436b47.camel@linux.intel.com>
-Subject: Re: [PATCH v11 00/13] Intel SGX1 support
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        "open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" 
-        <kvm@vger.kernel.org>, Len Brown <len.brown@intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:SPARSE CHECKER" <linux-sparse@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+Received: by mail-wm0-f67.google.com with SMTP id p126-v6so8489095wmb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 02:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KgzUsT5klp3mH+Bs9uLjhA8WoqAAQnIELCbF/ZgvuUE=;
+        b=bRPkIloeOe4Ki5yJFakry4UdMKBBhGV76cb8uMShjV17zIiBePU3iS2GOOIB5oF+W6
+         XgSymg7KE/fWCcXExsaaqIqwQtUEs8aJrRhebeE9bStVoiwxOeoog7odETiI6gB7RdPF
+         GKG/WgLOEfaMEbuynskcYCir9CJRiT7CUyc7U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KgzUsT5klp3mH+Bs9uLjhA8WoqAAQnIELCbF/ZgvuUE=;
+        b=IElsYryf5iCVgpPpXgFEpPHevy3GMrUkzXmYVbUK4nZtewoEBRVL/alktFy7R02U0l
+         04HAGgooiPP24UkEztjwDTOevlOPkgyLY0X7NW3a2xk4IwZkD6+V+PRdoGN6MPjhLEjG
+         RqDWgKtbnTO52ca4bYMXrH6kQdYoIFpkPOPHOn+npdq2T2wCFMqMB6lsTG2HFebmOppJ
+         ihNbanX4n8/Wa5/evkUyzGJu1wWE2UHXCxvVd+AFH273YO3ZFq39vtsI1Gw36vZFAEPA
+         m1OErHy5ycJb/FuWaPscrM09gsd0/Kg3bHqJ84crwotekyMpDJOvi4hn8/awxJePIyDY
+         GOMg==
+X-Gm-Message-State: APt69E2WAFKfvq+6h5fKFQRzyz5NAKgdpjjfEap8hXy+nX83Btjc6C4Q
+        INhVnbVBmwEdxWOAZYMaKEMzRw==
+X-Google-Smtp-Source: ADUXVKKOAxwS24httRL2quGKLO1PJUs4PFVbulIIKHbdypCbJQi7BhI4eh3MeIxAieRnlc7tEM+hXg==
+X-Received: by 2002:a1c:3fc2:: with SMTP id m185-v6mr385587wma.37.1529919855820;
+        Mon, 25 Jun 2018 02:44:15 -0700 (PDT)
+Received: from ?IPv6:2001:41d0:fe90:b800:a134:e815:db69:bcb1? ([2001:41d0:fe90:b800:a134:e815:db69:bcb1])
+        by smtp.googlemail.com with ESMTPSA id 137-v6sm14823441wmv.28.2018.06.25.02.44.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 02:44:15 -0700 (PDT)
+Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle injection
+ framework
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Vikas Shivappa <vikas.shivappa@linux.intel.com>
-Date:   Mon, 25 Jun 2018 12:44:04 +0300
-In-Reply-To: <20180621125511.GA4287@gmail.com>
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
-         <20180621125511.GA4287@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180620043415.57yvgzlye4l7wdqy@vireshk-i7>
+ <fc2ef4e9-7ec8-c644-9495-e33f000531b2@linaro.org>
+ <CAJZ5v0gBC_ZzUBJcNEmeAbDLrJA6K9SqohS0GXtUANKc4o+T_g@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <df526d9f-706c-3875-17c2-06c52fcf1ddf@linaro.org>
+Date:   Mon, 25 Jun 2018 11:44:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0gBC_ZzUBJcNEmeAbDLrJA6K9SqohS0GXtUANKc4o+T_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-21 at 14:55 +0200, Ingo Molnar wrote:
-> Just some quick feedback: these are core kernel functionality and should be
-> in 
-> arch/x86/, not in drivers/platform/.
-
-We have in core what is used by both KVM and the driver right now (EPC
-management, SGX detection and some other bits). The driver uses this
-functionality to launch enclaves.
-
-> Thanks,
+On 25/06/2018 10:20, Rafael J. Wysocki wrote:
+> Hi Daniel,
 > 
-> 	Ingo
+> On Mon, Jun 25, 2018 at 12:40 AM, Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>> Hi Rafael,
+>>
+>> do you think this patch is acceptable for merging ?
+> 
+> Well, it needs a bit of work still IMO, but let me comment on the patch itself.
+> 
+> Also, can you point me to the code using it that you have, please?
+> I'd like to try to switch powerclamp over to it.
 
-/Jarkko
+
+Sure, here it is:
+
+https://git.linaro.org/people/daniel.lezcano/linux.git/log/?h=thermal/idle-inject-v4
+
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
