@@ -2,110 +2,146 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D30BAC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 158B3C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B30B2566A
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:09:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pkHgu/f7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B30B2566A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C58442566D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:10:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C58442566D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754746AbeFYJJe (ORCPT
+        id S1754798AbeFYJKB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:09:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44496 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754449AbeFYJJc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:09:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T4IcgGg6PdWvhDaUl9WTorcuQL/6wKnWxj8NavTnoZE=; b=pkHgu/f7xRh3z10uhRLgjfD82
-        LqxSGC+lA8hvE/fGShfdm2/cVt5dcoPADfFUPhHq3T8mLH5olw/JvikOaJ40xnmIVxABxXuqAjvlJ
-        fOE5dEKll2tE1mdOhMtY/YIXODcorRTuxXXxS9IMkm/NLetqX3svL3rSiUpYvYj3sSzL5qhvnpuPU
-        RVKVd7YadayfhoHyATJzuCa+WP6mekCTIa8YNdz5AtrbSWC7SQvZrqrixhAAekJxAgqMfc1QJfz0K
-        tEbAOU1PAQcRSbuIJhg4/qG8bODziP7vGt3CO1p3+wa9V+xjwrGDf9sYYdOdIo7fgLC/l69uOpu7w
-        Z2Yq6Qgaw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXNUr-0001qN-B3; Mon, 25 Jun 2018 09:09:17 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CC2182029F1D9; Mon, 25 Jun 2018 11:09:15 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 11:09:15 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        prarit@redhat.com, feng.tang@intel.com, pmladek@suse.com,
-        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v12 01/11] x86: text_poke() may access uninitialized
- struct pages
-Message-ID: <20180625090915.GV2494@hirez.programming.kicks-ass.net>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
- <20180621212518.19914-2-pasha.tatashin@oracle.com>
- <20180625081429.GS2494@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1806251038190.8650@nanos.tec.linutronix.de>
+        Mon, 25 Jun 2018 05:10:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55778 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754449AbeFYJJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 05:09:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id CD43EAB43;
+        Mon, 25 Jun 2018 09:09:57 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 11:09:57 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     jing xia <jing.xia.mail@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+Message-ID: <20180625090957.GF28965@dhcp22.suse.cz>
+References: <alpine.LRH.2.02.1806150832100.26650@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180615130925.GI24039@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806181003560.4201@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180619104312.GD13685@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806191228110.25656@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180622090151.GS10465@dhcp22.suse.cz>
+ <20180622090935.GT10465@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806220845190.8072@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180622130524.GZ10465@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806221447050.2717@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806251038190.8650@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <alpine.LRH.2.02.1806221447050.2717@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 10:39:24AM +0200, Thomas Gleixner wrote:
-> On Mon, 25 Jun 2018, Peter Zijlstra wrote:
-> > On Thu, Jun 21, 2018 at 05:25:08PM -0400, Pavel Tatashin wrote:
-> > > -void *text_poke(void *addr, const void *opcode, size_t len)
-> > > +void __ref *text_poke(void *addr, const void *opcode, size_t len)
-> > >  {
-> > >  	unsigned long flags;
-> > >  	char *vaddr;
-> > >  	struct page *pages[2];
-> > >  	int i;
-> > >  
-> > > +	/* While boot memory allocator is runnig we cannot use struct
-> > 
-> > Broken comment style..
-> > 
-> > > +	 * pages as they are not yet initialized. However, we also know
-> > > +	 * that this is early in boot, and it is safe to fallback to
-> > > +	 * text_poke_early.
-> > > +	 */
-> > > +	if (unlikely(!after_bootmem))
-> > > +		return text_poke_early(addr, opcode, len);
-> > 
-> > I'm not entirely sure this is right.. Because not only do we need the
-> > whole fixmap stuff working, we also need #DB and the IPI handlers set-up
-> > and working.
+On Fri 22-06-18 14:57:10, Mikulas Patocka wrote:
 > 
-> IPI? That's early UP boot why would you need an IPI?
+> 
+> On Fri, 22 Jun 2018, Michal Hocko wrote:
+> 
+> > On Fri 22-06-18 08:52:09, Mikulas Patocka wrote:
+> > > 
+> > > 
+> > > On Fri, 22 Jun 2018, Michal Hocko wrote:
+> > > 
+> > > > On Fri 22-06-18 11:01:51, Michal Hocko wrote:
+> > > > > On Thu 21-06-18 21:17:24, Mikulas Patocka wrote:
+> > > > [...]
+> > > > > > What about this patch? If __GFP_NORETRY and __GFP_FS is not set (i.e. the 
+> > > > > > request comes from a block device driver or a filesystem), we should not 
+> > > > > > sleep.
+> > > > > 
+> > > > > Why? How are you going to audit all the callers that the behavior makes
+> > > > > sense and moreover how are you going to ensure that future usage will
+> > > > > still make sense. The more subtle side effects gfp flags have the harder
+> > > > > they are to maintain.
+> > > > 
+> > > > So just as an excercise. Try to explain the above semantic to users. We
+> > > > currently have the following.
+> > > > 
+> > > >  * __GFP_NORETRY: The VM implementation will try only very lightweight
+> > > >  *   memory direct reclaim to get some memory under memory pressure (thus
+> > > >  *   it can sleep). It will avoid disruptive actions like OOM killer. The
+> > > >  *   caller must handle the failure which is quite likely to happen under
+> > > >  *   heavy memory pressure. The flag is suitable when failure can easily be
+> > > >  *   handled at small cost, such as reduced throughput
+> > > > 
+> > > >  * __GFP_FS can call down to the low-level FS. Clearing the flag avoids the
+> > > >  *   allocator recursing into the filesystem which might already be holding
+> > > >  *   locks.
+> > > > 
+> > > > So how are you going to explain gfp & (__GFP_NORETRY | ~__GFP_FS)? What
+> > > > is the actual semantic without explaining the whole reclaim or force
+> > > > users to look into the code to understand that? What about GFP_NOIO |
+> > > > __GFP_NORETRY? What does it mean to that "should not sleep". Do all
+> > > > shrinkers have to follow that as well?
+> > > 
+> > > My reasoning was that there is broken code that uses __GFP_NORETRY and 
+> > > assumes that it can't fail - so conditioning the change on !__GFP_FS would 
+> > > minimize the diruption to the broken code.
+> > > 
+> > > Anyway - if you want to test only on __GFP_NORETRY (and fix those 16 
+> > > broken cases that assume that __GFP_NORETRY can't fail), I'm OK with that.
+> > 
+> > As I've already said, this is a subtle change which is really hard to
+> > reason about. Throttling on congestion has its meaning and reason. Look
+> > at why we are doing that in the first place. You cannot simply say this
+> 
+> So - explain why is throttling needed. You support throttling, I don't, so 
+> you have to explain it :)
+> 
+> > is ok based on your specific usecase. We do have means to achieve that.
+> > It is explicit and thus it will be applied only where it makes sense.
+> > You keep repeating that implicit behavior change for everybody is
+> > better.
+> 
+> I don't want to change it for everybody. I want to change it for block 
+> device drivers. I don't care what you do with non-block drivers.
 
-Because the way this is called is from __jump_label_transform() ->
-text_poke_bp() -> text_poke() -> text_poke_early().
+Well, it is usually onus of the patch submitter to justify any change.
+But let me be nice on you, for once. This throttling is triggered only
+if we all the pages we have encountered during the reclaim attempt are
+dirty and that means that we are rushing through the LRU list quicker
+than flushers are able to clean. If we didn't throttle we could hit
+stronger reclaim priorities (aka scan more to reclaim memory) and
+reclaim more pages as a result.
 
-And if you look at text_poke_bp(), you'll note it relies on #DB and
-on_each_cpu() IPIs.
+> > I guess we will not agree on that part. I consider it a hack
+> > rather than a systematic solution. I can easily imagine that we just
+> > find out other call sites that would cause over reclaim or similar
+> 
+> If a __GFP_NORETRY allocation does overreclaim - it could be fixed by 
+> returning NULL instead of doing overreclaim. The specification says that 
+> callers must handle failure of __GFP_NORETRY allocations.
+> 
+> So yes - if you think that just skipping throttling on __GFP_NORETRY could 
+> cause excessive CPU consumption trying to reclaim unreclaimable pages or 
+> something like that - then you can add more points where the __GFP_NORETRY 
+> is failed with NULL to avoid the excessive CPU consumption.
 
-Which is of course exactly the reason I avoided text_poke_bp() entirely
-in the first place.
-
-
+Which is exactly something I do not want to do. Spread __GFP_NORETRY all
+over the reclaim code. Especially for something we already have means
+for...
+-- 
+Michal Hocko
+SUSE Labs
