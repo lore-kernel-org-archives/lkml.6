@@ -2,166 +2,164 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EE9C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2F7C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C9E25A71
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:32:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C9E25A71
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9AE3925A79
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:32:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE3925A79
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934080AbeFYNcD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:32:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50182 "EHLO mx2.suse.de"
+        id S934100AbeFYNcr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:32:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49990 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933583AbeFYNcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:32:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0AC1AAEE3;
-        Mon, 25 Jun 2018 13:31:59 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 15:31:57 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Felix Kuehling <felix.kuehling@amd.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-mm@kvack.org,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180625133157.GL28965@dhcp22.suse.cz>
-References: <20180622150242.16558-1-mhocko@kernel.org>
- <0aa9f695-5702-6704-9462-7779cbfdb3fd@amd.com>
- <20180622152444.GC10465@dhcp22.suse.cz>
- <dd260800-6457-f3ff-47df-b65ef258f4b7@amd.com>
- <20180625080103.GB28965@dhcp22.suse.cz>
+        id S933919AbeFYNcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:32:45 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 04673206A0; Mon, 25 Jun 2018 15:32:43 +0200 (CEST)
+Received: from localhost (unknown [80.255.6.130])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BD0BB206D8;
+        Mon, 25 Jun 2018 15:32:32 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 15:32:33 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 8/9] media: cedrus: Add start and stop decoder operations
+Message-ID: <20180625133233.3b7qup3tcgydfo5t@flea>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+ <20180613140714.1686-9-maxime.ripard@bootlin.com>
+ <f37f23580c92728bbcd5bfe3fff506b5bb2bdfd0.camel@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bkh4pwgu6vcj5lmf"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180625080103.GB28965@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <f37f23580c92728bbcd5bfe3fff506b5bb2bdfd0.camel@bootlin.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 25-06-18 10:01:03, Michal Hocko wrote:
-> On Fri 22-06-18 16:09:06, Felix Kuehling wrote:
-> > On 2018-06-22 11:24 AM, Michal Hocko wrote:
-> > > On Fri 22-06-18 17:13:02, Christian König wrote:
-> > >> Hi Michal,
-> > >>
-> > >> [Adding Felix as well]
-> > >>
-> > >> Well first of all you have a misconception why at least the AMD graphics
-> > >> driver need to be able to sleep in an MMU notifier: We need to sleep because
-> > >> we need to wait for hardware operations to finish and *NOT* because we need
-> > >> to wait for locks.
-> > >>
-> > >> I'm not sure if your flag now means that you generally can't sleep in MMU
-> > >> notifiers any more, but if that's the case at least AMD hardware will break
-> > >> badly. In our case the approach of waiting for a short time for the process
-> > >> to be reaped and then select another victim actually sounds like the right
-> > >> thing to do.
-> > > Well, I do not need to make the notifier code non blocking all the time.
-> > > All I need is to ensure that it won't sleep if the flag says so and
-> > > return -EAGAIN instead.
-> > >
-> > > So here is what I do for amdgpu:
-> > 
-> > In the case of KFD we also need to take the DQM lock:
-> > 
-> > amdgpu_mn_invalidate_range_start_hsa -> amdgpu_amdkfd_evict_userptr ->
-> > kgd2kfd_quiesce_mm -> kfd_process_evict_queues -> evict_process_queues_cpsch
-> > 
-> > So we'd need to pass the blockable parameter all the way through that
-> > call chain.
-> 
-> Thanks, I have missed that part. So I guess I will start with something
-> similar to intel-gfx and back off when the current range needs some
-> treatment. So this on top. Does it look correct?
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> index d138a526feff..e2d422b3eb0b 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> @@ -266,6 +266,11 @@ static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
->  		struct amdgpu_mn_node *node;
->  		struct amdgpu_bo *bo;
->  
-> +		if (!blockable) {
-> +			amdgpu_mn_read_unlock();
-> +			return -EAGAIN;
-> +		}
-> +
->  		node = container_of(it, struct amdgpu_mn_node, it);
->  		it = interval_tree_iter_next(it, start, end);
 
-Ble, just noticed that half of the change didn't get to git index...
-This is what I have
-commit c4701b36ac2802b903db3d05cf77c030fccce3a8
-Author: Michal Hocko <mhocko@suse.com>
-Date:   Mon Jun 25 15:24:03 2018 +0200
+--bkh4pwgu6vcj5lmf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    fold me
-    
-    - amd gpu notifiers can sleep deeper in the callchain (evict_process_queues_cpsch
-      on a lock and amdgpu_mn_invalidate_node on unbound timeout) make sure
-      we bail out when we have an intersecting range for starter
+On Thu, Jun 21, 2018 at 05:38:23PM +0200, Paul Kocialkowski wrote:
+> Hi,
+>=20
+> On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> > Some codec needs to perform some additional task when a decoding is sta=
+rted
+> > and stopped, and not only at every frame.
+> >=20
+> > For example, the H264 decoding support needs to allocate buffers that w=
+ill
+> > be used in the decoding process, but do not need to change over time, o=
+r at
+> > each frame.
+> >=20
+> > In order to allow that for codecs, introduce a start and stop hook that
+> > will be called if present at start_streaming and stop_streaming time.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > ---
+> >  .../platform/sunxi/cedrus/sunxi_cedrus_common.h    |  2 ++
+> >  .../platform/sunxi/cedrus/sunxi_cedrus_video.c     | 14 +++++++++++++-
+> >  2 files changed, 15 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h =
+b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > index a2a507eb9fc9..20c78ec1f037 100644
+> > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > @@ -120,6 +120,8 @@ struct sunxi_cedrus_dec_ops {
+> >  	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx *c=
+tx);
+> >  	void (*setup)(struct sunxi_cedrus_ctx *ctx,
+> >  		      struct sunxi_cedrus_run *run);
+> > +	int (*start)(struct sunxi_cedrus_ctx *ctx);
+> > +	void (*stop)(struct sunxi_cedrus_ctx *ctx);
+> >  	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
+> >  };
+> > =20
+> > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c b=
+/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
+> > index fb7b081a5bb7..d93461178857 100644
+> > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
+> > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
+> > @@ -416,6 +416,8 @@ static int sunxi_cedrus_buf_prepare(struct vb2_buff=
+er *vb)
+> >  static int sunxi_cedrus_start_streaming(struct vb2_queue *q, unsigned =
+int count)
+> >  {
+> >  	struct sunxi_cedrus_ctx *ctx =3D vb2_get_drv_priv(q);
+> > +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
+> > +	int ret =3D 0;
+> > =20
+> >  	switch (ctx->vpu_src_fmt->fourcc) {
+> >  	case V4L2_PIX_FMT_MPEG2_FRAME:
+> > @@ -425,16 +427,26 @@ static int sunxi_cedrus_start_streaming(struct vb=
+2_queue *q, unsigned int count)
+> >  		return -EINVAL;
+> >  	}
+> > =20
+> > -	return 0;
+> > +	if (V4L2_TYPE_IS_OUTPUT(q->type) &&
+>=20
+> I suppose this check was put in place to ensure that ->start is only
+> called once, but what if start_streaming is called multiple times on
+> output? Am I totally unsure about whether the API guarantees that we
+> only get one start_streaming call per buffer queue, regardless of how
+> many userspace issues.
+>=20
+> If we don't have such a guarantee, we probably need an internal
+> mechanism to avoid having ->start called more than once.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-index d138a526feff..3399a4a927fb 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-@@ -225,6 +225,11 @@ static int amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
- 	while (it) {
- 		struct amdgpu_mn_node *node;
- 
-+		if (!blockable) {
-+			amdgpu_mn_read_unlock(rmn);
-+			return -EAGAIN;
-+		}
-+
- 		node = container_of(it, struct amdgpu_mn_node, it);
- 		it = interval_tree_iter_next(it, start, end);
- 
-@@ -266,6 +271,11 @@ static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 		struct amdgpu_mn_node *node;
- 		struct amdgpu_bo *bo;
- 
-+		if (!blockable) {
-+			amdgpu_mn_read_unlock(rmn);
-+			return -EAGAIN;
-+		}
-+
- 		node = container_of(it, struct amdgpu_mn_node, it);
- 		it = interval_tree_iter_next(it, start, end);
- 
--- 
-Michal Hocko
-SUSE Labs
+As far as I understand it, start_streaming can only be called once:
+https://elixir.bootlin.com/linux/latest/source/include/media/videobuf2-core=
+=2Eh#L357
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--bkh4pwgu6vcj5lmf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsw7vAACgkQ0rTAlCFN
+r3SG9A/+JxtDrW0vEWk/HeW3YiinlIPzaEXNtQQL668DXghQmSP1QT+7Orc6SZRZ
+5Vldwdb4Aikj099JA13q72N52jqkKALfQCEhcoFuLdlfCV2RtAJwS1B9qG22sTlT
+674bisEeytEa1ryIZkOCFORksnYsa/AEJqr2Zzm/v8bBLpOd+IptfM2J3FunjvPz
+kl1NK/WsZB307KYS9KgFmC/TOzMACRRxqhRK7Hm189xQn6gLSPf82fK9JxLmKoEu
+EkT2pJzFhFFFtEcV1L0GrQrSGfB2l/VgdPn6Anwxpnh+YEscWnO71lb8FNAjlD1K
+QltM7XhhqFEnjJXOGQz/svWeYQbo8iy8boKKHFTj6j2Xff+GrVeSstERakfgtdID
+fegw93I7g/qeeQd5MuZvX02ya2Jlft2LzHn3a18c26UxoT3lUZhX+CGae05Xx3An
+Jt9N88HJcx87Zl+mVX+3pA5oll6fpALb9p8w0WJ0NHEVXheb8iMuyBGuTmbydvRo
+GjsNjgtBiQETXe6+4xEV3TbTXH8VvaCrFpJi5W3O8TN1X5Fbp/vlxSuFm/Q8mdix
+mdaiey+A8nKBLcJDg+SqBiwoRdXWY0t9r4agZPj9A0jU2uFRDRsNCKNyVIpMqjef
+SFcb2mtIcYNZPwZvtX7E+08jiVDV/D1vDy82HeRburJPpPmNcSY=
+=e2dl
+-----END PGP SIGNATURE-----
+
+--bkh4pwgu6vcj5lmf--
