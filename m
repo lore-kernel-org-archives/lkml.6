@@ -3,86 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3985CC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C327BC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E34692565E
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:07:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34692565E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 848DE25660
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:07:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848DE25660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754823AbeFYJHR (ORCPT
+        id S1754843AbeFYJHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:07:17 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:46954 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754537AbeFYJHQ (ORCPT
+        Mon, 25 Jun 2018 05:07:25 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:43510 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754537AbeFYJHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:07:16 -0400
-X-UUID: 01506ea2b8bb470da06a7139dfcdee91-20180625
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1642554823; Mon, 25 Jun 2018 17:07:13 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 25 Jun 2018 17:07:10 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 25 Jun 2018 17:07:11 +0800
-Message-ID: <1529917631.17448.22.camel@mtkswgap22>
-Subject: Re: Add system timer driver for Mediatek SoCs
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>
-Date:   Mon, 25 Jun 2018 17:07:11 +0800
-In-Reply-To: <dd36b094-b11c-e6ef-a0fc-b039785e74f2@linaro.org>
-References: <1529910601-15005-1-git-send-email-stanley.chu@mediatek.com>
-         <dd36b094-b11c-e6ef-a0fc-b039785e74f2@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 25 Jun 2018 05:07:21 -0400
+Received: by mail-ua0-f193.google.com with SMTP id z16-v6so8122489uaz.10
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 02:07:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TorOwruUNp57xWE0RsAcyQ/AI6wGTDQqMCU/mvNIRRI=;
+        b=lDqA6RuBuFQm0pYafItZ0bcX4G7EEGBJDOxPfMyJIByjp1/rKUvge6uAJO4zWpJvxP
+         N0swNUfxXtX0QvLLO7IqEQIEa91wyTk/hyzt9JcTBmGBWczUdzuvn3zImn3ABvtUygWw
+         tNtQc3j89JmCjF4QkWAo5kDdxik7yTj8u2mlklSSIvRVr2sdAe5p1O+8HJOd8uBYdwSp
+         5YWOD8TW1VBi2zMM+LgigNR75T2Fv1zzihb7HDXx1pfFw3ecOXjCfYXKm37g4mF8wOmG
+         ypv/d71XAE3K9xRRFzocaktedDgg7SN7gJorG560fztY2hHHqLrddktuT7QO26E8NmGz
+         2E7g==
+X-Gm-Message-State: APt69E1TEAJjXsrd7j+w89FIza4tm3Hk9BUvLXexUcwlaZTvgMMo0bCF
+        w7t1U+st8FD4dxkj1U5l71+pUnl80tWpIY0nF7tKt7Di
+X-Google-Smtp-Source: ADUXVKKxQXIP8MoglaZsNyW80mC0eXS0orm9chMYNwAR4dRqKy87WrIvKqltUfY1HAmX4IBJZjWCKFwqGKy5xrWF7Kg=
+X-Received: by 2002:ab0:265:: with SMTP id 92-v6mr8025779uas.26.1529917640801;
+ Mon, 25 Jun 2018 02:07:20 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+References: <20180625090329.10895-1-geert@linux-m68k.org>
+In-Reply-To: <20180625090329.10895-1-geert@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 25 Jun 2018 11:07:09 +0200
+Message-ID: <CAMuHMdW--a2btaTWu3ZP_KtTD6zKFCYsG8FV9KA0y-W6Vg0gQw@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.18-rc2
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Linux MIPS Mailing List <linux-mips@linux-mips.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-25 at 09:34 +0200, Daniel Lezcano wrote:
-> On 25/06/2018 09:09, Stanley Chu wrote:
-> > This patch adds a new driver for system timer on the Mediatek SoCs.
-> 
-> Please elaborate why we need yet another timer.
-> 
-> Is this timer present on all Mediatek platform ? Does it always co-exist
-> with the existing one ?
-> 
-> 
-> 
-> 
-Hi Daniel,
+On Mon, Jun 25, 2018 at 11:04 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> JFYI, when comparing v4.18-rc2[1] to v4.18-rc1[3], the summaries are:
+>   - build errors: +6/-4
 
-This new "system timer" only exists on recent Mediatek platforms,
-for example, MT6765. We will upstream driver first, and then update
-device tree on MT6765 later.
+  + /kisskb/src/arch/mips/kernel/signal.c: error: passing argument 1
+of 'rseq_handle_notify_resume' from incompatible pointer type
+[-Werror=incompatible-pointer-types]:  => 873:29
+  + /kisskb/src/arch/mips/kernel/signal.c: error: passing argument 1
+of 'rseq_handle_notify_resume' from incompatible pointer type
+[-Werror]:  => 873:3
+  + /kisskb/src/arch/mips/kernel/signal.c: error: passing argument 1
+of 'rseq_signal_deliver' from incompatible pointer type
+[-Werror=incompatible-pointer-types]:  => 804:22
+  + /kisskb/src/arch/mips/kernel/signal.c: error: passing argument 1
+of 'rseq_signal_deliver' from incompatible pointer type [-Werror]:  =>
+804:2
+  + /kisskb/src/arch/mips/kernel/signal.c: error: too few arguments to
+function 'rseq_handle_notify_resume':  => 873:3
+  + /kisskb/src/arch/mips/kernel/signal.c: error: too few arguments to
+function 'rseq_signal_deliver':  => 804:2
 
-System timer is designed and optimized as a SoC timer for
-tick-broadcasting. Besides timer IP has simpler register manipulation
-and friendly low-power design.
+Lots of MIPS, fix available.
 
-There is no plan to remove existed "General Purpose Timer" now.
+> [1] http://kisskb.ellerman.id.au/kisskb/head/7daf201d7fe8334e2d2364d4e8ed3394ec9af819/ (231 out of 244 configs)
+> [3] http://kisskb.ellerman.id.au/kisskb/head/ce397d215ccd07b8ae3f71db689aedb85d56ab40/ (233 out of 244 configs)
 
-Thanks.
-Stanley Chu
+Gr{oetje,eeting}s,
 
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
