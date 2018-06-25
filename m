@@ -2,107 +2,151 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3A2C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DE9C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1F5257D2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6598D25BC9
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:49:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U6JkeUSh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1F5257D2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LcOmdowY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6598D25BC9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934604AbeFYWsp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:48:45 -0400
-Received: from mail-io0-f202.google.com ([209.85.223.202]:49717 "EHLO
-        mail-io0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754259AbeFYWk6 (ORCPT
+        id S1755713AbeFYWty (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:49:54 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36773 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754259AbeFYWtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:40:58 -0400
-Received: by mail-io0-f202.google.com with SMTP id x13-v6so12886601iog.16
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:40:58 -0700 (PDT)
+        Mon, 25 Jun 2018 18:49:52 -0400
+Received: by mail-pf0-f196.google.com with SMTP id u16-v6so3355008pfh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
-         :cc;
-        bh=smiMhu+/BeT5Pxdg509a30E1ghstaHTxE6n7qixOWlc=;
-        b=U6JkeUShAN/4xy5Y0SstOVpLWKTCw19NJLX38E2AREFR2ACgKd58omFusy5Etlwy8R
-         0XHCzp7jRmPO5UKgm78o4K9wqZKbRD8CnZ9/gFj1xjypBVh+O1NIIU20ZyGdGzfXLws8
-         AYo/yDIdt366QqR219PkWtFoe/UZoM+KqkYKCaR02sREVOS+0RZBQ1u1BdGzZYxTPQ8D
-         pOkvFvWWew0Ns4WZOwusHa+LUQobFWij47y4gnjm7uTW3wZEkoMtRTocRulmnzogm9+D
-         cjGrib9HhmXhmbhwRLc+fnyarF46fZPeHmHg22LplU3Bl4n51bbwrGIidqHhL6XcA4P9
-         fpEQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=6rPgU9h4zlOWQeKmmluqpkKujuBTKpSYZM1yTZ394ko=;
+        b=LcOmdowYFrZikDUJuK0A5k2fMUBL6UhMA/IUHDbLgTU8TI1zbi2ELWDRGFU7FHBFHd
+         5+ZdyoEG7LOl4HrkB7SscJO4BJy8jIdwchbOr1bZ1BOIbR+azy14QxjjmGl/u4UrvlYk
+         ZJ4+al58vt7IxfkSGBGwQlb4tB7UjwjJDEv/Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
-         :references:subject:from:to:cc;
-        bh=smiMhu+/BeT5Pxdg509a30E1ghstaHTxE6n7qixOWlc=;
-        b=mf9oAGAGzALOGHQfqmgITzxrVXMo2eU3vQkgsEHkq0fBLL2cnozwZMrtQjbqtpllD4
-         yQpLl6fMudEHa9PJjRDi9m9CGXrY0cjZHk9TWF52890D2Yd5bDxurjOF/r/vhYmH74TD
-         /EtDzIVITVvA1iZdc3wXvBx6NJoNF+HUPMrZ5THiEXZmAGC0PnTluqXiytQz37uQAYJ+
-         OpMf5iR27P+y1DiBzpthbLaTiXB5ZuG+1nMQg7AX4Q+vEqrVp+6SX51dlC0IgLqbdEcm
-         ExKMcZhJSJtFwGQZ0Q9phG1xfpO3kjuRKqLsuq5BkGMdyMx8DDqRbAdnLmLW+MEXPBJU
-         N6Pw==
-X-Gm-Message-State: APt69E36DSITvoKb6My6qlazurC1UaHdWayQsey4zMbsBk5kUkscfkYJ
-        lQctwFe4nYnY1k2ysWEya9RdUQvMe8EBYg==
-X-Google-Smtp-Source: ADUXVKLwYmw/x5AjuGui7CGCkokkURkHf1n9bi8BHM6yCyuL/w2MGgbAiRtG5eOKFdXI7exKF94HhCT8RUksxw==
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=6rPgU9h4zlOWQeKmmluqpkKujuBTKpSYZM1yTZ394ko=;
+        b=Kfd2hbh+8oVqVJOL8AJzlRGdgLpjgPsXGnCruoI7RBAwX/FqwCto/kQ7sXwmSSdpx3
+         EZWWfXd1Kzy73RPrCffzWrOfdt7bKqjbfWY4phYmVR1fPtpOheHUB2UTChpqUJvhTADO
+         q7zEaBA+RmdAqNoFjXQl94LYeSDvuIMtBaGWdHov8ZDNCBsXLmP/6FG8A4SQI1+3Gsat
+         rcFQmCOZGbyAn1boUyvhiW7uLlnZZJ7ucXhW53z4QqxlUan7Fk9z20eW6xaghCSRpMYz
+         rY4BVgPEFsuf5eMtY6eHSilKDd2ALL7Jm0Ya+I9HpQnZhdka/p8jrSMigWRZAndPpuBS
+         QWXg==
+X-Gm-Message-State: APt69E3TXV5FfnixX5N9+luZbT4/KWvRIe0DFyVMeStl9+KEJWQiUuiG
+        bhe3sMnTjraC5iqVDQoW9GSHpg==
+X-Google-Smtp-Source: ADUXVKJy0Ci5jzMnjUBQHcFQHDt8z40FpO1fe0YtfImmCkIIA7zCmAnRDpLPX+tY360D81LiqUposg==
+X-Received: by 2002:a63:d8:: with SMTP id 207-v6mr11744719pga.94.1529966992030;
+        Mon, 25 Jun 2018 15:49:52 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id h13-v6sm86365pgp.13.2018.06.25.15.49.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 15:49:50 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:49:49 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>,
+        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org
+Subject: [PATCH v4 net-next] mdio-mux-gpio: Remove VLA usage
+Message-ID: <20180625224949.GA48766@beast>
 MIME-Version: 1.0
-X-Received: by 2002:a24:b602:: with SMTP id g2-v6mr1171076itf.16.1529966457671;
- Mon, 25 Jun 2018 15:40:57 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 15:38:50 -0700
-In-Reply-To: <20180625224014.134829-1-thgarnie@google.com>
-Message-Id: <20180625224014.134829-3-thgarnie@google.com>
-References: <20180625224014.134829-1-thgarnie@google.com>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v5 02/27] x86: Use symbol name on bug table for PIE support
-From:   Thomas Garnier <thgarnie@google.com>
-To:     kernel-hardening@lists.openwall.com
-Cc:     Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the %c constraint with %P. The %c is incompatible with PIE
-because it implies an immediate value whereas %P reference a symbol.
+In the quest to remove all stack VLA usage from the kernel[1], this
+allocates the values buffer during the callback instead of putting it
+on the stack.
 
-Position Independent Executable (PIE) support will allow to extend the
-KASLR randomization range 0xffffffff80000000.
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Signed-off-by: Thomas Garnier <thgarnie@google.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- arch/x86/include/asm/bug.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v4: use struct_size() helper for allocation (Joe Perches)
+v3: resend to netdev with Reviewed-by
+v2: allocate array as part of structure (Andrew Lunn)
+---
+ drivers/net/phy/mdio-mux-gpio.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 6804d6642767..3d690a4abf50 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -35,7 +35,7 @@ do {									\
- 	asm volatile("1:\t" ins "\n"					\
- 		     ".pushsection __bug_table,\"aw\"\n"		\
- 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
-+		     "\t"  __BUG_REL(%P0) "\t# bug_entry::file\n"	\
- 		     "\t.word %c1"        "\t# bug_entry::line\n"	\
- 		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
- 		     "\t.org 2b+%c3\n"					\
+diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+index 082ffef0dec4..bc90764a8b8d 100644
+--- a/drivers/net/phy/mdio-mux-gpio.c
++++ b/drivers/net/phy/mdio-mux-gpio.c
+@@ -20,23 +20,23 @@
+ struct mdio_mux_gpio_state {
+ 	struct gpio_descs *gpios;
+ 	void *mux_handle;
++	int values[];
+ };
+ 
+ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ 				   void *data)
+ {
+ 	struct mdio_mux_gpio_state *s = data;
+-	int values[s->gpios->ndescs];
+ 	unsigned int n;
+ 
+ 	if (current_child == desired_child)
+ 		return 0;
+ 
+ 	for (n = 0; n < s->gpios->ndescs; n++)
+-		values[n] = (desired_child >> n) & 1;
++		s->values[n] = (desired_child >> n) & 1;
+ 
+ 	gpiod_set_array_value_cansleep(s->gpios->ndescs, s->gpios->desc,
+-				       values);
++				       s->values);
+ 
+ 	return 0;
+ }
+@@ -44,15 +44,21 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct mdio_mux_gpio_state *s;
++	struct gpio_descs *gpios;
+ 	int r;
+ 
+-	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
+-	if (!s)
++	gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
++	if (IS_ERR(gpios))
++		return PTR_ERR(gpios);
++
++	s = devm_kzalloc(&pdev->dev, struct_size(s, values, gpios->ndescs),
++			 GFP_KERNEL);
++	if (!s) {
++		gpiod_put_array(gpios);
+ 		return -ENOMEM;
++	}
+ 
+-	s->gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
+-	if (IS_ERR(s->gpios))
+-		return PTR_ERR(s->gpios);
++	s->gpios = gpios;
+ 
+ 	r = mdio_mux_init(&pdev->dev, pdev->dev.of_node,
+ 			  mdio_mux_gpio_switch_fn, &s->mux_handle, s, NULL);
 -- 
-2.18.0.rc2.346.g013aa6912e-goog
+2.17.1
 
+
+-- 
+Kees Cook
+Pixel Security
