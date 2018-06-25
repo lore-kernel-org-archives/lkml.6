@@ -7,71 +7,69 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA170C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 083CEC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 845D226210
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B31D426208
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ARK9ftcg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 845D226210
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NJmelMs3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31D426208
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934189AbeFYWla (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:41:30 -0400
-Received: from mail-io0-f202.google.com ([209.85.223.202]:49719 "EHLO
-        mail-io0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933969AbeFYWl0 (ORCPT
+        id S934309AbeFYWlg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:41:36 -0400
+Received: from mail-yb0-f201.google.com ([209.85.213.201]:41972 "EHLO
+        mail-yb0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933969AbeFYWlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:41:26 -0400
-Received: by mail-io0-f202.google.com with SMTP id x13-v6so12887215iog.16
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:26 -0700 (PDT)
+        Mon, 25 Jun 2018 18:41:31 -0400
+Received: by mail-yb0-f201.google.com with SMTP id f22-v6so11089037ybg.8
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:date:in-reply-to:message-id:references:subject:from:to
          :cc;
-        bh=XXQ7C/CDeUMNvwwGw/8BYZVCFy2rI+v0Pigd08BAKSc=;
-        b=ARK9ftcgOouSqk4fMxtyYsAfDex24/Ayzi/AtIxioDUezvChXudQkPfNOwwr+3ZiRL
-         rVCwh5esMjB9OTMkdaqfam+0w2pfO9aYrBUYX40KkiohWcjVjigpRkTishZWQzBBP/uR
-         1ql786ng1WWfmkMjPO+FuSQfa1Z8UX34oKUUlsqe4cgFd2+9/+o8WiI19h/3a7pxOjwq
-         MV/8m0KQdewBL4Q8AxKONCqHduy0eq5ZMhWTYJCpe6G/2I6BDldafG5NTvKRJKKHG4vX
-         WhBbWMi5LPECGI+m2D0C2JNvVV08sSEH0TwU3YdQ8uhlfO7wtw83EhJ8/LD3yQCr9Jp7
-         060g==
+        bh=0C+LMsVRbCpktsH0OP9a+VzlFglDWVu/5NfSR7InwoA=;
+        b=NJmelMs3JGtjo0UodVP9ZvMLU2naSvRRF6ul/wNI+nvw1kYD4d/FeJOkctM1L+ujmi
+         nNdwDfA2g1lvMv5rhiua2hAIu01gPwi594rBxnQFldPmIiTYb8ZtP5tCHIcJNTM7a/gk
+         xWqhO9NHeoMbTX1210jR6embXbfGT9aIseMhanbCJWiGEdq37FxHM+BULPGuyzfb/1vc
+         xq6aQdpxS/dfE6TOtvnPhOG3wOvkg+Un1Y5V/I2w6BkatD48/M2EXKo7uSVWUhB8lnEX
+         0lDwyyjuiI9U1PBfbwK8tydil2pVenBkzUN8c9RHwZRqLtLLnjWrARpjkobbxGpu2j9e
+         yJxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id
          :references:subject:from:to:cc;
-        bh=XXQ7C/CDeUMNvwwGw/8BYZVCFy2rI+v0Pigd08BAKSc=;
-        b=j9bW7+hp0r/ranvT5ZNkitWCu9uwwNfwHUg2cvWL0rc3/YTgygcA+qTaLkvwKHF+b8
-         TEvBiBgppqtxBZRxRQloG8mC9NOvYz/RHDd2P1icsnE5fkm4oS9+HFbKMFJ5b/h14mpV
-         1NsfOM7hufzA1VXZvVoTLeOOuREb1mwb81+zZEwLhlC8j4zQatnx09XzRSmcQ4Ln/TKR
-         rdEgEwQe1oPufVvdX2J+ofnBT4IO7y8hRwtrQsw26bdD7YI1Hdc8kbQyHx3+dNK89ERV
-         /QX2L2PONWX6lLzVZWuWcBkkHdygT0iHzUvBdwRD+sgRlGetwZE0UzrFB192JWIcqiif
-         Hsng==
-X-Gm-Message-State: APt69E2TpNSfI5sc7A4FMGgbuAErrc5Rlr+fI8czhS+NlHNYIbF5HmCV
-        VrlEJ5kiysrt+9rDwzyO72IH0n/sNe2/Dg==
-X-Google-Smtp-Source: ADUXVKInHsu2npYg7XtQ4k9TVhn2iNrTC4MpiIVgLdoBMmCL8Nj9iE/HXeNOjEeLLnh2WsEB9e3brWOFXptFRg==
+        bh=0C+LMsVRbCpktsH0OP9a+VzlFglDWVu/5NfSR7InwoA=;
+        b=UKbw44CGrg4CwCuprUfPsZ5VS55t6PsY3fNz8bEhcopFYhMrc6C9mdjY2j2HcXbRB2
+         suthoASEda4HaMBPYMHmVwH4bAYaFHfwhe+94kbF2KZfPpGNMckqH7wsLSev19nvhTXK
+         +SS0RDH1S8GWpnqNO/2YiOBT7wpHvuy3xres1SDuTxW1U8vCoKgdgfTCsYF6qpbQHyUQ
+         M5xDCqYrswDAzSk47T7pPWf0ZXdb3mC6aANLjfEy99xs1ZzXunv8WAS+37aR75+5bpOQ
+         I4bJXUrS3kQVJjXwmgQ9ffOYMLy0Lkl0U/L+Ln8WKDu1cN8kAvugSUZRXwznjxp4M3Zy
+         YJTw==
+X-Gm-Message-State: APt69E2GzznuxwK4HD40GkGYO+dsEg0dM1Obu1YUYERJO+yVr0J7vE7s
+        pQWXn6NpYM/TZ4LvLN+aR5hn7oPWzZBo8A==
+X-Google-Smtp-Source: ADUXVKIqVXM+wU3CsSYuZh3Q3Rse4uFmsl2JSdtyT/nKDKD1dMt/UNALHxq+X17U14i7wnlfDhbXw3/LXjBKsQ==
 MIME-Version: 1.0
-X-Received: by 2002:a24:14ca:: with SMTP id 193-v6mr1231065itg.13.1529966485494;
- Mon, 25 Jun 2018 15:41:25 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 15:38:58 -0700
+X-Received: by 2002:a25:9d8b:: with SMTP id v11-v6mr3853301ybp.51.1529966490949;
+ Mon, 25 Jun 2018 15:41:30 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:39:00 -0700
 In-Reply-To: <20180625224014.134829-1-thgarnie@google.com>
-Message-Id: <20180625224014.134829-11-thgarnie@google.com>
+Message-Id: <20180625224014.134829-13-thgarnie@google.com>
 References: <20180625224014.134829-1-thgarnie@google.com>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v5 10/27] x86/boot/64: Adapt assembly for PIE support
+Subject: [PATCH v5 12/27] x86/paravirt: Adapt assembly for PIE support
 From:   Thomas Garnier <thgarnie@google.com>
 To:     kernel-hardening@lists.openwall.com
 Cc:     Thomas Garnier <thgarnie@google.com>,
+        Juergen Gross <jgross@suse.com>,
+        Alok Kataria <akataria@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
+        virtualization@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,76 +77,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible.
-
-Early at boot, the kernel is mapped at a temporary address while preparing
-the page table. To know the changes needed for the page table with KASLR,
-the boot code calculate the difference between the expected address of the
-kernel and the one chosen by KASLR. It does not work with PIE because all
-symbols in code are relatives. Instead of getting the future relocated
-virtual address, you will get the current temporary mapping.
-Instructions were changed to have absolute 64-bit references.
+if PIE is enabled, switch the paravirt assembly constraints to be
+compatible. The %c/i constrains generate smaller code so is kept by
+default.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/kernel/head_64.S | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/paravirt_types.h | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 8344dd2f310a..7fca19e1f556 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -89,8 +89,10 @@ startup_64:
- 	popq	%rsi
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..140747a98d94 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -337,9 +337,17 @@ extern struct pv_lock_ops pv_lock_ops;
+ #define PARAVIRT_PATCH(x)					\
+ 	(offsetof(struct paravirt_patch_template, x) / sizeof(void *))
  
- 	/* Form the CR3 value being sure to include the CR3 modifier */
--	addq	$(early_top_pgt - __START_KERNEL_map), %rax
-+	movabs  $(early_top_pgt - __START_KERNEL_map), %rcx
-+	addq    %rcx, %rax
- 	jmp 1f
++#ifdef CONFIG_X86_PIE
++#define paravirt_opptr_call "a"
++#define paravirt_opptr_type "p"
++#else
++#define paravirt_opptr_call "c"
++#define paravirt_opptr_type "i"
++#endif
 +
- ENTRY(secondary_startup_64)
- 	UNWIND_HINT_EMPTY
- 	/*
-@@ -119,7 +121,8 @@ ENTRY(secondary_startup_64)
- 	popq	%rsi
+ #define paravirt_type(op)				\
+ 	[paravirt_typenum] "i" (PARAVIRT_PATCH(op)),	\
+-	[paravirt_opptr] "i" (&(op))
++	[paravirt_opptr] paravirt_opptr_type (&(op))
+ #define paravirt_clobber(clobber)		\
+ 	[paravirt_clobber] "i" (clobber)
  
- 	/* Form the CR3 value being sure to include the CR3 modifier */
--	addq	$(init_top_pgt - __START_KERNEL_map), %rax
-+	movabs	$(init_top_pgt - __START_KERNEL_map), %rcx
-+	addq    %rcx, %rax
- 1:
+@@ -395,7 +403,7 @@ int paravirt_disable_iospace(void);
+  */
+ #define PARAVIRT_CALL					\
+ 	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
++	"call *%" paravirt_opptr_call "[paravirt_opptr];"
  
- 	/* Enable PAE mode, PGE and LA57 */
-@@ -137,7 +140,7 @@ ENTRY(secondary_startup_64)
- 	movq	%rax, %cr3
- 
- 	/* Ensure I am executing from virtual addresses */
--	movq	$1f, %rax
-+	movabs  $1f, %rax
- 	ANNOTATE_RETPOLINE_SAFE
- 	jmp	*%rax
- 1:
-@@ -234,11 +237,12 @@ ENTRY(secondary_startup_64)
- 	 *	REX.W + FF /5 JMP m16:64 Jump far, absolute indirect,
- 	 *		address given in m16:64.
- 	 */
--	pushq	$.Lafter_lret	# put return address on stack for unwinder
-+	movabs  $.Lafter_lret, %rax
-+	pushq	%rax		# put return address on stack for unwinder
- 	xorq	%rbp, %rbp	# clear frame pointer
--	movq	initial_code(%rip), %rax
-+	leaq	initial_code(%rip), %rax
- 	pushq	$__KERNEL_CS	# set correct cs
--	pushq	%rax		# target address in negative space
-+	pushq	(%rax)		# target address in negative space
- 	lretq
- .Lafter_lret:
- END(secondary_startup_64)
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
