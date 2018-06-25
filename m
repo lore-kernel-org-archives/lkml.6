@@ -7,57 +7,57 @@ X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A76C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CD9C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F401525CB5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0A6925CB5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:30:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yy90DSrT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F401525CB5
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="M3kqkFCS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A6925CB5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753170AbeFYPaF (ORCPT
+        id S1752751AbeFYPaC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:30:05 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52000 "EHLO
+        Mon, 25 Jun 2018 11:30:02 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37359 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752305AbeFYP36 (ORCPT
+        with ESMTP id S1752248AbeFYP34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:29:58 -0400
-Received: by mail-wm0-f65.google.com with SMTP id w137-v6so4449914wmw.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:29:58 -0700 (PDT)
+        Mon, 25 Jun 2018 11:29:56 -0400
+Received: by mail-wm0-f65.google.com with SMTP id r125-v6so10493451wmg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 08:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4HAy4CFX12smc0TnD2wG3IULi/54eoKnvvMUZ/d29ys=;
-        b=yy90DSrTj2fc+se71/phGT+Bi0iqLgeH+47AgNXRMDFRo5nlsZlI6V8D2BglJlPof0
-         ZmR6LNIyizmB3QB5s88o1EFfLY76gtgqr1TXU0r3PTmAtsdRnH0Mie39TjiSB5AWuLUk
-         gEdza/vO0zlxoOt2baADuQMKbxtnBhwRG8iM2YwnrqsRQwpDSXmBfqmnRgU3HfTgtq5G
-         twfziKYa6rPaoVJ3BUwW4wnvyICn+9ag8d4nSuYzLZ600o7eYomLzidHnSNw89yAAOtq
-         /jJjrObJUlmw+unZ8LtfhDA2ue3A6hfz0rFMXEW/izzPlU8rwxnfUhIX8vOj5znMvRqu
-         0Rxg==
+        bh=WiqV9M76Gh7uIiyGVv/zVGJ/wBPqBjAK4YHV4jg0FP4=;
+        b=M3kqkFCSe6bRY/PbE20zNLP/1xem3I5D+YfzQShygp9W1urnnmrH7V+VudIzwNHvaN
+         8TZRNM6BesGBKYECkmGq8ctjeIQspnDFmalHE6sk7oUu4gS6wjVB5XaH+nRmBI6OCdKZ
+         NL9QjtmHXsUHjGaVo2iOB5tcamErzT4Xb70aAGJG0VwBxouzYdCDuuzybvsqFSff8cWT
+         ezMRqFL2jdRKkq1Ey0e5rd5xGIwWx8ACBhfrIR6smx+CYIeVJFxarxufRdVlBfryglnC
+         Qqwq6bZGt8JN9d8AWn7rLxci4rDpACjvgjldFHPNnosquaY1HYfppuVdPCINAjsQ760k
+         xR9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4HAy4CFX12smc0TnD2wG3IULi/54eoKnvvMUZ/d29ys=;
-        b=J58/KNNTlIPYUmfpIzt/Mg9fzbni+/4jBpOV9k+9DmfCHdl9d7yKkGxqQqs3eWxG5B
-         C17FyKcxvcn3mrwI2dGKeChDIRdEolI+zrcZfLvYBpzDesx5w4DxFF5cNGmpdRUJ6wX0
-         Y9oGMMweEfDLZPyay70HysFQild7YxqrD8dVTwTJh8zlv0FmnOyxN+wmFZhVmoY7FSxH
-         LJbKKGnaccqXaG/ofe0Ha1KsERlh8jUcT78WDxzgTIqM+RS5z3Js+fH52VwDVnV8Ojgd
-         WZ/IE7ZZcl2AIqNyjtwi6rx6Lx9A7O4lX5MV45VGyR4PNw32XXn5nxrfv8YlRfTrhB9D
-         82WA==
-X-Gm-Message-State: APt69E3+EnYEcuLDY6+o8JUU7B+OX81IV3h2eLjqdG24wGOkauJtdJzx
-        TyRyIaIVVmfVAHS8HJt8V19GUnwu3Pw=
-X-Google-Smtp-Source: AAOMgpedQ5dk47B4slfXXD4+Fsl+JjrfVb01jcZ7D6Sl4FLyy1cEs/SEZaGjSqff3xkNf8V5h6AdIA==
-X-Received: by 2002:a1c:ea4a:: with SMTP id i71-v6mr1302968wmh.158.1529940597620;
-        Mon, 25 Jun 2018 08:29:57 -0700 (PDT)
+        bh=WiqV9M76Gh7uIiyGVv/zVGJ/wBPqBjAK4YHV4jg0FP4=;
+        b=rtlm2iYkUFfc3RruxMgEAXvtouWJTKxUcWDkbPo5r17GofpN0bGRQifNuwbMImn52U
+         +WoXSKtnGA0UTkZO1MoTXTE0NgT8n2fqOhmTM/X5myp/kMyt6qIszSqv8k3HOzHKKrUb
+         u/hPWD7ZXW7NbGNKL1KjfSqmvHEYtGPmLhQw5BnhBKgLFL3PJjvG3UEEgFL5wj3u20KW
+         6vXRbRiptmxtqeZdbN1cK0WPRPHDMIL0VXB1PYRUjHAVAreJ1Rw8y7B7ALIbzxKG1DdM
+         f70dYH8wlhTIlut5CJD+DwDKAZ0EZa1M5xwlcLJxVY1zLfa3ZK90HT/IdR5taFq3J7nS
+         RwUw==
+X-Gm-Message-State: APt69E0Xunb44+bynDomIMDED7FItvqTFODJ0toz2kS//DTDcpRO0mdo
+        ikql9y0TUMh5tZFzhFOTjPsMnw==
+X-Google-Smtp-Source: ADUXVKL3qVB6a1Dqug/OpVB2233TbYImjl/hMRcczbiqDb171Xs3pXfnddcUT+1UosE8qg48Ya1BKw==
+X-Received: by 2002:a1c:b80a:: with SMTP id i10-v6mr1442182wmf.123.1529940595526;
+        Mon, 25 Jun 2018 08:29:55 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id l15-v6sm18829174wrs.95.2018.06.25.08.29.56
+        by smtp.gmail.com with ESMTPSA id l15-v6sm18829174wrs.95.2018.06.25.08.29.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 08:29:57 -0700 (PDT)
+        Mon, 25 Jun 2018 08:29:54 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -67,9 +67,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 7/9] ARM: davinci: dm646x-evm: use aemif platform driver
-Date:   Mon, 25 Jun 2018 17:29:18 +0200
-Message-Id: <20180625152920.11549-8-brgl@bgdev.pl>
+Subject: [PATCH 5/9] ARM: davinci: dm644x-evm: use aemif platform driver
+Date:   Mon, 25 Jun 2018 17:29:16 +0200
+Message-Id: <20180625152920.11549-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
 References: <20180625152920.11549-1-brgl@bgdev.pl>
@@ -81,93 +81,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
 We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in dm646x-evm.
+device instead of using the handcrafted API in dm644x-evm.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-dm646x-evm.c | 52 +++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 11 deletions(-)
+ arch/arm/mach-davinci/board-dm644x-evm.c | 55 ++++++++++++++++++------
+ 1 file changed, 42 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 867ab2fa6cfd..99297e0612ba 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -24,6 +24,7 @@
- #include <linux/i2c.h>
- #include <linux/platform_data/at24.h>
- #include <linux/platform_data/pcf857x.h>
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 738e443ab15f..e3556708c71b 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -42,6 +42,7 @@
+ #include <linux/platform_data/mmc-davinci.h>
+ #include <linux/platform_data/usb-davinci.h>
+ #include <linux/platform_data/mtd-davinci-aemif.h>
 +#include <linux/platform_data/ti-aemif.h>
  
- #include <media/i2c/tvp514x.h>
- #include <media/i2c/adv7343.h>
-@@ -106,16 +107,47 @@ static struct resource davinci_nand_resources[] = {
+ #include "davinci.h"
+ 
+@@ -174,14 +175,47 @@ static struct resource davinci_evm_nandflash_resource[] = {
  	},
  };
  
--static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
--	.id			= 0,
-+static struct platform_device davinci_aemif_devices[] = {
+-static struct platform_device davinci_evm_nandflash_device = {
+-	.name		= "davinci_nand",
+-	.id		= 0,
+-	.dev		= {
+-		.platform_data	= &davinci_evm_nandflash_data,
++static struct resource davinci_evm_aemif_resource[] = {
++	{
++		.start		= DM644X_ASYNC_EMIF_CONTROL_BASE,
++		.end		= DM644X_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
++		.flags		= IORESOURCE_MEM,
+ 	},
+-	.num_resources	= ARRAY_SIZE(davinci_evm_nandflash_resource),
+-	.resource	= davinci_evm_nandflash_resource,
++};
++
++static struct aemif_abus_data davinci_evm_aemif_abus_data[] = {
++	{
++		.cs		= 1,
++	},
++};
++
++static struct platform_device davinci_evm_nandflash_devices[] = {
 +	{
 +		.name		= "davinci_nand",
 +		.id		= 0,
-+		.num_resources	= ARRAY_SIZE(davinci_nand_resources),
-+		.resource	= davinci_nand_resources,
 +		.dev		= {
-+			.platform_data	= &davinci_nand_data,
++			.platform_data	= &davinci_evm_nandflash_data,
 +		},
++		.num_resources	= ARRAY_SIZE(davinci_evm_nandflash_resource),
++		.resource	= davinci_evm_nandflash_resource,
 +	},
 +};
 +
-+static struct resource davinci_aemif_resources[] = {
-+	{
-+		.start	= DM646X_ASYNC_EMIF_CONTROL_BASE,
-+		.end	= DM646X_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
- 
--	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
--	.resource		= davinci_nand_resources,
-+static struct aemif_abus_data davinci_aemif_abus_data[] = {
-+	{
-+		.cs	= 1,
-+	},
-+};
- 
--	.dev			= {
--		.platform_data	= &davinci_nand_data,
-+static struct aemif_platform_data davinci_aemif_pdata = {
-+	.abus_data		= davinci_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(davinci_aemif_abus_data),
-+	.sub_devices		= davinci_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(davinci_aemif_devices),
++static struct aemif_platform_data davinci_evm_aemif_pdata = {
++	.abus_data = davinci_evm_aemif_abus_data,
++	.num_abus_data = ARRAY_SIZE(davinci_evm_aemif_abus_data),
++	.sub_devices = davinci_evm_nandflash_devices,
++	.num_sub_devices = ARRAY_SIZE(davinci_evm_nandflash_devices),
 +};
 +
-+static struct platform_device davinci_aemif_device = {
-+	.name		= "ti-aemif",
++static struct platform_device davinci_evm_aemif_device = {
++	.name			= "ti-aemif",
 +	.dev = {
-+		.platform_data	= &davinci_aemif_pdata,
- 	},
-+	.resource	= davinci_aemif_resources,
-+	.num_resources	= ARRAY_SIZE(davinci_aemif_resources),
-+	.id		= -1,
++		.platform_data = &davinci_evm_aemif_pdata,
++	},
++	.resource = davinci_evm_aemif_resource,
++	.num_resources = ARRAY_SIZE(davinci_evm_aemif_resource),
++	.id = -1,
  };
  
- #define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
-@@ -793,10 +825,8 @@ static __init void evm_init(void)
- 	if (machine_is_davinci_dm6467tevm())
- 		davinci_nand_data.timing = &dm6467tevm_nandflash_timing;
+ static u64 davinci_fb_dma_mask = DMA_BIT_MASK(32);
+@@ -795,12 +829,7 @@ static __init void davinci_evm_init(void)
  
--	platform_device_register(&davinci_nand_device);
+ 		/* only one device will be jumpered and detected */
+ 		if (HAS_NAND) {
+-			platform_device_register(&davinci_evm_nandflash_device);
 -
--	if (davinci_aemif_setup(&davinci_nand_device))
--		pr_warn("%s: Cannot configure AEMIF.\n", __func__);
-+	if (platform_device_register(&davinci_aemif_device))
-+		pr_warn("%s: Cannot register AEMIF device.\n", __func__);
- 
- 	dm646x_init_edma(dm646x_edma_rsv);
- 
+-			if (davinci_aemif_setup(&davinci_evm_nandflash_device))
+-				pr_warn("%s: Cannot configure AEMIF\n",
+-					__func__);
+-
++			platform_device_register(&davinci_evm_aemif_device);
+ #ifdef CONFIG_I2C
+ 			evm_leds[7].default_trigger = "nand-disk";
+ #endif
 -- 
 2.17.1
 
