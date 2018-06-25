@@ -2,136 +2,288 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B56EC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1AEC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1370525E1D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F20825E23
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:21:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="WbSJqvSS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1370525E1D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="wCRMRHks"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F20825E23
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755260AbeFYQUs (ORCPT
+        id S1755419AbeFYQVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:20:48 -0400
-Received: from vern.gendns.com ([206.190.152.46]:49035 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752161AbeFYQUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:20:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=me8FnDlvGoAR/OmXUeAie8+u58fzI4GgPsj3+JhzP6M=; b=WbSJqvSSFrUbrweDctb/PbW5rS
-        3MBsSrLIt9+/0cgoAChx+s5ECSjJ+JMRhlLDWkAd7P8nnM8VJ+6fFmgPnrnFgrL0MHO09MJrnx3VE
-        3/7SVJPq+iAFefP5zwpb34ivgYVm26TcBVoVhwQuYMYv2pCFBy1kL9hppo50fjrHPv2LeussPnKsy
-        2B98WOPHKOugBXxHhJfiS1+fJ6xKBVAk1cTsv6aQfAH8+2AMQYWwp7JHP+tPybWLkSBcjEBenBDPt
-        JfO1CFw4a4utPYuVH4U7ZJTs5+8P+nSDaDWblu9fBBYy07I/b3xcXSaoONjAVzXot39ckIxBtmR06
-        Zv9a8aaA==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:54348 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1fXUEP-001EDA-I1; Mon, 25 Jun 2018 12:20:45 -0400
-Subject: Re: [PATCH 6/9] ARM: davinci: da830-evm: use aemif platform driver
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
- <20180625152920.11549-7-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <0e4bc2fb-15fc-6422-a4a3-0918adf0b1b3@lechnology.com>
-Date:   Mon, 25 Jun 2018 11:20:44 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 25 Jun 2018 12:21:06 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34415 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752347AbeFYQVE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 12:21:04 -0400
+Received: by mail-pf0-f196.google.com with SMTP id g3-v6so1937121pfi.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 09:21:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XXa2cTHmp8UavvBtodYFdgvv5MPzmEpNtkylk+SQCgY=;
+        b=wCRMRHksPk8HktqdSaZUrDhcOzCWopIybcWZ31J7LGayOlxZLILMZk0D30eO24sUyR
+         dTkv9IzQmGD2Brz6EpgYX90B26Czx1OAMGB0yh6HggRllsUz2dhORe0CAso5ycZLel1R
+         WIowD2rze2uA/Q7Co9U3NNLhNhWX54eC6tAe4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XXa2cTHmp8UavvBtodYFdgvv5MPzmEpNtkylk+SQCgY=;
+        b=NnrKhBPLnKm3dgqWvE2zpAfFUvd+TEc9kHnqctLbesnGbghOhpfTz1dbvxgpR9qW+t
+         HaPp+3TguJQyAgNcbB9xYN07DpdfZ8ZuSLjf4Z6dMiMgTW59rbpUjY4Ma9rK/iVtOzAh
+         0+BTMTtgGaxyJmhDzQyW9pKOFpYLmG7gpHDMiqZ1tTkT43o2V0GsGX1bHUqv1xBPmGFy
+         9Q6Q47wyLYzCa4sskAl0xN8x036G87t9++FZpqMVKEQOg0uZ9ciSxSHRxsqhzgKcfUeO
+         OaneJ0rsUedqGmDfc+nnzUr5EMrYGvnrOiautC3qesplxWn+aCK43iycE4ROXPD40jVv
+         AQNQ==
+X-Gm-Message-State: APt69E0iUb5y9kXRbALuev3dwMlWLHdS0reXnuqe2wbjoUrgUVJbAVzz
+        f4Is3wyYLIrXqlK3EOqXM65dRA==
+X-Google-Smtp-Source: ADUXVKLNPxu3d+OWbzoFd+uBItnshpWN6EF6zcr599z/B9zMGGhXqs6GkDXsZ7IqXC6Q8kt0oSszig==
+X-Received: by 2002:a65:5144:: with SMTP id g4-v6mr2515135pgq.21.1529943664066;
+        Mon, 25 Jun 2018 09:21:04 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id h24-v6sm8648807pfd.69.2018.06.25.09.21.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 09:21:03 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 09:21:02 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v9 7/7] kselftests: Add tests for the preemptoff and
+ irqsoff tracers
+Message-ID: <20180625162102.GA49367@joelaf.mtv.corp.google.com>
+References: <20180621223236.211495-1-joel@joelfernandes.org>
+ <20180621223236.211495-8-joel@joelfernandes.org>
+ <20180625221302.8507c98e500d8efc70c19d88@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180625152920.11549-7-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625221302.8507c98e500d8efc70c19d88@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Jun 25, 2018 at 10:13:02PM +0900, Masami Hiramatsu wrote:
+> Hi Joel,
 > 
-> We now support board files in the aemif driver. Register a platform
-> device instead of using the handcrafted API in da830-evm.
+> On Thu, 21 Jun 2018 15:32:36 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
+> [...]
+> > +++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+> > @@ -0,0 +1,74 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# description: test for the preemptirqsoff tracer
+> > +
+> > +MOD=test_atomic_sections
+> > +
+> > +fail() {
+> > +    reset_tracer
+> > +    rmmod $MOD || true
+> > +    exit_fail
+> > +}
+> > +
+> > +unsup() { #msg
+> > +    reset_tracer
+> > +    rmmod $MOD || true
+> > +    echo $1
+> > +    exit_unsupported
+> > +}
+> > +
+> > +modprobe $MOD || unsup "$MOD module not available"
+> > +rmmod $MOD
+> > +
+> > +grep -q "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
+> > +grep -q "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
+> > +
+> > +reset_tracer
+> > +
+> > +# Simulate preemptoff section for half a second couple of times
+> > +echo preemptoff > current_tracer
+> > +sleep 1
+> > +modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
+> > +rmmod test_atomic_sections || fail
+> > +modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
+> > +rmmod test_atomic_sections || fail
+> > +modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
+> > +rmmod test_atomic_sections || fail
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   arch/arm/mach-davinci/board-da830-evm.c | 56 +++++++++++++++++++------
->   1 file changed, 44 insertions(+), 12 deletions(-)
+> Why don't you use $MOD for these operations?
+
+Yes, I will. Thanks for the suggestion.
+
+> > +
+> > +cat trace
+> > +
+> > +# Confirm which tracer
+> > +grep -q "tracer: preemptoff" trace || fail
+> > +
+> > +# Check the end of the section
+> > +egrep -q "5.....us : <stack trace>" trace || fail
+> > +
+> > +# Check for 500ms of latency
+> > +egrep -q "latency: 5..... us" trace || fail
+> > +
+> > +reset_tracer
+> > +
+> > +# Simulate irqsoff section for half a second couple of times
+> > +echo irqsoff > current_tracer
+> > +sleep 1
+> > +modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
+> > +rmmod test_atomic_sections || fail
+> > +modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
+> > +rmmod test_atomic_sections || fail
+> > +modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
+> > +rmmod test_atomic_sections || fail
 > 
-> diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-> index b2470141dba3..666db3cee08a 100644
-> --- a/arch/arm/mach-davinci/board-da830-evm.c
-> +++ b/arch/arm/mach-davinci/board-da830-evm.c
-> @@ -28,6 +28,7 @@
->   #include <linux/platform_data/mtd-davinci-aemif.h>
->   #include <linux/platform_data/spi-davinci.h>
->   #include <linux/platform_data/usb-davinci.h>
-> +#include <linux/platform_data/ti-aemif.h>
->   #include <linux/regulator/machine.h>
->   
->   #include <asm/mach-types.h>
-> @@ -333,14 +334,48 @@ static struct resource da830_evm_nand_resources[] = {
->   	},
->   };
->   
-> -static struct platform_device da830_evm_nand_device = {
-> -	.name		= "davinci_nand",
-> -	.id		= 1,
-> -	.dev		= {
-> -		.platform_data	= &da830_evm_nand_pdata,
-> +static struct platform_device da830_evm_aemif_devices[] = {
-> +	{
-> +		.name		= "davinci_nand",
-> +		.id		= 1,
+> Ditto.
 
-Actually, now that I've thought about it some more. It probably
-makes more sense to make all of the "davinci_nand" devices in this
-series use id = -1 since there is only one per board. It looks like
-da850 is the only one that has a lookup for "davinic_nand.0" already.
+Done.
+ 
+> Other parts looks good to me.
 
-I think that we are going to have to add clock lookups for the
-"davinci_nand" devices as well. Although the driver doesn't do
-clk_get() explicitly, I think some function it calls does get a
-clock. I remember that we had to add a clock-ranges property to
-device tree to get the davinci_nand driver working, which is why
-I think we are going to need a clock lookup for these devices
-as well.
+Cool, updated this patch below as "v9.1" ;-)
 
-> +		.dev		= {
-> +			.platform_data	= &da830_evm_nand_pdata,
-> +		},
-> +		.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
-> +		.resource	= da830_evm_nand_resources,
-> +	},
-> +};
-> +
+thanks!
+
+- Joel
+
+---8<-----------------
+
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: [PATCH v9.1 7/7] kselftests: Add tests for the preemptoff and irqsoff
+ tracers
+
+Here we add unit tests for the preemptoff and irqsoff tracer by using a
+kernel module introduced previously to trigger atomic sections in the
+kernel.
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ tools/testing/selftests/ftrace/config         |  3 +
+ .../test.d/preemptirq/irqsoff_tracer.tc       | 74 +++++++++++++++++++
+ 2 files changed, 77 insertions(+)
+ create mode 100755 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index b01924c71c09..29588b328345 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -4,3 +4,6 @@ CONFIG_FUNCTION_PROFILER=y
+ CONFIG_TRACER_SNAPSHOT=y
+ CONFIG_STACK_TRACER=y
+ CONFIG_HIST_TRIGGERS=y
++CONFIG_PREEMPT_TRACER=y
++CONFIG_IRQSOFF_TRACER=y
++CONFIG_TEST_ATOMIC_SECTIONS=m
+diff --git a/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+new file mode 100755
+index 000000000000..2dcd5e4cafb4
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+@@ -0,0 +1,74 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: test for the preemptirqsoff tracer
++
++MOD=test_atomic_sections
++
++fail() {
++    reset_tracer
++    rmmod $MOD || true
++    exit_fail
++}
++
++unsup() { #msg
++    reset_tracer
++    rmmod $MOD || true
++    echo $1
++    exit_unsupported
++}
++
++modprobe $MOD || unsup "$MOD module not available"
++rmmod $MOD
++
++grep -q "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
++grep -q "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
++
++reset_tracer
++
++# Simulate preemptoff section for half a second couple of times
++echo preemptoff > current_tracer
++sleep 1
++modprobe $MOD atomic_mode=preempt atomic_time=500000 || fail
++rmmod $MOD || fail
++modprobe $MOD atomic_mode=preempt atomic_time=500000 || fail
++rmmod $MOD || fail
++modprobe $MOD atomic_mode=preempt atomic_time=500000 || fail
++rmmod $MOD || fail
++
++cat trace
++
++# Confirm which tracer
++grep -q "tracer: preemptoff" trace || fail
++
++# Check the end of the section
++egrep -q "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep -q "latency: 5..... us" trace || fail
++
++reset_tracer
++
++# Simulate irqsoff section for half a second couple of times
++echo irqsoff > current_tracer
++sleep 1
++modprobe $MOD atomic_mode=irq atomic_time=500000 || fail
++rmmod $MOD || fail
++modprobe $MOD atomic_mode=irq atomic_time=500000 || fail
++rmmod $MOD || fail
++modprobe $MOD atomic_mode=irq atomic_time=500000 || fail
++rmmod $MOD || fail
++
++cat trace
++
++# Confirm which tracer
++grep -q "tracer: irqsoff" trace || fail
++
++# Check the end of the section
++egrep -q "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep -q "latency: 5..... us" trace || fail
++
++reset_tracer
++exit 0
++
+-- 
+2.18.0.rc2.346.g013aa6912e-goog
+
