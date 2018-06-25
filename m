@@ -2,87 +2,94 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83466C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8944EC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46B9C25BC9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:20:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B9C25BC9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
+	by mail.kernel.org (Postfix) with ESMTP id 424FD25C88
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:21:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 424FD25C88
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934877AbeFYPUZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:20:25 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:52820 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752021AbeFYPUW (ORCPT
+        id S934902AbeFYPVA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 11:21:00 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:43520 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751957AbeFYPU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:20:22 -0400
-Received: from localhost ([83.135.237.7]) by mrelayeu.kundenserver.de
- (mreue005 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0LdZfa-1fyaY12L9m-00ioKF; Mon, 25 Jun 2018 17:19:27 +0200
-Date:   Mon, 25 Jun 2018 17:19:26 +0200
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        mchehab@kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        linus.walleij@linaro.org, rdunlap@infradead.org,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] iio: hx711: warning in dt binding example doc
-Message-ID: <20180625151926.GA6403@arbeit>
+        Mon, 25 Jun 2018 11:20:58 -0400
+Received: by mail-yb0-f194.google.com with SMTP id g3-v6so3313416ybf.10;
+        Mon, 25 Jun 2018 08:20:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q+hPqOVJZNiksjOzh0iI563O0ZNNigWbaSygipBy0Tg=;
+        b=cQbURxwgG4vnYdaruAcOMj0NVhYxMgIt5I26ceajoNhe0UvBE37epUJo1wg8nH0wVI
+         KkvuAnoqOqxBwKFTCbdht3vTWNJwl1ZaYOC0THcVLgNd4VHSrdWjkW/MPPDJnZHpPGKp
+         3j6cakT7IzDvJjC8FpsAyd4LreBe0w16GPJY+ovijCMXWMPEfKnn9FU22syroZKPBHrx
+         hg96ziYZLh9mpBwpYs6czd5aDYQxVAYHdeatNpK66iCZYY54ZU8gEb136kxAivkwvGkj
+         e5Th79/hEVQBCpNAH5y/lmkXY6spFJEN99lYeO011aRdWKyFHCFOYnrvqKCkSJEEMfwc
+         BuzQ==
+X-Gm-Message-State: APt69E0IZqvw9fMJLjU1QJJeZOyy+hMa++gBQ33ayUrIqYnWAP7Aoygz
+        FtW/V6YbHULjpOZFm9q8iDIfJss=
+X-Google-Smtp-Source: ADUXVKLATUuvPyQ6nXj4SWLzT/3hqxgh44S+uI8pfS5iu0cNa1rxoj3ifaGgYHeEbJZT5lK5rARHfw==
+X-Received: by 2002:a25:404b:: with SMTP id n72-v6mr6333970yba.428.1529940057841;
+        Mon, 25 Jun 2018 08:20:57 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id y4-v6sm396911ywf.70.2018.06.25.08.20.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 08:20:56 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 09:20:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Todd Poynor <toddpoynor@google.com>
+Subject: Re: [PATCH v2] drivers: base: initcall_debug logs for driver probe
+ times
+Message-ID: <20180625152055.GA23270@rob-hp-laptop>
+References: <20180621003556.65578-1-toddpoynor@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Provags-ID: V03:K1:YQA1kZXM1bvOr8eg79OAiOfQy2s++FUUJlg4TmjgHHE8BuaRFfg
- kxh8jNd8+oA21+DtiisGzjx/FUtis99ZCq7+f6gfP/65qVCjjIWLkLBzvH8LVgScDZKXITW
- ndTeWxdysRWMhfgwc8GcqHTgS2ntmArBdftU2vXYZRna/Pdhtw0EALniEK4TyA0f4qA88Y9
- n1oP1qEyiENLbUvCnqesA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+mfc/WGZll0=:+L2GqtFOV/WHqMMs7Obqci
- iQvOsLN6MNeffjX/Lx9Oy54D5cW6rznoUHGKx8uElnLHakqyaOBoQwpKvOO1akJOkzBUAGU9I
- aP2HNaNCbHx/JSp8wKRlYWbFYF/Z0WQs8OIsqnd6JdtKlRyHwrigY3+NQrwcUASYggNmjGuoi
- haz42rBKVTTIdpzu4bdXkVkPLLSxDydi2lZigmAf+oSQKtZYPaThkCukbJfXA4KtcAyu3y4lC
- 5lz53VURWtsX1ZnuBK6lU/U9oOT9W0TOeZ+y1hELPo78GWOy83TLuQtb7DTQ0hxQnzwQZNZ2d
- CDH7LYbfxC0hrK1RyF3rub0JFZGXEEKaQF2r06OuaGhRyfOMGMblFnk/rTDNoi/gxFNlAPiya
- C/PsgqbACDcMYXVjp9y433bbk5IN5RRvUbs5itzvwvKRTfSWmcwGkg6tLPmOEjXf1vBGlTBf6
- 0dk/ugQ9pF9UZA341DzMYa9GWhcpwGe7X3VsY3VQnsdX2cXaaDTn9c9WZzcLKDmYHmQve9c56
- V/v0dr2Q32v3G47s3WnNNbXXn57YnaLYn9O9qzxHws9Z7o2FpUB8KcR3qYHy+nve/j4HcAmbm
- nHkcbiXx82xZiwyh2008c5ZAHxHweVKLPCORnKLWIZBqmJog7s46rFKpY2fbVUAPlL/w9ttfB
- WGqex7qW6yZ5BmMxqyZkJwrStljqZWbd/wvzsQnVCfmMVWYst8NK81+dnVdeQIfI5PoQ=
+In-Reply-To: <20180621003556.65578-1-toddpoynor@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-device tree compiler (dtc) gives a warning if a device node has "@" with a
-following number as it's name but no reg property.
+On Wed, Jun 20, 2018 at 05:35:56PM -0700, Todd Poynor wrote:
+> From: Todd Poynor <toddpoynor@google.com>
+> 
+> Add initcall_debug logs for each driver device probe call, for example:
+> 
+>    probe of a3800000.ramoops returned 1 after 3007 usecs
+> 
+> This replaces the previous code added to report times for deferred
+> probes.  It also reports OF platform bus device creates that were
+> formerly lumped together in a single entry for function
+> of_platform_default_populate_init, as well as helping to annotate other
+> initcalls that involve device probing.
+> 
+> Remove restriction on printing probe times only during initcalls, since
+> initcall_debug now continues to show driver timing info past the boot
+> phase.
+> 
+> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+> ---
+>  drivers/base/dd.c | 50 +++++++++++++++++++++--------------------------
+>  1 file changed, 22 insertions(+), 28 deletions(-)
+> 
+> Changes from v1:
+> * unsigned long long -> s64
+> * use ktime_to_us() instead of ktime_to_ns with shift
+> * print probe return value
+> * drop code that stopped output on end of initcall processing
 
-fix the example in the documentation of avia,hx711 to conform to dtc
-behavior
-
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
----
- Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-index d0c066e3df69..8c9bcaa4d750 100644
---- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-@@ -15,7 +15,7 @@ Optional properties:
- 			is 50000 in the datasheet
- 
- Example:
--weight@0 {
-+weight {
- 	compatible = "avia,hx711";
- 	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
- 	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
--- 
-2.1.4
+Reviewed-by: Rob Herring <robh@kernel.org>
