@@ -2,156 +2,105 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB718C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 02:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C28C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 02:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 456DC253C0
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 02:06:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39005253D1
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 02:22:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="WbEfyqNQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jb/jn8Ip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456DC253C0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZxiOVxo0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39005253D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752683AbeFYCGa (ORCPT
+        id S1752704AbeFYCWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 22:06:30 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:58603 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751834AbeFYCG2 (ORCPT
+        Sun, 24 Jun 2018 22:22:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48432 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752463AbeFYCWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 22:06:28 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8EA6220E46;
-        Sun, 24 Jun 2018 22:06:27 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 24 Jun 2018 22:06:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :content-transfer-encoding:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=/MJze+aeqNjRd2fQuCZo/c2tzuQyi
-        kPXjwxzxaNssSQ=; b=WbEfyqNQte1MBp6J2ts2Ytxkxz0S24wu4TnAlKvCiriSe
-        W5By+zu/Sp5Il8CAzmGnXEib5bu52psv2XWqK3ZwpZqL+XiAH5gUER9ulz9bKv7b
-        LXn4rzx7bChhvtmCQTO/jvgkppw7JzkN+Q1YDMd2IErlHUkWPUbYSuB9FiahI9mK
-        0PYTMuD60/v1HL4csX2WGKzYTXq0Y2ZGPFzi39WAd+PdvsLi5UAiUVtZ9MnvZAq5
-        fl9Fz/s0FFVnvDs9T0YhCOYBd8NPvaTAJFoNwL+rK05Z1pd1YIeSLxRKMM1seEtZ
-        k8nW1Sn1y1i1bGvytvCsQxyUvkTmizOtrz38/AmYg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=/MJze+
-        aeqNjRd2fQuCZo/c2tzuQyikPXjwxzxaNssSQ=; b=Jb/jn8IpIZJV8Gw/M3GH9a
-        6IvRU8xyLNvtHV8I2+HS2WxXmqg3fCmt9vSa1P6Uf7zOB+v3oTJnJ65IpFDNqHcy
-        4eKFd4Em8Tj5G3N2ZybNVO5hRWUi5mVxUORBP+tlXutkQqHLANEHV2iD7XqLSVR7
-        IJCCmisKte0U+8lGaPYGROaaI3v24CCgXBKNXXn/8Pz6n4r3dIBSN2UWbMoAElyb
-        YFWypBQ2ZJsbdhV4dOuYp/JBBckQdzBgQYZyP49X6B2tGf9QgXIjq4+QsocpOgqj
-        lg1G4IMx8P2iHK6GLBZKo67ubd0Qfm7XYotXSmZ7N34FJRPITzUXP5CCMy5C3vsA
-        ==
-X-ME-Proxy: <xmx:I04wWyJkoBW9Jr4vbFRjF8zb5bkwxE6xrR4p1EWRsfZXkob9_nyO5g>
-    <xmx:I04wW6Uk4k5RWH85hP8aIRUdXvQP3w3SkfPWZhwvxJLghOZwvoFSjQ>
-    <xmx:I04wW0ghLMmJflTjSKAAwKTz1KuI5p8GaLtYzUnSUsOLcpka0DMtcQ>
-    <xmx:I04wW19Z11U7cMFZ-70cdpEjeFJciFVgKEQxzDmvzTswCiWX0nP3jA>
-    <xmx:I04wW-BSKGrYmCOiCLg0IBn7O-rC1QQc_BLclaKJMPkYfRCaRdeafQ>
-    <xmx:I04wWxkeW4GVMrH6Qx78HZ3lti05FOdm3vPjZIkvvVC6_ovXdD3hAA>
-X-ME-Sender: <xms:I04wW230c64mc-nMfhVz3kSv3KB36qTWRoA97eLN-xfIF8tgRmrr8Q>
-Received: from localhost (ppp121-44-217-101.bras1.syd2.internode.on.net [121.44.217.101])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9060FE40A3;
-        Sun, 24 Jun 2018 22:06:26 -0400 (EDT)
-Date:   Mon, 25 Jun 2018 12:06:23 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] docs: e100[0] fix build errors
-Message-ID: <20180625020623.GJ3006@eros>
-References: <20180622003708.31848-1-me@tobin.cc>
- <ba768d6c-dd21-3600-5cba-151b5d6185f1@infradead.org>
- <20180624234135.GE3006@eros>
- <91A1572C-63A6-4420-B01B-A0DD5F84200A@intel.com>
+        Sun, 24 Jun 2018 22:22:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ubT3V0bdTZcdgVCi6Yrf3mINHtnD7iqYXOsI8Lc1yJ8=; b=ZxiOVxo0wyJ0GzqeqbzJckTSu
+        f8AheWIBViNoz1luhgbb/fDFDsMn0RwGQDhaWLc9/eJPYvqNvghfcwpDY2/RdmgeOuzDKJTjSBsOu
+        8ODKFp4dqV+XRYL18VdEXv0t3g5008ykRsMY/pO1nwfHjdGxpr1OkDzrw2Puxzu+zA0NZgF/DehXT
+        RV9ErgFalX1JbQpA0MNg6vaJ0+oLie3Rww7sm8ehjPDgKbL0/AolIMFcVxAQfGUjzDqlQQ9xC3/Cp
+        VA0PufScaRohECaDcGmi9tr69rtPPPOhhj84X4fY1hHka/b/35WM8RgrPc2gYOcIn4iI2QLd2Ivrb
+        UTaD0J8QA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXH9R-0008RF-JM; Mon, 25 Jun 2018 02:22:45 +0000
+Subject: Re: syscalls: incompatible types and aliases on i386
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     X86 ML <x86@kernel.org>
+References: <d2014bd6-e7c0-251e-aa88-ae7e00b77393@infradead.org>
+Message-ID: <899b9c95-7515-f843-662e-5ffa93a3f3e4@infradead.org>
+Date:   Sun, 24 Jun 2018 19:22:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <d2014bd6-e7c0-251e-aa88-ae7e00b77393@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <91A1572C-63A6-4420-B01B-A0DD5F84200A@intel.com>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 01:11:33AM +0000, Kirsher, Jeffrey T wrote:
+On 06/24/2018 04:51 PM, Randy Dunlap wrote:
+> Hi,
+> 
+> I'm seeing lots of this type of warning in 4.18-rc2 (maybe even before,
+> but this is on x86_32/i386, so maybe people aren't checking it so much?):
+> 
+> In file included from ../arch/x86/kernel/process_32.c:40:
+> ../include/linux/syscalls.h:234:18: warning: 'sys_arch_prctl' alias between functions of incompatible types 'long int(int,  long unsigned int)' and 'long int(long int,  long int)' [-Wattribute-alias]
+>   asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
+>                   ^~~
+> ../include/linux/syscalls.h:223:2: note: in expansion of macro '__SYSCALL_DEFINEx'
+>   __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+>   ^~~~~~~~~~~~~~~~~
+> ../include/linux/syscalls.h:213:36: note: in expansion of macro 'SYSCALL_DEFINEx'
+>  #define SYSCALL_DEFINE2(name, ...) SYSCALL_DEFINEx(2, _##name, __VA_ARGS__)
+>                                     ^~~~~~~~~~~~~~~
+> ../arch/x86/kernel/process_32.c:310:1: note: in expansion of macro 'SYSCALL_DEFINE2'
+>  SYSCALL_DEFINE2(arch_prctl, int, option, unsigned long, arg2)
+>  ^~~~~~~~~~~~~~~
+> ../include/linux/syscalls.h:239:18: note: aliased declaration here
+>   asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
+>                   ^~~~~~~~
+> ../include/linux/syscalls.h:223:2: note: in expansion of macro '__SYSCALL_DEFINEx'
+>   __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+>   ^~~~~~~~~~~~~~~~~
+> ../include/linux/syscalls.h:213:36: note: in expansion of macro 'SYSCALL_DEFINEx'
+>  #define SYSCALL_DEFINE2(name, ...) SYSCALL_DEFINEx(2, _##name, __VA_ARGS__)
+>                                     ^~~~~~~~~~~~~~~
+> ../arch/x86/kernel/process_32.c:310:1: note: in expansion of macro 'SYSCALL_DEFINE2'
+>  SYSCALL_DEFINE2(arch_prctl, int, option, unsigned long, arg2)
+>  ^~~~~~~~~~~~~~~
 > 
 > 
-> > On Jun 24, 2018, at 16:41, Tobin C. Harding <me@tobin.cc> wrote:
-> > 
-> >> On Fri, Jun 22, 2018 at 01:22:37PM -0700, Randy Dunlap wrote:
-> >> Hi Tobin,
-> >> 
-> >>> On 06/21/2018 05:37 PM, Tobin C. Harding wrote:
-> >>> Hi Jonathan,
-> >>> 
-> >>> This patch set fixes current docs build failure on Linus' mainline
-> >>> 
-> >>> commit: (ba4dbdedd3ed Merge tag 'jfs-4.18' of git://github.com/kleikamp/linux-shaggy)
-> >>> 
-> >>> (FYI this is 8 commits after Linux 4.18-rc1).
-> >>> 
-> >>> And also same build errors on today's linux-next
-> >>> 
-> >>> 8439c34f07a3 (tag: next-20180621, linux-next/master, linux-next) Add linux-next specific files for 20180621
-> >>> 
-> >>> 
-> >>> I split the patches in between the two drivers to enable use of the
-> >>> 'Fixes:' tag.
-> >>> 
-> >>> Tobin C. Harding (4):
-> >>>  Documentation: e100: Use correct heading adornment
-> >>>  Documentation: e1000: Use correct heading adornment
-> >>>  Documentation: e100: Fix docs build error
-> >>>  Documentation: e1000: Fix docs build error
-> >>> 
-> >>> Documentation/networking/e100.rst  | 112 +++++++++++++++--------------
-> >>> Documentation/networking/e1000.rst |  76 ++++++++++----------
-> >>> 2 files changed, 96 insertions(+), 92 deletions(-)
-> >> 
-> >> I am still seeing a few warnings (your 4 patches applied to
-> >> linux-next-20180622):
-> >> 
-> >> linux-next-20180622/Documentation/networking/e100.rst:57: WARNING: Literal block expected; none found.
-> >> linux-next-20180622/Documentation/networking/e100.rst:68: WARNING: Literal block expected; none found.
-> >> linux-next-20180622/Documentation/networking/e100.rst:75: WARNING: Literal block expected; none found.
-> >> linux-next-20180622/Documentation/networking/e100.rst:84: WARNING: Literal block expected; none found.
-> >> linux-next-20180622/Documentation/networking/e100.rst:93: WARNING: Inline emphasis start-string without end-string.
-> >> linux-next-20180622/Documentation/networking/e1000.rst:83: ERROR: Unexpected indentation.
-> >> linux-next-20180622/Documentation/networking/e1000.rst:84: WARNING: Block quote ends without a blank line; unexpected unindent.
-> >> linux-next-20180622/Documentation/networking/e1000.rst:173: WARNING: Definition list ends without a blank line; unexpected unindent.
-> >> linux-next-20180622/Documentation/networking/e1000.rst:236: WARNING: Definition list ends without a blank line; unexpected unindent.
-> >> 
-> >> 
-> >> You didn't get these warnings?  or they weren't important?
-> >> or "perfect" was not your primary goal?   :)   [which is fine]
-> >> 
-> >> [I see around 50 similar doc formatting warnings/errors in the entire
-> >> Documentation build.]
-> > 
-> > Thanks for testing this Randy.  You are right there are a bunch of
-> > warnings, I did not think to grep for warnings on these files - sloppy
-> > work by me.  The series has been applied already but I'll add clearing
-> > these warnings to my TODO list.
 > 
-> Thanks, already on it.  I have a set of patches that I will push once Dave open’s up his net-next tree.
+> I see around 300 of these.
+> Using:  gcc (SUSE Linux) 8.1.1 20180523 [gcc-8-branch revision 260570]
+> 
+> Is there a patch for this?
 
-Oh cool, even better.
+Found it.
 
-thanks,
-Tobin.
+thnx,
+-- 
+~Randy
