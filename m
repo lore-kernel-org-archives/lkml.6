@@ -2,144 +2,154 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D19A8C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4CFC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9463125A81
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:33:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9463125A81
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 388CD25A8F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:35:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vhCQdPYX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388CD25A8F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934136AbeFYNdV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:33:21 -0400
-Received: from mga06.intel.com ([134.134.136.31]:32292 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933939AbeFYNdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:33:19 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 06:33:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,270,1526367600"; 
-   d="scan'208";a="66134248"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga004.fm.intel.com with SMTP; 25 Jun 2018 06:33:13 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 25 Jun 2018 16:33:13 +0300
-Date:   Mon, 25 Jun 2018 16:33:13 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: shpchp: Fix probing logic inversion
-Message-ID: <20180625133313.GL2558@lahna.fi.intel.com>
-References: <20180621164715.28160-1-marc.zyngier@arm.com>
- <20180625125204.GH2558@lahna.fi.intel.com>
- <8d37f32e-d62d-0e81-d478-8a7a8d7b15c0@arm.com>
+        id S1755528AbeFYNff (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:35:35 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44976 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752124AbeFYNfd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:35:33 -0400
+Received: by mail-pg0-f66.google.com with SMTP id b10-v6so2401058pgq.11;
+        Mon, 25 Jun 2018 06:35:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lxgWpkcqfBJolW6ZojM7ufHRXQ+7Xu5sCZoIIWm9rvk=;
+        b=vhCQdPYXiwDPr4Ud7Ol/S9f/h5uaONc85V+AYJiqPXrF7Aat2VNSFm09wfaNy+Su9U
+         qSVt4PfAt5jqhTSskAtWPdAeEiUo148DqYfAZv+68biLQW/ZhecF/u53xZhWzvIS8i+S
+         tlUSTrZa/oiu9kjhwt+s+IWg0iD5xgca3CjKEdAWwqOlSvVpIr4VC3iBW94oUejZg/mX
+         EHbEuia1RdwzwqWs1kCTTpqlAIgEvmnljRa/cWFOtH+/K5HqleP9IJnBFHU/UOVk72mc
+         4ahaAJEzvHgBn2pD3V9rRmELE/UTyrIwHOBcQFf8okQAoqUV8F3cir3JYSHQYfv8+oEw
+         Gysw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lxgWpkcqfBJolW6ZojM7ufHRXQ+7Xu5sCZoIIWm9rvk=;
+        b=aT1XuAQC7dPwhowieA7GxVSFdGd59kXO89c1lvLFRh+mfJ613aa6y/NaalWQVec/F0
+         6m/ywfgH/AqOn2kQHs7J/vjjL/W2hSABlG6phlXDYmswKNjdGzSRTeEtElaV0irVtmju
+         vv0azmv1WzR0+pE8GzIsDZzHz45QcZjzRKZwSE5aeamidCglDFGEzY41sSj6kX+JSpoj
+         RC8S3tEbvHu7fycDS9o5OBqXvxxJxiTF4/7P5rKR7PbQpZgPhGGeNPkTrE7/9wuyHnxp
+         oRIwT77J2b7/A2+s/6hy/xYaJQsVyH1tMKA6YIjmO1bA87FSCSiBCPnUd7F8GQCrupoC
+         TmcA==
+X-Gm-Message-State: APt69E27S7kod/wxTeEl1tGo2v/Gts7PMZg0rlgaLOVUj6JiFMM6ewSP
+        Y6hCDRX4Xpk4cA2K8vikgJ+Yyg==
+X-Google-Smtp-Source: ADUXVKL4dL1+otudLLksHYtuOZSc251PtlPzX0KiNk8Lg7FVasopKC1VYpwCeAwklyieRo8W/Uvlug==
+X-Received: by 2002:a65:6141:: with SMTP id o1-v6mr10572286pgv.409.1529933733278;
+        Mon, 25 Jun 2018 06:35:33 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id 8-v6sm30827226pfk.132.2018.06.25.06.35.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 06:35:32 -0700 (PDT)
+Subject: Re: s390 qemu boot failure in -next
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-s390x <qemu-s390x@nongnu.org>,
+        qemu-devel <qemu-devel@nongnu.org>,
+        Thomas Huth <thuth@redhat.com>
+References: <20180622194736.GA5794@roeck-us.net>
+ <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
+ <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
+ <20180625100548.64222dad.cohuck@redhat.com>
+ <your-ad-here.call-01529915788-ext-6027@work.hours>
+ <20180625104928.6c4cb239.cohuck@redhat.com>
+ <76740f8f-ef4c-9d11-dae1-192beebff4d8@de.ibm.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <64bcba64-b88f-3594-da6e-7c2118482c20@roeck-us.net>
+Date:   Mon, 25 Jun 2018 06:35:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d37f32e-d62d-0e81-d478-8a7a8d7b15c0@arm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <76740f8f-ef4c-9d11-dae1-192beebff4d8@de.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 02:13:26PM +0100, Marc Zyngier wrote:
-> On 25/06/18 13:52, Mika Westerberg wrote:
-> > On Thu, Jun 21, 2018 at 05:47:15PM +0100, Marc Zyngier wrote:
-> >> Until recently, shpc_probe() would bail out pretty early in the
-> >> absence of the SHPC capability. A logic change in the way the
-> >> driver now checks that capability makes it go and probe the
-> >> firmware anyway, with ugly consequences if the system is not
-> >> ACPI based (my arm64 ThunderX is DT driven, and explodes in
-> >> a spectacular way after getting a NULL root bridge from the
-> >> non-existent ACPI tables...).
-> > 
-> > Could you share log from the failure? I would like to understand a bit
-> > better where it crashes and why.
+On 06/25/2018 05:26 AM, Christian Borntraeger wrote:
 > 
-> Here you go:
 > 
-> [   12.330017] pcieport 0008:1f:00.0: enabling device (0506 -> 0507)
-> [   12.336315] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
-> [   12.345104] Mem abort info:
-> [   12.347895]   ESR = 0x96000004
-> [   12.350945]   Exception class = DABT (current EL), IL = 32 bits
-> [   12.356860]   SET = 0, FnV = 0
-> [   12.359910]   EA = 0, S1PTW = 0
-> [   12.363046] Data abort info:
-> [   12.365922]   ISV = 0, ISS = 0x00000004
-> [   12.369748]   CM = 0, WnR = 0
-> [   12.372712] [0000000000000058] user address but active_mm is swapper
-> [   12.379063] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> [   12.384625] Modules linked in:
-> [   12.387676] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.18.0-rc1-00006-ga2c5c6a64fb6 #10
-> [   12.395929] Hardware name: FOXCONN R2-1221R-A4/C2U4N_MB, BIOS G31FB18A 03/31/2017
-> [   12.403408] Workqueue: events work_for_cpu_fn
-> [   12.407758] pstate: 60000005 (nZCv daif -PAN -UAO)
-> [   12.412544] pc : acpi_get_hp_hw_control_from_firmware+0xa0/0x2b0
-> [   12.418541] lr : acpi_get_hp_hw_control_from_firmware+0xa0/0x2b0
-> [   12.424537] sp : ffff00000a613c60
-> [   12.427841] x29: ffff00000a613c60 x28: 0000000000000000 
-> [   12.433147] x27: ffff800fbeb8d0b0 x26: ffff00000982a068 
-> [   12.438453] x25: 0000000000000000 x24: ffff000009feb898 
-> [   12.443759] x23: 0000000000000000 x22: ffff000009808000 
-> [   12.449064] x21: ffff0000098dee98 x20: ffff810fa60d9000 
-> [   12.454370] x19: 0000000000000000 x18: ffffffffffffffff 
-> [   12.459675] x17: 0000000000000e00 x16: 0000000000000020 
-> [   12.464981] x15: ffff000009808648 x14: ffff000089a31b8f 
-> [   12.470286] x13: 0000000000000000 x12: 0000000000000040 
-> [   12.475591] x11: 000000000000004c x10: 0000000000000a20 
-> [   12.480897] x9 : ffff00000a613d30 x8 : 0000000000000000 
-> [   12.486202] x7 : ffff000009808648 x6 : 0000000000000057 
-> [   12.491508] x5 : 0000000000000010 x4 : 000000000000001f 
-> [   12.496813] x3 : 0000000000000000 x2 : 0d68a3f9b2251000 
-> [   12.502118] x1 : 0000000000000000 x0 : 0000000000000000 
-> [   12.507425] Process kworker/0:0 (pid: 5, stack limit = 0x(____ptrval____))
-> [   12.514289] Call trace:
-> [   12.516727]  acpi_get_hp_hw_control_from_firmware+0xa0/0x2b0
-> [   12.522377]  shpc_probe+0x48/0x3b0
-> [   12.525772]  local_pci_probe+0x44/0xb0
-> [   12.529511]  work_for_cpu_fn+0x20/0x30
-> [   12.533252]  process_one_work+0x208/0x480
-> [   12.537251]  worker_thread+0x254/0x448
-> [   12.540992]  kthread+0x104/0x130
-> [   12.544212]  ret_from_fork+0x10/0x1c
-> [   12.547779] Code: f100427f 54000040 f85f8260 94009f63 (b9405800) 
-> [   12.553866] ---[ end trace 8ee5b8cc95cd4f02 ]---
+> On 06/25/2018 10:49 AM, Cornelia Huck wrote:
+>> On Mon, 25 Jun 2018 10:36:33 +0200
+>> Vasily Gorbik <gor@linux.ibm.com> wrote:
+>>
+>>> This change has been done on purpose. Uncompressed image is not going
+>>> to be bootable any more. In future the decompressor phase would get
+>>> more function (early memory detection as an example) and there is no
+>>> chance to duplicate that code in uncompressed image as well (to keep it
+>>> bootable on its own). The patch series commit messages contain more
+>>> technical details.
+>>>
+>>> For qemu either bzImage or arch/s390/boot/compressed/vmlinux should be
+>>> used, which are bootable images.
+>>>
+>>> But that's really confusing that uncompressed vmlinux is still kind
+>>> of booting. May be we should discuss how to avoid this confusion
+>>> (may be change uncompressed image enty point to a function doing
+>>> disabled wait with badb007 or smth) and how to encourage people to use
+>>> arch/s390/boot/compressed/vmlinux instead.
+>>
+>> So, the intention is that you can't boot the uncompressed image
+>> anywhere? (Was it possible before, e.g. when punching the image under
+>> z/VM?)
 > 
-> >> Take this opportunity to move the call to shpchp_is_native()
-> >> back into shpc_probe(), making it clear that a non-ACPI system
-> >> is not expected to use this driver.
-> > 
-> > It is fine to use SHPC in non-ACPI systems. However, in ACPI systems we
-> > should negotiate whether it is the OS or the firmware who handles it.
-> Fair enough. In which case we should at the very least make sure
-> we can handle acpi_pci_find_root() returning NULL (which is what
-> generates the crash in my case).
+> The uncompressed image (the vmlinux file) was never bootable in LPAR or z/VM.
+> It was just a "nice hack" that QEMU was able to do so. (even qemu on x86 can not
+> boot the pure vmlinux file as far as I know).
+> 
 
-Agreed. Can you try if the below patch fixes the issue for you?
+"even" is relative. vmlinux boots on some arm platforms, metag, mips64, nios2,
+parisc, ppc/ppc64, and riscv.
 
-diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
-index 3979f89b250a..73bc92cf0594 100644
---- a/drivers/pci/hotplug/acpi_pcihp.c
-+++ b/drivers/pci/hotplug/acpi_pcihp.c
-@@ -88,6 +88,9 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
- 
- 	/* If _OSC exists, we should not evaluate OSHP */
- 	host = pci_find_host_bridge(pdev->bus);
-+	if (!ACPI_HANDLE(&host->dev))
-+		return 0;
-+
- 	root = acpi_pci_find_root(ACPI_HANDLE(&host->dev));
- 	if (root->osc_support_set)
- 		goto no_control;
+If an image is not expected to be bootable, a message such as "This image does
+not boot. Please use <correct image>" would be nice. Unfortunately, which image
+to boot under qemu is pretty much undocumented, and it is guesswork for each
+architecture/platform.
+
+Guenter
+
+> I talked to Vasily and the vmlinux file in the linux source path is just an
+> intermediate file. Future changes will happen that will make that ELF file
+> unsuitable for direct boot anyway (e.g. think about potential ASLR or Kasan
+> changes).
+> 
+>   If yes, it would make sense to explicitly fence it. But I'm
+>> worried that it would break previously working setups (did we document
+>> the purpose of the images anywhere?
+>>
+> 
+> 
+> I think by referring to arch/s390/boot/compressed/vmlinux things are probably
+> good enough. That will still load from 0x10000.
+> 
+> We might still "change" the way that we add the parameters (e.g.
+> make that not depend on the load address), but looking forward this might
+> become less important for the "intermediate vmlnux file".
+> 
+> 
+
