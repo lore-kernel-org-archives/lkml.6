@@ -2,140 +2,141 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2A4C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB1FC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49E5526129
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93C0726129
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:15:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAXgpeDE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49E5526129
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IWdbohPy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C0726129
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754314AbeFYWPA (ORCPT
+        id S1754559AbeFYWPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:15:00 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45819 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752625AbeFYWO6 (ORCPT
+        Mon, 25 Jun 2018 18:15:07 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44787 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752625AbeFYWPB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:14:58 -0400
-Received: by mail-oi0-f68.google.com with SMTP id 188-v6so14028360oid.12;
-        Mon, 25 Jun 2018 15:14:58 -0700 (PDT)
+        Mon, 25 Jun 2018 18:15:01 -0400
+Received: by mail-wr0-f194.google.com with SMTP id p12-v6so13540000wrn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:15:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=ThBbUOBn+R6VpGkNExmDZxoJRzHPGWoNtrzFo/QO6ss=;
-        b=JAXgpeDEPpp3/xUNpZnES3lfbkAvBaJ9em2I33T2RfxSwuqqrKoAbSpONT4SqJ6Jnt
-         6+uGGgYB9xEw7tJqvW/ElW3JmD6+vDDH45XebtPbN3v2LG6vjuoKuT+FgP3EYIzPGgrL
-         GT4D6opakJzlMHEhejG6oI5Z48Kq8hC037uYDi9QfthM1t8x2xWYa4Ixm1e2q5/U8Ete
-         rFEgj4ACSvvEXSFbgFCNj6J6VQxWqoABeq1GXKcYLdIly5Vgu9l+ieDKIgT2avY3s+p/
-         m2akvq5DD/AiCo8CdLgqliyc+gAuEbD8v3Hcw+l+JbY1CqVhAfxtG038Gzph/4AkFymL
-         YVgw==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UvrXs+qy2Fcrq2CTMnh6Wrp6q/WoLGsOa/5BXS7bfio=;
+        b=IWdbohPyql8LRd+qLmyU30LbItFAN4DrSnpcHajZCFGN2sCr88lBn69Xw+NRzvZcfJ
+         56hgks8z3EQyy9kiWbhVKpnOp4miph5BVNnldNksOMcXdtLdawqWtKW++jOk3lBLr/2m
+         raQ7G4ZTsW6RrvIuvXeTWwfcDzW9rlRBc6N/s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=ThBbUOBn+R6VpGkNExmDZxoJRzHPGWoNtrzFo/QO6ss=;
-        b=KslVaGi2ANr1XjJkqkh1y6KtFhSH6kVYop3me0Y+acAuPQExchR4wUaHutSBf8duUo
-         alochjhCHwCZLLGceDbSgq2WqBP6lX9xXeGZ5mRBRruWjWBZEWb5/UhofnMt6oDc4ZrF
-         thADR3OV2TxzhWSEFhb5a7nTJ0JIPBzaMYi/+hFQ0ZBCfdQXV/x1zkBpF2xQzyKfOofG
-         zkCOQBLvvZZRiEr9PS6vft+N2ob1RTJ8cawfUSJo3GycRedJQ99cRnzLTVx25PqBZBQd
-         TXAoJWDTlLg6mT0Ikiu4+HucJ4bfu99/l3ao0qXz9R9ZAqtjisu0WpNPgyUKHsgEaN3g
-         KEDw==
-X-Gm-Message-State: APt69E3opyfUbyv5S+ekDdmin8j+94LSGe8Rj07mqzGv7Dt4LLu0Zqa2
-        UZU0E/EWAmDaUD75BD31TCD9ze6DU29S9f+vV/M=
-X-Google-Smtp-Source: AAOMgpfBOYGPpXoM5gOsTR7Lustndd0jSjB1x8mDE3JRjMbr6VzixFcq//1kWx/+0a88zDmsOeoD2SgOSJJQGNBu0UY=
-X-Received: by 2002:aca:6910:: with SMTP id e16-v6mr7685251oic.358.1529964897829;
- Mon, 25 Jun 2018 15:14:57 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UvrXs+qy2Fcrq2CTMnh6Wrp6q/WoLGsOa/5BXS7bfio=;
+        b=R6pC8cY/Y2HlWuL+SjlQFmKMoqzYgqYteThgf8mOprDT+kGR6OmDiUAdIOWjralFGW
+         kP9417rL8+TWOWKPzVRrmEa6YtlrCaIQeN6XLepvhlQA0icbR+1y/FDvzyBUC5Zdgjfb
+         WO58Xgvbt82H1eHrO/fmqkXD1jY/T/B2vuCfcxefVbu0UfYu9gqgsfhr2/ex7KXaOpbv
+         CJnGf9zzILeYheWlM/UUs8YTpEkRBU3CxQmv/MLGf+1G+zuxoJpmBTOyM1BOi38X1oZx
+         dRGYHy9/Ex8szzZ5eQ3qILLWvHQZz1cikE6zAvIG9T1QEUTGdye0L8DQcxFWDjN3MwL7
+         Ueag==
+X-Gm-Message-State: APt69E1sJrtc7czW7ZthZocacmBKXj+yNOdpvtIBOmFM0+31d2jUrQxd
+        /apCtqZogzkog3sDMplYcNIByA==
+X-Google-Smtp-Source: AAOMgpctfneSrUpnUUgmf1Ui98MhqmSK6ILUwKH/6zY6Qjx4zJEjd5WXX3jL6YwUx7uM3teNO2rURg==
+X-Received: by 2002:adf:e987:: with SMTP id h7-v6mr11256393wrm.102.1529964899694;
+        Mon, 25 Jun 2018 15:14:59 -0700 (PDT)
+Received: from ?IPv6:2001:41d0:fe90:b800:7ce3:d1ec:2b62:6452? ([2001:41d0:fe90:b800:7ce3:d1ec:2b62:6452])
+        by smtp.googlemail.com with ESMTPSA id d14-v6sm50407wro.24.2018.06.25.15.14.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 15:14:58 -0700 (PDT)
+Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle injection
+ framework
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
+ <CAJZ5v0iyS7wUx5sYnyhZxhRD7EMEWyKzcpBu7vXUGxuwM4+prw@mail.gmail.com>
+ <98f43bb6-9ab5-2f79-05f2-be68a0f7f88e@linaro.org>
+ <CAJZ5v0gv_y9DfEsqq_46D5hi3SA+UYy7cUoaCwb3_+HtRadDOg@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <dd30daab-caf6-91d6-2f72-998f640f85ae@linaro.org>
+Date:   Tue, 26 Jun 2018 00:15:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 15:14:57
- -0700 (PDT)
-In-Reply-To: <20180625115913.GD17001@amd>
-References: <cover.1529486870.git.yu.c.chen@intel.com> <20180621085332.GA21807@amd>
- <CAJZ5v0izS8CNzhsd_bjB40xTkZxaxh13NtHsJi9LYXEr84MoMA@mail.gmail.com>
- <20180621191443.GB14623@amd> <CAJZ5v0gHPRa-9btfCCYEDDphZrEy8DTrXjsn57MoKMAu7sKMEA@mail.gmail.com>
- <20180625115913.GD17001@amd>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 26 Jun 2018 00:14:57 +0200
-X-Google-Sender-Auth: Bnz56HbKillBvz1EfpPUQ3dm_To
-Message-ID: <CAJZ5v0jPp5GyrHCGLxXzbUOM2MzSL1ikkiEAMt32mcsuY1Gp4Q@mail.gmail.com>
-Subject: Re: [PATCH 0/3][RFC] Introduce the in-kernel hibernation encryption
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJZ5v0gv_y9DfEsqq_46D5hi3SA+UYy7cUoaCwb3_+HtRadDOg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 1:59 PM, Pavel Machek <pavel@ucw.cz> wrote:
->
->
->> > Well, AFAICT in this case userland has the key and encrypted data are
->> > on disk. That does not seem to be improvement.
+On 25/06/2018 23:55, Rafael J. Wysocki wrote:
+> On Mon, Jun 25, 2018 at 1:52 PM, Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>> On 25/06/2018 10:23, Rafael J. Wysocki wrote:
 >>
->> Not really.
+>> [ ... ]
 >>
->> With the encryption in the kernel, if the kernel is careful enough,
->> use space will not be able to read the image even if it knows the
->> passphrase, unless it can also add itself to the initramfs image
->> loaded by the restore kernel, which (at least) can be made way more
->> difficult than simply reading the plain-text image data via an I/F
->> readily provided by the kernel.
->
-> I still do not see the improvement. If you are root, you can modify
-> the initramfs and decrypt the data.
-
-Even so, this requires additional effort which already makes the life
-of attackers harder.
-
-> Please explain in the changelog how this is better than existing solution.
-
-That can be done.
-
->> >> Besides, the user space part of what you are calling uswsusp has not
->> >> been actively maintained for years now and honestly I don't know how
->> >> many users of it there are.
->> >
->> > I'd assume distros want progress bars so they still use it?
+>>>> + * It is up to the user of this framework to provide a lock at an
+>>>> + * upper level to prevent stupid things to happen, like starting while
+>>>> + * we are unregistering.
+>>>> + */
+>>>
+>>> The English above and elsewhere needs some polishing IMO, but I can
+>>> take care of that. :-)
 >>
->> I'd rather not speak for distros, but if hibernation images are
->> written to fast storage, progress bars are not that useful any more.
->> They are not used on Windows any more, for one.
+>> I can give a try and if you are still unhappy, you change them in a
+>> better way.
+> 
+> Well, I could tell you what I would write, but then it'll take less
+> time and effort if I just write it myself. :-)
+
+Ok.
+
+>> [ ... ]
 >>
->> > Anyway, there's solution for encrypted hibernation.
+>>>> +static void idle_injection_setup(unsigned int cpu)
+>>>> +{
+>>>> +       struct sched_param param = { .sched_priority = MAX_USER_RT_PRIO / 2 };
+>>>> +
+>>>> +       set_freezable();
+>>>
+>>> Why do you need set_freezable() here?
 >>
->> Which is suboptimal and you know it.
->
-> If this is better, please explain how in the changelog.
->
->> > If Intel wants to invent different solution for that, and put it into kernel, they
->> > should explain what the advantages are, relative to existing solution.
->>
->> I'm not sure what "they" is supposed to mean here, but the advantages
->> are quite clear to me: better security and reduced syscall overhead.
->
-> Better security against which attack?
+>> We don't want to continue injecting idle cycles when the system is
+>> suspended.
+> 
+> And where's the corresponding try_to_freeze() called?
 
-If kernel memory is encrypted by the kernel, it doesn't have to worry
-about bugs in user space utilities and similar, for example.
+Yes, it is missing. I suppose try_to_freeze() should be put at the
+beginning of the idle_inject_fn() function, right ?
 
-> Syscall overhead is not a problem for hibernation, and you know it.
 
-Oh well.
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-I wrote the majority of the code you seem to be defending and I don't
-really share your enthusiasm about it.  It was good enough at the time
-it was written, but not today and this discussion is over as far as
-I'm concerned.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
