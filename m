@@ -2,78 +2,77 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B83FC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852F1C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC012572E
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33E2225741
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:11:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LB6nxSJv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A0+agDNF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC012572E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fO74Wumz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E2225741
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755157AbeFYKKR (ORCPT
+        id S1755196AbeFYKLZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 06:10:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49922 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755044AbeFYKKO (ORCPT
+        Mon, 25 Jun 2018 06:11:25 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35493 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755178AbeFYKLW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 06:10:14 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3AEF760712; Mon, 25 Jun 2018 10:10:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529921414;
-        bh=YvDE1ptx9lR2drPc8jPNiArSJkLwhpGYY5qBndN0C8k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LB6nxSJvhZZzK1oUZ2J/OSsWtEZdV6JrnV/A2d978vafrlNQPzTmu5o4SMzdWxnxN
-         m2S5R25lgHDy8Dy+ANnXbKWCSiqrMRkaWIxJfBrkCZE4Eb1ePhL2urnu3LQEvASGd1
-         Tlqi530JiM+CE6n01/JKPt5oIEBYFTwTp0T35Lak=
-Received: from [10.79.40.88] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1190660585;
-        Mon, 25 Jun 2018 10:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529921413;
-        bh=YvDE1ptx9lR2drPc8jPNiArSJkLwhpGYY5qBndN0C8k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=A0+agDNFJUkgLPJ9KHy670x5q7R/VrkMvHTAGvDRf/0kI35MNqZ/ArftDX6XEI+Pu
-         xbIh2zAF4JGFwuiCzKMeg722eWGdFxFwzLn+SCA7RsIdfCsAhZ9DoJqC7oiKz09qBt
-         ajJEz6PaRnu8DX/+ChVNBiV701RMkIz3vIU2z0PQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1190660585
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v3 7/7] soc: qcom: rpmpd/rpmhpd: Add a max vote on all
- corners at init
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180612044052.4402-1-rnayak@codeaurora.org>
- <20180612044052.4402-8-rnayak@codeaurora.org>
- <414598de-00a1-9ce7-3a7e-4a95fd1bd35d@codeaurora.org>
- <f5014664-1639-c610-a50a-db66484428dc@codeaurora.org>
- <20180619101016.hbgjvev7d3h4yg7x@vireshk-i7>
- <CAPDyKFpvBXbppamoDDUKcMTnD8S3U7ZTKutLgSsLYQkAU0JXZg@mail.gmail.com>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <08963d3b-324e-8401-9d03-74900fe6b0ec@codeaurora.org>
-Date:   Mon, 25 Jun 2018 15:40:08 +0530
+        Mon, 25 Jun 2018 06:11:22 -0400
+Received: by mail-wm0-f67.google.com with SMTP id z137-v6so3593423wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 03:11:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LZPMk3UvdXqGovYsPdV0HSX8rsRhp+BgB3A0YEeHpjk=;
+        b=fO74Wumz8MxkU/yQpCqgvkXL14CEWUmxBWuk4NSLTKk/OOyaGjPU4R2iHb+hksael6
+         1MWRjDm6FcC3eexdsyRKFz0oXVpYQumHg+ddyt3YTzfrBUpf3hzEfNN0Zz1tFc7O0oov
+         XhAlVkbx4zfpJKniN1mmk782VUAblfR1Rkhts=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LZPMk3UvdXqGovYsPdV0HSX8rsRhp+BgB3A0YEeHpjk=;
+        b=j9ckkTVafyxPQ9XViKtxpRmzk7w491w8DmYDCY8ZVf378oq2cpSjOut6QZqyRdc+ru
+         iQA0G/3bkeMSHib1w/VLjmnKv3IwnL0b1pRCK/6vWncwKpcj6lVLX0GIbeBq0nk4EfoI
+         8+wIWctqQ6j10jMTkFNwaVo4qdG1UMbC397SV1JoeeEYvBdStdLYkujDMNzjxmNebxW6
+         E74/3xnOmmHSA6UK7D44zRzrx8C0xALQR/shrE1zk7798RFb3rMpJ3wkQPM66BMysOwQ
+         /K/8ATTc2gKD9abiT5JXim7CXyZ8/EhGukwqo15Q/NrW1A+sxUEsTdF/oFgjFfjGzcVe
+         Dh9Q==
+X-Gm-Message-State: APt69E33xMC6HQuEOmc/Ow1uIHUi9uFsaQ/XZuPJ5/4+mibfNeLu/3w9
+        XiQw4XUgLrB1PmlY+QMjY/Wli0TU02M=
+X-Google-Smtp-Source: ADUXVKLaeQ7q4GBKciJRCxF+fMx0Z0whbpgZnCaXfptzzvtMlQFuko3pDoTw0p2513P5h1IxMXDT7A==
+X-Received: by 2002:a1c:ec0a:: with SMTP id k10-v6mr473031wmh.4.1529921481589;
+        Mon, 25 Jun 2018 03:11:21 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id b124-v6sm12984767wmf.11.2018.06.25.03.11.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 03:11:21 -0700 (PDT)
+Subject: Re: [PATCH 1/2] slimbus: stream: add stream support
+To:     Vinod <vkoul@kernel.org>
+Cc:     gregkh@linuxfoundation.org, broonie@kernel.org,
+        sdharia@quicinc.com, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+        ctatlor97@gmail.com
+References: <20180621134009.27116-1-srinivas.kandagatla@linaro.org>
+ <20180621134009.27116-2-srinivas.kandagatla@linaro.org>
+ <20180622125050.GO27187@vkoul-mobl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <a922d359-2096-48ed-c442-affc5b0c4ccf@linaro.org>
+Date:   Mon, 25 Jun 2018 11:11:20 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpvBXbppamoDDUKcMTnD8S3U7ZTKutLgSsLYQkAU0JXZg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180622125050.GO27187@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -81,127 +80,164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks Vinod for the Review,
 
-
-On 06/25/2018 02:27 PM, Ulf Hansson wrote:
-> On 19 June 2018 at 12:10, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->> On 14-06-18, 12:05, Rajendra Nayak wrote:
->>> On 06/14/2018 03:58 AM, David Collins wrote:
->>>> Hello Rajendra,
->>>>
->>>> On 06/11/2018 09:40 PM, Rajendra Nayak wrote:
->>>>> As we move from no clients/consumers in kernel voting on corners,
->>>>> to *some* voting and some not voting, we might end up in a situation
->>>>> where the clients which remove votes can adversly impact others
->>>>
->>>> s/adversly/adversely/
->>>>
->>>>> who still don't have a way to vote.
->>>>>
->>>>> To avoid this situation, have a max vote on all corners at init.
->>>>> This should/can be removed once we have all clients moved to
->>>>> be able to vote/unvote for themselves.
->>>>
->>>> This change seems like a hack.  Do you intend for it to be merged and then
->>>> later reverted in Linus's tree?  Could it instead be implemented in a way
->>>> that does not require reverting and instead is enabled by some DT
->>>> property?  Alternatively, could this feature be added to the power domain
->>>> core since it is relatively generic?
->>>>
->>>>
->>>>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->>>>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->>>>> ---
->>>>>  drivers/soc/qcom/rpmhpd.c | 12 +++++++++++-
->>>>>  drivers/soc/qcom/rpmpd.c  |  9 +++++++++
->>>>>  2 files changed, 20 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
->>>>> index 7083ec1590ff..3c753d33aeee 100644
->>>>> --- a/drivers/soc/qcom/rpmhpd.c
->>>>> +++ b/drivers/soc/qcom/rpmhpd.c
->>>>> @@ -329,7 +329,7 @@ static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
->>>>>
->>>>>  static int rpmhpd_probe(struct platform_device *pdev)
->>>>>  {
->>>>> -  int i, ret;
->>>>> +  int i, ret, max_level;
->>>>>    size_t num;
->>>>>    struct genpd_onecell_data *data;
->>>>>    struct rpmhpd **rpmhpds;
->>>>> @@ -390,6 +390,16 @@ static int rpmhpd_probe(struct platform_device *pdev)
->>>>>            pm_genpd_init(&rpmhpds[i]->pd, NULL, true);
->>>>>
->>>>>            data->domains[i] = &rpmhpds[i]->pd;
->>>>> +
->>>>> +          /*
->>>>> +           * Until we have all consumers voting on corners
->>>>> +           * just vote the max corner on all PDs
->>>>> +           * This should ideally be *removed* once we have
->>>>> +           * all (most) consumers being able to vote
->>>>> +           */
->>>>> +          max_level = rpmhpds[i]->level_count - 1;
->>>>> +          rpmhpd_set_performance(&rpmhpds[i]->pd, rpmhpds[i]->level[max_level]);
->>>>> +          rpmhpd_power_on(&rpmhpds[i]->pd);
->>>>
->>>> Clearly these calls will result in max level requests being sent for all
->>>> power domains at probe time.  However, it isn't clear that this will
->>>> actually help at runtime in these two cases:
->>>>
->>>> 1. A consumer enables and then disables a power domain.
->>>>     - It seems like the PD would just be disabled in this case.
->>
->> So instead of rpmhpd_power_on() we should be doing gepnd_power_on() or whatever
->> the API is, so the user count stays at 1.
+On 22/06/18 13:50, Vinod wrote:
+> On 21-06-18, 14:40, Srinivas Kandagatla wrote:
+>> This patch adds support to SLIMbus stream apis for slimbus device.
+>> SLIMbus streaming involves adding support to Data Channel Management and
+>> channel Reconfiguration Messages to slim core plus few stream apis.
+>> >From slim device side the apis are very simple mostly inline with other
+>    ^^
+> Bad char >
+Yep, will fix it.
 > 
-> There is no such API.
+>> +/**
+>> + * enum slim_port_direction: SLIMbus port direction
 > 
-> Instead a device needs to be attached to genpd and that's it. As long
-> as the device don't enables runtime PM and that the device gets
-> runtime suspended, genpd will remain powered on.
+> blank line here makes it more readable
+> 
+Sure it makes sense.
+>> +/**
+>> + * struct slim_presence_rate - Presense Rate table for all Natural Frequencies
+>> + *	The Presense rate of a constant bitrate stram is mean flow rate of the
+>                                                  ^^^^^
+> Do you mean stream?
+Yep will fix it.
+> 
+>> +static struct slim_presence_rate {
+>> +	int rate;
+>> +	int pr_code;
+>> +} prate_table[] = {
+>> +	{12000,		0x01},
+>> +	{24000,		0x02},
+>> +	{48000,		0x03},
+>> +	{96000,		0x04},
+>> +	{192000,	0x05},
+>> +	{384000,	0x06},
+>> +	{768000,	0x07},
+>> +	{110250,	0x09},
+>> +	{220500,	0x0a},
+>> +	{441000,	0x0b},
+>> +	{882000,	0x0c},
+>> +	{176400,	0x0d},
+>> +	{352800,	0x0e},
+>> +	{705600,	0x0f},
+>> +	{4000,		0x10},
+>> +	{8000,		0x11},
+>> +	{16000,		0x12},
+>> +	{32000,		0x13},
+>> +	{64000,		0x14},
+>> +	{128000,	0x15},
+>> +	{256000,	0x16},
+>> +	{512000,	0x17},
+> 
+> this table values are indices, so how about using only rate and removing
+> pr_code and use array index for that, saves half the space..
+> 
+look like I over done it, I will fix this in next version.
 
-Its more to do with keeping the power domains at a desired 'performance level'
-than just keeping them on.
+>> +struct slim_stream_runtime *slim_stream_allocate(struct slim_device *dev,
+>> +						 const char *name)
+>> +{
+>> +	struct slim_stream_runtime *rt;
+>> +	unsigned long flags;
+>> +
+>> +	rt = kzalloc(sizeof(*rt), GFP_KERNEL);
+>> +	if (!rt)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	rt->name = kasprintf(GFP_KERNEL, "slim-%s", name);
+>> +	if (!rt->name) {
+>> +		kfree(rt);
+>> +		return ERR_PTR(-ENOMEM);
+>> +	}
+>> +
+>> +	rt->dev = dev;
+>> +	rt->state = SLIM_STREAM_STATE_ALLOCATED;
+>> +	spin_lock_irqsave(&dev->stream_list_lock, flags);
+>> +	list_add_tail(&rt->node, &dev->stream_list);
+>> +	spin_unlock_irqrestore(&dev->stream_list_lock, flags);
+> 
+> Any reason for _irqsave variant? Do you expect stream APIs to be called
+> from ISR?We can move to non irqsave variant here, as i do not see a case where 
+this list would be interrupted from irq context.
+
 
 > 
->>
->>>> 2. A consumer sets a non-max performance state of a power domain.
->>>>     - It seems like the PD would just be set to the new lower
->>>>       performance state since the max vote isn't known to the
->>>>       PD core for aggregation purposes.
->>
->> Right, and that's because the patch isn't implemented properly yet. I asked to
->> do a fake vote from some user with their dev structure, so the vote always
->> stays.
->>
->>> Yes, you are right. I certainly did not seem to have thought through this enough.
->>>
->>> A need for something like this came up at a point where genpd could not deal with
->>> devices with multiple power domains. So the concern at that point was that if some
->>> consumers (which only need to vote on one corner) move to using this driver, while
->>> some others (which need to vote on multiple corners) cannot, we would end up breaking
->>> them.
->>>
->>> That does not seem to be true anymore since we do have patches from Ulf which support
->>> having devices with multiple power domains attached which can be controlled individually.
->>> So if some consumer voting makes some others break, they should just be fixed and patched
->>> to vote as well. If all this gets handled centrally from within the clock drivers then we
->>> most likely won't even end up with a situation like this.
->>>
->>> I think I will just drop this one unless Stephen/Viresh still see an issue with some early
->>> voters breaking others.
->>
->> So what if the LCD/DDR/etc are getting used at boot and someone requests a lower
->> vote?  Wouldn't we just break ?
+>> +/*
+>> + * slim_stream_prepare() - Prepare a SLIMbus Stream
+>> + *
+>> + * @rt: instance of slim stream runtime to configure
+>> + * @cfg: new configuration for the stream
+>> + *
+>> + * This API will configure SLIMbus stream with config parameters from cfg.
+>> + * return zero on success and error code on failure. From ASoC DPCM framework,
+>> + * this state is linked to hw_params()/prepare() operation.
 > 
-> Sounds like we need a way to manage votes for "boot constraints
-> performance levels". :-)
+> so would this be called from either.. btw prepare can be invoked
+> multiple times, so that should be taken into consideration by caller.
 
-Yes, I think we are mixing up whats needed for 'boot constraints' and what this
-patch was meant to do.
-Boot constraints is a generic problem not limited to power domains alone and this patch
-isn't trying to solve that.
+This should be just hw_params() where we have more information on the 
+audio parameters, I will make this more clear in the doc about this.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+> 
+>> + */
+>> +int slim_stream_prepare(struct slim_stream_runtime *rt,
+>> +			struct slim_stream_config *cfg)
+>> +{
+>> +	struct slim_controller *ctrl = rt->dev->ctrl;
+>> +	struct slim_port *port;
+>> +	int num_ports, i, port_id;
+>> +
+>> +	num_ports = hweight32(cfg->port_mask);
+>> +	rt->ports = kcalloc(num_ports, sizeof(*port), GFP_ATOMIC);
+> 
+> since this is supposed to be invoked in hw_params()/prepare, why would
+> we need GFP_ATOMIC here?
+No, we do not need this to be ATOMIC, will remove this!
+
+> 
+>> +static int slim_activate_channel(struct slim_stream_runtime *stream,
+>> +				 struct slim_port *port)
+>> +{
+>> +	struct slim_device *sdev = stream->dev;
+>> +	struct slim_val_inf msg = {0, 0, NULL, NULL};
+>> +	u8 mc = SLIM_MSG_MC_NEXT_ACTIVATE_CHANNEL;
+>> +	DEFINE_SLIM_LDEST_TXN(txn, mc, 5, stream->dev->laddr, &msg);
+>> +	u8 wbuf[1];
+>> +
+>> +	txn.msg->num_bytes = 1;
+>> +	txn.msg->wbuf = wbuf;
+>> +	wbuf[0] = port->ch.id;
+>> +	port->ch.state = SLIM_CH_STATE_ACTIVE;
+>> +
+>> +	return slim_do_transfer(sdev->ctrl, &txn);
+>> +}
+> 
+> how about adding a macro for sending message, which fills slim_val_inf
+> and you invoke that with required parameters to be filled.
+> 
+Sounds sensible thing, I will give that a try and see!
+
+>> +/*
+>> + * slim_stream_enable() - Enable a prepared SLIMbus Stream
+> 
+> Do you want to check if it is already prepared ..?
+Yep, I think most of the code needs similar state machine check, I will 
+add this in next version.
+> 
+>> +/**
+>> + * slim_stream_direction: SLIMbus stream direction
+>> + *
+>> + * @SLIM_STREAM_DIR_PLAYBACK: Playback
+>> + * @SLIM_STREAM_DIR_CAPTURE: Capture
+>> + */
+>> +enum slim_stream_direction {
+>> +	SLIM_STREAM_DIR_PLAYBACK = 0,
+>> +	SLIM_STREAM_DIR_CAPTURE,
+> 
+> this is same as SNDRV_PCM_STREAM_PLAYBACK, so should we use that here?
+Sure will do, makes it clear!
+
+> 
