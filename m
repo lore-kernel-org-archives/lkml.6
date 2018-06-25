@@ -2,143 +2,206 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A33C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 082D5C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:49:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F83025AC6
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:48:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="1xis0CIc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F83025AC6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id B5E94254A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:49:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E94254A7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755595AbeFYNr6 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:47:58 -0400
-Received: from mail-sn1nam02on0052.outbound.protection.outlook.com ([104.47.36.52]:24309
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755015AbeFYNr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:47:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aQMsvNKDC7+pY0nVD49OXQxlzMw2k/iC3Z8P0aXAmGU=;
- b=1xis0CIcy37+MvApankltvflB/stuSQlDzmtalvmJmVHddnYYmq5JYdCfFNyyFHU6/lnviGzt6yRWeV2iAlL5DBG92O+LVzO1XQHEoT6boodOVbeJbln5N3AhRAoiv+JiDwV04WZ9RJkyFPHzomxCLS6we2MqckadVUmj48JYVM=
-Received: from DM6PR02MB4361.namprd02.prod.outlook.com (20.176.105.26) by
- DM6PR02MB4860.namprd02.prod.outlook.com (20.176.111.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.23; Mon, 25 Jun 2018 13:47:53 +0000
-Received: from DM6PR02MB4361.namprd02.prod.outlook.com
- ([fe80::9cf9:1a80:115a:f9fa]) by DM6PR02MB4361.namprd02.prod.outlook.com
- ([fe80::9cf9:1a80:115a:f9fa%2]) with mapi id 15.20.0884.024; Mon, 25 Jun 2018
- 13:47:52 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     Joe Perches <joe@perches.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Michal Simek <michals@xilinx.com>,
-        netdev <netdev@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/5] net: emaclite: Use __func__ instead of hardcoded name
-Thread-Topic: [PATCH 1/5] net: emaclite: Use __func__ instead of hardcoded
- name
-Thread-Index: AQHUBvS6CT4gPmJtvkmLLZPHjMPu66RoHVUAgAAQ/wCACNehgA==
-Date:   Mon, 25 Jun 2018 13:47:52 +0000
-Message-ID: <DM6PR02MB436155458BFAB5575207B2C4C74A0@DM6PR02MB4361.namprd02.prod.outlook.com>
-References: <1529320103-7711-1-git-send-email-radhey.shyam.pandey@xilinx.com>
-         <1529320103-7711-2-git-send-email-radhey.shyam.pandey@xilinx.com>
-         <CAHp75VcKuqnUgynqXvACS7zY5=6aRxqymGE1w3Yh8sshehSm2g@mail.gmail.com>
- <3013aae1803c096645887864d1b161efbfba7c77.camel@perches.com>
-In-Reply-To: <3013aae1803c096645887864d1b161efbfba7c77.camel@perches.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR02MB4860;7:vBUcQ43ThBLvPiE7oPsuK4tiWsJ7q8gljDufXyYEwKlajI9oHRPqzzrYhKE0Ulv8aOm0sZsBASBHojkz78EcNwE7Epslotdmn/2hHw+JRZVdH8CsrFLr7x459nU7DRVV3Aw0eg8nHlFrK8ctHAetZUD65IuIFGdrNsYkGLMJETqtIqmKNQ6X8/GAOeoBn9g0cjRb2LSv6ub8S1u1Na8AmEGvopm9el9+pDcWsP6bWkZ6kYuWvblZm1qDT6khXQnD
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(376002)(346002)(39380400002)(189003)(199004)(13464003)(11346002)(39060400002)(6246003)(446003)(25786009)(4326008)(53936002)(476003)(5660300001)(97736004)(66066001)(93886005)(486006)(316002)(2906002)(3280700002)(7696005)(76176011)(99286004)(186003)(3660700001)(26005)(55236004)(305945005)(102836004)(229853002)(110136005)(6506007)(59450400001)(86362001)(14454004)(6116002)(3846002)(53546011)(2900100001)(478600001)(33656002)(74316002)(5250100002)(9686003)(55016002)(8676002)(7736002)(68736007)(105586002)(54906003)(8936002)(106356001)(6436002)(81156014)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4860;H:DM6PR02MB4361.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 2e71fa10-9381-41fc-ce48-08d5daa23f69
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DM6PR02MB4860;
-x-ms-traffictypediagnostic: DM6PR02MB4860:
-x-microsoft-antispam-prvs: <DM6PR02MB48603543CFC6A29E3A4ED343C74A0@DM6PR02MB4860.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(258649278758335)(192813158149592);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DM6PR02MB4860;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4860;
-x-forefront-prvs: 0714841678
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 0pm7b527UlwAKAraSJW3f59ZnlEpPcVtWGXApXoSJE4E4z2XMhvT3OJtLIsYNgvirJyNz4WYpE6cmkHOONAwShUt2Ed6oq8SxUoV7P8MU/wNn1lvkM6VcOfeuDdrG4KaM6oswAmTb1qbI6DQ/2yq15SE0jg3arU/iIVQK2OgmsQZrcu2cADHDaJK5XIqypH3DoZVW8hCujzf3+w587JJHjNw1eYaDe2smP60hoS4gLqQSVXGDQrHuN0JD6CVVSJYI63detFE414TfVCKAm3a5ehRctVXOc6plxFleqnqeninE685xqt+i/immoseJcchZBZFndbF6UvPD0mnkMhZaTbUGYJ/dY1eVmCLenlrTcs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e71fa10-9381-41fc-ce48-08d5daa23f69
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2018 13:47:52.5198
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4860
+        id S933971AbeFYNtB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:49:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50586 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755345AbeFYNtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:49:00 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0B60C20703; Mon, 25 Jun 2018 15:48:58 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9E78820CFE;
+        Mon, 25 Jun 2018 15:48:47 +0200 (CEST)
+Message-ID: <0d20a3159ea710f47d1860a83b7c027116e8e97c.camel@bootlin.com>
+Subject: Re: [PATCH 6/9] media: cedrus: Add ops structure
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Mon, 25 Jun 2018 15:48:48 +0200
+In-Reply-To: <20180625132933.tzr36vsucqsq3mmb@flea>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+         <20180613140714.1686-7-maxime.ripard@bootlin.com>
+         <939381a854760b1d54984ae0f534ec03312ec8e0.camel@bootlin.com>
+         <20180625132933.tzr36vsucqsq3mmb@flea>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-0NIUE1z8vrsnfV1Gs03l"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Joe Perches [mailto:joe@perches.com]
-> Sent: Wednesday, June 20, 2018 4:08 AM
-> To: Andy Shevchenko <andy.shevchenko@gmail.com>; Radhey Shyam
-> Pandey <radheys@xilinx.com>
-> Cc: David S. Miller <davem@davemloft.net>; Andrew Lunn
-> <andrew@lunn.ch>; Michal Simek <michals@xilinx.com>; netdev
-> <netdev@vger.kernel.org>; linux-arm Mailing List <linux-arm-
-> kernel@lists.infradead.org>; Linux Kernel Mailing List <linux-
-> kernel@vger.kernel.org>
-> Subject: Re: [PATCH 1/5] net: emaclite: Use __func__ instead of hardcoded
-> name
->=20
-> On Wed, 2018-06-20 at 00:36 +0300, Andy Shevchenko wrote:
-> > On Mon, Jun 18, 2018 at 2:08 PM, Radhey Shyam Pandey
-> > <radhey.shyam.pandey@xilinx.com> wrote:
-> > > Switch hardcoded function name with a reference to __func__ making
-> > > the code more maintainable. Address below checkpatch warning:
-> > >
-> > > WARNING: Prefer using '"%s...", __func__' to using
-> 'xemaclite_mdio_read',
-> > > this function's name, in a string
-> > > +               "xemaclite_mdio_read(phy_id=3D%i, reg=3D%x) =3D=3D %x=
-\n",
-> > >
-> > > WARNING: Prefer using '"%s...", __func__' to using
-> 'xemaclite_mdio_write',
-> > > this function's name, in a string
-> > > +               "xemaclite_mdio_write(phy_id=3D%i, reg=3D%x, val=3D%x=
-)\n",
-> > >
-> >
-> > For dev_dbg() the __func__ should be completely dropped away.
->=20
-> Not really the same.
->=20
-> dev_dbg without CONFIG_DYNAMIC_DEBUG does not have
-> the ability to prefix __func__.
-Yes.  If it's acceptable,  prefer to use __func__  to support all=20
-configurations
 
+--=-0NIUE1z8vrsnfV1Gs03l
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Mon, 2018-06-25 at 15:29 +0200, Maxime Ripard wrote:
+> Hi!
 >=20
+> On Thu, Jun 21, 2018 at 11:49:54AM +0200, Paul Kocialkowski wrote:
+> > Hi,
+> >=20
+> > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> > > In order to increase the number of codecs supported, we need to decou=
+ple
+> > > the MPEG2 only code that was there up until now and turn it into some=
+thing
+> > > a bit more generic.
+> > >=20
+> > > Do that by introducing an intermediate ops structure that would need =
+to be
+> > > filled by each supported codec. Start by implementing in that structu=
+re the
+> > > setup and trigger hooks that are currently the only functions being
+> > > implemented by codecs support.
+> > >=20
+> > > To do so, we need to store the current codec in use, which we do at
+> > > start_streaming time.
+> >=20
+> > With the comments below taken in account, this is:
+> >=20
+> > Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>=20
+> Thanks!
+>=20
+> > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > ---
+> > >  .../platform/sunxi/cedrus/sunxi_cedrus.c      |  2 ++
+> > >  .../sunxi/cedrus/sunxi_cedrus_common.h        | 11 +++++++
+> > >  .../platform/sunxi/cedrus/sunxi_cedrus_dec.c  | 10 +++---
+> > >  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 11 +++++--
+> > >  .../sunxi/cedrus/sunxi_cedrus_mpeg2.h         | 33 -----------------=
+--
+> > >  .../sunxi/cedrus/sunxi_cedrus_video.c         | 17 +++++++++-
+> > >  6 files changed, 42 insertions(+), 42 deletions(-)
+> > >  delete mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_=
+mpeg2.h
+> > >=20
+> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c b/dri=
+vers/media/platform/sunxi/cedrus/sunxi_cedrus.c
+> > > index ccd41d9a3e41..bc80480f5dfd 100644
+> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c
+> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c
+> > > @@ -244,6 +244,8 @@ static int sunxi_cedrus_probe(struct platform_dev=
+ice *pdev)
+> > >  	if (ret)
+> > >  		return ret;
+> > > =20
+> > > +	dev->dec_ops[SUNXI_CEDRUS_CODEC_MPEG2] =3D &sunxi_cedrus_dec_ops_mp=
+eg2;
+> > > +
+> > >  	ret =3D v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
+> > >  	if (ret)
+> > >  		goto unreg_media;
+> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.=
+h b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > index a5f83c452006..c2e2c92d103b 100644
+> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> > > @@ -75,6 +75,7 @@ struct sunxi_cedrus_ctx {
+> > >  	struct v4l2_pix_format_mplane src_fmt;
+> > >  	struct sunxi_cedrus_fmt *vpu_dst_fmt;
+> > >  	struct v4l2_pix_format_mplane dst_fmt;
+> > > +	enum sunxi_cedrus_codec current_codec;
+> >=20
+> > Nit: for consistency with the way things are named, "codec_current"
+> > probably makes more sense.
+>=20
+> I'm not quite sure what you mean by consitency here. This structure
+> has 5 other variables with two words: vpu_src_fmt, src_fmt,
+> vpu_dst_fmt, dst_fmt and dst_bufs. codec_current would be going
+> against the consistency of that structure.
+
+Mhh, not sure what I meant after all regarding consistency. I was
+thinking in terms of name/qualifier, but it's clear that the structure
+for the names of already-existing elements has qualifiers first and name
+at the end, so "curent_codec" indeed fits best.
+
+Sorry for the noise!
+
+> > IMO using the natural English order is fine for temporary variables, bu=
+t
+> >  less so for variables used in common parts like structures. This allow=
+s
+> > seeing "_" as a logical hierarchical delimiter that automatically makes
+> > us end up with consistent prefixes that can easily be grepped for and
+> > derived.
+> >=20
+> > But that's just my 2 cents, it's really not a big deal, especially in
+> > this case!
+> >=20
+> > >  	struct v4l2_ctrl_handler hdl;
+> > >  	struct v4l2_ctrl *ctrls[SUNXI_CEDRUS_CTRL_MAX];
+> > > @@ -107,6 +108,14 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer=
+(const struct vb2_buffer *p)
+> > >  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
+> > >  }
+> > > =20
+> > > +struct sunxi_cedrus_dec_ops {
+> > > +	void (*setup)(struct sunxi_cedrus_ctx *ctx,
+> > > +		      struct sunxi_cedrus_run *run);
+> > > +	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
+> >=20
+> > By the way, are we sure that these functions won't ever fail?
+> > I think this is the case for MPEG2 (there is virtually nothing to check
+> > for errors) but perhaps it's different for H264.
+>=20
+> It won't fail either, and if we need to change it somewhere down the
+> line, it's quite easy to do.
+
+Right, let's keep it that way then.
+
+Cheers,
+
+Paul
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-0NIUE1z8vrsnfV1Gs03l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsw8sAACgkQ3cLmz3+f
+v9FkwAf/fw1tjLwFGOghickXiQz7CRqbY7gepneYN3d5MLmEk0/SeK9bNpHW7oXE
+aLJYa8YptZeuP00DzB59dNAgQPSvz7q+/ZpCFPsp6F9kQh4fToSvK+BLZihmbgTJ
+E6fmHW8uO6iOcdkTI5TfsDmyHyg5Zgv0pYunnb4uiLSEKUsrbTdOZOtCVm6SlCQJ
+x5QpRGRzAAHF9pk2zK/ZMtL2ygj99Vnis6n9RGymnGZ5j/LkN+9dW700HZ6F5THx
+JLKEZtvo/Ktxt9b3cZwyRuZXJbus3t7JX6DzJR31ZfcdTGweu1IPSS1jq6tqjRY2
+29tcnDNT7jStdYsrLfJfNzxP8XLL1A==
+=qfoR
+-----END PGP SIGNATURE-----
+
+--=-0NIUE1z8vrsnfV1Gs03l--
 
