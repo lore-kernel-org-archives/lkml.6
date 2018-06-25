@@ -2,115 +2,135 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D5EC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6650BC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE02E2623A
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:45:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bFiGmUWP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE02E2623A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 272AA2623A
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:46:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272AA2623A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934901AbeFYWpw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:45:52 -0400
-Received: from mail-it0-f74.google.com ([209.85.214.74]:56033 "EHLO
-        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934154AbeFYWl3 (ORCPT
+        id S965017AbeFYWqD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:46:03 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53826 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754775AbeFYWqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:41:29 -0400
-Received: by mail-it0-f74.google.com with SMTP id 7-v6so7318516itv.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
-         :cc;
-        bh=DWmGvA0lR6w7y5ULZBpH8CF04xCV2RqblUumbO+kjTU=;
-        b=bFiGmUWPHjGBuOHdMmFSusIQ4RcqGqhbbC+KO7++F6XJa+rf+G/3sdSMCGx49hQWap
-         H7c2uu35f4WsOO6xSPy/vZ0iJ6bbZcpqkrEkBUpfuUtlPADE8NNGlM8twAK8lfavlb8J
-         8ID9qhlzz4joD/ksZjgFL2hQfRPt/mQZkgBVF6c1hOtF9e4a1eixZl6FBdSB6AeHDGsz
-         oCAwSIreuCI8DA1JmKJcgsEob73EknV752zZQ4+aszUshK0UJ6JNe0PzZxjB2zV+srSj
-         /D0qDEL/nmED3KCzRWDM2SzpEBdqpoahCIuO5EAP7HctBdMCXR5iljEevMEFplg0lhrp
-         VZcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
-         :references:subject:from:to:cc;
-        bh=DWmGvA0lR6w7y5ULZBpH8CF04xCV2RqblUumbO+kjTU=;
-        b=Jnvq9wmNa33v8RjIt4iaBbFmoG6Ue3ZGPZi7tdMcClhEG2IOcOY6WY3L/HS2dXcpkp
-         pmDa9NoKs/KD/etWbsJf2qMXXcO+CQdFVU2SQNRNEGE9mXe1xcjB+iJ6XTbbDR1r5uJC
-         Hzn/qwFIvslVr8Q6BASHXmazUSWkfRINUtvJWIPlHJrky71CJU4VZEHibfHlBTIzJKzo
-         jjQ8s0YJ5B+/UnzT/RhA88mQtXYDYMjxghYqjqNlNv764qStrIFaqZ63LbLgz9GzpjsG
-         GOSkSorecFifo50bZziIr7vKa4pXwJTxzoQC/0IRXNfSFaUm6kBg2YUBIHY1lL5MKdog
-         erXA==
-X-Gm-Message-State: APt69E10J3zAIQcSkEqLBFj5y36thQhZgArPAwmCMCf5CZgnVMuevrT7
-        8cgVXMIp3Utw5YjaRZ63ZVemgBoYusWnCw==
-X-Google-Smtp-Source: AAOMgpcMfOgsNjQ3gS57e24UnR3P+4f45NGqjZpwIO8a6CATrwhRFOqvNBr8LlS8GSAmtKv643o/RgJRATOtow==
-MIME-Version: 1.0
-X-Received: by 2002:a24:6b15:: with SMTP id v21-v6mr1197132itc.1.1529966488785;
- Mon, 25 Jun 2018 15:41:28 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 15:38:59 -0700
-In-Reply-To: <20180625224014.134829-1-thgarnie@google.com>
-Message-Id: <20180625224014.134829-12-thgarnie@google.com>
-References: <20180625224014.134829-1-thgarnie@google.com>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v5 11/27] x86/power/64: Adapt assembly for PIE support
-From:   Thomas Garnier <thgarnie@google.com>
-To:     kernel-hardening@lists.openwall.com
-Cc:     Thomas Garnier <thgarnie@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Jun 2018 18:46:01 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PMicuV087252
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 18:46:01 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96p0j79-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 18:46:01 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 25 Jun 2018 18:46:00 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Jun 2018 18:45:55 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5PMjsbj57999388
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Jun 2018 22:45:54 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9EDBBB2066;
+        Mon, 25 Jun 2018 18:45:49 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F633B2067;
+        Mon, 25 Jun 2018 18:45:49 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Jun 2018 18:45:49 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id CAA5316CA096; Mon, 25 Jun 2018 15:47:59 -0700 (PDT)
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 3/4] srcu: Add address of first callback to rcutorture output
+Date:   Mon, 25 Jun 2018 15:47:57 -0700
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180625224734.GA10860@linux.vnet.ibm.com>
+References: <20180625224734.GA10860@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18062522-0040-0000-0000-000004450CA1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052301; UDB=6.00539448; IPR=6.00830226;
+ MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-25 22:45:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062522-0041-0000-0000-0000084B2256
+Message-Id: <20180625224758.11300-3-paulmck@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806250258
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible.
+This commit adds the address of the first callback to the per-CPU rcutorture
+output in order to allow lost wakeups to be more efficiently tracked down.
 
-Position Independent Executable (PIE) support will allow to extend the
-KASLR randomization range 0xffffffff80000000.
-
-Signed-off-by: Thomas Garnier <thgarnie@google.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- arch/x86/power/hibernate_asm_64.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/rcu/srcutree.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/power/hibernate_asm_64.S b/arch/x86/power/hibernate_asm_64.S
-index ce8da3a0412c..6fdd7bbc3c33 100644
---- a/arch/x86/power/hibernate_asm_64.S
-+++ b/arch/x86/power/hibernate_asm_64.S
-@@ -24,7 +24,7 @@
- #include <asm/frame.h>
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 37bef2fe80e6..5a1a9a07b407 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -1271,11 +1271,11 @@ void srcu_torture_stats_print(struct srcu_struct *sp, char *tt, char *tf)
+ 		unsigned long l0, l1;
+ 		unsigned long u0, u1;
+ 		long c0, c1;
+-		struct srcu_data *counts;
++		struct srcu_data *sdp;
  
- ENTRY(swsusp_arch_suspend)
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	%rsp, pt_regs_sp(%rax)
- 	movq	%rbp, pt_regs_bp(%rax)
- 	movq	%rsi, pt_regs_si(%rax)
-@@ -115,7 +115,7 @@ ENTRY(restore_registers)
- 	movq	%rax, %cr4;  # turn PGE back on
+-		counts = per_cpu_ptr(sp->sda, cpu);
+-		u0 = counts->srcu_unlock_count[!idx];
+-		u1 = counts->srcu_unlock_count[idx];
++		sdp = per_cpu_ptr(sp->sda, cpu);
++		u0 = sdp->srcu_unlock_count[!idx];
++		u1 = sdp->srcu_unlock_count[idx];
  
- 	/* We don't restore %rax, it must be 0 anyway */
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	pt_regs_sp(%rax), %rsp
- 	movq	pt_regs_bp(%rax), %rbp
- 	movq	pt_regs_si(%rax), %rsi
+ 		/*
+ 		 * Make sure that a lock is always counted if the corresponding
+@@ -1283,12 +1283,13 @@ void srcu_torture_stats_print(struct srcu_struct *sp, char *tt, char *tf)
+ 		 */
+ 		smp_rmb();
+ 
+-		l0 = counts->srcu_lock_count[!idx];
+-		l1 = counts->srcu_lock_count[idx];
++		l0 = sdp->srcu_lock_count[!idx];
++		l1 = sdp->srcu_lock_count[idx];
+ 
+ 		c0 = l0 - u0;
+ 		c1 = l1 - u1;
+-		pr_cont(" %d(%ld,%ld)", cpu, c0, c1);
++		pr_cont(" %d(%ld,%ld %1p)",
++			cpu, c0, c1, rcu_segcblist_head(&sdp->srcu_cblist));
+ 		s0 += c0;
+ 		s1 += c1;
+ 	}
 -- 
-2.18.0.rc2.346.g013aa6912e-goog
+2.17.1
 
