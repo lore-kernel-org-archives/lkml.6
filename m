@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E493C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61752C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58583257C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:01:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58583257C4
+	by mail.kernel.org (Postfix) with ESMTP id 23D04257CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 11:01:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23D04257CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932944AbeFYLBZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 07:01:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:54600 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932353AbeFYLAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 07:00:13 -0400
+        id S933030AbeFYLBp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 07:01:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54584 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932280AbeFYLAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 07:00:09 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C72EA22D9;
-        Mon, 25 Jun 2018 04:00:12 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7F9B22C8;
+        Mon, 25 Jun 2018 04:00:08 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9682D3F73D;
-        Mon, 25 Jun 2018 04:00:11 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2D0CB3F73D;
+        Mon, 25 Jun 2018 04:00:07 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
         peterz@infradead.org, boqun.feng@gmail.com
 Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCHv2 06/11] atomics/treewide: rework ordering barriers
-Date:   Mon, 25 Jun 2018 11:59:47 +0100
-Message-Id: <20180625105952.3756-7-mark.rutland@arm.com>
+        Dmitry Vyukov <dvyukov@google.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCHv2 04/11] atomics/treewide: instrument xchg()
+Date:   Mon, 25 Jun 2018 11:59:45 +0100
+Message-Id: <20180625105952.3756-5-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180625105952.3756-1-mark.rutland@arm.com>
 References: <20180625105952.3756-1-mark.rutland@arm.com>
@@ -43,192 +45,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently architectures can override __atomic_op_*() to define the barriers
-used before/after a relaxed atomic when used to build acquire/release/fence
-variants.
+While we instrument atomic*() and cmpxchg(), we missed xchg().
 
-This has the unfortunate property of requiring the architecture to define the
-full wrapper for the atomics, rather than just the barriers they care about,
-and gets in the way of generating atomics which can be easily read.
-
-Instead, this patch has architectures define an optional set of barriers,
-__atomic_mb_{before,after}_{acquire,release,fence}(), which <linux/atomic.h>
-uses to build the wrappers.
-
-At the same time, let's avoid any potential reliance on these elsewhere
-by ensuring each is undef'd at the end of <linux/atomic.h>.
-
-There should be no functional change as a result of this patch.
+Let's add instrumentation for xchg(), fixing up x86 to implement
+arch_xchg().
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andrea Parri <parri.andrea@gmail.com>
 ---
- arch/alpha/include/asm/atomic.h   |  8 +++----
- arch/powerpc/include/asm/atomic.h | 17 +++++---------
- arch/riscv/include/asm/atomic.h   | 17 +++++---------
- include/linux/atomic.h            | 47 ++++++++++++++++++++++++++-------------
- 4 files changed, 45 insertions(+), 44 deletions(-)
+ arch/x86/include/asm/atomic.h             | 2 +-
+ arch/x86/include/asm/atomic64_64.h        | 2 +-
+ arch/x86/include/asm/cmpxchg.h            | 2 +-
+ include/asm-generic/atomic-instrumented.h | 7 +++++++
+ 4 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/arch/alpha/include/asm/atomic.h b/arch/alpha/include/asm/atomic.h
-index 4a6a8f58c9c9..df8d9aa2a47e 100644
---- a/arch/alpha/include/asm/atomic.h
-+++ b/arch/alpha/include/asm/atomic.h
-@@ -18,11 +18,11 @@
-  * To ensure dependency ordering is preserved for the _relaxed and
-  * _release atomics, an smp_read_barrier_depends() is unconditionally
-  * inserted into the _relaxed variants, which are used to build the
-- * barriered versions. To avoid redundant back-to-back fences, we can
-- * define the _acquire and _fence versions explicitly.
-+ * barriered versions. Avoid redundant back-to-back fences in the
-+ * _acquire and _fence versions.
-  */
--#define __atomic_op_acquire(op, args...)	op##_relaxed(args)
--#define __atomic_op_fence			__atomic_op_release
-+#define __atomic_acquire_fence()
-+#define __atomic_post_fence()
+diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
+index 823fd2f320cf..b143717b92b3 100644
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -202,7 +202,7 @@ static __always_inline bool arch_atomic_try_cmpxchg(atomic_t *v, int *old, int n
  
- #define ATOMIC_INIT(i)		{ (i) }
- #define ATOMIC64_INIT(i)	{ (i) }
-diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
-index a0156cb43d1f..963abf8bf1c0 100644
---- a/arch/powerpc/include/asm/atomic.h
-+++ b/arch/powerpc/include/asm/atomic.h
-@@ -18,18 +18,11 @@
-  * a "bne-" instruction at the end, so an isync is enough as a acquire barrier
-  * on the platform without lwsync.
-  */
--#define __atomic_op_acquire(op, args...)				\
--({									\
--	typeof(op##_relaxed(args)) __ret  = op##_relaxed(args);		\
--	__asm__ __volatile__(PPC_ACQUIRE_BARRIER "" : : : "memory");	\
--	__ret;								\
--})
--
--#define __atomic_op_release(op, args...)				\
--({									\
--	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory");	\
--	op##_relaxed(args);						\
--})
-+#define __atomic_acquire_fence()					\
-+	__asm__ __volatile__(PPC_ACQUIRE_BARRIER "" : : : "memory")
-+
-+#define __atomic_release_fence()					\
-+	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory")
- 
- static __inline__ int atomic_read(const atomic_t *v)
+ static inline int arch_atomic_xchg(atomic_t *v, int new)
  {
-diff --git a/arch/riscv/include/asm/atomic.h b/arch/riscv/include/asm/atomic.h
-index 512b89485790..c452359c9cb8 100644
---- a/arch/riscv/include/asm/atomic.h
-+++ b/arch/riscv/include/asm/atomic.h
-@@ -25,18 +25,11 @@
+-	return xchg(&v->counter, new);
++	return arch_xchg(&v->counter, new);
+ }
  
- #define ATOMIC_INIT(i)	{ (i) }
+ static inline void arch_atomic_and(int i, atomic_t *v)
+diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
+index 849f1c566a11..4343d9b4f30e 100644
+--- a/arch/x86/include/asm/atomic64_64.h
++++ b/arch/x86/include/asm/atomic64_64.h
+@@ -188,7 +188,7 @@ static __always_inline bool arch_atomic64_try_cmpxchg(atomic64_t *v, s64 *old, l
  
--#define __atomic_op_acquire(op, args...)				\
--({									\
--	typeof(op##_relaxed(args)) __ret  = op##_relaxed(args);		\
--	__asm__ __volatile__(RISCV_ACQUIRE_BARRIER "" ::: "memory");	\
--	__ret;								\
--})
--
--#define __atomic_op_release(op, args...)				\
--({									\
--	__asm__ __volatile__(RISCV_RELEASE_BARRIER "" ::: "memory");	\
--	op##_relaxed(args);						\
--})
-+#define __atomic_acquire_fence()					\
-+	__asm__ __volatile__(RISCV_ACQUIRE_BARRIER "" ::: "memory")
-+
-+#define __atomic_release_fence()					\
-+	__asm__ __volatile__(RISCV_RELEASE_BARRIER "" ::: "memory");
- 
- static __always_inline int atomic_read(const atomic_t *v)
+ static inline long arch_atomic64_xchg(atomic64_t *v, long new)
  {
-diff --git a/include/linux/atomic.h b/include/linux/atomic.h
-index 8e04f1f69bd9..fc39e4bead30 100644
---- a/include/linux/atomic.h
-+++ b/include/linux/atomic.h
-@@ -38,40 +38,46 @@
-  * barriers on top of the relaxed variant. In the case where the relaxed
-  * variant is already fully ordered, no additional barriers are needed.
-  *
-- * Besides, if an arch has a special barrier for acquire/release, it could
-- * implement its own __atomic_op_* and use the same framework for building
-- * variants
-- *
-- * If an architecture overrides __atomic_op_acquire() it will probably want
-- * to define smp_mb__after_spinlock().
-+ * If an architecture overrides __atomic_acquire_fence() it will probably
-+ * want to define smp_mb__after_spinlock().
+-	return xchg(&v->counter, new);
++	return arch_xchg(&v->counter, new);
+ }
+ 
+ static inline void arch_atomic64_and(long i, atomic64_t *v)
+diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
+index e3efd8a06066..a55d79b233d3 100644
+--- a/arch/x86/include/asm/cmpxchg.h
++++ b/arch/x86/include/asm/cmpxchg.h
+@@ -75,7 +75,7 @@ extern void __add_wrong_size(void)
+  * use "asm volatile" and "memory" clobbers to prevent gcc from moving
+  * information around.
   */
--#ifndef __atomic_op_acquire
-+#ifndef __atomic_acquire_fence
-+#define __atomic_acquire_fence		smp_mb__after_atomic
-+#endif
+-#define xchg(ptr, v)	__xchg_op((ptr), (v), xchg, "")
++#define arch_xchg(ptr, v)	__xchg_op((ptr), (v), xchg, "")
+ 
+ /*
+  * Atomic compare and exchange.  Compare OLD with MEM, if identical,
+diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
+index c7c3e4cdd942..53481b6eacdf 100644
+--- a/include/asm-generic/atomic-instrumented.h
++++ b/include/asm-generic/atomic-instrumented.h
+@@ -408,6 +408,13 @@ static __always_inline bool atomic64_add_negative(s64 i, atomic64_t *v)
+ }
+ #endif
+ 
++#define xchg(ptr, new)							\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
++	arch_xchg(__ai_ptr, (new));					\
++})
 +
-+#ifndef __atomic_release_fence
-+#define __atomic_release_fence		smp_mb__before_atomic
-+#endif
-+
-+#ifndef __atomic_pre_fence
-+#define __atomic_pre_fence		smp_mb__before_atomic
-+#endif
-+
-+#ifndef __atomic_post_fence
-+#define __atomic_post_fence		smp_mb__after_atomic
-+#endif
-+
- #define __atomic_op_acquire(op, args...)				\
+ #define cmpxchg(ptr, old, new)						\
  ({									\
- 	typeof(op##_relaxed(args)) __ret  = op##_relaxed(args);		\
--	smp_mb__after_atomic();						\
-+	__atomic_acquire_fence();					\
- 	__ret;								\
- })
--#endif
- 
--#ifndef __atomic_op_release
- #define __atomic_op_release(op, args...)				\
- ({									\
--	smp_mb__before_atomic();					\
-+	__atomic_release_fence();					\
- 	op##_relaxed(args);						\
- })
--#endif
- 
--#ifndef __atomic_op_fence
- #define __atomic_op_fence(op, args...)					\
- ({									\
- 	typeof(op##_relaxed(args)) __ret;				\
--	smp_mb__before_atomic();					\
-+	__atomic_pre_fence();						\
- 	__ret = op##_relaxed(args);					\
--	smp_mb__after_atomic();						\
-+	__atomic_post_fence();						\
- 	__ret;								\
- })
--#endif
- 
- /* atomic_add_return_relaxed */
- #ifndef atomic_add_return_relaxed
-@@ -1308,4 +1314,13 @@ static inline long long atomic64_dec_if_positive(atomic64_t *v)
- 
- #include <asm-generic/atomic-long.h>
- 
-+#undef __atomic_op_acquire
-+#undef __atomic_op_release
-+#undef __atomic_op_fence
-+
-+#undef __atomic_acquire_fence
-+#undef __atomic_release_fence
-+#undef __atomic_pre_fence
-+#undef __atomic_post_fence
-+
- #endif /* _LINUX_ATOMIC_H */
+ 	typeof(ptr) __ai_ptr = (ptr);					\
 -- 
 2.11.0
 
