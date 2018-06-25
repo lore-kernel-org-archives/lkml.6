@@ -2,98 +2,83 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B25C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3F2C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15EC4259F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:07:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="BaAbQFZF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15EC4259F5
+	by mail.kernel.org (Postfix) with ESMTP id 548B5259F7
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:08:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 548B5259F7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755498AbeFYNHP (ORCPT
+        id S1755538AbeFYNH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:07:15 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50702 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755221AbeFYNHN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:07:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SUYkmoKLYhiANkgEC7YweDdkYW/1K1zWLSMv9+j61yM=; b=BaAbQFZFliQVMd8DXDuEvQTH1
-        aG9XYD0kJBOhvAasvPAJPWghC1n9qzwePsIYjcYnjbUlGrfAhYjqw2HKN2nEYIJhApHMPtJc1FWNb
-        ghqr4Y++t+35JFiQgNsLrGOgRDoQeMCt9ld8YxNa1MHo5rVxQ2NNm6QGqV1QpRB680/Yo=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fXRCy-0007qz-HZ; Mon, 25 Jun 2018 13:07:04 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fXRCy-0007zx-2h; Mon, 25 Jun 2018 14:07:04 +0100
-Date:   Mon, 25 Jun 2018 14:07:04 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v3 00/14] ARM: pxa: switch to DMA slave maps
-Message-ID: <20180625130704.GQ9413@sirena.org.uk>
-References: <20180617170217.24177-1-robert.jarzmik@free.fr>
- <20180618104159.24b9fffb@bbrezillon>
- <87d0wnrhqz.fsf@belgarion.home>
+        Mon, 25 Jun 2018 09:07:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48066 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755221AbeFYNH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:07:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E04A0ACF9;
+        Mon, 25 Jun 2018 13:07:56 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 15:07:56 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     peter enderborg <peter.enderborg@sony.com>
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-mm@kvack.org, rientjes@google.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
+ killer.
+Message-ID: <20180625130756.GK28965@dhcp22.suse.cz>
+References: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180620115531.GL13685@dhcp22.suse.cz>
+ <3d27f26e-68ba-d3c0-9518-cebeb2689aec@sony.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Vsi50HYs5tPfr+1I"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <87d0wnrhqz.fsf@belgarion.home>
-X-Cookie: I'm having a MID-WEEK CRISIS!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3d27f26e-68ba-d3c0-9518-cebeb2689aec@sony.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon 25-06-18 15:03:40, peter enderborg wrote:
+> On 06/20/2018 01:55 PM, Michal Hocko wrote:
+> > On Wed 20-06-18 20:20:38, Tetsuo Handa wrote:
+> >> Sleeping with oom_lock held can cause AB-BA lockup bug because
+> >> __alloc_pages_may_oom() does not wait for oom_lock. Since
+> >> blocking_notifier_call_chain() in out_of_memory() might sleep, sleeping
+> >> with oom_lock held is currently an unavoidable problem.
+> > Could you be more specific about the potential deadlock? Sleeping while
+> > holding oom lock is certainly not nice but I do not see how that would
+> > result in a deadlock assuming that the sleeping context doesn't sleep on
+> > the memory allocation obviously.
+> 
+> It is a mutex you are supposed to be able to sleep.  It's even exported.
 
---Vsi50HYs5tPfr+1I
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+What do you mean? oom_lock is certainly not exported for general use. It
+is not local to oom_killer.c just because it is needed in other _mm_
+code.
+ 
+> >> As a preparation for not to sleep with oom_lock held, this patch brings
+> >> OOM notifier callbacks to outside of OOM killer, with two small behavior
+> >> changes explained below.
+> > Can we just eliminate this ugliness and remove it altogether? We do not
+> > have that many notifiers. Is there anything fundamental that would
+> > prevent us from moving them to shrinkers instead?
+> 
+> 
+> @Hocko Do you remember the lowmemorykiller from android? Some things
+> might not be the right thing for shrinkers.
 
-On Mon, Jun 18, 2018 at 09:56:20PM +0200, Robert Jarzmik wrote:
+Just that lmk did it wrong doesn't mean others have to follow.
 
-> I must insist on "Wednesday", as I need to have one last pass from 0-day kernel
-> checker to be fully covered, and I'd like as well to know which tree the ASoC
-> patch will take, ie. if Mark commits to take it, or rather wants to pull from
-> the imutable branch.
-
-I'll pull the branch in (a signed tag would've been nicer but it's not
-the end of the world).
-
---Vsi50HYs5tPfr+1I
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsw6PcACgkQJNaLcl1U
-h9DjMAf/af5+btMq4R9XHetdh/iAvu2jYHAw4/iyHWOKMS8MDABxBEz/3eB2XlUA
-35JbCDcC7RYyk41csobZ7/CnhgkTM5HOjyLVHs8OOYhAOSrmFK0sDoGg884OvlAp
-F5WNWOsmiqGfJEUoiSh7SoHtVi+cN3snsAcgX2yJtPlmyMcRodxvSMdXxjACwDoE
-092a9LGzs4WYoPqdk8zszqY+2cu2HLH2aXvB1oplkwbcyJYB3VkO4Q0O+7o9AvMM
-26QSPG26ufIJY+/ZxrO5BWsZrs8QlOAAhLjI65FITchHfVEoBxqryQbGk4MjpG3G
-VAOCzizL4A454dl/xHPD8erqdXCmVw==
-=EUsN
------END PGP SIGNATURE-----
-
---Vsi50HYs5tPfr+1I--
+-- 
+Michal Hocko
+SUSE Labs
