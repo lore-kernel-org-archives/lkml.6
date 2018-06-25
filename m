@@ -2,232 +2,140 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA728C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B03C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CD32256B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:26:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CD32256B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CD93256B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:27:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhl6y9+v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CD93256B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754968AbeFYJ0U (ORCPT
+        id S1754782AbeFYJ1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:26:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:53022 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754537AbeFYJ0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:26:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D8FC7A9;
-        Mon, 25 Jun 2018 02:26:18 -0700 (PDT)
-Received: from red-moon (red-moon.cambridge.arm.com [10.1.206.55])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F30C3F59C;
-        Mon, 25 Jun 2018 02:26:16 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 10:27:58 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Ley Foon Tan <ley.foon.tan@intel.com>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch
- Kconfig
-Message-ID: <20180625092758.GA6412@red-moon>
-References: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
- <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
- <20180621165400.GB14519@e107981-ln.cambridge.arm.com>
- <5e9b0aa4-ded1-725d-c401-49c13b7d5f9d@broadcom.com>
- <1529683148.2729.6.camel@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1529683148.2729.6.camel@intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 25 Jun 2018 05:27:51 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44912 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750919AbeFYJ1t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 05:27:49 -0400
+Received: by mail-wr0-f193.google.com with SMTP id p12-v6so11265010wrn.11;
+        Mon, 25 Jun 2018 02:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=67rhiyFVzoKVQXTuifEiGRJEsSDBWmuXfM2BvfFlAMY=;
+        b=dhl6y9+v+ycSfiUBxdNf416LexO1FtagKLWSYz/FgwWxbTaD3JRk0mDpOP0heFjpm9
+         +b3bnFN4pscTJYmixfYnM2e+Jm7m5C1mwGxrV620QGuUiJVlhVkEECRWwfSfh0km33A7
+         yYorPABnKZZ3RG8C2P2sfOVQyylVwsky0nz2x5UPDmz/+dhU9lQCW+uTxF6gZIi9iLvN
+         wsWI6S0KuUy9q3I7mq9oAteeeaskSNnI6OmqnV84cofVzs95Dy5i1nFah6B5x6xGylkp
+         yxzC3HfzEdcR3SkuBlzXykESDM9uTfQmt55hO4qtvUrFoctqMt6qGG6dqnU++8L0MIE5
+         Oq2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=67rhiyFVzoKVQXTuifEiGRJEsSDBWmuXfM2BvfFlAMY=;
+        b=g2ZJyTsH7a1u6ux04buofvyA1t2FRh/OwRno/N8OQNx1xKcGD+udH09VMRmKZNFyGK
+         bqYr2leI7Dd/5Ji7KDXOAbUS4y0HclDBvfNo30i/T9Y7Xyne6+bMPsnWvjXNEYUuPklY
+         UJPGRIfshg4DFY1qDaHB8AIYjqO/eCRl2tEr5Zihb7zpaqhKwl2E6YpGxYpOHvQIojtz
+         fX4laN7ahMwRagqohX9URxOt+LKEX+mYTbrmTclTfYL2D27+8NmpdIl5ut3zGQMUrRjB
+         9YBw1jiq1sSXZTg8DqjZQwWlOE7VjQSTsyazlTlwsw/JfkfybAyfieWJ2O4ccMlnWCTJ
+         lw6Q==
+X-Gm-Message-State: APt69E0f7VfSsjZej4yNOd9hflNvUPZb32wQ0QZTD01PaCLjFBdb72Nv
+        Uwy6o3dxLRaGIObzHR5yMqM=
+X-Google-Smtp-Source: AAOMgpdS2STkIDUxrW88Z8MYmB+jI6DvmWOcw6WEScoskZ8ThR3W3RDBrvf3IyLpD7fCswnQzMn3+w==
+X-Received: by 2002:a5d:41c5:: with SMTP id e5-v6mr3256028wrq.25.1529918868222;
+        Mon, 25 Jun 2018 02:27:48 -0700 (PDT)
+Received: from NewMoon.iit.local ([90.147.180.254])
+        by smtp.gmail.com with ESMTPSA id v2-v6sm15638779wrm.84.2018.06.25.02.27.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 02:27:47 -0700 (PDT)
+From:   Andrea Merello <andrea.merello@gmail.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com,
+        michal.simek@xilinx.com, appana.durga.rao@xilinx.com,
+        dmaengine@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andrea Merello <andrea.merello@gmail.com>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Subject: [PATCH v3 1/5] dmaengine: xilinx_dma: in axidma slave_sg and dma_cylic mode align split descriptors
+Date:   Mon, 25 Jun 2018 11:27:20 +0200
+Message-Id: <20180625092724.22164-1-andrea.merello@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 11:59:08PM +0800, Ley Foon Tan wrote:
-> On Thu, 2018-06-21 at 22:08 -0700, Scott Branden wrote:
-> > 
-> > 
-> > On 18-06-21 09:54 AM, Lorenzo Pieralisi wrote:
-> > > 
-> > > 
-> > > On Wed, Jun 20, 2018 at 10:07:33AM +0200, Jan Kiszka wrote:
-> > > > 
-> > > > 
-> > > > On 2018-06-19 13:21, Lorenzo Pieralisi wrote:
-> > > > > 
-> > > > > 
-> > > > > Commit 51bc085d6454 ("PCI: Improve host drivers compile test
-> > > > > coverage")
-> > > > > added configuration options to allow PCI host controller
-> > > > > drivers to be
-> > > > > compile tested on all architectures.
-> > > > > 
-> > > > > Some host controller drivers (eg PCIE_ALTERA) config entries
-> > > > > select
-> > > > > the PCI_DOMAINS config option to enable PCI domains management
-> > > > > in
-> > > > > the kernel. Now that host controller drivers can be compiled on
-> > > > > all architectures, this triggers build regressions on arches
-> > > > > that
-> > > > > do not implement the PCI_DOMAINS required API (ie
-> > > > > pci_domain_nr()):
-> > > > > 
-> > > > > drivers/ata/pata_ali.c: In function 'ali_init_chipset':
-> > > > > drivers/ata/pata_ali.c:469:38: error:
-> > > > >          implicit declaration of function 'pci_domain_nr';
-> > > > >                                            did you mean
-> > > > > 'pci_iomap_wc'?
-> > > > > 
-> > > > > Furthemore, some software configurations (ie Jailhouse) require
-> > > > > a
-> > > > > PCI_DOMAINS enabled kernel to configure multiple host
-> > > > > controllers
-> > > > > without having an explicit dependency on the ARM platform on
-> > > > > which
-> > > > > they run.
-> > > > > 
-> > > > > Make PCI_DOMAINS a visible configuration option on ARM so that
-> > > > > software
-> > > > > configurations that need it can manually select it and move the
-> > > > > PCI_DOMAINS selection from PCI controllers configuration file
-> > > > > to ARM
-> > > > > sub-arch config entries that currently require it, fixing the
-> > > > > issue.
-> > > > > 
-> > > > > Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test
-> > > > > coverage")
-> > > > > Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us
-> > > > > .net
-> > > > > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > > > > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > > > > Cc: Scott Branden <scott.branden@broadcom.com>
-> > > > > Cc: Will Deacon <will.deacon@arm.com>
-> > > > > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > > > > Cc: Rob Herring <robh@kernel.org>
-> > > > > Cc: Russell King <linux@armlinux.org.uk>
-> > > > > Cc: Jan Kiszka <jan.kiszka@siemens.com>
-> > > > > Cc: Guenter Roeck <linux@roeck-us.net>
-> > > > > Cc: Ley Foon Tan <lftan@altera.com>
-> > > > > ---
-> > > > > v1 -> v2
-> > > > >     - Removed ARCH_VIRT PCI_DOMAINS selection
-> > > > >     - Added PCI_DOMAINS visible config option
-> > > > > 
-> > > > > v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
-> > > > > 
-> > > > >   arch/arm/Kconfig               | 8 +++++++-
-> > > > >   arch/arm/mach-bcm/Kconfig      | 1 +
-> > > > >   arch/arm/mach-socfpga/Kconfig  | 1 +
-> > > > >   drivers/pci/controller/Kconfig | 3 ---
-> > > > >   4 files changed, 9 insertions(+), 4 deletions(-)
-> > > > > 
-> > > > > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> > > > > index 54eeb8d00bc6..843edfd000be 100644
-> > > > > --- a/arch/arm/Kconfig
-> > > > > +++ b/arch/arm/Kconfig
-> > > > > @@ -1245,8 +1245,14 @@ config PCI
-> > > > >       VESA. If you have PCI, say Y, otherwise N.
-> > > > > 
-> > > > >   config PCI_DOMAINS
-> > > > > -   bool
-> > > > > +   bool "Support for multiple PCI domains"
-> > > > >     depends on PCI
-> > > > > +   help
-> > > > > +     Enable PCI domains kernel management. Say Y if your
-> > > > > machine
-> > > > > +     has a PCI bus hierarchy that requires more than one PCI
-> > > > > +     domain (aka segment) to be correctly managed. Say N
-> > > > > otherwise.
-> > > > > +
-> > > > > +     If you don't know what to do here, say N.
-> > > > > 
-> > > > >   config PCI_DOMAINS_GENERIC
-> > > > >     def_bool PCI_DOMAINS
-> > > > > diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-
-> > > > > bcm/Kconfig
-> > > > > index c46a728df44e..25aac6ee2ab1 100644
-> > > > > --- a/arch/arm/mach-bcm/Kconfig
-> > > > > +++ b/arch/arm/mach-bcm/Kconfig
-> > > > > @@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
-> > > > >     select GPIOLIB
-> > > > >     select ARM_AMBA
-> > > > >     select PINCTRL
-> > > > > +   select PCI_DOMAINS if PCI
-> > > > >     help
-> > > > >       This enables support for systems based on Broadcom IPROC
-> > > > > architected SoCs.
-> > > > >       The IPROC complex contains one or more ARM CPUs along
-> > > > > with common
-> > > > > diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-
-> > > > > socfpga/Kconfig
-> > > > > index d0f62eacf59d..4adb901dd5eb 100644
-> > > > > --- a/arch/arm/mach-socfpga/Kconfig
-> > > > > +++ b/arch/arm/mach-socfpga/Kconfig
-> > > > > @@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
-> > > > >     select HAVE_ARM_SCU
-> > > > >     select HAVE_ARM_TWD if SMP
-> > > > >     select MFD_SYSCON
-> > > > > +   select PCI_DOMAINS if PCI
-> > > > > 
-> > > > >   if ARCH_SOCFPGA
-> > > > >   config SOCFPGA_SUSPEND
-> > > > > diff --git a/drivers/pci/controller/Kconfig
-> > > > > b/drivers/pci/controller/Kconfig
-> > > > > index 18fa09b3ac8f..cc9fa02d32a0 100644
-> > > > > --- a/drivers/pci/controller/Kconfig
-> > > > > +++ b/drivers/pci/controller/Kconfig
-> > > > > @@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
-> > > > >     depends on OF
-> > > > >     select PCI_HOST_COMMON
-> > > > >     select IRQ_DOMAIN
-> > > > > -   select PCI_DOMAINS
-> > > > >     help
-> > > > >       Say Y here if you want to support a simple generic PCI
-> > > > > host
-> > > > >       controller, such as the one emulated by kvmtool.
-> > > > > @@ -138,7 +137,6 @@ config PCI_VERSATILE
-> > > > > 
-> > > > >   config PCIE_IPROC
-> > > > >     tristate
-> > > > > -   select PCI_DOMAINS
-> > > > >     help
-> > > > >       This enables the iProc PCIe core controller support for
-> > > > > Broadcom's
-> > > > >       iProc family of SoCs. An appropriate bus interface driver
-> > > > > needs
-> > > > > @@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
-> > > > >   config PCIE_ALTERA
-> > > > >     bool "Altera PCIe controller"
-> > > > >     depends on ARM || NIOS2 || COMPILE_TEST
-> > > > > -   select PCI_DOMAINS
-> > > > >     help
-> > > > >       Say Y here if you want to enable PCIe controller support
-> > > > > on Altera
-> > > > >       FPGA.
-> > > > > 
-> > > > Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
-> > > Thanks a lot. Scott, Ley Foon, does it work for you ? I would like
-> > > to ask Bjorn to send it asap since the build on sparc is still
-> > > broken.
-> > Change will have to be made for arm64 for ARCH_BCM_IPROC as well.
-> Yes, need to add it to arm64 too. Others are okay.
+Whenever a single or cyclic transaction is prepared, the driver
+could eventually split it over several SG descriptors in order
+to deal with the HW maximum transfer length.
 
-On arm64 CONFIG_PCI_DOMAINS defaults to CONFIG_PCI so there is no need
-to select it, if that's all you need changed there is nothing to
-change and this patch is read to be merged.
+This could end up in DMA operations starting from a misaligned
+address. This seems fatal for the HW if DRE is not enabled.
 
-Lorenzo
+This patch eventually adjusts the transfer size in order to make sure
+all operations start from an aligned address.
+
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+---
+Changes in v2:
+        - don't introduce copy_mask field, rather rely on already-esistent
+          copy_align field. Suggested by Radhey Shyam Pandey
+        - reword title
+Changes in v3:
+	- fix bug introduced in v2: wrong copy size when DRE is enabled
+	  use implementation suggested by Radhey Shyam Pandey
+---
+ drivers/dma/xilinx/xilinx_dma.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index 27b523530c4a..113d9bf1b6a1 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -1793,6 +1793,16 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_slave_sg(
+ 			 */
+ 			copy = min_t(size_t, sg_dma_len(sg) - sg_used,
+ 				     XILINX_DMA_MAX_TRANS_LEN);
++
++			if ((copy + sg_used < sg_dma_len(sg)) &&
++			    chan->xdev->common.copy_align) {
++				/*
++				 * If this is not the last descriptor, make sure
++				 * the next one will be properly aligned
++				 */
++				copy = rounddown(copy,
++					(1 << chan->xdev->common.copy_align));
++			}
+ 			hw = &segment->hw;
+ 
+ 			/* Fill in the descriptor */
+@@ -1898,6 +1908,16 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_dma_cyclic(
+ 			 */
+ 			copy = min_t(size_t, period_len - sg_used,
+ 				     XILINX_DMA_MAX_TRANS_LEN);
++
++			if ((copy + sg_used < period_len) &&
++			    chan->xdev->common.copy_align) {
++				/*
++				 * If this is not the last descriptor, make sure
++				 * the next one will be properly aligned
++				 */
++				copy = rounddown(copy,
++					(1 << chan->xdev->common.copy_align));
++			}
+ 			hw = &segment->hw;
+ 			xilinx_axidma_buf(chan, hw, buf_addr, sg_used,
+ 					  period_len * i);
+-- 
+2.17.1
+
