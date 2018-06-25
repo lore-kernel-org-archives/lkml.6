@@ -2,131 +2,93 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDB3C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561C2C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C54E1246AC
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:44:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54E1246AC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 137AE25D1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:45:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137AE25D1F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeFYPoS (ORCPT
+        id S1754296AbeFYPpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:44:18 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:1098 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751381AbeFYPoR (ORCPT
+        Mon, 25 Jun 2018 11:45:02 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59815 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751631AbeFYPn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:44:17 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b310db40000>; Mon, 25 Jun 2018 08:43:48 -0700
-Received: from HQMAIL105.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 25 Jun 2018 08:44:16 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 25 Jun 2018 08:44:16 -0700
-Received: from [10.2.161.48] (10.2.161.48) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 25 Jun
- 2018 15:44:15 +0000
-Subject: Re: [PATCH] doc: Update wake_up() & co. memory-barrier guarantees
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <1529918258-7295-1-git-send-email-andrea.parri@amarulasolutions.com>
- <20180625095031.GX2494@hirez.programming.kicks-ass.net>
- <20180625105618.GA12676@andrea>
- <20180625123121.GY2494@hirez.programming.kicks-ass.net>
- <20180625131643.GA15126@andrea>
- <20180625141830.GC2494@hirez.programming.kicks-ass.net>
- <20180625145611.GA16333@andrea>
-From:   Daniel Lustig <dlustig@nvidia.com>
-Message-ID: <bad7783b-9510-0049-b10a-a0d7f7273b57@nvidia.com>
-Date:   Mon, 25 Jun 2018 08:44:14 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 25 Jun 2018 11:43:59 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5PFcbAu018483;
+        Mon, 25 Jun 2018 17:43:22 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2ju0hc8sx2-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 25 Jun 2018 17:43:22 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7FED038;
+        Mon, 25 Jun 2018 15:43:21 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 635CB2872;
+        Mon, 25 Jun 2018 15:43:21 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 25 Jun
+ 2018 17:43:21 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 25 Jun
+ 2018 17:43:21 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V5 5/5] ARM: dts: stm32: update iwdg with lsi clock name for stm32f429
+Date:   Mon, 25 Jun 2018 17:43:03 +0200
+Message-ID: <1529941383-8653-6-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
+References: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180625145611.GA16333@andrea>
-X-Originating-IP: [10.2.161.48]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL105.nvidia.com (172.20.187.12)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/25/2018 7:56 AM, Andrea Parri wrote:
-> On Mon, Jun 25, 2018 at 04:18:30PM +0200, Peter Zijlstra wrote:
->> On Mon, Jun 25, 2018 at 03:16:43PM +0200, Andrea Parri wrote:
->>>>> A concrete example being the store-buffering pattern reported in [1].
->>>>
->>>> Well, that example only needs a store->load barrier. It so happens
->>>> smp_mb() is the only one actually doing that, but imagine we had a
->>>> weaker barrier that did just that, one that did not imply the full
->>>> transitivity smp_mb() does.
->>>>
->>>> Then the example from [1] could use that weaker thing.
->>>
->>> Absolutely (and that would be "fence w,r" on RISC-V, IIUC).
->>
->> Ah cute. What is the transitivity model of those "fence" instructions? I
->> see their smp_mb() is "fence rw,rw" and smp_mb() must be RSsc. Otoh
->> their smp_wmb() is "fence w,w" which is only only required to be RCpc.
->>
->> So what does RISC-V do for "w,w" and "w,r" like things?
-> 
-> I'd defer to Daniel (in Cc:) for this ;-)  I simply checked the SB pattern
-> plus w,r fences against the following models:
-> 
->   http://www.cl.cam.ac.uk/~sf502/regressions/rmem/
->   http://moscova.inria.fr/~maranget/cats7/riscv/ 
-> 
+From: Ludovic Barre <ludovic.barre@st.com>
 
-First off, the latest RISC-V spec is here, in case anyone hasn't seen it:
-https://github.com/riscv/riscv-isa-manual.  It's all public now,
-fortunately.  There's a PDF link at the bottom of that page too.  The
-spec now has proposed Linux mappings (not all of which have actually made
-it upstream...) in Appendix A.5 as well.  We'd welcome general feedback
-on those.
+This patch updates iwdg watchdog to use lsi clock name.
 
-Now to the question above:
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+---
+ arch/arm/boot/dts/stm32f429.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-RISC-V is (other-)multi-copy-atomic, so I don't think transitivity
-should be an issue here.
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index ede77e0..39ea13a 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -310,6 +310,7 @@
+ 			compatible = "st,stm32-iwdg";
+ 			reg = <0x40003000 0x400>;
+ 			clocks = <&clk_lsi>;
++			clock-names = "lsi";
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.7.4
 
-We do have a "fence w,r", but we decided to warn against actually using
-it for a few reasons: 1) lack of known common use cases :), 2) IIRC
-there was some corner case discrepancy between the axiomatic and
-operational models if we allowed it, and 3) in practice, it's already
-both expensive enough and obscure enough that many or most
-implementations will simply just treat it as "fence rw,rw" anyway.
-
-So, in theory, "fence w,r" should be enough to prevent SB-like patterns.
-It's just not yet clear that it's a big enough win that it's worth
-creating a new fence macro for it, or pulling the current RISC-V
-recommendation against its use.  What do you all think?
-
-Are there other known use cases where you really do want a "fence w,r"
-that's intentionally not also something stronger?  How common would the
-pattern be?
-
-Dan
