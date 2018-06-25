@@ -6,83 +6,106 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BFAC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E191C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7EE12569F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:21:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7EE12569F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 335822569F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:21:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 335822569F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754834AbeFYJVG (ORCPT
+        id S1754898AbeFYJV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:21:06 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:40121 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754449AbeFYJVE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:21:04 -0400
-Received: by mail-vk0-f65.google.com with SMTP id o71-v6so7433269vke.7;
-        Mon, 25 Jun 2018 02:21:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kBzvh9rbN/YiC1yLuddFuoOnGCjizmGENjzNEPCPgHg=;
-        b=MJciQ39r7G4PEKA2OUCIlArYZAIOIcn0ZyqB0bma4L9WHutZty901skaJuo09lZzct
-         a5SB0FJ5Ko8oMehNJ+gp0EMGyFy8z3EX2DfExLTRTCZ1fEgS1aqMj+qiLF4X5uvvruuU
-         FdbPwL5X4hZT2maSqbtu14RBbm/yyF8Y7D3IhDtq72dWH+xLWkoh9+6pMgYoXXNzZnZP
-         uYo/6rCPXF2y13MA/PoI0IR4XOnC+ECm/O+QgdGxAXlB3hyeHea6FkWgqMLZQsZnCe8k
-         Im5i6AVgWy9v0b7uDfp92z64gpHhoGxUqee66W7/5BXr+GRSY/5Fg1AGSwQ8DBk0BRUb
-         lNiw==
-X-Gm-Message-State: APt69E1X5Yw5RZmPiZXvsBpRKvorAi/MS7E985ZqwdShoNya/Dl5m+CA
-        0Mtslrvnl/1BwThnSRWPmDV+/7Lk61EdpeLB0wwodQ==
-X-Google-Smtp-Source: ADUXVKK6fpvEzDYpEBkBDD1t0aCoZ6wtPwaVshtr09EL6SX52A+SN70R35pTe07JscHYZxrj0hWvF4CR70iSwR1jGO0=
-X-Received: by 2002:a1f:1e10:: with SMTP id e16-v6mr6947758vke.176.1529918463343;
- Mon, 25 Jun 2018 02:21:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <1529915064-5014-1-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1529915064-5014-1-git-send-email-michel.pollet@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 25 Jun 2018 11:20:52 +0200
-Message-ID: <CAMuHMdVtkxvpBjSy2+2MHvZ15t5ZTSq-4H+pfgsayOx+EHXnEg@mail.gmail.com>
-Subject: Re: [PATCH v10 1/1] clk: renesas: Renesas R9A06G032 clock driver
-To:     Michel Pollet <michel.pollet@bp.renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+        Mon, 25 Jun 2018 05:21:29 -0400
+Received: from mga11.intel.com ([192.55.52.93]:58839 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754449AbeFYJV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 05:21:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 02:21:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,269,1526367600"; 
+   d="scan'208";a="240363011"
+Received: from jsakkine-mobl1.tm.intel.com (HELO sfriis-mobl.ger.corp.intel.com) ([10.237.50.42])
+  by fmsmga006.fm.intel.com with ESMTP; 25 Jun 2018 02:21:23 -0700
+Message-ID: <b8ea3787ae99637a8aae286ff90ac6889d8b55f4.camel@linux.intel.com>
+Subject: Re: [PATCH v11 09/13] x86, sgx: basic routines for enclave page
+ cache
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        x86@kernel.org, platform-driver-x86@vger.kernel.org
+Cc:     dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>,
+        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
+Date:   Mon, 25 Jun 2018 12:21:22 +0300
+In-Reply-To: <1529500871.9779.58.camel@intel.com>
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+         <20180608171216.26521-10-jarkko.sakkinen@linux.intel.com>
+         <1529500871.9779.58.camel@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
+On Wed, 2018-06-20 at 06:21 -0700, Sean Christopherson wrote:
+> On Fri, 2018-06-08 at 19:09 +0200, Jarkko Sakkinen wrote:
+> > SGX has a set of data structures to maintain information about the enclaves
+> > and their security properties. BIOS reserves a fixed size region of
+> > physical memory for these structures by setting Processor Reserved Memory
+> > Range Registers (PRMRR). This memory area is called Enclave Page Cache
+> > (EPC).
+> > 
+> > This commit implements the basic routines to allocate and free pages from
+> > different EPC banks. There is also a swapper thread ksgxswapd for EPC pages
+> > that gets woken up by sgx_alloc_page() when we run below the low watermark.
+> > The swapper thread continues swapping pages up until it reaches the high
+> > watermark.
+> > 
+> > Each subsystem that uses SGX must provide a set of callbacks for EPC
+> > pages that are used to reclaim, block and write an EPC page. Kernel
+> > takes the responsibility of maintaining LRU cache for them.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/sgx.h      |  67 +++++
+> >  arch/x86/include/asm/sgx_arch.h | 224 ++++++++++++++++
+> >  arch/x86/kernel/cpu/intel_sgx.c | 443 +++++++++++++++++++++++++++++++-
+> >  3 files changed, 732 insertions(+), 2 deletions(-)
+> >  create mode 100644 arch/x86/include/asm/sgx_arch.h
+> 
+> ...
+> 
+> > +struct sgx_pcmd {
+> > +	struct sgx_secinfo secinfo;
+> > +	uint64_t enclave_id;
+> > +	uint8_t reserved[40];
+> > +	uint8_t mac[16];
+> > +};
+> 
+> sgx_pcmd has a 128-byte alignment requirement.  I think it's
+> worth specifying here as sgx_pcmd is small enough that it could
+> be put on the stack, e.g. by KVM when trapping and executing
+> ELD* on behalf of a guest VM.
+> 
+> In fact, it probably makes sense to add alightment attributes
+> to all SGX structs for self-documentation purposes, even though
+> many of them will never be allocated statically or on the stack.
 
-On Mon, Jun 25, 2018 at 10:29 AM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This provides a clock driver for the Renesas R09A06G032.
-> This uses a structure derived from both the RCAR gen2 driver as well as
-> the renesas-cpg-mssr driver.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+I agree with this. It also documents stuff so that you don't have
+to look it up from the SDM.
 
-Thanks, updated.
+Neil: this should also clear your concerns.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+/Jarkko
