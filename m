@@ -2,132 +2,166 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DBCC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C7FC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED2425CFA
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:38:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED2425CFA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7316925CFA
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:38:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7316925CFA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752211AbeFYPiD (ORCPT
+        id S1752330AbeFYPiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:38:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52732 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751686AbeFYPiA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:38:00 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PFYUSw053456
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 11:38:00 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ju2shs8ur-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 11:38:00 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 25 Jun 2018 11:37:59 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 11:37:55 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5PFbsCU9765258
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Jun 2018 15:37:54 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 88ADCB2065;
-        Mon, 25 Jun 2018 11:37:49 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6A29AB205F;
-        Mon, 25 Jun 2018 11:37:49 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Jun 2018 11:37:49 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id DF30016C6A76; Mon, 25 Jun 2018 08:39:58 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 08:39:58 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com, joel@joelfernandes.org
-Subject: Re: [PATCH] rcu: Make it stop complaining about docbook
- function-header comment
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1529908015-7256-1-git-send-email-byungchul.park@lge.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529908015-7256-1-git-send-email-byungchul.park@lge.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062515-0040-0000-0000-00000444E851
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009253; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052158; UDB=6.00539362; IPR=6.00830083;
- MB=3.00021850; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-25 15:37:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062515-0041-0000-0000-0000084AFDBD
-Message-Id: <20180625153958.GO3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806250181
+        Mon, 25 Jun 2018 11:38:15 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58526 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752224AbeFYPiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:38:12 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9A221206A0; Mon, 25 Jun 2018 17:38:10 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3DAA6203B4;
+        Mon, 25 Jun 2018 17:38:10 +0200 (CEST)
+Message-ID: <d8e471608643a014d0961c82256753e5fd0c5060.camel@bootlin.com>
+Subject: Re: [PATCH 7/9] media: cedrus: Move IRQ maintainance to
+ cedrus_dec_ops
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     tfiga@chromium.org, posciak@chromium.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Mon, 25 Jun 2018 17:38:10 +0200
+In-Reply-To: <20180613140714.1686-8-maxime.ripard@bootlin.com>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+         <20180613140714.1686-8-maxime.ripard@bootlin.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-IEAekvlujL4VhhCQES3c"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 03:26:55PM +0900, Byungchul Park wrote:
-> Running "make htmldocs" complains about the docbook function-header
-> comment. It wants the "irq" parameter described which wasn't done by
-> a commit 5e5ea52645b197 (rcu: Refactor rcu_{nmi,irq}_{enter,exit}()).
-> So add its description of the parameter to the comment.
-> 
-> Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 
-Very good, I will squash this into your previous patch, adding to the
-commit log as suggested by Steven Rostedt.
+--=-IEAekvlujL4VhhCQES3c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-							Thanx, Paul
+Hi,
 
+On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> The IRQ handler up until now was hardcoding the use of the MPEG engine to
+> read the interrupt status, clear it and disable the interrupts.
+>=20
+> Obviously, that won't work really well with the introduction of new codec=
+s
+> that use a separate engine with a separate register set.
+>=20
+> In order to make this more future proof, introduce new decodec operations
+> to deal with the interrupt management. The only one missing is the one to
+> enable the interrupts in the first place, but that's taken care of by the
+> trigger hook for now.
+
+Here's another comment about an issue I just figured out.
+
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 > ---
->  kernel/rcu/tree.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 4ed74f1..6c5a7f0 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -774,6 +774,7 @@ void rcu_user_enter(void)
-> 
->  /**
->   * rcu_nmi_exit_common - inform RCU of exit from NMI context
-> + * @irq: Is this call from rcu_irq_exit?
->   *
->   * If we are returning from the outermost NMI handler that interrupted an
->   * RCU-idle period, update rdtp->dynticks and rdtp->dynticks_nmi_nesting
-> @@ -933,6 +934,7 @@ void rcu_user_exit(void)
-> 
->  /**
->   * rcu_nmi_enter_common - inform RCU of entry to NMI context
-> + * @irq: Is this call from rcu_irq_enter?
->   *
->   * If the CPU was idle from RCU's viewpoint, update rdtp->dynticks and
->   * rdtp->dynticks_nmi_nesting to let the RCU grace-period handling know
-> -- 
-> 1.9.1
-> 
+>  .../sunxi/cedrus/sunxi_cedrus_common.h        |  9 +++++
+>  .../platform/sunxi/cedrus/sunxi_cedrus_hw.c   | 21 ++++++------
+>  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 33 +++++++++++++++++++
+>  3 files changed, 53 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h b/=
+drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> index c2e2c92d103b..a2a507eb9fc9 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> @@ -108,7 +108,16 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer(con=
+st struct vb2_buffer *p)
+>  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
+>  }
+> =20
+> +enum sunxi_cedrus_irq_status {
+> +	SUNXI_CEDRUS_IRQ_NONE,
+> +	SUNXI_CEDRUS_IRQ_ERROR,
+> +	SUNXI_CEDRUS_IRQ_OK,
+> +};
+> +
+>  struct sunxi_cedrus_dec_ops {
+> +	void (*irq_clear)(struct sunxi_cedrus_ctx *ctx);
+> +	void (*irq_disable)(struct sunxi_cedrus_ctx *ctx);
+> +	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx *ctx=
+);
+>  	void (*setup)(struct sunxi_cedrus_ctx *ctx,
+>  		      struct sunxi_cedrus_run *run);
+>  	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/driv=
+ers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> index bb46a01214e0..6b97cbd2834e 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> @@ -77,27 +77,28 @@ static irqreturn_t sunxi_cedrus_ve_irq(int irq, void =
+*dev_id)
+>  	struct sunxi_cedrus_ctx *ctx;
+>  	struct sunxi_cedrus_buffer *src_buffer, *dst_buffer;
+>  	struct vb2_v4l2_buffer *src_vb, *dst_vb;
+> +	enum sunxi_cedrus_irq_status status;
+>  	unsigned long flags;
+> -	unsigned int value, status;
+> =20
+>  	spin_lock_irqsave(&dev->irq_lock, flags);
+> =20
+> -	/* Disable MPEG interrupts and stop the MPEG engine */
+> -	value =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL);
+> -	sunxi_cedrus_write(dev, value & (~0xf), VE_MPEG_CTRL);
+> -
+> -	status =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS);
+> -	sunxi_cedrus_write(dev, 0x0000c00f, VE_MPEG_STATUS);
+> -	sunxi_cedrus_engine_disable(dev);
+
+This call was dropped from the code reorganization. What it intentional?
+
+IMO, it should be brought back to the irq_disable ops for MPEG2 (and the
+same probably applies to H264). Things still seem to work without it,
+though, but there might be a difference in terms of standby VPU power
+consumption.
+
+Cheers,
+
+Paul
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-IEAekvlujL4VhhCQES3c
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsxDGIACgkQ3cLmz3+f
+v9HJ1wf/e87b7B3R3TQcw7qgwoyI20Zd9HMG+A4Ow7MFZnuYfnPT+Y6odRkUn1Tu
+XL/Cg4KAFBLuIq/qQnFvIJCW+MErhX8iW/KlW23xZzzhPxzxRDR//j2iEru8Rj3H
+l/XqxhoaMUpGj29QEaHAlH2Fjdxj9xxYcq6dzUPEhRmNVAdVeUuIXtmAlOzsIFbi
+jP6U3cnOcW4MX9QP6NN+Q3Aoh5FlwHEHJbRTrSOMb5vgP464m8Rjv14o+SiS8lke
+aedm+Hyi1bCH1o8/mHObDA55ByoN2EYIgY0gcJu5YuOcR0IJis5akZuSMukq+Z1a
+fgTM04NVSRLoMEgcdTcNCFtdQpBnLg==
+=kGSx
+-----END PGP SIGNATURE-----
+
+--=-IEAekvlujL4VhhCQES3c--
 
