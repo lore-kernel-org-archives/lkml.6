@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FD1C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58995C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C99E24788
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07DED24788
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:23:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="umf6TeNz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C99E24788
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCkrnaVD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DED24788
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeFYFXp (ORCPT
+        id S1752140AbeFYFXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 01:23:45 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35170 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751365AbeFYFXm (ORCPT
+        Mon, 25 Jun 2018 01:23:49 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41240 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752055AbeFYFXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 01:23:42 -0400
-Received: by mail-pl0-f68.google.com with SMTP id k1-v6so6261644plt.2;
-        Sun, 24 Jun 2018 22:23:42 -0700 (PDT)
+        Mon, 25 Jun 2018 01:23:45 -0400
+Received: by mail-pf0-f194.google.com with SMTP id a11-v6so5909218pff.8;
+        Sun, 24 Jun 2018 22:23:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2PgFlR5DMr1n4DFmL2/H8moGaIFk/PpLJOyse2SJBv4=;
-        b=umf6TeNz8pdVNSjULAQ780+NK6Itk49rDOHKSz7YIR+WjivI3EPRuYcAVznP5lLHAC
-         MBCFdxAXREokKGKd7xDVdKzhAm0k9pfOtFa+U0HssAz6Yn6lignHjW2eTxl08xGKruj7
-         RoDuxe6nsYvEMhf3YrWIe6DdkJ72Toai1/EryITFGUkQAm1m8tOih597lD/A/cVCww6c
-         pglvHxN54IC6sh/+pRLCRvqjc9glNGrTOTZW8fXwBT37peq9R1RbxjAlNXUARMy1O+XW
-         23quwSBtxrUOAEZ3HNwM0cvKJIyglRGHBPXIZM4tM6HFrg4rUXaUOR+FYqHZi/PNhqzP
-         KkKw==
+        bh=J6D5eN1+0fIt5/9Ceft+1VHrVFUjZfVeHhccJ811fjY=;
+        b=bCkrnaVDE9PBFn/cu5FhPi5cZ4QZN5d0TkBLYz+ads1UPq/bnDmG4MQlhn/hqsSqVe
+         jjn0/XbiLRwIgkN60BXPgwL+JbdCWeR6KSK3jpIStZKF8Y0AQjpTGMv2QAPwuTA1aB6P
+         e8g6JNw0e0h4Z/HSdd0STsmks8NUInUNpkzB63JGKsGUXNn5Vakb6E36KyHbm5Qkfk1n
+         HEMGgekzepxh1dfhQ0pkBTGt3M1LoCuync1fZy8NfJZuSYhEaaEeJRTny1SNoPFn4dii
+         faXVT0RC6vkuZe4TU08hCbgqJsB4OTRyYYILEkpkPsfjpO92BYY8hWW3x+41aAt5EWc+
+         MS8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2PgFlR5DMr1n4DFmL2/H8moGaIFk/PpLJOyse2SJBv4=;
-        b=iwOGUoxr17UUXn4McJD6XohXjZOFKeGQz3fRNeerN/1ASpasI4+SS6UsmthJbZ9q3N
-         y8w8Q2/jJyz/+ivjnvHzHQYoCVYeTRpR6A9kVtezsIs2yrxbcqG0UKfAiD1YHkHovGdo
-         QP4KX9pWR3HJrcIIFavKJKjVJeeQpevHj482NsGrQ4UPOH2T+FPjXJiiC1mxbz0rmHXo
-         rf5gTaiORNRoi0M6hiPSc2qw16gAqF1Z+JAfSbTXVxjf3aPQPKCkVKoX29LGZ/Hz/zNj
-         tSNx93iadDxcHT7JA0/YiuqTKpaRU8a6koj376KKLHmZANhMsLj5zvH8DC+IxT4QnW27
-         eE9Q==
-X-Gm-Message-State: APt69E193wyNHKSBrJPz/PYk0cSZbhKfBMQZ6eG1nzoMJR/AY8pzYcUM
-        H777Z5/fq2yNEUUgrysvDQZg
-X-Google-Smtp-Source: ADUXVKJLsNj4bsfceFwgHnlLYF8MT9TTZMfziMsFLzWdmB/McK2tf1LaLSFJs1QVQj6zGXZOLhMCmA==
-X-Received: by 2002:a17:902:43a4:: with SMTP id j33-v6mr10957060pld.118.1529904221664;
-        Sun, 24 Jun 2018 22:23:41 -0700 (PDT)
+        bh=J6D5eN1+0fIt5/9Ceft+1VHrVFUjZfVeHhccJ811fjY=;
+        b=F7Dl/xaS5A/wCvs6DA52iktAi5df1bOTkvXrrC4a5PauFXHOP3ErPZcT/VyL7JmPUE
+         TcHTaWc0Foi6d66h0fhbrpBOWSrF99izWcq2c9SZGs4twpBZxywqLqXk0OYie6Ei4j96
+         urgnRpRaqe7IH75dcSEvngqlN/HYH/cKiePVc+0vldysmaqXJgPSJS3FNaubWB9paBc0
+         J4QVhRc5P3G1ni+OfF7yYcftetDLM2jxzxcb/67pctvn9JkJCYHr6/p5WXoU09vvKh0/
+         xm9z9NYDlQOQKhIx2Gg7TBf+QA/vzS90I0ir5OmHQqnUjc4KGrT12gDR23Z1hwoXwZTV
+         t1yQ==
+X-Gm-Message-State: APt69E2wM3NSc6FZgXnr4rOeZzWbG39YRFEk4TivHZkxSjPVOFGMvVhX
+        JfuFweT7dEd1gobv4N2xW/M3
+X-Google-Smtp-Source: ADUXVKIfAYSNfiRhPrpVaNdbouR+VPG7nVV8Xi2FwNQvt+Nev+3NxsPiJgJlvSUPfMxzcN7QXr7r1A==
+X-Received: by 2002:a62:da59:: with SMTP id w25-v6mr11489609pfl.161.1529904225149;
+        Sun, 24 Jun 2018 22:23:45 -0700 (PDT)
 Received: from mylaptop.nay.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k71-v6sm1835936pga.62.2018.06.24.22.23.38
+        by smtp.gmail.com with ESMTPSA id k71-v6sm1835936pga.62.2018.06.24.22.23.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Jun 2018 22:23:41 -0700 (PDT)
+        Sun, 24 Jun 2018 22:23:44 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -67,9 +67,9 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         Bjorn Helgaas <helgaas@kernel.org>,
         Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 1/3] drivers/base: introduce some help routines for reordering a group of dev
-Date:   Mon, 25 Jun 2018 13:23:05 +0800
-Message-Id: <1529904187-18673-2-git-send-email-kernelfans@gmail.com>
+Subject: [PATCH 2/3] drivers/base: reorder consumer and its children behind suppliers
+Date:   Mon, 25 Jun 2018 13:23:06 +0800
+Message-Id: <1529904187-18673-3-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529904187-18673-1-git-send-email-kernelfans@gmail.com>
 References: <1529904187-18673-1-git-send-email-kernelfans@gmail.com>
@@ -78,8 +78,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduce some help routines used by next patch. It aims to
-ease reviewing, while the next patch will concentrate on algorithm.
+commit 52cdbdd49853 ("driver core: correct device's shutdown order")
+introduces supplier<-consumer order in devices_kset. The commit tries
+to cleverly maintain both parent<-child and supplier<-consumer order by
+reordering a device when probing. This method makes things simple and
+clean, but unfortunately, breaks parent<-child order in some case,
+which is described in next patch in this series.
+Here this patch tries to resolve supplier<-consumer by only reordering a
+device when it has suppliers, and takes care of the following scenario:
+    [consumer, children] [ ... potential ... ] supplier
+                         ^                   ^
+After moving the consumer and its children after the supplier, the
+potentail section may contain consumers whose supplier is inside
+children, and this poses the requirement to dry out all consumpers in
+the section recursively.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Grygorii Strashko <grygorii.strashko@ti.com>
@@ -90,53 +102,125 @@ Cc: linux-pci@vger.kernel.org
 Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 ---
- drivers/base/core.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/base/base.h |  1 +
+ drivers/base/core.c | 97 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 98 insertions(+)
 
+diff --git a/drivers/base/base.h b/drivers/base/base.h
+index a75c302..37f86ca 100644
+--- a/drivers/base/base.h
++++ b/drivers/base/base.h
+@@ -135,6 +135,7 @@ extern void device_unblock_probing(void);
+ 
+ /* /sys/devices directory */
+ extern struct kset *devices_kset;
++extern int device_reorder_consumer(struct device *dev);
+ extern void devices_kset_move_last(struct device *dev);
+ 
+ #if defined(CONFIG_MODULES) && defined(CONFIG_SYSFS)
 diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 36622b5..8113d2c 100644
+index 8113d2c..db30e86 100644
 --- a/drivers/base/core.c
 +++ b/drivers/base/core.c
-@@ -123,6 +123,44 @@ static int device_is_dependent(struct device *dev, void *target)
- 	return ret;
+@@ -161,6 +161,103 @@ static bool is_consumer(struct device *query, struct device *supplier)
+ 	return false;
  }
  
-+struct pos_info {
-+	struct device *pos;
-+	struct device *tail;
-+};
-+
-+/* caller takes the devices_kset->list_lock */
-+static int descendants_reorder_after_pos(struct device *dev,
-+	void *data)
++/* recursively move the potential consumers in open section (left, right)
++ * after the barrier
++ */
++static int __device_reorder_consumer(struct device *consumer,
++	struct list_head *left, struct list_head *right,
++	struct pos_info *p)
 +{
-+	struct device *pos;
-+	struct pos_info *p = data;
++	struct list_head *iter;
++	struct device *c_dev, *s_dev, *tail_dev;
 +
-+	pos = p->pos;
-+	pr_debug("devices_kset: Moving %s after %s\n",
-+		 dev_name(dev), dev_name(pos));
-+	device_for_each_child(dev, p, descendants_reorder_after_pos);
-+	/* children at the tail */
-+	list_move(&dev->kobj.entry, &pos->kobj.entry);
-+	/* record the right boundary of the section */
-+	if (p->tail == NULL)
-+		p->tail = dev;
++	descendants_reorder_after_pos(consumer, p);
++	tail_dev = p->tail;
++	/* (left, right) may contain consumers, hence checking if any moved
++	 * child serving as supplier. The reversing order help us to meet
++	 * the last supplier of a consumer.
++	 */
++	list_opensect_for_each_reverse(iter, left, right) {
++		struct list_head *l_iter, *moved_left, *moved_right;
++
++		moved_left = (&consumer->kobj.entry)->prev;
++		moved_right = tail_dev->kobj.entry.next;
++		/* the moved section may contain potential suppliers */
++		list_opensect_for_each_reverse(l_iter, moved_left,
++			moved_right) {
++			s_dev = list_entry(l_iter, struct device, kobj.entry);
++			c_dev = list_entry(iter, struct device, kobj.entry);
++			/* to fix: this poses extra effort for locking */
++			if (is_consumer(c_dev, s_dev)) {
++				p->tail = NULL;
++				/* to fix: lock issue */
++				p->pos =  s_dev;
++				/* reorder after the last supplier */
++				__device_reorder_consumer(c_dev,
++					l_iter, right, p);
++			}
++		}
++	}
 +	return 0;
 +}
 +
-+/* iterate over an open section */
-+#define list_opensect_for_each_reverse(cur, left, right)	\
-+	for (cur = right->prev; cur == left; cur = cur->prev)
-+
-+static bool is_consumer(struct device *query, struct device *supplier)
++static int find_last_supplier(struct device *dev, struct device *supplier)
 +{
 +	struct device_link *link;
-+	/* todo, lock protection */
-+	list_for_each_entry(link, &supplier->links.consumers, s_node)
-+		if (link->consumer == query)
-+			return true;
-+	return false;
++
++	list_for_each_entry_reverse(link, &dev->links.suppliers, c_node) {
++		if (link->supplier == supplier)
++			return 1;
++	}
++	if (dev == supplier)
++		return -1;
++	return 0;
++}
++
++/* When reodering, take care of the range of (old_pos(dev), new_pos(dev)),
++ * there may be requirement to recursively move item.
++ */
++int device_reorder_consumer(struct device *dev)
++{
++	struct list_head *iter, *left, *right;
++	struct device *cur_dev;
++	struct pos_info info;
++	int ret, idx;
++
++	idx = device_links_read_lock();
++	if (list_empty(&dev->links.suppliers)) {
++		device_links_read_unlock(idx);
++		return 0;
++	}
++	spin_lock(&devices_kset->list_lock);
++	list_for_each_prev(iter, &devices_kset->list) {
++		cur_dev = list_entry(iter, struct device, kobj.entry);
++		ret = find_last_supplier(dev, cur_dev);
++		switch (ret) {
++		case -1:
++			goto unlock;
++		case 1:
++			break;
++		case 0:
++			continue;
++		}
++	}
++	BUG_ON(!ret);
++
++	/* record the affected open section */
++	left = dev->kobj.entry.prev;
++	right = iter;
++	info.pos = list_entry(iter, struct device, kobj.entry);
++	info.tail = NULL;
++	/* dry out the consumers in (left,right) */
++	__device_reorder_consumer(dev, left, right, &info);
++
++unlock:
++	spin_unlock(&devices_kset->list_lock);
++	device_links_read_unlock(idx);
++	return 0;
 +}
 +
  static int device_reorder_to_tail(struct device *dev, void *not_used)
