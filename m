@@ -2,199 +2,208 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49112C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 02:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CE1C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 02:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E45253CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 02:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD39A248C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 02:38:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="dnl4pJA2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E45253CF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t77c7k/B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD39A248C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeFYCYl (ORCPT
+        id S1752717AbeFYCiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 22:24:41 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:25687 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752463AbeFYCYk (ORCPT
+        Sun, 24 Jun 2018 22:38:06 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:21023 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752463AbeFYCiE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 22:24:40 -0400
-Received: from mail-ua0-f181.google.com (mail-ua0-f181.google.com [209.85.217.181]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w5P2OTU4007425;
-        Mon, 25 Jun 2018 11:24:29 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5P2OTU4007425
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529893470;
-        bh=t2Y74zEX3dLuJH/g7aqTd97EUrNN2fFqQlDw5QLQtqs=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=dnl4pJA2OolU+7q+XtnOBsKetEkTv2PPQZ+CyB4caqV9fAOjLXEPIIMR8TUcfJXuk
-         W64glB6EtikZQKR7mGKyMgzeRua0wAtaO9Izm+eGkVQ7xPAnVYpeiPYzq2uNytnktx
-         L3PW8FBjssxhdIypZ5XXG8X3PDfHIwtcqLt0t3c1sQnQxkqJvmP2cv3q0wKR2MVbaN
-         lCezqprwwiW/CaUCcr8IOqfpcZ8LUIGMHdq8fc448vLMoEdFvzQDkWmo1qAbzt7b5U
-         9OBU3nRxvxyUOXZdUBlyzBHP7jyg/zEbnBCJ1BW4eKdrJCNh1tqgaF7e2r0pe2bXlv
-         ShD1pPeHxNtvQ==
-X-Nifty-SrcIP: [209.85.217.181]
-Received: by mail-ua0-f181.google.com with SMTP id z16-v6so7635838uaz.10;
-        Sun, 24 Jun 2018 19:24:29 -0700 (PDT)
-X-Gm-Message-State: APt69E3IfqU2zVHVLUsiGNMp/mNQGNsIPqvHsxNqGsqFbXWZUKHAjMOh
-        n93E8tTAQRUeEum/SfDEESrdxMj57ngIDMtnIvQ=
-X-Google-Smtp-Source: ADUXVKKfNdFOn9aSTU1dQOZqHjCrji0E8gkB3WhYxUZRQ7r+WNTHEsdnHfGuk7yJL2CnagJa3s4/s86ppuXGa9I/eYA=
-X-Received: by 2002:a9f:3d6b:: with SMTP id m43-v6mr6799654uai.17.1529893468530;
- Sun, 24 Jun 2018 19:24:28 -0700 (PDT)
+        Sun, 24 Jun 2018 22:38:04 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180625023801epoutp040fa20ca65d59c47b80facc941bc05d98~7Rr5f8qIP0084000840epoutp04E
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 02:38:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180625023801epoutp040fa20ca65d59c47b80facc941bc05d98~7Rr5f8qIP0084000840epoutp04E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1529894281;
+        bh=BIAGg9oHKEWpb1ZFXQ1wR0rqWLgYS/dsHm03q7mW2Gc=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=t77c7k/Bl2ljcx9tM62LWUcbBY186uIYZxBcin1opbBn/5BNWD2SnWTsA0LwdATxw
+         HX4wwsvXMARxCpjwWLsF8y4Ta47XenEgZuZDrRg94NFSwCjGZrzsysj6x38zEUObXa
+         9zqNke5JWhL6Q2sM4J7bmUeqAWuZ+wB+4VyAc4fw=
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.158]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20180625023758epcas1p4b6bb3e6d9c8b71bf3a865be245b95b9d~7Rr2Km4xt2221122211epcas1p4I;
+        Mon, 25 Jun 2018 02:37:58 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AF.1F.04068.685503B5; Mon, 25 Jun 2018 11:37:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180625023757epcas1p215ceb8660829c6ce1bd60c572a4e61c0~7Rr1bz4G52864028640epcas1p24;
+        Mon, 25 Jun 2018 02:37:57 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180625023757epsmtrp227a7b56d451e03ac6db6414bd1c14721~7Rr1ZEh_A1610616106epsmtrp2m;
+        Mon, 25 Jun 2018 02:37:57 +0000 (GMT)
+X-AuditID: b6c32a36-be9ff70000000fe4-d3-5b305586fe1d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F1.A0.03632.585503B5; Mon, 25 Jun 2018 11:37:57 +0900 (KST)
+Received: from [10.113.62.206] (unknown [10.113.62.206]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180625023757epsmtip29e5a3039b7c2c7cbbb96e7bb39f52edb~7Rr095YLU1516415164epsmtip2r;
+        Mon, 25 Jun 2018 02:37:57 +0000 (GMT)
+Date:   Mon, 25 Jun 2018 11:37:56 +0900
+From:   Inki Dae <inki.dae@samsung.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 19:23:48
- -0700 (PDT)
-In-Reply-To: <1529479662-4026-2-git-send-email-absahu@codeaurora.org>
-References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org> <1529479662-4026-2-git-send-email-absahu@codeaurora.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 25 Jun 2018 11:23:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQirQO7MCsVa-MeSCj2J2_jW_2fV5HUAhss9pWHHAPNVg@mail.gmail.com>
-Message-ID: <CAK7LNAQirQO7MCsVa-MeSCj2J2_jW_2fV5HUAhss9pWHHAPNVg@mail.gmail.com>
-Subject: Re: [PATCH v4 01/15] mtd: rawnand: helper function for setting up ECC configuration
-To:     Abhishek Sahu <absahu@codeaurora.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+To:     Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 01/10] drm/exynos: rename "bridge_node" to
+ "mic_bridge_node"
+In-Reply-To: <1527682561-1386-2-git-send-email-m.purski@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA3VTa0wcVRjN3ZmdWZC10+1WbrbRbiY2aUlYZh+U26akxLRkkvrDH6WhbCxO
+        lnEX3Zc7uwTsD5EK5VUeqSawmLJFGtotQlmoAhFjkPQRZSnhIRCRJq3FtoLGumhTKM7srJE/
+        /jvn3O+ce++5uSpMM0jqVMVuP+9zc06aSMa/+HZfRnpVHmNl2pfVaKEnqkTnorcVqKJ6RYn6
+        WnqVqH1M1KZjvxHol58mcdR47zGGJiaukWi84lcS1TR3kihyb1aJpoY/JVDLxNcKFHq4gKPP
+        xxZJdOmHSQWqHBkjUcv5hwR6OnwBz9Gy3Re6ATvVcE7BDgUXSbatulXJRsI1BPvl2l0lu1R3
+        U8H2d37ANgyEAfsk8sobyQXl4BDnszmKS3g977Z5iord9mw673huOqL1Do/gz6atJsZsMGVa
+        DCZLluEA8+ZBUyatd3MuPpsuTU94ab3P5hVnXWWCGODkDQndIPDuopx3PAGpFIPAuYSA226w
+        eVy0voRzBsQIOuOt34FjIviA8LZrS9tadpeDKFULVCpIWeCPlQdrQbJKQw0C2DC9QsrkDwDH
+        P64TSZJI1gAcmPNLWDLE1lsV8tCI6OjeBDJZATC4PAOkKZzaAx+vbsTdhIibLy8REt5J5cOh
+        9rW4rqa2w9ut93HJrKUmAZyP9sQJRk3hcHQkhktTO6g8uNrbF09Noo7AjsaFuI5Ru+GZ622Y
+        ZIDULAljY0NAji2BNTPPcfmwR2BoKETKeAd8dHMggXXwyeoIIZvPAvh0PQLkhXoAu75yyNgM
+        H1ysVUg1YdQ+2DucIcvb4XezdZh8iBfhaqxeKTephtVVGnmEhjcm5xKJEN7pbCZkzMJnG3cS
+        BYs3Dl8/TzYBfXBLG8Etdwv+t3MIYGHwEu8VXHZeMHpNW185AuL/IG3/IOiIvj4KKBWgU9Rz
+        yxlWjZIrEcpcowCqMFqrDrCMVaMu4sre532eQl/AyQujwCY+VjOm22nziL/K7S80ZprMZjOy
+        GPdnGo1bZIuZYUxGJivrQJb5f2Q6VV06T1k1lJ3z8+/yvJf3/buLQpWkKwe7wkcX60+m9ZdW
+        ZB/7u2Bm2n/jz74TNHMseW8hdqvpVn+TY13z6uyV08Ohy98Iuvtz4Y8epZ3AKzF7kFna5FLz
+        U7Rn8I3cU/Nth1MDr739XHf0Z9d7tSm5XIVW8/InH3aN92wryI8E7p7+vmqlqPGv5SsvdNkG
+        T9pzaMJZdnXzrO8zGhccnDEN8wncP2NhE5pLBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsWy7bCSvG5rqEG0wdwdYha31p1jteg9d5LJ
+        oqnjLavFxhnrWS3mHwGKXfn6ns3ixb2LLBb9j18zW5w/v4Hd4mzTG3aLzolL2C02Pb7GanF5
+        1xw2ixnn9zFZLHh5i8Vi7ZG77BZLr19ksmjde4TdYsbkl2wWP3fNY3EQ8Vgzbw2jx+W+XiaP
+        nbPusnvM7pjJ6rFpVSebx/ZvD1g97ncfZ/LYvKTeo2/LKkaPz5vkAriiuGxSUnMyy1KL9O0S
+        uDLOz3rGVjBfpGL2DPkGxnMCXYycHBICJhJf/8xk6mLk4hAS2M0o8eVrB5DDAZSQkNiylQPC
+        FJY4fLgYouQ1o0T75n4WkF5eAS2Jpyt3sYHYLAKqEq/f/WUHsdmA7Ikr7oPFRQXCJKb9fs4K
+        US8ocXLmExaQQSIClxglNlx+wwriMAvcYpH437MObKqwQLDEjg1bmSHWnWWUeHf5LBNIglPA
+        RWJR/y2wImYBdYk/8y4xQ9jyEs1bZzNPYBSchWTLLCRls5CULWBkXsUomVpQnJueW2xYYJiX
+        Wq5XnJhbXJqXrpecn7uJERy5Wpo7GC8viT/EKMDBqMTDe+O5frQQa2JZcWXuIUYJDmYlEd5S
+        D4NoId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxP845FCgmkJ5akZqemFqQWwWSZODilGhiLH//+
+        0Jkh7X+jR4vruI+E0UvpcKtcixRvEeNbP5LOX9R5mDcpvmzm3TsRR+wvxxU5NN1vSPFQtJ1t
+        ueWK3yGrc3cbmESsRdnmbEh5ef+JmY68NnPGJY+GZ8srRFekBqe3mNrdPNQ+ear0O/eVOSY5
+        O3/lTMtPE5nZ8uSJU8WOgEsB756K6SqxFGckGmoxFxUnAgDJESQS2AIAAA==
+Message-Id: <20180625023757epcas1p215ceb8660829c6ce1bd60c572a4e61c0~7Rr1bz4G52864028640epcas1p24@epcas1p2.samsung.com>
+X-CMS-MailID: 20180625023757epcas1p215ceb8660829c6ce1bd60c572a4e61c0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-ArchiveUser: EV
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180530121623eucas1p27e08223bc5b04dbb0b0253c18a9f83d5
+References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
+        <CGME20180530121623eucas1p27e08223bc5b04dbb0b0253c18a9f83d5@eucas1p2.samsung.com>
+        <1527682561-1386-2-git-send-email-m.purski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-20 16:27 GMT+09:00 Abhishek Sahu <absahu@codeaurora.org>:
-> commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
-> match, maximize ECC settings") provides generic helpers which
-> drivers can use for setting up ECC parameters.
->
-> Since same board can have different ECC strength nand chips so
-> following is the logic for setting up ECC strength and ECC step
-> size, which can be used by most of the drivers.
->
-> 1. If both ECC step size and ECC strength are already set
->    (usually by DT) then just check whether this setting
->    is supported by NAND controller.
-> 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
->    supported by NAND controller.
-> 3. Otherwise, try to match the ECC step size and ECC strength closest
->    to the chip's requirement. If available OOB size can't fit the chip
->    requirement then select maximum ECC strength which can be fit with
->    available OOB size.
->
-> This patch introduces nand_ecc_choose_conf function which calls the
-> required helper functions for the above logic. The drivers can use
-> this single function instead of calling the 3 helper functions
-> individually.
->
-> CC: Masahiro Yamada <yamada.masahiro@socionext.com>
+Hi,
 
-You can replace the CC with my
+I will start to review patch sets for -fixes first so I queued your four patches and you can check exynos-drm-next-todo branch for it.
 
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Thanks,
+Inki Dae
 
-Thanks.
-
-
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+2018년 05월 30일 21:15에 Maciej Purski 이(가) 쓴 글:
+> When adding support for peripheral out bridges, the "bridge" name
+> becomes imprecise as it refers to a different device than the
+> "out_bridge".
+> 
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
 > ---
-> * Changes from v3:
->   1. call nand_maximize_ecc() 2 times to make code more clear.
->
-> * Changes from v2:
->
->   1. Renamed function to nand_ecc_choose_conf.
->   2. Minor code reorganization to remove warning and 2 function calls
->      for nand_maximize_ecc.
->
-> * Changes from v1:
->   NEW PATCH
->
->  drivers/mtd/nand/raw/nand_base.c | 33 +++++++++++++++++++++++++++++++++
->  include/linux/mtd/rawnand.h      |  3 +++
->  2 files changed, 36 insertions(+)
->
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 10c4f991..c64e3fc 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -6287,6 +6287,39 @@ int nand_maximize_ecc(struct nand_chip *chip,
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index eae44fd..9599e6b 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -279,7 +279,7 @@ struct exynos_dsi {
+>  	struct list_head transfer_list;
+>  
+>  	const struct exynos_dsi_driver_data *driver_data;
+> -	struct device_node *bridge_node;
+> +	struct device_node *mic_bridge_node;
+>  };
+>  
+>  #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
+> @@ -1631,7 +1631,7 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	dsi->bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
+> +	dsi->mic_bridge_node = of_graph_get_remote_node(node, DSI_PORT_IN, 0);
+>  
+>  	return 0;
 >  }
->  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
->
-> +/**
-> + * nand_ecc_choose_conf - Set the ECC strength and ECC step size
-> + * @chip: nand chip info structure
-> + * @caps: ECC engine caps info structure
-> + * @oobavail: OOB size that the ECC engine can use
-> + *
-> + * Choose the ECC configuration according to following logic
-> + *
-> + * 1. If both ECC step size and ECC strength are already set (usually by DT)
-> + *    then check if it is supported by this controller.
-> + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
-> + * 3. Otherwise, try to match the ECC step size and ECC strength closest
-> + *    to the chip's requirement. If available OOB size can't fit the chip
-> + *    requirement then fallback to the maximum ECC step size and ECC strength.
-> + *
-> + * On success, the chosen ECC settings are set.
-> + */
-> +int nand_ecc_choose_conf(struct nand_chip *chip,
-> +                        const struct nand_ecc_caps *caps, int oobavail)
-> +{
-> +       if (chip->ecc.size && chip->ecc.strength)
-> +               return nand_check_ecc_caps(chip, caps, oobavail);
-> +
-> +       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
-> +               return nand_maximize_ecc(chip, caps, oobavail);
-> +
-> +       if (!nand_match_ecc_req(chip, caps, oobavail))
-> +               return 0;
-> +
-> +       return nand_maximize_ecc(chip, caps, oobavail);
-> +}
-> +EXPORT_SYMBOL_GPL(nand_ecc_choose_conf);
-> +
->  /*
->   * Check if the chip configuration meet the datasheet requirements.
->
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index 3e8ec3b..03a0061 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -1650,6 +1650,9 @@ int nand_match_ecc_req(struct nand_chip *chip,
->  int nand_maximize_ecc(struct nand_chip *chip,
->                       const struct nand_ecc_caps *caps, int oobavail);
->
-> +int nand_ecc_choose_conf(struct nand_chip *chip,
-> +                        const struct nand_ecc_caps *caps, int oobavail);
-> +
->  /* Default write_oob implementation */
->  int nand_write_oob_std(struct mtd_info *mtd, struct nand_chip *chip, int page);
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
-> is a member of Code Aurora Forum, hosted by The Linux Foundation
->
->
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> @@ -1642,7 +1642,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+>  	struct drm_encoder *encoder = dev_get_drvdata(dev);
+>  	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+>  	struct drm_device *drm_dev = data;
+> -	struct drm_bridge *bridge;
+> +	struct drm_bridge *mic_bridge;
+>  	int ret;
+>  
+>  	drm_encoder_init(drm_dev, encoder, &exynos_dsi_encoder_funcs,
+> @@ -1661,10 +1661,10 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+>  		return ret;
+>  	}
+>  
+> -	if (dsi->bridge_node) {
+> -		bridge = of_drm_find_bridge(dsi->bridge_node);
+> -		if (bridge)
+> -			drm_bridge_attach(encoder, bridge, NULL);
+> +	if (dsi->mic_bridge_node) {
+> +		mic_bridge = of_drm_find_bridge(dsi->mic_bridge_node);
+> +		if (mic_bridge)
+> +			drm_bridge_attach(encoder, mic_bridge, NULL);
+>  	}
+>  
+>  	return mipi_dsi_host_register(&dsi->dsi_host);
+> @@ -1783,7 +1783,7 @@ static int exynos_dsi_remove(struct platform_device *pdev)
+>  {
+>  	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
+>  
+> -	of_node_put(dsi->bridge_node);
+> +	of_node_put(dsi->mic_bridge_node);
+>  
+>  	pm_runtime_disable(&pdev->dev);
+>  
+> 
