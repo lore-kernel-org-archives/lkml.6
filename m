@@ -3,80 +3,216 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476BAC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5769C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07A2025B6B
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:28:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A2025B6B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 524AE25B84
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:33:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524AE25B84
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934406AbeFYO2C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 10:28:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58181 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934258AbeFYO2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:28:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C9814AD69;
-        Mon, 25 Jun 2018 14:27:59 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 16:27:58 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Maninder Singh <maninder1.s@samsung.com>,
-        sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
-        pankaj.m@samsung.com, v.narang@samsung.com
-Subject: Re: [PATCH v2] printk: make sure to print log on console.
-Message-ID: <20180625142758.ourdvfid3aymgvan@pathway.suse.cz>
-References: <CGME20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26@epcas5p3.samsung.com>
- <20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26~z-a_jkmrI2993329933epcas5p3q@epcas5p3.samsung.com>
- <20180618061550.GA27996@jagdpanzerIV>
- <20180618062306.GA29683@jagdpanzerIV>
- <20180619093244.ehj34uhpnpv6447f@pathway.suse.cz>
- <20180619094953.GB2631@jagdpanzerIV>
- <20180619105213.uzf6ba3oo3475icz@pathway.suse.cz>
- <20180620015525.GC650@jagdpanzerIV>
+        id S934347AbeFYOdR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 10:33:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:46700 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754710AbeFYOdP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 10:33:15 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <kurt.kanzenbach@linutronix.de>)
+        id 1fXSYI-0001dv-Ff; Mon, 25 Jun 2018 16:33:10 +0200
+Date:   Mon, 25 Jun 2018 16:36:41 +0200
+From:   Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Subject: Re: [PATCH 1/1] mmc: sdhci-pci: fix eMMC controller issue on Intel
+ Baytrail SoCs
+Message-ID: <20180625143641.mmplqwrldmzx3rvg@linutronix.de>
+References: <20180619063119.3955-1-kurt@linutronix.de>
+ <20180619063119.3955-2-kurt@linutronix.de>
+ <293c2771-ea9b-4f0c-bd31-f8844de12dc4@intel.com>
+ <20180620131509.dhshihzxhfebracx@linutronix.de>
+ <4d3d9d0d-79b5-ef6c-cca8-9cd9ea7112af@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180620015525.GC650@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <4d3d9d0d-79b5-ef6c-cca8-9cd9ea7112af@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-06-20 10:55:25, Sergey Senozhatsky wrote:
-> On (06/19/18 12:52), Petr Mladek wrote:
-> > > But when I set /sys/module/printk/parameters/ignore_loglevel I naturally
-> > > expect it to take an immediate action. Without waiting for the consoles
-> > > to catch up and to discard N messages [if the consoles were behind the
-> > > logbuf head].
-> > 
-> > Yeah, I understand this view. I thought about it as well. But did you
-> > ever needed this behavior in the real life?
+> On 06/20/2018 04:15 PM, Kurt Kanzenbach wrote:
+> > Hi,
 > >
-> > I personally changed ignore_loglevel only before I wanted to reproduce a
-> > bug. Then it would be perfectly fine to handle it only in
-> > vprintk_emit(). In fact, it would be even better because it would
-> > affect only messages that happened after I triggered the bug.
-> 
-> So maybe the patch can stand the way it is, after all. JFI, still haven't
-> seen those "helps in real life a lot" examples, tho.
+> > thanks for your response.
+> >
+> > On Tue, Jun 19, 2018 at 10:03:01AM +0300, Adrian Hunter wrote:
+> >> On 19/06/18 09:31, Kurt Kanzenbach wrote:
+> >>> Sometimes the eMMC controller doesn't respond anymore on Intel Baytrail
+> >>> SoCs. The resulting error looks like:
+> >>>
+> >>> |mmc1: Reset 0x1 never completed.
+> >>> |sdhci: =========== REGISTER DUMP (mmc1)===========
+> >>> |sdhci: Sys addr: 0xffffffff | Version:  0x0000ffff
+> >>> |sdhci: Blk size: 0x0000ffff | Blk cnt:  0x0000ffff
+> >>> |sdhci: Argument: 0xffffffff | Trn mode: 0x0000ffff
+> >>> |sdhci: Present:  0xffffffff | Host ctl: 0x000000ff
+> >>> |sdhci: Power:    0x000000ff | Blk gap:  0x000000ff
+> >>> |sdhci: Wake-up:  0x000000ff | Clock:    0x0000ffff
+> >>> |sdhci: Timeout:  0x000000ff | Int stat: 0xffffffff
+> >>> |sdhci: Int enab: 0xffffffff | Sig enab: 0xffffffff
+> >>> |sdhci: AC12 err: 0x0000ffff | Slot int: 0x0000ffff
+> >>> |sdhci: Caps:     0xffffffff | Caps_1:   0xffffffff
+> >>> |sdhci: Cmd:      0x0000ffff | Max curr: 0xffffffff
+> >>> |sdhci: Host ctl2: 0x0000ffff
+> >>> |sdhci: ADMA Err: 0xffffffff | ADMA Ptr: 0xffffffff
+> >>>
+> >>> The behavior was observed on an Intel Atom E3825 performing lots of reboots. The
+> >>
+> >> So you are saying this only happens at boot time?  And only when
+> >> re-booting?
+> >
+> > well, exactly. This issue was only observed when rebooting, not on cold
+> > boots.
+> >
+> >> Can you send all the kernel messages?  Can you send an acpidump?
+> >
+> > The kernel log is straightforward. The system is booting and starting a
+> > few applications. Afterwards the issue happens. The rootfilesystem is
+> > located on the eMMC.
+>
+> The full messages can be more revealing such as showing what else was
+> happening and the order of events, so I would still like to see them.
+>
+> >
+> > The error message above is from the Linux v4.9 boot log.
+> >
+> > On v4.17 the same issue happens, but the error messages are different:
+> >
+> > |mmc1: Timeout waiting for hardware interrupt.
+> > |mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+> > |mmc1: sdhci: Sys addr:  0x00000002 | Version:  0x00001002
+> > |mmc1: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000000
+> > |mmc1: sdhci: Argument:  0x00040fd4 | Trn mode: 0x0000003b
+> > |mmc1: sdhci: Present:   0x1fff0000 | Host ctl: 0x00000035
+> > |mmc1: sdhci: Power:     0x0000000b | Blk gap:  0x00000080
+> > |mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x00000207
+> > |mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000003
+> > |mmc1: sdhci: Int enab:  0x02ff000b | Sig enab: 0x02ff000b
+> > |mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000001
+> > |mmc1: sdhci: Caps:      0x446cc801 | Caps_1:   0x00000005
+> > |mmc1: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
+> > |mmc1: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffff
+> > |mmc1: sdhci: Resp[2]:   0x320f5913 | Resp[3]:  0x00000900
+> > |mmc1: sdhci: Host ctl2: 0x0000000c
+> > |mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x34ee5208
+> > |mmc1: sdhci: ============================================
+> > |[...]
+>
+> Those messages show that the interrupt did happen but the driver did not see
+> it.  Are you doing anything unusual like using threadirqs?
 
-I have personally seen these races when testing printk in NMI. I
-combined iptables logging, ping -f and sysrq-l. I am not sure
-how often they happen in the real life but I could understand
-that it might be annoying.
+No, I'm not doing anything unusual. The mmc core uses threaded irqs by
+default. But, most of the work is performed in the primary handler. So,
+that shouldn't be a problem.
 
-This patch goes in the right direction and nobody really blocks
-it. Therefore I pushed it into printk.git, branch for-4.19.
+But in the v4.9 case, we use preempt rt. I took a few scheduler traces
+in order to see if there might be any task blocking or preempting the
+mmc irqs. However, that's not the case.
 
-Best Regards,
-Petr
+The common pattern is: mmc1 is suspended, afterwards some applications
+use mmc0 and finally a different application accesses mmc1. The suspend
+function is called and during initialization the reset doesn't work
+anymore.
+
+Anyway, I'll perform more tests.
+
+Thanks, Kurt
+
+>
+> >
+> > Both issues disappear when disabling runtime pm.
+> >
+> > Anyway I'll prepare an acpidump for you.
+> >
+> >>
+> >>> issue seems to occur if runtime power management is used. Found by utilizing
+> >>> ftrace.
+> >>>
+> >>> The erratum VLI10 for the Intel E3825 states, that the eMMC controller
+> >>> incorrectly announces that it supports suspend/resume. However, that shouldn't
+> >>> be used, as the controller may incorrectly transfer data between memory and the
+> >>> SD device.
+> >>
+> >> That erratum is not related to this problem.  The suspend/resume that is
+> >> documented is an internal SDHCI feature, not the kernel's suspend/resume.
+> >> The SDHCI Suspend/Resume Mechanism is not supported in the driver, so it is
+> >> not being used anyway.
+> >
+> > Thanks for the clarification.
+> >
+> > Do you have any idea why this issue might happen?
+>
+> No, but it seems like the runtime pm callbacks aren't happening when they
+> are supposed to.
+>
+> >
+> > Thanks, Kurt
+> >
+> >>
+> >>>
+> >>> Therefore, disallowing runtime pm resolves the issue. Tested on the E3825.
+> >>>
+> >>> Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+> >>> ---
+> >>>  drivers/mmc/host/sdhci-pci-core.c | 17 ++++++++++++++++-
+> >>>  1 file changed, 16 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> >>> index 77dd3521daae..df89381944cd 100644
+> >>> --- a/drivers/mmc/host/sdhci-pci-core.c
+> >>> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> >>> @@ -870,6 +870,21 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
+> >>>  	.priv_size	= sizeof(struct intel_host),
+> >>>  };
+> >>>
+> >>> +/*
+> >>> + * See Erratum VLI10 from Errata List for Intel Atom E3825, Link:
+> >>> + * https://www.intel.ca/content/dam/www/public/us/en/documents/specification-updates/atom-e3800-family-spec-update.pdf
+> >>> + */
+> >>> +static const struct sdhci_pci_fixes sdhci_intel_byt_emmc_no_runtime_pm = {
+> >>> +	.allow_runtime_pm = false,
+> >>> +	.probe_slot	= byt_emmc_probe_slot,
+> >>> +	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+> >>> +	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+> >>> +			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
+> >>> +			  SDHCI_QUIRK2_STOP_WITH_TC,
+> >>> +	.ops		= &sdhci_intel_byt_ops,
+> >>> +	.priv_size	= sizeof(struct intel_host),
+> >>> +};
+> >>> +
+> >>>  static const struct sdhci_pci_fixes sdhci_intel_glk_emmc = {
+> >>>  	.allow_runtime_pm	= true,
+> >>>  	.probe_slot		= glk_emmc_probe_slot,
+> >>> @@ -1470,7 +1485,7 @@ static const struct pci_device_id pci_ids[] = {
+> >>>  	SDHCI_PCI_SUBDEVICE(INTEL, BYT_SDIO, NI, 7884, ni_byt_sdio),
+> >>>  	SDHCI_PCI_DEVICE(INTEL, BYT_SDIO,  intel_byt_sdio),
+> >>>  	SDHCI_PCI_DEVICE(INTEL, BYT_SD,    intel_byt_sd),
+> >>> -	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc),
+> >>> +	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc_no_runtime_pm),
+> >>>  	SDHCI_PCI_DEVICE(INTEL, BSW_EMMC,  intel_byt_emmc),
+> >>>  	SDHCI_PCI_DEVICE(INTEL, BSW_SDIO,  intel_byt_sdio),
+> >>>  	SDHCI_PCI_DEVICE(INTEL, BSW_SD,    intel_byt_sd),
+> >>>
+> >>
+> >
+>
