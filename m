@@ -2,108 +2,216 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D8EC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C331DC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B2125E6F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:43:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B2125E6F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7201825E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:43:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="j+zkIPPz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7201825E75
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933846AbeFYQnF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:43:05 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34233 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933140AbeFYQnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:43:03 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F3F29206D8; Mon, 25 Jun 2018 18:43:00 +0200 (CEST)
-Received: from localhost (unknown [88.128.82.118])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B7DC320012;
-        Mon, 25 Jun 2018 18:43:00 +0200 (CEST)
-Date:   Mon, 25 Jun 2018 18:43:01 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
-Message-ID: <20180625164300.vivzyu3g52d2pjdn@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fedf5x4px5amfvpi"
-Content-Disposition: inline
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180512
+        id S1755134AbeFYQn5 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 12:43:57 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:27368 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933282AbeFYQnz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 12:43:55 -0400
+Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id w5PGfPxq017815;
+        Tue, 26 Jun 2018 01:41:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w5PGfPxq017815
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1529944887;
+        bh=vK5LFFB15NVR6U2dAR6ekcSyjGGWGKM12lO3lvB7SDA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j+zkIPPzDSMnc/VFw/ygeXLUHtosWq0y8OHEzOH57P8j+y4WmekMdnRAWEWeAlmBT
+         8wTTNjLffoagM3tJ7J8W3j+5CS5mbORGbT7Cl/usXvSSsM6B4TyAMjd1sWtNmFM+IN
+         HlynX2KB8PJrA2beqq9AnAIKG1snNI1dsr+dpIg5CGyE9qolyKX9Azr/XV+XPmGrJY
+         bJGyFIQpuRUDq0bMdgdB7TZC+hVjbhY/W1UBn4LrGb9u+4AWPqcfSN830vcmySTsnT
+         9UxX8RenpXd5BqT5AK+xtNjiAG+xBZw6B1QCiGJV448C+rtGm67fttdjKUA6OmBm4F
+         6TkfTG45Gj1fg==
+X-Nifty-SrcIP: [125.199.20.195]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-s390@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>, x86@kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Ingo Molnar <mingo@redhat.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-security-module@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH] kbuild: move bin2c back to scripts/ from scripts/basic/
+Date:   Tue, 26 Jun 2018 01:40:23 +0900
+Message-Id: <1529944823-22228-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit 8370edea81e3 ("bin2c: move bin2c in scripts/basic") moved bin2c
+to the scripts/basic/ directory, incorrectly stating "Kexec wants to
+use bin2c and it wants to use it really early in the build process.
+See arch/x86/purgatory/ code in later patches."
 
---fedf5x4px5amfvpi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit bdab125c9301 ("Revert "kexec/purgatory: Add clean-up for
+purgatory directory"") and commit d6605b6bbee8 ("x86/build: Remove
+unnecessary preparation for purgatory") removed the redundant
+purgatory build magic entirely.
 
-On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
-> This series adds support for R40 HDMI pipeline. It is a bit special
-> than other already supported pipelines because it has additional unit
-> called TCON TOP responsible for relationship configuration between
-> mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-> and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> and TV encoders.
->=20
-> However, it seems that TCON TOP will become a norm, since newer
-> Allwinner SoCs like H6 also have this unit.
->=20
-> I tested different possible configurations:
-> - mixer0 <> TCON-TV0 <> HDMI
-> - mixer0 <> TCON-TV1 <> HDMI
-> - mixer1 <> TCON-TV0 <> HDMI
-> - mixer1 <> TCON-TV1 <> HDMI
->=20
-> Please review.
+That means that the move of bin2c was unnecessary in the first place.
 
-This looks all fine by me, thanks!
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-I'd still like some more review (by Chen-Yu and Rob) before applying
-it, but you can add my Acked-by for the next round if needed.
+ arch/powerpc/purgatory/Makefile | 3 +--
+ arch/s390/purgatory/Makefile    | 3 +--
+ arch/x86/purgatory/Makefile     | 3 +--
+ kernel/Makefile                 | 2 +-
+ scripts/.gitignore              | 1 +
+ scripts/Makefile                | 1 +
+ scripts/basic/.gitignore        | 1 -
+ scripts/basic/Makefile          | 1 -
+ scripts/{basic => }/bin2c.c     | 0
+ security/tomoyo/Makefile        | 2 +-
+ 10 files changed, 7 insertions(+), 10 deletions(-)
+ rename scripts/{basic => }/bin2c.c (100%)
 
-Maxime
+diff --git a/arch/powerpc/purgatory/Makefile b/arch/powerpc/purgatory/Makefile
+index 30e05de..4314ba5 100644
+--- a/arch/powerpc/purgatory/Makefile
++++ b/arch/powerpc/purgatory/Makefile
+@@ -6,9 +6,8 @@ LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined
+ $(obj)/purgatory.ro: $(obj)/trampoline.o FORCE
+ 		$(call if_changed,ld)
+ 
+-CMD_BIN2C = $(objtree)/scripts/basic/bin2c
+ quiet_cmd_bin2c = BIN2C   $@
+-      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
++      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
+ 
+ $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
+ 	$(call if_changed,bin2c)
+diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
+index 1ace023..445c460 100644
+--- a/arch/s390/purgatory/Makefile
++++ b/arch/s390/purgatory/Makefile
+@@ -27,9 +27,8 @@ KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
+ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+ 		$(call if_changed,ld)
+ 
+-CMD_BIN2C = $(objtree)/scripts/basic/bin2c
+ quiet_cmd_bin2c = BIN2C   $@
+-      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
++      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
+ 
+ $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
+ 	$(call if_changed,bin2c)
+diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+index 2e9ee02..d6ac098 100644
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -28,9 +28,8 @@ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+ 
+ targets += kexec-purgatory.c
+ 
+-CMD_BIN2C = $(objtree)/scripts/basic/bin2c
+ quiet_cmd_bin2c = BIN2C   $@
+-      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
++      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
+ 
+ $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
+ 	$(call if_changed,bin2c)
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 04bc07c..7a63d56 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -123,7 +123,7 @@ targets += config_data.gz
+ $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE
+ 	$(call if_changed,gzip)
+ 
+-      filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/basic/bin2c; echo "MAGIC_END;")
++      filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/bin2c; echo "MAGIC_END;")
+ targets += config_data.h
+ $(obj)/config_data.h: $(obj)/config_data.gz FORCE
+ 	$(call filechk,ikconfiggz)
+diff --git a/scripts/.gitignore b/scripts/.gitignore
+index 0442c06..12d302d 100644
+--- a/scripts/.gitignore
++++ b/scripts/.gitignore
+@@ -1,6 +1,7 @@
+ #
+ # Generated files
+ #
++bin2c
+ conmakehash
+ kallsyms
+ pnmtologo
+diff --git a/scripts/Makefile b/scripts/Makefile
+index 25ab143..59c21ec 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -10,6 +10,7 @@
+ 
+ HOST_EXTRACFLAGS += -I$(srctree)/tools/include
+ 
++hostprogs-$(CONFIG_BUILD_BIN2C)  += bin2c
+ hostprogs-$(CONFIG_KALLSYMS)     += kallsyms
+ hostprogs-$(CONFIG_LOGO)         += pnmtologo
+ hostprogs-$(CONFIG_VT)           += conmakehash
+diff --git a/scripts/basic/.gitignore b/scripts/basic/.gitignore
+index 9528ec9..a776371 100644
+--- a/scripts/basic/.gitignore
++++ b/scripts/basic/.gitignore
+@@ -1,2 +1 @@
+ fixdep
+-bin2c
+diff --git a/scripts/basic/Makefile b/scripts/basic/Makefile
+index 0372b33..af49b44 100644
+--- a/scripts/basic/Makefile
++++ b/scripts/basic/Makefile
+@@ -9,7 +9,6 @@
+ # fixdep: 	 Used to generate dependency information during build process
+ 
+ hostprogs-y	:= fixdep
+-hostprogs-$(CONFIG_BUILD_BIN2C)     += bin2c
+ always		:= $(hostprogs-y)
+ 
+ # fixdep is needed to compile other host programs
+diff --git a/scripts/basic/bin2c.c b/scripts/bin2c.c
+similarity index 100%
+rename from scripts/basic/bin2c.c
+rename to scripts/bin2c.c
+diff --git a/security/tomoyo/Makefile b/security/tomoyo/Makefile
+index b7c6a7f..cca5a30 100644
+--- a/security/tomoyo/Makefile
++++ b/security/tomoyo/Makefile
+@@ -4,7 +4,7 @@ obj-y = audit.o common.o condition.o domain.o environ.o file.o gc.o group.o load
+ targets += builtin-policy.h
+ define do_policy
+ echo "static char tomoyo_builtin_$(1)[] __initdata ="; \
+-$(objtree)/scripts/basic/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
++$(objtree)/scripts/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
+ echo ";"
+ endef
+ quiet_cmd_policy  = POLICY  $@
+-- 
+2.7.4
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---fedf5x4px5amfvpi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsxG5QACgkQ0rTAlCFN
-r3QBiA//an1PO/EbZjw00Eqp1RaiAneLJvJrChICpxAUXy2zYmIhpKUmVxdv1jxl
-Osyb/mJb14nkegVCLNPjwSeFu0TN2D+s0gS95q7KBE/8MrFrAxNwc6PcN8Y/7vNx
-0hg0mosBIoot7+VStEmjSzyCF82B0YE2FHpIO+bYjwdx0oAGJ8XGrIgeXJv38QRx
-oqZ3ilF504mRHwRu6eadGaG3rEgU2/eOjSZvC4CQz4trQ2PlyC/pxIRipYogBxkU
-SaMQqVkQ1mp4oqpikMqFqUIFtR9gRS4qGHrtahzMqbdRxuzF/4wwmcWLiAgCAOIN
-x2ygwkSdrsla9Zc0SHfJV8tlD/kAt7cmyqU0RjwtDeyA9RjOpgD5dnciygxittgm
-hZWb1Gb4lPEeOkoiJeq3NHNez3A55dVGPWtWbeU+FyiEFl9UN0K/Qu+m97fyllj1
-XmrAdWZ+wS0Yw52pj9/CVaFk8X1G0jyTHvgXDNxBuQNJ8tELtxSHfOhiZd4Dbn5k
-CirxbfOz5wHaoLu5mlJM077olYp1ZoKw4D6dTx0Zfgn1FO99Mjgep9vz8KXLHx9k
-WKFxUgVcRGtMGWwjVKRIjvz+4FhWr1PXcqVh9kGVQSVD2Q/JZKEqV6sdWQAHBLCe
-Vp8WzDVo8GXAmfozQ9ErxdTwUPfhx97cNSFVFFlUcxx8aI9ThIQ=
-=aSGT
------END PGP SIGNATURE-----
-
---fedf5x4px5amfvpi--
