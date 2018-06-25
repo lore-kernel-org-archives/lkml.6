@@ -5,78 +5,76 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CED0C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 20:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C0EC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 20:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADB726100
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 20:46:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADB726100
+	by mail.kernel.org (Postfix) with ESMTP id 01FB326100
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 20:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01FB326100
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965163AbeFYUqR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 16:46:17 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:44144 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934686AbeFYUqQ (ORCPT
+        id S965177AbeFYUr1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 16:47:27 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:38220 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934686AbeFYUrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 16:46:16 -0400
-Received: by mail-yb0-f194.google.com with SMTP id a2-v6so5123881ybe.11;
-        Mon, 25 Jun 2018 13:46:15 -0700 (PDT)
+        Mon, 25 Jun 2018 16:47:24 -0400
+Received: by mail-yw0-f193.google.com with SMTP id w13-v6so5267577ywa.5;
+        Mon, 25 Jun 2018 13:47:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=s5QzYU+lJDMJ42RYJz11qeXsn5SJF2ACCWmEw1sZUoI=;
-        b=TZoUs8VHuLzqrcAKwbhTjylVcrw62/ud0YWZj6TAEUyLVsccxSf63Ki/4npxiU5PoU
-         Ruh/QYaDX1/XNvKf1W2XsFcLVupQuOUa93o9OzrzOCAAkpY3rGmJOkBlxnw06kwCpuK2
-         uVLNvnHyqFSkctTa7fI2o14j7EFkbBtYcNQdg9m3TkD2lKXqt7rcKSzukNO2gVPcgAC5
-         Hi79yER2CIAt7TIPS4/M1rBbrTg8jJmXbEHcApYi3Yfi4gMAKdACGu/DH8KlOTsYwU4q
-         mRxqtDNCN00+5qVqaRFZHM57cW7TmfjLvU0Q9jLtSB5gh6LKl/4ZRisJ/WoRm6Zgcuoy
-         uZwg==
-X-Gm-Message-State: APt69E0Jz1Wul5bAxt8/BSzt4NvjG6JS7CCdbn0anboATBy0I7aorFoa
-        nUZtt7AC/Rol0IqCj17ZlUE0Enc=
-X-Google-Smtp-Source: ADUXVKJfhJOuXgmOmFVGgN4Y4QvWwmOdTlBAkiLIPEijFCRUmIofO5qa4ElhPWo/IVP37orm0iYDgw==
-X-Received: by 2002:a25:ae02:: with SMTP id a2-v6mr6943157ybj.436.1529959575459;
-        Mon, 25 Jun 2018 13:46:15 -0700 (PDT)
+        bh=jeWTqVj4m4ojDqRKMZLWbd6m7K0jmtk+s/i6thpFnh4=;
+        b=Sdrmw4I3euOAlA/eg9qsLHwVlIEbvShlGL57l79LDVNb9WcOQKYRnBbrXbUjRdgKck
+         lhwJoC1qq3RSUG8t2K5V960s2FLZc0AXPfOhBk9AoiuNwq0Z7Dv3y9W2tKPTvmCLOrSJ
+         B3h8H2p+zY8xEeZYAw3MsgTtxWQ5w/ymug8Ul360rG9jqVqIjb+P6p3c33xfcvy8K7aK
+         YqDoSYPKWm7a6MErk80ZqfIcC2sC1+RSSUBHR1FxHBtnAMVR2Pra6jda9cllll8pMz/U
+         nJP9CNn7LNhCmIdtaMkuG01Xz3doM81orwflTwySU+VskNVy6FzsIyTRbUB2UX/Xw2RF
+         hsPQ==
+X-Gm-Message-State: APt69E0mKdqzpeXpq0g3QOEQAq0WCpz8eip6k34Iu3CcffTEcdvNQD+0
+        3ojLazFe0xonQKbd8oxd/w==
+X-Google-Smtp-Source: ADUXVKJvUzjPloryaH/ZT3bplLO6X+2fL4lYaPwHbDlQiR864tazVab2v/ekQ0jcd57daAUALMfgGg==
+X-Received: by 2002:a81:902:: with SMTP id 2-v6mr6620378ywj.373.1529959643990;
+        Mon, 25 Jun 2018 13:47:23 -0700 (PDT)
 Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id g145-v6sm5925278ywe.17.2018.06.25.13.46.13
+        by smtp.gmail.com with ESMTPSA id q7-v6sm4970262ywa.57.2018.06.25.13.47.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 13:46:14 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 14:46:12 -0600
+        Mon, 25 Jun 2018 13:47:22 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 14:47:21 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mathieu.poirier@linaro.org, frowand.list@gmail.com,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 4/6] dts: bindings: Document device tree binding for
- CATU
-Message-ID: <20180625204612.GA15054@rob-hp-laptop>
-References: <20180625112213.23492-1-suzuki.poulose@arm.com>
- <20180625112213.23492-5-suzuki.poulose@arm.com>
+To:     Michel Pollet <michel.pollet@bp.renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/5] dt-bindings: Add the r9a06g032-pinctrl.h file
+Message-ID: <20180625204721.GA20131@rob-hp-laptop>
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528974029-29617-2-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180625112213.23492-5-suzuki.poulose@arm.com>
+In-Reply-To: <1528974029-29617-2-git-send-email-michel.pollet@bp.renesas.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 12:22:11PM +0100, Suzuki K Poulose wrote:
-> Document CATU device-tree bindings. CATU augments the TMC-ETR
-> by providing an improved Scatter Gather mechanism for streaming
-> trace data to non-contiguous system RAM pages.
+On Thu, Jun 14, 2018 at 12:00:17PM +0100, Michel Pollet wrote:
+> This adds the constants necessary to use the renesas,r9a06g032-pinctrl
+> node.
 > 
-> Cc: devicetree@vger.kernel.org
-> Cc: frowand.list@gmail.com
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 > ---
->  .../devicetree/bindings/arm/coresight.txt          | 53 ++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
+>  include/dt-bindings/pinctrl/r9a06g032-pinctrl.h | 191 ++++++++++++++++++++++++
+>  1 file changed, 191 insertions(+)
+>  create mode 100644 include/dt-bindings/pinctrl/r9a06g032-pinctrl.h
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This can be combined with patch 2.
