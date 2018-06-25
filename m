@@ -2,82 +2,272 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BA5C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B891C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB7525AE5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB7525AE5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D112C25AED
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:01:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1vvlB8L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D112C25AED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934058AbeFYOAB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 10:00:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58232 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933144AbeFYOAA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:00:00 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A6C1CFD;
-        Mon, 25 Jun 2018 13:59:58 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 21:59:53 +0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     avifishman70@gmail.com
-Cc:     stern@rowland.harvard.edu, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
-        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
-        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
-        digetx@gmail.com, kstewart@linuxfoundation.org,
-        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] MAINTAINERS: add subfolders for nuvoton *npcm*
-Message-ID: <20180625135953.GA3999@kroah.com>
-References: <20180620063306.134820-1-avifishman70@gmail.com>
- <20180620063306.134820-4-avifishman70@gmail.com>
+        id S934130AbeFYOB2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 10:01:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933587AbeFYOB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 10:01:26 -0400
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9109925AE5;
+        Mon, 25 Jun 2018 14:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529935286;
+        bh=UzVy9+fN4NN+4RWpMOLB/uOyAp6f0UMz+7UFawqguS0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L1vvlB8LXu3Q/Q/GptektwPwLfcLub0QLV0OoFFAY+UB4Vry2fU9O99l7c9MazCYP
+         eYYvl3iYx+OSpX/gp0GJfWTLGaWxCbuiqALfu3UL9rSOzabmGDFDtuDS+KK6CXpuaX
+         qlwCJeCDyxG3KqNXb9UdBe8xsM3GL3ASdQOoYhfs=
+Date:   Mon, 25 Jun 2018 09:01:22 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: shpchp: Fix probing logic inversion
+Message-ID: <20180625140122.GF108993@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180621164715.28160-1-marc.zyngier@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180620063306.134820-4-avifishman70@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180621164715.28160-1-marc.zyngier@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 09:33:06AM +0300, avifishman70@gmail.com wrote:
-> From: Avi Fishman <AviFishman70@gmail.com>
-> 
-> Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
+Hi Marc,
 
-No changelog text?
+Sorry we broke this!
 
-> ---
->  MAINTAINERS | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e0ce3c5f32e5..23c450adad44 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1727,7 +1727,10 @@ F:	arch/arm/mach-npcm/
->  F:	arch/arm/boot/dts/nuvoton-npcm*
->  F:	include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
->  F:	drivers/*/*npcm*
-> +F:	drivers/*/*/*npcm*
->  F:	Documentation/*/*npcm*
-> +F:	Documentation/*/*/*npcm*
-> +F:	Documentation/*/*/*/*npcm*
+On Thu, Jun 21, 2018 at 05:47:15PM +0100, Marc Zyngier wrote:
+> Until recently, shpc_probe() would bail out pretty early in the
+> absence of the SHPC capability. A logic change in the way the
+> driver now checks that capability makes it go and probe the
+> firmware anyway, with ugly consequences if the system is not
+> ACPI based (my arm64 ThunderX is DT driven, and explodes in
+> a spectacular way after getting a NULL root bridge from the
+> non-existent ACPI tables...).
+>
+> Take this opportunity to move the call to shpchp_is_native()
+> back into shpc_probe(), making it clear that a non-ACPI system
+> is not expected to use this driver.
 
-Patch does not apply to 4.18-rc2 :(
+But a non-ACPI system *should* be able to use SHPC.
 
-thanks,
+Here's my understanding of how it should work.  On an ACPI system,
 
-greg k-h
+  - If firmware has _OSC, the OS calls it to request permission to
+    manage the SHPC.  If _OSC grants permission, it should also
+    configure the hardware (interrupts, etc) to give the OS.
+    
+  - If there's no _OSC, shpchp assumes it's allowed to manage the
+    SHPC, and it calls OSHP to configure the hardware appropriately.
+
+On a non-ACPI system, shpchp assumes there's no firmware involved at
+all, so it can manage the SHPC without doing anything special.
+
+I see Mika has already posted a patch similar to the first one
+below; I think either of those should fix the problem you're seeing.
+
+The second is an attempt to clean things up so they make a
+little more sense.
+
+Bjorn
+
+
+commit 7780896578a93fdec2b345def554355168cceee4
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Mon Jun 25 08:17:33 2018 -0500
+
+    PCI: shpchp: Manage SHPC unconditionally on non-ACPI systems
+    
+    If CONFIG_ACPI=y but the current hardware/firmware platform doesn't support
+    ACPI, acpi_get_hp_hw_control_from_firmware() is implemented and causes a
+    NULL pointer dereference  because acpi_pci_find_root() returns NULL.
+    
+    If acpi_pci_find_root() returns NULL, it means there's no ACPI host bridge
+    device (PNP0A03 or PNP0A08), and the OS is always allowed to manage the
+    SHPC, so return success in that case.
+
+diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
+index 3979f89b250a..912d0de29caa 100644
+--- a/drivers/pci/hotplug/acpi_pcihp.c
++++ b/drivers/pci/hotplug/acpi_pcihp.c
+@@ -87,8 +87,17 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+ 		return 0;
+ 
+ 	/* If _OSC exists, we should not evaluate OSHP */
++
++	/*
++	 * If there's no ACPI host bridge (i.e., ACPI support is compiled
++	 * into the kernel but the hardware platform doesn't support ACPI),
++	 * there's nothing to do here.
++	 */
+ 	host = pci_find_host_bridge(pdev->bus);
+ 	root = acpi_pci_find_root(ACPI_HANDLE(&host->dev));
++	if (!root)
++		return 0;
++
+ 	if (root->osc_support_set)
+ 		goto no_control;
+ 
+
+commit 82ca61ebf1e38bc05753d38103791f48f6a09d91
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Fri Jun 22 17:48:11 2018 -0500
+
+    PCI: shpchp: Separate existence of SHPC and permission to use it
+    
+    The shpchp driver registers for all PCI bridge devices.  Its probe method
+    should fail if either (1) the bridge doesn't have an SHPC or (2) the OS
+    isn't allowed to use it.
+    
+    Separate these two tests into:
+    
+      - A new shpc_capable() that looks for the SHPC hardware and is applicable
+        on all systems, and
+    
+      - A simplified acpi_get_hp_hw_control_from_firmware() that we call only
+        when we already know an SHPC exists and there may be ACPI methods to
+        either request permission to use it (_OSC) or transfer control to the
+        OS (OSHP).
+
+diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
+index 912d0de29caa..bd7358bcb2ea 100644
+--- a/drivers/pci/hotplug/acpi_pcihp.c
++++ b/drivers/pci/hotplug/acpi_pcihp.c
+@@ -74,20 +74,6 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+ 	acpi_handle chandle, handle;
+ 	struct acpi_buffer string = { ACPI_ALLOCATE_BUFFER, NULL };
+ 
+-	/*
+-	 * Per PCI firmware specification, we should run the ACPI _OSC
+-	 * method to get control of hotplug hardware before using it. If
+-	 * an _OSC is missing, we look for an OSHP to do the same thing.
+-	 * To handle different BIOS behavior, we look for _OSC on a root
+-	 * bridge preferentially (according to PCI fw spec). Later for
+-	 * OSHP within the scope of the hotplug controller and its parents,
+-	 * up to the host bridge under which this controller exists.
+-	 */
+-	if (shpchp_is_native(pdev))
+-		return 0;
+-
+-	/* If _OSC exists, we should not evaluate OSHP */
+-
+ 	/*
+ 	 * If there's no ACPI host bridge (i.e., ACPI support is compiled
+ 	 * into the kernel but the hardware platform doesn't support ACPI),
+@@ -98,9 +84,25 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+ 	if (!root)
+ 		return 0;
+ 
+-	if (root->osc_support_set)
+-		goto no_control;
++	/*
++	 * If _OSC exists, it determines whether we're allowed to manage
++	 * the SHPC.  We executed it while enumerating the host bridge.
++	 */
++	if (root->osc_support_set) {
++		if (host->native_shpc_hotplug)
++			return 0;
++		return -ENODEV;
++	}
+ 
++	/*
++	 * In the absence of _OSC, we're always allowed to manage the SHPC.
++	 * However, if an OSHP method is present, we must execute it so the
++	 * firmware can transfer control to the OS, e.g., direct interrupts
++	 * to the OS instead of to the firmware.
++	 *
++	 * N.B. The PCI Firmware Spec (r3.2, sec 4.8) does not endorse
++	 * searching up the ACPI hierarchy, so the loops below are suspect.
++	 */
+ 	handle = ACPI_HANDLE(&pdev->dev);
+ 	if (!handle) {
+ 		/*
+@@ -129,7 +131,7 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+ 		if (ACPI_FAILURE(status))
+ 			break;
+ 	}
+-no_control:
++
+ 	pci_info(pdev, "Cannot get control of SHPC hotplug\n");
+ 	kfree(string.pointer);
+ 	return -ENODEV;
+diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
+index e91be287f292..7eb44fdc4445 100644
+--- a/drivers/pci/hotplug/shpchp_core.c
++++ b/drivers/pci/hotplug/shpchp_core.c
+@@ -270,11 +270,30 @@ static int get_adapter_status(struct hotplug_slot *hotplug_slot, u8 *value)
+ 	return 0;
+ }
+ 
++static bool shpc_capable(struct pci_dev *bridge)
++{
++	/*
++	 * It is assumed that AMD GOLAM chips support SHPC but they do not
++	 * have SHPC capability.
++	 */
++	if (bridge->vendor == PCI_VENDOR_ID_AMD &&
++	    bridge->device == PCI_DEVICE_ID_AMD_GOLAM_7450)
++		return true;
++
++	if (pci_find_capability(bridge, PCI_CAP_ID_SHPC))
++		return true;
++
++	return false;
++}
++
+ static int shpc_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	int rc;
+ 	struct controller *ctrl;
+ 
++	if (!shpc_capable(pdev))
++		return -ENODEV;
++
+ 	if (acpi_get_hp_hw_control_from_firmware(pdev))
+ 		return -ENODEV;
+ 
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index 65113b6eed14..b10dd6caeda1 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -408,17 +408,6 @@ bool shpchp_is_native(struct pci_dev *bridge)
+ 	if (!IS_ENABLED(CONFIG_HOTPLUG_PCI_SHPC))
+ 		return false;
+ 
+-	/*
+-	 * It is assumed that AMD GOLAM chips support SHPC but they do not
+-	 * have SHPC capability.
+-	 */
+-	if (bridge->vendor == PCI_VENDOR_ID_AMD &&
+-	    bridge->device == PCI_DEVICE_ID_AMD_GOLAM_7450)
+-		return true;
+-
+-	if (!pci_find_capability(bridge, PCI_CAP_ID_SHPC))
+-		return false;
+-
+ 	host = pci_find_host_bridge(bridge->bus);
+ 	return host->native_shpc_hotplug;
+ }
