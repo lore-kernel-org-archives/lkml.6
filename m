@@ -2,216 +2,106 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C331DC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CBAC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7201825E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D702625E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 16:47:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="j+zkIPPz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7201825E75
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q34OwfO5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D702625E79
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755134AbeFYQn5 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 12:43:57 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:27368 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933282AbeFYQnz (ORCPT
+        id S933846AbeFYQrV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 12:47:21 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:38542 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933647AbeFYQrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:43:55 -0400
-Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id w5PGfPxq017815;
-        Tue, 26 Jun 2018 01:41:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w5PGfPxq017815
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529944887;
-        bh=vK5LFFB15NVR6U2dAR6ekcSyjGGWGKM12lO3lvB7SDA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=j+zkIPPzDSMnc/VFw/ygeXLUHtosWq0y8OHEzOH57P8j+y4WmekMdnRAWEWeAlmBT
-         8wTTNjLffoagM3tJ7J8W3j+5CS5mbORGbT7Cl/usXvSSsM6B4TyAMjd1sWtNmFM+IN
-         HlynX2KB8PJrA2beqq9AnAIKG1snNI1dsr+dpIg5CGyE9qolyKX9Azr/XV+XPmGrJY
-         bJGyFIQpuRUDq0bMdgdB7TZC+hVjbhY/W1UBn4LrGb9u+4AWPqcfSN830vcmySTsnT
-         9UxX8RenpXd5BqT5AK+xtNjiAG+xBZw6B1QCiGJV448C+rtGm67fttdjKUA6OmBm4F
-         6TkfTG45Gj1fg==
-X-Nifty-SrcIP: [125.199.20.195]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-s390@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, x86@kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Ingo Molnar <mingo@redhat.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-security-module@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH] kbuild: move bin2c back to scripts/ from scripts/basic/
-Date:   Tue, 26 Jun 2018 01:40:23 +0900
-Message-Id: <1529944823-22228-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 25 Jun 2018 12:47:19 -0400
+Received: by mail-pf0-f196.google.com with SMTP id a1-v6so2860823pfi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 09:47:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h4Js/y2RDourC42qGYvqe35rJyf6gmgLpW233a/eV/c=;
+        b=Q34OwfO5Z9TcdMB+ukJgK/eNwDNfgllRCQfMDgdR1SdGOI+xsfMXjzIQXXSSF9yuNb
+         kHekfxlMeTRsw2jTf7/zRCEGpMKDY/D2TdDvXnXmVCoW13iWtXoftNyFrS0J+zBTbTEH
+         9Ek0zrrB4OthHw+utAERlUxlLG5RYPg/g4/5z0yOroN/ppzYlzSBKahIoSMGrTS6lhS7
+         Tat0WcWvAwbOEUFOX3ZKsO7gYNdsaTMuXujlvU7n/1RNNBTns0Z7zVHClunJyNcIuIVM
+         futSdG7bqpEYOcNXXkYqo7Jgs6D7HTRef9TdhCju/Ckn5yaixqPmPvfviq2+kud10v6u
+         xmgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h4Js/y2RDourC42qGYvqe35rJyf6gmgLpW233a/eV/c=;
+        b=mnxB/RGauPpNAnezZGvcv0xTmiehwEXHxzdf9VgSaX84mJu58zdVr8/ghI/NQlVs8q
+         ieyWVrmD6CPPNKf+gpAYDWSiTt1GT3LgXyDsoKNL5wBXJF1N6yG4aOpMII5toLElqwXT
+         106AviEd3eigRBzLhbA98X0J1KO2hQx+myZQMIrDooJfo559iM6k6Ugf0aWp/fNjTb5k
+         LX4z9BR9HB3EQEJoD1GIIfecmaLeylYv1Clb9F29i7JXP9aBXmkiohrmaovJf8hFlWR1
+         0KUGeWh67l+HqmsCS68I3Mk8XMuexoiDTuLFzPq+MFDcNURKQiM8+haxoOnmObQBR+s9
+         4Byg==
+X-Gm-Message-State: APt69E044hkJNDNCUhw74cT31zGpOoJPnZkZn403iEjVIOay4EVqPN+8
+        tfXA4sFxgiT7hGRG/4569F9H2TGYXmMQJoA29ChCDw==
+X-Google-Smtp-Source: ADUXVKJqg5/6bXZRAJEjj86XIiamBCA+9WhVmbsPvnRM6VJ8BMyd4e3SeG0a/ivsNZ9egiCF081my7mAxd9E70PDJf4=
+X-Received: by 2002:a65:4841:: with SMTP id i1-v6mr11207948pgs.75.1529945238943;
+ Mon, 25 Jun 2018 09:47:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180619192504.180479-1-mka@chromium.org> <4dd99306-4fea-24b2-4bea-5b7927ea5e79@redhat.com>
+In-Reply-To: <4dd99306-4fea-24b2-4bea-5b7927ea5e79@redhat.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 25 Jun 2018 12:47:07 -0400
+Message-ID: <CAKwvOdmmv9EtPB-jhwVruLASFve5d4h0+wx-6iY=ve=T9hbNdg@mail.gmail.com>
+Subject: Re: [PATCH v2] kvm: x86: mmu: Add cast to negated bitmasks in update_permission_bitmask()
+To:     pbonzini@redhat.com
+Cc:     Matthias Kaehlcke <mka@chromium.org>, rkrcmar@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, joe@perches.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 8370edea81e3 ("bin2c: move bin2c in scripts/basic") moved bin2c
-to the scripts/basic/ directory, incorrectly stating "Kexec wants to
-use bin2c and it wants to use it really early in the build process.
-See arch/x86/purgatory/ code in later patches."
+On Mon, Jun 25, 2018 at 12:05 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 19/06/2018 21:25, Matthias Kaehlcke wrote:
+> > update_permission_bitmask() negates u8 bitmask values and assigns them
+> > to variables of type u8. Since the MSB is set in the bitmask values the
+> > compiler expands the negated values to int, which then is assigned to
+> > an u8 variable. Cast the negated value back to u8.
+> >
+> > This fixes several warnings like this when building with clang:
+> >
+> > arch/x86/kvm/mmu.c:4266:39: error: implicit conversion from 'int' to 'u8'
+> >   (aka 'unsigned char') changes value from -205 to 51 [-Werror,
+> >   -Wconstant-conversion]
+> >     u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
+> >        ~~                               ^~
+> >
+> > (gcc also raises a warning (see https://godbolt.org/g/6JWfWk), however it
+> > doesn't seem to be universally enabled)
+> >
+> > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > Changes in v2:
+> > - negate the bitmask at initialization and rename variables to not_X
+>
+> The patch is not that bad, but I'd like to get confirmation that other
+> maintainers are applying fixes like this.  Honestly I'm not really
+> impressed by most new clang warnings, these days.
 
-Commit bdab125c9301 ("Revert "kexec/purgatory: Add clean-up for
-purgatory directory"") and commit d6605b6bbee8 ("x86/build: Remove
-unnecessary preparation for purgatory") removed the redundant
-purgatory build magic entirely.
+Here's an actual bug this warning caught applied to drivers/input/:
 
-That means that the move of bin2c was unnecessary in the first place.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- arch/powerpc/purgatory/Makefile | 3 +--
- arch/s390/purgatory/Makefile    | 3 +--
- arch/x86/purgatory/Makefile     | 3 +--
- kernel/Makefile                 | 2 +-
- scripts/.gitignore              | 1 +
- scripts/Makefile                | 1 +
- scripts/basic/.gitignore        | 1 -
- scripts/basic/Makefile          | 1 -
- scripts/{basic => }/bin2c.c     | 0
- security/tomoyo/Makefile        | 2 +-
- 10 files changed, 7 insertions(+), 10 deletions(-)
- rename scripts/{basic => }/bin2c.c (100%)
-
-diff --git a/arch/powerpc/purgatory/Makefile b/arch/powerpc/purgatory/Makefile
-index 30e05de..4314ba5 100644
---- a/arch/powerpc/purgatory/Makefile
-+++ b/arch/powerpc/purgatory/Makefile
-@@ -6,9 +6,8 @@ LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined
- $(obj)/purgatory.ro: $(obj)/trampoline.o FORCE
- 		$(call if_changed,ld)
- 
--CMD_BIN2C = $(objtree)/scripts/basic/bin2c
- quiet_cmd_bin2c = BIN2C   $@
--      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
-+      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
- 
- $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
- 	$(call if_changed,bin2c)
-diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
-index 1ace023..445c460 100644
---- a/arch/s390/purgatory/Makefile
-+++ b/arch/s390/purgatory/Makefile
-@@ -27,9 +27,8 @@ KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
- $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
- 		$(call if_changed,ld)
- 
--CMD_BIN2C = $(objtree)/scripts/basic/bin2c
- quiet_cmd_bin2c = BIN2C   $@
--      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
-+      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
- 
- $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
- 	$(call if_changed,bin2c)
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 2e9ee02..d6ac098 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -28,9 +28,8 @@ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
- 
- targets += kexec-purgatory.c
- 
--CMD_BIN2C = $(objtree)/scripts/basic/bin2c
- quiet_cmd_bin2c = BIN2C   $@
--      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
-+      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
- 
- $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
- 	$(call if_changed,bin2c)
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 04bc07c..7a63d56 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -123,7 +123,7 @@ targets += config_data.gz
- $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE
- 	$(call if_changed,gzip)
- 
--      filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/basic/bin2c; echo "MAGIC_END;")
-+      filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/bin2c; echo "MAGIC_END;")
- targets += config_data.h
- $(obj)/config_data.h: $(obj)/config_data.gz FORCE
- 	$(call filechk,ikconfiggz)
-diff --git a/scripts/.gitignore b/scripts/.gitignore
-index 0442c06..12d302d 100644
---- a/scripts/.gitignore
-+++ b/scripts/.gitignore
-@@ -1,6 +1,7 @@
- #
- # Generated files
- #
-+bin2c
- conmakehash
- kallsyms
- pnmtologo
-diff --git a/scripts/Makefile b/scripts/Makefile
-index 25ab143..59c21ec 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -10,6 +10,7 @@
- 
- HOST_EXTRACFLAGS += -I$(srctree)/tools/include
- 
-+hostprogs-$(CONFIG_BUILD_BIN2C)  += bin2c
- hostprogs-$(CONFIG_KALLSYMS)     += kallsyms
- hostprogs-$(CONFIG_LOGO)         += pnmtologo
- hostprogs-$(CONFIG_VT)           += conmakehash
-diff --git a/scripts/basic/.gitignore b/scripts/basic/.gitignore
-index 9528ec9..a776371 100644
---- a/scripts/basic/.gitignore
-+++ b/scripts/basic/.gitignore
-@@ -1,2 +1 @@
- fixdep
--bin2c
-diff --git a/scripts/basic/Makefile b/scripts/basic/Makefile
-index 0372b33..af49b44 100644
---- a/scripts/basic/Makefile
-+++ b/scripts/basic/Makefile
-@@ -9,7 +9,6 @@
- # fixdep: 	 Used to generate dependency information during build process
- 
- hostprogs-y	:= fixdep
--hostprogs-$(CONFIG_BUILD_BIN2C)     += bin2c
- always		:= $(hostprogs-y)
- 
- # fixdep is needed to compile other host programs
-diff --git a/scripts/basic/bin2c.c b/scripts/bin2c.c
-similarity index 100%
-rename from scripts/basic/bin2c.c
-rename to scripts/bin2c.c
-diff --git a/security/tomoyo/Makefile b/security/tomoyo/Makefile
-index b7c6a7f..cca5a30 100644
---- a/security/tomoyo/Makefile
-+++ b/security/tomoyo/Makefile
-@@ -4,7 +4,7 @@ obj-y = audit.o common.o condition.o domain.o environ.o file.o gc.o group.o load
- targets += builtin-policy.h
- define do_policy
- echo "static char tomoyo_builtin_$(1)[] __initdata ="; \
--$(objtree)/scripts/basic/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
-+$(objtree)/scripts/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
- echo ";"
- endef
- quiet_cmd_policy  = POLICY  $@
--- 
-2.7.4
-
+dae1a432ab1f ("Input: mousedev - fix implicit conversion warning"):
+https://patchwork.kernel.org/patch/9753771/
