@@ -2,107 +2,179 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AC7C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9D6C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76D31262A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:18:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="UxHXMZxD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D31262A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id CAA92262A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 23:18:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAA92262A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932888AbeFYXSd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 19:18:33 -0400
-Received: from vern.gendns.com ([206.190.152.46]:35519 "EHLO vern.gendns.com"
+        id S933724AbeFYXS5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 19:18:57 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:47703 "EHLO smtp.infotech.no"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932235AbeFYXSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 19:18:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=G81hSo2v4U4brBxlIMvXfT+XU6RDxZK31J7WXuz0OBc=; b=UxHXMZxD9uLImrC0jcOIhPaCTI
-        CKhUJgiQ4P6rr5ZsUUCSzJNAKJS9iVogovHhnInm3YMdvUasT+kMxFIDgbGQBVnnYuf7lxUkuAecI
-        ccdakI5Nv8Je2KXiKbkB1fjRRxirDpLL2wL5r6yHvLUlyAqxfW39NdYLTYk9rVSO5jLEaHYmlUWIh
-        JTppK6wFL+RzehS69ZUmbTuaUu7RI5SxOrWyIivZkNNpL8fKUyap2VGq+XaB530kA7rnLXh8fmQw1
-        zdLe3oHdg0Q+CZM68+Wke3UJQPg0ey5+gZ4LeS6V4n+sSw6LpCF2yfcjFdONRLFLzB4XUuoKBNB+0
-        yY+bMASA==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:60728 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1fXakf-002Nxd-Vy; Mon, 25 Jun 2018 19:18:30 -0400
-Subject: Re: [PATCH] clk: davinci: fix a typo (which leads to build failures)
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable@vger.kernel.org
-References: <20180625172550.17379-1-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <28163c26-152b-9188-9c13-7a906809e0f1@lechnology.com>
-Date:   Mon, 25 Jun 2018 18:18:28 -0500
+        id S1754559AbeFYXS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 19:18:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 01275204187;
+        Tue, 26 Jun 2018 01:18:53 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id gj+h0CcrDX11; Tue, 26 Jun 2018 01:18:52 +0200 (CEST)
+Received: from [82.134.31.189] (unknown [82.134.31.189])
+        by smtp.infotech.no (Postfix) with ESMTPA id CD9D3204152;
+        Tue, 26 Jun 2018 01:18:52 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH v3] sg: mitigate read/write abuse
+To:     Jann Horn <jannh@google.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
+        kernel-hardening@lists.openwall.com, security@kernel.org,
+        Benjamin Block <bblock@linux.vnet.ibm.com>
+References: <20180625142544.182673-1-jannh@google.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <beea2f87-807d-eabd-bd92-3f3feacb78ba@interlog.com>
+Date:   Tue, 26 Jun 2018 01:18:52 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180625172550.17379-1-brgl@bgdev.pl>
+In-Reply-To: <20180625142544.182673-1-jannh@google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/25/2018 12:25 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 2018-06-25 04:25 PM, Jann Horn wrote:
+> As Al Viro noted in commit 128394eff343 ("sg_write()/bsg_write() is not fit
+> to be called under KERNEL_DS"), sg improperly accesses userspace memory
+> outside the provided buffer, permitting kernel memory corruption via
+> splice().
+> But it doesn't just do it on ->write(), also on ->read().
 > 
-> This should have been DM365, not DM356.
+> As a band-aid, make sure that the ->read() and ->write() handlers can not
+> be called in weird contexts (kernel context or credentials different from
+> file opener), like for ib_safe_file_access().
 > 
-> Fixes: 4eff0bebf4ed5 ("clk: davinci: Fix link errors when not all SoCs are enabled")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> If someone needs to use these interfaces from different security contexts,
+> a new interface should be written that goes through the ->ioctl() handler.
+> 
+> I've mostly copypasted ib_safe_file_access() over as sg_safe_file_access()
+> because I couldn't find a good common header - please tell me if you know a
+> better way.
+> 
+> changed in v2:
+>   - remove the bsg parts per Christoph Hellwig's request
+> 
+> changed in v3:
+>   - move error messages into helper function
+>   - use two different error messages and return values (Douglas Gilbert)
+>   - add comment on stranded responses (Douglas Gilbert)
+>   - use current_real_cred() instead of current_cred() (so that
+>     override_creds() can't bypass this check)
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jann Horn <jannh@google.com>
 > ---
->   drivers/clk/davinci/psc.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/scsi/sg.c | 42 ++++++++++++++++++++++++++++++++++++++++--
+>   1 file changed, 40 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
-> index 6a42529d31a9..cc5614567a70 100644
-> --- a/drivers/clk/davinci/psc.h
-> +++ b/drivers/clk/davinci/psc.h
-> @@ -107,7 +107,7 @@ extern const struct davinci_psc_init_data of_da850_psc1_init_data;
->   #ifdef CONFIG_ARCH_DAVINCI_DM355
->   extern const struct davinci_psc_init_data dm355_psc_init_data;
->   #endif
-> -#ifdef CONFIG_ARCH_DAVINCI_DM356
-> +#ifdef CONFIG_ARCH_DAVINCI_DM365
->   extern const struct davinci_psc_init_data dm365_psc_init_data;
->   #endif
->   #ifdef CONFIG_ARCH_DAVINCI_DM644x
+> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+> index 53ae52dbff84..4f4e88ca8213 100644
+> --- a/drivers/scsi/sg.c
+> +++ b/drivers/scsi/sg.c
+> @@ -51,6 +51,7 @@ static int sg_version_num = 30536;	/* 2 digits for each component */
+>   #include <linux/atomic.h>
+>   #include <linux/ratelimit.h>
+>   #include <linux/uio.h>
+> +#include <linux/cred.h> /* for sg_safe_file_access() */
+
+s/_safe_/_check_/
+
+>   
+>   #include "scsi.h"
+>   #include <scsi/scsi_dbg.h>
+> @@ -209,6 +210,33 @@ static void sg_device_destroy(struct kref *kref);
+>   	sdev_prefix_printk(prefix, (sdp)->device,		\
+>   			   (sdp)->disk->disk_name, fmt, ##a)
+>   
+> +/*
+> + * The SCSI interfaces that use read() and write() as an asynchronous variant of
+> + * ioctl(..., SG_IO, ...) are fundamentally unsafe, since there are lots of ways
+> + * to trigger read() and write() calls from various contexts with elevated
+> + * privileges. This can lead to kernel memory corruption (e.g. if these
+> + * interfaces are called through splice()) and privilege escalation inside
+> + * userspace (e.g. if a process with access to such a device passes a file
+> + * descriptor to a SUID binary as stdin/stdout/stderr).
+> + *
+> + * This function provides protection for the legacy API by restricting the
+> + * calling context.
+> + */
+> +static int sg_check_file_access(struct file *filp, const char *caller)
+> +{
+> +	if (filp->f_cred != current_real_cred()) {
+> +		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
+> +			caller, task_tgid_vnr(current), current->comm);
+> +		return -EPERM;
+> +	}
+> +	if (uaccess_kernel()) {
+> +		pr_err_once("%s: process %d (%s) called from kernel context, this is not allowed.\n",
+> +			caller, task_tgid_vnr(current), current->comm);
+> +		return -EACCES;
+> +	}
+> +	return 0;
+> +}
+> +
+>   static int sg_allow_access(struct file *filp, unsigned char *cmd)
+>   {
+>   	struct sg_fd *sfp = filp->private_data;
+> @@ -393,6 +421,14 @@ sg_read(struct file *filp, char __user *buf, size_t count, loff_t * ppos)
+>   	struct sg_header *old_hdr = NULL;
+>   	int retval = 0;
+>   
+> +	/*
+> +	 * This could cause a response to be stranded. Close the associated
+> +	 * file descriptor to free up any resources being held.
+> +	 */
+> +	retval = sg_check_file_access(filp, __func__);
+> +	if (retval)
+> +		return retval;
+> +
+>   	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
+>   		return -ENXIO;
+>   	SCSI_LOG_TIMEOUT(3, sg_printk(KERN_INFO, sdp,
+> @@ -580,9 +616,11 @@ sg_write(struct file *filp, const char __user *buf, size_t count, loff_t * ppos)
+>   	struct sg_header old_hdr;
+>   	sg_io_hdr_t *hp;
+>   	unsigned char cmnd[SG_MAX_CDB_SIZE];
+> +	int retval;
+>   
+> -	if (unlikely(uaccess_kernel()))
+> -		return -EINVAL;
+> +	retval = sg_check_file_access(filp, __func__);
+> +	if (retval)
+> +		return retval;
+>   
+>   	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
+>   		return -ENXIO;
 > 
 
+If you need to make any other changes to this patch, then you could fix
+that typo above.
 
-Applied to https://github.com/dlech/linux/tree/clk-davinci-fixes
-
-Thanks.
-
+Acked-by: Douglas Gilbert <dgilbert@interlog.com>
