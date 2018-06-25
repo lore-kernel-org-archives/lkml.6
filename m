@@ -2,127 +2,284 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA1DC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3B3C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473D725B00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:06:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qb0/+fZI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473D725B00
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 77D1925B04
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 14:07:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D1925B04
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934275AbeFYOG5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 10:06:57 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55782 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934074AbeFYOGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:06:55 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5PE450X028744;
-        Mon, 25 Jun 2018 14:06:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=7ndiITZ+2qweKohVfD8O03LlwPBea3Eg9F3AGiqEUu0=;
- b=qb0/+fZIpx6xjocuq0f6a8L6KATV0j92v/AJ1bcW4JoJpVJN6NVWct31+k/ZECb/qlem
- WJkpnpcwnGAkW+WqQT0ozxz4i6OzBL2r47Fahx8VxmkzZsM803Bc96lks09r4R9mkPLa
- X77GRTfCIXp/M7Nqel0+/BA5K0Fsqf5kXWY+5e6wBzWkt0Hp1BaoCNC9P6bAEe1rXC1w
- fQmDjPcApvWhKS83BS1W9fE0vJEdxCgCiitYL6clonJWiuK0WXj4RYaoVs3qyj5wREqJ
- eGMXeiScUe2Ssgf3iwexk6hp73A6dyPzZisjj7mSM9eQN8vXN4CtDKJ7QFvWJILaeqEp UA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2jt8a7jv3v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Jun 2018 14:06:54 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5PE6lLU025571
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Jun 2018 14:06:47 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5PE6l3t010999;
-        Mon, 25 Jun 2018 14:06:47 GMT
-Received: from mail-oi0-f51.google.com (/209.85.218.51)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 25 Jun 2018 07:06:47 -0700
-Received: by mail-oi0-f51.google.com with SMTP id 21-v6so1927416oip.8;
-        Mon, 25 Jun 2018 07:06:46 -0700 (PDT)
-X-Gm-Message-State: APt69E35RXv8v4d2KiPPg5CrYUWim3wNiTHPCCaMWVTgEsAQetnlWKzd
-        iWYsh9qYySv7GlGvaGYQscLc45hYwXpEZ3V3aNM=
-X-Google-Smtp-Source: ADUXVKLjeG0TIKvXJ1AN0OFOCMlGgDktHbT4Kf00mK0/d6v6tqzHbiNB/tH3c+kc8Fe+n9SGIYXsvUzCWxJWdqYhC1E=
-X-Received: by 2002:aca:3b09:: with SMTP id i9-v6mr7467357oia.156.1529935606442;
- Mon, 25 Jun 2018 07:06:46 -0700 (PDT)
+        id S934327AbeFYOHN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 10:07:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934074AbeFYOHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 10:07:12 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC7EA25B01;
+        Mon, 25 Jun 2018 14:07:10 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 10:07:08 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        joel@joelfernandes.org
+Subject: Re: [PATCH] rcu: Refactor rcu_{nmi,irq}_{enter,exit}()
+Message-ID: <20180625100708.3cb50ced@gandalf.local.home>
+In-Reply-To: <20180623174954.GA3584@linux.vnet.ibm.com>
+References: <1529647926-24427-1-git-send-email-byungchul.park@lge.com>
+        <20180622062351.GC17010@X58A-UD3R>
+        <20180623174954.GA3584@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
- <20180621212518.19914-2-pasha.tatashin@oracle.com> <20180625081429.GS2494@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1806251038190.8650@nanos.tec.linutronix.de>
- <20180625090915.GV2494@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1806251112460.8650@nanos.tec.linutronix.de>
- <20180625092229.GW2494@hirez.programming.kicks-ass.net> <CAGM2rebqeEwQfYBAQT=SNLceMQ1fruG2zMqQN6hM1JA_KedR0A@mail.gmail.com>
- <20180625134851.GB2494@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180625134851.GB2494@hirez.programming.kicks-ass.net>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Mon, 25 Jun 2018 10:06:10 -0400
-X-Gmail-Original-Message-ID: <CAGM2reaOZiCsJbLonrZH0-uPQFLG4Xek0mJ4gNZe7K6iJFU=Xw@mail.gmail.com>
-Message-ID: <CAGM2reaOZiCsJbLonrZH0-uPQFLG4Xek0mJ4gNZe7K6iJFU=Xw@mail.gmail.com>
-Subject: Re: [PATCH v12 01/11] x86: text_poke() may access uninitialized
- struct pages
-To:     peterz@infradead.org
-Cc:     tglx@linutronix.de, Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        prarit@redhat.com, feng.tang@intel.com,
-        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8934 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806250164
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Also, I think the better condition is @early_boot_irqs_disabled, until
-> we enable IRQs for the first time, text_poke_early() should be fine. And
-> once we enable interrupts, all that other crud should really be working.
+On Sat, 23 Jun 2018 10:49:54 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-Sure, I will use early_boot_irqs_disabled flag. I think, we still want
-to have BUG_ON(!after_bootmem); in text_poke(). I could do
-BUG_ON(early_boot_irqs_disabled), but I am worried that there are call
-sites that might be using text_poke() between mem_init() and
-local_irq_enable() in start_kernel().
+> commit 5e5ea52645b197fb7ae2f59f7927079b91e91aa0
+> Author: Byungchul Park <byungchul.park@lge.com>
+> Date:   Fri Jun 22 15:12:06 2018 +0900
+> 
+>     rcu: Refactor rcu_{nmi,irq}_{enter,exit}()
+>     
+>     When entering or exiting irq or NMI handlers, the current code uses
+>     ->dynticks_nmi_nesting to detect if it is in the outermost handler,  
+>     that is, the one interrupting or returning to an RCU-idle context (the
+>     idle loop or nohz_full usermode execution).  When entering the outermost
+>     handler via an interrupt (as opposed to NMI), it is necessary to invoke
+>     rcu_dynticks_task_exit() just before the CPU is marked non-idle from an
+>     RCU perspective and to invoke rcu_cleanup_after_idle() just after the
+>     CPU is marked non-idle.  Similarly, when exiting the outermost handler
+>     via an interrupt, it is necessary to invoke rcu_prepare_for_idle() just
+>     before marking the CPU idle and to invoke rcu_dynticks_task_enter()
+>     just after marking the CPU idle.
+>     
+>     The decision to execute these four functions is currently taken in
+>     rcu_irq_enter() and rcu_irq_exit() as follows:
+>     
+>        rcu_irq_enter()
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>           rcu_nmi_enter()
+>              /* A conditional branch with ->dynticks */
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>        rcu_irq_exit()
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>           rcu_nmi_exit()
+>              /* A conditional branch with ->dynticks_nmi_nesting */
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>        rcu_nmi_enter()
+>           /* A conditional branch with ->dynticks */
+>     
+>        rcu_nmi_exit()
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>     This works, but the conditional branches in rcu_irq_enter() and
+>     rcu_irq_exit() are redundant with those in rcu_nmi_enter() and
+>     rcu_nmi_exit(), respectively.  Redundant branches are not something
+>     we want in the to/from-idle fastpaths, so this commit refactors
+>     rcu_{nmi,irq}_{enter,exit}() so they use a common inlined function passed
+>     a constant argument as follows:
+>     
+>        rcu_irq_enter() inlining rcu_nmi_enter_common(irq=true)
+>           /* A conditional branch with ->dynticks */
+>     
+>        rcu_irq_exit() inlining rcu_nmi_exit_common(irq=true)
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>        rcu_nmi_enter() inlining rcu_nmi_enter_common(irq=false)
+>           /* A conditional branch with ->dynticks */
+>     
+>        rcu_nmi_exit() inlining rcu_nmi_exit_common(irq=false)
+>           /* A conditional branch with ->dynticks_nmi_nesting */
+>     
+>     The combination of the constant function argument and the inlining allows
+>     the compiler to discard the conditionals that previously controlled
+>     execution of rcu_dynticks_task_exit(), rcu_cleanup_after_idle(),
+>     rcu_prepare_for_idle(), and rcu_dynticks_task_enter().  This reduces both
+>     the to-idle and from-idle path lengths by two conditional branches each,
+>     and improves readability as well.
 
->
-> This gives:
->
-> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-> index e56c95be2808..425ba6102828 100644
-> --- a/arch/x86/kernel/jump_label.c
-> +++ b/arch/x86/kernel/jump_label.c
-> @@ -46,6 +46,9 @@ static void __jump_label_transform(struct jump_entry *entry,
->         const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
->         const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
->
-> +       if (early_boot_irqs_disabled)
-> +               poker = text_poke_early;
+Nice write up. Makes a lot of sense.
+
+>     
+>     Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>     Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 8788ddbc0d13..4ed74f10c852 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -773,17 +773,17 @@ void rcu_user_enter(void)
+>  #endif /* CONFIG_NO_HZ_FULL */
+>  
+>  /**
+> - * rcu_nmi_exit - inform RCU of exit from NMI context
+> + * rcu_nmi_exit_common - inform RCU of exit from NMI context
+>   *
+>   * If we are returning from the outermost NMI handler that interrupted an
+>   * RCU-idle period, update rdtp->dynticks and rdtp->dynticks_nmi_nesting
+>   * to let the RCU grace-period handling know that the CPU is back to
+>   * being RCU-idle.
+>   *
+> - * If you add or remove a call to rcu_nmi_exit(), be sure to test
+> + * If you add or remove a call to rcu_nmi_exit_common(), be sure to test
+>   * with CONFIG_RCU_EQS_DEBUG=y.
+>   */
+> -void rcu_nmi_exit(void)
+> +static __always_inline void rcu_nmi_exit_common(bool irq)
+>  {
+>  	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+>  
+> @@ -809,7 +809,22 @@ void rcu_nmi_exit(void)
+>  	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
+>  	trace_rcu_dyntick(TPS("Startirq"), rdtp->dynticks_nmi_nesting, 0, rdtp->dynticks);
+>  	WRITE_ONCE(rdtp->dynticks_nmi_nesting, 0); /* Avoid store tearing. */
 > +
->         if (type == JUMP_LABEL_JMP) {
->                 if (init) {
->                         /*
->
-> > Also, modify text_poke_early to call sync_core().
+> +	if (irq)
+> +		rcu_prepare_for_idle();
+> +
+>  	rcu_dynticks_eqs_enter();
+> +
+> +	if (irq)
+> +		rcu_dynticks_task_enter();
+> +}
+> +
+> +/**
+> + * rcu_nmi_exit - inform RCU of exit from NMI context
+> + */
+> +void rcu_nmi_exit(void)
+> +{
+> +	rcu_nmi_exit_common(false);
+>  }
+>  
+>  /**
+> @@ -833,14 +848,8 @@ void rcu_nmi_exit(void)
+>   */
+>  void rcu_irq_exit(void)
+>  {
+> -	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+> -
+>  	lockdep_assert_irqs_disabled();
+> -	if (rdtp->dynticks_nmi_nesting == 1)
+> -		rcu_prepare_for_idle();
+> -	rcu_nmi_exit();
+> -	if (rdtp->dynticks_nmi_nesting == 0)
+> -		rcu_dynticks_task_enter();
+> +	rcu_nmi_exit_common(true);
+>  }
+>  
+>  /*
+> @@ -923,7 +932,7 @@ void rcu_user_exit(void)
+>  #endif /* CONFIG_NO_HZ_FULL */
+>  
+>  /**
+> - * rcu_nmi_enter - inform RCU of entry to NMI context
+> + * rcu_nmi_enter_common - inform RCU of entry to NMI context
+>   *
+>   * If the CPU was idle from RCU's viewpoint, update rdtp->dynticks and
+>   * rdtp->dynticks_nmi_nesting to let the RCU grace-period handling know
+> @@ -931,10 +940,10 @@ void rcu_user_exit(void)
+>   * long as the nesting level does not overflow an int.  (You will probably
+>   * run out of stack space first.)
+>   *
+> - * If you add or remove a call to rcu_nmi_enter(), be sure to test
+> + * If you add or remove a call to rcu_nmi_enter_common(), be sure to test
+>   * with CONFIG_RCU_EQS_DEBUG=y.
+>   */
+> -void rcu_nmi_enter(void)
+> +static __always_inline void rcu_nmi_enter_common(bool irq)
+>  {
+>  	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+>  	long incby = 2;
+> @@ -951,7 +960,15 @@ void rcu_nmi_enter(void)
+>  	 * period (observation due to Andy Lutomirski).
+>  	 */
+>  	if (rcu_dynticks_curr_cpu_in_eqs()) {
+> +
+> +		if (irq)
+> +			rcu_dynticks_task_exit();
+> +
+>  		rcu_dynticks_eqs_exit();
+> +
+> +		if (irq)
+> +			rcu_cleanup_after_idle();
+> +
+>  		incby = 1;
+>  	}
+>  	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
 
-Also, we still need to add __ref to __jump_label_transform as
-text_poke_early() is __init
+
+There is a slight change here, although I don't think it is an issue,
+but I want to bring it up just in case.
+
+The old way had:
+
+	rcu_dynticks_task_exit();
+	rcu_dynticks_eqs_exit();
+	trace_rcu_dyntick();
+	rcu_cleanup_after_idle();
+
+The new way has:
+
+	rcu_dynticks_task_exit();
+	rcu_dynticks_eqs_exit();
+	rcu_cleanup_after_idle();
+	trace_rcu_dyntick();
+
+As that tracepoint will use RCU, will this cause any side effects?
+
+My thought is that the new way is actually more correct, as I'm not
+sure we wanted RCU usage before the rcu_cleanup_after_idle().
+
+-- Steve
+
+
+> @@ -962,6 +979,14 @@ void rcu_nmi_enter(void)
+>  	barrier();
+>  }
+>  
+> +/**
+> + * rcu_nmi_enter - inform RCU of entry to NMI context
+> + */
+> +void rcu_nmi_enter(void)
+> +{
+> +	rcu_nmi_enter_common(false);
+> +}
+> +
+>  /**
+>   * rcu_irq_enter - inform RCU that current CPU is entering irq away from idle
+>   *
+> @@ -986,14 +1011,8 @@ void rcu_nmi_enter(void)
+>   */
+>  void rcu_irq_enter(void)
+>  {
+> -	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+> -
+>  	lockdep_assert_irqs_disabled();
+> -	if (rdtp->dynticks_nmi_nesting == 0)
+> -		rcu_dynticks_task_exit();
+> -	rcu_nmi_enter();
+> -	if (rdtp->dynticks_nmi_nesting == 1)
+> -		rcu_cleanup_after_idle();
+> +	rcu_nmi_enter_common(true);
+>  }
+>  
+>  /*
+
