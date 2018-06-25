@@ -4,72 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 333EFC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA170C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB6826208
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 845D226210
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:41:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="apVdS+Tp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB6826208
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ARK9ftcg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 845D226210
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934091AbeFYWlZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:41:25 -0400
-Received: from mail-qt0-f201.google.com ([209.85.216.201]:37533 "EHLO
-        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933969AbeFYWlW (ORCPT
+        id S934189AbeFYWla (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 18:41:30 -0400
+Received: from mail-io0-f202.google.com ([209.85.223.202]:49719 "EHLO
+        mail-io0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933969AbeFYWl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:41:22 -0400
-Received: by mail-qt0-f201.google.com with SMTP id i7-v6so14524534qtp.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:22 -0700 (PDT)
+        Mon, 25 Jun 2018 18:41:26 -0400
+Received: by mail-io0-f202.google.com with SMTP id x13-v6so12887215iog.16
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:41:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:date:in-reply-to:message-id:references:subject:from:to
          :cc;
-        bh=Od59Jof06fmqB0qjXSfZQ2gfWVDeH43xyKGMWu1WNYU=;
-        b=apVdS+TpQhthLWohXGWtBJUB/pXqAbBGgIcvpYxNvWsMHVcKNamdLM/bgDJe5iAmUX
-         rFxTmo4V94gVhp19uz9oEY38kvj4EBTlFbTgx09T+GE5tgIsNInITqcHLPH4b9eyO7I+
-         awLAIpSorrpv/gnLuQsc+i+tGyGdVuP0UbSp5uVdUth4WhRI8wJRGaRzsssfUjuKYrJG
-         fg/GPDprIorpEIGVuXTU78VvOMtFHmI56CrOzNpm/2cHTfH0apL6mBVT/+Jnj+bySD7n
-         QOfOW/1hKYfr+I8zruWNGU9KXJwuzCyK6NXY7wP0B+vD7uGwN9qNnR/eVxBZcW24Pd9z
-         z2+g==
+        bh=XXQ7C/CDeUMNvwwGw/8BYZVCFy2rI+v0Pigd08BAKSc=;
+        b=ARK9ftcgOouSqk4fMxtyYsAfDex24/Ayzi/AtIxioDUezvChXudQkPfNOwwr+3ZiRL
+         rVCwh5esMjB9OTMkdaqfam+0w2pfO9aYrBUYX40KkiohWcjVjigpRkTishZWQzBBP/uR
+         1ql786ng1WWfmkMjPO+FuSQfa1Z8UX34oKUUlsqe4cgFd2+9/+o8WiI19h/3a7pxOjwq
+         MV/8m0KQdewBL4Q8AxKONCqHduy0eq5ZMhWTYJCpe6G/2I6BDldafG5NTvKRJKKHG4vX
+         WhBbWMi5LPECGI+m2D0C2JNvVV08sSEH0TwU3YdQ8uhlfO7wtw83EhJ8/LD3yQCr9Jp7
+         060g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id
          :references:subject:from:to:cc;
-        bh=Od59Jof06fmqB0qjXSfZQ2gfWVDeH43xyKGMWu1WNYU=;
-        b=gGbRdkkaq3U+2j2QXhVzefevdz1FZZBPgg8ATPzWCgD5sTLVBNGvCKXIQSYf1sjw6/
-         SQW/gBAAl8NXnw+dR8fHoWvIgRfmPAEO40Z2EN06LoxsP4nxFbKWUUvWg7nu6HElFwAS
-         yqE8I/K9Dqg/4kBQeO0NberD1LMSMdKk+1v7crlOqtK75RifVi3FQobSn7yq3TyM/Th5
-         wZH9nrdh+W1sJEhwcvfnxcno0pnsEqsxhWqH36HrU2PVcBEJzrXlde+caGlOpn/MKHPq
-         mNCiyGs/gNz9Bm0XYLrzX2xceGA1BtZ0YWm4Yb8tGOszwnQLQQKc5sEizJq/Ofmqcmzt
-         /ARw==
-X-Gm-Message-State: APt69E1+4z5uacYM0CtKuoe1FGv5Lkt35jqCi2Ds/d7Sr4n5BrQVJ8R/
-        eT5+rPc34bm4v3M2QE3ORPtOWhsNUZVfUw==
-X-Google-Smtp-Source: AAOMgpeYyRD2F9A0DRsyFrlWDgyaWcWUwtuLfPa++rF733Vrv1j2uPswuhfqk0sIn3BqjGCREUp8mKsvm2yVOA==
+        bh=XXQ7C/CDeUMNvwwGw/8BYZVCFy2rI+v0Pigd08BAKSc=;
+        b=j9bW7+hp0r/ranvT5ZNkitWCu9uwwNfwHUg2cvWL0rc3/YTgygcA+qTaLkvwKHF+b8
+         TEvBiBgppqtxBZRxRQloG8mC9NOvYz/RHDd2P1icsnE5fkm4oS9+HFbKMFJ5b/h14mpV
+         1NsfOM7hufzA1VXZvVoTLeOOuREb1mwb81+zZEwLhlC8j4zQatnx09XzRSmcQ4Ln/TKR
+         rdEgEwQe1oPufVvdX2J+ofnBT4IO7y8hRwtrQsw26bdD7YI1Hdc8kbQyHx3+dNK89ERV
+         /QX2L2PONWX6lLzVZWuWcBkkHdygT0iHzUvBdwRD+sgRlGetwZE0UzrFB192JWIcqiif
+         Hsng==
+X-Gm-Message-State: APt69E2TpNSfI5sc7A4FMGgbuAErrc5Rlr+fI8czhS+NlHNYIbF5HmCV
+        VrlEJ5kiysrt+9rDwzyO72IH0n/sNe2/Dg==
+X-Google-Smtp-Source: ADUXVKInHsu2npYg7XtQ4k9TVhn2iNrTC4MpiIVgLdoBMmCL8Nj9iE/HXeNOjEeLLnh2WsEB9e3brWOFXptFRg==
 MIME-Version: 1.0
-X-Received: by 2002:a0c:fa04:: with SMTP id q4-v6mr7893824qvn.7.1529966482027;
- Mon, 25 Jun 2018 15:41:22 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 15:38:57 -0700
+X-Received: by 2002:a24:14ca:: with SMTP id 193-v6mr1231065itg.13.1529966485494;
+ Mon, 25 Jun 2018 15:41:25 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:38:58 -0700
 In-Reply-To: <20180625224014.134829-1-thgarnie@google.com>
-Message-Id: <20180625224014.134829-10-thgarnie@google.com>
+Message-Id: <20180625224014.134829-11-thgarnie@google.com>
 References: <20180625224014.134829-1-thgarnie@google.com>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v5 09/27] x86/acpi: Adapt assembly for PIE support
+Subject: [PATCH v5 10/27] x86/boot/64: Adapt assembly for PIE support
 From:   Thomas Garnier <thgarnie@google.com>
 To:     kernel-hardening@lists.openwall.com
 Cc:     Thomas Garnier <thgarnie@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,89 +82,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Change the assembly code to use only relative references of symbols for the
 kernel to be PIE compatible.
 
+Early at boot, the kernel is mapped at a temporary address while preparing
+the page table. To know the changes needed for the page table with KASLR,
+the boot code calculate the difference between the expected address of the
+kernel and the one chosen by KASLR. It does not work with PIE because all
+symbols in code are relatives. Instead of getting the future relocated
+virtual address, you will get the current temporary mapping.
+Instructions were changed to have absolute 64-bit references.
+
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- arch/x86/kernel/acpi/wakeup_64.S | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ arch/x86/kernel/head_64.S | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
-index 50b8ed0317a3..472659c0f811 100644
---- a/arch/x86/kernel/acpi/wakeup_64.S
-+++ b/arch/x86/kernel/acpi/wakeup_64.S
-@@ -14,7 +14,7 @@
- 	 * Hooray, we are in Long 64-bit mode (but still running in low memory)
- 	 */
- ENTRY(wakeup_long64)
--	movq	saved_magic, %rax
-+	movq	saved_magic(%rip), %rax
- 	movq	$0x123456789abcdef0, %rdx
- 	cmpq	%rdx, %rax
- 	jne	bogus_64_magic
-@@ -25,14 +25,14 @@ ENTRY(wakeup_long64)
- 	movw	%ax, %es
- 	movw	%ax, %fs
- 	movw	%ax, %gs
--	movq	saved_rsp, %rsp
-+	movq	saved_rsp(%rip), %rsp
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 8344dd2f310a..7fca19e1f556 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -89,8 +89,10 @@ startup_64:
+ 	popq	%rsi
  
--	movq	saved_rbx, %rbx
--	movq	saved_rdi, %rdi
--	movq	saved_rsi, %rsi
--	movq	saved_rbp, %rbp
-+	movq	saved_rbx(%rip), %rbx
-+	movq	saved_rdi(%rip), %rdi
-+	movq	saved_rsi(%rip), %rsi
-+	movq	saved_rbp(%rip), %rbp
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	addq	$(early_top_pgt - __START_KERNEL_map), %rax
++	movabs  $(early_top_pgt - __START_KERNEL_map), %rcx
++	addq    %rcx, %rax
+ 	jmp 1f
++
+ ENTRY(secondary_startup_64)
+ 	UNWIND_HINT_EMPTY
+ 	/*
+@@ -119,7 +121,8 @@ ENTRY(secondary_startup_64)
+ 	popq	%rsi
  
--	movq	saved_rip, %rax
-+	movq	saved_rip(%rip), %rax
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	addq	$(init_top_pgt - __START_KERNEL_map), %rax
++	movabs	$(init_top_pgt - __START_KERNEL_map), %rcx
++	addq    %rcx, %rax
+ 1:
+ 
+ 	/* Enable PAE mode, PGE and LA57 */
+@@ -137,7 +140,7 @@ ENTRY(secondary_startup_64)
+ 	movq	%rax, %cr3
+ 
+ 	/* Ensure I am executing from virtual addresses */
+-	movq	$1f, %rax
++	movabs  $1f, %rax
+ 	ANNOTATE_RETPOLINE_SAFE
  	jmp	*%rax
- ENDPROC(wakeup_long64)
- 
-@@ -45,7 +45,7 @@ ENTRY(do_suspend_lowlevel)
- 	xorl	%eax, %eax
- 	call	save_processor_state
- 
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	%rsp, pt_regs_sp(%rax)
- 	movq	%rbp, pt_regs_bp(%rax)
- 	movq	%rsi, pt_regs_si(%rax)
-@@ -64,13 +64,14 @@ ENTRY(do_suspend_lowlevel)
- 	pushfq
- 	popq	pt_regs_flags(%rax)
- 
--	movq	$.Lresume_point, saved_rip(%rip)
-+	leaq	.Lresume_point(%rip), %rax
-+	movq	%rax, saved_rip(%rip)
- 
--	movq	%rsp, saved_rsp
--	movq	%rbp, saved_rbp
--	movq	%rbx, saved_rbx
--	movq	%rdi, saved_rdi
--	movq	%rsi, saved_rsi
-+	movq	%rsp, saved_rsp(%rip)
-+	movq	%rbp, saved_rbp(%rip)
-+	movq	%rbx, saved_rbx(%rip)
-+	movq	%rdi, saved_rdi(%rip)
-+	movq	%rsi, saved_rsi(%rip)
- 
- 	addq	$8, %rsp
- 	movl	$3, %edi
-@@ -82,7 +83,7 @@ ENTRY(do_suspend_lowlevel)
- 	.align 4
- .Lresume_point:
- 	/* We don't restore %rax, it must be 0 anyway */
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	saved_context_cr4(%rax), %rbx
- 	movq	%rbx, %cr4
- 	movq	saved_context_cr3(%rax), %rbx
+ 1:
+@@ -234,11 +237,12 @@ ENTRY(secondary_startup_64)
+ 	 *	REX.W + FF /5 JMP m16:64 Jump far, absolute indirect,
+ 	 *		address given in m16:64.
+ 	 */
+-	pushq	$.Lafter_lret	# put return address on stack for unwinder
++	movabs  $.Lafter_lret, %rax
++	pushq	%rax		# put return address on stack for unwinder
+ 	xorq	%rbp, %rbp	# clear frame pointer
+-	movq	initial_code(%rip), %rax
++	leaq	initial_code(%rip), %rax
+ 	pushq	$__KERNEL_CS	# set correct cs
+-	pushq	%rax		# target address in negative space
++	pushq	(%rax)		# target address in negative space
+ 	lretq
+ .Lafter_lret:
+ END(secondary_startup_64)
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
