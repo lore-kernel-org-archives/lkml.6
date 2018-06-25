@@ -2,85 +2,78 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DEFC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54215C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B23925632
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:49:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B23925632
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EC34225635
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:51:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC34225635
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754652AbeFYIte (ORCPT
+        id S1754728AbeFYIvB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:49:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35314 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754071AbeFYItc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:49:32 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EA495401EF2B;
-        Mon, 25 Jun 2018 08:49:31 +0000 (UTC)
-Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7044479DD;
-        Mon, 25 Jun 2018 08:49:30 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 10:49:28 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Vasily Gorbik <gor@linux.ibm.com>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-s390x <qemu-s390x@nongnu.org>,
-        qemu-devel <qemu-devel@nongnu.org>,
-        Thomas Huth <thuth@redhat.com>
-Subject: Re: s390 qemu boot failure in -next
-Message-ID: <20180625104928.6c4cb239.cohuck@redhat.com>
-In-Reply-To: <your-ad-here.call-01529915788-ext-6027@work.hours>
-References: <20180622194736.GA5794@roeck-us.net>
-        <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
-        <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
-        <20180625100548.64222dad.cohuck@redhat.com>
-        <your-ad-here.call-01529915788-ext-6027@work.hours>
-Organization: Red Hat GmbH
+        Mon, 25 Jun 2018 04:51:01 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:49495 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754449AbeFYIu6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 04:50:58 -0400
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id w5P8qSH7009370;
+        Mon, 25 Jun 2018 16:52:28 +0800 (GMT-8)
+        (envelope-from zong@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.1.85) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Mon, 25 Jun 2018
+ 16:49:45 +0800
+From:   Zong Li <zong@andestech.com>
+To:     <palmer@sifive.com>, <hch@infradead.org>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <zongbox@gmail.com>
+CC:     Zong Li <zong@andestech.com>, <greentime@andestech.com>
+Subject: [PATCH v2 0/4] Building for 32-bit RISC-V kernel
+Date:   Mon, 25 Jun 2018 16:49:36 +0800
+Message-ID: <cover.1529915117.git.zong@andestech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 25 Jun 2018 08:49:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 25 Jun 2018 08:49:32 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w5P8qSH7009370
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Jun 2018 10:36:33 +0200
-Vasily Gorbik <gor@linux.ibm.com> wrote:
+These patches for building 32-bit RISC-V kernel.
+ - Fix the compile errors and warnings on RV32I.
+ - Fix some incompatible problem on RV32I.
+ - Add format.h for compatible of print format.
 
-> This change has been done on purpose. Uncompressed image is not going
-> to be bootable any more. In future the decompressor phase would get
-> more function (early memory detection as an example) and there is no
-> chance to duplicate that code in uncompressed image as well (to keep it
-> bootable on its own). The patch series commit messages contain more
-> technical details.
-> 
-> For qemu either bzImage or arch/s390/boot/compressed/vmlinux should be
-> used, which are bootable images.
-> 
-> But that's really confusing that uncompressed vmlinux is still kind
-> of booting. May be we should discuss how to avoid this confusion
-> (may be change uncompressed image enty point to a function doing
-> disabled wait with badb007 or smth) and how to encourage people to use
-> arch/s390/boot/compressed/vmlinux instead.
+The fixed width integer types format for Elf_Addr will move to
+generic header by another patch. For now, there are some warning
+about unexpected argument of type on RV32I.
 
-So, the intention is that you can't boot the uncompressed image
-anywhere? (Was it possible before, e.g. when punching the image under
-z/VM?) If yes, it would make sense to explicitly fence it. But I'm
-worried that it would break previously working setups (did we document
-the purpose of the images anywhere?)
+Change in v1:
+ - Fix some error in v1
+ - Remove implementation of fixed width integer types format for Elf_Addr.
+
+Zong Li (4):
+  RISC-V: Add conditional macro for zone of DMA32
+  RISC-V: Select GENERIC_UCMPDI2 on RV32I
+  RISC-V: Add definiion of extract symbol's index and type for 32-bit
+  RISC-V: Change variable type for 32-bit compatible
+
+ arch/riscv/Kconfig                |  1 +
+ arch/riscv/include/uapi/asm/elf.h |  9 +++++++--
+ arch/riscv/kernel/module.c        | 22 +++++++++++-----------
+ arch/riscv/mm/init.c              |  2 ++
+ 4 files changed, 21 insertions(+), 13 deletions(-)
+
+-- 
+2.16.1
+
