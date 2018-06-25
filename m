@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC700C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAAEAC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62C8625A18
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A32B25A1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:15:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="KkSCU5gL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C8625A18
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="q/o9e/3l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A32B25A1A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933724AbeFYNPk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:15:40 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36640 "EHLO
+        id S933959AbeFYNPu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:15:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36860 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755558AbeFYNPf (ORCPT
+        with ESMTP id S933726AbeFYNPn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:15:35 -0400
+        Mon, 25 Jun 2018 09:15:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=jBIZxG66Fl3PV8AVlIgYJDyR11j0hCMHNUW9eojQLz0=; b=KkSCU5gLL+Zi
-        WQhf1W2/TXr+kMEdf4JRts5Yjryg6mkArPQq0bUVQrWVvoQHm71vo5X2DeZsKNEZlS3eTtqvWGCvR
-        KTKWS25zL8KbWgc8t11am8ypg3FB+sOR3ViORvxUGJWyPqcCHuSj1PpRjQQu5pjYTP6eSg/IfJRuE
-        DITa8=;
+        List-Archive; bh=pG5Lif47lSeDNi70RAjG03Fj2KB43qSvRQlO7rrCKNw=; b=q/o9e/3lv8ci
+        j7J3iDFBEVVLizw0dWJx9I2hV4MW5Y8P4+wB9WA9Zf2cuO0itmgAWKZx4RNb05QpMJj52fCi/dKTb
+        K23q1F7H/VOUS1ogQVWOsDFtfMN56U2zitTFC60M3YD6Kin2QH2hM9m0atIjO9mPOjDkIg8Kd2R4W
+        R2Yoc=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fXRKt-0007rI-WB; Mon, 25 Jun 2018 13:15:16 +0000
+        id 1fXRL7-0007sE-Fq; Mon, 25 Jun 2018 13:15:29 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fXRKt-0008Il-HJ; Mon, 25 Jun 2018 14:15:15 +0100
+        id 1fXRL7-0008RT-0t; Mon, 25 Jun 2018 14:15:29 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Daniel Mack <daniel@zonque.org>, Daniel Mack <daniel@zonque.org>,
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
         Boris Brezillon <boris.brezillon@free-electrons.com>,
@@ -59,10 +60,10 @@ Cc:     Daniel Mack <daniel@zonque.org>, Daniel Mack <daniel@zonque.org>,
         linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org,
         dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-media@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ARM: pxa: change SSP DMA channels allocation" to the asoc tree
-In-Reply-To:  <20180524070703.11901-14-robert.jarzmik@free.fr>
-Message-Id: <E1fXRKt-0008Il-HJ@debutante>
-Date:   Mon, 25 Jun 2018 14:15:15 +0100
+Subject: Applied "mmc: pxamci: remove the dmaengine compat need" to the asoc tree
+In-Reply-To:  <20180524070703.11901-4-robert.jarzmik@free.fr>
+Message-Id: <E1fXRL7-0008RT-0t@debutante>
+Date:   Mon, 25 Jun 2018 14:15:29 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,7 +71,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ARM: pxa: change SSP DMA channels allocation
+   mmc: pxamci: remove the dmaengine compat need
 
 has been applied to the asoc tree at
 
@@ -95,117 +96,85 @@ to this mail.
 Thanks,
 Mark
 
-From cd31b80736852d34bc1072f3e579a6fd73a244e7 Mon Sep 17 00:00:00 2001
+From 6b3348f9e6eb35d2c2d49ffa274039ef9a901adc Mon Sep 17 00:00:00 2001
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Sun, 17 Jun 2018 19:02:17 +0200
-Subject: [PATCH] ARM: pxa: change SSP DMA channels allocation
+Date: Sun, 17 Jun 2018 19:02:07 +0200
+Subject: [PATCH] mmc: pxamci: remove the dmaengine compat need
 
-Now the dma_slave_map is available for PXA architecture, switch the SSP
-device to it.
+As the pxa architecture switched towards the dmaengine slave map, the
+old compatibility mechanism to acquire the dma requestor line number and
+priority are not needed anymore.
 
-This specifically means that :
-- for platform data based machines, the DMA requestor channels are
-  extracted from the slave map, where pxa-ssp-dai.<N> is a 1-1 match to
-  ssp.<N>, and the channels are either "rx" or "tx".
-
-- for device tree platforms, the dma node should be hooked into the
-  pxa2xx-ac97 or pxa-ssp-dai node.
+This patch simplifies the dma resource acquisition, using the more
+generic function dma_request_slave_channel().
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Daniel Mack <daniel@zonque.org>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/arm/plat-pxa/ssp.c    | 47 --------------------------------------
- include/linux/pxa2xx_ssp.h |  2 --
- sound/soc/pxa/pxa-ssp.c    |  5 ++--
- 3 files changed, 2 insertions(+), 52 deletions(-)
+ drivers/mmc/host/pxamci.c | 29 +++--------------------------
+ 1 file changed, 3 insertions(+), 26 deletions(-)
 
-diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
-index ba13f793fbce..ed36dcab80f1 100644
---- a/arch/arm/plat-pxa/ssp.c
-+++ b/arch/arm/plat-pxa/ssp.c
-@@ -127,53 +127,6 @@ static int pxa_ssp_probe(struct platform_device *pdev)
- 	if (IS_ERR(ssp->clk))
- 		return PTR_ERR(ssp->clk);
+diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
+index c763b404510f..6c94474e36f4 100644
+--- a/drivers/mmc/host/pxamci.c
++++ b/drivers/mmc/host/pxamci.c
+@@ -24,7 +24,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/dmaengine.h>
+ #include <linux/dma-mapping.h>
+-#include <linux/dma/pxa-dma.h>
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/mmc/host.h>
+@@ -637,10 +636,8 @@ static int pxamci_probe(struct platform_device *pdev)
+ {
+ 	struct mmc_host *mmc;
+ 	struct pxamci_host *host = NULL;
+-	struct resource *r, *dmarx, *dmatx;
+-	struct pxad_param param_rx, param_tx;
++	struct resource *r;
+ 	int ret, irq, gpio_cd = -1, gpio_ro = -1, gpio_power = -1;
+-	dma_cap_mask_t mask;
  
--	if (dev->of_node) {
--		struct of_phandle_args dma_spec;
--		struct device_node *np = dev->of_node;
--		int ret;
--
--		/*
--		 * FIXME: we should allocate the DMA channel from this
--		 * context and pass the channel down to the ssp users.
--		 * For now, we lookup the rx and tx indices manually
--		 */
--
--		/* rx */
--		ret = of_parse_phandle_with_args(np, "dmas", "#dma-cells",
--						 0, &dma_spec);
--
--		if (ret) {
--			dev_err(dev, "Can't parse dmas property\n");
--			return -ENODEV;
+ 	ret = pxamci_of_init(pdev);
+ 	if (ret)
+@@ -739,34 +736,14 @@ static int pxamci_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, mmc);
+ 
+-	if (!pdev->dev.of_node) {
+-		dmarx = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-		dmatx = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+-		if (!dmarx || !dmatx) {
+-			ret = -ENXIO;
+-			goto out;
 -		}
--		ssp->drcmr_rx = dma_spec.args[0];
--		of_node_put(dma_spec.np);
--
--		/* tx */
--		ret = of_parse_phandle_with_args(np, "dmas", "#dma-cells",
--						 1, &dma_spec);
--		if (ret) {
--			dev_err(dev, "Can't parse dmas property\n");
--			return -ENODEV;
--		}
--		ssp->drcmr_tx = dma_spec.args[0];
--		of_node_put(dma_spec.np);
--	} else {
--		res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
--		if (res == NULL) {
--			dev_err(dev, "no SSP RX DRCMR defined\n");
--			return -ENODEV;
--		}
--		ssp->drcmr_rx = res->start;
--
--		res = platform_get_resource(pdev, IORESOURCE_DMA, 1);
--		if (res == NULL) {
--			dev_err(dev, "no SSP TX DRCMR defined\n");
--			return -ENODEV;
--		}
--		ssp->drcmr_tx = res->start;
+-		param_rx.prio = PXAD_PRIO_LOWEST;
+-		param_rx.drcmr = dmarx->start;
+-		param_tx.prio = PXAD_PRIO_LOWEST;
+-		param_tx.drcmr = dmatx->start;
 -	}
 -
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (res == NULL) {
- 		dev_err(dev, "no memory resource defined\n");
-diff --git a/include/linux/pxa2xx_ssp.h b/include/linux/pxa2xx_ssp.h
-index 8461b18e4608..03a7ca46735b 100644
---- a/include/linux/pxa2xx_ssp.h
-+++ b/include/linux/pxa2xx_ssp.h
-@@ -212,8 +212,6 @@ struct ssp_device {
- 	int		type;
- 	int		use_count;
- 	int		irq;
--	int		drcmr_rx;
--	int		drcmr_tx;
- 
- 	struct device_node	*of_node;
- };
-diff --git a/sound/soc/pxa/pxa-ssp.c b/sound/soc/pxa/pxa-ssp.c
-index 6fc986080130..0b441338bdd4 100644
---- a/sound/soc/pxa/pxa-ssp.c
-+++ b/sound/soc/pxa/pxa-ssp.c
-@@ -105,9 +105,8 @@ static int pxa_ssp_startup(struct snd_pcm_substream *substream,
- 	dma = kzalloc(sizeof(struct snd_dmaengine_dai_dma_data), GFP_KERNEL);
- 	if (!dma)
- 		return -ENOMEM;
+-	dma_cap_zero(mask);
+-	dma_cap_set(DMA_SLAVE, mask);
 -
--	dma->filter_data = substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
--				&ssp->drcmr_tx : &ssp->drcmr_rx;
-+	dma->chan_name = substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
-+		"tx" : "rx";
+-	host->dma_chan_rx =
+-		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+-						 &param_rx, &pdev->dev, "rx");
++	host->dma_chan_rx = dma_request_slave_channel(&pdev->dev, "rx");
+ 	if (host->dma_chan_rx == NULL) {
+ 		dev_err(&pdev->dev, "unable to request rx dma channel\n");
+ 		ret = -ENODEV;
+ 		goto out;
+ 	}
  
- 	snd_soc_dai_set_dma_data(cpu_dai, substream, dma);
- 
+-	host->dma_chan_tx =
+-		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+-						 &param_tx,  &pdev->dev, "tx");
++	host->dma_chan_tx = dma_request_slave_channel(&pdev->dev, "tx");
+ 	if (host->dma_chan_tx == NULL) {
+ 		dev_err(&pdev->dev, "unable to request tx dma channel\n");
+ 		ret = -ENODEV;
 -- 
 2.18.0.rc2
 
