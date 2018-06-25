@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FB4C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B5FC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD8225935
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:39:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD8225935
+	by mail.kernel.org (Postfix) with ESMTP id EB29C24CA3
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:39:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB29C24CA3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933870AbeFYMjU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:39:20 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:42040 "EHLO inva021.nxp.com"
+        id S933975AbeFYMj3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:39:29 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:42110 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933787AbeFYMjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:39:17 -0400
+        id S933787AbeFYMjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 08:39:23 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 884C420008B;
-        Mon, 25 Jun 2018 14:39:15 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5AD312000CA;
+        Mon, 25 Jun 2018 14:39:21 +0200 (CEST)
 Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 116D0200078;
-        Mon, 25 Jun 2018 14:39:15 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EC53E200078;
+        Mon, 25 Jun 2018 14:39:20 +0200 (CEST)
 Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
-        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 6E69340A70;
-        Mon, 25 Jun 2018 05:39:14 -0700 (MST)
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 5AB4040C72;
+        Mon, 25 Jun 2018 05:39:20 -0700 (MST)
 Received: from titan.ap.freescale.net ([10.192.208.233])
-        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w5PCd34N025070;
-        Mon, 25 Jun 2018 05:39:11 -0700
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w5PCd34P025070;
+        Mon, 25 Jun 2018 05:39:17 -0700
 From:   Yangbo Lu <yangbo.lu@nxp.com>
 To:     netdev@vger.kernel.org, madalin.bucur@nxp.com,
         Richard Cochran <richardcochran@gmail.com>,
@@ -42,9 +42,9 @@ To:     netdev@vger.kernel.org, madalin.bucur@nxp.com,
 Cc:     devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v4, 02/10] ptp: support DPAA FMan 1588 timer in ptp_qoriq
-Date:   Mon, 25 Jun 2018 20:37:08 +0800
-Message-Id: <20180625123716.28993-3-yangbo.lu@nxp.com>
+Subject: [v4, 04/10] powerpc/mpc85xx: move ptp timer out of fman in dts
+Date:   Mon, 25 Jun 2018 20:37:10 +0800
+Message-Id: <20180625123716.28993-5-yangbo.lu@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180625123716.28993-1-yangbo.lu@nxp.com>
 References: <20180625123716.28993-1-yangbo.lu@nxp.com>
@@ -54,10 +54,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to support DPAA (Data Path Acceleration Architecture)
-1588 timer by adding "fsl,fman-ptp-timer" compatible, sharing
-interrupt with FMan, adding FSL_DPAA_ETH dependency, and fixing
-up register offset.
+This patch is to move ptp timer node out of fman.
+Because ptp timer will be probed by ptp_qoriq driver,
+it should be an independent device in case of conflict
+memory mapping.
 
 Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 Acked-by: Richard Cochran <richardcochran@gmail.com>
@@ -70,390 +70,188 @@ Changes for v3:
 Changes for v4:
 	- Added ACKs.
 ---
- drivers/ptp/Kconfig           |    2 +-
- drivers/ptp/ptp_qoriq.c       |  104 ++++++++++++++++++++++++++---------------
- include/linux/fsl/ptp_qoriq.h |   38 ++++++++++++---
- 3 files changed, 98 insertions(+), 46 deletions(-)
+ arch/powerpc/boot/dts/fsl/qoriq-fman-0.dtsi   |   14 ++++++++------
+ arch/powerpc/boot/dts/fsl/qoriq-fman-1.dtsi   |   14 ++++++++------
+ arch/powerpc/boot/dts/fsl/qoriq-fman3-0.dtsi  |   14 ++++++++------
+ arch/powerpc/boot/dts/fsl/qoriq-fman3-1.dtsi  |   14 ++++++++------
+ arch/powerpc/boot/dts/fsl/qoriq-fman3l-0.dtsi |   14 ++++++++------
+ 5 files changed, 40 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
-index 474c988..d137c48 100644
---- a/drivers/ptp/Kconfig
-+++ b/drivers/ptp/Kconfig
-@@ -43,7 +43,7 @@ config PTP_1588_CLOCK_DTE
+diff --git a/arch/powerpc/boot/dts/fsl/qoriq-fman-0.dtsi b/arch/powerpc/boot/dts/fsl/qoriq-fman-0.dtsi
+index abd01d4..6b124f7 100644
+--- a/arch/powerpc/boot/dts/fsl/qoriq-fman-0.dtsi
++++ b/arch/powerpc/boot/dts/fsl/qoriq-fman-0.dtsi
+@@ -37,12 +37,13 @@ fman0: fman@400000 {
+ 	#size-cells = <1>;
+ 	cell-index = <0>;
+ 	compatible = "fsl,fman";
+-	ranges = <0 0x400000 0x100000>;
+-	reg = <0x400000 0x100000>;
++	ranges = <0 0x400000 0xfe000>;
++	reg = <0x400000 0xfe000>;
+ 	interrupts = <96 2 0 0>, <16 2 1 1>;
+ 	clocks = <&clockgen 3 0>;
+ 	clock-names = "fmanclk";
+ 	fsl,qman-channel-range = <0x40 0xc>;
++	ptimer-handle = <&ptp_timer0>;
  
- config PTP_1588_CLOCK_QORIQ
- 	tristate "Freescale QorIQ 1588 timer as PTP clock"
--	depends on GIANFAR
-+	depends on GIANFAR || FSL_DPAA_ETH
- 	depends on PTP_1588_CLOCK
- 	default y
- 	help
-diff --git a/drivers/ptp/ptp_qoriq.c b/drivers/ptp/ptp_qoriq.c
-index e8652c1..a14c317 100644
---- a/drivers/ptp/ptp_qoriq.c
-+++ b/drivers/ptp/ptp_qoriq.c
-@@ -39,11 +39,12 @@
- /* Caller must hold qoriq_ptp->lock. */
- static u64 tmr_cnt_read(struct qoriq_ptp *qoriq_ptp)
- {
-+	struct qoriq_ptp_registers *regs = &qoriq_ptp->regs;
- 	u64 ns;
- 	u32 lo, hi;
+ 	muram@0 {
+ 		compatible = "fsl,fman-muram";
+@@ -93,9 +94,10 @@ fman0: fman@400000 {
+ 		reg = <0x87000 0x1000>;
+ 		status = "disabled";
+ 	};
++};
  
--	lo = qoriq_read(&qoriq_ptp->regs->tmr_cnt_l);
--	hi = qoriq_read(&qoriq_ptp->regs->tmr_cnt_h);
-+	lo = qoriq_read(&regs->ctrl_regs->tmr_cnt_l);
-+	hi = qoriq_read(&regs->ctrl_regs->tmr_cnt_h);
- 	ns = ((u64) hi) << 32;
- 	ns |= lo;
- 	return ns;
-@@ -52,16 +53,18 @@ static u64 tmr_cnt_read(struct qoriq_ptp *qoriq_ptp)
- /* Caller must hold qoriq_ptp->lock. */
- static void tmr_cnt_write(struct qoriq_ptp *qoriq_ptp, u64 ns)
- {
-+	struct qoriq_ptp_registers *regs = &qoriq_ptp->regs;
- 	u32 hi = ns >> 32;
- 	u32 lo = ns & 0xffffffff;
- 
--	qoriq_write(&qoriq_ptp->regs->tmr_cnt_l, lo);
--	qoriq_write(&qoriq_ptp->regs->tmr_cnt_h, hi);
-+	qoriq_write(&regs->ctrl_regs->tmr_cnt_l, lo);
-+	qoriq_write(&regs->ctrl_regs->tmr_cnt_h, hi);
- }
- 
- /* Caller must hold qoriq_ptp->lock. */
- static void set_alarm(struct qoriq_ptp *qoriq_ptp)
- {
-+	struct qoriq_ptp_registers *regs = &qoriq_ptp->regs;
- 	u64 ns;
- 	u32 lo, hi;
- 
-@@ -70,16 +73,18 @@ static void set_alarm(struct qoriq_ptp *qoriq_ptp)
- 	ns -= qoriq_ptp->tclk_period;
- 	hi = ns >> 32;
- 	lo = ns & 0xffffffff;
--	qoriq_write(&qoriq_ptp->regs->tmr_alarm1_l, lo);
--	qoriq_write(&qoriq_ptp->regs->tmr_alarm1_h, hi);
-+	qoriq_write(&regs->alarm_regs->tmr_alarm1_l, lo);
-+	qoriq_write(&regs->alarm_regs->tmr_alarm1_h, hi);
- }
- 
- /* Caller must hold qoriq_ptp->lock. */
- static void set_fipers(struct qoriq_ptp *qoriq_ptp)
- {
-+	struct qoriq_ptp_registers *regs = &qoriq_ptp->regs;
-+
- 	set_alarm(qoriq_ptp);
--	qoriq_write(&qoriq_ptp->regs->tmr_fiper1, qoriq_ptp->tmr_fiper1);
--	qoriq_write(&qoriq_ptp->regs->tmr_fiper2, qoriq_ptp->tmr_fiper2);
-+	qoriq_write(&regs->fiper_regs->tmr_fiper1, qoriq_ptp->tmr_fiper1);
-+	qoriq_write(&regs->fiper_regs->tmr_fiper2, qoriq_ptp->tmr_fiper2);
- }
- 
- /*
-@@ -89,16 +94,17 @@ static void set_fipers(struct qoriq_ptp *qoriq_ptp)
- static irqreturn_t isr(int irq, void *priv)
- {
- 	struct qoriq_ptp *qoriq_ptp = priv;
-+	struct qoriq_ptp_registers *regs = &qoriq_ptp->regs;
- 	struct ptp_clock_event event;
- 	u64 ns;
- 	u32 ack = 0, lo, hi, mask, val;
- 
--	val = qoriq_read(&qoriq_ptp->regs->tmr_tevent);
-+	val = qoriq_read(&regs->ctrl_regs->tmr_tevent);
- 
- 	if (val & ETS1) {
- 		ack |= ETS1;
--		hi = qoriq_read(&qoriq_ptp->regs->tmr_etts1_h);
--		lo = qoriq_read(&qoriq_ptp->regs->tmr_etts1_l);
-+		hi = qoriq_read(&regs->etts_regs->tmr_etts1_h);
-+		lo = qoriq_read(&regs->etts_regs->tmr_etts1_l);
- 		event.type = PTP_CLOCK_EXTTS;
- 		event.index = 0;
- 		event.timestamp = ((u64) hi) << 32;
-@@ -108,8 +114,8 @@ static irqreturn_t isr(int irq, void *priv)
- 
- 	if (val & ETS2) {
- 		ack |= ETS2;
--		hi = qoriq_read(&qoriq_ptp->regs->tmr_etts2_h);
--		lo = qoriq_read(&qoriq_ptp->regs->tmr_etts2_l);
-+		hi = qoriq_read(&regs->etts_regs->tmr_etts2_h);
-+		lo = qoriq_read(&regs->etts_regs->tmr_etts2_l);
- 		event.type = PTP_CLOCK_EXTTS;
- 		event.index = 1;
- 		event.timestamp = ((u64) hi) << 32;
-@@ -130,16 +136,16 @@ static irqreturn_t isr(int irq, void *priv)
- 			hi = ns >> 32;
- 			lo = ns & 0xffffffff;
- 			spin_lock(&qoriq_ptp->lock);
--			qoriq_write(&qoriq_ptp->regs->tmr_alarm2_l, lo);
--			qoriq_write(&qoriq_ptp->regs->tmr_alarm2_h, hi);
-+			qoriq_write(&regs->alarm_regs->tmr_alarm2_l, lo);
-+			qoriq_write(&regs->alarm_regs->tmr_alarm2_h, hi);
- 			spin_unlock(&qoriq_ptp->lock);
- 			qoriq_ptp->alarm_value = ns;
- 		} else {
--			qoriq_write(&qoriq_ptp->regs->tmr_tevent, ALM2);
-+			qoriq_write(&regs->ctrl_regs->tmr_tevent, ALM2);
- 			spin_lock(&qoriq_ptp->lock);
--			mask = qoriq_read(&qoriq_ptp->regs->tmr_temask);
-+			mask = qoriq_read(&regs->ctrl_regs->tmr_temask);
- 			mask &= ~ALM2EN;
--			qoriq_write(&qoriq_ptp->regs->tmr_temask, mask);
-+			qoriq_write(&regs->ctrl_regs->tmr_temask, mask);
- 			spin_unlock(&qoriq_ptp->lock);
- 			qoriq_ptp->alarm_value = 0;
- 			qoriq_ptp->alarm_interval = 0;
-@@ -153,7 +159,7 @@ static irqreturn_t isr(int irq, void *priv)
- 	}
- 
- 	if (ack) {
--		qoriq_write(&qoriq_ptp->regs->tmr_tevent, ack);
-+		qoriq_write(&regs->ctrl_regs->tmr_tevent, ack);
- 		return IRQ_HANDLED;
- 	} else
- 		return IRQ_NONE;
-@@ -169,6 +175,7 @@ static int ptp_qoriq_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
- 	u32 tmr_add;
- 	int neg_adj = 0;
- 	struct qoriq_ptp *qoriq_ptp = container_of(ptp, struct qoriq_ptp, caps);
-+	struct qoriq_ptp_registers *regs = &qoriq_ptp->regs;
- 
- 	if (scaled_ppm < 0) {
- 		neg_adj = 1;
-@@ -186,7 +193,7 @@ static int ptp_qoriq_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
- 
- 	tmr_add = neg_adj ? tmr_add - diff : tmr_add + diff;
- 
--	qoriq_write(&qoriq_ptp->regs->tmr_add, tmr_add);
-+	qoriq_write(&regs->ctrl_regs->tmr_add, tmr_add);
- 
- 	return 0;
- }
-@@ -250,6 +257,7 @@ static int ptp_qoriq_enable(struct ptp_clock_info *ptp,
- 			      struct ptp_clock_request *rq, int on)
- {
- 	struct qoriq_ptp *qoriq_ptp = container_of(ptp, struct qoriq_ptp, caps);
-+	struct qoriq_ptp_registers *regs = &qoriq_ptp->regs;
- 	unsigned long flags;
- 	u32 bit, mask;
- 
-@@ -266,23 +274,23 @@ static int ptp_qoriq_enable(struct ptp_clock_info *ptp,
- 			return -EINVAL;
- 		}
- 		spin_lock_irqsave(&qoriq_ptp->lock, flags);
--		mask = qoriq_read(&qoriq_ptp->regs->tmr_temask);
-+		mask = qoriq_read(&regs->ctrl_regs->tmr_temask);
- 		if (on)
- 			mask |= bit;
- 		else
- 			mask &= ~bit;
--		qoriq_write(&qoriq_ptp->regs->tmr_temask, mask);
-+		qoriq_write(&regs->ctrl_regs->tmr_temask, mask);
- 		spin_unlock_irqrestore(&qoriq_ptp->lock, flags);
- 		return 0;
- 
- 	case PTP_CLK_REQ_PPS:
- 		spin_lock_irqsave(&qoriq_ptp->lock, flags);
--		mask = qoriq_read(&qoriq_ptp->regs->tmr_temask);
-+		mask = qoriq_read(&regs->ctrl_regs->tmr_temask);
- 		if (on)
- 			mask |= PP1EN;
- 		else
- 			mask &= ~PP1EN;
--		qoriq_write(&qoriq_ptp->regs->tmr_temask, mask);
-+		qoriq_write(&regs->ctrl_regs->tmr_temask, mask);
- 		spin_unlock_irqrestore(&qoriq_ptp->lock, flags);
- 		return 0;
- 
-@@ -313,10 +321,12 @@ static int qoriq_ptp_probe(struct platform_device *dev)
- {
- 	struct device_node *node = dev->dev.of_node;
- 	struct qoriq_ptp *qoriq_ptp;
-+	struct qoriq_ptp_registers *regs;
- 	struct timespec64 now;
- 	int err = -ENOMEM;
- 	u32 tmr_ctrl;
- 	unsigned long flags;
-+	void __iomem *base;
- 
- 	qoriq_ptp = kzalloc(sizeof(*qoriq_ptp), GFP_KERNEL);
- 	if (!qoriq_ptp)
-@@ -351,7 +361,7 @@ static int qoriq_ptp_probe(struct platform_device *dev)
- 		pr_err("irq not in device tree\n");
- 		goto no_node;
- 	}
--	if (request_irq(qoriq_ptp->irq, isr, 0, DRIVER, qoriq_ptp)) {
-+	if (request_irq(qoriq_ptp->irq, isr, IRQF_SHARED, DRIVER, qoriq_ptp)) {
- 		pr_err("request_irq failed\n");
- 		goto no_node;
- 	}
-@@ -368,12 +378,27 @@ static int qoriq_ptp_probe(struct platform_device *dev)
- 
- 	spin_lock_init(&qoriq_ptp->lock);
- 
--	qoriq_ptp->regs = ioremap(qoriq_ptp->rsrc->start,
--				resource_size(qoriq_ptp->rsrc));
--	if (!qoriq_ptp->regs) {
-+	base = ioremap(qoriq_ptp->rsrc->start,
-+		       resource_size(qoriq_ptp->rsrc));
-+	if (!base) {
- 		pr_err("ioremap ptp registers failed\n");
- 		goto no_ioremap;
- 	}
-+
-+	qoriq_ptp->base = base;
-+
-+	if (of_device_is_compatible(node, "fsl,fman-ptp-timer")) {
-+		qoriq_ptp->regs.ctrl_regs = base + FMAN_CTRL_REGS_OFFSET;
-+		qoriq_ptp->regs.alarm_regs = base + FMAN_ALARM_REGS_OFFSET;
-+		qoriq_ptp->regs.fiper_regs = base + FMAN_FIPER_REGS_OFFSET;
-+		qoriq_ptp->regs.etts_regs = base + FMAN_ETTS_REGS_OFFSET;
-+	} else {
-+		qoriq_ptp->regs.ctrl_regs = base + CTRL_REGS_OFFSET;
-+		qoriq_ptp->regs.alarm_regs = base + ALARM_REGS_OFFSET;
-+		qoriq_ptp->regs.fiper_regs = base + FIPER_REGS_OFFSET;
-+		qoriq_ptp->regs.etts_regs = base + ETTS_REGS_OFFSET;
-+	}
-+
- 	ktime_get_real_ts64(&now);
- 	ptp_qoriq_settime(&qoriq_ptp->caps, &now);
- 
-@@ -383,13 +408,14 @@ static int qoriq_ptp_probe(struct platform_device *dev)
- 
- 	spin_lock_irqsave(&qoriq_ptp->lock, flags);
- 
--	qoriq_write(&qoriq_ptp->regs->tmr_ctrl,   tmr_ctrl);
--	qoriq_write(&qoriq_ptp->regs->tmr_add,    qoriq_ptp->tmr_add);
--	qoriq_write(&qoriq_ptp->regs->tmr_prsc,   qoriq_ptp->tmr_prsc);
--	qoriq_write(&qoriq_ptp->regs->tmr_fiper1, qoriq_ptp->tmr_fiper1);
--	qoriq_write(&qoriq_ptp->regs->tmr_fiper2, qoriq_ptp->tmr_fiper2);
-+	regs = &qoriq_ptp->regs;
-+	qoriq_write(&regs->ctrl_regs->tmr_ctrl,   tmr_ctrl);
-+	qoriq_write(&regs->ctrl_regs->tmr_add,    qoriq_ptp->tmr_add);
-+	qoriq_write(&regs->ctrl_regs->tmr_prsc,   qoriq_ptp->tmr_prsc);
-+	qoriq_write(&regs->fiper_regs->tmr_fiper1, qoriq_ptp->tmr_fiper1);
-+	qoriq_write(&regs->fiper_regs->tmr_fiper2, qoriq_ptp->tmr_fiper2);
- 	set_alarm(qoriq_ptp);
--	qoriq_write(&qoriq_ptp->regs->tmr_ctrl,   tmr_ctrl|FIPERST|RTPE|TE|FRD);
-+	qoriq_write(&regs->ctrl_regs->tmr_ctrl,   tmr_ctrl|FIPERST|RTPE|TE|FRD);
- 
- 	spin_unlock_irqrestore(&qoriq_ptp->lock, flags);
- 
-@@ -405,7 +431,7 @@ static int qoriq_ptp_probe(struct platform_device *dev)
- 	return 0;
- 
- no_clock:
--	iounmap(qoriq_ptp->regs);
-+	iounmap(qoriq_ptp->base);
- no_ioremap:
- 	release_resource(qoriq_ptp->rsrc);
- no_resource:
-@@ -419,12 +445,13 @@ static int qoriq_ptp_probe(struct platform_device *dev)
- static int qoriq_ptp_remove(struct platform_device *dev)
- {
- 	struct qoriq_ptp *qoriq_ptp = platform_get_drvdata(dev);
-+	struct qoriq_ptp_registers *regs = &qoriq_ptp->regs;
- 
--	qoriq_write(&qoriq_ptp->regs->tmr_temask, 0);
--	qoriq_write(&qoriq_ptp->regs->tmr_ctrl,   0);
-+	qoriq_write(&regs->ctrl_regs->tmr_temask, 0);
-+	qoriq_write(&regs->ctrl_regs->tmr_ctrl,   0);
- 
- 	ptp_clock_unregister(qoriq_ptp->clock);
--	iounmap(qoriq_ptp->regs);
-+	iounmap(qoriq_ptp->base);
- 	release_resource(qoriq_ptp->rsrc);
- 	free_irq(qoriq_ptp->irq, qoriq_ptp);
- 	kfree(qoriq_ptp);
-@@ -434,6 +461,7 @@ static int qoriq_ptp_remove(struct platform_device *dev)
- 
- static const struct of_device_id match_table[] = {
- 	{ .compatible = "fsl,etsec-ptp" },
-+	{ .compatible = "fsl,fman-ptp-timer" },
- 	{},
+-	ptp_timer0: ptp-timer@fe000 {
+-		compatible = "fsl,fman-ptp-timer";
+-		reg = <0xfe000 0x1000>;
+-	};
++ptp_timer0: ptp-timer@4fe000 {
++	compatible = "fsl,fman-ptp-timer";
++	reg = <0x4fe000 0x1000>;
++	interrupts = <96 2 0 0>;
  };
- MODULE_DEVICE_TABLE(of, match_table);
-diff --git a/include/linux/fsl/ptp_qoriq.h b/include/linux/fsl/ptp_qoriq.h
-index b462d9e..dc3dac4 100644
---- a/include/linux/fsl/ptp_qoriq.h
-+++ b/include/linux/fsl/ptp_qoriq.h
-@@ -11,9 +11,8 @@
+diff --git a/arch/powerpc/boot/dts/fsl/qoriq-fman-1.dtsi b/arch/powerpc/boot/dts/fsl/qoriq-fman-1.dtsi
+index debea75..b80aaf5 100644
+--- a/arch/powerpc/boot/dts/fsl/qoriq-fman-1.dtsi
++++ b/arch/powerpc/boot/dts/fsl/qoriq-fman-1.dtsi
+@@ -37,12 +37,13 @@ fman1: fman@500000 {
+ 	#size-cells = <1>;
+ 	cell-index = <1>;
+ 	compatible = "fsl,fman";
+-	ranges = <0 0x500000 0x100000>;
+-	reg = <0x500000 0x100000>;
++	ranges = <0 0x500000 0xfe000>;
++	reg = <0x500000 0xfe000>;
+ 	interrupts = <97 2 0 0>, <16 2 1 0>;
+ 	clocks = <&clockgen 3 1>;
+ 	clock-names = "fmanclk";
+ 	fsl,qman-channel-range = <0x60 0xc>;
++	ptimer-handle = <&ptp_timer1>;
  
- /*
-  * qoriq ptp registers
-- * Generated by regen.tcl on Thu May 13 01:38:57 PM CEST 2010
-  */
--struct qoriq_ptp_registers {
-+struct ctrl_regs {
- 	u32 tmr_ctrl;     /* Timer control register */
- 	u32 tmr_tevent;   /* Timestamp event register */
- 	u32 tmr_temask;   /* Timer event mask register */
-@@ -28,22 +27,47 @@ struct qoriq_ptp_registers {
- 	u8  res1[4];
- 	u32 tmroff_h;     /* Timer offset high */
- 	u32 tmroff_l;     /* Timer offset low */
--	u8  res2[8];
+ 	muram@0 {
+ 		compatible = "fsl,fman-muram";
+@@ -93,9 +94,10 @@ fman1: fman@500000 {
+ 		reg = <0x87000 0x1000>;
+ 		status = "disabled";
+ 	};
 +};
-+
-+struct alarm_regs {
- 	u32 tmr_alarm1_h; /* Timer alarm 1 high register */
- 	u32 tmr_alarm1_l; /* Timer alarm 1 high register */
- 	u32 tmr_alarm2_h; /* Timer alarm 2 high register */
- 	u32 tmr_alarm2_l; /* Timer alarm 2 high register */
--	u8  res3[48];
-+};
-+
-+struct fiper_regs {
- 	u32 tmr_fiper1;   /* Timer fixed period interval */
- 	u32 tmr_fiper2;   /* Timer fixed period interval */
- 	u32 tmr_fiper3;   /* Timer fixed period interval */
--	u8  res4[20];
-+};
-+
-+struct etts_regs {
- 	u32 tmr_etts1_h;  /* Timestamp of general purpose external trigger */
- 	u32 tmr_etts1_l;  /* Timestamp of general purpose external trigger */
- 	u32 tmr_etts2_h;  /* Timestamp of general purpose external trigger */
- 	u32 tmr_etts2_l;  /* Timestamp of general purpose external trigger */
+ 
+-	ptp_timer1: ptp-timer@fe000 {
+-		compatible = "fsl,fman-ptp-timer";
+-		reg = <0xfe000 0x1000>;
+-	};
++ptp_timer1: ptp-timer@5fe000 {
++	compatible = "fsl,fman-ptp-timer";
++	reg = <0x5fe000 0x1000>;
++	interrupts = <97 2 0 0>;
  };
+diff --git a/arch/powerpc/boot/dts/fsl/qoriq-fman3-0.dtsi b/arch/powerpc/boot/dts/fsl/qoriq-fman3-0.dtsi
+index 3a20e0d..d3720fd 100644
+--- a/arch/powerpc/boot/dts/fsl/qoriq-fman3-0.dtsi
++++ b/arch/powerpc/boot/dts/fsl/qoriq-fman3-0.dtsi
+@@ -37,12 +37,13 @@ fman0: fman@400000 {
+ 	#size-cells = <1>;
+ 	cell-index = <0>;
+ 	compatible = "fsl,fman";
+-	ranges = <0 0x400000 0x100000>;
+-	reg = <0x400000 0x100000>;
++	ranges = <0 0x400000 0xfe000>;
++	reg = <0x400000 0xfe000>;
+ 	interrupts = <96 2 0 0>, <16 2 1 1>;
+ 	clocks = <&clockgen 3 0>;
+ 	clock-names = "fmanclk";
+ 	fsl,qman-channel-range = <0x800 0x10>;
++	ptimer-handle = <&ptp_timer0>;
  
-+struct qoriq_ptp_registers {
-+	struct ctrl_regs __iomem *ctrl_regs;
-+	struct alarm_regs __iomem *alarm_regs;
-+	struct fiper_regs __iomem *fiper_regs;
-+	struct etts_regs __iomem *etts_regs;
+ 	muram@0 {
+ 		compatible = "fsl,fman-muram";
+@@ -98,9 +99,10 @@ fman0: fman@400000 {
+ 		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
+ 		reg = <0xfd000 0x1000>;
+ 	};
 +};
-+
-+/* Offset definitions for the four register groups */
-+#define CTRL_REGS_OFFSET	0x0
-+#define ALARM_REGS_OFFSET	0x40
-+#define FIPER_REGS_OFFSET	0x80
-+#define ETTS_REGS_OFFSET	0xa0
-+
-+#define FMAN_CTRL_REGS_OFFSET	0x80
-+#define FMAN_ALARM_REGS_OFFSET	0xb8
-+#define FMAN_FIPER_REGS_OFFSET	0xd0
-+#define FMAN_ETTS_REGS_OFFSET	0xe0
-+
-+
- /* Bit definitions for the TMR_CTRL register */
- #define ALM1P                 (1<<31) /* Alarm1 output polarity */
- #define ALM2P                 (1<<30) /* Alarm2 output polarity */
-@@ -105,10 +129,10 @@ struct qoriq_ptp_registers {
- #define DRIVER		"ptp_qoriq"
- #define DEFAULT_CKSEL	1
- #define N_EXT_TS	2
--#define REG_SIZE	sizeof(struct qoriq_ptp_registers)
  
- struct qoriq_ptp {
--	struct qoriq_ptp_registers __iomem *regs;
-+	void __iomem *base;
-+	struct qoriq_ptp_registers regs;
- 	spinlock_t lock; /* protects regs */
- 	struct ptp_clock *clock;
- 	struct ptp_clock_info caps;
+-	ptp_timer0: ptp-timer@fe000 {
+-		compatible = "fsl,fman-ptp-timer";
+-		reg = <0xfe000 0x1000>;
+-	};
++ptp_timer0: ptp-timer@4fe000 {
++	compatible = "fsl,fman-ptp-timer";
++	reg = <0x4fe000 0x1000>;
++	interrupts = <96 2 0 0>;
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/qoriq-fman3-1.dtsi b/arch/powerpc/boot/dts/fsl/qoriq-fman3-1.dtsi
+index 82750ac..ae34c20 100644
+--- a/arch/powerpc/boot/dts/fsl/qoriq-fman3-1.dtsi
++++ b/arch/powerpc/boot/dts/fsl/qoriq-fman3-1.dtsi
+@@ -37,12 +37,13 @@ fman1: fman@500000 {
+ 	#size-cells = <1>;
+ 	cell-index = <1>;
+ 	compatible = "fsl,fman";
+-	ranges = <0 0x500000 0x100000>;
+-	reg = <0x500000 0x100000>;
++	ranges = <0 0x500000 0xfe000>;
++	reg = <0x500000 0xfe000>;
+ 	interrupts = <97 2 0 0>, <16 2 1 0>;
+ 	clocks = <&clockgen 3 1>;
+ 	clock-names = "fmanclk";
+ 	fsl,qman-channel-range = <0x820 0x10>;
++	ptimer-handle = <&ptp_timer1>;
+ 
+ 	muram@0 {
+ 		compatible = "fsl,fman-muram";
+@@ -98,9 +99,10 @@ fman1: fman@500000 {
+ 		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
+ 		reg = <0xfd000 0x1000>;
+ 	};
++};
+ 
+-	ptp_timer1: ptp-timer@fe000 {
+-		compatible = "fsl,fman-ptp-timer";
+-		reg = <0xfe000 0x1000>;
+-	};
++ptp_timer1: ptp-timer@5fe000 {
++	compatible = "fsl,fman-ptp-timer";
++	reg = <0x5fe000 0x1000>;
++	interrupts = <97 2 0 0>;
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/qoriq-fman3l-0.dtsi b/arch/powerpc/boot/dts/fsl/qoriq-fman3l-0.dtsi
+index 7f60b60..02f2755 100644
+--- a/arch/powerpc/boot/dts/fsl/qoriq-fman3l-0.dtsi
++++ b/arch/powerpc/boot/dts/fsl/qoriq-fman3l-0.dtsi
+@@ -37,12 +37,13 @@ fman0: fman@400000 {
+ 	#size-cells = <1>;
+ 	cell-index = <0>;
+ 	compatible = "fsl,fman";
+-	ranges = <0 0x400000 0x100000>;
+-	reg = <0x400000 0x100000>;
++	ranges = <0 0x400000 0xfe000>;
++	reg = <0x400000 0xfe000>;
+ 	interrupts = <96 2 0 0>, <16 2 1 1>;
+ 	clocks = <&clockgen 3 0>;
+ 	clock-names = "fmanclk";
+ 	fsl,qman-channel-range = <0x800 0x10>;
++	ptimer-handle = <&ptp_timer0>;
+ 
+ 	muram@0 {
+ 		compatible = "fsl,fman-muram";
+@@ -86,9 +87,10 @@ fman0: fman@400000 {
+ 		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
+ 		reg = <0xfd000 0x1000>;
+ 	};
++};
+ 
+-	ptp_timer0: ptp-timer@fe000 {
+-		compatible = "fsl,fman-ptp-timer";
+-		reg = <0xfe000 0x1000>;
+-	};
++ptp_timer0: ptp-timer@4fe000 {
++	compatible = "fsl,fman-ptp-timer";
++	reg = <0x4fe000 0x1000>;
++	interrupts = <96 2 0 0>;
+ };
 -- 
 1.7.1
 
