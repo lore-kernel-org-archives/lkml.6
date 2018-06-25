@@ -2,118 +2,150 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F032BC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7246AC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A736E2460E
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:08:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A736E2460E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BA6924701
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:09:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mtNNjkcn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA6924701
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753095AbeFYWIl (ORCPT
+        id S1754157AbeFYWJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:08:41 -0400
-Received: from mga09.intel.com ([134.134.136.24]:31824 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752248AbeFYWIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:08:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 15:08:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,272,1526367600"; 
-   d="scan'208";a="62137081"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.149]) ([10.24.14.149])
-  by orsmga003.jf.intel.com with ESMTP; 25 Jun 2018 15:08:39 -0700
-Subject: Re: [PATCH V7 00/41] Intel(R) Resource Director Technology Cache
- Pseudo-Locking enabling
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     fenghua.yu@intel.com, Tony Luck <tony.luck@intel.com>,
-        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
-        jithu.joseph@intel.com, dave.hansen@intel.com, mingo@redhat.com,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <cover.1529706536.git.reinette.chatre@intel.com>
- <alpine.DEB.2.21.1806231402500.8650@nanos.tec.linutronix.de>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <3d2bff8f-e5a8-1627-1e19-a7d190b67bdf@intel.com>
-Date:   Mon, 25 Jun 2018 15:08:39 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 25 Jun 2018 18:09:22 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:38180 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753229AbeFYWJU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 18:09:20 -0400
+Received: by mail-pg0-f66.google.com with SMTP id c9-v6so6670278pgf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:09:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=lVu1CrTXGPht9UK74qhh+fBGxqTASE7jfuwJXfl62yU=;
+        b=mtNNjkcntTMufcEX/vqRF41nml9OSK/pyx/MjpxC049qeN9HSyIaepZL4fbT76TNdg
+         UZKDEW1QN1vcBRRomnP0wIi3JrC+kbNwO13K8yJKawXWJimhu9HOXMOFzr16OtnbKGvd
+         ev/xGIFUh9uXJEQFz1rKOMgFNVOAZTEa1Ikf8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=lVu1CrTXGPht9UK74qhh+fBGxqTASE7jfuwJXfl62yU=;
+        b=OYdU+Ls3/W8SNLv2O/d5ci6q0/hSUpIsDi54QSLG/5Q816HexIgEJvgcnYa1D8xULj
+         Z6aFnQoUyo3K+kmEtlpdP9OizsJ23LDD6qqSt9lea85caY5go8ZmIPbaN14dGCSlUZsS
+         mJahFtOBOYUKu/qMhVoihqw9+UfeuMpC8XANv9t1/g41rM7TKvEWncp8lI0aB0gBE6aP
+         KGhK4QmiFhtayyK+ER/a6uGN2cU4uT4iZU1KtKoA525hUlxQfO0lYhcspq3TwD0WsHdM
+         SlQEqqKKxJt0Qzx1TO4HpbK87HNrZydwTii0rOpDncvCKtyK39ABtsq63cSHt0IKwtnR
+         qjsg==
+X-Gm-Message-State: APt69E3sTnCB2sUSb66IGk/UFq2OGTKIkmgZCTYGsI7lRj7C8NGfRzUx
+        kTXbet8dPVEXSEVPgKbnI1N/ew==
+X-Google-Smtp-Source: ADUXVKKkj070fv3fnWiSqe/0kfTWwFIy1dx2orsZPyeNTMKiJfcSeDtmQigsABaC4ZhN8RpSME9qXQ==
+X-Received: by 2002:a63:6f85:: with SMTP id k127-v6mr8627478pgc.108.1529964559993;
+        Mon, 25 Jun 2018 15:09:19 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id d65-v6sm38438pfj.20.2018.06.25.15.09.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 15:09:18 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 15:09:17 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        netdev@vger.kernel.org
+Subject: [PATCH v3 net-next] mdio-mux-gpio: Remove VLA usage
+Message-ID: <20180625220917.GA25022@beast>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1806231402500.8650@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+In the quest to remove all stack VLA usage from the kernel[1], this
+allocates the values buffer during the callback instead of putting it
+on the stack.
 
-On 6/23/2018 5:16 AM, Thomas Gleixner wrote:
-> On Fri, 22 Jun 2018, Reinette Chatre wrote:
->> The Cache Pseudo-Locking enabling series that was recently merged to the
->> x86/cache branch of tip was found to conflict with the new kernfs support
->> for mounting with fs_context.
->>
->> In preparation for a conflict-free merge between the two repos some no-op
->> hooks are created within the RDT mount function being changed by
->> the two features. The goal is for this commit to be placed on a minimal
->> no-rebase branch to be consumed by both features.
-> 
-> Thanks for doing this so quick! I've picked up the lot and slightly
-> modified the first patch by moving the stubs to the header file to get them
-> completely out of the conflicting area.
-> 
-> The immutable branch for David to pull is:
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git for-vfs
-> 
-> I've also created a branch based on Davids mount-context branch, applied
-> the cleanup patch below to it and merged the for-vfs branch on top.
-> 
-> David feel free to pull the result from
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git for-vfs-merged
-> 
-> or pick up the patch below and do the merge and conflict resolution yourself.
-> 
-> The x86/cache branch is rebased and merges cleanly with for-vfs-merged. The
-> last two patches are dropped; I folded them back to the patches they fix.
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
-> 
-> Reinette, can you please verify that x86/cache + for-vfs-merged are doing
-> the right thing?
-> 
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-I tested a merge of x86/cache and for-vfs-merged and Cache
-Pseudo-Locking works.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+v2: allocate array as part of structure (Andrew Lunn)
+v3: resend to netdev with Reviewed-by
+---
+ drivers/net/phy/mdio-mux-gpio.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-The for-vfs-merged changes modify how mount options are handled so I
-tried to cover this as well by testing on a (L3) CDP supporting system.
-Mounting resctrl with and without the cdp mount option behaves as
-expected. In fact, if I am looking right it seems that for-vfs-merged
-includes a fix for the current resctrl mount option handling. The
-resctrl filesystem supports mount options for CDP and the MBA software
-controller. At the moment, if an error occurs after the mount options
-are handled, only the CDP option handling is reverted, not the MBA
-software controller handling. The for-vfs-merged changes includes an
-additional snippet on the error path for handling of the MBA software
-controller mount option:
+diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+index 082ffef0dec4..6b55e0ddef63 100644
+--- a/drivers/net/phy/mdio-mux-gpio.c
++++ b/drivers/net/phy/mdio-mux-gpio.c
+@@ -20,23 +20,23 @@
+ struct mdio_mux_gpio_state {
+ 	struct gpio_descs *gpios;
+ 	void *mux_handle;
++	int values[];
+ };
+ 
+ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ 				   void *data)
+ {
+ 	struct mdio_mux_gpio_state *s = data;
+-	int values[s->gpios->ndescs];
+ 	unsigned int n;
+ 
+ 	if (current_child == desired_child)
+ 		return 0;
+ 
+ 	for (n = 0; n < s->gpios->ndescs; n++)
+-		values[n] = (desired_child >> n) & 1;
++		s->values[n] = (desired_child >> n) & 1;
+ 
+ 	gpiod_set_array_value_cansleep(s->gpios->ndescs, s->gpios->desc,
+-				       values);
++				       s->values);
+ 
+ 	return 0;
+ }
+@@ -44,15 +44,21 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct mdio_mux_gpio_state *s;
++	struct gpio_descs *gpios;
+ 	int r;
+ 
+-	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
+-	if (!s)
++	gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
++	if (IS_ERR(gpios))
++		return PTR_ERR(gpios);
++
++	s = devm_kzalloc(&pdev->dev, sizeof(*s->values) * gpios->ndescs +
++				     sizeof(*s), GFP_KERNEL);
++	if (!s) {
++		gpiod_put_array(gpios);
+ 		return -ENOMEM;
++	}
+ 
+-	s->gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
+-	if (IS_ERR(s->gpios))
+-		return PTR_ERR(s->gpios);
++	s->gpios = gpios;
+ 
+ 	r = mdio_mux_init(&pdev->dev, pdev->dev.of_node,
+ 			  mdio_mux_gpio_switch_fn, &s->mux_handle, s, NULL);
+-- 
+2.17.1
 
-+out_mba:
-+       if (ctx->enable_mba_mbps)
-+               set_mba_sc(false);
 
-
-Reinette
+-- 
+Kees Cook
+Pixel Security
