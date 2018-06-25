@@ -2,87 +2,76 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9777BC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1FAC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEE6250B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:57:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XsUTPnba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEE6250B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A1C5425117
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:57:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1C5425117
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752332AbeFYH5J (ORCPT
+        id S1752214AbeFYH5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 03:57:09 -0400
-Received: from mail-lj1-f172.google.com ([209.85.208.172]:43876 "EHLO
-        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750994AbeFYH5H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 03:57:07 -0400
-Received: by mail-lj1-f172.google.com with SMTP id x3-v6so5342094ljj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 00:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WU6tY2blVqHM5Ct6pAniDe8wIZoKyuSC/i0MKQXrAj4=;
-        b=XsUTPnba3rJypSBgqfzboUOAR9lh/Wf3gZq0rPssGMPpcxTKeXCTZ4wX9058Qzmzcm
-         StbnYReM3re1Y/6ZIvH64hRWmKZr4lQXBkVkd2i9R9QHDa9GAy4rYXpJ5Uzp37KgELkx
-         fn1bEDX0Ch0hy9QWq0/9wVHV1KQ/HKb28YSdM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WU6tY2blVqHM5Ct6pAniDe8wIZoKyuSC/i0MKQXrAj4=;
-        b=h77HhXg3GgHYqD9V+omVzwZ3zvMhDurgTaM9+VPRRacm0dRltD7G0cyO+L0Zyg47yF
-         5S1wfFf1cnFcJj3cYIRRbWOe+HCq9vYEbJBQEvUw8r+1v4+ZZjMPDCSRESbh23C+Sb27
-         q1zg6QVjZ8/9zIYBh1q10CAojVq1MT9Af6ktpOUXORLDeAFW9yIQCaioZ+W+wlOqz61l
-         nyRRZIUDKBOGrVAHNElDxjV65+mbzGXE67CxUBtuhfCkyyEZp0j+1nmVsNfA2C58Al1f
-         20ig+D5eaqNeLzURNfM80/2JoNOk9ZO0Yiyp0vliSEZDYy1BldUpu8/tWUQDuF/IDOqB
-         YVzQ==
-X-Gm-Message-State: APt69E3a6j12pSjBy2WuE7BM4siblfGLZVJDwcTtrqA0UcImewLxbv1H
-        7zww2ZYZz8z/ZliBfdlBl4gNHV1lf31BJtjcss7mhw==
-X-Google-Smtp-Source: ADUXVKLzRjJ7kjGIQ8HZWDeLZSjBSTDFJuaxvioZL4gsUA1Y3AoVZ3fSQeQB6eYHP76kxHK8WeY3ywJvs7/SWcqwOx4=
-X-Received: by 2002:a2e:9dd0:: with SMTP id x16-v6mr6611804ljj.142.1529913426381;
- Mon, 25 Jun 2018 00:57:06 -0700 (PDT)
+        Mon, 25 Jun 2018 03:57:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51287 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752402AbeFYH5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 03:57:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 3179DAB09;
+        Mon, 25 Jun 2018 07:57:17 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 09:57:15 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-mm@kvack.org, Andrea Arcangeli <aarcange@redhat.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
+Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+Message-ID: <20180625075715.GA28965@dhcp22.suse.cz>
+References: <20180622150242.16558-1-mhocko@kernel.org>
+ <d617fc1d-28a7-3441-7465-bedf4dc69976@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 00:57:05
- -0700 (PDT)
-In-Reply-To: <CA+G9fYvsGCogLWYooQ9qjUYuu5XO=pwD_q3vqD-ys41wwPk90w@mail.gmail.com>
-References: <20180624142740.481662434@linuxfoundation.org> <CA+G9fYsxWVXZH=VB9tCvBcJ_K4pOPs51J1XnnCjF8vcBVMadDg@mail.gmail.com>
- <20180625065557.GA5140@kroah.com> <CA+G9fYvsGCogLWYooQ9qjUYuu5XO=pwD_q3vqD-ys41wwPk90w@mail.gmail.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 25 Jun 2018 13:27:05 +0530
-Message-ID: <CA+G9fYt27umnoetNwEgPFSNKe+sYNKHibHDfm9ft3CjNAM+kAQ@mail.gmail.com>
-Subject: Re: [PATCH 4.17 00/70] 4.17.3-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d617fc1d-28a7-3441-7465-bedf4dc69976@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> This looks like a quemu bug, not a kernel issue, so did you tell the
->> qemu developers about this?
->
-> Thanks for confirming this is not a kernel bug.
-> I will report this bug to qemu developer mailing list.
+On Sun 24-06-18 10:11:21, Paolo Bonzini wrote:
+> On 22/06/2018 17:02, Michal Hocko wrote:
+> > @@ -7215,6 +7216,8 @@ void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+> >  	apic_address = gfn_to_hva(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
+> >  	if (start <= apic_address && apic_address < end)
+> >  		kvm_make_all_cpus_request(kvm, KVM_REQ_APIC_PAGE_RELOAD);
+> > +
+> > +	return 0;
+> 
+> This is wrong, gfn_to_hva can sleep.
 
-Reported QEMU bug on launchpad,
-Bug id #1778473.
+Hmm, I have tried to crawl the call chain and haven't found any
+sleepable locks taken. Maybe I am just missing something.
+__kvm_memslots has a complex locking assert. I do not see we would take
+slots_lock anywhere from the notifier call path. IIUC that means that
+users_count has to be zero at that time. I have no idea how that is
+guaranteed.
+ 
+> You could do the the kvm_make_all_cpus_request unconditionally, but only
+> if !blockable is a really rare thing.  OOM would be fine, since the
+> request actually would never be processed, but I'm afraid of more uses
+> of !blockable being introduced later.
 
-- Naresh
+Well, if this is not generally guaranteed then I have to come up with a
+different flag. E.g. OOM_CONTEXT that would be more specific to
+contrains for the callback.
+-- 
+Michal Hocko
+SUSE Labs
