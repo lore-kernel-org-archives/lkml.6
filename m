@@ -5,45 +5,45 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 458E8C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E144AC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CE5220873
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:29:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE5220873
+	by mail.kernel.org (Postfix) with ESMTP id A666725F47
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:30:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A666725F47
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934849AbeFYR3a (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:29:30 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38796 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933920AbeFYR31 (ORCPT
+        id S934905AbeFYRaS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:30:18 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46261 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755365AbeFYRaQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:29:27 -0400
-Received: by mail-pg0-f67.google.com with SMTP id c9-v6so6370130pgf.5;
-        Mon, 25 Jun 2018 10:29:26 -0700 (PDT)
+        Mon, 25 Jun 2018 13:30:16 -0400
+Received: by mail-pf0-f195.google.com with SMTP id q1-v6so6761043pff.13;
+        Mon, 25 Jun 2018 10:30:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W9RLrW6vHNXGCW9SZqbhZLU/LP/mOaw83xEOCyG9uuA=;
-        b=tfTdrI3gt3VnFYOlRfBNOcMkHKDWv1dm1iIYiw/AlStTXcarQPxJc1sst+yjqHoRJu
-         HGWOCgrReoZGoUqAR+o+Uq1nfbrjTBhooBgiIRdYoQGGJjdXNJ7fwf2ulJ7czgv4GEMH
-         pooI6u88nxwS1SQZdV/kPWFQT+gLE09n2KDF7ym+o16h2r8WLcZbuDrwABhcm8ap8VuL
-         2jUM+GwqXefXgmNukCQD4DlN/pZgeXuR+eJrgWAgvEyYEAZKP5PjySg0RjvU++HKTQzJ
-         zWLUFaxcxyGcdLUCP3S0z6jl5/MCSF22nJ/sD4maV6xRtHbXZceiWxQWfCpQqtOpk6qd
-         +G8g==
-X-Gm-Message-State: APt69E067e7V1gT6wfq7oB/ora0wJJxMjnAmlcWD/HfUg3G8Ffv0nRUc
-        6mqx+KErKxOnBAChoVmpJw==
-X-Google-Smtp-Source: ADUXVKI7UEjXPOm6mpF/6frFUdj8wmNeyjZvT/gssb20mq36CXXJAOK/DWjIDsSmmJDE9Tw/lID5bQ==
-X-Received: by 2002:a65:40ca:: with SMTP id u10-v6mr11300759pgp.2.1529947766517;
-        Mon, 25 Jun 2018 10:29:26 -0700 (PDT)
+        bh=bdMM/amKNcWLOQ4+yrvmy9soOvE7jf1rDB3PCndVysE=;
+        b=iVQDQy9N6HmOUH3NljT5jHcpI/hYimzj836qs9rD/1pfTnoj/Rs9OVws4AuA3D70Te
+         gA75klOIGRJRSz9b0ZzUsZPToxRAcULt2ZV3X+Y01f85bNRqgmvgP56/ZyDfPH44oK9E
+         Nm07hs+xksrBHzBdnXT9F3wqQl6WWfS+eVYbRJKiKvFemfLCeXV2+y5pDj1AEV6xeQrH
+         Xb4wF/EiewmVr4RnzlIvqOVBfTcUIo9xG8qYm6Vccsyu+s9D+JsxFeHJZ896Mugu4t9g
+         nM7Ot+WQ3rj4Ha7e7hVz6OqQ13S5abj4P4z5MMqdYN69nqSTajMOSdDPcxIYR+ai5Bbe
+         1Kew==
+X-Gm-Message-State: APt69E2CgQLhJHpxoCbHjUxrXOn11wWzFMNIJARAzGItAUHmRvbB2cUo
+        shDaxa/eU95JGmC5ES8NAw==
+X-Google-Smtp-Source: ADUXVKIlEU+HA/SmqJjb6v7ZckUSNq/NlFCcNWMMkfsA4zv2v9/cp/PFDB01OHkJ08asG5rv0J/dpQ==
+X-Received: by 2002:a65:6252:: with SMTP id q18-v6mr11688374pgv.106.1529947815443;
+        Mon, 25 Jun 2018 10:30:15 -0700 (PDT)
 Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id w11-v6sm21770402pfn.71.2018.06.25.10.29.25
+        by smtp.gmail.com with ESMTPSA id t23-v6sm30021896pfa.86.2018.06.25.10.30.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 10:29:25 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 11:29:24 -0600
+        Mon, 25 Jun 2018 10:30:14 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 11:30:13 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Andrea Merello <andrea.merello@gmail.com>
 Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
@@ -52,24 +52,24 @@ Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
         linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org,
         Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Subject: Re: [PATCH v3 2/5] dt-bindings: dmaengine: xilinx_dma: add optional
- xlnx,sg-length-width property
-Message-ID: <20180625172924.GA398@rob-hp-laptop>
+Subject: Re: [PATCH v3 5/5] dt-bindings: dmaengine: xilinx_dma: drop has-sg
+ property
+Message-ID: <20180625173013.GA2268@rob-hp-laptop>
 References: <20180625092724.22164-1-andrea.merello@gmail.com>
- <20180625092724.22164-2-andrea.merello@gmail.com>
+ <20180625092724.22164-5-andrea.merello@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180625092724.22164-2-andrea.merello@gmail.com>
+In-Reply-To: <20180625092724.22164-5-andrea.merello@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 11:27:21AM +0200, Andrea Merello wrote:
-> The width of the "length register" cannot be autodetected, and it is now
-> specified with a DT property. Add DOC for it.
+On Mon, Jun 25, 2018 at 11:27:24AM +0200, Andrea Merello wrote:
+> This property is not needed anymore, because the driver now autodetects it.
+> Delete references in documentation.
 > 
 > Cc: Rob Herring <robh+dt@kernel.org>
 > Cc: Mark Rutland <mark.rutland@arm.com>
@@ -79,32 +79,11 @@ On Mon, Jun 25, 2018 at 11:27:21AM +0200, Andrea Merello wrote:
 > Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
 > ---
 > Changes in v2:
-> 	- change property name
-> 	- property is now optional
 > 	- cc DT maintainer
 > Changes in v3:
-> 	- reword
-> 	- cc DT maintainerS and ML
+> 	- cc DT maintainerS/ML
 > ---
->  Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt b/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
-> index a2b8bfaec43c..c894abe28baa 100644
-> --- a/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
-> +++ b/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
-> @@ -41,6 +41,7 @@ Optional properties:
->  - xlnx,include-sg: Tells configured for Scatter-mode in
->  	the hardware.
->  Optional properties for AXI DMA:
-> +- xlnx,sg-length-width: Should be the width of the length register as configured in h/w.
+>  Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt | 3 ---
+>  1 file changed, 3 deletions(-)
 
-What are the units? What are valid values? What is the default if the 
-property is not present?
-
->  - xlnx,mcdma: Tells whether configured for multi-channel mode in the hardware.
->  Optional properties for VDMA:
->  - xlnx,flush-fsync: Tells which channel to Flush on Frame sync.
-> -- 
-> 2.17.1
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
