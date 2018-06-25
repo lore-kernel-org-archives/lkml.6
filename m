@@ -5,172 +5,162 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D618AC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE98C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 976D625C10
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976D625C10
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D75621EC3
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 15:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D75621EC3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934723AbeFYPIX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 11:08:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38088 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934559AbeFYPIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:08:22 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1EFD64023132;
-        Mon, 25 Jun 2018 15:08:22 +0000 (UTC)
-Received: from crecklin.bos.com (dhcp-17-195.bos.redhat.com [10.18.17.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E97072166B5D;
-        Mon, 25 Jun 2018 15:08:21 +0000 (UTC)
-From:   Chris von Recklinghausen <crecklin@redhat.com>
-To:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-mm@vger.kernel.org
-Subject: [PATCH] add param that allows bootline control of hardened usercopy
-Date:   Mon, 25 Jun 2018 11:08:20 -0400
-Message-Id: <1529939300-27461-1-git-send-email-crecklin@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 25 Jun 2018 15:08:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 25 Jun 2018 15:08:22 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
+        id S934754AbeFYPJc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 11:09:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36198 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934649AbeFYPJ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:09:28 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5PF05ip005268
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 11:09:28 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju0h3yk3p-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 11:09:27 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
+        Mon, 25 Jun 2018 16:09:24 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Jun 2018 16:09:22 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5PF9Kwe28770502
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Jun 2018 15:09:20 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 19CA0A4040;
+        Mon, 25 Jun 2018 16:09:15 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BA7FBA404D;
+        Mon, 25 Jun 2018 16:09:14 +0100 (BST)
+Received: from localhost (unknown [9.152.212.171])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 25 Jun 2018 16:09:14 +0100 (BST)
+Date:   Mon, 25 Jun 2018 17:09:19 +0200
+From:   Vasily Gorbik <gor@linux.ibm.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-s390x <qemu-s390x@nongnu.org>,
+        qemu-devel <qemu-devel@nongnu.org>,
+        Thomas Huth <thuth@redhat.com>
+Subject: [PATCH] s390/boot: block uncompressed vmlinux booting attempts
+References: <64bcba64-b88f-3594-da6e-7c2118482c20@roeck-us.net>
+ <cover.thread-8b0da3.your-ad-here.call-01529937119-ext-3705@work.hours>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.thread-8b0da3.your-ad-here.call-01529937119-ext-3705@work.hours>
+X-TM-AS-GCONF: 00
+x-cbid: 18062515-0012-0000-0000-000002834A51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062515-0013-0000-0000-000020B4A498
+Message-Id: <patch-1.thread-8b0da3.git-8b0da335b2d3.your-ad-here.call-01529937119-ext-3705@work.hours>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806250175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling HARDENED_USER_COPY causes measurable regressions in the
-networking performances, up to 8% under UDP flood.
+Since uncompressed kernel image "vmlinux" elf file is not bootable under
+qemu anymore, add a check which would report that.
 
-A generic distro may want to enable HARDENED_USER_COPY in their default
-kernel config, but at the same time, such distro may want to be able to
-avoid the performance penalties in with the default configuration and
-enable the stricter check on a per-boot basis.
+Qemu users are encouraged to use bzImage or
+arch/s390/boot/compressed/vmlinux instead.
 
-This change adds a config variable and a boot parameter to conditionally
-enable HARDENED_USER_COPY at boot time, and switch HUC to off if
-HUC_DEFAULT_OFF is set.
+The check relies on s390 linux entry point ABI definition, which is only
+present in bzImage and arch/s390/boot/compressed/vmlinux.
 
-Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 ---
- .../admin-guide/kernel-parameters.rst         |  2 ++
- .../admin-guide/kernel-parameters.txt         |  3 ++
- include/linux/thread_info.h                   |  7 +++++
- mm/usercopy.c                                 | 28 +++++++++++++++++++
- security/Kconfig                              | 10 +++++++
- 5 files changed, 50 insertions(+)
+ arch/s390/boot/head.S         |  4 ++--
+ arch/s390/include/asm/setup.h |  3 ++-
+ arch/s390/kernel/early.c      | 12 ++++++++++++
+ 3 files changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentation/admin-guide/kernel-parameters.rst
-index b8d0bc07ed0a..c3035038e3ae 100644
---- a/Documentation/admin-guide/kernel-parameters.rst
-+++ b/Documentation/admin-guide/kernel-parameters.rst
-@@ -100,6 +100,8 @@ parameter is applicable::
- 	FB	The frame buffer device is enabled.
- 	FTRACE	Function tracing enabled.
- 	GCOV	GCOV profiling is enabled.
-+	HUC	Hardened usercopy is enabled
-+	HUCF	Hardened usercopy disabled at boot
- 	HW	Appropriate hardware is enabled.
- 	IA-64	IA-64 architecture is enabled.
- 	IMA     Integrity measurement architecture is enabled.
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index efc7aa7a0670..cd3354bc14d3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -816,6 +816,9 @@
- 	disable=	[IPV6]
- 			See Documentation/networking/ipv6.txt.
+diff --git a/arch/s390/boot/head.S b/arch/s390/boot/head.S
+index f09e792df495..f721913b73f1 100644
+--- a/arch/s390/boot/head.S
++++ b/arch/s390/boot/head.S
+@@ -272,14 +272,14 @@ iplstart:
+ 	.org	0x10000
+ ENTRY(startup)
+ 	j	.Lep_startup_normal
+-	.org	0x10008
++	.org	EP_OFFSET
+ #
+ # This is a list of s390 kernel entry points. At address 0x1000f the number of
+ # valid entry points is stored.
+ #
+ # IMPORTANT: Do not change this table, it is s390 kernel ABI!
+ #
+-	.ascii	"S390EP"
++	.ascii	EP_STRING
+ 	.byte	0x00,0x01
+ #
+ # kdump startup-code at 0x10010, running in 64 bit absolute addressing mode
+diff --git a/arch/s390/include/asm/setup.h b/arch/s390/include/asm/setup.h
+index be02f0558048..1d66016f4170 100644
+--- a/arch/s390/include/asm/setup.h
++++ b/arch/s390/include/asm/setup.h
+@@ -9,7 +9,8 @@
+ #include <linux/const.h>
+ #include <uapi/asm/setup.h>
  
-+	enable_hardened_usercopy [HUC,HUCF]
-+			Enable hardened usercopy checks
-+
- 	disable_radix	[PPC]
- 			Disable RADIX MMU mode on POWER9
+-
++#define EP_OFFSET		0x10008
++#define EP_STRING		"S390EP"
+ #define PARMAREA		0x10400
+ #define PARMAREA_END		0x11000
  
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index 8d8821b3689a..140a36cc1c2c 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -109,12 +109,19 @@ static inline int arch_within_stack_frames(const void * const stack,
- #endif
+diff --git a/arch/s390/kernel/early.c b/arch/s390/kernel/early.c
+index 827699eb48fa..45c5be3d8777 100644
+--- a/arch/s390/kernel/early.c
++++ b/arch/s390/kernel/early.c
+@@ -331,8 +331,20 @@ static void __init setup_boot_command_line(void)
+ 	append_to_cmdline(append_ipl_scpdata);
+ }
  
- #ifdef CONFIG_HARDENED_USERCOPY
-+#include <linux/jump_label.h>
-+
-+DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
-+
- extern void __check_object_size(const void *ptr, unsigned long n,
- 					bool to_user);
- 
- static __always_inline void check_object_size(const void *ptr, unsigned long n,
- 					      bool to_user)
- {
-+	if (static_branch_likely(&bypass_usercopy_checks))
++static void __init check_image_bootable(void)
++{
++	if (!memcmp(EP_STRING, (void *)EP_OFFSET, strlen(EP_STRING)))
 +		return;
 +
- 	if (!__builtin_constant_p(n))
- 		__check_object_size(ptr, n, to_user);
- }
-diff --git a/mm/usercopy.c b/mm/usercopy.c
-index e9e9325f7638..ce3996da1b2e 100644
---- a/mm/usercopy.c
-+++ b/mm/usercopy.c
-@@ -279,3 +279,31 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
- 	check_kernel_text_object((const unsigned long)ptr, n, to_user);
- }
- EXPORT_SYMBOL(__check_object_size);
-+
-+DEFINE_STATIC_KEY_FALSE(bypass_usercopy_checks);
-+EXPORT_SYMBOL(bypass_usercopy_checks);
-+
-+#ifdef CONFIG_HUC_DEFAULT_OFF
-+#define HUC_DEFAULT false
-+#else
-+#define HUC_DEFAULT true
-+#endif
-+
-+static bool enable_huc_atboot = HUC_DEFAULT;
-+
-+static int __init parse_enable_usercopy(char *str)
-+{
-+	enable_huc_atboot = true;
-+	return 1;
++	sclp_early_printk("The linux kernel boot failure: the image is corrupted or not bootable.\n");
++	sclp_early_printk("Please check that you are using bootable kernel image \"bzImage\".\n");
++	sclp_early_printk("(or alternatively \"arch/s390/boot/compressed/vmlinux\" image for qemu)\n");
++	disabled_wait(0xbadb007);
 +}
 +
-+static int __init set_enable_usercopy(void)
-+{
-+	if (enable_huc_atboot == false)
-+		static_branch_enable(&bypass_usercopy_checks);
-+	return 1;
-+}
-+
-+__setup("enable_hardened_usercopy", parse_enable_usercopy);
-+
-+late_initcall(set_enable_usercopy);
-diff --git a/security/Kconfig b/security/Kconfig
-index c4302067a3ad..a6173897b85c 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -189,6 +189,16 @@ config HARDENED_USERCOPY_PAGESPAN
- 	  been removed. This config is intended to be used only while
- 	  trying to find such users.
- 
-+config HUC_DEFAULT_OFF
-+	bool "allow CONFIG_HARDENED_USERCOPY to be configured but disabled"
-+	depends on HARDENED_USERCOPY
-+	help
-+	  When CONFIG_HARDENED_USERCOPY is enabled, disable its
-+	  functionality unless it is enabled via at boot time
-+	  via the "enable_hardened_usercopy" boot parameter. This allows
-+	  the functionality of hardened usercopy to be present but not
-+	  impact performance unless it is needed.
-+
- config FORTIFY_SOURCE
- 	bool "Harden common str/mem functions against buffer overflows"
- 	depends on ARCH_HAS_FORTIFY_SOURCE
+ void __init startup_init(void)
+ {
++	check_image_bootable();
+ 	time_early_init();
+ 	init_kernel_storage_key();
+ 	lockdep_off();
 -- 
-2.17.0
+⣔⢻⣟⢢ 2.18.0.rc2.13.g4da9a5d
+⣿⢿⡿⣿ pacman edition
 
