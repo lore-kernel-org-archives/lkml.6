@@ -2,83 +2,271 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E5CC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BFCC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1741625F5C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:33:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1741625F5C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F13A25F60
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 17:34:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F13A25F60
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964833AbeFYRdW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 13:33:22 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34010 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934051AbeFYRdU (ORCPT
+        id S964839AbeFYRes (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 13:34:48 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40520 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934051AbeFYRer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 13:33:20 -0400
-Received: by mail-pg0-f67.google.com with SMTP id y1-v6so775518pgv.1;
-        Mon, 25 Jun 2018 10:33:19 -0700 (PDT)
+        Mon, 25 Jun 2018 13:34:47 -0400
+Received: by mail-wm0-f66.google.com with SMTP id z13-v6so4740620wma.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 10:34:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ve/0ePpJYgZ6xMPmi4Guh2qlFKx+/MSUrNtiHQkldnM=;
-        b=YTzFaEf49Lr0T1Z+q99dlgINl1LbhIV15n0blYd1CL3g8PPTd1heM5mT3vgSetbYLs
-         V/kHJoHsmS9FeNKocWvsACJJUkoVfPqeFSTqosTBj5llmwPUSXfhK3gbDzd5LYedgB0s
-         M8USvcQO13L0ZGDUvxRjW1UGHPvQ8AupZQVxhasA5ke6GAvDS/zXfGIq0D5O60txWzrS
-         vHcbbeykzwMvEqPIdrll0kvBaucIliIdYrRq/8bHWAZVEcrOM7wuSIiqt4tbhdnI8fSb
-         x/K050BVXW1IZ5/j2cWz2g8J9hPrWT5x9Z9SoQ+l+2c/RxWCEey4DQucrv1ctxQ7sN7g
-         G8/A==
-X-Gm-Message-State: APt69E2PslgwvAIBIjE+PQUcqcF01OmoiCtp2b2xmen3bzrl3ub5ymzR
-        tZ66nO/by2wdmyGS5/T/NraezNQ=
-X-Google-Smtp-Source: ADUXVKIxrLkuoHldmQ933KOmdpFx+RkJHkiYHxZUkGCu/O/Tdrjn7vmKLrMP4aRCL4ELSJ8ucW7TgQ==
-X-Received: by 2002:a63:8648:: with SMTP id x69-v6mr8028905pgd.172.1529947999363;
-        Mon, 25 Jun 2018 10:33:19 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id a25-v6sm21078212pff.8.2018.06.25.10.33.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 10:33:18 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 11:33:17 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     maxime.ripard@bootlin.com, wens@csie.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 04/24] dt-bindings: display: sunxi-drm: Add TCON TOP
- description
-Message-ID: <20180625173317.GA3691@rob-hp-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180625120304.7543-5-jernej.skrabec@siol.net>
+        bh=oTMhCjI3OV1IQfUk4eOYiVhiGVarAJLozWfbtPieI4g=;
+        b=ZyLFFMUhJushQ8YeGJ6jLyZ7tdb8dpFmcieERIjE+ccTyJVAgL58VxtVSq/P3Y19iH
+         kP6dZ+H/wWUiz156YKukR1mQj1T5RAfOfVZgnqKLKX3x/1DY2Yxex4j2CEkmdFIJ1YO+
+         AydP+QDPvF8U9YI8U/Rz/icgvaSc/o2pcHj+nL8h5TbvVAHtnjyQFqLimJDmGOJdG1/0
+         1OaJt/MGQY6EpYKIMqc4rgu8lULRxDzoCCaXlqSPaEJhQ3od4jbxxAcv/bEqYzkfvjS0
+         ZFbS93tLWxKQi9S5uYpyulJ6FpMkC+tPCYQJhHu8jtmUuwxoUxwiHsMAUsoYIUGIbxRe
+         6U/A==
+X-Gm-Message-State: APt69E3/+BTEdQRTKxV157v9Q08UL9KrV+eIyEIp4bqWFfhqBuk/NRoC
+        Dl1OtpihJeq3yZsx7c7pG80=
+X-Google-Smtp-Source: ADUXVKJtQhocjK6YapFbae8qeaEUZTtj1qShjw2e0k8xM7sx5p5PgYcv695alCrBJiFv/3j0utHUeQ==
+X-Received: by 2002:a1c:228b:: with SMTP id i133-v6mr1788879wmi.92.1529948085659;
+        Mon, 25 Jun 2018 10:34:45 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id n7-v6sm16639834wrr.39.2018.06.25.10.34.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 10:34:44 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 2D5B81237D3; Mon, 25 Jun 2018 19:34:44 +0200 (CEST)
+Date:   Mon, 25 Jun 2018 19:34:44 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        pasha.tatashin@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 3/4] mm/memory_hotplug: Get rid of link_mem_sections
+Message-ID: <20180625173444.GA23268@techadventures.net>
+References: <20180601125321.30652-1-osalvador@techadventures.net>
+ <20180601125321.30652-4-osalvador@techadventures.net>
+ <20180625180436.000049ac@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180625120304.7543-5-jernej.skrabec@siol.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180625180436.000049ac@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 02:02:44PM +0200, Jernej Skrabec wrote:
-> TCON TOP main purpose is to configure whole display pipeline. It
-> determines relationships between mixers and TCONs, selects source TCON
-> for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
-> clock source and contains additional TV TCON and DSI gates.
+On Mon, Jun 25, 2018 at 06:04:36PM +0100, Jonathan Cameron wrote:
+> On Fri, 1 Jun 2018 14:53:20 +0200
+> <osalvador@techadventures.net> wrote:
 > 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt      | 56 +++++++++++++++++++
->  include/dt-bindings/clock/sun8i-tcon-top.h    | 11 ++++
->  2 files changed, 67 insertions(+)
->  create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
+> > From: Oscar Salvador <osalvador@suse.de>
+> > 
+> > link_mem_sections() and walk_memory_range() share most of the code,
+> > so we can use walk_memory_range() with a callback to register_mem_sect_under_node()
+> > instead of using link_mem_sections().
+> > 
+> > To control whether the node id must be check, two new functions has been added:
+> > 
+> > register_mem_sect_under_node_nocheck_node()
+> > and
+> > register_mem_sect_under_node_check_node()
+> > 
+> > They both call register_mem_sect_under_node_check() with
+> > the parameter check_nid set to true or false.
+> > 
+> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> > ---
+> >  drivers/base/node.c  | 47 ++++++++++-------------------------------------
+> >  include/linux/node.h | 21 +++++++++------------
+> >  mm/memory_hotplug.c  |  8 ++++----
+> >  3 files changed, 23 insertions(+), 53 deletions(-)
+> > 
+> > diff --git a/drivers/base/node.c b/drivers/base/node.c
+> > index a5e821d09656..248c712e8de5 100644
+> > --- a/drivers/base/node.c
+> > +++ b/drivers/base/node.c
+> > @@ -398,6 +398,16 @@ static int __ref get_nid_for_pfn(unsigned long pfn)
+> >  	return pfn_to_nid(pfn);
+> >  }
+> >  
+> > +int register_mem_sect_under_node_check_node(struct memory_block *mem_blk, void *nid)
+> > +{
+> > +	return register_mem_sect_under_node (mem_blk, *(int *)nid, true);
+> > +}
+> > +
+> > +int register_mem_sect_under_node_nocheck_node(struct memory_block *mem_blk, void *nid)
+> > +{
+> > +	return register_mem_sect_under_node (mem_blk, *(int *)nid, false);
+> > +}
+> > +
+> >  /* register memory section under specified node if it spans that node */
+> >  int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
+> >  				 bool check_nid)
+> > @@ -490,43 +500,6 @@ int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+> >  	return 0;
+> >  }
+> >  
+> > -int link_mem_sections(int nid, unsigned long start_pfn, unsigned long nr_pages,
+> > -		      bool check_nid)
+> > -{
+> > -	unsigned long end_pfn = start_pfn + nr_pages;
+> > -	unsigned long pfn;
+> > -	struct memory_block *mem_blk = NULL;
+> > -	int err = 0;
+> > -
+> > -	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+> > -		unsigned long section_nr = pfn_to_section_nr(pfn);
+> > -		struct mem_section *mem_sect;
+> > -		int ret;
+> > -
+> > -		if (!present_section_nr(section_nr))
+> > -			continue;
+> > -		mem_sect = __nr_to_section(section_nr);
+> > -
+> > -		/* same memblock ? */
+> > -		if (mem_blk)
+> > -			if ((section_nr >= mem_blk->start_section_nr) &&
+> > -			    (section_nr <= mem_blk->end_section_nr))
+> > -				continue;
+> > -
+> > -		mem_blk = find_memory_block_hinted(mem_sect, mem_blk);
+> > -
+> > -		ret = register_mem_sect_under_node(mem_blk, nid, check_nid);
+> > -		if (!err)
+> > -			err = ret;
+> > -
+> > -		/* discard ref obtained in find_memory_block() */
+> > -	}
+> > -
+> > -	if (mem_blk)
+> > -		kobject_put(&mem_blk->dev.kobj);
+> > -	return err;
+> > -}
+> > -
+> >  #ifdef CONFIG_HUGETLBFS
+> >  /*
+> >   * Handle per node hstate attribute [un]registration on transistions
+> > diff --git a/include/linux/node.h b/include/linux/node.h
+> > index 6d336e38d155..1158bea9be52 100644
+> > --- a/include/linux/node.h
+> > +++ b/include/linux/node.h
+> > @@ -31,19 +31,11 @@ struct memory_block;
+> >  extern struct node *node_devices[];
+> >  typedef  void (*node_registration_func_t)(struct node *);
+> >  
+> > -#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_NUMA)
+> > -extern int link_mem_sections(int nid, unsigned long start_pfn,
+> > -			     unsigned long nr_pages, bool check_nid);
+> > -#else
+> > -static inline int link_mem_sections(int nid, unsigned long start_pfn,
+> > -				    unsigned long nr_pages, bool check_nid)
+> > -{
+> > -	return 0;
+> > -}
+> > -#endif
+> > -
+> >  extern void unregister_node(struct node *node);
+> >  #ifdef CONFIG_NUMA
+> > +#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE)
+> > +extern int register_mem_sect_under_node_check_node(struct memory_block *mem_blk, void *nid);
+> > +#endif
+> >  /* Core of the node registration - only memory hotplug should use this */
+> >  extern int __register_one_node(int nid);
+> >  
+> > @@ -54,12 +46,17 @@ static inline int register_one_node(int nid)
+> >  
+> >  	if (node_online(nid)) {
+> >  		struct pglist_data *pgdat = NODE_DATA(nid);
+> > +		unsigned long start = pgdat->node_start_pfn;
+> > +		unsigned long size = pgdat->node_spanned_pages;
+> >  
+> >  		error = __register_one_node(nid);
+> >  		if (error)
+> >  			return error;
+> >  		/* link memory sections under this node */
+> > -		error = link_mem_sections(nid, pgdat->node_start_pfn, pgdat->node_spanned_pages, true);
+> > +#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE)
+> > +		error = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
+> > +					(void *)&nid, register_mem_sect_under_node_check_node);
+> > +#endif
+> Apologies, my previous testing was clearly garbage.
+> 
+> Looks like we take the node pfns then shift them again.  Result on my system is we only get as far as pfn 22
+> which is still in the first memory block so rest of them are never successfully added.
+> Replacing with 
+> 
+> error = walk_memory_range(start, start + size - 1, ...
+> 
+> works much better and lets me test Lorenzo's patch which is what I was really trying to do today.
+> 
+> Sorry again for the incorrect previous tested-by.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Jonathan,
 
+this was fixed in v2.
+Please, see: <20180622111839.10071-1-osalvador@techadventures.net>
+
+Thanks
+
+Oscar Salvador
+
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+> 
+> >  	}
+> >  
+> >  	return error;
+> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> > index f84ef96175ab..ac21dc506b84 100644
+> > --- a/mm/memory_hotplug.c
+> > +++ b/mm/memory_hotplug.c
+> > @@ -40,6 +40,8 @@
+> >  
+> >  #include "internal.h"
+> >  
+> > +extern int register_mem_sect_under_node_nocheck_node(struct memory_block *mem_blk, void *nid);
+> > +
+> >  /*
+> >   * online_page_callback contains pointer to current page onlining function.
+> >   * Initially it is generic_online_page(). If it is required it could be
+> > @@ -1118,7 +1120,6 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+> >  	u64 start, size;
+> >  	bool new_node;
+> >  	int ret;
+> > -	unsigned long start_pfn, nr_pages;
+> >  
+> >  	start = res->start;
+> >  	size = resource_size(res);
+> > @@ -1157,9 +1158,8 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+> >  	}
+> >  
+> >  	/* link memory sections under this node.*/
+> > -	start_pfn = start >> PAGE_SHIFT;
+> > -	nr_pages = size >> PAGE_SHIFT;
+> > -	ret = link_mem_sections(nid, start_pfn, nr_pages, false);
+> > +	ret = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
+> > +				(void *)&nid, register_mem_sect_under_node_nocheck_node);
+> >  	if (ret)
+> >  		goto register_fail;
+> >  
+> 
+> 
+
+-- 
+Oscar Salvador
+SUSE L3
