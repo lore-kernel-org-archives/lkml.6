@@ -2,106 +2,307 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 048F9C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905BDC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFEC5255E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D378255E7
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:29:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KmGu4WE3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFEC5255E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="k5CxeZZL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D378255E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeFYI3d (ORCPT
+        id S1754508AbeFYI3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:29:33 -0400
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:35583 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754080AbeFYI3b (ORCPT
+        Mon, 25 Jun 2018 04:29:36 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37684 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754240AbeFYI3d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:29:31 -0400
-Received: by mail-wr0-f171.google.com with SMTP id c13-v6so2750282wrq.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 01:29:31 -0700 (PDT)
+        Mon, 25 Jun 2018 04:29:33 -0400
+Received: by mail-wm0-f68.google.com with SMTP id r125-v6so8919549wmg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 01:29:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mnr+Nr+2rMhZCwmr3I2/Y2jpho0XSbY1HRMR/OFVW1k=;
-        b=KmGu4WE3+OSSCrW7ptX9spj7hN1oMPj0CdLOndxUp+Na4pvRbXIewVlRBxOeU4pK2m
-         Q+7PyV5ESlruENPKQDwDKO6to2j/J4chL+zKzWTw+Rkox68BkiaZKd3dNiiC8gzcGPxw
-         dX2/EENPFfKyfH7SM+jEFZ2f6V/2Y6duT4ITc=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=++TCHwl/guPvkMV1hf+DsB+4uPX30e9QVrZWiSpKN3s=;
+        b=k5CxeZZLvF0JsvxpilbrH2zhJBl6YYRIMgjnjT60Io2ytkpyhR86zyug7IhkOMSzj7
+         EluTyMs31wN6XA6g9ZW+r0aMwCtA972bavAI//CybFXs3CE7cKejiyuH96uJHsoFFl0F
+         tHn/oPg6Y062rbLM5GxHyjrZBibyNao6eepIbf9TxZ5IkIhzWDZZ/eUxAHCzY1745/8Z
+         OoOY9D7me0lkFJMj3Jm0i10BNsop9WyFOYCp6KgGRmhNl89KsAK7XMoEUeS1eOAGXFXU
+         vgnkYA6BDIEHacdxa8wU5vWSFL0Vperx/9Jlc4J85+0n9qzdxoXI41UeN7H0N3EXT6Ei
+         REdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mnr+Nr+2rMhZCwmr3I2/Y2jpho0XSbY1HRMR/OFVW1k=;
-        b=OZ7/p2xtXDUlufc+u2bPDhpEclmz0x1dEpnsf1bC7J560pUux+RjJi1/dScvk3vJ10
-         VzLwUeCYaQ73uVV3TDRR7+aIXfZ6xIXb8mZtTYKYiI5/i/kF9kZ/k16i+EwKaN3u46Rz
-         Wa04oQxgdWF+3r3RvdAbHp1A/LXLTdKWlryWR6+AY8xC3YKfaGXVW1uqKAJxLTqqkvHL
-         px5/ZymVr2nnuiJECkMAQpa1ZekELa5oS5EjKVoxvkJ1rRU0mTBOEVv/wfsE3WtWvzMb
-         gaBEPPUNyWQk1D9vXEPDxEIcBnOI3NoaUy9DQ07jCRociwhknNtHky/kTY44yNKlBaZw
-         AHyg==
-X-Gm-Message-State: APt69E2S/rwELoO9rSJwSh04ZeYU0DGfBRf5aXFPCcdphpQgCYbogESx
-        pOW1hQWb/3fh9IrP+ttEZAjjYA==
-X-Google-Smtp-Source: AAOMgpc2ImJjKYkjE4tkNml77fco6W05cU5nfOU5zc0AK53HsYHHG/lQpUQ5x44u+q/2jGKv7vzEdQ==
-X-Received: by 2002:adf:e447:: with SMTP id t7-v6mr9607079wrm.145.1529915370472;
-        Mon, 25 Jun 2018 01:29:30 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id z128-v6sm10167931wmz.18.2018.06.25.01.29.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 01:29:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=++TCHwl/guPvkMV1hf+DsB+4uPX30e9QVrZWiSpKN3s=;
+        b=HpAG8me+DrKxUlib1SB5Bz/sR7xZx4lPXeeFtvw/n/BSMUYHx/ibXGuoEFUkIaJVjK
+         qBl6q3H/IbiE2vgiZXc4qo35rNW1k5o9lV4ylLH4+y30WJOsn0L+mwgmGCHA+Mra26rj
+         e7kR5JP1lrezxtGro7rClOjW3jyww390u8tun+QOTkAHwAr98c11JhO9unAppKeqrun8
+         xSkIn0zz3+lRVuFgUs9Y18lHr9YtHMcsRcppLJR/4/BzlglklIb9CA3JoesMD3MdRP7G
+         EpWxdYtbPkZGrJNtUdykPbAbehmJETGn2xaWrmrBGN6pF3xXvh/JHPqjq0RMGjIa0uvQ
+         QuDg==
+X-Gm-Message-State: APt69E1u5aoYIGjVdn/EYrzv+UWZ1Ok4iSULbuBfhKaZfczmoSmX1622
+        utEu/2H7a24Md3DW8V+wtqFyfw==
+X-Google-Smtp-Source: AAOMgpcY4SadMwMyofywUhA2HvEFwN25NYyiORup9cDpO8O6YYxgA2ki7N+t3JU0bEr7wQ3bqG6/RA==
+X-Received: by 2002:a1c:9253:: with SMTP id u80-v6mr222956wmd.52.1529915371797;
+        Mon, 25 Jun 2018 01:29:31 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id n17-v6sm12911855wmd.14.2018.06.25.01.29.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 01:29:31 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: dpcm: improve runtime update predictability
 Date:   Mon, 25 Jun 2018 10:29:23 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-Message-ID: <20180625082923.GA5808@andrea>
-References: <20180622080928.GB7601@arm.com>
- <Pine.LNX.4.44L0.1806221337440.1454-100000@iolanthe.rowland.org>
- <20180625073229.GR2494@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625073229.GR2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Message-Id: <20180625082923.25636-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 09:32:29AM +0200, Peter Zijlstra wrote:
-> 
-> I have yet to digest the rest of the discussion, however:
-> 
-> On Fri, Jun 22, 2018 at 02:09:04PM -0400, Alan Stern wrote:
-> > The LKMM uses the same CAT code for acquire/release and lock/unlock.
-> > (In essence, it considers a lock to be an acquire and an unlock to be a
-> > release; everything else follows from that.)  Treating one differently
-> > from the other in these tests would require some significant changes.
-> > It wouldn't be easy.
-> 
-> That is problematic, acquire+release are very much simpler operations
-> than lock+unlock.
-> 
-> At the very least, lock includes a control-dependency, where acquire
-> does not.
+As it is, dpcm_runtime_update() performs the old path and new path
+update of a frontend before going on to the next frontend DAI.
+Depending the order of the FEs within the rtd list, the result of
+the update might be different.
 
-I don't see how this is relevant here; roughly, "if something is guaranteed
-by a control-dependency, that is also guaranteed by an acquire".  Right? ;)
+For example:
+ * Frontend A connected to backend C, with a 48kHz playback
+ * Frontend B connected to backend D, with a 44.1kHz playback
+ * FE A appears before FE B in the rtd list of the card.
 
-  Andrea
+If we reparent BE C to FE B (disconnecting BE D):
+* old path update of FE A will run first, and BE C will get hw_free()
+  and shutdown()
+* new path update of FE B will run after and BE C, which is stopped,
+  so it will be configured at 44.1kHz, as expected
+
+If we reparent BE D to FE A (disconnecting BE C):
+* new path update of FE A will run first but since BE D is still running
+  at 44.1kHz, it won't be reconfigured (no call to startup() or
+  hw_params())
+* old path update of FE B runs after, nothing happens
+* In this case, we end up with a BE playing at 44.1kHz a stream which is
+  supposed to be played at 48Khz (too slow)
+
+To improve this situation, this patch performs all the FE old paths update
+before going on to update the new paths. With this, the result should
+no longer depend on the order of the FE within the card rtd list.
+
+Please note that there might be a small performance penalty since
+dpcm_process_paths() is called twice per stream direction.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/soc-pcm.c | 165 +++++++++++++++++++++++++++-------------------------
+ 1 file changed, 86 insertions(+), 79 deletions(-)
+
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 5e7ae47a9658..5c2534414478 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -2543,106 +2543,113 @@ static int dpcm_run_old_update(struct snd_soc_pcm_runtime *fe, int stream)
+ 	return ret;
+ }
+ 
+-/* Called by DAPM mixer/mux changes to update audio routing between PCMs and
+- * any DAI links.
+- */
+-int soc_dpcm_runtime_update(struct snd_soc_card *card)
++int soc_dpcm_fe_runtime_update(struct snd_soc_pcm_runtime *fe, int new)
+ {
+-	struct snd_soc_pcm_runtime *fe;
+-	int old, new, paths;
++	struct snd_soc_dapm_widget_list *list;
++	int count, paths;
+ 
+-	mutex_lock_nested(&card->mutex, SND_SOC_CARD_CLASS_RUNTIME);
+-	list_for_each_entry(fe, &card->rtd_list, list) {
+-		struct snd_soc_dapm_widget_list *list;
++	if (!fe->dai_link->dynamic)
++		return 0;
+ 
+-		/* make sure link is FE */
+-		if (!fe->dai_link->dynamic)
+-			continue;
++	/* only check active links */
++	if (!fe->cpu_dai->active)
++		return 0;
+ 
+-		/* only check active links */
+-		if (!fe->cpu_dai->active)
+-			continue;
++	/* DAPM sync will call this to update DSP paths */
++	dev_dbg(fe->dev, "ASoC: DPCM %s runtime update for FE %s\n",
++		new ? "new" : "old", fe->dai_link->name);
+ 
+-		/* DAPM sync will call this to update DSP paths */
+-		dev_dbg(fe->dev, "ASoC: DPCM runtime update for FE %s\n",
+-			fe->dai_link->name);
++	/* skip if FE doesn't have playback capability */
++	if (!fe->cpu_dai->driver->playback.channels_min ||
++	    !fe->codec_dai->driver->playback.channels_min)
++		goto capture;
+ 
+-		/* skip if FE doesn't have playback capability */
+-		if (!fe->cpu_dai->driver->playback.channels_min
+-		    || !fe->codec_dai->driver->playback.channels_min)
+-			goto capture;
+-
+-		/* skip if FE isn't currently playing */
+-		if (!fe->cpu_dai->playback_active
+-		    || !fe->codec_dai->playback_active)
+-			goto capture;
+-
+-		paths = dpcm_path_get(fe, SNDRV_PCM_STREAM_PLAYBACK, &list);
+-		if (paths < 0) {
+-			dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
+-					fe->dai_link->name,  "playback");
+-			mutex_unlock(&card->mutex);
+-			return paths;
+-		}
++	/* skip if FE isn't currently playing */
++	if (!fe->cpu_dai->playback_active || !fe->codec_dai->playback_active)
++		goto capture;
+ 
+-		/* update any new playback paths */
+-		new = dpcm_process_paths(fe, SNDRV_PCM_STREAM_PLAYBACK, &list, 1);
+-		if (new) {
+-			dpcm_run_new_update(fe, SNDRV_PCM_STREAM_PLAYBACK);
+-			dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_PLAYBACK);
+-			dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_PLAYBACK);
+-		}
++	paths = dpcm_path_get(fe, SNDRV_PCM_STREAM_PLAYBACK, &list);
++	if (paths < 0) {
++		dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
++			 fe->dai_link->name,  "playback");
++		return paths;
++	}
+ 
+-		/* update any old playback paths */
+-		old = dpcm_process_paths(fe, SNDRV_PCM_STREAM_PLAYBACK, &list, 0);
+-		if (old) {
++	/* update any playback paths */
++	count = dpcm_process_paths(fe, SNDRV_PCM_STREAM_PLAYBACK, &list, new);
++	if (count) {
++		if (new)
++			dpcm_run_new_update(fe, SNDRV_PCM_STREAM_PLAYBACK);
++		else
+ 			dpcm_run_old_update(fe, SNDRV_PCM_STREAM_PLAYBACK);
+-			dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_PLAYBACK);
+-			dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_PLAYBACK);
+-		}
+ 
+-		dpcm_path_put(&list);
++		dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_PLAYBACK);
++		dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_PLAYBACK);
++	}
++
++	dpcm_path_put(&list);
++
+ capture:
+-		/* skip if FE doesn't have capture capability */
+-		if (!fe->cpu_dai->driver->capture.channels_min
+-		    || !fe->codec_dai->driver->capture.channels_min)
+-			continue;
++	/* skip if FE doesn't have capture capability */
++	if (!fe->cpu_dai->driver->capture.channels_min ||
++	    !fe->codec_dai->driver->capture.channels_min)
++		return 0;
+ 
+-		/* skip if FE isn't currently capturing */
+-		if (!fe->cpu_dai->capture_active
+-		    || !fe->codec_dai->capture_active)
+-			continue;
++	/* skip if FE isn't currently capturing */
++	if (!fe->cpu_dai->capture_active || !fe->codec_dai->capture_active)
++		return 0;
+ 
+-		paths = dpcm_path_get(fe, SNDRV_PCM_STREAM_CAPTURE, &list);
+-		if (paths < 0) {
+-			dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
+-					fe->dai_link->name,  "capture");
+-			mutex_unlock(&card->mutex);
+-			return paths;
+-		}
++	paths = dpcm_path_get(fe, SNDRV_PCM_STREAM_CAPTURE, &list);
++	if (paths < 0) {
++		dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
++			 fe->dai_link->name,  "capture");
++		return paths;
++	}
+ 
+-		/* update any new capture paths */
+-		new = dpcm_process_paths(fe, SNDRV_PCM_STREAM_CAPTURE, &list, 1);
+-		if (new) {
++	/* update any old capture paths */
++	count = dpcm_process_paths(fe, SNDRV_PCM_STREAM_CAPTURE, &list, new);
++	if (count) {
++		if (new)
+ 			dpcm_run_new_update(fe, SNDRV_PCM_STREAM_CAPTURE);
+-			dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_CAPTURE);
+-			dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_CAPTURE);
+-		}
+-
+-		/* update any old capture paths */
+-		old = dpcm_process_paths(fe, SNDRV_PCM_STREAM_CAPTURE, &list, 0);
+-		if (old) {
++		else
+ 			dpcm_run_old_update(fe, SNDRV_PCM_STREAM_CAPTURE);
+-			dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_CAPTURE);
+-			dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_CAPTURE);
+-		}
+ 
+-		dpcm_path_put(&list);
++		dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_CAPTURE);
++		dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_CAPTURE);
+ 	}
+ 
+-	mutex_unlock(&card->mutex);
++	dpcm_path_put(&list);
++
+ 	return 0;
+ }
++
++/* Called by DAPM mixer/mux changes to update audio routing between PCMs and
++ * any DAI links.
++ */
++int soc_dpcm_runtime_update(struct snd_soc_card *card)
++{
++	struct snd_soc_pcm_runtime *fe;
++	int ret = 0;
++
++	mutex_lock_nested(&card->mutex, SND_SOC_CARD_CLASS_RUNTIME);
++	/* shutdown all old paths first */
++	list_for_each_entry(fe, &card->rtd_list, list) {
++		ret = soc_dpcm_fe_runtime_update(fe, 0);
++		if (ret)
++			goto out;
++	}
++
++	/* bring new paths up */
++	list_for_each_entry(fe, &card->rtd_list, list) {
++		ret = soc_dpcm_fe_runtime_update(fe, 1);
++		if (ret)
++			goto out;
++	}
++
++out:
++	mutex_unlock(&card->mutex);
++	return ret;
++}
+ int soc_dpcm_be_digital_mute(struct snd_soc_pcm_runtime *fe, int mute)
+ {
+ 	struct snd_soc_dpcm *dpcm;
+-- 
+2.14.4
+
