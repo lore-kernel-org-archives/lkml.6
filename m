@@ -2,145 +2,189 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BB4C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B97C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D81325AB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3B1825AB4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:43:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mfA4f31q";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mfA4f31q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D81325AB1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOSo7g8A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B1825AB4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934215AbeFYNmv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:42:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43138 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755345AbeFYNk3 (ORCPT
+        id S934244AbeFYNnA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:43:00 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41814 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934034AbeFYNm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:40:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 952AA60791; Mon, 25 Jun 2018 13:40:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529934028;
-        bh=/qoVU1NSlTfNbRJtCaj1eKbbZC1ANROnlSaCSWOm1ok=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mfA4f31qj/id2TthuSK60uHsvnMf804jQ8OlJjK7U8or1S32xCqUAB2lKw5QYNl+S
-         qOjaQPTfmatXIxMtaBW3XGB5bmaRMFMsh2H9qcehk6PGh6buzjdJCebk9FWkp8C80u
-         +n5cp33BKu+vYsjAePcUJ9K0witbwmHirOmV062Y=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4494260A06;
-        Mon, 25 Jun 2018 13:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529934028;
-        bh=/qoVU1NSlTfNbRJtCaj1eKbbZC1ANROnlSaCSWOm1ok=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mfA4f31qj/id2TthuSK60uHsvnMf804jQ8OlJjK7U8or1S32xCqUAB2lKw5QYNl+S
-         qOjaQPTfmatXIxMtaBW3XGB5bmaRMFMsh2H9qcehk6PGh6buzjdJCebk9FWkp8C80u
-         +n5cp33BKu+vYsjAePcUJ9K0witbwmHirOmV062Y=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4494260A06
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v8 1/7] dt-bindings: net: bluetooth: Add device tree bindings for QTI chip wcn3990
-Date:   Mon, 25 Jun 2018 19:10:07 +0530
-Message-Id: <20180625134013.19684-2-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180625134013.19684-1-bgodavar@codeaurora.org>
-References: <20180625134013.19684-1-bgodavar@codeaurora.org>
+        Mon, 25 Jun 2018 09:42:57 -0400
+Received: by mail-lf0-f66.google.com with SMTP id d24-v6so14492220lfa.8;
+        Mon, 25 Jun 2018 06:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=z2ajmEiGZC7KCjvG5fyNO1lM3nIidAhkT1T6KgfzJik=;
+        b=eOSo7g8A0ZXXZf4EROc9LQ1sr3wcxa22sIC9Zy4P30QwzC/YYucY4zgeSaB1qPYhht
+         dsUj6WhL87S/xNngpCy73KZycy9ku0eFNUWCJimdNAWm9CBiDxPmoLzmWxbV9LkLye0f
+         H+F0CHuv508SbDt6ieJx49yvEPsIXLywC7uwAI21bTuOXEFXu/dl/Xg1/Q4/vARsD05c
+         UCg2Voi+/bOu4mKaIXLdkO5cYriBtpG9sysECDNVQcn7yLKbAUYHco6kXia/VCok+/J3
+         LiwElpkTBpQAS8zKin/2UYwAB7zcSdjD7NIqBB/aTgimAYNgBMQCxgclGOhywyNOqLf6
+         zVOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=z2ajmEiGZC7KCjvG5fyNO1lM3nIidAhkT1T6KgfzJik=;
+        b=TSFHJd03UFl8SlQtVMLzADO7Ae88v6zPE7gMWGy6QQKe0tCDIxTF+4KXmKPqCdG/DU
+         EeEyNJLmjc7mt4x1NnxTkGM96BJsx+V+7N/Btdpyn67tmXC4t4oFnLREBNnrnP82yuH3
+         ABbXxbIrSxZwg0lYJHF25AGF8s1wGoa4RwrC/DZVHMz+18W2UfQ3rd0ldc7+4DDRGCWq
+         ifftwLDkUL1KIzD9BU+zxUcDCbUYiej4vRAUIecBuTdRLFI5E1nk3U4euzBqsvcFT+rl
+         4BiSCpgevfBjEJL3/0rJtl7tvht9uXxAoG1OPydm2Rej94hcO62iK0jGCiXPj4dkWyat
+         1u8w==
+X-Gm-Message-State: APt69E1QNP1ozR15KK6OXTd9GFkYWo4LhzmtnxB8zFg9V1xz1NQ8Z7dJ
+        hFhoEEAP/i3AR4ViSBgSLywp4G4PMKibWsH843c=
+X-Google-Smtp-Source: ADUXVKKNbYh150QJhu7ezcqkqAqn2WFFB7ItFwA6H4EGvO0rUppwMEi5iGUtLQcvwxS+zpXaKUC0eWFBMydVQ4i8CK0=
+X-Received: by 2002:a19:141f:: with SMTP id k31-v6mr6400629lfi.23.1529934175336;
+ Mon, 25 Jun 2018 06:42:55 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:41cf:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 06:42:54
+ -0700 (PDT)
+In-Reply-To: <CAK8P3a1Lr2y1SZonodsyUETkc3d_NBOzyOGGv0OFSW=Xo_RVsA@mail.gmail.com>
+References: <20180620150138.49380-1-arnd@arndb.de> <87r2l1sby0.fsf@linux.intel.com>
+ <CAK8P3a1J9j7pz-d+otbJweWgOZZePdaMJEb_sU2GJKi3oYq7Xg@mail.gmail.com>
+ <87muvpsa61.fsf@linux.intel.com> <CAK8P3a1Lr2y1SZonodsyUETkc3d_NBOzyOGGv0OFSW=Xo_RVsA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 25 Jun 2018 15:42:54 +0200
+X-Google-Sender-Auth: WpwlM56nUbaM0pdSeg0Vl3S08h8
+Message-ID: <CAK8P3a2YuoMJ654sJtzE4mJN7wdd4o5JtY8W7c9QocZX8JP6cw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: replace current_kernel_time64 with ktime equivalent
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables regulators for the Qualcomm Bluetooth wcn3990
-controller.
+On Wed, Jun 20, 2018 at 9:35 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Jun 20, 2018 at 6:19 PM, Andi Kleen <ak@linux.intel.com> wrote:
+>> Arnd Bergmann <arnd@arndb.de> writes:
+>>>
+>>> To clarify: current_kernel_time() uses at most millisecond resolution rather
+>>> than microsecond, as tkr_mono.xtime_nsec only gets updated during the
+>>> timer tick.
+>>
+>> Ah you're right. I remember now: the motivation was to make sure there
+>> is basically no overhead. In some setups the full gtod can be rather
+>> slow, particularly if it falls back to some crappy timer.
+>
+> This means, we're probably fine with a compile-time option that
+> distros can choose to enable depending on what classes of hardware
+> they are targetting, like
+>
+> struct timespec64 current_time(struct inode *inode)
+> {
+>         struct timespec64 now;
+>         u64 gran = inode->i_sb->s_time_gran;
+>
+>         if (IS_ENABLED(CONFIG_HIRES_INODE_TIMES) &&
+>             gran <= NSEC_PER_JIFFY)
+>                   ktime_get_real_ts64(&now);
+>         else
+>                   ktime_get_coarse_real_ts64(&now);
+>
+>         return timespec64_trunc(now, gran);
+> }
+>
+> With that implementation, we could still let file systems choose
+> to get coarse timestamps by tuning the granularity in the
+> superblock s_time_gran, which would result in nice round
+> tv_nsec values that represent the actual accuracy.
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+I've done some simple tests and found that on a variety of
+x86, arm32 and arm64 CPUs, it takes between 70 and 100
+CPU cycles to read the TSC and add it to the coarse
+clock, e.g. on a 3.1GHz Ryzen, using the little test program
+below:
+
+vdso hires:   37.18ns
+vdso coarse:    6.44ns
+sysc hires: 161.62ns
+sysc coarse: 133.87ns
+
+On the same machine, it takes around 400ns (1240 cycles)
+to write one byte into a tmpfs file with pwrite(). Adding 5% to
+10% overhead for accurate timestamps would definitely be
+noticed, so I guess we wouldn't enable that unconditionally,
+but could do it as an opt-in mount option if someone had a
+use case.
+
+       Arnd
+
 ---
+/* measure times for high-resolution clocksource access from userspace */
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <sys/syscall.h>
 
-Changes in v8:
-    * Separated the optional entries between two chips
+static int do_clock_gettime(clockid_t clkid, struct timespec *tp, bool vdso)
+{
+        if (vdso)
+                return clock_gettime(clkid, tp);
 
-Changes in v7:
-    * no change.
+        return syscall(__NR_clock_gettime, clkid, tp);
+}
 
-Changes in v6:
+static int loop1sec(int clkid, bool vdso)
+{
+        int i;
+        struct timespec t, start;
 
-    * Changed the oper-speed to max-speed.
+        do_clock_gettime(clkid, &start, vdso);
+        i = 0;
+        do {
+                do_clock_gettime(clkid, &t, vdso);
+                i++;
+        } while (t.tv_sec == start.tv_sec || t.tv_nsec < start.tv_nsec);
 
-Changes in v5:
+        return i;
+}
 
-    * Added entry for oper-speed and init-speed.
+int main(void)
+{
+        printf("vdso hires:     %7.2fns\n", 1000000000.0 /
+loop1sec(CLOCK_REALTIME, true));
+        printf("vdso coarse:    %7.2fns\n", 1000000000.0 /
+loop1sec(CLOCK_REALTIME_COARSE, true));
+        printf("sysc hires:     %7.2fns\n", 1000000000.0 /
+loop1sec(CLOCK_REALTIME, false));
+        printf("sysc coarse:    %7.2fns\n", 1000000000.0 /
+loop1sec(CLOCK_REALTIME_COARSE, false));
 
----
- .../bindings/net/qualcomm-bluetooth.txt       | 30 +++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-index 0ea18a53cc29..c2b09dd2bf31 100644
---- a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-+++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-@@ -10,12 +10,23 @@ device the slave device is attached to.
- Required properties:
-  - compatible: should contain one of the following:
-    * "qcom,qca6174-bt"
-+   * "qcom,wcn3990-bt"
-+
-+Optional properties for compatible string qcom,qca6174-bt:
- 
--Optional properties:
-  - enable-gpios: gpio specifier used to enable chip
-  - clocks: clock provided to the controller (SUSCLK_32KHZ)
- 
--Example:
-+Optional properties for compatible string qcom,wcn3990-bt:
-+
-+ - vddio-supply: Bluetooth VDD IO regulator handle.
-+ - vddxtal-supply: Bluetooth VDD XTAL regulator handle.
-+ - vddpa-supply: Bluetooth VDD PA regulator handle.
-+ - vddldo-supply: Bluetooth VDD LDO regulator handle.
-+ - vddcore-supply: Bluetooth VDD CORE regulator handle.
-+ - max-speed: Maximum operating speed of the chip.
-+
-+Examples:
- 
- serial@7570000 {
- 	label = "BT-UART";
-@@ -28,3 +39,18 @@ serial@7570000 {
- 		clocks = <&divclk4>;
- 	};
- };
-+
-+serial@898000 {
-+	label = "BT-UART";
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn3990-bt";
-+		vddio-supply = <&pm8998_s3>;
-+		vddxtal-supply = <&pm8998_s5>;
-+		vddcore-supply = <&pm8998_l7>;
-+		vddpa-supply = <&pm8998_l17>;
-+		vddldo-supply = <&pm8998_l25>;
-+		max-speed = <3200000>;
-+	};
-+};
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+        return 0;
+}
