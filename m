@@ -2,105 +2,122 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DDBC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA53DC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEA5F25706
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:51:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56EF42570C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 09:53:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sLcG48dT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEA5F25706
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEefgy8h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56EF42570C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932113AbeFYJvL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 05:51:11 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:40717 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755034AbeFYJvJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 05:51:09 -0400
-Received: by mail-vk0-f67.google.com with SMTP id o71-v6so7479280vke.7
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 02:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=2TtAcicZiJky3WJSEK9dPu8qH1IjaXX1oZK5353zrQ0=;
-        b=sLcG48dTzpWMun8/0rdQHFzSvtDGuYwdygyNIV/rj/ngOeKe+xOUphetixAzZhgK0f
-         OAmoE8LFRu1dONQtfbEt+CvavQTHmjKJ0XAKRr1SrxWP/A3bQr0UaGMrp1sS2H1OqroZ
-         7aqD2hQ8emEEpglyn+StURLcnMV/NbUQR0FeNH+QRYNexLqMtGEIDU/EsFygNhBzgyts
-         balTEfO3F7dQ/dXfnce9xReB1th4ZN8mYWY9LbfBzy6uvLrdYZbarH1He7yfBczQh8Aa
-         BYBw+j5xak/ZfLNoCoP3NcnRCpUDUrVXtObCW9/D0FQDXkgtLbwcrMRLb1vuQWfHzKXl
-         TKUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=2TtAcicZiJky3WJSEK9dPu8qH1IjaXX1oZK5353zrQ0=;
-        b=kr2ZBUgiANewsIoJbzaxn7+ML54WJZNnUlBapFlleugRW7KQOH+wOv9kkiAyd8P7x+
-         dj0XzCagpITfypS3OgRcNNe59ISl/LI9Q78LEJF6gIGtVcQCUilExxm3v6YIZyfDofKa
-         MAnLUKQt1x+50a2N8P7gtK6AbSc7wfBG+xf+AifwSaovzhE5DYTsT1wfS+NsOWiE1qLE
-         iaaHpgesw9cV9q5rImjouFAsq6Vw8aLZ5YrFXP7nZ/nGx2CsWva2IIgZkESSxqSPHvGu
-         qCHfZu+0fY5/oCNENhQjy5Vo+/IMEOX/72397RZOxgIjhGT8/jf2vgeYSteKTPt9Yb90
-         OeMQ==
-X-Gm-Message-State: APt69E1qTHCofuy3QRgHsrGFt4VYRHbQ6zqq/spKXl8IMZbCKxsu7WAe
-        tRmu+aCszuf+5ARchjE2l5DeLO5x9X+35lFjJyE=
-X-Google-Smtp-Source: ADUXVKJb5UISIP0+Oyw7HUjhpLuJXG0Yi8hUNldwh1zaNa001rT9J2a8s8VODahdNcbDlNGNUDZ93cn2CijQWv6LgG8=
-X-Received: by 2002:a1f:1e10:: with SMTP id e16-v6mr6994867vke.176.1529920268993;
- Mon, 25 Jun 2018 02:51:08 -0700 (PDT)
+        id S1755078AbeFYJxC (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 05:53:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754650AbeFYJxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 05:53:01 -0400
+Received: from linux-5o07 (charybdis-ext.suse.de [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 235322570B;
+        Mon, 25 Jun 2018 09:52:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529920380;
+        bh=ZuySTQAWHuQCqjxpuJh+37pcrUTd7axEvmTAIVhs7FI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vEefgy8hPXNzP6iBDUPmmH406bbgsRF1jw81IqNnPfB5eHy15olIW9OqYVmkiwhRv
+         4QMBiehkLFqT40r3a4q03jQ6sZFjzsA0JmGC5f34nMrP+g5Mzw3TjDf5xwdvpraZfJ
+         GO6+qeljZeyE5GEdmHUZ8JfXNfCdezWpUX7TZoBk=
+Date:   Mon, 25 Jun 2018 11:52:58 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: replace VMLINUX_SYMBOL_STR() with __stringify()
+ or string literal
+Message-ID: <20180625095258.umu7nfazw2g3tiwp@linux-5o07>
+References: <1529768264-10199-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 02:51:08
- -0700 (PDT)
-In-Reply-To: <20180623094532.12316-1-michael.straube@posteo.de>
-References: <20180623094532.12316-1-michael.straube@posteo.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 25 Jun 2018 12:51:08 +0300
-Message-ID: <CAHp75VcNxZie7-9YqUgtrE7BR88SLDSXuNCa5Nph4cKBrQxAWQ@mail.gmail.com>
-Subject: Re: [PATCH] staging: rtl8723bs: refactor rtw_macaddr_cfg()
-To:     Michael Straube <michael.straube@posteo.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1529768264-10199-1-git-send-email-yamada.masahiro@socionext.com>
+X-OS:   Linux linux-5o07 4.18.0-rc1-lp150.11-default+ x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 12:45 PM, Michael Straube
-<michael.straube@posteo.de> wrote:
-> Using is_broadcast_ether_addr() and is_zero_ether_addr() instead of
-> testing each byte of the mac[] array for 0xff and 0x00 shortens the
-> code and improves readability.
++++ Masahiro Yamada [24/06/18 00:37 +0900]:
+>With the special case handling for Blackfin and Metag was removed by
+>commit 94e58e0ac312 ("export.h: remove code for prefixing symbols with
+>underscore"), VMLINUX_SYMBOL_STR() is now equivalent to __stringify().
 >
-> If np == NULL, of_get_property() returns NULL, hence the "np" check
-> is not needed.
+>Replace the remaining usages to prepare for the entire removal of
+>VMLINUX_SYMBOL_STR().
 >
-> Instead of a fixed default mac address use a random one to reduce the
-> likelihood of mac address collision.
+>Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Applied, thanks.
+
+Jessica
+
+>---
 >
-> Thanks to Joe Perches and Dan Carpenter.
-
-> +               if ((addr = of_get_property(np, "local-mac-address", &len)) &&
->                     len == ETH_ALEN) {
->                         memcpy(mac_addr, addr, ETH_ALEN);
-
-ether_addr_copy()?
-
->                 } else {
-
-> +                       eth_random_addr(mac_addr);
-> +                       DBG_871X("MAC Address from efuse error, assign random one !!!\n");
->                 }
-
--- 
-With Best Regards,
-Andy Shevchenko
+> include/linux/module.h | 4 ++--
+> kernel/module.c        | 6 ++----
+> 2 files changed, 4 insertions(+), 6 deletions(-)
+>
+>diff --git a/include/linux/module.h b/include/linux/module.h
+>index d44df9b..f807f15 100644
+>--- a/include/linux/module.h
+>+++ b/include/linux/module.h
+>@@ -266,7 +266,7 @@ extern int modules_disabled; /* for sysctl */
+> /* Get/put a kernel symbol (calls must be symmetric) */
+> void *__symbol_get(const char *symbol);
+> void *__symbol_get_gpl(const char *symbol);
+>-#define symbol_get(x) ((typeof(&x))(__symbol_get(VMLINUX_SYMBOL_STR(x))))
+>+#define symbol_get(x) ((typeof(&x))(__symbol_get(__stringify(x))))
+>
+> /* modules using other modules: kdb wants to see this. */
+> struct module_use {
+>@@ -575,7 +575,7 @@ extern void __noreturn __module_put_and_exit(struct module *mod,
+> #ifdef CONFIG_MODULE_UNLOAD
+> int module_refcount(struct module *mod);
+> void __symbol_put(const char *symbol);
+>-#define symbol_put(x) __symbol_put(VMLINUX_SYMBOL_STR(x))
+>+#define symbol_put(x) __symbol_put(__stringify(x))
+> void symbol_put_addr(void *addr);
+>
+> /* Sometimes we know we already have a refcount, and it's easier not
+>diff --git a/kernel/module.c b/kernel/module.c
+>index f475f30..624d2c0 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -1339,14 +1339,12 @@ static inline int check_modstruct_version(const struct load_info *info,
+> 	 * locking is necessary -- use preempt_disable() to placate lockdep.
+> 	 */
+> 	preempt_disable();
+>-	if (!find_symbol(VMLINUX_SYMBOL_STR(module_layout), NULL,
+>-			 &crc, true, false)) {
+>+	if (!find_symbol("module_layout", NULL, &crc, true, false)) {
+> 		preempt_enable();
+> 		BUG();
+> 	}
+> 	preempt_enable();
+>-	return check_version(info, VMLINUX_SYMBOL_STR(module_layout),
+>-			     mod, crc);
+>+	return check_version(info, "module_layout", mod, crc);
+> }
+>
+> /* First part is kernel version, which we ignore if module has crcs. */
+>-- 
+>2.7.4
+>
