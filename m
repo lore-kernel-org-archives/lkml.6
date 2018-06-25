@@ -2,131 +2,144 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0373C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D19A8C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3B0D25A7B
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:32:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B0D25A7B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 9463125A81
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 13:33:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9463125A81
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934129AbeFYNcv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 09:32:51 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:21928 "EHLO pegase1.c-s.fr"
+        id S934136AbeFYNdV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 09:33:21 -0400
+Received: from mga06.intel.com ([134.134.136.31]:32292 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933785AbeFYNct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 09:32:49 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41Dqq04v1Nz9txd0;
-        Mon, 25 Jun 2018 15:32:28 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id M-Ht8ZYJGn8i; Mon, 25 Jun 2018 15:32:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41Dqq04JRsz9txcm;
-        Mon, 25 Jun 2018 15:32:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D4DB78B7A0;
-        Mon, 25 Jun 2018 15:32:35 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id RWhLy7_ecLVj; Mon, 25 Jun 2018 15:32:35 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.35])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6DEAF8B7C2;
-        Mon, 25 Jun 2018 15:32:35 +0200 (CEST)
-Subject: Re: [PATCH v2 2/2] kobject: Fix -Wstringop-truncation warning
-To:     Stafford Horne <shorne@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
-        Eric Biggers <ebiggers3@gmail.com>,
-        linux-crypto@vger.kernel.org
-References: <20180625124538.21051-1-shorne@gmail.com>
- <20180625124538.21051-3-shorne@gmail.com>
- <c89dd856-3637-b235-f134-e15621eab2c6@c-s.fr>
- <20180625132445.GI24595@lianli.shorne-pla.net>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <d962dac0-ed9c-6894-09df-ad5f6c00c8f1@c-s.fr>
-Date:   Mon, 25 Jun 2018 15:32:35 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933939AbeFYNdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 09:33:19 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 06:33:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,270,1526367600"; 
+   d="scan'208";a="66134248"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga004.fm.intel.com with SMTP; 25 Jun 2018 06:33:13 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 25 Jun 2018 16:33:13 +0300
+Date:   Mon, 25 Jun 2018 16:33:13 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: shpchp: Fix probing logic inversion
+Message-ID: <20180625133313.GL2558@lahna.fi.intel.com>
+References: <20180621164715.28160-1-marc.zyngier@arm.com>
+ <20180625125204.GH2558@lahna.fi.intel.com>
+ <8d37f32e-d62d-0e81-d478-8a7a8d7b15c0@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180625132445.GI24595@lianli.shorne-pla.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d37f32e-d62d-0e81-d478-8a7a8d7b15c0@arm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 25/06/2018 à 15:24, Stafford Horne a écrit :
-> On Mon, Jun 25, 2018 at 02:57:13PM +0200, Christophe LEROY wrote:
->>
->>
->> Le 25/06/2018 à 14:45, Stafford Horne a écrit :
->>> When compiling with GCC 9.0.0 I am seeing the following warning:
->>>
->>>       In function ‘fill_kobj_path’,
->>> 	inlined from ‘kobject_get_path’ at lib/kobject.c:155:2:
->>>       lib/kobject.c:128:3: warning: ‘strncpy’ output truncated before terminating nul copying as many bytes from a string as its length [-Wstringop-truncation]
->>>          strncpy(path + length, kobject_name(parent), cur);
->>>          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>       lib/kobject.c: In function ‘kobject_get_path’:
->>>       lib/kobject.c:125:13: note: length computed here
->>>          int cur = strlen(kobject_name(parent));
->>> 		 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>
->>> This is not really an issue since the buffer we are writing to is
->>> pre-zero'd and we have already allocated the buffer based on the
->>> calculated strlen size and accounted for the terminating '\0'.
->>> Just use memcpy() instead.
->>
->> If we are already sure the destination is big enough, why not just do a
->> strcpy() and drop the 'cur = strlen()' ?
+On Mon, Jun 25, 2018 at 02:13:26PM +0100, Marc Zyngier wrote:
+> On 25/06/18 13:52, Mika Westerberg wrote:
+> > On Thu, Jun 21, 2018 at 05:47:15PM +0100, Marc Zyngier wrote:
+> >> Until recently, shpc_probe() would bail out pretty early in the
+> >> absence of the SHPC capability. A logic change in the way the
+> >> driver now checks that capability makes it go and probe the
+> >> firmware anyway, with ugly consequences if the system is not
+> >> ACPI based (my arm64 ThunderX is DT driven, and explodes in
+> >> a spectacular way after getting a NULL root bridge from the
+> >> non-existent ACPI tables...).
+> > 
+> > Could you share log from the failure? I would like to understand a bit
+> > better where it crashes and why.
 > 
-> Hi Christophe,
+> Here you go:
 > 
-> Here were are writing multiple strings into a buffer from back to front.  We are
-> copying exactly strlen() bytes at a time to avoid the nul terminator being
-> copied into the buffer.
+> [   12.330017] pcieport 0008:1f:00.0: enabling device (0506 -> 0507)
+> [   12.336315] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
+> [   12.345104] Mem abort info:
+> [   12.347895]   ESR = 0x96000004
+> [   12.350945]   Exception class = DABT (current EL), IL = 32 bits
+> [   12.356860]   SET = 0, FnV = 0
+> [   12.359910]   EA = 0, S1PTW = 0
+> [   12.363046] Data abort info:
+> [   12.365922]   ISV = 0, ISS = 0x00000004
+> [   12.369748]   CM = 0, WnR = 0
+> [   12.372712] [0000000000000058] user address but active_mm is swapper
+> [   12.379063] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+> [   12.384625] Modules linked in:
+> [   12.387676] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.18.0-rc1-00006-ga2c5c6a64fb6 #10
+> [   12.395929] Hardware name: FOXCONN R2-1221R-A4/C2U4N_MB, BIOS G31FB18A 03/31/2017
+> [   12.403408] Workqueue: events work_for_cpu_fn
+> [   12.407758] pstate: 60000005 (nZCv daif -PAN -UAO)
+> [   12.412544] pc : acpi_get_hp_hw_control_from_firmware+0xa0/0x2b0
+> [   12.418541] lr : acpi_get_hp_hw_control_from_firmware+0xa0/0x2b0
+> [   12.424537] sp : ffff00000a613c60
+> [   12.427841] x29: ffff00000a613c60 x28: 0000000000000000 
+> [   12.433147] x27: ffff800fbeb8d0b0 x26: ffff00000982a068 
+> [   12.438453] x25: 0000000000000000 x24: ffff000009feb898 
+> [   12.443759] x23: 0000000000000000 x22: ffff000009808000 
+> [   12.449064] x21: ffff0000098dee98 x20: ffff810fa60d9000 
+> [   12.454370] x19: 0000000000000000 x18: ffffffffffffffff 
+> [   12.459675] x17: 0000000000000e00 x16: 0000000000000020 
+> [   12.464981] x15: ffff000009808648 x14: ffff000089a31b8f 
+> [   12.470286] x13: 0000000000000000 x12: 0000000000000040 
+> [   12.475591] x11: 000000000000004c x10: 0000000000000a20 
+> [   12.480897] x9 : ffff00000a613d30 x8 : 0000000000000000 
+> [   12.486202] x7 : ffff000009808648 x6 : 0000000000000057 
+> [   12.491508] x5 : 0000000000000010 x4 : 000000000000001f 
+> [   12.496813] x3 : 0000000000000000 x2 : 0d68a3f9b2251000 
+> [   12.502118] x1 : 0000000000000000 x0 : 0000000000000000 
+> [   12.507425] Process kworker/0:0 (pid: 5, stack limit = 0x(____ptrval____))
+> [   12.514289] Call trace:
+> [   12.516727]  acpi_get_hp_hw_control_from_firmware+0xa0/0x2b0
+> [   12.522377]  shpc_probe+0x48/0x3b0
+> [   12.525772]  local_pci_probe+0x44/0xb0
+> [   12.529511]  work_for_cpu_fn+0x20/0x30
+> [   12.533252]  process_one_work+0x208/0x480
+> [   12.537251]  worker_thread+0x254/0x448
+> [   12.540992]  kthread+0x104/0x130
+> [   12.544212]  ret_from_fork+0x10/0x1c
+> [   12.547779] Code: f100427f 54000040 f85f8260 94009f63 (b9405800) 
+> [   12.553866] ---[ end trace 8ee5b8cc95cd4f02 ]---
 > 
-> I don't doubt we could use strcpy() but I was trying to keep the change small.
+> >> Take this opportunity to move the call to shpchp_is_native()
+> >> back into shpc_probe(), making it clear that a non-ACPI system
+> >> is not expected to use this driver.
+> > 
+> > It is fine to use SHPC in non-ACPI systems. However, in ACPI systems we
+> > should negotiate whether it is the OS or the firmware who handles it.
+> Fair enough. In which case we should at the very least make sure
+> we can handle acpi_pci_find_root() returning NULL (which is what
+> generates the crash in my case).
 
-Ok, fair enough.
+Agreed. Can you try if the below patch fixes the issue for you?
 
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
-> 
-> -Stafford
-> 
->>>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Cc: Arnd Bergmann <arnd@arndb.de>
->>> Cc: Eric Biggers <ebiggers3@gmail.com>
->>> Signed-off-by: Stafford Horne <shorne@gmail.com>
->>> ---
->>>    lib/kobject.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/lib/kobject.c b/lib/kobject.c
->>> index 18989b5b3b56..e876957743c8 100644
->>> --- a/lib/kobject.c
->>> +++ b/lib/kobject.c
->>> @@ -125,7 +125,7 @@ static void fill_kobj_path(struct kobject *kobj, char *path, int length)
->>>    		int cur = strlen(kobject_name(parent));
->>>    		/* back up enough to print this name with '/' */
->>>    		length -= cur;
->>> -		strncpy(path + length, kobject_name(parent), cur);
->>> +		memcpy(path + length, kobject_name(parent), cur);
->>>    		*(path + --length) = '/';
->>>    	}
->>>
+diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
+index 3979f89b250a..73bc92cf0594 100644
+--- a/drivers/pci/hotplug/acpi_pcihp.c
++++ b/drivers/pci/hotplug/acpi_pcihp.c
+@@ -88,6 +88,9 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+ 
+ 	/* If _OSC exists, we should not evaluate OSHP */
+ 	host = pci_find_host_bridge(pdev->bus);
++	if (!ACPI_HANDLE(&host->dev))
++		return 0;
++
+ 	root = acpi_pci_find_root(ACPI_HANDLE(&host->dev));
+ 	if (root->osc_support_set)
+ 		goto no_control;
