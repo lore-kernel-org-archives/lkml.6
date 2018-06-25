@@ -2,280 +2,161 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57936C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 955EAC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0750325454
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:04:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B95D25459
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 05:06:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/AjRvls"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0750325454
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MWl7Ur4E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B95D25459
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751675AbeFYFEZ (ORCPT
+        id S1751773AbeFYFGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 01:04:25 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38680 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751460AbeFYFEX (ORCPT
+        Mon, 25 Jun 2018 01:06:51 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:32782 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750825AbeFYFGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 01:04:23 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a1-v6so2036610pfi.5
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 22:04:22 -0700 (PDT)
+        Mon, 25 Jun 2018 01:06:49 -0400
+Received: by mail-lf0-f65.google.com with SMTP id b7-v6so2496195lfa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 22:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=hziHGUZkooF12/Zrmans442y7pdgZuICpJdqKv9SPu8=;
-        b=f/AjRvlsCATOzVT5E4CKIk892NxHvBQsJh8fVOKdS6ZT2wTMaNDxWdu8yLPTNw9+M7
-         NsR1lm2BcZNqSDvdWJSV0z0ljjKjZ1IhRdiUCbMcBWQUeGm2TLHQC8SbfX58nKhMm8Qn
-         eKKHCsuZLArh3BfJ/cTM3wKR53mGDoqby6OqI=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+xamVzowMINqWQQbg7vy1YFCSYZPL+ZP45UPL3babms=;
+        b=MWl7Ur4EXS6lrMwdOkuuZYfL4yc/8T0C7gQwodXnCjuNcVqs0HZGUPf58AED2JZ6uq
+         L3NKlfgmFKVs40+dv5r/f3asVjsIVlPdyTOQquXA829cX5E8rTeLymW7djC1XBM6OnVD
+         CcHAv7qWGO9G1hPYY+SAFCNG/5L3Y3Ghat+zw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=hziHGUZkooF12/Zrmans442y7pdgZuICpJdqKv9SPu8=;
-        b=TF9L9RgaeO65YduWw/OAJR0SJk04Xt0x5x43lGGk3HaHiBLyFvLkFA9G/mNHAcNluK
-         yaxMmcc60uM3gfBk6mriOseVHHUVBcu+oNpoA0SyivTGUtgGC+Lk2la1sNZJasNxa7NX
-         7GBFLGVQaEOHCBC9S5nqE15u3Dgay/B7wDOFS97HvMTGORzM3j0buwPYUDYGIi6kVzQN
-         bzSd+25LIRWV6tye5TGt5ZtA8nNdraZSrKHnueGZhV2AZDBd65JXduHZP4Ese1ylBIlF
-         XLHDs95ONqBN9NF8oaoFcdsxoNfbY2OeOrfrfSmqAnFONbMWXb3FlzkrRG9490OU6uMk
-         Kedw==
-X-Gm-Message-State: APt69E0fdOmHl3ud6OvjTl8QrFYfK1gO4xCzJf950AcX2W0cnuXEmSTF
-        sOutkWd8fyHQlgC5bk/7xjtFZw==
-X-Google-Smtp-Source: ADUXVKJ9SjNg4e+iOKnokTnd2kI/id4YYj/+Md8d5cdZ2aQhsn/JHx5DZOqucbrijuBU2GT/LQZeQw==
-X-Received: by 2002:aa7:83d1:: with SMTP id j17-v6mr11573821pfn.236.1529903062472;
-        Sun, 24 Jun 2018 22:04:22 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm19444695pfh.67.2018.06.24.22.04.20
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 24 Jun 2018 22:04:21 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc:     bjorn.andersson@linaro.org, baolin.wang@linaro.org,
-        broonie@kernel.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] leds: sc27xx: Add pattern_set/get/clear interfaces for LED controller
-Date:   Mon, 25 Jun 2018 13:03:20 +0800
-Message-Id: <9ed96acd5b46ab089cb4e2b906eedbd34df41249.1529902636.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <046c0cf717cbdfd55dcdc2bb7463642734e2ca4c.1529902636.git.baolin.wang@linaro.org>
-References: <046c0cf717cbdfd55dcdc2bb7463642734e2ca4c.1529902636.git.baolin.wang@linaro.org>
-In-Reply-To: <046c0cf717cbdfd55dcdc2bb7463642734e2ca4c.1529902636.git.baolin.wang@linaro.org>
-References: <046c0cf717cbdfd55dcdc2bb7463642734e2ca4c.1529902636.git.baolin.wang@linaro.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+xamVzowMINqWQQbg7vy1YFCSYZPL+ZP45UPL3babms=;
+        b=ofg/QM2XqyrMY1xqVtwlgY0F6ztCMA1Iuu2g6eIasJjKq3nFr9W2cT7SOn2RNKLAhq
+         ez3w9HgJkMFeQ+aUwDO62ip+X0MCy0L1sMWSOXiiEXlt2ecD+5YcBlOXFq9K1aXDKFVx
+         lOGLqBti/HceExNboubzhndEUbdqP6h/isSICTYJpXxEqLcHDgp+ZTssTyRR8D2+5rwj
+         IYUFB+MF5HwEczJ8xoecprWUzlIbhtZm8aiXqrVB7bXwI0yAdgxswF7h7X5oZmvYZy3H
+         esTcqcV3cIBdvGH89fVfeVUiEl4+fvMe0P9bJzv8UxPxxFHjElSQW1b29d4vR+P8Mybs
+         tL0w==
+X-Gm-Message-State: APt69E0rCm0fm/VumDOCDZB7ykbIADcH3XoPAr6ggKPSHt1b8x9s6J2+
+        K4kIdyH9xf4gTrjHDtKgtRvIxIFyr7Br+P4C/Z0Ncg==
+X-Google-Smtp-Source: ADUXVKIul4bJrjItsVIN31nvm/hnjZPNSIHLsLJRqabgnV37OD0Vm40SfWWN0LtHvcVocwKjpS3zZyXTZKV/FS17keo=
+X-Received: by 2002:a19:c1c4:: with SMTP id r187-v6mr4821126lff.90.1529903208463;
+ Sun, 24 Jun 2018 22:06:48 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 22:06:47
+ -0700 (PDT)
+In-Reply-To: <20180624152352.038950449@linuxfoundation.org>
+References: <20180624152352.038950449@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 25 Jun 2018 10:36:47 +0530
+Message-ID: <CA+G9fYvEfPc09E9oBEd4fB2Ya1jdXB9cmfAy_x2-u_bPgPdA5Q@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/39] 4.9.110-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the 'pattern_set', 'pattern_get' and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
+On 24 June 2018 at 20:53, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
+rote:
+> This is the start of the stable review cycle for the 4.9.110 release.
+> There are 39 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue Jun 26 15:23:25 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.110-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/leds/leds-sc27xx-bltc.c |  160 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..898f92d 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -6,6 +6,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/slab.h>
- #include <uapi/linux/uleds.h>
- 
- /* PMIC global control register definition */
-@@ -32,8 +33,13 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +128,157 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 patterns to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static struct led_pattern *sc27xx_led_pattern_get(struct led_classdev *ldev,
-+						  int *len)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	struct regmap *regmap = leds->priv->regmap;
-+	struct led_pattern *pattern;
-+	int i, err;
-+	u32 val;
-+
-+	/*
-+	 * Must allocate 4 patterns to show the rise time, high time, fall time
-+	 * and low time.
-+	 */
-+	pattern = kcalloc(SC27XX_LEDS_PATTERN_CNT, sizeof(*pattern),
-+			  GFP_KERNEL);
-+	if (!pattern)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[0].delta_t = val & SC27XX_CURVE_L_MASK;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[1].delta_t = val & SC27XX_CURVE_L_MASK;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[2].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[3].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_DUTY, &val);
-+	if (err)
-+		goto out;
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	val = (val & SC27XX_DUTY_MASK) >> SC27XX_DUTY_SHIFT;
-+	for (i = 0; i < SC27XX_LEDS_PATTERN_CNT; i++)
-+		pattern[i].brightness = val;
-+
-+	*len = SC27XX_LEDS_PATTERN_CNT;
-+
-+	return pattern;
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+	kfree(pattern);
-+
-+	return ERR_PTR(err);
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +297,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_get = sc27xx_led_pattern_get;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
--- 
-1.7.9.5
+Summary
+------------------------------------------------------------------------
 
+kernel: 4.9.110-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: fe540a7de55792b4b7ef577aec632e14ad337480
+git describe: v4.9.109-40-gfe540a7de557
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.109-40-gfe540a7de557
+
+
+No regressions (compared to build v4.9.109-40-g7accec442c1b)
+
+
+Ran 11448 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
