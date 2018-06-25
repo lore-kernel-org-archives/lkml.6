@@ -2,89 +2,111 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4D0C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2BDC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D62E254E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:45:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D62E254E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 46BB6254F0
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 06:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BB6254F0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752564AbeFYGpW (ORCPT
+        id S1752255AbeFYG4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 02:45:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55834 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752292AbeFYGpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 02:45:20 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1657A8315E;
-        Mon, 25 Jun 2018 06:45:20 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-109.ams2.redhat.com [10.36.116.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 36C132156888;
-        Mon, 25 Jun 2018 06:45:19 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 20C881750F; Mon, 25 Jun 2018 08:45:18 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     alex.williamson@redhat.com
-Cc:     airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        christian.koenig@amd.com, daniel.vetter@ffwll.ch,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        kvm@vger.kernel.org (open list:VFIO MEDIATED DEVICE DRIVERS)
-Subject: [PATCH 1/2] sample/mdev/mbochs: remove mbochs_kmap_atomic_dmabuf
-Date:   Mon, 25 Jun 2018 08:44:51 +0200
-Message-Id: <20180625064453.19768-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 25 Jun 2018 06:45:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 25 Jun 2018 06:45:20 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
+        Mon, 25 Jun 2018 02:56:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42416 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752047AbeFYG4G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 02:56:06 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9E4D41C;
+        Mon, 25 Jun 2018 06:56:04 +0000 (UTC)
+Date:   Mon, 25 Jun 2018 14:55:57 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.17 00/70] 4.17.3-stable review
+Message-ID: <20180625065557.GA5140@kroah.com>
+References: <20180624142740.481662434@linuxfoundation.org>
+ <CA+G9fYsxWVXZH=VB9tCvBcJ_K4pOPs51J1XnnCjF8vcBVMadDg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYsxWVXZH=VB9tCvBcJ_K4pOPs51J1XnnCjF8vcBVMadDg@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Atomic mapping interface for dmabufs will be removed.
+On Mon, Jun 25, 2018 at 12:10:08PM +0530, Naresh Kamboju wrote:
+> On 24 June 2018 at 20:51, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > This is the start of the stable review cycle for the 4.17.3 release.
+> > There are 70 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Tue Jun 26 14:27:20 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.3-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Results from Linaro’s test farm.
+> No regressions on arm64 and arm.
+> 
+> Kselftest test case mov_ss_trap_64 is causing kernel panic on
+> qemu-system-x86_64 and PASS on real x86_64 hardware.
+> 
+> [RUN] MOV SS; CSx14 INT3
+> [  762.263790] PANIC: double fault, error_code: 0x0
+> [  762.265169] CPU: 2 PID: 3380 Comm: mov_ss_trap_64 Not tainted 4.17.3-rc1 #1
+> [  762.267588] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> BIOS 1.10.2-1 04/01/2014
+> [  762.273190] RIP: 0010:error_entry+0x12/0x100
+> 
+> Test code snippet,
+> main() {
+> <>
+>     printf("[RUN]\tMOV SS; CS CS INT3\n");
+>     asm volatile ("mov %[ss], %%ss; .byte 0x2e, 0x2e; int3" :: [ss] "m" (ss));
+> <>
+> }
+> 
+> Reported upstream,
+> https://lkml.org/lkml/2018/6/25/19
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- samples/vfio-mdev/mbochs.c | 10 ----------
- 1 file changed, 10 deletions(-)
+Nit, there is a better way to refer to lkml emails, see the bottom of
+this page as lots of time lkml.org does not work for people:
+	https://www.kernel.org/lore.html
 
-diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
-index 2960e26c6e..aa25cda21d 100644
---- a/samples/vfio-mdev/mbochs.c
-+++ b/samples/vfio-mdev/mbochs.c
-@@ -803,15 +803,6 @@ static void mbochs_release_dmabuf(struct dma_buf *buf)
- 	mutex_unlock(&mdev_state->ops_lock);
- }
- 
--static void *mbochs_kmap_atomic_dmabuf(struct dma_buf *buf,
--				       unsigned long page_num)
--{
--	struct mbochs_dmabuf *dmabuf = buf->priv;
--	struct page *page = dmabuf->pages[page_num];
--
--	return kmap_atomic(page);
--}
--
- static void *mbochs_kmap_dmabuf(struct dma_buf *buf, unsigned long page_num)
- {
- 	struct mbochs_dmabuf *dmabuf = buf->priv;
-@@ -824,7 +815,6 @@ static struct dma_buf_ops mbochs_dmabuf_ops = {
- 	.map_dma_buf	  = mbochs_map_dmabuf,
- 	.unmap_dma_buf	  = mbochs_unmap_dmabuf,
- 	.release	  = mbochs_release_dmabuf,
--	.map_atomic	  = mbochs_kmap_atomic_dmabuf,
- 	.map		  = mbochs_kmap_dmabuf,
- 	.mmap		  = mbochs_mmap_dmabuf,
- };
--- 
-2.9.3
+This looks like a quemu bug, not a kernel issue, so did you tell the
+qemu developers about this?
 
+In looking at the full headers:
+	https://lore.kernel.org/lkml/CA+G9fYu0E0fM+WaFim1WKup5BZvjtGZ_4ii5FhTUjNZEqaAuwA@mail.gmail.com/
+it doesn't look like you did :(
+
+thanks,
+
+greg k-h
