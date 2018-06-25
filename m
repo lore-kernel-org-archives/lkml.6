@@ -6,88 +6,84 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BC1C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179D4C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC84225578
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 07:59:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC84225578
+	by mail.kernel.org (Postfix) with ESMTP id CD21C2557A
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:00:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD21C2557A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752335AbeFYH7O (ORCPT
+        id S1752579AbeFYIAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 03:59:14 -0400
-Received: from mout.perfora.net ([74.208.4.197]:51381 "EHLO mout.perfora.net"
+        Mon, 25 Jun 2018 04:00:06 -0400
+Received: from mout.perfora.net ([74.208.4.196]:55099 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750994AbeFYH7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 03:59:12 -0400
+        id S1751821AbeFYIAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 04:00:04 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LrtKS-1gJ7PS15Bu-013bNu; Mon, 25 Jun 2018 09:58:56 +0200
+ 0MFKMM-1fLFS114Xk-00ENLh; Mon, 25 Jun 2018 09:59:53 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
-Cc:     Peter Chen <Peter.Chen@nxp.com>,
-        Marcel Ziswiler <marcel@ziswiler.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+To:     linux-tegra@vger.kernel.org, linux-can@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        devicetree@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] usb: chipidea: tegra: Use aligned DMA on Tegra114/124
-Date:   Mon, 25 Jun 2018 09:58:43 +0200
-Message-Id: <20180625075843.31878-1-marcel@ziswiler.com>
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] apalis_t30: fix can2
+Date:   Mon, 25 Jun 2018 09:59:48 +0200
+Message-Id: <20180625075948.32040-1-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
-X-Provags-ID: V03:K1:Qt4nMLDtXx0afGkPpsgzHre3KQOrnOGqIoHyU+7HEsBP2JiiOun
- 3qTZYq1Opl9MyCUnTJAFFo4B7/BaZ8gtuCKBxM7S/YlTHygB2ZFwUrk45s+XIqU9nfuylME
- LC89fv1vxImWHx4MxvbMryBUm2+20RSaTiucv08t2QxaxFm/rg+DVmak/kXen0werTI2mxm
- Obs2Tflcb3vSQCsvUuuDg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:DUVUh84gFqI=:qmPL3GzTGEXU97pk0jquPt
- 8unzZ+yGp3tnELMtYuINzqNHyw8dkkUIYK4388fwKwH98cRJzsgfisCbXIffAgWHU/caoKOnp
- /hH5a61xrAE+wyA8U9koqUB8FpxlzrWY92FK4y/nChh5EeS1VWShmKcPZuJt/1uVSrxqOEuE8
- 41jc5BwrH5YJ68Yy10JWspeiCiZpRYZ2zio26wxey1I/x5VGaGcXKv8IgDNxIH5iYOKufCI6Y
- weWBWCeQ+w1FuL4fBD6p2sIcNlh6y23RE6ub1+8Edy4uMTvb0IG1lk7gFjGb8rkoLjKYTYOPA
- /3M7WWv9c4f6OimktM6ELXF3Vj6oTOLhbIQz1g0Khl7IlHeSvdikqOGON73lRnYyB7msv8YoW
- J5K2u/Q9h8d5lj3t97t8wq0rdEeO+4VxB7l8RDjab15cyMQssFaPrivD+WAXW9TddtxPFpO4b
- li3UY9/6rvhnbeoi4KNKjgG+Flvt8mTxyoFiL50aIQaMwETVv0AkQcehl0DJ67rLaHkaPV1tF
- tKbzbYd1TTZpOy1RNKZvY8JiKlIhlkXCuOZa6wxcKetdHxCywf8u3Wk1KyXUdpLV5lN03qFxO
- ZfXRHCvrjvmVhjb2cDu//bMEIgo3m0MmGJzFtIlmnQep0Vc9gOCdnxv+BNqgqMXgdIvkOWtwl
- B9xFNR+srM+2dnOPiXlIsiRrb06+q+4QqgaexizqEQAjQFySeY6emgEmRhzdUvkUiqZk=
+X-Provags-ID: V03:K1:N/0KozSzT2u9n6v7TtdjClWNzzAsQ/O3xgT+L72cZBrEbZcCMp8
+ iccCXTWaiwzo/U3b4uxxnOhMzTXcowHXLW4+yyKDwJZEfZxr5KikHQqPLLxVi3US/GLC1VY
+ TG7I89aBX1aesQv8c8N4/YKjldnKRz1lQw/VqXHyHBkk8NsSxzYZKwD69RuQJuHQnovwq2U
+ 1HAjOldrmr8aY6Pv+TBIQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qGMpSrAMtbs=:Fs687a+y3YbQv3cArdoCEd
+ UrK5lTOLc6qlPWZXEF6l4lYa6qjClbpxSZLK+Ff7bWxiLBAf5UVIwhOMlUrluafv2BLKmr0V/
+ +m/fBHujCXVXlta/seTjvU3hXcf8Rl8P7gMf/QhXf0ct0SzX8rp/DyhLPMUmiwLbKu1SP1zr9
+ 395qd6sgr43hsZ0rum4gN2V7i46Ta9/ssb3VqJ1ts25DNk2U9lcvQ+G1Vw48fx7YrnCXvYgEX
+ YhilS5WZb/Y5naagGwTEo9nO65qH07hFEjrlzGN3A8135E9VK9bpoQDhCXLyQ+HI+VYduf4Zi
+ MobWQNX3JK12oOJojokLYnZ5oe/xHuzB6gd57xFzIeMBm1AswF5NjP12twmkE1MAr4f1dro4e
+ PZZEZ00IRCR7qPoIXZrIBO/wN9bK82xPYqm/hX4QGVym1/n0wjXHJQbx/0+JaA6cLM54MeDz7
+ pAKEnV2ZAMg4+vHc11I8NSLvn6gIQmeeq/k741U233vHooQGLc15yX9NVJbSDycPedzWHzJeu
+ JQVfWdCwUHNInvh32o/0JULdPZVuSyupgbUght/45rhn9S0OGjuMxKFW3vcq4Nc8u9HdG+ihz
+ YicJihO1yepUylmMzn8rQVmSCtRlVS6kjfTTEz2YZdLhYrikFloiv2FNEGaWxWCDsZsLot5UC
+ 2JbTAnKMcFEVrFNdjcI8iaitjm74SzalmEEg1V/xrKKLwvAVqjTLhUgBUWEpC5Q5KkfQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB Ethernet gadget now works on Tegra114 and Tegra124.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Similar to commit 061e20e9899e ("usb: chipidea: tegra: Use aligned DMA
-on Tegra30").
+CAN2 currently fails on probe as follows:
+
+mcp251x spi1.1: Probe failed, err=19
+
+Fix this by enabling input on pin mux of resp. SPI4 pins.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- drivers/usb/chipidea/ci_hdrc_tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-index 7f4d2b6af37a..772851bee99b 100644
---- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-+++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-@@ -33,11 +33,11 @@ static const struct tegra_udc_soc_info tegra30_udc_soc_info = {
- };
- 
- static const struct tegra_udc_soc_info tegra114_udc_soc_info = {
--	.flags = 0,
-+	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA,
- };
- 
- static const struct tegra_udc_soc_info tegra124_udc_soc_info = {
--	.flags = 0,
-+	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA,
- };
- 
- static const struct of_device_id tegra_udc_of_match[] = {
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index d1d21ec2a844..9ff6aafd72b3 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -118,6 +118,7 @@
+ 				nvidia,function = "spi4";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			/* CAN_INT2 */
+ 			spi2_cs2_n_pw3 {
 -- 
 2.14.4
 
