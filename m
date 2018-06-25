@@ -2,335 +2,150 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33706C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E15C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA2C257A9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:52:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1089B257BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 10:54:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iPcx+Oc3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA2C257A9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=NextfourGroupOy.onmicrosoft.com header.i=@NextfourGroupOy.onmicrosoft.com header.b="CEHbRW6j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1089B257BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nextfour.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932187AbeFYKwr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 06:52:47 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43513 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755242AbeFYKwq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 06:52:46 -0400
-Received: by mail-io0-f194.google.com with SMTP id i23-v6so9194627iog.10
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 03:52:45 -0700 (PDT)
+        id S1755293AbeFYKyX (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 06:54:23 -0400
+Received: from mail-db5eur01on0051.outbound.protection.outlook.com ([104.47.2.51]:44977
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755242AbeFYKyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 06:54:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=sMg09Ql72zTFSSrrfgULE6NA0JdWsG8N7exwvWbhAqo=;
-        b=iPcx+Oc3WEXlOv/+7BHZ46r2cnmGAXR/BbpDa+qj4BybPKoKTGZp2r/yxkpgzEOaWU
-         uIfMOTa39VaNz+z126W/IgWpdVtdek1hK9fIb9xvwjttzeO6AEM5XzpEFadp9rghFLJe
-         L6k+4Jgokhlu4M+6utN3/HbVQMAoh7PZmO07w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=sMg09Ql72zTFSSrrfgULE6NA0JdWsG8N7exwvWbhAqo=;
-        b=uCCJ1HcYjnG3ZiavVmfKXpgkE1UdczWiPROGtrPMOTpiWamtI9lX9AMeVqugatilQw
-         d79Y+nfekLwvp4geNuyg7zS08pylBWu6HYj+Y2DnuTMIlX6g3/0Lh4mzjitWSp8DsiDg
-         HIBIUI1BteLewnQd/RQ8iRDOUDfAFFL1s5IFde/isccyDT+juXxQ4fkEcijKPKwWup0g
-         yjIbCPzeg1Dk5r+t639QjpxZMwPeifVIAJ9YLuCN2YAzylNyJHGXnKr5c1e7S2T4fLe3
-         rA31OQZt9gjbpnMIbGjtZGpigsMbBmylviWnxQmJChzJH4j5XIz8k50sZ7uu9odH+G5y
-         L+hw==
-X-Gm-Message-State: APt69E1pNow49IxO5uVTdvrv7BNbMy2Z2apocjYCEclfwOkGE2U/C/hv
-        AKeN5F37zrCpF4tY6ah+YoFZFlEKgGsp4x8ZplWtyw==
-X-Google-Smtp-Source: AAOMgpcK4bz01U3j2wwHzKF7msVjslrP9kka5nOqGu5tnbWPm5xzdw1gHCgPXj4jP+i7byu1totAce223zOmUEClpVg=
-X-Received: by 2002:a6b:5d09:: with SMTP id r9-v6mr6128375iob.170.1529923965499;
- Mon, 25 Jun 2018 03:52:45 -0700 (PDT)
+ d=NextfourGroupOy.onmicrosoft.com; s=selector1-nextfour-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6bDj/EyNRzwpw2NFrC8emmskeR6H/WeEpW1X0Met6dA=;
+ b=CEHbRW6jmYtcm6UfMgGu2nZroSXT2zOlgKRmbD7XjGavqaQe4HYmR+EBULxqFrZqEbSQnardXXBgSnVxG7YXumQ/l6FRs8tKzSbh+qMl2Pbu7qUlQ1Tt3jG1talOI1kfuhjIKCFUm0pmvPV9j0TpgzmIKLqe+fRPDJlDDv3P6xw=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=mika.penttila@nextfour.com; 
+Received: from mjp-ThinkCentre-M92p.nextfour.com (194.157.170.35) by
+ VI1PR07MB3341.eurprd07.prod.outlook.com (2603:10a6:802:23::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.19; Mon, 25 Jun 2018 10:54:17 +0000
+From:   mika.penttila@nextfour.com
+To:     Peter.Chen@nxp.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Mika=20Penttil=C3=A4?= <mika.penttila@nextfour.com>
+Subject: [PATCH] Regression fix for Chipidea USB
+Date:   Mon, 25 Jun 2018 13:54:05 +0300
+Message-Id: <1529924045-28556-1-git-send-email-mika.penttila@nextfour.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 03:52:44
- -0700 (PDT)
-In-Reply-To: <CAB0TPYHrx=tcOmzT2_4QpDG-reSJVX3BYEZcH0-X1m30WEADNw@mail.gmail.com>
-References: <20180311123815.17916-1-ard.biesheuvel@linaro.org>
- <20180311123815.17916-4-ard.biesheuvel@linaro.org> <CAB0TPYGd1jQzgc2q+fJZif4LVQTPnOrD4b6w0YSAzgAB0oL86g@mail.gmail.com>
- <CAKv+Gu-M4vJfppfQ8PYv3hFR6a1FuOAEKpvyisYSZBe-ubMvHQ@mail.gmail.com> <CAB0TPYHrx=tcOmzT2_4QpDG-reSJVX3BYEZcH0-X1m30WEADNw@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 25 Jun 2018 12:52:44 +0200
-Message-ID: <CAKv+Gu-vmYxsEh-yRJqntWKqSimkCKzFYEqHhSoQLnbp=HuSaw@mail.gmail.com>
-Subject: Re: [PATCH v8 3/6] module: use relative references for __ksymtab entries
-To:     Martijn Coenen <maco@android.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Mackerras <paulus@samba.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        James Morris <james.l.morris@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [194.157.170.35]
+X-ClientProxiedBy: HE1PR05CA0194.eurprd05.prod.outlook.com
+ (2603:10a6:3:f9::18) To VI1PR07MB3341.eurprd07.prod.outlook.com
+ (2603:10a6:802:23::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 47212c55-6deb-4d58-3b3b-08d5da89ffd1
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(8989117)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR07MB3341;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB3341;3:Otljh/487Irdos0hEFecpL+SHO157EEMKyP4y+hEazws6kHbospY0/1r4Qi5P5igETKbazI0HveVdew+tMYlUmnDedUlsY/hvAPPLHzyzoQbfyz2/fpfmHugaI+eHz1N+maGRoq7D2zMENEYGtUKwf25HQoDgbaKiK5dVIrMFgV61/zEoO7sctnZqCYUQ7sQQZtLwaaRchkESufaSWVWKeI03/+B2jO+GEgMA2ZMToaSM7ZF4YSveftdyk7r1nzW;25:vnMxrKrTKmxAlODmS+25Fqr21c7dOHNCk4eNTvxSUmZ7yCXMJkjuX7Hb9lNDoq5zVAmHPoqJEDeMggvAmKqUpf8je0dR/+dxUzWfPMetdtoWi6noTqVbyb77yqXyp73VqVBNJ0zly7GC01ZCE1L75Bhi+ZWxgKOe9wpDZ7/FgTN+ZW5ydrMNu7OLXlHyDfOnvvMA4bUXlfw15ff2Nl+ciCA/JMjedxm1sOqQWnlbudcM5CbWEXj7PIKZtAKaCsn/z8XiUFNOx9LyeL433jsvkxdFzu/HJtU2RJr6gc2HqMsPOCjax0P3ay1p73HdZ1+h9nNPgLYFdzdW2K1owxWh4w==;31:eVHxEf+HoUfPpS1Ia3Feh/cY07IjX0LGI47xCwLhFRA917kJr/86zqusYzEidX6ETvz05EWbSlsAs81PXaN9ONPNcmh+sqjXj53nNFLmEsNuB7oPpDcwPLDLA2K33lGEGJdI2fY5IFNRmJYiCTk8bwr9QGL32+MNPtRNHUfJD5IapjdYTkmUIMILh6NCoPe905KsncjzjWvHrwvN0GcF3xezLxIOYrssWgeMc4t5CMU=
+X-MS-TrafficTypeDiagnostic: VI1PR07MB3341:
+X-Microsoft-Antispam-PRVS: <VI1PR07MB3341582AC108C3320EA2DFAA834A0@VI1PR07MB3341.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(8415204561270);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(2016111802025)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(6072148)(6043046)(201708071742011)(7699016);SRVR:VI1PR07MB3341;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB3341;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB3341;4:xQ7dCHSrRxveAeCsK41S0px90J9zBhMcuNJckAK5IDNVjPbB9ArJtcKPoGSLvuMzURYJo3au95UsF7CrTVY6Ug20qOMyhnYyaFYRe92L/F664T5uaZ0GgU48cOuCr5bwjpXWWxqCpZoBdV872J5P/i1bK64thi1yD77kas3kkRKbWqqYW6yWiMsGw4QnFmQuqDiQ0XUcpHi/zDkc166GhaHnKTJTzgtJ9ycCEwzf/Rs3GlSSYoAjZczdfZG+cK0HXXtMQ49kiBBzEbPd9EcFUtv+9dUCnknGCoPvmondYdLJuMiwS4pHUusMmZ8eKFhv
+X-Forefront-PRVS: 0714841678
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39380400002)(376002)(346002)(396003)(39830400003)(189003)(199004)(9686003)(69596002)(6486002)(85782001)(1857600001)(316002)(6666003)(86362001)(8936002)(8676002)(81166006)(81156014)(2870700001)(2906002)(5660300001)(486006)(2616005)(305945005)(7736002)(3846002)(956004)(476003)(6116002)(97736004)(106356001)(107886003)(4326008)(50226002)(25786009)(53936002)(478600001)(105586002)(53416004)(386003)(68736007)(16526019)(186003)(36756003)(47776003)(66066001)(7696005)(26005)(52116002)(23676004)(50466002)(85772001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR07MB3341;H:mjp-ThinkCentre-M92p.nextfour.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nextfour.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA3TUIzMzQxOzIzOndQa2FIUjJzSCs5ZWhOZG94cjNVMTh6MU96?=
+ =?utf-8?B?WlFFbDJWbm5xSjdKUUdxeWFRMHB0b1hYWnFPMSs0d0lTalYrRnZSeDBxM0dN?=
+ =?utf-8?B?d3RxeHUxUVp6UTFkcVA1cFhoVXovTDR6QzlZV0trdVdsS244VUF0SlBMQXI4?=
+ =?utf-8?B?dmp2NEFQMkhMQ2szaFZnQkRLV0RJTFFkN1VFMFhwVlBETW96c05nYzBQMHBL?=
+ =?utf-8?B?cmQxYkIzL1NNdFBRS1grS1hYNkd4eTFYdm1kaHIyajhvci9zUUlLYVc5blN5?=
+ =?utf-8?B?VFQ5Ni81WWlEdlQ5V1ZpakJ3djI4SEJLK1M0MExPSktLY1ZiQVcvNG4vSVhV?=
+ =?utf-8?B?bFpIRitHV08wOXJDbmNHTG51M0tOS3Mza1JmKzFkTmZ4dE1yWmduOFhnVWlw?=
+ =?utf-8?B?dVhLZ2hKUTVuNXFkN3VzYnFkSHY4bEFFNkl5SmJiVnc2U3VKZ01aNENMZitk?=
+ =?utf-8?B?VzlJdDAycmtWamdkekU1UEd3SU0vZ3hjenJBcDRoOFY1YmgvWm5RcmEvdWN1?=
+ =?utf-8?B?VDEwYkxGdkh0T3NPRjJXMlRJVHdQdi9KcDdNTmtTc3pJM1BrRWpXTFZIMWtZ?=
+ =?utf-8?B?c0w5YTNDd29raW1yRjd4WVhHZHlycVh3VVcrOVRvV25wdzNMZmdBTXFDZkh4?=
+ =?utf-8?B?dEx4T1ZRMmF1OVMxZzV1ZjJaUXhpVE9pYlRydGovYTFjUUoyZzdwNThwdE5a?=
+ =?utf-8?B?d3BWQ2ZRTkNidnJHQ2Vubm4yQndsbml5MlpMS01rb1ZBVVQ3MEFETkxZRENk?=
+ =?utf-8?B?Y0NSQ3UwMi84ajhqRXpuTk5peTRmb1BJZTlGK0NtTTBhYi84SUxpTTZ6Vi9W?=
+ =?utf-8?B?NmtSeFhRVllwSVFJQjRJRjFXNW1aR0RBeUxrcnZuTVEzNThxRHVldUNWdjBS?=
+ =?utf-8?B?eC9MNzhqWS9XcDJCMzFTVGVaT3oydlQwQ01CRVR1SUJqVExUVm9zYUhSYXVn?=
+ =?utf-8?B?UVJXaWQvaSt2Zm80bURpSGFaaWhtdmhETXlNM2pkd01nYWV5VERTVXpTR0RQ?=
+ =?utf-8?B?RXFtdWNsQWd6NVBkdTF5dG1Jai9ZbHdIOGs1S0VyTDA0U2t4RUhhWmtJaHln?=
+ =?utf-8?B?NXgxcWFSQ0pFNjNRTGwzbnV1NGV5ZXk4UnhTVm5XMDhJTXhoUzN3dXV2S1l3?=
+ =?utf-8?B?WStTQVUzelMvTlFiMlVMTlY0ZzR0cVNaRHoyUklHZ3ozcVBuSjRyK0tqMmZL?=
+ =?utf-8?B?ZmJtQWxOaDhXcVA5SmFSUG9hRnEvTXp1cUhPZEJ0Y2xkdWw5aW5Ddy8ybjNU?=
+ =?utf-8?B?TVhUeFFHMFhWYmQ2OVphMm5IbmlGSGFKb1NOSmppTGxGcC9lUXZLVzBwbjFL?=
+ =?utf-8?B?Lzk5WGhUakdOdkp3a0ErVnBXSUNtY0kzYU8vcElzRGxCb0drYkdTOStNRjNI?=
+ =?utf-8?B?S0Z0YWV4MUpMNU5uLzNxV3JDSWFFQVRCajErUWo3ZjN6Y1o4cG0rdERqT3Vj?=
+ =?utf-8?B?Ull4N0JTNm9vOWpJWVRwTTUrZDhtckpzK2c4V1NMSFF5bytENGIwelN0cCs3?=
+ =?utf-8?B?eFd1WXU1OTlwSzFuOE5jd2g0eFVSQ2JuVDgwUXJYVlZEWU82ejhQUEJ5SDBk?=
+ =?utf-8?B?QStzR0RuVkxtZHNaWG9TMEJ3L3hpTVRsWlJ0anBWWUFxcTZ2aGlCcmI0M0JU?=
+ =?utf-8?B?NDFuTndjWk5HNW44alZwbU5TMUVQNThOMjFDS0FKaGIxVmh1VThMWHVBPT0=?=
+X-Microsoft-Antispam-Message-Info: sRR4XrZGFb/K9+mqfP/FOYS/EFllnaTKEOWByAEBICUIFK7/wu5QoJmjETSPpJlBRL+Qd2WONPvzWGdJxs4t2cmLlBct+Eenb3DZjl/fG7bVQKzMc+sgi2BYkBKPojy5k0MIQZudesOZE/sF0CsbAfloyVHHhY6PZoYpGS1u9QmC8M9vKE7z/fj50eNtVTSFaZfbBJFVfl3avn/PhdCIxAPeyGzEKtxZtTBpUwIKK36n1KRk5L7wb4REXsolIoqqEVkhb7pEFFQgQYf3Flw8hZgwxqhUMSTBJ7Yya43wHjTgeZNcbwpyRRHjC9wxPTO6v5w7GcYAvQvd0Qv2m3e5P59n67J41Z6mIQ7nE9ZspM4=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB3341;6:5WP/UrWTRpS+jwJhLjI5q7vZJQceMLtCidbHLtl54gRDy3ekvmXy2dJIE9vbkZxwVon09TQU0+83oFZn/eT9v0ajSp4uSBk1pQDz047poJZuzUHBpigUOVUDtmNjqBp55Ao4Z9hrVNI8hd/tOwYT8iuZY4RfuaFhvNtuyXCx/p/t8IR1l2JwnxH5ZKh2sRIVacnGT6kEmNyliLvr/Mrjb8ZIs6DeIhJjnR25qsfKhJkXQYiXU/w+2taP4lfH3OaDLpDouNu1Pumt4GQasFKby/KwtKPTmTUweRpqqrfUdhpyC6OiMcy4ALKPRJZ4kpWB79JBOl2RKAbaATpY93dWdisXjnR3iuZ0eJ8WlRXRFbgKXAlg7D0OfwxLQw3ZXcFZOmvypL6svlznJDkUwZ8icStHKwsNlLVTDDFOwiNMB4WBL23cOC0fF5B17EPCqmdZJ/yOOvmPVnh+iJRvZuCeUA==;5:SLxONledzXpUotEAop3s7wg39xl4boo/MG2ljhS2scxknbIaRUzdoz65VBZ4lrgeGieZ3sIsTpCnmjjwQ+N1D9VGFTO/1ugyZdXlXDhDmxwIykcCrJDl0DZEOdvVExBqgSpuIVXLyUiOAc25t0XjZGEOrPrmNuyDr9EhDshJ4zA=;24:+ia8QsCT+OOtMyinYql1Fmp2uPsCP9NYvQVZQJnUJXamM6nDJsj41/XGgi5JHWnUf3no/zqEabylC9EA3gPBynoV0+C4tMShn6kSLhmopQQ=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB3341;7:5yN+X3ooY0G1dqdj42Wg0k6d+r9RdybhsuUCYceWA4qEU/739Wbad8a61C40Ow4ms0umUeRh9cODHB73otJ3xMcsrU/a1FqXCbImD7OzP+Og9aqa4/XaqlhG+TKIYyKTMB2wLWmu1I1vIJJK79Vr7V/MH/L+ar2Uyooi/RHgYh46ohgitntRhqoJH91EOPgrKASJdGAz0fQdGBfBsf8CPfTD39/nm7z288vH2uLCy7PHbplKsBNbOQ0BIJPtElGn
+X-OriginatorOrg: nextfour.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2018 10:54:17.7298 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47212c55-6deb-4d58-3b3b-08d5da89ffd1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 972e95c2-9290-4a02-8705-4014700ea294
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB3341
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 June 2018 at 12:15, Martijn Coenen <maco@android.com> wrote:
-> On Mon, Jun 25, 2018 at 11:14 AM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> Because struct kernel_symbol is only 8 bytes in size after this
->> change, and aligning a 8 byte quantity to 16 bytes wastes 8 bytes.
->
-> I get that, but then that means the 16-byte alignment wasn't actually
-> necessary in the first place.
->
+From: Mika Penttilä <mika.penttila@nextfour.com>
 
-Not really, I suppose, although it is not unusual to align large
-arrays to the entry size if it is a power of 2, so they don't span
-cachelines.
+I started to see usb failures on i.MX6, like "nonzero urb status received" after:
 
->> The x86 ABI may require it, but we don't actually adhere to it in the
->> kernel. Also, these structures never occur on the stack anyway.
->
-> Ok, makes sense.
->
-> Thanks,
-> Martijn
->
->>
->>
->>>> -#include <asm-generic/export.h>
->>>> diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
->>>> index 719db1968d81..97ce606459ae 100644
->>>> --- a/include/asm-generic/export.h
->>>> +++ b/include/asm-generic/export.h
->>>> @@ -5,12 +5,10 @@
->>>>  #define KSYM_FUNC(x) x
->>>>  #endif
->>>>  #ifdef CONFIG_64BIT
->>>> -#define __put .quad
->>>>  #ifndef KSYM_ALIGN
->>>>  #define KSYM_ALIGN 8
->>>>  #endif
->>>>  #else
->>>> -#define __put .long
->>>>  #ifndef KSYM_ALIGN
->>>>  #define KSYM_ALIGN 4
->>>>  #endif
->>>> @@ -25,6 +23,16 @@
->>>>  #define KSYM(name) name
->>>>  #endif
->>>>
->>>> +.macro __put, val, name
->>>> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->>>> +       .long   \val - ., \name - .
->>>> +#elif defined(CONFIG_64BIT)
->>>> +       .quad   \val, \name
->>>> +#else
->>>> +       .long   \val, \name
->>>> +#endif
->>>> +.endm
->>>> +
->>>>  /*
->>>>   * note on .section use: @progbits vs %progbits nastiness doesn't matter,
->>>>   * since we immediately emit into those sections anyway.
->>>> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
->>>> index ab4711c63601..0a9328ea9dbd 100644
->>>> --- a/include/linux/compiler.h
->>>> +++ b/include/linux/compiler.h
->>>> @@ -280,6 +280,25 @@ unsigned long read_word_at_a_time(const void *addr)
->>>>
->>>>  #endif /* __KERNEL__ */
->>>>
->>>> +/*
->>>> + * Force the compiler to emit 'sym' as a symbol, so that we can reference
->>>> + * it from inline assembler. Necessary in case 'sym' could be inlined
->>>> + * otherwise, or eliminated entirely due to lack of references that are
->>>> + * visible to the compiler.
->>>> + */
->>>> +#define __ADDRESSABLE(sym) \
->>>> +       static void * const __attribute__((section(".discard"), used))  \
->>>> +               __PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
->>>> +
->>>> +/**
->>>> + * offset_to_ptr - convert a relative memory offset to an absolute pointer
->>>> + * @off:       the address of the 32-bit offset value
->>>> + */
->>>> +static inline void *offset_to_ptr(const int *off)
->>>> +{
->>>> +       return (void *)((unsigned long)off + *off);
->>>> +}
->>>> +
->>>>  #endif /* __ASSEMBLY__ */
->>>>
->>>>  #ifndef __optimize
->>>> diff --git a/include/linux/export.h b/include/linux/export.h
->>>> index 25005b55b079..04c78e6bfec9 100644
->>>> --- a/include/linux/export.h
->>>> +++ b/include/linux/export.h
->>>> @@ -24,12 +24,6 @@
->>>>  #define VMLINUX_SYMBOL_STR(x) __VMLINUX_SYMBOL_STR(x)
->>>>
->>>>  #ifndef __ASSEMBLY__
->>>> -struct kernel_symbol
->>>> -{
->>>> -       unsigned long value;
->>>> -       const char *name;
->>>> -};
->>>> -
->>>>  #ifdef MODULE
->>>>  extern struct module __this_module;
->>>>  #define THIS_MODULE (&__this_module)
->>>> @@ -60,17 +54,47 @@ extern struct module __this_module;
->>>>  #define __CRC_SYMBOL(sym, sec)
->>>>  #endif
->>>>
->>>> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->>>> +#include <linux/compiler.h>
->>>> +/*
->>>> + * Emit the ksymtab entry as a pair of relative references: this reduces
->>>> + * the size by half on 64-bit architectures, and eliminates the need for
->>>> + * absolute relocations that require runtime processing on relocatable
->>>> + * kernels.
->>>> + */
->>>> +#define __KSYMTAB_ENTRY(sym, sec)                                      \
->>>> +       __ADDRESSABLE(sym)                                              \
->>>> +       asm("   .section \"___ksymtab" sec "+" #sym "\", \"a\"  \n"     \
->>>> +           "   .balign 8                                       \n"     \
->>>> +           VMLINUX_SYMBOL_STR(__ksymtab_##sym) ":              \n"     \
->>>> +           "   .long " VMLINUX_SYMBOL_STR(sym) "- .            \n"     \
->>>> +           "   .long " VMLINUX_SYMBOL_STR(__kstrtab_##sym) "- .\n"     \
->>>> +           "   .previous                                       \n")
->>>> +
->>>> +struct kernel_symbol {
->>>> +       int value_offset;
->>>> +       int name_offset;
->>>> +};
->>>> +#else
->>>> +#define __KSYMTAB_ENTRY(sym, sec)                                      \
->>>> +       static const struct kernel_symbol __ksymtab_##sym               \
->>>> +       __attribute__((section("___ksymtab" sec "+" #sym), used))       \
->>>> +       = { (unsigned long)&sym, __kstrtab_##sym }
->>>> +
->>>> +struct kernel_symbol {
->>>> +       unsigned long value;
->>>> +       const char *name;
->>>> +};
->>>> +#endif
->>>> +
->>>>  /* For every exported symbol, place a struct in the __ksymtab section */
->>>>  #define ___EXPORT_SYMBOL(sym, sec)                                     \
->>>>         extern typeof(sym) sym;                                         \
->>>>         __CRC_SYMBOL(sym, sec)                                          \
->>>>         static const char __kstrtab_##sym[]                             \
->>>> -       __attribute__((section("__ksymtab_strings"), aligned(1)))       \
->>>> +       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
->>>>         = VMLINUX_SYMBOL_STR(sym);                                      \
->>>> -       static const struct kernel_symbol __ksymtab_##sym               \
->>>> -       __used                                                          \
->>>> -       __attribute__((section("___ksymtab" sec "+" #sym), used))       \
->>>> -       = { (unsigned long)&sym, __kstrtab_##sym }
->>>> +       __KSYMTAB_ENTRY(sym, sec)
->>>>
->>>>  #if defined(__DISABLE_EXPORTS)
->>>>
->>>> diff --git a/kernel/module.c b/kernel/module.c
->>>> index ad2d420024f6..b4782cfbb79b 100644
->>>> --- a/kernel/module.c
->>>> +++ b/kernel/module.c
->>>> @@ -549,12 +549,30 @@ static bool check_symbol(const struct symsearch *syms,
->>>>         return true;
->>>>  }
->>>>
->>>> +static unsigned long kernel_symbol_value(const struct kernel_symbol *sym)
->>>> +{
->>>> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->>>> +       return (unsigned long)offset_to_ptr(&sym->value_offset);
->>>> +#else
->>>> +       return sym->value;
->>>> +#endif
->>>> +}
->>>> +
->>>> +static const char *kernel_symbol_name(const struct kernel_symbol *sym)
->>>> +{
->>>> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->>>> +       return offset_to_ptr(&sym->name_offset);
->>>> +#else
->>>> +       return sym->name;
->>>> +#endif
->>>> +}
->>>> +
->>>>  static int cmp_name(const void *va, const void *vb)
->>>>  {
->>>>         const char *a;
->>>>         const struct kernel_symbol *b;
->>>>         a = va; b = vb;
->>>> -       return strcmp(a, b->name);
->>>> +       return strcmp(a, kernel_symbol_name(b));
->>>>  }
->>>>
->>>>  static bool find_symbol_in_section(const struct symsearch *syms,
->>>> @@ -2198,7 +2216,7 @@ void *__symbol_get(const char *symbol)
->>>>                 sym = NULL;
->>>>         preempt_enable();
->>>>
->>>> -       return sym ? (void *)sym->value : NULL;
->>>> +       return sym ? (void *)kernel_symbol_value(sym) : NULL;
->>>>  }
->>>>  EXPORT_SYMBOL_GPL(__symbol_get);
->>>>
->>>> @@ -2228,10 +2246,12 @@ static int verify_export_symbols(struct module *mod)
->>>>
->>>>         for (i = 0; i < ARRAY_SIZE(arr); i++) {
->>>>                 for (s = arr[i].sym; s < arr[i].sym + arr[i].num; s++) {
->>>> -                       if (find_symbol(s->name, &owner, NULL, true, false)) {
->>>> +                       if (find_symbol(kernel_symbol_name(s), &owner, NULL,
->>>> +                                       true, false)) {
->>>>                                 pr_err("%s: exports duplicate symbol %s"
->>>>                                        " (owned by %s)\n",
->>>> -                                      mod->name, s->name, module_name(owner));
->>>> +                                      mod->name, kernel_symbol_name(s),
->>>> +                                      module_name(owner));
->>>>                                 return -ENOEXEC;
->>>>                         }
->>>>                 }
->>>> @@ -2280,7 +2300,7 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
->>>>                         ksym = resolve_symbol_wait(mod, info, name);
->>>>                         /* Ok if resolved.  */
->>>>                         if (ksym && !IS_ERR(ksym)) {
->>>> -                               sym[i].st_value = ksym->value;
->>>> +                               sym[i].st_value = kernel_symbol_value(ksym);
->>>>                                 break;
->>>>                         }
->>>>
->>>> @@ -2540,7 +2560,7 @@ static int is_exported(const char *name, unsigned long value,
->>>>                 ks = lookup_symbol(name, __start___ksymtab, __stop___ksymtab);
->>>>         else
->>>>                 ks = lookup_symbol(name, mod->syms, mod->syms + mod->num_syms);
->>>> -       return ks != NULL && ks->value == value;
->>>> +       return ks != NULL && kernel_symbol_value(ks) == value;
->>>>  }
->>>>
->>>>  /* As per nm */
->>>> --
->>>> 2.15.1
->>>>
+" commit 4e88d4c083016454f179686529ae65d70b933b58
+ Author: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+ Date:   Sat Mar 3 22:43:03 2018 +0100
+
+     usb: add a flag to skip PHY initialization to struct usb_hcd"
+
+The errors were related to some scpecific scenarios, like usb device reset, disappear etc.
+
+The fix below worked for me.
+
+--Mika
+
+
+Signed-off-by: Mika Penttilä <mika.penttila@nextfour.com>
+
+---
+ drivers/usb/chipidea/host.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
+index af45aa32..c45d081 100644
+--- a/drivers/usb/chipidea/host.c
++++ b/drivers/usb/chipidea/host.c
+@@ -124,6 +124,9 @@ static int host_start(struct ci_hdrc *ci)
+ 
+ 	hcd->power_budget = ci->platdata->power_budget;
+ 	hcd->tpl_support = ci->platdata->tpl_support;
++
++	hcd->usb_phy = ci->usb_phy;
++
+ 	if (ci->phy || ci->usb_phy)
+ 		hcd->skip_phy_initialization = 1;
+ 
+-- 
+1.9.1
+
