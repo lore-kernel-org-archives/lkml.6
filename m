@@ -2,187 +2,222 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08219C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D32EC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A27B25769
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:25:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="dw+jGbuZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A27B25769
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id 43E11261E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 22:29:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E11261E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754605AbeFYWZ2 (ORCPT
+        id S1754659AbeFYW3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 18:25:28 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34476 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752618AbeFYWZ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 18:25:26 -0400
-Received: by mail-lj1-f196.google.com with SMTP id l12-v6so2858145lja.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 15:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FyR1YY6hnnl2em8Nf3X3cY6j1m0bPCqE33ovi1g3/Sg=;
-        b=dw+jGbuZzI6AWOcHt0diGdmQt9BoSlBciUyhb08xBc0AocMvAh3rTyrLe11hrnZwNq
-         2aK+D7vw0OZW0EYKDNkl8rrIcq+EbUpz4+KWvbzzPZeO+6fTTPWjL1mdxbq/MdSzDMJV
-         5W4f4BTXn6WF18QCsz0Vxd0X6BEELWIU6cxOEhV0Veajk/ipuhJunT7ImsiBGc4hQVu/
-         9yniaxFw+MzYg9itMTQJ0u+3d+SJ9tutNdEgwoIUJFK3c+S+4xSEFfiyiXCH4vpakeIW
-         6eUUVm6y2LmJy82ZywEmM3D7De/m9Gq8AyJf2Ao+mVG976MaeqJkk2nfeQb+ZDW89zCf
-         Z63Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FyR1YY6hnnl2em8Nf3X3cY6j1m0bPCqE33ovi1g3/Sg=;
-        b=q9Mzsxk617gLfAf7UKrN21E+A5ZDz1E1AISFXyGhd9BZgLbNdsJPD5XUkP9/9hlZ5u
-         GPwuAMnUc14cYFKIfb9tn/aJaC/R6Sp+u7dAQPkzXWxRycNMaYHXGq/GZb5Rf6dm7lTZ
-         zDdjVIs7d9SPrzw+aj1l52kg7Yob+VPHB9npnLv79m1AGXcuN5zm2z2/g7a2iFFg/oG/
-         J3Q6XbIPSoRQsie8ggDr6fjAfAm4z406/xt+w1eC4wOUpqkaEslFQHmH8gsXhlriZgBY
-         xRrZWgQ1VSWTqZDf/L5nj3826jn/bPKk6A+tMZ3mx8pbl5U0Yz1qG8jVP4N5yt9Tv6B0
-         Vv1A==
-X-Gm-Message-State: APt69E0E7NV/kICfS9btRl9VzAR2JmhaFEBJ6uiEHZ2lNFEbN2Hu6XR9
-        i5YHVvOTrHCeUpLfOFv+uIdoP7vtoStAp7zqa/Az
-X-Google-Smtp-Source: ADUXVKL3RCtMdnCGlxu13DTnH7Y9vETZ/SV0uyq6fH/28cc5H55zKm2FiWyH5Fv0OsSHALwMk0yzLWLb3qiYa7hQOOA=
-X-Received: by 2002:a2e:c52:: with SMTP id o18-v6mr8412281ljd.72.1529965524223;
- Mon, 25 Jun 2018 15:25:24 -0700 (PDT)
+        Mon, 25 Jun 2018 18:29:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38814 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753155AbeFYW3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 18:29:12 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C7C87A7E8;
+        Mon, 25 Jun 2018 22:29:11 +0000 (UTC)
+Received: from crecklin.bos.csb (ovpn-121-147.rdu2.redhat.com [10.10.121.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EA7EB7C24;
+        Mon, 25 Jun 2018 22:29:10 +0000 (UTC)
+Reply-To: crecklin@redhat.com
+Subject: Re: [PATCH] add param that allows bootline control of hardened
+ usercopy
+To:     Laura Abbott <labbott@redhat.com>, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <1529939300-27461-1-git-send-email-crecklin@redhat.com>
+ <d110c9af-cb68-5a3c-bc70-0c7650edb0d4@redhat.com>
+ <cfd52ae6-6fea-1a5a-b2dd-4dfdd65acd15@redhat.com>
+From:   Christoph von Recklinghausen <crecklin@redhat.com>
+Organization: Red Hat
+Message-ID: <2e4d9686-835c-f4be-2647-2344899e3cd4@redhat.com>
+Date:   Mon, 25 Jun 2018 18:29:09 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <20180621033245.10754-1-baijiaju1990@gmail.com>
- <20180621042912.GA4967@bombadil.infradead.org> <20180622092340.dzl2ea7tdkjdkdhg@quack2.suse.cz>
- <CAHC9VhTPCmAXjZgo_i=M_Yo9pJXqUJAmAfL7+pYYb6cOSWw9Zw@mail.gmail.com> <20180625092257.kyqnmn4ki7cuqkat@quack2.suse.cz>
-In-Reply-To: <20180625092257.kyqnmn4ki7cuqkat@quack2.suse.cz>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 25 Jun 2018 18:25:12 -0400
-Message-ID: <CAHC9VhSv7drmJOEapks2W=fqT48TQnv=ERrFGHj4EbmpdgbxbA@mail.gmail.com>
-Subject: Re: [PATCH] kernel: audit_tree: Fix a sleep-in-atomic-context bug
-To:     jack@suse.cz
-Cc:     willy@infradead.org, baijiaju1990@gmail.com,
-        Eric Paris <eparis@redhat.com>, amir73il@gmail.com,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, rgb@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <cfd52ae6-6fea-1a5a-b2dd-4dfdd65acd15@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 25 Jun 2018 22:29:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 25 Jun 2018 22:29:11 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 5:23 AM Jan Kara <jack@suse.cz> wrote:
-> On Fri 22-06-18 14:56:09, Paul Moore wrote:
-> > On Fri, Jun 22, 2018 at 5:23 AM Jan Kara <jack@suse.cz> wrote:
-> > > On Wed 20-06-18 21:29:12, Matthew Wilcox wrote:
-> > > > On Thu, Jun 21, 2018 at 11:32:45AM +0800, Jia-Ju Bai wrote:
-> > > > > The kernel may sleep with holding a spinlock.
-> > > > > The function call paths (from bottom to top) in Linux-4.16.7 are:
-> > > > >
-> > > > > [FUNC] kmem_cache_alloc(GFP_KERNEL)
-> > > > > fs/notify/mark.c, 439:
-> > > > >             kmem_cache_alloc in fsnotify_attach_connector_to_object
-> > > > > fs/notify/mark.c, 520:
-> > > > >             fsnotify_attach_connector_to_object in fsnotify_add_mark_list
-> > > > > fs/notify/mark.c, 590:
-> > > > >             fsnotify_add_mark_list in fsnotify_add_mark_locked
-> > > > > kernel/audit_tree.c, 437:
-> > > > >             fsnotify_add_mark_locked in tag_chunk
-> > > > > kernel/audit_tree.c, 423:
-> > > > >             spin_lock in tag_chunk
-> > > >
-> > > > There are several locks here; your report would be improved by saying
-> > > > which one is the problem.  I'm assuming it's old_entry->lock.
-> > > >
-> > > >         spin_lock(&old_entry->lock);
-> > > > ...
-> > > >         if (fsnotify_add_inode_mark_locked(chunk_entry,
-> > > >                              old_entry->connector->inode, 1)) {
-> > > > ...
-> > > >         return fsnotify_add_mark_locked(mark, inode, NULL, allow_dups);
-> > > > ...
-> > > >         ret = fsnotify_add_mark_list(mark, inode, mnt, allow_dups);
-> > > > ...
-> > > >         if (inode)
-> > > >                 connp = &inode->i_fsnotify_marks;
-> > > >         conn = fsnotify_grab_connector(connp);
-> > > >         if (!conn) {
-> > > >                 err = fsnotify_attach_connector_to_object(connp, inode, mnt);
-> > > >
-> > > > It seems to me that this is safe because old_entry is looked up from
-> > > > fsnotify_find_mark, and it can't be removed while its lock is held.
-> > > > Therefore there's always a 'conn' returned from fsnotify_grab_connector(),
-> > > > and so this path will never be taken.
-> > > >
-> > > > But this code path is confusing to me, and I could be wrong.  Jan, please
-> > > > confirm my analysis is correct?
-> > >
-> > > Yes, you are correct. The presence of another mark in the list (and the
-> > > fact we pin it there using refcount & mark_mutex) guarantees we won't need
-> > > to allocate the connector. I agree the audit code's use of fsnotify would
-> > > deserve some cleanup.
-> >
-> > I'm always open to suggestions and patches (hint, hint) from the
-> > fsnotify experts ;)
+On 06/25/2018 03:44 PM, Laura Abbott wrote:
+> On 06/25/2018 08:22 AM, Christoph von Recklinghausen wrote:
+>> Add correct address for linux-mm
+>>
+>> On 06/25/2018 11:08 AM, Chris von Recklinghausen wrote:
+>>> Enabling HARDENED_USER_COPY causes measurable regressions in the
+>>> networking performances, up to 8% under UDP flood.
+>>>
+>>> A generic distro may want to enable HARDENED_USER_COPY in their default
+>>> kernel config, but at the same time, such distro may want to be able to
+>>> avoid the performance penalties in with the default configuration and
+>>> enable the stricter check on a per-boot basis.
+>>>
+>>> This change adds a config variable and a boot parameter to
+>>> conditionally
+>>> enable HARDENED_USER_COPY at boot time, and switch HUC to off if
+>>> HUC_DEFAULT_OFF is set.
+>>>
+>>> Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
+>>> ---
+>>>   .../admin-guide/kernel-parameters.rst         |  2 ++
+>>>   .../admin-guide/kernel-parameters.txt         |  3 ++
+>>>   include/linux/thread_info.h                   |  7 +++++
+>>>   mm/usercopy.c                                 | 28
+>>> +++++++++++++++++++
+>>>   security/Kconfig                              | 10 +++++++
+>>>   5 files changed, 50 insertions(+)
+>>>
+>>> diff --git a/Documentation/admin-guide/kernel-parameters.rst
+>>> b/Documentation/admin-guide/kernel-parameters.rst
+>>> index b8d0bc07ed0a..c3035038e3ae 100644
+>>> --- a/Documentation/admin-guide/kernel-parameters.rst
+>>> +++ b/Documentation/admin-guide/kernel-parameters.rst
+>>> @@ -100,6 +100,8 @@ parameter is applicable::
+>>>       FB    The frame buffer device is enabled.
+>>>       FTRACE    Function tracing enabled.
+>>>       GCOV    GCOV profiling is enabled.
+>>> +    HUC    Hardened usercopy is enabled
+>>> +    HUCF    Hardened usercopy disabled at boot
+>>>       HW    Appropriate hardware is enabled.
+>>>       IA-64    IA-64 architecture is enabled.
+>>>       IMA     Integrity measurement architecture is enabled.
+>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+>>> b/Documentation/admin-guide/kernel-parameters.txt
+>>> index efc7aa7a0670..cd3354bc14d3 100644
+>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>> @@ -816,6 +816,9 @@
+>>>       disable=    [IPV6]
+>>>               See Documentation/networking/ipv6.txt.
+>>>   +    enable_hardened_usercopy [HUC,HUCF]
+>>> +            Enable hardened usercopy checks
+>>> +
+>>>       disable_radix    [PPC]
+>>>               Disable RADIX MMU mode on POWER9
+>>>   diff --git a/include/linux/thread_info.h
+>>> b/include/linux/thread_info.h
+>>> index 8d8821b3689a..140a36cc1c2c 100644
+>>> --- a/include/linux/thread_info.h
+>>> +++ b/include/linux/thread_info.h
+>>> @@ -109,12 +109,19 @@ static inline int
+>>> arch_within_stack_frames(const void * const stack,
+>>>   #endif
+>>>     #ifdef CONFIG_HARDENED_USERCOPY
+>>> +#include <linux/jump_label.h>
+>>> +
+>>> +DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
+>>> +
+>>>   extern void __check_object_size(const void *ptr, unsigned long n,
+>>>                       bool to_user);
+>>>     static __always_inline void check_object_size(const void *ptr,
+>>> unsigned long n,
+>>>                             bool to_user)
+>>>   {
+>>> +    if (static_branch_likely(&bypass_usercopy_checks))
+>>> +        return;
+>>> +
+>>>       if (!__builtin_constant_p(n))
+>>>           __check_object_size(ptr, n, to_user);
+>>>   }
+>>> diff --git a/mm/usercopy.c b/mm/usercopy.c
+>>> index e9e9325f7638..ce3996da1b2e 100644
+>>> --- a/mm/usercopy.c
+>>> +++ b/mm/usercopy.c
+>>> @@ -279,3 +279,31 @@ void __check_object_size(const void *ptr,
+>>> unsigned long n, bool to_user)
+>>>       check_kernel_text_object((const unsigned long)ptr, n, to_user);
+>>>   }
+>>>   EXPORT_SYMBOL(__check_object_size);
+>>> +
+>>> +DEFINE_STATIC_KEY_FALSE(bypass_usercopy_checks);
+>>> +EXPORT_SYMBOL(bypass_usercopy_checks);
+>>> +
+>>> +#ifdef CONFIG_HUC_DEFAULT_OFF
+>>> +#define HUC_DEFAULT false
+>>> +#else
+>>> +#define HUC_DEFAULT true
+>>> +#endif
+>>> +
+>>> +static bool enable_huc_atboot = HUC_DEFAULT;
+>>> +
+>>> +static int __init parse_enable_usercopy(char *str)
+>>> +{
+>>> +    enable_huc_atboot = true;
+>>> +    return 1;
+>>> +}
+>>> +
+>>> +static int __init set_enable_usercopy(void)
+>>> +{
+>>> +    if (enable_huc_atboot == false)
+>>> +        static_branch_enable(&bypass_usercopy_checks);
+>>> +    return 1;
+>>> +}
+>>> +
+>>> +__setup("enable_hardened_usercopy", parse_enable_usercopy);
+>>> +
+>>> +late_initcall(set_enable_usercopy);
+>>> diff --git a/security/Kconfig b/security/Kconfig
+>>> index c4302067a3ad..a6173897b85c 100644
+>>> --- a/security/Kconfig
+>>> +++ b/security/Kconfig
+>>> @@ -189,6 +189,16 @@ config HARDENED_USERCOPY_PAGESPAN
+>>>         been removed. This config is intended to be used only while
+>>>         trying to find such users.
+>>>   +config HUC_DEFAULT_OFF
+>>> +    bool "allow CONFIG_HARDENED_USERCOPY to be configured but
+>>> disabled"
+>>> +    depends on HARDENED_USERCOPY
+>>> +    help
+>>> +      When CONFIG_HARDENED_USERCOPY is enabled, disable its
+>>> +      functionality unless it is enabled via at boot time
+>>> +      via the "enable_hardened_usercopy" boot parameter. This allows
+>>> +      the functionality of hardened usercopy to be present but not
+>>> +      impact performance unless it is needed.
+>>> +
+>>>   config FORTIFY_SOURCE
+>>>       bool "Harden common str/mem functions against buffer overflows"
+>>>       depends on ARCH_HAS_FORTIFY_SOURCE
+>>
+>>
 >
-> Yeah, I was looking into it on Friday and today :). Currently I've got a
-> bit stuck because I think I've found some races in audit_tree code and I
-> haven't yet decided how to fix them. E.g. am I right the following can
-> happen?
+> This seems a bit backwards, I'd much rather see hardened user copy
+> default to on with the basic config option and then just have a command
+> line option to turn it off.
 >
-> CPU1                                    CPU2
-> tag_chunk(inode, tree1)                 tag_chunk(inode, tree2)
->   old_entry = fsnotify_find_mark();       old_entry = fsnotify_find_mark();
->   old = container_of(old_entry);          old = container_of(old_entry);
->   chunk = alloc_chunk(old->count + 1);    chunk = alloc_chunk(old->count + 1);
->   mutex_lock(&group->mark_mutex);
->   adds new mark
->   replaces chunk
->   old->dead = 1;
->   mutex_unlock(&group->mark_mutex);
->                                           mutex_lock(&group->mark_mutex);
->                                           if (!(old_entry->flags &
->                                                 FSNOTIFY_MARK_FLAG_ATTACHED)) {
->                                             Check fails as old_entry is
->                                             not yet destroyed
->                                           adds new mark
->                                           replaces old chunk again ->
->                                             list corruption, lost refs, ...
->                                           mutex_unlock(&group->mark_mutex);
->
-> Generally there's a bigger problem that audit_tree code can have multiple
-> marks attached to one inode but only one of them is the "valid" one (i.e.,
-> the one embedded in the latest chunk). This is only a temporary state until
-> fsnotify_destroy_mark() detaches the mark and then on last reference drop
-> we really remove the mark from inode's list but during that window it is
-> undefined which mark is returned from fsnotify_find_mark()...
->
-> So am I right the above can really happen or is there some higher level
-> synchronization I'm missing? If this can really happen, I think I'll need
-> to rework the code so that audit_tree has just one mark attached and
-> let it probably point to the current chunk.
+> Thanks,
+> Laura
 
-Full disclosure: I inherited almost all of this code, and aside from
-work by Richard to add some new functionality early in my tenure, and
-the fixes you've sent, I've not ventured too far into this
-audit/fsnotify code.  This means I don't have a quick answer for you,
-in fact since you've been digging through the code recently, you're
-probably more knowledgeable than I am with this particular corner of
-the audit code.
+I have a small set of customers that want CONFIG_HARDENED_USERCOPY
+enabled, and a large number of customers who would be impacted by its
+default behavior (before my change).  The desire was to have the smaller
+number of users need to change their boot lines to get the behavior they
+wanted. Adding CONFIG_HUC_DEFAULT_OFF was an attempt to preserve the
+default behavior of existing users of CONFIG_HARDENED_USERCOPY (default
+enabled) and allowing that to coexist with the desires of the greater
+number of my customers (default disabled).
 
-I've added Richard to the CC line; he was the last audit person to
-spend any quality time with this code, he may have some insight;
-although it has been many years if the git log is to be believed.
+If folks think that it's better to have it enabled by default and the
+command line option to turn it off I can do that (it is simpler). Does
+anyone else have opinions one way or the other?
 
-As far as the "bigger problem" is concerned, we actually are aware of
-this - partially anyway - we just haven't had the cycles to deal with
-it:
+Thanks,
 
-* https://github.com/linux-audit/audit-kernel/issues/12
+Chris
 
--- 
-paul moore
-www.paul-moore.com
