@@ -2,330 +2,304 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5170AC43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C0BC43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54E92563E
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A0C2563E
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 08:57:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="sscVSUbH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54E92563E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="3vu5QjNC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52A0C2563E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754719AbeFYI4v (ORCPT
+        id S1754686AbeFYI4t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 04:56:51 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40873 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754610AbeFYI4r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 04:56:49 -0400
+Received: from mail-eopbgr720064.outbound.protection.outlook.com ([40.107.72.64]:45449
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752620AbeFYI4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 04:56:47 -0400
-Received: by mail-it0-f66.google.com with SMTP id 188-v6so11188373ita.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 01:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=j+i7kHPKtBxahNlNBJMLAammIcnZ9/AU8/UqJYQsEDw=;
-        b=sscVSUbHDLE6WDZgBJ29M9EYXTzqQmCH1UYok4LadoDJHlni1c2y2TaHC2RwgGgDQY
-         5vo3Pe2lNip6TKG0bpIzJX+90yhSdvbfsMd8JvQKaQv2lCcga4zCsIUBLjzPpqFNSaci
-         UWfjWJ4Dg/I201PNGIFxrMCPRyQZs1AKvCVHepTfdnd2xfHX8Q29+uaJKqKM62HP5w1/
-         80Gn6Tq37GDOcaHSrvjGIdURihABsbqTr37Ug/I0521F4zkSsjiXQZEfq90fiGmLLV9J
-         InZkdYbz7XdBGkSzh0vn6YFk0/rj8RimFrCmNjn+12GsBk6cS6kwmCKogJf6b9vad8ZS
-         hStg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=j+i7kHPKtBxahNlNBJMLAammIcnZ9/AU8/UqJYQsEDw=;
-        b=s5NNS/Nv0JmAgxyjYsyLByVHmmgTT81DMGOtFx5fOuT732pxrd+3tUL3iPOriZ12nu
-         Qsc6ghcGyr0ir1ee3hp98PuF+rBRJUmCmKybuPYTiz5635NamIxivDpKgV447uQh2iHT
-         5SEcgeWpWOQNDg03301mSRbvtFLa/Kn8D9ThpNEgu+rOv+5wz+Btm8VPBOISnHO00dKW
-         lW0PBzbw3NfOilYx6gB1w2Wm3xYmUFxuts1mCHHYQBWMZNUtJeolN9z/MXDX/MXAiI2L
-         0vjyC4M1Bb64Nr833Gx/jtceEz1CU2cZDPPT5lxdDLjAW0VNr+TF/LyrFH/gSo5RLBss
-         GdBw==
-X-Gm-Message-State: APt69E2Umz1YePpXqA75NW5Oj0S1w2BLtNNZ0Qq7P5yxdir285DY0N50
-        hRLG5soVKhz1Gt8mqqoUcwbR/MPxWI8ou2SlesDY1+IX
-X-Google-Smtp-Source: ADUXVKIvy8oU0HXm3SG5j/InVbJeNOQs+/GPSWQ+0ROPt/FbVUuS+tR/teVdpShqpOoAlSWYTAZDJ0CmCf/mt3nhoyc=
-X-Received: by 2002:a24:7a4b:: with SMTP id a72-v6mr172165itc.123.1529917007103;
- Mon, 25 Jun 2018 01:56:47 -0700 (PDT)
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6X29Am6xShs0OWJ4X8/lkH9O/50sqzttY3PKtAP+2h4=;
+ b=3vu5QjNCIsHYNq87y/mrk07HnfcpM8VFnQODbPKyI1KdnMXFNysZqymYpAfMXkKgd2Mw+CGNz6jje9YRln2ldg7ObRotxJzJojhl2o9seYjS7uZjPDWQNfRkAqhdh6kNdcC3660dvD822JgcYhBKomZ8O/SHNxMyuQ3J7XGlOJ0=
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com (10.168.206.9) by
+ MWHPR02MB3215.namprd02.prod.outlook.com (10.164.133.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.20; Mon, 25 Jun 2018 08:56:42 +0000
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::fcca:2142:386d:ec1b]) by MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::fcca:2142:386d:ec1b%8]) with mapi id 15.20.0884.024; Mon, 25 Jun 2018
+ 08:56:41 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "mmayer@broadcom.com" <mmayer@broadcom.com>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "ladis@linux-mips.org" <ladis@linux-mips.org>,
+        "ada@thorsis.com" <ada@thorsis.com>,
+        "honghui.zhang@mediatek.com" <honghui.zhang@mediatek.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>,
+        Michal Simek <michals@xilinx.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [[LINUX PATCH v10] 3/4] Documentation: nand: pl353: Add
+ documentation for controller and driver
+Thread-Topic: [[LINUX PATCH v10] 3/4] Documentation: nand: pl353: Add
+ documentation for controller and driver
+Thread-Index: AQHUCSsiBBSirPZfYkmY2lWGh+TOWKRv6L2AgADFW5A=
+Date:   Mon, 25 Jun 2018 08:56:41 +0000
+Message-ID: <MWHPR02MB26234FD1B68C2B5ECC6B87F6AF4A0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1529563351-2241-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1529563351-2241-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
+ <20180624225427.67c4d9c3@bbrezillon>
+In-Reply-To: <20180624225427.67c4d9c3@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB3215;7:toYWeXOg938OvwhnaGdSAlzptO90pBIbJuR545Wq7uZmNB/CXcFrW750Er+GhI0tmXM/wnrrdXw4dYU++bhuIlvSNUBiqOxY2/d0/upYAJN66603rCf10Z/l8QgQxnVKlApVGXu1WFzA2Qcic0kj901ZBmupCAPmCNWKJ+tHAPs/2pn5Jw4EkvRgbGaMqF37SybAcrNFDQsDOE7JKcdD8moS4fnbPHbe2jTNBzzvPmWFkSwtqx90civVpyTfxobW
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(376002)(39380400002)(396003)(366004)(346002)(39860400002)(13464003)(189003)(199004)(186003)(53546011)(106356001)(229853002)(25786009)(68736007)(5660300001)(81156014)(81166006)(53936002)(6436002)(105586002)(6306002)(8676002)(3280700002)(5250100002)(74316002)(476003)(4326008)(11346002)(6246003)(2906002)(486006)(3660700001)(9686003)(55016002)(478600001)(39060400002)(7736002)(26005)(102836004)(6506007)(8936002)(3846002)(55236004)(33656002)(2900100001)(6116002)(446003)(99286004)(7696005)(59450400001)(86362001)(305945005)(66066001)(7416002)(14454004)(6916009)(54906003)(316002)(76176011)(97736004)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB3215;H:MWHPR02MB2623.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: ad4e3245-3119-415b-fafa-08d5da7991a5
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB3215;
+x-ms-traffictypediagnostic: MWHPR02MB3215:
+x-microsoft-antispam-prvs: <MWHPR02MB32155C81843E00DA65CC58FBAF4A0@MWHPR02MB3215.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(31051911155226)(9452136761055)(85827821059158)(258649278758335)(192813158149592)(17755550239193);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB3215;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB3215;
+x-forefront-prvs: 0714841678
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 8xoasJu6JfZMySzcrIXGZvVOQUS/X6bdI0xxmsizMSdeHf/6zDPVPYIsQfjBp3gg5eTyMnhKCVM9pxZoDsVVJnHCByMfnd/ncEiJcH8jvkFWnum27CDGBMWU2c17xAat7I6ALs3UgXEEsvRF0f/rlgT3Pnpk2ycJ6cB0qAs7ranYzmFOwfC2MhH8IK3cJxMaVOH4Q+yMVqHvjHjxgLGO6p+Usj8w/p9u0nvGPb7TQvQ+4sgFU8YYE6M5cz5W8bcw4BDPcXb97zhiebiwkT+PtIVj8CZ7sdBrIWEyt2vqwFQqMg9p1/xyLPL33K4grA9LcOTegU4BMOZrsd37w4AHYbP7E/lD6YBIkcaHtL16vIE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a4f:4642:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 01:56:46
- -0700 (PDT)
-In-Reply-To: <20180311123815.17916-4-ard.biesheuvel@linaro.org>
-References: <20180311123815.17916-1-ard.biesheuvel@linaro.org> <20180311123815.17916-4-ard.biesheuvel@linaro.org>
-From:   Martijn Coenen <maco@android.com>
-Date:   Mon, 25 Jun 2018 10:56:46 +0200
-Message-ID: <CAB0TPYGd1jQzgc2q+fJZif4LVQTPnOrD4b6w0YSAzgAB0oL86g@mail.gmail.com>
-Subject: Re: [PATCH v8 3/6] module: use relative references for __ksymtab entries
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Mackerras <paulus@samba.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        James Morris <james.l.morris@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad4e3245-3119-415b-fafa-08d5da7991a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2018 08:56:41.1234
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB3215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
+Hi Boris,
 
-> --- a/arch/x86/include/asm/export.h
-> +++ /dev/null
-> @@ -1,5 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> -#ifdef CONFIG_64BIT
-> -#define KSYM_ALIGN 16
-> -#endif
+> -----Original Message-----
+> From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> Sent: Monday, June 25, 2018 2:24 AM
+> To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> Cc: richard@nod.at; dwmw2@infradead.org; computersforpeace@gmail.com;
+> marek.vasut@gmail.com; f.fainelli@gmail.com; mmayer@broadcom.com; rogerq@=
+ti.com;
+> ladis@linux-mips.org; ada@thorsis.com; honghui.zhang@mediatek.com;
+> miquel.raynal@bootlin.com; nagasureshkumarrelli@gmail.com; Michal Simek
+> <michals@xilinx.com>; linux-mtd@lists.infradead.org; linux-kernel@vger.ke=
+rnel.org
+> Subject: Re: [[LINUX PATCH v10] 3/4] Documentation: nand: pl353: Add docu=
+mentation
+> for controller and driver
+>=20
+> On Thu, 21 Jun 2018 12:12:30 +0530
+> Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
+>=20
+> > Added notes about the controller and driver.
+> >
+> > Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.co=
+m>
+> > ---
+> > Changes in v10:
+> >  - None
+> > Changes in v9:
+> >  - Addressed the comments given by Miquel and Randy
+> > Changes in v8
+> >  - None
+> > Changes in v7:
+> > - None
+> > Changes in v6:
+> > - None
+> > Changes in v5:
+> > - Fixed the review comments
+> > Changes in v4:
+> > - None
+> > ---
+> >  Documentation/mtd/nand/pl353-nand.txt | 99
+> +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 99 insertions(+)
+> >  create mode 100644 Documentation/mtd/nand/pl353-nand.txt
+>=20
+> Can we put these information directly in the driver instead of having
+> yet another place where we have things partially documented? I just
+> discovered a doc for the pxa NAND controller in this directory because
+> of this patch, which kind of proves my point :-).
+Ok, but could you please explain where to put in driver?
+Do you mean, as comments inside drivers/mtd/raw/pl353-nand.c?
 
-Why remove the 16-byte alignment here? I was working on some other
-code and ran into this 16-byte alignment, but I'm not sure why it's
-needed on x86_64 in the first place. Possibly because the ABI requires
-the stack to be 16-byte aligned when using sse instructions?
+>=20
+> >
+> > diff --git a/Documentation/mtd/nand/pl353-nand.txt b/Documentation/mtd/=
+nand/pl353-
+> nand.txt
+> > new file mode 100644
+> > index 0000000..c352c87
+> > --- /dev/null
+> > +++ b/Documentation/mtd/nand/pl353-nand.txt
+> > @@ -0,0 +1,99 @@
+> > +This document provides some notes about the ARM pl353 SMC controller u=
+sed in
+> > +Zynq SOC and confined to NAND specific details.
+> > +
+> > +Overview of the controller
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> > +	The SMC (PL353) supports two memory interfaces:
+> > +	Interface 0 type SRAM.
+> > +	Interface 1 type NAND.
+> > +	This configuration supports the following configurable options:
+> > +	   . 32-bit or 64-bit AXI data width
+> > +	   . 8-bit, 16-bit, or 32-bit memory data width for interface 0
+> > +	   . 8-bit, or 16-bit memory data width for interface 1
+> > +	   . 1-4 chip selects on each interface
+> > +	   . SLC ECC block for interface 1
+> > +
+> > +For more information, refer the below link for TRM
+> >
+> +http://infocenter.arm.com/help/topic/com.arm.doc.ddi0380g/DDI0380G_smc_p=
+l350_series
+> _r2p1_trm.pdf
+> > +
+> > +NAND memory accesses
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +	. Two phase NAND accesses
+> > +	. NAND command phase transfers
+> > +	. NAND data phase transfers
+> > +
+> > +Two phase NAND accesses
+> > +	The SMC defines two phases of commands when transferring data to or f=
+rom
+> > +NAND flash.
+> > +
+> > +Command phase
+> > +	Commands and optional address information are written to the NAND fla=
+sh.
+> > +The command and address can be associated with either a data phase ope=
+ration to
+> > +write to or read from the array, or a status/ID register transfer.
+> > +
+> > +Data phase
+> > + Data is either written to or read from the NAND flash. This data can =
+be either
+> > +data transferred to or from the array, or status/ID register informati=
+on.
+> > +
+> > +NAND AXI address setup
+> > +       AXI address      Command phase      Data phase
+> > +	[31:24]         Chip address       Chip address
+> > +	[23]            NoOfAddCycles_2    Reserved
+> > +	[22]            NoOfAddCycles_1    Reserved
+> > +	[21]            NoOfAddCycles_0    ClearCS
+> > +	[20]            End command valid  End command valid
+> > +	[19]            0                  1
+> > +	[18:11]         End command        End command
+> > +	[10:3]          Start command      [10] ECC Last
+> > +					   [9:3] Reserved
+> > +	[2:0]           Reserved           Reserved
+> > +
+> > +ECC
+> > +=3D=3D=3D
+> > +    It operates on a number of 512 byte blocks of NAND memory and can =
+be
+> > +programmed to store the ECC codes after the data in memory. For writes=
+,
+> > +the ECC is written to the spare area of the page. For reads, the resul=
+t of
+> > +a block ECC check are made available to the device driver.
+> > +
+> > +----------------------------------------------------------------------=
+--
+> > +|               n * 512 blocks                  | extra  | ecc    |   =
+  |
+> > +|                                               | block  | codes  |   =
+  |
+> > +----------------------------------------------------------------------=
+--
+> > +
+> > +The ECC calculation uses a simple Hamming code, using 1-bit correction=
+ 2-bit
+> > +detection. It starts when a valid read or write command with a 512 byt=
+e aligned
+> > +address is detected on the memory interface.
+> > +
+> > +Driver details
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +	The NAND driver has dependency with the pl353_smc memory controller
+> > +driver for initializing the NAND timing parameters, bus width, ECC mod=
+es,
+> > +control and status information.
+> > +
+> > +Since the controller expects that the chip select bit would be cleared=
+ for the
+> > +last data transfer i.e last 4 data bytes, the existing nand page
+> > +read/write routines for soft ECC and ECC none modes will not work. So,=
+ in order
+> > +to make this driver work, it always updates the ECC mode as HW ECC and
+> > +implements the page read/write functions for supporting the SW ECC.
+> > +i.e. There is a limitation in SMC controller, that we must set ECC LAS=
+T on
+> > +last data phase access, to tell ECC block not to expect any data furth=
+er.
+> > +Ex:  When number of ECC STEPS are 4, then till 3 we will write to flas=
+h
+> > +using SMC with HW ECC enabled. And for the last ECC STEP, we will subt=
+ract
+> > +4bytes from page size, and will initiate a transfer. And the remaining=
+ 4 as
+> > +one more transfer with ECC_LAST bit set in NAND data phase register to=
+ notify
+> > +ECC block not to expect any more data. The last block should be align =
+with end
+> > +of 512 byte block. Because of this limitation, we are not using core r=
+outines.
+> > +
+> > +HW ECC mode:
+> > +	Up to 2K page size is supported and beyond that it returns
+> > +-ENOTSUPPORT error. If the flash has on-die ECC controller then the
+> > +priority is given to the on-die ECC controller. Also the current
+> > +implementation has support for up to 64 bytes of OOB data.
+> > +
+> > +SW ECC mode:
+> > +	It supports all the page sizes. But since, Zynq SOC bootrom uses
+> > +HW ECC for the devices that have page <=3D 2K. so, When the kernel is =
+not
+> > +aware of the ECC mode, it uses HW ECC by default.
+> > +
+> > +For devicetree binding information please refer to the below dt bindin=
+g file
+> > +Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt.
 
 Thanks,
-Martijn
-
-> -#include <asm-generic/export.h>
-> diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
-> index 719db1968d81..97ce606459ae 100644
-> --- a/include/asm-generic/export.h
-> +++ b/include/asm-generic/export.h
-> @@ -5,12 +5,10 @@
->  #define KSYM_FUNC(x) x
->  #endif
->  #ifdef CONFIG_64BIT
-> -#define __put .quad
->  #ifndef KSYM_ALIGN
->  #define KSYM_ALIGN 8
->  #endif
->  #else
-> -#define __put .long
->  #ifndef KSYM_ALIGN
->  #define KSYM_ALIGN 4
->  #endif
-> @@ -25,6 +23,16 @@
->  #define KSYM(name) name
->  #endif
->
-> +.macro __put, val, name
-> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-> +       .long   \val - ., \name - .
-> +#elif defined(CONFIG_64BIT)
-> +       .quad   \val, \name
-> +#else
-> +       .long   \val, \name
-> +#endif
-> +.endm
-> +
->  /*
->   * note on .section use: @progbits vs %progbits nastiness doesn't matter,
->   * since we immediately emit into those sections anyway.
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index ab4711c63601..0a9328ea9dbd 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -280,6 +280,25 @@ unsigned long read_word_at_a_time(const void *addr)
->
->  #endif /* __KERNEL__ */
->
-> +/*
-> + * Force the compiler to emit 'sym' as a symbol, so that we can reference
-> + * it from inline assembler. Necessary in case 'sym' could be inlined
-> + * otherwise, or eliminated entirely due to lack of references that are
-> + * visible to the compiler.
-> + */
-> +#define __ADDRESSABLE(sym) \
-> +       static void * const __attribute__((section(".discard"), used))  \
-> +               __PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
-> +
-> +/**
-> + * offset_to_ptr - convert a relative memory offset to an absolute pointer
-> + * @off:       the address of the 32-bit offset value
-> + */
-> +static inline void *offset_to_ptr(const int *off)
-> +{
-> +       return (void *)((unsigned long)off + *off);
-> +}
-> +
->  #endif /* __ASSEMBLY__ */
->
->  #ifndef __optimize
-> diff --git a/include/linux/export.h b/include/linux/export.h
-> index 25005b55b079..04c78e6bfec9 100644
-> --- a/include/linux/export.h
-> +++ b/include/linux/export.h
-> @@ -24,12 +24,6 @@
->  #define VMLINUX_SYMBOL_STR(x) __VMLINUX_SYMBOL_STR(x)
->
->  #ifndef __ASSEMBLY__
-> -struct kernel_symbol
-> -{
-> -       unsigned long value;
-> -       const char *name;
-> -};
-> -
->  #ifdef MODULE
->  extern struct module __this_module;
->  #define THIS_MODULE (&__this_module)
-> @@ -60,17 +54,47 @@ extern struct module __this_module;
->  #define __CRC_SYMBOL(sym, sec)
->  #endif
->
-> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-> +#include <linux/compiler.h>
-> +/*
-> + * Emit the ksymtab entry as a pair of relative references: this reduces
-> + * the size by half on 64-bit architectures, and eliminates the need for
-> + * absolute relocations that require runtime processing on relocatable
-> + * kernels.
-> + */
-> +#define __KSYMTAB_ENTRY(sym, sec)                                      \
-> +       __ADDRESSABLE(sym)                                              \
-> +       asm("   .section \"___ksymtab" sec "+" #sym "\", \"a\"  \n"     \
-> +           "   .balign 8                                       \n"     \
-> +           VMLINUX_SYMBOL_STR(__ksymtab_##sym) ":              \n"     \
-> +           "   .long " VMLINUX_SYMBOL_STR(sym) "- .            \n"     \
-> +           "   .long " VMLINUX_SYMBOL_STR(__kstrtab_##sym) "- .\n"     \
-> +           "   .previous                                       \n")
-> +
-> +struct kernel_symbol {
-> +       int value_offset;
-> +       int name_offset;
-> +};
-> +#else
-> +#define __KSYMTAB_ENTRY(sym, sec)                                      \
-> +       static const struct kernel_symbol __ksymtab_##sym               \
-> +       __attribute__((section("___ksymtab" sec "+" #sym), used))       \
-> +       = { (unsigned long)&sym, __kstrtab_##sym }
-> +
-> +struct kernel_symbol {
-> +       unsigned long value;
-> +       const char *name;
-> +};
-> +#endif
-> +
->  /* For every exported symbol, place a struct in the __ksymtab section */
->  #define ___EXPORT_SYMBOL(sym, sec)                                     \
->         extern typeof(sym) sym;                                         \
->         __CRC_SYMBOL(sym, sec)                                          \
->         static const char __kstrtab_##sym[]                             \
-> -       __attribute__((section("__ksymtab_strings"), aligned(1)))       \
-> +       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
->         = VMLINUX_SYMBOL_STR(sym);                                      \
-> -       static const struct kernel_symbol __ksymtab_##sym               \
-> -       __used                                                          \
-> -       __attribute__((section("___ksymtab" sec "+" #sym), used))       \
-> -       = { (unsigned long)&sym, __kstrtab_##sym }
-> +       __KSYMTAB_ENTRY(sym, sec)
->
->  #if defined(__DISABLE_EXPORTS)
->
-> diff --git a/kernel/module.c b/kernel/module.c
-> index ad2d420024f6..b4782cfbb79b 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -549,12 +549,30 @@ static bool check_symbol(const struct symsearch *syms,
->         return true;
->  }
->
-> +static unsigned long kernel_symbol_value(const struct kernel_symbol *sym)
-> +{
-> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-> +       return (unsigned long)offset_to_ptr(&sym->value_offset);
-> +#else
-> +       return sym->value;
-> +#endif
-> +}
-> +
-> +static const char *kernel_symbol_name(const struct kernel_symbol *sym)
-> +{
-> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-> +       return offset_to_ptr(&sym->name_offset);
-> +#else
-> +       return sym->name;
-> +#endif
-> +}
-> +
->  static int cmp_name(const void *va, const void *vb)
->  {
->         const char *a;
->         const struct kernel_symbol *b;
->         a = va; b = vb;
-> -       return strcmp(a, b->name);
-> +       return strcmp(a, kernel_symbol_name(b));
->  }
->
->  static bool find_symbol_in_section(const struct symsearch *syms,
-> @@ -2198,7 +2216,7 @@ void *__symbol_get(const char *symbol)
->                 sym = NULL;
->         preempt_enable();
->
-> -       return sym ? (void *)sym->value : NULL;
-> +       return sym ? (void *)kernel_symbol_value(sym) : NULL;
->  }
->  EXPORT_SYMBOL_GPL(__symbol_get);
->
-> @@ -2228,10 +2246,12 @@ static int verify_export_symbols(struct module *mod)
->
->         for (i = 0; i < ARRAY_SIZE(arr); i++) {
->                 for (s = arr[i].sym; s < arr[i].sym + arr[i].num; s++) {
-> -                       if (find_symbol(s->name, &owner, NULL, true, false)) {
-> +                       if (find_symbol(kernel_symbol_name(s), &owner, NULL,
-> +                                       true, false)) {
->                                 pr_err("%s: exports duplicate symbol %s"
->                                        " (owned by %s)\n",
-> -                                      mod->name, s->name, module_name(owner));
-> +                                      mod->name, kernel_symbol_name(s),
-> +                                      module_name(owner));
->                                 return -ENOEXEC;
->                         }
->                 }
-> @@ -2280,7 +2300,7 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
->                         ksym = resolve_symbol_wait(mod, info, name);
->                         /* Ok if resolved.  */
->                         if (ksym && !IS_ERR(ksym)) {
-> -                               sym[i].st_value = ksym->value;
-> +                               sym[i].st_value = kernel_symbol_value(ksym);
->                                 break;
->                         }
->
-> @@ -2540,7 +2560,7 @@ static int is_exported(const char *name, unsigned long value,
->                 ks = lookup_symbol(name, __start___ksymtab, __stop___ksymtab);
->         else
->                 ks = lookup_symbol(name, mod->syms, mod->syms + mod->num_syms);
-> -       return ks != NULL && ks->value == value;
-> +       return ks != NULL && kernel_symbol_value(ks) == value;
->  }
->
->  /* As per nm */
-> --
-> 2.15.1
->
+Naga Sureshkumar Relli.
