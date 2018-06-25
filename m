@@ -2,100 +2,260 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 262C0C43144
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AD4C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB51525951
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:40:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BcRfNiNc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB51525951
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 115FD25957
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 12:41:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115FD25957
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755271AbeFYMkX (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 08:40:23 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36747 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753456AbeFYMkV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 08:40:21 -0400
-Received: by mail-pg0-f67.google.com with SMTP id m5-v6so6011676pgd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 05:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=I6I1Xdja27lprqUfXNY4jTSrTq1PzSBNCimJ6lQV66U=;
-        b=BcRfNiNcUydP3RnAH9WzRe/Ipif6kY8Oa4zO7DEysNbXed669nQBnHNpsfmWO2160Y
-         YPmz08eR/QErjqn1TnPeExeHNPCkkDTOGkvEnsS4rfCJOU34cQF7BKuxv8nqfnqNFsC4
-         o+o8N6wBy/kcngaZgl9g4kiAQCMrAk2Cv8y7En7x6ApFySAENyYZX0e8ffCE7+fD5XA3
-         won8Avasm0xGUUfxI+hexDPh02TuV5GzY8hdifT0wg7Xr598OT1g3NXMCYp45zASnSOI
-         8E8JBrMRH+AQBwUG91e/1aIaEpNqO9XQ5wmWd8d+z9VBDkquOYqCWbKaLgFUD31gjpyo
-         OCyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=I6I1Xdja27lprqUfXNY4jTSrTq1PzSBNCimJ6lQV66U=;
-        b=LylmVx7wMgxoXLBRtitlrKzEDoEY5m6BQRbKs72CTgyYK5tTetWJPOGRXXwZunX9V0
-         VleSCer32IjZ0vlLXOx+mvxDNtX6jMci0HGWNv0WehDTAZwiLPH6znylsMbUQDjRENK2
-         gTid7NyJVShPJpmsWuJH3bruzdzSjrdOTuIfcEEUdZ49nH+3HhHMNDdLrGOwTfpoCv1E
-         GoY6/TcZeqwkCuCSwrFVklHPzBYHFH88N0q8wiEDD+U0F77jSdByvFVZM0SgMAC2S1NN
-         lInXjVVURvlSfPF8hS+OK615yStYgquC+f9Jafv9Lt3D9dgKdBwe98yjjHSxo+hT7kcJ
-         ihkg==
-X-Gm-Message-State: APt69E0vSL8SdYkFXhEcxiUniAaPyyhwoOlM6aMvOE0jB6fGFVpe5MDu
-        r2meYHAD/EMhyy9O7aEX8srufgd3KYYPVPwlQZLz6A==
-X-Google-Smtp-Source: ADUXVKIsoS1ORLR1JrU0JsP25cMxR+vSS9xFVNLcGB6Syfu08sti8pZYyaLIMWHHujj3IFl8xPSkOpT3c7xo2D1s+/4=
-X-Received: by 2002:a65:490d:: with SMTP id p13-v6mr10229295pgs.84.1529930420968;
- Mon, 25 Jun 2018 05:40:20 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Mon, 25 Jun 2018 05:40:00
- -0700 (PDT)
-In-Reply-To: <20180621081704.GA677@jagdpanzerIV>
-References: <20180620125540.228766-1-dvyukov@gmail.com> <CAHp75VdR_gDBk7v9WDN1fHc=1q=j2mx3CkTz83SZZWm=pbnczA@mail.gmail.com>
- <CACT4Y+bjdmgdeRLM5kBaf6-vunFwFRD0_zCZX=A-rY+XEEfnEA@mail.gmail.com> <20180621081704.GA677@jagdpanzerIV>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 25 Jun 2018 14:40:00 +0200
-Message-ID: <CACT4Y+ZZVOjec2dvRCU9p7MHkbYyjqk7FMr4Yu3ahVyL_g0YGQ@mail.gmail.com>
-Subject: Re: [PATCH] arch/x86: get rid of KERN_CONT in show_fault_oops()
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Dmitry Vyukov <dvyukov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S933402AbeFYMlG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 08:41:06 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:38322 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933919AbeFYMj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 08:39:28 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 422B11A00B6;
+        Mon, 25 Jun 2018 14:39:27 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D64091A00CE;
+        Mon, 25 Jun 2018 14:39:26 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 496D040A70;
+        Mon, 25 Jun 2018 05:39:26 -0700 (MST)
+Received: from titan.ap.freescale.net ([10.192.208.233])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w5PCd34R025070;
+        Mon, 25 Jun 2018 05:39:23 -0700
+From:   Yangbo Lu <yangbo.lu@nxp.com>
+To:     netdev@vger.kernel.org, madalin.bucur@nxp.com,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v4, 06/10] fsl/fman: add set_tstamp interface
+Date:   Mon, 25 Jun 2018 20:37:12 +0800
+Message-Id: <20180625123716.28993-7-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180625123716.28993-1-yangbo.lu@nxp.com>
+References: <20180625123716.28993-1-yangbo.lu@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 10:17 AM, Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
-> On (06/21/18 09:59), Dmitry Vyukov wrote:
->> >
->> >> +       printk(KERN_ALERT "BUG: unable to handle kernel %s at %px\n",
->> >> +               (address < PAGE_SIZE ? "NULL pointer dereference" :
->> >> +               "paging request"), (void *) address);
->> >
->> > Perhaps pr_alert() ?
->>
->> It's the same, right? Make sense.
->
-> Right.
->
-> In printk(KERN_<LEVEL> ...) people tend to forget KERN_<LEVEL> sometimes,
-> so, I think, in general we want to see more pr_foo() and less printk().
+This patch is to add set_tstamp interface for memac,
+dtsec, and 10GEC controllers to configure HW timestamping.
 
-Mailed v2 with pr_alert().
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Acked-by: Madalin Bucur <madalin.bucur@nxp.com>
+---
+Changes for v2:
+	- None.
+Changes for v3:
+	- None.
+Changes for v4:
+	- Added ACKs.
+---
+ drivers/net/ethernet/freescale/fman/fman_dtsec.c |   27 ++++++++++++++++++++++
+ drivers/net/ethernet/freescale/fman/fman_dtsec.h |    1 +
+ drivers/net/ethernet/freescale/fman/fman_memac.c |    5 ++++
+ drivers/net/ethernet/freescale/fman/fman_memac.h |    1 +
+ drivers/net/ethernet/freescale/fman/fman_tgec.c  |   21 +++++++++++++++++
+ drivers/net/ethernet/freescale/fman/fman_tgec.h  |    1 +
+ drivers/net/ethernet/freescale/fman/mac.c        |    3 ++
+ drivers/net/ethernet/freescale/fman/mac.h        |    1 +
+ 8 files changed, 60 insertions(+), 0 deletions(-)
 
-Since nobody else commented on single pr_alert() with ternary operator
-vs if + 2 pr_alert()'s, I left it intact for now.
+diff --git a/drivers/net/ethernet/freescale/fman/fman_dtsec.c b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
+index 57b1e2b..1ca543a 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_dtsec.c
++++ b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
+@@ -123,11 +123,13 @@
+ #define DTSEC_ECNTRL_R100M		0x00000008
+ #define DTSEC_ECNTRL_QSGMIIM		0x00000001
+ 
++#define TCTRL_TTSE			0x00000040
+ #define TCTRL_GTS			0x00000020
+ 
+ #define RCTRL_PAL_MASK			0x001f0000
+ #define RCTRL_PAL_SHIFT			16
+ #define RCTRL_GHTX			0x00000400
++#define RCTRL_RTSE			0x00000040
+ #define RCTRL_GRS			0x00000020
+ #define RCTRL_MPROM			0x00000008
+ #define RCTRL_RSF			0x00000004
+@@ -1136,6 +1138,31 @@ int dtsec_set_allmulti(struct fman_mac *dtsec, bool enable)
+ 	return 0;
+ }
+ 
++int dtsec_set_tstamp(struct fman_mac *dtsec, bool enable)
++{
++	struct dtsec_regs __iomem *regs = dtsec->regs;
++	u32 rctrl, tctrl;
++
++	if (!is_init_done(dtsec->dtsec_drv_param))
++		return -EINVAL;
++
++	rctrl = ioread32be(&regs->rctrl);
++	tctrl = ioread32be(&regs->tctrl);
++
++	if (enable) {
++		rctrl |= RCTRL_RTSE;
++		tctrl |= TCTRL_TTSE;
++	} else {
++		rctrl &= ~RCTRL_RTSE;
++		tctrl &= ~TCTRL_TTSE;
++	}
++
++	iowrite32be(rctrl, &regs->rctrl);
++	iowrite32be(tctrl, &regs->tctrl);
++
++	return 0;
++}
++
+ int dtsec_del_hash_mac_address(struct fman_mac *dtsec, enet_addr_t *eth_addr)
+ {
+ 	struct dtsec_regs __iomem *regs = dtsec->regs;
+diff --git a/drivers/net/ethernet/freescale/fman/fman_dtsec.h b/drivers/net/ethernet/freescale/fman/fman_dtsec.h
+index 1a689ad..5149d96 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_dtsec.h
++++ b/drivers/net/ethernet/freescale/fman/fman_dtsec.h
+@@ -56,5 +56,6 @@ int dtsec_set_exception(struct fman_mac *dtsec,
+ int dtsec_del_hash_mac_address(struct fman_mac *dtsec, enet_addr_t *eth_addr);
+ int dtsec_get_version(struct fman_mac *dtsec, u32 *mac_version);
+ int dtsec_set_allmulti(struct fman_mac *dtsec, bool enable);
++int dtsec_set_tstamp(struct fman_mac *dtsec, bool enable);
+ 
+ #endif /* __DTSEC_H */
+diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.c b/drivers/net/ethernet/freescale/fman/fman_memac.c
+index 446a97b..bc6eb30 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_memac.c
++++ b/drivers/net/ethernet/freescale/fman/fman_memac.c
+@@ -964,6 +964,11 @@ int memac_set_allmulti(struct fman_mac *memac, bool enable)
+ 	return 0;
+ }
+ 
++int memac_set_tstamp(struct fman_mac *memac, bool enable)
++{
++	return 0; /* Always enabled. */
++}
++
+ int memac_del_hash_mac_address(struct fman_mac *memac, enet_addr_t *eth_addr)
+ {
+ 	struct memac_regs __iomem *regs = memac->regs;
+diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.h b/drivers/net/ethernet/freescale/fman/fman_memac.h
+index b5a5033..b2c671e 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_memac.h
++++ b/drivers/net/ethernet/freescale/fman/fman_memac.h
+@@ -58,5 +58,6 @@ int memac_set_exception(struct fman_mac *memac,
+ int memac_add_hash_mac_address(struct fman_mac *memac, enet_addr_t *eth_addr);
+ int memac_del_hash_mac_address(struct fman_mac *memac, enet_addr_t *eth_addr);
+ int memac_set_allmulti(struct fman_mac *memac, bool enable);
++int memac_set_tstamp(struct fman_mac *memac, bool enable);
+ 
+ #endif /* __MEMAC_H */
+diff --git a/drivers/net/ethernet/freescale/fman/fman_tgec.c b/drivers/net/ethernet/freescale/fman/fman_tgec.c
+index 284735d..4070593 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_tgec.c
++++ b/drivers/net/ethernet/freescale/fman/fman_tgec.c
+@@ -44,6 +44,7 @@
+ #define TGEC_TX_IPG_LENGTH_MASK	0x000003ff
+ 
+ /* Command and Configuration Register (COMMAND_CONFIG) */
++#define CMD_CFG_EN_TIMESTAMP		0x00100000
+ #define CMD_CFG_NO_LEN_CHK		0x00020000
+ #define CMD_CFG_PAUSE_IGNORE		0x00000100
+ #define CMF_CFG_CRC_FWD			0x00000040
+@@ -588,6 +589,26 @@ int tgec_set_allmulti(struct fman_mac *tgec, bool enable)
+ 	return 0;
+ }
+ 
++int tgec_set_tstamp(struct fman_mac *tgec, bool enable)
++{
++	struct tgec_regs __iomem *regs = tgec->regs;
++	u32 tmp;
++
++	if (!is_init_done(tgec->cfg))
++		return -EINVAL;
++
++	tmp = ioread32be(&regs->command_config);
++
++	if (enable)
++		tmp |= CMD_CFG_EN_TIMESTAMP;
++	else
++		tmp &= ~CMD_CFG_EN_TIMESTAMP;
++
++	iowrite32be(tmp, &regs->command_config);
++
++	return 0;
++}
++
+ int tgec_del_hash_mac_address(struct fman_mac *tgec, enet_addr_t *eth_addr)
+ {
+ 	struct tgec_regs __iomem *regs = tgec->regs;
+diff --git a/drivers/net/ethernet/freescale/fman/fman_tgec.h b/drivers/net/ethernet/freescale/fman/fman_tgec.h
+index cbbd3b4..3bfd106 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_tgec.h
++++ b/drivers/net/ethernet/freescale/fman/fman_tgec.h
+@@ -52,5 +52,6 @@ int tgec_set_exception(struct fman_mac *tgec,
+ int tgec_del_hash_mac_address(struct fman_mac *tgec, enet_addr_t *eth_addr);
+ int tgec_get_version(struct fman_mac *tgec, u32 *mac_version);
+ int tgec_set_allmulti(struct fman_mac *tgec, bool enable);
++int tgec_set_tstamp(struct fman_mac *tgec, bool enable);
+ 
+ #endif /* __TGEC_H */
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index 7b5b95f..a847b9c 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -471,6 +471,7 @@ static void setup_dtsec(struct mac_device *mac_dev)
+ 	mac_dev->set_rx_pause		= dtsec_accept_rx_pause_frames;
+ 	mac_dev->set_exception		= dtsec_set_exception;
+ 	mac_dev->set_allmulti		= dtsec_set_allmulti;
++	mac_dev->set_tstamp		= dtsec_set_tstamp;
+ 	mac_dev->set_multi		= set_multi;
+ 	mac_dev->start			= start;
+ 	mac_dev->stop			= stop;
+@@ -490,6 +491,7 @@ static void setup_tgec(struct mac_device *mac_dev)
+ 	mac_dev->set_rx_pause		= tgec_accept_rx_pause_frames;
+ 	mac_dev->set_exception		= tgec_set_exception;
+ 	mac_dev->set_allmulti		= tgec_set_allmulti;
++	mac_dev->set_tstamp		= tgec_set_tstamp;
+ 	mac_dev->set_multi		= set_multi;
+ 	mac_dev->start			= start;
+ 	mac_dev->stop			= stop;
+@@ -509,6 +511,7 @@ static void setup_memac(struct mac_device *mac_dev)
+ 	mac_dev->set_rx_pause		= memac_accept_rx_pause_frames;
+ 	mac_dev->set_exception		= memac_set_exception;
+ 	mac_dev->set_allmulti		= memac_set_allmulti;
++	mac_dev->set_tstamp		= memac_set_tstamp;
+ 	mac_dev->set_multi		= set_multi;
+ 	mac_dev->start			= start;
+ 	mac_dev->stop			= stop;
+diff --git a/drivers/net/ethernet/freescale/fman/mac.h b/drivers/net/ethernet/freescale/fman/mac.h
+index b520cec..824a81a 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.h
++++ b/drivers/net/ethernet/freescale/fman/mac.h
+@@ -68,6 +68,7 @@ struct mac_device {
+ 	int (*set_promisc)(struct fman_mac *mac_dev, bool enable);
+ 	int (*change_addr)(struct fman_mac *mac_dev, enet_addr_t *enet_addr);
+ 	int (*set_allmulti)(struct fman_mac *mac_dev, bool enable);
++	int (*set_tstamp)(struct fman_mac *mac_dev, bool enable);
+ 	int (*set_multi)(struct net_device *net_dev,
+ 			 struct mac_device *mac_dev);
+ 	int (*set_rx_pause)(struct fman_mac *mac_dev, bool en);
+-- 
+1.7.1
+
