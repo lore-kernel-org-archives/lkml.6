@@ -2,137 +2,143 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AC3C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52842C43144
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3936125F63
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:07:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3936125F63
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B6C0125FFC
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 18:10:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="l9DCRP+R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C0125FFC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964868AbeFYSHY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 14:07:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48775 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964807AbeFYSHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 14:07:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C861CAB1E;
-        Mon, 25 Jun 2018 18:07:18 +0000 (UTC)
-Date:   Mon, 25 Jun 2018 20:07:17 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Stefan Agner <stefan@agner.ch>, Joe Perches <joe@perches.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/memblock: add missing include <linux/bootmem.h>
-Message-ID: <20180625180717.GS28965@dhcp22.suse.cz>
-References: <20180622210542.2025-1-malat@debian.org>
- <20180625171513.31845-1-malat@debian.org>
+        id S964879AbeFYSKN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 14:10:13 -0400
+Received: from mail.efficios.com ([167.114.142.138]:53990 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933990AbeFYSKM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 14:10:12 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 5DAF71C2C34;
+        Mon, 25 Jun 2018 14:10:11 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id M_baklF6yqF3; Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id B64D81C2C31;
+        Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B64D81C2C31
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1529950210;
+        bh=CB7yFnDG6eH60Hxcx8Ee25ITsW8xCkrtpUFF1WSD7G4=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=l9DCRP+RaxuQ41GHTfLytl1PyKgaa82+hekGpM3lKTe8I5kev3GF11oARmXDyFcwr
+         7jQF8tYWHZAjciHWC49zVnNXp8stPkeY8FpG4gxzQ0a+mnzW68Y/fwigK0jRLtWaWr
+         CnkLSqGU/tbyhnxAMHmM5YKq1M8Ln4fmGS7nevi5Rt8V0xn74OqRuZ2BtmSIydRadD
+         DAZ/OSzOP4B/OAv8t0Omf33bZ8yrfQrLYE3FtrBJa7CPbBYRLuV4SxDpFo4QktzCTN
+         6ax7WTYj5yTIxqUp8YEIDSi6feRVy+8KzKgfjvetD39zEy0/2jIsmXbYewYpy6WOWx
+         Mf7jS/YfmPTiQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 3vp_32iBWNDr; Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 9EBE71C2C2A;
+        Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
+Date:   Mon, 25 Jun 2018 14:10:10 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        peter maydell <peter.maydell@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Message-ID: <501929863.3051.1529950210436.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1529949285-11013-4-git-send-email-will.deacon@arm.com>
+References: <1529949285-11013-1-git-send-email-will.deacon@arm.com> <1529949285-11013-4-git-send-email-will.deacon@arm.com>
+Subject: Re: [PATCH 3/3] rseq/selftests: Add support for arm64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625171513.31845-1-malat@debian.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq/selftests: Add support for arm64
+Thread-Index: yP7vNsKbxoqvvCxYacs6zXLc8e16Qw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 25-06-18 19:15:12, Mathieu Malaterre wrote:
-> Commit 26f09e9b3a06 ("mm/memblock: add memblock memory allocation apis")
-> introduced two new function definitions:
-> 
->   memblock_virt_alloc_try_nid_nopanic()
->   memblock_virt_alloc_try_nid()
-> 
-> Commit ea1f5f3712af ("mm: define memblock_virt_alloc_try_nid_raw")
-> introduced the following function definition:
-> 
->   memblock_virt_alloc_try_nid_raw()
-> 
-> This commit adds an include of header file <linux/bootmem.h> to provide
-> the missing function prototypes. Silence the following gcc warning
-> (W=1):
-> 
->   mm/memblock.c:1334:15: warning: no previous prototype for `memblock_virt_alloc_try_nid_raw' [-Wmissing-prototypes]
->   mm/memblock.c:1371:15: warning: no previous prototype for `memblock_virt_alloc_try_nid_nopanic' [-Wmissing-prototypes]
->   mm/memblock.c:1407:15: warning: no previous prototype for `memblock_virt_alloc_try_nid' [-Wmissing-prototypes]
-> 
-> It also adds #ifdef blockers to prevent compilation failure on mips/ia64
-> where CONFIG_NO_BOOTMEM=n. Because Makefile already does:
-> 
->   obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
-> 
-> The #ifdef has been simplified from:
-> 
->   #if defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM)
-> 
-> to simply:
-> 
->   #if defined(CONFIG_NO_BOOTMEM)
+----- On Jun 25, 2018, at 1:54 PM, Will Deacon will.deacon@arm.com wrote:
 
-Well, I would apreciate an explanation why do we need NO_BOOTMEM guard
-in the first place rather than why HAVE_MEMBLOCK is not needed.
+[...]
 
-> Suggested-by: Tony Luck <tony.luck@intel.com>
-> Suggested-by: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> +#define __RSEQ_ASM_DEFINE_TABLE(label, version, flags, start_ip,		\
+> +				post_commit_offset, abort_ip)			\
+> +	"	.pushsection	__rseq_table, \"aw\"\n"				\
+> +	"	.balign	32\n"							\
+> +	__rseq_str(label) ":\n"							\
+> +	"	.long	" __rseq_str(version) ", " __rseq_str(flags) "\n"	\
+> +	"	.quad	" __rseq_str(start_ip) ", "				\
+> +			  __rseq_str(post_commit_offset) ", "			\
+> +			  __rseq_str(abort_ip) "\n"				\
+> +	"	.popsection\n"
+> +
+> +#define RSEQ_ASM_DEFINE_TABLE(label, start_ip, post_commit_ip, abort_ip)	\
+> +	__RSEQ_ASM_DEFINE_TABLE(label, 0x0, 0x0, start_ip,			\
+> +				(post_commit_ip - start_ip), abort_ip)
+> +
+> +#define RSEQ_ASM_STORE_RSEQ_CS(label, cs_label, rseq_cs)			\
+> +	RSEQ_INJECT_ASM(1)							\
+> +	"	adrp	" RSEQ_ASM_TMP_REG ", " __rseq_str(cs_label) "\n"	\
+> +	"	add	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
+> +			", :lo12:" __rseq_str(cs_label) "\n"			\
+> +	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(rseq_cs) "]\n"	\
+> +	__rseq_str(label) ":\n"
+> +
+> +#define RSEQ_ASM_DEFINE_ABORT(label, abort_label)				\
+> +	"	.pushsection	__rseq_failure, \"ax\"\n"			\
+> +	"	.long 	"	__rseq_str(RSEQ_SIG) "\n"			\
+> +	__rseq_str(label) ":\n"							\
+> +	"	b	%l[" __rseq_str(abort_label) "]\n"			\
+> +	"	.popsection\n"
 
-Anyway this looks better. I wish we can actually get rid of bootmem
-allocator which would simplify this as well but that is another topic.
+Thanks Will for porting rseq to arm64 !
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+I notice you are using the instructions
 
-> ---
-> v2: Simplify #ifdef
-> 
->  mm/memblock.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 03d48d8835ba..611a970ac902 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -20,6 +20,7 @@
->  #include <linux/kmemleak.h>
->  #include <linux/seq_file.h>
->  #include <linux/memblock.h>
-> +#include <linux/bootmem.h>
->  
->  #include <asm/sections.h>
->  #include <linux/io.h>
-> @@ -1224,6 +1225,7 @@ phys_addr_t __init memblock_alloc_try_nid(phys_addr_t size, phys_addr_t align, i
->  	return memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
->  }
->  
-> +#if defined(CONFIG_NO_BOOTMEM)
->  /**
->   * memblock_virt_alloc_internal - allocate boot memory block
->   * @size: size of memory block to be allocated in bytes
-> @@ -1431,6 +1433,7 @@ void * __init memblock_virt_alloc_try_nid(
->  	      (u64)max_addr);
->  	return NULL;
->  }
-> +#endif
->  
->  /**
->   * __memblock_free_early - free boot memory block
-> -- 
-> 2.11.0
-> 
+  adrp
+  add
+  str
+
+to implement RSEQ_ASM_STORE_RSEQ_CS(). Did you compare
+performance-wise with an approach using a literal pool
+near the instruction pointer like I did on arm32 ?
+
+With that approach, this ends up being simply
+
+  adr
+  str
+
+which provides significantly better performance on my test
+platform over loading a pointer targeting a separate data
+section.
+
+Thanks,
+
+Mathieu
 
 -- 
-Michal Hocko
-SUSE Labs
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
