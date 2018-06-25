@@ -2,84 +2,84 @@ Return-Path: <SRS0=Q/hc=JL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 667C8C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 03:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6754DC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 03:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B50B2083F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 03:23:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13B5225401
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Jun 2018 03:35:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="lRNrPCho"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B50B2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="iytV47+V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13B5225401
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752718AbeFYDXE (ORCPT
+        id S1752732AbeFYDfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Jun 2018 23:23:04 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:36230 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752374AbeFYDXD (ORCPT
+        Sun, 24 Jun 2018 23:35:44 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:50442 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752254AbeFYDfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Jun 2018 23:23:03 -0400
-Received: by mail-wm0-f44.google.com with SMTP id u18-v6so3753501wmc.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Jun 2018 20:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=f+PuqZlpeM+CAqWIdyepDwKptRsWjDypJWYD21xlxDQ=;
-        b=lRNrPChoCH6iEHodHcgrTrkG0at4lepOV5Md3u950trSXkNGa8GcrOfm3tjT2KRUuL
-         y7Fkr0dGuc8XZTM+5comeWZCnCJJzG4CXOSs5fGiryifgiPC/N+o2jTZzmydensZvfhB
-         e0wEqcVvAzh3wAArIP2ZtuMV0wH72W/VNxGBilyV2+Oa7zzsUw3j3WGguDKlxXX9sXFy
-         Wa2SqpIk1wbDjlNWb6722zPmEwB3+x9PfbjqrFzyXn5R6L+j/OuUA8GeVPw2ftAOFCz+
-         4F/1iWLCqyi3K9PdyurhpiXE8LbYxJbbyAvOEaFyd5l4+qSBI8iMPF6aI/WluKsJ32K/
-         QFjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=f+PuqZlpeM+CAqWIdyepDwKptRsWjDypJWYD21xlxDQ=;
-        b=GclfBL57TqvUjSpmF7h3nU0oaOE0xN1ipbp4jFABiVAHrNt2z2caBCgwYZxsZdYUUK
-         GscyJ1O/kJiLiW/P8B2sSl34eVC2UjWeQVDwsTFmywf3I14u3BSh8LLgOgPNoAA7UFdx
-         Vc4HRAeNgr77xqwyPrfwNE5ybUP8IomMUc7pONEzojkYT3K2gXE4s9KQ8JQvZuiH8jAd
-         ODjdD/R00jVML55GZ2l+wJpO73pwiB2XSEGUoc+GLhjf5eom+io0g5OnaR2+SiByz72Q
-         8CnxBD2D+VgNBEUTdCpsLBK1d9lxTskf83E8TR1exRFpAXi/auOH3NrrwmRUVQ4dFJsw
-         KDWA==
-X-Gm-Message-State: APt69E0KHQEqTamhEErXfosPc91/TsT7kjjTErg9+o83hsBYDLTdk4Ip
-        9GkoUvcwz+1td4EONt5LLXUmDD9QzvdmjFhvZdIEZw==
-X-Google-Smtp-Source: ADUXVKL5xaGAZ88ljX1uPxmQNYIJ/ydUMPoTjfrpoWjcKrkUWwletptBKc6i0M5GNnmvZL1AHeDAgmZ6BgroZ/8R0yM=
-X-Received: by 2002:a1c:4a06:: with SMTP id x6-v6mr8501959wma.89.1529896981423;
- Sun, 24 Jun 2018 20:23:01 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:a308:0:0:0:0:0 with HTTP; Sun, 24 Jun 2018 20:23:01
- -0700 (PDT)
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Mon, 25 Jun 2018 08:53:01 +0530
-Message-ID: <CAAhSdy2vVyp_LtyiX0CQ0N=1KzgNPk4BtwOScndYEVoFSq8msw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/13] remoteproc: add fixed memory region support
-To:     Loic Pallardy <loic.pallardy@st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 24 Jun 2018 23:35:43 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id w5P3YrPZ012508;
+        Mon, 25 Jun 2018 12:34:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w5P3YrPZ012508
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1529897694;
+        bh=mnGLruqlKKCL7Hp12gMKZFZ6jyP3pl0EqnTnLbLtjb8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iytV47+VfXYRgtgdxndYcNwF3yA+AwwIVz+zhokDg2abJZAWGl2XJ6Z/LX6mSAdPf
+         Unm9kg4VCYwGjoHLRjo/4WoKFKaGd+UInCrnOkcRzqUaTQuqN+B9BuG4pcgvFPfZps
+         8nPeyAGazNiw9hwEh/ymOFKIPOiYfJXoHCNqqshQlN8PfAI7aoZnWIGYoyNdQ7p7dk
+         XrmYmhr1ReUmdl11kINccLBQExsZ01x0/WBh3aVe/SA3+3k838J8eyL2kEmN/DRX7V
+         uy6rQwcV6K5o86BVfjsU0h7aquZQ7L4pKSJkDhWom4Q94FT/E6jYj3MkYQqoT4JVFN
+         Jdx8kjf4YLgag==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] arm64: uniphier: select RESET_CONTROLLER
+Date:   Mon, 25 Jun 2018 12:34:45 +0900
+Message-Id: <1529897685-15029-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529897685-15029-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1529897685-15029-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Loic Pallardy, Bjorn Andersson,
+The UniPhier platform highly relies on the reset controller.
+Select RESET_CONTROLLER to enable it forcibly.
 
-This patchset also helps in getting VirtIO RPMSG driver working
-with VirtIO MMIO transport.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Is it possible to have this patchset part of Linux-4.19 or Linux-4.20?
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-Anup
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index d5aeac3..f34cd1b 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -261,6 +261,7 @@ config ARCH_UNIPHIER
+ 	bool "Socionext UniPhier SoC Family"
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select PINCTRL
++	select RESET_CONTROLLER
+ 	help
+ 	  This enables support for Socionext UniPhier SoC family.
+ 
+-- 
+2.7.4
+
