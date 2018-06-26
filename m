@@ -2,105 +2,128 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 226E5C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CF2C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D318A26E5D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:51:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XXVcvfqD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D318A26E5D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 0420D26EBB
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:52:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0420D26EBB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rockwellcollins.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933973AbeFZRvk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:51:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40422 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752597AbeFZRvg (ORCPT
+        id S1754703AbeFZRvQ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 13:51:16 -0400
+Received: from da1vs04.rockwellcollins.com ([205.175.227.52]:7965 "EHLO
+        da1vs04.rockwellcollins.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752591AbeFZRvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:51:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Qv71m6jFU7lsZ2rKFZvtBOPZBhBWmX95qPyFmYuRgf0=; b=XXVcvfqDCjSac0dJE9jpjmHrl
-        /o0/lgGj15Do2of/k1ReaAIJ4R4rrkj1ptXuWneYm3IJjaBAqRtFVCIh7Ymv8MC0vfmvYbT3kTI8C
-        rL/aOR6LYHdSpS0M3Uw/zQtzjtlrjGDegdQ84EivthjI7SwoOrhh5mjhRXz7+WJWa9k0IDHuVy6lm
-        VYOWV/RvqaZPG3gOtoFWSXaSso6TNoCaVG9n7/b/x2BrsIaJ+S9v8JuEyJ+3elDEwq0kQvWAYF29Q
-        +Ai5xoyIqcSAHTAF4vnEFeejmm39BYtgyTEw1RWdrMcNVKekIkPhHtxH/49oIjJ16Xk8NXMlIeH0Y
-        YGGmRuduQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXs7d-0000qd-TW; Tue, 26 Jun 2018 17:51:22 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0606C2029F1DB; Tue, 26 Jun 2018 19:51:20 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 19:51:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
- race with CPU offline
-Message-ID: <20180626175119.GL2494@hirez.programming.kicks-ass.net>
-References: <20180626002052.GA24146@linux.vnet.ibm.com>
- <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 26 Jun 2018 13:51:14 -0400
+Received: from ofwda1n02.rockwellcollins.com (HELO ciulimr02.rockwellcollins.com) ([205.175.227.14])
+  by da1vs04.rockwellcollins.com with ESMTP; 26 Jun 2018 12:51:13 -0500
+X-Received: from righttwix.rockwellcollins.com (righttwix.rockwellcollins.com [192.168.141.218])
+        by ciulimr02.rockwellcollins.com (Postfix) with ESMTP id 4069C2007C;
+        Tue, 26 Jun 2018 12:51:13 -0500 (CDT)
+From:   Brandon Maier <brandon.maier@rockwellcollins.com>
+To:     netdev@vger.kernel.org
+Cc:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
+        michal.simek@xilinx.com, clayton.shotwell@rockwellcollins.com,
+        kristopher.cory@rockwellcollins.com, linux-kernel@vger.kernel.org,
+        Brandon Maier <brandon.maier@rockwellcollins.com>
+Subject: [PATCH net-next v2 1/3] net: phy: xgmiitorgmii: Check phy_driver ready before accessing
+Date:   Tue, 26 Jun 2018 12:50:48 -0500
+Message-Id: <20180626175050.71165-1-brandon.maier@rockwellcollins.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 10:10:39AM -0700, Paul E. McKenney wrote:
-> Without special fail-safe quiescent-state-propagation checks, grace-period
-> hangs can result from the following scenario:
-> 
-> 1.	CPU 1 goes offline.
-> 
-> 2.	Because CPU 1 is the only CPU in the system blocking the current
-> 	grace period, as soon as rcu_cleanup_dying_idle_cpu()'s call to
-> 	rcu_report_qs_rnp() returns.
-> 
-> 3.	At this point, the leaf rcu_node structure's ->lock is no longer
-> 	held: rcu_report_qs_rnp() has released it, as it must in order
-> 	to awaken the RCU grace-period kthread.
-> 
-> 4.	At this point, that same leaf rcu_node structure's ->qsmaskinitnext
-> 	field still records CPU 1 as being online.  This is absolutely
-> 	necessary because the scheduler uses RCU, and ->qsmaskinitnext
+Since a phy_device is added to the global mdio_bus list during
+phy_device_register(), but a phy_device's phy_driver doesn't get
+attached until phy_probe(). It's possible of_phy_find_device() in
+xgmiitorgmii will return a valid phy with a NULL phy_driver. Leading to
+a NULL pointer access during the memcpy().
 
-Can you expand a bit on this, where does the scheduler care about the
-online state of the CPU that's about to call into arch_cpu_idle_dead()?
+Fixes this Oops:
 
-> 	contains RCU's idea as to which CPUs are online.  Therefore,
-> 	invoking rcu_report_qs_rnp() after clearing CPU 1's bit from
-> 	->qsmaskinitnext would result in a lockdep-RCU splat due to
-> 	RCU being used from an offline CPU.
-> 
-> 5.	RCU's grace-period kthread awakens, sees that the old grace period
-> 	has completed and that a new one is needed.  It therefore starts
-> 	a new grace period, but because CPU 1's leaf rcu_node structure's
-> 	->qsmaskinitnext field still shows CPU 1 as being online, this new
-> 	grace period is initialized to wait for a quiescent state from the
-> 	now-offline CPU 1.
+Unable to handle kernel NULL pointer dereference at virtual address 00000000
+pgd = c0004000
+[00000000] *pgd=00000000
+Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.40 #1
+Hardware name: Xilinx Zynq Platform
+task: ce4c8d00 task.stack: ce4ca000
+PC is at memcpy+0x48/0x330
+LR is at xgmiitorgmii_probe+0x90/0xe8
+pc : [<c074bc68>]    lr : [<c0529548>]    psr: 20000013
+sp : ce4cbb54  ip : 00000000  fp : ce4cbb8c
+r10: 00000000  r9 : 00000000  r8 : c0c49178
+r7 : 00000000  r6 : cdc14718  r5 : ce762800  r4 : cdc14710
+r3 : 00000000  r2 : 00000054  r1 : 00000000  r0 : cdc14718
+Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 18c5387d  Table: 0000404a  DAC: 00000051
+Process swapper/0 (pid: 1, stack limit = 0xce4ca210)
+...
+[<c074bc68>] (memcpy) from [<c0529548>] (xgmiitorgmii_probe+0x90/0xe8)
+[<c0529548>] (xgmiitorgmii_probe) from [<c0526a94>] (mdio_probe+0x28/0x34)
+[<c0526a94>] (mdio_probe) from [<c04db98c>] (driver_probe_device+0x254/0x414)
+[<c04db98c>] (driver_probe_device) from [<c04dbd58>] (__device_attach_driver+0xac/0x10c)
+[<c04dbd58>] (__device_attach_driver) from [<c04d96f4>] (bus_for_each_drv+0x84/0xc8)
+[<c04d96f4>] (bus_for_each_drv) from [<c04db5bc>] (__device_attach+0xd0/0x134)
+[<c04db5bc>] (__device_attach) from [<c04dbdd4>] (device_initial_probe+0x1c/0x20)
+[<c04dbdd4>] (device_initial_probe) from [<c04da8fc>] (bus_probe_device+0x98/0xa0)
+[<c04da8fc>] (bus_probe_device) from [<c04d8660>] (device_add+0x43c/0x5d0)
+[<c04d8660>] (device_add) from [<c0526cb8>] (mdio_device_register+0x34/0x80)
+[<c0526cb8>] (mdio_device_register) from [<c0580b48>] (of_mdiobus_register+0x170/0x30c)
+[<c0580b48>] (of_mdiobus_register) from [<c05349c4>] (macb_probe+0x710/0xc00)
+[<c05349c4>] (macb_probe) from [<c04dd700>] (platform_drv_probe+0x44/0x80)
+[<c04dd700>] (platform_drv_probe) from [<c04db98c>] (driver_probe_device+0x254/0x414)
+[<c04db98c>] (driver_probe_device) from [<c04dbc58>] (__driver_attach+0x10c/0x118)
+[<c04dbc58>] (__driver_attach) from [<c04d9600>] (bus_for_each_dev+0x8c/0xd0)
+[<c04d9600>] (bus_for_each_dev) from [<c04db1fc>] (driver_attach+0x2c/0x30)
+[<c04db1fc>] (driver_attach) from [<c04daa98>] (bus_add_driver+0x50/0x260)
+[<c04daa98>] (bus_add_driver) from [<c04dc440>] (driver_register+0x88/0x108)
+[<c04dc440>] (driver_register) from [<c04dd6b4>] (__platform_driver_register+0x50/0x58)
+[<c04dd6b4>] (__platform_driver_register) from [<c0b31248>] (macb_driver_init+0x24/0x28)
+[<c0b31248>] (macb_driver_init) from [<c010203c>] (do_one_initcall+0x60/0x1a4)
+[<c010203c>] (do_one_initcall) from [<c0b00f78>] (kernel_init_freeable+0x15c/0x1f8)
+[<c0b00f78>] (kernel_init_freeable) from [<c0763d10>] (kernel_init+0x18/0x124)
+[<c0763d10>] (kernel_init) from [<c0112d74>] (ret_from_fork+0x14/0x20)
+Code: ba000002 f5d1f03c f5d1f05c f5d1f07c (e8b151f8)
+---[ end trace 3e4ec21905820a1f ]---
 
-If we're past cpuhp_report_idle_cpu() -> rcu_report_dead(), then
-cpu_offline() is true. Is that not sufficient state to avoid this?
+Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
+---
+v2:
+- Add Oops to commit message
 
-> 6.	Without the fail-safe force-quiescent-state checks, there would
-> 	be no quiescent state from the now-offline CPU 1, which would
-> 	eventually result in RCU CPU stall warnings and memory exhaustion.
+v1: https://marc.info/?l=linux-netdev&m=152838762210538&w=2
+
+ drivers/net/phy/xilinx_gmii2rgmii.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
+index 2e5150b0b8d5..04c8bec1c4c1 100644
+--- a/drivers/net/phy/xilinx_gmii2rgmii.c
++++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+@@ -81,6 +81,11 @@ static int xgmiitorgmii_probe(struct mdio_device *mdiodev)
+ 		return -EPROBE_DEFER;
+ 	}
+ 
++	if (!priv->phy_dev->drv) {
++		dev_info(dev, "Attached phy not ready\n");
++		return -EPROBE_DEFER;
++	}
++
+ 	priv->addr = mdiodev->addr;
+ 	priv->phy_drv = priv->phy_dev->drv;
+ 	memcpy(&priv->conv_phy_drv, priv->phy_dev->drv,
+-- 
+2.17.1
+
