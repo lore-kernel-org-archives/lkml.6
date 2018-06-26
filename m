@@ -2,96 +2,227 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E26BFC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E90FDC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6382B26F70
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BE4926F68
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:19:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gqvTn/kx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6382B26F70
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="fx+zf32G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BE4926F68
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752917AbeFZVSJ (ORCPT
+        id S1752547AbeFZVTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 17:18:09 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46606 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752512AbeFZVSH (ORCPT
+        Tue, 26 Jun 2018 17:19:47 -0400
+Received: from mail.efficios.com ([167.114.142.138]:41196 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752048AbeFZVTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 17:18:07 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5QLDlmO022822;
-        Tue, 26 Jun 2018 21:17:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=9LcvlXcYLulb34N4XW/oYz5XPOlzIw9AJs+vNbVNufI=;
- b=gqvTn/kxl+/xU8xU4m68pQ05//jhmUP8DPqxMgCVwpRWG/m8e7XG05TzYxOjPu+yHrYE
- ZZJeub/q0eqi9DXyAb4TpbMstWYZCm5bM0QgCELkUK/kutlD3hwPi6TZe9qsuN9beckx
- U/VhPwsB21OYoFmkFoqvzXMrFkyQMO7aIq9u/TJZVnRhQkz7wQbqAhLO/A36Y87T5Bv3
- W35agQ/B0UkYOqTR+fdQFxDv2qnFQW4emzcwEmDIAeekC0C4N1xxNSaalx+T9wYtQpZX
- /n8B/B08BiOkGYAM3IxJxfyGLgRup+I7szpOm1ZT5Wxz/20La1vOJDyZ8UXTxKitIT+J wg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2jukhsade4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 21:17:42 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5QLHgGD024209
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 21:17:42 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5QLHgw7017561;
-        Tue, 26 Jun 2018 21:17:42 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Jun 2018 14:17:42 -0700
-Subject: Re: [PATCH 0/3] Dts nodes for Keystone2 hw_rng driver
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-To:     Vitaly Andrianov <vitalya@ti.com>, ssantosh@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     m-karicheri2@ti.com
-References: <1527167538-29837-1-git-send-email-vitalya@ti.com>
- <45e0a1c8-739e-0a38-bd86-047c37551f62@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <1b60d0ff-f445-1f95-bb4c-366b09249b6d@oracle.com>
-Date:   Tue, 26 Jun 2018 14:17:41 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 17:19:45 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 4ACF422DBCD;
+        Tue, 26 Jun 2018 17:19:45 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 6XbLYpqVVprG; Tue, 26 Jun 2018 17:19:44 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id B9AF722DBC5;
+        Tue, 26 Jun 2018 17:19:44 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B9AF722DBC5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530047984;
+        bh=3Osi75krxmrwfOBUSAFYSuCJ6gcVEwcL5JBOKaXIm4s=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=fx+zf32Gr6P7oIelhA6ErF2nRUUrtwI2tMdIAOLjOiUEbHxhsCiz0I7Gs4kb5dBCJ
+         AZmhjVn5j/iqSPIyf9/q37wNsRDwGMAsa79+4zfGqHeVba4BTqBeWdEDkRdpwPz0JJ
+         HMUTY1EY7dNvXJoAYkEePOfl+24l+phYYZR2G3+uoOHcydR3XDw5UB0vXmLd7A5Z/T
+         VMEd+TOualuDm3GnVfiaAIVoftoOFSIvzSsIIaWtsFTCJ4cGPzRVQbyfdIvsFQTsOZ
+         C3zYPM1nx1g5d9xXcjOJGtIbc892PTyAEyYZnE6oeA04Eoq7l/mCCsbvt2Bbmy1i2j
+         qnOQsfYv5B5QA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id u6ORow84uDEK; Tue, 26 Jun 2018 17:19:44 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id A448322DBBE;
+        Tue, 26 Jun 2018 17:19:44 -0400 (EDT)
+Date:   Tue, 26 Jun 2018 17:19:44 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Message-ID: <1453026995.6388.1530047984544.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CALCETrVs57TZf4V4vrCkh2Aa_x=+HuVO5hYB5yFmS1VqE5rcuw@mail.gmail.com>
+References: <1514459655.4190.1530034687884.JavaMail.zimbra@efficios.com> <170076903.5015.1530038711536.JavaMail.zimbra@efficios.com> <CALCETrXimh61U7Tn9KShr6sKag7NCL3qfraN18Oy2Bk+0VRAUA@mail.gmail.com> <1277536320.5963.1530042608296.JavaMail.zimbra@efficios.com> <CALCETrWhY_+SxKt9Xq2ruiGk8GQeYvrojy84w_Quosrf5fpApQ@mail.gmail.com> <1352608225.6039.1530043932895.JavaMail.zimbra@efficios.com> <CALCETrVs57TZf4V4vrCkh2Aa_x=+HuVO5hYB5yFmS1VqE5rcuw@mail.gmail.com>
+Subject: Re: rseq: How to test for compat task at signal delivery
 MIME-Version: 1.0
-In-Reply-To: <45e0a1c8-739e-0a38-bd86-047c37551f62@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8936 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=767
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806260234
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: How to test for compat task at signal delivery
+Thread-Index: J9wU3OUAVFQPk6dzYLDpUzy43Ov/XQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/25/2018 9:43 PM, santosh.shilimkar@oracle.com wrote:
-> On 5/24/18 6:12 AM, Vitaly Andrianov wrote:
->> This series adds dts nodes for Keystone2 hw_rng driver
->>
->> Vitaly Andrianov (3):
->>    ARM: dts: k2hk: add dts node for k2hk hw_rng driver
->>    ARM: dts: k2l: add dts node for k2l hw_rng driver
->>    ARM: dts: k2e: add dts node for k2e hw_rng driver
->>
-> Looks good. Will queue this up for 4.19. Thanks !!
-> 
-Applied. You should see it in linux-next as well.
+----- On Jun 26, 2018, at 4:46 PM, Andy Lutomirski luto@amacapital.net wrote:
 
-Regards,
-Santosh
+> On Tue, Jun 26, 2018 at 1:12 PM Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> ----- On Jun 26, 2018, at 3:55 PM, Andy Lutomirski luto@amacapital.net wrote:
+>>
+>> > On Tue, Jun 26, 2018 at 12:50 PM Mathieu Desnoyers
+>> > <mathieu.desnoyers@efficios.com> wrote:
+>> >>
+>> >> ----- On Jun 26, 2018, at 3:32 PM, Andy Lutomirski luto@amacapital.net wrote:
+>> >>
+>> >> > On Tue, Jun 26, 2018 at 11:45 AM Mathieu Desnoyers
+>> >> > <mathieu.desnoyers@efficios.com> wrote:
+>> >> >>
+>> >> >> ----- On Jun 26, 2018, at 1:38 PM, Mathieu Desnoyers
+>> >> >> mathieu.desnoyers@efficios.com wrote:
+>> >> >>
+>> >> >> > Hi Andy,
+>> >> >> >
+>> >> >> > I would like to make the behavior rseq on compat tasks more robust
+>> >> >> > by ensuring that kernel/rseq.c:rseq_get_rseq_cs() clears the high
+>> >> >> > bits of rseq_cs->abort_ip, rseq_cs->start_ip and
+>> >> >> > rseq_cs->post_commit_offset when a 32-bit binary is run on a 64-bit
+>> >> >> > kernel.
+>> >> >> >
+>> >> >> > The intent here is that if user-space has garbage rather than zeroes
+>> >> >> > in its struct rseq_cs fields padding, the behavior will be the same
+>> >> >> > whether the binary is run on 32-bit or 64 kernels.
+>> >> >> >
+>> >> >> > I know that internally, the kernel is making a transition from
+>> >> >> > is_compat_task() to in_compat_syscall().
+>> >> >> >
+>> >> >> > I'm fine with using in_compat_syscall() when rseq_get_rseq_cs() is
+>> >> >> > invoked from a system call, but is it OK to call it when it is
+>> >> >> > invoked from signal delivery ? AFAIU, signals can be delivered
+>> >> >> > upon return from interrupt as well.
+>> >> >> >
+>> >> >> > If not, what strategy do you recommend for arch-agnostic code ?
+>> >> >>
+>> >> >> I think what we're missing here is a new "is_compat_frame(struct ksignal *ksig)"
+>> >> >> which I could use in the rseq code. I'll prepare a patch and we can discuss
+>> >> >> from there.
+>> >> >>
+>> >> >
+>> >> > That sounds about right.
+>> >> >
+>> >> > I'm confused, though.  Wouldn't it be more consistent to just segfault
+>> >> > if the high 32 bits are not clear when rseq transitions to a 32-bit
+>> >> > context?  If there's garbage in 64-bit mode, the program will crash.
+>> >> > Why should 32-bit mode be any different?
+>> >>
+>> >> Currently, if a 32-bit binary puts garbage in the high bits of
+>> >> start_ip, post_commit_offset, and abort_ip in
+>> >>
+>> >> include/uapi/linux/rseq.h:
+>> >>
+>> >> struct rseq_cs {
+>> >>         /* Version of this structure. */
+>> >>         __u32 version;
+>> >>         /* enum rseq_cs_flags */
+>> >>         __u32 flags;
+>> >>         LINUX_FIELD_u32_u64(start_ip);
+>> >>         /* Offset from start_ip. */
+>> >>         LINUX_FIELD_u32_u64(post_commit_offset);
+>> >>         LINUX_FIELD_u32_u64(abort_ip);
+>> >> } __attribute__((aligned(4 * sizeof(__u64))));
+>> >
+>> > This ABI isn't real ABI until a stable kernel happens, right?  So how
+>> > about just making all those fields be u64?
+>>
+>> Good point. Unlike the rseq_cs field in the struct rseq TLS, those
+>> fields don't need to be word-sized/word-aligned, so we could simply
+>> declare them as __u64.
+>>
+>> >
+>> >>
+>> >> A 32-bit kernel just never reads the padding, thus in reality acting
+>> >> as if those were zeroes. However, a 64-bit kernel dealing with this
+>> >> 32-bit compat task will read that padding, handling those as very
+>> >> large values.
+>> >
+>> > Sounds like a design error.  Have all kernels read the fields no
+>> > matter what.  A 32-bit kernel will send SIGSEGV if the high bits are
+>> > set.  A 64-bit kernel running compat userspace should make sure that a
+>> > 32-bit task dies if the high bits are set.
+>>
+>> If we end up declaring those as __u64, that approach makes sense.
+>>
+>> >
+>> >>
+>> >> We need to improve that by introducing a consistent behavior across
+>> >> native 32-bit kernels and 32-bit compat mode on 64-bit kernels.
+>> >>
+>> >> There are two ways to achieve this: either the 32-bit kernel validates
+>> >> the padding by killing the process if padding is non-zero, or the
+>> >> 64-bit kernel treats compat mode by zeroing the high bits of padding.
+>> >>
+>> >> If we look at system call interfaces in general, I think the usual
+>> >> approach is to clear the top bits whenever a value read from a
+>> >> compat task ends up being used as a pointer. This is why I am tempted
+>> >> to go for the "clear high bits" approach rather than killing the task.
+>> >
+>> > I think the modern preference is to use fields of fixed size rather
+>> > than long when UABI is involved.
+>> >
+>> > In any event, I think the test you want is user_64bit_mode().
+>>
+>> Currently, user_64bit_mode is only implemented on x86.
+>>
+>> Should we introduce an architecture-agnostic user_64bit_mode(struct pt_regs *)
+>> which maps to is_compat_task() for non-x86 ? I'm just worried that ptrace
+>> code could try to use it from the context of another task and get mixed up.
+> 
+> I'm not sure other archs can do this.  It might need to have a
+> task_struct pointer, too.
+> 
+> But I think the only actual consideration is that a lot of
+> architectures might fail to kill the task if the task is 32-bit and
+> regs->ip or regs->sp ends up with garbage in the high bits.  Certainly
+> x86 is not consistent about this.  So maybe a helper to fully validate
+> all 64 bits of ip and sp or perhaps helpers to set them and check for
+> full validity would be better.  Like:
+> 
+> void set_task_64bit_ip_or_signal(struct task_struct *, u64 value);
+> 
+> that promises to actually signal the task if value is garbage?
+> 
+> Let's ask linux-arch here.  I'm not nearly familiar enough with the
+> nasty details of other compat-capable architectures.  x86 is very,
+> very, very inconsistent about how what the high bits of the registers
+> mean, and there are cases where the "high bits" involved are actually
+> the high 48 bits, not the high 32 bits.  Sigh.
+
+For the records, I just sent out 2 patches as RFC implementing the
+is_compat_frame() approach, and clearing the high bits for compat tasks.
+
+It has the merit to be straightforward and introduce few changes at
+this stage of the -rc.
+
+Thanks,
+
+Mathieu
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
