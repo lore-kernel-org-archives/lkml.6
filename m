@@ -2,110 +2,82 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04181C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A8BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EAD258B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F34426E0D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:48:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="spogcpW3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EAD258B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TtbxufXJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F34426E0D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754702AbeFZTo3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 15:44:29 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42065 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752109AbeFZTo2 (ORCPT
+        id S932205AbeFZTsU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 15:48:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42142 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752109AbeFZTsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 15:44:28 -0400
-Received: by mail-wr0-f194.google.com with SMTP id p1-v6so2801860wrs.9
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 12:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YHEVmIl1h6ieTLWgDYcgH9mnUN9xL6k+pvUhmmEAG38=;
-        b=spogcpW3z5NoueaIoWxsHm3MS2dvKR+GEAzeUbbBOUeHHhR/tsk+MFlij3XkQ1lr2E
-         9PwsG/mVkgswNyX7HTUJXNvz0+yM1rVpJsY3EHj+SEj0Nky6aU1ZoPXUUAwPMja9YGK3
-         5B5Y4UFIkxlTMMnmQV1GHthBqkeLzglpK/r/Yw7HALJ1OAu/X8YA1p5QvctpxqDCxQmE
-         +H6VoCdG6kBeIfByOXo/erxhn0sgecwB4DKQYtcUdLWB5hdQeKu1HpS3aEygyNY8eL6L
-         VUPiDTIhKG7VRIKBYvIS0kgJcjr2YiSo+02A3ad/X+3tttmb9qIQAtxJOmr9ChtcZ6ee
-         X8lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YHEVmIl1h6ieTLWgDYcgH9mnUN9xL6k+pvUhmmEAG38=;
-        b=dCOVzfFdpTi5K5x5z5NfGRrU7Oo35Cwi0/WiJB7roZP+pMrN4JYglMuCn+VBWpxhXU
-         0d3Dn0cBFH423R71RG6VV/l0mfuAV8WgEaNSkLSeBIDmgaSxqrdsRLwKG3Em26gSWMvI
-         3RyP9SGXHX3JcgENkVm8S9bCgfYvwvdtiDs/Xs9ti+1hY/7SsBzMSB4ghJOeN088dCyO
-         2AjCA1XeiLtlZ43Po9TAIALjL4NS7Cn1yY922w/UEFpcBAB20GC/3IATcgouGbEC07Vi
-         nqlqhe0HxVQCJ0inO56v7CFLFXAIxNr9UtCnvvjT8889YhhzcyzJRkhu+DgJuy3Axu0+
-         wHcQ==
-X-Gm-Message-State: APt69E1kgX1j6Gk9I8ZK+UclKF4cdMr6UX47bdTCl3iSGVl4tkR6Wwgg
-        VVFvnK0uWAyj7mywhKBvUXY=
-X-Google-Smtp-Source: AAOMgpd1K9Y/eFTs13wAE4qdOkv0pmwP50cow96lDaOn5YRewpd5/wqNveo7ejOE3PnBT8RnQhDP3Q==
-X-Received: by 2002:adf:fc8c:: with SMTP id g12-v6mr2604213wrr.216.1530042267449;
-        Tue, 26 Jun 2018 12:44:27 -0700 (PDT)
-Received: from [192.168.1.4] (x590c812a.dyn.telefonica.de. [89.12.129.42])
-        by smtp.gmail.com with ESMTPSA id k17-v6sm2467018wrp.19.2018.06.26.12.44.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 12:44:26 -0700 (PDT)
-Subject: Re: [PATCH v3 3/4] staging: rtl8723bs: use ether_addr_copy() in
- rtw_macaddr_cfg()
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <20180626081409.9518-1-straube.linux@gmail.com>
- <20180626081409.9518-3-straube.linux@gmail.com>
- <CAHp75Vc3gEyP+h_XtJV7zKZV0J++Nyr04au7Rtu3h5y0JJASXg@mail.gmail.com>
-From:   Michael Straube <straube.linux@gmail.com>
-Message-ID: <37cca7e4-3c1f-b1ab-14b3-fd3dbbae8b01@gmail.com>
-Date:   Tue, 26 Jun 2018 21:44:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 15:48:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=e9Yzis0G53lJlIZsDwZNWfZ2kQOZic6NEoa4ZcabL18=; b=TtbxufXJlZelO9q4QrXHIoChS
+        xcbMdBwkM8+TTIA75AcbEsyRxMYEblJCZ7doapwNMhezXHzumaxDmC+prgBoU8qVT67c1HyeYTwBg
+        +iqZx2qo42znwHXZNlUFBZhbjtV4i+A92pZhsDQCJLgcLum0WTe+5p46YpkhGa9+o+NmIZiFQnD/i
+        SBH3l51ai7M2yiA10V519JTG8g56kcFERNO3vsUIyxWSAx1QTfHWlrjxoJjk0FSZa2TxHWiXXLwev
+        QUZ8uSIuQp6f/9+KmvKMKFGkA/NQeUlkMHx8nD+KBDgfbeHjY4OHgpKeYnu37JV+yjeiRHA3ivLL2
+        GxQ/XY4vQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXtwf-0004wG-3s; Tue, 26 Jun 2018 19:48:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8EAFE2029FA0A; Tue, 26 Jun 2018 21:48:07 +0200 (CEST)
+Date:   Tue, 26 Jun 2018 21:48:07 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
+ race with CPU offline
+Message-ID: <20180626194807.GQ2494@hirez.programming.kicks-ass.net>
+References: <20180626002052.GA24146@linux.vnet.ibm.com>
+ <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
+ <20180626174424.GK2494@hirez.programming.kicks-ass.net>
+ <20180626181937.GG3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc3gEyP+h_XtJV7zKZV0J++Nyr04au7Rtu3h5y0JJASXg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626181937.GG3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/26/18 19:32, Andy Shevchenko wrote:
-> On Tue, Jun 26, 2018 at 11:14 AM, Michael Straube
-> <straube.linux@gmail.com> wrote:
->> Use ether_addr_copy() instead of memcpy() to copy the mac address.
->>
-> 
-> Suggested-by ?
-> 
+On Tue, Jun 26, 2018 at 11:19:37AM -0700, Paul E. McKenney wrote:
+> The initial reason for ____cacheline_internodealigned_in_smp was that
+> some of the fields can be accessed by random CPUs, while others are
+> used more locally, give or take our usual contention over the handling
+> of CPU numbers.  ;-)
 
-I'll add it. Sorry, I was not aware of the Suggested-by tag.
+So that whole internode thing only matters for the insane VSMP case,
+where they take node to mean a cluster node, not a numa node.
 
-> Btw, ensure that the source and destination buffers are aligned to u16
-> as required by API.
+VSMP is a networked shared memory machine where, by necessity, the MESI
+protocol operates on page granularity.
 
-To be honest I'm not sure how to do that excactly.
-
-Use __align(2) in the array declarations? e.g.:
-
-         u8 mac[ETH_ALEN] __align(2);
-
-
-Thanks for your help.
-Michael
+In general I tend to completely and utterly ignore that and let the VSMP
+people worry about things.
