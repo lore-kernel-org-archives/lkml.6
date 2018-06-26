@@ -2,119 +2,242 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F94C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C1DC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7300C26831
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:19:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="GM3KcWMy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7300C26831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B2D2269B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:21:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B2D2269B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934362AbeFZLTu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:19:50 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50609 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933880AbeFZLTs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:19:48 -0400
-Received: by mail-wm0-f66.google.com with SMTP id e16-v6so1457066wmd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 04:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dFk2a73yNvmx/ag8Bs3W7C5/h3ttpubUvZ/7CYBiWoM=;
-        b=GM3KcWMylAFV9r+0Ikd/TAwN6I55E76RKukseWf3JyzgSF86nSynPL02x7YyPLz4DO
-         o6t2yp+KdOl8aS6/bn7+fLPvmOLdp8dpUdw4OrLX+um3xMfSXLV+5YoZxO15nm8QNCLp
-         UqgR1WBQQPscod0aesGQ6x4AQKRTM7E5uMm0Xe7f2Z5RXMeehqtpLrlzZkFWwGY1PYLL
-         YJt4y0RjWJrJ/jkeSVMyPqhHMTHiA06XJIt/XutZDCGQZnXUqDpTgs7rfglygBcNnT9E
-         Slnij/VuN6fOjqCDyetKRCn0qxhppA4j3KT/AVpUiDGY37KOHB10vc7cD9mFhM9w3vOm
-         xjJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dFk2a73yNvmx/ag8Bs3W7C5/h3ttpubUvZ/7CYBiWoM=;
-        b=UL99+uZrKGDu/NNc0unx5/W79lQ5gAAdKw00kk/wrcFupjECjVHDb8sGiQ04eSi17J
-         pP4sC3iJQekjQeXrr51hq85xHTTmueaO0p84D9CSGLNuHgy+JUp9FR3fnwhPpnJJSmXQ
-         NXqCpzgkonYv+qT2Yjy67d/EP6u5Geuxjh3vXvNKesBSty3iixlamVk1+6o3VLs83o/Y
-         0o7db/uiaV64opgmKRdEJp2OKCAsTesrXSvVXmoVMzDCeNAGQXFqMGFfspfscE60J0cP
-         vyh2NVP/fDFLV2I0ygek6WJYCg7BcfU7jR0IGXN5wNQMw+fwksB91vk7EH0wG75UHoiF
-         XQdA==
-X-Gm-Message-State: APt69E1Zx4enShHv6gW49LSXlyLrFTgZ3TqrGkRbHAZmdHM/X4mhO2If
-        wpns5wAjvgPk+vDdxMi2nbqmig==
-X-Google-Smtp-Source: AAOMgpfMVBd/unba/ySW202QEjjoMPLc6FjFVFx7BuJjONbvKPXca6yeRvqt2lGoZ0Fj7u7HYDgprw==
-X-Received: by 2002:a1c:894f:: with SMTP id l76-v6mr1239129wmd.103.1530011987409;
-        Tue, 26 Jun 2018 04:19:47 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y193-v6sm1977446wmy.13.2018.06.26.04.19.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 04:19:46 -0700 (PDT)
-Message-ID: <1530011985.2900.45.camel@baylibre.com>
-Subject: Re: [PATCH 0/2] clk: meson: drop clk-audio-divider
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 26 Jun 2018 13:19:45 +0200
-In-Reply-To: <20180620100610.29010-1-jbrunet@baylibre.com>
-References: <20180620100610.29010-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        id S934541AbeFZLVk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:21:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43990 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932544AbeFZLVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 07:21:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A459980D;
+        Tue, 26 Jun 2018 04:21:38 -0700 (PDT)
+Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67AD53F5C0;
+        Tue, 26 Jun 2018 04:21:37 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] arm64/mm: Move {tramp_pg_dir, swapper_pg_dir} to
+ .rodata section
+To:     Jun Yao <yaojun8558363@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <20180625113921.21854-1-yaojun8558363@gmail.com>
+ <20180625113921.21854-3-yaojun8558363@gmail.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <f9dfd840-1d90-96f9-2915-7e1bc4bd43a4@arm.com>
+Date:   Tue, 26 Jun 2018 12:21:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180625113921.21854-3-yaojun8558363@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-20 at 12:06 +0200, Jerome Brunet wrote:
-> As explained in the commit descriptions, clk-audio-divider was a poor
-> solution to make sure PLL rates would be high enough while using CCF
-> rate propagation to determine audio clock rates.
-> 
-> Stopping rate propagation before the PLLs is actually simpler and provides
-> better results. It also allow to get rid of clk-audio-divider.
-> 
-> Off tree sound cards using these clocks should add the following to the
-> sound card DT to properly setup the PLLs:
-> 
-> 	assigned-clocks = <&clkc CLKID_MPLL2>,
-> 	                  <&clkc CLKID_MPLL0>,
-> 	                  <&clkc CLKID_MPLL1>;
-> 	assigned-clock-parents = <0>, <0>, <0>;
-> 	assigned-clock-rates = <294912000>,
-> 	                       <270950400>,
-> 	                       <393216000>;
-> 
-> * MPLL2: 294912000Hz: 192Khz * 32 * 24 * 2
->   used 24, 48, 96, 192Khz
-> 
-> * MPLL0: 270950400Hz: 176.4Khz * 32 * 24 * 2
->   used for 5.512, 10.025, 20.05, 44.1, 88.2 and 176,4Khz
-> 
-> * MPLL1: 393216000Hz: 64Khz * 32 * 24 * 8
->   used for 8, 16, 32 and 64Khz
-> 
-> Jerome Brunet (2):
->   clk: meson: stop rate propagation for audio clocks
->   clk: meson: remove unused clk-audio-divider driver
-> 
->  drivers/clk/meson/Makefile            |   2 +-
->  drivers/clk/meson/clk-audio-divider.c | 110 ----------------------------------
->  drivers/clk/meson/clkc.h              |   7 ---
->  drivers/clk/meson/gxbb.c              |  16 +++--
->  4 files changed, 8 insertions(+), 127 deletions(-)
->  delete mode 100644 drivers/clk/meson/clk-audio-divider.c
-> 
+Hi Jun,
 
-Rebased and applied with Neil's ack.
+On 25/06/18 12:39, Jun Yao wrote:
+> When CONFIG_ARM64_VA_BITS_36/CONFIG_ARM64_VA_BITS_39/
+> CONFIG_ARM64_VA_BITS_42 are selected, a block-mapping can be
+> written to swapper_pg_dir. To defend 'KSMA', we move swapper_pg_dir
+> to .rodata section when these configurations are selected. At the
+> same time, we update swapper_pg_dir by fixmap.
+
+I don't think we should consider individual MMU configurations. KSMA is the
+motivation for making swapper_pg_dir read-only.
+When making swapper_pg_dir read-only it should work in the same way for all
+configurations as its simpler.
+
+
+> diff --git a/arch/arm64/include/asm/fixmap.h b/arch/arm64/include/asm/fixmap.h
+> index 62908eeedcdc..881784b43965 100644
+> --- a/arch/arm64/include/asm/fixmap.h
+> +++ b/arch/arm64/include/asm/fixmap.h
+> @@ -83,6 +83,7 @@ enum fixed_addresses {
+>  	FIX_PTE,
+>  	FIX_PMD,
+>  	FIX_PUD,
+> +	FIX_SWAPPER,
+
+Please leave this as FIX_PGD that you removed in the previous patch. Depending
+on the folding pmd/pud can be used as the top level. If we always use the fixmap
+entry that goes with the name, its clear how these operate.
+
+
+>  	__end_of_fixed_addresses
+>  };
+> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+> index 2e05bcd944c8..62512ad9c310 100644
+> --- a/arch/arm64/include/asm/pgalloc.h
+> +++ b/arch/arm64/include/asm/pgalloc.h
+
+How come you don't touch pgd_populate()? Surely with a 4-level configuration we
+may need to put a new pud-table in when we use a fresh chunk of vmalloc space...
+
+(ah, this is because you are conditionally doing all this on configurations
+where the MMU has top-level block mappings. I think this is unnecessarily
+complicated, we should just do it all the time)
+
+
+> @@ -49,6 +49,22 @@ static inline void __pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
+>  
+>  static inline void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmdp)
+>  {
+> +#ifdef CONFIG_ARM64_VA_BITS_39
+
+Please make this depend on the number of levels not the VA size. We also have
+3-level page tables for 64K with 48bit VA space, and 16K with 47bit VA space.
+
+I'd prefer some "if (CONFIG_PGTABLE_LEVELS == 3)" style check, as that way the
+compiler will always parse the code that is currently hidden behind #ifdefs.
+
+We can avoid use of fixmap entries for subsequent levels by making the check
+something like:
+| if (CONFIG_PGTABLE_LEVELS == 3 && magic_helper(pud) == swapper_pg_dir)
+
+
+> +	if (mm == &init_mm) {
+> +		pud_t *pud;
+> +		unsigned long offset;
+> +		extern spinlock_t pgdir_lock;
+> +
+> +		spin_lock(&pgdir_lock);
+> +		pud = (pud_t *)swapper_set_fixmap();
+
+Can't we use pud_set_fixmap for pud levels?
+
+Do we need an extra spinlock?, won't init_mm.page_table_lock always be held?
+(we can put a lockdep_assert_held() in here to find cases that aren't).
+
+
+> +		offset = (unsigned long)pudp - (unsigned long)swapper_pg_dir;
+> +		pud = (pud_t *)((unsigned long)pud + offset);
+
+It feels like there should be a helper for this.
+
+I'm not comfortable assuming mm=init_mm means we are actually modifying
+swapper_pg_dir. Hibernate does this on the grounds that the tables it generates
+will be used as the kernel's mm when it starts restoring. This field wasn't used
+before, so it wasn't clear what the field was for. I'm sure we will find
+something else doing this...
+
+Could we test that the provided pudp is within swapper_pg_dir before invoking
+the fixmap path.
+
+
+> +		__pud_populate(pud, __pa(pmdp), PMD_TYPE_TABLE);
+> +		swapper_clear_fixmap();
+> +		spin_unlock(&pgdir_lock);
+> +		return;
+> +	}
+> +#endif
+>  	__pud_populate(pudp, __pa(pmdp), PMD_TYPE_TABLE);
+>  }
+>  #else
+
+
+> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> index 9677deb7b6c7..9db187024b44 100644
+> --- a/arch/arm64/kernel/head.S
+> +++ b/arch/arm64/kernel/head.S
+
+(Changes here are cleanup, they should be in a separate patch)
+
+
+> @@ -300,7 +300,7 @@ __create_page_tables:
+>  	 * dirty cache lines being evicted.
+>  	 */
+>  	adrp	x0, idmap_pg_dir
+> -	adrp	x1, swapper_pg_end
+> +	adrp	x1, idmap_pg_end
+>  	sub	x1, x1, x0
+>  	bl	__inval_dcache_area
+
+As we no longer modify swapper_pg_dir with the MMU disabled I think this is safe.
+
+
+> @@ -313,7 +313,7 @@ __create_page_tables:
+>  	 * Clear the idmap and init page tables.
+>  	 */
+>  	adrp	x0, idmap_pg_dir
+> -	adrp	x1, swapper_pg_end
+> +	adrp	x1, idmap_pg_end
+>  	sub	x1, x1, x0
+>  	clear_pages x0, x1
+
+With the current placement of swapper_pg_dir after the BSS we rely on this to
+zero that memory. It may have junk left over from the boot loader as this is the
+area where the kernel's memory-footprint is bigger than the Image file.
+
+Your vmlinux.lds.S changes below conditionally move swapper_pg_dir around.
+Sometimes you need this, sometimes you don't.
+
+Please always keep these pgd in the read-only section. I think we should keep
+the page-zeroing as a sanity check, we only do it once during boot, and
+corruption here isn't something we would be able to debug easily.
+
+
+> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+> index b0e4255fcba4..db72c4680f1d 100644
+> --- a/arch/arm64/kernel/vmlinux.lds.S
+> +++ b/arch/arm64/kernel/vmlinux.lds.S
+> @@ -219,6 +219,28 @@ SECTIONS
+>  	. = ALIGN(PAGE_SIZE);
+>  	idmap_pg_dir = .;
+>  	. += IDMAP_DIR_SIZE;
+> +	idmap_pg_end = .;
+> +
+> +#if defined(CONFIG_ARM64_VA_BITS_39) || \
+> +	defined(CONFIG_ARM64_VA_BITS_36) || \
+> +	defined(CONFIG_ARM64_VA_BITS_42)
+
+I think we should always do this read-only-swapper, even if there aren't any
+top-level block-mappings. The code will be much more maintainable this way.
+
+
+> +	.rodata : {
+> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> +		. = ALIGN(PAGE_SIZE);
+> +		tramp_pg_dir = .;
+> +		. += PAGE_SIZE;
+> +#endif
+> +
+> +#ifdef CONFIG_ARM64_SW_TTBR0_PAN
+> +		reserved_ttbr0 = .;
+> +		. += RESERVED_TTBR0_SIZE;
+> +#endif
+> +		swapper_pg_dir = .;
+> +		. += PAGE_SIZE;
+> +		swapper_pg_end = .;
+> +	}
+> +
+> +#else
+>  
+>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  	tramp_pg_dir = .;
+> @@ -232,6 +254,7 @@ SECTIONS
+>  	swapper_pg_dir = .;
+>  	. += PAGE_SIZE;
+>  	swapper_pg_end = .;
+> +#endif
+
+
+
+Thanks,
+
+James
