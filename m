@@ -2,254 +2,83 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1397C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6BDC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 580CA269D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:32:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 580CA269D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6797B269D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:33:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="C5hYovHF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6797B269D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chronox.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934742AbeFZLc5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:32:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52814 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934069AbeFZLcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:32:55 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C4997401EF36;
-        Tue, 26 Jun 2018 11:32:54 +0000 (UTC)
-Received: from [10.36.112.56] (ovpn-112-56.ams2.redhat.com [10.36.112.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D05392026D6A;
-        Tue, 26 Jun 2018 11:32:52 +0000 (UTC)
-Subject: Re: [PATCH 1/1] kvm: selftests: add cr4_cpuid_sync_test
-To:     Wei Huang <wei@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        hofsass@google.com, peng.hao2@zte.com.cn
-References: <1529984517-7843-1-git-send-email-wei@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e73137a6-6e4c-ab9b-0705-a3ce33d8df66@redhat.com>
-Date:   Tue, 26 Jun 2018 13:32:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934776AbeFZLdR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:33:17 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.25]:18252 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933780AbeFZLdQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 07:33:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1530012794;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=CmIPr7WXozYFTcxtERJdZPZ1TWtF8DBHqScYjQutFA0=;
+        b=C5hYovHFmiEOeJaY7cfbwNwrLLAl5ZqldzmuyKDURPpJQU3OkrQ59Xc3Ep6cOBYCpK
+        Afe7JhdCTmuZo8VDRtkmqnVrgvTcCEr+cApq5MrUWdJUuVxzFrjSV6TXk8h20GxWlSbw
+        hmfHVx52GClR9p6Ilc4XlM5tjOd56JEe/RayKJQbahenz1c4MmOmHmIStmBrIKfIuHK3
+        XgPQhmW0ZXl52SEfZ8EswWgk8pCVImHydbSxrX130RYgLpFkjJcs0N1AA2qLjfzKhK8T
+        exYJvTrli90Yd071c5tzTPi3V+fKN46r0pyGHBjGiz1rLvlw7RWFdMyH9+XE/2ac50yU
+        /WLQ==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zW4DNhHoQE+naq/TxnB4G17At7qqy34JoXPVwp4IB4BhOW7BTvQpCg=="
+X-RZG-CLASS-ID: mo00
+Received: from tauon.chronox.de
+        by smtp.strato.de (RZmta 43.10 AUTH)
+        with ESMTPSA id j06b90u5QBXCnrh
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 26 Jun 2018 13:33:12 +0200 (CEST)
+From:   Stephan Mueller <smueller@chronox.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: cryptomgr_test / drbg_ctr: BUG: sleeping function called from invalid context
+Date:   Tue, 26 Jun 2018 13:33:12 +0200
+Message-ID: <2482919.MrXjzQZjmy@tauon.chronox.de>
+In-Reply-To: <CAMuHMdXfn6YuG9imLKd5nEdxhT4gWu-V8bn1LRt+M3bESaUAkA@mail.gmail.com>
+References: <CAMuHMdW_4gvQYhCxcXR+sa6dhwAshyJnhXhc36=VC=hWKB-7Jw@mail.gmail.com> <14009987.cibGRJrWdm@positron.chronox.de> <CAMuHMdXfn6YuG9imLKd5nEdxhT4gWu-V8bn1LRt+M3bESaUAkA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1529984517-7843-1-git-send-email-wei@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 26 Jun 2018 11:32:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 26 Jun 2018 11:32:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/06/2018 05:41, Wei Huang wrote:
-> KVM is supposed to update some guest VM's CPUID bits (e.g. OSXSAVE) when
-> CR4 is changed. A bug was found in KVM recently and it was fixed by
-> Commit c4d2188206ba ("KVM: x86: Update cpuid properly when CR4.OSXAVE or
-> CR4.PKE is changed"). This patch adds a test to verify the synchronization
-> between guest VM's CR4 and CPUID bits.
-> 
-> Signed-off-by: Wei Huang <wei@redhat.com>
-> ---
->  tools/testing/selftests/kvm/Makefile              |   1 +
->  tools/testing/selftests/kvm/cr4_cpuid_sync_test.c | 129 ++++++++++++++++++++++
->  2 files changed, 130 insertions(+)
->  create mode 100644 tools/testing/selftests/kvm/cr4_cpuid_sync_test.c
-> 
-> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-> index d9d0031..65bda4f 100644
-> --- a/tools/testing/selftests/kvm/Makefile
-> +++ b/tools/testing/selftests/kvm/Makefile
-> @@ -9,6 +9,7 @@ LIBKVM_x86_64 = lib/x86.c lib/vmx.c
->  TEST_GEN_PROGS_x86_64 = set_sregs_test
->  TEST_GEN_PROGS_x86_64 += sync_regs_test
->  TEST_GEN_PROGS_x86_64 += vmx_tsc_adjust_test
-> +TEST_GEN_PROGS_x86_64 += cr4_cpuid_sync_test
->  
->  TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
->  LIBKVM += $(LIBKVM_$(UNAME_M))
-> diff --git a/tools/testing/selftests/kvm/cr4_cpuid_sync_test.c b/tools/testing/selftests/kvm/cr4_cpuid_sync_test.c
-> new file mode 100644
-> index 0000000..dbbaf3c
-> --- /dev/null
-> +++ b/tools/testing/selftests/kvm/cr4_cpuid_sync_test.c
-> @@ -0,0 +1,129 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * CR4 and CPUID sync test
-> + *
-> + * Copyright 2018, Red Hat, Inc. and/or its affiliates.
-> + *
-> + * Author:
-> + *   Wei Huang <wei@redhat.com>
-> + */
-> +
-> +#include <fcntl.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <sys/ioctl.h>
-> +
-> +#include "test_util.h"
-> +
-> +#include "kvm_util.h"
-> +#include "x86.h"
-> +
-> +#define X86_FEATURE_XSAVE	(1<<26)
-> +#define X86_FEATURE_OSXSAVE	(1<<27)
-> +#define VCPU_ID			1
-> +
-> +enum {
-> +	GUEST_UPDATE_CR4 = 0x1000,
-> +	GUEST_FAILED,
-> +	GUEST_DONE,
-> +};
-> +
-> +static void exit_to_hv(uint16_t port)
-> +{
-> +	__asm__ __volatile__("in %[port], %%al"
-> +			     :
-> +			     : [port]"d"(port)
-> +			     : "rax");
-> +}
-> +
-> +static inline bool cr4_cpuid_is_sync(void)
-> +{
-> +	int func, subfunc;
-> +	uint32_t eax, ebx, ecx, edx;
-> +	uint64_t cr4;
-> +
-> +	func = 0x1;
-> +	subfunc = 0x0;
-> +	__asm__ __volatile__("cpuid"
-> +			     : "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx)
-> +			     : "a"(func), "c"(subfunc));
-> +
-> +	cr4 = get_cr4();
-> +
-> +	return (!!(ecx & X86_FEATURE_OSXSAVE)) == (!!(cr4 & X86_CR4_OSXSAVE));
-> +}
-> +
-> +static void guest_code(void)
-> +{
-> +	uint64_t cr4;
-> +
-> +	/* turn on CR4.OSXSAVE */
-> +	cr4 = get_cr4();
-> +	cr4 |= X86_CR4_OSXSAVE;
-> +	set_cr4(cr4);
-> +
-> +	/* verify CR4.OSXSAVE == CPUID.OSXSAVE */
-> +	if (!cr4_cpuid_is_sync())
-> +		exit_to_hv(GUEST_FAILED);
-> +
-> +	/* notify hypervisor to change CR4 */
-> +	exit_to_hv(GUEST_UPDATE_CR4);
-> +
-> +	/* check again */
-> +	if (!cr4_cpuid_is_sync())
-> +		exit_to_hv(GUEST_FAILED);
-> +
-> +	exit_to_hv(GUEST_DONE);
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	struct kvm_run *run;
-> +	struct kvm_vm *vm;
-> +	struct kvm_sregs sregs;
-> +	struct kvm_cpuid_entry2 *entry;
-> +	int rc;
-> +
-> +	entry = kvm_get_supported_cpuid_entry(1);
-> +	if (!(entry->ecx & X86_FEATURE_XSAVE)) {
-> +		printf("XSAVE feature not supported, skipping test\n");
-> +		return 0;
-> +	}
-> +
-> +	/* Tell stdout not to buffer its content */
-> +	setbuf(stdout, NULL);
-> +
-> +	/* Create VM */
-> +	vm = vm_create_default_vmx(VCPU_ID, guest_code);
-> +	vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
-> +	run = vcpu_state(vm, VCPU_ID);
-> +
-> +	while (1) {
-> +		rc = _vcpu_run(vm, VCPU_ID);
-> +
-> +		if (run->exit_reason == KVM_EXIT_IO) {
-> +			switch (run->io.port) {
-> +			case GUEST_UPDATE_CR4:
-> +				/* emulate hypervisor clearing CR4.OSXSAVE */
-> +				vcpu_sregs_get(vm, VCPU_ID, &sregs);
-> +				sregs.cr4 &= ~X86_CR4_OSXSAVE;
-> +				vcpu_sregs_set(vm, VCPU_ID, &sregs);
-> +				break;
-> +			case GUEST_FAILED:
-> +				TEST_ASSERT(false, "Guest CR4 bit (OSXSAVE) unsynchronized with CPUID bit.");
-> +				break;
-> +			case GUEST_DONE:
-> +				goto done;
-> +			default:
-> +				TEST_ASSERT(false, "Unknown port 0x%x.",
-> +					    run->io.port);
-> +			}
-> +		}
-> +	}
-> +
-> +	kvm_vm_free(vm);
-> +
-> +done:
-> +	return 0;
-> +}
-> 
+Am Dienstag, 26. Juni 2018, 12:33:48 CEST schrieb Geert Uytterhoeven:
 
-Queued, thanks.
+Hi Geert,
 
-Paolo
+> Issue is gone. I assume due to commit 6e88f01206edab0e ("crypto:
+> arm64/aes-blk - fix and move skcipher_walk_done out of kernel_neon_begin,
+> _end").
+
+Thanks a lot for the hint.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+
+
+
+Ciao
+Stephan
+
+
