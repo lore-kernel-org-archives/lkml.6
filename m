@@ -2,144 +2,113 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC906C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C15A3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 644E726C68
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:29:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 644E726C68
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 6595B26C6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:31:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6595B26C6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936099AbeFZO3y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 10:29:54 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:51356 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935339AbeFZO3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:29:53 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id fdbsMcMnNCMh; Tue, 26 Jun 2018 16:29:52 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA5B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:5b00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 33B681EC01D4;
-        Tue, 26 Jun 2018 16:29:52 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 16:29:49 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     David Wang <davidwang@zhaoxin.com>
-Cc:     tony.luck@intel.com, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-edac@vger.kernel.org, cooperyan@zhaoxin.com,
-        qiyuanwang@zhaoxin.com, benjaminpan@viatech.com,
-        lukelin@viacpu.com, timguo@zhaoxin.com
-Subject: Re: [PATCH v2] x86/mce: add CMCI support for Centaur CPUs
-Message-ID: <20180626142949.GA4136@zn.tnic>
-References: <1528079853-8101-1-git-send-email-davidwang@zhaoxin.com>
+        id S936120AbeFZObx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 10:31:53 -0400
+Received: from mail.netline.ch ([148.251.143.178]:52561 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935535AbeFZObw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 10:31:52 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id B9E2D2A604F;
+        Tue, 26 Jun 2018 16:31:49 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 8_XT_7TIJPtH; Tue, 26 Jun 2018 16:31:49 +0200 (CEST)
+Received: from kaveri (252.228.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.228.252])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 5E4B02A604C;
+        Tue, 26 Jun 2018 16:31:48 +0200 (CEST)
+Received: from daenzer by kaveri with local (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1fXp0V-0003jL-Gd; Tue, 26 Jun 2018 16:31:47 +0200
+From:   =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>
+To:     Sumit Semwal <sumit.semwal@linaro.org>
+Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org
+Subject: [PATCH] dma-buf: Move BUG_ON from _add_shared_fence to _add_shared_inplace
+Date:   Tue, 26 Jun 2018 16:31:47 +0200
+Message-Id: <20180626143147.14296-1-michel@daenzer.net>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1528079853-8101-1-git-send-email-davidwang@zhaoxin.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 10:37:33AM +0800, David Wang wrote:
-> New Centaur CPU support CMCI mechanism, which is compatible with INTEL CMCI.
-> 
-> Signed-off-by: David Wang <davidwang@zhaoxin.com>
+From: Michel Dänzer <michel.daenzer@amd.com>
 
-...
+Fixes the BUG_ON spuriously triggering under the following
+circumstances:
 
-> diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-> index cd76380..2ebafc7 100644
-> --- a/arch/x86/kernel/cpu/mcheck/mce.c
-> +++ b/arch/x86/kernel/cpu/mcheck/mce.c
-> @@ -1727,6 +1727,7 @@ static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
->  	}
->  }
->  
-> +#ifdef CONFIG_X86_MCE_CENTAUR
->  static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
->  {
->  	struct mca_config *cfg = &mca_cfg;
-> @@ -1740,7 +1741,12 @@ static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
->  		if (cfg->monarch_timeout < 0)
->  			cfg->monarch_timeout = USEC_PER_SEC;
->  	}
-> +	mce_intel_feature_init(c);
-> +	mce_adjust_timer = cmci_intel_adjust_timer;
+* ttm_eu_reserve_buffers processes a list containing multiple BOs using
+  the same reservation object, so it calls
+  reservation_object_reserve_shared with that reservation object once
+  for each such BO.
+* In reservation_object_reserve_shared, old->shared_count ==
+  old->shared_max - 1, so obj->staged is freed in preparation of an
+  in-place update.
+* ttm_eu_fence_buffer_objects calls reservation_object_add_shared_fence
+  once for each of the BOs above, always with the same fence.
+* The first call adds the fence in the remaining free slot, after which
+  old->shared_count == old->shared_max.
 
-This ...
+In the next call to reservation_object_add_shared_fence, the BUG_ON
+triggers. However, nothing bad would happen in
+reservation_object_add_shared_inplace, since the fence is already in the
+reservation object.
 
->  }
-> +#else
-> +static inline void mce_centaur_feature_init(struct cpuinfo_x86 *c) { }
-> +#endif
->  
->  static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
->  {
-> diff --git a/arch/x86/kernel/cpu/mcheck/mce_intel.c b/arch/x86/kernel/cpu/mcheck/mce_intel.c
-> index d05be30..5b1b68f 100644
-> --- a/arch/x86/kernel/cpu/mcheck/mce_intel.c
-> +++ b/arch/x86/kernel/cpu/mcheck/mce_intel.c
-> @@ -85,7 +85,8 @@ static int cmci_supported(int *banks)
->  	 * initialization is vendor keyed and this
->  	 * makes sure none of the backdoors are entered otherwise.
->  	 */
-> -	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-> +	if ((boot_cpu_data.x86_vendor != X86_VENDOR_INTEL &&
-> +		boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR))
->  		return 0;
->  	if (!boot_cpu_has(X86_FEATURE_APIC) || lapic_get_maxlvt() < 6)
->  		return 0;
-> @@ -506,10 +507,20 @@ static void intel_ppin_init(struct cpuinfo_x86 *c)
->  
->  void mce_intel_feature_init(struct cpuinfo_x86 *c)
->  {
-> -	intel_init_thermal(c);
-> -	intel_init_cmci();
-> -	intel_init_lmce();
-> -	intel_ppin_init(c);
-> +
-> +	switch (c->x86_vendor) {
-> +	case X86_VENDOR_INTEL:
-> +		intel_init_thermal(c);
-> +		intel_init_cmci();
-> +		intel_init_lmce();
-> +		intel_ppin_init(c);
-> +		break;
-> +	case X86_VENDOR_CENTAUR:
-> +		intel_init_cmci();
+Prevent this by moving the BUG_ON to where an overflow would actually
+happen (e.g. if a buggy caller didn't call
+reservation_object_reserve_shared before).
 
-... and this I really don't like for the simple reason that if the Intel
-side gets changed, it could potentially break Centaur. And we don't want
-that. And the vendor should be free to change their code without asking
-another vendor for permission even if the other vendor is almost copying
-the code...
+Cc: stable@vger.kernel.org
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+---
+ drivers/dma-buf/reservation.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Long story short, I think you should extract the facilities you're
-going to need into generic, library-like ones and call them
-from centaur-specific compilation units which get enabled when
-CPU_SUP_CENTAUR is enabled.
-
-So that the code can still be shared but there's no dependency on
-other vendors and so that one vendor doesn't break the other one and
-vice-versa.
-
-IMO.
-
-Thx.
-
+diff --git a/drivers/dma-buf/reservation.c b/drivers/dma-buf/reservation.c
+index 314eb1071cce..532545b9488e 100644
+--- a/drivers/dma-buf/reservation.c
++++ b/drivers/dma-buf/reservation.c
+@@ -141,6 +141,7 @@ reservation_object_add_shared_inplace(struct reservation_object *obj,
+ 	if (signaled) {
+ 		RCU_INIT_POINTER(fobj->shared[signaled_idx], fence);
+ 	} else {
++		BUG_ON(fobj->shared_count >= fobj->shared_max);
+ 		RCU_INIT_POINTER(fobj->shared[fobj->shared_count], fence);
+ 		fobj->shared_count++;
+ 	}
+@@ -230,10 +231,9 @@ void reservation_object_add_shared_fence(struct reservation_object *obj,
+ 	old = reservation_object_get_list(obj);
+ 	obj->staged = NULL;
+ 
+-	if (!fobj) {
+-		BUG_ON(old->shared_count >= old->shared_max);
++	if (!fobj)
+ 		reservation_object_add_shared_inplace(obj, old, fence);
+-	} else
++	else
+ 		reservation_object_add_shared_replace(obj, old, fobj, fence);
+ }
+ EXPORT_SYMBOL(reservation_object_add_shared_fence);
 -- 
-Regards/Gruss,
-    Boris.
+2.18.0
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
