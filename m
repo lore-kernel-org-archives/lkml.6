@@ -2,328 +2,142 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B35C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA04C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2305525544
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:35:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="p+9GJa7T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2305525544
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id CF2E926DB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:38:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2E926DB3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752437AbeFZQfN (ORCPT
+        id S1752114AbeFZQi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 12:35:13 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41956 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751105AbeFZQfL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 12:35:11 -0400
-Received: by mail-wr0-f195.google.com with SMTP id h10-v6so17894159wrq.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 09:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=W7MsJxeL7y+NWRxEiqwBUpAh1kCljKNvyhm7Zgp4kjg=;
-        b=p+9GJa7Tb/4vzoFM04qJ+FL5hq3jQg/vSfSuZuxmuhir/rx8gi0ALzeCe2OA069Iwu
-         Wkz5GHJ37hiKYzyXXZoENbZ0lPQUaajynYb3LRdO0N1JelEEul3YVcwvCcBWb3v9UDF0
-         4ho1z98BNfBCQNr5jtNK/Y2UxwisGhgO3DY+c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=W7MsJxeL7y+NWRxEiqwBUpAh1kCljKNvyhm7Zgp4kjg=;
-        b=qnh6DptJL+CouUDccwU6KqJk8Q5Z6iQwdjTphR89Tsw96qu5e6lzwTzfsf+ITZeMLq
-         fRscJLgU1OutH4hiK+LpSapJMaw4plsJCerGxGeuUlOUsdxA4ZmzA9Qp9C1WnObfeeC3
-         rNnPuD6ibJ2FkRvb/767YxJW5oyJ0qfUA1NHii0FdCcj+q8nLA0JTPA7XhE7mWZMo6+B
-         SvXc/Ox7n7WS4LYBs7w6kPSBMPN1FpMVgWJBpo2E02ps+9p3+MBAHahBxy9/anTu3Dpy
-         D2kIzwVxTdSJwEYqZtLbXAkOONPGNuyFT0GYnLuGX/9irt6Qh65KduobWfQL0QGrfrpQ
-         JKxw==
-X-Gm-Message-State: APt69E2sX/1KoL6i55cPtN1gF0yrYh66cqMqEKmNIpm7NckKe5XWZcuc
-        RQszky6rGkWo6t/BQJTT/BSEtZk3i3OXYBpPA1bNJQ==
-X-Google-Smtp-Source: AAOMgpcleas2+1k5BOyaaKHlmH8LD8zWvmLwfnnULfn5Lo8ExiyuZU3wT/5t2gy2bvacF+ru9K3IPeNgrAwRQHeblmg=
-X-Received: by 2002:adf:bbc9:: with SMTP id z9-v6mr1688989wrg.183.1530030910197;
- Tue, 26 Jun 2018 09:35:10 -0700 (PDT)
+        Tue, 26 Jun 2018 12:38:26 -0400
+Received: from mga12.intel.com ([192.55.52.136]:24875 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751088AbeFZQiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 12:38:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 09:38:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,275,1526367600"; 
+   d="scan'208";a="67899667"
+Received: from unknown (HELO [10.7.201.141]) ([10.7.201.141])
+  by orsmga001.jf.intel.com with ESMTP; 26 Jun 2018 09:38:23 -0700
+Subject: Re: [PATCHv4 17/18] x86/mm: Handle encrypted memory in page_to_virt()
+ and __pa()
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
+ <20180626142245.82850-18-kirill.shutemov@linux.intel.com>
+Cc:     Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <1609f2b4-4638-8b9d-4dc7-fcb3303739cd@intel.com>
+Date:   Tue, 26 Jun 2018 09:38:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:adf:8684:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 09:35:09
- -0700 (PDT)
-In-Reply-To: <7b996681-3a94-1f93-10c0-5369fe843cbc@redhat.com>
-References: <CAOf5uwmSeugMHBBFc8ZQKY=wEsVD-YwD=YSWi=XbysU58Gp=Ww@mail.gmail.com>
- <9fb661e6-482b-76e0-2af0-a62a70e5606d@redhat.com> <CAOf5uwk2cf_+27nk9i9MQmbfJ8LCfPYopkcX__9M64jMYmhu1A@mail.gmail.com>
- <CAOf5uwkEuDgAJ7e8rNFyiKpUZPA3NhQGREtOGsm1EVSofW3rzQ@mail.gmail.com>
- <233d6808-4d44-9e47-7e3f-4f35cf731706@redhat.com> <CAOf5uwkJimhGJd_BtUuDyxaD5-ZYGe3JZtgC4pDKc_jnvaV21g@mail.gmail.com>
- <CAOf5uwnVoXw1MA=n3vphMhtto=fc+NVf11idLF8nwC6JCvf4+A@mail.gmail.com> <7b996681-3a94-1f93-10c0-5369fe843cbc@redhat.com>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Tue, 26 Jun 2018 18:35:09 +0200
-Message-ID: <CAOf5uwmxZxxKG0CnstnNaTYdt-1+=YZHr8eSac5TdwfANdobxQ@mail.gmail.com>
-Subject: Re: simple-framebuffer enquire
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     artlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180626142245.82850-18-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans
+> diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
+> index ba83fba4f9b3..dbfbd955da98 100644
+> --- a/arch/x86/include/asm/mktme.h
+> +++ b/arch/x86/include/asm/mktme.h
+> @@ -29,6 +29,9 @@ void arch_free_page(struct page *page, int order);
+>  
+>  int sync_direct_mapping(void);
+>  
+> +#define page_to_virt(x) \
+> +	(__va(PFN_PHYS(page_to_pfn(x))) + page_keyid(x) * direct_mapping_size)
 
-On Tue, Jun 26, 2018 at 4:47 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> Hi,
->
->
-> On 26-06-18 16:42, Michael Nazzareno Trimarchi wrote:
->>
->> Hi Hans
->>
->> On Tue, Jun 26, 2018 at 3:38 PM, Michael Nazzareno Trimarchi
->> <michael@amarulasolutions.com> wrote:
->>>
->>> Hi
->>>
->>> On Tue, Jun 26, 2018 at 3:36 PM, Hans de Goede <hdegoede@redhat.com>
->>> wrote:
->>>>
->>>> Hi,
->>>>
->>>>
->>>> On 26-06-18 15:29, Michael Nazzareno Trimarchi wrote:
->>>>>
->>>>>
->>>>> Hi
->>>>>
->>>>> to be more specific
->>>>>
->>>>> On Tue, Jun 26, 2018 at 3:06 PM, Michael Nazzareno Trimarchi
->>>>> <michael@amarulasolutions.com> wrote:
->>>>>>
->>>>>>
->>>>>> Hi
->>>>>>
->>>>>> On Tue., 26 Jun. 2018, 12:01 pm Hans de Goede, <hdegoede@redhat.com>
->>>>>> wrote:
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Hi,
->>>>>>>
->>>>>>> On 25-06-18 15:29, Michael Nazzareno Trimarchi wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> Hi Hans
->>>>>>>>
->>>>>>>> In order to let it even registered the simplefb I have added this
->>>>>>>> change. According on what I understand
->>>>>>>> from the code seems that this is the way to acquire memory with the
->>>>>>>> correct attribute
->>>>>>>>
->>>>>>>> diff --git a/drivers/video/fbdev/simplefb.c
->>>>>>>> b/drivers/video/fbdev/simplefb.c
->>>>>>>> index a3c44ec..7e61ce3 100644
->>>>>>>> --- a/drivers/video/fbdev/simplefb.c
->>>>>>>> +++ b/drivers/video/fbdev/simplefb.c
->>>>>>>> @@ -466,8 +466,8 @@ static int simplefb_probe(struct platform_device
->>>>>>>> *pdev)
->>>>>>>>
->>>>>>>>            info->fbops = &simplefb_ops;
->>>>>>>>            info->flags = FBINFO_DEFAULT | FBINFO_MISC_FIRMWARE;
->>>>>>>> -       info->screen_base = ioremap_wc(info->fix.smem_start,
->>>>>>>> -                                      info->fix.smem_len);
->>>>>>>> +       info->screen_base = arch_memremap_wb(info->fix.smem_start,
->>>>>>>> +                                            info->fix.smem_len);
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> I'm not sure why you need this?  wb certainly is not optimal
->>>>>>> for a framebuffer, the existing wc mapping is really what you
->>>>>>> want.
->>>>>>>
->>>>>>
->>>>>> Well in this way raise a WARN and get a nice NULL on memory remap on
->>>>>> imx6ull
->>>>>> SoC
->>>>>>
->>>>>
->>>>> [    0.397484] WARNING: CPU: 0 PID: 1 at arch/arm/mm/ioremap.c:303
->>>>> __arm_ioremap_pfn_caller+0x80/0x1cc
->>>>
->>>>
->>>>
->>>>
->>>> This is causes by a mismatch in memory attributes, which means the
->>>> memory is already mapped by the kernel as regular RAM and may
->>>> already be used for other purposes by the kernel!
->>>>
->>>> Memory used by a simplefb framebuffer must be reserved by the
->>>> bootloader, so that it does not get used by the kernel as regular
->>>> RAM. See e.g.:
->>>>
->>>>
->>>> http://git.denx.de/?p=u-boot.git;a=blob;f=drivers/video/sunxi/sunxi_display.c
->>>>
->>>> Near the end of the file where the framebuffer RAM gets excluded from
->>>> the memory-range reported to the kernel as usable RAM. Note this relies
->>>> on the u-boot sunxi video code putting the framebuffer at the end of the
->>>> RAM.
->>
->>
->> +       aliases {
->> +               display0 = &lcdif;
->> +       };
->> +
->> +       reserved-memory {
->> +               #address-cells = <1>;
->> +               #size-cells = <1>;
->> +               ranges;
->> +
->> +               display_reserved: framebuffer@86fd6080 {
->> +                       reg = <0x86fd6080 (480 * 272 *4)>;
->> +               };
->> +
->>
->> This should do the trick but I have still the same problem on memory
->> type. Any idea?
->
->
-> For starters your start address and size are not page-size
-> (multiple of 4k aligned), you need to fix that.
->
+Please put this in a generic header so that this hunk represents the
+*default* x86 implementation that is used universally on x86.  Then,
+please do
 
-cat memblock/reserved
-   0: 0x80004000..0x80007fff
-   1: 0x80100000..0x81e030b3
-   2: 0x83000000..0x83007fff
-   3: 0x84000000..0x85ffffff
-   4: 0x86fa2000..0x87021fff
+#ifndef CONFIG_MKTME_WHATEVER
+#define page_keyid(x) (0)
+#endif
 
-+       reserved-memory {
-+               #address-cells = <1>;
-+               #size-cells = <1>;
-+               ranges;
-+
-+               display_reserved: framebuffer@86fa2000 {
-+                       reg = <0x86fa2000 0x80000>;
-+               };
-+
-+       };
-+
-+       chosen {
-+               #address-cells = <1>;
-+               #size-cells = <1>;
-+               ranges;
-+
-+               stdout-path = &uart1;
-+               framebuffer0: framebuffer@86fa2000 {
-+                       compatible = "simple-framebuffer";
-+                       reg = <0x86fa2000 (480 * 272 * 4)>;
-+                       width = <480>;
-+                       height = <272>;
-+                       stride = <(480 * 4)>;
-+                       format = "a8r8g8b8";
-+                       clocks = <&clks IMX6UL_CLK_LCDIF_PIX>,
-+                                <&clks IMX6UL_CLK_LCDIF_APB>,
-+                                <&clks IMX6UL_CLK_DUMMY>,
-+                                <&clks IMX6UL_CLK_GPIO3>,
-+                                <&clks IMX6UL_CLK_GPIO4>;
-+                       nshut-supply = <&reg_lcd_nshut>;
-+                       nreset-supply = <&reg_lcd_nreset>;
-+                       display = <&lcdif>;
+>  #else
+>  #define mktme_keyid_mask	((phys_addr_t)0)
+>  #define mktme_nr_keyids		0
+> diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+> index 53c32af895ab..ffad496aadad 100644
+> --- a/arch/x86/include/asm/page_64.h
+> +++ b/arch/x86/include/asm/page_64.h
+> @@ -23,7 +23,7 @@ static inline unsigned long __phys_addr_nodebug(unsigned long x)
+>  	/* use the carry flag to determine if x was < __START_KERNEL_map */
+>  	x = y + ((x > y) ? phys_base : (__START_KERNEL_map - PAGE_OFFSET));
+>  
+> -	return x;
+> +	return x % direct_mapping_size;
 
-Still have the same on ioremap.
+There are almost *surely* performance implications from this that affect
+anyone with this compile option turned on.  There's now a 64-bit integer
+division operation which is used in places like kfree().
 
-Michael
-
-
-> After that double check in the memory map reported by the
-> kernel during boot that your reservation actually works.
->
-> Regards,
->
-> Hans
->
->
->
->
->>
->>
->> +               linux,cma {
->> +                       compatible = "shared-dma-pool";
->> +                       reusable;
->> +                       size = <0x1000000>;
->> +                       linux,cma-default;
->> +               };
->> +       };
->> +
->> +       chosen {
->> +               #address-cells = <1>;
->> +               #size-cells = <1>;
->> +               ranges;
->> +
->> +               stdout-path = &uart1;
->> +               framebuffer0: framebuffer@86fd6080 {
->> +                       compatible = "simple-framebuffer";
->> +                       reg = <0x86fd6080 (480 * 272 * 4)>;
->>
->> Here I try to use the same. I will create in uboot a dynamic way to
->> track down. I think that
->> we can even add to the simple buffer a way to get hand of reserved
->> region automatically
->>
->> Michael
->>
->> +                       width = <480>;
->> +                       height = <272>;
->> +                       stride = <(480 * 4)>;
->> +                       format = "a8r8g8b8";
->> +                       clocks = <&clks IMX6UL_CLK_LCDIF_PIX>,
->> +                                <&clks IMX6UL_CLK_LCDIF_APB>,
->> +                                <&clks IMX6UL_CLK_DUMMY>,
->> +                                <&clks IMX6UL_CLK_GPIO3>,
->> +                                <&clks IMX6UL_CLK_GPIO4>;
->> +                       nshut-supply = <&reg_lcd_nshut>;
->> +                       nreset-supply = <&reg_lcd_nreset>;
->> +                       display = <&lcdif>;
->> +                       status = "okay";
->> +               };
->>
->>
->>
->>>>
->>>
->>> Thank you very much for this lesson ;). I will try to document better
->>> after my tour ;)
->>>
->>> Michael
->>>
->>>> Regards,
->>>>
->>>> Hans
->>>
->>>
->>>
->>>
->>> --
->>> | Michael Nazzareno Trimarchi                     Amarula Solutions BV |
->>> | COO  -  Founder                                      Cruquiuskade 47 |
->>> | +31(0)851119172                                 Amsterdam 1018 AM NL |
->>> |                  [`as] http://www.amarulasolutions.com               |
->>
->>
->>
->>
->
-
-
-
--- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
+That's a show-stopper for me until we've done some pretty comprehensive
+performance analysis of this, which means much more than one kernel
+compile test on one system.
