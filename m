@@ -2,97 +2,84 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C57C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BBBC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0FF02661D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:36:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0FF02661D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 036292661F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:37:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p9P8YPUL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036292661F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeFZHgx convert rfc822-to-8bit (ORCPT
+        id S1752686AbeFZHhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:36:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49616 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752481AbeFZHgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:36:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3E6A5207D4; Tue, 26 Jun 2018 09:36:50 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F19EA206ED;
-        Tue, 26 Jun 2018 09:36:49 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 09:36:50 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Martin Kaiser <martin@kaiser.cx>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: mxc: remove __init qualifier from
- mxcnd_probe_dt
-Message-ID: <20180626093650.5835593b@xps13>
-In-Reply-To: <20180626092413.703249c8@bbrezillon>
-References: <1529679025-5735-1-git-send-email-martin@kaiser.cx>
-        <20180626091005.08d56b2a@xps13>
-        <20180626092413.703249c8@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 26 Jun 2018 03:37:43 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58330 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751965AbeFZHhm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 03:37:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=70o/HiBNRNbTRwkhWgdrQLPYiG4JnwjdJdvVA33ckIs=; b=p9P8YPULxdzWMNAjCEjDY50cv8
+        ZStiKiWdfsYb/NJ0SUwwAfLE+MxFV2szumEkdtlt/CJWDIsUVHqtJV2X2ofW/6H0GRr6J1BNM8van
+        N2i4lj7mcptfAjdbKqtfvesdjqJtm2j+sFjOy9ZpP8QqHlKtpCgYP6OfGKIEiUYE69Ox1zrlcwby+
+        awBFOuJ4q8YWi+6TDVlMJaBpY0/a9xLPf4E3ZcnkNbfpk9ZYEX/Tam+FnOwJWdu+YtI1CRQ6tNNpE
+        xPay72CQ8Gp3ij96I7UCnJo1JiHFNQFbPgMC26ani0ssDkROr1X4hjk62VW9RnCDd2iDl3fhbZJ1B
+        N5Ypq+7Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXiXX-0005u8-CI; Tue, 26 Jun 2018 07:37:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E20E62029FA0E; Tue, 26 Jun 2018 09:37:22 +0200 (CEST)
+Date:   Tue, 26 Jun 2018 09:37:22 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Gavin Schenk <g.schenk@eckelmann.de>, kernel@pengutronix.de
+Subject: Re: [PATCH] RFC: siox: don't create a thread without starting it
+Message-ID: <20180626073722.GX2458@hirez.programming.kicks-ass.net>
+References: <20180625102056.28468-1-u.kleine-koenig@pengutronix.de>
+ <20180625125105.GZ2494@hirez.programming.kicks-ass.net>
+ <20180625192121.k3hx32xbbhqkyfu4@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180625192121.k3hx32xbbhqkyfu4@pengutronix.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-
-On Tue, 26 Jun 2018 09:24:13 +0200, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-
-> On Tue, 26 Jun 2018 09:10:05 +0200
-> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+On Mon, Jun 25, 2018 at 09:21:21PM +0200, Uwe Kleine-Kˆnig wrote:
+> > That said, irrespective of the whole UNINTERRUPTIBLE/IDLE thing, I find
+> > this construct fairly fragile. We rely on not getting any spurious
+> > wakeups without a 'special' state.
 > 
-> > Hi Martin, Boris,
-> > 
-> > On Fri, 22 Jun 2018 16:50:25 +0200, Martin Kaiser <martin@kaiser.cx>
-> > wrote:
-> >   
-> > > mxcnd_probe_dt is called from mxcnd_probe, which is not marked as __init.
-> > >     
-> > 
-> > I think this line is just a side note and should be at the end of the
-> > commit log.
-> >   
-> > > Using the sysfs unbind, bind nodes, mxcnd_probe and mxcnd_probe_dt can
-> > > potentially be called at any time. After the __init functions are cleaned,
-> > > mxcnd_probe_dt is no longer available. Calling it anyway causes a crash.    
-> > 
-> > The above paragraph explains the problem and the solution, you can just
-> > add something like "mcvnd_probe is untouched because it is already not
-> > marked as __init" instead of the first line.
-> >   
-> > > 
-> > > Signed-off-by: Martin Kaiser <martin@kaiser.cx>    
-> > 
-> > Boris, do you think this patch is a good candidate for stable?
-> > 
-> > If yes, Martin, could you please add a couple of stable/fixes tags above
-> > your SoB?  
-> 
-> We should at least have a Fixes tag. For the stable one, I'm not so
-> sure because the bug does not exist in practice (the compiler always
-> inline mxcnd_probe_dt()).
+> Well, if the thread is woken up unintentionally nothing happens (apart
 
-Fine, then a Fixes tag will be enough and I will take it into
-nand/next as it is not urgent at all to have it in the main tree.
+In your case sure. But people rely on the task being 'idle/blocked'
+after kthread_create() to call things like kthread_bind() on it.
 
+If it were to be woken early because dodgy games, the kthread_bind()
+would fail, which in turn can lead to all sorts of 'fun' problems.
 
-Miqu√®l
+That is the whole point of this intermediate blocked state, it allows
+you to muck with the kthread before it starts running custom code.
+Arguably one could do it differently, but this is what it is.
