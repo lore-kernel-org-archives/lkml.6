@@ -1,119 +1,345 @@
 Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D86B5C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27713C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91840266D3
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:27:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gYCo3J+D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91840266D3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 72488266DC
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:29:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72488266DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932814AbeFZI1Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:27:25 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:41661 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752779AbeFZI1W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:27:22 -0400
-Received: by mail-io0-f196.google.com with SMTP id k16-v6so12395137ioa.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 01:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=BIJcebHsDqfdi2LXM6kPYp6IdvPn5oZ7MhO6RpWFR0Y=;
-        b=gYCo3J+De0Pg1FoYdhgM67v0lttusTzNmevL5cdNrplrJ58cd8Tfs3X54ktTao3CZx
-         dgW9CeoJFvsQUx38AmiLsYtYBvwRK+DWpGuF/XpoBvfqsdCu0w6urdC9Jtxh1VcaG0zU
-         g9+gXtHBBrKw2cVnMPnd4OrIAQPowzkC3RHbRicYLrhjH0UonFWVw7++TJbI1Q941O1y
-         t6suwavH+sRPz89CGRAlOTkMcB/tZQEOn6VHE2LfPfXdI1yJglTcoze2UkmE5uQMi7jp
-         fD3U+VvOoqhmdE8wDFwMpJClFRCbLnKmnwiHc2Gz4KpodD8TayJkojdq4H4qo3N7OVwh
-         qC7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=BIJcebHsDqfdi2LXM6kPYp6IdvPn5oZ7MhO6RpWFR0Y=;
-        b=tcYgE7osni2T/hHuiYf4vVBXOs/wZmO4Kgy83YWKlV8ViIPFxQsW8lbgSarOTUMp60
-         gbGW3rMZtYloVDXQVULeER5tlojWvoZD/C38xOHN2lEu/yLjD48SGzOJ0bXDer/dLfKG
-         sltuyqhJR+kgklav8JHutrY7sFMMgal0o9EexMbPbIbpQ7w2dSb69qlkm1AlvKR8JBXQ
-         uMRBzvaIIfW0opes5pW1+8YshWQCv9IwEJtTfHIOPDxwoJJqCT6CUdEVYxAGliSBaUu8
-         XfdIq9/ugu6qa83Jafhn2yf0+PGhDL7w8QnQem/NtyHLbbk0A3mU9konG9F4myRERSrt
-         BJ2w==
-X-Gm-Message-State: APt69E2aWI0nBEBvWmcQ7djuJ0Q07FzRAKr51SxpjGNZ0PHPk1EKE70e
-        djWBHygSRT7nUFclqMF0AHons5hQg2SznILm/cMC+A==
-X-Google-Smtp-Source: AAOMgpfmdLKG4SjJPdpHI50H9KMrXG5OGGMCN3u4kP0A1GbDTonTHubzSvHWszjubr12oeceYrne6hya/LiL7Oxy+eU=
-X-Received: by 2002:a6b:c855:: with SMTP id y82-v6mr409772iof.187.1530001641806;
- Tue, 26 Jun 2018 01:27:21 -0700 (PDT)
+        id S1752957AbeFZI3a (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 04:29:30 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9129 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752606AbeFZI3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 04:29:23 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7787F5A3FE9D1;
+        Tue, 26 Jun 2018 16:29:05 +0800 (CST)
+Received: from localhost (10.202.226.43) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Tue, 26 Jun 2018
+ 16:29:03 +0800
+Date:   Tue, 26 Jun 2018 09:28:41 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Peter Rosin <peda@axentia.se>
+CC:     <linux-kernel@vger.kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "Sekhar Nori" <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        "Haavard Skinnemoen" <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        "Peter Meerwald-Stadler" <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        <linux-integrity@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>
+Subject: Re: [PATCH v2 10/10] i2c: remove i2c_lock_adapter and use
+ i2c_lock_bus directly
+Message-ID: <20180626092841.00003277@huawei.com>
+In-Reply-To: <20180620051803.12206-11-peda@axentia.se>
+References: <20180620051803.12206-1-peda@axentia.se>
+        <20180620051803.12206-11-peda@axentia.se>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Received: by 2002:a6b:9c51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 01:27:21
- -0700 (PDT)
-In-Reply-To: <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl> <20180625152920.11549-2-brgl@bgdev.pl>
- <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com> <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
- <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 26 Jun 2018 10:27:21 +0200
-Message-ID: <CAMRc=MfDmQxiy+jX4kW1A8vvP4xVXjKDo8VpgRZ-2AsTNik-0A@mail.gmail.com>
-Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
- the aemif clock
-To:     David Lechner <david@lechnology.com>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-25 18:06 GMT+02:00 David Lechner <david@lechnology.com>:
-> On 06/25/2018 11:01 AM, Bartosz Golaszewski wrote:
->>
->> 2018-06-25 17:53 GMT+02:00 David Lechner <david@lechnology.com>:
->>>
->>> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
->>>>
->>>>
->>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>
->>>> We want to be able to get the clock both from the board file by its
->>>> con_id and from the aemif driver by dev_id.
->>>
->>>
->>>
->>> What about the other SoCs? Don't they need this change as well?
->>>
->>
->> So I double checked and turns out I missed one other board that's
->> affected by this series and calls clk_get() from machine code:
->> dm644x-evm.
->>
->> I'll fix it in v2.
->
->
-> The ti-aemif platform driver also does clk_get(). Don't you need
-> lookups to make that work as well? For example, DA830 doesn't have
-> a clock lookup for aemif at all.
->
+On Wed, 20 Jun 2018 07:18:03 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
-This seems like a bug: in arch/arm/mach-davinci/aemif.c in current
-mainline we do call clk_get() for 'aemif' and it's called indirectly
-from board-da830-evm.c via davinci_aemif_setup().
+> The i2c_lock_adapter name is ambiguous since it is unclear if it
+> refers to the root adapter or the adapter you name in the argument.
+> The natural interpretation is the adapter you name in the argument,
+> but there are historical reasons for that not being the case; it
+> in fact locks the root adapter. Just remove the function and force
+> users to spell out the I2C_LOCK_ROOT_ADAPTER name to indicate what
+> is really going on. Also remove i2c_unlock_adapter, of course.
+> 
+> This patch was generated with
+> 
+> git grep -l 'i2c_\(un\)\?lock_adapter' \
+> | xargs sed -i 's/i2c_\(un\)\?lock_adapter(\([^)]*\))/'\
+> 'i2c_\1lock_bus(\2, I2C_LOCK_ROOT_ADAPTER)/g'
+> 
+> followed by white-space touch-up.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-I'll address this too in v2.
+For IIO: Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-Bart
+> ---
+>  drivers/i2c/busses/i2c-brcmstb.c   |  8 ++++----
+>  drivers/i2c/busses/i2c-davinci.c   |  4 ++--
+>  drivers/i2c/busses/i2c-gpio.c      | 40 +++++++++++++++++++-------------------
+>  drivers/i2c/busses/i2c-s3c2410.c   |  4 ++--
+>  drivers/i2c/busses/i2c-sprd.c      |  8 ++++----
+>  drivers/i2c/i2c-core-slave.c       |  8 ++++----
+>  drivers/iio/temperature/mlx90614.c |  4 ++--
+>  include/linux/i2c.h                | 12 ------------
+>  8 files changed, 38 insertions(+), 50 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
+> index 78792b4d6437..826d32049996 100644
+> --- a/drivers/i2c/busses/i2c-brcmstb.c
+> +++ b/drivers/i2c/busses/i2c-brcmstb.c
+> @@ -689,9 +689,9 @@ static int brcmstb_i2c_suspend(struct device *dev)
+>  {
+>  	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>  
+> -	i2c_lock_adapter(&i2c_dev->adapter);
+> +	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  	i2c_dev->is_suspended = true;
+> -	i2c_unlock_adapter(&i2c_dev->adapter);
+> +	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	return 0;
+>  }
+> @@ -700,10 +700,10 @@ static int brcmstb_i2c_resume(struct device *dev)
+>  {
+>  	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>  
+> -	i2c_lock_adapter(&i2c_dev->adapter);
+> +	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  	brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
+>  	i2c_dev->is_suspended = false;
+> -	i2c_unlock_adapter(&i2c_dev->adapter);
+> +	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
+> index 75d6ab177055..d945a2654c2f 100644
+> --- a/drivers/i2c/busses/i2c-davinci.c
+> +++ b/drivers/i2c/busses/i2c-davinci.c
+> @@ -714,14 +714,14 @@ static int i2c_davinci_cpufreq_transition(struct notifier_block *nb,
+>  
+>  	dev = container_of(nb, struct davinci_i2c_dev, freq_transition);
+>  
+> -	i2c_lock_adapter(&dev->adapter);
+> +	i2c_lock_bus(&dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  	if (val == CPUFREQ_PRECHANGE) {
+>  		davinci_i2c_reset_ctrl(dev, 0);
+>  	} else if (val == CPUFREQ_POSTCHANGE) {
+>  		i2c_davinci_calc_clk_dividers(dev);
+>  		davinci_i2c_reset_ctrl(dev, 1);
+>  	}
+> -	i2c_unlock_adapter(&dev->adapter);
+> +	i2c_unlock_bus(&dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+> index 005e6e0330c2..9d63337efa82 100644
+> --- a/drivers/i2c/busses/i2c-gpio.c
+> +++ b/drivers/i2c/busses/i2c-gpio.c
+> @@ -78,24 +78,24 @@ static struct dentry *i2c_gpio_debug_dir;
+>  #define getscl(bd)	((bd)->getscl((bd)->data))
+>  
+>  #define WIRE_ATTRIBUTE(wire) \
+> -static int fops_##wire##_get(void *data, u64 *val)	\
+> -{							\
+> -	struct i2c_gpio_private_data *priv = data;	\
+> -							\
+> -	i2c_lock_adapter(&priv->adap);			\
+> -	*val = get##wire(&priv->bit_data);		\
+> -	i2c_unlock_adapter(&priv->adap);		\
+> -	return 0;					\
+> -}							\
+> -static int fops_##wire##_set(void *data, u64 val)	\
+> -{							\
+> -	struct i2c_gpio_private_data *priv = data;	\
+> -							\
+> -	i2c_lock_adapter(&priv->adap);			\
+> -	set##wire(&priv->bit_data, val);		\
+> -	i2c_unlock_adapter(&priv->adap);		\
+> -	return 0;					\
+> -}							\
+> +static int fops_##wire##_get(void *data, u64 *val)		\
+> +{								\
+> +	struct i2c_gpio_private_data *priv = data;		\
+> +								\
+> +	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
+> +	*val = get##wire(&priv->bit_data);			\
+> +	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
+> +	return 0;						\
+> +}								\
+> +static int fops_##wire##_set(void *data, u64 val)		\
+> +{								\
+> +	struct i2c_gpio_private_data *priv = data;		\
+> +								\
+> +	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
+> +	set##wire(&priv->bit_data, val);			\
+> +	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
+> +	return 0;						\
+> +}								\
+>  DEFINE_DEBUGFS_ATTRIBUTE(fops_##wire, fops_##wire##_get, fops_##wire##_set, "%llu\n")
+>  
+>  WIRE_ATTRIBUTE(scl);
+> @@ -113,7 +113,7 @@ static int fops_incomplete_transfer_set(void *data, u64 addr)
+>  	/* ADDR (7 bit) + RD (1 bit) + SDA hi (1 bit) */
+>  	pattern = (addr << 2) | 3;
+>  
+> -	i2c_lock_adapter(&priv->adap);
+> +	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	/* START condition */
+>  	setsda(bit_data, 0);
+> @@ -129,7 +129,7 @@ static int fops_incomplete_transfer_set(void *data, u64 addr)
+>  		udelay(bit_data->udelay);
+>  	}
+>  
+> -	i2c_unlock_adapter(&priv->adap);
+> +	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index 9fe2b6951895..2f2e28d60ef5 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -919,9 +919,9 @@ static int s3c24xx_i2c_cpufreq_transition(struct notifier_block *nb,
+>  
+>  	if ((val == CPUFREQ_POSTCHANGE && delta_f < 0) ||
+>  	    (val == CPUFREQ_PRECHANGE && delta_f > 0)) {
+> -		i2c_lock_adapter(&i2c->adap);
+> +		i2c_lock_bus(&i2c->adap, I2C_LOCK_ROOT_ADAPTER);
+>  		ret = s3c24xx_i2c_clockrate(i2c, &got);
+> -		i2c_unlock_adapter(&i2c->adap);
+> +		i2c_unlock_bus(&i2c->adap, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  		if (ret < 0)
+>  			dev_err(i2c->dev, "cannot find frequency (%d)\n", ret);
+> diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
+> index 4053259bccb8..a94e724f51dc 100644
+> --- a/drivers/i2c/busses/i2c-sprd.c
+> +++ b/drivers/i2c/busses/i2c-sprd.c
+> @@ -590,9 +590,9 @@ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
+>  {
+>  	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
+>  
+> -	i2c_lock_adapter(&i2c_dev->adap);
+> +	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+>  	i2c_dev->is_suspended = true;
+> -	i2c_unlock_adapter(&i2c_dev->adap);
+> +	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	return pm_runtime_force_suspend(pdev);
+>  }
+> @@ -601,9 +601,9 @@ static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
+>  {
+>  	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
+>  
+> -	i2c_lock_adapter(&i2c_dev->adap);
+> +	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+>  	i2c_dev->is_suspended = false;
+> -	i2c_unlock_adapter(&i2c_dev->adap);
+> +	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	return pm_runtime_force_resume(pdev);
+>  }
+> diff --git a/drivers/i2c/i2c-core-slave.c b/drivers/i2c/i2c-core-slave.c
+> index 4a78c65e9971..47a9f70a24a9 100644
+> --- a/drivers/i2c/i2c-core-slave.c
+> +++ b/drivers/i2c/i2c-core-slave.c
+> @@ -47,9 +47,9 @@ int i2c_slave_register(struct i2c_client *client, i2c_slave_cb_t slave_cb)
+>  
+>  	client->slave_cb = slave_cb;
+>  
+> -	i2c_lock_adapter(client->adapter);
+> +	i2c_lock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  	ret = client->adapter->algo->reg_slave(client);
+> -	i2c_unlock_adapter(client->adapter);
+> +	i2c_unlock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	if (ret) {
+>  		client->slave_cb = NULL;
+> @@ -69,9 +69,9 @@ int i2c_slave_unregister(struct i2c_client *client)
+>  		return -EOPNOTSUPP;
+>  	}
+>  
+> -	i2c_lock_adapter(client->adapter);
+> +	i2c_lock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  	ret = client->adapter->algo->unreg_slave(client);
+> -	i2c_unlock_adapter(client->adapter);
+> +	i2c_unlock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	if (ret == 0)
+>  		client->slave_cb = NULL;
+> diff --git a/drivers/iio/temperature/mlx90614.c b/drivers/iio/temperature/mlx90614.c
+> index d619e8634a00..13a4cec64ea8 100644
+> --- a/drivers/iio/temperature/mlx90614.c
+> +++ b/drivers/iio/temperature/mlx90614.c
+> @@ -433,11 +433,11 @@ static int mlx90614_wakeup(struct mlx90614_data *data)
+>  
+>  	dev_dbg(&data->client->dev, "Requesting wake-up");
+>  
+> -	i2c_lock_adapter(data->client->adapter);
+> +	i2c_lock_bus(data->client->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  	gpiod_direction_output(data->wakeup_gpio, 0);
+>  	msleep(MLX90614_TIMING_WAKEUP);
+>  	gpiod_direction_input(data->wakeup_gpio);
+> -	i2c_unlock_adapter(data->client->adapter);
+> +	i2c_unlock_bus(data->client->adapter, I2C_LOCK_ROOT_ADAPTER);
+>  
+>  	data->ready_timestamp = jiffies +
+>  			msecs_to_jiffies(MLX90614_TIMING_STARTUP);
+> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+> index 254cd34eeae2..795e3a860afe 100644
+> --- a/include/linux/i2c.h
+> +++ b/include/linux/i2c.h
+> @@ -754,18 +754,6 @@ i2c_unlock_bus(struct i2c_adapter *adapter, unsigned int flags)
+>  	adapter->lock_ops->unlock_bus(adapter, flags);
+>  }
+>  
+> -static inline void
+> -i2c_lock_adapter(struct i2c_adapter *adapter)
+> -{
+> -	i2c_lock_bus(adapter, I2C_LOCK_ROOT_ADAPTER);
+> -}
+> -
+> -static inline void
+> -i2c_unlock_adapter(struct i2c_adapter *adapter)
+> -{
+> -	i2c_unlock_bus(adapter, I2C_LOCK_ROOT_ADAPTER);
+> -}
+> -
+>  /*flags for the client struct: */
+>  #define I2C_CLIENT_PEC		0x04	/* Use Packet Error Checking */
+>  #define I2C_CLIENT_TEN		0x10	/* we have a ten bit chip address */
+
+
