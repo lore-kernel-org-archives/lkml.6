@@ -2,123 +2,145 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70C3C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 944E9C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204AD264D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45D53264CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:16:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="GnWjFotU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204AD264D0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJbJ3y/p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D53264CD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751055AbeFZEPT (ORCPT
+        id S1751141AbeFZEQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 00:15:19 -0400
-Received: from mail-sn1nam01on0120.outbound.protection.outlook.com ([104.47.32.120]:53459
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750873AbeFZEPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 00:15:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4sfLhERWw+uYrLl/MPvP7NOlAcbr4qhGG13y29NmTcU=;
- b=GnWjFotUQVDWUIOTwxAcptP1oonlYiBvQ7W2ANangxymUo2FDb6fBT+wLmQgXN0k5regY54HNJTjzHvZXUZYnkg6vAIPgkyPRD4Hl6M7MoNqxTQZnd0e+YkKYcq7Q9ajkBllQBVQfaA/m28YJzIzCLVPi1dZnwh8xUF8W6lixAg=
-Received: from DM5PR2101MB0728.namprd21.prod.outlook.com (10.167.110.153) by
- DM5PR2101MB0728.namprd21.prod.outlook.com (10.167.110.153) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.5; Tue, 26 Jun 2018 04:15:15 +0000
-Received: from DM5PR2101MB0728.namprd21.prod.outlook.com
- ([fe80::c9b4:8268:f6ba:8724]) by DM5PR2101MB0728.namprd21.prod.outlook.com
- ([fe80::c9b4:8268:f6ba:8724%2]) with mapi id 15.20.0930.005; Tue, 26 Jun 2018
- 04:15:15 +0000
-From:   Long Li <longli@microsoft.com>
-To:     Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Subject: RE: [Patch v2 11/15] CIFS: Pass page offset for calculating signature
-Thread-Topic: [Patch v2 11/15] CIFS: Pass page offset for calculating
- signature
-Thread-Index: AQHT+E9kTqmTQaE0dUWSlwGWkLpLc6Ru1R8AgANB/VA=
-Date:   Tue, 26 Jun 2018 04:15:15 +0000
-Message-ID: <DM5PR2101MB0728DDBD53A756B6CEB9EEAECE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
-References: <20180530194807.31657-1-longli@linuxonhyperv.com>
- <20180530194807.31657-12-longli@linuxonhyperv.com>
- <7a9ee28d-4c18-c4fd-259b-1feeeb3fb83b@talpey.com>
-In-Reply-To: <7a9ee28d-4c18-c4fd-259b-1feeeb3fb83b@talpey.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2001:4898:80e8:a:fdde:db5c:c6fe:798]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0728;7:tCY7cKBAYsex0/ocVozqfil9JdWpSQs95Ahd/xUhwbg1Wgi0PWdn8DQ5Eas6cZ8aIuK0alT7uQhOezy1F+Liqr9d+d0BuiL906HB1dB225AqScbLcFRNuVVz30lGXt2NOlIwb88f9gSh5AdBgyGXIpi+enFECfJSGQm6VgbhiWNktR3pOq2WI03nkt/l6S4ZQgXE/eidtcXS3qspYkeWAEwSbj+6GxaXnOyKrEweiQJwbkxj+P1A7ju2th9Dl3BZ
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 0762c0fe-8923-492c-23e4-08d5db1b6ba7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0728;
-x-ms-traffictypediagnostic: DM5PR2101MB0728:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=longli@microsoft.com; 
-x-microsoft-antispam-prvs: <DM5PR2101MB07285497728E1395AF8051B8CE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(2018427008)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM5PR2101MB0728;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0728;
-x-forefront-prvs: 071518EF63
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(39860400002)(346002)(376002)(199004)(189003)(2906002)(478600001)(22452003)(316002)(25786009)(105586002)(76176011)(110136005)(7696005)(9686003)(8990500004)(68736007)(7736002)(74316002)(5660300001)(305945005)(2900100001)(8936002)(8676002)(106356001)(81156014)(81166006)(33656002)(10290500003)(446003)(11346002)(486006)(5250100002)(476003)(10090500001)(55016002)(86362001)(2201001)(14454004)(102836004)(6436002)(86612001)(53936002)(99286004)(2501003)(6116002)(186003)(46003)(229853002)(53546011)(6246003)(6506007)(14444005)(97736004)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0728;H:DM5PR2101MB0728.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: uy2Npo+eNPzAg1dMVowmizBMfaSuEsdTUvsLvnYMiLGxWdNDdo0sN6LkTW1a7UpQfjCj6Bywa7dr65BDJECu/P3hp+wfNwmu1OJRB6twmd60Ngldzgn8mFQpufDW/yhOeSamJQgKXIh5O7+JawFdd3OBNJKarInjzHpiaEgTNyGMU8GlUdK04MswlJRBafp4J2TYjbmZe9HaBKdO7ecGu1p8bs9OKJA0E5ydh0v3/a0vgL4W2PZ4Of+gS1ib6e6FfR/OcbJflb0Q6sXDYsh6/+SLCGfPM+H6ZvshaJjLunXDgRZuEM8Md/42OThzuLe0JwLwww6V3mAPJ3G7+ZLui+fHXSCDzNNdZ98u+fJWsgI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 26 Jun 2018 00:16:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47674 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750829AbeFZEQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 00:16:37 -0400
+Received: from localhost (unknown [5.29.173.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DAF4264CD;
+        Tue, 26 Jun 2018 04:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529986597;
+        bh=M4Z9R0h2eMvdwjZ0scm+jSroOY47fpGsCVLr0MXiFg4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lJbJ3y/pQ3Atu4o8rGpd/wnYYRhIbCmQqSVPA2pAiZBuSvoXFFuFJOf5JijUC93aj
+         lwpWzrELgJ1gRnV44TuvUrP4hg4TeJu5b+HWYrRHBJ3cww+rfYWlrGmQIL73z3khas
+         551MeUh1So3MYDNgJEKGdRsCypzWADVAjz6QPN6w=
+Date:   Tue, 26 Jun 2018 07:16:34 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Doug Ledford <dledford@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Hadar Hen Zion <hadarh@mellanox.com>,
+        Matan Barak <matanb@mellanox.com>,
+        Michael J Ruhl <michael.j.ruhl@intel.com>,
+        Noa Osherovich <noaos@mellanox.com>,
+        Raed Salem <raeds@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        linux-netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH rdma-next 08/12] overflow.h: Add arithmetic shift helper
+Message-ID: <20180626041634.GL17747@mtr-leonro.mtl.com>
+References: <20180624082353.16138-1-leon@kernel.org>
+ <20180624082353.16138-9-leon@kernel.org>
+ <CAKwiHFhgsyWYD+q+JFb2HJEphnjiiOp=o4Airv3MW031q2jx8w@mail.gmail.com>
+ <20180625171157.GE5356@mellanox.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0762c0fe-8923-492c-23e4-08d5db1b6ba7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2018 04:15:15.8258
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0728
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="sMkrXc3gAYLRVOjR"
+Content-Disposition: inline
+In-Reply-To: <20180625171157.GE5356@mellanox.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBTdWJqZWN0OiBSZTogW1BhdGNoIHYyIDExLzE1XSBDSUZTOiBQYXNzIHBhZ2Ugb2Zmc2V0IGZv
-ciBjYWxjdWxhdGluZyBzaWduYXR1cmUNCj4gDQo+IE9uIDUvMzAvMjAxOCAzOjQ4IFBNLCBMb25n
-IExpIHdyb3RlOg0KPiA+IEZyb206IExvbmcgTGkgPGxvbmdsaUBtaWNyb3NvZnQuY29tPg0KPiA+
-DQo+ID4gV2hlbiBjYWxjdWxhdGluZyBzaWduYXR1cmUgZm9yIHRoZSBwYWNrZXQsIGl0IG5lZWRz
-IHRvIHJlYWQgaW50byB0aGUNCj4gPiBjb3JyZWN0IHBhZ2Ugb2Zmc2V0IGZvciB0aGUgZGF0YS4N
-Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IExvbmcgTGkgPGxvbmdsaUBtaWNyb3NvZnQuY29tPg0K
-PiA+IC0tLQ0KPiA+ICAgZnMvY2lmcy9jaWZzZW5jcnlwdC5jIHwgOSArKysrKy0tLS0NCj4gPiAg
-IDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+ID4NCj4g
-PiBkaWZmIC0tZ2l0IGEvZnMvY2lmcy9jaWZzZW5jcnlwdC5jIGIvZnMvY2lmcy9jaWZzZW5jcnlw
-dC5jIGluZGV4DQo+ID4gYTZlZjA4OC4uZTg4MzAzYyAxMDA2NDQNCj4gPiAtLS0gYS9mcy9jaWZz
-L2NpZnNlbmNyeXB0LmMNCj4gPiArKysgYi9mcy9jaWZzL2NpZnNlbmNyeXB0LmMNCj4gPiBAQCAt
-NjgsMTEgKzY4LDEyIEBAIGludCBfX2NpZnNfY2FsY19zaWduYXR1cmUoc3RydWN0IHNtYl9ycXN0
-ICpycXN0LA0KPiA+DQo+ID4gICAJLyogbm93IGhhc2ggb3ZlciB0aGUgcnFfcGFnZXMgYXJyYXkg
-Ki8NCj4gPiAgIAlmb3IgKGkgPSAwOyBpIDwgcnFzdC0+cnFfbnBhZ2VzOyBpKyspIHsNCj4gPiAt
-CQl2b2lkICprYWRkciA9IGttYXAocnFzdC0+cnFfcGFnZXNbaV0pOw0KPiA+IC0JCXNpemVfdCBs
-ZW4gPSBycXN0LT5ycV9wYWdlc3o7DQo+ID4gKwkJdm9pZCAqa2FkZHI7DQo+ID4gKwkJdW5zaWdu
-ZWQgaW50IGxlbiwgb2Zmc2V0Ow0KPiA+DQo+ID4gLQkJaWYgKGkgPT0gcnFzdC0+cnFfbnBhZ2Vz
-IC0gMSkNCj4gPiAtCQkJbGVuID0gcnFzdC0+cnFfdGFpbHN6Ow0KPiA+ICsJCXJxc3RfcGFnZV9n
-ZXRfbGVuZ3RoKHJxc3QsIGksICZsZW4sICZvZmZzZXQpOw0KPiA+ICsNCj4gPiArCQlrYWRkciA9
-IChjaGFyICopIGttYXAocnFzdC0+cnFfcGFnZXNbaV0pICsgb2Zmc2V0Ow0KPiANCj4gSSBzdXBw
-b3NlIGl0J3MgbW9yZSByb2J1c3QgdG8gbWFwIGEgcGFnZSBhdCBhIHRpbWUsIGJ1dCBpdCdzIHBy
-ZXR0eSBleHBlbnNpdmUuDQo+IElzIHRoaXMgdGhlIG9ubHkgd2F5IHRvIGl0ZXJhdGUgb3ZlciBh
-IHBvdGVudGlhbGx5IHZlcnkgbGFyZ2UgYmxvY2sgb2YgZGF0YT8gRm9yDQo+IGV4YW1wbGUsIGEg
-MU1CIHNlZ21lbnQgbWVhbnMgMjU2IGttYXAva3VubWFwcy4NCg0KSSB3aWxsIGxvb2sgaW50byBu
-b3QgbWFwcGluZyB0aG9zZSBwYWdlcyB3aGlsZSBkb2luZyBJL08uDQoNClRoaXMgY29kZSBwYXRo
-IGlzIGZvciBSRE1BIHNlbmQvcmVjZWl2ZSwgYW5kIGl0J3MgcmFyZWx5IHVzZWQgZm9yIHRyYW5z
-ZmVycmluZyBsYXJnZSBhbW91bnQgb2YgZGF0YS4NCg0KPiANCj4gVG9tLg0KPiANCj4gPg0KPiA+
-ICAgCQljcnlwdG9fc2hhc2hfdXBkYXRlKHNoYXNoLCBrYWRkciwgbGVuKTsNCj4gPg0KPiA+DQo=
+
+--sMkrXc3gAYLRVOjR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jun 25, 2018 at 11:11:57AM -0600, Jason Gunthorpe wrote:
+> On Mon, Jun 25, 2018 at 11:26:05AM +0200, Rasmus Villemoes wrote:
+>
+> >    check_shift_overflow(a, s, d) {
+> >        unsigned _nbits = 8*sizeof(a);
+> >        typeof(a) _a = (a);
+> >        typeof(s) _s = (s);
+> >        typeof(d) _d = (d);
+> >
+> >        *_d = ((u64)(_a) << (_s & (_nbits-1)));
+> >        _s >= _nbits || (_s > 0 && (_a >> (_nbits - _s -
+> >    is_signed_type(a))) != 0);
+> >    }
+>
+> Those types are not quite right.. What about this?
+>
+>     check_shift_overflow(a, s, d) ({
+>         unsigned int _nbits = 8*sizeof(d) - is_signed_type(d);
+>         typeof(d) _a = a;  // Shift is always performed on type 'd'
+>         typeof(s) _s = s;
+>         typeof(d) _d = d;
+>
+>         *_d = (_a << (_s & (_nbits-1)));
+>
+> 	(((*_d) >> (_s & (_nbits-1)) != _a);
+>     })
+>
+> And can we use mathamatcial invertability to prove no overlow and
+> bound _a ? As above.
+
+Rasmus and Jason,
+
+Thanks for the feedback.
+The reason why I introduced function, because wanted to reuse
+check_mul_overflow macro, but for any reasons which I don't remember
+now, I had hard time to fix compilation errors.
+
+Anyway, I'll resubmit.
+
+Thanks
+
+
+>
+> Jason
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--sMkrXc3gAYLRVOjR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbMb4iAAoJEORje4g2clinBKwQAJWn7Dr7LawQOUuHxpIQ3tUx
+hNKFM5PC4ekX3MCYddsN+E/DMif8dbZl5q/RIS0AT3u1kICpwv4twliHgJIOKMbk
+w0dJ6k+qW9RgOGXvyglHRbX2481p9qh/tV5Wx+/jAzSY4+x0R5JfSl+YjDkSQN9m
+nPfiMJzgyAs4uQ5/wGbI19REH8sxTY/wm7s8Dvde2WFFz94ksNwj35i3bpYEve5m
+pSO6Z/7xTBRSa07dvC+gkHZU5W+CeyIYeGnW42F+486DGoNM8rCKeSQNXjc52CYy
+qyT9G/OpCf/3H9WDVkEDcQ/06b/uM9s/iAUjb34XmLxIfmfWFtHdN6INuOWANQpL
+Jiv/RUm1tV0pxE4vG3uUuFhm3Bmd010frtsfkRypqaR/N4EWfh+vBM9bFUbmrBoX
+kfZw0Gdhfl7/yYrc4oYj5I54CZIo14vAzuZL9PtBn1V6ns7YyCGSPcZXVjcMgh0F
+sWeZ7lLbcD0qrP6BZTOzhKyR28T9V6kSEkMUciBhS8bt0yDp27O0Q3+oXiljNSR5
+OWnKOY4pizgr6OMEexh+26aGPM6hBQP1mxCaUKgXTmkB1+JylAbClB6BuD2eXymg
+87EAC3j7GK/1RGhOoBKYsYslrJNRMA61dWx3vGtGEm2cAYGw9l0WKnzRZj7KAbTD
+RIrR9YPhTQK5zHtf8U8R
+=Kso0
+-----END PGP SIGNATURE-----
+
+--sMkrXc3gAYLRVOjR--
