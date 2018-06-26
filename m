@@ -2,86 +2,198 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BA1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68477C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C8826A80
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:26:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C8826A80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 14B2826A7E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:27:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lx9aGm0c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B2826A7E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935289AbeFZM02 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:26:28 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:14257 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933509AbeFZM01 (ORCPT
+        id S964916AbeFZM1E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:27:04 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41984 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933509AbeFZM1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:26:27 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5QCOGqj014698;
-        Tue, 26 Jun 2018 14:26:08 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2jumuy8680-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 26 Jun 2018 14:26:08 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 985DF4D;
-        Tue, 26 Jun 2018 12:26:07 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 72A7F29C2;
-        Tue, 26 Jun 2018 12:26:07 +0000 (GMT)
-Received: from [10.201.21.58] (10.75.127.51) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 26 Jun
- 2018 14:26:06 +0200
-Subject: Re: [PATCH] ARM: dts: stm32: Add DFSDM support to stm32mp157c
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>
-References: <1527067835-22303-1-git-send-email-fabrice.gasnier@st.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <8e696c04-2992-e20a-56ba-1b3097150ce9@st.com>
-Date:   Tue, 26 Jun 2018 14:25:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1527067835-22303-1-git-send-email-fabrice.gasnier@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_07:,,
- signatures=0
+        Tue, 26 Jun 2018 08:27:03 -0400
+Received: by mail-lf0-f66.google.com with SMTP id u202-v6so5064338lff.9;
+        Tue, 26 Jun 2018 05:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=uTTDf/OjNj79FSCvDOl6BXjS5FofBA1ikoNLA4as9Co=;
+        b=Lx9aGm0c/ZGzjfu6KiDIStpyYjKFmblaLRJn/CGLoCZjIrA7FSfTMEcooC9R4w5pLO
+         QLH6wunLaxiXAjMnEiC7KA+OVHJADweRu0ZDu5Qun5HbNdFcvLa0nYzvbzqyY9hMIKZs
+         PC8NKONqVYQYzxtPX2XDnOo+6rALEZ5X+BKusI3DvxkgHim0DvqYmGo0iNftvR8fPIQC
+         8oSjQmNo8KzoawDCFLtTzfof57UETYvfeRc4as8zzUanP5DE61fu1VQhBvrbAnvKH57/
+         6SlrmQJ/skeSGyYNTO8d8koBICOK2E00YvwkKvedccBTFYR0RXlIYM3q9KvGwv7DUcaZ
+         IHnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=uTTDf/OjNj79FSCvDOl6BXjS5FofBA1ikoNLA4as9Co=;
+        b=HQGtxBUh2/ia9KWndtoc1bchWYsolG+4Bf9orT7dGrzsD0nB2uL8vYOwgakWG4iSiA
+         A5O7B4zK7ktC3zD2xMk9+/oMmCJ0JP4aX49BYcBNQWxX36z/fpHaYZfm+54zbsH2H6cP
+         cK/2YBZTBlFnCiqgdZ7I7CH1sU9p5g7F97ftrD5R4tlFTxT2pYhlyb6m3byd/jBfdTO5
+         f1KIHb//lV2H+UY7NC5RzpmPLyiNSPW1/bFcNgJ2iYuaD9Ib4SLg06yYwqjENjnqrwEZ
+         QmwQBuJ+BRHFl9DA6fh3dMMn2Zhzzq8f2d38P24neTmh/G+wltDbiWskTTiK+t3vGET2
+         Cw1w==
+X-Gm-Message-State: APt69E0gbnhhMJ5lpfzk+NBxLU9Yx3nPuEjVbqtiRFicNbx4SAb/5BIJ
+        qu8N+nSVd5n86V09KJc+hjK2Tklv
+X-Google-Smtp-Source: AAOMgpeTD+kjwaxnrgwZ9Pet0Q5I+Cz+SKIC3BrqP/Qt21Fq86Z6btT52MzyM2dO08Ofpx1MSui1sw==
+X-Received: by 2002:a19:ed0c:: with SMTP id y12-v6mr1221241lfy.91.1530016021376;
+        Tue, 26 Jun 2018 05:27:01 -0700 (PDT)
+Received: from [192.168.1.31] (83-94-206-14-cable.dk.customer.tdc.net. [83.94.206.14])
+        by smtp.gmail.com with ESMTPSA id n79-v6sm168412lfi.51.2018.06.26.05.27.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 05:27:00 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] lightnvm: pblk: assume that chunks are closed on 1.2 devices
+From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javigon.napster@gmail.com>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <f000c5f3-27f4-489c-5e6e-99921f456954@lightnvm.io>
+Date:   Tue, 26 Jun 2018 14:26:58 +0200
+Cc:     javier@cnexlabs.com, hans.ml.holmberg@owltronix.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hans.holmberg@cnexlabs.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <04C28867-8D30-4031-B7F0-3BD2A5D9B3D7@gmail.com>
+References: <1529399189-3239-1-git-send-email-hans.ml.holmberg@owltronix.com> <a2bb1959-5244-f8af-b747-6d87e8d456a4@lightnvm.io> <1612C143-24C3-4B6F-B745-945EAF684DFC@cnexlabs.com> <ed909bcb-8e91-7e6d-521e-b5f36db61efa@lightnvm.io> <CANr-nt3Qzp-brMa16NAVa=E6eRCfpNyV44cmRoaxYUV0J7zStA@mail.gmail.com> <4bcd22df-3899-fc87-d558-27754befae5e@lightnvm.io> <D165FE85-ED96-4E1E-85C3-D4C0C52B8E24@cnexlabs.com> <f000c5f3-27f4-489c-5e6e-99921f456954@lightnvm.io>
+To:     =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrice,
 
-On 05/23/2018 11:30 AM, Fabrice Gasnier wrote:
-> stm32mp157c has DFSDM (Digital Filter For Sigma Delta Modulators) hardware
-> with 6 filter instances.
-> 
-> Signed-off-by: Fabrice Gasnier<fabrice.gasnier@st.com>
-> ---
->   arch/arm/boot/dts/stm32mp157c.dtsi | 70 ++++++++++++++++++++++++++++++++++++++
->   1 file changed, 70 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-> index 66d7496..3d2f4e7 100644
-> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
-> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+> On 26 Jun 2018, at 14.13, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 06/26/2018 01:54 PM, Javier Gonzalez wrote:
+>>> On 26 Jun 2018, at 13.44, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>>>=20
+>>>>> On 06/26/2018 01:31 PM, Hans Holmberg wrote:
+>>>>>> On Tue, Jun 26, 2018 at 1:38 PM, Matias Bj=C3=B8rling <mb@lightnvm.io=
+> wrote:
+>>>>>> On 06/26/2018 11:37 AM, Javier Gonzalez wrote:
+>>>>>>=20
+>>>>>>=20
+>>>>>>=20
+>>>>>>> On 26 Jun 2018, at 10.41, Matias Bj=C3=B8rling <mb@lightnvm.io> wrot=
+e:
+>>>>>>>=20
+>>>>>>> On 06/19/2018 11:06 AM, Hans Holmberg wrote:
+>>>>>>>>=20
+>>>>>>>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>>>>>>> We can't know if a block is closed or not on 1.2 devices, so assume=
 
-Applied on stm32-next.
+>>>>>>>> closed state to make sure that blocks are erased before writing.
+>>>>>>>> Fixes: 32ef9412c114 ("lightnvm: pblk: implement get log report chun=
+k")
+>>>>>>>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>>>>>>> ---
+>>>>>>>> This patch applies on:
+>>>>>>>> ssh://github.com/OpenChannelSSD/linux branch for-4.19/core
+>>>>>>>>   drivers/lightnvm/pblk-init.c | 5 +++--
+>>>>>>>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>>>>> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-i=
+nit.c
+>>>>>>>> index aa24264..3b8aa4a 100644
+>>>>>>>> --- a/drivers/lightnvm/pblk-init.c
+>>>>>>>> +++ b/drivers/lightnvm/pblk-init.c
+>>>>>>>> @@ -717,10 +717,11 @@ static int pblk_setup_line_meta_12(struct pbl=
+k
+>>>>>>>> *pblk, struct pblk_line *line,
+>>>>>>>>                 /*
+>>>>>>>>                  * In 1.2 spec. chunk state is not persisted by the=
 
-Thanks.
-Alex
+>>>>>>>> device. Thus
+>>>>>>>> -                * some of the values are reset each time pblk is
+>>>>>>>> instantiated.
+>>>>>>>> +                * some of the values are reset each time pblk is
+>>>>>>>> instantiated,
+>>>>>>>> +                * so we have to assume that the block is closed.
+>>>>>>>>                  */
+>>>>>>>>                 if (lun_bb_meta[line->id] =3D=3D NVM_BLK_T_FREE)
+>>>>>>>> -                       chunk->state =3D  NVM_CHK_ST_FREE;
+>>>>>>>> +                       chunk->state =3D  NVM_CHK_ST_CLOSED;
+>>>>>>>>                 else
+>>>>>>>>                         chunk->state =3D NVM_CHK_ST_OFFLINE;
+>>>>>>>>=20
+>>>>>>>=20
+>>>>>>> pblk should scan (or the lightnvm subsystem) the blocks for their
+>>>>>>> state, such that it doesn't have to reinitialize a full drive if it i=
+s
+>>>>>>> already in a closed state. If marking closed, it does a full erase
+>>>>>>> cycle on initialization, which should be avoided since it is a limit=
+ed
+>>>>>>> resource.
+>>>>>>=20
+>>>>>>=20
+>>>>>> In 1.2 there is no such state unfortunately. However, pblk will never=
+
+>>>>>> attempt to reinitialize the whole drive - metadata for closed blocks
+>>>>>> will be recovered and only those going to GC will be erased before
+>>>>>> usage. In fact, a full close drive is the state pblk expects.
+>>>>>>=20
+>>>>>> This patch only affects "unknown blocks", thus the only case in which=
+
+>>>>>> pblk would attempt to double erase is when blocks have been pre-erase=
+d
+>>>>>> (e.g., factory or through liblightnvm). After an erase round though,
+>>>>>> pblk will only erase pre-usage. One thing we could do is attempting t=
+o
+>>>>>> read the first page of these unknown blocks and mark them as free if
+>>>>>> "empty page" is returned. Is this what you mean?
+>>>>>=20
+>>>>>=20
+>>>>> Yes, that is what I mean.
+>>>>>=20
+>>>>> Note that this can be
+>>>>>>=20
+>>>>>> costly on large drives; this is the reason we returned to the pre-2.0=
+
+>>>>>> behaviour with this patch. We are implementing a log that, among othe=
+r
+>>>>>> things, keeps the state so that pblk can have an accurate state for t=
+he
+>>>>>> cases this can be a problem.
+>>>>>=20
+>>>>>=20
+>>>>> Yep, it will take some time. Good to hear with the log.
+>>>> Until we have a log in place, this patch unbreaks 1.2 support and has
+>>>> no negative impact on performance (as compared to pre 2.0 support), so
+>>>> please consider it for the next window.
+>>>> The current state is that if a pblk instance is created on a 1.2 disk
+>>>> with written blocks, writes will fail.
+>>>>  / Hans
+>>>=20
+>>> The negative impact is that all blocks are erased, even if they are in f=
+ree state. This is a showstopper. We cannot throw out 1/X of the lifetime of=
+ the drive on each initialization. The 1.2 spec is made such that a scan can=
+ recover the block state accurately.
+>> This fixes patch returns to the original behavior, so it=E2=80=99s not in=
+troducing a worse behavior than before 2.0. But you=E2=80=99re right, it is n=
+ot the way it should be.
+>> Can you consider taking this as a fix for 4.18 to avoid writes failing on=
+ 1.2 devices and I promise to send a patch this week to implement the state b=
+ased on reads? This new patch would be for 4.19.
+>> Javier
+>=20
+> Okay, sounds good to me. Thanks
+
+Thanks!
+
+Javier=
