@@ -2,135 +2,213 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C80DEC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275C3C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67505263AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C72E2263AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:06:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eXHsHSCw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67505263AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZCgHPq6f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C72E2263AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934588AbeFZBF7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 21:05:59 -0400
-Received: from mail-eopbgr30072.outbound.protection.outlook.com ([40.107.3.72]:33312
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933294AbeFZBF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 21:05:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DWCAeQA9qqf7CeIWahiMH/cS98pDfHEfK+yXgfwxzto=;
- b=eXHsHSCwCMsjyTQYR0fMmaP2zEYgkmp1XoIbb8EDzy18TBuWG5kYeZqlrBpnd8P1yyiQ5FO6268lOGrzVB9+WAfKViPPbPc6FCnYPEv3eWNTEH4iM0qIZqbEm86u737Q/Ywi3lx9JsQOdq+b2ztPGqBlBm7GzpGhtxywJn9L2Lg=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
- DB5PR04MB1318.eurprd04.prod.outlook.com (2a01:111:e400:51cb::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.884.21; Tue, 26 Jun
- 2018 01:05:50 +0000
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] ARM: dts: imx6sll-evk: make pfuze100 sw4 always on
-Date:   Tue, 26 Jun 2018 09:01:40 +0800
-Message-Id: <1529974900-28865-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
+        id S935018AbeFZBGI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 21:06:08 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:32785 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934609AbeFZBGB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 21:06:01 -0400
+Received: by mail-pg0-f66.google.com with SMTP id e11-v6so6840358pgq.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 18:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mnvwAyj8ZtH00+Wn+SIacL5vPle4pk+pMqZqrDXiS4g=;
+        b=ZCgHPq6f5OIzGiDQFxqVcg2lsAKybFvY51la3LyNNnPzSBuuUzwDJUDbBYFM8Dc+ww
+         Zjlgl2GKj/iUMRc9mQQCpoEiMbSuXp6BChhflG80xOjFO/kcKVuA5UwU3Geyvx9bKmXg
+         qrieXLSv2vAO2ja1zDWbFU+z/+cXBshcgP6pI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mnvwAyj8ZtH00+Wn+SIacL5vPle4pk+pMqZqrDXiS4g=;
+        b=kOr/SbHOatpgXBhVkLC2mABv1z7epdC32xgep9EdVYr4xkvLGSXlQNq+N8QM4YPwt9
+         heyFkfnTqpex3OiqKDhuzaKAqVPMXXACQ5oKU0pQ3SBPlPm0lPPguAabUoeoVdc5uXzB
+         5Yz+u25M6Utnn5DWLMi+qwJUdM/m+eg9Tbmqw+Ir6k12JtqlKeq5A8UAEEn2hUwI+xCZ
+         GB8H6OckyCpgMrSE0rM4zQTkdLcUDq+zKFRIS6J2VuHMSZDU5XlT30+eGKGeuSpethZb
+         VW/io3HbIB2/hK9oAjiktkWYMxWhPi7DeoDiG2OSK2DNBH0uGbC6bZkM4jH2Ua+EahFs
+         g/Mw==
+X-Gm-Message-State: APt69E2anIa3AQ22B5pGGLDmctZqOyriYwn6q0CypR90ruM39FYnnFy2
+        j42DEvhe95ZfdoC4Ab53Q7YHRQ==
+X-Google-Smtp-Source: ADUXVKLP6BLMVfXsDc3Se2Wv5luw4K00w30krtA/VerwBhewz5U6yD9byZYJYAhxvzilLA8g95hpXQ==
+X-Received: by 2002:a65:4783:: with SMTP id e3-v6mr12624428pgs.235.1529975160800;
+        Mon, 25 Jun 2018 18:06:00 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id k9-v6sm313685pfc.179.2018.06.25.18.05.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 18:06:00 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 18:05:59 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v8 7/7] Bluetooth: hci_qca: Add support for Qualcomm
+ Bluetooth chip wcn3990
+Message-ID: <20180626010559.GK129942@google.com>
+References: <20180625134013.19684-1-bgodavar@codeaurora.org>
+ <20180625134013.19684-8-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: HK0P153CA0019.APCP153.PROD.OUTLOOK.COM
- (2603:1096:203:18::31) To DB5PR04MB1318.eurprd04.prod.outlook.com
- (2a01:111:e400:51cb::12)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6e4a1b2b-b47a-4205-c05b-08d5db00f743
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1318;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1318;3:9rRkcDQoTzCnA4bylv59RQ4SqKUUV5bvAvv2A8ZOZRnFZ6Jikgz7GxRkJeGHtxvc0cq2m+y8onUsK25DCudIxtxc6RmhQ4d1NbvmBr/4X+S3lJBX514lWOatabssSYYugx5cg0Zr1zDW2khQFVBcN3eMMYeoihzoA7iP7RWcdr2MN62tkWEZaWNslYDOw1h56iCkmxO9B81sL1ndzijT1C886rzEi6+LaAYG2sFNCo3iT6YF+iTGAVrjOAhFmhg1;25:ajj8t5MWyw0JrCSXH4qiAqK5dyxO87IvzvoTiQoTq6Dbcfl4ybORxWq2l8FmDR1kyQZX0OOkHwWv1jTIiKQPk/kyj5zNagIwTCLkexY9ZJX2nI36hGf6JzPMKxvDFO5QHFP8qYNALHkmjLkn5qUgfUnzBwC5iJd4j47WgkArPh8yfu8zJPCoOLqNHNTLhDYSlPqMmu1dmF3upoq2G+DKGw3X7uK8uM5LsEFnN+0bQ8weTZfyOeNxpHyFmQ2vV9DHFaL1xWOJYhVm6AYxdC3zsUCXto7Sxm7iiTyhIVX3WVmqwz8nYAYspeXlWLHfIlAoAg7ZJemzO8dpXuO0WfJwng==;31:l/qv+ITGGKTwYZTao6KyUx+Su09QqdvMmdNGNnISKmggSz/tPuxWFytANgBkNfaZTbNNftH75GA2JYO7CwXiU/X1GCrHg3/Gn9BtqtHwSiYL5Rt9Vf1k8/zZDIHZQt7+1Vc7trq2qEbL4isLcf9v1iWj9kJJB03ohBS9EMp4JW+wmPOWK8C842Wmz43AJr+cZjyzkrd/zceTE8cuDaXF35WkFpzOxII/AsgskxVvDME=
-X-MS-TrafficTypeDiagnostic: DB5PR04MB1318:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1318;20:RxBOAUpCrlK9vqx8C+R/mK796/ZVpGRUGK1qLhBjcnc32xYEKbiOK0LlcVoWNRs1Eje6S4JLvYNh6l6qYeISLvMUrBLFADgekK00hvkctSZJ1KInfoC065wwAdOU8Eq0lFwIaDXIF4TCvS3f82rT/m3rtu8yUtrOHQbID/Qe7cNlopt8veQXCvPkGa/oFXErdxLwSyQtgzjQX02bZ02M8tHFKrVp2TbSIsJ7BUJ277z0QTyBJa/QD0UoG9ssyxt1CcLveaUOdRETdKH+qp4HNCXTY2OgxL1vkRoS0WR1jQnJlNt2/zxRaaQBExHYnJCbGVErtFOhH5ErGs9rUIpRd3AwJq/I6JY6evYEf6ay85nntQWM3rQF6mroFA1lA6p6mL2qQ8QmG4KjhuQthZsNIpAx6cjKpCNJ9lOKIS4Xg1hN8+j9fwLA3pCkqHpCR/xwLenrC/FupQRw3jwOEmYqOuPcyH6aBlIx3PhFuR5yrXMU6Df6EZmlVgNzUDmbfX+E;4:aYxNOtOCLMogajG3cKVoc9zpUSgQYF4TpdvlfHmQ8NYwK1qX7ck/T7NDJTYX/hEz2qxHUkZBxgmPWcQM7ivDYV9YKRhGwNXsSUh/nKvuiUbbt+S7Fr94kBHAl1jp0g8Ehhu5xNA67iOWsb1OFsD/jXclPvwvqAcmHSROZQLlI3w7422BQADPJtK4RKtmx9DBtobAnYzcRj5yUfwfjmjA3hdcDInG+4q/mlsCdh06csxf9y80nyZeTd70uuUKqdROLqsBVVPnPxaXXTI3dRXOWbIAMr8hnuCfEnjM+cRvp0FL3p0OmBJPyEH+DMfJ5aWb
-X-Microsoft-Antispam-PRVS: <DB5PR04MB131861CAB5C678E3E7322705F5490@DB5PR04MB1318.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DB5PR04MB1318;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1318;
-X-Forefront-PRVS: 071518EF63
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(136003)(376002)(346002)(199004)(189003)(6486002)(86362001)(97736004)(16586007)(6116002)(3846002)(53936002)(36756003)(6506007)(386003)(305945005)(7736002)(6512007)(186003)(16526019)(26005)(316002)(51416003)(476003)(52116002)(2616005)(4326008)(47776003)(486006)(956004)(66066001)(50226002)(5660300001)(478600001)(50466002)(48376002)(68736007)(25786009)(14444005)(6666003)(81156014)(106356001)(81166006)(105586002)(8936002)(2906002)(8676002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1318;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1318;23:dttbJ78r+dzru3aAct7CiI1WHd/JaYbsIi2gNwLMX?=
- =?us-ascii?Q?igruleFCYKX2Z4VUvVIar+NM4M1JFOHN574GEzHgZOiWP+ZfK8FcG8omRtC7?=
- =?us-ascii?Q?6u9IFlmynS9RRfjZGaTK8YidsqMmVhP2HfdOIHR+woUAi6nm8A706OR+cSFq?=
- =?us-ascii?Q?VOvXcRU3Nkx0+jOgALBoH32ekgjYITt8RbdPriymJRkrFhwxRlX9bNP6n6HV?=
- =?us-ascii?Q?hLzm4Ma2Ghj9NOd06KwwXYb2/eOPBvPinG/AMXPhQCuUlQgQaCgHlZxoFa+g?=
- =?us-ascii?Q?/iKQBf6bDmVUWEebeG9AXo5CFbsueSGXa36RHX1sc5zOLXgTD79DX8Jv65a0?=
- =?us-ascii?Q?8DSWAGJcDpjb+GOdKM1NMWIvCKIVVFmaPd7HKf8EBoDqDqbWadcoB/uKUxSo?=
- =?us-ascii?Q?m3UuoHoC3f4q51QzJX15hBdFFQzWXWmz3XcKcZWSebLjabgNjlP6ANZpG/QU?=
- =?us-ascii?Q?DJLuca8kWIvmyTv7hJpaAC5XCrywl0Ni7JBy/RG3uFWFG3v9n9IPo8XIbwKw?=
- =?us-ascii?Q?F7XR9TtQhLn8JZ9Z7LSfKBxFextiNGOJbZp3LekGh9htxi6RjOu66WXBtSEg?=
- =?us-ascii?Q?0+TsIn2junnuptP//kMrljUA0HhCF6Yf4zMA18xck7ps5NUmgp0v2QPAbgbx?=
- =?us-ascii?Q?SKVHqzVjt3UU9HTfxi0RRc8arO4uqMkHA88C9CLuVTGfcA72BAcLWA4qfGp4?=
- =?us-ascii?Q?K9JobQXP/2BAZFg6DrmygBE+1e1/QMsa67ChlMpuqOsxC30c1IlG9SjlbR+m?=
- =?us-ascii?Q?2CT8ed5rmCt8wZJclK8cjmh48Uout4XazqeDbEaWXQ4pPFn1dokujJDVYyVn?=
- =?us-ascii?Q?lcxDyCeZJfp5T9dEYf/b2kYaLQNxj7hdSX6d849bML7050T2FAewbmq1xFiX?=
- =?us-ascii?Q?wzNMcGm/Nrz5ahrgpzYDhZWBbLaTOW3pEJMHbSFD1IwQ4gHo8KywUCIPmWse?=
- =?us-ascii?Q?ZI560lnBR9wu4tlH2twuYRdMUaxVwg2sL/INn/DC42QPsytVBmb/JzS7URQ7?=
- =?us-ascii?Q?BwMqK1i/MOx0KB9SBuqX9chOcmRZgLGcB1YwBBFzlxCDvyMDQFXodpiWihBg?=
- =?us-ascii?Q?G/kiiDKovkTxq5Ukr/cbVeGg2owzIpiiHQLUgG3m73p4my7qbZTtp3bfhntk?=
- =?us-ascii?Q?6sMh6bQIlmlCZrU1GYAHKMJty0CQ5DC?=
-X-Microsoft-Antispam-Message-Info: DZsF1nJE7XtTs7jxjKjuZ9koHjXFA3cWipCQrVLKR8O7lfCS7/FtpSDZCvhviQbVmNv2wA/uwhC9i+y476kv/XjpaNbquPVToHFjL8Rxh8A74FGolGL4K17UIJgVXvG+VFUj19ab61kXMdlyA1CLtTgZwviwJpPnCbn7cxnbEePQpaBFvHrrDMCjXahap89P5ZHsCRnBUSJNtKeaTAp2FWoZTHgssBPI+w89C4u+NqcUM4nu85pi9Wf7ZvD1TS4nvid98BaB5m+M5J9zRiCB0Bcd249cBRHKfmBmDsawklAQuzRWky3jUQM8MFtT601IivWLBeQkxtnnqzxtCPbzgenHpR+AXsTdXsCyJwlZw60=
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1318;6:CxqtR1/a6vC5KYDrwVvEuTsUWHxQGkITi+UsGjshxGrlH6jTRrTh7KuUHjC13OM3ifGFOyCupc9svDPBip/Io2vGcqe5rB351mRP8XyaLMFG3d2nK7XZI9Izo1XO7TLuv3LcuW9lIhuiw0GfVa9nHSeQqWaGfK8OyRPSrgmNyaF/dc0cfML5kdkKowQGlwRcO7YQwB89gRHSQ4xOrfwGzVjwx3eZ2h7d09ufc5pldh0iVEBG1/wNNA8LIHpxGZB/vWZWA2RQOxPZCQp8MaDYhod0LUmI7GDPAQZuYjdr9YIOQ1lGoub17lAxVALZMyuP11F1jLhlH+4flUyJjXNN9zrzHFKHqAF/sd1EL6SjfDssXMudFW1UQ+psaagpOy51Ysb5hT257KrN63oQ9Pg7EoZlJFkxUkWWFLR4cD2yHlwCIHB6sVc1ObqUZ/AFciVM/BomJxjSVS3bL2awgY6GgA==;5:nJDwOM9A0rE3Sy6JNLnaxkK5+QMgEHOPOccaEnkAaINkcQaJRD+zhuzTKjnhMjHX11Gtn2LwliSolrZVb1LZ+JtuCeQOsiyDnoITfCsW90hALBTOPh84lAFgyqcePdmrQFaaSdiqSelwKBr6AG05K2vXaAMYCiXZwe8sYKk5mZA=;24:KxhRkFUG/KZH1/bexHIxWvaLcmAC+U8LrkCWOPME1m5gYn9PbtWl7eaoAL1oxEYxoRLDM6PyqXhkZPpuo8VOz/lhh8R40qY0aukNHefezFM=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1318;7:Hcc24o6t+JUgWvFck4SbswsuYqK8BXAOXFEycPisPqHKYy0Z3pG+mPpWpNQoS6/pVgc15ivKncISMCxtl0fQyoDlMnt3Z7USncYN6Ep9GJHKs4MIBnrLq791yg3QxulDWAhnGQTfhRSpvAK5tbBnt0O6z0Q41iekSBzunT5xK90d2QUOIxV9koNndpRMczpx3oLIvu90eyVVvrd615x0KzuD3sMNlOHShtQLpGqGnxx12YkbEb2bsoQdPnik3TrM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2018 01:05:50.6905
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e4a1b2b-b47a-4205-c05b-08d5db00f743
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1318
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180625134013.19684-8-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On i.MX6SLL EVK board, PFuze100's SW4 is supplying
-LPDDR3, it needs to be always on. This patch fixes
-Linux kernel boot up hang caused by commit
-(5fe156f regulator: pfuze100: add enable/disable for switch),
-because SW4 is turned off unexpectedly:
+On Mon, Jun 25, 2018 at 07:10:13PM +0530, Balakrishna Godavarthi wrote:
+> Add support to set voltage/current of various regulators
+> to power up/down Bluetooth chip wcn3990.
+> 
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> changes in v8:
+>     * closing qca buffer, if qca_power_setup fails
+>     * chnaged ibs start timer function call location.
+>     * updated review comments.
+>   	
+> changes in v7:
+>     * addressed review comments.
+> 
+> changes in v6:
+>     * Hooked up qca_power to qca_serdev.
+>     * renamed all the naming inconsistency functions with qca_*
+>     * leveraged common code of ROME for wcn3990.
+>     * created wrapper functions for re-usable blocks.
+>     * updated function of _*regulator_enable and _*regualtor_disable.  
+>     * removed redundant comments and functions.
+>     * addressed review comments.
+> 
+> Changes in v5:
+>     * updated regulator vddpa min_uV to 1304000.
+>       * addressed review comments.
+>  
+> Changes in v4:
+>     * Segregated the changes of btqca from hci_qca
+>     * rebased all changes on top of bluetooth-next.
+>     * addressed review comments.
+> 
+> ---
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index 28187a89b850..bd4c9a78716f 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> ...
+> +static int qca_send_vendor_cmd(struct hci_dev *hdev, u8 cmd)
+> +{
+> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+> +	struct qca_data *qca = hu->priv;
+> +	struct sk_buff *skb;
+> +
+> +	bt_dev_dbg(hdev, "sending command %02x to SoC", cmd);
+> +
+> +	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
+> +	if (!skb) {
+> +		bt_dev_err(hdev, "Failed to allocate memory for vendor packet");
 
-[    1.693613] cfg80211: failed to load regulatory.db
-[    1.700063] SW4: disabling
-[    1.703973] SWBST: disabling
+As mentioned on v7, custom OOM messages should be avoided.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-changes since V1:
-	improve commit message by adding info of which commit introduces this issue.
- arch/arm/boot/dts/imx6sll-evk.dts | 1 +
- 1 file changed, 1 insertion(+)
+>  static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  {
+> +	struct qca_serdev *qcadev;
+>  	unsigned int speed, qca_baudrate;
+>  	int ret;
+>  
+> @@ -971,6 +1054,13 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  		return 0;
+>  	}
+>  
+> +	qcadev = serdev_device_get_drvdata(hu->serdev);
+> +	/* Disabling hardware flow control is preferred while
+> +	 * sending change baud rate command to SoC.
+> +	 */
 
-diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-evk.dts
-index 4684ac4..2217c40 100644
---- a/arch/arm/boot/dts/imx6sll-evk.dts
-+++ b/arch/arm/boot/dts/imx6sll-evk.dts
-@@ -142,6 +142,7 @@
- 			sw4_reg: sw4 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
- 			};
- 
- 			swbst_reg: swbst {
--- 
-2.7.4
+Is it only preferred or must be?
 
+> +	if (qcadev->btsoc_type == QCA_WCN3990)
+> +		hci_uart_set_flow_control(hu, true);
+> +
+
+nit: consider doing this just before qca_set_baudrate(). It doesn't
+make a difference but leaves it clearer what exactly needs to be
+'protected' (analogy to locking).
+
+>  	qca_baudrate = qca_get_baudrate_value(speed);
+>  	bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
+>  	ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+> @@ -980,8 +1070,10 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  	}
+>  
+>  	host_set_baudrate(hu, speed);
+> +	if (qcadev->btsoc_type == QCA_WCN3990)
+> +		hci_uart_set_flow_control(hu, false);
+
+>  static int qca_setup(struct hci_uart *hu)
+> @@ -989,10 +1081,11 @@ static int qca_setup(struct hci_uart *hu)
+>  	struct hci_dev *hdev = hu->hdev;
+>  	struct qca_data *qca = hu->priv;
+>  	unsigned int speed, qca_baudrate = QCA_BAUDRATE_115200;
+> +	struct qca_serdev *qcadev;
+>  	int ret;
+>  	int soc_ver = 0;
+>  
+> -	bt_dev_info(hdev, "ROME setup");
+> +	qcadev = serdev_device_get_drvdata(hu->serdev);
+>  
+>  	/* Patch downloading has to be done without IBS mode */
+>  	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+> @@ -1000,6 +1093,35 @@ static int qca_setup(struct hci_uart *hu)
+>  	/* Setup initial baudrate */
+>  	qca_set_speed(hu, QCA_INIT_SPEED);
+>  
+> +	if (qcadev->btsoc_type == QCA_WCN3990) {
+> +		bt_dev_dbg(hdev, "setting up wcn3990");
+> +		hci_uart_set_flow_control(hu, true);
+> +		ret = qca_send_vendor_cmd(hdev, QCA_WCN3990_POWERON_PULSE);
+> +		if (ret)
+> +			return ret;
+> +
+> +		hci_uart_set_flow_control(hu, false);
+> +		serdev_device_close(hu->serdev);
+> +		ret = serdev_device_open(hu->serdev);
+> +		if (ret) {
+> +			bt_dev_err(hdev, "failed to open port");
+> +			return ret;
+> +		}
+> +
+> +		msleep(100);
+
+Is the sleep really related with _open() or is it rather that the
+device needs to settle after the power on pulse? In the latter case
+I'd suggest to do the sleep before _open(), if it doesn't make a
+functional difference (makes the code a bit more self documenting).
+
+> +		/* Setup initial baudrate */
+> +		qca_set_speed(hu, QCA_INIT_SPEED);
+> +		hci_uart_set_flow_control(hu, false);
+
+This is still a bit noisy with all the open/close and flow control
+stuff. If I understand correctly this essentially switches the
+controller on (or resets it?) and brings it (and the driver) into a
+sane state. Would it make sense to move the above block into a
+wcn3990_init/reset() or so?
