@@ -3,55 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06ADBC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C903FC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA80E26390
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:52:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA80E26390
+	by mail.kernel.org (Postfix) with ESMTP id 8C7402638D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7402638D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935275AbeFZAw1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 20:52:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60526 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934658AbeFZAub (ORCPT
+        id S965171AbeFZAw3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 20:52:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46434 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934621AbeFZAub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 20:50:31 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q0o5nA141754
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:50:31 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju975c1y3-1
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q0n1fU039384
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:50:30 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ju96rbtf2-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:50:30 -0400
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Mon, 25 Jun 2018 20:50:29 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Mon, 25 Jun 2018 20:50:25 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q0oOQ19699728
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q0oO5S4063612
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Tue, 26 Jun 2018 00:50:24 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4DF81B2073;
-        Mon, 25 Jun 2018 20:50:19 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id E53A0B2072;
+        Mon, 25 Jun 2018 20:50:18 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D330B206B;
-        Mon, 25 Jun 2018 20:50:19 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id C0637B206E;
+        Mon, 25 Jun 2018 20:50:18 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Jun 2018 20:50:19 -0400 (EDT)
+        Mon, 25 Jun 2018 20:50:18 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6858516CA09C; Mon, 25 Jun 2018 17:52:29 -0700 (PDT)
+        id 4FE0516CA098; Mon, 25 Jun 2018 17:52:29 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -59,21 +59,21 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 09/13] rcutorture: Disable RT throttling for boost tests
-Date:   Mon, 25 Jun 2018 17:52:23 -0700
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 05/13] rcutorture: Use per-CPU random state for rcu_torture_timer()
+Date:   Mon, 25 Jun 2018 17:52:19 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626005205.GA28179@linux.vnet.ibm.com>
 References: <20180626005205.GA28179@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062600-0040-0000-0000-00000445293E
+x-cbid: 18062600-0060-0000-0000-000002827CC0
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01052342; UDB=6.00539473; IPR=6.00830268;
- MB=3.00021856; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:50:29
+ MB=3.00021856; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:50:28
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062600-0041-0000-0000-0000084B3F00
-Message-Id: <20180626005227.30660-9-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062600-0061-0000-0000-000045935E13
+Message-Id: <20180626005227.30660-5-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,88 +86,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Currently, the rcu_torture_timer() function uses a single global
+torture_random_state structure protected by a single global lock.
+This conflicts to some extent with performance and scalability,
+but even more with the goal of consolidating read-side testing
+with rcu_torture_reader().  This commit therefore creates a per-CPU
+torture_random_state structure for use by rcu_torture_timer() and
+eliminates the lock.
 
-Currently rcutorture is not able to torture RCU boosting properly. This
-is because the rcutorture's boost threads which are doing the torturing
-may be throttled due to RT throttling.
-
-This patch makes rcutorture use the right torture technique (unthrottled
-rcutorture boost tasks) for torturing RCU so that the test fails
-correctly when no boost is available.
-
-Currently this requires accessing sysctl_sched_rt_runtime directly, but
-that should be Ok since rcutorture is test code. Such direct access is
-also only possible if rcutorture is used as a built-in so make it
-conditional on that.
-
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+[ paulmck: Make rcu_torture_timer_rand static, per 0day Test Robot report. ]
 ---
- kernel/rcu/rcutorture.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ include/linux/torture.h |  2 ++
+ kernel/rcu/rcutorture.c | 10 +++++-----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/torture.h b/include/linux/torture.h
+index a55e80817dae..61dfd93b6ee4 100644
+--- a/include/linux/torture.h
++++ b/include/linux/torture.h
+@@ -64,6 +64,8 @@ struct torture_random_state {
+ 	long trs_count;
+ };
+ #define DEFINE_TORTURE_RANDOM(name) struct torture_random_state name = { 0, 0 }
++#define DEFINE_TORTURE_RANDOM_PERCPU(name) \
++	DEFINE_PER_CPU(struct torture_random_state, name)
+ unsigned long torture_random(struct torture_random_state *trsp);
+ 
+ /* Task shuffler, which causes CPUs to occasionally go idle. */
 diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index aa0be7ec2a26..74e47d0a618c 100644
+index 2452e4a29923..d5a5465d2507 100644
 --- a/kernel/rcu/rcutorture.c
 +++ b/kernel/rcu/rcutorture.c
-@@ -55,6 +55,7 @@
- #include <linux/torture.h>
- #include <linux/vmalloc.h>
- #include <linux/sched/debug.h>
-+#include <linux/sched/sysctl.h>
- 
- #include "rcu.h"
- 
-@@ -772,6 +773,32 @@ static void rcu_torture_boost_cb(struct rcu_head *head)
- 	smp_store_release(&rbip->inflight, 0);
+@@ -1143,6 +1143,8 @@ static bool rcu_torture_one_read(struct torture_random_state *trsp)
+ 	return true;
  }
  
-+static int old_rt_runtime = -1;
++static DEFINE_TORTURE_RANDOM_PERCPU(rcu_torture_timer_rand);
 +
-+static void rcu_torture_disable_rt_throttle(void)
-+{
-+	/*
-+	 * Disable RT throttling so that rcutorture's boost threads don't get
-+	 * throttled. Only possible if rcutorture is built-in otherwise the
-+	 * user should manually do this by setting the sched_rt_period_us and
-+	 * sched_rt_runtime sysctls.
-+	 */
-+	if (!IS_BUILTIN(CONFIG_RCU_TORTURE_TEST) || old_rt_runtime != -1)
-+		return;
-+
-+	old_rt_runtime = sysctl_sched_rt_runtime;
-+	sysctl_sched_rt_runtime = -1;
-+}
-+
-+static void rcu_torture_enable_rt_throttle(void)
-+{
-+	if (!IS_BUILTIN(CONFIG_RCU_TORTURE_TEST) || old_rt_runtime == -1)
-+		return;
-+
-+	sysctl_sched_rt_runtime = old_rt_runtime;
-+	old_rt_runtime = -1;
-+}
-+
- static int rcu_torture_boost(void *arg)
- {
- 	unsigned long call_rcu_time;
-@@ -1511,6 +1538,7 @@ static int rcutorture_booster_cleanup(unsigned int cpu)
- 	mutex_lock(&boost_mutex);
- 	t = boost_tasks[cpu];
- 	boost_tasks[cpu] = NULL;
-+	rcu_torture_enable_rt_throttle();
- 	mutex_unlock(&boost_mutex);
+ /*
+  * RCU torture reader from timer handler.  Dereferences rcu_torture_current,
+  * incrementing the corresponding element of the pipeline array.  The
+@@ -1154,12 +1156,12 @@ static void rcu_torture_timer(struct timer_list *unused)
+ 	int idx;
+ 	unsigned long started;
+ 	unsigned long completed;
+-	static DEFINE_TORTURE_RANDOM(rand);
+-	static DEFINE_SPINLOCK(rand_lock);
+ 	struct rcu_torture *p;
+ 	int pipe_count;
++	struct torture_random_state *trsp;
+ 	unsigned long long ts;
  
- 	/* This must be outside of the mutex, otherwise deadlock! */
-@@ -1527,6 +1555,7 @@ static int rcutorture_booster_init(unsigned int cpu)
- 
- 	/* Don't allow time recalculation while creating a new task. */
- 	mutex_lock(&boost_mutex);
-+	rcu_torture_disable_rt_throttle();
- 	VERBOSE_TOROUT_STRING("Creating rcu_torture_boost task");
- 	boost_tasks[cpu] = kthread_create_on_node(rcu_torture_boost, NULL,
- 						  cpu_to_node(cpu),
++	trsp = this_cpu_ptr(&rcu_torture_timer_rand);
+ 	atomic_long_inc(&n_rcu_torture_timers);
+ 	idx = cur_ops->readlock();
+ 	started = cur_ops->get_gp_seq();
+@@ -1176,9 +1178,7 @@ static void rcu_torture_timer(struct timer_list *unused)
+ 	}
+ 	if (p->rtort_mbtest == 0)
+ 		atomic_inc(&n_rcu_torture_mberror);
+-	spin_lock(&rand_lock);
+-	cur_ops->read_delay(&rand);
+-	spin_unlock(&rand_lock);
++	cur_ops->read_delay(trsp);
+ 	preempt_disable();
+ 	pipe_count = p->rtort_pipe_count;
+ 	if (pipe_count > RCU_TORTURE_PIPE_LEN) {
 -- 
 2.17.1
 
