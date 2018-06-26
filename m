@@ -6,121 +6,85 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36DCC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD03CC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B91526C56
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64B0826EAB
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:17:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="U3aDOUE/";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bcuacwxV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B91526C56
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="DsBFfOWt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B0826EAB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932351AbeFZSPV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:15:21 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:33097 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752989AbeFZSPS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:15:18 -0400
-Received: by mail-vk0-f65.google.com with SMTP id f200-v6so3265105vke.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:15:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=hNDLuRpjoOinG+RYBwJ2iqM8kFqSLM5NEbxWxbbbFiE=;
-        b=U3aDOUE/khrVut+d0/POAxvVRzxKjF6nJVlrHUr7lhnJplW2IZB8hJmISFQASizXI3
-         WXviwpU4UNvP42uX87CTADLX6bU/9iD73jqZOsNhlwO9qqbfGZF9KWq50bxevEb2a84I
-         ocRO78K1OzfTRT7r/NNw1z0cn/aBoYjFJ0hH9/GyS7WAI7/bxYzovVWnVJ/qtf4WAtRh
-         ea8LSdXH5JDeoxZ02fHAj9X+EIUrtkV0Q3W2ZeVge2Na+zsKc5UZ2EAMhovRXc1q5C0W
-         ABgiLl0184lpNIX8VbcYekwFt/mKvq+dY23J4oB5jkdj11UGVzpGiWJqS7XH5+dgKpYE
-         Q4ag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=hNDLuRpjoOinG+RYBwJ2iqM8kFqSLM5NEbxWxbbbFiE=;
-        b=bcuacwxVtRsTWW8dPyqJmH8hp/b0tArWJoX8LAqTFJEjwy8dN1hpr4GPper1H9mAH+
-         J9CYGoaOjd8ZKtnaCMsb2H8X9znLkkgstp6kSD5aGciu3BA9MIiIDKkhfpthxHWzJ0WG
-         xOkRmuVPKd0XqWjC/AJPt4VzqSHdsCJgx0/OU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=hNDLuRpjoOinG+RYBwJ2iqM8kFqSLM5NEbxWxbbbFiE=;
-        b=PlOksa+F3Gtkr1gzmG/xQ2IyrnfgM8JIHScZp7H3wG9z8xlid4DN3J/itPcc6korsD
-         bgmecAYLZmxTBu2YYPEES2+SQ78a7RIKBMvMNiXuR2NJUxdw/CzRFeykbrt8+EIlM/Er
-         sBTxmgpW4Xh2WU9f0JY28GZpuqDqAmY9lSap4GdlTAhHgBQzszSqKUt1RHyC73rY65q3
-         TaoxqyWfUsBoKOf4RfLWRtWSRUzcgmYnk20rk18Z0Vxw1iD+KGxtPp5exLB83gijaOlA
-         Ny1x6/rbWUs1JSf/g4KIV5tDK9Lp/if0QjZgMpnM/HXBqQQuEdRS7KoUpr+Meh0yW0YL
-         b9ng==
-X-Gm-Message-State: APt69E1ra/Cpw/2LCvP37FJ5pbItPIGsGUTSpVZZiN3XoWP9FgDiC+8H
-        oBaxANdGAXOh170v76uWbz2XYombwIz7X9zc69+W6w==
-X-Google-Smtp-Source: AAOMgpf1Pcf5cdIGRHy3cb7R30dvN2vracJFipEmLRzr5Lw0KCkYLOWZc0/pREzzBt5LenuYedWX+oWzFRfOVh5ekak=
-X-Received: by 2002:a1f:7c4:: with SMTP id 187-v6mr1645801vkh.60.1530036916078;
- Tue, 26 Jun 2018 11:15:16 -0700 (PDT)
+        id S933181AbeFZSRE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:17:04 -0400
+Received: from vern.gendns.com ([206.190.152.46]:50746 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752419AbeFZSRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 14:17:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=hwMdOuQocVPzLDfHh1zOiHx8Of/Y2mj9opWpKwIWUYw=; b=DsBFfOWtdWQBBea41SIq3U3W+8
+        /7YfbUtVNcFhtEdikgL3v/Cfdkh8EQHI86aRGZUiH//wAQcdW33A2hAUMg2v7pgnYX6D4rHfvCAoS
+        heoTBPqOMO5ieg0AX2U4GqNYKH7B5rZ88iGPstsZycv5tjIu9u6MZtB8lakuPmEOsqoTn8aCloWDB
+        k9N8QR3LrhKkW1IbUtsYUogZKDntKQIizPGeKF14T+WHHY+ylIBYzkBljk7EpLP4XcnynPbNfxCqm
+        KxOG8u3Ya3Y+QWeIfoN4/r3eCDiTfztcUCgNrXCJwRoyBTCwPdOMLdeXOqsHS+zWh36hHfq/j9BL3
+        NIieseaQ==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:52080 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fXsWT-005uP6-04; Tue, 26 Jun 2018 14:17:01 -0400
+Subject: Re: [PATCH v2 0/4] drm/tinydrm: new dirver for ILI9341 displays
+To:     Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Nitin Patil <nitin@mindsensors.com>, limor@ladyada.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20180525193623.15533-1-david@lechnology.com>
+ <8840212b-fd46-e700-58a1-cb1b882c5771@tronnes.org>
+ <d5297fc5-94f2-edcd-5a11-95d7a9dca78d@lechnology.com>
+ <ecd75b89-14a6-12f7-0ec4-222b1f984e49@tronnes.org>
+ <5a2bc4e7-c6cd-b270-61d3-61bfa5d9e90d@tronnes.org>
+ <CAKMK7uF-hBjqnRG28fX7NXOJDc5YEWhq+G6s0M8usA+TXM1BKw@mail.gmail.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <bc3429d4-44e3-29dc-3588-209ba30fb2eb@lechnology.com>
+Date:   Tue, 26 Jun 2018 13:16:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 11:15:14
- -0700 (PDT)
-In-Reply-To: <20180626150203.GG1779@sirena.org.uk>
-References: <cover.1529712888.git.collinsd@codeaurora.org> <35c4ea70cdf5caba560fb6f40e866ee8bc456d93.1529712888.git.collinsd@codeaurora.org>
- <CAD=FV=XVEEPgjBXxR+-46RgxLOq63Xvq-jtruoaCxccmMoKUuA@mail.gmail.com>
- <20180626120733.GD1779@sirena.org.uk> <CAD=FV=X1E8Cz=L93G-zJwhM0R=N3YuBBhkvCnLvWuxMU9KJkTw@mail.gmail.com>
- <20180626150203.GG1779@sirena.org.uk>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 26 Jun 2018 11:15:14 -0700
-X-Google-Sender-Auth: dfZHZGLctuH0wP4BjV2FR8VQTEI
-Message-ID: <CAD=FV=WC_XWRk-6OELOFFWGnhRq1VeoiiveqXLSy+xqsVb22pA@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] regulator: add QCOM RPMh regulator driver
-To:     Mark Brown <broonie@kernel.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKMK7uF-hBjqnRG28fX7NXOJDc5YEWhq+G6s0M8usA+TXM1BKw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 06/20/2018 04:07 AM, Daniel Vetter wrote:
 
-On Tue, Jun 26, 2018 at 8:02 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Jun 26, 2018 at 08:00:29AM -0700, Doug Anderson wrote:
->> On Tue, Jun 26, 2018 at 5:07 AM, Mark Brown <broonie@kernel.org> wrote:
->
->> > Please do not submit new versions of already applied patches, please
->> > submit incremental updates to the existing code.  Modifying existing
->> > commits creates problems for other users building on top of those
->> > commits so it's best practice to only change pubished git commits if
->> > absolutely essential.
->
->> Sorry, wasn't suggesting making any changes to those two patches, just
->> was noting the dependency.  ...but, as you said, the two dependent
->> patches have already landed and I just didn't notice.  :(  Sorry for
->> the noise.
->
-> Ah, so there's no revisions that need merging?  That's great.
+> I acked and forwarded the account request, sorry for the delay. Next
+> time around, poking maintainers on irc helps if this stuff is stuck.
+> -Daniel
 
-Right.  So all that's left to do is decide if ${SUBJECT} patch is
-ready to land and how to land it.  Andy has landed RPMh into his
-for-next tree.  You can see it at
-<https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/log/?h=for-next>.
-I think he's still planning on re-shuffling his tree a bit.  When he
-does this, do you need him to put the RPMh patches somewhere you can
-merge into your tree?
+The account was supposedly setup, but I am not able to use it for some
+reason. Are there any particular nicks I should ping on IRC?
 
-Thanks!
-
--Doug
