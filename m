@@ -2,344 +2,439 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675FBC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0642C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 162EF26B06
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:17:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162EF26B06
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=foss.arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 92B1026B08
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:17:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fsOQodnR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B1026B08
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965359AbeFZNRV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:17:21 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45516 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965304AbeFZNRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:17:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A98D80D;
-        Tue, 26 Jun 2018 06:17:19 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 273943F5AF;
-        Tue, 26 Jun 2018 06:17:19 -0700 (PDT)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 7C20168030C; Tue, 26 Jun 2018 14:17:17 +0100 (BST)
-Date:   Tue, 26 Jun 2018 14:17:17 +0100
-From:   Liviu Dudau <Liviu.Dudau@foss.arm.com>
-To:     Ayan Kumar Halder <ayan.halder@arm.com>
-Cc:     liviu.dudau@arm.com, brian.starkey@arm.com, malidp@foss.arm.com,
-        airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, nd@arm.com
-Subject: Re: [RFC PATCH 3/4] drm/arm/malidp: Set the AFBC register bits if
- the framebuffer has AFBC modifier
-Message-ID: <20180626131716.GA14974@e110455-lin.cambridge.arm.com>
-References: <1529070694-21088-1-git-send-email-ayan.halder@arm.com>
- <1529070694-21088-4-git-send-email-ayan.halder@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1529070694-21088-4-git-send-email-ayan.halder@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S965410AbeFZNRm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:17:42 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43202 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935560AbeFZNP7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:15:59 -0400
+Received: by mail-wr0-f196.google.com with SMTP id c5-v6so6068957wrs.10
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 06:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=YZ4DVnMT9/HgtT77N06ERiaGY+swOS3/UplqsCQuXIw=;
+        b=fsOQodnRw940B67mYiFYkTnfzGlqJRkjOIaf9ad6ov6NmsQlDtDRUaJtXRPIosmsUi
+         oiSuyMoTLf+CTzR1iB31T7kgQAdBe0PqvJ2flyTqqurGBOnKJS4cpm4ROG9YBTetMtEb
+         JtWvOcMc7Oj8CTNTQGzrBZG8AI6GLXGt+ABRh/A5joX0LClBVjLRp321iNAYni9gMamd
+         DiS0QBfZkIUOPm49CYbuUD31nJ3jPJacDZehdALPhZ9H1PCf8yUvFxW8J92xRMyFJ8zl
+         IFhUVVL7kcl/AkziahGtr7RhnjXIdnfhoyplpg4KcEEBWUngCHxXYpuZvsQ8Tyv1ah6v
+         9oew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=YZ4DVnMT9/HgtT77N06ERiaGY+swOS3/UplqsCQuXIw=;
+        b=H6SqtpjdWoX9YD2AhGTodFr8tx4QppG5i32f915zqq6LlHC6jt7xAJRgDEGRJGj5Bc
+         jh2D6mKpyiiquss4SubG5yxFwrmXvzRKiCraTJldM0WxI/8XlLGsHzFKehRmNqll4tVI
+         RrFNloB2cexEFsRg2j0f8iKPbuEOcw7f24ZlKmAQlAF7XbUSMLZZKLKViaQWNox/yqXp
+         VTsJ7vv8/y3dHsAeoVYvF5gIKT7eLi78ATOFo+NBYGzIvnIcdVZqmmPb76Pqrfa/Tjbc
+         AwER2IZXo3R5qseRL01eQhPyEfhzBzuVCWIvEXidyue2W+pw4FBM3brWGCYkUAWLgatP
+         BFXg==
+X-Gm-Message-State: APt69E2YIs5rwZCD58MxwQupxU6HzE6ZAdJHWDHo+6MHLvBlwRPAUODj
+        bSfLYKAp5EUYCK7SqOJP8JOXxw==
+X-Google-Smtp-Source: AAOMgpf+oCcoJ17zH1keETr1PiTQ/319PZKMD0kw3Q8EuNvnNku2ZrnsSDC6ASE1iM8irTtRtxI5GQ==
+X-Received: by 2002:adf:9a0b:: with SMTP id z11-v6mr1466241wrb.47.1530018957417;
+        Tue, 26 Jun 2018 06:15:57 -0700 (PDT)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
+        by smtp.gmail.com with ESMTPSA id w15-v6sm2162639wrn.25.2018.06.26.06.15.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 06:15:56 -0700 (PDT)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org
+Cc:     Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v4 13/17] khwasan: add hooks implementation
+Date:   Tue, 26 Jun 2018 15:15:23 +0200
+Message-Id: <a2a93370d43ec85b02abaf8d007a15b464212221.1530018818.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
+In-Reply-To: <cover.1530018818.git.andreyknvl@google.com>
+References: <cover.1530018818.git.andreyknvl@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ayan,
+This commit adds KHWASAN specific hooks implementation and adjusts
+common KASAN and KHWASAN ones.
 
-Thanks for the patch! I have some small comments to make:
+1. When a new slab cache is created, KHWASAN rounds up the size of the
+   objects in this cache to KASAN_SHADOW_SCALE_SIZE (== 16).
 
-On Fri, Jun 15, 2018 at 02:51:33PM +0100, Ayan Kumar Halder wrote:
-> Added the AFBC decoder registers for DP500 , DP550 and DP650.
-> These registers control the processing of AFBC buffers. It controls various
-> features like AFBC decoder enable, lossless transformation and block split
-> as well as setting of the left, right, top and bottom cropping of AFBC buffers
-> (in number of pixels).
-> All the layers (except DE_SMART) support framebuffers with AFBC modifiers.
-> One needs to set the pixel values of the top, left, bottom and right cropping
-> for the AFBC framebuffer.
-> Added the functionality in malidp_de_plane_update() to set the various
-> registers for AFBC decoder, depending on the modifiers.
-> 
-> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
-> Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-> ---
->  drivers/gpu/drm/arm/malidp_hw.c     | 27 ++++++++-----
->  drivers/gpu/drm/arm/malidp_hw.h     |  2 +
->  drivers/gpu/drm/arm/malidp_planes.c | 81 +++++++++++++++++++++++++++++++++----
->  drivers/gpu/drm/arm/malidp_regs.h   | 20 +++++++++
->  4 files changed, 111 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-> index 4dbf39f..fd6b510 100644
-> --- a/drivers/gpu/drm/arm/malidp_hw.c
-> +++ b/drivers/gpu/drm/arm/malidp_hw.c
-> @@ -76,33 +76,38 @@ static const struct malidp_format_id malidp550_de_formats[] = {
->  
->  static const struct malidp_layer malidp500_layers[] = {
->  	{ DE_VIDEO1, MALIDP500_DE_LV_BASE, MALIDP500_DE_LV_PTR_BASE,
-> -		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, ROTATE_ANY },
-> +		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, ROTATE_ANY,
-> +		MALIDP500_DE_LV_AD_CTRL },
->  	{ DE_GRAPHICS1, MALIDP500_DE_LG1_BASE, MALIDP500_DE_LG1_PTR_BASE,
-> -		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY },
-> +		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY, MALIDP500_DE_LG1_AD_CTRL },
->  	{ DE_GRAPHICS2, MALIDP500_DE_LG2_BASE, MALIDP500_DE_LG2_PTR_BASE,
-> -		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY },
-> +		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY, MALIDP500_DE_LG2_AD_CTRL },
->  };
->  
->  static const struct malidp_layer malidp550_layers[] = {
->  	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
-> -		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY },
-> +		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY,
-> +		MALIDP550_DE_LV1_AD_CTRL },
->  	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
-> -		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY },
-> +		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY, MALIDP550_DE_LG_AD_CTRL },
->  	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
-> -		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY },
-> +		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY,
-> +		MALIDP550_DE_LV2_AD_CTRL },
->  	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
-> -		MALIDP550_DE_LS_R1_STRIDE, 0, ROTATE_NONE },
-> +		MALIDP550_DE_LS_R1_STRIDE, 0, ROTATE_NONE, 0 },
->  };
->  
->  static const struct malidp_layer malidp650_layers[] = {
->  	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
-> -		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY },
-> +		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY,
-> +		MALIDP550_DE_LV1_AD_CTRL },
->  	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
-> -		MALIDP_DE_LG_STRIDE, 0, ROTATE_COMPRESSED },
-> +		MALIDP_DE_LG_STRIDE, 0, ROTATE_COMPRESSED, MALIDP550_DE_LG_AD_CTRL },
->  	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
-> -		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY },
-> +		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY,
-> +		MALIDP550_DE_LV2_AD_CTRL },
->  	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
-> -		MALIDP550_DE_LS_R1_STRIDE, 0, ROTATE_NONE },
-> +		MALIDP550_DE_LS_R1_STRIDE, 0, ROTATE_NONE, 0 },
->  };
->  
->  #define SE_N_SCALING_COEFFS	96
-> diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-> index 4390243..bbe6883 100644
-> --- a/drivers/gpu/drm/arm/malidp_hw.h
-> +++ b/drivers/gpu/drm/arm/malidp_hw.h
-> @@ -67,6 +67,8 @@ struct malidp_layer {
->  	u16 stride_offset;	/* offset to the first stride register. */
->  	s16 yuv2rgb_offset;	/* offset to the YUV->RGB matrix entries */
->  	enum rotation_features rot;    /* type of rotation supported */
-> +	/* address offset for the AFBC decoder registers */
-> +	u16 afbc_decoder_offset;
->  };
->  
->  enum malidp_scaling_coeff_set {
-> diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-> index 533cdde..3950504 100644
-> --- a/drivers/gpu/drm/arm/malidp_planes.c
-> +++ b/drivers/gpu/drm/arm/malidp_planes.c
-> @@ -330,6 +330,71 @@ static void malidp_de_set_color_encoding(struct malidp_plane *plane,
->  	}
->  }
->  
-> +static void malidp_set_plane_base_addr(struct drm_framebuffer *fb,
-> +				       struct malidp_plane *mp,
-> +				       int plane_index)
-> +{
-> +	dma_addr_t paddr;
-> +	u16 ptr;
-> +	struct drm_plane *plane = &mp->base;
-> +	bool afbc = fb->modifier ? true : false;
+2. On each kmalloc KHWASAN generates a random tag, sets the shadow memory,
+   that corresponds to this object to this tag, and embeds this tag value
+   into the top byte of the returned pointer.
 
-The decision to set afbc based on wether the fb has a modifier or not
-seems a bit weak. Should we also (at least) check that the modifier is
-an ARM one?
+3. On each kfree KHWASAN poisons the shadow memory with a random tag to
+   allow detection of use-after-free bugs.
 
-> +
-> +	ptr = mp->layer->ptr + (plane_index << 4);
-> +
-> +	/*
-> +	 * For AFBC buffers, cropping is handled by AFBC decoder rather than
-> +	 * pointer manipulation.
-> +	 */
-> +	if (!afbc) {
-> +		paddr = drm_fb_cma_get_gem_addr(fb, plane->state,
-> +						plane_index);
-> +	} else {
-> +		struct drm_gem_cma_object *obj;
-> +
-> +		obj = drm_fb_cma_get_gem_obj(fb, plane_index);
-> +
-> +		if (WARN_ON(!obj))
-> +			return;
-> +		paddr = obj->paddr;
-> +	}
-> +
-> +	malidp_hw_write(mp->hwdev, lower_32_bits(paddr), ptr);
-> +	malidp_hw_write(mp->hwdev, upper_32_bits(paddr), ptr + 4);
-> +}
-> +
-> +static void malidp_de_set_plane_afbc(struct drm_plane *plane)
-> +{
-> +	struct malidp_plane *mp;
-> +	u32 src_w, src_h, val = 0, src_x, src_y;
-> +	struct drm_framebuffer *fb = plane->state->fb;
-> +
-> +	mp = to_malidp_plane(plane);
-> +
-> +	/* convert src values from Q16 fixed point to integer */
-> +	src_w = plane->state->src_w >> 16;
-> +	src_h = plane->state->src_h >> 16;
-> +	src_x = plane->state->src_x >> 16;
-> +	src_y = plane->state->src_y >> 16;
-> +
-> +	val = ((fb->width - (src_x + src_w)) << MALIDP_AD_CROP_RIGHT_OFFSET) |
-> +		   src_x;
-> +	malidp_hw_write(mp->hwdev, val,
-> +			mp->layer->afbc_decoder_offset + MALIDP_AD_CROP_H);
-> +
-> +	val = ((fb->height - (src_y + src_h)) << MALIDP_AD_CROP_BOTTOM_OFFSET) |
-> +		   src_y;
-> +	malidp_hw_write(mp->hwdev, val,
-> +			mp->layer->afbc_decoder_offset + MALIDP_AD_CROP_V);
-> +
-> +	val = MALIDP_AD_EN;
-> +	if (fb->modifier & AFBC_FORMAT_MOD_SPLIT)
-> +		val |= MALIDP_AD_BS;
-> +	if (fb->modifier & AFBC_FORMAT_MOD_YTR)
-> +		val |= MALIDP_AD_YTR;
-> +
-> +	malidp_hw_write(mp->hwdev, val, mp->layer->afbc_decoder_offset);
-> +}
-> +
->  static void malidp_de_plane_update(struct drm_plane *plane,
->  				   struct drm_plane_state *old_state)
->  {
-> @@ -338,6 +403,7 @@ static void malidp_de_plane_update(struct drm_plane *plane,
->  	u32 src_w, src_h, dest_w, dest_h, val;
->  	int i;
->  	bool format_has_alpha = plane->state->fb->format->has_alpha;
-> +	struct drm_framebuffer *fb = plane->state->fb;
->  
->  	mp = to_malidp_plane(plane);
->  
-> @@ -349,15 +415,9 @@ static void malidp_de_plane_update(struct drm_plane *plane,
->  
->  	malidp_hw_write(mp->hwdev, ms->format, mp->layer->base);
->  
-> -	for (i = 0; i < ms->n_planes; i++) {
-> -		/* calculate the offset for the layer's plane registers */
-> -		u16 ptr = mp->layer->ptr + (i << 4);
-> -		dma_addr_t fb_addr = drm_fb_cma_get_gem_addr(plane->state->fb,
-> -							     plane->state, i);
-> +	for (i = 0; i < ms->n_planes; i++)
-> +		malidp_set_plane_base_addr(fb, mp, i);
->  
-> -		malidp_hw_write(mp->hwdev, lower_32_bits(fb_addr), ptr);
-> -		malidp_hw_write(mp->hwdev, upper_32_bits(fb_addr), ptr + 4);
-> -	}
->  	malidp_de_set_plane_pitches(mp, ms->n_planes,
->  				    plane->state->fb->pitches);
->  
-> @@ -381,6 +441,11 @@ static void malidp_de_plane_update(struct drm_plane *plane,
->  				LAYER_H_VAL(src_w) | LAYER_V_VAL(src_h),
->  				mp->layer->base + MALIDP550_LS_R1_IN_SIZE);
->  
-> +	if (fb->modifier)
-> +		malidp_de_set_plane_afbc(plane);
-> +	else
-> +		malidp_hw_write(mp->hwdev, 0, mp->layer->afbc_decoder_offset);
+The rest of the logic of the hook implementation is very much similar to
+the one provided by KASAN. KHWASAN saves allocation and free stack metadata
+to the slab object the same was KASAN does this.
 
-Given that you are testing for the non-zero value of fb->modifier inside
-malidp_de_set_plane_afbc() function before setting the afbc_decoder
-register value, I feel that you could take the 'else' branch from here
-and merge it into malidp_de_set_plane_afbc() function (possibly also
-rename it to malidp_de_set_plane).
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ mm/kasan/common.c  | 83 +++++++++++++++++++++++++++++++++++-----------
+ mm/kasan/kasan.h   |  8 +++++
+ mm/kasan/khwasan.c | 40 ++++++++++++++++++++++
+ 3 files changed, 111 insertions(+), 20 deletions(-)
 
-With those small changes:
-
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
-
-> +
->  	/* first clear the rotation bits */
->  	val = malidp_hw_read(mp->hwdev, mp->layer->base + MALIDP_LAYER_CONTROL);
->  	val &= ~LAYER_ROT_MASK;
-> diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
-> index 149024f..54f4ec5 100644
-> --- a/drivers/gpu/drm/arm/malidp_regs.h
-> +++ b/drivers/gpu/drm/arm/malidp_regs.h
-> @@ -180,10 +180,13 @@
->  #define MALIDP500_LV_YUV2RGB		((s16)(-0xB8))
->  #define MALIDP500_DE_LV_BASE		0x00100
->  #define MALIDP500_DE_LV_PTR_BASE	0x00124
-> +#define MALIDP500_DE_LV_AD_CTRL		0x00400
->  #define MALIDP500_DE_LG1_BASE		0x00200
->  #define MALIDP500_DE_LG1_PTR_BASE	0x0021c
-> +#define MALIDP500_DE_LG1_AD_CTRL	0x0040c
->  #define MALIDP500_DE_LG2_BASE		0x00300
->  #define MALIDP500_DE_LG2_PTR_BASE	0x0031c
-> +#define MALIDP500_DE_LG2_AD_CTRL	0x00418
->  #define MALIDP500_SE_BASE		0x00c00
->  #define MALIDP500_SE_CONTROL		0x00c0c
->  #define MALIDP500_SE_PTR_BASE		0x00e0c
-> @@ -208,10 +211,13 @@
->  #define MALIDP550_LV_YUV2RGB		0x00084
->  #define MALIDP550_DE_LV1_BASE		0x00100
->  #define MALIDP550_DE_LV1_PTR_BASE	0x00124
-> +#define MALIDP550_DE_LV1_AD_CTRL	0x001B8
->  #define MALIDP550_DE_LV2_BASE		0x00200
->  #define MALIDP550_DE_LV2_PTR_BASE	0x00224
-> +#define MALIDP550_DE_LV2_AD_CTRL	0x002B8
->  #define MALIDP550_DE_LG_BASE		0x00300
->  #define MALIDP550_DE_LG_PTR_BASE	0x0031c
-> +#define MALIDP550_DE_LG_AD_CTRL		0x00330
->  #define MALIDP550_DE_LS_BASE		0x00400
->  #define MALIDP550_DE_LS_PTR_BASE	0x0042c
->  #define MALIDP550_DE_PERF_BASE		0x00500
-> @@ -223,6 +229,20 @@
->  #define MALIDP550_CONFIG_VALID		0x0c014
->  #define MALIDP550_CONFIG_ID		0x0ffd4
->  
-> +/* AFBC register offsets relative to MALIDPXXX_DE_LX_AD_CTRL */
-> +/* The following register offsets are common for DP500, DP550 and DP650 */
-> +#define MALIDP_AD_CROP_H                0x4
-> +#define MALIDP_AD_CROP_V                0x8
-> +#define MALIDP_AD_END_PTR_LOW           0xc
-> +#define MALIDP_AD_END_PTR_HIGH          0x10
-> +
-> +/* AFBC decoder Registers */
-> +#define MALIDP_AD_EN                    BIT(0)
-> +#define MALIDP_AD_YTR                   BIT(4)
-> +#define MALIDP_AD_BS                    BIT(8)
-> +#define MALIDP_AD_CROP_RIGHT_OFFSET     16
-> +#define MALIDP_AD_CROP_BOTTOM_OFFSET    16
-> +
->  /*
->   * Starting with DP550 the register map blocks has been standardised to the
->   * following layout:
-> -- 
-> 2.7.4
-> 
-
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index 656baa8984c7..1e96ca050c75 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -140,6 +140,9 @@ void kasan_poison_shadow(const void *address, size_t size, u8 value)
+ {
+ 	void *shadow_start, *shadow_end;
+ 
++	/* Perform shadow offset calculation based on untagged address */
++	address = reset_tag(address);
++
+ 	shadow_start = kasan_mem_to_shadow(address);
+ 	shadow_end = kasan_mem_to_shadow(address + size);
+ 
+@@ -148,11 +151,20 @@ void kasan_poison_shadow(const void *address, size_t size, u8 value)
+ 
+ void kasan_unpoison_shadow(const void *address, size_t size)
+ {
+-	kasan_poison_shadow(address, size, 0);
++	u8 tag = get_tag(address);
++
++	/* Perform shadow offset calculation based on untagged address */
++	address = reset_tag(address);
++
++	kasan_poison_shadow(address, size, tag);
+ 
+ 	if (size & KASAN_SHADOW_MASK) {
+ 		u8 *shadow = (u8 *)kasan_mem_to_shadow(address + size);
+-		*shadow = size & KASAN_SHADOW_MASK;
++
++		if (IS_ENABLED(CONFIG_KASAN_HW))
++			*shadow = tag;
++		else
++			*shadow = size & KASAN_SHADOW_MASK;
+ 	}
+ }
+ 
+@@ -200,8 +212,9 @@ void kasan_unpoison_stack_above_sp_to(const void *watermark)
+ 
+ void kasan_alloc_pages(struct page *page, unsigned int order)
+ {
+-	if (likely(!PageHighMem(page)))
+-		kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
++	if (unlikely(PageHighMem(page)))
++		return;
++	kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
+ }
+ 
+ void kasan_free_pages(struct page *page, unsigned int order)
+@@ -235,6 +248,7 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
+ 			slab_flags_t *flags)
+ {
+ 	unsigned int orig_size = *size;
++	unsigned int redzone_size = 0;
+ 	int redzone_adjust;
+ 
+ 	/* Add alloc meta. */
+@@ -242,20 +256,20 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
+ 	*size += sizeof(struct kasan_alloc_meta);
+ 
+ 	/* Add free meta. */
+-	if (cache->flags & SLAB_TYPESAFE_BY_RCU || cache->ctor ||
+-	    cache->object_size < sizeof(struct kasan_free_meta)) {
++	if (IS_ENABLED(CONFIG_KASAN_GENERIC) &&
++	    (cache->flags & SLAB_TYPESAFE_BY_RCU || cache->ctor ||
++	     cache->object_size < sizeof(struct kasan_free_meta))) {
+ 		cache->kasan_info.free_meta_offset = *size;
+ 		*size += sizeof(struct kasan_free_meta);
+ 	}
+-	redzone_adjust = optimal_redzone(cache->object_size) -
+-		(*size - cache->object_size);
+ 
++	redzone_size = optimal_redzone(cache->object_size);
++	redzone_adjust = redzone_size -	(*size - cache->object_size);
+ 	if (redzone_adjust > 0)
+ 		*size += redzone_adjust;
+ 
+ 	*size = min_t(unsigned int, KMALLOC_MAX_SIZE,
+-			max(*size, cache->object_size +
+-					optimal_redzone(cache->object_size)));
++			max(*size, cache->object_size + redzone_size));
+ 
+ 	/*
+ 	 * If the metadata doesn't fit, don't enable KASAN at all.
+@@ -268,6 +282,8 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
+ 		return;
+ 	}
+ 
++	cache->align = round_up(cache->align, KASAN_SHADOW_SCALE_SIZE);
++
+ 	*flags |= SLAB_KASAN;
+ }
+ 
+@@ -325,18 +341,41 @@ void kasan_init_slab_obj(struct kmem_cache *cache, const void *object)
+ 
+ void *kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t flags)
+ {
+-	return kasan_kmalloc(cache, object, cache->object_size, flags);
++	object = kasan_kmalloc(cache, object, cache->object_size, flags);
++	if (IS_ENABLED(CONFIG_KASAN_HW) && unlikely(cache->ctor)) {
++		/*
++		 * Cache constructor might use object's pointer value to
++		 * initialize some of its fields.
++		 */
++		cache->ctor(object);
++	}
++	return object;
++}
++
++static inline bool shadow_invalid(u8 tag, s8 shadow_byte)
++{
++        if (IS_ENABLED(CONFIG_KASAN_GENERIC))
++                return shadow_byte < 0 ||
++			shadow_byte >= KASAN_SHADOW_SCALE_SIZE;
++        else
++                return tag != (u8)shadow_byte;
+ }
+ 
+ static bool __kasan_slab_free(struct kmem_cache *cache, void *object,
+ 			      unsigned long ip, bool quarantine)
+ {
+ 	s8 shadow_byte;
++	u8 tag;
++	void *tagged_object;
+ 	unsigned long rounded_up_size;
+ 
++	tag = get_tag(object);
++	tagged_object = object;
++	object = reset_tag(object);
++
+ 	if (unlikely(nearest_obj(cache, virt_to_head_page(object), object) !=
+ 	    object)) {
+-		kasan_report_invalid_free(object, ip);
++		kasan_report_invalid_free(tagged_object, ip);
+ 		return true;
+ 	}
+ 
+@@ -345,20 +384,22 @@ static bool __kasan_slab_free(struct kmem_cache *cache, void *object,
+ 		return false;
+ 
+ 	shadow_byte = READ_ONCE(*(s8 *)kasan_mem_to_shadow(object));
+-	if (shadow_byte < 0 || shadow_byte >= KASAN_SHADOW_SCALE_SIZE) {
+-		kasan_report_invalid_free(object, ip);
++	if (shadow_invalid(tag, shadow_byte)) {
++		kasan_report_invalid_free(tagged_object, ip);
+ 		return true;
+ 	}
+ 
+ 	rounded_up_size = round_up(cache->object_size, KASAN_SHADOW_SCALE_SIZE);
+ 	kasan_poison_shadow(object, rounded_up_size, KASAN_KMALLOC_FREE);
+ 
+-	if (!quarantine || unlikely(!(cache->flags & SLAB_KASAN)))
++	if ((IS_ENABLED(CONFIG_KASAN_GENERIC) && !quarantine) ||
++			unlikely(!(cache->flags & SLAB_KASAN)))
+ 		return false;
+ 
+ 	set_track(&get_alloc_info(cache, object)->free_track, GFP_NOWAIT);
+ 	quarantine_put(get_free_info(cache, object), cache);
+-	return true;
++
++	return IS_ENABLED(CONFIG_KASAN_GENERIC);
+ }
+ 
+ bool kasan_slab_free(struct kmem_cache *cache, void *object, unsigned long ip)
+@@ -371,6 +412,7 @@ void *kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
+ {
+ 	unsigned long redzone_start;
+ 	unsigned long redzone_end;
++	u8 tag;
+ 
+ 	if (gfpflags_allow_blocking(flags))
+ 		quarantine_reduce();
+@@ -383,14 +425,15 @@ void *kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
+ 	redzone_end = round_up((unsigned long)object + cache->object_size,
+ 				KASAN_SHADOW_SCALE_SIZE);
+ 
+-	kasan_unpoison_shadow(object, size);
++	tag = random_tag();
++	kasan_unpoison_shadow(set_tag(object, tag), size);
+ 	kasan_poison_shadow((void *)redzone_start, redzone_end - redzone_start,
+ 		KASAN_KMALLOC_REDZONE);
+ 
+ 	if (cache->flags & SLAB_KASAN)
+ 		set_track(&get_alloc_info(cache, object)->alloc_track, flags);
+ 
+-	return (void *)object;
++	return set_tag(object, tag);
+ }
+ EXPORT_SYMBOL(kasan_kmalloc);
+ 
+@@ -440,7 +483,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
+ 	page = virt_to_head_page(ptr);
+ 
+ 	if (unlikely(!PageSlab(page))) {
+-		if (ptr != page_address(page)) {
++		if (reset_tag(ptr) != page_address(page)) {
+ 			kasan_report_invalid_free(ptr, ip);
+ 			return;
+ 		}
+@@ -453,7 +496,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
+ 
+ void kasan_kfree_large(void *ptr, unsigned long ip)
+ {
+-	if (ptr != page_address(virt_to_head_page(ptr)))
++	if (reset_tag(ptr) != page_address(virt_to_head_page(ptr)))
+ 		kasan_report_invalid_free(ptr, ip);
+ 	/* The object will be poisoned by page_alloc. */
+ }
+diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+index d60859d26be7..6f4f2ebf5f57 100644
+--- a/mm/kasan/kasan.h
++++ b/mm/kasan/kasan.h
+@@ -12,10 +12,18 @@
+ #define KHWASAN_TAG_INVALID	0xFE /* inaccessible memory tag */
+ #define KHWASAN_TAG_MAX		0xFD /* maximum value for random tags */
+ 
++#ifdef CONFIG_KASAN_GENERIC
+ #define KASAN_FREE_PAGE         0xFF  /* page was freed */
+ #define KASAN_PAGE_REDZONE      0xFE  /* redzone for kmalloc_large allocations */
+ #define KASAN_KMALLOC_REDZONE   0xFC  /* redzone inside slub object */
+ #define KASAN_KMALLOC_FREE      0xFB  /* object was freed (kmem_cache_free/kfree) */
++#else
++#define KASAN_FREE_PAGE         KHWASAN_TAG_INVALID
++#define KASAN_PAGE_REDZONE      KHWASAN_TAG_INVALID
++#define KASAN_KMALLOC_REDZONE   KHWASAN_TAG_INVALID
++#define KASAN_KMALLOC_FREE      KHWASAN_TAG_INVALID
++#endif
++
+ #define KASAN_GLOBAL_REDZONE    0xFA  /* redzone for global variable */
+ 
+ /*
+diff --git a/mm/kasan/khwasan.c b/mm/kasan/khwasan.c
+index d34679b8f8c7..fd1725022794 100644
+--- a/mm/kasan/khwasan.c
++++ b/mm/kasan/khwasan.c
+@@ -88,15 +88,52 @@ void *khwasan_reset_tag(const void *addr)
+ void check_memory_region(unsigned long addr, size_t size, bool write,
+ 				unsigned long ret_ip)
+ {
++	u8 tag;
++	u8 *shadow_first, *shadow_last, *shadow;
++	void *untagged_addr;
++
++	tag = get_tag((const void *)addr);
++
++	/* Ignore accesses for pointers tagged with 0xff (native kernel
++	 * pointer tag) to suppress false positives caused by kmap.
++	 *
++	 * Some kernel code was written to account for archs that don't keep
++	 * high memory mapped all the time, but rather map and unmap particular
++	 * pages when needed. Instead of storing a pointer to the kernel memory,
++	 * this code saves the address of the page structure and offset within
++	 * that page for later use. Those pages are then mapped and unmapped
++	 * with kmap/kunmap when necessary and virt_to_page is used to get the
++	 * virtual address of the page. For arm64 (that keeps the high memory
++	 * mapped all the time), kmap is turned into a page_address call.
++
++	 * The issue is that with use of the page_address + virt_to_page
++	 * sequence the top byte value of the original pointer gets lost (gets
++	 * set to KHWASAN_TAG_KERNEL (0xFF).
++	 */
++	if (tag == KHWASAN_TAG_KERNEL)
++		return;
++
++	untagged_addr = reset_tag((const void *)addr);
++	shadow_first = kasan_mem_to_shadow(untagged_addr);
++	shadow_last = kasan_mem_to_shadow(untagged_addr + size - 1);
++
++	for (shadow = shadow_first; shadow <= shadow_last; shadow++) {
++		if (*shadow != tag) {
++			kasan_report(addr, size, write, ret_ip);
++			return;
++		}
++	}
+ }
+ 
+ #define DEFINE_HWASAN_LOAD_STORE(size)					\
+ 	void __hwasan_load##size##_noabort(unsigned long addr)		\
+ 	{								\
++		check_memory_region(addr, size, false, _RET_IP_);	\
+ 	}								\
+ 	EXPORT_SYMBOL(__hwasan_load##size##_noabort);			\
+ 	void __hwasan_store##size##_noabort(unsigned long addr)		\
+ 	{								\
++		check_memory_region(addr, size, true, _RET_IP_);	\
+ 	}								\
+ 	EXPORT_SYMBOL(__hwasan_store##size##_noabort)
+ 
+@@ -108,15 +145,18 @@ DEFINE_HWASAN_LOAD_STORE(16);
+ 
+ void __hwasan_loadN_noabort(unsigned long addr, unsigned long size)
+ {
++	check_memory_region(addr, size, false, _RET_IP_);
+ }
+ EXPORT_SYMBOL(__hwasan_loadN_noabort);
+ 
+ void __hwasan_storeN_noabort(unsigned long addr, unsigned long size)
+ {
++	check_memory_region(addr, size, true, _RET_IP_);
+ }
+ EXPORT_SYMBOL(__hwasan_storeN_noabort);
+ 
+ void __hwasan_tag_memory(unsigned long addr, u8 tag, unsigned long size)
+ {
++	kasan_poison_shadow((void *)addr, size, tag);
+ }
+ EXPORT_SYMBOL(__hwasan_tag_memory);
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.18.0.rc2.346.g013aa6912e-goog
+
