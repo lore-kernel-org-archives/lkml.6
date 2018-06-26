@@ -6,70 +6,70 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 714B4C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC556C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28863241B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:24:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28863241B9
+	by mail.kernel.org (Postfix) with ESMTP id 911F925CDF
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:24:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911F925CDF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932216AbeFZRXs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:23:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51536 "EHLO
+        id S933001AbeFZRYC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 13:24:02 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49648 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753096AbeFZRXn (ORCPT
+        by vger.kernel.org with ESMTP id S1753272AbeFZRXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:23:43 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QHIlgr121590
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:23:43 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jus52sr7n-1
+        Tue, 26 Jun 2018 13:23:48 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QHIl8x008655
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:23:48 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2juqm26ffv-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:23:42 -0400
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:23:47 -0400
 Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 11:23:42 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 26 Jun 2018 11:23:47 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 11:23:38 -0600
+        Tue, 26 Jun 2018 11:23:44 -0600
 Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QHNbIh62652546
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QHNhYm9372102
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 10:23:37 -0700
+        Tue, 26 Jun 2018 10:23:43 -0700
 Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0FF6D7805E;
-        Tue, 26 Jun 2018 11:23:37 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id A34B27805C;
+        Tue, 26 Jun 2018 11:23:43 -0600 (MDT)
 Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 82E3B78060;
-        Tue, 26 Jun 2018 11:23:36 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 2D1E57805F;
+        Tue, 26 Jun 2018 11:23:43 -0600 (MDT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 11:23:36 -0600 (MDT)
+        Tue, 26 Jun 2018 11:23:43 -0600 (MDT)
 From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
 To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
         zohar@linux.vnet.ibm.com
 Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v6 1/5] tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
-Date:   Tue, 26 Jun 2018 13:23:27 -0400
+Subject: [PATCH v6 5/5] ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
+Date:   Tue, 26 Jun 2018 13:23:31 -0400
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180626172331.2505541-1-stefanb@linux.vnet.ibm.com>
 References: <20180626172331.2505541-1-stefanb@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062617-0036-0000-0000-00000A03E0A9
+x-cbid: 18062617-8235-0000-0000-00000DC8C01B
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01052673; UDB=6.00539671; IPR=6.00830598;
- MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:23:40
+ MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:23:46
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062617-0037-0000-0000-000047E0031C
-Message-Id: <20180626172331.2505541-2-stefanb@linux.vnet.ibm.com>
+x-cbparentid: 18062617-8236-0000-0000-000041AA0728
+Message-Id: <20180626172331.2505541-6-stefanb@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -82,127 +82,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename tpm_chip_find_get() to tpm_find_get_ops() to more closely match
-the tpm_put_ops() counter part.
+Get rid of ima_used_chip and use ima_tpm_chip variable instead for
+determining whether to use the TPM chip.
 
 Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm-chip.c      |  9 ++++++---
- drivers/char/tpm/tpm-interface.c | 14 +++++++-------
- drivers/char/tpm/tpm.h           |  2 +-
- 3 files changed, 14 insertions(+), 11 deletions(-)
+ security/integrity/ima/ima.h        | 1 -
+ security/integrity/ima/ima_crypto.c | 2 +-
+ security/integrity/ima/ima_init.c   | 7 ++-----
+ security/integrity/ima/ima_queue.c  | 2 +-
+ 4 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0a62c19937b6..242b716aed5e 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -81,18 +81,21 @@ void tpm_put_ops(struct tpm_chip *chip)
- EXPORT_SYMBOL_GPL(tpm_put_ops);
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 35409461a3f2..2ab1affffa36 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -53,7 +53,6 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+ extern int ima_policy_flag;
  
- /**
-- * tpm_chip_find_get() - find and reserve a TPM chip
-+ * tpm_find_get_ops() - find and reserve a TPM chip
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-  *
-  * Finds a TPM chip and reserves its class device and operations. The chip must
-- * be released with tpm_chip_put_ops() after use.
-+ * be released with tpm_put_ops() after use.
-+ * This function is for internal use only. It supports existing TPM callers
-+ * by accepting NULL, but those callers should be converted to pass in a chip
-+ * directly.
-  *
-  * Return:
-  * A reserved &struct tpm_chip instance.
-  * %NULL if a chip is not found.
-  * %NULL if the chip is not available.
-  */
--struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
-+struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
+ /* set during initialization */
+-extern int ima_used_chip;
+ extern int ima_hash_algo;
+ extern int ima_appraise;
+ extern struct tpm_chip *ima_tpm_chip;
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 88082f35adb2..7e7e7e7c250a 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -631,7 +631,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+ 
+ static void __init ima_pcrread(int idx, u8 *pcr)
  {
- 	struct tpm_chip *res = NULL;
- 	int chip_num = 0;
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index c43a9e28995e..b4bb34216050 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -929,7 +929,7 @@ int tpm_is_tpm2(struct tpm_chip *chip)
- {
+-	if (!ima_used_chip)
++	if (!ima_tpm_chip)
+ 		return;
+ 
+ 	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 1437ed3dbccc..faac9ecaa0ae 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -26,7 +26,6 @@
+ 
+ /* name for boot aggregate entry */
+ static const char *boot_aggregate_name = "boot_aggregate";
+-int ima_used_chip;
+ struct tpm_chip *ima_tpm_chip;
+ 
+ /* Add the boot aggregate to the IMA measurement list and extend
+@@ -65,7 +64,7 @@ static int __init ima_add_boot_aggregate(void)
+ 	iint->ima_hash->algo = HASH_ALGO_SHA1;
+ 	iint->ima_hash->length = SHA1_DIGEST_SIZE;
+ 
+-	if (ima_used_chip) {
++	if (ima_tpm_chip) {
+ 		result = ima_calc_boot_aggregate(&hash.hdr);
+ 		if (result < 0) {
+ 			audit_cause = "hashing_error";
+@@ -110,9 +109,7 @@ int __init ima_init(void)
  	int rc;
  
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
+ 	ima_tpm_chip = tpm_default_chip();
+-
+-	ima_used_chip = ima_tpm_chip != NULL;
+-	if (!ima_used_chip)
++	if (!ima_tpm_chip)
+ 		pr_info("No TPM chip found, activating TPM-bypass!\n");
  
-@@ -953,7 +953,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+ 	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index c6303fa19a49..b186819bd5aa 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -142,7 +142,7 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
  {
- 	int rc;
+ 	int result = 0;
  
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-@@ -1012,7 +1012,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
- 	u32 count = 0;
- 	int i;
+-	if (!ima_used_chip)
++	if (!ima_tpm_chip)
+ 		return result;
  
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
-@@ -1141,7 +1141,7 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
- {
- 	int rc;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
-@@ -1261,7 +1261,7 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- 	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
- 		return -EINVAL;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
-@@ -1323,7 +1323,7 @@ int tpm_seal_trusted(struct tpm_chip *chip, struct trusted_key_payload *payload,
- {
- 	int rc;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_find_get_ops(chip);
- 	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
- 		return -ENODEV;
- 
-@@ -1351,7 +1351,7 @@ int tpm_unseal_trusted(struct tpm_chip *chip,
- {
- 	int rc;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_find_get_ops(chip);
- 	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
- 		return -ENODEV;
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 7f2d0f489e9c..c38772474091 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -535,7 +535,7 @@ static inline void tpm_msleep(unsigned int delay_msec)
- 		     delay_msec * 1000);
- };
- 
--struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
-+struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
- void tpm_put_ops(struct tpm_chip *chip);
- 
+ 	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
 -- 
 2.17.1
 
