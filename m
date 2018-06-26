@@ -3,43 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477CAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3887C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01732240F7
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:55:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01732240F7
+	by mail.kernel.org (Postfix) with ESMTP id A7E1C26ACA
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:55:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E1C26ACA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965224AbeFZMzN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:55:13 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:23325 "EHLO
+        id S965196AbeFZMzM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:55:12 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:65459 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964803AbeFZMzJ (ORCPT
+        by vger.kernel.org with ESMTP id S965141AbeFZMzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:55:09 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5QCs5Qs025199;
-        Tue, 26 Jun 2018 14:54:32 +0200
+        Tue, 26 Jun 2018 08:55:08 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5QCsRd0005734;
+        Tue, 26 Jun 2018 14:54:33 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2junaj8796-1
+        by mx07-00178001.pphosted.com with ESMTP id 2jumuy8bvv-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 26 Jun 2018 14:54:32 +0200
+        Tue, 26 Jun 2018 14:54:33 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C13543A;
-        Tue, 26 Jun 2018 12:54:31 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9CBD72A30;
-        Tue, 26 Jun 2018 12:54:31 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun
- 2018 14:54:31 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EBDB638;
+        Tue, 26 Jun 2018 12:54:32 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CE72B2A30;
+        Tue, 26 Jun 2018 12:54:32 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun
+ 2018 14:54:32 +0200
 Received: from localhost (10.201.23.65) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun 2018 14:54:31
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun 2018 14:54:32
  +0200
 From:   Lionel Debieve <lionel.debieve@st.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
@@ -52,9 +52,9 @@ To:     Herbert Xu <herbert@gondor.apana.org.au>,
 CC:     Benjamin Gaignard <benjamin.gaignard@st.com>,
         Fabien Dessenne <fabien.dessenne@st.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 2/3] crypto: stm32/hash - Add power management support
-Date:   Tue, 26 Jun 2018 14:52:45 +0200
-Message-ID: <1530017566-14779-3-git-send-email-lionel.debieve@st.com>
+Subject: [PATCH 3/3] crypto: stm32/crc - Add power management support
+Date:   Tue, 26 Jun 2018 14:52:46 +0200
+Message-ID: <1530017566-14779-4-git-send-email-lionel.debieve@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530017566-14779-1-git-send-email-lionel.debieve@st.com>
 References: <1530017566-14779-1-git-send-email-lionel.debieve@st.com>
@@ -68,170 +68,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding pm and pm_runtime support to STM32 HASH.
+Adding pm and pm_runtime support to STM32 CRC.
 
 Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
 ---
- drivers/crypto/stm32/stm32-hash.c | 71 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+ drivers/crypto/stm32/stm32_crc32.c | 62 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/drivers/crypto/stm32/stm32-hash.c b/drivers/crypto/stm32/stm32-hash.c
-index cdc96f1..d1d7233 100644
---- a/drivers/crypto/stm32/stm32-hash.c
-+++ b/drivers/crypto/stm32/stm32-hash.c
-@@ -31,6 +31,7 @@
+diff --git a/drivers/crypto/stm32/stm32_crc32.c b/drivers/crypto/stm32/stm32_crc32.c
+index 8f09b84..04ba5e1 100644
+--- a/drivers/crypto/stm32/stm32_crc32.c
++++ b/drivers/crypto/stm32/stm32_crc32.c
+@@ -8,6 +8,7 @@
+ #include <linux/clk.h>
  #include <linux/module.h>
- #include <linux/of_device.h>
  #include <linux/platform_device.h>
 +#include <linux/pm_runtime.h>
- #include <linux/reset.h>
  
- #include <crypto/engine.h>
-@@ -121,6 +122,8 @@ enum stm32_hash_data_format {
- #define HASH_QUEUE_LENGTH		16
- #define HASH_DMA_THRESHOLD		50
+ #include <crypto/internal/hash.h>
  
-+#define HASH_AUTOSUSPEND_DELAY		50
+@@ -32,6 +33,8 @@
+ #define POLY_CRC32              0xEDB88320
+ #define POLY_CRC32C             0x82F63B78
+ 
++#define CRC_AUTOSUSPEND_DELAY	50
 +
- struct stm32_hash_ctx {
- 	struct crypto_engine_ctx enginectx;
- 	struct stm32_hash_dev	*hdev;
-@@ -814,12 +817,17 @@ static void stm32_hash_finish_req(struct ahash_request *req, int err)
- 		rctx->flags |= HASH_FLAGS_ERRORS;
+ struct stm32_crc {
+ 	struct list_head list;
+ 	struct device    *dev;
+@@ -106,6 +109,8 @@ static int stm32_crc_init(struct shash_desc *desc)
  	}
+ 	spin_unlock_bh(&crc_list.lock);
  
-+	pm_runtime_mark_last_busy(hdev->dev);
-+	pm_runtime_put_autosuspend(hdev->dev);
++	pm_runtime_get_sync(ctx->crc->dev);
 +
- 	crypto_finalize_hash_request(hdev->engine, req, err);
+ 	/* Reset, set key, poly and configure in bit reverse mode */
+ 	writel_relaxed(bitrev32(mctx->key), ctx->crc->regs + CRC_INIT);
+ 	writel_relaxed(bitrev32(mctx->poly), ctx->crc->regs + CRC_POL);
+@@ -115,6 +120,9 @@ static int stm32_crc_init(struct shash_desc *desc)
+ 	ctx->partial = readl_relaxed(ctx->crc->regs + CRC_DR);
+ 	ctx->crc->nb_pending_bytes = 0;
+ 
++	pm_runtime_mark_last_busy(ctx->crc->dev);
++	pm_runtime_put_autosuspend(ctx->crc->dev);
++
+ 	return 0;
  }
  
- static int stm32_hash_hw_init(struct stm32_hash_dev *hdev,
- 			      struct stm32_hash_request_ctx *rctx)
- {
-+	pm_runtime_get_sync(hdev->dev);
-+
- 	if (!(HASH_FLAGS_INIT & hdev->flags)) {
- 		stm32_hash_write(hdev, HASH_CR, HASH_CR_INIT);
- 		stm32_hash_write(hdev, HASH_STR, 0);
-@@ -967,6 +975,8 @@ static int stm32_hash_export(struct ahash_request *req, void *out)
- 	u32 *preg;
+@@ -126,6 +134,8 @@ static int stm32_crc_update(struct shash_desc *desc, const u8 *d8,
+ 	u32 *d32;
  	unsigned int i;
  
-+	pm_runtime_get_sync(hdev->dev);
++	pm_runtime_get_sync(crc->dev);
 +
- 	while (!(stm32_hash_read(hdev, HASH_SR) & HASH_SR_DATA_INPUT_READY))
- 		cpu_relax();
+ 	if (unlikely(crc->nb_pending_bytes)) {
+ 		while (crc->nb_pending_bytes != sizeof(u32) && length) {
+ 			/* Fill in pending data */
+@@ -149,6 +159,9 @@ static int stm32_crc_update(struct shash_desc *desc, const u8 *d8,
+ 	/* Store partial result */
+ 	ctx->partial = readl_relaxed(crc->regs + CRC_DR);
  
-@@ -982,6 +992,9 @@ static int stm32_hash_export(struct ahash_request *req, void *out)
- 	for (i = 0; i < HASH_CSR_REGISTER_NUMBER; i++)
- 		*preg++ = stm32_hash_read(hdev, HASH_CSR(i));
- 
-+	pm_runtime_mark_last_busy(hdev->dev);
-+	pm_runtime_put_autosuspend(hdev->dev);
++	pm_runtime_mark_last_busy(crc->dev);
++	pm_runtime_put_autosuspend(crc->dev);
 +
- 	memcpy(out, rctx, sizeof(*rctx));
- 
- 	return 0;
-@@ -1000,6 +1013,8 @@ static int stm32_hash_import(struct ahash_request *req, const void *in)
- 
- 	preg = rctx->hw_context;
- 
-+	pm_runtime_get_sync(hdev->dev);
-+
- 	stm32_hash_write(hdev, HASH_IMR, *preg++);
- 	stm32_hash_write(hdev, HASH_STR, *preg++);
- 	stm32_hash_write(hdev, HASH_CR, *preg);
-@@ -1009,6 +1024,9 @@ static int stm32_hash_import(struct ahash_request *req, const void *in)
- 	for (i = 0; i < HASH_CSR_REGISTER_NUMBER; i++)
- 		stm32_hash_write(hdev, HASH_CSR(i), *preg++);
- 
-+	pm_runtime_mark_last_busy(hdev->dev);
-+	pm_runtime_put_autosuspend(hdev->dev);
-+
- 	kfree(rctx->hw_context);
- 
- 	return 0;
-@@ -1482,6 +1500,13 @@ static int stm32_hash_probe(struct platform_device *pdev)
+ 	/* Check for pending data (non 32 bits) */
+ 	length &= 3;
+ 	if (likely(!length))
+@@ -272,6 +285,13 @@ static int stm32_crc_probe(struct platform_device *pdev)
  		return ret;
  	}
  
-+	pm_runtime_set_autosuspend_delay(dev, HASH_AUTOSUSPEND_DELAY);
++	pm_runtime_set_autosuspend_delay(dev, CRC_AUTOSUSPEND_DELAY);
 +	pm_runtime_use_autosuspend(dev);
 +
 +	pm_runtime_get_noresume(dev);
 +	pm_runtime_set_active(dev);
 +	pm_runtime_enable(dev);
 +
- 	hdev->rst = devm_reset_control_get(&pdev->dev, NULL);
- 	if (!IS_ERR(hdev->rst)) {
- 		reset_control_assert(hdev->rst);
-@@ -1522,6 +1547,8 @@ static int stm32_hash_probe(struct platform_device *pdev)
- 	dev_info(dev, "Init HASH done HW ver %x DMA mode %u\n",
- 		 stm32_hash_read(hdev, HASH_VER), hdev->dma_mode);
+ 	platform_set_drvdata(pdev, crc);
+ 
+ 	spin_lock(&crc_list.lock);
+@@ -287,12 +307,18 @@ static int stm32_crc_probe(struct platform_device *pdev)
+ 
+ 	dev_info(dev, "Initialized\n");
  
 +	pm_runtime_put_sync(dev);
 +
  	return 0;
+ }
  
- err_algs:
-@@ -1535,6 +1562,9 @@ static int stm32_hash_probe(struct platform_device *pdev)
- 	if (hdev->dma_lch)
- 		dma_release_channel(hdev->dma_lch);
- 
-+	pm_runtime_disable(dev);
-+	pm_runtime_put_noidle(dev);
-+
- 	clk_disable_unprepare(hdev->clk);
- 
- 	return ret;
-@@ -1543,11 +1573,16 @@ static int stm32_hash_probe(struct platform_device *pdev)
- static int stm32_hash_remove(struct platform_device *pdev)
+ static int stm32_crc_remove(struct platform_device *pdev)
  {
- 	static struct stm32_hash_dev *hdev;
-+	int ret;
- 
- 	hdev = platform_get_drvdata(pdev);
- 	if (!hdev)
- 		return -ENODEV;
- 
-+	ret = pm_runtime_get_sync(hdev->dev);
+ 	struct stm32_crc *crc = platform_get_drvdata(pdev);
++	int ret = pm_runtime_get_sync(crc->dev);
++
 +	if (ret < 0)
 +		return ret;
-+
- 	stm32_hash_unregister_algs(hdev);
  
- 	crypto_engine_exit(hdev->engine);
-@@ -1559,16 +1594,52 @@ static int stm32_hash_remove(struct platform_device *pdev)
- 	if (hdev->dma_lch)
- 		dma_release_channel(hdev->dma_lch);
+ 	spin_lock(&crc_list.lock);
+ 	list_del(&crc->list);
+@@ -300,11 +326,46 @@ static int stm32_crc_remove(struct platform_device *pdev)
  
-+	pm_runtime_disable(hdev->dev);
-+	pm_runtime_put_noidle(hdev->dev);
+ 	crypto_unregister_shashes(algs, ARRAY_SIZE(algs));
+ 
++	pm_runtime_disable(crc->dev);
++	pm_runtime_put_noidle(crc->dev);
 +
- 	clk_disable_unprepare(hdev->clk);
+ 	clk_disable_unprepare(crc->clk);
  
  	return 0;
  }
  
 +#ifdef CONFIG_PM
-+static int stm32_hash_runtime_suspend(struct device *dev)
++static int stm32_crc_runtime_suspend(struct device *dev)
 +{
-+	struct stm32_hash_dev *hdev = dev_get_drvdata(dev);
++	struct stm32_crc *crc = dev_get_drvdata(dev);
 +
-+	clk_disable_unprepare(hdev->clk);
++	clk_disable_unprepare(crc->clk);
 +
 +	return 0;
 +}
 +
-+static int stm32_hash_runtime_resume(struct device *dev)
++static int stm32_crc_runtime_resume(struct device *dev)
 +{
-+	struct stm32_hash_dev *hdev = dev_get_drvdata(dev);
++	struct stm32_crc *crc = dev_get_drvdata(dev);
 +	int ret;
 +
-+	ret = clk_prepare_enable(hdev->clk);
++	ret = clk_prepare_enable(crc->clk);
 +	if (ret) {
-+		dev_err(hdev->dev, "Failed to prepare_enable clock\n");
++		dev_err(crc->dev, "Failed to prepare_enable clock\n");
 +		return ret;
 +	}
 +
@@ -239,21 +204,23 @@ index cdc96f1..d1d7233 100644
 +}
 +#endif
 +
-+static const struct dev_pm_ops stm32_hash_pm_ops = {
++static const struct dev_pm_ops stm32_crc_pm_ops = {
 +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
 +				pm_runtime_force_resume)
-+	SET_RUNTIME_PM_OPS(stm32_hash_runtime_suspend,
-+			   stm32_hash_runtime_resume, NULL)
++	SET_RUNTIME_PM_OPS(stm32_crc_runtime_suspend,
++			   stm32_crc_runtime_resume, NULL)
 +};
 +
- static struct platform_driver stm32_hash_driver = {
- 	.probe		= stm32_hash_probe,
- 	.remove		= stm32_hash_remove,
- 	.driver		= {
- 		.name	= "stm32-hash",
-+		.pm = &stm32_hash_pm_ops,
- 		.of_match_table	= stm32_hash_of_match,
- 	}
+ static const struct of_device_id stm32_dt_ids[] = {
+ 	{ .compatible = "st,stm32f7-crc", },
+ 	{},
+@@ -316,6 +377,7 @@ static struct platform_driver stm32_crc_driver = {
+ 	.remove = stm32_crc_remove,
+ 	.driver = {
+ 		.name           = DRIVER_NAME,
++		.pm		= &stm32_crc_pm_ops,
+ 		.of_match_table = stm32_dt_ids,
+ 	},
  };
 -- 
 2.7.4
