@@ -6,91 +6,93 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828CAC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C57C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:36:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 358A22661C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 358A22661C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id C0FF02661D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:36:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0FF02661D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752430AbeFZHg3 (ORCPT
+        id S1752627AbeFZHgx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:36:29 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:35848 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751869AbeFZHg2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:36:28 -0400
-Received: by mail-ua0-f193.google.com with SMTP id n10-v6so848282uao.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 00:36:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g4YYZZNDubcA62SOhgOG2KWBQsvVz6hv3RzZpHbD6bs=;
-        b=Qe1i4i6zAOqhDFcjwEZFjKMDWydB7oLZCElfLNYCveJc6UIy8yWB+9ok0LnVpEmJKp
-         7e5HCScn4cVPrtEtowPmtzvj1a84Vy49wVH88NrJjLOz/fcD8q/S9cAMsz4Q7byR+YTA
-         cnWll4NtHfBUBmg9HLdJm7tLNjUjabfbx01wAPAO1PFnq+qyR4nn/3u+g5wPHXayebLD
-         9DTL5a+C251GpWZLTpsUR7tUnCy1VCdwTH2XTeDsYG1uvsjLY9FQR+XL0bhnR09YVpL8
-         BkQ3xZJjjyubzeCyRYZ2aTj8+NTfNv0znnNMAzfnMTfaH7ccvvebChPhu8ACG9n5+Xf5
-         uULA==
-X-Gm-Message-State: APt69E3jBL9SJF9cZ3b9ojoPdhjZMFAsHNS0jl68iitrgKeXiAwH7BtU
-        LTbxO+EYaEQuNO9QS5Hgdq3v1gS3iLI7o+Wg/h0=
-X-Google-Smtp-Source: AAOMgpexrFd84ucSrDppBKvacfxj/J59GPfkQGpTe44B5btW6JO3z5QncwfyPPi1BPUuiSbnMlV5hnUViWs7G3S4e9Q=
-X-Received: by 2002:ab0:5922:: with SMTP id n31-v6mr267048uad.114.1529998587652;
- Tue, 26 Jun 2018 00:36:27 -0700 (PDT)
+        Tue, 26 Jun 2018 03:36:53 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49616 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752481AbeFZHgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 03:36:52 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3E6A5207D4; Tue, 26 Jun 2018 09:36:50 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F19EA206ED;
+        Tue, 26 Jun 2018 09:36:49 +0200 (CEST)
+Date:   Tue, 26 Jun 2018 09:36:50 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Martin Kaiser <martin@kaiser.cx>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: mxc: remove __init qualifier from
+ mxcnd_probe_dt
+Message-ID: <20180626093650.5835593b@xps13>
+In-Reply-To: <20180626092413.703249c8@bbrezillon>
+References: <1529679025-5735-1-git-send-email-martin@kaiser.cx>
+        <20180626091005.08d56b2a@xps13>
+        <20180626092413.703249c8@bbrezillon>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180621185442.17086-1-geert@linux-m68k.org> <CACRpkdbCBO3mgPm3czUvBMqrFHvxDqkmfKH9v2X0UMypjjOe_g@mail.gmail.com>
-In-Reply-To: <CACRpkdbCBO3mgPm3czUvBMqrFHvxDqkmfKH9v2X0UMypjjOe_g@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Jun 2018 09:36:16 +0200
-Message-ID: <CAMuHMdVQtCh-qbD+ne_iL2tfgwiEN41B_3Eva8-Sg06BhT5PSw@mail.gmail.com>
-Subject: Re: [PATCH] w1: Allow compile test of GPIO consumers if !GPIOLIB
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Evgeniy Polyakov <zbr@ioremap.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Boris,
 
-On Tue, Jun 26, 2018 at 9:34 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Jun 21, 2018 at 8:54 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> > not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> > functionality only, can still be compiled if GPIOLIB is not enabled.
-> >
-> > Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
-> > appropriate.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-> > ---
-> > v3:
-> >   - Add Acked-by,
->
-> I think my last change to w1 I just put into the GPIO tree.
->
-> Should I simply carry this patch in the GPIO tree?
+On Tue, 26 Jun 2018 09:24:13 +0200, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
 
-Fine for me ;-)
+> On Tue, 26 Jun 2018 09:10:05 +0200
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> 
+> > Hi Martin, Boris,
+> > 
+> > On Fri, 22 Jun 2018 16:50:25 +0200, Martin Kaiser <martin@kaiser.cx>
+> > wrote:
+> >   
+> > > mxcnd_probe_dt is called from mxcnd_probe, which is not marked as __init.
+> > >     
+> > 
+> > I think this line is just a side note and should be at the end of the
+> > commit log.
+> >   
+> > > Using the sysfs unbind, bind nodes, mxcnd_probe and mxcnd_probe_dt can
+> > > potentially be called at any time. After the __init functions are cleaned,
+> > > mxcnd_probe_dt is no longer available. Calling it anyway causes a crash.    
+> > 
+> > The above paragraph explains the problem and the solution, you can just
+> > add something like "mcvnd_probe is untouched because it is already not
+> > marked as __init" instead of the first line.
+> >   
+> > > 
+> > > Signed-off-by: Martin Kaiser <martin@kaiser.cx>    
+> > 
+> > Boris, do you think this patch is a good candidate for stable?
+> > 
+> > If yes, Martin, could you please add a couple of stable/fixes tags above
+> > your SoB?  
+> 
+> We should at least have a Fixes tag. For the stable one, I'm not so
+> sure because the bug does not exist in practice (the compiler always
+> inline mxcnd_probe_dt()).
 
-Thanks!
+Fine, then a Fixes tag will be enough and I will take it into
+nand/next as it is not urgent at all to have it in the main tree.
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Miquèl
