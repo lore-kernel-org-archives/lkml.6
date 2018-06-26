@@ -1,97 +1,164 @@
 Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C07C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24157C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF1521885
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:15:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9jwQlTN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF1521885
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D754221777
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:16:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D754221777
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeFZHO7 (ORCPT
+        id S1752305AbeFZHQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:14:59 -0400
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:36254 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751220AbeFZHO5 (ORCPT
+        Tue, 26 Jun 2018 03:16:18 -0400
+Received: from regular1.263xmail.com ([211.150.99.140]:49561 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751885AbeFZHQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:14:57 -0400
-Received: by mail-wr0-f180.google.com with SMTP id f16-v6so16054635wrm.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 00:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aTv/dLWLJHJn7U5R2PzQo5aaCxHJ/cTkgZ3taM+JFX0=;
-        b=C9jwQlTNOOxt6W2kiBq5tKkIcyKoijEuwsnoOxjfrZDS0zzEJMzOVABvCGnAdHpqJ3
-         cZNcl4iKrIvFMMc3gzXsMJId1ndTHcR5vORmumhJXa//fplZCnlXQXuSUkt2mjWoA+N9
-         OvRy/OuTE4IItJdzMU8JeAGDIYDoe5wmR+OXrju29ASUXcynktEiBWnVacgx10qmbEju
-         IjSmsKqYugquXwrfwMg+ZcvQOiMSwxR2EhHoSWfqcNmXsmKnkVFkZuIk1esBdthOpDeB
-         b9rGJrbjyZ/ASGqeN1Ht1BkG3MCTCLAqXBoUOhZfizdHWqrnV9tZA5oJjqkbEVmEK8as
-         /dQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aTv/dLWLJHJn7U5R2PzQo5aaCxHJ/cTkgZ3taM+JFX0=;
-        b=kdGJgb7OYuMwEqq3oTTlJZtHyW1h8FlRXXgD+JacWLCdmqVGvDTip1GI1if6DbzMtM
-         bGFY8zcXxYEomnGJ4+kJTb7+vgZ41o2PCa2xckbpiQnTXRyBPTcSCQONILZSmmZ39/Em
-         O4OceFEUv4j4R98PZ50J7glMI78KAscycaAaqqz2l7RrXPGFSkKGI9N40umGLhES2G5V
-         oNU0C407OKEKMk0Jjg8uoV9Nwa3I8Qk4MF+T3d9EkgTJGhMk3pB4FnZGmed5mAlf077L
-         cSCveCZoExzPJgSe1HF93VgJ08U5sUuEAFsuc/3L7saXmb87gPabEu+N6t0VH7F/GBku
-         Zscw==
-X-Gm-Message-State: APt69E0oZDrjPJKUmRlKkfrKlsLzRIdxocH5ZyD1DUAYRSrpfFhvXNHz
-        j+sNaShxudrZ/Lt1OFwWCBY=
-X-Google-Smtp-Source: AAOMgpdCB8wGhEfsRj9JAsbpwqj+7opOk0MJs/zX68pfTjK+FLxgSEVAcWOSUv6Rc162kAlmkWs7DA==
-X-Received: by 2002:adf:8e10:: with SMTP id n16-v6mr371884wrb.100.1529997296790;
-        Tue, 26 Jun 2018 00:14:56 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id k17-v6sm858749wrp.19.2018.06.26.00.14.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 00:14:56 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 09:14:54 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] x86/mm: Drop unneeded __always_inline for p4d page table
- helpers
-Message-ID: <20180626071454.GA26761@gmail.com>
-References: <20180625223531.73080-1-kirill.shutemov@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625223531.73080-1-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 26 Jun 2018 03:16:16 -0400
+Received: from hjc?rock-chips.com (unknown [192.168.167.76])
+        by regular1.263xmail.com (Postfix) with ESMTP id 6265E4A6E;
+        Tue, 26 Jun 2018 15:16:08 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 12D8D39A;
+        Tue, 26 Jun 2018 15:16:05 +0800 (CST)
+X-RL-SENDER: hjc@rock-chips.com
+X-FST-TO: dri-devel@lists.freedesktop.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: hjc@rock-chips.com
+X-UNIQUE-TAG: <5fab89b86e7e88b84bc1ac679f3f0128>
+X-ATTACHMENT-NUM: 0
+X-SENDER: hjc@rock-chips.com
+X-DNS-TYPE: 0
+Received: from unknown (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith SMTP id 2568OG7VBV;
+        Tue, 26 Jun 2018 15:16:08 +0800 (CST)
+From:   Sandy Huang <hjc@rock-chips.com>
+To:     dri-devel@lists.freedesktop.org, Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     seanpaul@chromium.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/2] devicetree/bindings: display: Add document for rockchip RGB output
+Date:   Tue, 26 Jun 2018 15:15:39 +0800
+Message-Id: <1529997340-156879-2-git-send-email-hjc@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529997340-156879-1-git-send-email-hjc@rock-chips.com>
+References: <1529997340-156879-1-git-send-email-hjc@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This path add support rv1108 and px30 rgb output interface driver.
 
-* Kirill A. Shutemov <kirill.shutemov@linux.intel.com> wrote:
+Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1509522765-118759-1-git-send-email-hjc@rock-chips.com
+---
 
-> This reverts commits 1ea66554d3b09ce09c42e6a871899c84a276bb39 and
-> 046c0dbec0238c25b7526c26c9a9687664229ce2.
+Changes in v4: Add support px30
+Changes in v3: None
+Changes in v2: None
 
-Could you please write out these commits explicitly and both with title, with one 
-commit per line, like you did here:
+.../bindings/display/rockchip/rockchip-rgb.txt     | 73 ++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
 
->   51be13351517 ("Revert "x86/mm: Mark __pgtable_l5_enabled __initdata"")
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt b/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
+new file mode 100644
+index 0000000..077b9ad
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
+@@ -0,0 +1,73 @@
++Rockchip RV1108 RGB interface
++================================
++
++Required properties:
++- compatible: matching the soc type:
++	- "rockchip,px30-rgb";
++	- "rockchip,rv1108-rgb";
++
++Optional properties:
++- pinctrl-names: should be a "lcdc" entry or a "default" entry.
++- pinctrl-0: pin control group to be used for this interface.
++
++The rgb has two video ports described by:
++	Documentation/devicetree/bindings/media/video-interfaces.txt
++Their connections are modeled using the OF graph bindings specified in
++	Documentation/devicetree/bindings/graph.txt.
++
++- video port 0 for the VOP input, the remote endpoint maybe vopb/vopl/vop
++- video port 1 for either a panel or subsequent encoder
++
++the panel described by:
++	Documentation/devicetree/bindings/display/panel/simple-panel.txt
++rgb-mode nodes described by:
++	Documentation/devicetree/bindings/display/panel/panel-rgb.txt
++Panel other required properties:
++- ports for remote rgb output.
++
++Example:
++
++panel: panel {
++	compatible = "auo,b101ean01";
++	enable-gpios = <&gpio7 21 GPIO_ACTIVE_HIGH>;
++	rgb-mode = "p888";
++
++	ports {
++		panel_in_rgb: endpoint {
++			remote-endpoint = <&rgb_out_panel>;
++		};
++	};
++};
++
++For Rockchip RV1108:
++
++	rgb: rgb {
++		compatible = "rockchip,rv1108-rgb";
++		pinctrl-names = "lcdc";
++		pinctrl-0 = <&lcdc_ctl>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			rgb_in: port@0 {
++				reg = <0>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				rgb_in_vop: endpoint {
++					remote-endpoint = <&vop_out_rgb>;
++				};
++			};
++
++			rgb_out: port@1 {
++				reg = <1>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				rgb_out_panel: endpoint {
++					remote-endpoint = <&panel_in_rgb>;
++				};
++			};
++		};
++	};
+-- 
+2.7.4
 
-?
 
-Thanks,
-
-	Ingo
