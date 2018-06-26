@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573D8C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38413C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F280D26CDF
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC5AB26CDF
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:11:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="kbx/5FzO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F280D26CDF
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="XfJEqwp4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC5AB26CDF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751137AbeFZPLF (ORCPT
+        id S1751561AbeFZPLN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:11:05 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49496 "EHLO
+        Tue, 26 Jun 2018 11:11:13 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49752 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeFZPLD (ORCPT
+        with ESMTP id S1751004AbeFZPLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:11:03 -0400
+        Tue, 26 Jun 2018 11:11:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=9yHPPN6j/1fqrS4j5vtjWjzCVma0WTCT5SQwlMa5JrY=; b=kbx/5FzOBUeq
-        ICTih7fge/3VseUu+e6xq1xbEZplialbAmCO8cEGEtxVaTMrFKFXBTZfCV5qjQQGuzKin7P7jsWDy
-        ui8c8i+2NvVqS6b+D5O8DBt6g5F5mHm/HfeGUPmtaQMdLNiBOwOhq7RwU2gBVEk4WF3PYlSNLe7kA
-        LVsRY=;
+        List-Archive; bh=xxt2PMvioVLZIqxpkpaGujDUWjDlDwp5j2L96dmWiso=; b=XfJEqwp4OwE/
+        ZGj6NiwUNWnrwy7woXG1aKMoXQQG3jfEMWkbi5V9JzpI0WwacM6494Ae1GKyPWfxHCT1uj2MueQdk
+        JvVMl0xbQOOcRTG4dSfL+pgFJxSjckF41HnJnKhI74j0U5pXL00JsyegkaSo1iFXlpzWhO1d0IZYA
+        KADw4=;
 Received: from host109-146-194-33.range109-146.btcentralplus.com ([109.146.194.33] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fXpcK-0001JN-NA; Tue, 26 Jun 2018 15:10:52 +0000
+        id 1fXpcS-0001Jl-IU; Tue, 26 Jun 2018 15:11:00 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 2DE53440070; Tue, 26 Jun 2018 16:10:52 +0100 (BST)
+        id 1963E440070; Tue, 26 Jun 2018 16:11:00 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
@@ -51,10 +51,10 @@ Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
         lgirdwood@gmail.com, linux-arm-msm@vger.kernel.org, tiwai@suse.com,
         linux-arm-kernel@lists.infradead.org, niklas.cassel@linaro.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6asm: remove unused struct q6asm member" to the asoc tree
-In-Reply-To:  <20180626092016.9296-13-srinivas.kandagatla@linaro.org>
-Message-Id: <20180626151052.2DE53440070@finisterre.ee.mobilebroadband>
-Date:   Tue, 26 Jun 2018 16:10:52 +0100 (BST)
+Subject: Applied "ASoC: qdsp6: q6routing: support dt based module loading" to the asoc tree
+In-Reply-To:  <20180626092016.9296-10-srinivas.kandagatla@linaro.org>
+Message-Id: <20180626151100.1963E440070@finisterre.ee.mobilebroadband>
+Date:   Tue, 26 Jun 2018 16:11:00 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: q6asm: remove unused struct q6asm member
+   ASoC: qdsp6: q6routing: support dt based module loading
 
 has been applied to the asoc tree at
 
@@ -87,32 +87,41 @@ to this mail.
 Thanks,
 Mark
 
-From f339155a4063cf3177bb38f6e83760951148e86b Mon Sep 17 00:00:00 2001
+From f48bde4bfbcf434d6aef604c1c50d68b12a4bc45 Mon Sep 17 00:00:00 2001
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 26 Jun 2018 10:20:16 +0100
-Subject: [PATCH] ASoC: qdsp6: q6asm: remove unused struct q6asm member
+Date: Tue, 26 Jun 2018 10:20:13 +0100
+Subject: [PATCH] ASoC: qdsp6: q6routing: support dt based module loading
 
-pcmdev in struct q6asm seems be left over and unused, so just remove it.
+This patch uses new compatible string to make DT based module loading work.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Acked-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6asm.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/qcom/qdsp6/q6routing.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
-index c4fd28f168d5..2b2c7233bb5f 100644
---- a/sound/soc/qcom/qdsp6/q6asm.c
-+++ b/sound/soc/qcom/qdsp6/q6asm.c
-@@ -174,7 +174,6 @@ struct q6asm {
- 	struct device *dev;
- 	struct q6core_svc_api_info ainfo;
- 	wait_queue_head_t mem_wait;
--	struct platform_device *pcmdev;
- 	spinlock_t slock;
- 	struct audio_client *session[MAX_SESSIONS + 1];
- };
+diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+index 593f66b8622f..ab696bf8d1d3 100644
+--- a/sound/soc/qcom/qdsp6/q6routing.c
++++ b/sound/soc/qcom/qdsp6/q6routing.c
+@@ -993,9 +993,16 @@ static int q6pcm_routing_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id q6pcm_routing_device_id[] = {
++	{ .compatible = "qcom,q6adm-routing" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, q6pcm_routing_device_id);
++
+ static struct platform_driver q6pcm_routing_platform_driver = {
+ 	.driver = {
+ 		.name = "q6routing",
++		.of_match_table = of_match_ptr(q6pcm_routing_device_id),
+ 	},
+ 	.probe = q6pcm_routing_probe,
+ 	.remove = q6pcm_routing_remove,
 -- 
 2.17.1
 
