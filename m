@@ -2,107 +2,125 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7718CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B349C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1268E26F4F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:32:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wpln2ZVu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1268E26F4F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C8C7A269C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8C7A269C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755090AbeFZUcz (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:32:55 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55416 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754947AbeFZUcy (ORCPT
+        id S933849AbeFZUhr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:37:47 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:47821 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933050AbeFZUhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:32:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uUmMeeUTwmq1xVmREQF4vesTADQoBJhL/x0ByqgkhQA=; b=wpln2ZVuDB/+lDnnfX27KUJlq
-        t5Svk+MIScX3uOlH0jcftG+kGU2wJogIGv/NBvScTCoAoK9/+DoA1kE8sP/c9/yEu53YDqUG5NatR
-        J9Miezz1V/utWrGbZ5SBSvUt96UXFW/oLUu1OLP99JI6nmvwZ4rrn3wgKNtEdT/WVwNe4uRAzTVxu
-        eUSDTkIfIwT92/s99ljXo3J2PW0k38qTwH2wn3G870vXu0I3YBBLowSZhoiAWqvzX2CFGMsgCy8Vr
-        q70Ec3ja+Mdmjgsm8lS/e3ssZZLuFo8SUkd7/y3r1Q+5kgfEKqCwi68TUXNvwpto5PAbO/JnAj+nz
-        Ksv5s9qGQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXudY-0005fc-9V; Tue, 26 Jun 2018 20:32:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5FE1B2029F1D5; Tue, 26 Jun 2018 22:32:25 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 22:32:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
- race with CPU offline
-Message-ID: <20180626203225.GT2494@hirez.programming.kicks-ass.net>
-References: <20180626002052.GA24146@linux.vnet.ibm.com>
- <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
- <20180626175119.GL2494@hirez.programming.kicks-ass.net>
- <20180626182950.GH3593@linux.vnet.ibm.com>
- <20180626202615.GA32162@linux.vnet.ibm.com>
+        Tue, 26 Jun 2018 16:37:46 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5QKb2Ks043677;
+        Wed, 27 Jun 2018 05:37:02 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Wed, 27 Jun 2018 05:37:02 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5QKb2nl043673
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 27 Jun 2018 05:37:02 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: what trees/branches to test on syzbot
+To:     Guenter Roeck <groeck@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        kbuild test robot <fengguang.wu@intel.com>
+References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
+ <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
+ <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
+ <873735n3dy.fsf@xmission.com> <20180116173440.GA15893@kroah.com>
+ <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
+ <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
+ <CA+55aFzJaHyKBg_PTS85Y5RxUsQEerJ_Lc5HY1dd1YNztf==Wg@mail.gmail.com>
+ <b9aa57f5-9204-dc97-bfd6-d53ed2e0ae12@i-love.sakura.ne.jp>
+ <20180626141602.GA17788@thunk.org>
+ <CACT4Y+YH3Z1q9aVTUgTbTPfDp2ao-z=YAjzBGU5HsjGJ-utgeg@mail.gmail.com>
+ <CABXOdTe1HCy78w+G4LuN8S7Ad5kvUxwHsiP2a=8aW-jEvpjdug@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <876e38d9-95e5-0a93-9c26-7287151b8b53@i-love.sakura.ne.jp>
+Date:   Wed, 27 Jun 2018 05:37:00 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626202615.GA32162@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CABXOdTe1HCy78w+G4LuN8S7Ad5kvUxwHsiP2a=8aW-jEvpjdug@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 01:26:15PM -0700, Paul E. McKenney wrote:
-> commit 2e5b2ff4047b138d6b56e4e3ba91bc47503cdebe
-> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Date:   Fri May 25 19:23:09 2018 -0700
+On 2018/06/26 23:54, Guenter Roeck wrote:
+> On Tue, Jun 26, 2018 at 7:38 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>>
+>> On Tue, Jun 26, 2018 at 4:16 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>>> On Tue, Jun 26, 2018 at 07:54:53PM +0900, Tetsuo Handa wrote:
+>>>> I hope we can accept NOW either "reviving linux-next.git" or "allowing debug printk()
+>>>> patches for linux.git". For example, "INFO: task hung in __sb_start_write" got 900
+>>>> crashes in 81 days but still unable to find a reproducer. Dmitry tried to reproduce
+>>>> locally with debug printk() patches but not yet successful. I think that testing with
+>>>> http://lkml.kernel.org/r/f91e1c82-9693-cca3-4ab7-ecd9d9881fb4@i-love.sakura.ne.jp
+>>>> on linux.git or linux-next.git is the only realistic way for debugging this bug.
+>>>> More we postpone revival of the linux-next, more syzbot reports we will get...
+>>>
+>>> Here's a proposal for adding linux-next back:
+>>>
+>>> *) Subsystems or maintainers need to have a way to opt out of getting
+>>>    spammed with Syzkaller reports that have no reproducer.  More often
+>>>    than not, they are not actionable, and just annoy the maintainers,
+>>>    with the net result that they tune out all Syzkaller reports as
+>>>    noise.
+>>
+>> False. You can count yourself. 2/3 are actionable and fixed.
+>>
 > 
->     rcu: Fix grace-period hangs due to race with CPU offline
->     
->     Without special fail-safe quiescent-state-propagation checks, grace-period
->     hangs can result from the following scenario:
->     
->     1.      CPU 1 goes offline.
->     
->     2.      Because CPU 1 is the only CPU in the system blocking the current
->             grace period, the grace period ends as soon as
->             rcu_cleanup_dying_idle_cpu()'s call to rcu_report_qs_rnp()
->             returns.
+> Problem is that some if not many of the other 1/3 will be considered
+> noise, and even some of the 2/3 will be considered noise because they
+> have already been fixed by the time they are reported. Same problem as
+> with, say, stable tree merges: People don't see the thousands of bug
+> fixes inherited with such merges, but they do see the two or three
+> regressions. Plus, of course, one can not prove that the thousands of
+> bug fixes did any good because the fixed bugs are not observable
+> anymore. The only remedy is to try to reduce regressions down to zero
+> (or, of course, stop using/merging stable releases).
+> 
+> The same applies here: People won't see the good, they only see the
+> noise. This is pretty much the reason why I all but stopped reporting
+> build/boot failures on -next. You would have to reduce the noise
+> almost down to zero for people to stop complaining, and you would have
+> to be _really_ sure that the problem was not already fixed or reported
+> elsewhere.
+> 
+> Guenter
+> 
 
-My current code doesn't have that call... So this is a new problem
-earlier in this series.
-
->     3.      At this point, the leaf rcu_node structure's ->lock is no longer
->             held: rcu_report_qs_rnp() has released it, as it must in order
->             to awaken the RCU grace-period kthread.
->     
->     4.      At this point, that same leaf rcu_node structure's ->qsmaskinitnext
->             field still records CPU 1 as being online.  This is absolutely
->             necessary because the scheduler uses RCU (in this case on the
->             wake-up path while awakening RCU's grace-period kthread), and
->             ->qsmaskinitnext contains RCU's idea as to which CPUs are online.
->             Therefore, invoking rcu_report_qs_rnp() after clearing CPU 1's
->             bit from ->qsmaskinitnext would result in a lockdep-RCU splat
->             due to RCU being used from an offline CPU.
-
-Argh.. so it's your own wakeup!
-
-This all still smells really bad. But let me try and figure out where
-you introduced the problem.
+I think that syzbot can stop deciding email recipients and leave it to those who
+diagnose bugs, for the ratio of sending to wrong subsystem maintainers is not low.
+For example, syzbot assumed that "INFO: task hung in __get_super" is a fs layer bug.
+But I think that the problem is in more lower layers (block or mm or locking layer).
+The root cause could even be just overstressed due to instructions enabled by
+CONFIG_KCOV_ENABLE_COMPARISONS=y.
