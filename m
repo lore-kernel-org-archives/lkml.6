@@ -2,152 +2,153 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93852C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45F8C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A9F26C34
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:24:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A9F26C34
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F80226C3A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:24:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NDpc2bWi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F80226C3A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966032AbeFZOYk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 10:24:40 -0400
-Received: from mga02.intel.com ([134.134.136.20]:35850 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935982AbeFZOW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:22:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 07:22:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
-   d="scan'208";a="62318729"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 26 Jun 2018 07:22:53 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 05D2C7AA; Tue, 26 Jun 2018 17:22:51 +0300 (EEST)
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv4 11/18] x86/mm: Implement prep_encrypted_page() and arch_free_page()
-Date:   Tue, 26 Jun 2018 17:22:38 +0300
-Message-Id: <20180626142245.82850-12-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
-References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
+        id S966044AbeFZOYx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 10:24:53 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:40160 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966021AbeFZOYt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 10:24:49 -0400
+Received: by mail-qk0-f196.google.com with SMTP id b129-v6so9583149qke.7;
+        Tue, 26 Jun 2018 07:24:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D31kFDHYVRdEreczmok+iIBNSYLFxRODEYX/0Rw4BWA=;
+        b=NDpc2bWiNILe5wtecEXkGOGqIHZE03R2BZZzEC9xBNSQXP5uxWgwv8BAPrUpZbXxGp
+         uLpBTFsxmNWnU2lM+yJVFUcu2s52/OQvG+mWgG71r622pjX+PnUsQcsjCA8SGJFEY2TR
+         5bxs/Y6Z9t99rwO1BSVCY2Fm+XKIy+R2jCjx1lWQe8wg0xKsORQXXTK0c2JcFSBX0Nvm
+         mZGLbIwCKFIabW9kxSRJ7JNa+f+cudKBAjoPmMmWH55I9F6NApXk6i2u6oGMGIryP/QJ
+         Z/J8n7t6GsWikJPnssMBA3jUIemXnTNiu1H7fLlK3ioGVltyvxQCWrSnGKjqO9F1WVep
+         TfAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D31kFDHYVRdEreczmok+iIBNSYLFxRODEYX/0Rw4BWA=;
+        b=JEv8oSJWpB3oEAgshiwu0Czs3GNmi3ZE41Otuc70ptfRhn8jbuWkWV6Lc/uQaIaQsg
+         B5d8xQfA0ditqaNffoBXPIFUpkhdckZvp7l868jiIfTuimJeOmaJ7qc+OoQ/BGnTqyRO
+         pg+ymzbBkn2OTuNq+RCFngnA5Fyy7cVDEqARjqdPhoXJZpJ2pk81T5/BuXHz1bfVC5Fz
+         EYKmZdDnvF42ew4wy9lVRJRl69BmMRaCx88PWvM3l41OC4SbIRPAcIycwM4Oj4C7smCV
+         sXPX1k6bW6pP5B/xJmsAQc9S+/K6HUosFaSWzmLJZ5a7paRQXl4Znko4EtPa9HS8iE6Y
+         OfXw==
+X-Gm-Message-State: APt69E2UKZ393CRk0i94jOPs+Lz0MErw7tbYUBBBrYCTnfCGJwMy8TX2
+        KckB3roYqPEpwAU0RCXFqCv4WHv6gtgIrWTFvXk=
+X-Google-Smtp-Source: AAOMgpcR3FdqKnDfwLq4U8vvXvTU2pQ9nVaYIFq+LZ4pb6PhI5xfm8hQIEtydLq7hXdsTVVn4+cuhC4HkeFUqXf6qmw=
+X-Received: by 2002:a37:9f0b:: with SMTP id i11-v6mr1447839qke.171.1530023088909;
+ Tue, 26 Jun 2018 07:24:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
+ <20180626112455.GC2118@localhost.localdomain> <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
+ <20180626120306.GD2118@localhost.localdomain>
+In-Reply-To: <20180626120306.GD2118@localhost.localdomain>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 26 Jun 2018 16:24:37 +0200
+Message-ID: <CAFqH_52v3-L1xLL12hzyGCbuooX5T52Lm7BXHM3sBX1ERWmhiQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+To:     matti.vaittinen@fi.rohmeurope.com
+Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hardware/CPU does not enforce coherency between mappings of the same
-physical page with different KeyIDs or encryption keys.
-We are responsible for cache management.
+Hi Matti,
 
-Flush cache on allocating encrypted page and on returning the page to
-the free pool.
+Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+dia dt., 26 de juny 2018 a les 14:03:
+>
+> Hello Again Eric,
+>
+> On Tue, Jun 26, 2018 at 01:40:40PM +0200, Enric Balletbo Serra wrote:
+> > Hi Matti,
+> > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > dia dt., 26 de juny 2018 a les 13:25:
+> > > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > > dia dt., 19 de juny 2018 a les 12:57:
+> > >
+> > > > > +static const struct of_device_id bd71837_of_match[] = {
+> > > > > +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> > > > > +       { },
+> > > >
+> > > > nit: { /* sentinel */ }
+> > >
+> > > I am sorry but I didn't quite get the point here. Could you please
+> > > explain what did you expect to be added here?
+> > >
+> >
+> > It's a nit but It is a good practice to specify that the last entry is
+> > a sentinel. Just this.
+> >
+> > +static const struct of_device_id bd71837_of_match[] = {
+> > +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> > +       { /* sentinel */ }
+> > +};
+>
+> Oh, I see. Finally something I can disagree =) I quickly opened few
+> random drivers which declare match table. None of them practiced this
+> good practice. So I guess it is not such a standard after all. And I
+> guess the meaning of last entry in match table should be quite obvious.
+> Adding the comment /* sentinel */ sounds like stating the obvious at
+> best - at worst it gets one just to wonder what the "sentinel" means =)
+>
 
-prep_encrypted_page() also takes care about zeroing the page. We have to
-do this after KeyID is set for the page.
+git grep "/\* sentinel \*/"
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- arch/x86/include/asm/mktme.h |  6 +++++
- arch/x86/mm/mktme.c          | 49 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+Anyway, I marked this change as a nit, so you don't need to change. I
+just commented because at some point I received a "complain" when I
+didn't add it. But this is up to the maintainer and I am not sure if
+the "complain" was received in this subsystem :)
 
-diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-index f0b7844e36a4..44409b8bbaca 100644
---- a/arch/x86/include/asm/mktme.h
-+++ b/arch/x86/include/asm/mktme.h
-@@ -19,6 +19,12 @@ int page_keyid(const struct page *page);
- #define vma_keyid vma_keyid
- int vma_keyid(struct vm_area_struct *vma);
- 
-+#define prep_encrypted_page prep_encrypted_page
-+void prep_encrypted_page(struct page *page, int order, int keyid, bool zero);
-+
-+#define HAVE_ARCH_FREE_PAGE
-+void arch_free_page(struct page *page, int order);
-+
- #else
- #define mktme_keyid_mask	((phys_addr_t)0)
- #define mktme_nr_keyids		0
-diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-index a1f40ee61b25..1194496633ce 100644
---- a/arch/x86/mm/mktme.c
-+++ b/arch/x86/mm/mktme.c
-@@ -1,4 +1,5 @@
- #include <linux/mm.h>
-+#include <linux/highmem.h>
- #include <asm/mktme.h>
- 
- phys_addr_t mktme_keyid_mask;
-@@ -49,3 +50,51 @@ int vma_keyid(struct vm_area_struct *vma)
- 	prot = pgprot_val(vma->vm_page_prot);
- 	return (prot & mktme_keyid_mask) >> mktme_keyid_shift;
- }
-+
-+void prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
-+{
-+	int i;
-+
-+	/* It's not encrypted page: nothing to do */
-+	if (!keyid)
-+		return;
-+
-+	/*
-+	 * The hardware/CPU does not enforce coherency between mappings of the
-+	 * same physical page with different KeyIDs or encryption keys.
-+	 * We are responsible for cache management.
-+	 *
-+	 * We flush cache before allocating encrypted page
-+	 */
-+	clflush_cache_range(page_address(page), PAGE_SIZE << order);
-+
-+	for (i = 0; i < (1 << order); i++) {
-+		/* All pages coming out of the allocator should have KeyID 0 */
-+		WARN_ON_ONCE(lookup_page_ext(page)->keyid);
-+		lookup_page_ext(page)->keyid = keyid;
-+
-+		/* Clear the page after the KeyID is set. */
-+		if (zero)
-+			clear_highpage(page);
-+
-+		page++;
-+	}
-+}
-+
-+void arch_free_page(struct page *page, int order)
-+{
-+	int i;
-+
-+	/* It's not encrypted page: nothing to do */
-+	if (!page_keyid(page))
-+		return;
-+
-+	clflush_cache_range(page_address(page), PAGE_SIZE << order);
-+
-+	for (i = 0; i < (1 << order); i++) {
-+		/* Check if the page has reasonable KeyID */
-+		WARN_ON_ONCE(lookup_page_ext(page)->keyid > mktme_nr_keyids);
-+		lookup_page_ext(page)->keyid = 0;
-+		page++;
-+	}
-+}
--- 
-2.18.0
+Cheers,
+ Enric
 
+> >
+> > And just noticed, is .data = (void *)0 really required?
+>
+> As static structs should be initialized to zero I'd say it is not
+> required. Will remove this. Thanks for pointing this out.
+>
+> Br,
+>         Matti Vaittinen
+>
