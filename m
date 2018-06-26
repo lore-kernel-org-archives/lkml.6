@@ -2,244 +2,159 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EBBC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389F8C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70B8D269C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:22:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B8D269C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E8A4526974
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:23:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A4526974
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934635AbeFZLWS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:22:18 -0400
-Received: from foss.arm.com ([217.140.101.70]:44034 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932544AbeFZLWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:22:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F7B880D;
-        Tue, 26 Jun 2018 04:22:16 -0700 (PDT)
-Received: from red-moon (unknown [10.1.206.55])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61CCB3F5C0;
-        Tue, 26 Jun 2018 04:22:14 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 12:23:53 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Ley Foon Tan <ley.foon.tan@intel.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch
- Kconfig
-Message-ID: <20180626112344.GA6850@red-moon>
-References: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
- <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
- <20180621165400.GB14519@e107981-ln.cambridge.arm.com>
- <5e9b0aa4-ded1-725d-c401-49c13b7d5f9d@broadcom.com>
- <1529683148.2729.6.camel@intel.com>
- <20180625092758.GA6412@red-moon>
- <1cf91447-6e17-a7cb-c827-210835179db9@broadcom.com>
+        id S934306AbeFZLXy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:23:54 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56450 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932544AbeFZLXv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 07:23:51 -0400
+X-UUID: 9b3cccbf2e804714a49edc6ef6d7e1df-20180626
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1558188118; Tue, 26 Jun 2018 19:23:46 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 26 Jun 2018 19:23:43 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Tue, 26 Jun 2018 19:23:43 +0800
+Message-ID: <1530012223.17380.2.camel@mtkswgap22>
+Subject: Re: [PATCH v2 2/2] arm64: dts: mediatek: add mt6765 support
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        "My Chuang" <my.chuang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 26 Jun 2018 19:23:43 +0800
+In-Reply-To: <86h8lq6l1r.wl-marc.zyngier@arm.com>
+References: <1529978646-28976-1-git-send-email-mars.cheng@mediatek.com>
+         <1529978646-28976-3-git-send-email-mars.cheng@mediatek.com>
+         <86h8lq6l1r.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1cf91447-6e17-a7cb-c827-210835179db9@broadcom.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 11:48:11PM -0700, Scott Branden wrote:
-> Hi Lorenzo,
-> 
-> 
-> On 18-06-25 02:27 AM, Lorenzo Pieralisi wrote:
-> >On Fri, Jun 22, 2018 at 11:59:08PM +0800, Ley Foon Tan wrote:
-> >>On Thu, 2018-06-21 at 22:08 -0700, Scott Branden wrote:
-> >>>
-> >>>On 18-06-21 09:54 AM, Lorenzo Pieralisi wrote:
-> >>>>
-> >>>>On Wed, Jun 20, 2018 at 10:07:33AM +0200, Jan Kiszka wrote:
-> >>>>>
-> >>>>>On 2018-06-19 13:21, Lorenzo Pieralisi wrote:
-> >>>>>>
-> >>>>>>Commit 51bc085d6454 ("PCI: Improve host drivers compile test
-> >>>>>>coverage")
-> >>>>>>added configuration options to allow PCI host controller
-> >>>>>>drivers to be
-> >>>>>>compile tested on all architectures.
-> >>>>>>
-> >>>>>>Some host controller drivers (eg PCIE_ALTERA) config entries
-> >>>>>>select
-> >>>>>>the PCI_DOMAINS config option to enable PCI domains management
-> >>>>>>in
-> >>>>>>the kernel. Now that host controller drivers can be compiled on
-> >>>>>>all architectures, this triggers build regressions on arches
-> >>>>>>that
-> >>>>>>do not implement the PCI_DOMAINS required API (ie
-> >>>>>>pci_domain_nr()):
-> >>>>>>
-> >>>>>>drivers/ata/pata_ali.c: In function 'ali_init_chipset':
-> >>>>>>drivers/ata/pata_ali.c:469:38: error:
-> >>>>>>          implicit declaration of function 'pci_domain_nr';
-> >>>>>>                                            did you mean
-> >>>>>>'pci_iomap_wc'?
-> >>>>>>
-> >>>>>>Furthemore, some software configurations (ie Jailhouse) require
-> >>>>>>a
-> >>>>>>PCI_DOMAINS enabled kernel to configure multiple host
-> >>>>>>controllers
-> >>>>>>without having an explicit dependency on the ARM platform on
-> >>>>>>which
-> >>>>>>they run.
-> >>>>>>
-> >>>>>>Make PCI_DOMAINS a visible configuration option on ARM so that
-> >>>>>>software
-> >>>>>>configurations that need it can manually select it and move the
-> >>>>>>PCI_DOMAINS selection from PCI controllers configuration file
-> >>>>>>to ARM
-> >>>>>>sub-arch config entries that currently require it, fixing the
-> >>>>>>issue.
-> >>>>>>
-> >>>>>>Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test
-> >>>>>>coverage")
-> >>>>>>Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us
-> >>>>>>.net
-> >>>>>>Reported-by: Guenter Roeck <linux@roeck-us.net>
-> >>>>>>Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> >>>>>>Cc: Scott Branden <scott.branden@broadcom.com>
-> >>>>>>Cc: Will Deacon <will.deacon@arm.com>
-> >>>>>>Cc: Bjorn Helgaas <bhelgaas@google.com>
-> >>>>>>Cc: Rob Herring <robh@kernel.org>
-> >>>>>>Cc: Russell King <linux@armlinux.org.uk>
-> >>>>>>Cc: Jan Kiszka <jan.kiszka@siemens.com>
-> >>>>>>Cc: Guenter Roeck <linux@roeck-us.net>
-> >>>>>>Cc: Ley Foon Tan <lftan@altera.com>
-> >>>>>>---
-> >>>>>>v1 -> v2
-> >>>>>>     - Removed ARCH_VIRT PCI_DOMAINS selection
-> >>>>>>     - Added PCI_DOMAINS visible config option
-> >>>>>>
-> >>>>>>v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
-> >>>>>>
-> >>>>>>   arch/arm/Kconfig               | 8 +++++++-
-> >>>>>>   arch/arm/mach-bcm/Kconfig      | 1 +
-> >>>>>>   arch/arm/mach-socfpga/Kconfig  | 1 +
-> >>>>>>   drivers/pci/controller/Kconfig | 3 ---
-> >>>>>>   4 files changed, 9 insertions(+), 4 deletions(-)
-> >>>>>>
-> >>>>>>diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> >>>>>>index 54eeb8d00bc6..843edfd000be 100644
-> >>>>>>--- a/arch/arm/Kconfig
-> >>>>>>+++ b/arch/arm/Kconfig
-> >>>>>>@@ -1245,8 +1245,14 @@ config PCI
-> >>>>>>       VESA. If you have PCI, say Y, otherwise N.
-> >>>>>>
-> >>>>>>   config PCI_DOMAINS
-> >>>>>>-   bool
-> >>>>>>+   bool "Support for multiple PCI domains"
-> >>>>>>     depends on PCI
-> >>>>>>+   help
-> >>>>>>+     Enable PCI domains kernel management. Say Y if your
-> >>>>>>machine
-> >>>>>>+     has a PCI bus hierarchy that requires more than one PCI
-> >>>>>>+     domain (aka segment) to be correctly managed. Say N
-> >>>>>>otherwise.
-> >>>>>>+
-> >>>>>>+     If you don't know what to do here, say N.
-> >>>>>>
-> >>>>>>   config PCI_DOMAINS_GENERIC
-> >>>>>>     def_bool PCI_DOMAINS
-> >>>>>>diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-
-> >>>>>>bcm/Kconfig
-> >>>>>>index c46a728df44e..25aac6ee2ab1 100644
-> >>>>>>--- a/arch/arm/mach-bcm/Kconfig
-> >>>>>>+++ b/arch/arm/mach-bcm/Kconfig
-> >>>>>>@@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
-> >>>>>>     select GPIOLIB
-> >>>>>>     select ARM_AMBA
-> >>>>>>     select PINCTRL
-> >>>>>>+   select PCI_DOMAINS if PCI
-> >>>>>>     help
-> >>>>>>       This enables support for systems based on Broadcom IPROC
-> >>>>>>architected SoCs.
-> >>>>>>       The IPROC complex contains one or more ARM CPUs along
-> >>>>>>with common
-> >>>>>>diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-
-> >>>>>>socfpga/Kconfig
-> >>>>>>index d0f62eacf59d..4adb901dd5eb 100644
-> >>>>>>--- a/arch/arm/mach-socfpga/Kconfig
-> >>>>>>+++ b/arch/arm/mach-socfpga/Kconfig
-> >>>>>>@@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
-> >>>>>>     select HAVE_ARM_SCU
-> >>>>>>     select HAVE_ARM_TWD if SMP
-> >>>>>>     select MFD_SYSCON
-> >>>>>>+   select PCI_DOMAINS if PCI
-> >>>>>>
-> >>>>>>   if ARCH_SOCFPGA
-> >>>>>>   config SOCFPGA_SUSPEND
-> >>>>>>diff --git a/drivers/pci/controller/Kconfig
-> >>>>>>b/drivers/pci/controller/Kconfig
-> >>>>>>index 18fa09b3ac8f..cc9fa02d32a0 100644
-> >>>>>>--- a/drivers/pci/controller/Kconfig
-> >>>>>>+++ b/drivers/pci/controller/Kconfig
-> >>>>>>@@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
-> >>>>>>     depends on OF
-> >>>>>>     select PCI_HOST_COMMON
-> >>>>>>     select IRQ_DOMAIN
-> >>>>>>-   select PCI_DOMAINS
-> >>>>>>     help
-> >>>>>>       Say Y here if you want to support a simple generic PCI
-> >>>>>>host
-> >>>>>>       controller, such as the one emulated by kvmtool.
-> >>>>>>@@ -138,7 +137,6 @@ config PCI_VERSATILE
-> >>>>>>
-> >>>>>>   config PCIE_IPROC
-> >>>>>>     tristate
-> >>>>>>-   select PCI_DOMAINS
-> >>>>>>     help
-> >>>>>>       This enables the iProc PCIe core controller support for
-> >>>>>>Broadcom's
-> >>>>>>       iProc family of SoCs. An appropriate bus interface driver
-> >>>>>>needs
-> >>>>>>@@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
-> >>>>>>   config PCIE_ALTERA
-> >>>>>>     bool "Altera PCIe controller"
-> >>>>>>     depends on ARM || NIOS2 || COMPILE_TEST
-> >>>>>>-   select PCI_DOMAINS
-> >>>>>>     help
-> >>>>>>       Say Y here if you want to enable PCIe controller support
-> >>>>>>on Altera
-> >>>>>>       FPGA.
-> >>>>>>
-> >>>>>Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
-> >>>>Thanks a lot. Scott, Ley Foon, does it work for you ? I would like
-> >>>>to ask Bjorn to send it asap since the build on sparc is still
-> >>>>broken.
-> >>>Change will have to be made for arm64 for ARCH_BCM_IPROC as well.
-> >>Yes, need to add it to arm64 too. Others are okay.
-> >On arm64 CONFIG_PCI_DOMAINS defaults to CONFIG_PCI so there is no need
-> >to select it, if that's all you need changed there is nothing to
-> >change and this patch is read to be merged.
-> I see that now: arm64 is doing things properly.  The same should be
-> done for arm: default to CONFIG_PCI so there is no need to select
-> it.
-> I didn't like the change to have select to begin with.
+Hi Marc
 
-I can't select PCI_DOMAINS by default on ARM 32-bit since this would
-force it on platforms (eg non-DT legacy) that never relied on it; this
-can easily trigger regressions. This patch is ready to go as-is, I do
-not like it either but as I tried to explain it is the only reasonable
-way forward.
+On Tue, 2018-06-26 at 08:53 +0100, Marc Zyngier wrote:
+> On Tue, 26 Jun 2018 03:04:06 +0100,
+> Mars Cheng <mars.cheng@mediatek.com> wrote:
+> > 
+> > This adds basic chip support for MT6765 SoC.
+> > 
+> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> > ---
+> >  arch/arm64/boot/dts/mediatek/Makefile       |    1 +
+> >  arch/arm64/boot/dts/mediatek/mt6765-evb.dts |   33 ++++++
+> >  arch/arm64/boot/dts/mediatek/mt6765.dtsi    |  158 +++++++++++++++++++++++++++
+> >  3 files changed, 192 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
+> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
+> > 
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt6765.dtsi b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
+> > new file mode 100644
+> > index 0000000..ab34c0f
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
+> 
+> [...]
+> 
+> > +	timer {
+> > +		compatible = "arm,armv8-timer";
+> > +		interrupt-parent = <&gic>;
+> > +		interrupts = <GIC_PPI 13
+> > +			     (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +			     <GIC_PPI 14
+> > +			     (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +			     <GIC_PPI 11
+> > +			     (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +			     <GIC_PPI 10
+> > +			     (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> 
+> GICv3 doesn't encode the PPI affinity in its interrupt specifiers (or
+> at least not this way). Please drop it.
 
-Thanks,
-Lorenzo
+Got it, will fix it.
+
+> 
+> > +	};
+> > +
+> > +	soc {
+> > +		#address-cells = <2>;
+> > +		#size-cells = <2>;
+> > +		compatible = "simple-bus";
+> > +		ranges;
+> > +
+> > +		sysirq: intpol-controller@10200a80 {
+> > +			compatible = "mediatek,mt6765-sysirq",
+> > +				     "mediatek,mt6577-sysirq";
+> > +			interrupt-controller;
+> > +			#interrupt-cells = <3>;
+> > +			interrupt-parent = <&gic>;
+> > +			reg = <0 0x10200a80 0 0x50>;
+> > +		};
+> > +
+> > +		gic: interrupt-controller@0c000000 {
+> > +			compatible = "arm,gic-v3";
+> > +			#interrupt-cells = <3>;
+> > +			#address-cells = <2>;
+> > +			#size-cells = <2>;
+> > +			#redistributor-regions = <1>;
+> 
+> A single redistributor is the default, and you don't need to specify
+> it in the DT.
+> 
+
+sure, it's really unnecessary. will remove it.
+
+> > +			interrupt-parent = <&gic>;
+> > +			interrupt-controller;
+> > +			reg = <0 0x0c000000 0 0x40000>, // distributor
+> > +			      <0 0x0c100000 0 0x200000>; // redistributor
+> 
+> How about the GICv2 compatibility regions, which are provided by the
+> CPUs at a fixed offset from PERIPHBASE? See the Cortex-A53 TRM for
+> detail, and please add the missing regions.
+> 
+
+Thanks. will add it soon.
+
+> > +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> > +		};
+> 
+> Thanks,
+> 
+> 	M.
+> 
+
+
