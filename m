@@ -2,143 +2,142 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D763DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77066C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6788E26C3E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07DE726DAC
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:30:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pow76olF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6788E26C3E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNhJv9bS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DE726DAC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933801AbeFZU0R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:26:17 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:45855 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933050AbeFZU0P (ORCPT
+        id S933628AbeFZUaU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:30:20 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40070 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754597AbeFZUaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:26:15 -0400
-Received: by mail-pg0-f66.google.com with SMTP id z1-v6so8104888pgv.12
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:26:15 -0700 (PDT)
+        Tue, 26 Jun 2018 16:30:17 -0400
+Received: by mail-pf0-f193.google.com with SMTP id z24-v6so8598534pfe.7;
+        Tue, 26 Jun 2018 13:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5oCijZqRRLjU1tU+JY9MJdRGy5LcryJVuAj8txFMAXg=;
-        b=Pow76olFQal3Sm6kSwUWYPXY1bMGQs7CIKbHnaFc1X9s8iOpCzIG8n2Onqpd0aFSsh
-         qLvYJog2bKpsweDf00Irq/gu3rhRzW2X9a0O8xq0VE8sq2PurLWUwR1hdAah1N/Nlc0Y
-         /jrompTuNV5MDcZDod2xYjNqnirIUNUIsXkkU=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K2sngbATib69Jr7lmX6FSNeYGWGovLUmKz581Pr+41A=;
+        b=bNhJv9bSGSA6q5NTFzHQIKpzVnndnGUe9uU2TAs/U7jXodF8HXKseZaXpjQRw7sfVD
+         OVY1vmHJjwNInWMBzSxWGnEqMl1MSjKq0gD0Ozg7+s1kGrt+4Rn2pggnFQ9+GXXvfo4X
+         VVE8Jj3LFdmnu48f00pPYtI4Di2hy2cv1aFlzogY6vu2KBDQHBNlJBihnMQW7cydurgo
+         VDXTPsCkaiWxVOgsGi5f0Kp7WNK5sN2Bv8vhOUaDGSjNgNvvec63bYPLmPEarnSUgfim
+         89oV/wH9arCJIeVueEy7XMR8SlYZzBlTnzIWSbRKqb5cqJtevDgOgl0NFvebFWFQtSjf
+         RIpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5oCijZqRRLjU1tU+JY9MJdRGy5LcryJVuAj8txFMAXg=;
-        b=JdEeeIcWuVNcRZ2oVInQeiLCA39WkJA3mNPenJqszmo6TuknoeTJXkzOLjE95f45jP
-         bVEUkep1LSzp6CQE4wpaXThd2YCTmeGhByFQxnwtgXuFYovkQODU/u6eCVX9JBQp7VQn
-         MOyCLuXPZ4ul3b+pynFx35BLY5zH6eJJz5QPiJUAv2U0aVbVkZcjKei4pnwwj1ZsL9Xn
-         K9BCq3NXA+o2UuRANcnZ6UidSfCidmvFSFvU0vmhyxpGOJ+9RVWfHA59CNUSEsAOUef1
-         acyXaNj44x318zi0pkHj1r3n7n9B5Ti77OqbASnFAuyPSiYJd7GvR72k9mBhat4uQCZS
-         dEcw==
-X-Gm-Message-State: APt69E2ScQJaN37jVtzio0oU+42a6IBFhShbBKGGg8GhTPzSxirFTZNY
-        XqExCn5ulfNL+UXI8/aI2Yjo7A==
-X-Google-Smtp-Source: AAOMgpexJcIbce9UVxx5cGtfpwpProEeMzPWKQsWcYM/7uQVVdWaVOw6O6nwtlFlpa2wP5uUeam3Yw==
-X-Received: by 2002:a62:5bc4:: with SMTP id p187-v6mr2935684pfb.226.1530044775234;
-        Tue, 26 Jun 2018 13:26:15 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a81-v6sm6038150pfl.167.2018.06.26.13.26.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 13:26:14 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 13:28:39 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        jason@lakedaemon.net, sudeep.holla@arm.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, nicolas.dechesne@linaro.org
-Subject: Re: [RFC PATCH] irqchip/gic-v3: Add quirk for msm8996 secured
- registers
-Message-ID: <20180626202839.GI1860@tuxbook-pro>
-References: <20180613114340.32550-1-srinivas.kandagatla@linaro.org>
- <2d866cd1-59a4-befb-b2de-b91f9e56804a@arm.com>
- <98209e4e-96b3-3baf-3f21-a57dc8447850@linaro.org>
- <152900843159.16708.3190914824253841690@swboyd.mtv.corp.google.com>
- <61229c8f-7de0-a798-5af4-ba5e0ea78001@arm.com>
- <152908522534.16708.13094007571453293776@swboyd.mtv.corp.google.com>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=K2sngbATib69Jr7lmX6FSNeYGWGovLUmKz581Pr+41A=;
+        b=ebi3Ox6uKQpFwCPTOXpoIEF6xrazfwbsxJpQLiTN2TaWw+km6JltA0s1Vj4+YjTwzX
+         J8conQAyR1cI/EBdKB/rw2QRwDHMEkZOJEV/Hc47XOvBeNuqbyLw+WlT072qruTUmrJ7
+         tpExM7lBmw7Za2t6GUDqgV6POM5Ys2MSnx9A2R2PZnIdChnLRiJ5PPdX+v4OTv7wM453
+         FWolGibg7mPh+SZtlwL+xcXYzFi1NxoP/Bkh3sEmDjjXB4e6E6kXTtbmtmXKzJlfCE73
+         s6/tHwySgmmWdEnAKiGMJvC1rGXrs7NLmtZXO6wOEyFIn5x8oh311yx3na3F2eKSuG2T
+         GLHQ==
+X-Gm-Message-State: APt69E0Bcovor19CBv40RckTiNYKsPJrv4fDiqIhCGKQ+3C1+RzaSFGD
+        J+AAnvPKy2HBx9zL/JP4g934oLh7
+X-Google-Smtp-Source: AAOMgpeclxMKDIosdezwsS/sHiEbnd+Em/dxnO62Eh7hjzPal/nrYFmH3mA05J8ZUKDaG6T9kaXdpA==
+X-Received: by 2002:a62:da07:: with SMTP id c7-v6mr2977662pfh.106.1530045015852;
+        Tue, 26 Jun 2018 13:30:15 -0700 (PDT)
+Received: from [10.69.41.93] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id l8-v6sm4147178pfb.102.2018.06.26.13.30.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 13:30:14 -0700 (PDT)
+Subject: Re: [PATCH v3] ARM: dts: BCM5301X: Add support for Linksys EA9500
+To:     Vivek Unune <npcomplete13@gmail.com>, hauke@hauke-m.de,
+        zajec5@gmail.com, jonmason@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180222223844.98527-1-npcomplete13@gmail.com>
+ <20180618174159.86150-1-npcomplete13@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
+ xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
+ X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
+ AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
+ ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
+ SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
+ nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
+ qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
+ YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
+ FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
+ 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
+ WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
+ pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
+ hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
+ OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
+ Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
+ oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
+ 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
+ BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
+ +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
+ FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
+ 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
+ vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
+ WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
+ HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
+ HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
+ Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
+ kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
+ aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
+ y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
+ X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <32c1b4db-acb8-35ae-eab9-f4e85a204e09@gmail.com>
+Date:   Tue, 26 Jun 2018 13:30:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152908522534.16708.13094007571453293776@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180618174159.86150-1-npcomplete13@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 15 Jun 10:53 PDT 2018, Stephen Boyd wrote:
-
-> Quoting Marc Zyngier (2018-06-15 01:16:02)
-> > On 14/06/18 21:33, Stephen Boyd wrote:
-> > > Quoting Srinivas Kandagatla (2018-06-14 10:54:43)
-> > >>>
-> > >>>> +{
-> > >>>> +    struct gic_chip_data *d = data;
-> > >>>> +
-> > >>>> +    d->flags |= GICV3_FLAGS_WORKAROUND_IW_GICR_WAKER;
-> > >>>> +
-> > >>>> +    return true;
-> > >>>> +}
-> > >>>> +
-> > >>>> +static const struct gic_quirk gicv3_quirks[] = {
-> > >>>> +    {
-> > >>>> +            .desc   = "GICV3: Qualcomm MSM8996 WAKER IW",
-> > >>>
-> > >>> Please the erratum number in the message. It should read something like:
-> > >>>
-> > >>>               "GICv3: Qualcomm erratum BIGNUMBERHERE"
-> > >>>
-> > >>>> +            .iidr   = 0x00001070,   /* MSM8996 */
-> > >>>> +            .mask   = 0x0000ffff,
-> > >>>
-> > >>> Please match the full GICD_IIDR register, not just the implementer and
-> > >>> the revision. Unless you expect all the QC systems to have the same
-> > >>> behaviour?
-> > >> There seems to be more than one SoC that has this issue,  I will dig up 
-> > >> more info before sending next version.
-> > >>
-> > > 
-> > > It depends on the firmware and if that firmware decides to block or
-> > > allow access to this register space. I don't see how it can be quirked
-> > > based on the IIDR at all because there could be different firmware on
-> > > the board that doesn't block access to the register. Can a DT property
-> > > work?
-> > 
-> > Are you saying that the IIDR doesn't isn't unique per implementation of
-> > the firmware (which, as far as the kernel is concerned in this case,
-> > implements the GIC)? That would be another erratum. If we did change the
-> > behaviour of the vGIC in KVM, we'd certainly change the IIDR value! This
-> > is the exact same case.
+On 06/18/2018 10:41 AM, Vivek Unune wrote:
+> Hardware Info
+> -------------
 > 
-> I don't know for certain. All I know is that we can't assume all QC
-> systems have a firmware that brings the whole system down when you read
-> the WAKER register. Hopefully Srini can find out if reads to IIDR are
-> being trapped by the hypervisor and emulated as something different.
+> Processor	- Broadcom BCM4709C0KFEBG dual-core @ 1.4 GHz
+> Switch		- BCM53012 in BCM4709C0KFEBG & external BCM53125
+> DDR3 RAM	- 256 MB
+> Flash		- 128 MB (Toshiba TC58BVG0S3HTA00)
+> 2.4GHz		- BCM4366 4×4 2.4/5G single chip 802.11ac SoC
+> Power Amp	- Skyworks SE2623L 2.4 GHz power amp (x4)
+> 5GHz x 2	- BCM4366 4×4 2.4/5G single chip 802.11ac SoC
+> Power Amp	- PLX Technology PEX8603 3-lane, 3-port PCIe switch
+> Ports		- 8 Ports, 1 WAN Ports
+> Antennas	- 8 Antennas
+> Serial Port	- @J6 [GND,TX,RX] (VCC NC)    115200 8n1
 > 
+> Tested with OpenWrt built with DSA driver and Kernel v4.14
+> 
+> Signed-off-by: Vivek Unune <npcomplete13@gmail.com>
 
-I took another look at the internal documentation related to this change
-and concluded that it was introduced for the "lead device" on the 8996
-platform. As such I expect that all publicly available 8996 devices have
-this implementation.
-
-Looking through some relevant platforms it seems like it's only 8996
-that that sports a GICv3 with an IIDR of 0x1070 (e.g. 8994 has a QGICv2
-with the same IIDR...), so the quirk seems reasonable in scope.
-
-Regards,
-Bjorn
+Applied to devicetree/next, thanks Vivek.
+-- 
+Florian
