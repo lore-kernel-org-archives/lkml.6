@@ -6,50 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09A8C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05726C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2DBF26B43
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:23:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2DBF26B43
+	by mail.kernel.org (Postfix) with ESMTP id B9F6E26B48
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:24:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F6E26B48
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935771AbeFZNX3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:23:29 -0400
-Received: from mga05.intel.com ([192.55.52.43]:60744 "EHLO mga05.intel.com"
+        id S935782AbeFZNY3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:24:29 -0400
+Received: from mga04.intel.com ([192.55.52.120]:55590 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935341AbeFZNX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:23:27 -0400
+        id S935385AbeFZNY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:24:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 06:23:26 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 06:24:27 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
-   d="scan'208";a="53002158"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga006.jf.intel.com with ESMTP; 26 Jun 2018 06:23:23 -0700
-Message-ID: <3a07d0d9fbe7178bbe9efa99fcb331df213a461f.camel@linux.intel.com>
-Subject: Re: [PATCH v2 0/2] Add a property in at24.c
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     alanx.chiang@intel.com, linux-i2c <linux-i2c@vger.kernel.org>,
-        andy.yeh@intel.com, Sakari Ailus <sakari.ailus@linux.intel.com>,
-        rajmohan.mani@intel.com,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 26 Jun 2018 16:23:22 +0300
-In-Reply-To: <CAMRc=Me511S4Qw_-SPNkpPXcby7rZApbgm9g2=W=irmy9Gsu3g@mail.gmail.com>
-References: <1529994128-26770-1-git-send-email-alanx.chiang@intel.com>
-         <CAMRc=Me-Tm8Q5_hGu2r1uqeYFAvCM9ssr7o=w1KZUyXcAn_uCw@mail.gmail.com>
-         <ff4c668d0807657940a4cddc6f7eb63d19be327c.camel@linux.intel.com>
-         <CAMRc=Me511S4Qw_-SPNkpPXcby7rZApbgm9g2=W=irmy9Gsu3g@mail.gmail.com>
-Organization: Intel Finland Oy
+   d="scan'208";a="235701081"
+Received: from skovflem-mobl1.ger.corp.intel.com ([10.249.254.74])
+  by orsmga005.jf.intel.com with ESMTP; 26 Jun 2018 06:24:23 -0700
+Message-ID: <cb41279d3c92e3aa00f46bf18bb9bdbf30be2ef6.camel@linux.intel.com>
+Subject: Re: [PATCH v5 3/5] tpm: Convert tpm_find_get_ops() to use
+ tpm_default_chip()
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
+Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 26 Jun 2018 16:24:22 +0300
+In-Reply-To: <20180626110619.2362791-4-stefanb@linux.vnet.ibm.com>
+References: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+         <20180626110619.2362791-4-stefanb@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.1-2 
 Mime-Version: 1.0
@@ -59,29 +52,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-26 at 14:36 +0200, Bartosz Golaszewski wrote:
-> 2018-06-26 14:14 GMT+02:00 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com>:
-> > On Tue, 2018-06-26 at 09:41 +0200, Bartosz Golaszewski wrote:
+On Tue, 2018-06-26 at 07:06 -0400, Stefan Berger wrote:
+> Convert tpm_find_get_ops() to use tpm_default_chip() in case no chip
+> is passed in.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-> > > What is your use case exactly? Do you have an EEPROM model that's
-> > > not
-> > > yet supported explicitly in the driver? Why would you need this
-> > > option?
-> > 
-> > The current at24 driver has no address width support,
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-> >  thus, reusing same
-> > (allocated) IDs (non-DT case) is hard.
-
-^^^^^
-
-> Every supported compatible has the width already specified in its
-> corresponding chip data.
-
-
-Please, read again carefully what I wrote before.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+/Jarkko
