@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AC6C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041EBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 719AA262F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:07:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 719AA262F4
+	by mail.kernel.org (Postfix) with ESMTP id B9FE5262F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:07:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FE5262F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964813AbeFZAHQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 20:07:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43828 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934309AbeFZAHE (ORCPT
+        id S934965AbeFZAHO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 20:07:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42692 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934312AbeFZAHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 20:07:04 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q03lvm028068
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q03lAa079277
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:03 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96utt60-1
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ju96raksm-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:03 -0400
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Mon, 25 Jun 2018 20:07:01 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Mon, 25 Jun 2018 20:06:57 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06usj19005796
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06u5k61997088
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Tue, 26 Jun 2018 00:06:56 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 848D6B2066;
+        by IMSVA (Postfix) with ESMTP id 0B62FB2072;
         Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6415CB206A;
-        Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id EB45AB206B;
+        Mon, 25 Jun 2018 20:06:50 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
+        Mon, 25 Jun 2018 20:06:50 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6B4A416CA0A7; Mon, 25 Jun 2018 17:09:01 -0700 (PDT)
+        id 1E8A816CA09A; Mon, 25 Jun 2018 17:09:01 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,20 +60,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 22/40] rcu: Convert rcu_grace_period_init tracepoint to gp_seq
-Date:   Mon, 25 Jun 2018 17:08:41 -0700
+Subject: [PATCH tip/core/rcu 09/40] rcu: Move rcu_implicit_dynticks_qs() to ->gp_seq
+Date:   Mon, 25 Jun 2018 17:08:28 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626000841.GA15696@linux.vnet.ibm.com>
 References: <20180626000841.GA15696@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062600-0072-0000-0000-000003746090
+x-cbid: 18062600-0064-0000-0000-000003202F92
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01052327; UDB=6.00539464; IPR=6.00830253;
  MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:07:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062600-0073-0000-0000-0000487C5221
-Message-Id: <20180626000859.23572-22-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062600-0065-0000-0000-000039B74449
+Message-Id: <20180626000859.23572-9-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,63 +86,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit makes the rcu_grace_period_init tracepoint use gp_seq instead
-of ->gpnum.
+This commit makes rcu_implicit_dynticks_qs() use ->gp_seq, with the
+exception of tracing, which will be converted later.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- include/trace/events/rcu.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ kernel/rcu/tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
-index 286047d22314..892016ad0647 100644
---- a/include/trace/events/rcu.h
-+++ b/include/trace/events/rcu.h
-@@ -142,14 +142,14 @@ TRACE_EVENT(rcu_future_grace_period,
-  */
- TRACE_EVENT(rcu_grace_period_init,
- 
--	TP_PROTO(const char *rcuname, unsigned long gpnum, u8 level,
-+	TP_PROTO(const char *rcuname, unsigned long gp_seq, u8 level,
- 		 int grplo, int grphi, unsigned long qsmask),
- 
--	TP_ARGS(rcuname, gpnum, level, grplo, grphi, qsmask),
-+	TP_ARGS(rcuname, gp_seq, level, grplo, grphi, qsmask),
- 
- 	TP_STRUCT__entry(
- 		__field(const char *, rcuname)
--		__field(unsigned long, gpnum)
-+		__field(unsigned long, gp_seq)
- 		__field(u8, level)
- 		__field(int, grplo)
- 		__field(int, grphi)
-@@ -158,7 +158,7 @@ TRACE_EVENT(rcu_grace_period_init,
- 
- 	TP_fast_assign(
- 		__entry->rcuname = rcuname;
--		__entry->gpnum = gpnum;
-+		__entry->gp_seq = gp_seq;
- 		__entry->level = level;
- 		__entry->grplo = grplo;
- 		__entry->grphi = grphi;
-@@ -166,7 +166,7 @@ TRACE_EVENT(rcu_grace_period_init,
- 	),
- 
- 	TP_printk("%s %lu %u %d %d %lx",
--		  __entry->rcuname, __entry->gpnum, __entry->level,
-+		  __entry->rcuname, __entry->gp_seq, __entry->level,
- 		  __entry->grplo, __entry->grphi, __entry->qsmask)
- );
- 
-@@ -754,7 +754,7 @@ TRACE_EVENT(rcu_barrier,
- #define trace_rcu_future_grace_period(rcuname, gp_seq, c, \
- 				      level, grplo, grphi, event) \
- 				      do { } while (0)
--#define trace_rcu_grace_period_init(rcuname, gpnum, level, grplo, grphi, \
-+#define trace_rcu_grace_period_init(rcuname, gp_seq, level, grplo, grphi, \
- 				    qsmask) do { } while (0)
- #define trace_rcu_exp_grace_period(rcuname, gqseq, gpevent) \
- 	do { } while (0)
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index eda23797a7f4..eef3ce54114f 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1178,7 +1178,7 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
+ 	ruqp = per_cpu_ptr(&rcu_dynticks.rcu_urgent_qs, rdp->cpu);
+ 	if (time_after(jiffies, rdp->rsp->gp_start + jtsq) &&
+ 	    READ_ONCE(rdp->rcu_qs_ctr_snap) != per_cpu(rcu_dynticks.rcu_qs_ctr, rdp->cpu) &&
+-	    READ_ONCE(rdp->gpnum) == rnp->gpnum && !rdp->gpwrap) {
++	    rcu_seq_current(&rdp->gp_seq) == rnp->gp_seq && !rdp->gpwrap) {
+ 		trace_rcu_fqs(rdp->rsp->name, rdp->gpnum, rdp->cpu, TPS("rqc"));
+ 		rcu_gpnum_ovf(rnp, rdp);
+ 		return 1;
 -- 
 2.17.1
 
