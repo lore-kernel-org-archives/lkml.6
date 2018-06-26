@@ -2,134 +2,328 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802F3C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A2AC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C2342168B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:29:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="bY5wxFVy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2342168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 60BD425C95
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:29:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BD425C95
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934760AbeFZK3M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 06:29:12 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41588 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934666AbeFZKXR (ORCPT
+        id S934835AbeFZK31 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 06:29:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54745 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934634AbeFZK3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 06:23:17 -0400
-Received: by mail-wr0-f196.google.com with SMTP id h10-v6so16649566wrq.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 03:23:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SmGXMywFtJmXgDto4kP5pCXWN6wLcgjDNSMmo19B6+U=;
-        b=bY5wxFVyqwHaOjbXPlhOk1H0UiWc3tfSm2OWnzGLb+UFSLAUh0FV5E/Woj68o7DIM5
-         nezpXaKVXEqQPUL0SD8mDoEkt3OKGzdw2azcvySel0WFThzn6748B4JNRunIMWiQxysu
-         nnEc1e106YjcujFL3cqdClwzT7IqRQfAtjgWLF8/9UgiNiAH4so47Td7vhcqXNtnS9/r
-         EwP0yhe6D9WogE2Q68ApENihtnBv8zDgJDXZCg+bP3QI9T1GR/8rtz984ReFgdf4VvwF
-         S52w7+lJTzmfukeTT07GbSt24tltWkip4OjylvIxLIPMUWYJdHtrX/JxhJaSGUdJ2UGK
-         g9/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=SmGXMywFtJmXgDto4kP5pCXWN6wLcgjDNSMmo19B6+U=;
-        b=n9syx3xl4kMVNp6AlkkGRydEyIvSWvU6rOUB1EEnqFySNqMMo7KB1HRoR8j1IK+16Q
-         7QWOM2AWB1WwmKOWp6NIZuC6EjCOE+BDUftzg6cxjTbubAX5zC3Ap3nu7klElLjpmQRD
-         GUh2FMcmAARbYWA37GxFDYn3dYfoZ9D/APfdH/6ZnppxSmpytnOJHZk4I3oK100SFKp8
-         8djY/DBgulWZzKPVj5upXa+kImhhziHrqtxQTYRbAq/1thtSmsTA1x6IfOjK4jnibiMK
-         ZtSoza7cNpoYzfiKiO3oNqLzFb40nYJ6yODoFvkyUAah4enplLQQMsTG3N/fbucEqx8X
-         IraQ==
-X-Gm-Message-State: APt69E2MEhKcPywXdhV8cVRkzMkGsl0g7Xhate8ED6aVuBZSFRIlnwld
-        iCWCfidUQ8FrzS0k+k2B/Qm1kA==
-X-Google-Smtp-Source: AAOMgpfhH8bJjirJCvX49I+t3EDUbx4GXq7IyeUCo5rzHwVa2ba2GgvL1jep2yzBMyfCa3zwEyqSqw==
-X-Received: by 2002:adf:8747:: with SMTP id 7-v6mr876432wrz.117.1530008596305;
-        Tue, 26 Jun 2018 03:23:16 -0700 (PDT)
-Received: from brgl-bgdev.lan (LFbn-NIC-1-55-10.w2-15.abo.wanadoo.fr. [2.15.147.10])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm2573852wmp.23.2018.06.26.03.23.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 03:23:15 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 02/15] ARM: davinci: dm365-evm: use nvmem lookup for mac address
-Date:   Tue, 26 Jun 2018 12:22:32 +0200
-Message-Id: <20180626102245.30711-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180626102245.30711-1-brgl@bgdev.pl>
-References: <20180626102245.30711-1-brgl@bgdev.pl>
+        Tue, 26 Jun 2018 06:29:24 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5QASOU81648523
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 26 Jun 2018 03:28:24 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5QASONW1648518;
+        Tue, 26 Jun 2018 03:28:24 -0700
+Date:   Tue, 26 Jun 2018 03:28:24 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Frederic Weisbecker <tipbot@zytor.com>
+Message-ID: <tip-8c449753a681517f0e6f877aad8539ac4c71757d@git.kernel.org>
+Cc:     peterz@infradead.org, catalin.marinas@arm.com, chris@zankel.net,
+        will.deacon@arm.com, mpe@ellerman.id.au, luto@kernel.org,
+        acme@redhat.com, mark.rutland@arm.com, mingo@kernel.org,
+        joel.opensrc@gmail.com, tglx@linutronix.de, acme@kernel.org,
+        benh@kernel.crashing.org, namhyung@kernel.org, jcmvbkbc@gmail.com,
+        ysato@users.sourceforge.jp, paulus@samba.org, dalias@libc.org,
+        hpa@zytor.com, frederic@kernel.org, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        torvalds@linux-foundation.org
+Reply-To: peterz@infradead.org, catalin.marinas@arm.com,
+          mpe@ellerman.id.au, luto@kernel.org, will.deacon@arm.com,
+          chris@zankel.net, acme@redhat.com, mark.rutland@arm.com,
+          joel.opensrc@gmail.com, tglx@linutronix.de, mingo@kernel.org,
+          acme@kernel.org, namhyung@kernel.org, jcmvbkbc@gmail.com,
+          benh@kernel.crashing.org, paulus@samba.org, dalias@libc.org,
+          ysato@users.sourceforge.jp, jolsa@redhat.com,
+          frederic@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          alexander.shishkin@linux.intel.com, torvalds@linux-foundation.org
+In-Reply-To: <1529981939-8231-7-git-send-email-frederic@kernel.org>
+References: <1529981939-8231-7-git-send-email-frederic@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/arch/arm64: Implement
+ hw_breakpoint_arch_parse()
+Git-Commit-ID: 8c449753a681517f0e6f877aad8539ac4c71757d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Commit-ID:  8c449753a681517f0e6f877aad8539ac4c71757d
+Gitweb:     https://git.kernel.org/tip/8c449753a681517f0e6f877aad8539ac4c71757d
+Author:     Frederic Weisbecker <frederic@kernel.org>
+AuthorDate: Tue, 26 Jun 2018 04:58:53 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 26 Jun 2018 09:07:56 +0200
 
-We now support nvmem lookups for machine code. Add a lookup for
-mac-address.
+perf/arch/arm64: Implement hw_breakpoint_arch_parse()
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Migrate to the new API in order to remove arch_validate_hwbkpt_settings()
+that clumsily mixes up architecture validation and commit.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Joel Fernandes <joel.opensrc@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rich Felker <dalias@libc.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Link: http://lkml.kernel.org/r/1529981939-8231-7-git-send-email-frederic@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/arm/mach-davinci/board-dm365-evm.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/include/asm/hw_breakpoint.h |  6 ++-
+ arch/arm64/kernel/hw_breakpoint.c      | 79 +++++++++++++++++-----------------
+ 2 files changed, 45 insertions(+), 40 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index 435f7ec7d9af..df640d977bfa 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -28,6 +28,7 @@
- #include <linux/spi/spi.h>
- #include <linux/spi/eeprom.h>
- #include <linux/v4l2-dv-timings.h>
-+#include <linux/nvmem-provider.h>
+diff --git a/arch/arm64/include/asm/hw_breakpoint.h b/arch/arm64/include/asm/hw_breakpoint.h
+index 9f4a3d48762e..bf9c305daa62 100644
+--- a/arch/arm64/include/asm/hw_breakpoint.h
++++ b/arch/arm64/include/asm/hw_breakpoint.h
+@@ -119,13 +119,17 @@ static inline void decode_ctrl_reg(u32 reg,
  
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -169,6 +170,15 @@ static struct platform_device davinci_nand_device = {
- 	},
- };
+ struct task_struct;
+ struct notifier_block;
++struct perf_event_attr;
+ struct perf_event;
+ struct pmu;
  
-+static struct nvmem_cell_lookup dm365evm_mac_address_cell = {
-+	.info = {
-+		.name = "mac-address",
-+		.offset = 0x7f00,
-+		.bytes = ETH_ALEN,
-+	},
-+	.nvmem_name = "1-00500",
-+};
-+
- static struct at24_platform_data eeprom_info = {
- 	.byte_len       = (256*1024) / 8,
- 	.page_size      = 64,
-@@ -769,6 +779,8 @@ static __init void dm365_evm_init(void)
+ extern int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
+ 				  int *gen_len, int *gen_type, int *offset);
+ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+-extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
++extern int hw_breakpoint_arch_parse(struct perf_event *bp,
++				    const struct perf_event_attr *attr,
++				    struct arch_hw_breakpoint *hw);
++#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
  
- 	dm365_init_spi0(BIT(0), dm365_evm_spi_info,
- 			ARRAY_SIZE(dm365_evm_spi_info));
-+
-+	nvmem_register_lookup(&dm365evm_mac_address_cell, 1);
+diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
+index 6a90d12e4ff2..8c9644376326 100644
+--- a/arch/arm64/kernel/hw_breakpoint.c
++++ b/arch/arm64/kernel/hw_breakpoint.c
+@@ -420,53 +420,53 @@ int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
+ /*
+  * Construct an arch_hw_breakpoint from a perf_event.
+  */
+-static int arch_build_bp_info(struct perf_event *bp)
++static int arch_build_bp_info(struct perf_event *bp,
++			      const struct perf_event_attr *attr,
++			      struct arch_hw_breakpoint *hw)
+ {
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+-
+ 	/* Type */
+-	switch (bp->attr.bp_type) {
++	switch (attr->bp_type) {
+ 	case HW_BREAKPOINT_X:
+-		info->ctrl.type = ARM_BREAKPOINT_EXECUTE;
++		hw->ctrl.type = ARM_BREAKPOINT_EXECUTE;
+ 		break;
+ 	case HW_BREAKPOINT_R:
+-		info->ctrl.type = ARM_BREAKPOINT_LOAD;
++		hw->ctrl.type = ARM_BREAKPOINT_LOAD;
+ 		break;
+ 	case HW_BREAKPOINT_W:
+-		info->ctrl.type = ARM_BREAKPOINT_STORE;
++		hw->ctrl.type = ARM_BREAKPOINT_STORE;
+ 		break;
+ 	case HW_BREAKPOINT_RW:
+-		info->ctrl.type = ARM_BREAKPOINT_LOAD | ARM_BREAKPOINT_STORE;
++		hw->ctrl.type = ARM_BREAKPOINT_LOAD | ARM_BREAKPOINT_STORE;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* Len */
+-	switch (bp->attr.bp_len) {
++	switch (attr->bp_len) {
+ 	case HW_BREAKPOINT_LEN_1:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_1;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_1;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_2:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_2;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_2;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_3:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_3;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_3;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_4:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_4;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_4;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_5:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_5;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_5;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_6:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_6;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_6;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_7:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_7;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_7;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_8:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_8;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_8;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -477,37 +477,37 @@ static int arch_build_bp_info(struct perf_event *bp)
+ 	 * AArch32 also requires breakpoints of length 2 for Thumb.
+ 	 * Watchpoints can be of length 1, 2, 4 or 8 bytes.
+ 	 */
+-	if (info->ctrl.type == ARM_BREAKPOINT_EXECUTE) {
++	if (hw->ctrl.type == ARM_BREAKPOINT_EXECUTE) {
+ 		if (is_compat_bp(bp)) {
+-			if (info->ctrl.len != ARM_BREAKPOINT_LEN_2 &&
+-			    info->ctrl.len != ARM_BREAKPOINT_LEN_4)
++			if (hw->ctrl.len != ARM_BREAKPOINT_LEN_2 &&
++			    hw->ctrl.len != ARM_BREAKPOINT_LEN_4)
+ 				return -EINVAL;
+-		} else if (info->ctrl.len != ARM_BREAKPOINT_LEN_4) {
++		} else if (hw->ctrl.len != ARM_BREAKPOINT_LEN_4) {
+ 			/*
+ 			 * FIXME: Some tools (I'm looking at you perf) assume
+ 			 *	  that breakpoints should be sizeof(long). This
+ 			 *	  is nonsense. For now, we fix up the parameter
+ 			 *	  but we should probably return -EINVAL instead.
+ 			 */
+-			info->ctrl.len = ARM_BREAKPOINT_LEN_4;
++			hw->ctrl.len = ARM_BREAKPOINT_LEN_4;
+ 		}
+ 	}
+ 
+ 	/* Address */
+-	info->address = bp->attr.bp_addr;
++	hw->address = attr->bp_addr;
+ 
+ 	/*
+ 	 * Privilege
+ 	 * Note that we disallow combined EL0/EL1 breakpoints because
+ 	 * that would complicate the stepping code.
+ 	 */
+-	if (arch_check_bp_in_kernelspace(info))
+-		info->ctrl.privilege = AARCH64_BREAKPOINT_EL1;
++	if (arch_check_bp_in_kernelspace(hw))
++		hw->ctrl.privilege = AARCH64_BREAKPOINT_EL1;
+ 	else
+-		info->ctrl.privilege = AARCH64_BREAKPOINT_EL0;
++		hw->ctrl.privilege = AARCH64_BREAKPOINT_EL0;
+ 
+ 	/* Enabled? */
+-	info->ctrl.enabled = !bp->attr.disabled;
++	hw->ctrl.enabled = !attr->disabled;
+ 
+ 	return 0;
  }
+@@ -515,14 +515,15 @@ static int arch_build_bp_info(struct perf_event *bp)
+ /*
+  * Validate the arch-specific HW Breakpoint register settings.
+  */
+-int arch_validate_hwbkpt_settings(struct perf_event *bp)
++int hw_breakpoint_arch_parse(struct perf_event *bp,
++			     const struct perf_event_attr *attr,
++			     struct arch_hw_breakpoint *hw)
+ {
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+ 	int ret;
+ 	u64 alignment_mask, offset;
  
- MACHINE_START(DAVINCI_DM365_EVM, "DaVinci DM365 EVM")
--- 
-2.17.1
-
+ 	/* Build the arch_hw_breakpoint. */
+-	ret = arch_build_bp_info(bp);
++	ret = arch_build_bp_info(bp, attr, hw);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -536,42 +537,42 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+ 	 * that here.
+ 	 */
+ 	if (is_compat_bp(bp)) {
+-		if (info->ctrl.len == ARM_BREAKPOINT_LEN_8)
++		if (hw->ctrl.len == ARM_BREAKPOINT_LEN_8)
+ 			alignment_mask = 0x7;
+ 		else
+ 			alignment_mask = 0x3;
+-		offset = info->address & alignment_mask;
++		offset = hw->address & alignment_mask;
+ 		switch (offset) {
+ 		case 0:
+ 			/* Aligned */
+ 			break;
+ 		case 1:
+ 			/* Allow single byte watchpoint. */
+-			if (info->ctrl.len == ARM_BREAKPOINT_LEN_1)
++			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+ 				break;
+ 		case 2:
+ 			/* Allow halfword watchpoints and breakpoints. */
+-			if (info->ctrl.len == ARM_BREAKPOINT_LEN_2)
++			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+ 				break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+ 	} else {
+-		if (info->ctrl.type == ARM_BREAKPOINT_EXECUTE)
++		if (hw->ctrl.type == ARM_BREAKPOINT_EXECUTE)
+ 			alignment_mask = 0x3;
+ 		else
+ 			alignment_mask = 0x7;
+-		offset = info->address & alignment_mask;
++		offset = hw->address & alignment_mask;
+ 	}
+ 
+-	info->address &= ~alignment_mask;
+-	info->ctrl.len <<= offset;
++	hw->address &= ~alignment_mask;
++	hw->ctrl.len <<= offset;
+ 
+ 	/*
+ 	 * Disallow per-task kernel breakpoints since these would
+ 	 * complicate the stepping code.
+ 	 */
+-	if (info->ctrl.privilege == AARCH64_BREAKPOINT_EL1 && bp->hw.target)
++	if (hw->ctrl.privilege == AARCH64_BREAKPOINT_EL1 && bp->hw.target)
+ 		return -EINVAL;
+ 
+ 	return 0;
