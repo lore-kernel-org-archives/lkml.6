@@ -2,126 +2,133 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8374C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945C1C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1693B26CEE
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CiEV0db0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1693B26CEE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5857B26E1B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5857B26E1B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754721AbeFZTJf (ORCPT
+        id S1754775AbeFZTJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 15:09:35 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:33339 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752498AbeFZTJe (ORCPT
+        Tue, 26 Jun 2018 15:09:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43030 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754747AbeFZTJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 15:09:34 -0400
-Received: by mail-ua0-f193.google.com with SMTP id u21-v6so2326243uao.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 12:09:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+z+MnntGYev9PwMYnXinO4dZq7CrIa1ZELfbU6xOWLA=;
-        b=CiEV0db0jxVdXt4Wb3yW39uepFM3fVImG48WD0xRQvtl6T39sDYg4/hZ1QQLrvGvrN
-         /WtOn5NVXInrHZ+gzclwwwwrzCEefQZ29C7mePj4iNDLy+B2VdhYxtJA6e3WQP3mRhZa
-         Ywght5RPC9i76CPte+Balmdn60VbU9TXI3zMZXNxeFyb4etlTuIj5m1FQGWs34e0xSto
-         RCOfp396IbnWMYBLal1RHAih7lm4BUjlHuMHGGle6IP7tAmnaGvE8U2VURLu4XnHlUgf
-         VSrUk2IkuztzPxu4muuIF0n2vvwtpVZTLlRkubaa9hVBj27fNc82BOiic44a3MTCNY98
-         GbBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+z+MnntGYev9PwMYnXinO4dZq7CrIa1ZELfbU6xOWLA=;
-        b=OaFD/i2lEM+Z9EO03ZHCCPVqlNKttmJWAOKiDv2wczodXHDD0zvjPXa4eaUVcNKhAx
-         Oc8SChe+oBbIvsA7mS5R3zKPao7un146OhDnvVH8mlezk6x+mU/5aDIZP7rpwUBUz700
-         /Gki1Lgr3+o3ULeGED3ii7WSGJRvs2BKUTZmoMB3ViYrti/0/8yYoGzGdLLybR0u4Y0B
-         NG+IJJWCRUn7E7BTSULomysGJFoHk53aydVNHYOU/0ez0zi5cbVUNhtbUy2dbPGGIhpW
-         DjY0gHpWqFf5mAnzHgpLBzrf84skOi8t4+OwGZtz0MvylLw+Yf0wg67lFmvSsZLkQsVE
-         1QPA==
-X-Gm-Message-State: APt69E1gyqCY1/YByMQ8DTiF53J2XpqWeB8Y9HMWE1+jPk/djmIfN/iN
-        nSPyaL/Pf5JrMNFbacvsOhy/EWFIVEqEcbnUAnDVmx6x
-X-Google-Smtp-Source: AAOMgpev4SVifaBQcrTyjARqRzZFoc3KGl36gvBE3LxUVFImOAsT2aZ12YzIc6jgmUNqxpmQ1Ao7Qm0ruv0TiFrkvfk=
-X-Received: by 2002:ab0:6037:: with SMTP id n23-v6mr1166930ual.28.1530040173376;
- Tue, 26 Jun 2018 12:09:33 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 12:09:32
- -0700 (PDT)
-In-Reply-To: <20180625122453.souir6wzzyhbkj4m@mwanda>
-References: <20180621182155.27769-1-michael.straube@posteo.de>
- <20180622102800.4p6wabmte4yf4rtp@mwanda> <CAHp75VeASBAsBrrq65qhkAGXHoSE8Hg-9dSGcgjT2bNND-1MBw@mail.gmail.com>
- <20180625122453.souir6wzzyhbkj4m@mwanda>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 26 Jun 2018 22:09:32 +0300
-Message-ID: <CAHp75VeO3dDRYwVFY+jeCngwOY-rZVr7XLxvwYNxkfR_cHZaFg@mail.gmail.com>
-Subject: Re: [PATCH] staging: rtl8723bs: fix brace coding style issues
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Straube <michael.straube@posteo.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 26 Jun 2018 15:09:40 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QJ8sIg117227
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 15:09:39 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2juuamg5vv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 15:09:39 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Tue, 26 Jun 2018 13:09:38 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Jun 2018 13:09:36 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QJ9Z8g8454550
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 12:09:35 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BBE5E6A04F;
+        Tue, 26 Jun 2018 13:09:35 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 356596A051;
+        Tue, 26 Jun 2018 13:09:35 -0600 (MDT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Jun 2018 13:09:35 -0600 (MDT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
+        zohar@linux.vnet.ibm.com
+Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system shutdown
+Date:   Tue, 26 Jun 2018 15:09:28 -0400
+X-Mailer: git-send-email 2.14.4
+X-TM-AS-GCONF: 00
+x-cbid: 18062619-0004-0000-0000-0000145A6BA2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052708; UDB=6.00539692; IPR=6.00830633;
+ MB=3.00021867; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 19:09:38
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062619-0005-0000-0000-000087E08A12
+Message-Id: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260213
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 3:24 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Mon, Jun 25, 2018 at 12:47:44PM +0300, Andy Shevchenko wrote:
->> On Fri, Jun 22, 2018 at 1:28 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> > On Thu, Jun 21, 2018 at 08:21:55PM +0200, Michael Straube wrote:
->> >> Remove braces from single line if statements.
->> >> Also fix a comparsion to NULL in one of the conditions.
->> >> Issues found by checkpatch.
+This series of patches converts IMA's usage of the tpm_chip to find a TPM
+chip initially and use it until the machine is shut down. To do this we need
+to introduce a kref for the tpm_chip that IMA and all other users of a
+tpm_chip hold onto until they don't need the TPM chip anymore.
 
->> >> --- a/drivers/staging/rtl8723bs/core/rtw_debug.c
->> >> +++ b/drivers/staging/rtl8723bs/core/rtw_debug.c
->> >> @@ -618,9 +618,8 @@ ssize_t proc_set_wait_hiq_empty(struct file *file, const char __user *buffer, si
->> >>       if (count < 1)
->> >>               return -EFAULT;
->> >>
->> >> -     if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp))) {
->> >> +     if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp)))
->> >>               sscanf(tmp, "%u", &g_wait_hiq_empty);
->> >> -     }
->> >
->> >
->> > The original code is kind of bad.  The NULL check isn't required.
->> > The sscanf call should have error checking.  The error code is wrong if
->> > the copy from user fails.  The tmp buffer isn't NUL terminated.
->> >
->> >         if (copy_from_user(tmp, buffer, sizeof(tmp)))
->> >                 return -EFAULT;
->> >         tmp[sizeof(tmp) - 1] = '\0';
->> >
->> >         if (sscanf(tmp, "%u", &g_wait_hiq_empty) != 1)
->> >                 return -EINVAL;
->> >
->> >         return count;
->>
->> Shouldn't this be
->>
->> kstrtouint_from_user()
->>
->> instead of all those lines?
->
-> I wasn't sure kstrtoint() was the exact same as sscanf()...  If so then
-> sure.
+    Stefan
 
-In this case it's very close to what sscanf() is doing here including
-all user buffer handing.
+v6->v7:
+  - fixed `if (!rc)` in patch 3 to `if (rc)` (detected while converting trusted
+    keys)
+
+v5->v6:
+  - more verbose patch description in patch 2
+
+v4->v5:
+  - repost with fixed changelog and posted to linux-security-module
+
+v3->v4:
+  - followed Jason's suggestions:
+    - extended docs of tpm_find_get_ops()
+    - calling new function tpm_default_chip()
+    - new patch 3 that uses tpm_default_chip() in tpm_find_get_ops()
+
+v2->v3:
+  - renaming tpm_chip_find_get() to tpm_get_ops()
+  - IMA does not lock access to ima_tpm_chip anymore
+  - IMA does not have a reboot notifier to release the chip anymore
+
+v1->v2:
+  - use the kref of the device via get_device()/put_device()
+
+Stefan Berger (5):
+  tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
+  tpm: Implement tpm_default_chip() to find a TPM chip
+  tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
+  ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
+  ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
+
+ drivers/char/tpm/tpm-chip.c         | 68 +++++++++++++++++++----------
+ drivers/char/tpm/tpm-interface.c    | 14 +++---
+ drivers/char/tpm/tpm.h              |  2 +-
+ include/linux/tpm.h                 |  5 +++
+ security/integrity/ima/ima.h        |  2 +-
+ security/integrity/ima/ima_crypto.c |  4 +-
+ security/integrity/ima/ima_init.c   | 16 +++----
+ security/integrity/ima/ima_queue.c  |  4 +-
+ 8 files changed, 69 insertions(+), 46 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
+
