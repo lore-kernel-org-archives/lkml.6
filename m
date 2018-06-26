@@ -2,126 +2,237 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8778AC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3A8C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B3A426E0D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B3A426E0D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D9E426F70
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:16:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Rgw3nowL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D9E426F70
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752451AbeFZVQD (ORCPT
+        id S1752620AbeFZVQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 17:16:03 -0400
-Received: from mga18.intel.com ([134.134.136.126]:16679 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752334AbeFZVQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 17:16:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 14:15:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,275,1526367600"; 
-   d="scan'208";a="62413778"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga003.jf.intel.com with ESMTP; 26 Jun 2018 14:15:49 -0700
-Received: from fmsmsx101.amr.corp.intel.com (10.18.124.199) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 26 Jun 2018 14:15:49 -0700
-Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
- fmsmsx101.amr.corp.intel.com (10.18.124.199) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 26 Jun 2018 14:15:48 -0700
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.94]) by
- LCSMSX153.ger.corp.intel.com ([169.254.8.115]) with mapi id 14.03.0319.002;
- Wed, 27 Jun 2018 00:15:46 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Alan Cox <alan@linux.intel.com>,
-        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-CC:     "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
-Thread-Topic: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
-Thread-Index: AQHUC/10xIwob4M80Eit0g6kz8euiKRw97kAgAABmYCAAg95gA==
-Date:   Tue, 26 Jun 2018 21:15:45 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D954923@hasmsx108.ger.corp.intel.com>
-References: <20180624205202.6597-1-tomas.winkler@intel.com>
-         <19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
- <cb7ecb912486ee3e504de7c0918d667ebd370080.camel@linux.intel.com>
-In-Reply-To: <cb7ecb912486ee3e504de7c0918d667ebd370080.camel@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2ZjMzM2OTktOWFjMS00YTE4LThkMTEtNjAwMjY5YTk1NmEyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiS1NvaWVHaWZ6NHlLakdYXC91MVFxbzc1K2JqWXRcL1BzV1h1MEN3VUNQRDNHSnFDTE1Kd0R1WXcycE9qb3h0VzUyIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.252.8.113]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 26 Jun 2018 17:16:40 -0400
+Received: from mail.efficios.com ([167.114.142.138]:41000 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751894AbeFZVQh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 17:16:37 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 88AFA22DAE0;
+        Tue, 26 Jun 2018 17:16:36 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id Ot20XGlPZCTu; Tue, 26 Jun 2018 17:16:35 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id BC91322DAD6;
+        Tue, 26 Jun 2018 17:16:35 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com BC91322DAD6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530047795;
+        bh=40zVm4fxxpUlNASy/ALDWkXeA72jWSKyt8DoN6qtPH0=;
+        h=From:To:Date:Message-Id;
+        b=Rgw3nowLKm/1EfvY/ixQ2k2ZkY37ro7ikEPrNgr9M0VbyxbYOhGI9e6/zcjKMZUZ9
+         fRB8z6AMt49fwqoFGgjqbSu3jjW4oKqApZQEsO9pclS50t6s9eIvipvMz0/E4tvK9J
+         quuWVTHtKRSUvFxL06rlvWuv8xZQP1UKGXoelYRi9nosnT2OnWlg1qlYfu9px6XlhS
+         wLsA8pdmKaw7OsYQWVucm8JFjLuxO3i7nxMRSbTGX/ssQbvhXPQLLute0sTkiqtl5n
+         HaDUQlIuETg4fPVwF5RgUKXu9A+MLhneNlTXfjfEnZ/UWKopzOHlhqsCTm+qpyRzXq
+         32lhgcba0QiLA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id a1bL8rbmBZ2g; Tue, 26 Jun 2018 17:16:35 -0400 (EDT)
+Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id 54B2722DAD0;
+        Tue, 26 Jun 2018 17:16:35 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Watson <davejwatson@fb.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Andrew Hunter <ahh@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Paul Turner <pjt@google.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Maurer <bmaurer@fb.com>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [RFC PATCH for 4.18 1/2] compat: Introduce is_compat_frame
+Date:   Tue, 26 Jun 2018 17:16:16 -0400
+Message-Id: <20180626211617.8933-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IA0KPiBPbiBNb24sIDIwMTgtMDYtMjUgYXQgMTk6MjQgKzAzMDAsIEphcmtrbyBTYWtraW5l
-biB3cm90ZToNCj4gPiBPbiBTdW4sIDIwMTgtMDYtMjQgYXQgMjM6NTIgKzAzMDAsIFRvbWFzIFdp
-bmtsZXIgd3JvdGU6DQo+ID4gPiBGaXggdHBtIHB0dCBpbml0aWFsaXphdGlvbiBlcnJvcjoNCj4g
-PiA+IHRwbSB0cG0wOiBBIFRQTSBlcnJvciAoMzc4KSBvY2N1cnJlZCBnZXQgdHBtIHBjciBhbGxv
-Y2F0aW9uLg0KPiA+ID4NCj4gPiA+IFdlIGNhbm5vdCB1c2UgZ29faWRsZSBjbWRfcmVhZHkgY29t
-bWFuZHMgdmlhIHJ1bnRpbWVfcG0gaGFuZGxlcyBhcw0KPiA+ID4gd2l0aCB0aGUgaW50cm9kdWN0
-aW9uIG9mIGxvY2FsaXRpZXMgdGhpcyBpcyBubyBsb25nZXIgYW4gb3B0aW9uYWwNCj4gPiA+IGZl
-YXR1cmUsIHdoaWxlIHJ1bnRpbWUgcG0gY2FuIGJlIG5vdCBlbmFibGVkLg0KPiA+ID4gVGhvdWdo
-IGNtZF9yZWFkeS9nb19pZGxlIHByb3ZpZGVzIGEgcG93ZXIgc2F2aW5nLCBpdCdzIGFsc28gYSBw
-YXJ0DQo+ID4gPiBvZg0KPiA+ID4gVFBNMiBwcm90b2NvbCBhbmQgc2hvdWxkIGJlIGNhbGxlZCBl
-eHBsaWNpdGx5Lg0KPiA+ID4gVGhpcyBwYXRjaCBleHBvc2VzIGNtZF9yZWFkL2dvX2lkbGUgdmlh
-IHRwbSBjbGFzcyBvcHMgYW5kIHJlbW92ZXMNCj4gPiA+IHJ1bnRpbWUgcG0gc3VwcG9ydCBhcyBp
-dCBpcyBub3QgdXNlZCBieSBhbnkgZHJpdmVyLg0KPiA+ID4NCj4gPiA+IEEgbmV3IHRwbSB0cmFu
-c21pdCBmbGFnIGlzIGFkZGVkIFRQTV9UUkFOU01JVF9ORVNURUQsIHdoaWNoIGltcGxpZXMNCj4g
-PiA+IFRQTV9UUkFOU01JVF9VTkxPQ0tFRCBhbmQgVFBNX1RSQU5TTUlUX1JBVy4gQm90aCBhcmUg
-bmVlZGVkDQo+IHRvDQo+ID4gPiByZXNvbHZlIHRwbSBzcGFjZXMgYW5kIGxvY2FsaXR5IHJlcXVl
-c3QgcmVjdXJzaXZlIGNhbGxzIHRvIHRwbV90cmFuc21pdCgpLg0KPiA+ID4NCj4gPiA+IE5ldyB3
-cmFwcGVycyBhcmUgYWRkZWQgdHBtX2NtZF9yZWFkeSgpIGFuZCB0cG1fZ29faWRsZSgpIHRvDQo+
-ID4gPiBzdHJlYW1saW5lIHRwbV90cnlfdHJhbnNtaXQgY29kZS4NCj4gPiA+DQo+ID4gPiB0cG1f
-Y3JiIG5vIGxvbmdlciBuZWVkcyBvd24gcG93ZXIgc2F2aW5nIGZ1bmN0aW9ucyBhbmQgY2FuIGRy
-b3ANCj4gPiA+IHVzaW5nIHRwbV9wbV9zdXNwZW5kL3Jlc3VtZS4NCj4gPiA+DQo+ID4gPiBUaGlz
-IHBhdGNoIGNhbm5vdCBiZSByZWFsbHkgc2VwYXJhdGVkIGZyb20gdGhlIGxvY2FsaXR5IGZpeC4N
-Cj4gPiA+IEZpeGVzOiA4ODhkODY3ZGY0NDEgKHRwbTogY21kX3JlYWR5IGNvbW1hbmQgY2FuIGJl
-IGlzc3VlZCBvbmx5IGFmdGVyDQo+ID4gPiBncmFudGluZw0KPiA+ID4gbG9jYWxpdHkpDQo+ID4g
-Pg0KPiA+ID4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+IEZpeGVzOiA4ODhkODY3
-ZGY0NDEgKHRwbTogY21kX3JlYWR5IGNvbW1hbmQgY2FuIGJlIGlzc3VlZCBvbmx5IGFmdGVyDQo+
-ID4gPiBncmFudGluZw0KPiA+ID4gbG9jYWxpdHkpDQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBUb21h
-cyBXaW5rbGVyIDx0b21hcy53aW5rbGVyQGludGVsLmNvbT4NCj4gPg0KPiA+IFBsZWFzZToNCj4g
-Pg0KPiA+IDEuIFJlbW92ZSBORVNURUQuDQo+ID4gMi4gV2hlcmUgeW91IG5lZWQgY2FsbCBSQVcg
-fCBVTkxPQ0tFRC4NCj4gPiAzLiBEbyBub3QgYWRkIF9fIHByZWZpeC4NCj4gDQo+IFJpZ2h0IG5v
-dyBpZiBJIHJlYWxseSBwdXQgaGVhZCBpbnRvIHRoaXMgSSBjYW4gdW5kZXJzdGFuZCB0aGUgbG9n
-aWMgYnV0IGl0IGlzIGENCj4gY29tcGxldGUgbWVzcy4NCg0KSSB0aGluayB3aGF0IGlzIHRoZSBt
-ZXNzIGlzIHRoYXQgd2UgaGF2ZSBhIHJlY3Vyc2l2ZSBjYWxsIHRvIHRwbV90cmFuc21pdCB0b3Bw
-ZWQgd2l0aCByZXRyaWVzLiAgQWxsIG90aGVyIG1lc3MgaXMganVzdCB0aGUgcmVzdWx0IG9mIHRo
-YXQuDQoNCj5JIHdpbGwgZm9yZ290IHRoZSBkZXBlbmRlbmNpZXMgYmV0d2VlbiBmbGFncyB3aXRo
-aW4gZmV3DQo+IHdlZWtzLiANCkhvcGUgdGhlIHJlYXNvbnMgYXJlIHdlbGwgZG9jdW1lbnRlZCBi
-b3RoIGluIGNvZGUgYW5kIHRoZSBjb21taXQgbWVzc2FnZSwgaWYgbm90IGxldCdzIGFkZHJlc3Mg
-dGhhdC4gV2UgcmVhbGx5IGNhbm5vdCBkZXBlbmQgb24gb25lJ3MgbWVtb3J5Lg0KSXQncyBub3Qg
-bGlrZSBJJ20gbm90IHN0cml2aW5nIGZvciBzaW1wbGVzdCBwb3NzaWJsZSBjb2RlLiANCg0KPkEg
-Zml4ZWQgcmVxdWlyZW1lbnQgKHNvIHRoYXQgeW91IGtub3cpIGlzIHRoYXQgdGhleSBtdXN0IGJl
-DQo+IGluZGVwZW5kZW50Lg0KVGhlIGZsYWdzIChob3BlIHRoaXMgd2hhdCB5b3UgcmVmZXJyaW5n
-IGhlcmUgdG8pIGFyZSBub3QgaW5kZXBlbmRlbnQgYW5kIHdlcmVuJ3QgYmVmb3JlLCAoUkFXIGNh
-bm5vdCBiZSBjYWxsZWQgYWxvbmUgYXMgeW91IHdpbGwgaGF2ZSBkb3VibGUgbG9ja2luZykgcHV0
-dGluZyB0aGVtIHVuZGVyIG9uZSBuYW1lIGp1c3Qgc2hvdWxkIG1ha2UgaXQgY2xlYXIuIA0KSSBi
-ZWcgeW91IHRvIGdvIG92ZXIgdGhlICBjb2RlIG9uZSBtb3JlIHRpbWUsIGRvbid0IGdldCBzdHVj
-ayB3aXRoIGZsYWdzIG5hbWVzLCBtYXliZSB5b3UgZXZlbiBkaXNjb3ZlciBzb21lIHJlYWwgaXNz
-dWUuIA0KDQpUaGFua3MNClRvbWFzDQoNCg==
+x86 is moving from is_compat_task() to in_compat_syscall(). However,
+in_compat_syscall cannot be used to check whether a signal is being
+delivered on a compat task.
+
+Introduce is_compat_frame to allow performing this check from
+architecture agnostic code. On all architectures except x86, it
+invokes is_compat_task(). On x86, it uses is_ia32_frame() and
+is_x32_frame() to check whether the signal frame is 32-bit.
+
+This is needed by restartable sequences to detect whether it needs
+to clear the top bits of the start_ip, abort_ip, and post_commit_offset
+rseq_cs fields on signal delivery, thus ensuring identical behavior
+for a 32-bit binary executed on 32-bit and 64-bit kernels.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Chris Lameter <cl@linux.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Andrew Hunter <ahh@google.com>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Maurer <bmaurer@fb.com>
+Cc: linux-api@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: x86@kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ arch/x86/include/asm/compat.h | 24 ++++++++++++++++++++++++
+ arch/x86/kernel/signal.c      | 17 -----------------
+ include/linux/compat.h        | 17 +++++++++++++++++
+ 3 files changed, 41 insertions(+), 17 deletions(-)
+
+diff --git a/arch/x86/include/asm/compat.h b/arch/x86/include/asm/compat.h
+index fb97cf7c4137..1405a8df5215 100644
+--- a/arch/x86/include/asm/compat.h
++++ b/arch/x86/include/asm/compat.h
+@@ -8,6 +8,7 @@
+ #include <linux/types.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
++#include <linux/signal.h>
+ #include <asm/processor.h>
+ #include <asm/user32.h>
+ #include <asm/unistd.h>
+@@ -242,4 +243,27 @@ struct compat_siginfo;
+ int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
+ 		const siginfo_t *from, bool x32_ABI);
+ 
++static inline int is_ia32_compat_frame(struct ksignal *ksig)
++{
++	return IS_ENABLED(CONFIG_IA32_EMULATION) &&
++		ksig->ka.sa.sa_flags & SA_IA32_ABI;
++}
++
++static inline int is_ia32_frame(struct ksignal *ksig)
++{
++	return IS_ENABLED(CONFIG_X86_32) || is_ia32_compat_frame(ksig);
++}
++
++static inline int is_x32_frame(struct ksignal *ksig)
++{
++	return IS_ENABLED(CONFIG_X86_X32_ABI) &&
++		ksig->ka.sa.sa_flags & SA_X32_ABI;
++}
++
++static inline bool is_compat_frame(struct ksignal *ksig)
++{
++	return is_ia32_frame(ksig) || is_x32_frame(ksig);
++}
++#define is_compat_frame	is_compat_frame		/* override the generic impl */
++
+ #endif /* _ASM_X86_COMPAT_H */
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 92a3b312a53c..cb488e3e952d 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -664,23 +664,6 @@ SYSCALL_DEFINE0(rt_sigreturn)
+ 	return 0;
+ }
+ 
+-static inline int is_ia32_compat_frame(struct ksignal *ksig)
+-{
+-	return IS_ENABLED(CONFIG_IA32_EMULATION) &&
+-		ksig->ka.sa.sa_flags & SA_IA32_ABI;
+-}
+-
+-static inline int is_ia32_frame(struct ksignal *ksig)
+-{
+-	return IS_ENABLED(CONFIG_X86_32) || is_ia32_compat_frame(ksig);
+-}
+-
+-static inline int is_x32_frame(struct ksignal *ksig)
+-{
+-	return IS_ENABLED(CONFIG_X86_X32_ABI) &&
+-		ksig->ka.sa.sa_flags & SA_X32_ABI;
+-}
+-
+ static int
+ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ {
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index b1a5562b3215..2e1ffba65117 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -1022,6 +1022,19 @@ static inline struct compat_timeval ns_to_compat_timeval(s64 nsec)
+ 	return ctv;
+ }
+ 
++/*
++ * For most but not all architectures, "is this a compat sigframe?" and
++ * "am I a compat task?" are the same question.  For architectures on which
++ * they aren't the same question, arch code can override is_compat_frame.
++ */
++
++#ifndef is_compat_frame
++static inline bool is_compat_frame(struct ksignal *ksig)
++{
++	return is_compat_task();
++}
++#endif
++
+ #else /* !CONFIG_COMPAT */
+ 
+ #define is_compat_task() (0)
+@@ -1029,6 +1042,10 @@ static inline struct compat_timeval ns_to_compat_timeval(s64 nsec)
+ static inline bool in_compat_syscall(void) { return false; }
+ #endif
+ 
++#ifndef is_compat_frame
++static inline bool is_compat_frame(struct ksignal *ksig) { return false; }
++#endif
++
+ #endif /* CONFIG_COMPAT */
+ 
+ #endif /* _LINUX_COMPAT_H */
+-- 
+2.11.0
+
