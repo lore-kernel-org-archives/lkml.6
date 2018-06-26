@@ -2,166 +2,109 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE7CC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14B1C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7209F26E67
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:13:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7209F26E67
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8736026E6B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:13:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uQPV0hdn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8736026E6B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933192AbeFZRMb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:12:31 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48152 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932131AbeFZRIx (ORCPT
+        id S932799AbeFZRMY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 13:12:24 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:46593 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932080AbeFZRMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:08:53 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QH4Jbi064446
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:53 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2juqhsxhuv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:53 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 13:08:51 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 13:08:46 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QH8jrL1311212
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 17:08:45 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DC880B2068;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4BB2B2067;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id DE77816CA0AC; Tue, 26 Jun 2018 10:10:49 -0700 (PDT)
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 17/22] rcutorture: Change units of onoff_interval to jiffies
-Date:   Tue, 26 Jun 2018 10:10:43 -0700
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180626002052.GA24146@linux.vnet.ibm.com>
-References: <20180626002052.GA24146@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18062617-0064-0000-0000-00000320971E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052668; UDB=6.00539668; IPR=6.00830593;
- MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:08:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062617-0065-0000-0000-000039B968CA
-Message-Id: <20180626171048.2181-17-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260192
+        Tue, 26 Jun 2018 13:12:21 -0400
+Received: by mail-vk0-f68.google.com with SMTP id b134-v6so10469634vke.13;
+        Tue, 26 Jun 2018 10:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=x4wL6b6YsxX6mdmE2Xy/8a7J3K3VkavEv8eY6FFv8kk=;
+        b=uQPV0hdnn/DJo8li1CFX3cg/cQMx0xwV3OblEfvK7T/6g98i0+3bZLxU8jSBZDIRPE
+         hemou6aSC/nYKSyl6OxkC4hL4Vjo1mjlZ5Esoc0pcElmHocKoQPDUqwtMkoFcXjaCo8t
+         Xsg3MwZMo5dgrKFZ9wtOFyRGYLurb6Uq/VcYu4cOUeDLcBETApt+CqqEYjufikIixq95
+         NJyDhQY59XmcStOVdl5qqLR5W2OI5isimDJHdxUgOo9dO2mXf+41u4Kq8eaH6W15Hp9K
+         4lK2onNq7cdvva6819LoRx8xj7f/FWFqMHxhJOxZEQsPrmayOpS2HL6/aGQiXhD46lVX
+         Pt0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=x4wL6b6YsxX6mdmE2Xy/8a7J3K3VkavEv8eY6FFv8kk=;
+        b=EIs7pAhksQ489PIOwmREYyVFThBywJkUyqMA/nxCJa70yYeYWGQvx/tgH4dV6cSsqX
+         MxTgeW3s48yLAJwPSK4b411NjVzbIJiT/lCrK07nvOpYNvJC6/PzRynwA4WQV/Rb4u1/
+         H8MetCsT7H0T/xNmASvPFO5w6re/Nkzml0Nrv7t2Mqy2cxXZfwzeqhfMET7/Wop3pgWv
+         R0PN7ZMv47YdueZRF1gT1nxfm58J7ue7eCKoTIUwTa66DVbX+/a3IAKWB6G6Y/QCPXOl
+         crOCv2NH9/U11YhKAsgKAmqmJcoLcLZZY0eZqCtm/flIbQkmTweaf8zWEoULbSZ68rIp
+         lDrw==
+X-Gm-Message-State: APt69E2ywpJLqFE8byVIgXHLyuCD1YMY9NkCY70JqBMpeq2wd3mwHYJD
+        3jDWwtuCn/uvUzV3HGpCJnmVJW/88rBGGeINCVk=
+X-Google-Smtp-Source: AAOMgpfw6yNrUwmgaBW+t4+xzLq5YkFf7IL8xp6wgnCbqLFZMF9C5difwbLKmBZZBKpSxh4ECTsLvcSrgB5Gjba6/oI=
+X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr1513030vkd.15.1530033141099;
+ Tue, 26 Jun 2018 10:12:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 10:12:20
+ -0700 (PDT)
+In-Reply-To: <20180626135535.2990-4-hdegoede@redhat.com>
+References: <20180626135535.2990-1-hdegoede@redhat.com> <20180626135535.2990-4-hdegoede@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 26 Jun 2018 20:12:20 +0300
+Message-ID: <CAHp75VfxQMTMMSZvNBtHGGQAyBaURrBTddtuiQqFmpcjWG6Ktg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] console/fbcon: Add support for deferred console takeover
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some RCU bugs have been sensitive to the frequency of CPU-hotplug
-operations, which have been gradually increased over time.  But this
-frequency is now at the one-second lower limit that can be specified using
-the rcutorture.onoff_interval kernel parameter.  This commit therefore
-changes the units of rcutorture.onoff_interval from seconds to jiffies,
-and also sets the value specified for this kernel parameter in the TREE03
-rcutorture scenario to 200, which is 200 milliseconds for HZ=1000.
+On Tue, Jun 26, 2018 at 4:55 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+> Currently fbcon claims fbdevs as soon as they are registered and takes over
+> the console as soon as the first fbdev gets registered.
+>
+> This behavior is undesirable in cases where a smooth graphical bootup is
+> desired, in such cases we typically want the contents of the framebuffer
+> (typically a vendor logo) to stay in place as is.
+>
+> The current solution for this problem (on embedded systems) is to not
+> enable fbcon.
+>
+> This commit adds a new FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER config option,
+> which when enabled defers fbcon taking over the console from the dummy
+> console until the first text is displayed on the console. Together with the
+> "quiet" kernel commandline option, this allows fbcon to still be used
+> together with a smooth graphical bootup, having it take over the console as
+> soon as e.g. an error message is logged.
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- Documentation/admin-guide/kernel-parameters.txt               | 4 ++--
- kernel/rcu/rcutorture.c                                       | 4 ++--
- tools/testing/selftests/rcutorture/configs/rcu/TREE03.boot    | 2 +-
- .../testing/selftests/rcutorture/configs/rcu/ver_functions.sh | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+> +       for (i = 0; i < FB_MAX; i++) {
+> +               if (registered_fb[i])
+> +                       fbcon_fb_registered(registered_fb[i]);
+> +       }
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index efc7aa7a0670..77bd3e635313 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3632,8 +3632,8 @@
- 			Set time (s) after boot for CPU-hotplug testing.
- 
- 	rcutorture.onoff_interval= [KNL]
--			Set time (s) between CPU-hotplug operations, or
--			zero to disable CPU-hotplug testing.
-+			Set time (jiffies) between CPU-hotplug operations,
-+			or zero to disable CPU-hotplug testing.
- 
- 	rcutorture.shuffle_interval= [KNL]
- 			Set task-shuffle interval (s).  Shuffling tasks
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 0481c7286875..eb6d4915b4e6 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -87,7 +87,7 @@ torture_param(int, object_debug, 0,
- 	     "Enable debug-object double call_rcu() testing");
- torture_param(int, onoff_holdoff, 0, "Time after boot before CPU hotplugs (s)");
- torture_param(int, onoff_interval, 0,
--	     "Time between CPU hotplugs (s), 0=disable");
-+	     "Time between CPU hotplugs (jiffies), 0=disable");
- torture_param(int, shuffle_interval, 3, "Number of seconds between shuffles");
- torture_param(int, shutdown_secs, 0, "Shutdown time (s), <= zero to disable.");
- torture_param(int, stall_cpu, 0, "Stall duration (s), zero to disable.");
-@@ -1889,7 +1889,7 @@ rcu_torture_init(void)
- 	firsterr = torture_shutdown_init(shutdown_secs, rcu_torture_cleanup);
- 	if (firsterr)
- 		goto unwind;
--	firsterr = torture_onoff_init(onoff_holdoff * HZ, onoff_interval * HZ);
-+	firsterr = torture_onoff_init(onoff_holdoff * HZ, onoff_interval);
- 	if (firsterr)
- 		goto unwind;
- 	firsterr = rcu_torture_stall_init();
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE03.boot b/tools/testing/selftests/rcutorture/configs/rcu/TREE03.boot
-index b79ddb9eb9e8..5c3213cc3ad7 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/TREE03.boot
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE03.boot
-@@ -1,4 +1,4 @@
--rcutorture.onoff_interval=1 rcutorture.onoff_holdoff=30
-+rcutorture.onoff_interval=200 rcutorture.onoff_holdoff=30
- rcutree.gp_preinit_delay=12
- rcutree.gp_init_delay=3
- rcutree.gp_cleanup_delay=3
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/ver_functions.sh b/tools/testing/selftests/rcutorture/configs/rcu/ver_functions.sh
-index 24ec91041957..7bab8246392b 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/ver_functions.sh
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/ver_functions.sh
-@@ -39,7 +39,7 @@ rcutorture_param_onoff () {
- 	if ! bootparam_hotplug_cpu "$1" && configfrag_hotplug_cpu "$2"
- 	then
- 		echo CPU-hotplug kernel, adding rcutorture onoff. 1>&2
--		echo rcutorture.onoff_interval=3 rcutorture.onoff_holdoff=30
-+		echo rcutorture.onoff_interval=1000 rcutorture.onoff_holdoff=30
- 	fi
- }
- 
+Simple git grep shows that we perhaps do
+
+#define for_each_registered_fbcon(i) ...
+
+(As an example see for_each_pci_bridge() how it's done there)
+
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
