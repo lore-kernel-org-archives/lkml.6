@@ -2,142 +2,265 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A93DFC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40745C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA36264C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D103522440
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:04:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="oa1cSiFt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DA36264C0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lje0uJ6S";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kE/cePgS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D103522440
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935321AbeFZD5F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 23:57:05 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:60893 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934448AbeFZD5C (ORCPT
+        id S1750945AbeFZEER (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 00:04:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47432 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750822AbeFZEEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 23:57:02 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id w5Q3tpaS000721;
-        Tue, 26 Jun 2018 12:55:51 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w5Q3tpaS000721
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529985352;
-        bh=vFqrl0yfN2D/Um8ZkgXnGPldzzwp/IOIYE5gV2wf3gg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=oa1cSiFtGbo3xFcbkILHI44EH0caJc1yPYmv+b3UFX0hUfRhMLBc5TQJGKI/HM81d
-         66MOoPWM0QCZHZm0JwJH9isI0l788nptAuRsUlmUUPnRLJT5GtkYPUFh7fdsLw0muG
-         3efFkgw0mEyXWp0rE2rnAy7y39CWuBv/r2Lg6MPnqvfEQOpvSFJbRTs4jigvybi3Kj
-         BCJc0wu2ZmdZK9c7NRR08SmuicpoIzTcHoMmBhRrxko9z8PuluWpxJaGJP+TV4ywP3
-         c36ax+ldMl0E31C/GUpl/TjxpCcEV0xzP9gpq4C+e7NtQXj6ItLNn81Z6z3bV2fL/T
-         BJvxvHvRtPQVQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Matteo Croce <mcroce@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: [RESEND PATCH] bpfilter: check compiler capability in Kconfig
-Date:   Tue, 26 Jun 2018 12:55:35 +0900
-Message-Id: <1529985336-27522-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 26 Jun 2018 00:04:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 350B260376; Tue, 26 Jun 2018 04:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529985855;
+        bh=3Nskf7rdnWjkQufLpRKFJ10nJmgFiwpU+c0wXKSoN08=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lje0uJ6S+nTQrN3UwVQDfQSTKxM+RNJRCR1CZ9BWm/jKyBDt5Yg8OxlReTNjR+gDG
+         VQnylDsN1PmbkuXWIVlCG320UC8/uY2d5WQkuIG8I+jM/eVGjCqnpTQaHFgOJD7AmP
+         E+gmFnPFqCGBKmhB4F+5vRuwJsfobWNlD0jLJuDM=
+Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 64D796021C;
+        Tue, 26 Jun 2018 04:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529985853;
+        bh=3Nskf7rdnWjkQufLpRKFJ10nJmgFiwpU+c0wXKSoN08=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kE/cePgSkVGTk+aSDq2+bzUHc83fYL3eqVwZASQazyTft4mTPxr90YjX/B0wD4AFq
+         BWjLY3e0afUgCqp0+1U8anNHZyj6ExPzS+2XicdnchI8OgE+2jjNxLuGp44FzKgw8F
+         7toCET9cIZ5qzUTCp7xW8xSNFQPyp6O4MhRqilmE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 64D796021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+To:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org,
+        evgreen@chromium.org, riteshh@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V4 1/3] scsi: ufs: set the device reference clock setting
+Date:   Tue, 26 Jun 2018 09:33:47 +0530
+Message-Id: <1529985829-18689-2-git-send-email-sayalil@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529985829-18689-1-git-send-email-sayalil@codeaurora.org>
+References: <1529985829-18689-1-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the brand-new syntax extension of Kconfig, we can directly
-check the compiler capability in the configuration phase.
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-If the cc-can-link.sh fails, the BPFILTER_UMH is automatically
-hidden by the dependency.
+UFS host supplies the reference clock to UFS device and UFS device
+specification allows host to provide one of the 4 frequencies (19.2 MHz,
+26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+device reference clock frequency setting in the device based on what
+frequency it is supplying to UFS device.
 
-I also deleted 'default n', which is no-op.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 ---
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  7 +++
+ drivers/scsi/ufs/ufs.h                             |  9 +++
+ drivers/scsi/ufs/ufshcd-pltfrm.c                   |  2 +
+ drivers/scsi/ufs/ufshcd.c                          | 72 ++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.h                          |  2 +
+ 5 files changed, 92 insertions(+)
 
- Makefile               | 5 -----
- net/Makefile           | 4 ----
- net/bpfilter/Kconfig   | 2 +-
- scripts/cc-can-link.sh | 2 +-
- 4 files changed, 2 insertions(+), 11 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index a6d4872..f71ea52 100644
---- a/Makefile
-+++ b/Makefile
-@@ -520,11 +520,6 @@ ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLA
-   KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
- endif
+diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+index c39dfef..4522434 100644
+--- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
++++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+@@ -41,6 +41,12 @@ Optional properties:
+ -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
+ 			  Note that it is assume same number of lanes is used both
+ 			  directions at once. If not specified, default is 2 lanes per direction.
++- dev-ref-clk-freq	: Specify the device reference clock frequency, must be one of the following:
++			  0: 19.2 MHz
++			  1: 26 MHz
++			  2: 38.4 MHz
++			  3: 52 MHz
++			  Defaults to 26 MHz if not specified.
  
--ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/cc-can-link.sh $(CC)), y)
--  CC_CAN_LINK := y
--  export CC_CAN_LINK
--endif
--
- # The expansion should be delayed until arch/$(SRCARCH)/Makefile is included.
- # Some architectures define CROSS_COMPILE in arch/$(SRCARCH)/Makefile.
- # CC_VERSION_TEXT is referenced from Kconfig (so it needs export),
-diff --git a/net/Makefile b/net/Makefile
-index 13ec0d5..bdaf539 100644
---- a/net/Makefile
-+++ b/net/Makefile
-@@ -20,11 +20,7 @@ obj-$(CONFIG_TLS)		+= tls/
- obj-$(CONFIG_XFRM)		+= xfrm/
- obj-$(CONFIG_UNIX)		+= unix/
- obj-$(CONFIG_NET)		+= ipv6/
--ifneq ($(CC_CAN_LINK),y)
--$(warning CC cannot link executables. Skipping bpfilter.)
--else
- obj-$(CONFIG_BPFILTER)		+= bpfilter/
--endif
- obj-$(CONFIG_PACKET)		+= packet/
- obj-$(CONFIG_NET_KEY)		+= key/
- obj-$(CONFIG_BRIDGE)		+= bridge/
-diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
-index a948b07..76deb66 100644
---- a/net/bpfilter/Kconfig
-+++ b/net/bpfilter/Kconfig
-@@ -1,6 +1,5 @@
- menuconfig BPFILTER
- 	bool "BPF based packet filtering framework (BPFILTER)"
--	default n
- 	depends on NET && BPF && INET
- 	help
- 	  This builds experimental bpfilter framework that is aiming to
-@@ -9,6 +8,7 @@ menuconfig BPFILTER
- if BPFILTER
- config BPFILTER_UMH
- 	tristate "bpfilter kernel module with user mode helper"
-+	depends on $(success,$(srctree)/scripts/cc-can-link.sh $(CC))
- 	default m
- 	help
- 	  This builds bpfilter kernel module with embedded user mode helper
-diff --git a/scripts/cc-can-link.sh b/scripts/cc-can-link.sh
-index 208eb28..6efcead 100755
---- a/scripts/cc-can-link.sh
-+++ b/scripts/cc-can-link.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
+ Note: If above properties are not defined it can be assumed that the supply
+ regulators or clocks are always on.
+@@ -66,4 +72,5 @@ Example:
+ 		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
+ 		phys = <&ufsphy1>;
+ 		phy-names = "ufsphy";
++		dev-ref-clk-freq = <0>; /* reference clock freq: 19.2 MHz */
+ 	};
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index 14e5bf7..e15deb0 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -378,6 +378,15 @@ enum query_opcode {
+ 	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+ };
  
--cat << "END" | $@ -x c - -o /dev/null >/dev/null 2>&1 && echo "y"
-+cat << "END" | $@ -x c - -o /dev/null >/dev/null 2>&1
- #include <stdio.h>
- int main(void)
++/* bRefClkFreq attribute values */
++enum ref_clk_freq {
++	REF_CLK_FREQ_19_2_MHZ	= 0x0,
++	REF_CLK_FREQ_26_MHZ	= 0x1,
++	REF_CLK_FREQ_38_4_MHZ	= 0x2,
++	REF_CLK_FREQ_52_MHZ	= 0x3,
++	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
++};
++
+ /* Query response result code */
+ enum {
+ 	QUERY_RESULT_SUCCESS                    = 0x00,
+diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+index e82bde0..0953563 100644
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ufshcd_parse_dev_ref_clk_freq(hba);
++
+ 	ufshcd_init_lanes_per_dir(hba);
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c5b1bf1..351f874 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6296,6 +6296,72 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+ 	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+ }
+ 
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
++{
++	struct device *dev = hba->dev;
++	int ret;
++
++	if (!dev)
++		return;
++
++	ret = device_property_read_u32(dev, "dev-ref-clk-freq",
++				   &hba->dev_ref_clk_freq);
++	if (ret ||
++	    (hba->dev_ref_clk_freq > REF_CLK_FREQ_52_MHZ)) {
++		dev_err(hba->dev,
++		"%s: invalid ref_clk setting = %d\n",
++		__func__, hba->dev_ref_clk_freq);
++		hba->dev_ref_clk_freq = REF_CLK_FREQ_MAX + 1;
++	}
++}
++
++/**
++ * ufshcd_set_dev_ref_clk - set the device bRefClkFreq
++ * @hba: per-adapter instance
++ *
++ * Read the current value of the bRefClkFreq attribute from device and update it
++ * if host is supplying different reference clock frequency than one mentioned
++ * in bRefClkFreq attribute.
++ *
++ * Returns zero on success, non-zero error value on failure.
++ */
++static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
++{
++	int err = 0;
++	int ref_clk = -1;
++	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
++						     "38.4 MHz", "52 MHz"};
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
++
++	if (err) {
++		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
++			 __func__, err);
++		goto out;
++	}
++
++	if (ref_clk == hba->dev_ref_clk_freq)
++		goto out; /* nothing to update */
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
++			&hba->dev_ref_clk_freq);
++
++	if (err)
++		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
++			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
++	/*
++	 * It is good to print this out here to debug any later failures
++	 * related to gear switch.
++	 */
++	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
++			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
++
++out:
++	return err;
++}
++
+ /**
+  * ufshcd_probe_hba - probe hba to detect device and initialize
+  * @hba: per-adapter instance
+@@ -6361,6 +6427,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 			"%s: Failed getting max supported power mode\n",
+ 			__func__);
+ 	} else {
++		/*
++		 * Set the right value to bRefClkFreq before attempting to
++		 * switch to HS gears.
++		 */
++		if (hba->dev_ref_clk_freq < REF_CLK_FREQ_MAX + 1)
++			ufshcd_set_dev_ref_clk(hba);
+ 		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8110dcd..101a75c 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -548,6 +548,7 @@ struct ufs_hba {
+ 	void *priv;
+ 	unsigned int irq;
+ 	bool is_irq_enabled;
++	u32 dev_ref_clk_freq;
+ 
+ 	/* Interrupt aggregation support is broken */
+ 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+@@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+ int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+ 				u32 val, unsigned long interval_us,
+ 				unsigned long timeout_ms, bool can_sleep);
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
+ 
+ static inline void check_upiu_size(void)
  {
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
