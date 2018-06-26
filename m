@@ -2,142 +2,165 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C15C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BAFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF2C262D3
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:24:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF2C262D3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 69F5B26427
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:25:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F5B26427
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933181AbeFZRYd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:24:33 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51860 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753237AbeFZRXp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:23:45 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QHIk2l121507
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:23:44 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jus52sr8v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:23:44 -0400
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 11:23:43 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 11:23:41 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QHNehe62652560
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 10:23:40 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 61BC278064;
-        Tue, 26 Jun 2018 11:23:40 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF57578060;
-        Tue, 26 Jun 2018 11:23:39 -0600 (MDT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 11:23:39 -0600 (MDT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.vnet.ibm.com
-Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v6 3/5] tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
-Date:   Tue, 26 Jun 2018 13:23:29 -0400
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180626172331.2505541-1-stefanb@linux.vnet.ibm.com>
-References: <20180626172331.2505541-1-stefanb@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18062617-0020-0000-0000-00000E3605B1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052673; UDB=6.00539671; IPR=6.00830598;
- MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:23:42
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062617-0021-0000-0000-000062132380
-Message-Id: <20180626172331.2505541-4-stefanb@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=796 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260195
+        id S933499AbeFZRZD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 13:25:03 -0400
+Received: from mga04.intel.com ([192.55.52.120]:3961 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752344AbeFZRZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 13:25:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 10:24:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,275,1526367600"; 
+   d="scan'208";a="53071751"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 26 Jun 2018 10:24:59 -0700
+Received: from [10.252.9.225] (abudanko-mobl.ccr.corp.intel.com [10.252.9.225])
+        by linux.intel.com (Postfix) with ESMTP id 3E1ED58011E;
+        Tue, 26 Jun 2018 10:24:55 -0700 (PDT)
+Subject: Re: [RFC 1/4] perf: Move some access checks later in perf_event_open
+To:     Tvrtko Ursulin <tursulin@ursulin.net>, linux-kernel@vger.kernel.org
+Cc:     Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Andi Kleen <ak@linux.intel.com>, x86@kernel.org,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+References: <20180626153642.5587-1-tvrtko.ursulin@linux.intel.com>
+ <20180626153642.5587-2-tvrtko.ursulin@linux.intel.com>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Message-ID: <861aa316-fa18-4385-af84-0e9445f261d1@linux.intel.com>
+Date:   Tue, 26 Jun 2018 20:24:54 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180626153642.5587-2-tvrtko.ursulin@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert tpm_find_get_ops() to use tpm_default_chip() in case no chip
-is passed in.
+Hi,
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-chip.c | 32 +++++++++++++-------------------
- 1 file changed, 13 insertions(+), 19 deletions(-)
+On 26.06.2018 18:36, Tvrtko Ursulin wrote:
+> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+> 
+> To enable per-PMU access controls in a following patch first move all call
+> sites of perf_paranoid_kernel() to after the event has been created.
+> 
+> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: x86@kernel.org
+> ---
+>  kernel/events/core.c | 36 ++++++++++++++++++++++--------------
+>  1 file changed, 22 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index f490caca9aa4..12de95b0472e 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -10189,10 +10189,6 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+>  			 */
+>  			attr->branch_sample_type = mask;
+>  		}
+> -		/* privileged levels capture (kernel, hv): check permissions */
+> -		if ((mask & PERF_SAMPLE_BRANCH_PERM_PLM)
+> -		    && perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+> -			return -EACCES;
+>  	}
+>  
+>  	if (attr->sample_type & PERF_SAMPLE_REGS_USER) {
+> @@ -10409,11 +10405,6 @@ SYSCALL_DEFINE5(perf_event_open,
+>  	if (err)
+>  		return err;
+>  
+> -	if (!attr.exclude_kernel) {
+> -		if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+> -			return -EACCES;
+> -	}
+> -
+>  	if (attr.namespaces) {
+>  		if (!capable(CAP_SYS_ADMIN))
+>  			return -EACCES;
+> @@ -10427,11 +10418,6 @@ SYSCALL_DEFINE5(perf_event_open,
+>  			return -EINVAL;
+>  	}
+>  
+> -	/* Only privileged users can get physical addresses */
+> -	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
+> -	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+> -		return -EACCES;
+> -
+>  	/*
+>  	 * In cgroup mode, the pid argument is used to pass the fd
+>  	 * opened to the cgroup directory in cgroupfs. The cpu argument
+> @@ -10501,6 +10487,28 @@ SYSCALL_DEFINE5(perf_event_open,
+>  		goto err_cred;
+>  	}
+>  
+> +	if (!attr.exclude_kernel) {
+> +		if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
+> +			err = -EACCES;
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index f551061262c9..b01d34983766 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -124,29 +124,23 @@ EXPORT_SYMBOL_GPL(tpm_default_chip);
-  */
- struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
- {
--	struct tpm_chip *res = NULL;
--	int chip_num = 0;
--	int chip_prev;
--
--	mutex_lock(&idr_lock);
-+	int rc;
- 
--	if (!chip) {
--		do {
--			chip_prev = chip_num;
--			chip = idr_get_next(&dev_nums_idr, &chip_num);
--			if (chip && !tpm_try_get_ops(chip)) {
--				res = chip;
--				break;
--			}
--		} while (chip_prev != chip_num);
--	} else {
-+	if (chip) {
- 		if (!tpm_try_get_ops(chip))
--			res = chip;
-+			return chip;
-+		return NULL;
- 	}
- 
--	mutex_unlock(&idr_lock);
--
--	return res;
-+	chip = tpm_default_chip();
-+	if (!chip)
-+		return NULL;
-+	rc = tpm_try_get_ops(chip);
-+	/* release additional reference we got from tpm_default_chip() */
-+	put_device(&chip->dev);
-+	if (!rc)
-+		return NULL;
-+	return chip;
- }
- 
- /**
--- 
-2.17.1
+I would separate this combined permissions check into a function e.g.
+static bool perf_test_pmu_paranoid(const struct pmu *pmu, int *err) to avoid 
+code duplication.
 
+> +			goto err_alloc;
+> +		}
+> +	}
+> +
+> +	/* Only privileged users can get physical addresses */
+> +	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
+> +	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
+> +		err = -EACCES;
+> +		goto err_alloc;
+> +	}
+> +
+> +	/* privileged levels capture (kernel, hv): check permissions */
+> +	if ((attr.sample_type & PERF_SAMPLE_BRANCH_STACK) &&
+> +	    (attr.branch_sample_type & PERF_SAMPLE_BRANCH_PERM_PLM) &&
+> +	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
+> +		err = -EACCES;
+> +		goto err_alloc;
+> +	}
+> +
+>  	if (is_sampling_event(event)) {
+>  		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
+>  			err = -EOPNOTSUPP;
+> 
