@@ -2,105 +2,155 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85651C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D569C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D83425AC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA8BA26637
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:45:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gfGloDXT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D83425AC6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sTuwJ3s7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA8BA26637
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932187AbeFZHoX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:44:23 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:38571 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752584AbeFZHoU (ORCPT
+        id S932203AbeFZHpc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 03:45:32 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:57516 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751982AbeFZHp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:44:20 -0400
-Received: by mail-io0-f194.google.com with SMTP id l19-v6so15043875ioj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 00:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=dFOoq9ukdoIjNXP3Kck/Dqmkte+kn13Q/803Th6ijI8=;
-        b=gfGloDXT2a571Nn2GPe9Ip4bsonGV6nb7vRFABv1ZlN91pvBVJtEs6+D7oOa2wMx1I
-         kdTuRnOI254j2c5AMsqecFk5prbJI/6I8nrX2pdHosm87olVRD7LsRdaf8E1JxIDC3g5
-         9vFKqpZl/R2xsrCErrg1mZaS3EP6Ru8PPxIhASTKBe7xRK+jkUZw98RxPZ+nOpPZDGe7
-         tWyTG/hje1u/cLHK+vjKrKyvVUeuQPb/rF2gH8Nr1MegViJ68j3FJuNf1/p5olz55A4H
-         Uxxtk0+lLN0aNd+HUmZJm/OeBnGFC8qFEzXnSt3AQNBS9Ttz4cz0GZEmuVjscwKouHGy
-         gdTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=dFOoq9ukdoIjNXP3Kck/Dqmkte+kn13Q/803Th6ijI8=;
-        b=ZTzWfm/ddD3RIKYg6MAT5KUOs4TSzzq2c2+sF09j4tQwBHpIMJt5WM90MxggLxfpyT
-         zXQZqbJa4A2N0ZeDWtX3M4QgUaTg03iTL08sItWCbFquGJO/Z8Q2ye6sLBVFNKYnQMAi
-         xABu4UyD274b9srJZ6hK+J7apIqNx7CJxTGKGn6Naynxh+ki/rTIzgAxIy9BQLnU5e7j
-         gjy5loYeMzc4opjb6UUN3yIAXsrzmaompX0XY0e1tGIbxTmsiYYoyqO9svHLWkbeH9aP
-         g6+LwHfq3FpmRDgv9Vsnq62G+NwHJTjX0tLLcaSvqFlJxCjsLmgA2qpXb1DUt4YqGVOt
-         4jmw==
-X-Gm-Message-State: APt69E0dfAN9teivMUizEyrccti0R6CS7JneaT9jrNXrtmaNaVjp1kT9
-        tS9Dq5lMzq+oFGVvNW1gw+WODX/ax8smLxi3R4OtpQ==
-X-Google-Smtp-Source: AAOMgpdeCb2eZ9/oOfaQ5y8kwc9lWd883NoOmwOgWbFPdmZRoBVyktbUMdHrqa2FukkfCewvqJyA2SPSd5abhZBBxbs=
-X-Received: by 2002:a6b:6515:: with SMTP id z21-v6mr323050iob.258.1529999060083;
- Tue, 26 Jun 2018 00:44:20 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:9c51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 00:44:19
- -0700 (PDT)
-In-Reply-To: <20180625180237.GC17417@lunn.ch>
-References: <20180625155025.12567-1-brgl@bgdev.pl> <20180625174024.GB17417@lunn.ch>
- <CAMRc=MdEn74G5SJAaGLAfNSS7Zy7wqH04aN5CMZ45UXqhu_58g@mail.gmail.com> <20180625180237.GC17417@lunn.ch>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 26 Jun 2018 09:44:19 +0200
-Message-ID: <CAMRc=MejDn=t6EPbKOfhMfRAb_O-5hxtWRyjAWH1mb5BUySrDA@mail.gmail.com>
-Subject: Re: [PATCH 00/14] ARM: davinci: step towards removing at24_platform_data
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
+        Tue, 26 Jun 2018 03:45:29 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5Q7iKpt151614;
+        Tue, 26 Jun 2018 07:44:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2017-10-26; bh=2kIqS0cF/4l0ErW6czHlvQXxX6JAzOqKQ9IrqTncaFE=;
+ b=sTuwJ3s71UNlBg2Ga8FI9JBRmvlpkkpgYmZghWihtD6wv6s9ou0yEL259YL9r6c+qY+x
+ AHl842lsj66y0mRxWCn0VrhhK5j98brKnmwDAIGyidrqXQhqKRD5j2DuN3fiyU6l5xZ+
+ sw5BP2dQZu2qZxlZg08/U3ZXQcVMO7yyjuXeMXr1r15b3WzvnDf9iAoeJtpAbCWJL3uL
+ wRg3Qk3rqZyA4ItUPxCPyVb+NLt/aDdv5ysJ98yN8B/AnD6mZ6F/DuU9V7enlBcBdTUN
+ 0/Pd9u4tzo+CwNMEBUtLFVMRujY62MxMUgXXx0z8j68KgIWD+RjzhqFPjldltzCw835a Bw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2ju20t2s1x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Jun 2018 07:44:45 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5Q7ii8b005649
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Jun 2018 07:44:44 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5Q7igxq011283;
+        Tue, 26 Jun 2018 07:44:42 GMT
+Received: from mwanda (/197.157.0.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 26 Jun 2018 00:44:41 -0700
+Date:   Tue, 26 Jun 2018 10:44:26 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, Pingfan Liu <kernelfans@gmail.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Pingfan Liu <kernelfans@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 2/3] drivers/base: reorder consumer and its children
+ behind suppliers
+Message-ID: <20180626074426.hzunfbvwbubt3t3p@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529904187-18673-3-git-send-email-kernelfans@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8935 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806260088
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-25 20:02 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
->> With my patch 1/14 you'll get -EPROBE_DEFER from nvmem_cell_get() if
->> the nvmem provider is not yet registered. Will that help in your case?
->
-> I don't think so. My driver instantiates the AT24 device. So if i get
-> -EPROBE_DEFER, i need to cleanup the probe, and return -EPROBDE_DEFER
-> to the code. Which means i need to remove the AT24 device...
->
->        Andrew
+[ There is a bug with kbuild where it's not showing the Smatch warnings
+  but I can probably guess...  - dan ]
 
-Are you sure this is the correct approach? I understand that you want
-to use something like board files for your machine? Wouldn't it be
-better to register a platform device for at24, register a cell lookup
-and then depend on that cell from your driver?
+Hi Pingfan,
 
-Would you mind describing your platform in detail a bit more?
+Thank you for the patch! Perhaps something to improve:
 
-Best regards,
-Bartosz
+url:    https://github.com/0day-ci/linux/commits/Pingfan-Liu/drivers-base-bugfix-for-supplier-consumer-ordering-in-device_kset/20180625-132702
+
+
+# https://github.com/0day-ci/linux/commit/1b2a1e63898baf80e8e830991284e1534bc54766
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 1b2a1e63898baf80e8e830991284e1534bc54766
+vim +/ret +245 drivers/base/core.c
+
+1b2a1e63 Pingfan Liu 2018-06-25  216  
+1b2a1e63 Pingfan Liu 2018-06-25  217  /* When reodering, take care of the range of (old_pos(dev), new_pos(dev)),
+1b2a1e63 Pingfan Liu 2018-06-25  218   * there may be requirement to recursively move item.
+1b2a1e63 Pingfan Liu 2018-06-25  219   */
+1b2a1e63 Pingfan Liu 2018-06-25  220  int device_reorder_consumer(struct device *dev)
+1b2a1e63 Pingfan Liu 2018-06-25  221  {
+1b2a1e63 Pingfan Liu 2018-06-25  222  	struct list_head *iter, *left, *right;
+1b2a1e63 Pingfan Liu 2018-06-25  223  	struct device *cur_dev;
+1b2a1e63 Pingfan Liu 2018-06-25  224  	struct pos_info info;
+1b2a1e63 Pingfan Liu 2018-06-25  225  	int ret, idx;
+1b2a1e63 Pingfan Liu 2018-06-25  226  
+1b2a1e63 Pingfan Liu 2018-06-25  227  	idx = device_links_read_lock();
+1b2a1e63 Pingfan Liu 2018-06-25  228  	if (list_empty(&dev->links.suppliers)) {
+1b2a1e63 Pingfan Liu 2018-06-25  229  		device_links_read_unlock(idx);
+1b2a1e63 Pingfan Liu 2018-06-25  230  		return 0;
+1b2a1e63 Pingfan Liu 2018-06-25  231  	}
+1b2a1e63 Pingfan Liu 2018-06-25  232  	spin_lock(&devices_kset->list_lock);
+1b2a1e63 Pingfan Liu 2018-06-25  233  	list_for_each_prev(iter, &devices_kset->list) {
+1b2a1e63 Pingfan Liu 2018-06-25  234  		cur_dev = list_entry(iter, struct device, kobj.entry);
+1b2a1e63 Pingfan Liu 2018-06-25  235  		ret = find_last_supplier(dev, cur_dev);
+1b2a1e63 Pingfan Liu 2018-06-25  236  		switch (ret) {
+1b2a1e63 Pingfan Liu 2018-06-25  237  		case -1:
+1b2a1e63 Pingfan Liu 2018-06-25  238  			goto unlock;
+1b2a1e63 Pingfan Liu 2018-06-25  239  		case 1:
+1b2a1e63 Pingfan Liu 2018-06-25  240  			break;
+1b2a1e63 Pingfan Liu 2018-06-25  241  		case 0:
+1b2a1e63 Pingfan Liu 2018-06-25  242  			continue;
+
+The break breaks from the switch and the continue continues the loop so
+they're equivalent.  Perhaps you intended to break from the loop?
+
+1b2a1e63 Pingfan Liu 2018-06-25  243  		}
+1b2a1e63 Pingfan Liu 2018-06-25  244  	}
+1b2a1e63 Pingfan Liu 2018-06-25 @245  	BUG_ON(!ret);
+
+If the list is empty then "ret" can be unitialized.  We test a different
+list "dev->links.suppliers" to see if that's empty.  I wrote a bunch of
+code to make Smatch try to understand about empty lists, but I don't
+think it works...
+
+1b2a1e63 Pingfan Liu 2018-06-25  246  
+1b2a1e63 Pingfan Liu 2018-06-25  247  	/* record the affected open section */
+1b2a1e63 Pingfan Liu 2018-06-25  248  	left = dev->kobj.entry.prev;
+1b2a1e63 Pingfan Liu 2018-06-25  249  	right = iter;
+1b2a1e63 Pingfan Liu 2018-06-25  250  	info.pos = list_entry(iter, struct device, kobj.entry);
+1b2a1e63 Pingfan Liu 2018-06-25  251  	info.tail = NULL;
+1b2a1e63 Pingfan Liu 2018-06-25  252  	/* dry out the consumers in (left,right) */
+1b2a1e63 Pingfan Liu 2018-06-25  253  	__device_reorder_consumer(dev, left, right, &info);
+1b2a1e63 Pingfan Liu 2018-06-25  254  
+1b2a1e63 Pingfan Liu 2018-06-25  255  unlock:
+1b2a1e63 Pingfan Liu 2018-06-25  256  	spin_unlock(&devices_kset->list_lock);
+1b2a1e63 Pingfan Liu 2018-06-25  257  	device_links_read_unlock(idx);
+1b2a1e63 Pingfan Liu 2018-06-25  258  	return 0;
+1b2a1e63 Pingfan Liu 2018-06-25  259  }
+1b2a1e63 Pingfan Liu 2018-06-25  260  
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
