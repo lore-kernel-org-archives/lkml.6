@@ -2,120 +2,163 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 111C2C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E09C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71F3268EA
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:47:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jewM3daz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71F3268EA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 29D4226869
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:50:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D4226869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935407AbeFZMr4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:47:56 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:51448 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935341AbeFZMrw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:47:52 -0400
-Received: by mail-it0-f65.google.com with SMTP id 128-v6so2114938itf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 05:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=PT1XIj0WBeJ5DCWbGQC8il7OaNsRxYvPefALlLLBAlM=;
-        b=jewM3dazMVYE15hJMjHLaByrCjeLeTSk2dAjzJgT3BpP6M6oJ9tp9yZW16DMih9DSq
-         hABl+fFPZcGrbLRLnOeqxteyFtVTHn84SDfnEN1qArqrxB/h3FdVhlvUFlOEx6zKPyU7
-         4KeaYrNg5uKiFveaUrbqch7/Tx7bp1DSVqB2q2NP2RBIk84zzxkgUtl8rf7ZDgN4H666
-         Tf+OnRTpqxLsFn+jQxdK9dgjAEYFCDTbXlkvZJV64oytpvZch07LGFYwfJXNLRwHod4b
-         LggXzXEw82dVm6XgFhpaW1MSMCLH7NHUXtWpQ8IcCWzp/YKSPI4LeLN0Mjl77lwzMUjC
-         FYqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=PT1XIj0WBeJ5DCWbGQC8il7OaNsRxYvPefALlLLBAlM=;
-        b=K7OY4CJLXXnwuWVcSHDEXU6ett4PdYSwy9Zqc9ufbStfyAKW8yJv/L3XEOh7UyTX91
-         Pw/bYRP66yuMO1FFoGvAbZKBkUIO2qeG4r3kWa3xytp663L3QiGpQAMk3vZ2C8fN6YIi
-         Y1o5eYFIqg0+q9ZkKksmzdy0QM0LwggHOSv1IYmDlckvskLcUmbVjZ4yihFQTKfV9aCF
-         /t9Jtvg3WLD/uUbyO7JPItvxl5lPcl0Hs5F1P56IzzKnQHXDzmxrMVINJrHocg0rYsGm
-         Tw/2ci3ljVRs7K9Lqbc5r9PPAEMONJjln+q2ADfWrhuEWi75g3SJZqBCCf39H9J7Pn1G
-         pzmw==
-X-Gm-Message-State: APt69E1J6784eG1krNFcyhh12DTCUQ2Ow+VaakgtEXpEBs0kbRcoBBZj
-        tSww/S5QyZEuq4byBvx4aGFkhx4FCzGH8L+3Q6IMRQ==
-X-Google-Smtp-Source: AAOMgpeFt9MYc+nUWUxqfPYxeX4Gst0QmKHGyId1gCbo5mZlebpGU2DGRL+oHyER7ziGGo/QFk8w6TmoHEgus7D0Nac=
-X-Received: by 2002:a24:ca43:: with SMTP id k64-v6mr1396237itg.44.1530017271527;
- Tue, 26 Jun 2018 05:47:51 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:9082:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 05:47:50
- -0700 (PDT)
-In-Reply-To: <cover.1529507994.git.andreyknvl@google.com>
-References: <cover.1529507994.git.andreyknvl@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 26 Jun 2018 14:47:50 +0200
-Message-ID: <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-doc@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S964938AbeFZMui (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:50:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55324 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934343AbeFZMuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:50:37 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4405B401EF11;
+        Tue, 26 Jun 2018 12:50:36 +0000 (UTC)
+Received: from crecklin.bos.com (ovpn-121-147.rdu2.redhat.com [10.10.121.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D99792166B5D;
+        Tue, 26 Jun 2018 12:50:35 +0000 (UTC)
+From:   Chris von Recklinghausen <crecklin@redhat.com>
+To:     keescook@chromium.org, labbott@redhat.com, pabeni@redhat.com,
+        linux-mm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [v2 PATCH] add param that allows bootline control of hardened usercopy
+Date:   Tue, 26 Jun 2018 08:50:30 -0400
+Message-Id: <1530017430-5394-1-git-send-email-crecklin@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 26 Jun 2018 12:50:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 26 Jun 2018 12:50:36 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 5:24 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> arm64 has a feature called Top Byte Ignore, which allows to embed pointer
-> tags into the top byte of each pointer. Userspace programs (such as
-> HWASan, a memory debugging tool [1]) might use this feature and pass
-> tagged user pointers to the kernel through syscalls or other interfaces.
->
-> This patch makes a few of the kernel interfaces accept tagged user
-> pointers. The kernel is already able to handle user faults with tagged
-> pointers and has the untagged_addr macro, which this patchset reuses.
->
-> We're not trying to cover all possible ways the kernel accepts user
-> pointers in one patchset, so this one should be considered as a start.
->
-> Thanks!
->
-> [1] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
+Enabling HARDENED_USER_COPY causes measurable regressions in the
+networking performances, up to 8% under UDP flood.
 
-Hi!
+A generic distro may want to enable HARDENED_USER_COPY in their default
+kernel config, but at the same time, such distro may want to be able to
+avoid the performance penalties in with the default configuration and
+disable the stricter check on a per-boot basis.
 
-Is there anything I should do to move forward with this?
+This change adds a boot parameter that to conditionally disable
+HARDENED_USERCOPY at boot time.
 
-I've received zero replies to this patch set (v3 and v4) over the last month.
+v1->v2:
+	remove CONFIG_HUC_DEFAULT_OFF
+	default is now enabled, boot param disables
+	move check to __check_object_size so as to not break optimization of
+		__builtin_constant_p()
+	include linux/atomic.h before linux/jump_label.h
 
-Thanks!
+Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
+---
+ .../admin-guide/kernel-parameters.rst         |  1 +
+ .../admin-guide/kernel-parameters.txt         |  3 +++
+ include/linux/thread_info.h                   |  5 ++++
+ mm/usercopy.c                                 | 27 +++++++++++++++++++
+ 4 files changed, 36 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentation/admin-guide/kernel-parameters.rst
+index b8d0bc07ed0a..87a1200a1db6 100644
+--- a/Documentation/admin-guide/kernel-parameters.rst
++++ b/Documentation/admin-guide/kernel-parameters.rst
+@@ -100,6 +100,7 @@ parameter is applicable::
+ 	FB	The frame buffer device is enabled.
+ 	FTRACE	Function tracing enabled.
+ 	GCOV	GCOV profiling is enabled.
++	HUC	Hardened usercopy is enabled
+ 	HW	Appropriate hardware is enabled.
+ 	IA-64	IA-64 architecture is enabled.
+ 	IMA     Integrity measurement architecture is enabled.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index efc7aa7a0670..d14be0038aed 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -816,6 +816,9 @@
+ 	disable=	[IPV6]
+ 			See Documentation/networking/ipv6.txt.
+ 
++	disable_hardened_usercopy [HUC]
++			Disable hardened usercopy checks
++
+ 	disable_radix	[PPC]
+ 			Disable RADIX MMU mode on POWER9
+ 
+diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+index 8d8821b3689a..ab24fe2d3f87 100644
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -109,6 +109,11 @@ static inline int arch_within_stack_frames(const void * const stack,
+ #endif
+ 
+ #ifdef CONFIG_HARDENED_USERCOPY
++#include <linux/atomic.h>
++#include <linux/jump_label.h>
++
++DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
++
+ extern void __check_object_size(const void *ptr, unsigned long n,
+ 					bool to_user);
+ 
+diff --git a/mm/usercopy.c b/mm/usercopy.c
+index e9e9325f7638..6a1265e1a54e 100644
+--- a/mm/usercopy.c
++++ b/mm/usercopy.c
+@@ -20,6 +20,8 @@
+ #include <linux/sched/task.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/thread_info.h>
++#include <linux/atomic.h>
++#include <linux/jump_label.h>
+ #include <asm/sections.h>
+ 
+ /*
+@@ -248,6 +250,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+  */
+ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+ {
++	if (static_branch_likely(&bypass_usercopy_checks))
++		return;
++
+ 	/* Skip all tests if size is zero. */
+ 	if (!n)
+ 		return;
+@@ -279,3 +284,25 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+ 	check_kernel_text_object((const unsigned long)ptr, n, to_user);
+ }
+ EXPORT_SYMBOL(__check_object_size);
++
++DEFINE_STATIC_KEY_FALSE(bypass_usercopy_checks);
++EXPORT_SYMBOL(bypass_usercopy_checks);
++
++static bool disable_huc_atboot = false;
++
++static int __init parse_disable_usercopy(char *str)
++{
++	disable_huc_atboot = true;
++	return 1;
++}
++
++static int __init set_disable_usercopy(void)
++{
++	if (disable_huc_atboot == true)
++		static_branch_enable(&bypass_usercopy_checks);
++	return 1;
++}
++
++__setup("disable_hardened_usercopy", parse_disable_usercopy);
++
++late_initcall(set_disable_usercopy);
+-- 
+2.17.0
+
