@@ -2,185 +2,103 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEDFC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2753DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5A99219E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5A99219E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CDFFA265CE
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDFFA265CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752504AbeFZHRU (ORCPT
+        id S1752602AbeFZHRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:17:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56754 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752402AbeFZHRS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:17:18 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q7BH8p110320
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 03:17:17 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jufb5kxj0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 03:17:17 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Tue, 26 Jun 2018 08:17:15 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 08:17:12 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q7HBpL30736536
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 07:17:12 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A5275205F;
-        Tue, 26 Jun 2018 08:17:06 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 03DE65204F;
-        Tue, 26 Jun 2018 08:17:05 +0100 (BST)
-From:   Thomas Richter <tmricht@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, ak@linux.intel.com, jolsa@redhat.com,
-        Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH 4/4 v4] perf stat: Add transaction flag (-T) support for s390
-Date:   Tue, 26 Jun 2018 09:17:01 +0200
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18062607-0028-0000-0000-000002D4F2F4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062607-0029-0000-0000-0000238C5504
-Message-Id: <20180626071701.58190-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260081
+        Tue, 26 Jun 2018 03:17:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38346 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752412AbeFZHRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 03:17:19 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ECC5D81A4EAD;
+        Tue, 26 Jun 2018 07:17:18 +0000 (UTC)
+Received: from t450s.home (ovpn04.gateway.prod.ext.sin2.redhat.com [10.69.146.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 25584111CA1C;
+        Tue, 26 Jun 2018 07:17:07 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 15:16:19 +0800
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        christian.koenig@amd.com, daniel.vetter@ffwll.ch,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        kvm@vger.kernel.org (open list:VFIO MEDIATED DEVICE DRIVERS)
+Subject: Re: [PATCH 1/2] sample/mdev/mbochs: remove
+ mbochs_kmap_atomic_dmabuf
+Message-ID: <20180626151619.13d4c214@t450s.home>
+In-Reply-To: <20180625064453.19768-1-kraxel@redhat.com>
+References: <20180625064453.19768-1-kraxel@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 26 Jun 2018 07:17:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 26 Jun 2018 07:17:19 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'alex.williamson@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-perf stat command line flag -T to display transaction counters is
-currently supported for x86 only.
-Add support for s390. It is based on the metrics flag -M transaction
-using the architecture dependend json files. This requires a metric
-named "transaction" in the json files for the platform.
+On Mon, 25 Jun 2018 08:44:51 +0200
+Gerd Hoffmann <kraxel@redhat.com> wrote:
 
-Introduce new function metricgroup__has_metric() to check for
-the existance of a metric_name transaction.
+> Atomic mapping interface for dmabufs will be removed.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
-As suggested by Andi Kleen, this is the new approach to support
-transactions counters. Other architectures will follow.
+Fixes: f664a5269542 ("dma-buf: remove kmap_atomic interface")
 
-Output before:
-[root@p23lp27 perf]# ./perf stat -T -- sleep 1
-Cannot set up transaction events
-[root@p23lp27 perf]#
+Though really the above commit needs to be updated to include this fix
+to preserve bisection since the mbochs sample driver is already
+upstream, suggests we only compile tested removing kmap_atomic without
+looking for other users.  drm folks, please update.  Thanks,
 
-Output after:
-[root@s35lp76 perf]# ./perf stat -T -- ~/mytesttx 1 >/tmp/111
+Alex
 
- Performance counter stats for '/root/mytesttx 1':
-
-                 1      tx_c_tend           #     13.0 transaction
-                 1      tx_nc_tend
-                11      tx_nc_tabort
-                 0      tx_c_tabort_special
-                 0      tx_c_tabort_no_special
-
-       0.001070109 seconds time elapsed
-
-[root@s35lp76 perf]#
-
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
----
----
- tools/perf/builtin-stat.c     | 12 ++++++++++++
- tools/perf/util/metricgroup.c | 22 ++++++++++++++++++++++
- tools/perf/util/metricgroup.h |  1 +
- 3 files changed, 35 insertions(+)
-
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 22547a490e1f..16df63e9a108 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -2449,6 +2449,18 @@ static int add_default_attributes(void)
- 		return 0;
- 
- 	if (transaction_run) {
-+		/* Handle -T as -M transaction. Once platform specific metrics
-+		 * support has been added to the json files, all archictures
-+		 * will use this approach. To determine transaction support
-+		 * on an architecture test for such a metric name.
-+		 */
-+		if (metricgroup__has_metric("transaction")) {
-+			struct option opt = { .value = &evsel_list };
-+
-+			return metricgroup__parse_groups(&opt, "transaction",
-+							 &metric_events);
-+		}
-+
- 		if (pmu_have_event("cpu", "cycles-ct") &&
- 		    pmu_have_event("cpu", "el-start"))
- 			err = parse_events(evsel_list, transaction_attrs,
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index 1ddc3d1d0147..96eab4ec34ff 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -490,3 +490,25 @@ int metricgroup__parse_groups(const struct option *opt,
- 	metricgroup__free_egroups(&group_list);
- 	return ret;
- }
-+
-+bool metricgroup__has_metric(const char *metric)
-+{
-+	struct pmu_events_map *map = perf_pmu__find_map(NULL);
-+	struct pmu_event *pe;
-+	int i;
-+
-+	if (!map)
-+		return false;
-+
-+	for (i = 0; ; i++) {
-+		pe = &map->table[i];
-+
-+		if (!pe->name && !pe->metric_group && !pe->metric_name)
-+			break;
-+		if (!pe->metric_expr)
-+			continue;
-+		if (match_metric(pe->metric_name, metric))
-+			return true;
-+	}
-+	return false;
-+}
-diff --git a/tools/perf/util/metricgroup.h b/tools/perf/util/metricgroup.h
-index 06854e125ee7..8a155dba0581 100644
---- a/tools/perf/util/metricgroup.h
-+++ b/tools/perf/util/metricgroup.h
-@@ -28,4 +28,5 @@ int metricgroup__parse_groups(const struct option *opt,
- 			struct rblist *metric_events);
- 
- void metricgroup__print(bool metrics, bool groups, char *filter, bool raw);
-+bool metricgroup__has_metric(const char *metric);
- #endif
--- 
-2.14.3
+> ---
+>  samples/vfio-mdev/mbochs.c | 10 ----------
+>  1 file changed, 10 deletions(-)
+> 
+> diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
+> index 2960e26c6e..aa25cda21d 100644
+> --- a/samples/vfio-mdev/mbochs.c
+> +++ b/samples/vfio-mdev/mbochs.c
+> @@ -803,15 +803,6 @@ static void mbochs_release_dmabuf(struct dma_buf *buf)
+>  	mutex_unlock(&mdev_state->ops_lock);
+>  }
+>  
+> -static void *mbochs_kmap_atomic_dmabuf(struct dma_buf *buf,
+> -				       unsigned long page_num)
+> -{
+> -	struct mbochs_dmabuf *dmabuf = buf->priv;
+> -	struct page *page = dmabuf->pages[page_num];
+> -
+> -	return kmap_atomic(page);
+> -}
+> -
+>  static void *mbochs_kmap_dmabuf(struct dma_buf *buf, unsigned long page_num)
+>  {
+>  	struct mbochs_dmabuf *dmabuf = buf->priv;
+> @@ -824,7 +815,6 @@ static struct dma_buf_ops mbochs_dmabuf_ops = {
+>  	.map_dma_buf	  = mbochs_map_dmabuf,
+>  	.unmap_dma_buf	  = mbochs_unmap_dmabuf,
+>  	.release	  = mbochs_release_dmabuf,
+> -	.map_atomic	  = mbochs_kmap_atomic_dmabuf,
+>  	.map		  = mbochs_kmap_dmabuf,
+>  	.mmap		  = mbochs_mmap_dmabuf,
+>  };
 
