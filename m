@@ -2,67 +2,68 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA15CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AD6C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6D826C94
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:47:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6D826C94
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 4329E26C9E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:52:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4329E26C9E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965796AbeFZOrp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 10:47:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
+        id S1751116AbeFZOwa (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 10:52:30 -0400
+Received: from mga04.intel.com ([192.55.52.120]:59883 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965359AbeFZOrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:47:43 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3072626C93;
-        Tue, 26 Jun 2018 14:47:42 +0000 (UTC)
-Date:   Tue, 26 Jun 2018 10:47:40 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] fbcon: Call WARN_CONSOLE_UNLOCKED() where
- applicable
-Message-ID: <20180626104740.0067bd5e@gandalf.local.home>
-In-Reply-To: <20180626135535.2990-3-hdegoede@redhat.com>
-References: <20180626135535.2990-1-hdegoede@redhat.com>
-        <20180626135535.2990-3-hdegoede@redhat.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751080AbeFZOw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 10:52:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 07:52:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
+   d="scan'208";a="70140483"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
+  by orsmga002.jf.intel.com with ESMTP; 26 Jun 2018 07:52:08 -0700
+Date:   Tue, 26 Jun 2018 08:55:32 -0600
+From:   Keith Busch <keith.busch@linux.intel.com>
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>
+Subject: Re: [PATCH v4 1/2] nvme: cache struct nvme_ctrl reference to struct
+ nvme_request
+Message-ID: <20180626145532.GA6628@localhost.localdomain>
+References: <20180626135141.14088-1-jthumshirn@suse.de>
+ <20180626135141.14088-2-jthumshirn@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626135141.14088-2-jthumshirn@suse.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Jun 2018 15:55:34 +0200
-Hans de Goede <hdegoede@redhat.com> wrote:
+On Tue, Jun 26, 2018 at 03:51:40PM +0200, Johannes Thumshirn wrote:
+> @@ -652,6 +653,7 @@ blk_status_t nvme_setup_cmd(struct nvme_ns *ns, struct request *req,
+>  	}
+>  
+>  	cmd->common.command_id = req->tag;
+> +	nvme_req(req)->ctrl = ctrl;
+>  	if (ns)
+>  		trace_nvme_setup_nvm_cmd(req->q->id, cmd);
+>  	else
 
-> Replace comments about places where the console lock should be held with
-> calls to WARN_CONSOLE_UNLOCKED() to assert that it is actually held.
-
-Why replace the comments? I prefer them, even with the WARN. The reason
-is, when using functions, I don't tend to look inside the function I'm
-about to use, but instead, I expect the comment above the function to
-have basic information I need to use it. Especially what locks are
-expected to be held.
-
-Please keep the comments in place, but the WARNs are fine. They are not
-a replacement for the comments.
-
-Nack on removing comments.
-
--- Steve
+I don't think we need to do this per-io. The request coming from the
+controller's tagset, so we can do this just once at .init_request time,
+right?
