@@ -2,69 +2,92 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC50C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A36C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFACB26D96
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:15:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFACB26D96
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 54DC726D85
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:16:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="IBTlimlz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54DC726D85
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752184AbeFZQPj (ORCPT
+        id S1752223AbeFZQQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 12:15:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41014 "EHLO mail.bootlin.com"
+        Tue, 26 Jun 2018 12:16:01 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46402 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751631AbeFZQPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 12:15:37 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7682420775; Tue, 26 Jun 2018 18:15:35 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4A3F7203B0;
-        Tue, 26 Jun 2018 18:15:35 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 18:15:36 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] RTC for 4.18
-Message-ID: <20180626161536.GH4207@piout.net>
-References: <20180610221645.GA26123@piout.net>
- <ff6d048a-c683-56e0-13f9-1627cdfd0ea9@nvidia.com>
+        id S1751631AbeFZQP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 12:15:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=qxpNrcxKeE+WWvBFZd3LT/JRIr/9dWjy7AauJCWLuuk=; b=IBTlimlzsl0UAEd3/9fX3xWgjF
+        m893DKWINXgcWqBQ+kpvsR9O87RWbYP2ClZvHXdcwd8xXwf1MQ3F3ncApgMlgSwRqRuGVpYl51+1k
+        oKy/WXKuYjaRUaRCxmWCfQxOrl4PKy53DSwelYSvqgQLsa5gAt11FMDRxRV8nvhNvtzVEh9fBZeV1
+        XGEDZWzlerlw5oB4uabmtEpjQClPFrSx5Bz6g3nNuM+ysCGa/mCnoXYcKDKSGZ7U0MElY8nbO0Qpf
+        X+L4bmhluP7PKfECVjZ5BnkEwhaRr7jLnpsFUj6G4i4S4uZAPQIfoPmg+/jIYCrYGuFwFHamasbbW
+        N6ym9GVA==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:49236 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fXqdJ-005Uod-6H; Tue, 26 Jun 2018 12:15:57 -0400
+Subject: Re: [PATCH v2 01/13] clk: davinci: psc-da850: remove the
+ 'davinci_nand.0" lookup
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
+ <20180626092537.6737-2-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <543c4ebf-4212-1933-9672-f8e29ba4d303@lechnology.com>
+Date:   Tue, 26 Jun 2018 11:15:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff6d048a-c683-56e0-13f9-1627cdfd0ea9@nvidia.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180626092537.6737-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 26/06/2018 16:51:40+0100, Jon Hunter wrote:
-> >       rtc: tps6586x: let the core handle rtc range
+On 06/26/2018 04:25 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Sorry I am missing the original mail with the above change, but I
-> have noticed on v4.18-rc1 that rtc wake-ups from suspend are no
-> longer working on one of our Tegra boards. The bisect points to the
-> above change and reverting it fixes the problem. I have not had
-> chance to dig further, but if you have any thoughts, please let me
-> know.
+> Since commit a8e3923ab571 ("mtd: rawnand: davinci: don't acquire and
+> enable clock") we no longer acquire the aemif clock from the davinci
+> nand driver - we only do it from the ti-aemif driver. Remove the nand
+> entry from the psc lookup table.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
+Reviewed-by: David Lechner <david@lechnology.com>
 
-Thanks for the report, does the following patch fix the issue:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git/patch/?id=1b287f23b0a1fcb2b502dae981a8024be379391e
-
-
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
