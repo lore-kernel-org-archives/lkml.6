@@ -2,128 +2,689 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D77C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB95C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FEC526DC9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88AA426DC9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:01:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="VuQsm9xP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FEC526DC9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ruk2p6ON"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88AA426DC9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752854AbeFZRBm (ORCPT
+        id S1752988AbeFZRBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:01:42 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:35330 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752106AbeFZRBk (ORCPT
+        Tue, 26 Jun 2018 13:01:48 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:46697 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752485AbeFZRBm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:01:40 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 064EC10C06BC;
+        Tue, 26 Jun 2018 13:01:42 -0400
+Received: by mail-pg0-f67.google.com with SMTP id q14-v6so4121718pgt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 10:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U7JO9oLTbsPABwovmrtw94CIatMuk0gQIHZTYj7VS8M=;
+        b=Ruk2p6ONjQH4R2TgzHUcd5drR8k+CA5ttAOVLB3RigSOy4Q+oGyfUnp12PV4IQZT+6
+         4EQm6AhEwzVbZVBb7emuZUjQOU6L+rVsP/KGnoEzQeIkARKFbj5Z696NJtKiCE06Plnr
+         u5hsILC9wP+GTx+mpIJhj9txMWHBl6/nTg00A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U7JO9oLTbsPABwovmrtw94CIatMuk0gQIHZTYj7VS8M=;
+        b=SVtinEoXRXgQWoB48E1nVSnqWiDQzVr8a4iP5Tiz6Duo6iNXhsmBrpP0oPn7ORJdvG
+         ifIncmPQutnx2tgaF7eU0Sn6TUP6KbR2ydRvDGlNzg6MS/nmhzsXcFSXR+Mt2BfM024N
+         hPnxkkHz+SF2afG9hSFkidrGTJKkXQxpQVOpW0D0IR5lPbSY3xox1P/Gg9tCSQuYzS/Z
+         m3FomfZbPMwr7AHXFFKi5lRMVPH7QWIfNhS3YzEON+/cwo/plJwxbAsL8sxiix5gYVrV
+         01DR+F5dCLGL3oZqTV/PBiaZG2b8FUFJfO1mIe01U2t5shXk2s+1JnEO5N/1NmrDGGxy
+         /oHw==
+X-Gm-Message-State: APt69E22bSeHEEBayEC9IfUyUZv7nZnX5WYapoplpfNsl2BF8Z/4VSfA
+        1mukgjWy73zLwrPXbEivYlYF
+X-Google-Smtp-Source: AAOMgpe1tFOmdhTzg0cYrTVGakArbizFmOqu0qkSh4UIkcm+7WoVx3psfCB4SYsEitxPTXL873Ec1Q==
+X-Received: by 2002:a62:4015:: with SMTP id n21-v6mr2386700pfa.198.1530032500401;
+        Tue, 26 Jun 2018 10:01:40 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2405:204:7404:c4e7:e0f7:6d43:b5dd:dab0])
+        by smtp.gmail.com with ESMTPSA id j63-v6sm9711059pfk.40.2018.06.26.10.01.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 26 Jun 2018 10:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1530032500; bh=fQRCeLpPzSlkZHs2dCDdikU+/tISZs1Sx0BYhAV1ZoU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=VuQsm9xP6E0+bk+G3Dq3en5Zx2aNMPydWUFvsXvzJvLH4+9P8w9WA3fjmLS+ph+x1
-         Ro8xkhJI+FsKey5fiExPlzy3Z7/g/SsuhPRU12g5hxT0dZDpxY7Da9iwvEICjdmOqK
-         kV5rIkPleBmb70dpL5ANWucmvCb9bQUIdL2Rrtbik2725IHOA384w+U6PN1FTUyGFi
-         9jSul2suqS/xBIpSsqFZoG9cmPPZSQL/IMl0cP1uJObHq8+qpX5rURJtWV1WxGEUIS
-         xVRsbAIaFSG5tuzxwxea6LRIYtyaYtqCA44uStC13+pDZDslP05O2jivvV/RaBbHIx
-         thj7s3CyrxW3Q==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id B84C1323D;
-        Tue, 26 Jun 2018 10:01:37 -0700 (PDT)
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 26 Jun 2018 10:01:37 -0700
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 26 Jun 2018 22:31:34 +0530
-Received: from [10.10.161.98] (10.10.161.98) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 26 Jun 2018 22:31:33 +0530
-Subject: Re: [PATCH] arc: configs: remove no longer needed config option
-To:     Anders Roxell <anders.roxell@linaro.org>
-CC:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180626152851.32674-1-anders.roxell@linaro.org>
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- i91ThhqBJlyU6MVUa6vZNv8E
-Message-ID: <f071a4af-5043-126d-fe3e-cff7deb974d1@synopsys.com>
-Date:   Tue, 26 Jun 2018 10:01:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Date:   Tue, 26 Jun 2018 22:31:25 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        =?utf-8?B?5YiY54Kc?= <liuwei@actions-semi.com>,
+        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        devicetree <devicetree@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        amit.kucheria@linaro.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        Mani Sadhasivam <manivannanece23@gmail.com>,
+        Thomas Liau <thomas.liau@actions-semi.com>,
+        jeff.chen@actions-semi.com
+Subject: Re: [PATCH 5/5] i2c: Add Actions Semi OWL family S900 I2C driver
+Message-ID: <20180626170125.GB5241@Mani-XPS-13-9360>
+References: <20180623161147.15672-1-manivannan.sadhasivam@linaro.org>
+ <20180623161147.15672-6-manivannan.sadhasivam@linaro.org>
+ <CAHp75Vf_JR6scrwnomiu62_x2idgCGH63UdMf2bhfy8VNaijXQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180626152851.32674-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.10.161.98]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf_JR6scrwnomiu62_x2idgCGH63UdMf2bhfy8VNaijXQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/26/2018 08:29 AM, Anders Roxell wrote:
-> Since commit eedf265aa003 ("devpts: Make each mount of devpts an
-> independent filesystem.") CONFIG_DEVPTS_MULTIPLE_INSTANCES isn't needed
-> in the defconfig anymore.
+Hi Andy,
+
+Thanks for the review!
+
+On Mon, Jun 25, 2018 at 12:38:50PM +0300, Andy Shevchenko wrote:
+> On Sat, Jun 23, 2018 at 7:11 PM, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> > Add Actions Semi OWL family S900 I2C driver.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/i2c/busses/Kconfig   |   7 +
+> >  drivers/i2c/busses/Makefile  |   1 +
+> >  drivers/i2c/busses/i2c-owl.c | 459 +++++++++++++++++++++++++++++++++++
+> >  3 files changed, 467 insertions(+)
+> >  create mode 100644 drivers/i2c/busses/i2c-owl.c
+> >
+> > diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> > index 4f8df2ec87b1..2062da17e33b 100644
+> > --- a/drivers/i2c/busses/Kconfig
+> > +++ b/drivers/i2c/busses/Kconfig
+> > @@ -762,6 +762,13 @@ config I2C_OMAP
+> >           Like OMAP1510/1610/1710/5912 and OMAP242x.
+> >           For details see http://www.ti.com/omap.
+> >
+> > +config I2C_OWL
+> > +       tristate "OWL I2C Controller"
+> > +       depends on ARCH_ACTIONS || COMPILE_TEST
+> > +       help
+> > +         Say Y here if you want to use the I2C bus controller on
+> > +         the Actions Semi OWL SoCs.
+> > +
+> >  config I2C_PASEMI
+> >         tristate "PA Semi SMBus interface"
+> >         depends on PPC_PASEMI && PCI
+> > diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+> > index 5a869144a0c5..b71618f77880 100644
+> > --- a/drivers/i2c/busses/Makefile
+> > +++ b/drivers/i2c/busses/Makefile
+> > @@ -76,6 +76,7 @@ obj-$(CONFIG_I2C_MXS)         += i2c-mxs.o
+> >  obj-$(CONFIG_I2C_NOMADIK)      += i2c-nomadik.o
+> >  obj-$(CONFIG_I2C_OCORES)       += i2c-ocores.o
+> >  obj-$(CONFIG_I2C_OMAP)         += i2c-omap.o
+> > +obj-$(CONFIG_I2C_OWL)          += i2c-owl.o
+> >  obj-$(CONFIG_I2C_PASEMI)       += i2c-pasemi.o
+> >  obj-$(CONFIG_I2C_PCA_PLATFORM) += i2c-pca-platform.o
+> >  obj-$(CONFIG_I2C_PMCMSP)       += i2c-pmcmsp.o
+> > diff --git a/drivers/i2c/busses/i2c-owl.c b/drivers/i2c/busses/i2c-owl.c
+> > new file mode 100644
+> > index 000000000000..53100ddfb3cc
+> > --- /dev/null
+> > +++ b/drivers/i2c/busses/i2c-owl.c
+> > @@ -0,0 +1,459 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * OWL SoC's I2C driver
+> > + *
+> > + * Copyright (c) 2014 Actions Semi Inc.
+> > + * Author: David Liu <liuwei@actions-semi.com>
+> > + *
+> > + * Copyright (c) 2018 Linaro Ltd.
+> > + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_device.h>
+> > +#include <linux/io.h>
+> > +
+> > +/* I2C registers */
+> > +#define OWL_I2C_REG_CTL                (0x0000)
+> > +#define OWL_I2C_REG_CLKDIV     (0x0004)
+> > +#define OWL_I2C_REG_STAT       (0x0008)
+> > +#define OWL_I2C_REG_ADDR       (0x000C)
+> > +#define OWL_I2C_REG_TXDAT      (0x0010)
+> > +#define OWL_I2C_REG_RXDAT      (0x0014)
+> > +#define OWL_I2C_REG_CMD                (0x0018)
+> > +#define OWL_I2C_REG_FIFOCTL    (0x001C)
+> > +#define OWL_I2C_REG_FIFOSTAT   (0x0020)
+> > +#define OWL_I2C_REG_DATCNT     (0x0024)
+> > +#define OWL_I2C_REG_RCNT       (0x0028)
+> 
+> I don't understand why these have parents?
+> 
+
+I'm not sure what you mean here! Can you please elaborate?
+
+> > +
+> > +/* I2Cx_CTL Bit Mask */
+> > +#define OWL_I2C_CTL_RB         BIT(1)
+> > +#define OWL_I2C_CTL_GBCC(x)    (((x) & 0x3) << 2)
+> > +#define        OWL_I2C_CTL_GBCC_NONE   OWL_I2C_CTL_GBCC(0)
+> > +#define        OWL_I2C_CTL_GBCC_START  OWL_I2C_CTL_GBCC(1)
+> > +#define        OWL_I2C_CTL_GBCC_STOP   OWL_I2C_CTL_GBCC(2)
+> > +#define        OWL_I2C_CTL_GBCC_RSTART OWL_I2C_CTL_GBCC(3)
+> > +#define OWL_I2C_CTL_IRQE       BIT(5)
+> > +#define OWL_I2C_CTL_EN         BIT(7)
+> > +#define OWL_I2C_CTL_AE         BIT(8)
+> > +#define OWL_I2C_CTL_SHSM       BIT(10)
+> > +
+> > +#define OWL_I2C_DIV_FACTOR(x)  ((x) & 0xff)
+> > +
+> > +/* I2Cx_STAT Bit Mask */
+> > +#define OWL_I2C_STAT_RACK      BIT(0)
+> > +#define OWL_I2C_STAT_BEB       BIT(1)
+> > +#define OWL_I2C_STAT_IRQP      BIT(2)
+> > +#define OWL_I2C_STAT_LAB       BIT(3)
+> > +#define OWL_I2C_STAT_STPD      BIT(4)
+> > +#define OWL_I2C_STAT_STAD      BIT(5)
+> > +#define OWL_I2C_STAT_BBB       BIT(6)
+> > +#define OWL_I2C_STAT_TCB       BIT(7)
+> > +#define OWL_I2C_STAT_LBST      BIT(8)
+> > +#define OWL_I2C_STAT_SAMB      BIT(9)
+> > +#define OWL_I2C_STAT_SRGC      BIT(10)
+> > +
+> > +/* I2Cx_CMD Bit Mask */
+> > +#define OWL_I2C_CMD_SBE                BIT(0)
+> > +#define OWL_I2C_CMD_RBE                BIT(4)
+> > +#define OWL_I2C_CMD_DE         BIT(8)
+> > +#define OWL_I2C_CMD_NS         BIT(9)
+> > +#define OWL_I2C_CMD_SE         BIT(10)
+> > +#define OWL_I2C_CMD_MSS                BIT(11)
+> > +#define OWL_I2C_CMD_WRS                BIT(12)
+> > +#define OWL_I2C_CMD_SECL       BIT(15)
+> > +
+> > +#define OWL_I2C_CMD_AS(x)      (((x) & 0x7) << 1)
+> > +#define OWL_I2C_CMD_SAS(x)     (((x) & 0x7) << 5)
+> > +
+> > +/* I2Cx_FIFOCTL Bit Mask */
+> > +#define OWL_I2C_FIFOCTL_NIB    BIT(0)
+> > +#define OWL_I2C_FIFOCTL_RFR    BIT(1)
+> > +#define OWL_I2C_FIFOCTL_TFR    BIT(2)
+> > +
+> > +/* I2Cc_FIFOSTAT Bit Mask */
+> > +#define OWL_I2C_FIFOSTAT_RNB   BIT(1)
+> > +#define OWL_I2C_FIFOSTAT_RFE   BIT(2)
+> > +#define OWL_I2C_FIFOSTAT_TFF   BIT(5)
+> > +#define OWL_I2C_FIFOSTAT_TFD   GENMASK(23, 16)
+> > +#define OWL_I2C_FIFOSTAT_RFD   GENMASK(15, 8)
+> > +
+> 
+> > +/* I2C bus timeout */
+> > +#define OWL_I2C_TIMEOUT                (msecs_to_jiffies(4 * 1000))
+> 
+> Ditto.
 >
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-Thx,
+Same as above
 
-Added to for-curr !
+> > +
+> > +#define OWL_I2C_DEFAULT_SPEED  100000
+> > +#define OWL_I2C_MAX_SPEED      400000
+> > +
+> > +struct owl_i2c_dev {
+> > +       struct i2c_adapter      adap;
+> > +       struct i2c_msg          *msg;
+> > +       struct completion       msg_complete;
+> > +       struct clk              *clk;
+> > +       void __iomem            *base;
+> > +       unsigned long           clk_rate;
+> > +       u32                     bus_freq;
+> > +       u32                     msg_ptr;
+> > +};
+> > +
+> > +static void owl_i2c_update_reg(void __iomem *base, unsigned int val, bool state)
+> > +{
+> > +       unsigned int regval;
+> > +
+> > +       regval = readl(base);
+> > +
+> > +       if (state)
+> > +               regval |= val;
+> > +       else
+> > +               regval &= ~val;
+> > +
+> > +       writel(regval, base);
+> > +}
+> > +
+> > +static void owl_i2c_reset(struct owl_i2c_dev *i2c_dev)
+> > +{
+> > +       unsigned int val;
+> > +
+> > +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> > +                               OWL_I2C_CTL_EN, false);
+> > +       mdelay(1);
+> > +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> > +                               OWL_I2C_CTL_EN, true);
+> > +
+> > +       /* Reset FIFO */
+> > +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> > +                               OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR,
+> > +                               true);
+> > +
+> > +       /* Wait until FIFO reset complete */
+> > +       do {
+> > +               val = readl(i2c_dev->base + OWL_I2C_REG_FIFOCTL);
+> > +               if (!(val & (OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR)))
+> > +                       break;
+> > +       } while (1);
+> 
+> No way. Get rid of infinite loop.
+>
 
--Vineet
+Okay. Can I change it to max of 50 retries with 1ms delay?
+
+> > +
+> > +       /* Clear status registers */
+> > +       writel(0, i2c_dev->base + OWL_I2C_REG_STAT);
+> > +}
+> > +
+> > +static void owl_i2c_set_freq(struct owl_i2c_dev *i2c_dev)
+> > +{
+> > +       unsigned int val;
+> > +
+> > +       val = (i2c_dev->clk_rate + i2c_dev->bus_freq * 16 - 1) /
+> > +                               (i2c_dev->bus_freq * 16);
+> > +
+> > +       /* Set clock divider factor */
+> > +       writel(OWL_I2C_DIV_FACTOR(val), i2c_dev->base + OWL_I2C_REG_CLKDIV);
+> > +}
+> > +
+> > +static void owl_i2c_hw_init(struct owl_i2c_dev *i2c_dev)
+> > +{
+> > +       /* Reset I2C controller */
+> > +       owl_i2c_reset(i2c_dev);
+> > +
+> > +       /* Set bus frequency */
+> > +       owl_i2c_set_freq(i2c_dev);
+> > +}
+> > +
+> > +static irqreturn_t owl_i2c_interrupt(int irq, void *_dev)
+> > +{
+> > +       struct owl_i2c_dev *i2c_dev = _dev;
+> > +       struct i2c_msg *msg = i2c_dev->msg;
+> > +       unsigned int stat, fifostat;
+> > +
+> > +       fifostat = readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT);
+> > +       if (fifostat & OWL_I2C_FIFOSTAT_RNB) {
+> 
+> > +               dev_warn(&i2c_dev->adap.dev, "received NACK from device");
+> 
+> And if it happens hundreds times in a row?
+> 
+
+Should I change it to dev_dbg?
+
+> > +               owl_i2c_reset(i2c_dev);
+> > +               goto stop;
+> > +       }
+> > +
+> > +       stat = readl(i2c_dev->base + OWL_I2C_REG_STAT);
+> > +       if (stat & OWL_I2C_STAT_BEB) {
+> 
+> > +               dev_warn(&i2c_dev->adap.dev, "bus error");
+> 
+> Ditto.
+>
+
+Same as above?
+
+> > +               owl_i2c_reset(i2c_dev);
+> > +               goto stop;
+> > +       }
+> > +
+> > +       /* Handle FIFO read */
+> > +       if (msg->flags & I2C_M_RD) {
+> > +               while ((readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
+> > +                               OWL_I2C_FIFOSTAT_RFE) &&
+> > +                               (i2c_dev->msg_ptr < msg->len)) {
+> > +                       msg->buf[i2c_dev->msg_ptr++] = readl(i2c_dev->base +
+> > +                                                       OWL_I2C_REG_RXDAT);
+> > +               }
+> > +       } else {
+> > +               /* Handle the remaining bytes which were not sent */
+> > +               while (!(readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
+> > +                               OWL_I2C_FIFOSTAT_TFF) &&
+> > +                               i2c_dev->msg_ptr < msg->len) {
+> > +                       writel(msg->buf[i2c_dev->msg_ptr++], i2c_dev->base +
+> > +                                                       OWL_I2C_REG_TXDAT);
+> > +               }
+> > +       }
+> > +
+> > +stop:
+> > +       /* Clear pending interrupts */
+> > +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_STAT,
+> > +                               OWL_I2C_STAT_IRQP, true);
+> > +
+> > +       complete_all(&i2c_dev->msg_complete);
+> > +
+> > +       return IRQ_HANDLED;
+> > +}
+> > +
+> > +static u32 owl_i2c_func(struct i2c_adapter *adap)
+> > +{
+> > +       return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+> > +}
+> > +
+> > +static int owl_i2c_check_bus_busy(struct i2c_adapter *adap)
+> > +{
+> > +       struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
+> > +       unsigned long timeout;
+> > +       unsigned int val;
+> > +
+> > +       timeout = jiffies + OWL_I2C_TIMEOUT;
+> 
+> > +       while (1) {
+> 
+> Red flag!
+> 
+> Use
+> 
+> do {
+> ...
+> } while (time_after(...));
+> 
+> instead.
+>
+
+Okay, will change it.
+
+> > +               val = readl(i2c_dev->base + OWL_I2C_REG_STAT);
+> > +
+> > +               /* Check for Arbitration lost */
+> > +               if (val & OWL_I2C_STAT_LAB) {
+> > +                       val &= ~OWL_I2C_STAT_LAB;
+> > +                       writel(val, i2c_dev->base + OWL_I2C_REG_STAT);
+> > +                       return -EAGAIN;
+> > +               }
+> > +
+> > +               /* Check for Bus busy */
+> > +               if (!(val & OWL_I2C_STAT_BBB))
+> > +                       break;
+> > +
+> > +               if (time_after(jiffies, timeout)) {
+> > +                       dev_err(&adap->dev, "Bus busy timeout");
+> > +                       return -ETIMEDOUT;
+> > +               }
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int owl_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+> > +                               int num)
+> > +{
+> > +       struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
+> > +       struct i2c_msg *msg;
+> > +       unsigned long time_left;
+> > +       unsigned int i2c_cmd;
+> > +       unsigned int addr;
+> > +       int ret = 0, idx;
+> > +
+> > +       owl_i2c_hw_init(i2c_dev);
+> > +
+> > +       ret = owl_i2c_check_bus_busy(adap);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       reinit_completion(&i2c_dev->msg_complete);
+> > +
+> > +       /* Enable I2C controller interrupt */
+> > +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> > +                               OWL_I2C_CTL_IRQE, true);
+> > +
+> > +       /*
+> > +        * Select: FIFO enable, Master mode, Stop enable, Data count enable,
+> > +        * Send start bit
+> > +        */
+> > +       i2c_cmd = (OWL_I2C_CMD_SECL | OWL_I2C_CMD_MSS | OWL_I2C_CMD_SE
+> > +                       | OWL_I2C_CMD_NS | OWL_I2C_CMD_DE | OWL_I2C_CMD_SBE);
+> > +
+> > +       addr = (msgs[0].addr & 0x7f) << 1;
+> > +
+> > +       /* Handle repeated start condition */
+> > +       if (num > 1) {
+> > +               /* Set internal address length and enable repeated start */
+> > +               i2c_cmd |= (OWL_I2C_CMD_AS(msgs[0].len + 1)
+> > +                               | OWL_I2C_CMD_SAS(1) | OWL_I2C_CMD_RBE);
+> > +
+> > +               /* Write slave address */
+> > +               writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
+> > +
+> > +               /* Write internal register address */
+> > +               for (idx = 0; idx < msgs[0].len; idx++)
+> > +                       writel(msgs[0].buf[idx], i2c_dev->base +
+> > +                                               OWL_I2C_REG_TXDAT);
+> > +
+> > +               msg = &msgs[1];
+> > +       } else {
+> > +               /* Set address length */
+> > +               i2c_cmd |= OWL_I2C_CMD_AS(1);
+> > +               msg = &msgs[0];
+> > +       }
+> > +
+> > +       i2c_dev->msg = msg;
+> > +       i2c_dev->msg_ptr = 0;
+> > +
+> > +       /* Set data count for the message */
+> > +       writel(msg->len, i2c_dev->base + OWL_I2C_REG_DATCNT);
+> > +
+> 
+> > +       if (msg->flags & I2C_M_RD) {
+> > +               writel((addr | 1), i2c_dev->base + OWL_I2C_REG_TXDAT);
+> > +       } else {
+> > +               writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
+> 
+> Don't we have a helper to construct 8-bit address?
+>
+
+Okay, will use i2c_8bit_addr_from_msg for constructing the address
+
+> > +
+> > +               /* Write data to FIFO */
+> > +               for (idx = 0; idx < msg->len; idx++) {
+> > +                       /* Check for FIFO full */
+> > +                       if (readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT)
+> > +                                       & OWL_I2C_FIFOSTAT_TFF)
+> > +                               break;
+> > +
+> > +                       writel(msg->buf[idx],
+> > +                                       i2c_dev->base + OWL_I2C_REG_TXDAT);
+> > +               }
+> > +
+> > +               i2c_dev->msg_ptr = idx;
+> > +       }
+> > +
+> > +       /* Ingore the NACK if needed */
+> > +       if (msg->flags & I2C_M_IGNORE_NAK)
+> > +               owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> > +                               OWL_I2C_FIFOCTL_NIB, true);
+> > +       else
+> > +               owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> > +                               OWL_I2C_FIFOCTL_NIB, false);
+> > +
+> > +       /* Start the transfer */
+> > +       writel(i2c_cmd, i2c_dev->base + OWL_I2C_REG_CMD);
+> > +
+> > +       time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+> > +                                               adap->timeout);
+> > +       if (time_left == 0) {
+> > +               dev_err(&adap->dev, "Transaction timed out");
+> > +               /* Send stop condition and release the bus */
+> > +               owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> > +                       OWL_I2C_CTL_GBCC_STOP | OWL_I2C_CTL_RB, true);
+> > +               ret = -ETIMEDOUT;
+> > +       }
+> > +
+> > +       /* Disable I2C controller */
+> > +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> > +                               OWL_I2C_CTL_EN, false);
+> > +
+> > +       return i2c_dev->msg_ptr;
+> > +}
+> > +
+> > +static const struct i2c_algorithm owl_i2c_algorithm = {
+> > +       .master_xfer    = owl_i2c_master_xfer,
+> > +       .functionality  = owl_i2c_func
+> > +};
+> > +
+> > +static const struct i2c_adapter_quirks owl_i2c_quirks = {
+> > +       .flags          = I2C_AQ_COMB | I2C_AQ_COMB_WRITE_FIRST,
+> > +       .max_read_len   = 240,
+> > +       .max_write_len  = 240,
+> > +       .max_comb_1st_msg_len = 6,
+> > +       .max_comb_2nd_msg_len = 240
+> > +};
+> > +
+> > +static int owl_i2c_probe(struct platform_device *pdev)
+> > +{
+> > +       struct device *dev = &pdev->dev;
+> > +       struct owl_i2c_dev *i2c_dev;
+> > +       struct resource *res;
+> > +       int ret, irq;
+> > +
+> > +       i2c_dev = devm_kzalloc(dev, sizeof(*i2c_dev), GFP_KERNEL);
+> > +       if (!i2c_dev)
+> > +               return -ENOMEM;
+> > +
+> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +       i2c_dev->base = devm_ioremap_resource(dev, res);
+> > +       if (IS_ERR(i2c_dev->base))
+> > +               return PTR_ERR(i2c_dev->base);
+> > +
+> > +       irq = platform_get_irq(pdev, 0);
+> > +       if (irq < 0) {
+> > +               dev_err(dev, "failed to get IRQ number\n");
+> > +               return irq;
+> > +       }
+> > +
+> > +       if (of_property_read_u32(dev->of_node, "clock-frequency",
+> > +                                       &i2c_dev->bus_freq))
+> > +               i2c_dev->bus_freq = OWL_I2C_DEFAULT_SPEED;
+> > +
+> > +       /* We support only frequencies of 100k and 400k for now */
+> > +       if (i2c_dev->bus_freq != OWL_I2C_DEFAULT_SPEED &&
+> > +                       i2c_dev->bus_freq > OWL_I2C_MAX_SPEED) {
+> > +               dev_err(dev, "invalid clock-frequency %d\n", i2c_dev->bus_freq);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       i2c_dev->clk = devm_clk_get(dev, NULL);
+> > +       if (IS_ERR(i2c_dev->clk)) {
+> > +               dev_err(dev, "failed to get clock\n");
+> > +               return PTR_ERR(i2c_dev->clk);
+> > +       }
+> > +
+> > +       ret = clk_prepare_enable(i2c_dev->clk);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       i2c_dev->clk_rate = clk_get_rate(i2c_dev->clk);
+> > +       if (!i2c_dev->clk_rate) {
+> > +               dev_err(dev, "input clock rate should not be zero\n");
+> > +               ret = -EINVAL;
+> > +               goto disable_clk;
+> > +       }
+> > +
+> > +       init_completion(&i2c_dev->msg_complete);
+> > +       i2c_dev->adap.owner = THIS_MODULE;
+> > +       i2c_dev->adap.algo = &owl_i2c_algorithm;
+> > +       i2c_dev->adap.timeout = OWL_I2C_TIMEOUT;
+> > +       i2c_dev->adap.quirks = &owl_i2c_quirks;
+> > +       i2c_dev->adap.dev.parent = dev;
+> > +       i2c_dev->adap.dev.of_node = dev->of_node;
+> > +       snprintf(i2c_dev->adap.name, sizeof(i2c_dev->adap.name),
+> > +                       "%s", "OWL I2C adapter");
+> > +       i2c_set_adapdata(&i2c_dev->adap, i2c_dev);
+> > +
+> > +       platform_set_drvdata(pdev, i2c_dev);
+> > +
+> > +       ret = devm_request_irq(dev, irq, owl_i2c_interrupt, 0, pdev->name,
+> > +                               i2c_dev);
+> > +       if (ret) {
+> > +               dev_err(dev, "failed to request irq %d\n", irq);
+> > +               goto disable_clk;
+> > +       }
+> > +
+> 
+> > +       ret = i2c_add_adapter(&i2c_dev->adap);
+> > +disable_clk:
+> > +       if (ret)
+> > +               clk_disable_unprepare(i2c_dev->clk);
+> > +
+> > +       return ret;
+> 
+> 
+> Can't we go with more usual patter, i.e.
+> 
+> ret = ...;
+> if (ret)
+>  goto err_handling;
+> 
+> return 0;
+> 
+> err_handling:
+>  ...
+> return ret;
+> 
+> ?
+> 
+
+Ack.
+
+Thanks,
+Mani
+
+> > +}
+> > +
+> > +static const struct of_device_id owl_i2c_of_match[] = {
+> > +       {.compatible = "actions,s900-i2c"},
+> > +       { /* sentinel */ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, owl_i2c_of_match);
+> > +
+> > +static struct platform_driver owl_i2c_driver = {
+> > +       .probe          = owl_i2c_probe,
+> > +       .driver         = {
+> > +               .name   = "owl-i2c",
+> > +               .of_match_table = of_match_ptr(owl_i2c_of_match),
+> > +       },
+> > +};
+> > +module_platform_driver(owl_i2c_driver);
+> > +
+> > +MODULE_AUTHOR("David Liu <liuwei@actions-semi.com>");
+> > +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
+> > +MODULE_DESCRIPTION("Actions Semi OWL SoCs I2C driver");
+> > +MODULE_LICENSE("GPL");
+> > --
+> > 2.17.1
+> >
+> 
+> 
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
