@@ -2,82 +2,158 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D928C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA95C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4826269D1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38A30269D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:31:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gr8awIT7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4826269D1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="elMnYwpg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A30269D6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934572AbeFZLbP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:31:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46308 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933576AbeFZLbO (ORCPT
+        id S934736AbeFZLbX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:31:23 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:41123 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934597AbeFZLbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:31:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g3CYTxThdejzIUPC/s3asGC0UiYzpA2rj+ae9F3ytt0=; b=gr8awIT7jRTV7+y7j8A33twen
-        cA2/IcV+NJcRffUx3+YriWcsgChaK2hQG4VC75PKonkZyhZJiUCghaTe+65UR5YpK0KcH9HIPNBXn
-        o6SZfpAEh31reoKj/eE5nIYoqNW2PhpsXHJEO7+32cnAOZNN6iSkkHzTthOqfK3zOAd6yoj5mP9pO
-        K91pv7gfCGklcQP4ri1gXlfQ/ex1xmbODWkUzCuwS4zhM36RBT4xjOZxSDPWD4G43prrDepYt7TVB
-        NWNtLsO7vt0U7qvL60BnkYZpzezOxBbJN5oqtsMlR3YGKbM5HPW+F4k3N6SHPak/wfyGwRePZnEmc
-        1cVlqEK9A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXmBd-00080z-P1; Tue, 26 Jun 2018 11:31:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6A4752029F1D9; Tue, 26 Jun 2018 13:31:03 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 13:31:03 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     Alan Cox <alan@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 06/16] x86/split_lock: Save #AC setting for split
- lock in firmware in boot time and restore the setting in reboot
-Message-ID: <20180626113103.GB2458@hirez.programming.kicks-ass.net>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <1527435965-202085-7-git-send-email-fenghua.yu@intel.com>
- <20180621195823.GD13636@worktop.programming.kicks-ass.net>
- <1529680267.4364.50.camel@linux.intel.com>
- <20180626090521.GF2494@hirez.programming.kicks-ass.net>
- <20180626120221.7fbd0eff@alans-desktop>
+        Tue, 26 Jun 2018 07:31:20 -0400
+Received: by mail-vk0-f67.google.com with SMTP id j11-v6so4507615vke.8
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 04:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=EpCY7o91CIWQoAQ4iqPLPVYvthNz4Xg9v7H35qFspcI=;
+        b=elMnYwpguh+LN8drN8QZmvEEa7BE1s0lrAviS/VTm6HvLbNQVzWwlXZVt36gY2iQEe
+         I6VrM6LDGxcYfP+EoSUScuG7thdyd4+5yerJnOLGKKL/wlfrmUbFR+LgUOyy9/VaRk+d
+         7XI8dkXOneBYdqOuoYTFTkeyoJsl/7GbMLhhbqV0Y7GhIIkBfsK3GGMhkWJaTPZfvrSP
+         BVSTM6Dzv+DwZzRFGYsRQV60HiAkdoJADF7QlFXkcpF83wfKpkp4awiMexEpkq7D+GZB
+         /eS4l3AfPEepq5uMmi6+bQ1RthBC/wQpXQvPXjFGVjP/vSL+xFuJlq3XNxDimSzsKGW8
+         luwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=EpCY7o91CIWQoAQ4iqPLPVYvthNz4Xg9v7H35qFspcI=;
+        b=GdPFR3iiDHrH10BiOWyezbm80p19lYL3ejcYh9f7dKICq/jE9uNeCL6G4kgBfCpDzu
+         vEcxm4so4cu3n4w+EkuUtRJxOuvkooCZ++ZK2zlaxVr1A63NbCulAW6uzeK12rQJksDd
+         mjfEgDNC7o5sWIxqKfLBSbrjk0X0pc7+5FvzSaPtQY9qOj2JjxcKxITO030g+yXf/0Gs
+         gHaReKRIfndlhIy3mn9WHY+APrJCbsrn+IndzdZzpoW4nhv/gR3a31Z1RYMvYrqo9eku
+         n3nlKEASJie0XdHPOxoBXB66WE2XEXu12sq7cHkVh283q9V2AcNJQFC7o9xNwXoPEt9f
+         5cLA==
+X-Gm-Message-State: APt69E0TFsfigFf0pN8YBnkl6IAXHYFUlaJWQzRdIOLP4P4cEs1eA2xz
+        7Tzz/xCViFXm6F2H0p4yAFyYzE8SQCFkP6cVp2PR7loN
+X-Google-Smtp-Source: AAOMgpe/TdJH2ViPgfLkV9GGFwy75b2GXY+KP0iP0jbFQJpI7R1cpUTO+KXqWphP4o74s22LLi3Pozs1OCYZlV/LzeA=
+X-Received: by 2002:a1f:c204:: with SMTP id s4-v6mr643132vkf.86.1530012679061;
+ Tue, 26 Jun 2018 04:31:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626120221.7fbd0eff@alans-desktop>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a67:981b:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 04:31:18
+ -0700 (PDT)
+In-Reply-To: <ed909bcb-8e91-7e6d-521e-b5f36db61efa@lightnvm.io>
+References: <1529399189-3239-1-git-send-email-hans.ml.holmberg@owltronix.com>
+ <a2bb1959-5244-f8af-b747-6d87e8d456a4@lightnvm.io> <1612C143-24C3-4B6F-B745-945EAF684DFC@cnexlabs.com>
+ <ed909bcb-8e91-7e6d-521e-b5f36db61efa@lightnvm.io>
+From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
+Date:   Tue, 26 Jun 2018 14:31:18 +0300
+Message-ID: <CANr-nt3Qzp-brMa16NAVa=E6eRCfpNyV44cmRoaxYUV0J7zStA@mail.gmail.com>
+Subject: Re: [PATCH] lightnvm: pblk: assume that chunks are closed on 1.2 devices
+To:     =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+Cc:     Javier Gonzalez <javier@cnexlabs.com>, linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 12:02:21PM +0100, Alan Cox wrote:
-> > But then how do we deal with SMIs ?
-> 
-> On a system doing that level of real time you don't do SMIs.
+On Tue, Jun 26, 2018 at 1:38 PM, Matias Bj=C3=B8rling <mb@lightnvm.io> wrot=
+e:
+> On 06/26/2018 11:37 AM, Javier Gonzalez wrote:
+>>
+>>
+>>
+>>> On 26 Jun 2018, at 10.41, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>>>
+>>> On 06/19/2018 11:06 AM, Hans Holmberg wrote:
+>>>>
+>>>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>>> We can't know if a block is closed or not on 1.2 devices, so assume
+>>>> closed state to make sure that blocks are erased before writing.
+>>>> Fixes: 32ef9412c114 ("lightnvm: pblk: implement get log report chunk")
+>>>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>>> ---
+>>>> This patch applies on:
+>>>> ssh://github.com/OpenChannelSSD/linux branch for-4.19/core
+>>>>   drivers/lightnvm/pblk-init.c | 5 +++--
+>>>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>>> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init=
+.c
+>>>> index aa24264..3b8aa4a 100644
+>>>> --- a/drivers/lightnvm/pblk-init.c
+>>>> +++ b/drivers/lightnvm/pblk-init.c
+>>>> @@ -717,10 +717,11 @@ static int pblk_setup_line_meta_12(struct pblk
+>>>> *pblk, struct pblk_line *line,
+>>>>                 /*
+>>>>                  * In 1.2 spec. chunk state is not persisted by the
+>>>> device. Thus
+>>>> -                * some of the values are reset each time pblk is
+>>>> instantiated.
+>>>> +                * some of the values are reset each time pblk is
+>>>> instantiated,
+>>>> +                * so we have to assume that the block is closed.
+>>>>                  */
+>>>>                 if (lun_bb_meta[line->id] =3D=3D NVM_BLK_T_FREE)
+>>>> -                       chunk->state =3D  NVM_CHK_ST_FREE;
+>>>> +                       chunk->state =3D  NVM_CHK_ST_CLOSED;
+>>>>                 else
+>>>>                         chunk->state =3D NVM_CHK_ST_OFFLINE;
+>>>>
+>>>
+>>> pblk should scan (or the lightnvm subsystem) the blocks for their
+>>> state, such that it doesn't have to reinitialize a full drive if it is
+>>> already in a closed state. If marking closed, it does a full erase
+>>> cycle on initialization, which should be avoided since it is a limited
+>>> resource.
+>>
+>>
+>> In 1.2 there is no such state unfortunately. However, pblk will never
+>> attempt to reinitialize the whole drive - metadata for closed blocks
+>> will be recovered and only those going to GC will be erased before
+>> usage. In fact, a full close drive is the state pblk expects.
+>>
+>> This patch only affects "unknown blocks", thus the only case in which
+>> pblk would attempt to double erase is when blocks have been pre-erased
+>> (e.g., factory or through liblightnvm). After an erase round though,
+>> pblk will only erase pre-usage. One thing we could do is attempting to
+>> read the first page of these unknown blocks and mark them as free if
+>> "empty page" is returned. Is this what you mean?
+>
+>
+> Yes, that is what I mean.
+>
+> Note that this can be
+>>
+>> costly on large drives; this is the reason we returned to the pre-2.0
+>> behaviour with this patch. We are implementing a log that, among other
+>> things, keeps the state so that pblk can have an accurate state for the
+>> cases this can be a problem.
+>
+>
+> Yep, it will take some time. Good to hear with the log.
 
-And where do I buy one of those systems? SMIs are a real problem today,
-we need help to make them go away.
+Until we have a log in place, this patch unbreaks 1.2 support and has
+no negative impact on performance (as compared to pre 2.0 support), so
+please consider it for the next window.
+The current state is that if a pblk instance is created on a 1.2 disk
+with written blocks, writes will fail.
+
+ / Hans
