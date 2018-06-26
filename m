@@ -2,164 +2,108 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF74C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84DFC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 750CE25090
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:04:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Gde6x2bf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750CE25090
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 9DBA225090
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:06:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DBA225090
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752863AbeFZIEv (ORCPT
+        id S1752758AbeFZIGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:04:51 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:54204 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752711AbeFZIEn (ORCPT
+        Tue, 26 Jun 2018 04:06:55 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:54150
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751869AbeFZIGv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:04:43 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id B6FC45C015F;
-        Tue, 26 Jun 2018 10:04:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1530000281;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=B73mcBAp8rkfHCkK9qPM7vDCuOQnoQ+bFm3aVC/Ub7k=;
-        b=Gde6x2bf+YfSTI1uam6VjN8YNJzU6wp5YrN7bYEiLHSkXNOFJGa6G2tw8fBJ0qvpG6khqv
-        FOsKt0m5F3lUvRVHNBFUwpH72zigIMa5H8F3CBKC9PZ7KNOieqx7pcwJ3p0rksjthhRnBz
-        S++EY1MxWhYo2Fs0FfVD4ThGwj/5xfc=
+        Tue, 26 Jun 2018 04:06:51 -0400
+X-IronPort-AV: E=Sophos;i="5.51,274,1526335200"; 
+   d="scan'208";a="269949661"
+Received: from dhcp-64-47.ens-lyon.fr ([140.77.64.47])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 10:06:48 +0200
+Date:   Tue, 26 Jun 2018 10:06:48 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Joe Perches <joe@perches.com>
+cc:     Chengguang Xu <cgxu519@gmx.com>, jakub.kicinski@netronome.com,
+        davem@davemloft.net, LKML <linux-kernel@vger.kernel.org>,
+        cocci <cocci@systeme.lip6.fr>, oss-drivers@netronome.com,
+        netdev@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: [PATCH v2 net] nfp: cast sizeof() to int when comparing with
+ error code
+In-Reply-To: <ff0b2834b771a467246b9f7c1b4600c38f5bb463.camel@perches.com>
+Message-ID: <alpine.DEB.2.20.1806261005190.4512@hadrien>
+References: <20180626011631.22717-1-cgxu519@gmx.com> <ff0b2834b771a467246b9f7c1b4600c38f5bb463.camel@perches.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 26 Jun 2018 10:04:41 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     linux-tegra@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        linux-tegra-owner@vger.kernel.org
-Subject: Re: [PATCH] mfd: as3722: disable auto power on when AC OK
-In-Reply-To: <20180625080013.32157-1-marcel@ziswiler.com>
-References: <20180625080013.32157-1-marcel@ziswiler.com>
-Message-ID: <9502dfa3fae42471ddedf05499876177@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-1.60 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.06.2018 10:00, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> On ams AS3722, power on when AC OK is enabled by default.
-> Making this option as disable by default and enable only
-> when platform need this explicitly.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Reviewed-by: Bibek Basu <bbasu@nvidia.com>
-> Tested-by: Bibek Basu <bbasu@nvidia.com>
-> Downsteam commit 09cd706fecb9 ("mfd: as3722: disable auto power on when
-> AC OK").
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
->  drivers/mfd/as3722.c       | 12 ++++++++++++
->  include/linux/mfd/as3722.h |  3 +++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/drivers/mfd/as3722.c b/drivers/mfd/as3722.c
-> index f87342c211bc..215465c97759 100644
-> --- a/drivers/mfd/as3722.c
-> +++ b/drivers/mfd/as3722.c
-> @@ -349,6 +349,8 @@ static int as3722_i2c_of_probe(struct i2c_client *i2c,
->  					"ams,enable-internal-int-pullup");
->  	as3722->en_intern_i2c_pullup = of_property_read_bool(np,
->  					"ams,enable-internal-i2c-pullup");
-> +	as3722->en_ac_ok_pwr_on = of_property_read_bool(np,
-> +					"ams,enable-ac-ok-power-on");
 
-This property should be added to
-Documentation/devicetree/bindings/mfd/as3722.txt.
 
->  	as3722->irq_flags = irqd_get_trigger_type(irq_data);
->  	dev_dbg(&i2c->dev, "IRQ flags are 0x%08lx\n", as3722->irq_flags);
->  	return 0;
-> @@ -360,6 +362,7 @@ static int as3722_i2c_probe(struct i2c_client *i2c,
->  	struct as3722 *as3722;
->  	unsigned long irq_flags;
->  	int ret;
-> +	u8 val = 0;
->  
->  	as3722 = devm_kzalloc(&i2c->dev, sizeof(struct as3722), GFP_KERNEL);
->  	if (!as3722)
-> @@ -398,6 +401,15 @@ static int as3722_i2c_probe(struct i2c_client *i2c,
->  	if (ret < 0)
->  		return ret;
->  
-> +	if (as3722->en_ac_ok_pwr_on)
-> +		val = AS3722_CTRL_SEQ1_AC_OK_PWR_ON;
+On Mon, 25 Jun 2018, Joe Perches wrote:
 
-Nit: Use SEQU1 instead of SEQ1 since that is how the register is named.
+> On Tue, 2018-06-26 at 09:16 +0800, Chengguang Xu wrote:
+> > sizeof() will return unsigned value so in the error check
+> > negative error code will be always larger than sizeof().
+>
+> This looks like a general class of error in the kernel
+> where a signed result that could be returning a -errno
+> is tested against < or <= sizeof()
+>
+> A couple examples:
+>
+> drivers/input/mouse/elan_i2c_smbus.c:
+>
+> 		len = i2c_smbus_read_block_data(client,
+> 						ETP_SMBUS_IAP_PASSWORD_READ,
+> 						val);
+> 		if (len < sizeof(u16)) {
+>
+> i2c_smbus_read_block_data can return a negative errno
+>
+>
+> net/smc/smc_clc.c:
+>
+> 	len = kernel_sendmsg(smc->clcsock, &msg, &vec, 1,
+> 			     sizeof(struct smc_clc_msg_decline));
+> 	if (len < sizeof(struct smc_clc_msg_decline))
+>
+> where kernel_sendmsg can return a negative errno
+>
+> There are probably others, I didn't look hard.
+>
+> Perhaps a cocci script to find these could be generated?
 
---
-Stefan
+Here's another one:
 
-> +	ret = as3722_update_bits(as3722, AS3722_CTRL_SEQU1_REG,
-> +			AS3722_CTRL_SEQ1_AC_OK_PWR_ON, val);
-> +	if (ret < 0) {
-> +		dev_err(as3722->dev, "CTRL_SEQ1 update failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
->  	ret = devm_mfd_add_devices(&i2c->dev, -1, as3722_devs,
->  				   ARRAY_SIZE(as3722_devs), NULL, 0,
->  				   regmap_irq_get_domain(as3722->irq_data));
-> diff --git a/include/linux/mfd/as3722.h b/include/linux/mfd/as3722.h
-> index 51e6f9414575..8841b9896033 100644
-> --- a/include/linux/mfd/as3722.h
-> +++ b/include/linux/mfd/as3722.h
-> @@ -296,6 +296,8 @@
->  #define AS3722_ADC1_CONV_NOTREADY			BIT(7)
->  #define AS3722_ADC1_SOURCE_SELECT_MASK			0x1F
->  
-> +#define AS3722_CTRL_SEQ1_AC_OK_PWR_ON			BIT(0)
-> +
->  /* GPIO modes */
->  #define AS3722_GPIO_MODE_MASK				0x07
->  #define AS3722_GPIO_MODE_INPUT				0x00
-> @@ -391,6 +393,7 @@ struct as3722 {
->  	unsigned long irq_flags;
->  	bool en_intern_int_pullup;
->  	bool en_intern_i2c_pullup;
-> +	bool en_ac_ok_pwr_on;
->  	struct regmap_irq_chip_data *irq_data;
->  };
+drivers/usb/serial/ir-usb.c
+@@ -126,13 +126,8 @@ irda_usb_find_class_desc(struct usb_seri
+ 	if (!desc)
+ 		return NULL;
+
+-	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
+-			USB_REQ_CS_IRDA_GET_CLASS_DESC,
+-			USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+-			0, ifnum, desc, sizeof(*desc), 1000);
+
+ 	dev_dbg(&serial->dev->dev, "%s -  ret=%d\n", __func__, ret);
+-	if (ret < sizeof(*desc)) {
+ 		dev_dbg(&serial->dev->dev,
+ 			"%s - class descriptor read %s (%d)\n", __func__,
+ 			(ret < 0) ? "failed" : "too short", ret);
+
+There are other results, but I haven't checked all of them.
+
+julia
