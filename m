@@ -2,225 +2,196 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 123ADC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D378DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDDD264F0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78019264F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="oz6D+ukH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BDDD264F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cvAiu9F/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78019264F5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751076AbeFZEjs (ORCPT
+        id S1751186AbeFZEl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 00:39:48 -0400
-Received: from mail-eopbgr730119.outbound.protection.outlook.com ([40.107.73.119]:36576
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750837AbeFZEjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 00:39:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K7XeRu9PLSxI5EfxDIYjuimbBswSb8EuWrpAUfh83Sk=;
- b=oz6D+ukHd5GaUIXH1WJusNNcdQk1LWLUUr6YIpSAmXmtT27+cl4QjSH5PLboNs1AXzbS5PANOGj4zk348bcIH2lfA10jeFIZI85JTSWTClX5Nz1bwyUeNsuOtmLhylAFUJKjMNlZBCVkW7R58wX//wagh/ii7D/DRUZYMyboEnc=
-Received: from DM5PR2101MB0728.namprd21.prod.outlook.com (10.167.110.153) by
- DM5PR2101MB0726.namprd21.prod.outlook.com (10.167.108.39) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.4; Tue, 26 Jun 2018 04:39:44 +0000
-Received: from DM5PR2101MB0728.namprd21.prod.outlook.com
- ([fe80::c9b4:8268:f6ba:8724]) by DM5PR2101MB0728.namprd21.prod.outlook.com
- ([fe80::c9b4:8268:f6ba:8724%2]) with mapi id 15.20.0930.005; Tue, 26 Jun 2018
- 04:39:44 +0000
-From:   Long Li <longli@microsoft.com>
-To:     Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Subject: RE: [Patch v2 14/15] CIFS: Add support for direct I/O write
-Thread-Topic: [Patch v2 14/15] CIFS: Add support for direct I/O write
-Thread-Index: AQHT+E9rVzE3c3vJxUOv9rK9/kChxaRu2wIAgANCeEA=
-Date:   Tue, 26 Jun 2018 04:39:43 +0000
-Message-ID: <DM5PR2101MB07285F85A018D8C2EFC2D730CE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
-References: <20180530194807.31657-1-longli@linuxonhyperv.com>
- <20180530194807.31657-15-longli@linuxonhyperv.com>
- <9162de67-fc5d-26e9-5882-26377194a2ff@talpey.com>
-In-Reply-To: <9162de67-fc5d-26e9-5882-26377194a2ff@talpey.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2001:4898:80e8:a:fdde:db5c:c6fe:798]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0726;7:JkOc8bYR5HCE6kjCl8QvvAhCx2sx2y2eNCeZQ8zrqi+vtox91Aw6fQplI0mkH9pIDBEQ2JmpyawH1ZyX6Y1Dme+wnB7v4+YTMSxYIu774XwW2rIjom8708ztje+hoUS4OPLKedKpQRIntFbJucvFiXS24dhst8enQbZ8MEwx8fh2u33yMejAGTQRoFEtdGeyBq20gXSuB8cSuDhKNBu0T2426dsiXo63PtIkhMWIPOxlKpB8cb5Y1cbtc32x7ImH
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 74327e59-d29b-4a7a-c6fa-08d5db1ed6bc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0726;
-x-ms-traffictypediagnostic: DM5PR2101MB0726:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=longli@microsoft.com; 
-x-microsoft-antispam-prvs: <DM5PR2101MB0726D1ABA854B4855E52BDFBCE490@DM5PR2101MB0726.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(158342451672863)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231254)(2018427008)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DM5PR2101MB0726;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0726;
-x-forefront-prvs: 071518EF63
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(39860400002)(136003)(376002)(69234005)(189003)(199004)(476003)(446003)(11346002)(486006)(76176011)(229853002)(7696005)(33656002)(6506007)(53546011)(102836004)(186003)(9686003)(478600001)(10290500003)(14454004)(46003)(68736007)(55016002)(22452003)(110136005)(316002)(6436002)(81166006)(8676002)(81156014)(8936002)(2906002)(14444005)(25786009)(2900100001)(99286004)(6116002)(2501003)(5250100002)(256004)(2201001)(5660300001)(106356001)(105586002)(97736004)(86612001)(8990500004)(305945005)(86362001)(7736002)(74316002)(10090500001)(6246003)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0726;H:DM5PR2101MB0728.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: tuAC20LEVK0L2+w1R0QpQUEGQQu2XhF6hsrnSj0tQkG6YmGuuQk4WsLH12/MpZwXttxJrtOqeiHeGxBtVY0GADiIUgmqkHOQ0T7NqibpTDr0etfL+/Ur5x/nxIdRIiQ/HNssmEH6p41WP7q43J7ebj3ytaHcxrkASm5wbRQLAzVyKpR0Kt66c10wkZot5rbEJUdvrHBI/Qz9Aku4O0jLJabTRWbQzpYJ+OnapUZqPKZFg1/1EbnseVQOVL/1o+v4tFASiUIa2FrMK6W9nOLK8Cv1tN0hlcm7kaXYgwmO8S70e1DAiNI5kbsDCnFxzMM8rCVOjfQg3HqjME6CVJdFfNXjZS+5L16dAHfp4Z2e1+o=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74327e59-d29b-4a7a-c6fa-08d5db1ed6bc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2018 04:39:43.9584
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0726
+        Tue, 26 Jun 2018 00:41:57 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:39891 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750972AbeFZElz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 00:41:55 -0400
+Received: by mail-pg0-f66.google.com with SMTP id n2-v6so3633869pgq.6;
+        Mon, 25 Jun 2018 21:41:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rrLz9SXX8D3Im2LUrAySQBIyfgTZMNl9glrxgYUJhtA=;
+        b=cvAiu9F/24JUfIa7LOWjwB28VILxOybixqlrte/sBuWtsZ3yA0IZdQqRDVOeNEkiuY
+         AEe0wTx8PR9MDuWIDwCAQD0UI08qUs2mPhj1QGm4hjc53aPIzfnMixa6nyuj66tq8IDf
+         npWhmcu4jUkgU65H3Lt6YO2WFvHC++lQTqzgePjrOkxeNr/PUgx1IxBLCH0pblaLKJcO
+         F6y2iCgnoEip7YrFjloPwyRsZaH+AXFRRNE8en0sUp5iG4PeS1N55GoeveMgyPeJd6OT
+         wySkSa1KnPzFSJt/xrTWPFdQQ3adrbuetYHsmy3PndCxweEe8viW96gqsMRLa1gFPJhS
+         86kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rrLz9SXX8D3Im2LUrAySQBIyfgTZMNl9glrxgYUJhtA=;
+        b=AzfXbGehzJ+XVyTNz8AHzdvr98OCTB2ijaTBza3Zqev0D/Q1th0A/m37xQ05JvLbql
+         bj+iJJJJVUEXmRO6SymKfZI+HW6MlBnfZyfBqfgtE+3BzBWNMel3kXtUz2lWixv6iH4p
+         wZxcmo4cu3rjsmuqTHA6zy9FGQg01noyBxmot6LQSaMY3Bo7hfLXl8tEkXETJXDRdaLx
+         +amUePJzg7fJlOuJPZwQaasiLPwPcMWVvYLxHU4qLd4fSOFbGuiOrzfTOvFbNHg8lr6B
+         Y8w1goJk7w2L/+cKrfdMDoBrJhzmtO5zpkUHMNOD3tZZ+6j2CmK/trPtYHHHTqN4mrnZ
+         I+HQ==
+X-Gm-Message-State: APt69E0GYnctAaPRAu9k5zP911ARxdqi3ontzY4Cy2Q5nBCZSM1fnvhX
+        z5YewktUTDD2EQC3cSFJ7+w=
+X-Google-Smtp-Source: ADUXVKJZfxik/oJ/feyrQ7Vk/jmhy1rzVuuacCsirHNX7kusWCiMon3PwWqonC5iMsDno/uWbi9AzA==
+X-Received: by 2002:a65:504c:: with SMTP id k12-v6mr4750560pgo.435.1529988114707;
+        Mon, 25 Jun 2018 21:41:54 -0700 (PDT)
+Received: from localhost.localdomain ([175.223.48.122])
+        by smtp.gmail.com with ESMTPSA id s22-v6sm692551pgs.34.2018.06.25.21.41.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 21:41:53 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Samuel Ortiz <sameo@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        syzkaller-bugs@googlegroups.com, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzbot <syzbot+d29d18215e477cfbfbdd@syzkaller.appspotmail.com>,
+        sergey.senozhatsky@gmail.com
+Subject: [PATCH] NFC: llcp: fix nfc_llcp_send_ui_frame() lockup
+Date:   Tue, 26 Jun 2018 13:41:19 +0900
+Message-Id: <20180626044119.30118-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBTdWJqZWN0OiBSZTogW1BhdGNoIHYyIDE0LzE1XSBDSUZTOiBBZGQgc3VwcG9ydCBmb3IgZGly
-ZWN0IEkvTyB3cml0ZQ0KPiANCj4gT24gNS8zMC8yMDE4IDM6NDggUE0sIExvbmcgTGkgd3JvdGU6
-DQo+ID4gRnJvbTogTG9uZyBMaSA8bG9uZ2xpQG1pY3Jvc29mdC5jb20+DQo+ID4NCj4gPiBJbXBs
-ZW1lbnQgdGhlIGZ1bmN0aW9uIGZvciBkaXJlY3QgSS9PIHdyaXRlLiBJdCBkb2Vzbid0IHN1cHBv
-cnQgQUlPLA0KPiA+IHdoaWNoIHdpbGwgYmUgaW1wbGVtZW50ZWQgaW4gYSBmb2xsb3cgdXAgcGF0
-Y2guDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBMb25nIExpIDxsb25nbGlAbWljcm9zb2Z0LmNv
-bT4NCj4gPiAtLS0NCj4gPiAgIGZzL2NpZnMvY2lmc2ZzLmggfCAgIDEgKw0KPiA+ICAgZnMvY2lm
-cy9maWxlLmMgICB8IDE2NQ0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrDQo+ID4gICAyIGZpbGVzIGNoYW5nZWQsIDE2NiBpbnNlcnRpb25z
-KCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZnMvY2lmcy9jaWZzZnMuaCBiL2ZzL2NpZnMvY2lm
-c2ZzLmggaW5kZXgNCj4gPiA3ZmJhOWFhLi5lOWM1MTAzIDEwMDY0NA0KPiA+IC0tLSBhL2ZzL2Np
-ZnMvY2lmc2ZzLmgNCj4gPiArKysgYi9mcy9jaWZzL2NpZnNmcy5oDQo+ID4gQEAgLTEwNSw2ICsx
-MDUsNyBAQCBleHRlcm4gc3NpemVfdCBjaWZzX3VzZXJfcmVhZHYoc3RydWN0IGtpb2NiICppb2Ni
-LA0KPiBzdHJ1Y3QgaW92X2l0ZXIgKnRvKTsNCj4gPiAgIGV4dGVybiBzc2l6ZV90IGNpZnNfZGly
-ZWN0X3JlYWR2KHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICp0byk7DQo+ID4g
-ICBleHRlcm4gc3NpemVfdCBjaWZzX3N0cmljdF9yZWFkdihzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0
-cnVjdCBpb3ZfaXRlciAqdG8pOw0KPiA+ICAgZXh0ZXJuIHNzaXplX3QgY2lmc191c2VyX3dyaXRl
-dihzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRlcg0KPiA+ICpmcm9tKTsNCj4gPiAr
-ZXh0ZXJuIHNzaXplX3QgY2lmc19kaXJlY3Rfd3JpdGV2KHN0cnVjdCBraW9jYiAqaW9jYiwgc3Ry
-dWN0IGlvdl9pdGVyDQo+ID4gKypmcm9tKTsNCj4gPiAgIGV4dGVybiBzc2l6ZV90IGNpZnNfc3Ry
-aWN0X3dyaXRldihzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRlciAqZnJvbSk7DQo+
-ID4gICBleHRlcm4gaW50IGNpZnNfbG9jayhzdHJ1Y3QgZmlsZSAqLCBpbnQsIHN0cnVjdCBmaWxl
-X2xvY2sgKik7DQo+ID4gICBleHRlcm4gaW50IGNpZnNfZnN5bmMoc3RydWN0IGZpbGUgKiwgbG9m
-Zl90LCBsb2ZmX3QsIGludCk7IGRpZmYNCj4gPiAtLWdpdCBhL2ZzL2NpZnMvZmlsZS5jIGIvZnMv
-Y2lmcy9maWxlLmMgaW5kZXggZTZlNmYyNC4uOGMzODViMSAxMDA2NDQNCj4gPiAtLS0gYS9mcy9j
-aWZzL2ZpbGUuYw0KPiA+ICsrKyBiL2ZzL2NpZnMvZmlsZS5jDQo+ID4gQEAgLTI0NjEsNiArMjQ2
-MSwzNSBAQCBjaWZzX3VuY2FjaGVkX3dyaXRlZGF0YV9yZWxlYXNlKHN0cnVjdCBrcmVmDQo+ID4g
-KnJlZmNvdW50KQ0KPiA+DQo+ID4gICBzdGF0aWMgdm9pZCBjb2xsZWN0X3VuY2FjaGVkX3dyaXRl
-X2RhdGEoc3RydWN0IGNpZnNfYWlvX2N0eCAqY3R4KTsNCj4gPg0KPiA+ICtzdGF0aWMgdm9pZCBj
-aWZzX2RpcmVjdF93cml0ZWRhdGFfcmVsZWFzZShzdHJ1Y3Qga3JlZiAqcmVmY291bnQpIHsNCj4g
-PiArCWludCBpOw0KPiA+ICsJc3RydWN0IGNpZnNfd3JpdGVkYXRhICp3ZGF0YSA9IGNvbnRhaW5l
-cl9vZihyZWZjb3VudCwNCj4gPiArCQkJCQlzdHJ1Y3QgY2lmc193cml0ZWRhdGEsIHJlZmNvdW50
-KTsNCj4gPiArDQo+ID4gKwlmb3IgKGkgPSAwOyBpIDwgd2RhdGEtPm5yX3BhZ2VzOyBpKyspDQo+
-ID4gKwkJcHV0X3BhZ2Uod2RhdGEtPnBhZ2VzW2ldKTsNCj4gPiArDQo+ID4gKwljaWZzX3dyaXRl
-ZGF0YV9yZWxlYXNlKHJlZmNvdW50KTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIHZvaWQg
-Y2lmc19kaXJlY3Rfd3JpdGV2X2NvbXBsZXRlKHN0cnVjdCB3b3JrX3N0cnVjdCAqd29yaykgew0K
-PiA+ICsJc3RydWN0IGNpZnNfd3JpdGVkYXRhICp3ZGF0YSA9IGNvbnRhaW5lcl9vZih3b3JrLA0K
-PiA+ICsJCQkJCXN0cnVjdCBjaWZzX3dyaXRlZGF0YSwgd29yayk7DQo+ID4gKwlzdHJ1Y3QgaW5v
-ZGUgKmlub2RlID0gZF9pbm9kZSh3ZGF0YS0+Y2ZpbGUtPmRlbnRyeSk7DQo+ID4gKwlzdHJ1Y3Qg
-Y2lmc0lub2RlSW5mbyAqY2lmc2kgPSBDSUZTX0koaW5vZGUpOw0KPiA+ICsNCj4gPiArCXNwaW5f
-bG9jaygmaW5vZGUtPmlfbG9jayk7DQo+ID4gKwljaWZzX3VwZGF0ZV9lb2YoY2lmc2ksIHdkYXRh
-LT5vZmZzZXQsIHdkYXRhLT5ieXRlcyk7DQo+ID4gKwlpZiAoY2lmc2ktPnNlcnZlcl9lb2YgPiBp
-bm9kZS0+aV9zaXplKQ0KPiA+ICsJCWlfc2l6ZV93cml0ZShpbm9kZSwgY2lmc2ktPnNlcnZlcl9l
-b2YpOw0KPiA+ICsJc3Bpbl91bmxvY2soJmlub2RlLT5pX2xvY2spOw0KPiA+ICsNCj4gPiArCWNv
-bXBsZXRlKCZ3ZGF0YS0+ZG9uZSk7DQo+ID4gKwlrcmVmX3B1dCgmd2RhdGEtPnJlZmNvdW50LCBj
-aWZzX2RpcmVjdF93cml0ZWRhdGFfcmVsZWFzZSk7IH0NCj4gPiArDQo+ID4gICBzdGF0aWMgdm9p
-ZA0KPiA+ICAgY2lmc191bmNhY2hlZF93cml0ZXZfY29tcGxldGUoc3RydWN0IHdvcmtfc3RydWN0
-ICp3b3JrKQ0KPiA+ICAgew0KPiA+IEBAIC0yNzAzLDYgKzI3MzIsMTQyIEBAIHN0YXRpYyB2b2lk
-IGNvbGxlY3RfdW5jYWNoZWRfd3JpdGVfZGF0YShzdHJ1Y3QNCj4gY2lmc19haW9fY3R4ICpjdHgp
-DQo+ID4gICAJCWNvbXBsZXRlKCZjdHgtPmRvbmUpOw0KPiA+ICAgfQ0KPiA+DQo+ID4gK3NzaXpl
-X3QgY2lmc19kaXJlY3Rfd3JpdGV2KHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVy
-ICpmcm9tKQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3QgZmlsZSAqZmlsZSA9IGlvY2ItPmtpX2ZpbHA7
-DQo+ID4gKwlzc2l6ZV90IHRvdGFsX3dyaXR0ZW4gPSAwOw0KPiA+ICsJc3RydWN0IGNpZnNGaWxl
-SW5mbyAqY2ZpbGU7DQo+ID4gKwlzdHJ1Y3QgY2lmc190Y29uICp0Y29uOw0KPiA+ICsJc3RydWN0
-IGNpZnNfc2JfaW5mbyAqY2lmc19zYjsNCj4gPiArCXN0cnVjdCBUQ1BfU2VydmVyX0luZm8gKnNl
-cnZlcjsNCj4gPiArCXBpZF90IHBpZDsNCj4gPiArCXVuc2lnbmVkIGxvbmcgbnJfcGFnZXM7DQo+
-ID4gKwlsb2ZmX3Qgb2Zmc2V0ID0gaW9jYi0+a2lfcG9zOw0KPiA+ICsJc2l6ZV90IGxlbiA9IGlv
-dl9pdGVyX2NvdW50KGZyb20pOw0KPiA+ICsJaW50IHJjOw0KPiA+ICsJc3RydWN0IGNpZnNfd3Jp
-dGVkYXRhICp3ZGF0YTsNCj4gPiArDQo+ID4gKwkvKg0KPiA+ICsJICogaW92X2l0ZXJfZ2V0X3Bh
-Z2VzX2FsbG9jIGRvZXNuJ3Qgd29yayB3aXRoIElURVJfS1ZFQy4NCj4gPiArCSAqIEluIHRoaXMg
-Y2FzZSwgZmFsbCBiYWNrIHRvIG5vbi1kaXJlY3Qgd3JpdGUgZnVuY3Rpb24uDQo+ID4gKwkgKi8N
-Cj4gPiArCWlmIChmcm9tLT50eXBlICYgSVRFUl9LVkVDKSB7DQo+ID4gKwkJY2lmc19kYmcoRllJ
-LCAidXNlIG5vbi1kaXJlY3QgY2lmc191c2VyX3dyaXRldiBmb3Iga3ZlYw0KPiBJL09cbiIpOw0K
-PiA+ICsJCXJldHVybiBjaWZzX3VzZXJfd3JpdGV2KGlvY2IsIGZyb20pOw0KPiA+ICsJfQ0KPiA+
-ICsNCj4gPiArCXJjID0gZ2VuZXJpY193cml0ZV9jaGVja3MoaW9jYiwgZnJvbSk7DQo+ID4gKwlp
-ZiAocmMgPD0gMCkNCj4gPiArCQlyZXR1cm4gcmM7DQo+ID4gKw0KPiA+ICsJY2lmc19zYiA9IENJ
-RlNfRklMRV9TQihmaWxlKTsNCj4gPiArCWNmaWxlID0gZmlsZS0+cHJpdmF0ZV9kYXRhOw0KPiA+
-ICsJdGNvbiA9IHRsaW5rX3Rjb24oY2ZpbGUtPnRsaW5rKTsNCj4gPiArCXNlcnZlciA9IHRjb24t
-PnNlcy0+c2VydmVyOw0KPiA+ICsNCj4gPiArCWlmICghc2VydmVyLT5vcHMtPmFzeW5jX3dyaXRl
-dikNCj4gPiArCQlyZXR1cm4gLUVOT1NZUzsNCj4gPiArDQo+ID4gKwlpZiAoY2lmc19zYi0+bW50
-X2NpZnNfZmxhZ3MgJiBDSUZTX01PVU5UX1JXUElERk9SV0FSRCkNCj4gPiArCQlwaWQgPSBjZmls
-ZS0+cGlkOw0KPiA+ICsJZWxzZQ0KPiA+ICsJCXBpZCA9IGN1cnJlbnQtPnRnaWQ7DQo+ID4gKw0K
-PiA+ICsJZG8gew0KPiA+ICsJCXVuc2lnbmVkIGludCB3c2l6ZSwgY3JlZGl0czsNCj4gPiArCQlz
-dHJ1Y3QgcGFnZSAqKnBhZ2V2ZWM7DQo+ID4gKwkJc2l6ZV90IHN0YXJ0Ow0KPiA+ICsJCXNzaXpl
-X3QgY3VyX2xlbjsNCj4gPiArDQo+ID4gKwkJcmMgPSBzZXJ2ZXItPm9wcy0+d2FpdF9tdHVfY3Jl
-ZGl0cyhzZXJ2ZXIsIGNpZnNfc2ItPndzaXplLA0KPiA+ICsJCQkJCQkgICAmd3NpemUsICZjcmVk
-aXRzKTsNCj4gPiArCQlpZiAocmMpDQo+ID4gKwkJCWJyZWFrOw0KPiA+ICsNCj4gPiArCQljdXJf
-bGVuID0gaW92X2l0ZXJfZ2V0X3BhZ2VzX2FsbG9jKA0KPiA+ICsJCQkJZnJvbSwgJnBhZ2V2ZWMs
-IHdzaXplLCAmc3RhcnQpOw0KPiA+ICsJCWlmIChjdXJfbGVuIDwgMCkgew0KPiA+ICsJCQljaWZz
-X2RiZyhWRlMsDQo+ID4gKwkJCQkiZGlyZWN0X3dyaXRldiBjb3VsZG4ndCBnZXQgdXNlciBwYWdl
-cyAiDQo+ID4gKwkJCQkiKHJjPSV6ZCkgaXRlciB0eXBlICVkIGlvdl9vZmZzZXQgJWx1IGNvdW50
-Ig0KPiA+ICsJCQkJIiAlbHVcbiIsDQo+ID4gKwkJCQljdXJfbGVuLCBmcm9tLT50eXBlLA0KPiA+
-ICsJCQkJZnJvbS0+aW92X29mZnNldCwgZnJvbS0+Y291bnQpOw0KPiA+ICsJCQlkdW1wX3N0YWNr
-KCk7DQo+ID4gKwkJCWJyZWFrOw0KPiA+ICsJCX0NCj4gPiArCQlpZiAoY3VyX2xlbiA8IDApDQo+
-ID4gKwkJCWJyZWFrOw0KPiANCj4gVGhpcyBjdXJfbGVuIDwgMCB0ZXN0IGlzIHJlZHVuZGFudCB3
-aXRoIHRoZSBwcmlvciBpZigpLCBkZWxldGUuDQo+ID4gKw0KPiA+ICsJCW5yX3BhZ2VzID0gKGN1
-cl9sZW4gKyBzdGFydCArIFBBR0VfU0laRSAtIDEpIC8gUEFHRV9TSVpFOw0KPiANCj4gQW0gSSBt
-aXNyZWFkaW5nLCBvciB3aWxsIHRoaXMgcmV0dXJuIGJlIG9uZSBtb3JlIHBhZ2UgdGhhbiBuZWVk
-ZWQ/IElmIHN0YXJ0DQo+ICh0aGUgZmlyc3QgYnl0ZSBvZmZzZXQpIGlzID4gMCwgbnJfcGFnZXMg
-d2lsbCBhbHJlYWR5IGJlIG9uZS4NCj4gQW5kIGlmIGN1cl9sZW4gaXMgNEtCLCBldmVuIGlmIHN0
-YXJ0IGlzIDAsIG5yX3BhZ2VzIHdpbGwgYmUgdHdvLg0KDQpJIHRoaW5rIHRoZSBjYWxjdWxhdGlv
-biBpcyBjb3JyZWN0LCBhc3N1bWluZyBjdXJfbGVuID4gMC4gKHdoaWNoIHNob3VsZCBiZSB0aGUg
-Y2FzZSBpZiB3ZSByZWFjaCBoZXJlKQ0KDQpJZiBjdXJfbGVuIGlzIDRrYiBhbmQgc3RhcnQgaXMg
-MCwgbnJfcGFnZXMgd2lsbCBiZSAxLg0KDQo+IA0KPiA+ICsNCj4gPiArCQl3ZGF0YSA9IGNpZnNf
-d3JpdGVkYXRhX2RpcmVjdF9hbGxvYyhwYWdldmVjLA0KPiA+ICsJCQkJCSAgICAgY2lmc19kaXJl
-Y3Rfd3JpdGV2X2NvbXBsZXRlKTsNCj4gPiArCQlpZiAoIXdkYXRhKSB7DQo+ID4gKwkJCXJjID0g
-LUVOT01FTTsNCj4gPiArCQkJYWRkX2NyZWRpdHNfYW5kX3dha2VfaWYoc2VydmVyLCBjcmVkaXRz
-LCAwKTsNCj4gPiArCQkJYnJlYWs7DQo+ID4gKwkJfQ0KPiA+ICsNCj4gPiArCQl3ZGF0YS0+bnJf
-cGFnZXMgPSBucl9wYWdlczsNCj4gPiArCQl3ZGF0YS0+cGFnZV9vZmZzZXQgPSBzdGFydDsNCj4g
-PiArCQl3ZGF0YS0+cGFnZXN6ID0gUEFHRV9TSVpFOw0KPiA+ICsJCXdkYXRhLT50YWlsc3ogPQ0K
-PiA+ICsJCQlucl9wYWdlcyA+IDEgPw0KPiA+ICsJCQljdXJfbGVuIC0gKFBBR0VfU0laRSAtIHN0
-YXJ0KSAtDQo+ID4gKwkJCQkobnJfcGFnZXMgLSAyKSAqIFBBR0VfU0laRSA6DQo+ID4gKwkJCWN1
-cl9sZW47DQo+ID4gKw0KPiA+ICsJCXdkYXRhLT5zeW5jX21vZGUgPSBXQl9TWU5DX0FMTDsNCj4g
-PiArCQl3ZGF0YS0+b2Zmc2V0ID0gKF9fdTY0KW9mZnNldDsNCj4gPiArCQl3ZGF0YS0+Y2ZpbGUg
-PSBjaWZzRmlsZUluZm9fZ2V0KGNmaWxlKTsNCj4gPiArCQl3ZGF0YS0+cGlkID0gcGlkOw0KPiA+
-ICsJCXdkYXRhLT5ieXRlcyA9IGN1cl9sZW47DQo+ID4gKwkJd2RhdGEtPmNyZWRpdHMgPSBjcmVk
-aXRzOw0KPiA+ICsNCj4gPiArCQlyYyA9IDA7DQo+ID4gKwkJaWYgKHdkYXRhLT5jZmlsZS0+aW52
-YWxpZEhhbmRsZSkNCj4gPiArCQkJcmMgPSBjaWZzX3Jlb3Blbl9maWxlKHdkYXRhLT5jZmlsZSwg
-ZmFsc2UpOw0KPiA+ICsNCj4gPiArCQlpZiAoIXJjKQ0KPiA+ICsJCQlyYyA9IHNlcnZlci0+b3Bz
-LT5hc3luY193cml0ZXYod2RhdGEsDQo+ID4gKwkJCQkJY2lmc19kaXJlY3Rfd3JpdGVkYXRhX3Jl
-bGVhc2UpOw0KPiA+ICsNCj4gPiArCQlpZiAocmMpIHsNCj4gPiArCQkJYWRkX2NyZWRpdHNfYW5k
-X3dha2VfaWYoc2VydmVyLCB3ZGF0YS0+Y3JlZGl0cywgMCk7DQo+ID4gKwkJCWtyZWZfcHV0KCZ3
-ZGF0YS0+cmVmY291bnQsDQo+ID4gKwkJCQkgY2lmc19kaXJlY3Rfd3JpdGVkYXRhX3JlbGVhc2Up
-Ow0KPiA+ICsJCQlpZiAocmMgPT0gLUVBR0FJTikNCj4gPiArCQkJCWNvbnRpbnVlOw0KPiA+ICsJ
-CQlicmVhazsNCj4gPiArCQl9DQo+IA0KPiBTYW1lIGNvbW1lbnRzIGFzIGZvciBwcmV2aW91cyBw
-YXRjaCByZSB0aGUgaWYgKHJjKSBsYWRkZXIsIGFuZCB0aGUNCj4gYnJlYWsvY29udGludWVzIGJv
-dGggYmVpbmcgYmV0dGVyIGV4cHJlc3NlZCBhcyBjYXJlZnVsIGdvdG8ncy4NCj4gDQo+ID4gKw0K
-PiA+ICsJCXdhaXRfZm9yX2NvbXBsZXRpb24oJndkYXRhLT5kb25lKTsNCj4gPiArCQlpZiAod2Rh
-dGEtPnJlc3VsdCkgew0KPiA+ICsJCQlyYyA9IHdkYXRhLT5yZXN1bHQ7DQo+ID4gKwkJCWtyZWZf
-cHV0KCZ3ZGF0YS0+cmVmY291bnQsDQo+ID4gKwkJCQkJY2lmc19kaXJlY3Rfd3JpdGVkYXRhX3Jl
-bGVhc2UpOw0KPiA+ICsJCQlpZiAocmMgPT0gLUVBR0FJTikNCj4gPiArCQkJCWNvbnRpbnVlOw0K
-PiA+ICsJCQlicmVhazsNCj4gPiArCQl9DQo+ID4gKw0KPiA+ICsJCWtyZWZfcHV0KCZ3ZGF0YS0+
-cmVmY291bnQsIGNpZnNfZGlyZWN0X3dyaXRlZGF0YV9yZWxlYXNlKTsNCj4gPiArDQo+ID4gKwkJ
-aW92X2l0ZXJfYWR2YW5jZShmcm9tLCBjdXJfbGVuKTsNCj4gPiArCQl0b3RhbF93cml0dGVuICs9
-IGN1cl9sZW47DQo+ID4gKwkJb2Zmc2V0ICs9IGN1cl9sZW47DQo+ID4gKwkJbGVuIC09IGN1cl9s
-ZW47DQo+ID4gKwl9IHdoaWxlIChsZW4pOw0KPiA+ICsNCj4gPiArCWlmICh1bmxpa2VseSghdG90
-YWxfd3JpdHRlbikpDQo+ID4gKwkJcmV0dXJuIHJjOw0KPiA+ICsNCj4gPiArCWlvY2ItPmtpX3Bv
-cyArPSB0b3RhbF93cml0dGVuOw0KPiA+ICsJcmV0dXJuIHRvdGFsX3dyaXR0ZW47DQo+ID4gKw0K
-PiA+ICt9DQo+ID4gKw0KPiA+ICAgc3NpemVfdCBjaWZzX3VzZXJfd3JpdGV2KHN0cnVjdCBraW9j
-YiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICpmcm9tKQ0KPiA+ICAgew0KPiA+ICAgCXN0cnVjdCBm
-aWxlICpmaWxlID0gaW9jYi0+a2lfZmlscDsNCj4gPg0K
+syzbot reported the following nfc_llcp_send_ui_frame() lockup:
+
+The kernel is CONFIG_PREEMPT_VOLUNTARY=y, llcp_sock_sendmsg() stuck
+in an infinite error reporting loop, because the system is low memory
+and MSG_DONTWAIT nfc_alloc_send_skb() allocations fail:
+
+        do {
+        ...
+                pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
+                                         frag_len + LLCP_HEADER_SIZE, &err);
+                if (pdu == NULL) {
+                        pr_err("Could not allocate PDU\n");
+                        continue;
+                }
+        ...
+        } while (remaining_len > 0);
+
+nfc_llcp_send_ui_frame() spent enough time (94+ sec) trying to
+allocate PDU, which resulted in RCU stall due to PREEMPT_VOLUNTARY:
+
+ llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+ llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+...
+ llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+ llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+ INFO: rcu_sched self-detected stall on CPU
+         1-....: (20918 ticks this GP) idle=55a/1/4611686018427387906
+ softirq=11347/11347 fqs=20240
+          (t=125005 jiffies g=5572 c=5571 q=149)
+ NMI backtrace for cpu 1
+ CPU: 1 PID: 4811 Comm: syz-executor0 Not tainted 4.18.0-rc1+ #115
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+ 01/01/2011
+ Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1336
+  print_cpu_stall kernel/rcu/tree.c:1485 [inline]
+  check_cpu_stall.isra.60.cold.78+0x36c/0x5a6 kernel/rcu/tree.c:1553
+  __rcu_pending kernel/rcu/tree.c:3244 [inline]
+  rcu_pending kernel/rcu/tree.c:3291 [inline]
+  rcu_check_callbacks+0x23f/0xcd0 kernel/rcu/tree.c:2646
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+ RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783 [inline]
+ RIP: 0010:console_unlock+0xc84/0x10b0 kernel/printk/printk.c:2397
+ Code: c1 e8 03 42 80 3c 38 00 0f 85 bd 03 00 00 48 83 3d 38 f7 8e 07 00 0f 84
+ 69 02 00 00 e8 45 56 19 00 48 8b bd b0 fe ff ff 57 9d <0f> 1f 44 00 00 e9 96
+ f5 ff ff e8 2d 56 19 00 48 8b 7d 08 e8 94 cf
+ RSP: 0018:ffff8801aab0f358 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+ RAX: ffff8801aa2802c0 RBX: 0000000000000200 RCX: 1ffff10035450163
+ RDX: 0000000000000000 RSI: ffffffff8162b8fb RDI: 0000000000000293
+ RBP: ffff8801aab0f4c0 R08: ffff8801aa280af8 R09: 0000000000000006
+ R10: ffff8801aa2802c0 R11: 0000000000000000 R12: 0000000000000000
+ R13: ffffffff84ea9880 R14: 0000000000000001 R15: dffffc0000000000
+  vprintk_emit+0x6c6/0xdf0 kernel/printk/printk.c:1907
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1948
+  vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:382
+  printk+0xa7/0xcf kernel/printk/printk.c:1981
+  nfc_llcp_send_ui_frame.cold.9+0x18/0x1f net/nfc/llcp_commands.c:758
+  llcp_sock_sendmsg+0x278/0x350 net/nfc/llcp_sock.c:786
+  sock_sendmsg_nosec net/socket.c:645 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:655
+  ___sys_sendmsg+0x51d/0x930 net/socket.c:2161
+  __sys_sendmmsg+0x240/0x6f0 net/socket.c:2256
+  __do_sys_sendmmsg net/socket.c:2285 [inline]
+  __se_sys_sendmmsg net/socket.c:2282 [inline]
+  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2282
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Address the issues by rate limiting nfc_alloc_send_skb() allocation
+error, to avoid logbuf pollution, and do cond_resched() before llcp
+attempts to allocate PDU again.
+
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Reported-by: syzbot+d29d18215e477cfbfbdd@syzkaller.appspotmail.com
+---
+ net/nfc/llcp_commands.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/nfc/llcp_commands.c b/net/nfc/llcp_commands.c
+index 2ceefa183cee..e19fadaa9022 100644
+--- a/net/nfc/llcp_commands.c
++++ b/net/nfc/llcp_commands.c
+@@ -20,6 +20,7 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/sched.h>
+ #include <linux/nfc.h>
+ 
+ #include <net/nfc/nfc.h>
+@@ -755,7 +756,8 @@ int nfc_llcp_send_ui_frame(struct nfc_llcp_sock *sock, u8 ssap, u8 dsap,
+ 		pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
+ 					 frag_len + LLCP_HEADER_SIZE, &err);
+ 		if (pdu == NULL) {
+-			pr_err("Could not allocate PDU\n");
++			pr_err_ratelimited("Could not allocate PDU\n");
++			cond_resched();
+ 			continue;
+ 		}
+ 
+-- 
+2.18.0
+
