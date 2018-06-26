@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1723DC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9EBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED4C25C2E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:34:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED4C25C2E
+	by mail.kernel.org (Postfix) with ESMTP id D360025C3B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D360025C3B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935230AbeFZAe0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 20:34:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41372 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934740AbeFZAdS (ORCPT
+        id S935192AbeFZAeZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 20:34:25 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58530 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934724AbeFZAdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 20:33:18 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q0Sckc094189
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q0SiCg130948
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:33:17 -0400
 Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96uun0n-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96qbey7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:33:17 -0400
 Received: from localhost
         by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Mon, 25 Jun 2018 20:33:16 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
         by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 20:33:12 -0400
+        Mon, 25 Jun 2018 20:33:11 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q0XBOu10355038
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q0XAoF9765246
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 00:33:11 GMT
+        Tue, 26 Jun 2018 00:33:10 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D05EB2065;
-        Mon, 25 Jun 2018 20:33:06 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id AE3D4B206A;
+        Mon, 25 Jun 2018 20:33:04 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB36FB2068;
-        Mon, 25 Jun 2018 20:33:05 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 99404B206C;
+        Mon, 25 Jun 2018 20:33:04 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Jun 2018 20:33:05 -0400 (EDT)
+        Mon, 25 Jun 2018 20:33:04 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 22D4416CA0A5; Mon, 25 Jun 2018 17:35:15 -0700 (PDT)
+        id D942716CA09B; Mon, 25 Jun 2018 17:35:14 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -59,22 +59,21 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Byungchul Park <byungchul.park@lge.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 20/27] rcu: Check the range of jiffies_till_{first,next}_fqs when setting them
-Date:   Mon, 25 Jun 2018 17:35:06 -0700
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 09/27] rcu: Remove unused rcu_kick_nohz_cpu() function
+Date:   Mon, 25 Jun 2018 17:34:55 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626003448.GA26209@linux.vnet.ibm.com>
 References: <20180626003448.GA26209@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062600-0040-0000-0000-00000445289A
+x-cbid: 18062600-0040-0000-0000-000004452897
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01052336; UDB=6.00539469; IPR=6.00830262;
  MB=3.00021856; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:33:15
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062600-0041-0000-0000-0000084B3E5C
-Message-Id: <20180626003513.27812-20-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062600-0041-0000-0000-0000084B3E59
+Message-Id: <20180626003513.27812-9-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,90 +86,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Byungchul Park <byungchul.park@lge.com>
+The rcu_kick_nohz_cpu() function is no longer used, and the functionality
+it used to provide is now provided by a call to resched_cpu() in the
+force-quiescent-state function rcu_implicit_dynticks_qs().  This commit
+therefore removes rcu_kick_nohz_cpu().
 
-Currently, the range of jiffies_till_{first,next}_fqs are checked and
-adjusted on and on in the loop of rcu_gp_kthread on runtime.
-
-However, it's enough to check them only when setting them, not every
-time in the loop. So make them handled on a setting time via sysfs.
-
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c | 45 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 32 insertions(+), 13 deletions(-)
+ kernel/rcu/tree.h        |  1 -
+ kernel/rcu/tree_plugin.h | 17 -----------------
+ 2 files changed, 18 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index bc1ed77a3df9..c59cca40ea92 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -510,8 +510,38 @@ static ulong jiffies_till_first_fqs = ULONG_MAX;
- static ulong jiffies_till_next_fqs = ULONG_MAX;
- static bool rcu_kick_kthreads;
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index d51e6edc8e83..4e74df768c57 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -483,7 +483,6 @@ static void __init rcu_spawn_nocb_kthreads(void);
+ #ifdef CONFIG_RCU_NOCB_CPU
+ static void __init rcu_organize_nocb_kthreads(struct rcu_state *rsp);
+ #endif /* #ifdef CONFIG_RCU_NOCB_CPU */
+-static void __maybe_unused rcu_kick_nohz_cpu(int cpu);
+ static bool init_nocb_callback_list(struct rcu_data *rdp);
+ static void rcu_bind_gp_kthread(void);
+ static bool rcu_nohz_full_cpu(struct rcu_state *rsp);
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 07d1ad175994..75a91d58b8f7 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -2645,23 +2645,6 @@ static bool init_nocb_callback_list(struct rcu_data *rdp)
  
--module_param(jiffies_till_first_fqs, ulong, 0644);
--module_param(jiffies_till_next_fqs, ulong, 0644);
-+static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
-+{
-+	ulong j;
-+	int ret = kstrtoul(val, 0, &j);
-+
-+	if (!ret)
-+		WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : j);
-+	return ret;
-+}
-+
-+static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param *kp)
-+{
-+	ulong j;
-+	int ret = kstrtoul(val, 0, &j);
-+
-+	if (!ret)
-+		WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : (j ?: 1));
-+	return ret;
-+}
-+
-+static struct kernel_param_ops first_fqs_jiffies_ops = {
-+	.set = param_set_first_fqs_jiffies,
-+	.get = param_get_ulong,
-+};
-+
-+static struct kernel_param_ops next_fqs_jiffies_ops = {
-+	.set = param_set_next_fqs_jiffies,
-+	.get = param_get_ulong,
-+};
-+
-+module_param_cb(jiffies_till_first_fqs, &first_fqs_jiffies_ops, &jiffies_till_first_fqs, 0644);
-+module_param_cb(jiffies_till_next_fqs, &next_fqs_jiffies_ops, &jiffies_till_next_fqs, 0644);
- module_param(rcu_kick_kthreads, bool, 0644);
+ #endif /* #else #ifdef CONFIG_RCU_NOCB_CPU */
  
+-/*
+- * An adaptive-ticks CPU can potentially execute in kernel mode for an
+- * arbitrarily long period of time with the scheduling-clock tick turned
+- * off.  RCU will be paying attention to this CPU because it is in the
+- * kernel, but the CPU cannot be guaranteed to be executing the RCU state
+- * machine because the scheduling-clock tick has been disabled.  Therefore,
+- * if an adaptive-ticks CPU is failing to respond to the current grace
+- * period and has not be idle from an RCU perspective, kick it.
+- */
+-static void __maybe_unused rcu_kick_nohz_cpu(int cpu)
+-{
+-#ifdef CONFIG_NO_HZ_FULL
+-	if (tick_nohz_full_cpu(cpu))
+-		smp_send_reschedule(cpu);
+-#endif /* #ifdef CONFIG_NO_HZ_FULL */
+-}
+-
  /*
-@@ -2180,10 +2210,6 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 		/* Handle quiescent-state forcing. */
- 		first_gp_fqs = true;
- 		j = jiffies_till_first_fqs;
--		if (j > HZ) {
--			j = HZ;
--			jiffies_till_first_fqs = HZ;
--		}
- 		ret = 0;
- 		for (;;) {
- 			if (!ret) {
-@@ -2218,13 +2244,6 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 				WRITE_ONCE(rsp->gp_activity, jiffies);
- 				ret = 0; /* Force full wait till next FQS. */
- 				j = jiffies_till_next_fqs;
--				if (j > HZ) {
--					j = HZ;
--					jiffies_till_next_fqs = HZ;
--				} else if (j < 1) {
--					j = 1;
--					jiffies_till_next_fqs = 1;
--				}
- 			} else {
- 				/* Deal with stray signal. */
- 				cond_resched_tasks_rcu_qs();
+  * Is this CPU a NO_HZ_FULL CPU that should ignore RCU so that the
+  * grace-period kthread will do force_quiescent_state() processing?
 -- 
 2.17.1
 
