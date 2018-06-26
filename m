@@ -2,124 +2,354 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE43C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F67C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DA92263B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:06:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bYePz5PQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DA92263B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 652A0263BD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:09:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652A0263BD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935083AbeFZBGr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 21:06:47 -0400
-Received: from mail-ve1eur01on0086.outbound.protection.outlook.com ([104.47.1.86]:1138
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755760AbeFZBGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 21:06:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=joE1HHNvr+ZRJJ2BEdgQTyP4U2zdtJxckMv4hAY9vvQ=;
- b=bYePz5PQfOf0Cl6mpOih5No5ZfsWN7E1yHT0gCuyITB2N0dhpEo4bvOaDed6uz7pOYNAwQ8Er1UQ4DbDWs981iaA2eh+Fq7Z8p5MEJDu8lkNwpMLt/5bG8sgxSWtf9+1xJEKKdJ/5H3qp1gbAQqDBOeVX85dP4w/7fo4kw1fbKU=
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com (10.163.7.13) by
- AM3PR04MB498.eurprd04.prod.outlook.com (10.242.114.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.24; Tue, 26 Jun 2018 01:06:40 +0000
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7]) by AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7%6]) with mapi id 15.20.0884.023; Tue, 26 Jun 2018
- 01:06:40 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: imx6sll-evk: make pfuze100 sw4 always on
-Thread-Topic: [PATCH] ARM: dts: imx6sll-evk: make pfuze100 sw4 always on
-Thread-Index: AQHUCfLfKDUUhkiOuEq/46i3GmnVi6Rw6o2AgADVSoA=
-Date:   Tue, 26 Jun 2018 01:06:40 +0000
-Message-ID: <AM3PR04MB13157D44DC7357CFB2F35948F5490@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1529648932-4832-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5Coi-LRXG8vepnm-eSSx75LLEtsZ90WrtK6rEy76u+OBQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5Coi-LRXG8vepnm-eSSx75LLEtsZ90WrtK6rEy76u+OBQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB498;7:yYUkou4L59ymrSSbaQxFgxundVkfdJAb+AksO27h7su+OE2zH/pnMCe3YjVyNHlhvPuMHH55uK0sw41IqM+TgThiO4bK8gxY7k/5m/AgjzsRyr87Rsn5cRt6iOyjD+m0eOzLGtQyEzGXB1TLpv67tKeBwQFTb72ZSkz2myi6HFj/bhCz/GvCKoKumwjC3pyvam2thzSwtiprbhtTQbpVJurfq54BeROjdGkcAywJo6uB/4Dr8o/QfEubHNxHhXhY
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4e7345d1-79b2-4f16-0e08-08d5db011336
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB498;
-x-ms-traffictypediagnostic: AM3PR04MB498:
-x-microsoft-antispam-prvs: <AM3PR04MB49834CAC97CC3A76EC56E72F5490@AM3PR04MB498.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB498;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB498;
-x-forefront-prvs: 071518EF63
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(189003)(199004)(13464003)(6246003)(5660300001)(6916009)(7736002)(305945005)(68736007)(14454004)(2906002)(2900100001)(74316002)(6436002)(53936002)(55016002)(86362001)(14444005)(256004)(33656002)(9686003)(446003)(97736004)(11346002)(476003)(486006)(25786009)(229853002)(39060400002)(4326008)(26005)(186003)(106356001)(102836004)(99286004)(53546011)(6506007)(105586002)(54906003)(3846002)(44832011)(6116002)(316002)(1411001)(8676002)(81166006)(8936002)(81156014)(478600001)(76176011)(5250100002)(7696005)(66066001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB498;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: P0wZu6oNPWURyCkgYUYaqIQ3d887bpzMoUQHvPVttj/fBWa58WamocEaEj1p+WRiX+BEjsv6/keoK/oVhhQvLEUZazdYO4BCuJqgXEworDDdSL21nTR7zDT/rJ/bhMYLN18w7WAB8D+Xf0ASVnYlYCTB7NEM2vArMJq1U3LBv/9pCaqTA4yx2j5AGV3sh1vbm+F8QuGyVyAnnx7VQUXhXcBB86Q7Mmlws/0f0m2dUAv3HWNFflm//BpzFkAbBcGHzk8LhRl7FCkhCIYyB9Oqkjj+bz91rO5jFX9MzoQf3sJLfNHXrZMJ0Oh1PFmQ/fILRI4+Jx3VwdWDWG3RMWtJBGsJLzhOr05yVSMjLqgJ7vw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1755807AbeFZBJP (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 21:09:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60390 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755570AbeFZBJN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 21:09:13 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67E00A95;
+        Tue, 26 Jun 2018 01:09:10 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 09:09:06 +0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.17.3
+Message-ID: <20180626010906.GA24957@kroah.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e7345d1-79b2-4f16-0e08-08d5db011336
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2018 01:06:40.5459
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB498
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
-Z21haWwuY29tXQ0KPiBTZW50OiBNb25kYXksIEp1bmUgMjUsIDIwMTggODoyMyBQTQ0KPiBUbzog
-QW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+DQo+IENjOiBTaGF3biBHdW8gPHNoYXdu
-Z3VvQGtlcm5lbC5vcmc+OyBTYXNjaGEgSGF1ZXINCj4gPHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU+
-OyBTYXNjaGEgSGF1ZXIgPGtlcm5lbEBwZW5ndXRyb25peC5kZT47IEZhYmlvDQo+IEVzdGV2YW0g
-PGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+
-Ow0KPiBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgb3BlbiBsaXN0Ok9QRU4g
-RklSTVdBUkUgQU5EDQo+IEZMQVRURU5FRCBERVZJQ0UgVFJFRSBCSU5ESU5HUyA8ZGV2aWNldHJl
-ZUB2Z2VyLmtlcm5lbC5vcmc+Ow0KPiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPjsg
-bW9kZXJhdGVkIGxpc3Q6QVJNL0ZSRUVTQ0FMRSBJTVggLyBNWEMNCj4gQVJNIEFSQ0hJVEVDVFVS
-RSA8bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnPjsgbGludXgta2VybmVsDQo+
-IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBB
-Uk06IGR0czogaW14NnNsbC1ldms6IG1ha2UgcGZ1emUxMDAgc3c0IGFsd2F5cyBvbg0KPiANCj4g
-SGkgQW5zb24sDQo+IA0KPiBPbiBGcmksIEp1biAyMiwgMjAxOCBhdCAzOjI4IEFNLCBBbnNvbiBI
-dWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gd3JvdGU6DQo+ID4gT24gaS5NWDZTTEwgRVZL
-IGJvYXJkLCBQRnV6ZTEwMCdzIFNXNCBpcyBzdXBwbHlpbmcgTFBERFIzLCBpdCBuZWVkcyB0bw0K
-PiA+IGJlIGFsd2F5cyBvbi4gVGhpcyBwYXRjaCBmaXhlcyBMaW51eCBrZXJuZWwgYm9vdCB1cCBo
-YW5nIGNhdXNlZCBieSBTVzQNCj4gPiBiZWluZyB0dXJuZWQNCj4gPiBvZmY6DQo+ID4NCj4gPiBb
-ICAgIDEuNjkzNjEzXSBjZmc4MDIxMTogZmFpbGVkIHRvIGxvYWQgcmVndWxhdG9yeS5kYg0KPiA+
-IFsgICAgMS43MDAwNjNdIFNXNDogZGlzYWJsaW5nDQo+ID4gWyAgICAxLjcwMzk3M10gU1dCU1Q6
-IGRpc2FibGluZw0KPiANCj4gSXQgd291bGQgYmUgbmljZSB0byBtZW50aW9uIGluIHRoZSBjb21t
-aXQgbG9nIHdoYXQgd2FzIHRoZSBwYXRjaCB0aGF0IGNhdXNlZA0KPiB0aGUgYnJlYWthZ2UsIGp1
-c3QgbGlrZSBSb2JpbiBkaWQgZm9yIGlteDZzbC1ldmsuDQo+IA0KPiBUaGFua3MsDQogDQpEb25l
-LCBhbHJlYWR5IHNlbnQgb3V0IFYyIHBhdGNoLCBwbGVhc2UgcmV2aWV3IGl0LCB0aGFua3MuDQoN
-CkFuc29uLg0KDQoNCg==
+
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.17.3 kernel.
+
+All users of the 4.17 kernel series must upgrade.
+
+The updated 4.17.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.17.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                             |    2=20
+ arch/um/drivers/vector_transports.c                  |    3=20
+ arch/x86/include/asm/apic.h                          |    2=20
+ arch/x86/include/asm/trace/irq_vectors.h             |    2=20
+ arch/x86/kernel/apic/io_apic.c                       |    2=20
+ arch/x86/kernel/apic/vector.c                        |   18 ++++-
+ arch/x86/kernel/cpu/intel_rdt.c                      |    2=20
+ arch/x86/kernel/cpu/mcheck/mce-inject.c              |    2=20
+ arch/x86/platform/uv/uv_irq.c                        |    7 -
+ block/blk-mq.c                                       |    3=20
+ drivers/acpi/acpica/psloop.c                         |   51 +++++++++++++-
+ drivers/acpi/acpica/psobject.c                       |   30 ++++++++
+ drivers/acpi/acpica/uterror.c                        |   10 +-
+ drivers/ata/libata-core.c                            |    3=20
+ drivers/ata/libata-zpodd.c                           |    2=20
+ drivers/base/core.c                                  |   14 +++
+ drivers/block/nbd.c                                  |   17 ++++
+ drivers/cpufreq/cpufreq.c                            |    2=20
+ drivers/cpufreq/cpufreq_governor.c                   |   12 +--
+ drivers/cpufreq/ti-cpufreq.c                         |    2=20
+ drivers/hid/intel-ish-hid/ipc/pci-ish.c              |   22 +-----
+ drivers/hid/wacom_sys.c                              |    8 ++
+ drivers/iommu/amd_iommu.c                            |    2=20
+ drivers/iommu/intel_irq_remapping.c                  |    2=20
+ drivers/iommu/irq_remapping.c                        |    5 -
+ drivers/iommu/irq_remapping.h                        |    2=20
+ drivers/media/rc/rc-main.c                           |    4 -
+ drivers/media/usb/uvc/uvc_ctrl.c                     |   17 ++--
+ drivers/net/bonding/bond_options.c                   |    1=20
+ drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c |   11 +--
+ drivers/net/hyperv/netvsc_drv.c                      |    4 -
+ drivers/net/phy/dp83848.c                            |   35 ++++++++-
+ drivers/net/tap.c                                    |    5 +
+ drivers/net/tun.c                                    |    3=20
+ drivers/net/usb/cdc_ncm.c                            |    4 -
+ drivers/net/virtio_net.c                             |    3=20
+ drivers/net/wireless/intel/iwlwifi/fw/paging.c       |   49 +++++++++++--
+ drivers/nvme/host/pci.c                              |   11 ++-
+ drivers/vhost/vhost.c                                |    3=20
+ drivers/w1/masters/mxc_w1.c                          |   20 +++--
+ fs/binfmt_misc.c                                     |   12 ++-
+ fs/btrfs/inode.c                                     |    4 -
+ fs/btrfs/ioctl.c                                     |   18 +++--
+ fs/btrfs/scrub.c                                     |    2=20
+ fs/btrfs/super.c                                     |    3=20
+ fs/cifs/cifsacl.h                                    |   14 +++
+ fs/cifs/smb2ops.c                                    |   68 +++++++++++++-=
+-----
+ fs/cifs/smb2pdu.c                                    |    4 -
+ fs/ext4/indirect.c                                   |   14 ++-
+ fs/ext4/inline.c                                     |    6 +
+ fs/ext4/inode.c                                      |   46 ++++++------
+ fs/ext4/resize.c                                     |    2=20
+ fs/ext4/xattr.c                                      |    2=20
+ fs/orangefs/inode.c                                  |    7 +
+ fs/orangefs/namei.c                                  |    7 +
+ include/linux/irq.h                                  |    7 +
+ include/linux/virtio_net.h                           |   11 +--
+ include/net/transp_v6.h                              |   11 ++-
+ include/net/udp.h                                    |    5 +
+ kernel/irq/manage.c                                  |   37 +++++++++-
+ kernel/irq/migration.c                               |   31 +++++---
+ mm/backing-dev.c                                     |   18 ++++-
+ mm/page_alloc.c                                      |    1=20
+ net/dsa/tag_trailer.c                                |    3=20
+ net/ipv4/tcp_ipv4.c                                  |    4 +
+ net/ipv4/udp.c                                       |    2=20
+ net/ipv4/udp_diag.c                                  |    2=20
+ net/ipv6/datagram.c                                  |    6 -
+ net/ipv6/route.c                                     |    3=20
+ net/ipv6/tcp_ipv6.c                                  |    4 +
+ net/ipv6/udp.c                                       |    3=20
+ net/packet/af_packet.c                               |    4 -
+ net/sched/act_simple.c                               |   15 +---
+ net/socket.c                                         |   18 ++++-
+ net/tls/tls_sw.c                                     |   32 +++++---
+ sound/pci/hda/hda_controller.c                       |    4 -
+ sound/pci/hda/patch_conexant.c                       |    3=20
+ sound/pci/hda/patch_realtek.c                        |    6 +
+ sound/usb/quirks-table.h                             |    5 +
+ 79 files changed, 608 insertions(+), 233 deletions(-)
+
+Alvaro Gamez Machado (1):
+      net: phy: dp83822: use BMCR_ANENABLE instead of BMSR_ANEGCAPABLE for =
+DP83620
+
+Bj=F8rn Mork (1):
+      cdc_ncm: avoid padding beyond end of skb
+
+Bo Chen (1):
+      ALSA: hda - Handle kzalloc() failure in snd_hda_attach_pcm_stream()
+
+Chen Yu (1):
+      cpufreq: governors: Fix long idle detection logic in load calculation
+
+Colin Ian King (1):
+      net: aquantia: fix unsigned numvecs comparison with less than zero
+
+Cong Wang (1):
+      socket: close race condition between sock_close() and sockfs_setattr()
+
+Dan Carpenter (1):
+      libata: zpodd: small read overflow in eject_tray()
+
+Daniel Borkmann (2):
+      tls: fix use-after-free in tls_push_record
+      tls: fix waitall behavior in tls_sw_recvmsg
+
+Davide Caratti (1):
+      net/sched: act_simple: fix parsing of TCA_DEF_DATA
+
+Dennis Wassenberg (2):
+      ALSA: hda: add dock and led support for HP EliteBook 830 G5
+      ALSA: hda: add dock and led support for HP ProBook 640 G4
+
+Dexuan Cui (1):
+      hv_netvsc: Fix a network regression after ifdown/ifup
+
+Dou Liyang (1):
+      x86/vector: Fix the args of vector_alloc tracepoint
+
+Erik Schmauss (1):
+      ACPICA: AML parser: attempt to continue loading table after error
+
+Even Xu (1):
+      HID: intel_ish-hid: ipc: register more pm callbacks to support hibern=
+ation
+
+Frank van der Linden (1):
+      tcp: verify the checksum of the first data segment in a new connection
+
+Greg Kroah-Hartman (1):
+      Linux 4.17.3
+
+Hans de Goede (1):
+      libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
+
+Hui Wang (1):
+      ALSA: hda/realtek - Enable mic-mute hotkey for several Lenovo AIOs
+
+Jan Kara (2):
+      ext4: fix hole length detection in ext4_ind_map_blocks()
+      ext4: fix fencepost error in check for inode count overflow during re=
+size
+
+Jason Gerecke (1):
+      HID: wacom: Correct logical maximum Y for 2nd-gen Intuos Pro large
+
+Josef Bacik (3):
+      nbd: fix nbd device deletion
+      nbd: update size when connected
+      nbd: use bd_set_size when updating disk size
+
+Julian Anastasov (1):
+      ipv6: allow PMTU exceptions to local routes
+
+Keith Busch (1):
+      nvme/pci: Sync controller reset for AER slot_reset
+
+Kieran Bingham (1):
+      media: uvcvideo: Prevent setting unavailable flags
+
+Luca Coelho (1):
+      iwlwifi: fw: harden page loading code
+
+Lukas Czerner (1):
+      ext4: update mtime in ext4_punch_hole even if no blocks are released
+
+Mark Syms (1):
+      CIFS: 511c54a2f69195b28afb9dd119f03787b1625bb4 adds a check for sessi=
+on expiry
+
+Martin Brandenburg (2):
+      orangefs: set i_size on new symlink
+      orangefs: report attributes_mask and attributes for statx
+
+Michael S. Tsirkin (1):
+      vhost: fix info leak due to uninitialized memory
+
+Omar Sandoval (3):
+      Btrfs: allow empty subvol=3D again
+      Btrfs: fix clone vs chattr NODATASUM race
+      Btrfs: fix memory and mount leak in btrfs_ioctl_rm_dev_v2()
+
+Paolo Abeni (1):
+      udp: fix rx queue len reported by diag and proc interface
+
+Qu Wenruo (1):
+      btrfs: scrub: Don't use inode pages for device replace
+
+Roman Pen (1):
+      blk-mq: reinit q->tag_set_list entry only after grace period
+
+Sean Young (1):
+      media: rc: ensure input/lirc device can be opened after register
+
+Shirish Pargaonkar (1):
+      cifs: For SMB2 security informaion query, check for minimum sized sec=
+urity descriptor instead of sizeof FileAllInformation class
+
+Stefan Potyra (1):
+      w1: mxc_w1: Enable clock before calling clk_get_rate() on it
+
+Steve French (2):
+      smb3: fix various xid leaks
+      smb3: on reconnect set PreviousSessionId field
+
+Su Yue (1):
+      btrfs: return error value if create_io_em failed in cow_file_range
+
+Suman Anna (1):
+      cpufreq: ti-cpufreq: Fix an incorrect error return value
+
+Takashi Iwai (2):
+      ALSA: usb-audio: Disable the quirk for Nura headset
+      ALSA: hda/conexant - Add fixup for HP Z2 G4 workstation
+
+Tao Wang (1):
+      cpufreq: Fix new policy initialization during limits updates via sysfs
+
+Tejun Heo (1):
+      bdi: Move cgroup bdi_writeback to a dedicated low concurrency workque=
+ue
+
+Tetsuo Handa (1):
+      driver core: Don't ignore class_dir_create_and_add() failure.
+
+Thadeu Lima de Souza Cascardo (1):
+      fs/binfmt_misc.c: do not allow offset overflow
+
+Theodore Ts'o (3):
+      ext4: do not allow external inodes for inline data
+      ext4: bubble errors from ext4_find_inline_data_nolock() up to ext4_ig=
+et()
+      ext4: correctly handle a zero-length xattr with a non-zero e_value_of=
+fs
+
+Thomas Gleixner (8):
+      x86/apic/vector: Prevent hlist corruption and leaks
+      x86/apic: Provide apic_ack_irq()
+      x86/ioapic: Use apic_ack_irq()
+      x86/platform/uv: Use apic_ack_irq()
+      irq_remapping: Use apic_ack_irq()
+      genirq/generic_pending: Do not lose pending affinity update
+      genirq/affinity: Defer affinity setting if irq chip is busy
+      genirq/migration: Avoid out of line call if pending is not set
+
+Tony Luck (2):
+      x86/MCE: Fix stack out-of-bounds write in mce-inject.c: Flags_read()
+      x86/intel_rdt: Enable CMT and MBM on new Skylake stepping
+
+Vlastimil Babka (1):
+      mm, page_alloc: do not break __GFP_THISNODE by zonelist reset
+
+Willem de Bruijn (1):
+      net: in virtio_net_hdr only add VLAN_HLEN to csum_start if payload ho=
+lds vlan
+
+Xiangning Yu (1):
+      bonding: re-evaluate force_primary when the primary slave name changes
+
+Zhouyang Jia (1):
+      net: dsa: add error handling for pskb_trim_rcsum
+
+
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlsxki4ACgkQONu9yGCS
+aT5r7xAA0RKOtjYqP4dIy9GrRz2g8RhbB+xWwTp75atOgB3O4FdwZqC+dLzoZOyq
+htIw6QYGp2CL6TfNG7eegMusq4wGiLQsKcqh7TM655D9s3vYE9b1djn0Q1kQG6eh
+UrXQtdQsSJXUFP3hpKAwoAUVUVwi6noXTM8i6yhOGFeZbexdxeMkxqASkSRnCP4A
+6r1pYeAdSiimAEpqGWqy76aKwBe3wMO2GgV4oQJDNjoRFEcKIYDpM/15PnEDKRlu
+FtGipLiaM6NDWNd73TrBR2EUmBaPdW8Ylvk9nM9bcvWoOLfz7XZTAZ6VD6gIjMOi
+ziORiJMm7WJXm70+iBNHod1JrDYkRenDyx70gJk2oWF2Zl1xV4ylWnTEuphPI9gu
+fn09hYW8DD6IJf88BQJkkt9IVa7HWa698Ql7I5PhFZ4xcvx7K8v1aIP0qJvlg3gZ
+e5HzxTDzqb5R0rTNSp6oXe2HVtMg0TSY/nj8dwa0TiC3asWEEyzRhMn6vyimJ6Ix
+oU2tZVHIaJH4rnvVOavXY8ooj2AoEe+KVFQ9BYK0C8ma5tKaxrsHdFOcMhBdX/Um
+J93YUnZB8aBKeXqqXhSbMJcYre3ks7ItaYoc+D1iWql0A4bYCiUxiaWZkPqhhwgx
+gqFtTlb16cmYK63Wk8jYJqohFyGQUaHokaC8gRL1IwLH3sKDpbU=
+=GhAL
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
