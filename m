@@ -3,96 +3,173 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B922C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB26C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED8726ABD
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:51:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED8726ABD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 770ED24053
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:53:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770ED24053
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965076AbeFZMvs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:51:48 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:50380 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964940AbeFZMvq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:51:46 -0400
-X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
-   d="scan'208";a="13463925"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Jun 2018 05:51:46 -0700
-Received: from [10.10.192.125] (10.10.76.4) by chn-sv-exch06.mchp-main.com
- (10.10.76.107) with Microsoft SMTP Server id 14.3.352.0; Tue, 26 Jun 2018
- 05:51:45 -0700
-Subject: Re: [PATCH net] net: macb: initialize bp->queues[0].bp for at91rm9200
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     Rafal Ozieblo <rafalo@cadence.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180626084401.16780-1-alexandre.belloni@bootlin.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <5551f74c-9b06-dae1-901b-c9d296ce82ae@microchip.com>
-Date:   Tue, 26 Jun 2018 05:51:43 -0700
+        id S965107AbeFZMxi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:53:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55930 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964799AbeFZMxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:53:37 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 010684067720;
+        Tue, 26 Jun 2018 12:53:37 +0000 (UTC)
+Received: from crecklin.bos.csb (ovpn-121-147.rdu2.redhat.com [10.10.121.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7EE78111AF22;
+        Tue, 26 Jun 2018 12:53:36 +0000 (UTC)
+Subject: Re: [v2 PATCH] add param that allows bootline control of hardened
+ usercopy
+From:   Christoph von Recklinghausen <crecklin@redhat.com>
+To:     keescook@chromium.org, labbott@redhat.com, pabeni@redhat.com,
+        "linux-mm@kvack.org >> Linux-MM" <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org
+References: <1530017430-5394-1-git-send-email-crecklin@redhat.com>
+Organization: Red Hat
+Message-ID: <06bde22f-3e28-e6f3-dab0-9bc8bd5973b8@redhat.com>
+Date:   Tue, 26 Jun 2018 08:53:36 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180626084401.16780-1-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <1530017430-5394-1-git-send-email-crecklin@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 12:53:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 12:53:37 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/06/2018 at 01:44, Alexandre Belloni wrote:
-> The macb driver currently crashes on at91rm9200 with the following trace:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address 00000014
-> [...]
-> [<c031da44>] (macb_rx_desc) from [<c031f2bc>] (at91ether_open+0x2e8/0x3f8)
-> [<c031f2bc>] (at91ether_open) from [<c041e8d8>] (__dev_open+0x120/0x13c)
-> [<c041e8d8>] (__dev_open) from [<c041ec08>] (__dev_change_flags+0x17c/0x1a8)
-> [<c041ec08>] (__dev_change_flags) from [<c041ec4c>] (dev_change_flags+0x18/0x4c)
-> [<c041ec4c>] (dev_change_flags) from [<c07a5f4c>] (ip_auto_config+0x220/0x10b0)
-> [<c07a5f4c>] (ip_auto_config) from [<c000a4fc>] (do_one_initcall+0x78/0x18c)
-> [<c000a4fc>] (do_one_initcall) from [<c0783e50>] (kernel_init_freeable+0x184/0x1c4)
-> [<c0783e50>] (kernel_init_freeable) from [<c0574d70>] (kernel_init+0x8/0xe8)
-> [<c0574d70>] (kernel_init) from [<c00090e0>] (ret_from_fork+0x14/0x34)
-> 
-> Solve that by initializing bp->queues[0].bp in at91ether_init (as is done
-> in macb_init).
-> 
-> Fixes: ae1f2a56d273 ("net: macb: Added support for many RX queues")
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
+On 06/26/2018 08:50 AM, Chris von Recklinghausen wrote:
+> Enabling HARDENED_USER_COPY causes measurable regressions in the
+> networking performances, up to 8% under UDP flood.
+>
+> A generic distro may want to enable HARDENED_USER_COPY in their default
+> kernel config, but at the same time, such distro may want to be able to
+> avoid the performance penalties in with the default configuration and
+> disable the stricter check on a per-boot basis.
+>
+> This change adds a boot parameter that to conditionally disable
+> HARDENED_USERCOPY at boot time.
+>
+> v1->v2:
+> 	remove CONFIG_HUC_DEFAULT_OFF
+> 	default is now enabled, boot param disables
+> 	move check to __check_object_size so as to not break optimization of
+> 		__builtin_constant_p()
+> 	include linux/atomic.h before linux/jump_label.h
+>
+> Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
 > ---
->   drivers/net/ethernet/cadence/macb_main.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 3e93df5d4e3b..96cc03a6d942 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -3726,6 +3726,8 @@ static int at91ether_init(struct platform_device *pdev)
->   	int err;
->   	u32 reg;
->   
-> +	bp->queues[0].bp = bp;
+>  .../admin-guide/kernel-parameters.rst         |  1 +
+>  .../admin-guide/kernel-parameters.txt         |  3 +++
+>  include/linux/thread_info.h                   |  5 ++++
+>  mm/usercopy.c                                 | 27 +++++++++++++++++++
+>  4 files changed, 36 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentation/admin-guide/kernel-parameters.rst
+> index b8d0bc07ed0a..87a1200a1db6 100644
+> --- a/Documentation/admin-guide/kernel-parameters.rst
+> +++ b/Documentation/admin-guide/kernel-parameters.rst
+> @@ -100,6 +100,7 @@ parameter is applicable::
+>  	FB	The frame buffer device is enabled.
+>  	FTRACE	Function tracing enabled.
+>  	GCOV	GCOV profiling is enabled.
+> +	HUC	Hardened usercopy is enabled
+>  	HW	Appropriate hardware is enabled.
+>  	IA-64	IA-64 architecture is enabled.
+>  	IMA     Integrity measurement architecture is enabled.
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index efc7aa7a0670..d14be0038aed 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -816,6 +816,9 @@
+>  	disable=	[IPV6]
+>  			See Documentation/networking/ipv6.txt.
+>  
+> +	disable_hardened_usercopy [HUC]
+> +			Disable hardened usercopy checks
 > +
->   	dev->netdev_ops = &at91ether_netdev_ops;
->   	dev->ethtool_ops = &macb_ethtool_ops;
->   
-> 
+>  	disable_radix	[PPC]
+>  			Disable RADIX MMU mode on POWER9
+>  
+> diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+> index 8d8821b3689a..ab24fe2d3f87 100644
+> --- a/include/linux/thread_info.h
+> +++ b/include/linux/thread_info.h
+> @@ -109,6 +109,11 @@ static inline int arch_within_stack_frames(const void * const stack,
+>  #endif
+>  
+>  #ifdef CONFIG_HARDENED_USERCOPY
+> +#include <linux/atomic.h>
+> +#include <linux/jump_label.h>
+> +
+> +DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
+> +
+>  extern void __check_object_size(const void *ptr, unsigned long n,
+>  					bool to_user);
+>  
+> diff --git a/mm/usercopy.c b/mm/usercopy.c
+> index e9e9325f7638..6a1265e1a54e 100644
+> --- a/mm/usercopy.c
+> +++ b/mm/usercopy.c
+> @@ -20,6 +20,8 @@
+>  #include <linux/sched/task.h>
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/thread_info.h>
+> +#include <linux/atomic.h>
+> +#include <linux/jump_label.h>
+>  #include <asm/sections.h>
+>  
+>  /*
+> @@ -248,6 +250,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+>   */
+>  void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+>  {
+> +	if (static_branch_likely(&bypass_usercopy_checks))
+> +		return;
+> +
+>  	/* Skip all tests if size is zero. */
+>  	if (!n)
+>  		return;
+> @@ -279,3 +284,25 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+>  	check_kernel_text_object((const unsigned long)ptr, n, to_user);
+>  }
+>  EXPORT_SYMBOL(__check_object_size);
+> +
+> +DEFINE_STATIC_KEY_FALSE(bypass_usercopy_checks);
+> +EXPORT_SYMBOL(bypass_usercopy_checks);
+> +
+> +static bool disable_huc_atboot = false;
+> +
+> +static int __init parse_disable_usercopy(char *str)
+> +{
+> +	disable_huc_atboot = true;
+> +	return 1;
+> +}
+> +
+> +static int __init set_disable_usercopy(void)
+> +{
+> +	if (disable_huc_atboot == true)
+> +		static_branch_enable(&bypass_usercopy_checks);
+> +	return 1;
+> +}
+> +
+> +__setup("disable_hardened_usercopy", parse_disable_usercopy);
+> +
+> +late_initcall(set_disable_usercopy);
 
 
--- 
-Nicolas Ferre
