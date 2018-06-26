@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D79CFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A940C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D60125DE2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D60125DE2
+	by mail.kernel.org (Postfix) with ESMTP id 3A6F225DEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:09:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6F225DEB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932455AbeFZRJK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:09:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40354 "EHLO
+        id S932577AbeFZRJN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 13:09:13 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58750 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753027AbeFZRIw (ORCPT
+        by vger.kernel.org with ESMTP id S1752356AbeFZRIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Jun 2018 13:08:52 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QH4M1D027340
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QH5PlG076471
         for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:52 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jup7c1v8c-1
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jus52s74r-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:52 -0400
 Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Tue, 26 Jun 2018 13:08:51 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 13:08:45 -0400
+        Tue, 26 Jun 2018 13:08:46 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QH8iqk7012636
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QH8jJC8258198
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 17:08:44 GMT
+        Tue, 26 Jun 2018 17:08:45 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6E015B2066;
+        by IMSVA (Postfix) with ESMTP id D1BEEB2064;
         Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B36DB206B;
+        by IMSVA (Postfix) with ESMTP id AA90BB206B;
         Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id B1CC416CA0A4; Tue, 26 Jun 2018 10:10:49 -0700 (PDT)
+        id E90D116CA0AE; Tue, 26 Jun 2018 10:10:49 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,20 +60,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 09/22] rcu: Suppress false-positive preempted-task splats
-Date:   Tue, 26 Jun 2018 10:10:35 -0700
+Subject: [PATCH tip/core/rcu 19/22] rcu: Add up-tree information to dump_blkd_tasks() diagnostics
+Date:   Tue, 26 Jun 2018 10:10:45 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626002052.GA24146@linux.vnet.ibm.com>
 References: <20180626002052.GA24146@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062617-0068-0000-0000-0000030E817F
+x-cbid: 18062617-0064-0000-0000-00000320971D
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052668; UDB=6.00539669; IPR=6.00830593;
- MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:08:49
+ PH=3.00000004; SC=3.00000266; SDB=6.01052668; UDB=6.00539668; IPR=6.00830593;
+ MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:08:50
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062617-0069-0000-0000-000044D130D8
-Message-Id: <20180626171048.2181-9-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062617-0065-0000-0000-000039B968C9
+Message-Id: <20180626171048.2181-19-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,72 +86,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Consider the following sequence of events in a PREEMPT=y kernel:
-
-1.	All CPUs corresponding to a given rcu_node structure go offline.
-	A new grace period starts just after the CPU-hotplug code path
-	does its synchronize_rcu() for the last CPU, so at least this
-	CPU is present in that structure's ->qsmask.
-
-2.	Before the grace period ends, a CPU comes back online, and not
-	just any CPU, but the one corresponding to a non-zero bit in
-	the leaf rcu_node structure's ->qsmask.
-
-3.	A task running on the newly onlined CPU is preempted while in
-	an RCU read-side critical section.  Because this CPU's ->qsmask
-	bit is net, not only does this task queue itself on the leaf
-	rcu_node structure's ->blkd_tasks list, it also sets that
-	structure's ->gp_tasks pointer to reference it.
-
-4.	The grace period started in #1 above comes to an end.  This
-	results in rcu_gp_cleanup() being invoked, which, among other
-	things, checks to make sure that there are no tasks blocking the
-	just-ended grace period, that is, that all ->gp_tasks pointers
-	are NULL.  The ->gp_tasks pointer corresponding to the task
-	preempted in #3 above is non-NULL, which results in a splat.
-
-This splat is a false positive.  The task's RCU read-side critical
-section cannot have begun before the just-ended grace period because
-this would mean either: (1) The CPU came online before the grace period
-started, which cannot have happened because the grace period started
-before that CPU was all the way offline, or (2) The task started its
-RCU read-side critical section on some other CPU, but then it would
-have had to have been preempted before migrating to this CPU, which
-would mean that it would have instead queued itself on that other CPU's
-rcu_node structure.
-
-This commit eliminates this false positive by adding code to the end
-of rcu_cleanup_dying_idle_cpu() that reports a quiescent state to RCU,
-which has the side-effect of clearing that CPU's ->qsmask bit, preventing
-the above scenario.  This approach has the added benefit of more promptly
-reporting quiescent states corresponding to offline CPUs.
-
-Note well that the call to rcu_report_qs_rnp() reporting the quiescent
-state must come -before- the clearing of this CPU's bit in the leaf
-rcu_node structure's ->qsmaskinitnext field.  Otherwise, lockdep-RCU
-will complain bitterly about quiescent states coming from an offline CPU.
+This commit updates dump_blkd_tasks() to print out quiescent-state
+bitmasks for the rcu_node structures further up the tree.  This
+information helps debugging of interactions between CPU-hotplug
+operations and RCU grace-period initialization.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/rcu/tree_plugin.h | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 5171c0361fbd..58ca69b5656b 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3729,6 +3729,11 @@ static void rcu_cleanup_dying_idle_cpu(int cpu, struct rcu_state *rsp)
- 	/* Remove outgoing CPU from mask in the leaf rcu_node structure. */
- 	mask = rdp->grpmask;
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags); /* Enforce GP memory-order guarantee. */
-+	if (rnp->qsmask & mask) { /* RCU waiting on outgoing CPU? */
-+		/* Report quiescent state -before- changing ->qsmaskinitnext! */
-+		rcu_report_qs_rnp(mask, rsp, rnp, rnp->gp_seq, flags);
-+		raw_spin_lock_irqsave_rcu_node(rnp, flags);
-+	}
- 	rnp->qsmaskinitnext &= ~mask;
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- }
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 6b85ce936ad4..f45ff97b0d51 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -858,13 +858,15 @@ static void dump_blkd_tasks(struct rcu_node *rnp, int ncheck)
+ {
+ 	int i;
+ 	struct list_head *lhp;
++	struct rcu_node *rnp1;
+ 
+ 	raw_lockdep_assert_held_rcu_node(rnp);
+-	pr_info("%s: grp: %d-%d level: %d ->gp_seq %#lx ->completedqs %#lx\n",
++	pr_info("%s: grp: %d-%d level: %d ->gp_seq %ld ->completedqs %ld\n",
+ 		__func__, rnp->grplo, rnp->grphi, rnp->level,
+-		rnp->gp_seq, rnp->completedqs);
+-	pr_info("%s: ->qsmask %#lx ->qsmaskinit %#lx ->qsmaskinitnext %#lx\n",
+-		__func__, rnp->qsmask, rnp->qsmaskinit, rnp->qsmaskinitnext);
++		(long)rnp->gp_seq, (long)rnp->completedqs);
++	for (rnp1 = rnp; rnp1; rnp1 = rnp1->parent)
++		pr_info("%s: %d:%d ->qsmask %#lx ->qsmaskinit %#lx ->qsmaskinitnext %#lx\n",
++			__func__, rnp1->grplo, rnp1->grphi, rnp1->qsmask, rnp1->qsmaskinit, rnp1->qsmaskinitnext);
+ 	pr_info("%s: ->gp_tasks %p ->boost_tasks %p ->exp_tasks %p\n",
+ 		__func__, rnp->gp_tasks, rnp->boost_tasks, rnp->exp_tasks);
+ 	pr_info("%s: ->blkd_tasks", __func__);
 -- 
 2.17.1
 
