@@ -2,199 +2,158 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD1AC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D85C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65CBC26CD2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:04:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="buz+cTY4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65CBC26CD2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 930ED26E0C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:05:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930ED26E0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752957AbeFZREh (ORCPT
+        id S1753020AbeFZRFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:04:37 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:40547 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752581AbeFZREg (ORCPT
+        Tue, 26 Jun 2018 13:05:30 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.91]:48258 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752278AbeFZRF2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:04:36 -0400
-Received: by mail-ua0-f193.google.com with SMTP id j17-v6so4959980uap.7
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 10:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=U76yXF9Dg0IJjSSkDJOxfLXCcEwp5CP3Vls3qzBk9wo=;
-        b=buz+cTY4r8/ztECLIPyKYpeGAecadb1NxynfoEv3A9yiq6fVZ/JJjknZqtrBJLUWDU
-         FecDQkNytrarZ5Y9EDkiVmveoDSPcL3EhN3byhY864aLyXEq9IFDYlubWl04+cRY28xW
-         EMbNz9Mp9qjIEuY9xM3B/K5C2spA0MT6T3JRSLBg1jhYsuhFbrrJotLmGdjq2Dv8u9R1
-         vaYdKdXjFPpVF99s7MVhhNyT9lER/02EMTmWlp1rtMs16XlvsDwcULPl6F1WDw23YVZh
-         WZcW6sLNNpaqBOYMe3LJfLlSLzG3HDSp7cfDsYnYElOZidWGpPSe0633F/tDSDB3M+7B
-         R58w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=U76yXF9Dg0IJjSSkDJOxfLXCcEwp5CP3Vls3qzBk9wo=;
-        b=PPkc4DOJaPALnnx9YzWD2NABBYxoZAp1K5/jm+HK/YORDkhwGZSGF5XcVL8NT4io0t
-         86WcBdxI9yrhAx0rs5eGOwoe5u9AGwrTvhUSc98m6jvKckt8GQhd0W8FLSI2rQBz7Ee/
-         ykVID3c6DbN1qRdlmCnPyXUDe9VMlOOu4nl33VlEI8JdFumDiwvSDyeYXudkhd/5Qqzg
-         asOiBT87nVSNvUm2FcoHqtigb2a6tAnjrFpiVI48v59/WX26fONHMXkNcobeD74s3T89
-         b98aLa90hZeTomOzq/FWLhc5nJOxLHqziIDMwcbYzTndW1aVa5/0nQlh7eM6gPlaXLw8
-         gqPQ==
-X-Gm-Message-State: APt69E10mjlARI2bfrNV7z8ThApwPtJOkj5b94zkHI2l8SpVwbxjsjk/
-        CdW9DEbcIiF+IkqJGIx2LxCOIomYWlajO+XkOlBhcw==
-X-Google-Smtp-Source: AAOMgpeilKYi/fAlvG5hIUOIJAihNR+sDnu/KISNtQr+YkyesXFvywyhnd+c4WARsZ25ZhhsjuXLWnfqL2SlV/5RAKM=
-X-Received: by 2002:ab0:15ad:: with SMTP id i42-v6mr1505346uae.199.1530032675270;
- Tue, 26 Jun 2018 10:04:35 -0700 (PDT)
+        Tue, 26 Jun 2018 13:05:28 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 2593B400E6CC1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 12:05:28 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id XrOsfcLndBcCXXrP4fNpfT; Tue, 26 Jun 2018 12:05:27 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=37564 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fXrOs-000425-9t; Tue, 26 Jun 2018 12:05:06 -0500
+Subject: Re: [PATCH v2 01/11] crypto: xcbc: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180625211026.15819-1-keescook@chromium.org>
+ <20180625211026.15819-2-keescook@chromium.org>
+ <4d9f90abbf87539d3588f88117806f76c6826030.camel@perches.com>
+ <CAGXu5j+PE9WpeO7eSX87uxrtwybBbX=J+F9d9H7sdoXAcWjUEw@mail.gmail.com>
+ <1ed829f4-ee39-2a46-e0d9-5c7ea584cfff@embeddedor.com>
+ <CAGXu5j+HNSMbORYEApw67MHX_0MNeEwO23=f_U3KE-9kAk16Fg@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <271701cc-63a8-cac7-fcb6-d30dea9223e8@embeddedor.com>
+Date:   Tue, 26 Jun 2018 12:05:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 10:04:34
- -0700 (PDT)
-In-Reply-To: <20180626162438.16306-1-dima@arista.com>
-References: <20180626162438.16306-1-dima@arista.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 26 Jun 2018 20:04:34 +0300
-Message-ID: <CAHp75VchWpr+76rBCmXctpYi5a06pr-MT==FrNDy03g=boxfog@mail.gmail.com>
-Subject: Re: [PATCHv2] lib/ratelimit: Lockless ratelimiting
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAGXu5j+HNSMbORYEApw67MHX_0MNeEwO23=f_U3KE-9kAk16Fg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fXrOs-000425-9t
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:37564
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 7:24 PM, Dmitry Safonov <dima@arista.com> wrote:
-> Currently ratelimit_state is protected with spin_lock. If the .lock is
-> taken at the moment of ___ratelimit() call, the message is suppressed to
-> make ratelimiting robust.
->
-> That results in the following issue issue:
->       CPU0                          CPU1
-> ------------------           ------------------
-> printk_ratelimit()           printk_ratelimit()
->         |                             |
->   try_spin_lock()              try_spin_lock()
->         |                             |
-> time_is_before_jiffies()          return 0; // suppress
->
-> So, concurrent call of ___ratelimit() results in silently suppressing
-> one of the messages, regardless if the limit is reached or not.
-> And rc->missed is not increased in such case so the issue is covered
-> from user.
->
-> Convert ratelimiting to use atomic counters and drop spin_lock.
->
-> Note: That might be unexpected, but with the first interval of messages
-> storm one can print up to burst*2 messages. So, it doesn't guarantee
-> that in *any* interval amount of messages is lesser than burst.
-> But, that differs lightly from previous behavior where one can start
-> burst=5 interval and print 4 messages on the last milliseconds of
-> interval + new 5 messages from new interval (totally 9 messages in
-> lesser than interval value):
->
->    msg0              msg1-msg4 msg0-msg4
->     |                     |       |
->     |                     |       |
->  |--o---------------------o-|-----o--------------------|--> (t)
->                           <------->
->                        Lesser than burst
-
->  #define RATELIMIT_STATE_INIT(name, interval_init, burst_init) {                \
-> -               .lock           = __RAW_SPIN_LOCK_UNLOCKED(name.lock),  \
-
-name is now redundant, isn't it?
-
->                 .interval       = interval_init,                        \
->                 .burst          = burst_init,                           \
-> +               .printed        = ATOMIC_INIT(0),                       \
-> +               .missed         = ATOMIC_INIT(0),                       \
->         }
->
->  #define RATELIMIT_STATE_INIT_DISABLED                                  \
-> @@ -42,9 +41,10 @@ static inline void ratelimit_state_init(struct ratelimit_state *rs,
->  {
->         memset(rs, 0, sizeof(*rs));
->
-> -       raw_spin_lock_init(&rs->lock);
->         rs->interval    = interval;
->         rs->burst       = burst;
-> +       atomic_set(&rs->printed, 0);
-> +       atomic_set(&rs->missed, 0);
-
-Can it be
-
-*rs = RATELIMIT_STATE_INIT(interval, burst);
-
-?
-
-(Yes, the '(struct ratelimit_state)' has to be added to macro to allow this)
-
->  }
 
 
->  static inline void ratelimit_state_exit(struct ratelimit_state *rs)
->  {
-> +       int missed;
-> +
->         if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE))
->                 return;
->
-> -       if (rs->missed) {
-> +       if ((missed = atomic_xchg(&rs->missed, 0)))
+On 06/26/2018 11:50 AM, Kees Cook wrote:
+> On Mon, Jun 25, 2018 at 5:54 PM, Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>>
+>> On 06/25/2018 06:06 PM, Kees Cook wrote:
+>>> On Mon, Jun 25, 2018 at 2:23 PM, Joe Perches <joe@perches.com> wrote:
+>>>>  warning-3 += -Wswitch-default
+>>>
+>>> This reminds me, though. Should _this_ one get moved to warning-1?
+>>>
+>>> $ git log next-20180625 --no-merges --grep 'mark expected switch
+>>> fall-through' --oneline | wc -l
+>>> 129
+>>>
+>>> Gustavo, have you checked recently how many of these are left? Maybe
+>>> we can move this to default too?
+>>>
+>>
+>> I just built today's kernel and we have a total of 704 fall-through warnings with -Wimplicit-fallthrough=2
+> 
+> Wow; that's still a lot!
+> 
+>> I think we might be able to do that in this development cycle.
+> 
+> Do you think we could finish the rest of the unannotated ones this
+> cycle? If not, we could upgrade from W=3 to W=1 since it's a condition
+> we're actively trying to remove from the kernel...
+> 
 
-Perhaps
+Most definitely. I'm already on that!
 
-missed = ...
-if (missed)
-
-?
-
->                 pr_warn("%s: %d output lines suppressed due to ratelimiting\n",
-> -                       current->comm, rs->missed);
-> -               rs->missed = 0;
-> -       }
-> +                       current->comm, missed);
->  }
-
-> +static void ratelimit_end_interval(struct ratelimit_state *rs, const char *func)
-> +{
-> +       rs->begin = jiffies;
-> +
-> +       if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
-
-> +               unsigned missed = (unsigned)atomic_xchg(&rs->missed, 0);
-> +
-> +               if (missed)
-> +                       pr_warn("%s: %u callbacks suppressed\n", func, missed);
-
-Instead of casting, perhaps
-
-int missed = ...
-
-I think you already has a guard against going it below zero. Or I
-missed something?
-
-> +       }
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks
+--
+Gustavo
