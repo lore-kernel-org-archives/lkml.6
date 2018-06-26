@@ -2,198 +2,273 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FFCC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80A8C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27DDC26A84
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:29:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27DDC26A84
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8243426A8A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:31:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8243426A8A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935169AbeFZM3y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:29:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35986 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933509AbeFZM3w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:29:52 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QCTFVQ078792
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:29:51 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jukyccbh6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:29:51 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 08:29:50 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 08:29:45 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QCTieP7733622
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 12:29:44 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 30CF5B2065;
-        Tue, 26 Jun 2018 08:29:38 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E6EECB2064;
-        Tue, 26 Jun 2018 08:29:37 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.202.60])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 08:29:37 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 295C816C5DDD; Tue, 26 Jun 2018 05:31:49 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 05:31:49 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 2/2] rcu: Make expedited GPs handle CPU 0
- being offline
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180625224308.GA10064@linux.vnet.ibm.com>
- <20180625224332.10596-2-paulmck@linux.vnet.ibm.com>
- <20180626093820.GG2494@hirez.programming.kicks-ass.net>
- <20180626104447.GG9125@tardis>
- <20180626114652.GH9125@tardis>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626114652.GH9125@tardis>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062612-0072-0000-0000-00000374AC3D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009258; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052575; UDB=6.00539612; IPR=6.00830499;
- MB=3.00021861; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 12:29:49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062612-0073-0000-0000-0000487DDBA2
-Message-Id: <20180626123149.GY3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260142
+        id S935394AbeFZMbA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:31:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33945 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935171AbeFZMa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:30:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E63A1206ED; Tue, 26 Jun 2018 14:30:55 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BAA4A203B0;
+        Tue, 26 Jun 2018 14:30:55 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     "David S . Miller" <davem@davemloft.net>
+Cc:     Allan Nielsen <Allan.Nielsen@microsemi.com>,
+        razvan.stefanescu@nxp.com, po.liu@nxp.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH net-next v2 1/2] net: mscc: ocelot: add bonding support
+Date:   Tue, 26 Jun 2018 14:28:48 +0200
+Message-Id: <20180626122849.13174-2-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180626122849.13174-1-alexandre.belloni@bootlin.com>
+References: <20180626122849.13174-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 07:46:52PM +0800, Boqun Feng wrote:
-> On Tue, Jun 26, 2018 at 06:44:47PM +0800, Boqun Feng wrote:
-> > On Tue, Jun 26, 2018 at 11:38:20AM +0200, Peter Zijlstra wrote:
-> > > On Mon, Jun 25, 2018 at 03:43:32PM -0700, Paul E. McKenney wrote:
-> > > > +		preempt_disable();
-> > > > +		for_each_leaf_node_possible_cpu(rnp, cpu) {
-> > > > +			if (cpu_is_offline(cpu)) /* Preemption disabled. */
-> > > > +				continue;
-> > > 
-> > > Create for_each_node_online_cpu() instead? Seems a bit pointless to
-> > > iterate possible mask only to then check it against the online mask.
-> > > Just iterate the online mask directly.
-> > > 
-> > > Or better yet, write this as:
-> > > 
-> > > 	preempt_disable();
-> > > 	cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
-> > > 	if (cpu > rnp->grphi)
-> > > 		cpu = WORK_CPU_UNBOUND;
-> > > 	queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-> > > 	preempt_enable();
-> > > 
-> > > Which is what it appears to be doing.
-> > > 
-> > 
-> > Make sense! Thanks ;-)
-> > 
-> > Applied this and running a TREE03 rcutorture. If all go well, I will
-> > send the updated patch.
-> 
-> So the patch has passed one 30 min run for TREE03 rcutorture. Paul,
-> if it looks good, could you take it for your next spin or pull request
-> in the future? Thanks.
+Add link aggregation hardware offload support for Ocelot.
 
-Looks much improved, thank you both!  I will pull this in later
-today, Pacific Time.
+ocelot_get_link_ksettings() is not great but it does work until the driver
+is reworked to switch to phylink.
 
-							Thanx, Paul
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/net/ethernet/mscc/ocelot.c | 160 +++++++++++++++++++++++++++++
+ drivers/net/ethernet/mscc/ocelot.h |   2 +-
+ 2 files changed, 161 insertions(+), 1 deletion(-)
 
-> Regards,
-> Boqun
-> 
-> -------------->8
-> Subject: [PATCH tip/core/rcu v2] rcu: exp: Make expedited GPs handle CPU 0 being offline
-> 
-> Currently, the parallelized initialization of expedited grace periods
-> uses the workqueue associated with each rcu_node structure's ->grplo
-> field.  This works fine unless that CPU is offline.  This commit
-> therefore uses the CPU corresponding to the lowest-numbered online CPU,
-> or fallback to queue the work on WORK_CPU_UNBOUND if there are no online
-> CPUs on this rcu_node structure.
-> 
-> Note that this patch uses cpu_online_mask instead of the usual approach
-> of checking bits in the rcu_node structure's ->qsmaskinitnext field.
-> This is safe because preemption is disabled across both the
-> cpu_online_mask check and the call to queue_work_on().
-> 
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> [ paulmck: Disable preemption to close offline race window. ]
-> Not-Yet-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> ---
-> v1 --> v2:
-> 	
-> *	Replace the for_each_leaf_node_possible_cpu() + cpu_is_offline()
-> 	check loop with a single cpumask_next() as suggested by Peter
-> 	Zijlstra
-> 
->  kernel/rcu/tree_exp.h | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> index d40708e8c5d6..3bf87fd4bd91 100644
-> --- a/kernel/rcu/tree_exp.h
-> +++ b/kernel/rcu/tree_exp.h
-> @@ -473,6 +473,7 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
->  				     smp_call_func_t func)
->  {
->  	struct rcu_node *rnp;
-> +	int cpu;
-> 
->  	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("reset"));
->  	sync_exp_reset_tree(rsp);
-> @@ -492,7 +493,13 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
->  			continue;
->  		}
->  		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
-> -		queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
-> +		preempt_disable();
-> +		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
-> +		/* All offlines, queue the work on an unbound CPU */
-> +		if (unlikely(cpu > rnp->grphi))
-> +			cpu = WORK_CPU_UNBOUND;
-> +		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-> +		preempt_enable();
->  		rnp->exp_need_flush = true;
->  	}
-> 
-> -- 
-> 2.17.1
-> 
+diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
+index fb2c8f8071e6..e154bdd1d12d 100644
+--- a/drivers/net/ethernet/mscc/ocelot.c
++++ b/drivers/net/ethernet/mscc/ocelot.c
+@@ -779,6 +779,8 @@ static const struct ethtool_ops ocelot_ethtool_ops = {
+ 	.get_strings		= ocelot_get_strings,
+ 	.get_ethtool_stats	= ocelot_get_ethtool_stats,
+ 	.get_sset_count		= ocelot_get_sset_count,
++	.get_link_ksettings	= phy_ethtool_get_link_ksettings,
++	.set_link_ksettings	= phy_ethtool_set_link_ksettings,
+ };
+ 
+ static int ocelot_port_attr_get(struct net_device *dev,
+@@ -1087,6 +1089,137 @@ static void ocelot_port_bridge_leave(struct ocelot_port *ocelot_port,
+ 		ocelot->hw_bridge_dev = NULL;
+ }
+ 
++static void ocelot_set_aggr_pgids(struct ocelot *ocelot)
++{
++	int i, port, lag;
++
++	/* Reset destination and aggregation PGIDS */
++	for (port = 0; port < ocelot->num_phys_ports; port++)
++		ocelot_write_rix(ocelot, BIT(port), ANA_PGID_PGID, port);
++
++	for (i = PGID_AGGR; i < PGID_SRC; i++)
++		ocelot_write_rix(ocelot, GENMASK(ocelot->num_phys_ports - 1, 0),
++				 ANA_PGID_PGID, i);
++
++	/* Now, set PGIDs for each LAG */
++	for (lag = 0; lag < ocelot->num_phys_ports; lag++) {
++		unsigned long bond_mask;
++		int aggr_count = 0;
++		u8 aggr_idx[16];
++
++		bond_mask = ocelot->lags[lag];
++		if (!bond_mask)
++			continue;
++
++		for_each_set_bit(port, &bond_mask, ocelot->num_phys_ports) {
++			// Destination mask
++			ocelot_write_rix(ocelot, bond_mask,
++					 ANA_PGID_PGID, port);
++			aggr_idx[aggr_count] = port;
++			aggr_count++;
++		}
++
++		for (i = PGID_AGGR; i < PGID_SRC; i++) {
++			u32 ac;
++
++			ac = ocelot_read_rix(ocelot, ANA_PGID_PGID, i);
++			ac &= ~bond_mask;
++			ac |= BIT(aggr_idx[i % aggr_count]);
++			ocelot_write_rix(ocelot, ac, ANA_PGID_PGID, i);
++		}
++	}
++}
++
++static void ocelot_setup_lag(struct ocelot *ocelot, int lag)
++{
++	unsigned long bond_mask = ocelot->lags[lag];
++	unsigned int p;
++
++	for_each_set_bit(p, &bond_mask, ocelot->num_phys_ports) {
++		u32 port_cfg = ocelot_read_gix(ocelot, ANA_PORT_PORT_CFG, p);
++
++		port_cfg &= ~ANA_PORT_PORT_CFG_PORTID_VAL_M;
++
++		/* Use lag port as logical port for port i */
++		ocelot_write_gix(ocelot, port_cfg |
++				 ANA_PORT_PORT_CFG_PORTID_VAL(lag),
++				 ANA_PORT_PORT_CFG, p);
++	}
++}
++
++static int ocelot_port_lag_join(struct ocelot_port *ocelot_port,
++				struct net_device *bond)
++{
++	struct ocelot *ocelot = ocelot_port->ocelot;
++	int p = ocelot_port->chip_port;
++	int lag, lp;
++	struct net_device *ndev;
++	u32 bond_mask = 0;
++
++	rcu_read_lock();
++	for_each_netdev_in_bond_rcu(bond, ndev) {
++		struct ocelot_port *port = netdev_priv(ndev);
++
++		bond_mask |= BIT(port->chip_port);
++	}
++	rcu_read_unlock();
++
++	lp = __ffs(bond_mask);
++
++	/* If the new port is the lowest one, use it as the logical port from
++	 * now on
++	 */
++	if (p == lp) {
++		lag = p;
++		ocelot->lags[p] = bond_mask;
++		bond_mask &= ~BIT(p);
++		if (bond_mask) {
++			lp = __ffs(bond_mask);
++			ocelot->lags[lp] = 0;
++		}
++	} else {
++		lag = lp;
++		ocelot->lags[lp] |= BIT(p);
++	}
++
++	ocelot_setup_lag(ocelot, lag);
++	ocelot_set_aggr_pgids(ocelot);
++
++	return 0;
++}
++
++static void ocelot_port_lag_leave(struct ocelot_port *ocelot_port,
++				  struct net_device *bond)
++{
++	struct ocelot *ocelot = ocelot_port->ocelot;
++	int p = ocelot_port->chip_port;
++	u32 port_cfg;
++	int i;
++
++	/* Remove port from any lag */
++	for (i = 0; i < ocelot->num_phys_ports; i++)
++		ocelot->lags[i] &= ~BIT(ocelot_port->chip_port);
++
++	/* if it was the logical port of the lag, move the lag config to the
++	 * next port
++	 */
++	if (ocelot->lags[p]) {
++		int n = __ffs(ocelot->lags[p]);
++
++		ocelot->lags[n] = ocelot->lags[p];
++		ocelot->lags[p] = 0;
++
++		ocelot_setup_lag(ocelot, n);
++	}
++
++	port_cfg = ocelot_read_gix(ocelot, ANA_PORT_PORT_CFG, p);
++	port_cfg &= ~ANA_PORT_PORT_CFG_PORTID_VAL_M;
++	ocelot_write_gix(ocelot, port_cfg | ANA_PORT_PORT_CFG_PORTID_VAL(p),
++			 ANA_PORT_PORT_CFG, p);
++
++	ocelot_set_aggr_pgids(ocelot);
++}
++
+ /* Checks if the net_device instance given to us originate from our driver. */
+ static bool ocelot_netdevice_dev_check(const struct net_device *dev)
+ {
+@@ -1113,6 +1246,14 @@ static int ocelot_netdevice_port_event(struct net_device *dev,
+ 				ocelot_port_bridge_leave(ocelot_port,
+ 							 info->upper_dev);
+ 		}
++		if (netif_is_lag_master(info->upper_dev)) {
++			if (info->linking)
++				err = ocelot_port_lag_join(ocelot_port,
++							   info->upper_dev);
++			else
++				ocelot_port_lag_leave(ocelot_port,
++						      info->upper_dev);
++		}
+ 		break;
+ 	default:
+ 		break;
+@@ -1128,6 +1269,20 @@ static int ocelot_netdevice_event(struct notifier_block *unused,
+ 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
+ 	int ret = 0;
+ 
++	if (event == NETDEV_PRECHANGEUPPER &&
++	    netif_is_lag_master(info->upper_dev)) {
++		struct netdev_lag_upper_info *lag_upper_info = info->upper_info;
++		struct netlink_ext_ack *extack;
++
++		if (lag_upper_info->tx_type != NETDEV_LAG_TX_TYPE_HASH) {
++			extack = netdev_notifier_info_to_extack(&info->info);
++			NL_SET_ERR_MSG_MOD(extack, "LAG device using unsupported Tx type");
++
++			ret = -EINVAL;
++			goto notify;
++		}
++	}
++
+ 	if (netif_is_lag_master(dev)) {
+ 		struct net_device *slave;
+ 		struct list_head *iter;
+@@ -1200,6 +1355,11 @@ int ocelot_init(struct ocelot *ocelot)
+ 	int i, cpu = ocelot->num_phys_ports;
+ 	char queue_name[32];
+ 
++	ocelot->lags = devm_kcalloc(ocelot->dev, ocelot->num_phys_ports,
++				    sizeof(u32), GFP_KERNEL);
++	if (!ocelot->lags)
++		return -ENOMEM;
++
+ 	ocelot->stats = devm_kcalloc(ocelot->dev,
+ 				     ocelot->num_phys_ports * ocelot->num_stats,
+ 				     sizeof(u64), GFP_KERNEL);
+diff --git a/drivers/net/ethernet/mscc/ocelot.h b/drivers/net/ethernet/mscc/ocelot.h
+index 097bd12a10d4..616bec30dfa3 100644
+--- a/drivers/net/ethernet/mscc/ocelot.h
++++ b/drivers/net/ethernet/mscc/ocelot.h
+@@ -493,7 +493,7 @@ struct ocelot {
+ 	u8 num_cpu_ports;
+ 	struct ocelot_port **ports;
+ 
+-	u16 lags[16];
++	u32 *lags;
+ 
+ 	/* Keep track of the vlan port masks */
+ 	u32 vlan_mask[VLAN_N_VID];
+-- 
+2.18.0
 
