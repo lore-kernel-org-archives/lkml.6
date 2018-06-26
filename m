@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5805C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D578AC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DFF4267A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:27:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CC7325C40
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:27:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="OsGmsgvx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DFF4267A5
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="OZpcw8s3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CC7325C40
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934623AbeFZJ0c (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:26:32 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34864 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934394AbeFZJZx (ORCPT
+        id S934585AbeFZJ0b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:26:31 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36995 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934152AbeFZJZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:25:53 -0400
-Received: by mail-wr0-f196.google.com with SMTP id c13-v6so6521371wrq.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:25:52 -0700 (PDT)
+        Tue, 26 Jun 2018 05:25:54 -0400
+Received: by mail-wr0-f193.google.com with SMTP id k6-v6so16470688wrp.4
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ahqoiiTcjlh/wyXMEWUU//ONxQ8k9wdMzGQvnnctcxI=;
-        b=OsGmsgvx0I1s1nugGhEtCt6LPvOsAIWBuEe1h4sWQQ2zOJv2WJcdaT/oorKcP1L15g
-         cbElphsJwy5YqQd/zZqbYCLdWS2MJpli8rCYXW5Mo/7tUN5NK9F8p6spFKYRXkbBoYbM
-         qXA9xtjvkeGGR+rK9yaHwcTbg0jIO9+xckP+4/gt94oxtFGi8SbfKi7IjvGMJZwZZ9RV
-         X0gf5n3xe9ssK8PvTMSGuZXP3LLLRcEDnrx4Vez+0QqK5m1A6yBfampznOalDKTDClkH
-         NK+9jTsysBUzz67UNXER3Bfg5YRUHE8Si8zvYf8cyypAME1gMJVUiiErc6587U3aBgFX
-         eZFg==
+        bh=DD+tegRkL77MXGQNOF6Vh7wMcrPvGgbRls6E01LtcQY=;
+        b=OZpcw8s3WOhiEnQDlGrRMjFedTDuF/I8JHmSFf12/YTSclsoZwVJmJZviSX83HTKWX
+         37I61rzi72H5Kcx9nIX9RddKy36LbJWxtCFgKEXksHtutSDKUGa/dzz2/g9YKWzQl33B
+         tW3UmO+Og5OnxPD+6zOdfkKgEhGOOXssjaIKOmeDRtBoAv5mVtVM9+Y8/Xv8yHACeaBe
+         dj9/ATb6dLe6SUJDcHUrsjL7A4BsTKwm3/NJODagXR0+qa66qeeKE0W4M0xgqBNvZZmr
+         Oh56gC1vPX+zI6lk39go3l+wvVMQFbrB7iUIde3ivTToye3T1r0noGDGx13K7AzxMTz2
+         92Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ahqoiiTcjlh/wyXMEWUU//ONxQ8k9wdMzGQvnnctcxI=;
-        b=YmRiLGv0aJ7yaVqHErbP3OgCfdJG7UAd1MImZfbuatzT4ce2oHR08Gj1W1xsH29UDZ
-         oUKxNfnZgnSlFBTCXxCTLtLsbSedkXsSrAFaShuLR4JB43QjhDiDsUPUq4xv4ohf3GQq
-         yFT1QTjAtbeYliXmPfRoO+6kSTvE77TRkgMGIcIHFwAQYpU+OvS+Er2PzhTxn1jZ3Bgb
-         neLTitjvUd8bkd3+enzhjZl/j9V20EWGgWsbTf1s4RfchQSvugQU7OKQY8o3tuAhhRaw
-         8V7GylgZQu0ZZvtL5Fv2uS6jcFEAbaY7uDXg2H9MLK8IndZ6F9S7o+H1okUtm8hjBd6K
-         JmvA==
-X-Gm-Message-State: APt69E07JL3GzfBr+evnY/voSOaEX6K8lJ3JxmIzKe2NKwq4lgEWKmfJ
-        BfQdnnkpcRN2WVGMOGMT2wCang==
-X-Google-Smtp-Source: AAOMgpcVqvbnBzHSLGE1qVpgXdPlVIsEq9B2rFg995Dm16Lew9yfPUT65Vmy3h4qi3Vcx99LQYTovw==
-X-Received: by 2002:adf:80c4:: with SMTP id 62-v6mr714949wrl.95.1530005151720;
-        Tue, 26 Jun 2018 02:25:51 -0700 (PDT)
+        bh=DD+tegRkL77MXGQNOF6Vh7wMcrPvGgbRls6E01LtcQY=;
+        b=NvaXfrIsDw+ABB2/L41oHdQK5VsAgEDEqVtLcVBcVNSgNykkB1oHGIp2SUHa1PPAXP
+         +2YedIiLWUaTbGc+JnuN/ZKCI8dO2eyQHiWYUQGMuYeIP9ln9/Q98QZmm21X8gYhgAXH
+         aBuRVKJuI0MY6fICsAcOpiqN2f8bWCaA7lfQ0whzfR1mrCmMQBxXY3iNzyeVrveKxGkz
+         F8b4Ctd5/4rIoXXX4H55zAud+Uu3a44WY4UpkTIa09yFrDQrwrboqyjAXhft9zWN8EVO
+         YGu/D/CzdRiJG1uUpG9qeiPcvtO+w3ugMduUrfzD9eeOwigBscXZb9mA9vZh1pnr5Hkr
+         wbHw==
+X-Gm-Message-State: APt69E0Yx8SSzbBpgHmEUu2lR95ab5Kkwqks2doSuhf9eEEI24QXCLHH
+        L/GzCM0jZg2MzUi+vN4hfp5XzA==
+X-Google-Smtp-Source: AAOMgpc367oVAjiYXtIjo/GVNimVUQHcQFbT+8roSZ6PKnwJh0a30wwTuc8wPhf9FzcJdbyvGubQaA==
+X-Received: by 2002:adf:fe46:: with SMTP id m6-v6mr719675wrs.171.1530005152907;
+        Tue, 26 Jun 2018 02:25:52 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-NIC-1-55-10.w2-15.abo.wanadoo.fr. [2.15.147.10])
-        by smtp.gmail.com with ESMTPSA id a8-v6sm1528791wrn.50.2018.06.26.02.25.50
+        by smtp.gmail.com with ESMTPSA id a8-v6sm1528791wrn.50.2018.06.26.02.25.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 02:25:51 -0700 (PDT)
+        Tue, 26 Jun 2018 02:25:52 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -66,9 +66,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 09/13] ARM: davinci: dm644x-evm: use aemif platform driver
-Date:   Tue, 26 Jun 2018 11:25:33 +0200
-Message-Id: <20180626092537.6737-10-brgl@bgdev.pl>
+Subject: [PATCH v2 10/13] ARM: davinci: da830-evm: use aemif platform driver
+Date:   Tue, 26 Jun 2018 11:25:34 +0200
+Message-Id: <20180626092537.6737-11-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
 References: <20180626092537.6737-1-brgl@bgdev.pl>
@@ -80,94 +80,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
 We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in dm644x-evm.
+device instead of using the handcrafted API in da830-evm.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-dm644x-evm.c | 55 ++++++++++++++++++------
- 1 file changed, 42 insertions(+), 13 deletions(-)
+ arch/arm/mach-davinci/board-da830-evm.c | 56 +++++++++++++++++++------
+ 1 file changed, 44 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index 738e443ab15f..e4a8f9225d16 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -42,6 +42,7 @@
- #include <linux/platform_data/mmc-davinci.h>
- #include <linux/platform_data/usb-davinci.h>
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index b2470141dba3..7d8ab36ff83d 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -28,6 +28,7 @@
  #include <linux/platform_data/mtd-davinci-aemif.h>
+ #include <linux/platform_data/spi-davinci.h>
+ #include <linux/platform_data/usb-davinci.h>
 +#include <linux/platform_data/ti-aemif.h>
+ #include <linux/regulator/machine.h>
  
- #include "davinci.h"
- 
-@@ -174,14 +175,47 @@ static struct resource davinci_evm_nandflash_resource[] = {
+ #include <asm/mach-types.h>
+@@ -333,14 +334,48 @@ static struct resource da830_evm_nand_resources[] = {
  	},
  };
  
--static struct platform_device davinci_evm_nandflash_device = {
+-static struct platform_device da830_evm_nand_device = {
 -	.name		= "davinci_nand",
--	.id		= 0,
+-	.id		= 1,
 -	.dev		= {
--		.platform_data	= &davinci_evm_nandflash_data,
-+static struct resource davinci_evm_aemif_resource[] = {
-+	{
-+		.start		= DM644X_ASYNC_EMIF_CONTROL_BASE,
-+		.end		= DM644X_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
-+		.flags		= IORESOURCE_MEM,
- 	},
--	.num_resources	= ARRAY_SIZE(davinci_evm_nandflash_resource),
--	.resource	= davinci_evm_nandflash_resource,
-+};
-+
-+static struct aemif_abus_data davinci_evm_aemif_abus_data[] = {
-+	{
-+		.cs		= 1,
-+	},
-+};
-+
-+static struct platform_device davinci_evm_nandflash_devices[] = {
+-		.platform_data	= &da830_evm_nand_pdata,
++static struct platform_device da830_evm_aemif_devices[] = {
 +	{
 +		.name		= "davinci_nand",
-+		.id		= 0,
++		.id		= 1,
 +		.dev		= {
-+			.platform_data	= &davinci_evm_nandflash_data,
++			.platform_data	= &da830_evm_nand_pdata,
 +		},
-+		.num_resources	= ARRAY_SIZE(davinci_evm_nandflash_resource),
-+		.resource	= davinci_evm_nandflash_resource,
++		.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
++		.resource	= da830_evm_nand_resources,
 +	},
 +};
 +
-+static struct aemif_platform_data davinci_evm_aemif_pdata = {
-+	.abus_data = davinci_evm_aemif_abus_data,
-+	.num_abus_data = ARRAY_SIZE(davinci_evm_aemif_abus_data),
-+	.sub_devices = davinci_evm_nandflash_devices,
-+	.num_sub_devices = ARRAY_SIZE(davinci_evm_nandflash_devices),
++static struct resource da830_evm_aemif_resource[] = {
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
 +};
 +
-+static struct platform_device davinci_evm_aemif_device = {
-+	.name			= "ti-aemif",
-+	.id			= -1,
++static struct aemif_abus_data da830_evm_aemif_abus_data[] = {
++	{
++		.cs	= 3,
+ 	},
+-	.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
+-	.resource	= da830_evm_nand_resources,
++};
++
++static struct aemif_platform_data da830_evm_aemif_pdata = {
++	.abus_data		= da830_evm_aemif_abus_data,
++	.num_abus_data		= ARRAY_SIZE(da830_evm_aemif_abus_data),
++	.sub_devices		= da830_evm_aemif_devices,
++	.num_sub_devices	= ARRAY_SIZE(da830_evm_aemif_devices),
++	.cs_offset		= 2,
++};
++
++static struct platform_device da830_evm_aemif_device = {
++	.name		= "ti-aemif",
++	.id		= -1,
 +	.dev = {
-+		.platform_data	= &davinci_evm_aemif_pdata,
++		.platform_data = &da830_evm_aemif_pdata,
 +	},
-+	.resource		= davinci_evm_aemif_resource,
-+	.num_resources		= ARRAY_SIZE(davinci_evm_aemif_resource),
++	.resource	= da830_evm_aemif_resource,
++	.num_resources	= ARRAY_SIZE(da830_evm_aemif_resource),
  };
  
- static u64 davinci_fb_dma_mask = DMA_BIT_MASK(32);
-@@ -795,12 +829,7 @@ static __init void davinci_evm_init(void)
+ /*
+@@ -371,12 +406,9 @@ static inline void da830_evm_init_nand(int mux_mode)
+ 	if (ret)
+ 		pr_warn("%s: emif25 mux setup failed: %d\n", __func__, ret);
  
- 		/* only one device will be jumpered and detected */
- 		if (HAS_NAND) {
--			platform_device_register(&davinci_evm_nandflash_device);
+-	ret = platform_device_register(&da830_evm_nand_device);
++	ret = platform_device_register(&da830_evm_aemif_device);
+ 	if (ret)
+-		pr_warn("%s: NAND device not registered\n", __func__);
 -
--			if (davinci_aemif_setup(&davinci_evm_nandflash_device))
--				pr_warn("%s: Cannot configure AEMIF\n",
--					__func__);
--
-+			platform_device_register(&davinci_evm_aemif_device);
- #ifdef CONFIG_I2C
- 			evm_leds[7].default_trigger = "nand-disk";
- #endif
+-	if (davinci_aemif_setup(&da830_evm_nand_device))
+-		pr_warn("%s: Cannot configure AEMIF\n", __func__);
++		pr_warn("%s: AEMIF device not registered\n", __func__);
+ 
+ 	gpio_direction_output(mux_mode, 1);
+ }
 -- 
 2.17.1
 
