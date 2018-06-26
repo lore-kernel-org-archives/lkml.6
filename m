@@ -2,296 +2,112 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347C5C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA7DC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3D0E26A4D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:29:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D0E26A4D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+	by mail.kernel.org (Postfix) with ESMTP id A7D3626B6C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:30:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="n1e5RgAT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D3626B6C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965466AbeFZN3r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:29:47 -0400
-Received: from p3plsmtpa11-09.prod.phx3.secureserver.net ([68.178.252.110]:33681
-        "EHLO p3plsmtpa11-09.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965649AbeFZN3p (ORCPT
+        id S965654AbeFZNaf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:30:35 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53124 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965412AbeFZNad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:29:45 -0400
-Received: from [192.168.0.67] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id Xo2RfXFFrXYbAXo2Sf9WpW; Tue, 26 Jun 2018 06:29:44 -0700
-Subject: Re: [Patch v2 14/15] CIFS: Add support for direct I/O write
-To:     Long Li <longli@microsoft.com>, Steve French <sfrench@samba.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-References: <20180530194807.31657-1-longli@linuxonhyperv.com>
- <20180530194807.31657-15-longli@linuxonhyperv.com>
- <9162de67-fc5d-26e9-5882-26377194a2ff@talpey.com>
- <DM5PR2101MB07285F85A018D8C2EFC2D730CE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <ade11bce-702e-7aa4-ffa8-9565b77a0aef@talpey.com>
-Date:   Tue, 26 Jun 2018 09:29:43 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 09:30:33 -0400
+Received: by mail-it0-f66.google.com with SMTP id m194-v6so2320330itg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 06:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=P2P2H0fm437n6tTQ49a9eBicnB/nfuRydIxc3Gjt56c=;
+        b=n1e5RgATpo+2uShehgpOHVhMlisoMinRNyVhE7ITVtS8b0Rc0787ULFZFov1uBfxy1
+         z2cM/34AzhqOdHAdneS40GgJiZgrgioFoipcSclXaAktbVmb+B4hq6XcSplzWTJqjItD
+         w1MroQaU4FQtAj/nh9bImOlr4hmrh5Gz9O8ufoMX7+n6SeFPwoDtzOvunoI/zcimqJ39
+         lL3fcv5uZpfLOwsYXskf4tSzl6XNFTCN71d6PhtPaZfYBe/TZ2dv+EoywXd3ZbBulX0g
+         rb3dPuOjIfgm/jmCHDUk2gKnqrl5O8SOIXSuUt+QukOTCC3l8ETIBCfeI8BE6HqE3PCf
+         y/Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=P2P2H0fm437n6tTQ49a9eBicnB/nfuRydIxc3Gjt56c=;
+        b=qmtmeOtmmmInUKkjn0AcxgO5Fs4CTtdhmNoInq8GEyyqsfi2AooqliuF0fDmMyo+KV
+         DBqOuPwAHD5qdQkcderUV2V3lEMkTxblNtVFAfiun/g0zpGR9Uv0DldLh5WXFsJLOuIx
+         CFuG0tWTAKQnHptayMA2TBrjZSec/eT6e+5Q/ZVZHU3r5u+uEtYwc/bDBKF8kjh1ktsX
+         s2YM51L9pR8l/koWJZDw1s8Icm9reYFvlNF1HDlae5xNkQTQ8XmCFHT4kmIhRzlhtnZA
+         9DjaLM7jIAgf9S2BHk1K5avvSHV6mKXQ4gGVvOn92Jg3z887Vi4Qus+3d7/MJA8XvRIQ
+         KPKg==
+X-Gm-Message-State: APt69E0yN71FDlYbk3N3hue4s8cEyXgysPCA/BhxnMmGzGM+L4rg9KNA
+        36uewEh2oVO/qNGHyc4c/q/lZUu3d5ewiBeX3NYZtQ==
+X-Google-Smtp-Source: ADUXVKKseEOEEuRRQj1oVO8/mfomWwETT6FioVy8zSL+nxEHYoBDGu1G+WgbGWodZgYCvqeqF0Ii5H6DlNjasLtVwrU=
+X-Received: by 2002:a24:d80a:: with SMTP id b10-v6mr1392936itg.141.1530019832417;
+ Tue, 26 Jun 2018 06:30:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <DM5PR2101MB07285F85A018D8C2EFC2D730CE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfIVVgzx3NFjhCEmFz39Z4rCJF/LFddt7XrXnbCrfK2z5PCnhgNCCz+7P3a25ph8nUYchfEFm3EJbJEt1FJhbmo5mD4YMW6icX4R/zzchMeDdRAhLezO+
- 0kt+m9iLdVp/eJWsFOjTS6xOmMBmYHKCY2khGagmsZtTh7chIHDYwdMEcQhVMoiKWv+km7RYVcoj9BehDOen83kOCf03peRDiOwZdkvdHreqVw7jeTgJdreO
- l2Pl1aYSLV3s/IWFyqE7vdixxGCcNHegEL1KnbuA+F+Fdqilu7v88aChMc1L9Sb2m0hXK7jwflzPV801295Ly1XkHZYaCXOowYSLLbZBaVoWmbv1IOrTon4z
- Iue1mo4i
+Received: by 2002:a6b:9c51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 06:30:31
+ -0700 (PDT)
+In-Reply-To: <3a07d0d9fbe7178bbe9efa99fcb331df213a461f.camel@linux.intel.com>
+References: <1529994128-26770-1-git-send-email-alanx.chiang@intel.com>
+ <CAMRc=Me-Tm8Q5_hGu2r1uqeYFAvCM9ssr7o=w1KZUyXcAn_uCw@mail.gmail.com>
+ <ff4c668d0807657940a4cddc6f7eb63d19be327c.camel@linux.intel.com>
+ <CAMRc=Me511S4Qw_-SPNkpPXcby7rZApbgm9g2=W=irmy9Gsu3g@mail.gmail.com> <3a07d0d9fbe7178bbe9efa99fcb331df213a461f.camel@linux.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 26 Jun 2018 15:30:31 +0200
+Message-ID: <CAMRc=MdvW_k3ZgrZAffD45r_zxOMWCyXoDx-YgXMQ2=-tSjyGw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Add a property in at24.c
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     alanx.chiang@intel.com, linux-i2c <linux-i2c@vger.kernel.org>,
+        andy.yeh@intel.com, Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/26/2018 12:39 AM, Long Li wrote:
->> Subject: Re: [Patch v2 14/15] CIFS: Add support for direct I/O write
->>
->> On 5/30/2018 3:48 PM, Long Li wrote:
->>> From: Long Li <longli@microsoft.com>
->>>
->>> Implement the function for direct I/O write. It doesn't support AIO,
->>> which will be implemented in a follow up patch.
->>>
->>> Signed-off-by: Long Li <longli@microsoft.com>
->>> ---
->>>    fs/cifs/cifsfs.h |   1 +
->>>    fs/cifs/file.c   | 165
->> +++++++++++++++++++++++++++++++++++++++++++++++++++++++
->>>    2 files changed, 166 insertions(+)
->>>
->>> diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h index
->>> 7fba9aa..e9c5103 100644
->>> --- a/fs/cifs/cifsfs.h
->>> +++ b/fs/cifs/cifsfs.h
->>> @@ -105,6 +105,7 @@ extern ssize_t cifs_user_readv(struct kiocb *iocb,
->> struct iov_iter *to);
->>>    extern ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to);
->>>    extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to);
->>>    extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter
->>> *from);
->>> +extern ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter
->>> +*from);
->>>    extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from);
->>>    extern int cifs_lock(struct file *, int, struct file_lock *);
->>>    extern int cifs_fsync(struct file *, loff_t, loff_t, int); diff
->>> --git a/fs/cifs/file.c b/fs/cifs/file.c index e6e6f24..8c385b1 100644
->>> --- a/fs/cifs/file.c
->>> +++ b/fs/cifs/file.c
->>> @@ -2461,6 +2461,35 @@ cifs_uncached_writedata_release(struct kref
->>> *refcount)
->>>
->>>    static void collect_uncached_write_data(struct cifs_aio_ctx *ctx);
->>>
->>> +static void cifs_direct_writedata_release(struct kref *refcount) {
->>> +	int i;
->>> +	struct cifs_writedata *wdata = container_of(refcount,
->>> +					struct cifs_writedata, refcount);
->>> +
->>> +	for (i = 0; i < wdata->nr_pages; i++)
->>> +		put_page(wdata->pages[i]);
->>> +
->>> +	cifs_writedata_release(refcount);
->>> +}
->>> +
->>> +static void cifs_direct_writev_complete(struct work_struct *work) {
->>> +	struct cifs_writedata *wdata = container_of(work,
->>> +					struct cifs_writedata, work);
->>> +	struct inode *inode = d_inode(wdata->cfile->dentry);
->>> +	struct cifsInodeInfo *cifsi = CIFS_I(inode);
->>> +
->>> +	spin_lock(&inode->i_lock);
->>> +	cifs_update_eof(cifsi, wdata->offset, wdata->bytes);
->>> +	if (cifsi->server_eof > inode->i_size)
->>> +		i_size_write(inode, cifsi->server_eof);
->>> +	spin_unlock(&inode->i_lock);
->>> +
->>> +	complete(&wdata->done);
->>> +	kref_put(&wdata->refcount, cifs_direct_writedata_release); }
->>> +
->>>    static void
->>>    cifs_uncached_writev_complete(struct work_struct *work)
->>>    {
->>> @@ -2703,6 +2732,142 @@ static void collect_uncached_write_data(struct
->> cifs_aio_ctx *ctx)
->>>    		complete(&ctx->done);
->>>    }
->>>
->>> +ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from)
->>> +{
->>> +	struct file *file = iocb->ki_filp;
->>> +	ssize_t total_written = 0;
->>> +	struct cifsFileInfo *cfile;
->>> +	struct cifs_tcon *tcon;
->>> +	struct cifs_sb_info *cifs_sb;
->>> +	struct TCP_Server_Info *server;
->>> +	pid_t pid;
->>> +	unsigned long nr_pages;
->>> +	loff_t offset = iocb->ki_pos;
->>> +	size_t len = iov_iter_count(from);
->>> +	int rc;
->>> +	struct cifs_writedata *wdata;
->>> +
->>> +	/*
->>> +	 * iov_iter_get_pages_alloc doesn't work with ITER_KVEC.
->>> +	 * In this case, fall back to non-direct write function.
->>> +	 */
->>> +	if (from->type & ITER_KVEC) {
->>> +		cifs_dbg(FYI, "use non-direct cifs_user_writev for kvec
->> I/O\n");
->>> +		return cifs_user_writev(iocb, from);
->>> +	}
->>> +
->>> +	rc = generic_write_checks(iocb, from);
->>> +	if (rc <= 0)
->>> +		return rc;
->>> +
->>> +	cifs_sb = CIFS_FILE_SB(file);
->>> +	cfile = file->private_data;
->>> +	tcon = tlink_tcon(cfile->tlink);
->>> +	server = tcon->ses->server;
->>> +
->>> +	if (!server->ops->async_writev)
->>> +		return -ENOSYS;
->>> +
->>> +	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
->>> +		pid = cfile->pid;
->>> +	else
->>> +		pid = current->tgid;
->>> +
->>> +	do {
->>> +		unsigned int wsize, credits;
->>> +		struct page **pagevec;
->>> +		size_t start;
->>> +		ssize_t cur_len;
->>> +
->>> +		rc = server->ops->wait_mtu_credits(server, cifs_sb->wsize,
->>> +						   &wsize, &credits);
->>> +		if (rc)
->>> +			break;
->>> +
->>> +		cur_len = iov_iter_get_pages_alloc(
->>> +				from, &pagevec, wsize, &start);
->>> +		if (cur_len < 0) {
->>> +			cifs_dbg(VFS,
->>> +				"direct_writev couldn't get user pages "
->>> +				"(rc=%zd) iter type %d iov_offset %lu count"
->>> +				" %lu\n",
->>> +				cur_len, from->type,
->>> +				from->iov_offset, from->count);
->>> +			dump_stack();
->>> +			break;
->>> +		}
->>> +		if (cur_len < 0)
->>> +			break;
->>
->> This cur_len < 0 test is redundant with the prior if(), delete.
->>> +
->>> +		nr_pages = (cur_len + start + PAGE_SIZE - 1) / PAGE_SIZE;
->>
->> Am I misreading, or will this return be one more page than needed? If start
->> (the first byte offset) is > 0, nr_pages will already be one.
->> And if cur_len is 4KB, even if start is 0, nr_pages will be two.
-> 
-> I think the calculation is correct, assuming cur_len > 0. (which should be the case if we reach here)
+2018-06-26 15:23 GMT+02:00 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
+> On Tue, 2018-06-26 at 14:36 +0200, Bartosz Golaszewski wrote:
+>> 2018-06-26 14:14 GMT+02:00 Andy Shevchenko
+>> <andriy.shevchenko@linux.intel.com>:
+>> > On Tue, 2018-06-26 at 09:41 +0200, Bartosz Golaszewski wrote:
+>
+>> > > What is your use case exactly? Do you have an EEPROM model that's
+>> > > not
+>> > > yet supported explicitly in the driver? Why would you need this
+>> > > option?
+>> >
+>> > The current at24 driver has no address width support,
+>
+>> >  thus, reusing same
+>> > (allocated) IDs (non-DT case) is hard.
+>
+> ^^^^^
+>
+>> Every supported compatible has the width already specified in its
+>> corresponding chip data.
+>
+>
+> Please, read again carefully what I wrote before.
+>
 
-Err, cur_len could possibly be zero, the prior line only breaks the
-loop if cur_len < 0.
+Ok makes sense in that case. Could you just point me towards an
+example model which has the address width different than the default
+for its type?
 
-> If cur_len is 4kb and start is 0, nr_pages will be 1.
-
-Hmm, I guess. But again, it seems as if this page handling is all
-being coded inline, in subtly different ways. I'm just concerned
-about clarity and robustness. To me, if it's hard to review, it's
-even harder to maintain.
-
-Tom.
-
-> 
->>
->>> +
->>> +		wdata = cifs_writedata_direct_alloc(pagevec,
->>> +					     cifs_direct_writev_complete);
->>> +		if (!wdata) {
->>> +			rc = -ENOMEM;
->>> +			add_credits_and_wake_if(server, credits, 0);
->>> +			break;
->>> +		}
->>> +
->>> +		wdata->nr_pages = nr_pages;
->>> +		wdata->page_offset = start;
->>> +		wdata->pagesz = PAGE_SIZE;
->>> +		wdata->tailsz =
->>> +			nr_pages > 1 ?
->>> +			cur_len - (PAGE_SIZE - start) -
->>> +				(nr_pages - 2) * PAGE_SIZE :
->>> +			cur_len;
->>> +
->>> +		wdata->sync_mode = WB_SYNC_ALL;
->>> +		wdata->offset = (__u64)offset;
->>> +		wdata->cfile = cifsFileInfo_get(cfile);
->>> +		wdata->pid = pid;
->>> +		wdata->bytes = cur_len;
->>> +		wdata->credits = credits;
->>> +
->>> +		rc = 0;
->>> +		if (wdata->cfile->invalidHandle)
->>> +			rc = cifs_reopen_file(wdata->cfile, false);
->>> +
->>> +		if (!rc)
->>> +			rc = server->ops->async_writev(wdata,
->>> +					cifs_direct_writedata_release);
->>> +
->>> +		if (rc) {
->>> +			add_credits_and_wake_if(server, wdata->credits, 0);
->>> +			kref_put(&wdata->refcount,
->>> +				 cifs_direct_writedata_release);
->>> +			if (rc == -EAGAIN)
->>> +				continue;
->>> +			break;
->>> +		}
->>
->> Same comments as for previous patch re the if (rc) ladder, and the
->> break/continues both being better expressed as careful goto's.
->>
->>> +
->>> +		wait_for_completion(&wdata->done);
->>> +		if (wdata->result) {
->>> +			rc = wdata->result;
->>> +			kref_put(&wdata->refcount,
->>> +					cifs_direct_writedata_release);
->>> +			if (rc == -EAGAIN)
->>> +				continue;
->>> +			break;
->>> +		}
->>> +
->>> +		kref_put(&wdata->refcount, cifs_direct_writedata_release);
->>> +
->>> +		iov_iter_advance(from, cur_len);
->>> +		total_written += cur_len;
->>> +		offset += cur_len;
->>> +		len -= cur_len;
->>> +	} while (len);
->>> +
->>> +	if (unlikely(!total_written))
->>> +		return rc;
->>> +
->>> +	iocb->ki_pos += total_written;
->>> +	return total_written;
->>> +
->>> +}
->>> +
->>>    ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from)
->>>    {
->>>    	struct file *file = iocb->ki_filp;
->>>
-
+Bart
