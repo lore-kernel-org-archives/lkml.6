@@ -2,128 +2,94 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162A1C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDA8C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2D08259E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:45:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="rWS0zCXH";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C+Gtd+V2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2D08259E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7564D26C0D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:47:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7564D26C0D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752636AbeFZQpQ (ORCPT
+        id S1752630AbeFZQrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 12:45:16 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:41971 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbeFZQpK (ORCPT
+        Tue, 26 Jun 2018 12:47:18 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:48170 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752337AbeFZQrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 12:45:10 -0400
-Received: by mail-yb0-f195.google.com with SMTP id y187-v6so5886334yby.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 09:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=f3P/2GUaNNmyvgMsxP0iPouVUKbOuGn2h38+V/ujWzw=;
-        b=rWS0zCXHaP2r74M+VXMM+nEKYGI0ZWERpEq6TLQrX8diZp5wvZgT9N8yCndXyVBhsS
-         KlLYig0SeYeo4T4r6jUxubRdIo2uYMHuiTYUT1KabJpf+ftO1NQuresCI4tmgxvQoVcz
-         iZnUg6E7lefBWSuVl1APU1t8uDfZRMznQyZAoZZJ4ay6QksjO0/h76BxmomAqMeMvfkx
-         Y7mhYaJK/nlZ9kNbMXLSH/IgDEydGQzAQP+j5DYPqXAA7n4H1X0q3pNEEhCT19+hLzzI
-         VllRsLYS2KKEhFYsb09Jo7B425aodzEYdDSaHgLOlfmNU8g0/xKEy3cG64UTOG0ZiE4n
-         TeIQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=f3P/2GUaNNmyvgMsxP0iPouVUKbOuGn2h38+V/ujWzw=;
-        b=C+Gtd+V2jlPBByLTMq71NCJtocHi2ZkQOitdKDNh6JoaOIwIhCZ69Skr6IF3EG5P0V
-         Nc+x3NMtWAbTDfhT8+WEa+Apod1YM589jUNc/hThUxUk3bDh6aCrRlSW9PuA7icYqAjY
-         vxx6IuRTyOrzQlxwjLgbThZlmsmQW9yspre+c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=f3P/2GUaNNmyvgMsxP0iPouVUKbOuGn2h38+V/ujWzw=;
-        b=Kr9v09GK5Pb8nIBdgqOOPP2IbbERKuuQqOZLgVOCYiNj+gaTXZstL9cYyjVSoO2RVx
-         YIJuv+T5qGJICI3v6t4q6wKC8ZKXCAL/d/qWuB13uBYGRiTxGuFrXEx6VrAb2SVMItby
-         FDC5iYATSdtKz2f7rMEaVSMC5ODsMkabS2LownGdLARdQSFNfbvcE/qfgLVgMuCT57Us
-         sBsbLXBBM/x0UQfoo0PfPaQ9qChxoROV+j0r3GSqKV5Ix2bMMDXPKqgn6dq5eKz+u6NU
-         PhvUPO9PfGAmrELEtxXdp0H18JvwBTar9R/NmIhgAcmYqy82TP5D/taq5nARNP31hLAB
-         t34g==
-X-Gm-Message-State: APt69E1uFyunO+FAo2WUaQsJcfEpwiMQEQzaeYS5W3xD9xNh5Zj8AAmY
-        woPPRT/nopqthfqbjNVTHsbCMabM970KpZTf275Siw==
-X-Google-Smtp-Source: ADUXVKJQ23R8OGfmYHmzabm7WTDmMFhbWisIhlZodW9CbEmhL6F0wXUW2iZfyB+3FnYEVVK6y6pLyBBWyZ+HQZf2AQI=
-X-Received: by 2002:a25:ce8b:: with SMTP id x133-v6mr1175320ybe.118.1530031510024;
- Tue, 26 Jun 2018 09:45:10 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 09:45:09
- -0700 (PDT)
-In-Reply-To: <20180626092041.mxfg4lxcvxfivzc2@gondor.apana.org.au>
-References: <20180625211026.15819-1-keescook@chromium.org> <20180625211026.15819-12-keescook@chromium.org>
- <20180626092041.mxfg4lxcvxfivzc2@gondor.apana.org.au>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 26 Jun 2018 09:45:09 -0700
-X-Google-Sender-Auth: aoBJ25LblkmlO__Xa0_adn7svsk
-Message-ID: <CAGXu5jKYb-0NNvOcN79hzqU7O6vCFhMTBDGBL8Knuoc-YHamPg@mail.gmail.com>
-Subject: Re: [PATCH v2 11/11] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, qat-linux@intel.com,
-        dm-devel@redhat.com, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 26 Jun 2018 12:47:16 -0400
+Received: from belgarion.home ([90.55.203.186])
+        by mwinf5d48 with ME
+        id 3Un41y00F41oiFu03UnChw; Tue, 26 Jun 2018 18:47:15 +0200
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Tue, 26 Jun 2018 18:47:15 +0200
+X-ME-IP: 90.55.203.186
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: pxa: fix the rtc controller
+Date:   Tue, 26 Jun 2018 18:47:01 +0200
+Message-Id: <20180626164701.1034-1-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 2:20 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> On Mon, Jun 25, 2018 at 02:10:26PM -0700, Kees Cook wrote:
->> In the quest to remove all stack VLA usage from the kernel[1], this
->> caps the skcipher request size similar to other limits and adds a
->> sanity check at registration. In a manual review of the callers of
->> crypto_skcipher_set_reqsize(), the largest was 384:
->>
->> 4     sun4i_cipher_req_ctx
->> 6     safexcel_cipher_req
->> 8     cryptd_skcipher_request_ctx
->> 80    cipher_req_ctx
->> 80    skcipher_request
->> 96    crypto_rfc3686_req_ctx
->> 104   nitrox_kcrypt_request
->> 144   mv_cesa_skcipher_std_req
->> 384   rctx
->>
->> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->>
->> Cc: Herbert Xu <herbert@gondor.apana.org.au>
->> Cc: "David S. Miller" <davem@davemloft.net>
->> Cc: linux-crypto@vger.kernel.org
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->
-> This has the same issue as the ahash reqsize patch.
+The RTC controller is fed by an external fixed 32kHz clock. Yet the
+driver wants to acquire this clock, even though it doesn't make any use
+of it, ie. doesn't get the rate to make calculation.
 
-Which are likely to be wrapped together? Should I take this to 512 or
-something else?
+Therefore, add the dummy clock in the PXA clock tree to make the driver
+happy and working.
 
--Kees
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ arch/arm/boot/dts/pxa25x.dtsi | 4 ++++
+ arch/arm/boot/dts/pxa27x.dtsi | 4 ++++
+ 2 files changed, 8 insertions(+)
 
+diff --git a/arch/arm/boot/dts/pxa25x.dtsi b/arch/arm/boot/dts/pxa25x.dtsi
+index 95d59be97213..c6ca07e4626b 100644
+--- a/arch/arm/boot/dts/pxa25x.dtsi
++++ b/arch/arm/boot/dts/pxa25x.dtsi
+@@ -80,6 +80,10 @@
+ 			#pwm-cells = <1>;
+ 			clocks = <&clks CLK_PWM1>;
+ 		};
++
++		rtc@40900000 {
++			clocks = <&clks CLK_NONE>;
++		};
+ 	};
+ 
+ 	timer@40a00000 {
+diff --git a/arch/arm/boot/dts/pxa27x.dtsi b/arch/arm/boot/dts/pxa27x.dtsi
+index 747f750f675d..e9cf4192e2e0 100644
+--- a/arch/arm/boot/dts/pxa27x.dtsi
++++ b/arch/arm/boot/dts/pxa27x.dtsi
+@@ -113,6 +113,10 @@
+ 
+ 			status = "disabled";
+ 		};
++
++		rtc@40900000 {
++			clocks = <&clks CLK_NONE>;
++		};
+ 	};
+ 
+ 	clocks {
 -- 
-Kees Cook
-Pixel Security
+2.11.0
+
