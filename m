@@ -2,103 +2,105 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CB1C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA09C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AB1C25DA4
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:38:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="epB0SYbg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB1C25DA4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4453926809
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:41:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4453926809
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934291AbeFZJir (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:38:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35046 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932206AbeFZJiq (ORCPT
+        id S933677AbeFZJlB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:41:01 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49277 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932206AbeFZJlA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:38:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FIiVtCr1PGtxn9E7KPr2HNRbrWMOr6X5klzP2dE7yYo=; b=epB0SYbgFYwuFJEXmjkFn+bFJ
-        6BwT+hDtiumnv/F61UBZMPsoOuKVzXnuUZ2L7Ow+MF69FXEbqzNTGYXJW0l3NZ1pFycKBbGkaA6Ls
-        kGysBghdlgPxGGEvYryOfaSgKuPgEsC2neVfg6vXvOT5ECEcqzofwdgn3CY2KEOaNRt8Y9uMORBMj
-        JU9cYtvDSkHTh+CIaBucpn9R2YXF5Ew5PTD4SPHr8rP3CBFcpMclMAs+ebwHDM8cbTFf9QyW/Dkqg
-        nY3EWKaN41pJ9WXCObNAocoAfzCvART9NhUBVcr4JG3S4QGJ+4mx16lIupjLXcevTjl73uCM9mdKF
-        6pgI7MMSw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXkQZ-0007Ha-9Z; Tue, 26 Jun 2018 09:38:23 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E91062029FA0A; Tue, 26 Jun 2018 11:38:20 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 11:38:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH tip/core/rcu 2/2] rcu: Make expedited GPs handle CPU 0
- being offline
-Message-ID: <20180626093820.GG2494@hirez.programming.kicks-ass.net>
-References: <20180625224308.GA10064@linux.vnet.ibm.com>
- <20180625224332.10596-2-paulmck@linux.vnet.ibm.com>
+        Tue, 26 Jun 2018 05:41:00 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fXkSw-0005p3-GY; Tue, 26 Jun 2018 11:40:50 +0200
+Date:   Tue, 26 Jun 2018 11:40:50 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Alan Cox <alan@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 06/16] x86/split_lock: Save #AC setting for split
+ lock in firmware in boot time and restore the setting in reboot
+In-Reply-To: <20180626090521.GF2494@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1806261115480.2204@nanos.tec.linutronix.de>
+References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com> <1527435965-202085-7-git-send-email-fenghua.yu@intel.com> <20180621195823.GD13636@worktop.programming.kicks-ass.net> <1529680267.4364.50.camel@linux.intel.com>
+ <20180626090521.GF2494@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625224332.10596-2-paulmck@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 03:43:32PM -0700, Paul E. McKenney wrote:
-> +		preempt_disable();
-> +		for_each_leaf_node_possible_cpu(rnp, cpu) {
-> +			if (cpu_is_offline(cpu)) /* Preemption disabled. */
-> +				continue;
-
-Create for_each_node_online_cpu() instead? Seems a bit pointless to
-iterate possible mask only to then check it against the online mask.
-Just iterate the online mask directly.
-
-Or better yet, write this as:
-
-	preempt_disable();
-	cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
-	if (cpu > rnp->grphi)
-		cpu = WORK_CPU_UNBOUND;
-	queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-	preempt_enable();
-
-Which is what it appears to be doing.
-
-> +			queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-> +			rnp->exp_need_flush = true;
-> +			break;
-> +		}
-> +		preempt_enable();
-> +		if (!rnp->exp_need_flush) { /* All offline, report QSes. */
-> +			queue_work(rcu_par_gp_wq, &rnp->rew.rew_work);
-> +			rnp->exp_need_flush = true;
-> +		}
->  	}
->  
->  	/* Wait for workqueue jobs (if any) to complete. */
-> -- 
-> 2.17.1
+On Tue, 26 Jun 2018, Peter Zijlstra wrote:
+> On Fri, Jun 22, 2018 at 04:11:07PM +0100, Alan Cox wrote:
+> > On Thu, 2018-06-21 at 21:58 +0200, Peter Zijlstra wrote:
+> > > On Sun, May 27, 2018 at 08:45:55AM -0700, Fenghua Yu wrote:
+> > > > Firmware may contain split locked instructions.
+> > > 
+> > > I think that's the wrong attitude. You should mandate in your BIOS
+> > > development guide that Firmware _MUST_NOT_ contain unaligned LOCK
+> > > prefixed instructions.
+> > > 
+> > 
+> > In the longer term I would agree entirely with that sentiment.
 > 
+> But then how do we deal with SMIs ? The firmware people will at least
+> need to know about this, and the quick fix is to make the SMI handler
+> save/restore the MSR, but since they're aware and already changing their
+> code, they might as well fix the actual problem -- which is likely
+> trivial.
+> 
+> So no, I don't buy it. Just fix the firmware instead of allowing them to
+> fester and grow layers of ducttape.
+> 
+> Because even for SMM WRMSR is 100s of cycles, and why would they want to
+> make every single SMI more expensive.
+> 
+> Also, as mentioned earlier, what are we going to do about SMIs in
+> general? They're a _far_ _FAR_ bigger problem for RT workloads than a
+> sporadic split atomic. Esp. with some vendors thinking they can run
+> bitcoin miners in SMI (or whatever else it is that is taking miliseconds
+> of compute time).
+> 
+> Split atomics are an insignificant problem compared to the nightmare
+> trainwreck that is SMM.
+
+Aside of that, the split lock detection is only available for not yet
+released silicon. So there is absolutely _ZERO_ reason to force the kernel
+to deal with broken BIOSes. This would be a different story if the feature
+would break gazillion of shipped systems.
+
+So there is no 'In the longer term'. It's still enough time to fix the BIOS
+hackery _before_ any of this hits a production line.
+
+Ergo. This is not going to go anywhere near the x86 kernel code ever. We
+are not fostering completely avoidable engineering trainwrecks.
+
+To be honest, this part of the patch set should have never seen the light
+of LKML and we neither should have that discussion in the first place.
+
+Thanks,
+
+	tglx
