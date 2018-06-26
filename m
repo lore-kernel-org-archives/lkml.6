@@ -2,85 +2,127 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDD1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359A7C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 756502671C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:55:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756502671C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E02062672B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:57:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02062672B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933206AbeFZIzG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:55:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43958 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752617AbeFZIyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:54:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id EB64BACD9;
-        Tue, 26 Jun 2018 08:54:49 +0000 (UTC)
-Date:   Tue, 26 Jun 2018 10:54:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Kani, Toshi" <toshi.kani@hpe.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>
-Subject: Re: [PATCH v3 0/3] fix free pmd/pte page handlings on x86
-Message-ID: <20180626085449.GU28965@dhcp22.suse.cz>
-References: <20180516233207.1580-1-toshi.kani@hpe.com>
- <alpine.DEB.2.21.1806241516410.8650@nanos.tec.linutronix.de>
- <1529938470.14039.134.camel@hpe.com>
- <20180625175225.GQ28965@dhcp22.suse.cz>
- <1529961187.14039.206.camel@hpe.com>
- <20180626063521.GT28965@dhcp22.suse.cz>
- <alpine.DEB.2.21.1806261043080.2204@nanos.tec.linutronix.de>
+        id S933436AbeFZI5M convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 04:57:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48586 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932206AbeFZI5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 04:57:09 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CE6E64079F09;
+        Tue, 26 Jun 2018 08:57:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-238.rdu2.redhat.com [10.10.120.238])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C4B1B2166B5D;
+        Tue, 26 Jun 2018 08:57:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180626072736.GA31860@outlook.office365.com>
+References: <20180626072736.GA31860@outlook.office365.com> <152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk> <20180619033450.GA11639@outlook.office365.com> <20180626061320.GA12548@outlook.office365.com>
+To:     Andrei Vagin <avagin@virtuozzo.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
+Subject: Re: [12/24] proc: Add fs_context support to procfs [ver #7]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806261043080.2204@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <31830.1530003427.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 26 Jun 2018 09:57:07 +0100
+Message-ID: <31831.1530003427@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 08:57:08 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 08:57:08 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 26-06-18 10:45:11, Thomas Gleixner wrote:
-> On Tue, 26 Jun 2018, Michal Hocko wrote:
-> > On Mon 25-06-18 21:15:03, Kani Toshimitsu wrote:
-> > > Lastly, for the code maintenance, I believe this memory allocation keeps
-> > > the code much simpler than it would otherwise need to manage a special
-> > > page list.
+Andrei Vagin <avagin@virtuozzo.com> wrote:
+
+> > > > -	mnt = kern_mount_data(&proc_fs_type, ns, 0);
 > > 
-> > Yes, I can see a simplicity as a reasonable argument for a quick fix,
-> > which these pile is supposed to be AFAIU. So this might be good to go
-> > from that perspective, but I believe that this should be changed in
-> > future at least.
+> > Here ns->user_ns and get_current_cred()->user_ns are not always equal
 > 
-> So the conclusion is, that we ship this set of patches now to cure the
-> existing wreckage, right?
+> What do you think about the attached patch?
+> ...
+> -	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
+> -				FS_CONTEXT_FOR_KERNEL_MOUNT);
+> +	fc = vfs_new_fs_context_userns(&proc_fs_type, NULL, 0,
+> +				FS_CONTEXT_FOR_KERNEL_MOUNT, ns->user_ns);
 
-Joerg was suggesting some alternative but I got lost in the discussion
-to be honest so I might mis{interpret,remember}.
+Or you could just change fc->user_ns immediately after calling
+vfs_new_fs_context().  This is what network filesystems should do with
+fc->net_ns, for example.
 
-> Fine with that, but who will take care of reworking it proper? I'm
-> concerned that this will just go stale the moment the fixes hit the tree.
+> -struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+> +struct fs_context *vfs_new_fs_context_userns(struct file_system_type *fs_type,
+>  				      struct dentry *reference,
+>  				      unsigned int sb_flags,
+> -				      enum fs_context_purpose purpose)
+> +				      enum fs_context_purpose purpose,
+> +				      struct user_namespace *user_ns)
 
-Yeah, this is why I usually try to push back hard because "will be fixed
-later" is similar to say "documentation will come later" etc...
 
-A big fat TODO would be appropriate so it won't get forgotten at least.
--- 
-Michal Hocko
-SUSE Labs
+If you'd really rather add a new parameter, please don't rename the function
+to vfs_new_fs_context_userns() - just add a new parameter.  There don't need
+to be two versions of it.
+
+
+This brings me to another thought:  I want to add the ability to let
+namespaces be configured by userspace, for example:
+
+	fd = fsopen("nfs");
+	sprintf(buf, "ns user %d", my_user_ns_fd);
+	write(fd, buf);
+	sprintf(buf, "ns net %d", my_net_ns_fd);
+	write(fd, buf);
+	write(fd, "s fedoraproject.org:/pub");
+	write(fd, "o intr");
+	...
+
+I think therefore, I might need to insert another phase between creating the
+context and calling the filesystem initialiser:
+
+	fc = vfs_new_fs_context(&afs_fs_type, mntpt, 0,
+				FS_CONTEXT_FOR_SUBMOUNT);
+
+followed by:
+
+	vfs_sb_set_namespace(fc, THIS_IS_USER_NS, user_ns);
+	vfs_sb_set_namespace(fc, THIS_IS_NET_NS, net_ns);
+
+but then we'd need to do:
+
+	vfs_begin_options(fc);
+
+before continuing (unless we made this happen automatically on the receipt of
+the first option):
+
+	afs_mntpt_set_params(fc, mntpt);
+	vfs_get_tree(fc);
+	mnt = vfs_create_mount(fc, 0);
+
+Alternatively, we could do the namespace setting after initialisation and let
+the fs apply the changes itself.
+
+David
