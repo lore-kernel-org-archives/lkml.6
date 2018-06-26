@@ -6,129 +6,139 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 945C1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBBCC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5857B26E1B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5857B26E1B
+	by mail.kernel.org (Postfix) with ESMTP id D7BD126E1B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7BD126E1B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754775AbeFZTJn (ORCPT
+        id S1754847AbeFZTJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 15:09:43 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43030 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754747AbeFZTJk (ORCPT
+        Tue, 26 Jun 2018 15:09:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54002 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754777AbeFZTJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 15:09:40 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QJ8sIg117227
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 15:09:39 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2juuamg5vv-1
+        Tue, 26 Jun 2018 15:09:45 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QJ8XFo051897
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 15:09:44 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jutw9h9gg-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 15:09:39 -0400
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 15:09:44 -0400
 Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 13:09:38 -0600
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 26 Jun 2018 13:09:43 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 13:09:36 -0600
+        Tue, 26 Jun 2018 13:09:42 -0600
 Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QJ9Z8g8454550
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QJ9fB79568648
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 12:09:35 -0700
+        Tue, 26 Jun 2018 12:09:41 -0700
 Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BBE5E6A04F;
-        Tue, 26 Jun 2018 13:09:35 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 0E53A6A05F;
+        Tue, 26 Jun 2018 13:09:41 -0600 (MDT)
 Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 356596A051;
-        Tue, 26 Jun 2018 13:09:35 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 7D4296A04F;
+        Tue, 26 Jun 2018 13:09:40 -0600 (MDT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 13:09:35 -0600 (MDT)
+        Tue, 26 Jun 2018 13:09:40 -0600 (MDT)
 From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
 To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
         zohar@linux.vnet.ibm.com
 Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v7 0/5] Have IMA find and use a tpm_chip until system shutdown
-Date:   Tue, 26 Jun 2018 15:09:28 -0400
+Subject: [PATCH v7 3/5] tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
+Date:   Tue, 26 Jun 2018 15:09:31 -0400
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062619-0004-0000-0000-0000145A6BA2
+x-cbid: 18062619-0016-0000-0000-000008FFC33F
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01052708; UDB=6.00539692; IPR=6.00830633;
- MB=3.00021867; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 19:09:38
+ MB=3.00021866; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 19:09:43
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062619-0005-0000-0000-000087E08A12
-Message-Id: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+x-cbparentid: 18062619-0017-0000-0000-00003F6B72A2
+Message-Id: <20180626190933.2508821-4-stefanb@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=793 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1806260213
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patches converts IMA's usage of the tpm_chip to find a TPM
-chip initially and use it until the machine is shut down. To do this we need
-to introduce a kref for the tpm_chip that IMA and all other users of a
-tpm_chip hold onto until they don't need the TPM chip anymore.
+Convert tpm_find_get_ops() to use tpm_default_chip() in case no chip
+is passed in.
 
-    Stefan
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm-chip.c | 32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
 
-v6->v7:
-  - fixed `if (!rc)` in patch 3 to `if (rc)` (detected while converting trusted
-    keys)
-
-v5->v6:
-  - more verbose patch description in patch 2
-
-v4->v5:
-  - repost with fixed changelog and posted to linux-security-module
-
-v3->v4:
-  - followed Jason's suggestions:
-    - extended docs of tpm_find_get_ops()
-    - calling new function tpm_default_chip()
-    - new patch 3 that uses tpm_default_chip() in tpm_find_get_ops()
-
-v2->v3:
-  - renaming tpm_chip_find_get() to tpm_get_ops()
-  - IMA does not lock access to ima_tpm_chip anymore
-  - IMA does not have a reboot notifier to release the chip anymore
-
-v1->v2:
-  - use the kref of the device via get_device()/put_device()
-
-Stefan Berger (5):
-  tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
-  tpm: Implement tpm_default_chip() to find a TPM chip
-  tpm: Convert tpm_find_get_ops() to use tpm_default_chip()
-  ima: Use tpm_default_chip() and call TPM functions with a tpm_chip
-  ima: Get rid of ima_used_chip and use ima_tpm_chip != NULL instead
-
- drivers/char/tpm/tpm-chip.c         | 68 +++++++++++++++++++----------
- drivers/char/tpm/tpm-interface.c    | 14 +++---
- drivers/char/tpm/tpm.h              |  2 +-
- include/linux/tpm.h                 |  5 +++
- security/integrity/ima/ima.h        |  2 +-
- security/integrity/ima/ima_crypto.c |  4 +-
- security/integrity/ima/ima_init.c   | 16 +++----
- security/integrity/ima/ima_queue.c  |  4 +-
- 8 files changed, 69 insertions(+), 46 deletions(-)
-
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index f551061262c9..46caadca916a 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -124,29 +124,23 @@ EXPORT_SYMBOL_GPL(tpm_default_chip);
+  */
+ struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
+ {
+-	struct tpm_chip *res = NULL;
+-	int chip_num = 0;
+-	int chip_prev;
+-
+-	mutex_lock(&idr_lock);
++	int rc;
+ 
+-	if (!chip) {
+-		do {
+-			chip_prev = chip_num;
+-			chip = idr_get_next(&dev_nums_idr, &chip_num);
+-			if (chip && !tpm_try_get_ops(chip)) {
+-				res = chip;
+-				break;
+-			}
+-		} while (chip_prev != chip_num);
+-	} else {
++	if (chip) {
+ 		if (!tpm_try_get_ops(chip))
+-			res = chip;
++			return chip;
++		return NULL;
+ 	}
+ 
+-	mutex_unlock(&idr_lock);
+-
+-	return res;
++	chip = tpm_default_chip();
++	if (!chip)
++		return NULL;
++	rc = tpm_try_get_ops(chip);
++	/* release additional reference we got from tpm_default_chip() */
++	put_device(&chip->dev);
++	if (rc)
++		return NULL;
++	return chip;
+ }
+ 
+ /**
 -- 
 2.17.1
 
