@@ -2,111 +2,136 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA244C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDD7C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F84126ABD
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC08E26E1B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:54:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaC3d+M1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F84126ABD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CBsU8TlP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC08E26E1B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934164AbeFZSxU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:53:20 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:46503 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933266AbeFZSxT (ORCPT
+        id S934220AbeFZSyZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:54:25 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50382 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933896AbeFZSyW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:53:19 -0400
-Received: by mail-vk0-f68.google.com with SMTP id b134-v6so10651439vke.13
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=sgO3y5y8ILyYqtUhal+y5a6Q/m8hk5bFpFO0IKwHBbA=;
-        b=eaC3d+M1Ct939uFn5MNpnIiKvLJZP2QVuiQH+q79PcF1jabRLuvw9nXQ3Nbnk9R2oR
-         +PWI2QNAzZLRhEMUGh1kkGImjwqOkROJkVsaj1hbICP0tk81SLIgBMbfG46S5RgUCdA2
-         h/yJ4Oj8oY8RPw5811MCEuV3OqZ6o+d6hQFFRPh4T/iukcYTQLRFeKks2VlNgpvvzcuP
-         3r8W+nUea4tBinF/DEl2zxru1wDFmZkSHEg1mfgMVgWjl2FB09n7vMRH5e8GbS5cuz0J
-         yxwz8GWbYbMXfwtQWr7VElGjoCAsFlN6OjFhR6hz1lEOT4pMtQ4pc2EhLHBDakXa0wdo
-         ARkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=sgO3y5y8ILyYqtUhal+y5a6Q/m8hk5bFpFO0IKwHBbA=;
-        b=kTsXfuoje4v/ybIcw6iARRagJ/+QXyzjKdOeCT550Oe+2st3sBfz6f4tJrREolpU1S
-         pk4pVnDSaRjaMQUPMt+GIw+RjD19PUEXrMt3Ch7aQJOfJQzIZXt2tbWhNgE0CtVUGwsd
-         +oY3KWTwac8//wA3oHXFNlzA0ptW8kd/ZPcTdmi/0l8dglOV9hPCIZWVlxkm9BmPn09N
-         3qbqfUek3nsaAVMECreBdhc+OMirh8/LzokxKEE/ide25Yp5kZ/I8zmfbN4ZoHsUNct1
-         xGEVtqk3bpEncH3+KIYxy7buT4E1FK3bFIjCYsymVaKhlZWXZOhgB0N729t+aXi3c+ib
-         qVFA==
-X-Gm-Message-State: APt69E2TyieSA3pD897axgzhxb+dw2mpAnyS2CjgxNBeGrF4OPt4nlCu
-        n4F2kpjkJxFsGmHRaXfmc+ziUOJI8cwBHslp/N4=
-X-Google-Smtp-Source: AAOMgpdGkFEsnzy9M4IU15vf3iv9bjVDFMMc1Z903whLlDYHSERpFSzBXSPEf+ncIZs8WBZ1h87nm0ZpS/zZFEIpizI=
-X-Received: by 2002:a1f:82c7:: with SMTP id e190-v6mr1733478vkd.187.1530039198813;
- Tue, 26 Jun 2018 11:53:18 -0700 (PDT)
+        Tue, 26 Jun 2018 14:54:22 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5QGQFsM099179;
+        Tue, 26 Jun 2018 11:26:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530030375;
+        bh=z8IImMLBt9ZpG9P2jaRwM9BlyFimZo+hAtQzPkS7GjI=;
+        h=From:To:CC:Subject:Date;
+        b=CBsU8TlPjUeIoDgiWOWTkMXtrWY1hbhoIsNKiCzQqxJqOfQyEdFsUcRbDd5P5KKis
+         evttbXH1ByDDKIKe+kpvQ1XIFgRfPJDECCm2gl0pWLWiONMWybbZrc/ZxA5DzMakK4
+         OdiidbOZb2EA40mXzoYp2ksi+WEpMCOy8AUacdJQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5QGQFfB015852;
+        Tue, 26 Jun 2018 11:26:15 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 26
+ Jun 2018 11:26:15 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 26 Jun 2018 11:26:15 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5QGQFDs024015;
+        Tue, 26 Jun 2018 11:26:15 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH V2 0/5] arm64: Initial support Texas Instrument's AM654 Platform
+Date:   Tue, 26 Jun 2018 11:26:10 -0500
+Message-ID: <20180626162615.19194-1-nm@ti.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 11:53:18
- -0700 (PDT)
-In-Reply-To: <20180625105952.3756-2-mark.rutland@arm.com>
-References: <20180625105952.3756-1-mark.rutland@arm.com> <20180625105952.3756-2-mark.rutland@arm.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 26 Jun 2018 21:53:18 +0300
-Message-ID: <CAHp75Vdsu2LQtPdjaxfYhc3qT6gOe7bdGQKB==52W-WpORp-WQ@mail.gmail.com>
-Subject: Re: [PATCHv2 01/11] atomic/tty: Fix up atomic abuse in ldsem
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Peter Hurley <peter@hurleysoftware.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 1:59 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
->
-> Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
-> working after making the atomic_long interface type safe.
->
-> Needing casts is bad form, which made me look at the code. There are no
-> ld_semaphore::count users outside of these functions so there is no
-> reason why it can not be an atomic_long_t in the first place, obviating
-> the need for this cast.
->
-> That also ensures the loads use atomic_long_read(), which implies (at
-> least) READ_ONCE() in order to guarantee single-copy-atomic loads.
->
-> When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
-> very thin (the only difference is not changing *old on success, which
-> most callers don't seem to care about).
->
-> So rework the whole thing to use atomic_long_t and its accessors
-> directly.
->
-> While there, fixup all the horrible comment styles.
+Hi,
+
+This is an minor update from V1 posted earlier:
+	https://marc.info/?l=linux-kernel&m=152943745424138&w=2
+
+The following series enables support for newest addition in TI's SoC
+portfolio - AM654 SoC.
+
+The series is based off v4.18-rc1, also available here:
+https://github.com/nmenon/linux-2.6-playground/tree/upstream/v4.18-rc1/k3-1-am6-base
+
+Key changes since RFC are indicated in respective patches:
+* Pickedup Tony's Reviewed by
+* Modified cbass nodes to indicate interconnect (patch #3 in the series)
+
+Consolidated all patches (including all series) are available here:
+https://github.com/nmenon/linux-2.6-playground/commits/upstream/v4.18-rc1/k3-am6-integ
+
+Full Boot log (integrated of all series) is available here:
+   https://pastebin.ubuntu.com/p/bBFmnzYtCd/
+
+NOTE: The uart series is seperated out and we get operational console only
+after that series is merged.
+
+The AM654 SoC is a lead device of the K3 Multicore SoC architecture
+platform, targeted for broad market and industrial control with aim to
+meet the complex processing needs of modern embedded products.
+
+The Linux development follows closely the 66AK2G SoC model in aarch64.
+
+See AM65x Technical Reference Manual (SPRUID7, April 2018)
+for further details: http://www.ti.com/lit/pdf/spruid7
 
 
-> -               ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
-> +               atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
+Nishanth Menon (5):
+  dt-bindings: arm: ti: Add bindings for AM654 SoC
+  arm64: Add support for TI's K3 Multicore SoC architecture
+  arm64: dts: ti: Add Support for AM654 SoC
+  soc: ti: Add Support for AM654 SoC config option
+  arm64: dts: ti: Add support for AM654 EVM base board
 
-I suppose it's simple atomic_long_add() here?
-
-Good fix!
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+ Documentation/devicetree/bindings/arm/ti/k3.txt |  23 +++++
+ MAINTAINERS                                     |   9 ++
+ arch/arm64/Kconfig.platforms                    |   7 ++
+ arch/arm64/boot/dts/Makefile                    |   1 +
+ arch/arm64/boot/dts/ti/Makefile                 |   9 ++
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi        |  31 +++++++
+ arch/arm64/boot/dts/ti/k3-am65.dtsi             |  87 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts  |  36 ++++++++
+ arch/arm64/boot/dts/ti/k3-am654.dtsi            | 115 ++++++++++++++++++++++++
+ drivers/soc/ti/Kconfig                          |  14 +++
+ 10 files changed, 332 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/ti/k3.txt
+ create mode 100644 arch/arm64/boot/dts/ti/Makefile
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am65.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am654.dtsi
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.15.1
+
