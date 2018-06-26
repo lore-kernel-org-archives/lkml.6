@@ -2,139 +2,113 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCF1C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78767C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C80426B83
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:37:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C80426B83
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3343B26B84
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:38:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="QJ4u+Aww"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3343B26B84
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935787AbeFZNhx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:37:53 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.23]:25729 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934324AbeFZNhv (ORCPT
+        id S965598AbeFZNiR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:38:17 -0400
+Received: from mail-io0-f174.google.com ([209.85.223.174]:44846 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935412AbeFZNiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:37:51 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 778EF80DDD
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:37:50 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Xo9zfOa9HbXuJXoACfaFKX; Tue, 26 Jun 2018 08:37:50 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=33294 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fXo9y-001n0g-Dv; Tue, 26 Jun 2018 08:37:30 -0500
-Subject: Re: [PATCH] drm/gma500: Fix compile warning
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Stone <daniels@collabora.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20180625123355.GA16757@embeddedor.com>
- <20180626132828.GY20518@intel.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <27f371cf-797e-7ae8-cb27-95e642c7dff0@embeddedor.com>
-Date:   Tue, 26 Jun 2018 08:37:29 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 09:38:15 -0400
+Received: by mail-io0-f174.google.com with SMTP id g7-v6so15972475ioh.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 06:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=oSsjhn6c5Q30e97BzO+OVKHHym1Ua66criidToCG5m0=;
+        b=QJ4u+Awwue+DqX/WWDF9TOJlwyM2aWqVpUjNat2+k+ijC/+VHekZrW5TmaaOVGD9J1
+         q+cfACNmVx7k47x4uU+/LilqZFY5GMVBfYRsSxj2z7PmD7o3aelvNCbPyuWsDaEn1fkI
+         o42y0fPIxO56mi8pSwleoDGUDSghOuqsET4PKDLcCR64o/GMCWW5o02Ix2Vcq2jEgmxu
+         aY6/Bq4HLOHX/mz5CCvsGPkFLmUfEHxgXTKEv4GnwhtpCws0aM6QBHYOi1mzJ1iVKs8i
+         SVwtM0Nw0l/3kYV5nlxjcBjTffpmvrqm0QcyV90XWuQPNPpBVjJjzfE9E6B2RH5kvhhX
+         tBgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=oSsjhn6c5Q30e97BzO+OVKHHym1Ua66criidToCG5m0=;
+        b=uhCjBJX4mFAdpwepryariu/aA8J03EGSir2GRR0AvxevLtPD9xvAXi4pjFDv/iE7Su
+         zxXJRARct3/3eJeb24YZBnJo6kFVCsn1EcDtuxZ0G+0tk2GiwZb2pubqP+JQ6MHROV0i
+         Vvw6Hbjm433c36XgTQKsY0gqVk0zrU/2CbL9+0/5qHkO2ZavPReIybsoGCTqR96J1KHf
+         MFZAXx1ORV+kpyy/fDehZMiVMatAsi9pLCGG0O3/hoJ0k4XEF5ze6l/MKO7VL8xZEsVK
+         Q1TlVwBJB5Mvys7qK20Gg/xqSVWj/2J1n1Zdpkv89M7PJQAlxnk5P29pwhkEPbAfDoHV
+         C6qQ==
+X-Gm-Message-State: APt69E01SmxqW6W5ifruSxtS/LIp2DKO5aO6kXVfjkQP8GiSmKeTF6Rt
+        U4Q9hJu4ZJTrUNo2kQUOyDdaS6ViLe7+3ZK4KYZuFA==
+X-Google-Smtp-Source: AAOMgpfUgUv75OGh1deWyuvkT7cTC+fUPvn8w+3PQpR/rMCi1TorHdMvvkDnPz+6/+rdKR1Ro1NZvxynLooH+wasWWk=
+X-Received: by 2002:a6b:6515:: with SMTP id z21-v6mr1243894iob.258.1530020295143;
+ Tue, 26 Jun 2018 06:38:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180626132828.GY20518@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fXo9y-001n0g-Dv
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:33294
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Received: by 2002:a6b:9c51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 06:38:14
+ -0700 (PDT)
+In-Reply-To: <20180626132154.GA5064@lunn.ch>
+References: <20180625155025.12567-1-brgl@bgdev.pl> <20180625174024.GB17417@lunn.ch>
+ <CAMRc=MdEn74G5SJAaGLAfNSS7Zy7wqH04aN5CMZ45UXqhu_58g@mail.gmail.com>
+ <20180625180237.GC17417@lunn.ch> <CAMRc=MejDn=t6EPbKOfhMfRAb_O-5hxtWRyjAWH1mb5BUySrDA@mail.gmail.com>
+ <20180626083823.GA28068@lunn.ch> <CAMRc=Mdvh+1enpD3qDoamhPfaBPin2v3amneQELApgoC0bS2FQ@mail.gmail.com>
+ <20180626132154.GA5064@lunn.ch>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 26 Jun 2018 15:38:14 +0200
+Message-ID: <CAMRc=McCk6fz5x5vJmjYkYx-i6XfGPAZPm9ctg2fuCCfkvKpLQ@mail.gmail.com>
+Subject: Re: [PATCH 00/14] ARM: davinci: step towards removing at24_platform_data
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-06-26 15:21 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
+>> I see. I see it this way: the setup callback comes from the time when
+>> we didn't have nvmem and should go away. I will protest loud whenever
+>> someone will try to use it again and will work towards removing it as
+>> soon as possible.
+>
+> The setup() callback could be moved into the nvmem framework, rather
+> than in the at24 driver. Make the call when the cells have been
+> connected to the backing store.
+>
 
+This would at least make it more generic. And maybe I could also get
+rid of the setup callback from the mityomapl138 board file.
 
-On 06/26/2018 08:28 AM, Ville Syrjälä wrote:
-> On Mon, Jun 25, 2018 at 07:33:55AM -0500, Gustavo A. R. Silva wrote:
->> Fix the following compile warning:
->>
->> warning: unused variable ‘psbfb’ [-Wunused-variable]
->>   struct psb_framebuffer *psbfb = to_psb_fb(fb);
->>
->> Fixes: c7cbed560ce2 ("drm/gma500: Fix Medfield for drm_framebuffer move")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> I sent the same patch a few days ago. Instead of hunting for an r-b
-> I just went ahead and pushed your version. Thanks for the patch.
-> 
+Bart
 
-Glad to help :)
-
-Thanks
---
-Gustavo
+>> I will give your problem a thought and will try to get back with some
+>> proposals - maybe we should, as you suggested, extend nvmem even
+>> further to allow to remove nvmem info entries etc.
+>
+> That does not help me too much. I have the same problem with i2c and
+> MDIO. So i actually prefer to keep this the same as all others.
+>
+>         Andrew
