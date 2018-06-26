@@ -2,92 +2,111 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4F7C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA244C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3C826A7E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F84126ABD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="XTy+JyS3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3C826A7E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaC3d+M1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F84126ABD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934134AbeFZSww (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:52:52 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46347 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933266AbeFZSwu (ORCPT
+        id S934164AbeFZSxU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:53:20 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:46503 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933266AbeFZSxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:52:50 -0400
-Received: by mail-oi0-f66.google.com with SMTP id h79-v6so16975690oig.13
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:52:49 -0700 (PDT)
+        Tue, 26 Jun 2018 14:53:19 -0400
+Received: by mail-vk0-f68.google.com with SMTP id b134-v6so10651439vke.13
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:53:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Dp4Gsuyo/S0fzQlMRo3ONbiMgTgD1AULKi8sXQ1s+cU=;
-        b=XTy+JyS3Gksn6bTQ8jSHKPA8uIkXPlQvUOSbLwCEudZzsW3Q5EDTKKg6bjOvjkmMsw
-         LwLJnDVRlz/qryEeuUxjdTxGk9u6COC4oW+7ToCzZ4iNKYYg+WKSEz1RlP64D1ldOmBp
-         OkTC9/VJ/32KK97Tg1IEJA6bcR61EuCJHfRCnlqtt0Yh/2fgPby0Gqz9BXYd8a7HZ5MM
-         Q8Zw2TmQkq2Pz5dLsGFh1rBSQbUvPiDVm9kmIIWTSUmvKk3uA70HS5NOOSX6PwqIcaBz
-         AyeUMD0NSz3kOgZIuZVOn/VoRoM0539VrpEY46Ryy5pbnn1Lnvf27CriG1+mgMv280YR
-         EX/g==
+        bh=sgO3y5y8ILyYqtUhal+y5a6Q/m8hk5bFpFO0IKwHBbA=;
+        b=eaC3d+M1Ct939uFn5MNpnIiKvLJZP2QVuiQH+q79PcF1jabRLuvw9nXQ3Nbnk9R2oR
+         +PWI2QNAzZLRhEMUGh1kkGImjwqOkROJkVsaj1hbICP0tk81SLIgBMbfG46S5RgUCdA2
+         h/yJ4Oj8oY8RPw5811MCEuV3OqZ6o+d6hQFFRPh4T/iukcYTQLRFeKks2VlNgpvvzcuP
+         3r8W+nUea4tBinF/DEl2zxru1wDFmZkSHEg1mfgMVgWjl2FB09n7vMRH5e8GbS5cuz0J
+         yxwz8GWbYbMXfwtQWr7VElGjoCAsFlN6OjFhR6hz1lEOT4pMtQ4pc2EhLHBDakXa0wdo
+         ARkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Dp4Gsuyo/S0fzQlMRo3ONbiMgTgD1AULKi8sXQ1s+cU=;
-        b=iX922+mp3cvkNqXzopcSb78/vqTvS9Bk2566+dQFz2XNand/phOuYyGWI73D+hBANU
-         ahyXuGgskx8UpC/FLDuMWvIkzimu6SDpgCbIRRbQUXL0ZP0XYfdY5fgw6WoUvZmZPV5T
-         sqA6U31HyEi1MqsW5Umk16hLJLp0g8jp+AJe9agDEG9V7AiLcTp573ApIHluaqhRhI5+
-         3jDObQcPNQGpODJu9DHpjnOD3MojOoiLQLujJtIASbuOLzL/yF+2FEM8LKhaFMKyeTKv
-         t94bfpWaDfqr+ntha0BWnRD/qtKl8fC2cRcdSdq1/Rv1Vb61W3Z8gsSlAvUxJLIuLvra
-         W/HQ==
-X-Gm-Message-State: APt69E0KCxLaCC5o7Mt1SsvJlCYAwvEFnRxoVDTeNOmFKOP/bGuZYG/J
-        ZLyl04N3YF8cNWbNOuzKUfFEc4K1JaBqedweMEwVlA==
-X-Google-Smtp-Source: AAOMgpcaHgxd8/NeHhFeQ0rR3v+G5Ql9Z/f83QDQDMj+xpU3L7QnrxJC2dYgTCIzjDFVQNxUA9GmE0SHGNScpr3FPZU=
-X-Received: by 2002:aca:745:: with SMTP id 66-v6mr1431536oih.295.1530039169643;
- Tue, 26 Jun 2018 11:52:49 -0700 (PDT)
+        bh=sgO3y5y8ILyYqtUhal+y5a6Q/m8hk5bFpFO0IKwHBbA=;
+        b=kTsXfuoje4v/ybIcw6iARRagJ/+QXyzjKdOeCT550Oe+2st3sBfz6f4tJrREolpU1S
+         pk4pVnDSaRjaMQUPMt+GIw+RjD19PUEXrMt3Ch7aQJOfJQzIZXt2tbWhNgE0CtVUGwsd
+         +oY3KWTwac8//wA3oHXFNlzA0ptW8kd/ZPcTdmi/0l8dglOV9hPCIZWVlxkm9BmPn09N
+         3qbqfUek3nsaAVMECreBdhc+OMirh8/LzokxKEE/ide25Yp5kZ/I8zmfbN4ZoHsUNct1
+         xGEVtqk3bpEncH3+KIYxy7buT4E1FK3bFIjCYsymVaKhlZWXZOhgB0N729t+aXi3c+ib
+         qVFA==
+X-Gm-Message-State: APt69E2TyieSA3pD897axgzhxb+dw2mpAnyS2CjgxNBeGrF4OPt4nlCu
+        n4F2kpjkJxFsGmHRaXfmc+ziUOJI8cwBHslp/N4=
+X-Google-Smtp-Source: AAOMgpdGkFEsnzy9M4IU15vf3iv9bjVDFMMc1Z903whLlDYHSERpFSzBXSPEf+ncIZs8WBZ1h87nm0ZpS/zZFEIpizI=
+X-Received: by 2002:a1f:82c7:: with SMTP id e190-v6mr1733478vkd.187.1530039198813;
+ Tue, 26 Jun 2018 11:53:18 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:38c2:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 11:52:49
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 11:53:18
  -0700 (PDT)
-In-Reply-To: <20180626175932.8899-2-ross.zwisler@linux.intel.com>
-References: <20180626175932.8899-1-ross.zwisler@linux.intel.com> <20180626175932.8899-2-ross.zwisler@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 26 Jun 2018 11:52:49 -0700
-Message-ID: <CAPcyv4iWgPnHmBKhUvhManC6UL9CkLqN_d8vBo6KmcPJdPzuUw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] pmem: only set QUEUE_FLAG_DAX for fsdax mode
-To:     Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc:     Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <20180625105952.3756-2-mark.rutland@arm.com>
+References: <20180625105952.3756-1-mark.rutland@arm.com> <20180625105952.3756-2-mark.rutland@arm.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 26 Jun 2018 21:53:18 +0300
+Message-ID: <CAHp75Vdsu2LQtPdjaxfYhc3qT6gOe7bdGQKB==52W-WpORp-WQ@mail.gmail.com>
+Subject: Re: [PATCHv2 01/11] atomic/tty: Fix up atomic abuse in ldsem
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Peter Hurley <peter@hurleysoftware.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 10:59 AM, Ross Zwisler
-<ross.zwisler@linux.intel.com> wrote:
-> QUEUE_FLAG_DAX is an indication that a given block device supports
-> filesystem DAX and should not be set for PMEM namespaces which are in "raw"
-> or "sector" modes.  These namespaces lack struct page and are prevented
-> from participating in filesystem DAX.
+On Mon, Jun 25, 2018 at 1:59 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> From: Peter Zijlstra <peterz@infradead.org>
 >
-> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Suggested-by: Mike Snitzer <snitzer@redhat.com>
-> Cc: stable@vger.kernel.org
+> Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
+> working after making the atomic_long interface type safe.
+>
+> Needing casts is bad form, which made me look at the code. There are no
+> ld_semaphore::count users outside of these functions so there is no
+> reason why it can not be an atomic_long_t in the first place, obviating
+> the need for this cast.
+>
+> That also ensures the loads use atomic_long_read(), which implies (at
+> least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+>
+> When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
+> very thin (the only difference is not changing *old on success, which
+> most callers don't seem to care about).
+>
+> So rework the whole thing to use atomic_long_t and its accessors
+> directly.
+>
+> While there, fixup all the horrible comment styles.
 
-Why is this cc: stable? What is the user visible impact of this change
-especially given the requirement to validate QUEUE_FLAG_DAX with
-bdev_dax_supported()? Patch looks good, but it's just a cosmetic fixup
-afaics.
+
+> -               ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
+> +               atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
+
+I suppose it's simple atomic_long_add() here?
+
+Good fix!
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
