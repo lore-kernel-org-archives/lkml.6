@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658CCC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 509C0C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBDD263F0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00924263F0
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 01:34:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a2iYIYiw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBDD263F0
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VYETUxHW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00924263F0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935356AbeFZBej (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 21:34:39 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:50508 "EHLO
+        id S935377AbeFZBez (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 21:34:55 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:32870 "EHLO
         mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935251AbeFZBeQ (ORCPT
+        with ESMTP id S935232AbeFZBeQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 21:34:16 -0400
-Received: by mail-it0-f65.google.com with SMTP id u4-v6so15306956itg.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 18:34:16 -0700 (PDT)
+Received: by mail-it0-f65.google.com with SMTP id k17-v6so13890610ita.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 18:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=o5QeWxqEpyDQcrAm1vuw7S6DJdzLkwTzI+oUogCtYFc=;
-        b=a2iYIYiwPtOpeNCYlUlNTatUvNE6Oj5HspI6iCRgaCMg2F+XOQZJneS9e4tpd0s78c
-         fg6sahQuZ9IBcSsJI9ah24B0oMNOTg6EuEJimX0i68jiJZa7aNGGXXBglQIQvH4k5lDE
-         gGE8LMuG9bvojv4JZKDASnXvmZwTwj8lE70/Q=
+        bh=/0D4dgUnxnyFGhUqk+RKwlNaqSx/b5/e3BH+kqEcajM=;
+        b=VYETUxHWJnqCGNAh6gMjY3ROfOR+9fimvNDXBSz9KJJe/7t4DS7BpZE6+UGVjNi2qJ
+         OwjZa3jtlJTUOPjdSZ5ONKYxhvdztBzXkxrh6qbMX93vud9HgCbzZxAAIWXVWUnMBNXT
+         mOEtGKcCUL7CldERpqjNyS5DXYx/UJ+xGBZ7c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=o5QeWxqEpyDQcrAm1vuw7S6DJdzLkwTzI+oUogCtYFc=;
-        b=HiQ3hOS2ihZpfxHSOKlafmRkjZ9nJMq0DjjMykih9nkNNvtoyH0rsRWOJHWCmPeE0B
-         lGnWhb6KmZotk1vW9lspFI1OJ4AFGdkRpByI4E3rvI3ceDfC4eeToZH+zMn+aCtv0sFS
-         YAZvXPTUl3VrceJE+8sk2TA+S/lI+U9j/M0VRO/V512n/S/8Wqc2ebu9UmXoC/p5kEK5
-         +YfURH4iy0zA1suMSM6F5sHkJBzSRoiA7gV5Tc925qAxxFJ4wt0V1XI/e3PlffJmYSrS
-         ZFCDKe/UfZBaKxnW7ScGg8VbYb2AqPsHAt1fKBqJptsl5CiNXbOZbxBNlrXyJUUNbW3+
-         rIGw==
-X-Gm-Message-State: APt69E0hYFdVfw3Y9CpcrnUwP3aK5Lmo0qhBXEo7rJeDti3Ipl96dgXl
-        vbaVCg+zUP/jEpi3Ab6SPBhbXzg0Wuk=
-X-Google-Smtp-Source: ADUXVKKT8eV1YeitxIXA4eXtU9mUZT7pwq90OMP3v7U7eIIuL+4spT9dMnc6QzCcuOnv+KbRoKIXug==
-X-Received: by 2002:a02:a999:: with SMTP id q25-v6mr11796857jam.47.1529976856141;
-        Mon, 25 Jun 2018 18:34:16 -0700 (PDT)
-Received: from localhost.localdomain (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
-        by smtp.gmail.com with ESMTPSA id h62-v6sm184699ioa.22.2018.06.25.18.34.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=/0D4dgUnxnyFGhUqk+RKwlNaqSx/b5/e3BH+kqEcajM=;
+        b=Kp+ZPdIjHRnuCV+QsKYNpynq7mTTsVMEefnw242QnRqwDiosL5FZRV+9kNZYEeBWmy
+         chZvmQijJ5uHFJ7HVh74Kp/iunP8LND+amPAD5UqcLb7qqvEMJJxnGwn5kEHq9CQk8C6
+         RyVVafNbRGF8xGtgjCemOCBv5Yt0RG0aGtCr4fs2NQDJvMeUR63rRGI15NBIqAhLOBzx
+         e5izJ7gkzq6/WALfn6l6Z4BXU0K4OjgAoo3zpmQX/TspWTnBHGpjV16CZBrklzpEeZSU
+         GKsRn2l3FetPE0oZKhlyHbHrz2ZlJr3OilDO+NWK2ohv1He4mf2XqiBv9Pfw17IV5Zso
+         g+zg==
+X-Gm-Message-State: APt69E2hQ+MwYwAvOhFice2GNjEgT+xhf4HEDjWNEuQkN4JkaNe59/gx
+        uWN7OgZVzayGnXQ9s5NgGEQmiGi+c2w=
+X-Google-Smtp-Source: ADUXVKJSKAZDx+GPaybAmugbhuTeDIgUVMpHI2hXHN+wTi8iyp+MuXY7OhQjhJoYMwobe4JkT+sHpg==
+X-Received: by 2002:a02:4c9b:: with SMTP id q27-v6mr6429026jad.38.1529976855201;
         Mon, 25 Jun 2018 18:34:15 -0700 (PDT)
+Received: from localhost.localdomain (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.gmail.com with ESMTPSA id h62-v6sm184699ioa.22.2018.06.25.18.34.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 18:34:14 -0700 (PDT)
 From:   Alex Elder <elder@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH resend 4/5] remoteproc: rename subdev probe and remove functions
-Date:   Mon, 25 Jun 2018 20:34:08 -0500
-Message-Id: <20180626013409.5125-5-elder@linaro.org>
+Subject: [PATCH resend 3/5] remoteproc: Make client initialize ops in rproc_subdev
+Date:   Mon, 25 Jun 2018 20:34:07 -0500
+Message-Id: <20180626013409.5125-4-elder@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626013409.5125-1-elder@linaro.org>
 References: <20180626013409.5125-1-elder@linaro.org>
@@ -67,109 +67,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename functions used when subdevices are started and stopped to
-reflect the new naming scheme.
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: Alex Elder <elder@linaro.org>
+In preparation of adding the additional prepare and unprepare operations
+make the client responsible for filling out the function pointers of the
+rproc_subdev. This makes the arguments to rproc_add_subdev() more
+manageable, in particular when some of the functions are left out.
+
+[elder@linaro.org: added comment about assigning function pointers]
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Alex Elder <elder@linaro.org>
 Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- drivers/remoteproc/qcom_common.c     | 16 ++++++++--------
- drivers/remoteproc/remoteproc_core.c |  8 ++++----
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/remoteproc/qcom_common.c     | 18 ++++++++++--------
+ drivers/remoteproc/qcom_sysmon.c     |  5 ++++-
+ drivers/remoteproc/remoteproc_core.c | 18 +++++++-----------
+ include/linux/remoteproc.h           |  5 +----
+ 4 files changed, 22 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 4ae87c5b8793..6f77840140bf 100644
+index acfc99f82fb8..4ae87c5b8793 100644
 --- a/drivers/remoteproc/qcom_common.c
 +++ b/drivers/remoteproc/qcom_common.c
-@@ -33,7 +33,7 @@
- 
- static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
- 
--static int glink_subdev_probe(struct rproc_subdev *subdev)
-+static int glink_subdev_start(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
-@@ -42,7 +42,7 @@ static int glink_subdev_probe(struct rproc_subdev *subdev)
- 	return PTR_ERR_OR_ZERO(glink->edge);
- }
- 
--static void glink_subdev_remove(struct rproc_subdev *subdev, bool crashed)
-+static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
-@@ -64,8 +64,8 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
+@@ -64,7 +64,10 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
  		return;
  
  	glink->dev = dev;
--	glink->subdev.start = glink_subdev_probe;
--	glink->subdev.stop = glink_subdev_remove;
-+	glink->subdev.start = glink_subdev_start;
-+	glink->subdev.stop = glink_subdev_stop;
- 
- 	rproc_add_subdev(rproc, &glink->subdev);
+-	rproc_add_subdev(rproc, &glink->subdev, glink_subdev_probe, glink_subdev_remove);
++	glink->subdev.start = glink_subdev_probe;
++	glink->subdev.stop = glink_subdev_remove;
++
++	rproc_add_subdev(rproc, &glink->subdev);
  }
-@@ -129,7 +129,7 @@ int qcom_register_dump_segments(struct rproc *rproc,
- }
- EXPORT_SYMBOL_GPL(qcom_register_dump_segments);
+ EXPORT_SYMBOL_GPL(qcom_add_glink_subdev);
  
--static int smd_subdev_probe(struct rproc_subdev *subdev)
-+static int smd_subdev_start(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
- 
-@@ -138,7 +138,7 @@ static int smd_subdev_probe(struct rproc_subdev *subdev)
- 	return PTR_ERR_OR_ZERO(smd->edge);
- }
- 
--static void smd_subdev_remove(struct rproc_subdev *subdev, bool crashed)
-+static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
- 
-@@ -160,8 +160,8 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+@@ -157,7 +160,10 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
  		return;
  
  	smd->dev = dev;
--	smd->subdev.start = smd_subdev_probe;
--	smd->subdev.stop = smd_subdev_remove;
-+	smd->subdev.start = smd_subdev_start;
-+	smd->subdev.stop = smd_subdev_stop;
- 
- 	rproc_add_subdev(rproc, &smd->subdev);
+-	rproc_add_subdev(rproc, &smd->subdev, smd_subdev_probe, smd_subdev_remove);
++	smd->subdev.start = smd_subdev_probe;
++	smd->subdev.stop = smd_subdev_remove;
++
++	rproc_add_subdev(rproc, &smd->subdev);
  }
+ EXPORT_SYMBOL_GPL(qcom_add_smd_subdev);
+ 
+@@ -202,11 +208,6 @@ void qcom_unregister_ssr_notifier(struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
+ 
+-static int ssr_notify_start(struct rproc_subdev *subdev)
+-{
+-	return  0;
+-}
+-
+ static void ssr_notify_stop(struct rproc_subdev *subdev, bool crashed)
+ {
+ 	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+@@ -227,8 +228,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
+ 			 const char *ssr_name)
+ {
+ 	ssr->name = ssr_name;
++	ssr->subdev.stop = ssr_notify_stop;
+ 
+-	rproc_add_subdev(rproc, &ssr->subdev, ssr_notify_start, ssr_notify_stop);
++	rproc_add_subdev(rproc, &ssr->subdev);
+ }
+ EXPORT_SYMBOL_GPL(qcom_add_ssr_subdev);
+ 
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index f085545d7da5..e976a602b015 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -469,7 +469,10 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
+ 
+ 	qmi_add_lookup(&sysmon->qmi, 43, 0, 0);
+ 
+-	rproc_add_subdev(rproc, &sysmon->subdev, sysmon_start, sysmon_stop);
++	sysmon->subdev.start = sysmon_start;
++	sysmon->subdev.stop = sysmon_stop;
++
++	rproc_add_subdev(rproc, &sysmon->subdev);
+ 
+ 	sysmon->nb.notifier_call = sysmon_notify;
+ 	blocking_notifier_chain_register(&sysmon_notifiers, &sysmon->nb);
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ca39fad175f2..2ede7ae6f5bc 100644
+index 981ae6dff145..ca39fad175f2 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -301,14 +301,14 @@ void rproc_free_vring(struct rproc_vring *rvring)
- 	rsc->vring[idx].notifyid = -1;
- }
- 
--static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
-+static int rproc_vdev_do_start(struct rproc_subdev *subdev)
- {
- 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
- 
- 	return rproc_add_virtio_dev(rvdev, rvdev->id);
- }
- 
--static void rproc_vdev_do_remove(struct rproc_subdev *subdev, bool crashed)
-+static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
- 
-@@ -399,8 +399,8 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+@@ -399,8 +399,10 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
  
  	list_add_tail(&rvdev->node, &rproc->rvdevs);
  
--	rvdev->subdev.start = rproc_vdev_do_probe;
--	rvdev->subdev.stop = rproc_vdev_do_remove;
-+	rvdev->subdev.start = rproc_vdev_do_start;
-+	rvdev->subdev.stop = rproc_vdev_do_stop;
+-	rproc_add_subdev(rproc, &rvdev->subdev,
+-			 rproc_vdev_do_probe, rproc_vdev_do_remove);
++	rvdev->subdev.start = rproc_vdev_do_probe;
++	rvdev->subdev.stop = rproc_vdev_do_remove;
++
++	rproc_add_subdev(rproc, &rvdev->subdev);
  
- 	rproc_add_subdev(rproc, &rvdev->subdev);
+ 	return 0;
+ 
+@@ -1663,17 +1665,11 @@ EXPORT_SYMBOL(rproc_del);
+  * rproc_add_subdev() - add a subdevice to a remoteproc
+  * @rproc: rproc handle to add the subdevice to
+  * @subdev: subdev handle to register
+- * @start: function to call after the rproc is started
+- * @stop: function to call before the rproc is stopped
++ *
++ * Caller is responsible for populating optional subdevice function pointers.
+  */
+-void rproc_add_subdev(struct rproc *rproc,
+-		      struct rproc_subdev *subdev,
+-		      int (*start)(struct rproc_subdev *subdev),
+-		      void (*stop)(struct rproc_subdev *subdev, bool crashed))
++void rproc_add_subdev(struct rproc *rproc, struct rproc_subdev *subdev)
+ {
+-	subdev->start = start;
+-	subdev->stop = stop;
+-
+ 	list_add_tail(&subdev->node, &rproc->subdevs);
+ }
+ EXPORT_SYMBOL(rproc_add_subdev);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index bf55bf2a5ee1..8f1426330cca 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -566,10 +566,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+ 	return rvdev->rproc;
+ }
+ 
+-void rproc_add_subdev(struct rproc *rproc,
+-		      struct rproc_subdev *subdev,
+-		      int (*start)(struct rproc_subdev *subdev),
+-		      void (*stop)(struct rproc_subdev *subdev, bool crashed));
++void rproc_add_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+ 
+ void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
  
 -- 
 2.17.1
