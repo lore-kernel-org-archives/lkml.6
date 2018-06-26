@@ -2,242 +2,296 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C69CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347C5C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF4126462
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:29:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="EsfyvOn7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF4126462
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id E3D0E26A4D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:29:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D0E26A4D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965614AbeFZN3c (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:29:32 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55021 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965545AbeFZN32 (ORCPT
+        id S965466AbeFZN3r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:29:47 -0400
+Received: from p3plsmtpa11-09.prod.phx3.secureserver.net ([68.178.252.110]:33681
+        "EHLO p3plsmtpa11-09.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965649AbeFZN3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:29:28 -0400
-Received: by mail-wm0-f66.google.com with SMTP id i139-v6so1937643wmf.4
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 06:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=9nxAPf4sKghV3dxynTnZhNIo/qfZz14pyZ4IOfbJPvI=;
-        b=EsfyvOn70LPjmgi4H9/p4bCljPzUTmtryzFYrVv9dxaFMPpRp8FLfIAdIReVs+hrcs
-         az5k2CQP6iALRAfLT+9hkCBZ6cX27yBXJnHXHAXi6oYpMFpbaNyn/n1HcfnguV0HuoTN
-         hXDxgb68vymHgCM2JqKzXvrsxxRIvK+RO9btk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9nxAPf4sKghV3dxynTnZhNIo/qfZz14pyZ4IOfbJPvI=;
-        b=SToSf/Zi/Sc+nt6tRsmj3xuf7kWCX5m4MYou1qmK4Vo4v9LetX93ALiVf+Q2lucCB/
-         5cLiHlu/vvE10iMd8uUdKbfu+1Y1h3cDH+el95jhy63WiCkpWIHIUfGMy7GXA5KEe1Tr
-         BZBjuvrb4aAJtzJxUeWZizX7aT31f2hL1iepgZVDAnUzEySiL5jF5UKaKoKTdDl6JvGu
-         0tXBEDxEjpnMTdu05ZitN4tcr8ahnjDmeoMzuVEgdaJERHUHmsVvrT09nHsYXXmuAPSH
-         3rGATcxYSNHwF5kGrrbqPhpZasfAxkecg94FrryUJJqxFajpwVNCuiCCa6eyXipkfzkZ
-         605Q==
-X-Gm-Message-State: APt69E2bkHDm8G1cMdxafUJeRx/bYShgyb20dsiRIeDHPzI9kg2KXQe2
-        0s5BkeWRffynXsp0i2Mbnq/CBRZPJ2KMCJEGvfbjxQ==
-X-Google-Smtp-Source: AAOMgpeJicEtzp9uvS2RA0zcok7z8fzwbFm8k6Dl7UrsLWJ0wDY5TcCsEhOG7LtaFvvHTUvRrnTye3kVemjQsqkuhz4=
-X-Received: by 2002:a1c:1e86:: with SMTP id e128-v6mr1688824wme.85.1530019766792;
- Tue, 26 Jun 2018 06:29:26 -0700 (PDT)
+        Tue, 26 Jun 2018 09:29:45 -0400
+Received: from [192.168.0.67] ([24.218.182.144])
+        by :SMTPAUTH: with ESMTPSA
+        id Xo2RfXFFrXYbAXo2Sf9WpW; Tue, 26 Jun 2018 06:29:44 -0700
+Subject: Re: [Patch v2 14/15] CIFS: Add support for direct I/O write
+To:     Long Li <longli@microsoft.com>, Steve French <sfrench@samba.org>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+References: <20180530194807.31657-1-longli@linuxonhyperv.com>
+ <20180530194807.31657-15-longli@linuxonhyperv.com>
+ <9162de67-fc5d-26e9-5882-26377194a2ff@talpey.com>
+ <DM5PR2101MB07285F85A018D8C2EFC2D730CE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <ade11bce-702e-7aa4-ffa8-9565b77a0aef@talpey.com>
+Date:   Tue, 26 Jun 2018 09:29:43 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:adf:8684:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 06:29:26
- -0700 (PDT)
-In-Reply-To: <CAOf5uwk2cf_+27nk9i9MQmbfJ8LCfPYopkcX__9M64jMYmhu1A@mail.gmail.com>
-References: <CAOf5uwmSeugMHBBFc8ZQKY=wEsVD-YwD=YSWi=XbysU58Gp=Ww@mail.gmail.com>
- <9fb661e6-482b-76e0-2af0-a62a70e5606d@redhat.com> <CAOf5uwk2cf_+27nk9i9MQmbfJ8LCfPYopkcX__9M64jMYmhu1A@mail.gmail.com>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Tue, 26 Jun 2018 15:29:26 +0200
-Message-ID: <CAOf5uwkEuDgAJ7e8rNFyiKpUZPA3NhQGREtOGsm1EVSofW3rzQ@mail.gmail.com>
-Subject: Re: simple-framebuffer enquire
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     artlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <DM5PR2101MB07285F85A018D8C2EFC2D730CE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfIVVgzx3NFjhCEmFz39Z4rCJF/LFddt7XrXnbCrfK2z5PCnhgNCCz+7P3a25ph8nUYchfEFm3EJbJEt1FJhbmo5mD4YMW6icX4R/zzchMeDdRAhLezO+
+ 0kt+m9iLdVp/eJWsFOjTS6xOmMBmYHKCY2khGagmsZtTh7chIHDYwdMEcQhVMoiKWv+km7RYVcoj9BehDOen83kOCf03peRDiOwZdkvdHreqVw7jeTgJdreO
+ l2Pl1aYSLV3s/IWFyqE7vdixxGCcNHegEL1KnbuA+F+Fdqilu7v88aChMc1L9Sb2m0hXK7jwflzPV801295Ly1XkHZYaCXOowYSLLbZBaVoWmbv1IOrTon4z
+ Iue1mo4i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On 6/26/2018 12:39 AM, Long Li wrote:
+>> Subject: Re: [Patch v2 14/15] CIFS: Add support for direct I/O write
+>>
+>> On 5/30/2018 3:48 PM, Long Li wrote:
+>>> From: Long Li <longli@microsoft.com>
+>>>
+>>> Implement the function for direct I/O write. It doesn't support AIO,
+>>> which will be implemented in a follow up patch.
+>>>
+>>> Signed-off-by: Long Li <longli@microsoft.com>
+>>> ---
+>>>    fs/cifs/cifsfs.h |   1 +
+>>>    fs/cifs/file.c   | 165
+>> +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>>    2 files changed, 166 insertions(+)
+>>>
+>>> diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h index
+>>> 7fba9aa..e9c5103 100644
+>>> --- a/fs/cifs/cifsfs.h
+>>> +++ b/fs/cifs/cifsfs.h
+>>> @@ -105,6 +105,7 @@ extern ssize_t cifs_user_readv(struct kiocb *iocb,
+>> struct iov_iter *to);
+>>>    extern ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to);
+>>>    extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to);
+>>>    extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter
+>>> *from);
+>>> +extern ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter
+>>> +*from);
+>>>    extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from);
+>>>    extern int cifs_lock(struct file *, int, struct file_lock *);
+>>>    extern int cifs_fsync(struct file *, loff_t, loff_t, int); diff
+>>> --git a/fs/cifs/file.c b/fs/cifs/file.c index e6e6f24..8c385b1 100644
+>>> --- a/fs/cifs/file.c
+>>> +++ b/fs/cifs/file.c
+>>> @@ -2461,6 +2461,35 @@ cifs_uncached_writedata_release(struct kref
+>>> *refcount)
+>>>
+>>>    static void collect_uncached_write_data(struct cifs_aio_ctx *ctx);
+>>>
+>>> +static void cifs_direct_writedata_release(struct kref *refcount) {
+>>> +	int i;
+>>> +	struct cifs_writedata *wdata = container_of(refcount,
+>>> +					struct cifs_writedata, refcount);
+>>> +
+>>> +	for (i = 0; i < wdata->nr_pages; i++)
+>>> +		put_page(wdata->pages[i]);
+>>> +
+>>> +	cifs_writedata_release(refcount);
+>>> +}
+>>> +
+>>> +static void cifs_direct_writev_complete(struct work_struct *work) {
+>>> +	struct cifs_writedata *wdata = container_of(work,
+>>> +					struct cifs_writedata, work);
+>>> +	struct inode *inode = d_inode(wdata->cfile->dentry);
+>>> +	struct cifsInodeInfo *cifsi = CIFS_I(inode);
+>>> +
+>>> +	spin_lock(&inode->i_lock);
+>>> +	cifs_update_eof(cifsi, wdata->offset, wdata->bytes);
+>>> +	if (cifsi->server_eof > inode->i_size)
+>>> +		i_size_write(inode, cifsi->server_eof);
+>>> +	spin_unlock(&inode->i_lock);
+>>> +
+>>> +	complete(&wdata->done);
+>>> +	kref_put(&wdata->refcount, cifs_direct_writedata_release); }
+>>> +
+>>>    static void
+>>>    cifs_uncached_writev_complete(struct work_struct *work)
+>>>    {
+>>> @@ -2703,6 +2732,142 @@ static void collect_uncached_write_data(struct
+>> cifs_aio_ctx *ctx)
+>>>    		complete(&ctx->done);
+>>>    }
+>>>
+>>> +ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from)
+>>> +{
+>>> +	struct file *file = iocb->ki_filp;
+>>> +	ssize_t total_written = 0;
+>>> +	struct cifsFileInfo *cfile;
+>>> +	struct cifs_tcon *tcon;
+>>> +	struct cifs_sb_info *cifs_sb;
+>>> +	struct TCP_Server_Info *server;
+>>> +	pid_t pid;
+>>> +	unsigned long nr_pages;
+>>> +	loff_t offset = iocb->ki_pos;
+>>> +	size_t len = iov_iter_count(from);
+>>> +	int rc;
+>>> +	struct cifs_writedata *wdata;
+>>> +
+>>> +	/*
+>>> +	 * iov_iter_get_pages_alloc doesn't work with ITER_KVEC.
+>>> +	 * In this case, fall back to non-direct write function.
+>>> +	 */
+>>> +	if (from->type & ITER_KVEC) {
+>>> +		cifs_dbg(FYI, "use non-direct cifs_user_writev for kvec
+>> I/O\n");
+>>> +		return cifs_user_writev(iocb, from);
+>>> +	}
+>>> +
+>>> +	rc = generic_write_checks(iocb, from);
+>>> +	if (rc <= 0)
+>>> +		return rc;
+>>> +
+>>> +	cifs_sb = CIFS_FILE_SB(file);
+>>> +	cfile = file->private_data;
+>>> +	tcon = tlink_tcon(cfile->tlink);
+>>> +	server = tcon->ses->server;
+>>> +
+>>> +	if (!server->ops->async_writev)
+>>> +		return -ENOSYS;
+>>> +
+>>> +	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
+>>> +		pid = cfile->pid;
+>>> +	else
+>>> +		pid = current->tgid;
+>>> +
+>>> +	do {
+>>> +		unsigned int wsize, credits;
+>>> +		struct page **pagevec;
+>>> +		size_t start;
+>>> +		ssize_t cur_len;
+>>> +
+>>> +		rc = server->ops->wait_mtu_credits(server, cifs_sb->wsize,
+>>> +						   &wsize, &credits);
+>>> +		if (rc)
+>>> +			break;
+>>> +
+>>> +		cur_len = iov_iter_get_pages_alloc(
+>>> +				from, &pagevec, wsize, &start);
+>>> +		if (cur_len < 0) {
+>>> +			cifs_dbg(VFS,
+>>> +				"direct_writev couldn't get user pages "
+>>> +				"(rc=%zd) iter type %d iov_offset %lu count"
+>>> +				" %lu\n",
+>>> +				cur_len, from->type,
+>>> +				from->iov_offset, from->count);
+>>> +			dump_stack();
+>>> +			break;
+>>> +		}
+>>> +		if (cur_len < 0)
+>>> +			break;
+>>
+>> This cur_len < 0 test is redundant with the prior if(), delete.
+>>> +
+>>> +		nr_pages = (cur_len + start + PAGE_SIZE - 1) / PAGE_SIZE;
+>>
+>> Am I misreading, or will this return be one more page than needed? If start
+>> (the first byte offset) is > 0, nr_pages will already be one.
+>> And if cur_len is 4KB, even if start is 0, nr_pages will be two.
+> 
+> I think the calculation is correct, assuming cur_len > 0. (which should be the case if we reach here)
 
-to be more specific
+Err, cur_len could possibly be zero, the prior line only breaks the
+loop if cur_len < 0.
 
-On Tue, Jun 26, 2018 at 3:06 PM, Michael Nazzareno Trimarchi
-<michael@amarulasolutions.com> wrote:
-> Hi
->
-> On Tue., 26 Jun. 2018, 12:01 pm Hans de Goede, <hdegoede@redhat.com> wrote:
->>
->> Hi,
->>
->> On 25-06-18 15:29, Michael Nazzareno Trimarchi wrote:
->> > Hi Hans
->> >
->> > In order to let it even registered the simplefb I have added this
->> > change. According on what I understand
->> > from the code seems that this is the way to acquire memory with the
->> > correct attribute
->> >
->> > diff --git a/drivers/video/fbdev/simplefb.c
->> > b/drivers/video/fbdev/simplefb.c
->> > index a3c44ec..7e61ce3 100644
->> > --- a/drivers/video/fbdev/simplefb.c
->> > +++ b/drivers/video/fbdev/simplefb.c
->> > @@ -466,8 +466,8 @@ static int simplefb_probe(struct platform_device
->> > *pdev)
->> >
->> >          info->fbops = &simplefb_ops;
->> >          info->flags = FBINFO_DEFAULT | FBINFO_MISC_FIRMWARE;
->> > -       info->screen_base = ioremap_wc(info->fix.smem_start,
->> > -                                      info->fix.smem_len);
->> > +       info->screen_base = arch_memremap_wb(info->fix.smem_start,
->> > +                                            info->fix.smem_len);
->>
->> I'm not sure why you need this?  wb certainly is not optimal
->> for a framebuffer, the existing wc mapping is really what you
->> want.
->>
->
-> Well in this way raise a WARN and get a nice NULL on memory remap on imx6ull
-> SoC
->
+> If cur_len is 4kb and start is 0, nr_pages will be 1.
 
-[    0.397484] WARNING: CPU: 0 PID: 1 at arch/arm/mm/ioremap.c:303
-__arm_ioremap_pfn_caller+0x80/0x1cc
-[    0.397533] Modules linked in:
-[    0.397611] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc1 #8
-[    0.397650] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
-[    0.397686] Backtrace:
-[    0.397767] [<c010ca88>] (dump_backtrace) from [<c010cd28>]
-(show_stack+0x18/0x1c)
-[    0.397819]  r7:00000000 r6:60000053 r5:00000000 r4:c1684b94
-[    0.397877] [<c010cd10>] (show_stack) from [<c0a22dc8>]
-(dump_stack+0xb4/0xe8)
-[    0.397936] [<c0a22d14>] (dump_stack) from [<c01255e0>] (__warn+0x104/0x130)
-[    0.397988]  r9:00000001 r8:0000012f r7:00000009 r6:c0d07b50
-r5:00000000 r4:00000000
-[    0.398041] [<c01254dc>] (__warn) from [<c01256dc>]
-(warn_slowpath_null+0x44/0x50)
-[    0.398093]  r8:c0dc3154 r7:00086fd6 r6:c0118d60 r5:0000012f r4:c0d07b50
-[    0.398149] [<c0125698>] (warn_slowpath_null) from [<c0118d60>]
-(__arm_ioremap_pfn_caller+0x80/0x1cc)
-[    0.398197]  r6:86fd6000 r5:00000080 r4:00080000
-[    0.398250] [<c0118ce0>] (__arm_ioremap_pfn_caller) from
-[<c0118f00>] (__arm_ioremap_caller+0x54/0x5c)
-[    0.398303]  r9:0000004b r8:c321d0d0 r7:c0b3ddc0 r6:c321cc00
-r5:c321d328 r4:c0118eac
-[    0.398358] [<c0118eac>] (__arm_ioremap_caller) from [<c0119008>]
-(ioremap_wc+0x20/0x28)
-[    0.398417] [<c0118fe8>] (ioremap_wc) from [<c04a499c>]
-(simplefb_probe+0x224/0x8a0)
-[    0.398462]  r5:c321d328 r4:c321d000
-[    0.398519] [<c04a4778>] (simplefb_probe) from [<c055ceb8>]
-(platform_drv_probe+0x58/0xb8)
-[    0.398571]  r10:00000000 r9:00000000 r8:c1633910 r7:fffffdfb
-r6:c1633910 r5:fffffffe
-[    0.398608]  r4:c321cc10
-[    0.398666] [<c055ce60>] (platform_drv_probe) from [<c055b334>]
-(driver_probe_device+0x2ac/0x334)
-[    0.398717]  r7:c1decedc r6:00000000 r5:c1deced8 r4:c321cc10
-[    0.398774] [<c055b088>] (driver_probe_device) from [<c055b528>]
-(__device_attach_driver+0xa0/0xd4)
-[    0.398826]  r10:00000000 r9:c1dece94 r8:00000000 r7:00000001
-r6:c321cc10 r5:c3059dd8
-[    0.398866]  r4:c1633910 r3:00000000
+Hmm, I guess. But again, it seems as if this page handling is all
+being coded inline, in subtly different ways. I'm just concerned
+about clarity and robustness. To me, if it's hard to review, it's
+even harder to maintain.
 
-Michael
->>
->> >          if (!info->screen_base) {
->> >                  ret = -ENOMEM;
->> >                  goto error_fb_release;
->> >
->> > Another question is
->> >
->> >          aliases {
->> >                  display0 = &lcdif;
->> >          };
->> >
->> >          chosen {
->> >                  #address-cells = <1>;
->> >                  #size-cells = <1>;
->> >                  ranges;
->> >
->> >                  stdout-path = &uart1;
->> >                  framebuffer0: framebuffer@86fd6080 {
->> >                          compatible = "simple-framebuffer";
->> >                          reg = <0x86fd6080 (480 * 272 * 4)>;
->> >                          width = <480>;
->> >                          height = <272>;
->> >                          stride = <(480 * 4)>;
->> >                          format = "a8r8g8b8";
->> >                          clocks = <&clks IMX6UL_CLK_LCDIF_PIX>,
->> >                                   <&clks IMX6UL_CLK_LCDIF_APB>,
->> >                                   <&clks IMX6UL_CLK_DUMMY>,
->> >                                   <&clks IMX6UL_CLK_GPIO3>,
->> >                                   <&clks IMX6UL_CLK_GPIO4>;
->> >                          nshut-supply = <&reg_lcd_nshut>;
->> >                          nreset-supply = <&reg_lcd_nreset>;
->>
->> This looks like GPIOS to me why are you modeling this a supplies?
->>
->> Anyways ...
->>
->> >                          display = <&lcdif>;
->> >                  };
->> >          };
->> > };
->> >
->> > How do you ensure that regulators that are bind to gpios can be
->> > maintain during boot?
->>
->> Any regulators listed in the simplefb dt-node will be kept enabled
->> until remove_conflicting_framebuffers is called() from the native
->> display driver. To keep them enabled while loading the native
->> display driver, you should get and enable them in the native display
->> driver *before* calling remove_conflicting_framebuffers()
->> (and the same goes for the clocks).
->>
->
-> I will check it
->
-> Thank you
->
-> Michael
->>
->> Regards,
->>
->> Hans
->>
->>
->>
->> > A small minor comment is how to automatic switch then to normal
->> > framebuffer. Anyway seems
->> > that
->> >                  #address-cells = <1>;
->> >                  #size-cells = <1>;
->> >                  ranges;
->> >
->> > are mandatory and they are in the dts documentation.
->> >
->> > Best regards
->> > Michael
->> >
+Tom.
 
+> 
+>>
+>>> +
+>>> +		wdata = cifs_writedata_direct_alloc(pagevec,
+>>> +					     cifs_direct_writev_complete);
+>>> +		if (!wdata) {
+>>> +			rc = -ENOMEM;
+>>> +			add_credits_and_wake_if(server, credits, 0);
+>>> +			break;
+>>> +		}
+>>> +
+>>> +		wdata->nr_pages = nr_pages;
+>>> +		wdata->page_offset = start;
+>>> +		wdata->pagesz = PAGE_SIZE;
+>>> +		wdata->tailsz =
+>>> +			nr_pages > 1 ?
+>>> +			cur_len - (PAGE_SIZE - start) -
+>>> +				(nr_pages - 2) * PAGE_SIZE :
+>>> +			cur_len;
+>>> +
+>>> +		wdata->sync_mode = WB_SYNC_ALL;
+>>> +		wdata->offset = (__u64)offset;
+>>> +		wdata->cfile = cifsFileInfo_get(cfile);
+>>> +		wdata->pid = pid;
+>>> +		wdata->bytes = cur_len;
+>>> +		wdata->credits = credits;
+>>> +
+>>> +		rc = 0;
+>>> +		if (wdata->cfile->invalidHandle)
+>>> +			rc = cifs_reopen_file(wdata->cfile, false);
+>>> +
+>>> +		if (!rc)
+>>> +			rc = server->ops->async_writev(wdata,
+>>> +					cifs_direct_writedata_release);
+>>> +
+>>> +		if (rc) {
+>>> +			add_credits_and_wake_if(server, wdata->credits, 0);
+>>> +			kref_put(&wdata->refcount,
+>>> +				 cifs_direct_writedata_release);
+>>> +			if (rc == -EAGAIN)
+>>> +				continue;
+>>> +			break;
+>>> +		}
+>>
+>> Same comments as for previous patch re the if (rc) ladder, and the
+>> break/continues both being better expressed as careful goto's.
+>>
+>>> +
+>>> +		wait_for_completion(&wdata->done);
+>>> +		if (wdata->result) {
+>>> +			rc = wdata->result;
+>>> +			kref_put(&wdata->refcount,
+>>> +					cifs_direct_writedata_release);
+>>> +			if (rc == -EAGAIN)
+>>> +				continue;
+>>> +			break;
+>>> +		}
+>>> +
+>>> +		kref_put(&wdata->refcount, cifs_direct_writedata_release);
+>>> +
+>>> +		iov_iter_advance(from, cur_len);
+>>> +		total_written += cur_len;
+>>> +		offset += cur_len;
+>>> +		len -= cur_len;
+>>> +	} while (len);
+>>> +
+>>> +	if (unlikely(!total_written))
+>>> +		return rc;
+>>> +
+>>> +	iocb->ki_pos += total_written;
+>>> +	return total_written;
+>>> +
+>>> +}
+>>> +
+>>>    ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from)
+>>>    {
+>>>    	struct file *file = iocb->ki_filp;
+>>>
 
-
--- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
