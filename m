@@ -2,160 +2,129 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6411C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3E9C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98CCF2654D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:35:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CCF2654D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3A94326554
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A94326554
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751949AbeFZGf0 (ORCPT
+        id S1752114AbeFZGga (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 02:35:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58556 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751181AbeFZGfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 02:35:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E3911ABA5;
-        Tue, 26 Jun 2018 06:35:22 +0000 (UTC)
-Date:   Tue, 26 Jun 2018 08:35:21 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kani, Toshi" <toshi.kani@hpe.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>
-Subject: Re: [PATCH v3 0/3] fix free pmd/pte page handlings on x86
-Message-ID: <20180626063521.GT28965@dhcp22.suse.cz>
-References: <20180516233207.1580-1-toshi.kani@hpe.com>
- <alpine.DEB.2.21.1806241516410.8650@nanos.tec.linutronix.de>
- <1529938470.14039.134.camel@hpe.com>
- <20180625175225.GQ28965@dhcp22.suse.cz>
- <1529961187.14039.206.camel@hpe.com>
+        Tue, 26 Jun 2018 02:36:30 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:38794 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751869AbeFZGg2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 02:36:28 -0400
+X-UUID: 6acbb1c84d01431c8d4c040bf61bcb3e-20180626
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 443016716; Tue, 26 Jun 2018 14:36:26 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 26 Jun 2018 14:36:24 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Tue, 26 Jun 2018 14:36:24 +0800
+Message-ID: <1529994984.17448.27.camel@mtkswgap22>
+Subject: Re: [PATCH 1/2] dt-bindings: Add mtk-systimer bindings
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date:   Tue, 26 Jun 2018 14:36:24 +0800
+In-Reply-To: <ad38a952-4400-984a-a7fd-aa4e6af13c13@linaro.org>
+References: <1529910601-15005-1-git-send-email-stanley.chu@mediatek.com>
+         <1529910601-15005-2-git-send-email-stanley.chu@mediatek.com>
+         <ad38a952-4400-984a-a7fd-aa4e6af13c13@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529961187.14039.206.camel@hpe.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 25-06-18 21:15:03, Kani Toshimitsu wrote:
-> On Mon, 2018-06-25 at 19:53 +0200, Michal Hocko wrote:
-> > On Mon 25-06-18 14:56:26, Kani Toshimitsu wrote:
-> > > On Sun, 2018-06-24 at 15:19 +0200, Thomas Gleixner wrote:
-> > > > On Wed, 16 May 2018, Toshi Kani wrote:
-> > > > 
-> > > > > This series fixes two issues in the x86 ioremap free page handlings
-> > > > > for pud/pmd mappings.
-> > > > > 
-> > > > > Patch 01 fixes BUG_ON on x86-PAE reported by Joerg.  It disables
-> > > > > the free page handling on x86-PAE.
-> > > > > 
-> > > > > Patch 02-03 fixes a possible issue with speculation which can cause
-> > > > > stale page-directory cache.
-> > > > >  - Patch 02 is from Chintan's v9 01/04 patch [1], which adds a new arg
-> > > > >    'addr', with my merge change to patch 01.
-> > > > >  - Patch 03 adds a TLB purge (INVLPG) to purge page-structure caches
-> > > > >    that may be cached by speculation.  See the patch descriptions for
-> > > > >    more detal.
-> > > > 
-> > > > Toshi, Joerg, Michal!
-> > > 
-> > > Hi Thomas,
-> > > 
-> > > Thanks for checking. I was about to ping as well.
-> > > 
-> > > > I'm failing to find a conclusion of this discussion. Can we finally make
-> > > > some progress with that?
-> > > 
-> > > I have not heard from Joerg since I last replied to his comments to
-> > > Patch 3/3 -- I did my best to explain that there was no issue in the
-> > > single page allocation in pud_free_pmd_page().  From my perspective, the
-> > >  v3 series is good to go.
+On Mon, 2018-06-25 at 23:53 +0200, Daniel Lezcano wrote:
+> On 25/06/2018 09:10, Stanley Chu wrote:
+> > Add binding documentation for the System Timer driver of
+> > the Mediatek SoCs.
 > > 
-> > Well, I admit that this not my area but I agree with Joerg that
-> > allocating memory inside afunction that is supposed to free page table
-> > is far from ideal. More so that the allocation is hardcoded GFP_KERNEL.
-> > We already have this antipattern in functions to allocate page tables
-> > and it has turned to be maintenance PITA longterm. So if there is a way
-> > around that then I would strongly suggest finding a different solution.
+> > Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+> > ---
+> >  .../bindings/timer/mediatek,mtk-systimer.txt       |   18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/timer/mediatek,mtk-systimer.txt
 > > 
-> > Whether that is sufficient to ditch the whole series is not my call
-> > though.
+> > diff --git a/Documentation/devicetree/bindings/timer/mediatek,mtk-systimer.txt b/Documentation/devicetree/bindings/timer/mediatek,mtk-systimer.txt
+> > new file mode 100644
+> > index 0000000..735a6fd
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/timer/mediatek,mtk-systimer.txt
+> > @@ -0,0 +1,18 @@
+> > +Mediatek System Timers
+> > +----------------------
+> > +
+> > +Required properties:
+> > +- compatible: should contain
+> > +	"mediatek,sys_timer" for those platforms which support system timer.
+> > +- reg: Mandatory. The location and length for system timer registers.
+> > +- clock-frequency: Optional. If not assigned specifically, default
+> > +	value 13000000 (means 13 MHz) would be applied.
 > 
-> I'd agree if this code is in a memory free path.  However, this code is
-> in the ioremap() path, which is expected to allocate new page(s).
+> The driver tells there is an error if it is not defined, so it can't be
+> optional.
+> 
+> > +Examples:
+> > +
+> > +	sys_timer@10017000 {
+> > +		compatible = "mediatek,sys_timer";
+> > +		reg = <0 0x10017000 0 0x1000>;
+> > +		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
+> > +		clock-frequency = <13000000>;
+> 
+> Replace it by a phandle to a 'fixed-clock'.
+> 
+> eg.
+> 
+> clocks = <&myclk>;
+> 
+> 
+> > +	};
+> 
+> myclk: myclk {
+> 	#clock-cells = <0>;
+> 	compatible = "fixed-clock";
+>         clock-frequency = <13000000>;
+> };
+> 
+> Thanks
+> 
+>   -- DAniel
+> 
+> 
+> 
+> 
+Hi Daniel,
 
-This might be the case right now but my experience tells me that
-something named this generic and placed in a generic pte handling header
-file will end up being called in many other places you even do not
-expect right now sooner or later.
+13 MHz clock is necessary. We will fix it in v2 by using system's
+fixed-clock.
 
-> For example, setting a fresh PUD map allocates a new page to setup page
-> tables as follows:
-> 
->   ioremap_pud_range()
->     pud_alloc()
->       __pud_alloc()
->         pud_alloc_one()
->           get_zeroed_page() with GFP_KERNEL
->             __get_free_pages() with GFP_KERNEL | __GFP_ZERO
-> 
-> In a rare case, a PUD map is set to a previously-used-for-PMD range,
-> which leads to call pud_free_pmd_page() to free up the page consisting
-> of cleared PMD entries.  To manage this procedure, pud_free_pmd_page()
-> temporary allocates a page to save the cleared PMD entries as follows:
-> 
->   ioremap_pud_range()
->     pud_free_pmd_page()
->       __get_free_page() with GFP_KERNEL
-> 
-> These details are all internal to the ioremap() callers, who should
-> always expect that ioremap() allocates pages for setting page tables.
-> 
-> As for possible performance implications associated with this page
-> allocation, pmd_free_pte_page() and pud_free_pmd_page() are very
-> different in terms of how likely they can be called.
-> 
-> pmd_free_pte_page(), which does not allocate a page, gets called
-> multiple times during normal boot on my test systems.  My ioremap tests
-> cause this function be called quite frequently.  This is because 4KB and
-> 2MB vaddr allocation comes from similar vmalloc ranges. 
-> 
-> pud_free_pmd_page(), which allocates a page, seems to be never called
-> under normal circumstances, at least I was not able to with my ioremap
-> tests.  I found that 1GB vaddr allocation does not share with 4KB/2MB
-> ranges.  I had to hack the allocation code to force them shared to test
-> this function.  Hence, this memory allocation does not have any
-> implications in performance.
+Thanks.
+Stanley Chu
 
-Again, this is all too much focused on your particular testing and the
-current code base. Neither is a great foundation for design decisions.
 
-> Lastly, for the code maintenance, I believe this memory allocation keeps
-> the code much simpler than it would otherwise need to manage a special
-> page list.
-
-Yes, I can see a simplicity as a reasonable argument for a quick fix,
-which these pile is supposed to be AFAIU. So this might be good to go
-from that perspective, but I believe that this should be changed in
-future at least.
--- 
-Michal Hocko
-SUSE Labs
