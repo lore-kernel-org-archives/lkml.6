@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DC0C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C1EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DD602630A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DD602630A
+	by mail.kernel.org (Postfix) with ESMTP id 5266F2630D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:09:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5266F2630D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935200AbeFZAJ2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 20:09:28 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49752 "EHLO
+        id S935180AbeFZAJ1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 20:09:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44082 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934572AbeFZAHG (ORCPT
+        by vger.kernel.org with ESMTP id S934573AbeFZAHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 20:07:06 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q04Mkt061787
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q03lvq028068
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:05 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96ttum7-1
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96utt87-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:05 -0400
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Mon, 25 Jun 2018 20:07:04 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Mon, 25 Jun 2018 20:06:58 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06vDM3080472
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06wjR63373448
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 00:06:57 GMT
+        Tue, 26 Jun 2018 00:06:58 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5EB28B2078;
+        by IMSVA (Postfix) with ESMTP id 80A4BB2081;
         Mon, 25 Jun 2018 20:06:52 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 38E31B205F;
+        by IMSVA (Postfix) with ESMTP id 3FE3CB206E;
         Mon, 25 Jun 2018 20:06:52 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Mon, 25 Jun 2018 20:06:52 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 46F5E16CA0A2; Mon, 25 Jun 2018 17:09:01 -0700 (PDT)
+        id 65A3F16CA09D; Mon, 25 Jun 2018 17:09:01 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,20 +60,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 16/40] rcu: Make RCU CPU stall warnings use ->gp_seq
-Date:   Mon, 25 Jun 2018 17:08:35 -0700
+Subject: [PATCH tip/core/rcu 21/40] rcu: Convert rcu_future_grace_period tracepoint to gp_seq
+Date:   Mon, 25 Jun 2018 17:08:40 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626000841.GA15696@linux.vnet.ibm.com>
 References: <20180626000841.GA15696@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062600-0052-0000-0000-00000303F3D3
+x-cbid: 18062600-0064-0000-0000-000003202F9B
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052328; UDB=6.00539464; IPR=6.00830253;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052327; UDB=6.00539464; IPR=6.00830253;
  MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:07:02
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062600-0053-0000-0000-00005D23BCD4
-Message-Id: <20180626000859.23572-16-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062600-0065-0000-0000-000039B74450
+Message-Id: <20180626000859.23572-21-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,156 +86,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit makes the RCU CPU stall-warning code in print_other_cpu_stall(),
-print_cpu_stall(), and check_cpu_stall() use ->gp_seq instead of ->gpnum
-and ->completed.
+This commit makes the rcu_future_grace_period tracepoint use gp_seq
+instead of ->gpnum and ->completed.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c        | 51 ++++++++++++++++++++--------------------
- kernel/rcu/tree_plugin.h |  8 +++----
- 2 files changed, 30 insertions(+), 29 deletions(-)
+ include/trace/events/rcu.h | 22 +++++++++-------------
+ kernel/rcu/tree.c          |  7 +++----
+ 2 files changed, 12 insertions(+), 17 deletions(-)
 
+diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+index cd229e82ec8b..286047d22314 100644
+--- a/include/trace/events/rcu.h
++++ b/include/trace/events/rcu.h
+@@ -103,16 +103,14 @@ TRACE_EVENT(rcu_grace_period,
+  */
+ TRACE_EVENT(rcu_future_grace_period,
+ 
+-	TP_PROTO(const char *rcuname, unsigned long gpnum, unsigned long completed,
+-		 unsigned long c, u8 level, int grplo, int grphi,
+-		 const char *gpevent),
++	TP_PROTO(const char *rcuname, unsigned long gp_seq, unsigned long c,
++		 u8 level, int grplo, int grphi, const char *gpevent),
+ 
+-	TP_ARGS(rcuname, gpnum, completed, c, level, grplo, grphi, gpevent),
++	TP_ARGS(rcuname, gp_seq, c, level, grplo, grphi, gpevent),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(const char *, rcuname)
+-		__field(unsigned long, gpnum)
+-		__field(unsigned long, completed)
++		__field(unsigned long, gp_seq)
+ 		__field(unsigned long, c)
+ 		__field(u8, level)
+ 		__field(int, grplo)
+@@ -122,8 +120,7 @@ TRACE_EVENT(rcu_future_grace_period,
+ 
+ 	TP_fast_assign(
+ 		__entry->rcuname = rcuname;
+-		__entry->gpnum = gpnum;
+-		__entry->completed = completed;
++		__entry->gp_seq = gp_seq;
+ 		__entry->c = c;
+ 		__entry->level = level;
+ 		__entry->grplo = grplo;
+@@ -131,10 +128,9 @@ TRACE_EVENT(rcu_future_grace_period,
+ 		__entry->gpevent = gpevent;
+ 	),
+ 
+-	TP_printk("%s %lu %lu %lu %u %d %d %s",
+-		  __entry->rcuname, __entry->gpnum, __entry->completed,
+-		  __entry->c, __entry->level, __entry->grplo, __entry->grphi,
+-		  __entry->gpevent)
++	TP_printk("%s %lu %lu %u %d %d %s",
++		  __entry->rcuname, __entry->gp_seq, __entry->c, __entry->level,
++		  __entry->grplo, __entry->grphi, __entry->gpevent)
+ );
+ 
+ /*
+@@ -755,7 +751,7 @@ TRACE_EVENT(rcu_barrier,
+ #else /* #ifdef CONFIG_RCU_TRACE */
+ 
+ #define trace_rcu_grace_period(rcuname, gp_seq, gpevent) do { } while (0)
+-#define trace_rcu_future_grace_period(rcuname, gpnum, completed, c, \
++#define trace_rcu_future_grace_period(rcuname, gp_seq, c, \
+ 				      level, grplo, grphi, event) \
+ 				      do { } while (0)
+ #define trace_rcu_grace_period_init(rcuname, gpnum, level, grplo, grphi, \
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 6f9a564e82d3..9452842e0590 100644
+index 70e5d155042c..de4b7994ffc4 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -1340,7 +1340,7 @@ static inline void panic_on_rcu_stall(void)
- 		panic("RCU Stall\n");
+@@ -1552,9 +1552,8 @@ void rcu_cpu_stall_reset(void)
+ static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+ 			      unsigned long c, const char *s)
+ {
+-	trace_rcu_future_grace_period(rdp->rsp->name, rnp->gpnum,
+-				      rnp->completed, c, rnp->level,
+-				      rnp->grplo, rnp->grphi, s);
++	trace_rcu_future_grace_period(rdp->rsp->name, rnp->gp_seq, c,
++				      rnp->level, rnp->grplo, rnp->grphi, s);
  }
  
--static void print_other_cpu_stall(struct rcu_state *rsp, unsigned long gpnum)
-+static void print_other_cpu_stall(struct rcu_state *rsp, unsigned long gp_seq)
- {
- 	int cpu;
- 	unsigned long flags;
-@@ -1350,6 +1350,8 @@ static void print_other_cpu_stall(struct rcu_state *rsp, unsigned long gpnum)
- 	struct rcu_node *rnp = rcu_get_root(rsp);
- 	long totqlen = 0;
- 
-+	WARN_ON_ONCE(gp_seq & 0x2); /* Remove when ->gpnum removed. */
-+
- 	/* Kick and suppress, if so configured. */
- 	rcu_stall_kick_kthreads(rsp);
- 	if (rcu_cpu_stall_suppress)
-@@ -1380,17 +1382,16 @@ static void print_other_cpu_stall(struct rcu_state *rsp, unsigned long gpnum)
- 	for_each_possible_cpu(cpu)
- 		totqlen += rcu_segcblist_n_cbs(&per_cpu_ptr(rsp->rda,
- 							    cpu)->cblist);
--	pr_cont("(detected by %d, t=%ld jiffies, g=%ld, c=%ld, q=%lu)\n",
-+	pr_cont("(detected by %d, t=%ld jiffies, g=%ld, q=%lu)\n",
- 	       smp_processor_id(), (long)(jiffies - rsp->gp_start),
--	       (long)rsp->gpnum, (long)rsp->completed, totqlen);
-+	       (long)rcu_seq_current(&rsp->gp_seq), totqlen);
- 	if (ndetected) {
- 		rcu_dump_cpu_stacks(rsp);
- 
- 		/* Complain about tasks blocking the grace period. */
- 		rcu_print_detail_task_stall(rsp);
- 	} else {
--		if (READ_ONCE(rsp->gpnum) != gpnum ||
--		    READ_ONCE(rsp->completed) == gpnum) {
-+		if (rcu_seq_current(&rsp->gp_seq) != gp_seq) {
- 			pr_err("INFO: Stall ended before state dump start\n");
- 		} else {
- 			j = jiffies;
-@@ -1442,9 +1443,9 @@ static void print_cpu_stall(struct rcu_state *rsp)
- 	for_each_possible_cpu(cpu)
- 		totqlen += rcu_segcblist_n_cbs(&per_cpu_ptr(rsp->rda,
- 							    cpu)->cblist);
--	pr_cont(" (t=%lu jiffies g=%ld c=%ld q=%lu)\n",
-+	pr_cont(" (t=%lu jiffies g=%ld q=%lu)\n",
- 		jiffies - rsp->gp_start,
--		(long)rsp->gpnum, (long)rsp->completed, totqlen);
-+		(long)rcu_seq_current(&rsp->gp_seq), totqlen);
- 
- 	rcu_check_gp_kthread_starvation(rsp);
- 
-@@ -1471,8 +1472,8 @@ static void print_cpu_stall(struct rcu_state *rsp)
- 
- static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
- {
--	unsigned long completed;
--	unsigned long gpnum;
-+	unsigned long gs1;
-+	unsigned long gs2;
- 	unsigned long gps;
- 	unsigned long j;
- 	unsigned long jn;
-@@ -1488,28 +1489,28 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
- 	/*
- 	 * Lots of memory barriers to reject false positives.
- 	 *
--	 * The idea is to pick up rsp->gpnum, then rsp->jiffies_stall,
--	 * then rsp->gp_start, and finally rsp->completed.  These values
--	 * are updated in the opposite order with memory barriers (or
--	 * equivalent) during grace-period initialization and cleanup.
--	 * Now, a false positive can occur if we get an new value of
--	 * rsp->gp_start and a old value of rsp->jiffies_stall.  But given
--	 * the memory barriers, the only way that this can happen is if one
--	 * grace period ends and another starts between these two fetches.
--	 * Detect this by comparing rsp->completed with the previous fetch
--	 * from rsp->gpnum.
-+	 * The idea is to pick up rsp->gp_seq, then rsp->jiffies_stall,
-+	 * then rsp->gp_start, and finally another copy of rsp->gp_seq.
-+	 * These values are updated in the opposite order with memory
-+	 * barriers (or equivalent) during grace-period initialization
-+	 * and cleanup.  Now, a false positive can occur if we get an new
-+	 * value of rsp->gp_start and a old value of rsp->jiffies_stall.
-+	 * But given the memory barriers, the only way that this can happen
-+	 * is if one grace period ends and another starts between these
-+	 * two fetches.  This is detected by comparing the second fetch
-+	 * of rsp->gp_seq with the previous fetch from rsp->gp_seq.
- 	 *
- 	 * Given this check, comparisons of jiffies, rsp->jiffies_stall,
- 	 * and rsp->gp_start suffice to forestall false positives.
- 	 */
--	gpnum = READ_ONCE(rsp->gpnum);
--	smp_rmb(); /* Pick up ->gpnum first... */
-+	gs1 = READ_ONCE(rsp->gp_seq);
-+	smp_rmb(); /* Pick up ->gp_seq first... */
- 	js = READ_ONCE(rsp->jiffies_stall);
- 	smp_rmb(); /* ...then ->jiffies_stall before the rest... */
- 	gps = READ_ONCE(rsp->gp_start);
--	smp_rmb(); /* ...and finally ->gp_start before ->completed. */
--	completed = READ_ONCE(rsp->completed);
--	if (ULONG_CMP_GE(completed, gpnum) ||
-+	smp_rmb(); /* ...and finally ->gp_start before ->gp_seq again. */
-+	gs2 = READ_ONCE(rsp->gp_seq);
-+	if (gs1 != gs2 ||
- 	    ULONG_CMP_LT(j, js) ||
- 	    ULONG_CMP_GE(gps, js))
- 		return; /* No stall or GP completed since entering function. */
-@@ -1527,7 +1528,7 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
- 		   cmpxchg(&rsp->jiffies_stall, js, jn) == js) {
- 
- 		/* They had a few time units to dump stack, so complain. */
--		print_other_cpu_stall(rsp, gpnum);
-+		print_other_cpu_stall(rsp, gs2);
+ /*
+@@ -2053,7 +2052,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
+ 	/* Check for GP requests since above loop. */
+ 	rdp = this_cpu_ptr(rsp->rda);
+ 	if (ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed)) {
+-		trace_rcu_this_gp(rnp, rdp, rsp->completed - 1,
++		trace_rcu_this_gp(rnp, rdp, rnp->gp_seq_needed,
+ 				  TPS("CleanupMore"));
+ 		needgp = true;
  	}
- }
- 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 2036dc7426ac..f4a88e3c388d 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1755,12 +1755,12 @@ static void print_cpu_stall_info(struct rcu_state *rsp, int cpu)
- 	 */
- 	touch_nmi_watchdog();
- 
--	if (rsp->gpnum == rdp->gpnum) {
-+	ticks_value = rcu_seq_ctr(rsp->gp_seq - rdp->gp_seq);
-+	if (ticks_value) {
-+		ticks_title = "GPs behind";
-+	} else {
- 		ticks_title = "ticks this GP";
- 		ticks_value = rdp->ticks_this_gp;
--	} else {
--		ticks_title = "GPs behind";
--		ticks_value = rsp->gpnum - rdp->gpnum;
- 	}
- 	print_cpu_stall_fast_no_hz(fast_no_hz, cpu);
- 	delta = rcu_seq_ctr(rdp->mynode->gp_seq - rdp->rcu_iw_gp_seq);
 -- 
 2.17.1
 
