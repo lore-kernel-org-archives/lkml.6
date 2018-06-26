@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9ADC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E44A0C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F865250C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93292208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:24:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N9jz4cKo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F865250C7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F+cyKahC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93292208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934089AbeFZJXm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:23:42 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46200 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933824AbeFZJWf (ORCPT
+        id S934187AbeFZJX7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:23:59 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36794 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933785AbeFZJWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:22:35 -0400
-Received: by mail-wr0-f194.google.com with SMTP id l14-v6so11398432wrq.13
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:22:35 -0700 (PDT)
+        Tue, 26 Jun 2018 05:22:33 -0400
+Received: by mail-wm0-f67.google.com with SMTP id u18-v6so1006649wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:22:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hA6RVdDkQgf8mnMUWOdmGysxSbhxeav6nDTk9MlVzdg=;
-        b=N9jz4cKoEhfc9vCHXO3jP2r/AjjwUv8nQ1iHHeK1++mK4BELZeAb4qwL16OsCc4tuM
-         QBdyPsIZWznYlfH9BnqYzIDuq1kQYFVEEtqhfyr5EfSCHn/lHv936uDpNlB+UBrimDqQ
-         hVoTPj/tQKKbY3oDkLy85JxCyRhkoeXM5/Do8=
+        bh=dDHlQQyDgNgCnbd9tlc16D/4bHw7LUCY4jFdFkZ6Znk=;
+        b=F+cyKahCRSnwMLc7HfBOO2kByLZWw6cGsDsVvXJ/5IKhTl99gon0VxdjX+sggnQZbB
+         J7vAj/hERlj2l2iB0HYph5BmrMLwJsy6ssMZFJH9vZBhYkuLDYgvrd5EaP2AWeiR9jEE
+         F6UAS/IpTtzcv2Uso5hktnirhbllP7emVTXow=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hA6RVdDkQgf8mnMUWOdmGysxSbhxeav6nDTk9MlVzdg=;
-        b=ndppKkIuf+JS1mb3j26nocntK7QYzXG6oCFTE9Rkig/LVs1PAgDl6y5Vd3vOQ0dtQO
-         JKrfoOX97pUvZ8rrYym5rEQSXipabxzcVMYNGsXVMq6Xe1GkLnOoUIPy+pRxV+23mAnt
-         Kmnymay4IplcQ6Z6bo8SOrnGGm9CuOGwbwCUjz87zDUg5UlAf8jHqvdJQ35disIYoXu7
-         6BxnlsaHpFLPFmNduvn1vhWSEo/JJi2JvtsR9SqDMAWOroHfXnlZez1YsVtObprLy4rB
-         ptzhIEQ9nU5hKvyswHitOHRYXbDkJxCKQobq9ZAtKYUBdtlphdn7s+iNsOWpBgzeLNtL
-         h23w==
-X-Gm-Message-State: APt69E3DX0oiDwYKszsIUR4dmQdrvbS2aTd/It2qck1IC5Q6jCfalaPn
-        7ayQ6E+ddaXVseookja72l1rJw==
-X-Google-Smtp-Source: AAOMgpeSVXohdOsWl5cMqj4Hh0icUR1KdlajywIpvjdKsfNb37XYkW66KmCVJ2agNfP8szJuPdNMXQ==
-X-Received: by 2002:adf:c546:: with SMTP id s6-v6mr798473wrf.46.1530004954415;
-        Tue, 26 Jun 2018 02:22:34 -0700 (PDT)
+        bh=dDHlQQyDgNgCnbd9tlc16D/4bHw7LUCY4jFdFkZ6Znk=;
+        b=T6MP7bNdm7rb9Rfd4S04LRvQi+Xy7aAKl7PXjDtKbeuLlRZdv0xPYHXI1XVNnO0EhL
+         hp/7Aulvh/KE90cbeNG5GMqe9j+nFnu5wpknTzYu7n0HJirFrmy+QR2OXd9Yy/ClESQi
+         7cVC0ow9CZU3+lI2Ir0pD1m4mqZ5158a07HB/vct6qTTEqK4/41aVyCUW4kejFgwPpD1
+         SFI5mjiYU/7xQYUVvrM13nq3dw8Yx2bmYlxKc4v2Hp4t3oX8ir2OXRorGz4lnV/TTI9m
+         ptdx+IKuCjGm7SeCZoxLuVzt7ZPwuJLyYSLPDcTMzEBX1fgdzxr03SUc2Y3mHzdJ67xe
+         f//A==
+X-Gm-Message-State: APt69E2O0LnYghdVt+tRwcpi4H7TSAB/2CHNpOTPUr6t1Ud2UevNv4jM
+        AgGABRBolnfgyyAybg5HhStxLW9GAJs=
+X-Google-Smtp-Source: AAOMgperth8EHM+m2QNNn3h9PzFVmHeUyUbIw0GCW22N+ieWLZdjh+mx6c8dF8WgR9yiopRatfHIDg==
+X-Received: by 2002:a1c:9e95:: with SMTP id h143-v6mr952105wme.68.1530004952197;
+        Tue, 26 Jun 2018 02:22:32 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm1438456wrr.3.2018.06.26.02.22.33
+        by smtp.gmail.com with ESMTPSA id x5-v6sm1438456wrr.3.2018.06.26.02.22.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 26 Jun 2018 02:22:33 -0700 (PDT)
+        Tue, 26 Jun 2018 02:22:31 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     broonie@kernel.org, robh+dt@kernel.org, alsa-devel@alsa-project.org
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         perex@perex.cz, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, niklas.cassel@linaro.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 10/12] ASoC: qcom: apq8096: remove redundant owner assignment
-Date:   Tue, 26 Jun 2018 10:20:14 +0100
-Message-Id: <20180626092016.9296-11-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 08/12] ASoC: qdsp6: q6asm-dai: support dt based module loading
+Date:   Tue, 26 Jun 2018 10:20:12 +0100
+Message-Id: <20180626092016.9296-9-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180626092016.9296-1-srinivas.kandagatla@linaro.org>
 References: <20180626092016.9296-1-srinivas.kandagatla@linaro.org>
@@ -71,27 +71,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-module owner is already set in platform_driver_register(), so remove this
-redundant assignment.
+This patch uses new compatible string to make DT based module loading work.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Acked-by: Niklas Cassel <niklas.cassel@linaro.org>
 ---
- sound/soc/qcom/apq8096.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
-index 561cd429e6f2..6e79fec7e789 100644
---- a/sound/soc/qcom/apq8096.c
-+++ b/sound/soc/qcom/apq8096.c
-@@ -245,7 +245,6 @@ static struct platform_driver msm_snd_apq8096_driver = {
- 	.remove = apq8096_platform_remove,
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index 349c6a883c63..1196dc7483d2 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -611,9 +611,16 @@ static int q6asm_dai_dev_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id q6asm_dai_device_id[] = {
++	{ .compatible = "qcom,q6asm-dais" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, q6asm_dai_device_id);
++
+ static struct platform_driver q6asm_dai_platform_driver = {
  	.driver = {
- 		.name = "msm-snd-apq8096",
--		.owner = THIS_MODULE,
- 		.of_match_table = msm_snd_apq8096_dt_match,
+ 		.name = "q6asm-dai",
++		.of_match_table = of_match_ptr(q6asm_dai_device_id),
  	},
- };
+ 	.probe = q6asm_dai_probe,
+ 	.remove = q6asm_dai_dev_remove,
 -- 
 2.16.2
 
