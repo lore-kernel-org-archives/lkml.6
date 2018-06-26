@@ -2,208 +2,253 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E34CDC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6334EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2B82650A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 067B92650A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:10:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S7txW7xt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B2B82650A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qSDH8uFH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 067B92650A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751576AbeFZFIX (ORCPT
+        id S1751241AbeFZFKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 01:08:23 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43089 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751121AbeFZFIU (ORCPT
+        Tue, 26 Jun 2018 01:10:24 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:32789 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750962AbeFZFKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 01:08:20 -0400
-Received: by mail-pl0-f65.google.com with SMTP id c41-v6so7926444plj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 22:08:20 -0700 (PDT)
+        Tue, 26 Jun 2018 01:10:22 -0400
+Received: by mail-pf0-f196.google.com with SMTP id b17-v6so7540317pfi.0;
+        Mon, 25 Jun 2018 22:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=I2fo/bEBb94t4oxxdXXxR4Kr3DNBAV0hMBWdYiTCaPs=;
-        b=S7txW7xtKhBtrp9/aqMzs/nOBP3OwkKeJvMYA2bpZP6fJwf4Ly9SCgxrPZCpM9acP8
-         kexCC0+E1x1XKbg8LuDwEZ2XNx4F+zaaZ7+fwoTaI1iresmaLWNrtBhdWhIyRdRkKee7
-         H27V40rSeMQCFZqo9zb6Gc7liGkqVSLKlX3gytXPu3v45/xG/Jw9Hc4mnkmjpDUjth1r
-         9+COR9lemQhyYf6fqw9/rCBSgrTny2INq+RtfN/RXqN/eu4KqghOU4aFfanZRNyxeagw
-         aFFWwq3eiylDdxAitJ8ms2hBFtMZIRPGra/B20v+AhIUMbf5Wxq9P/W2GIAHmEPOT2MZ
-         cjrQ==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=xrk+GqouRkO2sMqxpXnSsY+YoLo/L2MiMcF1ddS4UQk=;
+        b=qSDH8uFH339XY8ZhnyVuxdp+ewFAp9FdegeIt11s3MlYvylqG7o90Yvj42P37PuXZA
+         DjHVrKHNBjsNpmBhQAh40CTSqYjjdiZmhLlGVu+X6QpILas6HiTpJtGv+ByjOf+w1m0O
+         yfVlpGhINxFxQfEZNShEAYcWjGb2SDjSnZcK9HnzAAQ4dcBHx+7Q7Bp6vfn++JAN7rTG
+         JvofzMwOZkqyiwZ24GNau1zZEvtDSlHsyuNq/ZE4ecc68ewNf7bvuLmnxI8bkRjDDOlf
+         xFh0puS+o0LpIcs+gomuY+N1qm+uAr+hoNCB6jqkCKWScZFYs1FNkVBccdSTpn5WMExP
+         DmBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=I2fo/bEBb94t4oxxdXXxR4Kr3DNBAV0hMBWdYiTCaPs=;
-        b=aNPm2McjxEXYdrGqt2ZTzPxYVPVYORFZufzIJrUb28w5CGLQJVfQbzuAWvZ1oeBDcv
-         Cpf4EFQKDBa0VggFcJDZmAVARsngGiUtImJqTcfON9vbAyhV4MGgszhbH/X8Ur04sqzb
-         4Kle0ttOo/5LIDREFo4aeRSqZlpQcMF2y9AUB/IoMqauScPdsU0memkitNbIc6EKtmbm
-         OzwrV8T84jSYoiRmH3bbQyEvlUo1MDF5vZAqAQe4EFLx1an4txOuf+ELBNNr2IC1ilx7
-         wi2njC5cgwj2x4DhlWEfpWW9hLKnv+Hd+jPMp940SHdBosdOBTKuNJv/FvVLyFXUWKeZ
-         rq+g==
-X-Gm-Message-State: APt69E37Ok2lc49brxVZ1M+dpMXhljgzWWJ12CM3K1SAr9lO2EhOg452
-        xZy1VPj+B12b1r6xT/jIdtnF50bn/y3EA62nJllm6A==
-X-Google-Smtp-Source: ADUXVKJH59wQQNWN8NoUqBlScnrnnmVJlLVWQQkfQ16KMDhKAxNRcAS+rlZt/Ex8eNMRQwUYS2yNrzYQYSiUbPiBuoo=
-X-Received: by 2002:a17:902:5a4d:: with SMTP id f13-v6mr9997855plm.85.1529989699942;
- Mon, 25 Jun 2018 22:08:19 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=xrk+GqouRkO2sMqxpXnSsY+YoLo/L2MiMcF1ddS4UQk=;
+        b=ewx60x40coMw4hF4jUANEfnru2ecSuQiAJ9FyRnF5MG/hLjGCdr31wdSSWpsoKfDfu
+         tCi89XZVnqT+Vt9qCtpKCu2xvjnGkPqMtoOPh8w9Pw+wEVoI8xkIlvWwtBj+bkrbOxhJ
+         GxIaEPPfpr30HnUXUqWX38+0jImA5R1kHMQ6k7nLAmxNnnWZqqgkNnpyxOQoJ+y7w/qy
+         93djSnb04/a4samPtW+/fWJSumJz0tBrZVvu8dAeQ34atqIDPutgFuh3VYjBhLDGDPz7
+         EtUSSl/OqGSi5Ph/dYR1OpC6hNll0njSCbx6+GNHPNP+KGNMvEMqqK1XNGWwUKWsNHi5
+         khbg==
+X-Gm-Message-State: APt69E0g+UB/zvycHdByPtuCm4FcCTxlln21S8LUHIWfcy++1B9Mr370
+        hFxs2U8f5PQeAtQprSmhksQ=
+X-Google-Smtp-Source: ADUXVKIfm8HDqBfp/cPQkVYC/F92lJOwGsgnlPL8V2wvbp1W62Q2qrQprbBJ/tn8dZrjJyVhfFZ8tA==
+X-Received: by 2002:a63:7986:: with SMTP id u128-v6mr12672017pgc.273.1529989821563;
+        Mon, 25 Jun 2018 22:10:21 -0700 (PDT)
+Received: from hxeon ([147.46.241.218])
+        by smtp.gmail.com with ESMTPSA id g78-v6sm983986pfe.39.2018.06.25.22.10.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 22:10:20 -0700 (PDT)
+From:   SeongJae Park <sj38.park@gmail.com>
+X-Google-Original-From: SeongJae Park <sjpark@hxeon>
+Date:   Tue, 26 Jun 2018 14:10:17 +0900 (KST)
+To:     Byungchul Park <byungchul.park@lge.com>
+cc:     sjpark <sj38.park@gmail.com>, paulmck@linux.vnet.ibm.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [PATCH] locking/memory-barriers.txt/kokr: Update Korean translation
+ to fix broken DMA vs. MMIO ordering example
+In-Reply-To: <20180626045609.GB20783@X58A-UD3R>
+Message-ID: <alpine.DEB.2.20.1806261406220.1528@hxeon>
+References: <20180617051608.2128-1-sj38.park@gmail.com> <20180626004738.GA20783@X58A-UD3R> <alpine.DEB.2.20.1806261218490.1528@hxeon> <20180626045609.GB20783@X58A-UD3R>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Mon, 25 Jun 2018 22:07:59
- -0700 (PDT)
-In-Reply-To: <20180626044119.30118-1-sergey.senozhatsky@gmail.com>
-References: <20180626044119.30118-1-sergey.senozhatsky@gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 26 Jun 2018 07:07:59 +0200
-Message-ID: <CACT4Y+ZvLqzEwXgdB25MrmAS_j2_HsS8NFaJaMojzMV3prXypg@mail.gmail.com>
-Subject: Re: [PATCH] NFC: llcp: fix nfc_llcp_send_ui_frame() lockup
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Samuel Ortiz <sameo@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-wireless@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+d29d18215e477cfbfbdd@syzkaller.appspotmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; BOUNDARY="781441777-375754469-1529989820=:1528"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 6:41 AM, Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
-> syzbot reported the following nfc_llcp_send_ui_frame() lockup:
->
-> The kernel is CONFIG_PREEMPT_VOLUNTARY=y, llcp_sock_sendmsg() stuck
-> in an infinite error reporting loop, because the system is low memory
-> and MSG_DONTWAIT nfc_alloc_send_skb() allocations fail:
->
->         do {
->         ...
->                 pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
->                                          frag_len + LLCP_HEADER_SIZE, &err);
->                 if (pdu == NULL) {
->                         pr_err("Could not allocate PDU\n");
->                         continue;
->                 }
->         ...
->         } while (remaining_len > 0);
->
-> nfc_llcp_send_ui_frame() spent enough time (94+ sec) trying to
-> allocate PDU, which resulted in RCU stall due to PREEMPT_VOLUNTARY:
->
->  llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
->  llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
-> ...
->  llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
->  llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
->  INFO: rcu_sched self-detected stall on CPU
->          1-....: (20918 ticks this GP) idle=55a/1/4611686018427387906
->  softirq=11347/11347 fqs=20240
->           (t=125005 jiffies g=5572 c=5571 q=149)
->  NMI backtrace for cpu 1
->  CPU: 1 PID: 4811 Comm: syz-executor0 Not tainted 4.18.0-rc1+ #115
->  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
->  01/01/2011
->  Call Trace:
->   <IRQ>
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->   nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
->   nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
->   arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->   trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
->   rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1336
->   print_cpu_stall kernel/rcu/tree.c:1485 [inline]
->   check_cpu_stall.isra.60.cold.78+0x36c/0x5a6 kernel/rcu/tree.c:1553
->   __rcu_pending kernel/rcu/tree.c:3244 [inline]
->   rcu_pending kernel/rcu/tree.c:3291 [inline]
->   rcu_check_callbacks+0x23f/0xcd0 kernel/rcu/tree.c:2646
->   update_process_times+0x2d/0x70 kernel/time/timer.c:1636
->   tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
->   tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
->   __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
->   __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
->   hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
->   local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->   smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
->   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
->   </IRQ>
->  RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783 [inline]
->  RIP: 0010:console_unlock+0xc84/0x10b0 kernel/printk/printk.c:2397
->  Code: c1 e8 03 42 80 3c 38 00 0f 85 bd 03 00 00 48 83 3d 38 f7 8e 07 00 0f 84
->  69 02 00 00 e8 45 56 19 00 48 8b bd b0 fe ff ff 57 9d <0f> 1f 44 00 00 e9 96
->  f5 ff ff e8 2d 56 19 00 48 8b 7d 08 e8 94 cf
->  RSP: 0018:ffff8801aab0f358 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
->  RAX: ffff8801aa2802c0 RBX: 0000000000000200 RCX: 1ffff10035450163
->  RDX: 0000000000000000 RSI: ffffffff8162b8fb RDI: 0000000000000293
->  RBP: ffff8801aab0f4c0 R08: ffff8801aa280af8 R09: 0000000000000006
->  R10: ffff8801aa2802c0 R11: 0000000000000000 R12: 0000000000000000
->  R13: ffffffff84ea9880 R14: 0000000000000001 R15: dffffc0000000000
->   vprintk_emit+0x6c6/0xdf0 kernel/printk/printk.c:1907
->   vprintk_default+0x28/0x30 kernel/printk/printk.c:1948
->   vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:382
->   printk+0xa7/0xcf kernel/printk/printk.c:1981
->   nfc_llcp_send_ui_frame.cold.9+0x18/0x1f net/nfc/llcp_commands.c:758
->   llcp_sock_sendmsg+0x278/0x350 net/nfc/llcp_sock.c:786
->   sock_sendmsg_nosec net/socket.c:645 [inline]
->   sock_sendmsg+0xd5/0x120 net/socket.c:655
->   ___sys_sendmsg+0x51d/0x930 net/socket.c:2161
->   __sys_sendmmsg+0x240/0x6f0 net/socket.c:2256
->   __do_sys_sendmmsg net/socket.c:2285 [inline]
->   __se_sys_sendmmsg net/socket.c:2282 [inline]
->   __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2282
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Address the issues by rate limiting nfc_alloc_send_skb() allocation
-> error, to avoid logbuf pollution, and do cond_resched() before llcp
-> attempts to allocate PDU again.
->
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Reported-by: syzbot+d29d18215e477cfbfbdd@syzkaller.appspotmail.com
-> ---
->  net/nfc/llcp_commands.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/net/nfc/llcp_commands.c b/net/nfc/llcp_commands.c
-> index 2ceefa183cee..e19fadaa9022 100644
-> --- a/net/nfc/llcp_commands.c
-> +++ b/net/nfc/llcp_commands.c
-> @@ -20,6 +20,7 @@
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/sched.h>
->  #include <linux/nfc.h>
->
->  #include <net/nfc/nfc.h>
-> @@ -755,7 +756,8 @@ int nfc_llcp_send_ui_frame(struct nfc_llcp_sock *sock, u8 ssap, u8 dsap,
->                 pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
->                                          frag_len + LLCP_HEADER_SIZE, &err);
->                 if (pdu == NULL) {
-> -                       pr_err("Could not allocate PDU\n");
-> +                       pr_err_ratelimited("Could not allocate PDU\n");
-> +                       cond_resched();
->                         continue;
->                 }
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--781441777-375754469-1529989820=:1528
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
 
-But this thread is still in an infinite (unkillable?) loop? If yes, we
-are waiting for the next syzbot report ;)
 
-I suspect this is not OOM. This is probably some persistent
-logical condition that makes the allocation function fail, either we
-ask for too much, or socket in some bad state. Potentially this is
-even triggerable remotely because there are some remove variables
-involved in size calculation.
+On Tue, 26 Jun 2018, Byungchul Park wrote:
+
+> On Tue, Jun 26, 2018 at 12:21:23PM +0900, sjpark wrote:
+> > Hello Byungchul,
+> >
+> >
+> > On Tue, 26 Jun 2018, Byungchul Park wrote:
+> >
+> > > On Sun, Jun 17, 2018 at 02:16:08PM +0900, SeongJae Park wrote:
+> > > > Translate this commit to Korean:
+> > > >
+> > > >   5846581e3563 ("locking/memory-barriers.txt: Fix broken DMA vs. MMIO ordering example")
+> > >
+> > > Hi SeongJae,
+> > >
+> > > You keep doing good jobs ;)
+> > >
+> > > I believe it would be better if you consider the little things below
+> > > more. What do you think about it, SeongJae?
+> >
+> > Thank you for great comments!
+> >
+> > >
+> > > > Signed-off-by: SeongJae Park <sj38.park@gmail.com>
+> > > > ---
+> > > >  Documentation/translations/ko_KR/memory-barriers.txt | 15 +++++++--------
+> > > >  1 file changed, 7 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
+> > > > index 921739d00f69..ada0a709cce1 100644
+> > > > --- a/Documentation/translations/ko_KR/memory-barriers.txt
+> > > > +++ b/Documentation/translations/ko_KR/memory-barriers.txt
+> > > > @@ -1891,19 +1891,18 @@ Mandatory 배리어들은 SMP 시스템에서도 UP 시스템에서도 SMP 효
+> > > >  		/* 소유권을 수정 */
+> > > >  		desc->status = DEVICE_OWN;
+> > > >
+> > > > -		/* MMIO 를 통해 디바이스에 공지를 하기 전에 메모리를 동기화 */
+> > > > -		wmb();
+> > > > -
+> > > >  		/* 업데이트된 디스크립터의 디바이스에 공지 */
+> > > >  		writel(DESC_NOTIFY, doorbell);
+> > > >  	}
+> > > >
+> > > >       dma_rmb() 는 디스크립터로부터 데이터를 읽어오기 전에 디바이스가 소유권을
+> > > > -     내놓았음을 보장하게 하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
+> > > > -     가졌음을 보기 전에 디스크립터에 데이터가 쓰였음을 보장합니다.  wmb() 는
+> > > > -     캐시 일관성이 없는 (cache incoherent) MMIO 영역에 쓰기를 시도하기 전에
+> > > > -     캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 완료되었음을
+> > > > -     보장해주기 위해 필요합니다.
+> > > > +     내려놓았을 것을 보장하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
+> > > > +     가졌음을 보기 전에 디스크립터에 데이터가 쓰였을 것을 보장합니다.  writel()
+> > >                                                                         ^
+> > >                                                                      참고로,
+> >
+> > Nice comment.  This will enhance the readability a lot.
+>
+> Could you add this, too? A quite little thing tho.
+
+Oops, I missed that.  Sorry.  Attaching the patch below.
+
+
+Thanks, SeongJae Park
+
+
+============================= >8 =====================================
+
+From bcfb52af5d1f6c6aa171d105bdd7376b4dfabf13 Mon Sep 17 00:00:00 2001
+From: SeongJae Park <sj38.park@gmail.com>
+Date: Sun, 17 Jun 2018 14:08:42 +0900
+Subject: [PATCH v3] locking/memory-barriers.txt/kokr: Update Korean
+ translation to fix broken DMA vs. MMIO ordering example
+
+Translate this commit to Korean:
+
+  5846581e3563 ("locking/memory-barriers.txt: Fix broken DMA vs. MMIO ordering example")
+
+Signed-off-by: SeongJae Park <sj38.park@gmail.com>
+---
+Changes since v1:
+ - Applied comments from Byungchul Park
+ - Rebased on v4.18-rc2
+
+ .../translations/ko_KR/memory-barriers.txt         | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
+index 921739d00f69..7f01fb1c1084 100644
+--- a/Documentation/translations/ko_KR/memory-barriers.txt
++++ b/Documentation/translations/ko_KR/memory-barriers.txt
+@@ -1891,22 +1891,22 @@ Mandatory 배리어들은 SMP 시스템에서도 UP 시스템에서도 SMP 효
+ 		/* 소유권을 수정 */
+ 		desc->status = DEVICE_OWN;
+
+-		/* MMIO 를 통해 디바이스에 공지를 하기 전에 메모리를 동기화 */
+-		wmb();
+-
+ 		/* 업데이트된 디스크립터의 디바이스에 공지 */
+ 		writel(DESC_NOTIFY, doorbell);
+ 	}
+
+      dma_rmb() 는 디스크립터로부터 데이터를 읽어오기 전에 디바이스가 소유권을
+-     내놓았음을 보장하게 하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
+-     가졌음을 보기 전에 디스크립터에 데이터가 쓰였음을 보장합니다.  wmb() 는
+-     캐시 일관성이 없는 (cache incoherent) MMIO 영역에 쓰기를 시도하기 전에
+-     캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 완료되었음을
+-     보장해주기 위해 필요합니다.
+-
+-     consistent memory 에 대한 자세한 내용을 위해선 Documentation/DMA-API.txt
+-     문서를 참고하세요.
++     내려놓았을 것을 보장하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
++     가졌음을 보기 전에 디스크립터에 데이터가 쓰였을 것을 보장합니다.  참고로,
++     writel() 을 사용하면 캐시 일관성이 있는 메모리 (cache coherent memory)
++     쓰기가 MMIO 영역에의 쓰기 전에 완료되었을 것을 보장하므로 writel() 앞에
++     wmb() 를 실행할 필요가 없음을 알아두시기 바랍니다.  writel() 보다 비용이
++     저렴한 writel_relaxed() 는 이런 보장을 제공하지 않으므로 여기선 사용되지
++     않아야 합니다.
++
++     writel_relaxed() 와 같은 완화된 I/O 접근자들에 대한 자세한 내용을 위해서는
++     "커널 I/O 배리어의 효과" 섹션을, consistent memory 에 대한 자세한 내용을
++     위해선 Documentation/DMA-API.txt 문서를 참고하세요.
+
+
+ MMIO 쓰기 배리어
+-- 
+2.13.0
+
+
+>
+> > > > +     을 사용하면 캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 MMIO
+> > > > +     영역에의 쓰기 전에 완료되었을 것을 보장하므로 writel() 앞에 wmb() 를
+> > > > +     실행할 필요가 없음을 알아두시기 바랍니다.  writel() 보다 비용이 저렴한
+> > > > +     writel_relaxed() 는 이런 보장을 제공하지 않으므로 여기선 사용되지 않아야
+> > > > +     합니다.
+> > > >
+> > > >       consistent memory 에 대한 자세한 내용을 위해선 Documentation/DMA-API.txt
+> > > >       문서를 참고하세요.
+> > >
+> > >      See the subsection "Kernel I/O barrier effects" for more information on
+> > >      relaxed I/O accessors and the Documentation/DMA-API.txt file for more
+> > >      information on consistent memory.
+> > >
+> > > Don't you think the whole sentence need to be translated? If yes, then
+> > > it would be better to do that as well ;)
+> >
+> > Oh, my mistake!  It should be.
+> >
+> > I applied your comments to the second version.
+>
+> Thank you SeongJae :)
+>
+> > Thanks,
+> > SeongJae Park
+> >
+> > >
+> > > > --
+> > > > 2.13.0
+> > >
+> > > --
+> > > Thanks,
+> > > Byungchul
+> > >
+>
+>
+--781441777-375754469-1529989820=:1528--
