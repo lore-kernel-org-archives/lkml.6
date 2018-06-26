@@ -2,195 +2,163 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFC8C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E80C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C26A2667F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:11:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="A56kxlsK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C26A2667F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 9549F26686
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:12:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9549F26686
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752889AbeFZILZ (ORCPT
+        id S1752917AbeFZIM2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:11:25 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:54280 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752189AbeFZILT (ORCPT
+        Tue, 26 Jun 2018 04:12:28 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:44239 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752409AbeFZIMX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:11:19 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 2B8F35C015F;
-        Tue, 26 Jun 2018 10:11:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1530000678;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+dIvVaWwEZYKLFBaHhaofzp7lYFP9x6CD2KXEriz0QM=;
-        b=A56kxlsKix3Akjy15bpungQNakAevMlB9Mu2XPXaPntqfwYVWeKrqVbyjSQgBrdekn1cxC
-        /ntImK1b1PHUnOQ7FpTuGLoiR1aNs7mI372cI3wYq9oM7oVJ8MK9FVFCqpOsWe34ONxWnh
-        AGPPg1P+xQyJ9S0rjiEh3EIkRuZmXdQ=
+        Tue, 26 Jun 2018 04:12:23 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id 0C18334FF4F;
+        Tue, 26 Jun 2018 10:12:22 +0200 (CEST)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     jdow <jdow@earthlink.net>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Sterba <dsterba@suse.cz>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+Subject: Re: moving affs + RDB partition support to staging?
+Date:   Tue, 26 Jun 2018 10:12:21 +0200
+Message-ID: <1954225.EY2fU3p6yy@merkaba>
+In-Reply-To: <45e05e92-e2b1-d46c-11fb-4bd75e793712@earthlink.net>
+References: <20180425154602.GA8546@bombadil.infradead.org> <CAOmrzk+CuuraUnWWKDKen9FV6=UcgKgc6+qJ3g-Fx+tkt5HHQw@mail.gmail.com> <45e05e92-e2b1-d46c-11fb-4bd75e793712@earthlink.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 26 Jun 2018 10:11:18 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Stephen Warren <swarren@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>, ard.biesheuvel@linaro.org,
-        arnd@arndb.de, nicolas.pitre@linaro.org, marc.zyngier@arm.com,
-        behanw@converseincode.com, keescook@chromium.org,
-        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 3/6] ARM: trusted_foundations: do not use naked
- function
-In-Reply-To: <20180417081109.GA5804@ulmo>
-References: <20180325180959.28008-1-stefan@agner.ch>
- <20180325180959.28008-4-stefan@agner.ch>
- <704c863a-0b5a-6396-d7da-f0ed17b7cca2@gmail.com>
- <263337af-7541-be9e-3db6-6cb987fd08fb@arm.com>
- <f627177c-f813-9e10-ade5-c7654375639b@gmail.com>
- <cf9b916103c0dba1e67682efc69f5bae@agner.ch>
- <498de826-6e6c-63d8-00d6-f394b2725a34@wwwdotorg.org>
- <507a66ab9ab530a6d71db7a74f11ddfb@agner.ch> <20180417081109.GA5804@ulmo>
-Message-ID: <b7d7f3db651e2ef5411be73e5dabbe77@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-2.22 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[16];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-2.12)[95.76%];
-         ARC_NA(0.00)[]
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.04.2018 10:11, Thierry Reding wrote:
-> On Mon, Apr 16, 2018 at 08:21:09PM +0200, Stefan Agner wrote:
->> On 16.04.2018 18:08, Stephen Warren wrote:
->> > On 04/16/2018 09:56 AM, Stefan Agner wrote:
->> >> On 27.03.2018 14:16, Dmitry Osipenko wrote:
->> >>> On 27.03.2018 14:54, Robin Murphy wrote:
->> >>>> On 26/03/18 22:20, Dmitry Osipenko wrote:
->> >>>>> On 25.03.2018 21:09, Stefan Agner wrote:
->> >>>>>> As documented in GCC naked functions should only use Basic asm
->> >>>>>> syntax. The Extended asm or mixture of Basic asm and "C" code is
->> >>>>>> not guaranteed. Currently this works because it was hard coded
->> >>>>>> to follow and check GCC behavior for arguments and register
->> >>>>>> placement.
->> >>>>>>
->> >>>>>> Furthermore with clang using parameters in Extended asm in a
->> >>>>>> naked function is not supported:
->> >>>>>>     arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
->> >>>>>>             references not allowed in naked functions
->> >>>>>>                   : "r" (type), "r" (arg1), "r" (arg2)
->> >>>>>>                          ^
->> >>>>>>
->> >>>>>> Use a regular function to be more portable. This aligns also with
->> >>>>>> the other smc call implementations e.g. in qcom_scm-32.c and
->> >>>>>> bcm_kona_smc.c.
->> >>>>>>
->> >>>>>> Cc: Dmitry Osipenko <digetx@gmail.com>
->> >>>>>> Cc: Stephen Warren <swarren@nvidia.com>
->> >>>>>> Cc: Thierry Reding <treding@nvidia.com>
->> >>>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> >>>>>> ---
->> >>>>>> Changes in v2:
->> >>>>>> - Keep stmfd/ldmfd to avoid potential ABI issues
->> >>>>>>
->> >>>>>>    arch/arm/firmware/trusted_foundations.c | 14 +++++++++-----
->> >>>>>>    1 file changed, 9 insertions(+), 5 deletions(-)
->> >>>>>>
->> >>>>>> diff --git a/arch/arm/firmware/trusted_foundations.c
->> >>>>>> b/arch/arm/firmware/trusted_foundations.c
->> >>>>>> index 3fb1b5a1dce9..689e6565abfc 100644
->> >>>>>> --- a/arch/arm/firmware/trusted_foundations.c
->> >>>>>> +++ b/arch/arm/firmware/trusted_foundations.c
->> >>>>>> @@ -31,21 +31,25 @@
->> >>>>>>      static unsigned long cpu_boot_addr;
->> >>>>>>    -static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
->> >>>>>> +static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
->> >>>>>>    {
->> >>>>>> +    register u32 r0 asm("r0") = type;
->> >>>>>> +    register u32 r1 asm("r1") = arg1;
->> >>>>>> +    register u32 r2 asm("r2") = arg2;
->> >>>>>> +
->> >>>>>>        asm volatile(
->> >>>>>>            ".arch_extension    sec\n\t"
->> >>>>>> -        "stmfd    sp!, {r4 - r11, lr}\n\t"
->> >>>>>> +        "stmfd    sp!, {r4 - r11}\n\t"
->> >>>>>>            __asmeq("%0", "r0")
->> >>>>>>            __asmeq("%1", "r1")
->> >>>>>>            __asmeq("%2", "r2")
->> >>>>>>            "mov    r3, #0\n\t"
->> >>>>>>            "mov    r4, #0\n\t"
->> >>>>>>            "smc    #0\n\t"
->> >>>>>> -        "ldmfd    sp!, {r4 - r11, pc}"
->> >>>>>> +        "ldmfd    sp!, {r4 - r11}\n\t"
->> >>>>>>            :
->> >>>>>> -        : "r" (type), "r" (arg1), "r" (arg2)
->> >>>>>> -        : "memory");
->> >>>>>> +        : "r" (r0), "r" (r1), "r" (r2)
->> >>>>>> +        : "memory", "r3", "r12", "lr");
->> >>>>>
->> >>>>> Although seems "lr" won't be affected by SMC invocation because it should be
->> >>>>> banked and hence could be omitted entirely from the code. Maybe somebody could
->> >>>>> confirm this.
->> >>>> Strictly per the letter of the architecture, the SMC could be trapped to Hyp
->> >>>> mode, and a hypervisor might clobber LR_usr in the process of forwarding the
->> >>>> call to the firmware secure monitor (since Hyp doesn't have a banked LR of its
->> >>>> own). Admittedly there are probably no real systems with the appropriate
->> >>>> hardware/software combination to hit that, but on the other hand if this gets
->> >>>> inlined where the compiler has already created a stack frame then an LR clobber
->> >>>> is essentially free, so I reckon we're better off keeping it for reassurance.
->> >>>> This isn't exactly a critical fast path anyway.
->> >>>
->> >>> Okay, thank you for the clarification.
->> >>
->> >> So it seems this change is fine?
->> >>
->> >> Stephen, you picked up changes for this driver before, is this patch
->> >> going through your tree?
->> >
->> > You had best ask Thierry; he's taken over Tegra maintenance upstream.
->> > But that said, don't files in arch/arm go through Russell?
->>
->> I think the last patches applied to that file went through your tree.
->>
->> Thierry, Russel, any preferences?
-> 
-> I don't mind picking this up into the Tegra tree. Might be a good idea
-> to move this into drivers/firmware, though, since that's where all the
-> other firmware-related drivers reside.
-> 
-> Firmware code, such as the BPMP driver, usually goes through ARM-SoC
-> these days. I think this is in the same category.
-> 
-> Russell, any objections to me picking this patch up and moving it into
-> drivers/firmware?
+Joanne.
 
-Russel, I think Thierry is waiting for your ok on this.
+jdow - 26.06.18, 07:17:
+> As long as it preserves compatibility it should be OK, I suppose.
+> Personally I'd make any partitioning tool front end gently force the
+> block size towards 8k as the disk size gets larger. The file systems
+> may also run into 2TB issues that are not obvious. An unused blocks
+> list will have to go beyond a uint32_t size, for example. But a block
+> list (OFS for sure, don't remember for the newer AFS) uses a tad
+> under 1% of the disk all by itself. A block bitmap is not quite so
+> bad. {^_-}
+> 
+> Just be sure you are aware of all the ramifications when you make a
+> change. I remember thinking about this for awhile and then
+> determining I REALLY did not want to think about it as my brain was
+> getting tied into a gordian knot.
 
---
-Stefan
+Heh… :)
+
+Well, all I can say it that it just worked on AmigaOS 4. I did not see 
+any data corruption in any of the filesystems. Well as far as I have 
+been able to check. There has been no repair tool for JXFS I think. But 
+as I migrated the data on it to SFS, I was able to copy everything.
+
+Famous last words.
+
+Well especially the disk size was detected properly and there was no 
+overflow like on Linux. So I´d say rather have on error less than one 
+error more.
+
+Of course, it could also be an option to outright *refuse* to detect 
+such disks with a big fat warning in kernel log that it may unsafe. But 
+overflowing and thus on writes overwriting existing data is not safe.
+
+I do think it is safe enough, but what I do know about the internals 
+about RDB (more than the average user certainly, but not as much as you 
+or some other AmigaOS developer who digged  deeper into that).
+
+So in case you´d rather see Linux to refuse to handle disks like that, 
+that would also be fine with me. Just do not handle them in the broken 
+way that they are handled in Linux now. I.e. do not deliberately corrupt 
+things as in "Its dangerous, so let´s overwrite data straight away, so 
+the user gets it." :)
+
+Anyway, in my opinion RDB still just so much more advanced than MBR and 
+in some parts even on par with the much later GPT. With some limitations 
+it is a quite brilliant partition format, if you ask me.
+
+> {^_^}
+> 
+> On 20180625 19:23, Michael Schmitz wrote:
+> > Joanne,
+> > 
+> > Martin's boot log (including your patch) says:
+> > 
+> > Jun 19 21:19:09 merkaba kernel: [ 7891.843284]  sdb: RDSK (512) sdb1
+> > (LNX^@)(res 2 spb 1) sdb2 (JXF^D)(res 2 spb 1) sdb3 (DOS^C)(res 2
+> > spb
+> > 4)
+> > Jun 19 21:19:09 merkaba kernel: [ 7891.844055] sd 7:0:0:0: [sdb]
+> > Attached SCSI disk
+> > 
+> > so it's indeed a case of self inflicted damage (RDSK (512) means 512
+> > byte blocks) and can be worked around by using a different block
+> > size.
+> > 
+> > Your memory serves right indeed - blocksize is in 512 bytes units.
+> > I'll still submit a patch to Jens anyway as this may bite others
+> > yet.
+> > 
+> > Cheers,
+> > 
+> >    Michael
+> > 
+> > On Sun, Jun 24, 2018 at 11:40 PM, jdow <jdow@earthlink.net> wrote:
+> >> BTW - anybody who uses 512 byte blocks with an Amiga file system is
+> >> a famn dool.
+> >> 
+> >> If memory serves the RDBs think in blocks rather than bytes so it
+> >> should work up to 2 gigablocks whatever your block size is. 512
+> >> blocks is 2199023255552 bytes. But that wastes just a WHOLE LOT of
+> >> disk in block maps. Go up to 4096 or 8192. The latter is 35 TB.
+> >> 
+> >> {^_^}
+> >> 
+> >> On 20180624 02:06, Martin Steigerwald wrote:
+> >>> Hi.
+> >>> 
+> >>> Michael Schmitz - 27.04.18, 04:11:
+> >>>> test results at https://bugzilla.kernel.org/show_bug.cgi?id=43511
+> >>>> indicate the RDB parser bug is fixed by the patch given there, so
+> >>>> if
+> >>>> Martin now submits the patch, all should be well?
+> >>> 
+> >>> Ok, better be honest than having anyone waiting for it:
+> >>> 
+> >>> I do not care enough about this, in order to motivate myself
+> >>> preparing the a patch from Joanne Dow´s fix.
+> >>> 
+> >>> I am not even using my Amiga boxes anymore, not even the Sam440ep
+> >>> which I still have in my apartment.
+> >>> 
+> >>> So RDB support in Linux it remains broken for disks larger 2 TB,
+> >>> unless someone else does.
+> >>> 
+> >>> Thanks.
+[…]
+-- 
+Martin
+
+
