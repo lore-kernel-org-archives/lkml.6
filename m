@@ -2,129 +2,124 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3E9C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F47BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A94326554
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:36:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A94326554
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B6E42656F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:44:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXmVdKvx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B6E42656F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752114AbeFZGga (ORCPT
+        id S1752161AbeFZGo1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 02:36:30 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:38794 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751869AbeFZGg2 (ORCPT
+        Tue, 26 Jun 2018 02:44:27 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:43126 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751448AbeFZGoZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 02:36:28 -0400
-X-UUID: 6acbb1c84d01431c8d4c040bf61bcb3e-20180626
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 443016716; Tue, 26 Jun 2018 14:36:26 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 26 Jun 2018 14:36:24 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 26 Jun 2018 14:36:24 +0800
-Message-ID: <1529994984.17448.27.camel@mtkswgap22>
-Subject: Re: [PATCH 1/2] dt-bindings: Add mtk-systimer bindings
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>
-Date:   Tue, 26 Jun 2018 14:36:24 +0800
-In-Reply-To: <ad38a952-4400-984a-a7fd-aa4e6af13c13@linaro.org>
-References: <1529910601-15005-1-git-send-email-stanley.chu@mediatek.com>
-         <1529910601-15005-2-git-send-email-stanley.chu@mediatek.com>
-         <ad38a952-4400-984a-a7fd-aa4e6af13c13@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 26 Jun 2018 02:44:25 -0400
+Received: by mail-pg0-f65.google.com with SMTP id a14-v6so7196193pgw.10;
+        Mon, 25 Jun 2018 23:44:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Oy+CvGZGR5S5EmzWStLBxl/hcCc2RcwnxW0zknpTvi0=;
+        b=cXmVdKvxDr+1LjM8Yf5+3v6zahDpQ1ibjxBlT58+YyPKuuKL73m4ur1sq493TyIDhp
+         DjdM8aOC0oQ9Gi2j/uREWVf4Hui6anN2nDbXEPX7Z5gLxDv+Vhj9l3NI1l+9ogdaxCBH
+         RgWToXkxfSZ7emouZfV5U9DXeNeqBdhS8AqjvvADiUreTNfqLNZOYvEyzQgiwRtYgKU1
+         BRzeTOMYcOaojGzl12tQSsM7GFineMjKKjlGUDihJyLOhS9EvmR46KSGzOdVUYxTxIq1
+         CHrz+3DyuzWq6wBgL8EdG9Vb1I8k8o/qFGJD6Sb6w8pHRFk/w7QT++qpx2toA10B5zNq
+         NF8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Oy+CvGZGR5S5EmzWStLBxl/hcCc2RcwnxW0zknpTvi0=;
+        b=BlOSiS+g7A2PBmZm7wCMoog/lARyizr1wuiUcYAeVETkPTaOx4i+fJ9y4QDHQALdoD
+         dgL9hSeAzdjBOT7zJ6a2M1MlvGpnyUGmFJCNvQk++WJX4GWzsehdd+0F5tC8QfuirJEB
+         0eBGC5H6NKFUf1OBzbdO6o3OoMWLiav8hzvuHuYj8ohV5gB3mZmthZ4ei5mD52cXub2h
+         1yNNBHvVh/04YjFg7XSfsKgnuDPwmQpTGol/qymUBtq8cqpTtdb5HDeh5F1tPEXF7acC
+         RPdA2U7UxXf9t/IZYzvjiHWXkALrBN/DQKKqr2D+RVRXZqq93cHxyQ8+aV2Nfj5ppaZi
+         Au/Q==
+X-Gm-Message-State: APt69E3xhLMq/S4VVbu+lRTwI6TwNkNKJZxdVA83NJiqn/hoghmtBnQ/
+        GraPoDTtNHbtFT0sS1q6n+0=
+X-Google-Smtp-Source: AAOMgpcUiFmhKXRYH7x/nGFkJqKsa60Y/R9eoEw+sXvtXw/xmx9pmweG1k8VLcpBjyXs4neEDdpVpw==
+X-Received: by 2002:a62:1c43:: with SMTP id c64-v6mr286596pfc.176.1529995464603;
+        Mon, 25 Jun 2018 23:44:24 -0700 (PDT)
+Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
+        by smtp.gmail.com with ESMTPSA id m25-v6sm1354332pfg.61.2018.06.25.23.44.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jun 2018 23:44:23 -0700 (PDT)
+Subject: Re: [PATCH] NFC: llcp: fix nfc_llcp_send_ui_frame() lockup
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     Samuel Ortiz <sameo@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-wireless@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d29d18215e477cfbfbdd@syzkaller.appspotmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+References: <20180626044119.30118-1-sergey.senozhatsky@gmail.com>
+ <CACT4Y+ZvLqzEwXgdB25MrmAS_j2_HsS8NFaJaMojzMV3prXypg@mail.gmail.com>
+ <20180626051221.GC31439@jagdpanzerIV>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <8c410102-43ab-dfdb-0d71-2ee5951e1af8@gmail.com>
+Date:   Mon, 25 Jun 2018 23:44:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <20180626051221.GC31439@jagdpanzerIV>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-25 at 23:53 +0200, Daniel Lezcano wrote:
-> On 25/06/2018 09:10, Stanley Chu wrote:
-> > Add binding documentation for the System Timer driver of
-> > the Mediatek SoCs.
-> > 
-> > Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-> > ---
-> >  .../bindings/timer/mediatek,mtk-systimer.txt       |   18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/timer/mediatek,mtk-systimer.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/timer/mediatek,mtk-systimer.txt b/Documentation/devicetree/bindings/timer/mediatek,mtk-systimer.txt
-> > new file mode 100644
-> > index 0000000..735a6fd
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/timer/mediatek,mtk-systimer.txt
-> > @@ -0,0 +1,18 @@
-> > +Mediatek System Timers
-> > +----------------------
-> > +
-> > +Required properties:
-> > +- compatible: should contain
-> > +	"mediatek,sys_timer" for those platforms which support system timer.
-> > +- reg: Mandatory. The location and length for system timer registers.
-> > +- clock-frequency: Optional. If not assigned specifically, default
-> > +	value 13000000 (means 13 MHz) would be applied.
-> 
-> The driver tells there is an error if it is not defined, so it can't be
-> optional.
-> 
-> > +Examples:
-> > +
-> > +	sys_timer@10017000 {
-> > +		compatible = "mediatek,sys_timer";
-> > +		reg = <0 0x10017000 0 0x1000>;
-> > +		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
-> > +		clock-frequency = <13000000>;
-> 
-> Replace it by a phandle to a 'fixed-clock'.
-> 
-> eg.
-> 
-> clocks = <&myclk>;
-> 
-> 
-> > +	};
-> 
-> myclk: myclk {
-> 	#clock-cells = <0>;
-> 	compatible = "fixed-clock";
->         clock-frequency = <13000000>;
-> };
-> 
-> Thanks
-> 
->   -- DAniel
-> 
-> 
-> 
-> 
-Hi Daniel,
-
-13 MHz clock is necessary. We will fix it in v2 by using system's
-fixed-clock.
-
-Thanks.
-Stanley Chu
 
 
+On 06/25/2018 10:12 PM, Sergey Senozhatsky wrote:
+> On (06/26/18 07:07), Dmitry Vyukov wrote:
+> [..]
+>>>  #include <net/nfc/nfc.h>
+>>> @@ -755,7 +756,8 @@ int nfc_llcp_send_ui_frame(struct nfc_llcp_sock *sock, u8 ssap, u8 dsap,
+>>>                 pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
+>>>                                          frag_len + LLCP_HEADER_SIZE, &err);
+>>>                 if (pdu == NULL) {
+>>> -                       pr_err("Could not allocate PDU\n");
+>>> +                       pr_err_ratelimited("Could not allocate PDU\n");
+>>> +                       cond_resched();
+>>>                         continue;
+>>>                 }
+>>
+>>
+>> But this thread is still in an infinite (unkillable?) loop? If yes, we
+>> are waiting for the next syzbot report ;)
+> 
+> The loop is still infinite, correct, but we have a preemption point now.
+> Sure, net people can come with a much better solution, I'll be happy to
+> scratch my patch.
+> 
+
+This can not be the right solution, think about current thread being real time,
+cond_resched() might be a nop.
+
+We should probably not loop at all, or not use MSG_DONTWAIT.
+
+(And remove this useless "Could not allocate PDU" message)
+
+NFC maintainers should really take a look at this.
