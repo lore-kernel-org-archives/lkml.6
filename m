@@ -2,117 +2,242 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71943C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 642FCC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AA7526431
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:18:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFEDB26432
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="dee1Fd2A";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="XKmeKkRy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA7526431
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="T2E82umC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFEDB26432
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965264AbeFZCS4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 22:18:56 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:60316 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965199AbeFZCSz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 22:18:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1529979535; x=1561515535;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=d2nxK7DvLRs9nDI5WmX7Zj8BdyViWFPk49EGoV5h6d8=;
-  b=dee1Fd2ADlfm97ix7yQyiRk7kNSaFv9SKuc96QtZSSiEU3j3er708vqF
-   RJuNnEyrg3ZnMERlQjAaCQSnVPG2MmjJqjNYr9yd21+7Ly1mqA7XrLD1E
-   Gr49tE9ApoTiPPnlAdtgBdktGGZ04c2XLJFRHJ6j2AYEaUMwVIWqOIlYZ
-   EZyxA1er6kTl3LU5s1TQpxVpojqq/oWZ63QT/OgDLWSozdTWKuOcLMIzB
-   innznYSPfUEj74qp2pBt49wpnrmzR4zzPqTXQHccUfPdNFXyZOaXKm8CX
-   E8LQ4h11Tom0iHo4OVUiwnSne3rSv1uwCdhV6bOj3V6XajAj9yAHuHS/C
-   g==;
-X-IronPort-AV: E=Sophos;i="5.51,272,1526313600"; 
-   d="scan'208";a="84374399"
-Received: from mail-cys01nam02lp0047.outbound.protection.outlook.com (HELO NAM02-CY1-obe.outbound.protection.outlook.com) ([207.46.163.47])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Jun 2018 10:18:55 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d2nxK7DvLRs9nDI5WmX7Zj8BdyViWFPk49EGoV5h6d8=;
- b=XKmeKkRyTVOB/m9RC3QUAvQWFY/sIhByy58x091V+/1Kv+QoYSfzC6owg2UAd0WWAEJMM3H/IZCw17U844XyGW6+h4pGv51OHCYQEAfxG99E4SsX4M7h09Pk9Uj51cW9IuBBUYy+RPqrJ7O5UcQwK2hW3O0BSazgn22gLycjdTI=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB0480.namprd04.prod.outlook.com (10.173.48.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.21; Tue, 26 Jun 2018 02:18:52 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::a134:ec95:a6c0:7c44]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::a134:ec95:a6c0:7c44%4]) with mapi id 15.20.0884.024; Tue, 26 Jun 2018
- 02:18:52 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "jthumshirn@suse.de" <jthumshirn@suse.de>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] scsi: check for equality of result byte values
-Thread-Topic: [PATCH v3 1/2] scsi: check for equality of result byte values
-Thread-Index: AQHUDHa10RnD73ewLEKXcSAlhYVJOKRxzx6A
-Date:   Tue, 26 Jun 2018 02:18:52 +0000
-Message-ID: <a0a24d883733dbc2dba00bac88f97c674c7b4900.camel@wdc.com>
-References: <20180625112059.12872-1-jthumshirn@suse.de>
-         <20180625112059.12872-2-jthumshirn@suse.de>
-In-Reply-To: <20180625112059.12872-2-jthumshirn@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [76.103.130.147]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0480;7:+Xvr2S0KINuGiKcZSQ0Kbk/MwcTtDz6zkPLCW1FsrsiBsjnUQO5sXflxqb8/IoApOvWgEqovu5AFXIlGt6eiFoXW3zyZJu/SMsoOcdtoWEDVnIaujr0RP+Uv2+GLYbUfmVKgFeWW/XIO31HH+0g787RiTu7HTcMEDsDEdmiRiEjOrf8//wvxg7yfCPe0wAMMKgUfY3zrUSpl7v1GrOGYvgEUI0/Jhofs/swu5CPg4d7UWyNFaZoPYCQCNlbr6t5y;20:hZ6yMMFyE1Qpu0rEH83vUuBlduAvVFqcdSU2IXne4CSNKLVrXSjyhAX/JqvUveRQ15S4qAKT5dhfWlRVXZdRV8HCp3zx334uQG01IC/QvTnIw4YB72Zx6ch0YuhUI7Wy1uyiV7PRyQhLngOIMlVS5F8AJvmGAMTej9CphBi6m4g=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a58a4b2c-a7e5-4334-9209-08d5db0b2939
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0480;
-x-ms-traffictypediagnostic: MWHPR04MB0480:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0480E24028A3328FF2790BF598490@MWHPR04MB0480.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0480;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0480;
-x-forefront-prvs: 071518EF63
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(136003)(346002)(376002)(189003)(199004)(25786009)(186003)(446003)(4326008)(316002)(8936002)(14454004)(476003)(53936002)(97736004)(486006)(14444005)(66066001)(5660300001)(2906002)(2616005)(72206003)(6246003)(26005)(11346002)(102836004)(99286004)(8676002)(86362001)(118296001)(2900100001)(54906003)(76176011)(6512007)(478600001)(36756003)(3846002)(68736007)(305945005)(6436002)(6506007)(6116002)(81166006)(110136005)(6486002)(7736002)(256004)(2501003)(105586002)(229853002)(81156014)(106356001)(5250100002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0480;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: l9A1m4lQgsanFkk0e0JWyFSbL/AOzhmTdQloSxZgzIY065iQtvh3dROygMRZHtw/4V06f/ldZTTP6+hohuHvRtA22yaxOpjjzz0w1mCw33URNV0MBh9WnSA4guMhtg0VdvJRUdmTGFdYncPctUt7yJ/vzb8qraAQVfz1vhutKsH09pGpE6wpUINZNZ9uUWVxxBy9zCpnmcZDiUUvGJ0kuWRdyG+z0V5nzP5WOlzPyGuMc44xntqerdNzkyWvrHSeel7Y5mE56pn30ShtckSHSkeTMHptuBrMUjS7e0q4EXZXm5V5bk0VR4SmBf9WY5mNVa5YXYKrW2Civ+/SmiLW/rm+E+GPL5x3oOYnscyvzME=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <07DF630B9255E74E86381C2808DCFC0E@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S965279AbeFZCTB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 22:19:01 -0400
+Received: from ozlabs.org ([203.11.71.1]:34493 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965199AbeFZCS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 22:18:58 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41F8qL5dhSz9ryk;
+        Tue, 26 Jun 2018 12:18:54 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1529979536;
+        bh=mQ8eETwnCeOP8oJeprz1H5KtV5Hv/9K+lqV4scIHeWA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=T2E82umCpTEu5K+Wqe3PcabDTYFRRKVWWz3cDpLMxGhh8I7qqRcSR718JH4hTZSwd
+         hNYP9y7x9AUie0TT6Hdm3iHfHeRN/iqtESjMi5W2jpHMxZh4eSbiZGAMhQc2TPIcmw
+         cPPEcJMpeOCVJ0bfI6wX9ZG65+4MKnZVVjpiAf83cWYlFQE7Tejlc3ZXL/P2Itb1io
+         1HVO06l2Hp5Id4qrhF/byIz2MPiINB17h/w7BGpKK8vsMofPkkiYUp3FFn5WXZUy4y
+         CJdhfLeiL5MOpj4uirBlc5QhHqNkasje9hn1/0Ph4WxD2awhYXliGWt1wzM2AcDZGQ
+         57vW9cXFbF5TA==
+Date:   Tue, 26 Jun 2018 12:18:53 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>
+Subject: linux-next: manual merge of the nvdimm tree with the tip tree
+Message-ID: <20180626121853.0b4ce17c@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a58a4b2c-a7e5-4334-9209-08d5db0b2939
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2018 02:18:52.4461
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0480
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IIvkWKSgwPivu/WSo_T0SPC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTA2LTI1IGF0IDEzOjIwICswMjAwLCBKb2hhbm5lcyBUaHVtc2hpcm4gd3Jv
-dGU6DQo+IFdoZW4gZXZhbHVhdGluZyBhIFNDU0kgY29tbWFuZCdzIHJlc3VsdCB1c2luZyB0aGUg
-ZmllbGQgYWNjZXNzIG1hY3JvcywNCj4gY2hlY2sgZm9yIGVxdWFsaXR5IG9mIHRoZSBmaWVsZHMg
-YW5kIG5vdCBpZiBhIHNwZWNpZmljIGJpdCBpcyBzZXQuDQo+IA0KPiBUaGlzIGlzIGEgcHJlcGFy
-YXRpb24gcGF0Y2gsIGZvciByZXdvcmtpbmcgdGhlIHJlc3VsdHMgZmllbGQgaW4gdGhlDQo+IFND
-U0kgY29tbWFuZC4NCg0KUmV2aWV3ZWQtYnk6IEJhcnQgVmFuIEFzc2NoZSA8YmFydC52YW5hc3Nj
-aGVAd2RjLmNvbT4NCg0KDQoNCg0KDQo=
+--Sig_/IIvkWKSgwPivu/WSo_T0SPC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the nvdimm tree got a conflict in:
+
+  arch/x86/kernel/cpu/mcheck/mce.c
+
+between commit:
+
+  d3d6923cd1ae ("x86/mce: Carve out the crashing_cpu check")
+
+from the tip tree and commit:
+
+  f6785eac562b ("x86/memory_failure: Introduce {set,clear}_mce_nospec()")
+
+from the nvdimm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kernel/cpu/mcheck/mce.c
+index 9a16f15f79eb,a0fbf0a8b7e6..000000000000
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@@ -1076,129 -1070,6 +1072,100 @@@ static int do_memory_failure(struct mc
+  	return ret;
+  }
+ =20
+- #ifndef mce_unmap_kpfn
+- static void mce_unmap_kpfn(unsigned long pfn)
+- {
+- 	unsigned long decoy_addr;
+-=20
+- 	/*
+- 	 * Unmap this page from the kernel 1:1 mappings to make sure
+- 	 * we don't log more errors because of speculative access to
+- 	 * the page.
+- 	 * We would like to just call:
+- 	 *	set_memory_np((unsigned long)pfn_to_kaddr(pfn), 1);
+- 	 * but doing that would radically increase the odds of a
+- 	 * speculative access to the poison page because we'd have
+- 	 * the virtual address of the kernel 1:1 mapping sitting
+- 	 * around in registers.
+- 	 * Instead we get tricky.  We create a non-canonical address
+- 	 * that looks just like the one we want, but has bit 63 flipped.
+- 	 * This relies on set_memory_np() not checking whether we passed
+- 	 * a legal address.
+- 	 */
+-=20
+- 	decoy_addr =3D (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
+-=20
+- 	if (set_memory_np(decoy_addr, 1))
+- 		pr_warn("Could not invalidate pfn=3D0x%lx from 1:1 map\n", pfn);
+- }
+- #endif
+-=20
+-=20
+ +/*
+ + * Cases where we avoid rendezvous handler timeout:
+ + * 1) If this CPU is offline.
+ + *
+ + * 2) If crashing_cpu was set, e.g. we're entering kdump and we need to
+ + *  skip those CPUs which remain looping in the 1st kernel - see
+ + *  crash_nmi_callback().
+ + *
+ + * Note: there still is a small window between kexec-ing and the new,
+ + * kdump kernel establishing a new #MC handler where a broadcasted MCE
+ + * might not get handled properly.
+ + */
+ +static bool __mc_check_crashing_cpu(int cpu)
+ +{
+ +	if (cpu_is_offline(cpu) ||
+ +	    (crashing_cpu !=3D -1 && crashing_cpu !=3D cpu)) {
+ +		u64 mcgstatus;
+ +
+ +		mcgstatus =3D mce_rdmsrl(MSR_IA32_MCG_STATUS);
+ +		if (mcgstatus & MCG_STATUS_RIPV) {
+ +			mce_wrmsrl(MSR_IA32_MCG_STATUS, 0);
+ +			return true;
+ +		}
+ +	}
+ +	return false;
+ +}
+ +
+ +static void __mc_scan_banks(struct mce *m, struct mce *final,
+ +			    unsigned long *toclear, unsigned long *valid_banks,
+ +			    int no_way_out, int *worst)
+ +{
+ +	struct mca_config *cfg =3D &mca_cfg;
+ +	int severity, i;
+ +
+ +	for (i =3D 0; i < cfg->banks; i++) {
+ +		__clear_bit(i, toclear);
+ +		if (!test_bit(i, valid_banks))
+ +			continue;
+ +
+ +		if (!mce_banks[i].ctl)
+ +			continue;
+ +
+ +		m->misc =3D 0;
+ +		m->addr =3D 0;
+ +		m->bank =3D i;
+ +
+ +		m->status =3D mce_rdmsrl(msr_ops.status(i));
+ +		if (!(m->status & MCI_STATUS_VAL))
+ +			continue;
+ +
+ +		/*
+ +		 * Corrected or non-signaled errors are handled by
+ +		 * machine_check_poll(). Leave them alone, unless this panics.
+ +		 */
+ +		if (!(m->status & (cfg->ser ? MCI_STATUS_S : MCI_STATUS_UC)) &&
+ +			!no_way_out)
+ +			continue;
+ +
+ +		/* Set taint even when machine check was not enabled. */
+ +		add_taint(TAINT_MACHINE_CHECK, LOCKDEP_NOW_UNRELIABLE);
+ +
+ +		severity =3D mce_severity(m, cfg->tolerant, NULL, true);
+ +
+ +		/*
+ +		 * When machine check was for corrected/deferred handler don't
+ +		 * touch, unless we're panicking.
+ +		 */
+ +		if ((severity =3D=3D MCE_KEEP_SEVERITY ||
+ +		     severity =3D=3D MCE_UCNA_SEVERITY) && !no_way_out)
+ +			continue;
+ +
+ +		__set_bit(i, toclear);
+ +
+ +		/* Machine check event was not enabled. Clear, but ignore. */
+ +		if (severity =3D=3D MCE_NO_SEVERITY)
+ +			continue;
+ +
+ +		mce_read_aux(m, i);
+ +
+ +		/* assuming valid severity level !=3D 0 */
+ +		m->severity =3D severity;
+ +
+ +		mce_log(m);
+ +
+ +		if (severity > *worst) {
+ +			*final =3D *m;
+ +			*worst =3D severity;
+ +		}
+ +	}
+ +
+ +	/* mce_clear_state will clear *final, save locally for use later */
+ +	*m =3D *final;
+ +}
+ +
+  /*
+   * The actual machine check handler. This only handles real
+   * exceptions when something got corrupted coming in through int 18.
+
+--Sig_/IIvkWKSgwPivu/WSo_T0SPC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsxoo0ACgkQAVBC80lX
+0GwJfAf+KicrRsw1kbQLwWi3Yo7C98PEraZGtRgoGfLaOByk66DaHydLqqe5jTEa
+L/TGQfTFweIrkBDEzDKWDy91gclttsIo+WiuwF6gHwG1BYVhqLF8Q7SwKyT3AcXX
+gP9glxSDxIt9cCql60qsWFGZUf1WPNU/JAsq46A2sM1JxGvFgIwGP2O5Mrd0cQwZ
+dpHpc+GkTJqzV5duXMmiPFSCeC1Zo/B5vi+IFMvOA7m0v0OUZMI4nQZywmLLk3T/
+sfrkp/7pRoUHth7hRq57ivO6Ksw+SFvg94CSiGD4qMNSTXMjFgl0qxmgmWpm7jKA
+xxEwrmc3rNbzCcOf2oQ+oR7Tg7Ayww==
+=VncD
+-----END PGP SIGNATURE-----
+
+--Sig_/IIvkWKSgwPivu/WSo_T0SPC--
