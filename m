@@ -2,116 +2,202 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BCAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128ACC43145
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B7826367
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:03:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B7826367
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B4D7A22523
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:03:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eEEnqxHe";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k687rbzS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D7A22523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934225AbeFZKDr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S934317AbeFZKDv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 06:03:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41418 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934205AbeFZKDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Jun 2018 06:03:47 -0400
-Received: from mga07.intel.com ([134.134.136.100]:3886 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933576AbeFZKDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 06:03:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 03:03:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
-   d="scan'208";a="49974036"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 26 Jun 2018 03:03:41 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 36C1CF8; Tue, 26 Jun 2018 13:03:43 +0300 (EEST)
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCHv2] x86/mm: Drop unneeded __always_inline for p4d page table helpers
-Date:   Tue, 26 Jun 2018 13:03:41 +0300
-Message-Id: <20180626100341.49910-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 436CE60274; Tue, 26 Jun 2018 10:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530007427;
+        bh=5VQabHnjQEr9dxHzFuJmVqGU5cn7e6OavA7JpZqJ4To=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=eEEnqxHeBmk1r8bMs8f0HoqToNWn4aL310VvrudjNj5/aza4VcpVEpMfb+D7lu9gv
+         VFJ5qj4v3+Q2qWjNC+f4Yi8CrEKYDQYExGrSHZiWF7p/HPE08Asyjw3y2yTmjvZAr8
+         p7qHRND/1NnYx8bxI9EgiuM5gGd80XTxWA7I60Pk=
+Received: from mail-qt0-f179.google.com (mail-qt0-f179.google.com [209.85.216.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3183960131;
+        Tue, 26 Jun 2018 10:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530007426;
+        bh=5VQabHnjQEr9dxHzFuJmVqGU5cn7e6OavA7JpZqJ4To=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=k687rbzSubCYDodvjGLRhmo6du1YKKtqYuOHLxerMWHs3VQz7WdshRlopaJHzmXZU
+         p+1r/bnRFIKuXnrcRlGxzh3liZ0uBDY8sPgLXG2rhL7haTxUsMa8ancryT04ivpmzt
+         IqD8cFbOoPNk2bJ9i1gjbG0bhniZKBF1AhqpGzqQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3183960131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qt0-f179.google.com with SMTP id o9-v6so14574346qtp.3;
+        Tue, 26 Jun 2018 03:03:46 -0700 (PDT)
+X-Gm-Message-State: APt69E1/2iABJKzPUVTCA1bUm3lgdL6pE6hzSU5KuRUamK87neVMx4Hr
+        JRsdU3U7uy4zabnanv6axF/Qah2wDkaIKNYqvxs=
+X-Google-Smtp-Source: AAOMgpeHDFK2fAqEpqhNV5yUnsGvHUJktqx3Cm/ec0DaSF43I5VJHm/KT+0hm5p2MLa+P3UigldcGKA8vfFGFlWcPEk=
+X-Received: by 2002:a0c:f489:: with SMTP id i9-v6mr702357qvm.0.1530007425373;
+ Tue, 26 Jun 2018 03:03:45 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac8:1082:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 03:03:44
+ -0700 (PDT)
+In-Reply-To: <541c84e9-47fc-e7bc-8249-1477b9e63455@codeaurora.org>
+References: <20180530095704.5788-1-vivek.gautam@codeaurora.org>
+ <a85d44e7-3bb1-f282-088d-c4311a108bcd@intel.com> <541c84e9-47fc-e7bc-8249-1477b9e63455@codeaurora.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Tue, 26 Jun 2018 15:33:44 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iGwcbOm0p33o9NEE7YBZNNvRsBeU0ySy0HcEmvq8mhBJA@mail.gmail.com>
+Message-ID: <CAFp+6iGwcbOm0p33o9NEE7YBZNNvRsBeU0ySy0HcEmvq8mhBJA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] device core: Add flag to autoremove device link on
+ supplier unbind
+To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, lukas@wunner.de,
+        dmitry.torokhov@gmail.com, aspriel@gmail.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commits
+On Wed, May 30, 2018 at 6:21 PM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
 
-  1ea66554d3b0 ("x86/mm: Mark p4d_offset() __always_inline")
-  046c0dbec023 ("x86: Mark native_set_p4d() as __always_inline")
+Adding Ulf and Marek for their side of comments.
+In summary, we do not want to not maintain a device link pointer
+when adding a device link in supplier's driver, to delete the link later.
+An autoremove flag from the suppliers side (similar to what we already
+have for consumer side) can help autoremove the device link
+when supplier driver goes away.
 
-p4d_offset(), native_set_p4d() and native_p4d_clear() were marked
-__always_inline in attempt to move __pgtable_l5_enabled into __initdata
-section.
+Hi Rafael, Lukas,
+Gentle ping. Can you please consider reviewing this patch.
 
-It was required as KASAN initialization code is a user of
-USE_EARLY_PGTABLE_L5, so all pgtable_l5_enabled() translated to
-__pgtable_l5_enabled there. This includes pgtable_l5_enabled() called
-from inline p4d helpers.
+Best regards
+Vivek
 
-If compiler would decided to not inline these p4d helpers, but leave
-them standalone, we end up with section mismatch.
+> Hi Rafael,
+>
+>
+> On 5/30/2018 4:29 PM, Rafael J. Wysocki wrote:
+>>
+>> On 5/30/2018 11:57 AM, Vivek Gautam wrote:
+>>>
+>>> When using the device links without the consumers or
+>>> suppliers maintaining pointers to these links, a flag can
+>>> help in autoremoving the links on supplier driver unbind.
+>>> We remove these links only when the supplier's link to its
+>>> consumers has gone in DL_STATE_SUPPLIER_UNBIND state.
+>>>
+>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>> Suggested-by: Lukas Wunner <lukas@wunner.de>
+>>> ---
+>>>
+>>> Lukas, as suggested in the thread [1] this change adds additional flag
+>>> to autoremove device links on supplier unbind.
+>>> For arm-smmu, we want to _not_ keep references to the device links
+>>> added between arm-smmu, and consumer devices.
+>>> Robin also pointed to [2] the need to autoremove the device link on
+>>> supplier unbind rather than consumer unbind.
+>>
+>>
+>> Please CC device links patches to linux-pm.
+>
+>
+> Thanks for the quick review. Sure, will keep this noted from now on.
+>
+>
+>>
+>>> [1] https://lkml.org/lkml/2018/3/14/390
+>>> [2] https://lkml.org/lkml/2018/5/21/381
+>>>
+>>>   drivers/base/core.c    | 10 ++++++++++
+>>>   include/linux/device.h |  2 ++
+>>>   2 files changed, 12 insertions(+)
+>>>
+>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>>> index b610816eb887..52c7222bb3c4 100644
+>>> --- a/drivers/base/core.c
+>>> +++ b/drivers/base/core.c
+>>> @@ -490,6 +490,16 @@ void device_links_driver_cleanup(struct device *dev)
+>>>             WARN_ON(link->flags & DL_FLAG_AUTOREMOVE);
+>>>           WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
+>>> +
+>>> +        /*
+>>> +         * autoremove the links between this @dev and its consumer
+>>> +         * devices that are not active, i.e. where the link state
+>>> +         * has moved to DL_STATE_SUPPLIER_UNBIND.
+>>> +         */
+>>> +        if (link->status == DL_STATE_SUPPLIER_UNBIND &&
+>>> +            link->flags & DL_FLAG_AUTOREMOVE_S)
+>>> +            kref_put(&link->kref, __device_link_del);
+>>> +
+>>>           WRITE_ONCE(link->status, DL_STATE_DORMANT);
+>>>       }
+>>>   diff --git a/include/linux/device.h b/include/linux/device.h
+>>> index 477956990f5e..6033bf58453d 100644
+>>> --- a/include/linux/device.h
+>>> +++ b/include/linux/device.h
+>>> @@ -779,11 +779,13 @@ enum device_link_state {
+>>>    * AUTOREMOVE: Remove this link automatically on consumer driver
+>>> unbind.
+>>>    * PM_RUNTIME: If set, the runtime PM framework will use this link.
+>>>    * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during link
+>>> creation.
+>>> + * AUTOREMOVE_S: Remove this link automatically on supplier driver
+>>> unbind.
+>>>    */
+>>>   #define DL_FLAG_STATELESS    BIT(0)
+>>>   #define DL_FLAG_AUTOREMOVE    BIT(1)
+>>>   #define DL_FLAG_PM_RUNTIME    BIT(2)
+>>>   #define DL_FLAG_RPM_ACTIVE    BIT(3)
+>>> +#define DL_FLAG_AUTOREMOVE_S    BIT(4)
+>>
+>>
+>> Couldn't you invent a better name for this one?
+>
+>
+> Frankly, I wanted to have something like DL_FLAG_AUTOREMOVE_SUPPLIER, but
+> that
+> felt a bit too long considering other flags.
+> Can you please consider suggesting a concise name?
+>
+> Regards
+> Vivek
+>
+>>
+>>>     /**
+>>>    * struct device_link - Device link representation.
+>>
+>>
+>>
+>
 
-We don't need __always_inline here anymore. __pgtable_l5_enabled moved
-back to be __ro_after_init. See commit
 
-  51be13351517 ("Revert "x86/mm: Mark __pgtable_l5_enabled __initdata"")
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/include/asm/pgtable.h    | 2 +-
- arch/x86/include/asm/pgtable_64.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 99ecde23c3ec..5715647fc4fe 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -898,7 +898,7 @@ static inline unsigned long pgd_page_vaddr(pgd_t pgd)
- #define pgd_page(pgd)	pfn_to_page(pgd_pfn(pgd))
- 
- /* to find an entry in a page-table-directory. */
--static __always_inline p4d_t *p4d_offset(pgd_t *pgd, unsigned long address)
-+static inline p4d_t *p4d_offset(pgd_t *pgd, unsigned long address)
- {
- 	if (!pgtable_l5_enabled())
- 		return (p4d_t *)pgd;
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 0fdcd21dadbd..3c5385f9a88f 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -216,7 +216,7 @@ static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
- }
- #endif
- 
--static __always_inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
-+static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- {
- 	pgd_t pgd;
- 
-@@ -230,7 +230,7 @@ static __always_inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- 	*p4dp = native_make_p4d(native_pgd_val(pgd));
- }
- 
--static __always_inline void native_p4d_clear(p4d_t *p4d)
-+static inline void native_p4d_clear(p4d_t *p4d)
- {
- 	native_set_p4d(p4d, native_make_p4d(0));
- }
 -- 
-2.18.0
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
