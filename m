@@ -2,214 +2,162 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C98C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F21DC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE9D126742
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:30:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9D126742
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CF38B26F02
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:30:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kWQofeSW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF38B26F02
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754735AbeFZSaJ (ORCPT
+        id S1754908AbeFZSa0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:30:09 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36048 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752210AbeFZSaH (ORCPT
+        Tue, 26 Jun 2018 14:30:26 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:47062 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751121AbeFZS2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:30:07 -0400
-Received: by mail-pf0-f196.google.com with SMTP id u16-v6so4700576pfh.3;
-        Tue, 26 Jun 2018 11:30:07 -0700 (PDT)
+        Tue, 26 Jun 2018 14:28:46 -0400
+Received: by mail-wr0-f194.google.com with SMTP id l14-v6so13143197wrq.13
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=0rtlaTwu4CCqZ4xjhd2DpZMexFkKmZwXAJxYNg8GKrI=;
+        b=kWQofeSWgXoFjz/j8asPkjzideKiaqYlr9d9vbu/r2+CWpyREDbBaoDmBUxiu0peFH
+         HPq9AnjbD8tgNgl/vBzBFgNM5iwiBgZc2u4TDt0NhyvsxqwUZQNyAQ7opJ3P/nUOKwvH
+         PTdbLXYvfUfdjZZ95APglwOGZ39x0iuVko2X4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dMeCInSn5HV4ZxyWsLPZK2lw5qRLL1OhPzhXOibJvmc=;
-        b=nnNUwD0ax9haKFCv53Lu+77HCOl6uLluMJkfwak5IdWVP7pBlKkvpg56HY9MGKxq2i
-         g8oulX3reYsiCVF2fHnsugRIcVBLbDPjnDKzuVAIH4HZgMmByktsw2kbh413iURSwL9a
-         qrzAiZtRDXC4bTgMvSvtiR8inEj14ebjpxV3ixwEpBd78EpNzzud5S/XdA4hDT6t/pif
-         3PARhEeieFEZpoychbJkZKzdugisPaXde2qn1D4mszrk2LCKTof8EWSi9vsBxtURrMwF
-         /UZ7byCTjcGcFcEptId7DXl8DZbu/IISTG/MDV0U2hWUl/4wGZYXADlnn4mqHPl9/Tvj
-         ALwA==
-X-Gm-Message-State: APt69E2FQyzFvkJYsIUohjPr4mgdHI6KWYb7vUJhLlNPXNEI72KwbFY3
-        yBvmDNSKxAV8qYnJh3MpmA==
-X-Google-Smtp-Source: ADUXVKLHMiedY3jdMep3RZZDXM/OzonEPuxL9CxJC9KpJjSciJDRSiT/VRT7VAJCMnR1NEzlfCc04g==
-X-Received: by 2002:a65:5ac9:: with SMTP id d9-v6mr2365525pgt.238.1530037806600;
-        Tue, 26 Jun 2018 11:30:06 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id g70-v6sm4211010pfc.107.2018.06.26.11.30.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 11:30:05 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 12:30:03 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     yixun.lan@amlogic.com, linux-mtd@lists.infradead.org,
-        boris.brezillon@bootlin.com, richard@nod.at,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        devicetree@vger.kernel.org, liang.yang@amlogic.com,
-        jian.hu@amlogic.com, khilman@baylibre.com, carlo@caione.org,
-        linux-amlogic@lists.infradead.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org, linux-arm-kernel@lists.infradead.org,
-        jbrunet@baylibre.com
-Subject: Re: [PATCH 1/2] dt-bindings: nand: meson: add Amlogic NAND
- controller driver
-Message-ID: <20180626183003.GA3019@rob-hp-laptop>
-References: <20180613161314.14894-1-yixun.lan@amlogic.com>
- <20180613161314.14894-2-yixun.lan@amlogic.com>
- <CAFBinCBeyXf6LNaZzAw6WnsxzDAv8E=Yp2eem0xCPWMEUi6pnQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFBinCBeyXf6LNaZzAw6WnsxzDAv8E=Yp2eem0xCPWMEUi6pnQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=0rtlaTwu4CCqZ4xjhd2DpZMexFkKmZwXAJxYNg8GKrI=;
+        b=PItl72HI+6VlGSrsXcHZbvp/U2BtT9zE3wP5ZRkgf368rq7VvOXap6XVVm8IJrrLSk
+         8w9SmDw6gOR+FSjhA8CgTF2a1JVO8yaN9j9RZAEIApYXsEFxoz7UvDb/qMARw5TRARzO
+         4Ff8Ii8Rr+hcW/9SJEk06kLKoj37rjeCb1ZA+5WXtwjykgB+SJB1iCx2goXL5gkR/5GQ
+         kbI+WV0em52SgSW41WnJF5q1rCtUNMu1UXwH2it4t0gg+cARvrv666AcrMxnI/2cypvS
+         ZJWxItKNWieCo5lxEINktgde0ORiYZ5sdQtbtwDxoOhmM7rX88FaQfPBU5/BnAh0BwFd
+         XaEg==
+X-Gm-Message-State: APt69E1QGin5pzoTMf1jpEvBIvNIuOBII6lEK8d7kBSvqT8WdHFO4HHe
+        q9AaIEpzu8SW6SwIydUHcuKzutw6K9I=
+X-Google-Smtp-Source: AAOMgpcsaI7g0EkQkI2f7EhPDlW/ATjGUpG2MyKr4CfAaHK4w2A7DuCRUIfeMS0l22l/rbNtj9usdA==
+X-Received: by 2002:adf:ebc3:: with SMTP id v3-v6mr2414460wrn.33.1530037724454;
+        Tue, 26 Jun 2018 11:28:44 -0700 (PDT)
+Received: from rev02.home ([2a01:cb1d:112:6f00:d037:e907:f0a2:a5ea])
+        by smtp.gmail.com with ESMTPSA id s17-v6sm1707664wmc.34.2018.06.26.11.28.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 11:28:43 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Mackerras <paulus@samba.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: [PATCH v9 2/6] module: allow symbol exports to be disabled
+Date:   Tue, 26 Jun 2018 20:27:57 +0200
+Message-Id: <20180626182802.19932-3-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
+References: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 24, 2018 at 12:46:59AM +0200, Martin Blumenstingl wrote:
-> Hello Yixun, Hello Liang,
-> 
-> I have a few small comments inline below
-> additionally I tried to explain the reason behind
-> "amlogic,mmc-syscon", clkin0 and clkin1 so Rob (or the devicetree
-> maintainers in general) can give feedback. feel free to correct me
-> wherever I'm wrong or provide additional notes in case I missed
-> something!
-> 
-> On Wed, Jun 13, 2018 at 10:17 AM Yixun Lan <yixun.lan@amlogic.com> wrote:
-> >
-> > From: Liang Yang <liang.yang@amlogic.com>
-> >
-> > Add Amlogic NAND controller dt-bindings for Meson SoC,
-> > Current this driver support GXBB/GXL/AXG platform.
-> >
-> > Signed-off-by: Liang Yang <liang.yang@amlogic.com>
-> > Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> > ---
-> >  .../bindings/mtd/amlogic,meson-nand.txt       | 118 ++++++++++++++++++
-> >  1 file changed, 118 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-> > new file mode 100644
-> > index 000000000000..eac9f9433d5d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-> > @@ -0,0 +1,118 @@
-> > +Amlogic NAND Flash Controller (NFC) for GXBB/GXL/AXG family SoCs
-> > +
-> > +This file documents the properties in addition to those available in
-> > +the MTD NAND bindings.
-> > +
-> > +Required properties:
-> > +- compatible : contains one of:
-> > +  - "amlogic,meson-gxl-nfc"
-> > +  - "amlogic,meson-axg-nfc"
-> the patch description states that GXBB/GXL/AXG are supported
-> shouldn't you add a compatible string for GXBB as well?
-> 
-> > +- clocks     :
-> > +       A list of phandle + clock-specifier pairs for the clocks listed
-> > +       in clock-names.
-> > +
-> > +- clock-names: Should contain the following:
-> > +       "core" - NFC module gate clock
-> > +       "clkin0" - Parent clock of internal mux
-> > +       "clkin1" - Other parent clock of internal mux
-> to give the devicetree maintainers some context on clkin0 and clkin1:
-> 
-> older SoCs (Meson8, Meson8b - not supported by this binding/driver
-> yet) had a dedicated NAND clock. there neither clkin0 or clkin1 would
-> be used, instead we just had a "nand" or "interface" clock (I'm not
-> aware of the actual naming in Amlogic's internal datasheets)
-> 
-> newer SoCs do NOT have a dedicated NAND "interface" clock anymore.
-> instead they are sharing the clock with the "sd_emmc_c" controller (I
-> *believe* the reason for this is because sd_emmc_c and the NAND
-> controller use the same pads on the SoC, pinctrl muxing controls where
-> these pads are routed -> NAND and sd_emmc_c cannot be used at the same
-> time, so SoC designers probably decided to re-use the clock)
-> 
-> unfortunately the sd_emmc_c clock is not provided by the "main" clock
-> controller on these newer SoCs
-> instead the clock is part of the MMC controller's register space (see
-> the SD_EMMC_CLOCK register in drivers/mmc/host/meson-gx-mmc.c)
-> even worse: the SD_EMMC_CLOCK contains more than just clock settings
-> (bit 25 enables the SDIO interrupt, which is currently not supported
-> by the meson-gx-mmc driver though)
-> 
-> the SD_EMMC_CLOCK register has a mux (CLK_SRC_MASK) to choose from
-> clkin0 and clkin1 which are passed here
-> the "amlogic,mmc-syscon" property is used to get a phandle to the
-> sd_emmc_c syscon register space
-> thus there is a bit of code duplication in the MMC and NAND drivers
-> with this binding (because both need to configure the SD_EMMC_CLOCK
-> register)
+To allow existing C code to be incorporated into the decompressor or
+the UEFI stub, introduce a CPP macro that turns all EXPORT_SYMBOL_xxx
+declarations into nops, and #define it in places where such exports
+are undesirable. Note that this gets rid of a rather dodgy redefine
+of linux/export.h's header guard.
 
-Well, that's ugly. Really, the SD controller should be modeled as a 
-clock provider. But then you would have to always have a driver 
-instantiated for it. Maybe you need that anyway if accessing this 
-register is dependent on some other clock or reset to the module being 
-enabled (which you may not hit if you only access the reg during boot)?
+Acked-by: Nicolas Pitre <nico@linaro.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ arch/x86/boot/compressed/kaslr.c      |  5 +----
+ drivers/firmware/efi/libstub/Makefile |  3 ++-
+ include/linux/export.h                | 11 ++++++++++-
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
-But if you really want to do it this way, I guess that is fine.
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index b87a7582853d..ed7a123bba42 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -23,11 +23,8 @@
+  * _ctype[] in lib/ctype.c is needed by isspace() of linux/ctype.h.
+  * While both lib/ctype.c and lib/cmdline.c will bring EXPORT_SYMBOL
+  * which is meaningless and will cause compiling error in some cases.
+- * So do not include linux/export.h and define EXPORT_SYMBOL(sym)
+- * as empty.
+  */
+-#define _LINUX_EXPORT_H
+-#define EXPORT_SYMBOL(sym)
++#define __DISABLE_EXPORTS
+ 
+ #include "misc.h"
+ #include "error.h"
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index a34e9290a699..0d0d3483241c 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
+ KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+ 				   -D__NO_FORTIFY \
+ 				   $(call cc-option,-ffreestanding) \
+-				   $(call cc-option,-fno-stack-protector)
++				   $(call cc-option,-fno-stack-protector) \
++				   -D__DISABLE_EXPORTS
+ 
+ GCOV_PROFILE			:= n
+ KASAN_SANITIZE			:= n
+diff --git a/include/linux/export.h b/include/linux/export.h
+index b768d6dd3c90..ea7df303d68d 100644
+--- a/include/linux/export.h
++++ b/include/linux/export.h
+@@ -66,7 +66,16 @@ extern struct module __this_module;
+ 	__attribute__((section("___ksymtab" sec "+" #sym), used))	\
+ 	= { (unsigned long)&sym, __kstrtab_##sym }
+ 
+-#if defined(__KSYM_DEPS__)
++#if defined(__DISABLE_EXPORTS)
++
++/*
++ * Allow symbol exports to be disabled completely so that C code may
++ * be reused in other execution contexts such as the UEFI stub or the
++ * decompressor.
++ */
++#define __EXPORT_SYMBOL(sym, sec)
++
++#elif defined(__KSYM_DEPS__)
+ 
+ /*
+  * For fine grained build dependencies, we want to tell the build system
+-- 
+2.11.0
 
-> > +
-> > +- pins     : Select pins which NFC need.
-> > +- nand_pins: Detail NAND pins information.
-> > +               nand_pins: nand {
-> > +                       mux {
-> > +                               groups = "emmc_nand_d0",
-> > +                                       "emmc_nand_d1",
-> > +                                       "emmc_nand_d2",
-> > +                                       "emmc_nand_d3",
-> > +                                       "emmc_nand_d4",
-> > +                                       "emmc_nand_d5",
-> > +                                       "emmc_nand_d6",
-> > +                                       "emmc_nand_d7",
-> > +                                       "nand_ce0",
-> > +                                       "nand_rb0",
-> > +                                       "nand_ale",
-> > +                                       "nand_cle",
-> > +                                       "nand_wen_clk",
-> > +                                       "nand_ren_wr";
-> > +                               function = "nand";
-> > +                       };
-> > +               };
-> > +
-> > +- amlogic,mmc-syscon   : Required for NAND clocks, it's shared with SD/eMMC
-> > +                               controller port C
-> > +
-> > +Optional children nodes:
-> > +Children nodes represent the available nand chips.
-> > +
-> > +Optional properties:
-> > +- meson-nand-user-mode :
-> > +       only set 2 or 16 which mean the way of reading OOB bytes by NFC.
-> as far as I know vendor specific properties should follow the naming
-> schema "vendor,purpose"
-> in this case this would be "amlogic,nand-user-mode"
-> 
-> maybe Rob can comment on this?
-
-Yes.
-
-> 
-> > +- meson-nand-ran-mode :
-> > +       setting 0 or 1, means disable/enable scrambler which keeps the balence
-> > +       of 0 and 1
-> I assume 0 and 1 are the only possible values.
-> to use of_property_read_bool in the driver the property would be either:
-> - (absent) = scrambler is disabled
-> - amlogic,nand-enable-scrambler (without any value - also same comment
-> as above for the value) = scrambler is enabled
-> 
-> 
-> Regards
-> Martin
