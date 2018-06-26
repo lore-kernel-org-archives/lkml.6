@@ -2,163 +2,205 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B199C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 712D3C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036EE26999
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:06:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RMO+eSzZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036EE26999
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2B5DA26999
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:06:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5DA26999
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934451AbeFZLGZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:06:25 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42056 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932888AbeFZLGW (ORCPT
+        id S934744AbeFZLGc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:06:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43054 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932888AbeFZLG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 07:06:26 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QB45xh108984
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 07:06:26 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jukqp9gn1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 07:06:25 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Tue, 26 Jun 2018 07:06:25 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Tue, 26 Jun 2018 07:06:22 -0400
-Received: by mail-wr0-f194.google.com with SMTP id p1-v6so1205828wrs.9
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 04:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+mJeQGFTRJHE/3BL5qTKTwaKOqkKEVbq51/K2yU6YPY=;
-        b=RMO+eSzZ/eU+E+dEQCspknDnYcS9aKCX3+TJ+cvYvE0/KzAt3vkBJEd3KMPDS+ls1R
-         YxO14JXsfkVfDC/DCARXRXHJyZIZ89T4muiRaOVcEzY1epNFiRUSECf8bWv7M5Ib5lGt
-         AVyj+V4MbRMbGmL36F/kqfjCAWBaR2GgJLlz8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+mJeQGFTRJHE/3BL5qTKTwaKOqkKEVbq51/K2yU6YPY=;
-        b=FyeTnQ7D/eTJWnUthZbCNtJx4AnVN9w+of3jlWB0qgIOA22EFjP/iib9++DniFVR4e
-         ETBORaeXjXa8BRnuYLM1Qq606OLXmHH0nDI7INYLpNRzO8o1MCYFkODFnXLhPNukfst3
-         qBNHIxVfjP5qxNkVn+hNdu/sy0s9cGD0BRJzoSvf6Ph+kdVZglGeCqh01bAszY/mcowq
-         KLFQhwx4B9MwHYM7CFKEwKJFz6F5l0cz1mQuzlgA24asUjiZYC1/F8tRhK+iv4a3jYvG
-         buPJ3C1tSKNG6Y4xNluADpTTz9x7U8YVmvDti+Ep5rJetZmFLFbK7lfx2Jw186fVx9SW
-         izoQ==
-X-Gm-Message-State: APt69E2/1wb1ESFkXghrXTvLGA5kXzztD+ZGwF9+9msOarRPQNSXdAyH
-        Z2Bg3VS6v4nxontDTcb5YiCm2Q==
-X-Google-Smtp-Source: AAOMgpe8fS83aqn/Fgt6ZPLmdpT6yV1+FeJQZ4uopfkpg+JCq3jbt8UVfYeOVa4Lx9u2jQoVtNKJ1A==
-X-Received: by 2002:adf:af27:: with SMTP id z36-v6mr1037888wrc.59.1530011181164;
-        Tue, 26 Jun 2018 04:06:21 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id e188-v6sm6231724wmf.21.2018.06.26.04.06.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 04:06:20 -0700 (PDT)
-Subject: Re: [PATCH v2 01/15] nvmem: add support for cell lookups
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180626102245.30711-1-brgl@bgdev.pl>
- <20180626102245.30711-2-brgl@bgdev.pl>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <25ebceca-8cdd-edae-6393-dd29eb323c53@linaro.org>
-Date:   Tue, 26 Jun 2018 12:06:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180626102245.30711-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QB6LPQ15663406
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 11:06:21 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 93600112061;
+        Tue, 26 Jun 2018 07:06:16 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 84917112067;
+        Tue, 26 Jun 2018 07:06:16 -0400 (EDT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Jun 2018 07:06:16 -0400 (EDT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
+        zohar@linux.vnet.ibm.com
+Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH v5 1/5] tpm: rename tpm_chip_find_get() to tpm_find_get_ops()
+Date:   Tue, 26 Jun 2018 07:06:15 -0400
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+References: <20180626110619.2362791-1-stefanb@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18062611-0068-0000-0000-0000030E5E97
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009258; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052547; UDB=6.00539596; IPR=6.00830472;
+ MB=3.00021860; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 11:06:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062611-0069-0000-0000-000044D06C61
+Message-Id: <20180626110619.2362791-2-stefanb@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=995 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the patch,
+Rename tpm_chip_find_get() to tpm_find_get_ops() to more closely match
+the tpm_put_ops() counter part.
 
-On 26/06/18 11:22, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We can currently only register nvmem cells from device tree or by
-> manually calling nvmem_add_cells(). The latter options however forces
-> users to make sure that the nvmem provider with which the cells are
-> associated is registered before the call.
-> 
-> This patch proposes a new solution inspired by other frameworks that
-> offer resource lookups (GPIO, PWM etc.). It adds a function that allows
-> machine code to register nvmem lookup which are later lazily used to
-> add corresponding nvmem cells.
-> 
-Overall the idea look fine to me.
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+---
+ drivers/char/tpm/tpm-chip.c      |  9 ++++++---
+ drivers/char/tpm/tpm-interface.c | 14 +++++++-------
+ drivers/char/tpm/tpm.h           |  2 +-
+ 3 files changed, 14 insertions(+), 11 deletions(-)
 
-This needs to be documented in ./Documentation/nvmem/nvmem.txt
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 0a62c19937b6..242b716aed5e 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -81,18 +81,21 @@ void tpm_put_ops(struct tpm_chip *chip)
+ EXPORT_SYMBOL_GPL(tpm_put_ops);
+ 
+ /**
+- * tpm_chip_find_get() - find and reserve a TPM chip
++ * tpm_find_get_ops() - find and reserve a TPM chip
+  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+  *
+  * Finds a TPM chip and reserves its class device and operations. The chip must
+- * be released with tpm_chip_put_ops() after use.
++ * be released with tpm_put_ops() after use.
++ * This function is for internal use only. It supports existing TPM callers
++ * by accepting NULL, but those callers should be converted to pass in a chip
++ * directly.
+  *
+  * Return:
+  * A reserved &struct tpm_chip instance.
+  * %NULL if a chip is not found.
+  * %NULL if the chip is not available.
+  */
+-struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
++struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
+ {
+ 	struct tpm_chip *res = NULL;
+ 	int chip_num = 0;
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index c43a9e28995e..b4bb34216050 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -929,7 +929,7 @@ int tpm_is_tpm2(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+@@ -953,7 +953,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+@@ -1012,7 +1012,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+ 	u32 count = 0;
+ 	int i;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+@@ -1141,7 +1141,7 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+@@ -1261,7 +1261,7 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ 	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
+ 		return -EINVAL;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+@@ -1323,7 +1323,7 @@ int tpm_seal_trusted(struct tpm_chip *chip, struct trusted_key_payload *payload,
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
+ 		return -ENODEV;
+ 
+@@ -1351,7 +1351,7 @@ int tpm_unseal_trusted(struct tpm_chip *chip,
+ {
+ 	int rc;
+ 
+-	chip = tpm_chip_find_get(chip);
++	chip = tpm_find_get_ops(chip);
+ 	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
+ 		return -ENODEV;
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 7f2d0f489e9c..c38772474091 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -535,7 +535,7 @@ static inline void tpm_msleep(unsigned int delay_msec)
+ 		     delay_msec * 1000);
+ };
+ 
+-struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
++struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
+ __must_check int tpm_try_get_ops(struct tpm_chip *chip);
+ void tpm_put_ops(struct tpm_chip *chip);
+ 
+-- 
+2.17.1
 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/nvmem/core.c           | 57 +++++++++++++++++++++++++++++++++-
->   include/linux/nvmem-consumer.h |  6 ++++
->   include/linux/nvmem-provider.h |  6 ++++
->   3 files changed, 68 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index b5b0cdc21d01..a2e87b464319 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -62,6 +62,9 @@ static DEFINE_IDA(nvmem_ida);
->   static LIST_HEAD(nvmem_cells);
->   static DEFINE_MUTEX(nvmem_cells_mutex);
->   
-> +static LIST_HEAD(nvmem_cell_lookups);
-> +static DEFINE_MUTEX(nvmem_lookup_mutex);
-> +
->   #ifdef CONFIG_DEBUG_LOCK_ALLOC
->   static struct lock_class_key eeprom_lock_key;
->   #endif
-> @@ -247,6 +250,23 @@ static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
->   	NULL,
->   };
->   
-> +/**
-> + * nvmem_register_lookup() - register a number of nvmem cell lookup entries
-> + *
-
-Can we rename this to nvmem_add_lookup_table()?
-register sound bit heavy here.
-
-We should also have something like nvmem_remove_lookup_table() for 
-consistency, and it should ensure that it clears the cells entry too.
-
-> + * @lookup: array of nvmem cell lookup entries
-> + * @nentries: number of lookup entries in the array
-> + */
-> +void nvmem_register_lookup(struct nvmem_cell_lookup *lookup, size_t nentries)
-> +{
-> +	int i;
-> + > +	mutex_lock(&nvmem_lookup_mutex);
-> +	for (i = 0; i < nentries; i++)
-> +		list_add_tail(&lookup[i].list, &nvmem_cell_lookups);
-> +	mutex_unlock(&nvmem_lookup_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(nvmem_register_lookup);
-> +
->   static void nvmem_release(struct device *dev)
->   {
->   	struct nvmem_device *nvmem = to_nvmem_device(dev);
-> @@ -916,6 +936,37 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
->   EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
->   #endif
->   
