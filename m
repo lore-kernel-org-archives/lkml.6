@@ -2,131 +2,101 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1979BC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79618C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBD5325841
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3240B26A4B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:11:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="z88yB4/S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBD5325841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="02YnKuRk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3240B26A4B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934999AbeFZMKm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:10:42 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34378 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934690AbeFZMKk (ORCPT
+        id S934841AbeFZMLh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:11:37 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37780 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933794AbeFZMLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:10:40 -0400
-Received: by mail-pf0-f195.google.com with SMTP id g3-v6so3243217pfi.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 05:10:40 -0700 (PDT)
+        Tue, 26 Jun 2018 08:11:34 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n17-v6so1044976wmh.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 05:11:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:cc:references:from:to:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kKFr+fsUSiwrXLlgtBVMrF621wu3ylIlXvos79BAKnU=;
-        b=z88yB4/S5IApA6fT/FCVQcNL4fRV7R2edbpI/grvJddv0HSJ/XCh7F9z8F6cvFyxYU
-         m4enL32cF9jXCjXHKXvMAwFwYT0Ky5pjgCK8uNJwpr8THRPJhV9Bn58+bRN5S1MZpzcX
-         y4FYwcQyl5CWaQwvbZZOG8RA/fS/8a3Cy45Ui8JA82H/l0zByVPqCqciroXM94lCcp1J
-         ZlWJrjiot5D9IuoHzz5CMAlktqC4nU9X/oXpQvSzEfCPLAnmoKdog4hSPnZbQo+pyxhk
-         HzWHp+vdm9GU4eIGOeVozMlXr3Rk3NfPfz+mHOZKvTg7JfLV8Z2o7wCQzSnr0QjeN1n7
-         zkLg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=blGSAXvb6m1ltzBycnx+sDMdWZjSk8/OFDstVHZEjF8=;
+        b=02YnKuRkBu3/885gnnD6Cq7DRLzZ0OvPG+EFh4oze4MIKQnwDnLGecMmR0K09XaQ2s
+         NQNYe0kjEeBL8/o9BO90lg4+lX5mSJK/1pvUD7N+a/UaIodWwQlcZg+ssHi71S+/QY07
+         e222x5wObe3vi4dopgpzuHjUrhGQK+QAJsWHiuA+7VU9hCmr05UTy2PLBSGIvB9zHz3r
+         fb3BxvDooaRAw69kKKYSEezjXXaMRyjfXqCvrpssiUHb/NsteQgbL7RH/qrXIHPQPqdR
+         cDD/elbsKKpAv9ggKa4+ABO0Fon2QsqeDHmFR1bXGmRp+J7TLj4W9Lc8b1/rZ1RvzyP4
+         YVGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:cc:references:from:to:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=kKFr+fsUSiwrXLlgtBVMrF621wu3ylIlXvos79BAKnU=;
-        b=gmPt9SP65nRYWDcilze+jCz+XhDp9cB/vYF2Y7hGOf5krISmnku5PqiE/JFMQ5BQcO
-         3fNoqXDqD+nkd4X5rtKWL14S7sI8L8/PgjjNdGpdGvyclymx8/k5W5wSw5VNcxbgX2Ed
-         sA1RejdcYWMIHgTbgoMg97hDmoUjM39XrZLMqKyD+KxqY/K7uREMBBUNmtecS2Zdz3cr
-         F9MHSMMlkBBa5R5c37LHUCI46JrvewfcLNVPg5Yr/bDnfRMV7bMbAZcUs1y9VLydT6Vb
-         VGIb1XVkC/DSIDYGPWZ5RT5os55ukDtxwDtlTRNQUZdlTj3b2hJQON7/2l21ON1fzNMV
-         /+uA==
-X-Gm-Message-State: APt69E0HoAuC4oaeROtX4eNkboSeBA6aqIGiolgXBeP3iaqgTuwv6Q4u
-        crMUuqHdpWoyvCiGTUIbwCX3dQ==
-X-Google-Smtp-Source: ADUXVKJv2MOs9qHsWz2W9d93ClpvVMsQOve6oWUJkr56U9S88WrlfLEF6E7Q0OJYtPTmdmQbDzXIfw==
-X-Received: by 2002:a63:714c:: with SMTP id b12-v6mr1154836pgn.420.1530015040157;
-        Tue, 26 Jun 2018 05:10:40 -0700 (PDT)
-Received: from [10.86.48.245] (rap-us.hgst.com. [199.255.44.250])
-        by smtp.googlemail.com with ESMTPSA id j10-v6sm7615457pfj.158.2018.06.26.05.10.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 05:10:38 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: pblk: assume that chunks are closed on 1.2
- devices
-Cc:     hans.ml.holmberg@owltronix.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, javier@cnexlabs.com,
-        hans.holmberg@cnexlabs.com
-References: <1529399189-3239-1-git-send-email-hans.ml.holmberg@owltronix.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-To:     axboe@kernel.dk
-Message-ID: <3d09296d-ace3-f025-b6d9-5d99ce6b9fc8@lightnvm.io>
-Date:   Tue, 26 Jun 2018 14:10:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        bh=blGSAXvb6m1ltzBycnx+sDMdWZjSk8/OFDstVHZEjF8=;
+        b=GD2cXKFdM/+c7wC92eaK7Cy/dD3fM9s/LmwOeoBJZvSJN20amv4HBpNBqITpl4a0X5
+         f6nPhfFOqrJmBJR22R7ClpJAII8pBKpOMU4elBHd1c0oagU9uSXnCWfsjSLZRwtZ3bDG
+         mLbOwhXhlZfZhg/pzawYth1nAmSDHeahijlfJqN2X3i+AOzrLc3RKUKPMIydVFCvbUo3
+         50aDEL1SM5U42rPAvsx9Oe7mtfbrHCpwIH0peomUpNrNh2b9a7zdYqQvQ1jyAEwpNcDx
+         2mXFdyH4A5SZ+quxSxNhyzrHnQN1bHNE9CTK5ilfrXZ1zNvKi4OYj8o4OWMXTKT/GSo4
+         4W3w==
+X-Gm-Message-State: APt69E1pfUZD+jHRdf6/Ea5AyJwkh9CjTOBNBuhBu46sQ3fi+uBxTSlo
+        XZVUb2TFtHgS7UZ7p0LHTwTMaQ==
+X-Google-Smtp-Source: AAOMgpdq2R+XaH2B8e7Za2+U7G9/pAoWgPj7DeS+MtgUO4YO9SOrtVNpozzBrbVDIFfAigjFmYDh2w==
+X-Received: by 2002:a1c:14cc:: with SMTP id 195-v6mr1374317wmu.48.1530015093869;
+        Tue, 26 Jun 2018 05:11:33 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id l15-v6sm1917865wrs.95.2018.06.26.05.11.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 05:11:33 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        =?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: [PATCH 0/3] ASoC: add simple-amplifier
+Date:   Tue, 26 Jun 2018 14:11:25 +0200
+Message-Id: <20180626121128.28564-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
 MIME-Version: 1.0
-In-Reply-To: <1529399189-3239-1-git-send-email-hans.ml.holmberg@owltronix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/19/2018 11:06 AM, Hans Holmberg wrote:
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> 
-> We can't know if a block is closed or not on 1.2 devices, so assume
-> closed state to make sure that blocks are erased before writing.
-> 
-> Fixes: 32ef9412c114 ("lightnvm: pblk: implement get log report chunk")
-> 
-> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> ---
-> 
-> This patch applies on:
-> ssh://github.com/OpenChannelSSD/linux branch for-4.19/core
-> 
->   drivers/lightnvm/pblk-init.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-> index aa24264..3b8aa4a 100644
-> --- a/drivers/lightnvm/pblk-init.c
-> +++ b/drivers/lightnvm/pblk-init.c
-> @@ -717,10 +717,11 @@ static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
->   
->   		/*
->   		 * In 1.2 spec. chunk state is not persisted by the device. Thus
-> -		 * some of the values are reset each time pblk is instantiated.
-> +		 * some of the values are reset each time pblk is instantiated,
-> +		 * so we have to assume that the block is closed.
->   		 */
->   		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
-> -			chunk->state =  NVM_CHK_ST_FREE;
-> +			chunk->state =  NVM_CHK_ST_CLOSED;
->   		else
->   			chunk->state = NVM_CHK_ST_OFFLINE;
->   
-> 
+As discuss here [0], this patchset rename the dio2125 driver to
+simple-amplifier in order to make it more discoverable.
 
-Hi Jens,
+The last patch adds simple-audio-amplifier as new compatible
 
-Would it be possible to pick this patch up for 4.18? It is a temporary 
-fix that lets pblk continue to work with 1.2 OCSSD drives that has open 
-blocks on initialization. Without it, writes will fail, as pblk assumes 
-that the blocks are free.
+[0]: https://lkml.kernel.org/r/20180625114445.GG9413@sirena.org.uk
 
-A proper fix that scans the block state on initialization will be ready 
-for 4.19.
+Jerome Brunet (3):
+  ASoC: simple-amplifier: remame dio2125 documentation
+  ASoC: simple-amplifier: rename dio2125 to simple-amplifer
+  ASoC: simple-amplifer: add simple-amplifier compatible
 
-Thank you,
-Matias
+ .../devicetree/bindings/sound/dioo,dio2125.txt     | 12 -------
+ .../devicetree/bindings/sound/simple-amplifier.txt | 12 +++++++
+ sound/soc/codecs/Kconfig                           | 10 +++---
+ sound/soc/codecs/Makefile                          |  4 +--
+ sound/soc/codecs/{dio2125.c => simple-amplifier.c} | 42 +++++++++++-----------
+ 5 files changed, 41 insertions(+), 39 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/dioo,dio2125.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/simple-amplifier.txt
+ rename sound/soc/codecs/{dio2125.c => simple-amplifier.c} (68%)
+
+-- 
+2.14.4
 
