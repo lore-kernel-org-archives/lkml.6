@@ -6,99 +6,90 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72865C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA27C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2892221C68
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:33:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2892221C68
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 705982197C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:34:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705982197C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965058AbeFZKde (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 06:33:34 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54089 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933880AbeFZKdb (ORCPT
+        id S934789AbeFZKeB convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 06:34:01 -0400
+Received: from mail-vk0-f47.google.com ([209.85.213.47]:40514 "EHLO
+        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933880AbeFZKd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 06:33:31 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5QAXBK01649344
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 26 Jun 2018 03:33:11 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5QAXBgs1649341;
-        Tue, 26 Jun 2018 03:33:11 -0700
-Date:   Tue, 26 Jun 2018 03:33:11 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andrey Ryabinin <tipbot@zytor.com>
-Message-ID: <tip-0e311d237d7f3022b7dafb639b42541bfb42fe94@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de, hpa@zytor.com,
-        mingo@kernel.org, aryabinin@virtuozzo.com, peterz@infradead.org
-Reply-To: aryabinin@virtuozzo.com, peterz@infradead.org, mingo@kernel.org,
-          hpa@zytor.com, kirill.shutemov@linux.intel.com,
-          tglx@linutronix.de, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20180625102427.15015-1-aryabinin@virtuozzo.com>
-References: <20180625102427.15015-1-aryabinin@virtuozzo.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm: Don't free P4D table when it is folded at
- runtime
-Git-Commit-ID: 0e311d237d7f3022b7dafb639b42541bfb42fe94
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 26 Jun 2018 06:33:59 -0400
+Received: by mail-vk0-f47.google.com with SMTP id o71-v6so9711024vke.7;
+        Tue, 26 Jun 2018 03:33:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZF+sJS6v7TvhYCRP7iAShui8LZVSJG/Baxd7sSB6M/8=;
+        b=titnR3PHflpmMfjoWvISwsZJC64h68CuEgYDVcbj4R3rPyRU38BW5g+1ONFipodCJ3
+         u6gKBZbiocKZSabOvXMaHZKoVTf1IeoK/P+Qo04SMnOv1a9XWblOMPonHDQ/2PyHZcEP
+         Ksx3vnBVxE+vg6NwxsA4p6Uk4itHxBVRxzscXOKPTpfngbkd632/HpuuwJqIqd5ywSPH
+         iuNGRlqkmJ6Xgr+5Mc5cX45BSmxPcXjfHMPVY+3UAvM6oxdPHYmM028xBKG18KaMV47K
+         TO32UfIYjH+T+9krAWx57M9LufX6mSSxbku91rUsNDv/FE86m3F8m2xySXulKCYz7M6U
+         1OsQ==
+X-Gm-Message-State: APt69E2zDnbN51KQmPQsXWLuWh4lu6G9gZaGBh92FwVaIqzlAyKbvq4T
+        tcLtjtWJczp6r0pDzrCFc5IgNrMHkLgZftupGiwAc3pt
+X-Google-Smtp-Source: AAOMgpf+FQYny7abbUlyrfX2r1FxcZKZWCpgtH4finkW2UmnrLTriSjxdPIEsOy4vD2Uf9W/jOS7yUfS3gJCTe4JdlM=
+X-Received: by 2002:a1f:644:: with SMTP id 65-v6mr499348vkg.159.1530009238857;
+ Tue, 26 Jun 2018 03:33:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <CAMuHMdW_4gvQYhCxcXR+sa6dhwAshyJnhXhc36=VC=hWKB-7Jw@mail.gmail.com>
+ <14009987.cibGRJrWdm@positron.chronox.de>
+In-Reply-To: <14009987.cibGRJrWdm@positron.chronox.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 26 Jun 2018 12:33:48 +0200
+Message-ID: <CAMuHMdXfn6YuG9imLKd5nEdxhT4gWu-V8bn1LRt+M3bESaUAkA@mail.gmail.com>
+Subject: Re: cryptomgr_test / drbg_ctr: BUG: sleeping function called from
+ invalid context
+To:     Stephan Mueller <smueller@chronox.de>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0e311d237d7f3022b7dafb639b42541bfb42fe94
-Gitweb:     https://git.kernel.org/tip/0e311d237d7f3022b7dafb639b42541bfb42fe94
-Author:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-AuthorDate: Mon, 25 Jun 2018 13:24:27 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 26 Jun 2018 09:21:48 +0200
+Hi Stephan,
 
-x86/mm: Don't free P4D table when it is folded at runtime
+On Sun, May 20, 2018 at 9:54 PM Stephan Müller <smueller@chronox.de> wrote:
+> Am Freitag, 18. Mai 2018, 10:36:04 CEST schrieb Geert Uytterhoeven:
+> > I tried following the code path, but couldn't find where it went wrong.
+> >
+> > mutex_lock(&drbg->drbg_mutex) is called from drbg_instantiate(), which is
+> > inlined by the compiler into drbg_kcapi_seed().
+> >
+> > Do you have a clue?
+>
+> It is the first time I hear from such an issue. Yes, the DRBG should not be
+> called in atomic context. But I do not see where we have an atomic context
+> (either a spin_lock or in an interrupt handler) when we are executing the test
+> manager.
+>
+> I will keep looking.
 
-When the P4D page table layer is folded at runtime, the p4d_free()
-should do nothing, the same as in <asm-generic/pgtable-nop4d.h>.
+Issue is gone. I assume due to commit 6e88f01206edab0e ("crypto: arm64/aes-blk
+- fix and move skcipher_walk_done out of kernel_neon_begin, _end").
 
-It seems this bug should cause double-free in efi_call_phys_epilog(),
-but I don't know how to trigger that code path, so I can't confirm that
-by testing.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org # 4.17
-Fixes: 98219dda2ab5 ("x86/mm: Fold p4d page table layer at runtime")
-Link: http://lkml.kernel.org/r/20180625102427.15015-1-aryabinin@virtuozzo.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/pgalloc.h | 3 +++
- 1 file changed, 3 insertions(+)
+                        Geert
 
-diff --git a/arch/x86/include/asm/pgalloc.h b/arch/x86/include/asm/pgalloc.h
-index ada6410fd2ec..fbd578daa66e 100644
---- a/arch/x86/include/asm/pgalloc.h
-+++ b/arch/x86/include/asm/pgalloc.h
-@@ -184,6 +184,9 @@ static inline p4d_t *p4d_alloc_one(struct mm_struct *mm, unsigned long addr)
- 
- static inline void p4d_free(struct mm_struct *mm, p4d_t *p4d)
- {
-+	if (!pgtable_l5_enabled())
-+		return;
-+
- 	BUG_ON((unsigned long)p4d & (PAGE_SIZE-1));
- 	free_page((unsigned long)p4d);
- }
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
