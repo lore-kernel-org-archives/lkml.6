@@ -6,120 +6,121 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11ECEC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35988C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F344269AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6B4022438
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:58:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="2EVQMI9+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F344269AC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="zEmGgM3W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B4022438
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753065AbeFZVv5 (ORCPT
+        id S1752897AbeFZV6P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 17:51:57 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:35698 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752258AbeFZVvy (ORCPT
+        Tue, 26 Jun 2018 17:58:15 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:47063 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752113AbeFZV6M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 17:51:54 -0400
-Received: by mail-ot0-f194.google.com with SMTP id a6-v6so6202179otf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:51:54 -0700 (PDT)
+        Tue, 26 Jun 2018 17:58:12 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 30-v6so9170874pld.13
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:58:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bPOY96BJG72mktrthVsC54uU6gGLvcgrnNExSO1NslU=;
-        b=2EVQMI9+VRGOSYuR9di3/zipvnY/Zm1dx1jNSdSd77z7CPDZ8/79vMfnVAqQpuMmVn
-         rzbU2rLOmqC+kCtpVqE0UWEDlo1Y63uOCHCXZYSC2mCLAh+mUcV5pPPm+whtZq0EA66p
-         c/YQFSfTIybWtosi6ehXN6whZosOQH/OX89/S29QuUysyUaRaZjMQ5k8zahRq8FJ7vP5
-         xhQjgPj55E5w/uzHE0SL90sbQDCqLJeeO6uzUeh7ZrZFaGIImdclZ58AXUTN4kzcpQeB
-         6DInqlu5FTfvsIG8Hn7xiP6bvm1Y3VR0LDG0pkOJjQfhaNx4UoFN8nYyr4sSSdOTH4lE
-         rs1A==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=qznug5JFcOhQCnZSWddHf8n96lgsu+uYCNiLX7Wf31Y=;
+        b=zEmGgM3Wc6E7/K/P6G/sN7rxwzvvr28FVIWUbkidfTsPKMTkwBv/nTX7kaKeL+y5cQ
+         /2zVc9yHTYS68Mt05bHG6gjv25nAyQxD1/qIXrez8/E5CjJ8h5wVA0YpGjhIwB8VICDc
+         isDhoAqyJCYwzjadmnCS1rg1ocO5d9NO/kg6GQHhSJ4znoBSsI87PXcmtMvJK41PEOHy
+         Yv5GqFafeM+dNhJMyWNwkaOZagZWh09uPjTVswdAeIRObdeFtiFG6rPpVOnnwP11pyMe
+         dsicp4Wqh8Wrsljix8r7WPd/gKL0SNyTr+eBZZpoop3iprY0AZi82K8f5s/BfLgzSfh3
+         fEWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=bPOY96BJG72mktrthVsC54uU6gGLvcgrnNExSO1NslU=;
-        b=H5k0LtAKHsWQD+5ZxskUvHpzazzgyTH9hGfe8ElwVpINOvbI9M9BO2dNaItEd0AkG2
-         UkEbTa7+mQpOtunQVJ1gfSJCEJeq9t+fG5Bru12IAByAqinygT2I1g6lMvmBLpMCYV+d
-         Cj2LiMWzcHr3T4navZXGRz1u9DnyVMy0EXvTdcKqJMrTjdcFSWrHm+2tcEp21UnxHLNf
-         6xtnum4mrnXFbkNQSOCZQcyKKnRzyOaUcJYHBh2ugXFp9G9PyA4+wG6lJ+0+pe8RYx3/
-         vZslmH3J7i7UBUVvcgPQla1vH8m34U+midzIUzerIOpmL7wR/HF5Nm9pPBNwDD479jxV
-         rp1A==
-X-Gm-Message-State: APt69E2HiY+xfFE7ei3SEFemLGDwGwtTZm++66YDbqQA7sGhBeKgHZBm
-        JBTNuc9ytbNyGKSPHOO7PXfLjW5AVLvcdaXV4lGoIQ==
-X-Google-Smtp-Source: AAOMgpetCjCJ/2l5dY2IFUWpBjGhLHLsnCX+GthiNp5fP3NHpHmRXxPQ8Iz0V7aEBuktf9ZPTxnN0H/gzGXnMSZhZyk=
-X-Received: by 2002:a9d:7311:: with SMTP id e17-v6mr1834834otk.162.1530049913801;
- Tue, 26 Jun 2018 14:51:53 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:38c2:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 14:51:52
- -0700 (PDT)
-In-Reply-To: <1530048545.14039.288.camel@hpe.com>
-References: <20180626175932.8899-1-ross.zwisler@linux.intel.com>
- <20180626175932.8899-2-ross.zwisler@linux.intel.com> <CAPcyv4iWgPnHmBKhUvhManC6UL9CkLqN_d8vBo6KmcPJdPzuUw@mail.gmail.com>
- <20180626185830.GA7171@redhat.com> <CAPcyv4h6HO6fs6k7QMD77jkz2djCeWCtWomCdNb0-1Q4VKanqw@mail.gmail.com>
- <20180626191346.GA7233@redhat.com> <1530046327.14039.273.camel@hpe.com>
- <CAPcyv4hP_Y3xdyCa-UkYCMJ5OtnjnkwPZDS2Z2Ge8+5ymBONwQ@mail.gmail.com>
- <1530048093.14039.286.camel@hpe.com> <CAPcyv4gXAC7imJs5qfsDNLeN545Rqyd2b1M9s5kr4f9y48LXgQ@mail.gmail.com>
- <1530048545.14039.288.camel@hpe.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 26 Jun 2018 14:51:52 -0700
-Message-ID: <CAPcyv4ifHX95fCM9Xj87CugwNWzgq=y-4LxPQ5L6RdjX0jdctQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] pmem: only set QUEUE_FLAG_DAX for fsdax mode
-To:     "Kani, Toshi" <toshi.kani@hpe.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=qznug5JFcOhQCnZSWddHf8n96lgsu+uYCNiLX7Wf31Y=;
+        b=e6SVEU1F3TqEdTXaHsm4GKqnUY0QUKk89+v1ZLLySQ/cVAGBsLCUsdG+IU402TfsE4
+         /c74U5x699KVhfcHiZUKYCtMSD8S69W8Px3yIrE4aHvC4YlEkW1FCnp8XSGyXuR3wN/g
+         B0zragb/qWpn3QYHu5FrU+2reboZk0FDD2bwhK19SrZcofXktztFmaWgBfGpbRCeE65l
+         V+zqbvHq4qx5km7vmV1omQfh0Xws//hH39kBBQRAWUOjyK49TzFhWoUO24vsRx4i02To
+         D5bOyoWxyx1ba+z9YgTnRBpxUNrciVzf5pk5EQm/1j603lsdk99kNQwic4wa2mUOHK+S
+         dCog==
+X-Gm-Message-State: APt69E1VAVyqu8y81CgpdXuc0EMwYox9YuK27bfnzqITo7f4z/K3Dwho
+        MkR+mXoX/m9ugfwsw7G5Vfiu5A==
+X-Google-Smtp-Source: ADUXVKJnW34ABTcYiYWwTWWcjEDL1Yj9+JUz/a8WEOJbONxwuM3DBiDg7Hvk5PxW21CH84paajWyGw==
+X-Received: by 2002:a17:902:8210:: with SMTP id x16-v6mr3275759pln.307.1530050291528;
+        Tue, 26 Jun 2018 14:58:11 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b01b:ac5e:f0d2:dd3c:5dff:6377? ([2600:1010:b01b:ac5e:f0d2:dd3c:5dff:6377])
+        by smtp.gmail.com with ESMTPSA id w1-v6sm1156579pgo.72.2018.06.26.14.58.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 14:58:10 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH for 4.18 2/2] rseq: compat: clear high bits of rseq_cs fields
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <20180626211617.8933-2-mathieu.desnoyers@efficios.com>
+Date:   Tue, 26 Jun 2018 14:58:08 -0700
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Joel Fernandes <joelaf@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Watson <davejwatson@fb.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Andrew Hunter <ahh@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Paul Turner <pjt@google.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Maurer <bmaurer@fb.com>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D9B93DE9-F61C-4488-B109-432C2DFDCEC2@amacapital.net>
+References: <20180626211617.8933-1-mathieu.desnoyers@efficios.com> <20180626211617.8933-2-mathieu.desnoyers@efficios.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 2:31 PM, Kani, Toshi <toshi.kani@hpe.com> wrote:
-> On Tue, 2018-06-26 at 14:28 -0700, Dan Williams wrote:
->> On Tue, Jun 26, 2018 at 2:23 PM, Kani, Toshi <toshi.kani@hpe.com> wrote:
->> > On Tue, 2018-06-26 at 14:02 -0700, Dan Williams wrote:
->> > > On Tue, Jun 26, 2018 at 1:54 PM, Kani, Toshi <toshi.kani@hpe.com> wrote:
->>
->> [..]
->> > > > When this dm change was made, the pmem driver supported DAX for both raw
->> > > > and memory modes (note: sector mode does not use the pmem driver).  I
->> > > > think the issue was introduced when we dropped DAX support from raw
->> > > > mode.
->> > >
->> > > Still DAX with raw mode never really worked any way. It was also
->> > > something that was broken from day one. So what happens to someone who
->> > > happened to avoid all the problems with page-less DAX and enabled
->> > > device-mapper on top? That failure mode detail needs to be added to
->> > > this changelog if we want to propose this for -stable.
->> >
->> > My point is that the behavior should be consistent between pmem and
->> > device-mapper.  When -o dax succeeds on a pmem, then it should succeed
->> > on a device-mapper on top of that pmem.
->> >
->> > Has the drop of dax support from raw mode made to -stable back to the
->> > baseline accepted 545ed20e6df6?  It will introduce inconsistency,
->> > otherwise.
->>
->> That commit, 569d0365f571 "dax: require 'struct page' by default for
->> filesystem dax", has not been tagged for -stable.
->
-> Then, Fixes tag should be set to 569d0365f571 to keep the behavior
-> consistent.
 
-Sure, and the failure mode is...? I'm thinking the commit log should say:
 
-"Starting with commit 569d0365f571 "dax: require 'struct page' by
-default for filesystem dax", dax is no longer supported for page-less
-configurations. However, device-mapper sees the QUEUE_FLAG_DAX still
-being set and falsely assumes that DAX is enabled, this leads to
-<insert user visible failure mode details here>"
+> On Jun 26, 2018, at 2:16 PM, Mathieu Desnoyers <mathieu.desnoyers@efficios=
+.com> wrote:
+>=20
+> Make the behavior rseq on compat tasks more robust by ensuring that
+> kernel/rseq.c:rseq_get_rseq_cs() clears the high bits of
+> rseq_cs->abort_ip, rseq_cs->start_ip and rseq_cs->post_commit_offset
+> when a 32-bit binary is run on a 64-bit kernel.
+>=20
+> The intent here is that if user-space has garbage rather than zeroes
+> in its struct rseq_cs fields padding, the behavior will be the same
+> whether the binary is run on 32-bit or 64-bit kernels.
+>=20
+> Use in_compat_syscall() when rseq_get_rseq_cs() is invoked from
+> system call context, and use is_compat_frame() when invoked from
+> signal delivery.
+>=20
+
+And when it=E2=80=99s invoked due to preemption unrelated to a syscall or si=
+gnal, you malfunction?
+
+I think the only sane solution is to make these fields be u64, delete the LI=
+NUX_FIELD_ macros, and possibly teach the x86 slowpath return to inject a si=
+gnal if it=E2=80=99s trying to return to a 32-bit context with garbage in th=
+e high bits of regs->ip so that we determistically fail if the user screws u=
+p.
+
+Rseq is brand new. It should not need compat code at all.=
