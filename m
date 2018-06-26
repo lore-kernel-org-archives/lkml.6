@@ -2,139 +2,81 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F63C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C45EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A4126DC3
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:00:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Sua81iqm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A4126DC3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id EC94126DC5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC94126DC5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752437AbeFZRAh (ORCPT
+        id S1752637AbeFZRBB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:00:37 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35694 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbeFZRAg (ORCPT
+        Tue, 26 Jun 2018 13:01:01 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36296 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752485AbeFZRA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:00:36 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5QGx3mE189182;
-        Tue, 26 Jun 2018 17:00:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=uu13tzXEek56fElJWDdqZooN/giP9fJJ4IS6zVfz/Lo=;
- b=Sua81iqmQAdR1ZpyN61WR5JqvFHrYX0yxrHYLX6YG1nY6qC5DJw/exHyWtuPEwKHOUL8
- yuc7ZdJLAbrRbWB4cbU2Ogh6rlD0PvaMsFmKjTilmDz4MCjEx2X8yLVq53EU7UtLZE1C
- 9o/O1t5mlGNbqgd1fLChP95j0+QWNalkJi1JA0UCkJY2n8yZEdrPD4lHsUTg9N1q2ruW
- LAOkvins0fDrfmbbsSCfjOxqyPUsIbJutGj7Rp5VwHeFoNVDankjybCv5doWjmltQn+j
- cyBh+JQQLfI9VwGLJZFHMI+3TWwJzARgrS/lbDuVDC82bBZiIwBAMx0RaNXcV8V4Xnt3 Ww== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2jum57sf6v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 17:00:18 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5QH0HSk008638
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 17:00:18 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5QH0G1G028692;
-        Tue, 26 Jun 2018 17:00:17 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Jun 2018 10:00:16 -0700
-Subject: Re: [PATCH] userfaultfd: hugetlbfs: Fix userfaultfd_huge_must_wait
- pte access
-To:     Janosch Frank <frankja@linux.ibm.com>, aarcange@redhat.com
-Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180626132421.78084-1-frankja@linux.ibm.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <c9c5c76c-23e5-671f-1fdc-8326e42917b9@oracle.com>
-Date:   Tue, 26 Jun 2018 10:00:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 13:00:58 -0400
+Received: by mail-pl0-f67.google.com with SMTP id a7-v6so8831873plp.3;
+        Tue, 26 Jun 2018 10:00:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y97+4mrw+GpHpUnQUD6Hhd4F4ZqvWPapugc1vHELcK4=;
+        b=oqI4VGRUXjTlDXSq1lcFhmXp+AnclPcmgGIQTelnJ057P28bbGeUP1Z2BrAh4VQLHZ
+         oqnTwp5mV6dcaRsCEvd70TFJc+dqonpOgpcQGVka1sFlo+v8abl5Qzdrwe/fUgj0VVF1
+         jz5rafGpGNiDZNNdLdd/5laAWDiT9w6a9QqqFXWXTMntoFTnil7JsjsjeIVMNHSOnmNH
+         R7xPQ90T4tX1U04N/cDyo1euLlzPv6qDXgKE6JJvIW79B7bdLWPepxTnLySWopAcG/tp
+         Fvk3zaEHAO2vQX+nXHKddnybg4EtHfu+0DnU74GBXstrj2XIwwEwxBJN91TrAmRS0qv8
+         m8+A==
+X-Gm-Message-State: APt69E1ak4oG/Q96F7F8YE+AP/P/fY1CpG9h4IIxVyFR06hmo0/lyVPu
+        k9EeM3FiDXBSG3LwXey/xA==
+X-Google-Smtp-Source: ADUXVKKyienV7WdPnBcQVZLdpO5dqhPmXkDI8c6y1yIKjD8DMILk2kmRAHd9WrCR9Vn8Au4LOG62Qw==
+X-Received: by 2002:a17:902:8a94:: with SMTP id p20-v6mr2445663plo.258.1530032457830;
+        Tue, 26 Jun 2018 10:00:57 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id z72-v6sm5031338pfa.126.2018.06.26.10.00.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 10:00:57 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 11:00:54 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Cc:     vkoul@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
+        dan.j.williams@intel.com, appana.durga.rao@xilinx.com,
+        lars@metafoo.de, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: dmaengine: xilinx_dma: Add VDMA
+ vertical flip property
+Message-ID: <20180626170054.GA1467@rob-hp-laptop>
+References: <1528875288-9140-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <1528875288-9140-2-git-send-email-radhey.shyam.pandey@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <20180626132421.78084-1-frankja@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8936 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806260191
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528875288-9140-2-git-send-email-radhey.shyam.pandey@xilinx.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/26/2018 06:24 AM, Janosch Frank wrote:
-> Use huge_ptep_get to translate huge ptes to normal ptes so we can
-> check them with the huge_pte_* functions. Otherwise some architectures
-> will check the wrong values and will not wait for userspace to bring
-> in the memory.
+On Wed, Jun 13, 2018 at 01:04:47PM +0530, Radhey Shyam Pandey wrote:
+> The AXI VDMA core supports Vertical flip in S2MM path when Enable
+> Vertical Flip (Advanced tab) is selected. To allow vertical flip
+> programming define an optional 'xlnx,enable-vert-flip' channel
+> child node property.
 > 
-> Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-> Fixes: 369cd2121be4 ("userfaultfd: hugetlbfs: userfaultfd_huge_must_wait for hugepmd ranges")
-
-Adding linux-mm and Andrew on Cc:
-
-Thanks for catching and fixing this.
-I think this needs to be fixed in stable as well.  Correct?  Assuming
-userfaultfd is/can be enabled for impacted architectures.
-
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
--- 
-Mike Kravetz
-
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
->  fs/userfaultfd.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 123bf7d516fc..594d192b2331 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -222,24 +222,26 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
->  					 unsigned long reason)
->  {
->  	struct mm_struct *mm = ctx->mm;
-> -	pte_t *pte;
-> +	pte_t *ptep, pte;
->  	bool ret = true;
->  
->  	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
->  
-> -	pte = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
-> -	if (!pte)
-> +	ptep = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
-> +
-> +	if (!ptep)
->  		goto out;
->  
->  	ret = false;
-> +	pte = huge_ptep_get(ptep);
->  
->  	/*
->  	 * Lockless access: we're in a wait_event so it's ok if it
->  	 * changes under us.
->  	 */
-> -	if (huge_pte_none(*pte))
-> +	if (huge_pte_none(pte))
->  		ret = true;
-> -	if (!huge_pte_write(*pte) && (reason & VM_UFFD_WP))
-> +	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
->  		ret = true;
->  out:
->  	return ret;
-> 
+>  .../devicetree/bindings/dma/xilinx/xilinx_dma.txt  |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
