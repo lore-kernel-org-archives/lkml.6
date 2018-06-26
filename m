@@ -2,166 +2,129 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA81C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4271CC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7FF726ECA
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:17:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7FF726ECA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0887926ED3
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:17:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0887926ED3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934012AbeFZSRb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:17:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38080 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752427AbeFZSR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:17:28 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7620E40753AB;
-        Tue, 26 Jun 2018 18:17:27 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4715D2026D6A;
-        Tue, 26 Jun 2018 18:17:27 +0000 (UTC)
-Date:   Tue, 26 Jun 2018 14:17:26 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc:     Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] dm: prevent DAX mounts if not supported
-Message-ID: <20180626181726.GA6630@redhat.com>
-References: <20180626175932.8899-1-ross.zwisler@linux.intel.com>
- <20180626175932.8899-4-ross.zwisler@linux.intel.com>
+        id S934038AbeFZSRn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:17:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39192 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752427AbeFZSRj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 14:17:39 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QIEaXS164672
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:17:38 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2juqm2896b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:17:38 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 26 Jun 2018 14:17:38 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Jun 2018 14:17:33 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QIHWJb6947256
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 18:17:32 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AAC60B2067;
+        Tue, 26 Jun 2018 14:17:25 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E579B2066;
+        Tue, 26 Jun 2018 14:17:25 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Jun 2018 14:17:25 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8637E16C15BE; Tue, 26 Jun 2018 11:19:37 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 11:19:37 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
+ race with CPU offline
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180626002052.GA24146@linux.vnet.ibm.com>
+ <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
+ <20180626174424.GK2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180626175932.8899-4-ross.zwisler@linux.intel.com>
+In-Reply-To: <20180626174424.GK2494@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 18:17:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 18:17:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
+X-TM-AS-GCONF: 00
+x-cbid: 18062618-0068-0000-0000-0000030E87A5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052691; UDB=6.00539682; IPR=6.00830615;
+ MB=3.00021866; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 18:17:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062618-0069-0000-0000-000044D1543D
+Message-Id: <20180626181937.GG3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260204
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26 2018 at  1:59pm -0400,
-Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
-
-> Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
-> flag is set on the device's request queue to decide whether or not the
-> device supports filesystem DAX.  Really we should be using
-> bdev_dax_supported() like filesystems do at mount time.  This performs
-> other tests like checking to make sure the dax_direct_access() path works.
+On Tue, Jun 26, 2018 at 07:44:24PM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 26, 2018 at 10:10:39AM -0700, Paul E. McKenney wrote:
+> > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+> > index 3def94fc9c74..6683da6e4ecc 100644
+> > --- a/kernel/rcu/tree.h
+> > +++ b/kernel/rcu/tree.h
+> > @@ -363,6 +363,10 @@ struct rcu_state {
+> >  	const char *name;			/* Name of structure. */
+> >  	char abbr;				/* Abbreviated name. */
+> >  	struct list_head flavors;		/* List of RCU flavors. */
+> > +
+> > +	spinlock_t ofl_lock ____cacheline_internodealigned_in_smp;
 > 
-> Conditionally set QUEUE_FLAG_DAX on the DM device's request queue based on
-> whether all underlying devices support DAX.  Now that bdev_dax_supported()
-> explicitly checks for this flag, this will ensure that filesystems built
-> upon DM devices will only be able to mount with DAX if all underlying
-> devices also support DAX.
-> 
-> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/md/dm-ioctl.c         | 5 +++++
->  drivers/md/dm-table.c         | 7 +++----
->  drivers/md/dm.c               | 3 +--
->  include/linux/device-mapper.h | 5 +++++
->  4 files changed, 14 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-> index b810ea77e6b1..0055bdbee5b1 100644
-> --- a/drivers/md/dm-ioctl.c
-> +++ b/drivers/md/dm-ioctl.c
-> @@ -1350,6 +1350,11 @@ static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_si
->  		goto err_unlock_md_type;
->  	}
->  
-> +	if (dm_table_supports_dax(t))
-> +		blk_queue_flag_set(QUEUE_FLAG_DAX, md->queue);
-> +	else
-> +		blk_queue_flag_clear(QUEUE_FLAG_DAX, md->queue);
-> +
->  	dm_unlock_md_type(md);
->  
->  	/* stage inactive table */
+> Are you really sure you didn't mean to use ____cacheline_aligned_in_smp
+> ? This internode crap gives you full page alignment under certain rare
+> configs.
 
-This should occur in drivers/md/dm-table.c:dm_table_set_restrictions().
-Which already has: 
-      if (dm_table_supports_dax(t))
-                blk_queue_flag_set(QUEUE_FLAG_DAX, q);
+When I get done consolidating, there will only be one rcu_state structure
+in the kernel.
 
-So it just needs tweaking.
+On the other hand, the choice of ____cacheline_internodealigned_in_smp
+was made a very long time ago, so this would not be a bad time to
+discuss the pros and cons of a change.  There are six more of these in
+kernel/rcu/tree.h, and three of them are in rcu_node, two of them in
+rcu_data, and another in rcu_state.  The ones in rcu_node and especially
+in rcu_data (which is per-CPU) would be quite a bit more painful from
+a memory-size viewpoint than the two in rcu_state.
 
-> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> index 938766794c2e..c673b4a51fb2 100644
-> --- a/drivers/md/dm-table.c
-> +++ b/drivers/md/dm-table.c
-> @@ -885,12 +885,10 @@ EXPORT_SYMBOL_GPL(dm_table_set_type);
->  static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
->  			       sector_t start, sector_t len, void *data)
->  {
-> -	struct request_queue *q = bdev_get_queue(dev->bdev);
-> -
-> -	return q && blk_queue_dax(q);
-> +	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
->  }
->  
-> -static bool dm_table_supports_dax(struct dm_table *t)
-> +bool dm_table_supports_dax(struct dm_table *t)
->  {
->  	struct dm_target *ti;
->  	unsigned i;
-> @@ -909,6 +907,7 @@ static bool dm_table_supports_dax(struct dm_table *t)
->  
->  	return true;
->  }
-> +EXPORT_SYMBOL_GPL(dm_table_supports_dax);
->  
->  static bool dm_table_does_not_support_partial_completion(struct dm_table *t);
->  
+The initial reason for ____cacheline_internodealigned_in_smp was that
+some of the fields can be accessed by random CPUs, while others are
+used more locally, give or take our usual contention over the handling
+of CPU numbers.  ;-)
 
-Which would mean you don't need to export dm_table_supports_dax().
+							Thanx, Paul
 
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index e65429a29c06..bef5a3f243ed 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -1056,8 +1056,7 @@ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
->  	if (len < 1)
->  		goto out;
->  	nr_pages = min(len, nr_pages);
-> -	if (ti->type->direct_access)
-> -		ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
-> +	ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
->  
->   out:
->  	dm_put_live_table(md, srcu_idx);
-> diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-> index 6fb0808e87c8..45ea9e1f9af9 100644
-> --- a/include/linux/device-mapper.h
-> +++ b/include/linux/device-mapper.h
-> @@ -461,6 +461,11 @@ void dm_table_add_target_callbacks(struct dm_table *t, struct dm_target_callback
->   */
->  void dm_table_set_type(struct dm_table *t, enum dm_queue_mode type);
->  
-> +/*
-> + * Check to see if this target type and all table devices support DAX.
-> + */
-> +bool dm_table_supports_dax(struct dm_table *t);
-> +
->  /*
->   * Finally call this to make the table ready for use.
->   */
-
-Nor do you need to publish the dm_table_supports_dax() interface via
-include/linux/device-mapper.h
