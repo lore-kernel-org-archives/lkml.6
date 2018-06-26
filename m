@@ -2,307 +2,154 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38256C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D7DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E02EC26DCE
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:02:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02EC26DCE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B27726DE2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:02:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="k7lTkD26";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="npmjSNaW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B27726DE2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753023AbeFZRCI (ORCPT
+        id S1753057AbeFZRCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:02:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33628 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752910AbeFZRBq (ORCPT
+        Tue, 26 Jun 2018 13:02:34 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:33978 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753042AbeFZRCd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:01:46 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QGwjT8095629
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:01:46 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jus3ys2xj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:01:45 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 13:01:44 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 13:01:41 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QH1fQR5702082
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 17:01:41 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42347B2068;
-        Tue, 26 Jun 2018 13:01:34 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F156B2066;
-        Tue, 26 Jun 2018 13:01:34 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 13:01:33 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id DAADC16C377B; Tue, 26 Jun 2018 10:03:45 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 10:03:45 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
- killer.
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <alpine.DEB.2.21.1806201528490.16984@chino.kir.corp.google.com>
- <20180621073142.GA10465@dhcp22.suse.cz>
- <2d8c3056-1bc2-9a32-d745-ab328fd587a1@i-love.sakura.ne.jp>
+        Tue, 26 Jun 2018 13:02:33 -0400
+Received: by mail-yw0-f193.google.com with SMTP id n187-v6so2867843ywd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 10:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=qrw8YOhghCb56pjSVaku2nRybHH7DHNHzmJpOHoV3x0=;
+        b=k7lTkD26kGxwiRnuUCfFzMC/R7aqrMIbfY0SOS4xdIMHo5CB1rHxYK1ugIbZ4ERML8
+         btCu4YWkI3+igYF9VZt41FtW2aB+OHEO25zBoODmmvaoL5tyvxHxTIK3yewM+4v5ccVa
+         nh8TQYgKm8Mnu0SiOqr4P63wOYnOnsQ0iy1pTcfoQZhXT1vLKZJw/p2fLnzO91YkRaGq
+         16HeNLTq3HRjv0/1DWj3BB//vARwQzievimIIVpdtVODrum88YsIFz7A9QkZaTvIuTa/
+         T4QYAPN9OHhBmmKzgo4vA5mxxQ3C2SDFoBsv2Uqg308EkVpJNz1+18p7M58PMnbSYcVu
+         q/xg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=qrw8YOhghCb56pjSVaku2nRybHH7DHNHzmJpOHoV3x0=;
+        b=npmjSNaWkm87YNMSEd3bEJjj8VJ2hN4i0/G2YKhWGKijCUWePWb2C3yzpmk30UOidX
+         gzCRP5fMeTnyblCQbOXmrWVhY5tSuzSzRw+9Bx+DdUK60PXFKbmr5fUEF2kB0CZoV4df
+         1TcK1gZYTKJ+EkgQn5W298Y3VLk+QY+oT9s9g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=qrw8YOhghCb56pjSVaku2nRybHH7DHNHzmJpOHoV3x0=;
+        b=QirpHndlF73AWlBFq72teufD1NinsBXKdwioHJBlkEjk0S+t0ojj7wVsEmHfd7UjpQ
+         /cEbSJqyVkFPdufdn3B4Qo7j712CKoD0BtqZ/URKNu7aVTB0zgAyDYF1uRgdEgHaASlS
+         buL06W6IxJLD4+u6H6LdjLl6LfevCbAKZR5th8cXLK/bMwt1WXpwrzXVHYTKcZB11Npw
+         +F4oI89/+5YiDCt4+P9mTD45OCPndlblRJwI/eFCf56usv7HDdXs3liwP5YphsQ/xpbx
+         Nk5Lnp+O1hpyVzbktw001DQY+wIG+pWWwbX4xrZIYI2zjRxYMjsx/8p3Q03LRQJ/Y0+I
+         HKYw==
+X-Gm-Message-State: APt69E29xAwhBUejNrzZZO65afhOPjQLxdwQHz7Qc6BlsFlcJlWX2NoI
+        RDXmNRuMeUZDT/cglYpZtoSxmwfknVVBq0xwDkTHEA==
+X-Google-Smtp-Source: AAOMgpdJO3Be0brK+QE/y0ttRMZYCqrBAxRq4khJO8PqxaU28lOmK1wqFS2H9S/v+mEqr75jmYJaQoEv2S2AsCNJsDU=
+X-Received: by 2002:a81:8743:: with SMTP id x64-v6mr1131583ywf.129.1530032551786;
+ Tue, 26 Jun 2018 10:02:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d8c3056-1bc2-9a32-d745-ab328fd587a1@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062617-2213-0000-0000-000002C045B6
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052666; UDB=6.00539667; IPR=6.00830590;
- MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:01:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062617-2214-0000-0000-00005A9DB463
-Message-Id: <20180626170345.GA3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260191
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 10:02:31
+ -0700 (PDT)
+In-Reply-To: <20180626091958.zy3m24sjukfbn7av@gondor.apana.org.au>
+References: <20180625211026.15819-1-keescook@chromium.org> <20180625211026.15819-11-keescook@chromium.org>
+ <20180625225609.GA181665@gmail.com> <20180626091958.zy3m24sjukfbn7av@gondor.apana.org.au>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 26 Jun 2018 10:02:31 -0700
+X-Google-Sender-Auth: G9ZTBIz-4kRPeNrAGCMrMpJIQIM
+Message-ID: <CAGXu5j+2UEUMJ0RL_XDm+Z2jBaPgshbiKaKmrYTQiP7yB2eKng@mail.gmail.com>
+Subject: Re: [dm-devel] [PATCH v2 10/11] crypto: ahash: Remove VLA usage for AHASH_REQUEST_ON_STACK
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers3@gmail.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        qat-linux@intel.com, LKML <linux-kernel@vger.kernel.org>,
+        dm-devel@redhat.com, linux-crypto <linux-crypto@vger.kernel.org>,
+        Lars Persson <larper@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 08:27:41PM +0900, Tetsuo Handa wrote:
-> On 2018/06/21 7:36, David Rientjes wrote:
-> >> @@ -1010,6 +1010,33 @@ int unregister_oom_notifier(struct notifier_block *nb)
-> >>  EXPORT_SYMBOL_GPL(unregister_oom_notifier);
-> >>  
-> >>  /**
-> >> + * try_oom_notifier - Try to reclaim memory from OOM notifier list.
-> >> + *
-> >> + * Returns non-zero if notifier callbacks released something, zero otherwise.
-> >> + */
-> >> +unsigned long try_oom_notifier(void)
-> > 
-> > It certainly is tried, but based on its usage it would probably be better 
-> > to describe what is being returned (it's going to set *did_some_progress, 
-> > which is a page count).
-> 
-> Well, it depends on what the callbacks are doing. Currently, we have 5 users.
-> 
->   arch/powerpc/platforms/pseries/cmm.c
->   arch/s390/mm/cmm.c
->   drivers/gpu/drm/i915/i915_gem_shrinker.c
->   drivers/virtio/virtio_balloon.c
->   kernel/rcu/tree_plugin.h
-> 
-> Speak of rcu_oom_notify() in kernel/rcu/tree_plugin.h , we can't tell whether
-> the callback helped releasing memory, for it does not update the "freed" argument.
+On Tue, Jun 26, 2018 at 2:19 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Mon, Jun 25, 2018 at 03:56:09PM -0700, Eric Biggers wrote:
+>>
+>> > diff --git a/include/crypto/internal/hash.h b/include/crypto/internal/hash.h
+>> > index a0b0ad9d585e..d96ae5f52125 100644
+>> > --- a/include/crypto/internal/hash.h
+>> > +++ b/include/crypto/internal/hash.h
+>> > @@ -142,6 +142,7 @@ static inline struct ahash_alg *__crypto_ahash_alg(struct crypto_alg *alg)
+>> >  static inline void crypto_ahash_set_reqsize(struct crypto_ahash *tfm,
+>> >                                         unsigned int reqsize)
+>> >  {
+>> > +   BUG_ON(reqsize > AHASH_MAX_REQSIZE);
+>> >     tfm->reqsize = reqsize;
+>> >  }
+>>
+>> This isn't accounting for the cases where a hash algorithm is "wrapped" with
+>> another one, which increases the request size.  For example, "sha512_mb" ends up
+>> with a request size of
+>
+> I think this patch is on the wrong track.  The stack requests are
+> only ever meant to be used for synchronous algorithms (IOW shash
+> algorithms) and were a quick-and-dirty fix for legacy users.
+>
+> So either check SHASH_MAX_REQSIZE or just convert the users to
+> kmalloc or even better make them real async users.
 
-It does not immediately release memory, but instead takes steps to
-encourage memory to be released more quickly.
+There is no SHASH_MAX_REQSIZE?
 
-> >> +{
-> >> +	static DEFINE_MUTEX(oom_notifier_lock);
-> >> +	unsigned long freed = 0;
-> >> +
-> >> +	/*
-> >> +	 * Since OOM notifier callbacks must not depend on __GFP_DIRECT_RECLAIM
-> >> +	 * && !__GFP_NORETRY memory allocation, waiting for mutex here is safe.
-> >> +	 * If lockdep reports possible deadlock dependency, it will be a bug in
-> >> +	 * OOM notifier callbacks.
-> >> +	 *
-> >> +	 * If SIGKILL is pending, it is likely that current thread was selected
-> >> +	 * as an OOM victim. In that case, current thread should return as soon
-> >> +	 * as possible using memory reserves.
-> >> +	 */
-> >> +	if (mutex_lock_killable(&oom_notifier_lock))
-> >> +		return 0;
-> >> +	blocking_notifier_call_chain(&oom_notify_list, 0, &freed);
-> >> +	mutex_unlock(&oom_notifier_lock);
-> >> +	return freed;
-> >> +}
-> > 
-> > If __blocking_notifier_call_chain() used down_read_killable(), could we 
-> > eliminate oom_notifier_lock?
-> 
-> I don't think we can eliminate it now, for it is a serialization lock
-> (while trying to respond to SIGKILL as soon as possible) which is currently
-> achieved by mutex_trylock(&oom_lock).
-> 
-> (1) rcu_oom_notify() in kernel/rcu/tree_plugin.h is not prepared for being
->     called concurrently.
-> 
-> ----------
-> static int rcu_oom_notify(struct notifier_block *self,
-> 			  unsigned long notused, void *nfreed)
-> {
-> 	int cpu;
-> 
-> 	/* Wait for callbacks from earlier instance to complete. */
-> 	wait_event(oom_callback_wq, atomic_read(&oom_callback_count) == 0); // <= Multiple threads can pass this line at the same time.
-> 	smp_mb(); /* Ensure callback reuse happens after callback invocation. */
-> 
-> 	/*
-> 	 * Prevent premature wakeup: ensure that all increments happen
-> 	 * before there is a chance of the counter reaching zero.
-> 	 */
-> 	atomic_set(&oom_callback_count, 1); // <= Multiple threads can execute this line at the same time.
-> 
-> 	for_each_online_cpu(cpu) {
-> 		smp_call_function_single(cpu, rcu_oom_notify_cpu, NULL, 1);
-> 		cond_resched_tasks_rcu_qs();
-> 	}
-> 
-> 	/* Unconditionally decrement: no need to wake ourselves up. */
-> 	atomic_dec(&oom_callback_count); // <= Multiple threads can execute this line at the same time, making oom_callback_count < 0 ?
-> 
-> 	return NOTIFY_OK;
-> }
-> ----------
-> 
->     The counter inconsistency problem could be fixed by
-> 
-> -	atomic_set(&oom_callback_count, 1);
-> +	atomic_inc(&oom_callback_count);
-> 
->     but who becomes happy if rcu_oom_notify() became ready to be called
->     concurrently? We want to wait for the callback to complete before
->     proceeding to the OOM killer. I think that we should save CPU resource
->     by serializing concurrent callers.
+As for users of AHASH_REQUEST_ON_STACK, I see:
 
-There are a lot of ways it could be made concurrency safe.  If you need
-me to do this, please do let me know.
+$ git grep AHASH_REQUEST_ON_STACK
+arch/x86/power/hibernate_64.c:          AHASH_REQUEST_ON_STACK(req, tfm);
+crypto/ccm.c:   AHASH_REQUEST_ON_STACK(ahreq, ctx->mac);
+drivers/block/drbd/drbd_worker.c:       AHASH_REQUEST_ON_STACK(req, tfm);
+drivers/block/drbd/drbd_worker.c:       AHASH_REQUEST_ON_STACK(req, tfm);
+drivers/md/dm-crypt.c:  AHASH_REQUEST_ON_STACK(req, essiv->hash_tfm);
+drivers/net/ppp/ppp_mppe.c:     AHASH_REQUEST_ON_STACK(req, state->sha1);
+drivers/staging/rtl8192e/rtllib_crypt_tkip.c:
+AHASH_REQUEST_ON_STACK(req, tfm_michael);
+drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_tkip.c:
+AHASH_REQUEST_ON_STACK(req, tfm_michael);
+net/wireless/lib80211_crypt_tkip.c:     AHASH_REQUEST_ON_STACK(req,
+tfm_michael);
 
-That said, the way it is now written, if you invoke rcu_oom_notify()
-twice in a row, the second invocation will wait until the memory from
-the first invocation is freed.  What do you want me to do if you invoke
-me concurrently?
+Regardless, I'll take a closer look at these.
 
-1.	One invocation "wins", waits for the earlier callbacks to
-	complete, then encourages any subsequent callbacks to be
-	processed more quickly.  The other invocations return
-	immediately without doing anything.
+The other patches leading up to the REQSIZE ones, though, I think are
+ready to go? They're distinct from the last two, so the first 9
+patches could be applied and I'll continue to improve the two REQSIZE
+ones? If that sounds okay, do you want me to resend just first 9, or
+do you want to take them from this series?
 
-2.	The invocations serialize, with each invocation waiting for
-	the callbacks from previous invocation (in mutex_lock() order
-	or some such), and then starting a new round.
+Thanks!
 
-3.	Something else?
+-Kees
 
-							Thanx, Paul
-
-> (2) i915_gem_shrinker_oom() in drivers/gpu/drm/i915/i915_gem_shrinker.c depends
->     on mutex_trylock() from shrinker_lock() from i915_gem_shrink() from
->     i915_gem_shrink_all() to return 1 (i.e. succeed) before need_resched()
->     becomes true in order to avoid returning without reclaiming memory.
-> 
-> > This patch is certainly an improvement because it does the last 
-> > get_page_from_freelist() call after invoking the oom notifiers that can 
-> > free memory and we've otherwise pointlessly redirected it elsewhere.
-> 
-> Thanks, but this patch might break subtle balance which is currently
-> achieved by mutex_trylock(&oom_lock) serialization/exclusion.
-> 
-> (3) virtballoon_oom_notify() in drivers/virtio/virtio_balloon.c by default
->     tries to release 256 pages. Since this value is configurable, one might
->     set 1048576 pages. If virtballoon_oom_notify() is concurrently called by
->     many threads, it might needlessly deflate the memory balloon.
-> 
-> We might want to remember and reuse the last result among serialized callers
-> (feedback mechanism) like
-> 
-> {
-> 	static DEFINE_MUTEX(oom_notifier_lock);
-> 	static unsigned long last_freed;
-> 	unsigned long freed = 0;
-> 	if (mutex_trylock(&oom_notifier_lock)) {
-> 		blocking_notifier_call_chain(&oom_notify_list, 0, &freed);
-> 		last_freed = freed;
-> 	} else {
-> 		mutex_lock(&oom_notifier_lock);
-> 		freed = last_freed;
-> 	}
-> 	mutex_unlock(&oom_notifier_lock);
-> 	return freed;
-> 
-> }
-> 
-> or
-> 
-> {
-> 	static DEFINE_MUTEX(oom_notifier_lock);
-> 	static unsigned long last_freed;
-> 	unsigned long freed = 0;
-> 	if (mutex_lock_killable(&oom_notifier_lock)) {
-> 		freed = last_freed;
-> 		last_freed >>= 1;
-> 		return freed;
-> 	} else if (last_freed) {
-> 		freed = last_freed;
-> 		last_freed >>= 1;
-> 	} else {
-> 		blocking_notifier_call_chain(&oom_notify_list, 0, &freed);
-> 		last_freed = freed;
-> 	}
-> 	mutex_unlock(&oom_notifier_lock);
-> 	return freed;
-> }
-> 
-> . Without feedback mechanism, mutex_lock_killable(&oom_notifier_lock) serialization
-> could still needlessly deflate the memory balloon compared to mutex_trylock(&oom_lock)
-> serialization/exclusion. Maybe virtballoon_oom_notify() (and two CMM users) would
-> implement feedback mechanism themselves, by examining watermark from OOM notifier
-> hooks.
-> 
-> 
-> 
-> On 2018/06/21 16:31, Michal Hocko wrote:
-> > On Wed 20-06-18 15:36:45, David Rientjes wrote:
-> > [...]
-> >> That makes me think that "oom_notify_list" isn't very intuitive: it can 
-> >> free memory as a last step prior to oom kill.  OOM notify, to me, sounds 
-> >> like its only notifying some callbacks about the condition.  Maybe 
-> >> oom_reclaim_list and then rename this to oom_reclaim_pages()?
-> > 
-> > Yes agreed and that is the reason I keep saying we want to get rid of
-> > this yet-another-reclaim mechanism. We already have shrinkers which are
-> > the main source of non-lru pages reclaim. Why do we even need
-> > oom_reclaim_pages? What is fundamentally different here? Sure those
-> > pages should be reclaimed as the last resort but we already do have
-> > priority for slab shrinking so we know that the system is struggling
-> > when reaching the lowest priority. Isn't that enough to express the need
-> > for current oom notifier implementations?
-> > 
-> 
-> Even if we update OOM notifier users to use shrinker hooks, they will need a
-> subtle balance which is currently achieved by mutex_trylock(&oom_lock).
-> 
-> Removing OOM notifier is not doable right now. It is not suitable as a regression
-> fix for commit 27ae357fa82be5ab ("mm, oom: fix concurrent munlock and oom reaper
-> unmap, v3"). What we could afford for this regression is
-> https://patchwork.kernel.org/patch/9842889/ which is exactly what you suggested
-> in a thread at https://www.spinics.net/lists/linux-mm/msg117896.html .
-> 
-
+-- 
+Kees Cook
+Pixel Security
