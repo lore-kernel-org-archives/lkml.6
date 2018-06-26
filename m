@@ -2,99 +2,121 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE9BC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D15C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED9F26D2C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE02120779
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:28:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Beg0cEYQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED9F26D2C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="a8U0QMO3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE02120779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeFZP1y (ORCPT
+        id S1751986AbeFZP2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:27:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57716 "EHLO mail.kernel.org"
+        Tue, 26 Jun 2018 11:28:36 -0400
+Received: from vern.gendns.com ([206.190.152.46]:44832 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751054AbeFZP1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:27:52 -0400
-Received: from localhost (unknown [122.178.245.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D0C926D2A;
-        Tue, 26 Jun 2018 15:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530026872;
-        bh=lfGgPXng7U8cv0fG7mBqUpCu7wumR8EUlXxgAIiiyw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Beg0cEYQgf3ZGJgJnEa007g2OT//qTrPIZTUZ1//Ihu0ELLi4JTyLPBx97aIDsrxJ
-         JVled+qgZL5v/xfefryJlSMINCPcB1hYKeTyc8MuqNllOuCTOSBeS+G3AqY6ZQ5W/c
-         d+nG+C4nMhSGfVlZkpLKsxHLElnjr3iXfQNbm754=
-Date:   Tue, 26 Jun 2018 20:57:43 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: rng: Add new compatible qcom,prng-v2
-Message-ID: <20180626152743.GD22377@vkoul-mobl>
-References: <20180619095430.26358-1-vkoul@kernel.org>
- <20180619095430.26358-2-vkoul@kernel.org>
- <20180625190609.GA3586@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625190609.GA3586@rob-hp-laptop>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751054AbeFZP2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 11:28:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YVl30gjMfzJNY/U7TcpVpMSh6wOSq1RXEvH5tCkgy4k=; b=a8U0QMO3DSPO9+udUK+QgxguvI
+        G9jJk66f/cYgjfEDhHoZPn93DEOHGiC2gESAduyVSnB1cEpF3PxYcyC/vDDWLKi9jIl+LVFVRgQTb
+        /SK/NFsnsad12ACdeeI58shFEw9ApObwnYHd7X4ttZDTHld1zsvEtGKRNaxB7uJa55mWF6SYl9/dp
+        jsVh8B1WnDDBlxI44ZcCl8mrpFVzYReWwzHxYHxNY2z03OGelNFX49JgwVZroNvT+sgENIuG7MqtQ
+        wsI8H4+DnMqUrpWzq5rg/Z1LBqpWNqqq1hlGOLJqxliDmQ38lTjMGTkxugxh7YW68aF+c7EGvsVrS
+        tp1Z1tHQ==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:48342 helo=freyr.lechnology.com)
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fXptR-005KZi-Jm; Tue, 26 Jun 2018 11:28:33 -0400
+From:   David Lechner <david@lechnology.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: da850: Add power-domains to PWM nodes
+Date:   Tue, 26 Jun 2018 10:28:17 -0500
+Message-Id: <20180626152817.16803-1-david@lechnology.com>
+X-Mailer: git-send-email 2.17.1
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-06-18, 13:06, Rob Herring wrote:
-> On Tue, Jun 19, 2018 at 03:24:29PM +0530, Vinod Koul wrote:
-> > Later qcom chips support v2 of the prng, so add new compatible
-> > qcom,prng-v2 for this.
-> > 
-> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > ---
-> > 
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: devicetree@vger.kernel.org
-> >  Documentation/devicetree/bindings/rng/qcom,prng.txt | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/rng/qcom,prng.txt b/Documentation/devicetree/bindings/rng/qcom,prng.txt
-> > index 8e5853c2879b..03fd218bd21a 100644
-> > --- a/Documentation/devicetree/bindings/rng/qcom,prng.txt
-> > +++ b/Documentation/devicetree/bindings/rng/qcom,prng.txt
-> > @@ -2,7 +2,8 @@ Qualcomm MSM pseudo random number generator.
-> >  
-> >  Required properties:
-> >  
-> > -- compatible  : should be "qcom,prng"
-> > +- compatible  : should be "qcom,prng" for 8916 etc
-> > +              : should be "qcom,prng-v2" for 8996 and later
-> 
-> Either use SoC specific compatibles or convince me 'v2' is a meaningful 
-> and specific enough version. Some other QC IP has x.y.z versioning for 
-> example.
+This adds the power-domains property to both the ECAP and EHRPWM PWM
+nodes. Both have drivers that use pm_runtime to enable the clocks, so
+they need this property in order to find and enable the clock properly.
 
-The specs says QC RNG V2 :)
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/boot/dts/da850.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Said that Stephen suggested to make it qcom,prng-ee to point out that we
-are pointing to an execution environment in the IP, so will do that
-instead unless you have better idea
-
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index de9a8bea100e..d60198e2ae4e 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -532,6 +532,7 @@
+ 			reg = <0x300000 0x2000>;
+ 			clocks = <&psc1 17>, <&ehrpwm_tbclk>;
+ 			clock-names = "fck", "tbclk";
++			power-domains = <&psc1 17>;
+ 			status = "disabled";
+ 		};
+ 		ehrpwm1: pwm@302000 {
+@@ -541,6 +542,7 @@
+ 			reg = <0x302000 0x2000>;
+ 			clocks = <&psc1 17>, <&ehrpwm_tbclk>;
+ 			clock-names = "fck", "tbclk";
++			power-domains = <&psc1 17>;
+ 			status = "disabled";
+ 		};
+ 		ecap0: ecap@306000 {
+@@ -550,6 +552,7 @@
+ 			reg = <0x306000 0x80>;
+ 			clocks = <&psc1 20>;
+ 			clock-names = "fck";
++			power-domains = <&psc1 20>;
+ 			status = "disabled";
+ 		};
+ 		ecap1: ecap@307000 {
+@@ -559,6 +562,7 @@
+ 			reg = <0x307000 0x80>;
+ 			clocks = <&psc1 20>;
+ 			clock-names = "fck";
++			power-domains = <&psc1 20>;
+ 			status = "disabled";
+ 		};
+ 		ecap2: ecap@308000 {
+@@ -568,6 +572,7 @@
+ 			reg = <0x308000 0x80>;
+ 			clocks = <&psc1 20>;
+ 			clock-names = "fck";
++			power-domains = <&psc1 20>;
+ 			status = "disabled";
+ 		};
+ 		spi0: spi@41000 {
 -- 
-~Vinod
+2.17.1
+
