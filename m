@@ -2,75 +2,74 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE7FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9727C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7192726C57
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7192726C57
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 7C1FE257C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:37:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C1FE257C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965840AbeFZOfJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 10:35:09 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:21269 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965304AbeFZOfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:35:07 -0400
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5QEZ0Cd024570;
-        Tue, 26 Jun 2018 23:35:00 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Tue, 26 Jun 2018 23:35:00 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5QEYtFB024497
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 26 Jun 2018 23:35:00 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v3] block/loop: Serialize ioctl operations.
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzbot 
-        <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>,
-        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
-References: <1527297408-4428-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <ce5ce21a-5865-36c5-a110-eed11f785ab2@I-love.SAKURA.ne.jp>
- <748bce03-afda-4ed2-13b3-1fcd01d57770@kernel.dk>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <9a9209af-c841-6034-4b4f-46d93aa0c037@i-love.sakura.ne.jp>
-Date:   Tue, 26 Jun 2018 23:34:52 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <748bce03-afda-4ed2-13b3-1fcd01d57770@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S934845AbeFZOhV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 10:37:21 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54118 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934219AbeFZOhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 10:37:20 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B509D1A0110;
+        Tue, 26 Jun 2018 16:37:18 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7B04B1A0104;
+        Tue, 26 Jun 2018 16:37:18 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id DC92E40A59;
+        Tue, 26 Jun 2018 07:37:17 -0700 (MST)
+Received: from fsr-ub1864-101.ea.freescale.net (fsr-fed1964-102.ea.freescale.net [10.171.82.97])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w5QEbEhh019017;
+        Tue, 26 Jun 2018 07:37:15 -0700
+From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
+To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org
+Cc:     Minghuan.Lian@nxp.com, Zhiqiang.Hou@nxp.com,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: [PATCH] irqchip/ls-scfg-msi: update effective affinity mask
+Date:   Tue, 26 Jun 2018 17:37:12 +0300
+Message-Id: <20180626143712.30489-1-laurentiu.tudor@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Did you get any idea?
+Update the effective affinity mask to fix this warning issued by the
+generic irq handling code:
 
-On 2018/06/05 3:13, Jens Axboe wrote:
-> On 6/4/18 5:19 AM, Tetsuo Handa wrote:
->> This problem was already ignored for 8 months. Unless we boost priority,
->> this problem will be ignored for years. Jens, can we test this patch?
-> 
-> Sorry, it's just that I _really_ hate this patch. We're making up
-> a weird locking primitive that tracks the process, with a weird
-> unlock helper that only unlocks if it's the process that is
-> holding the mutex.
-> 
-> I'll try and think about this a bit, it would be nice if we had
-> a better alternative than the above.
-> 
+"genirq: irq_chip MSI did not update eff. affinity mask of irq x"
+
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+---
+ drivers/irqchip/irq-ls-scfg-msi.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
+index 1ec3bfe56693..d81d5b016438 100644
+--- a/drivers/irqchip/irq-ls-scfg-msi.c
++++ b/drivers/irqchip/irq-ls-scfg-msi.c
+@@ -122,6 +122,7 @@ static int ls_scfg_msi_set_affinity(struct irq_data *irq_data,
+ 	}
+ 
+ 	cpumask_copy(irq_data->common->affinity, mask);
++	irq_data_update_effective_affinity(irq_data, mask);
+ 
+ 	return IRQ_SET_MASK_OK;
+ }
+-- 
+2.17.1
+
