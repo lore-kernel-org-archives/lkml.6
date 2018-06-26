@@ -3,88 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B5BC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE29C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AD3926664
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:02:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AD3926664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+	by mail.kernel.org (Postfix) with ESMTP id E1F7E25FEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:03:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F7E25FEB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932417AbeFZICK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:02:10 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:50015 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932279AbeFZICF (ORCPT
+        id S1752695AbeFZIDr (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 04:03:47 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:55127 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752169AbeFZIDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:02:05 -0400
-Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.lichtvoll.de (Postfix) with ESMTPSA id 38DD034FF29;
-        Tue, 26 Jun 2018 10:02:03 +0200 (CEST)
-From:   Martin Steigerwald <martin@lichtvoll.de>
-To:     Michael Schmitz <schmitzmic@gmail.com>
-Cc:     jdow <jdow@earthlink.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Sterba <dsterba@suse.cz>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-Subject: Re: moving affs + RDB partition support to staging?
-Date:   Tue, 26 Jun 2018 10:02:02 +0200
-Message-ID: <1611526.WuK5Cf0iMF@merkaba>
-In-Reply-To: <CAOmrzk+CuuraUnWWKDKen9FV6=UcgKgc6+qJ3g-Fx+tkt5HHQw@mail.gmail.com>
-References: <20180425154602.GA8546@bombadil.infradead.org> <c76b4e4d-7e8e-13ac-81e4-9132f4235eb8@earthlink.net> <CAOmrzk+CuuraUnWWKDKen9FV6=UcgKgc6+qJ3g-Fx+tkt5HHQw@mail.gmail.com>
+        Tue, 26 Jun 2018 04:03:45 -0400
+X-UUID: c5f6c9f62a104778841a2ebfc228662f-20180626
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 799738630; Tue, 26 Jun 2018 16:03:40 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 26 Jun 2018 16:03:38 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Tue, 26 Jun 2018 16:03:38 +0800
+Message-ID: <1530000218.17448.28.camel@mtkswgap22>
+Subject: Re: Add system timer driver for Mediatek SoCs
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date:   Tue, 26 Jun 2018 16:03:38 +0800
+In-Reply-To: <561c2c41-ea92-3ad8-a1d7-aeef46cdc601@linaro.org>
+References: <1529910601-15005-1-git-send-email-stanley.chu@mediatek.com>
+         <dd36b094-b11c-e6ef-a0fc-b039785e74f2@linaro.org>
+         <1529917631.17448.22.camel@mtkswgap22>
+         <561c2c41-ea92-3ad8-a1d7-aeef46cdc601@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael.
-
-Michael Schmitz - 26.06.18, 04:23:
-> Joanne,
+On Tue, 2018-06-26 at 09:31 +0200, Daniel Lezcano wrote:
+> On 25/06/2018 11:07, Stanley Chu wrote:
+> > On Mon, 2018-06-25 at 09:34 +0200, Daniel Lezcano wrote:
+> >> On 25/06/2018 09:09, Stanley Chu wrote:
+> >>> This patch adds a new driver for system timer on the Mediatek SoCs.
+> >>
+> >> Please elaborate why we need yet another timer.
+> >>
+> >> Is this timer present on all Mediatek platform ? Does it always co-exist
+> >> with the existing one ?
+> >>
+> >>
+> >>
+> >>
+> > Hi Daniel,
+> > 
+> > This new "system timer" only exists on recent Mediatek platforms,
+> > for example, MT6765. We will upstream driver first, and then update
+> > device tree on MT6765 later.
+> > 
+> > System timer is designed and optimized as a SoC timer for
+> > tick-broadcasting. Besides timer IP has simpler register manipulation
+> > and friendly low-power design.
+> > 
+> > There is no plan to remove existed "General Purpose Timer" now.
 > 
-> Martin's boot log (including your patch) says:
+> It is unclear what "General Purpose Timer" and "System Timer" differ
+> except they are different timers running on different platforms.
 > 
-> Jun 19 21:19:09 merkaba kernel: [ 7891.843284]  sdb: RDSK (512) sdb1
-> (LNX^@)(res 2 spb 1) sdb2 (JXF^D)(res 2 spb 1) sdb3 (DOS^C)(res 2 spb
-> 4)
-> Jun 19 21:19:09 merkaba kernel: [ 7891.844055] sd 7:0:0:0: [sdb]
-> Attached SCSI disk
+> Merge them into a single timer-mediatek.c file.
 > 
-> so it's indeed a case of self inflicted damage (RDSK (512) means 512
-> byte blocks) and can be worked around by using a different block size.
+Hi Daniel,
 
-Well I pretty much believe that this was the standard block size of the 
-tool I used in order to create the RDB. I think it has  been Media 
-Toolbox + the engine behind it, from AmigaOS 4.0 (not 4.1) or so. DOS-
-Type JXF points to JXFS, an AmigaOS 4 only filesystem that meanwhile has 
-been deprecated by AmigaOS upstream.
+Yes, they are different timers running on different platforms.
 
-Maybe HDToolbox + hdwrench.library by Joanne (AmigaOS 3.5/3.9) would 
-have set it up differently.
+"System Timer" can replace "General Purpose Timer" in recent platforms,
+for example, MT6765.
 
-Anyway: It works like this in AmigaOS 4 without any issues. With 512 
-Byte Blocks. I think it is good that Linux does not create data 
-corruption when writing to disks that work just fine in AmigaOS. 
-Especially as those using AmigaNG machines like AmigaOne X1000/X5000 or 
-Acube Sam machines may dual boot AmigaOS and Linux on their machines.
-
-Thanks again for putting together a patch.
-
-Thanks,
--- 
-Martin
-
+Thanks.
+Stanley Chu
 
