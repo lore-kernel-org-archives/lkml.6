@@ -1,88 +1,186 @@
 Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA25CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEDFC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 679C1219E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHp7qaY9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 679C1219E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C5A99219E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5A99219E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752373AbeFZHRK (ORCPT
+        id S1752504AbeFZHRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:17:10 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44002 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751641AbeFZHRJ (ORCPT
+        Tue, 26 Jun 2018 03:17:20 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56754 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752402AbeFZHRS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:17:09 -0400
-Received: by mail-wr0-f194.google.com with SMTP id c5-v6so4885804wrs.10
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 00:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0gMSjV+NKILsP+I551i/YZUQOki/c2LrqnzxYGoR1hA=;
-        b=fHp7qaY9fxCZX4PT1VPfFTSKl6TxL2IFfwcyQkSlF9Z9wdOT7wFsZRynd9nFcseokG
-         FdzSRtdLKdqThRZEQwyrFZmeQp0SXg4gMc7OrTKXhxIgVn97mJdZiiyV/HThuczCC6J0
-         FM9Ve4dXiSyieAMykZpR8SCMvmIwDyOmafOJPfAXEhUYYuNvuA9QMTucBlQO8V5iiFis
-         UgTwYipHuDIgIEBQoU7TYhKaiFcGEqpAyOmj//YTUoRjrRY25YQO4NOkyXODlpcyli9s
-         1FOB2HsYkNDShKKu7BiXNtHl+JN5dbYKLSLlo4Ribx3q3M5ozmUTXVGmN5EYZHKLgZik
-         Vqiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0gMSjV+NKILsP+I551i/YZUQOki/c2LrqnzxYGoR1hA=;
-        b=IWsGlCUAbmJ3XH2Mu6rzdM7H5jok5ELXBup/uapLvbRHhp5Y/K5WCsXMvaLIvYPZ+W
-         omSoNuZHcvSetOp8TiJsmDcmNb5OlgWtPMYI9gNArXTmrzl4vFIcGO5Wzx+doZrQU7ki
-         J0umyAVSQkZOEp8jRzBMZs9YBGMKdDketnc2Bqm0Qvtl2xthDmpbXeDv0xlijTncZ1tZ
-         Q1kB8g6Yxe8+5K1g4L5hVkQrhldnH51Vov8qdamrYTy8wqLovtpUAEGxoaKsFCMnWwBJ
-         TW2+J4+zIZIwaMrK96jebNJYYWydk9KrgN4bqyNk7a0sJ4nv9SYoQhR/vGYzGDxKyusb
-         Pdxw==
-X-Gm-Message-State: APt69E2MuOS7R/nzD3rALjvbhHtpiuXv7YU6ijnWKEsZvyH1Mrv2JJ7t
-        fJvOqcDvOcH65RqvbExvBEj01Q==
-X-Google-Smtp-Source: AAOMgpf2xtZkQzObpA4IXGaRdXC3PfhwEWROBGHT1JtOG72NvpebXAh1l2qxOBXmDNimc2HTRV8r5A==
-X-Received: by 2002:adf:9736:: with SMTP id r51-v6mr342366wrb.5.1529997428415;
-        Tue, 26 Jun 2018 00:17:08 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id c201-v6sm1230791wmh.18.2018.06.26.00.17.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 00:17:07 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 09:17:05 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Jan Beulich <JBeulich@suse.com>
-Cc:     mingo@elte.hu, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86-64: use 32-bit XOR to zero registers
-Message-ID: <20180626071705.GB26761@gmail.com>
-References: <5B30C32902000078001CD6D5@prv1-mh.provo.novell.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B30C32902000078001CD6D5@prv1-mh.provo.novell.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 26 Jun 2018 03:17:18 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q7BH8p110320
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 03:17:17 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jufb5kxj0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 03:17:17 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Tue, 26 Jun 2018 08:17:15 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Jun 2018 08:17:12 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q7HBpL30736536
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 07:17:12 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4A5275205F;
+        Tue, 26 Jun 2018 08:17:06 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 03DE65204F;
+        Tue, 26 Jun 2018 08:17:05 +0100 (BST)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, ak@linux.intel.com, jolsa@redhat.com,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH 4/4 v4] perf stat: Add transaction flag (-T) support for s390
+Date:   Tue, 26 Jun 2018 09:17:01 +0200
+X-Mailer: git-send-email 2.16.4
+X-TM-AS-GCONF: 00
+x-cbid: 18062607-0028-0000-0000-000002D4F2F4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062607-0029-0000-0000-0000238C5504
+Message-Id: <20180626071701.58190-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+perf stat command line flag -T to display transaction counters is
+currently supported for x86 only.
+Add support for s390. It is based on the metrics flag -M transaction
+using the architecture dependend json files. This requires a metric
+named "transaction" in the json files for the platform.
 
-* Jan Beulich <JBeulich@suse.com> wrote:
+Introduce new function metricgroup__has_metric() to check for
+the existance of a metric_name transaction.
 
-> Some Intel CPUs don't recognize 64-bit XORs as zeroing idioms
+As suggested by Andi Kleen, this is the new approach to support
+transactions counters. Other architectures will follow.
 
-Please write out the consequence of that in the changelog.
+Output before:
+[root@p23lp27 perf]# ./perf stat -T -- sleep 1
+Cannot set up transaction events
+[root@p23lp27 perf]#
 
-Thanks,
+Output after:
+[root@s35lp76 perf]# ./perf stat -T -- ~/mytesttx 1 >/tmp/111
 
-	Ingo
+ Performance counter stats for '/root/mytesttx 1':
+
+                 1      tx_c_tend           #     13.0 transaction
+                 1      tx_nc_tend
+                11      tx_nc_tabort
+                 0      tx_c_tabort_special
+                 0      tx_c_tabort_no_special
+
+       0.001070109 seconds time elapsed
+
+[root@s35lp76 perf]#
+
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Acked-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+---
+---
+ tools/perf/builtin-stat.c     | 12 ++++++++++++
+ tools/perf/util/metricgroup.c | 22 ++++++++++++++++++++++
+ tools/perf/util/metricgroup.h |  1 +
+ 3 files changed, 35 insertions(+)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 22547a490e1f..16df63e9a108 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -2449,6 +2449,18 @@ static int add_default_attributes(void)
+ 		return 0;
+ 
+ 	if (transaction_run) {
++		/* Handle -T as -M transaction. Once platform specific metrics
++		 * support has been added to the json files, all archictures
++		 * will use this approach. To determine transaction support
++		 * on an architecture test for such a metric name.
++		 */
++		if (metricgroup__has_metric("transaction")) {
++			struct option opt = { .value = &evsel_list };
++
++			return metricgroup__parse_groups(&opt, "transaction",
++							 &metric_events);
++		}
++
+ 		if (pmu_have_event("cpu", "cycles-ct") &&
+ 		    pmu_have_event("cpu", "el-start"))
+ 			err = parse_events(evsel_list, transaction_attrs,
+diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+index 1ddc3d1d0147..96eab4ec34ff 100644
+--- a/tools/perf/util/metricgroup.c
++++ b/tools/perf/util/metricgroup.c
+@@ -490,3 +490,25 @@ int metricgroup__parse_groups(const struct option *opt,
+ 	metricgroup__free_egroups(&group_list);
+ 	return ret;
+ }
++
++bool metricgroup__has_metric(const char *metric)
++{
++	struct pmu_events_map *map = perf_pmu__find_map(NULL);
++	struct pmu_event *pe;
++	int i;
++
++	if (!map)
++		return false;
++
++	for (i = 0; ; i++) {
++		pe = &map->table[i];
++
++		if (!pe->name && !pe->metric_group && !pe->metric_name)
++			break;
++		if (!pe->metric_expr)
++			continue;
++		if (match_metric(pe->metric_name, metric))
++			return true;
++	}
++	return false;
++}
+diff --git a/tools/perf/util/metricgroup.h b/tools/perf/util/metricgroup.h
+index 06854e125ee7..8a155dba0581 100644
+--- a/tools/perf/util/metricgroup.h
++++ b/tools/perf/util/metricgroup.h
+@@ -28,4 +28,5 @@ int metricgroup__parse_groups(const struct option *opt,
+ 			struct rblist *metric_events);
+ 
+ void metricgroup__print(bool metrics, bool groups, char *filter, bool raw);
++bool metricgroup__has_metric(const char *metric);
+ #endif
+-- 
+2.14.3
+
