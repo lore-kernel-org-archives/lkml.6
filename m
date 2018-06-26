@@ -2,111 +2,121 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BD7C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4F0C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8808C216C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:14:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="CsAW2L8n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8808C216C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0D75421C18
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:14:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D75421C18
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935441AbeFZMOL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:14:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34874 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933814AbeFZMOI (ORCPT
+        id S935457AbeFZMO0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:14:26 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43850 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933509AbeFZMOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:14:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XIP4ePtoqepWq6J8GLzgApKJWGNw7cEwdK7pNbymJxw=; b=CsAW2L8nZgClHZqJ/O01pM43I
-        xKEWHNonBltiehLhKwEfgnp1R0Z3cGRIuxdg3Z2Qtb7NwAQcfXIExbowuRDH+civeTlxPWO08kTvE
-        pRtvX4uqHYxpytLsV1yoH2A1G/VuVc3qCWfGAv7mxuc0Q9/1o7FD9jkWit1mtB7MDlg1s=;
-Received: from 188.29.165.85.threembb.co.uk ([188.29.165.85] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fXmr9-0001E6-N3; Tue, 26 Jun 2018 12:14:02 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 89223440071; Tue, 26 Jun 2018 13:07:33 +0100 (BST)
-Date:   Tue, 26 Jun 2018 13:07:33 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+        Tue, 26 Jun 2018 08:14:23 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5QCDSOe008197;
+        Tue, 26 Jun 2018 14:13:49 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2juk81gm7u-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 26 Jun 2018 14:13:49 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B358D3F;
+        Tue, 26 Jun 2018 12:13:39 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8931D2956;
+        Tue, 26 Jun 2018 12:13:39 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.48) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 26 Jun
+ 2018 14:13:38 +0200
+Subject: Re: [PATCH 3/3] ARM: multi_v7_defconfig: enable STM32 SPI
+To:     Amelie DELAUNAY <amelie.delaunay@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v8 2/2] regulator: add QCOM RPMh regulator driver
-Message-ID: <20180626120733.GD1779@sirena.org.uk>
-References: <cover.1529712888.git.collinsd@codeaurora.org>
- <35c4ea70cdf5caba560fb6f40e866ee8bc456d93.1529712888.git.collinsd@codeaurora.org>
- <CAD=FV=XVEEPgjBXxR+-46RgxLOq63Xvq-jtruoaCxccmMoKUuA@mail.gmail.com>
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1526566904-24514-1-git-send-email-amelie.delaunay@st.com>
+ <1526566904-24514-4-git-send-email-amelie.delaunay@st.com>
+ <e3bd3097-fbde-b790-e2b3-d78fb34b849d@st.com>
+ <120d8997-3184-bfed-26b7-e0ac7d995b74@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <f61c7908-8046-1709-94cf-a4066a330299@st.com>
+Date:   Tue, 26 Jun 2018 14:13:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="at6+YcpfzWZg/htY"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=XVEEPgjBXxR+-46RgxLOq63Xvq-jtruoaCxccmMoKUuA@mail.gmail.com>
-X-Cookie: PARDON me, am I speaking ENGLISH?
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <120d8997-3184-bfed-26b7-e0ac7d995b74@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---at6+YcpfzWZg/htY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Jun 25, 2018 at 11:50:52AM -0700, Doug Anderson wrote:
+On 06/26/2018 01:47 PM, Amelie DELAUNAY wrote:
+> Hi Alex
+> 
+> On 06/26/2018 10:44 AM, Alexandre Torgue wrote:
+>> Hi Amélie
+>> 
+>> On 05/17/2018 04:21 PM, Amelie Delaunay wrote:
+>>> Enable the STM32 SPI driver, implemented on STM32MP1 SoC.
+>>>
+>>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+>>> ---
+>>>   arch/arm/configs/multi_v7_defconfig | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm/configs/multi_v7_defconfig 
+>>> b/arch/arm/configs/multi_v7_defconfig
+>>> index 89167cd..f990335 100644
+>>> --- a/arch/arm/configs/multi_v7_defconfig
+>>> +++ b/arch/arm/configs/multi_v7_defconfig
+>>> @@ -411,6 +411,7 @@ CONFIG_SPI_S3C64XX=m
+>>>   CONFIG_SPI_SH_MSIOF=m
+>>>   CONFIG_SPI_SH_HSPI=y
+>>>   CONFIG_SPI_SIRF=y
+>>> +CONFIG_SPI_STM32=y
+>>>   CONFIG_SPI_SUN4I=y
+>>>   CONFIG_SPI_SUN6I=y
+>>>   CONFIG_SPI_TEGRA114=y
+>>>
+>> 
+>> Driver which are are not "vital" to boot STM32 platform should be 
+>> defined as module. It's the case for this one. Isn't ?
+>> 
+> 
+> You're right. I'll send v2 with CONFIG_SPI_STM32=m ASAP. Should I resend
+> the whole patchset (with DT), or just this patch and you take the DT
+> patches as they are ?
+> 
 
-> ...to this patch.  Speaking of which it might be getting very close to
-> time for this series to land along with David's other series, AKA:
+No, you can just resend this one. I will take DT part from this version.
 
-> * [1/2] regulator: of: add property for allowed modes specification
->   https://patchwork.kernel.org/patch/10395731/
+Regards
+Alex
 
-> * [2/2] regulator: of: add support for allowed modes configuration
->   https://patchwork.kernel.org/patch/10395725/
-
-Please do not submit new versions of already applied patches, please
-submit incremental updates to the existing code.  Modifying existing
-commits creates problems for other users building on top of those
-commits so it's best practice to only change pubished git commits if
-absolutely essential.
-
---at6+YcpfzWZg/htY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsyLIQACgkQJNaLcl1U
-h9A3mQf7BbinIiX/WnJKrr4+my+I3hHicVubnBVayQLn5dXhoqJdolPD/4I39ig/
-0OBI2Xz6IAuEByEmZKC5cFlV9x7VQaMvfPjjD9vYQJbQmAkd1kwUrKrutjXhtkKn
-yStHJBE9mxuxzbIRnonjAwj+TGSGRsnRhVrZaO8xJ8MejTntnCKtSXA55XdqZ5QT
-e0IckrY+pD5C1sC9gvCbr6tgHyYRpml7ZkhC6JGPwseoFXVvv2lZdmR6iZ7SUqKy
-RzMv6XpdOWESd7I8MMbkYKntbOENYY2hyJRPUApm391hcHFWoOpYi7cO+2K/VDI7
-2JrEXzzQX5KyGo80Yy648/8tlqxYqQ==
-=e0zs
------END PGP SIGNATURE-----
-
---at6+YcpfzWZg/htY--
+> Regards,
+> Amelie
