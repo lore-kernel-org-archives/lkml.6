@@ -3,137 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD2DC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D617CC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3491626AE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:36:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3491626AE7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 99F5026B83
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:37:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F5026B83
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935732AbeFZNgd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:36:33 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39876 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934583AbeFZNgc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:36:32 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w14-v6so1014377eds.6
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 06:36:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Zv2Gnj5MM3N4KJAlXi63QYIHZ1k+lWfFKCBz6HuB8KY=;
-        b=oaAJnFfMf49HKhQ7F0aG7fiAWm3wGa7RFlkgDcZ9f/UWd3jJS6tT7CoDzhM2SZbCbo
-         gZRVxZXAwOQHtvSMb1d5R4s7/DXKQsD5LuqYWIdSmT3Hs+o5RCFcG+mEVzcsPp2NZgXE
-         EF/XUhpcOEXeR7bB269lBUcDIttd/RBRyGAttyE/mOZy/hEvq5b+w95+xWbXVfK4lTTz
-         zybjpxNfJyfeomAva4thv7jo6/aSxPQWiWM64TL4KA+ehy+pTcw2YxoliQEvDz1OhXuC
-         +o3DWyi26Bh/XASTFhVX7e+S59Yee4N1xfu4O+r77OEhdbXAkSEOnrKk8ElpQg3+v4IY
-         23jw==
-X-Gm-Message-State: APt69E07retm5y9Og3BtCVsvePhKSmE9JiJW3CMvUd6KzE8TGPQ0jTUh
-        F5KZxRaQOUb7iLxwSZAyaQDSi5x5eRM=
-X-Google-Smtp-Source: AAOMgpcK7h7J0WB9qSO7IyhItqZs2pFWx4alMmaX5etD2o3GLfFfA+lCvJsqHjs/tDH7dk35ssuMNQ==
-X-Received: by 2002:a50:9eac:: with SMTP id a41-v6mr1892191edf.92.1530020190583;
-        Tue, 26 Jun 2018 06:36:30 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id a32-v6sm867389edd.54.2018.06.26.06.36.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 06:36:29 -0700 (PDT)
-Subject: Re: simple-framebuffer enquire
-To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Cc:     artlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <CAOf5uwmSeugMHBBFc8ZQKY=wEsVD-YwD=YSWi=XbysU58Gp=Ww@mail.gmail.com>
- <9fb661e6-482b-76e0-2af0-a62a70e5606d@redhat.com>
- <CAOf5uwk2cf_+27nk9i9MQmbfJ8LCfPYopkcX__9M64jMYmhu1A@mail.gmail.com>
- <CAOf5uwkEuDgAJ7e8rNFyiKpUZPA3NhQGREtOGsm1EVSofW3rzQ@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <233d6808-4d44-9e47-7e3f-4f35cf731706@redhat.com>
-Date:   Tue, 26 Jun 2018 15:36:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S965440AbeFZNhE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:37:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:51539 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934583AbeFZNhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:37:02 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41FRsl6NtMz9ryk;
+        Tue, 26 Jun 2018 23:36:59 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        sachinp <sachinp@linux.vnet.ibm.com>,
+        sim <sim@linux.vnet.ibm.com>,
+        manvanth <manvanth@linux.vnet.ibm.com>,
+        Brian King <brking@linux.vnet.ibm.com>
+Subject: Re: [next-20180601][nvme][ppc] Kernel Oops is triggered when creating lvm snapshots on nvme disks
+In-Reply-To: <1530003645.24245.7.camel@abdul.in.ibm.com>
+References: <1530003645.24245.7.camel@abdul.in.ibm.com>
+Date:   Tue, 26 Jun 2018 23:36:58 +1000
+Message-ID: <87d0wd7jph.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <CAOf5uwkEuDgAJ7e8rNFyiKpUZPA3NhQGREtOGsm1EVSofW3rzQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Abdul Haleem <abdhalee@linux.vnet.ibm.com> writes:
 
-On 26-06-18 15:29, Michael Nazzareno Trimarchi wrote:
-> Hi
-> 
-> to be more specific
-> 
-> On Tue, Jun 26, 2018 at 3:06 PM, Michael Nazzareno Trimarchi
-> <michael@amarulasolutions.com> wrote:
->> Hi
->>
->> On Tue., 26 Jun. 2018, 12:01 pm Hans de Goede, <hdegoede@redhat.com> wrote:
->>>
->>> Hi,
->>>
->>> On 25-06-18 15:29, Michael Nazzareno Trimarchi wrote:
->>>> Hi Hans
->>>>
->>>> In order to let it even registered the simplefb I have added this
->>>> change. According on what I understand
->>>> from the code seems that this is the way to acquire memory with the
->>>> correct attribute
->>>>
->>>> diff --git a/drivers/video/fbdev/simplefb.c
->>>> b/drivers/video/fbdev/simplefb.c
->>>> index a3c44ec..7e61ce3 100644
->>>> --- a/drivers/video/fbdev/simplefb.c
->>>> +++ b/drivers/video/fbdev/simplefb.c
->>>> @@ -466,8 +466,8 @@ static int simplefb_probe(struct platform_device
->>>> *pdev)
->>>>
->>>>           info->fbops = &simplefb_ops;
->>>>           info->flags = FBINFO_DEFAULT | FBINFO_MISC_FIRMWARE;
->>>> -       info->screen_base = ioremap_wc(info->fix.smem_start,
->>>> -                                      info->fix.smem_len);
->>>> +       info->screen_base = arch_memremap_wb(info->fix.smem_start,
->>>> +                                            info->fix.smem_len);
->>>
->>> I'm not sure why you need this?  wb certainly is not optimal
->>> for a framebuffer, the existing wc mapping is really what you
->>> want.
->>>
->>
->> Well in this way raise a WARN and get a nice NULL on memory remap on imx6ull
->> SoC
->>
-> 
-> [    0.397484] WARNING: CPU: 0 PID: 1 at arch/arm/mm/ioremap.c:303
-> __arm_ioremap_pfn_caller+0x80/0x1cc
+> Greeting's
+>
+> Kernel Oops is seen on 4.17.0-rc7-next-20180601 kernel on a bare-metal
+> machine when running lvm snapshot tests on nvme disks.
+>
+> Machine Type: Power 8 bare-metal
+> kernel : 4.17.0-rc7-next-20180601
+> test:  
+> $ pvcreate -y /dev/nvme0n1
+> $ vgcreate avocado_vg /dev/nvme0n1
+> $ lvcreate --size 1.4T --name avocado_lv avocado_vg -y
+> $ mkfs.ext2 /dev/avocado_vg/avocado_lv
+> $ lvcreate --size 1G --snapshot --name avocado_sn /dev/avocado_vg/avocado_lv -y
+> $ lvconvert --merge /dev/avocado_vg/avocado_sn
 
+> the last command results in Oops:
+>
+> Unable to handle kernel paging request for data at address 0x000000d0
+> Faulting instruction address: 0xc0000000002dced4
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> LE SMP NR_CPUS=2048 NUMA PowerNV
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in: dm_snapshot dm_bufio nvme bnx2x iptable_mangle
+> ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
+> nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4
+> xt_tcpudp tun bridge stp llc iptable_filter dm_mirror dm_region_hash
+> dm_log dm_service_time vmx_crypto powernv_rng rng_core dm_multipath
+> kvm_hv binfmt_misc kvm nfsd ip_tables x_tables autofs4 xfs lpfc
+> crc_t10dif crct10dif_generic mdio nvme_fc libcrc32c nvme_fabrics
+> nvme_core crct10dif_common [last unloaded: nvme]
+> CPU: 70 PID: 157763 Comm: lvconvert Not tainted 4.17.0-rc7-next-20180601-autotest-autotest #1
+> NIP:  c0000000002dced4 LR: c000000000244d14 CTR: c000000000244cf0
+> REGS: c000001f81d6b5a0 TRAP: 0300   Not tainted  (4.17.0-rc7-next-20180601-autotest-autotest)
+> MSR:  900000010280b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22442444  XER: 20000000
+> CFAR: c000000000008934 DAR: 00000000000000d0 DSISR: 40000000 SOFTE: 0
+> GPR00: c000000000244d14 c000001f81d6b820 c00000000109c400 c000003c9d080180
+> GPR04: 0000000000000001 c000001fad510000 c000001fad510000 0000000000000001
+> GPR08: 0000000000000000 f000000000000000 f000000000000008 0000000000000000
+> GPR12: c000000000244cf0 c000001ffffc4f80 00007fffa0e31090 00007fffd9d9b470
+> GPR16: 0000000000000000 000000000000005c 00007fffa0e3a5b0 00007fffa0e62040
+> GPR20: 0000010014ad7d50 0000010014ad7d20 00007fffa0e64210 0000000000000001
+> GPR24: 0000000000000000 c00000000081bae0 c000001ed2461b00 d00000000f859d08
+> GPR28: c000003c9d080180 c000000000244d14 0000000000000001 0000000000000000
+> NIP [c0000000002dced4] kmem_cache_free+0x1a4/0x2b0
+> LR [c000000000244d14] mempool_free_slab+0x24/0x40
 
-This is causes by a mismatch in memory attributes, which means the
-memory is already mapped by the kernel as regular RAM and may
-already be used for other purposes by the kernel!
+Are you running with slub debugging enabled?
+Try booting with slub_debug=FZP
 
-Memory used by a simplefb framebuffer must be reserved by the
-bootloader, so that it does not get used by the kernel as regular
-RAM. See e.g.:
-
-http://git.denx.de/?p=u-boot.git;a=blob;f=drivers/video/sunxi/sunxi_display.c
-
-Near the end of the file where the framebuffer RAM gets excluded from
-the memory-range reported to the kernel as usable RAM. Note this relies
-on the u-boot sunxi video code putting the framebuffer at the end of the
-RAM.
-
-Regards,
-
-Hans
+cheers
