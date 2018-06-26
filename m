@@ -2,113 +2,120 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8F3C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 846A8C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC202241CF
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 261B02646D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:59:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ofZmo0/v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC202241CF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="scO5jOmF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 261B02646D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755886AbeFZCqX (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 22:46:23 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41498 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755848AbeFZCqV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 22:46:21 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 21-v6so3870655oip.8
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 19:46:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OzBmhIJfAsVeBzxgrm8gIPWnnYbiLu0ldeO1S5DsT2E=;
-        b=ofZmo0/voErzFZ3IpaK5RMnKcZRmY5BYUFmXeR2F9pDttZGjfViZE4pupYv5oPbi1I
-         1TgK8pM4R9U4aaEr14d1GKOuEz1lnC64/WdCr2jCEnZHt64nLhENiF/ekX1bLxOxO4bb
-         49SLBofHeVK8vAbzArMxl0vwQXdzG5YGmxA3vmoIJ1Bms3FkMGYvnBv4/btAcdq3sceK
-         xA2a2x64p8xuAY7vJi0XCHzQzg2CQyOIFC45tUKHRBgzetBv4nZnaZLLiICK5xuSjHqN
-         6H3yF7I21p5x8JpVeetDViSoy2US5W7AccZdwrHxW1aIT2QZJCFQOyxJytCeetvrkA8m
-         UjSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OzBmhIJfAsVeBzxgrm8gIPWnnYbiLu0ldeO1S5DsT2E=;
-        b=Klaqrbm8PBG42wTYcriGg7KaqvXbzIWrfM3YpxNIDmmZFF+6FK6OXnrb9KvIg29HCe
-         ktOQ0yg3l7Z4sh2YlNlfBIsiFbIEirAGQnF/OeCOFkLimWtNbg9boOJZqx8rvIH06cBB
-         aEE9KC59SZRpeUfcsGvfTYAyH9Q/0OLoQbU/93orsmD7DmwwtXDc4Ex4a7LHPdKSznZ2
-         CShCBHfI9ENp84uCjdlkcr5ml3te7RCdnnggAl6Oy7VwRzZJHYq440F6RwAupVlRCelv
-         ZNUnuTLsNk9XvBqe2UDsAG1RbelPTmXffBp+Vnalr4ZDVPclumKJIM/4kZ1msYJPgSSE
-         333A==
-X-Gm-Message-State: APt69E3Vc3Bjai6tjG0V52nP7DEoz+QXISq3edEz2SVqk2ewPzUsxHBT
-        IftqzqBY6aW6m6YrF3vJd12xsabKuatexxmi0mrAZZ0S
-X-Google-Smtp-Source: AAOMgpfqIGHEjuEqfBINciovziEyeINMswDeDEVfIHTLHD8vysqSJu+hNFsjb2gEiGmi5cPlDVpD33peLPNQSqbkl2A=
-X-Received: by 2002:aca:5bd5:: with SMTP id p204-v6mr8848946oib.91.1529981180502;
- Mon, 25 Jun 2018 19:46:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-In-Reply-To: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 26 Jun 2018 04:46:08 +0200
-Message-ID: <CAG48ez2puLWrDDPg=ighCY+yxFoP-nN97MqVseqYabBad+eKmg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Control Flow Enforcement - Part (3)
-To:     yu-cheng.yu@intel.com
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
+        id S965275AbeFZC7T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 22:59:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965232AbeFZC7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 22:59:18 -0400
+Received: from localhost.localdomain (h2133.porttelecom.ru [193.189.69.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D11BF257C6;
+        Tue, 26 Jun 2018 02:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529981958;
+        bh=gFrEUNKK5Jvn4ekydSEjv5zlBq+1Gix6/pSB6hRuoXY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=scO5jOmFoZDfvrN21SljU6rSm/Hyy7a6e+uMOcfrJE8uAxP/AiioMv+nFBNBm/4Dg
+         qLaGbEL9Fr53lOQH2FBeBrbKXAP9V2aAnI8zTc7aEUAIS3ua2lqX6m9U1nxjsHykHP
+         7pnTcRxoxB5n+Mv+Ajbheb7bZSvur9KmCSMuRMg0=
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Joel Fernandes <joel.opensrc@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>,
+        Paul Mackerras <paulus@samba.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, hjl.tools@gmail.com,
-        vedvyas.shanbhogue@intel.com, ravi.v.shankar@intel.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Rich Felker <dalias@libc.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [GIT PULL] breakpoint: Rework arch validation v4
+Date:   Tue, 26 Jun 2018 04:58:47 +0200
+Message-Id: <1529981939-8231-1-git-send-email-frederic@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 4:45 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->
-> This series introduces CET - Shadow stack
->
-> At the high level, shadow stack is:
->
->         Allocated from a task's address space with vm_flags VM_SHSTK;
->         Its PTEs must be read-only and dirty;
->         Fixed sized, but the default size can be changed by sys admin.
->
-> For a forked child, the shadow stack is duplicated when the next
-> shadow stack access takes place.
->
-> For a pthread child, a new shadow stack is allocated.
->
-> The signal handler uses the same shadow stack as the main program.
->
-> Yu-cheng Yu (10):
->   x86/cet: User-mode shadow stack support
->   x86/cet: Introduce WRUSS instruction
->   x86/cet: Signal handling for shadow stack
->   x86/cet: Handle thread shadow stack
->   x86/cet: ELF header parsing of Control Flow Enforcement
->   x86/cet: Add arch_prctl functions for shadow stack
->   mm: Prevent mprotect from changing shadow stack
->   mm: Prevent mremap of shadow stack
->   mm: Prevent madvise from changing shadow stack
->   mm: Prevent munmap and remap_file_pages of shadow stack
+Ingo,
 
-Shouldn't patches like these be CC'ed to linux-api@vger.kernel.org?
+Please pull the perf/breakpoint-v4 branch that can be found at:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
+	perf/breakpoint-v4
+
+HEAD: ba25ee9c7b3ef1543c2a24a7ca6a621433803ee4
+
+Only change since v3 is a rebase against latest tip:perf/core
+
+---
+When we modify a hardware breakpoint, the architecture code fills up
+the architecture data as the validation of generic attributes progresses.
+If something goes wrong in the middle, the architecture data changes
+aren't rolled back and we are left with a halfway fiddled breakpoint.
+
+This set fixes the various misdesigns that back this bad behaviour.
+
+Thanks,
+	Frederic
+---
+
+Frederic Weisbecker (12):
+      perf/breakpoint: Split attribute parse and commit
+      perf/breakpoint: Pass arch breakpoint struct to arch_check_bp_in_kernelspace()
+      x86: Implement hw_breakpoint_arch_parse()
+      powerpc: Implement hw_breakpoint_arch_parse()
+      arm: Implement hw_breakpoint_arch_parse()
+      arm64: Implement hw_breakpoint_arch_parse()
+      sh: Remove "struct arch_hw_breakpoint::name" unused field
+      sh: Implement hw_breakpoint_arch_parse()
+      xtensa: Implement hw_breakpoint_arch_parse()
+      perf/breakpoint: Remove default hw_breakpoint_arch_parse()
+      perf/breakpoint: Pass new breakpoint type to modify_breakpoint_slot()
+      perf/breakpoint: Clean up and consolidate modify_user_hw_breakpoint_check()
+
+
+ arch/arm/include/asm/hw_breakpoint.h     |   7 +-
+ arch/arm/kernel/hw_breakpoint.c          |  78 +++++++++---------
+ arch/arm64/include/asm/hw_breakpoint.h   |   7 +-
+ arch/arm64/kernel/hw_breakpoint.c        |  86 ++++++++++----------
+ arch/powerpc/include/asm/hw_breakpoint.h |   7 +-
+ arch/powerpc/kernel/hw_breakpoint.c      |  47 ++++++-----
+ arch/sh/include/asm/hw_breakpoint.h      |   8 +-
+ arch/sh/kernel/hw_breakpoint.c           |  53 ++++++-------
+ arch/x86/include/asm/hw_breakpoint.h     |   7 +-
+ arch/x86/kernel/hw_breakpoint.c          | 131 ++++++++++++++++---------------
+ arch/xtensa/include/asm/hw_breakpoint.h  |   7 +-
+ arch/xtensa/kernel/hw_breakpoint.c       |  40 ++++------
+ kernel/events/hw_breakpoint.c            |  92 +++++++++++++---------
+ 13 files changed, 294 insertions(+), 276 deletions(-)
