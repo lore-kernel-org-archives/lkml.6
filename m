@@ -2,126 +2,151 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCB0C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4331AC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 133B726757
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:08:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 133B726757
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E419F26768
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:14:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GcrVpNQ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E419F26768
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933644AbeFZJIe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:08:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41298 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752730AbeFZJIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:08:31 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 898F681A4EAD;
-        Tue, 26 Jun 2018 09:08:30 +0000 (UTC)
-Received: from [10.36.112.56] (ovpn-112-56.ams2.redhat.com [10.36.112.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 014E72026D6A;
-        Tue, 26 Jun 2018 09:08:27 +0000 (UTC)
-Subject: Re: [PATCH v2] kvm: x86: mmu: Add cast to negated bitmasks in
- update_permission_bitmask()
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Joe Perches <joe@perches.com>
-References: <20180619192504.180479-1-mka@chromium.org>
- <4dd99306-4fea-24b2-4bea-5b7927ea5e79@redhat.com>
- <20180625173502.GD129942@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <f8df7ae5-e1e8-72b3-2f01-49d016b75719@redhat.com>
-Date:   Tue, 26 Jun 2018 11:08:26 +0200
+        id S933185AbeFZJOx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:14:53 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41468 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932353AbeFZJOv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 05:14:51 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5Q9Ecak021391;
+        Tue, 26 Jun 2018 09:14:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=RiKVJrMLUbUf4w3eqQBCxYpMa/N8hLVV4DCM37pEFEo=;
+ b=GcrVpNQ7vW7mUdSUWtk+mifMoNllDwBkY0brAUjM0HIEq61vyVE9z0t72eYCnMc2UYWj
+ iAp8vqwhsdSW3typbYrg5yQHU0pn4km3orMefu6nNYX+/qLb4DjA2nksi1pRUkYIP9wI
+ MTftOGEp0W06zMNQ9ANOcpZVteLKv7bFnsPxazutRXzLfVwir5k7YaUYc755LD4J4OhB
+ A5QeNgpGesrk2fhZCcfaccAmA4adty13f9YPV97vEb7+/CHCZOeLWWiqaQsnWfoLFtCc
+ /uKJR8A3mKslZgg1Av+xU9Nl7BuccUwWOyo6+phh08upG7QUQEQ9DY7CmrTPuMWxcWNv OA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2ju242b40x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Jun 2018 09:14:42 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5Q9Efgf021773
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Jun 2018 09:14:41 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5Q9EeMi027875;
+        Tue, 26 Jun 2018 09:14:40 GMT
+Received: from [10.186.53.178] (/10.186.53.178)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 26 Jun 2018 02:14:40 -0700
+Subject: Re: general protection fault in find_device
+To:     Nikolay Borisov <nborisov@suse.com>, dsterba@suse.cz, clm@fb.com,
+        dsterba@suse.com, jbacik@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000e5da7e056ee43449@google.com>
+ <45200a61-58c3-b7f0-d8e4-5108f8369ac5@suse.com>
+ <20180618133228.GL24375@twin.jikos.cz>
+ <d1bbc78f-da5d-1f87-e9f5-a6bec6650e9a@suse.com>
+From:   Anand Jain <anand.jain@oracle.com>
+Message-ID: <d59c40af-3659-0cc7-58d6-8a2d6568b60d@oracle.com>
+Date:   Tue, 26 Jun 2018 17:17:48 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180625173502.GD129942@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <d1bbc78f-da5d-1f87-e9f5-a6bec6650e9a@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 26 Jun 2018 09:08:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 26 Jun 2018 09:08:30 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8935 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806260105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/2018 19:35, Matthias Kaehlcke wrote:
-> commit e2a5dca753d1cdc3212519023ed8a13e13f5495b
-> Author: Borislav Petkov <bp@suse.de>
-> Date:   Thu Nov 23 10:19:51 2017 +0100
+
+
+(Sorry for the delay in replay due to my vacation).
+
+Thanks Nikolay. more below.
+
+On 06/18/2018 09:43 PM, Nikolay Borisov wrote:
 > 
->     x86/umip: Fix insn_get_code_seg_params()'s return value
+> 
+> On 18.06.2018 16:32, David Sterba wrote:
+>> On Mon, Jun 18, 2018 at 10:03:18AM +0300, Nikolay Borisov wrote:
+>>> So this suggests some inconsistency on fs_devices->devices list. On a
+>>> quick look indeed it doesn't seem clear what the locking rules for this
+>>> list are. In device_list_add in the !device case a device is added with
+>>> fs_devices->device_list_Mutex held and using list_add_rcu. In the same
+>>> function if we want to read the list ie invoke find_devices (because we
+>>> have found an fsid) we are using plain list_for_each_entry (ie not the
+>>> _rcu version and i don't see device_list_mutex being held while
+>>> iterating the list). Additionally in btrfs_free_extra_devids the
+>>> fs_devices->devices list is iterated with uuid_mutex being held and not
+>>> device_list_mutex. In open_fs_devices we don't get any protection
+>>> whatsoever while reading the list.
+>>
+>> The uuid_mutex or device_list_mutex is provided by a caller up the
+>> stack.
+>>
+>>> Same thing in
+>>> btrfs_find_next_active_device. If the list is supposed to be
+>>> RCU-protected then the rules are:
+>>>
+>>> 1. There needs to be an out of band (ie not RCU) mutual exclusion of
+>>> modifiers
+>>
+>> that's device_list_mutex for fs_devices::devices
+>>
+>>> 2. Iterating the list should use _rcu list primitives.
+>>>
+>>> Currently I don't see those 2 invariants being enforced in every code path.
+>>
+>> Where is it not enforced for example?
+> 
+> Admittedly I didn't check the whole call chain but for example in
+> find_device it's used "naked". Perhaps putting some lockdep_assert in
+> various places dealing with fs_devices->devices list would help ?
+>>
+>> If the device_list_mutex is held, list traversal does not use
+>> list_for_each_entry_rcu, otherwise it does (eg the DEV_INFO ioctl or
+>> btrfs_show_devname).
+>>
+>> The problem that triggers this report is IMO in device_list_add that
+>> uses the device list unprotected. Anand sent patches for that, but they
+>> were titled as 'cleanups' so I skipped them for the merge window.
 
-So this is the closest thing to a bug (it could have been a real bug
-if the caller checked ret < 0 instead of ret == -EINVAL).  *However*
-the warning there is a bit misleading too.
+  Ah. sorry to confuse you. Will consolidate fixes into github
+  (also reviewing David's fixes as well) and will use syz to confirm.
 
-The compiler does absolutely nothing to tell you that the return value
-is in the [-EINVAL,132] range and therefore it should have been int.
-_That_ would have been a useful warning.  Instead, it says:
+Thanks, Anand
 
-      arch/x86/lib/insn-eval.c:780:10: warning: implicit conversion from 'int' to 'char'
-              changes value from 132 to -124 [-Wconstant-conversion]
-                      return INSN_CODE_SEG_PARAMS(4, 8);
-                      ~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
-      ./arch/x86/include/asm/insn-eval.h:16:57: note: expanded from macro 'INSN_CODE_SEG_PARAMS'
-      #define INSN_CODE_SEG_PARAMS(oper_sz, addr_sz) (oper_sz | (addr_sz << 4))
-    
-If you changed the return value from char to u8, you'd break the "return
--EINVAL;" case.  The compiler would probably complain in turn that this
-is not the right fix, by signaling a warning on "return -EINVAL;", but the
-warning could really be done better.
+>> Candidate fixes are:
+>>
+>> https://patchwork.kernel.org/patch/10437705/
+>> https://patchwork.kernel.org/patch/10437713/
+> Yep those 2 definitely look like fixing unlocked accesses to
+> fs_devices->devices list
 
-Thanks,
 
-Paolo
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-btrfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
