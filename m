@@ -2,214 +2,152 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1555C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C96C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157AA224D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:44:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tpzFKbzc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157AA224D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B1FCE26B9E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:52:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FCE26B9E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754680AbeFZWoX (ORCPT
+        id S1754847AbeFZWwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 18:44:23 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:38370 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751958AbeFZWoU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 18:44:20 -0400
-Received: by mail-vk0-f68.google.com with SMTP id b77-v6so39222vkb.5;
-        Tue, 26 Jun 2018 15:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KcnfhAEDq8Fq7u0t7cuUlX7Y/QOr8EX8EmjQxvpNdWM=;
-        b=tpzFKbzcAZ0WJTH2Ha7ASekkV4wpsOTXijPbJQy1xuuG5rgt8k0QA35ltC0FbmnFO5
-         SkN5SxaZC5OYtdzPqqnpQk8OmtzctBoBohPo+DTPS4ilmW2kxi/uITvXb3oQLB6Pczvg
-         cJSVhsT+68bXG1jEF3RUPpB12KC29m9vU49yZIwwaOLJ9ypBnUA6eGcikE1fxDJrgFss
-         LeBMgog9p4hyUwmNiuRqte0RSGuqLHzZruYpmzUfHLWnSfOfjVH6qwjCCT8iyrAMUY+p
-         YyTVuBwKYh9cfw1J3wcGll6+V/GaQLkrtCaSgLUR/Z690n2mzO3mwLy7EwfB9Y2LerQw
-         639A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KcnfhAEDq8Fq7u0t7cuUlX7Y/QOr8EX8EmjQxvpNdWM=;
-        b=UqbFzeNjMnzSUo4mAiGKj2JAur3r35bT6KajO3TreumVypQvt2nk4PO3L7oJt/s4mS
-         blzZxh5kPQkSGw3+NitGK7G84xSr9qb7Pz/ZsA2BWfaAtcNHr6f+FY8+Vub8EhmBe6Hn
-         ah9xcHBnHWr7AaSQfUMxTZmH6MUAk+Sswj+5IlrBxyvxzbKmfuvtOdxKqBeMESiJCHvT
-         vYp5pF/tTcdt+q+Q+ChTBYGjfxWmgF+mJUoyX/NnAiPqcoC4d0Sf8V4wnbaaZVlRIxLm
-         5qJZ89CWoLWVxbw/7qmZ/6ruG7wlixA3fRbyriozM1Gs50+iZ5Ok1t0P2M/1dQ8yVfuj
-         0ndg==
-X-Gm-Message-State: APt69E3NPErq0smDHvYT5llEe8M0ZMcUqr4YJ2UF3gRz1A6HZmaYflCS
-        uP3VcETJpxvLc3429Qh5+mD7cFZfWQ6Nk4Kqzu0=
-X-Google-Smtp-Source: AAOMgpfNSlCS+nl8NZ5m1KkqFIR7GOrY3t+59LoREZSz6rWADC89Gc5CgxlnmsdYGNktArlcTZ86unUgwyPMxmHdy0I=
-X-Received: by 2002:a1f:4a04:: with SMTP id x4-v6mr2198972vka.88.1530053059772;
- Tue, 26 Jun 2018 15:44:19 -0700 (PDT)
+        Tue, 26 Jun 2018 18:52:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35544 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751143AbeFZWwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 18:52:38 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F218A40201CE;
+        Tue, 26 Jun 2018 22:52:37 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B3B512026D6A;
+        Tue, 26 Jun 2018 22:52:37 +0000 (UTC)
+Subject: Re: [PATCH] get_maintainer.pl: Add optional
+ .get_maintainer.MAINTAINERS override
+To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+Cc:     dzickus@redhat.com, jtoppins@redhat.com
+References: <20180626182505.4176-1-prarit@redhat.com>
+ <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <98fe3602-864a-3963-ac56-a743f1b61700@redhat.com>
+Date:   Tue, 26 Jun 2018 18:52:37 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180617051608.2128-1-sj38.park@gmail.com> <20180626004738.GA20783@X58A-UD3R>
- <alpine.DEB.2.20.1806261218490.1528@hxeon> <20180626045609.GB20783@X58A-UD3R>
- <alpine.DEB.2.20.1806261406220.1528@hxeon> <20180626065827.GC20783@X58A-UD3R>
- <20180626122242.GX3593@linux.vnet.ibm.com> <CAEjAshpv13xoZ7m6=vX=3o+iUQEG7ExCg8BpPDpOY5ZW3+gxQA@mail.gmail.com>
- <20180626220649.GN3593@linux.vnet.ibm.com>
-In-Reply-To: <20180626220649.GN3593@linux.vnet.ibm.com>
-From:   SeongJae Park <sj38.park@gmail.com>
-Date:   Wed, 27 Jun 2018 07:43:52 +0900
-Message-ID: <CAEjAshoQedrCzQmSDV-0tnmUPPa8s6QbpYepgMrN7q-SZGLC+g@mail.gmail.com>
-Subject: Re: [PATCH] locking/memory-barriers.txt/kokr: Update Korean
- translation to fix broken DMA vs. MMIO ordering example
-To:     Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc:     Byungchul Park <byungchul.park@lge.com>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+In-Reply-To: <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 26 Jun 2018 22:52:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 26 Jun 2018 22:52:38 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCBKdW4gMjcsIDIwMTggYXQgNzowNCBBTSBQYXVsIEUuIE1jS2VubmV5DQo8cGF1bG1j
-a0BsaW51eC52bmV0LmlibS5jb20+IHdyb3RlOg0KPg0KPiBPbiBUdWUsIEp1biAyNiwgMjAxOCBh
-dCAwOToyNTowOFBNICswOTAwLCBTZW9uZ0phZSBQYXJrIHdyb3RlOg0KPiA+IEhlbGxvIFBhdWws
-DQo+ID4NCj4gPiBPbiBUdWUsIEp1biAyNiwgMjAxOCBhdCA5OjIwIFBNIFBhdWwgRS4gTWNLZW5u
-ZXkNCj4gPiA8cGF1bG1ja0BsaW51eC52bmV0LmlibS5jb20+IHdyb3RlOg0KPiA+ID4NCj4gPiA+
-IE9uIFR1ZSwgSnVuIDI2LCAyMDE4IGF0IDAzOjU4OjI3UE0gKzA5MDAsIEJ5dW5nY2h1bCBQYXJr
-IHdyb3RlOg0KPiA+ID4gPiBPbiBUdWUsIEp1biAyNiwgMjAxOCBhdCAwMjoxMDoxN1BNICswOTAw
-LCBTZW9uZ0phZSBQYXJrIHdyb3RlOg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBP
-biBUdWUsIDI2IEp1biAyMDE4LCBCeXVuZ2NodWwgUGFyayB3cm90ZToNCj4gPiA+ID4gPg0KPiA+
-ID4gPiA+ID4gT24gVHVlLCBKdW4gMjYsIDIwMTggYXQgMTI6MjE6MjNQTSArMDkwMCwgc2pwYXJr
-IHdyb3RlOg0KPiA+ID4gPiA+ID4gPiBIZWxsbyBCeXVuZ2NodWwsDQo+ID4gPiA+ID4gPiA+DQo+
-ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IE9uIFR1ZSwgMjYgSnVuIDIwMTgsIEJ5dW5nY2h1
-bCBQYXJrIHdyb3RlOg0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IE9uIFN1biwgSnVu
-IDE3LCAyMDE4IGF0IDAyOjE2OjA4UE0gKzA5MDAsIFNlb25nSmFlIFBhcmsgd3JvdGU6DQo+ID4g
-PiA+ID4gPiA+ID4gPiBUcmFuc2xhdGUgdGhpcyBjb21taXQgdG8gS29yZWFuOg0KPiA+ID4gPiA+
-ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiA+ICAgNTg0NjU4MWUzNTYzICgibG9ja2luZy9tZW1v
-cnktYmFycmllcnMudHh0OiBGaXggYnJva2VuIERNQSB2cy4gTU1JTyBvcmRlcmluZyBleGFtcGxl
-IikNCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IEhpIFNlb25nSmFlLA0KPiA+ID4g
-PiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gWW91IGtlZXAgZG9pbmcgZ29vZCBqb2JzIDspDQo+
-ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiBJIGJlbGlldmUgaXQgd291bGQgYmUgYmV0
-dGVyIGlmIHlvdSBjb25zaWRlciB0aGUgbGl0dGxlIHRoaW5ncyBiZWxvdw0KPiA+ID4gPiA+ID4g
-PiA+IG1vcmUuIFdoYXQgZG8geW91IHRoaW5rIGFib3V0IGl0LCBTZW9uZ0phZT8NCj4gPiA+ID4g
-PiA+ID4NCj4gPiA+ID4gPiA+ID4gVGhhbmsgeW91IGZvciBncmVhdCBjb21tZW50cyENCj4gPiA+
-ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+ID4gU2lnbmVkLW9mZi1i
-eTogU2VvbmdKYWUgUGFyayA8c2ozOC5wYXJrQGdtYWlsLmNvbT4NCj4gPiA+ID4gPiA+ID4gPiA+
-IC0tLQ0KPiA+ID4gPiA+ID4gPiA+ID4gIERvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL2tvX0tS
-L21lbW9yeS1iYXJyaWVycy50eHQgfCAxNSArKysrKysrLS0tLS0tLS0NCj4gPiA+ID4gPiA+ID4g
-PiA+ICAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQ0KPiA+
-ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0
-aW9uL3RyYW5zbGF0aW9ucy9rb19LUi9tZW1vcnktYmFycmllcnMudHh0IGIvRG9jdW1lbnRhdGlv
-bi90cmFuc2xhdGlvbnMva29fS1IvbWVtb3J5LWJhcnJpZXJzLnR4dA0KPiA+ID4gPiA+ID4gPiA+
-ID4gaW5kZXggOTIxNzM5ZDAwZjY5Li5hZGEwYTcwOWNjZTEgMTAwNjQ0DQo+ID4gPiA+ID4gPiA+
-ID4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9rb19LUi9tZW1vcnktYmFycmll
-cnMudHh0DQo+ID4gPiA+ID4gPiA+ID4gPiArKysgYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9u
-cy9rb19LUi9tZW1vcnktYmFycmllcnMudHh0DQo+ID4gPiA+ID4gPiA+ID4gPiBAQCAtMTg5MSwx
-OSArMTg5MSwxOCBAQCBNYW5kYXRvcnkg67Cw66as7Ja065Ok7J2AIFNNUCDsi5zsiqTthZzsl5Ds
-hJzrj4QgVVAg7Iuc7Iqk7YWc7JeQ7ISc64+EIFNNUCDtmqgNCj4gPiA+ID4gPiA+ID4gPiA+ICAg
-ICAgICAgICAgIC8qIOyGjOycoOq2jOydhCDsiJjsoJUgKi8NCj4gPiA+ID4gPiA+ID4gPiA+ICAg
-ICAgICAgICAgIGRlc2MtPnN0YXR1cyA9IERFVklDRV9PV047DQo+ID4gPiA+ID4gPiA+ID4gPg0K
-PiA+ID4gPiA+ID4gPiA+ID4gLSAgICAgICAgICAgLyogTU1JTyDrpbwg7Ya17ZW0IOuUlOuwlOyd
-tOyKpOyXkCDqs7Xsp4Drpbwg7ZWY6riwIOyghOyXkCDrqZTrqqjrpqzrpbwg64+Z6riw7ZmUICov
-DQo+ID4gPiA+ID4gPiA+ID4gPiAtICAgICAgICAgICB3bWIoKTsNCj4gPiA+ID4gPiA+ID4gPiA+
-IC0NCj4gPiA+ID4gPiA+ID4gPiA+ICAgICAgICAgICAgIC8qIOyXheuNsOydtO2KuOuQnCDrlJTs
-iqTtgazrpr3thLDsnZgg65SU67CU7J207Iqk7JeQIOqzteyngCAqLw0KPiA+ID4gPiA+ID4gPiA+
-ID4gICAgICAgICAgICAgd3JpdGVsKERFU0NfTk9USUZZLCBkb29yYmVsbCk7DQo+ID4gPiA+ID4g
-PiA+ID4gPiAgICAgfQ0KPiA+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiA+ICAgICAg
-IGRtYV9ybWIoKSDripQg65SU7Iqk7YGs66a97YSw66Gc67aA7YSwIOuNsOydtO2EsOulvCDsnb3s
-lrTsmKTquLAg7KCE7JeQIOuUlOuwlOydtOyKpOqwgCDshozsnKDqtozsnYQNCj4gPiA+ID4gPiA+
-ID4gPiA+IC0gICAgIOuCtOuGk+yVmOydjOydhCDrs7TsnqXtlZjqsowg7ZWY6rOgLCBkbWFfd21i
-KCkg64qUIOuUlOuwlOydtOyKpOqwgCDsnpDsi6DsnbQg7IaM7Jyg6raM7J2EIOuLpOyLnA0KPiA+
-ID4gPiA+ID4gPiA+ID4gLSAgICAg6rCA7KGM7J2M7J2EIOuztOq4sCDsoITsl5Ag65SU7Iqk7YGs
-66a97YSw7JeQIOuNsOydtO2EsOqwgCDsk7DsmIDsnYzsnYQg67O07J6l7ZWp64uI64ukLiAgd21i
-KCkg64qUDQo+ID4gPiA+ID4gPiA+ID4gPiAtICAgICDsupDsi5wg7J286rSA7ISx7J20IOyXhuuK
-lCAoY2FjaGUgaW5jb2hlcmVudCkgTU1JTyDsmIHsl63sl5Ag7JOw6riw66W8IOyLnOuPhO2VmOq4
-sCDsoITsl5ANCj4gPiA+ID4gPiA+ID4gPiA+IC0gICAgIOy6kOyLnCDsnbzqtIDshLHsnbQg7J6I
-64qUIOuplOuqqOumrCAoY2FjaGUgY29oZXJlbnQgbWVtb3J5KSDsk7DquLDqsIAg7JmE66OM65CY
-7JeI7J2M7J2EDQo+ID4gPiA+ID4gPiA+ID4gPiAtICAgICDrs7TsnqXtlbTso7zquLAg7JyE7ZW0
-IO2VhOyalO2VqeuLiOuLpC4NCj4gPiA+ID4gPiA+ID4gPiA+ICsgICAgIOuCtOugpOuGk+yVmOyd
-hCDqsoPsnYQg67O07J6l7ZWY6rOgLCBkbWFfd21iKCkg64qUIOuUlOuwlOydtOyKpOqwgCDsnpDs
-i6DsnbQg7IaM7Jyg6raM7J2EIOuLpOyLnA0KPiA+ID4gPiA+ID4gPiA+ID4gKyAgICAg6rCA7KGM
-7J2M7J2EIOuztOq4sCDsoITsl5Ag65SU7Iqk7YGs66a97YSw7JeQIOuNsOydtO2EsOqwgCDsk7Ds
-mIDsnYQg6rKD7J2EIOuztOyepe2VqeuLiOuLpC4gIHdyaXRlbCgpDQo+ID4gPiA+ID4gPiA+ID4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgXg0KPiA+ID4gPiA+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOywuOqzoOuhnCwN
-Cj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gTmljZSBjb21tZW50LiAgVGhpcyB3aWxsIGVu
-aGFuY2UgdGhlIHJlYWRhYmlsaXR5IGEgbG90Lg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IENv
-dWxkIHlvdSBhZGQgdGhpcywgdG9vPyBBIHF1aXRlIGxpdHRsZSB0aGluZyB0aG8uDQo+ID4gPiA+
-ID4NCj4gPiA+ID4gPiBPb3BzLCBJIG1pc3NlZCB0aGF0LiAgU29ycnkuICBBdHRhY2hpbmcgdGhl
-IHBhdGNoIGJlbG93Lg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBUaGFua3MsIFNl
-b25nSmFlIFBhcmsNCj4gPiA+ID4NCj4gPiA+ID4gVGhhbmtzIGEgbG90LCBTZW9uZ0phZS4NCj4g
-PiA+ID4NCj4gPiA+ID4gQWNrZWQtYnk6IEJ5dW5nY2h1bCBQYXJrIDxieXVuZ2NodWwucGFya0Bs
-Z2UuY29tPg0KPiA+ID4NCj4gPiA+IFRoYW5rIHlvdSBib3RoIQ0KPiA+ID4NCj4gPiA+IFRoZSBw
-YXRjaCBiZWxvdyBpcyB0aGUgY29tcGxldGUgcGF0Y2gsIHNvIHRoYXQgSSBzaG91bGQgcmVwbGFj
-ZQ0KPiA+ID4gd2hhdCBJIGhhdmUgd2l0aCBpdCwgY29ycmVjdD8gIElmIG5vdCwgcGxlYXNlIGhl
-bHAgbWUgb3V0IGhlcmUuICA7LSkNCj4gPg0KPiA+IFllcywgY29ycmVjdCEgOikNCj4NCj4gTGlr
-ZSB0aGlzLCB0aGVuPw0KDQpZZXMsIG9mIGNvdXJzZSA7KQ0KDQoNClRoYW5rcywNClNlb25nSmFl
-IFBhcmsNCg0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIFRoYW54LCBQYXVsDQo+DQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPg0KPiBjb21t
-aXQgM2NiMGQ3NzAxYzRjZTY2NjhmYjUwOTZjOTBlYzZkNWI0YmY3MTYzOA0KPiBBdXRob3I6IFNl
-b25nSmFlIFBhcmsgPHNqMzgucGFya0BnbWFpbC5jb20+DQo+IERhdGU6ICAgU3VuIEp1biAxNyAx
-NDoxNjowOCAyMDE4ICswOTAwDQo+DQo+ICAgICBsb2NraW5nL21lbW9yeS1iYXJyaWVycy50eHQv
-a29rcjogVXBkYXRlIEtvcmVhbiB0cmFuc2xhdGlvbiB0byBmaXggYnJva2VuIERNQSB2cy4gTU1J
-TyBvcmRlcmluZyBleGFtcGxlDQo+DQo+ICAgICBUcmFuc2xhdGUgdGhpcyBjb21taXQgdG8gS29y
-ZWFuOg0KPg0KPiAgICAgICA1ODQ2NTgxZTM1NjMgKCJsb2NraW5nL21lbW9yeS1iYXJyaWVycy50
-eHQ6IEZpeCBicm9rZW4gRE1BIHZzLiBNTUlPIG9yZGVyaW5nIGV4YW1wbGUiKQ0KPg0KPiAgICAg
-U2lnbmVkLW9mZi1ieTogU2VvbmdKYWUgUGFyayA8c2ozOC5wYXJrQGdtYWlsLmNvbT4NCj4gICAg
-IFNpZ25lZC1vZmYtYnk6IFBhdWwgRS4gTWNLZW5uZXkgPHBhdWxtY2tAbGludXgudm5ldC5pYm0u
-Y29tPg0KPiAgICAgWyBwYXVsbWNrOiBVcGRhdGVkIGJhc2VkIG9uIGZlZWRiYWNrIGZyb20gQnl1
-bmdjaHVsIFBhcmsuIF0NCj4gICAgIEFja2VkLWJ5OiBCeXVuZ2NodWwgUGFyayA8Ynl1bmdjaHVs
-LnBhcmtAbGdlLmNvbT4NCj4NCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vdHJhbnNsYXRp
-b25zL2tvX0tSL21lbW9yeS1iYXJyaWVycy50eHQgYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9u
-cy9rb19LUi9tZW1vcnktYmFycmllcnMudHh0DQo+IGluZGV4IDkyMTczOWQwMGY2OS4uN2YwMWZi
-MWMxMDg0IDEwMDY0NA0KPiAtLS0gYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9rb19LUi9t
-ZW1vcnktYmFycmllcnMudHh0DQo+ICsrKyBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL2tv
-X0tSL21lbW9yeS1iYXJyaWVycy50eHQNCj4gQEAgLTE4OTEsMjIgKzE4OTEsMjIgQEAgTWFuZGF0
-b3J5IOuwsOumrOyWtOuTpOydgCBTTVAg7Iuc7Iqk7YWc7JeQ7ISc64+EIFVQIOyLnOyKpO2FnOyX
-kOyEnOuPhCBTTVAg7ZqoDQo+ICAgICAgICAgICAgICAgICAvKiDshozsnKDqtozsnYQg7IiY7KCV
-ICovDQo+ICAgICAgICAgICAgICAgICBkZXNjLT5zdGF0dXMgPSBERVZJQ0VfT1dOOw0KPg0KPiAt
-ICAgICAgICAgICAgICAgLyogTU1JTyDrpbwg7Ya17ZW0IOuUlOuwlOydtOyKpOyXkCDqs7Xsp4Dr
-pbwg7ZWY6riwIOyghOyXkCDrqZTrqqjrpqzrpbwg64+Z6riw7ZmUICovDQo+IC0gICAgICAgICAg
-ICAgICB3bWIoKTsNCj4gLQ0KPiAgICAgICAgICAgICAgICAgLyog7JeF642w7J207Yq465CcIOuU
-lOyKpO2BrOumve2EsOydmCDrlJTrsJTsnbTsiqTsl5Ag6rO17KeAICovDQo+ICAgICAgICAgICAg
-ICAgICB3cml0ZWwoREVTQ19OT1RJRlksIGRvb3JiZWxsKTsNCj4gICAgICAgICB9DQo+DQo+ICAg
-ICAgIGRtYV9ybWIoKSDripQg65SU7Iqk7YGs66a97YSw66Gc67aA7YSwIOuNsOydtO2EsOulvCDs
-nb3slrTsmKTquLAg7KCE7JeQIOuUlOuwlOydtOyKpOqwgCDshozsnKDqtozsnYQNCj4gLSAgICAg
-64K064aT7JWY7J2M7J2EIOuztOyepe2VmOqyjCDtlZjqs6AsIGRtYV93bWIoKSDripQg65SU67CU
-7J207Iqk6rCAIOyekOyLoOydtCDshozsnKDqtozsnYQg64uk7IucDQo+IC0gICAgIOqwgOyhjOyd
-jOydhCDrs7TquLAg7KCE7JeQIOuUlOyKpO2BrOumve2EsOyXkCDrjbDsnbTthLDqsIAg7JOw7JiA
-7J2M7J2EIOuztOyepe2VqeuLiOuLpC4gIHdtYigpIOuKlA0KPiAtICAgICDsupDsi5wg7J286rSA
-7ISx7J20IOyXhuuKlCAoY2FjaGUgaW5jb2hlcmVudCkgTU1JTyDsmIHsl63sl5Ag7JOw6riw66W8
-IOyLnOuPhO2VmOq4sCDsoITsl5ANCj4gLSAgICAg7LqQ7IucIOydvOq0gOyEseydtCDsnojripQg
-66mU66qo66asIChjYWNoZSBjb2hlcmVudCBtZW1vcnkpIOyTsOq4sOqwgCDsmYTro4zrkJjsl4js
-nYzsnYQNCj4gLSAgICAg67O07J6l7ZW07KO86riwIOychO2VtCDtlYTsmpTtlanri4jri6QuDQo+
-IC0NCj4gLSAgICAgY29uc2lzdGVudCBtZW1vcnkg7JeQIOuMgO2VnCDsnpDshLjtlZwg64K07Jqp
-7J2EIOychO2VtOyEoCBEb2N1bWVudGF0aW9uL0RNQS1BUEkudHh0DQo+IC0gICAgIOusuOyEnOul
-vCDssLjqs6DtlZjshLjsmpQuDQo+ICsgICAgIOuCtOugpOuGk+yVmOydhCDqsoPsnYQg67O07J6l
-7ZWY6rOgLCBkbWFfd21iKCkg64qUIOuUlOuwlOydtOyKpOqwgCDsnpDsi6DsnbQg7IaM7Jyg6raM
-7J2EIOuLpOyLnA0KPiArICAgICDqsIDsoYzsnYzsnYQg67O06riwIOyghOyXkCDrlJTsiqTtgazr
-pr3thLDsl5Ag642w7J207YSw6rCAIOyTsOyYgOydhCDqsoPsnYQg67O07J6l7ZWp64uI64ukLiAg
-7LC46rOg66GcLA0KPiArICAgICB3cml0ZWwoKSDsnYQg7IKs7Jqp7ZWY66m0IOy6kOyLnCDsnbzq
-tIDshLHsnbQg7J6I64qUIOuplOuqqOumrCAoY2FjaGUgY29oZXJlbnQgbWVtb3J5KQ0KPiArICAg
-ICDsk7DquLDqsIAgTU1JTyDsmIHsl63sl5DsnZgg7JOw6riwIOyghOyXkCDsmYTro4zrkJjsl4js
-nYQg6rKD7J2EIOuztOyepe2VmOuvgOuhnCB3cml0ZWwoKSDslZ7sl5ANCj4gKyAgICAgd21iKCkg
-66W8IOyLpO2Wie2VoCDtlYTsmpTqsIAg7JeG7J2M7J2EIOyVjOyVhOuRkOyLnOq4sCDrsJTrno3r
-i4jri6QuICB3cml0ZWwoKSDrs7Tri6Qg67mE7Jqp7J20DQo+ICsgICAgIOyggOugtO2VnCB3cml0
-ZWxfcmVsYXhlZCgpIOuKlCDsnbTrn7Ag67O07J6l7J2EIOygnOqzte2VmOyngCDslYrsnLzrr4Dr
-oZwg7Jes6riw7ISgIOyCrOyaqeuQmOyngA0KPiArICAgICDslYrslYTslbwg7ZWp64uI64ukLg0K
-PiArDQo+ICsgICAgIHdyaXRlbF9yZWxheGVkKCkg7JmAIOqwmeydgCDsmYTtmZTrkJwgSS9PIOyg
-keq3vOyekOuTpOyXkCDrjIDtlZwg7J6Q7IS47ZWcIOuCtOyaqeydhCDsnITtlbTshJzripQNCj4g
-KyAgICAgIuy7pOuEkCBJL08g67Cw66as7Ja07J2YIO2aqOqzvCIg7IS57IWY7J2ELCBjb25zaXN0
-ZW50IG1lbW9yeSDsl5Ag64yA7ZWcIOyekOyEuO2VnCDrgrTsmqnsnYQNCj4gKyAgICAg7JyE7ZW0
-7ISgIERvY3VtZW50YXRpb24vRE1BLUFQSS50eHQg66y47ISc66W8IOywuOqzoO2VmOyEuOyalC4N
-Cj4NCj4NCj4gIE1NSU8g7JOw6riwIOuwsOumrOyWtA0KPg0K
+
+
+On 06/26/2018 04:16 PM, Joe Perches wrote:
+> On Tue, 2018-06-26 at 14:25 -0400, Prarit Bhargava wrote:
+>> OSes have additional maintainers that should be cc'd on patches or may
+>> want to circulate internal patches.
+>>
+>> Parse the .get_maintainer.MAINTAINERS file.  Entries in the file
+>> can begin with a '+' to indicate the email and list entries should be
+>> added to the exiting MAINTAINERS output, or a '-' to indicate that the
+>> entries should override the existing MAINTAINERS file.
+>>
+>> Also add a help entry for the .get_maintainers.ignore file.
+> 
+> I see no reason for this patch to be applied.
+> Why should it?
+
+The kernel has other vendor/OS changes like my patch, for example, 4efb442cc12e
+("kernel/panic.c: add TAINT_AUX").  From that commit message
+
+    Add an auxiliary taint flag to be used by distros and others.  This
+    obviates the need to forward-port whatever internal solutions people
+    have in favor of a single flag which they can map arbitrarily to a
+    definition of their pleasing.
+
+The same principle should be applied to my patch in that distros no longer would
+need to forward-port internal solutions similar to this.
+
+> Why shouldn't this be in your private repository?
+
+If you don't want it I'll carry it forward but that's a loss for both of us, and
+as pointed out in the above commit, other distros.  If you do want to reject the
+patch please let me know and I'll only submit the "get_maintainer.ignore" help
+chunk.
+
+P.
+> 
+>> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+>> Cc: Joe Perches <joe@perches.com>
+>> Cc: dzickus@redhat.com
+>> Cc: jtoppins@redhat.com
+>> ---
+>>  scripts/get_maintainer.pl | 34 ++++++++++++++++++++++++++++++++++
+>>  1 file changed, 34 insertions(+)
+>>
+>> diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+>> index c87fa734e3e1..239f4d2ce972 100755
+>> --- a/scripts/get_maintainer.pl
+>> +++ b/scripts/get_maintainer.pl
+>> @@ -384,6 +384,32 @@ sub find_ignore_git {
+>>  read_all_maintainer_files();
+>>  
+>>  sub read_all_maintainer_files {
+>> +	my $conf = which_conf(".get_maintainer.MAINTAINERS");
+>> +	if ( -f $conf) {
+>> +	    my @conf_args;
+>> +	    my $add = 0;
+>> +	    open(my $conffile, '<', "$conf")
+>> +		or warn "$P: Can't find a readable .get_maintainer.MAINTAINERS file $!\n";
+>> +	    while (<$conffile>) {
+>> +		my $line = $_;
+>> +		if ($line =~ m/^\+/ ) {
+>> +		    $add = 1;
+>> +		}
+>> +		next if ($line =~ m/^\s*#/);
+>> +		$line =~ s/^\+//g;
+>> +		$line =~ s/^\-//g;
+>> +		$line =~ s/\s*\n?$//;
+>> +		push(@mfiles, $line);
+>> +	    }
+>> +	    close($conffile);
+>> +	    if ($add eq 0) {
+>> +		foreach my $file (@mfiles) {
+>> +		     read_maintainer_file("$file");
+>> +		}
+>> +		return;
+>> +	    }
+>> +	}
+>> +
+>>      if (-d "${lk_path}MAINTAINERS") {
+>>          opendir(DIR, "${lk_path}MAINTAINERS") or die $!;
+>>          my @files = readdir(DIR);
+>> @@ -1068,6 +1094,14 @@ Notes:
+>>        Entries in this file can be any command line argument.
+>>        This file is prepended to any additional command line arguments.
+>>        Multiple lines and # comments are allowed.
+>> +  File ".get_maintainer.ignore", if it exists in the linux kernel source root
+>> +      directory, can contain a list of email addresses to ignore.  Multiple
+>> +      lines and # comments are allowed.
+>> +  File ".get_maintainer.MAINTAINERS", if it exists in the linux kernel source
+>> +      root directory, can change the location of the MAINTAINERS file.
+>> +      Entries beginning with a '+' are added to the default list, and
+>> +      entries beginning with a '-' override the existing MAINTAINERS list
+>> +      lookup.  Multiple lines and # comments are allowed.
+>>    Most options have both positive and negative forms.
+>>        The negative forms for --<foo> are --no<foo> and --no-<foo>.
+>>  
