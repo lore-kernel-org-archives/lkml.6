@@ -2,171 +2,140 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B47C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1896BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D67D267AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB7AC267AF
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:27:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Mg/GUTML"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D67D267AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCikj1RW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB7AC267AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934495AbeFZJ00 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:26:26 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:56248 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934041AbeFZJZ4 (ORCPT
+        id S933868AbeFZJ1o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:27:44 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:45420 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932558AbeFZJ1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:25:56 -0400
-Received: by mail-wm0-f68.google.com with SMTP id v16-v6so1045137wmv.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:25:55 -0700 (PDT)
+        Tue, 26 Jun 2018 05:27:40 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 188-v6so15317503oid.12;
+        Tue, 26 Jun 2018 02:27:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xn0TQaIyLWB0HDP/8rvd9dfNDRKBIZ2xXAWWSdTqIuQ=;
-        b=Mg/GUTML7xgHHaFwRyjTiq+9FxusLfdhUJSUavvhg/SiD0DoAAxZL4w1SN3RVfsS49
-         y79kb4zGgQvgF0mfHpI51mVDkxJ4Em9HN96M5OfWw1l086YyW/tdyGbRQepFb4BRKtqp
-         YOXgp7m1YriQUKhyMUn1baIh/9vjfJ7S6Wbrp/90faebhRFR9nt3n0HZkOzlD1TuRXdC
-         6491Pf5PhEj0h/GJJ6iV2RmWc1WbtfT1Kqtw8UeT8gdaOYRTfT/LWB0DlAFPSz1UJyrY
-         6wrSVfAMiQZLa0ezzKGnD5O06yELhcRq3mDqbjnEp/xC6mTS3vJYX184hqyVeGfqkvoZ
-         372w==
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=yWBeA6VQJ80kE6+hyv2MTLa3ITL68W2PGaSKLhX3hBg=;
+        b=nCikj1RWkQJmg1AZQnEt2iHEsQIhXfgTJKLj0JaezDa8bJP2uP/Xbi+mCPJm0AOyOM
+         AJlFMLR8HwUR3iPaZLJMJgMabVos4FZSzNssEEILxY+ay0couebYATejY9otlJZ+wTR9
+         P4DlHSxoR7i1VdXISyTKfNaFLpxKWpdwcVQJrVh9PmlSCGYxRcmCmYoFpFNmfKYg99JX
+         KsM+iFIUONiB6l4xNeZ0vIHLt5I+fwqO+RC1uu61R7pKv0VcmOgUva4qer5HElrYeYXb
+         Kmog5RM1sih5tC8PA9pIIERUegtUpIFipOiVcUvFpiMZntMllEyhjj53WIOtIMRG5djV
+         Ou4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=xn0TQaIyLWB0HDP/8rvd9dfNDRKBIZ2xXAWWSdTqIuQ=;
-        b=jfCfgTCYV8OtUqEgtMUWmo7Df7UN2hGbTcLqm04Qa7qgMlBx3M2rhKanmhzTgqVgCH
-         yuNn3Q8PUWVi6TLAXGLklLpSZS5ss07qTs+IalhbbiBVg5PGatXMSfGsKYp71540C89d
-         bbw+t/fslL2YcfDMXeLXjQ4zYN8dryq4XHFul+VLxPy726oCGlXo0y2WfVNGHH/npidB
-         43i2iwnmKxKLrx9fuR1NcBL5Entd+BIDHuxjVrRQOG4PKA8E0pJDBkIb1J++pCmJmQdC
-         jJyprnyLaHZiAnFrlnmvVK8scNvmwSyRH/K2K3V5+jAPZ0tbixgrDvD1Q0gvtB/rAoTt
-         kJRg==
-X-Gm-Message-State: APt69E2UDJItF/sZzBesiWlUl8/jiqfy0fJnitiGrf0tT6fmd+5rAN/c
-        x/MurrC/FMMd7yJ1kGPXrHhO7w==
-X-Google-Smtp-Source: AAOMgpeG4WHS4olZin+XJTfje4iWXAQnfalfDxbpc/LbzpMjKpwMeYjeN3OZGNJPpxBnrzkq8dyxeg==
-X-Received: by 2002:a1c:d9d0:: with SMTP id q199-v6mr1000719wmg.78.1530005155070;
-        Tue, 26 Jun 2018 02:25:55 -0700 (PDT)
-Received: from brgl-bgdev.lan (LFbn-NIC-1-55-10.w2-15.abo.wanadoo.fr. [2.15.147.10])
-        by smtp.gmail.com with ESMTPSA id a8-v6sm1528791wrn.50.2018.06.26.02.25.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 02:25:54 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 12/13] ARM: davinci: mityomapl138: use aemif platform driver
-Date:   Tue, 26 Jun 2018 11:25:36 +0200
-Message-Id: <20180626092537.6737-13-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=yWBeA6VQJ80kE6+hyv2MTLa3ITL68W2PGaSKLhX3hBg=;
+        b=AwH6mDpszqk3xaPEJzfALlKqD3KBn2t2g8F2J7XN8ZNLiTtjzVcNPUVCoUHBEyqwqO
+         R8dP6ppO+p+lR0CsI6m/DNEx7jGUHvGKykquROAlE47gNqwL3LmulFgzLALIYihG4L04
+         Kn5FwSoaamQz4qABNQ9GMMBCnDhWri8AzVkDq+ExiloV6gjmf1WiYdhk5tZqzDsvvuon
+         Qf5lemwOU3Ku4WU3t9jxR+MxlsDBMr4bIICLmce/gHMyUxqY5bwLoxniUg5DmekEfu50
+         nYCJqXgmmMsrpgCprzkq8yBW5UIMWx7RF9KpzetzLWj6+7/podUIUtIvKrMAY/yWBoE9
+         qwzA==
+X-Gm-Message-State: APt69E07b4E+Qb3XBt4K2Uitp/kQMmamFW1WEjqdwZGSVjppDp93VqOZ
+        y/9+YNMD7lPu/b+ncUb1z7EG2RdCbP7OCwd6Kb4=
+X-Google-Smtp-Source: AAOMgpeTk07s/gk4C5JWcOE4gCotQwX/qK430fMg5X0GswfjVFyHHPOL+QcmP3UMwWT6KtV9pXR2FYVKKJk5DbcZlIA=
+X-Received: by 2002:aca:5bc6:: with SMTP id p189-v6mr400753oib.116.1530005259783;
+ Tue, 26 Jun 2018 02:27:39 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 02:27:39
+ -0700 (PDT)
+In-Reply-To: <dd30daab-caf6-91d6-2f72-998f640f85ae@linaro.org>
+References: <1529414627-5638-1-git-send-email-daniel.lezcano@linaro.org>
+ <CAJZ5v0iyS7wUx5sYnyhZxhRD7EMEWyKzcpBu7vXUGxuwM4+prw@mail.gmail.com>
+ <98f43bb6-9ab5-2f79-05f2-be68a0f7f88e@linaro.org> <CAJZ5v0gv_y9DfEsqq_46D5hi3SA+UYy7cUoaCwb3_+HtRadDOg@mail.gmail.com>
+ <dd30daab-caf6-91d6-2f72-998f640f85ae@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 26 Jun 2018 11:27:39 +0200
+X-Google-Sender-Auth: SbIuC6Q7CgcMc7IQIT1gi1suvkE
+Message-ID: <CAJZ5v0i6Mi0MtrcQRCJs-v1PiogKzxGZj-N_+rzkJ9+98wvuGw@mail.gmail.com>
+Subject: Re: [PATCH V9] powercap/drivers/idle_injection: Add an idle injection framework
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Jun 26, 2018 at 12:15 AM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> On 25/06/2018 23:55, Rafael J. Wysocki wrote:
+>> On Mon, Jun 25, 2018 at 1:52 PM, Daniel Lezcano
+>> <daniel.lezcano@linaro.org> wrote:
+>>> On 25/06/2018 10:23, Rafael J. Wysocki wrote:
+>>>
+>>> [ ... ]
+>>>
+>>>>> + * It is up to the user of this framework to provide a lock at an
+>>>>> + * upper level to prevent stupid things to happen, like starting while
+>>>>> + * we are unregistering.
+>>>>> + */
+>>>>
+>>>> The English above and elsewhere needs some polishing IMO, but I can
+>>>> take care of that. :-)
+>>>
+>>> I can give a try and if you are still unhappy, you change them in a
+>>> better way.
+>>
+>> Well, I could tell you what I would write, but then it'll take less
+>> time and effort if I just write it myself. :-)
+>
+> Ok.
+>
+>>> [ ... ]
+>>>
+>>>>> +static void idle_injection_setup(unsigned int cpu)
+>>>>> +{
+>>>>> +       struct sched_param param = { .sched_priority = MAX_USER_RT_PRIO / 2 };
+>>>>> +
+>>>>> +       set_freezable();
+>>>>
+>>>> Why do you need set_freezable() here?
+>>>
+>>> We don't want to continue injecting idle cycles when the system is
+>>> suspended.
+>>
+>> And where's the corresponding try_to_freeze() called?
+>
+> Yes, it is missing. I suppose try_to_freeze() should be put at the
+> beginning of the idle_inject_fn() function, right ?
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in mityomapl138.
+Well, given that people want to get rid of kthread freezing entirely,
+adding it may not be a good idea at all.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-mityomapl138.c | 55 ++++++++++++++++------
- 1 file changed, 41 insertions(+), 14 deletions(-)
+Also I'm not sure if we should avoid injecting idle on system suspend.
+It may slow down the suspend process, but that's OK and after that it
+shouldn't matter.  And if it turns out to matter, we'll address the
+problem instead of trying to avoid it by freezing the kthreads.
 
-diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-index 2cce0d7d2f2a..2933e0c87cfa 100644
---- a/arch/arm/mach-davinci/board-mityomapl138.c
-+++ b/arch/arm/mach-davinci/board-mityomapl138.c
-@@ -30,6 +30,7 @@
- #include <mach/da8xx.h>
- #include <linux/platform_data/mtd-davinci.h>
- #include <linux/platform_data/mtd-davinci-aemif.h>
-+#include <linux/platform_data/ti-aemif.h>
- #include <mach/mux.h>
- #include <linux/platform_data/spi-davinci.h>
- 
-@@ -422,27 +423,53 @@ static struct resource mityomapl138_nandflash_resource[] = {
- 	},
- };
- 
--static struct platform_device mityomapl138_nandflash_device = {
--	.name		= "davinci_nand",
--	.id		= 1,
--	.dev		= {
--		.platform_data	= &mityomapl138_nandflash_data,
-+static struct platform_device mityomapl138_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &mityomapl138_nandflash_data,
-+		},
-+		.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
-+		.resource	= mityomapl138_nandflash_resource,
- 	},
--	.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
--	.resource	= mityomapl138_nandflash_resource,
- };
- 
--static struct platform_device *mityomapl138_devices[] __initdata = {
--	&mityomapl138_nandflash_device,
-+static struct resource mityomapl138_aemif_resources[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct aemif_abus_data mityomapl138_aemif_abus_data[] = {
-+	{
-+		.cs	= 1,
-+	},
-+};
-+
-+static struct aemif_platform_data mityomapl138_aemif_pdata = {
-+	.abus_data		= mityomapl138_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(mityomapl138_aemif_abus_data),
-+	.sub_devices		= mityomapl138_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(mityomapl138_aemif_devices),
-+};
-+
-+static struct platform_device mityomapl138_aemif_device = {
-+	.name		= "ti-aemif",
-+	.id		= -1,
-+	.dev = {
-+		.platform_data	= &mityomapl138_aemif_pdata,
-+	},
-+	.resource	= mityomapl138_aemif_resources,
-+	.num_resources	= ARRAY_SIZE(mityomapl138_aemif_resources),
- };
- 
- static void __init mityomapl138_setup_nand(void)
- {
--	platform_add_devices(mityomapl138_devices,
--				 ARRAY_SIZE(mityomapl138_devices));
--
--	if (davinci_aemif_setup(&mityomapl138_nandflash_device))
--		pr_warn("%s: Cannot configure AEMIF\n", __func__);
-+	if (platform_device_register(&mityomapl138_aemif_device))
-+		pr_warn("%s: Cannot register AEMIF device\n", __func__);
- }
- 
- static const short mityomap_mii_pins[] = {
--- 
-2.17.1
-
+So, I would just drop the set_freezable() and leave it like that.
