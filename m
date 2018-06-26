@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB75C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976ECC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A30626E53
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:10:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A30626E53
+	by mail.kernel.org (Postfix) with ESMTP id 4EC8A26E53
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:11:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC8A26E53
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932329AbeFZRJE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:09:04 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33172 "EHLO
+        id S932205AbeFZRI7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 13:08:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33124 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932111AbeFZRIw (ORCPT
+        by vger.kernel.org with ESMTP id S1753014AbeFZRIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:08:52 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QH4Kwg156869
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:52 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2juqm25y7n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:51 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Tue, 26 Jun 2018 13:08:51 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QH5RXG119016
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:50 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jus3ysbmk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:50 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 26 Jun 2018 13:08:49 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Tue, 26 Jun 2018 13:08:45 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QH8jEF1835456
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QH8icU5833402
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 17:08:45 GMT
+        Tue, 26 Jun 2018 17:08:44 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6DD56B2065;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id EF06BB2072;
+        Tue, 26 Jun 2018 13:08:37 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A1A0B206A;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id B1AC7B2066;
+        Tue, 26 Jun 2018 13:08:37 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
+        Tue, 26 Jun 2018 13:08:37 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id ADD2F16CA0A3; Tue, 26 Jun 2018 10:10:49 -0700 (PDT)
+        id 8D7FA16C5DDD; Tue, 26 Jun 2018 10:10:49 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,20 +60,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 08/22] rcu: Suppress false-positive offline-CPU lockdep-RCU splat
-Date:   Tue, 26 Jun 2018 10:10:34 -0700
+Subject: [PATCH tip/core/rcu 01/22] rcu: Clean up handling of tasks blocked across full-rcu_node offline
+Date:   Tue, 26 Jun 2018 10:10:27 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626002052.GA24146@linux.vnet.ibm.com>
 References: <20180626002052.GA24146@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062617-0052-0000-0000-000003045DA3
+x-cbid: 18062617-0068-0000-0000-0000030E817C
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01052668; UDB=6.00539669; IPR=6.00830593;
- MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:08:49
+ MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:08:48
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062617-0053-0000-0000-00005D25E428
-Message-Id: <20180626171048.2181-8-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062617-0069-0000-0000-000044D130D3
+Message-Id: <20180626171048.2181-1-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,96 +86,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rcu_lockdep_current_cpu_online() function currently checks only the
-RCU-sched data structures to determine whether or not RCU believes that a
-given CPU is offline.  Unfortunately, there are multiple flavors of RCU,
-which means that there is a short window of time during which the various
-flavors disagree as to whether or not a given CPU is offline.  This can
-result in false-positive lockdep-RCU splats in which some other flavor
-of RCU tries to do something based on its view that the CPU is online,
-only to get hit with a lockdep-RCU splat because RCU-sched instead
-believes that the CPU is offline.
+Commit 0aa04b055e71 ("rcu: Process offlining and onlining only at
+grace-period start") deferred handling of CPU-hotplug events until the
+start of the next grace period, but consider the following sequence
+of events:
 
-This commit therefore changes rcu_lockdep_current_cpu_online() to scan
-all RCU flavors and to consider a given CPU to be online if any of the
-RCU flavors believe it to be online, thus preventing these false-positive
-splats.
+1.	A task is preempted within an RCU-preempt read-side critical
+	section.
+
+2.	The CPU that this task was running on goes offline, along with all
+	other CPUs sharing the corresponding leaf rcu_node structure.
+
+3.	The task resumes execution.
+
+4.	One of those CPUs comes back online before a new grace period starts.
+
+In step 2, the code in the next rcu_gp_init() invocation will (correctly)
+defer removing the leaf rcu_node structure from the upper-level bitmasks,
+and will (correctly) set that structure's ->wait_blkd_tasks field.  During
+the ensuing interval, RCU will (correctly) track the tasks preempted on
+that structure because they must block any subsequent grace period.
+
+In step 3, the code in rcu_read_unlock_special() will (correctly) remove
+the task from the leaf rcu_node structure.  From this point forward, RCU
+need not pay attention to this structure, at least not until one of the
+corresponding CPUs comes back online.
+
+In step 4, the code in the next rcu_gp_init() invocation will
+(incorrectly) inovke rcu_init_new_rnp().  This is incorrect because
+the corresponding rcu_cleanup_dead_rnp() was never invoked.  This is
+nevertheless harmless because the upper-level bits are still set.
+So, no harm, no foul, right?
+
+At least, all is well until a little further into rcu_gp_init()
+invocation, which will notice that there are no longer any tasks blocked
+on the leaf rcu_node structure, conclude that there is no longer anything
+left over from step 2's offline operation, and will therefore invoke
+rcu_cleanup_dead_rnp().  But this invocation of rcu_cleanup_dead_rnp()
+is for the beginning of the earlier offline interval, and the previous
+invocation of rcu_init_new_rnp() is for the end of that same interval.
+That is right, they are invoked out of order.
+
+That cannot be good, can it?
+
+It turns out that this is not a (correctness!) problem because
+rcu_cleanup_dead_rnp() checks to see if any of the corresponding CPUs
+are online, and refuses to do anything if so.  In other words, in the
+case where rcu_init_new_rnp() and rcu_cleanup_dead_rnp() execute out of
+order, they both have no effect.
+
+But this is at best an accident waiting to happen.
+
+This commit therefore adds logic to rcu_gp_init() so that
+rcu_init_new_rnp() and rcu_cleanup_dead_rnp() are always invoked in
+order, and so that neither are invoked at all in cases where RCU had to
+pay attention to the leaf rcu_node structure during the entire time that
+all corresponding CPUs were offline.
+
+And, while in the area, this commit reduces confusion by using formal
+parameters rather than local variables that just happen to have the same
+value at that particular point in the code.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c | 48 +++++++++++++++++++++++------------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ kernel/rcu/tree.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 324ca1b2b233..5171c0361fbd 100644
+index 73298a27620f..bde895507335 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -1030,41 +1030,41 @@ void rcu_request_urgent_qs_task(struct task_struct *t)
- #if defined(CONFIG_PROVE_RCU) && defined(CONFIG_HOTPLUG_CPU)
+@@ -1909,12 +1909,14 @@ static bool rcu_gp_init(struct rcu_state *rsp)
  
- /*
-- * Is the current CPU online?  Disable preemption to avoid false positives
-- * that could otherwise happen due to the current CPU number being sampled,
-- * this task being preempted, its old CPU being taken offline, resuming
-- * on some other CPU, then determining that its old CPU is now offline.
-- * It is OK to use RCU on an offline processor during initial boot, hence
-- * the check for rcu_scheduler_fully_active.  Note also that it is OK
-- * for a CPU coming online to use RCU for one jiffy prior to marking itself
-- * online in the cpu_online_mask.  Similarly, it is OK for a CPU going
-- * offline to continue to use RCU for one jiffy after marking itself
-- * offline in the cpu_online_mask.  This leniency is necessary given the
-- * non-atomic nature of the online and offline processing, for example,
-- * the fact that a CPU enters the scheduler after completing the teardown
-- * of the CPU.
-+ * Is the current CPU online as far as RCU is concerned?
-  *
-- * This is also why RCU internally marks CPUs online during in the
-- * preparation phase and offline after the CPU has been taken down.
-+ * Disable preemption to avoid false positives that could otherwise
-+ * happen due to the current CPU number being sampled, this task being
-+ * preempted, its old CPU being taken offline, resuming on some other CPU,
-+ * then determining that its old CPU is now offline.  Because there are
-+ * multiple flavors of RCU, and because this function can be called in the
-+ * midst of updating the flavors while a given CPU coming online or going
-+ * offline, it is necessary to check all flavors.  If any of the flavors
-+ * believe that given CPU is online, it is considered to be online.
-  *
-- * Disable checking if in an NMI handler because we cannot safely report
-- * errors from NMI handlers anyway.
-+ * Disable checking if in an NMI handler because we cannot safely
-+ * report errors from NMI handlers anyway.  In addition, it is OK to use
-+ * RCU on an offline processor during initial boot, hence the check for
-+ * rcu_scheduler_fully_active.
-  */
- bool rcu_lockdep_current_cpu_online(void)
- {
- 	struct rcu_data *rdp;
- 	struct rcu_node *rnp;
--	bool ret;
-+	struct rcu_state *rsp;
+ 		/* If zero-ness of ->qsmaskinit changed, propagate up tree. */
+ 		if (!oldmask != !rnp->qsmaskinit) {
+-			if (!oldmask) /* First online CPU for this rcu_node. */
+-				rcu_init_new_rnp(rnp);
+-			else if (rcu_preempt_has_tasks(rnp)) /* blocked tasks */
+-				rnp->wait_blkd_tasks = true;
+-			else /* Last offline CPU and can propagate. */
++			if (!oldmask) { /* First online CPU for rcu_node. */
++				if (!rnp->wait_blkd_tasks) /* Ever offline? */
++					rcu_init_new_rnp(rnp);
++			} else if (rcu_preempt_has_tasks(rnp)) {
++				rnp->wait_blkd_tasks = true; /* blocked tasks */
++			} else { /* Last offline CPU and can propagate. */
+ 				rcu_cleanup_dead_rnp(rnp);
++			}
+ 		}
  
--	if (in_nmi())
-+	if (in_nmi() || !rcu_scheduler_fully_active)
- 		return true;
- 	preempt_disable();
--	rdp = this_cpu_ptr(&rcu_sched_data);
--	rnp = rdp->mynode;
--	ret = (rdp->grpmask & rcu_rnp_online_cpus(rnp)) ||
--	      !rcu_scheduler_fully_active;
-+	for_each_rcu_flavor(rsp) {
-+		rdp = this_cpu_ptr(rsp->rda);
-+		rnp = rdp->mynode;
-+		if (rdp->grpmask & rcu_rnp_online_cpus(rnp)) {
-+			preempt_enable();
-+			return true;
-+		}
-+	}
- 	preempt_enable();
--	return ret;
-+	return false;
- }
- EXPORT_SYMBOL_GPL(rcu_lockdep_current_cpu_online);
+ 		/*
+@@ -1923,14 +1925,13 @@ static bool rcu_gp_init(struct rcu_state *rsp)
+ 		 * still offline, propagate up the rcu_node tree and
+ 		 * clear ->wait_blkd_tasks.  Otherwise, if one of this
+ 		 * rcu_node structure's CPUs has since come back online,
+-		 * simply clear ->wait_blkd_tasks (but rcu_cleanup_dead_rnp()
+-		 * checks for this, so just call it unconditionally).
++		 * simply clear ->wait_blkd_tasks.
+ 		 */
+ 		if (rnp->wait_blkd_tasks &&
+-		    (!rcu_preempt_has_tasks(rnp) ||
+-		     rnp->qsmaskinit)) {
++		    (!rcu_preempt_has_tasks(rnp) || rnp->qsmaskinit)) {
+ 			rnp->wait_blkd_tasks = false;
+-			rcu_cleanup_dead_rnp(rnp);
++			if (!rnp->qsmaskinit)
++				rcu_cleanup_dead_rnp(rnp);
+ 		}
  
+ 		raw_spin_unlock_irq_rcu_node(rnp);
+@@ -2450,9 +2451,10 @@ static void rcu_cleanup_dead_rnp(struct rcu_node *rnp_leaf)
+ 	long mask;
+ 	struct rcu_node *rnp = rnp_leaf;
+ 
+-	raw_lockdep_assert_held_rcu_node(rnp);
++	raw_lockdep_assert_held_rcu_node(rnp_leaf);
+ 	if (!IS_ENABLED(CONFIG_HOTPLUG_CPU) ||
+-	    rnp->qsmaskinit || rcu_preempt_has_tasks(rnp))
++	    WARN_ON_ONCE(rnp_leaf->qsmaskinit) ||
++	    WARN_ON_ONCE(rcu_preempt_has_tasks(rnp_leaf)))
+ 		return;
+ 	for (;;) {
+ 		mask = rnp->grpmask;
+@@ -2461,7 +2463,8 @@ static void rcu_cleanup_dead_rnp(struct rcu_node *rnp_leaf)
+ 			break;
+ 		raw_spin_lock_rcu_node(rnp); /* irqs already disabled. */
+ 		rnp->qsmaskinit &= ~mask;
+-		rnp->qsmask &= ~mask;
++		/* Between grace periods, so better already be zero! */
++		WARN_ON_ONCE(rnp->qsmask);
+ 		if (rnp->qsmaskinit) {
+ 			raw_spin_unlock_rcu_node(rnp);
+ 			/* irqs remain disabled. */
+@@ -3477,6 +3480,7 @@ static void rcu_init_new_rnp(struct rcu_node *rnp_leaf)
+ 	struct rcu_node *rnp = rnp_leaf;
+ 
+ 	raw_lockdep_assert_held_rcu_node(rnp);
++	WARN_ON_ONCE(rnp->wait_blkd_tasks);
+ 	for (;;) {
+ 		mask = rnp->grpmask;
+ 		rnp = rnp->parent;
 -- 
 2.17.1
 
