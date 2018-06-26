@@ -2,235 +2,127 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB41AC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC4EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6943E26A25
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:02:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="mf25Ff75"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6943E26A25
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=xff.cz
+	by mail.kernel.org (Postfix) with ESMTP id 49AB226A26
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:03:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AB226A26
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934943AbeFZMCv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:02:51 -0400
-Received: from vps.xff.cz ([195.181.215.36]:57872 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933658AbeFZMCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:02:49 -0400
-X-Greylist: delayed 552 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Jun 2018 08:02:49 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-        t=1530014015; bh=3y0DfM7wwsUtOlGAkx6fintErTkXRfswHutxDVp4zhk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mf25Ff75UYOs0XbicaUfNnfjHqKGap9di+rIPKWC0b7PthSnbkwucywXE4UPtmEA0
-         rdbfJ2oiv2RctPP7e0ZL23XSvrHwx7fcCI24Uew2LZS4gfee3wweUGNOrge9fOKaTf
-         EmGdVB+j+w1tXIBcSg+6c2OyqJ4Q9fm39H2d7eHM=
-Date:   Tue, 26 Jun 2018 13:53:35 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <doudahwezomiechahtah@xff.cz>
-To:     =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc:     linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
-        devicetree@vger.kernel.org, opendmb@gmail.com,
-        quentin.schulz@bootlin.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, f.fainelli@gmail.com,
-        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 00/12] Sunxi: Add SMP support on A83T
-Message-ID: <20180626115335.cou6o22lks2stign@core>
-Mail-Followup-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>,
-        linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
-        devicetree@vger.kernel.org, opendmb@gmail.com,
-        quentin.schulz@bootlin.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, f.fainelli@gmail.com,
-        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+        id S964818AbeFZMDQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:03:16 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:40297 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933658AbeFZMDN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:03:13 -0400
+Received: by mail-lf0-f66.google.com with SMTP id q11-v6so17178035lfc.7;
+        Tue, 26 Jun 2018 05:03:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Do4B6UIAjExbte8LFXvNR06Ty0lWIK5b2ePF3XBwtKk=;
+        b=b/8C6AZy8qFeGffCjKyARdTkQkS1WQKtU3krdu5E1G1c4PQz6iQ7kVKcGHCfZhdAzS
+         6trOJPlhDYr/AwQfI/VsDQs9wdeguD8FNG+t4bx2KgzfCQkzYxored6xDO5sucJgT4ws
+         FrueU4hPvpaC4h+fIuUyDa+AwC6qaj9hfHtAleEfgtChO3c2gw77Vd5P1vi/Awp2fIeF
+         R4f5YQKVptCq4kK8X/KjS5J2J0DS70HIkFqNOwdUCaWA5olDnw+c6IY1yDtwJqSp0z3R
+         7pVhrFd3ZvrfokFGi7egH0/Tr5/qWoqWBBoUybmdHIn7m47oKijbIShdIFVhRquiy/IZ
+         eTEA==
+X-Gm-Message-State: APt69E3YKG+Nm3ktBghl8f43P/DowOlSFa01OtvoNHZsd4q0wOPHHa43
+        04GO7zltZAR1OWzI+fK2iss=
+X-Google-Smtp-Source: AAOMgpe0f0h6fJeOQ0vVtwPul4QRTZ1D6ZKunyOShVIMxkdA50Nt2ofrJp6z+ye7pCTq3Q/c4FL4fw==
+X-Received: by 2002:a19:2593:: with SMTP id l141-v6mr1189517lfl.10.1530014590543;
+        Tue, 26 Jun 2018 05:03:10 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id c84-v6sm323814lfh.10.2018.06.26.05.03.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 05:03:09 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 15:03:06 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Enric Balletbo Serra <eballetbo@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+        andrew.smirnov@gmail.com, Linus Walleij <linus.walleij@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180626120306.GD2118@localhost.localdomain>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
+ <20180626112455.GC2118@localhost.localdomain>
+ <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+In-Reply-To: <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mylène,
+Hello Again Eric,
 
-On Fri, May 04, 2018 at 09:05:33PM +0200, Mylène Josserand wrote:
-> Hello everyone,
+On Tue, Jun 26, 2018 at 01:40:40PM +0200, Enric Balletbo Serra wrote:
+> Hi Matti,
+> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> dia dt., 26 de juny 2018 a les 13:25:
+> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > dia dt., 19 de juny 2018 a les 12:57:
+> >
+> > > > +static const struct of_device_id bd71837_of_match[] = {
+> > > > +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> > > > +       { },
+> > >
+> > > nit: { /* sentinel */ }
+> >
+> > I am sorry but I didn't quite get the point here. Could you please
+> > explain what did you expect to be added here?
+> >
 > 
-> This is a V9 of my series that adds SMP support for Allwinner sun8i-a83t.
-> Based on sunxi's tree, sunxi/for-next branch.
-> Depends on a patch from Doug Berger that allows to include the "cpu-type"
-> header on assembly files that I included in my series (patch 01).
+> It's a nit but It is a good practice to specify that the last entry is
+> a sentinel. Just this.
+> 
+> +static const struct of_device_id bd71837_of_match[] = {
+> +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> +       { /* sentinel */ }
+> +};
 
-I've tested your patches and the kernel always locks up when disabling the first
-CPU in the second cluster. I can enable/disable other CPUs in the second cluster
-though.
+Oh, I see. Finally something I can disagree =) I quickly opened few
+random drivers which declare match table. None of them practiced this
+good practice. So I guess it is not such a standard after all. And I
+guess the meaning of last entry in match table should be quite obvious.
+Adding the comment /* sentinel */ sounds like stating the obvious at
+best - at worst it gets one just to wonder what the "sentinel" means =)
 
-Other thing I observed was, that when disabling cores no power is saved (not
-even a tiny bit), which is slightly surprising.
+> 
+> And just noticed, is .data = (void *)0 really required?
+ 
+As static structs should be initialized to zero I'd say it is not
+required. Will remove this. Thanks for pointing this out.
 
-From the standpoint of the DT, A83T CPU config seems to lack some cpu
-properties, which makes it not claim a cluster clock when I enable any other
-CPU than the first CPU in the cluster.
+Br,
+	Matti Vaittinen
 
-The same goes for cpu-supply regulator. When I dump the state of regulators
-after booting with maxcpus=1 and enabling cpu5, the regulator on the second
-cluster is not claimed, but when I add cpu-supply property on all cpu# nodes,
-I get (when enabling CPU5):
-
-[  200.072895] CPU5: update cpu_capacity 1024
-[  200.072914] CPU5: thread -1, cpu 1, socket 1, mpidr 80000101
-[  200.151403] cpu cpu5: opp_list_debug_create_link: Failed to create link
-[  200.151411] cpu cpu5: _add_opp_dev: Failed to register opp debugfs (-12)
-
-I'm not having much luck with this. Do you have some suggestions, please?
-I'll probably figure out the last issue with the regulators, but I'm at the
-loss about the lockup on CPU4 disable.
-
-thaks and regards,
-  Ondrej Jirman
-
-> The difference with the v8 is just that the machine is renamed in sun8i-a83t
-> (see patch 07), according to Maxime's review.
-> 
-> Thank you in advance,
-> Best regards,
-> Mylène
-> 
-> Changes from v8:
->     - Rename machine into "sun8i-a83t"
-> 
-> Changes from v7:
->     - Add the patch of Doug Berger in my series.
->     - Rename the machine name to start secure_cntvoff into "sun8i-a83t",
->     according to Maxime's review.
->     - Change the type of is_a83t field from integer into boolean.
-> 
-> Changes from v6:
->     - Correct the commit log on patch 07 according to Sergei Shtylyov's
->     review.
->     - Rename the field "is_sun8i" into "is_a83t".
->     - Add all Tested-by and Reviewed-by from previous version.
-> 
-> Changes from v5:
->     - Remove my patch 01 and use the patch of Doug Berger to be able to
->     include the cpu-type header on assembly files.
->     - Rename smp_init_cntvoff function into secure_cntvoff_init according
->     to Marc Zyngier's review.
->     - According to Chen-Yu and Maxime's reviews, remove the patch that was
->     moving structures. Instead of using an index to retrieve which
->     architecture we are having, use a global variable.
->     - Merge the 2 patches that move assembly code from C to assembly file.
->     - Use a sun8i field instead of sun9i to know on which architecture we
->     are using because many modifications/additions of the code are for
->     sun8i-a83t.
->     - Rework the patch "add is_sun8i field" to add only this field in this
->     patch. The part of the patch that was starting to handle the differences
->     between sun8i-a83t and sun9i-a80 is merged in the patch that adds the
->     support of sun8i-a83t.
->     - Add a new patch that refactor the shmobile code to use the new function
->     secure_cntvoff_init introduced in this series.
-> 
-> Changes from v4:
->     - Rebased my series according to new Chen-Yu series:
->        "ARM: sunxi: Clean and improvements for multi-cluster SMP"
->        https://lkml.org/lkml/2018/3/8/886
->     - Updated my series according to Marc Zyngier's reviews to add CNTVOFF
->     initialization's function into ARM's common part. Thanks to that, other
->     platforms such as Renesa can use this function.
->     - For boot CPU, create a new machine to handle the CNTVOFF initialization
->     using "init_early" callback.
-> 
-> Changes from v3:
->     - Take into account Maxime's reviews:
-> 	- split the first patch into 4 new patches: add sun9i device tree
-> 	parsing, rename some variables, add a83t support and finally,
-> 	add hotplug support.
-> 	- Move the code of previous patch 07 (to disable CPU0 disabling)
-> 	into hotplug support patch (see patch 04)
-> 	- Remove the patch that added PRCM register because it is already
-> 	available. Because of that, update the device tree parsing to use
-> 	"sun8i-a83t-r-ccu".
-> 	- Use a variable to know which SoC we currently have
->     - Take into account Chen-Yu's reviews: create two iounmap functions
->     to release the resources of the device tree parsing.
->     - Take into account Marc's review: Update the code to initialize CNTVOFF
->     register. As there is already assembly code in the driver, I decided
->     to create an assembly file not to mix assembly and C code.
->     For that, I create 3 new patches: move the current assembly code that
->     handles the cluster cache enabling into a file, move the cpu_resume entry
->     in this file and finally, add a new assembly entry to initialize the timer
->     offset for boot CPU and secondary CPUs.
-> 
-> Changes from v2:
->     - Rebased my modifications according to new Chen Yu's patch series
->     that adds SMP support for sun9i-a80 (without MCPM).
->     - Split the device-tree patches into 3 patches for CPUCFG, R_CPUCFG
->     and PRCM registers for more visibility.
->     - The hotplug of CPU0 is currently not working (even after trying what
->     Allwinner's code is doing) so remove the possibility of disabling
->     this CPU. Created a new patch for it.
-> 
-> Changes from v1:
->     - Add Chen Yu's patch in my series (see path 01)
->     - Add new compatibles for prcm and cpucfg registers for sun8i-a83t.
->     Create two functions to separate the DT parsing of sun9i-a80 and
->     sun8i-a83t.
->     - Thanks to Maxime's review: order device tree's nodes according
->     to physical addresses, remove unused label and fix registers' sizes.
->     Update the commit log and commit title of my last patch (see
->     patch 05).
-> 
-> Doug Berger (1):
->   ARM: Allow this header to be included by assembly files
-> 
-> Mylène Josserand (11):
->   ARM: sunxi: smp: Move assembly code into a file
->   ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
->   ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
->   ARM: dts: sun8i: a83t: Add CCI-400 node
->   ARM: smp: Add initialization of CNTVOFF
->   ARM: sunxi: Add initialization of CNTVOFF
->   ARM: sun9i: smp: Rename clusters's power-off
->   ARM: sun9i: smp: Add is_a83t field
->   ARM: sun8i: smp: Add support for A83T
->   ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
->   ARM: shmobile: Convert file to use cntvoff
-> 
->  arch/arm/boot/dts/sun8i-a83t.dtsi        |  59 ++++++++
->  arch/arm/common/Makefile                 |   1 +
->  arch/arm/common/secure_cntvoff.S         |  31 ++++
->  arch/arm/include/asm/cputype.h           |  10 +-
->  arch/arm/include/asm/secure_cntvoff.h    |   8 ++
->  arch/arm/mach-shmobile/common.h          |   1 -
->  arch/arm/mach-shmobile/headsmp-apmu.S    |  22 +--
->  arch/arm/mach-shmobile/setup-rcar-gen2.c |   3 +-
->  arch/arm/mach-sunxi/Kconfig              |   2 +-
->  arch/arm/mach-sunxi/Makefile             |   2 +-
->  arch/arm/mach-sunxi/headsmp.S            |  81 +++++++++++
->  arch/arm/mach-sunxi/mc_smp.c             | 239 +++++++++++++++++++------------
->  arch/arm/mach-sunxi/sunxi.c              |  20 ++-
->  13 files changed, 356 insertions(+), 123 deletions(-)
->  create mode 100644 arch/arm/common/secure_cntvoff.S
->  create mode 100644 arch/arm/include/asm/secure_cntvoff.h
->  create mode 100644 arch/arm/mach-sunxi/headsmp.S
-> 
-> -- 
-> 2.11.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
