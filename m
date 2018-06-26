@@ -2,110 +2,214 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE640C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C98C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9679926742
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:29:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9679926742
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BE9D126742
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:30:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9D126742
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934091AbeFZS3u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:29:50 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38168 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754582AbeFZS3r (ORCPT
+        id S1754735AbeFZSaJ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:30:09 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36048 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752210AbeFZSaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:29:47 -0400
-Received: by mail-wr0-f194.google.com with SMTP id e18-v6so18221821wrs.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:29:47 -0700 (PDT)
+        Tue, 26 Jun 2018 14:30:07 -0400
+Received: by mail-pf0-f196.google.com with SMTP id u16-v6so4700576pfh.3;
+        Tue, 26 Jun 2018 11:30:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZDn3qoo3IMjSUe/WmGnkdEjxeaYPLSrNkmO6pEqVmT0=;
-        b=F4r476odD7nKfgOCLyynAUcb7vISTxa1u8P7xHdZhLoJPxJRyem376xqXi66l6JETF
-         2fnaP79/016BKW9J+LhjiQq27Fb2WEM2MzxAfeqVig5cEjGJVuvsD544UyWtpdxNeQ1+
-         0MJn206PINPl3jrJh5ptWNRT0l3bCz1HCYeD8CmrkvBkZ2s8UubZrfco6pUdV9CSO2WK
-         lfD7J9lFcx2aHm6hz5lB0WFQe7q4MkYdAj4P5kwFpRGtOpy8hiiTHefSSPD8wSKbqJGr
-         KrzQGJIA2X7/ZTjTx8H1JuK/UmixBBbFL+AIHi4LyUaDDGlJ3Vc4luMYFfUhL9EmTN/h
-         hkWg==
-X-Gm-Message-State: APt69E1if/egor+Mbt3O+IRpxp7sA77QF/J49SQoz7FkmXQwylxHm6Vh
-        cOOl1SuNTpzDV29AXlVdNCaIIka1yU4=
-X-Google-Smtp-Source: AAOMgpfyCMKiOBWYxdo5Svpl3tI4+jD2Df0GC1BB1NzmoUyIarMv63IiujkncXOztQWEejT7VBm8BQ==
-X-Received: by 2002:adf:f5c3:: with SMTP id k3-v6mr501824wrp.219.1530037786158;
-        Tue, 26 Jun 2018 11:29:46 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id j131-v6sm3238029wmb.25.2018.06.26.11.29.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 11:29:45 -0700 (PDT)
-Subject: Re: [PATCH v3 3/3] console/fbcon: Add support for deferred console
- takeover
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180626135535.2990-1-hdegoede@redhat.com>
- <20180626135535.2990-4-hdegoede@redhat.com>
- <CAHp75VfxQMTMMSZvNBtHGGQAyBaURrBTddtuiQqFmpcjWG6Ktg@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <ad0becb1-eece-b89c-c77f-273403052491@redhat.com>
-Date:   Tue, 26 Jun 2018 20:29:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dMeCInSn5HV4ZxyWsLPZK2lw5qRLL1OhPzhXOibJvmc=;
+        b=nnNUwD0ax9haKFCv53Lu+77HCOl6uLluMJkfwak5IdWVP7pBlKkvpg56HY9MGKxq2i
+         g8oulX3reYsiCVF2fHnsugRIcVBLbDPjnDKzuVAIH4HZgMmByktsw2kbh413iURSwL9a
+         qrzAiZtRDXC4bTgMvSvtiR8inEj14ebjpxV3ixwEpBd78EpNzzud5S/XdA4hDT6t/pif
+         3PARhEeieFEZpoychbJkZKzdugisPaXde2qn1D4mszrk2LCKTof8EWSi9vsBxtURrMwF
+         /UZ7byCTjcGcFcEptId7DXl8DZbu/IISTG/MDV0U2hWUl/4wGZYXADlnn4mqHPl9/Tvj
+         ALwA==
+X-Gm-Message-State: APt69E2FQyzFvkJYsIUohjPr4mgdHI6KWYb7vUJhLlNPXNEI72KwbFY3
+        yBvmDNSKxAV8qYnJh3MpmA==
+X-Google-Smtp-Source: ADUXVKLHMiedY3jdMep3RZZDXM/OzonEPuxL9CxJC9KpJjSciJDRSiT/VRT7VAJCMnR1NEzlfCc04g==
+X-Received: by 2002:a65:5ac9:: with SMTP id d9-v6mr2365525pgt.238.1530037806600;
+        Tue, 26 Jun 2018 11:30:06 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id g70-v6sm4211010pfc.107.2018.06.26.11.30.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 11:30:05 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 12:30:03 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     yixun.lan@amlogic.com, linux-mtd@lists.infradead.org,
+        boris.brezillon@bootlin.com, richard@nod.at,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
+        devicetree@vger.kernel.org, liang.yang@amlogic.com,
+        jian.hu@amlogic.com, khilman@baylibre.com, carlo@caione.org,
+        linux-amlogic@lists.infradead.org, computersforpeace@gmail.com,
+        dwmw2@infradead.org, linux-arm-kernel@lists.infradead.org,
+        jbrunet@baylibre.com
+Subject: Re: [PATCH 1/2] dt-bindings: nand: meson: add Amlogic NAND
+ controller driver
+Message-ID: <20180626183003.GA3019@rob-hp-laptop>
+References: <20180613161314.14894-1-yixun.lan@amlogic.com>
+ <20180613161314.14894-2-yixun.lan@amlogic.com>
+ <CAFBinCBeyXf6LNaZzAw6WnsxzDAv8E=Yp2eem0xCPWMEUi6pnQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VfxQMTMMSZvNBtHGGQAyBaURrBTddtuiQqFmpcjWG6Ktg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFBinCBeyXf6LNaZzAw6WnsxzDAv8E=Yp2eem0xCPWMEUi6pnQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 26-06-18 19:12, Andy Shevchenko wrote:
-> On Tue, Jun 26, 2018 at 4:55 PM, Hans de Goede <hdegoede@redhat.com> wrote:
->> Currently fbcon claims fbdevs as soon as they are registered and takes over
->> the console as soon as the first fbdev gets registered.
->>
->> This behavior is undesirable in cases where a smooth graphical bootup is
->> desired, in such cases we typically want the contents of the framebuffer
->> (typically a vendor logo) to stay in place as is.
->>
->> The current solution for this problem (on embedded systems) is to not
->> enable fbcon.
->>
->> This commit adds a new FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER config option,
->> which when enabled defers fbcon taking over the console from the dummy
->> console until the first text is displayed on the console. Together with the
->> "quiet" kernel commandline option, this allows fbcon to still be used
->> together with a smooth graphical bootup, having it take over the console as
->> soon as e.g. an error message is logged.
+On Sun, Jun 24, 2018 at 12:46:59AM +0200, Martin Blumenstingl wrote:
+> Hello Yixun, Hello Liang,
 > 
->> +       for (i = 0; i < FB_MAX; i++) {
->> +               if (registered_fb[i])
->> +                       fbcon_fb_registered(registered_fb[i]);
->> +       }
+> I have a few small comments inline below
+> additionally I tried to explain the reason behind
+> "amlogic,mmc-syscon", clkin0 and clkin1 so Rob (or the devicetree
+> maintainers in general) can give feedback. feel free to correct me
+> wherever I'm wrong or provide additional notes in case I missed
+> something!
 > 
-> Simple git grep shows that we perhaps do
+> On Wed, Jun 13, 2018 at 10:17 AM Yixun Lan <yixun.lan@amlogic.com> wrote:
+> >
+> > From: Liang Yang <liang.yang@amlogic.com>
+> >
+> > Add Amlogic NAND controller dt-bindings for Meson SoC,
+> > Current this driver support GXBB/GXL/AXG platform.
+> >
+> > Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+> > Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> > ---
+> >  .../bindings/mtd/amlogic,meson-nand.txt       | 118 ++++++++++++++++++
+> >  1 file changed, 118 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+> > new file mode 100644
+> > index 000000000000..eac9f9433d5d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+> > @@ -0,0 +1,118 @@
+> > +Amlogic NAND Flash Controller (NFC) for GXBB/GXL/AXG family SoCs
+> > +
+> > +This file documents the properties in addition to those available in
+> > +the MTD NAND bindings.
+> > +
+> > +Required properties:
+> > +- compatible : contains one of:
+> > +  - "amlogic,meson-gxl-nfc"
+> > +  - "amlogic,meson-axg-nfc"
+> the patch description states that GXBB/GXL/AXG are supported
+> shouldn't you add a compatible string for GXBB as well?
 > 
-> #define for_each_registered_fbcon(i) ...
+> > +- clocks     :
+> > +       A list of phandle + clock-specifier pairs for the clocks listed
+> > +       in clock-names.
+> > +
+> > +- clock-names: Should contain the following:
+> > +       "core" - NFC module gate clock
+> > +       "clkin0" - Parent clock of internal mux
+> > +       "clkin1" - Other parent clock of internal mux
+> to give the devicetree maintainers some context on clkin0 and clkin1:
 > 
-> (As an example see for_each_pci_bridge() how it's done there)
+> older SoCs (Meson8, Meson8b - not supported by this binding/driver
+> yet) had a dedicated NAND clock. there neither clkin0 or clkin1 would
+> be used, instead we just had a "nand" or "interface" clock (I'm not
+> aware of the actual naming in Amlogic's internal datasheets)
+> 
+> newer SoCs do NOT have a dedicated NAND "interface" clock anymore.
+> instead they are sharing the clock with the "sd_emmc_c" controller (I
+> *believe* the reason for this is because sd_emmc_c and the NAND
+> controller use the same pads on the SoC, pinctrl muxing controls where
+> these pads are routed -> NAND and sd_emmc_c cannot be used at the same
+> time, so SoC designers probably decided to re-use the clock)
+> 
+> unfortunately the sd_emmc_c clock is not provided by the "main" clock
+> controller on these newer SoCs
+> instead the clock is part of the MMC controller's register space (see
+> the SD_EMMC_CLOCK register in drivers/mmc/host/meson-gx-mmc.c)
+> even worse: the SD_EMMC_CLOCK contains more than just clock settings
+> (bit 25 enables the SDIO interrupt, which is currently not supported
+> by the meson-gx-mmc driver though)
+> 
+> the SD_EMMC_CLOCK register has a mux (CLK_SRC_MASK) to choose from
+> clkin0 and clkin1 which are passed here
+> the "amlogic,mmc-syscon" property is used to get a phandle to the
+> sd_emmc_c syscon register space
+> thus there is a bit of code duplication in the MMC and NAND drivers
+> with this binding (because both need to configure the SD_EMMC_CLOCK
+> register)
 
-This is probably a worthwhile cleanup for all the fbdev related
-code / drivers. But outside of the scope of this patchset.
+Well, that's ugly. Really, the SD controller should be modeled as a 
+clock provider. But then you would have to always have a driver 
+instantiated for it. Maybe you need that anyway if accessing this 
+register is dependent on some other clock or reset to the module being 
+enabled (which you may not hit if you only access the reg during boot)?
 
-Regards,
+But if you really want to do it this way, I guess that is fine.
 
-Hans
+> > +
+> > +- pins     : Select pins which NFC need.
+> > +- nand_pins: Detail NAND pins information.
+> > +               nand_pins: nand {
+> > +                       mux {
+> > +                               groups = "emmc_nand_d0",
+> > +                                       "emmc_nand_d1",
+> > +                                       "emmc_nand_d2",
+> > +                                       "emmc_nand_d3",
+> > +                                       "emmc_nand_d4",
+> > +                                       "emmc_nand_d5",
+> > +                                       "emmc_nand_d6",
+> > +                                       "emmc_nand_d7",
+> > +                                       "nand_ce0",
+> > +                                       "nand_rb0",
+> > +                                       "nand_ale",
+> > +                                       "nand_cle",
+> > +                                       "nand_wen_clk",
+> > +                                       "nand_ren_wr";
+> > +                               function = "nand";
+> > +                       };
+> > +               };
+> > +
+> > +- amlogic,mmc-syscon   : Required for NAND clocks, it's shared with SD/eMMC
+> > +                               controller port C
+> > +
+> > +Optional children nodes:
+> > +Children nodes represent the available nand chips.
+> > +
+> > +Optional properties:
+> > +- meson-nand-user-mode :
+> > +       only set 2 or 16 which mean the way of reading OOB bytes by NFC.
+> as far as I know vendor specific properties should follow the naming
+> schema "vendor,purpose"
+> in this case this would be "amlogic,nand-user-mode"
+> 
+> maybe Rob can comment on this?
+
+Yes.
+
+> 
+> > +- meson-nand-ran-mode :
+> > +       setting 0 or 1, means disable/enable scrambler which keeps the balence
+> > +       of 0 and 1
+> I assume 0 and 1 are the only possible values.
+> to use of_property_read_bool in the driver the property would be either:
+> - (absent) = scrambler is disabled
+> - amlogic,nand-enable-scrambler (without any value - also same comment
+> as above for the value) = scrambler is enabled
+> 
+> 
+> Regards
+> Martin
