@@ -2,322 +2,389 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9C0C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 472E0C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDE3F2695A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:34:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SK1UniiE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDE3F2695A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C80822694A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:35:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C80822694A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753109AbeFZXec (ORCPT
+        id S1755013AbeFZXe6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 19:34:32 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42034 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751641AbeFZXe3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 19:34:29 -0400
-Received: by mail-pg0-f68.google.com with SMTP id c10-v6so72616pgu.9
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 16:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4NoK6Tck95gwqa4XuNsQJD0wftpbR8Mn4w7mzWDbI90=;
-        b=SK1UniiE1d86cTKOvdSscRTlfHl9e0Dn6huIA35SLcPl8MZBw4unkdHmD8UYbcKPdX
-         BfIHZtJAGSmug/m3XdpfEeoZzB92tzXGtS2q3V4igYm7EzE2oL85s3FcyA04q3zcGc+v
-         TCsHz/dgnCJbjfmDr11a8enuNu8A39il4+Yms=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4NoK6Tck95gwqa4XuNsQJD0wftpbR8Mn4w7mzWDbI90=;
-        b=N8suZA8PtjMzz9+yonAf82ui3PZPAFYjbZobiXOJBXQxDlJDhmsFqHxxa5sltxCS8c
-         PxZxn5KeL1WFtB9cRkcQzMJlzf0ifqAandNoxQLUZ0Di5S0stfWPJGkiu8z69r7OTo0k
-         rGi+eggI/gf82wdBRI8wvQVjIYdB0UoT3KrFZxvnHMBqqA45Z3W3M4cd9tHhaW6YbBJ6
-         OfFcpWTLjQPXB7d+xENZDag0Qt3oRFkQGJTDpt70MHkL53hRLDLbfiu7CTUKOYDYn9cC
-         DO4g9/S0Tt34HRWWVtIj36Ftc3o143E/ixqu1YV4/KyulYwoc6ZycfTwnN1be+W7hK4U
-         aI0A==
-X-Gm-Message-State: APt69E2Q5f+bA0MqX1sxCvIiOUrkO92dhqJAP2OT9Ts5f2ZIjNFYjytd
-        TqIwUpcXAofHHQgLwyYGFHOZzw==
-X-Google-Smtp-Source: AAOMgpdGrtsQxny+2wPO8UjRC7i+9OCLXqq+uVLLVhYv/SlNxUkyJ6Lijv4zBLc1aZ+Jz4HLoPz2Dg==
-X-Received: by 2002:a62:d955:: with SMTP id s82-v6mr3464550pfg.216.1530056069185;
-        Tue, 26 Jun 2018 16:34:29 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id t6-v6sm3455175pgp.3.2018.06.26.16.34.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 16:34:28 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 16:34:27 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, vincent.guittot@linaro.org,
-        skannan@codeaurora.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        abailon@baylibre.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 1/8] interconnect: Add generic on-chip interconnect API
-Message-ID: <20180626233427.GR129942@google.com>
-References: <20180620121141.15403-1-georgi.djakov@linaro.org>
- <20180620121141.15403-2-georgi.djakov@linaro.org>
+        Tue, 26 Jun 2018 19:34:58 -0400
+Received: from mga03.intel.com ([134.134.136.65]:57139 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750909AbeFZXe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 19:34:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 16:34:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,276,1526367600"; 
+   d="scan'208";a="211431252"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by orsmga004.jf.intel.com with ESMTP; 26 Jun 2018 16:34:56 -0700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     alex.hung@canonical.com, dvhart@infradead.org, andy@infradead.org
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net, Mario.Limonciello@dell.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] platform/x86: intel-hid: Add support for Device Specific Methods
+Date:   Tue, 26 Jun 2018 16:34:54 -0700
+Message-Id: <20180626233454.47340-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180620121141.15403-2-georgi.djakov@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Georgi,
+In some of the recent platforms, it is possible that stand alone methods
+for HEBC() or other methods used in this driver may not exist. In this
+case intel-hid driver will fail to load and power button will not be
+functional.
 
-On Wed, Jun 20, 2018 at 03:11:34PM +0300, Georgi Djakov wrote:
-> This patch introduce a new API to get requirements and configure the
+It is also possible that some quirks in this driver added for some platforms
+may have same issue in loading intel-hid driver.
 
-nit: s/introduce/introduces/
+There is an update to the ACPI details for the HID event filter driver.
+In the updated specification a _DSM is added, which has separate function
+indexes for each of the previous stand alone methods.
 
-> interconnect buses across the entire chipset to fit with the current
-> demand.
-> 
-> The API is using a consumer/provider-based model, where the providers are
-> the interconnect buses and the consumers could be various drivers.
-> The consumers request interconnect resources (path) between endpoints and
-> set the desired constraints on this data flow path. The providers receive
-> requests from consumers and aggregate these requests for all master-slave
-> pairs on that path. Then the providers configure each participating in the
-> topology node according to the requested data flow path, physical links and
-> constraints. The topology could be complicated and multi-tiered and is SoC
-> specific.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
-> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
->
-> ...
->
-> +static struct icc_path *path_find(struct device *dev, struct icc_node *src,
-> +				  struct icc_node *dst)
-> +{
-> +	struct icc_node *n, *node = NULL;
-> +	struct icc_provider *provider;
-> +	struct list_head traverse_list;
-> +	struct list_head edge_list;
-> +	struct list_head visited_list;
-> +	size_t i, depth = 0;
-> +	bool found = false;
-> +	int ret = -EPROBE_DEFER;
-> +
-> +	INIT_LIST_HEAD(&traverse_list);
-> +	INIT_LIST_HEAD(&edge_list);
-> +	INIT_LIST_HEAD(&visited_list);
-> +
-> +	list_add_tail(&src->search_list, &traverse_list);
-> +	src->reverse = NULL;
-> +
-> +	do {
-> +		list_for_each_entry_safe(node, n, &traverse_list, search_list) {
-> +			if (node == dst) {
-> +				found = true;
-> +				list_add(&node->search_list, &visited_list);
-> +				break;
-> +			}
-> +			for (i = 0; i < node->num_links; i++) {
-> +				struct icc_node *tmp = node->links[i];
-> +
-> +				if (!tmp) {
-> +					ret = -ENOENT;
-> +					goto out;
-> +				}
-> +
-> +				if (tmp->is_traversed)
-> +					continue;
-> +
-> +				tmp->is_traversed = true;
-> +				tmp->reverse = node;
-> +				list_add(&tmp->search_list, &edge_list);
-> +			}
-> +		}
-> +		if (found)
-> +			break;
-> +
-> +		list_splice_init(&traverse_list, &visited_list);
-> +		list_splice_init(&edge_list, &traverse_list);
-> +
-> +		/* count the hops away from the source */
-> +		depth++;
-> +
-> +	} while (!list_empty(&traverse_list));
-> +
-> +out:
-> +	/* reset the traversed state */
-> +	list_for_each_entry(provider, &icc_provider_list, provider_list) {
-> +		list_for_each_entry(n, &provider->nodes, node_list)
-> +			if (n->is_traversed)
-> +				n->is_traversed = false;
-> +	}
-> +
-> +	if (found) {
-> +		struct icc_path *path = path_allocate(dst, depth);
-> +
-> +		if (IS_ERR(path))
-> +			return path;
-> +
-> +		/* initialize the path */
-> +		for (i = 0; i < path->num_nodes; i++) {
-> +			node = path->reqs[i].node;
-> +			path->reqs[i].dev = dev;
-> +			node->provider->users++;
+This change brings in support for the _DSM and allows usage of function
+index for corresponding stand alone methods.
 
-nit: doing the assignment of path->reqs[i].dev before assiging 'node'
-or after incrementing the 'users' would slightly improve readability.
+Details of Device Specific Method:
 
-> +static int apply_constraints(struct icc_path *path)
-> +{
-> +	struct icc_node *next, *prev = NULL;
-> +	int ret = 0;
-> +	int i;
-> +
-> +	for (i = 0; i < path->num_nodes; i++, prev = next) {
-> +		struct icc_provider *p;
-> +
-> +		next = path->reqs[i].node;
-> +		/*
-> +		 * Both endpoints should be valid master-slave pairs of the
-> +		 * same interconnect provider that will be configured.
-> +		 */
-> +		if (!prev || next->provider != prev->provider)
-> +			continue;
-> +
-> +		p = next->provider;
-> +
-> +		aggregate_provider(p);
-> +
-> +		if (p->set) {
-> +			/* set the constraints */
-> +			ret = p->set(prev, next, p->avg_bw, p->peak_bw);
-> +		}
+Intel HID Event Filter Driver _DSM UUID:
+eeec56b3-4442-408f-a792-4edd4d758054
 
-remove curly brackets
+• Function index 0: Returns a buffer with a bit-field representing the
+supported function IDs.
 
-EDIT: actually the condition can be removed, icc_provider_add() fails
-when p->set is NULL.
+Function Index	ASL Object
+--------------------------------
+1		BTNL
+2		HDMM
+3		HDSM
+4		HDEM
+5		BTNS
+6		BTNE
+7		HEBC
+8		VGBS
+9		HEBC
 
-> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
-> +{
-> +	struct icc_node *node;
-> +	struct icc_provider *p;
-> +	size_t i;
-> +	int ret = 0;
+One significant change is to query the supported methods implemented on
+the platform. So the previous HEBC() has two variants. HEBC v1 and
+HEBC v2. The v2 version allowed further define which of the 5-button
+are actually defined by the platform. HEBC v2 support is only available
+via new DSM.
 
-initialization is not necessary
+v1 Button details:
+Bits [0] - Rotation Lock, Num Lock, Home, End, Page Up,
+Page Down
+Bits [1] - Wireless Radio Control
+Bits [2] - System Power Down
+Bits [3] - System Hibernate
+Bits [4] - System Sleep/ System Wake
+Bits [5] - Scan Next Track
+Bits [6] - Scan Previous Track
+Bits [7] - Stop
+Bits [8] - Play/Pause
+Bits [9] - Mute
+Bits [10] - Volume Increment
+Bits [11] - Volume Decrement
+Bits [12] - Display Brightness Increment
+Bits [13] - Display Brightness Decrement
+Bits [14] - Lock Tablet
+Bits [15] - Release Tablet
+Bits [16] - Toggle Bezel
+Bits [17] - 5 button array
+Bits [18-31] - reserved
 
-> +struct icc_path *icc_get(struct device *dev, const int src_id, const int dst_id)
-> +{
-> +	struct icc_node *src, *dst;
-> +	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
-> +
-> +	src = node_find(src_id);
-> +	if (!src) {
-> +		dev_err(dev, "%s: invalid src=%d\n", __func__, src_id);
-> +		goto out;
-> +	}
-> +
-> +	dst = node_find(dst_id);
-> +	if (!dst) {
-> +		dev_err(dev, "%s: invalid dst=%d\n", __func__, dst_id);
-> +		goto out;
-> +	}
-> +
-> +	mutex_lock(&icc_lock);
-> +	path = path_find(dev, src, dst);
-> +	mutex_unlock(&icc_lock);
-> +	if (IS_ERR(path)) {
-> +		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
-> +		goto out;
+v2 Buttom details:
+Bits [0] - Rotation Lock, Num Lock, Home, End, Page Up, Page Down
+Bits [1] - Wireless Radio Control
+Bits [2] - System Power Down
+Bits [3] - System Hibernate
+Bits [4] - System Sleep/ System Wake
+Bits [5] - Scan Next Track
+Bits [6] - Scan Previous Track
+Bits [7] - Stop
+Bits [8] - Play/Pause
+Bits [9] - Mute
+Bits [10] - Volume Increment
+Bits [11] - Volume Decrement
+Bits [12] - Display Brightness Increment
+Bits [13] - Display Brightness Decrement
+Bits [14] - Lock Tablet
+Bits [15] - Release Tablet
+Bits [16] - Toggle Bezel
+Bits [17] - 5 button array
+Bits [18] – Power Button
+Bits [19] - W Home Button
+Bits [20] - Volume Up Button
+Bits [21] - Volume Down Button
+Bits [22] – Rotation Lock Button
+Bits [23-31] – reserved
 
-this goto isn't really needed
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/platform/x86/intel-hid.c | 178 +++++++++++++++++++++++++++----
+ 1 file changed, 157 insertions(+), 21 deletions(-)
 
-> +struct icc_node *icc_node_create(int id)
-> +{
-> +	struct icc_node *node;
-> +
-> +	/* check if node already exists */
-> +	node = node_find(id);
-> +	if (node)
-> +		goto out;
-> +
-> +	node = kzalloc(sizeof(*node), GFP_KERNEL);
-> +	if (!node) {
-> +		node = ERR_PTR(-ENOMEM);
-> +		goto out;
-> +	}
-> +
-> +	mutex_lock(&icc_lock);
-> +
-> +	id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
-> +	if (WARN(id < 0, "couldn't get idr")) {
+diff --git a/drivers/platform/x86/intel-hid.c b/drivers/platform/x86/intel-hid.c
+index b5adba227783..9e34f056fdf3 100644
+--- a/drivers/platform/x86/intel-hid.c
++++ b/drivers/platform/x86/intel-hid.c
+@@ -96,13 +96,143 @@ struct intel_hid_priv {
+ 	bool wakeup_mode;
+ };
+ 
+-static int intel_hid_set_enable(struct device *device, bool enable)
++#define HID_EVENT_FILTER_UUID	"eeec56b3-4442-408f-a792-4edd4d758054"
++
++enum intel_hid_dsm_fn_codes {
++	INTEL_HID_DSM_FN_INVALID,
++	BTNL_FN_CODE,
++	HDMM_FN_CODE,
++	HDSM_FN_CODE,
++	HDEM_FN_CODE,
++	BTNS_FN_CODE,
++	BTNE_FN_CODE,
++	HEBC_V1_FN_CODE,
++	VGBS_FN_CODE,
++	HEBC_V2_FN_CODE,
++	HEBC_MAX_FN_CODES
++};
++
++static const char *intel_hid_dsm_fn_to_method[HEBC_MAX_FN_CODES] = {
++	NULL,
++	"BTNL",
++	"HDMM",
++	"HDSM",
++	"HDEM",
++	"BTNS",
++	"BTNE",
++	"HEBC",
++	"VGBS",
++	"HEBC"
++};
++
++static unsigned long long intel_hid_dsm_fn_mask;
++
++static bool intel_hid_execute_method(acpi_handle handle,
++				     enum intel_hid_dsm_fn_codes fn_index,
++				     unsigned long long arg)
+ {
++	union acpi_object *obj, argv4, req;
+ 	acpi_status status;
++	guid_t dsm_guid;
++	char *method_name;
+ 
+-	status = acpi_execute_simple_method(ACPI_HANDLE(device), "HDSM",
+-					    enable);
+-	if (ACPI_FAILURE(status)) {
++	if (fn_index <= INTEL_HID_DSM_FN_INVALID ||
++	    fn_index >= HEBC_MAX_FN_CODES)
++		return false;
++
++	method_name = (char *)intel_hid_dsm_fn_to_method[fn_index];
++
++	if (!(intel_hid_dsm_fn_mask & fn_index))
++		goto skip_dsm_exec;
++
++	guid_parse(HID_EVENT_FILTER_UUID, &dsm_guid);
++
++	/* All methods expects a package with one integer element */
++	req.type = ACPI_TYPE_INTEGER;
++	req.integer.value = arg;
++
++	argv4.type = ACPI_TYPE_PACKAGE;
++	argv4.package.count = 1;
++	argv4.package.elements = &req;
++
++	obj = acpi_evaluate_dsm(handle, &dsm_guid, 1, fn_index, &argv4);
++	if (obj) {
++		pr_debug("Exec DSM Fn code: %d[%s] success\n", fn_index,
++			 method_name);
++		ACPI_FREE(obj);
++		return true;
++	}
++
++skip_dsm_exec:
++	status = acpi_execute_simple_method(handle, method_name, arg);
++	if (ACPI_SUCCESS(status))
++		return true;
++
++	return false;
++}
++
++static bool intel_hid_evaluate_method(acpi_handle handle,
++				      enum intel_hid_dsm_fn_codes fn_index,
++				      unsigned long long *result)
++{
++	union acpi_object *obj;
++	acpi_status status;
++	guid_t dsm_guid;
++	char *method_name;
++
++	if (fn_index <= INTEL_HID_DSM_FN_INVALID ||
++	    fn_index >= HEBC_MAX_FN_CODES)
++		return false;
++
++	method_name = (char *)intel_hid_dsm_fn_to_method[fn_index];
++
++	if (!(intel_hid_dsm_fn_mask & fn_index))
++		goto skip_dsm_eval;
++
++	guid_parse(HID_EVENT_FILTER_UUID, &dsm_guid);
++
++	obj = acpi_evaluate_dsm_typed(handle, &dsm_guid,
++				      1, fn_index,
++				      NULL,  ACPI_TYPE_INTEGER);
++	if (obj) {
++		*result = obj->integer.value;
++		pr_debug("Eval DSM Fn code: %d[%s] results: 0x%llx\n",
++			 fn_index, method_name, *result);
++		ACPI_FREE(obj);
++		return true;
++	}
++
++skip_dsm_eval:
++	status = acpi_evaluate_integer(handle, method_name, NULL, result);
++	if (ACPI_SUCCESS(status))
++		return true;
++
++	return false;
++}
++
++static void intel_hid_init_dsm(acpi_handle handle)
++{
++	union acpi_object *obj;
++	guid_t dsm_guid;
++
++	guid_parse(HID_EVENT_FILTER_UUID, &dsm_guid);
++
++	obj = acpi_evaluate_dsm_typed(handle, &dsm_guid, 1, 0, NULL,
++				      ACPI_TYPE_BUFFER);
++	if (obj) {
++		intel_hid_dsm_fn_mask = *obj->buffer.pointer;
++		ACPI_FREE(obj);
++	}
++
++	pr_debug("intel_hid_dsm_fn_mask = %llx\n", intel_hid_dsm_fn_mask);
++}
++
++static int intel_hid_set_enable(struct device *device, bool enable)
++{
++
++	/* Enable|disable features - power button is always enabled */
++	if (!intel_hid_execute_method(ACPI_HANDLE(device), HDSM_FN_CODE,
++				      enable)) {
+ 		dev_warn(device, "failed to %sable hotkeys\n",
+ 			 enable ? "en" : "dis");
+ 		return -EIO;
+@@ -129,9 +259,8 @@ static void intel_button_array_enable(struct device *device, bool enable)
+ 	}
+ 
+ 	/* Enable|disable features - power button is always enabled */
+-	status = acpi_execute_simple_method(handle, "BTNE",
+-					    enable ? button_cap : 1);
+-	if (ACPI_FAILURE(status))
++	if (!intel_hid_execute_method(handle, BTNE_FN_CODE,
++				      enable ? button_cap : 1))
+ 		dev_warn(device, "failed to set button capability\n");
+ }
+ 
+@@ -217,7 +346,6 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
+ 	struct platform_device *device = context;
+ 	struct intel_hid_priv *priv = dev_get_drvdata(&device->dev);
+ 	unsigned long long ev_index;
+-	acpi_status status;
+ 
+ 	if (priv->wakeup_mode) {
+ 		/*
+@@ -269,8 +397,7 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
+ 		return;
+ 	}
+ 
+-	status = acpi_evaluate_integer(handle, "HDEM", NULL, &ev_index);
+-	if (ACPI_FAILURE(status)) {
++	if (!intel_hid_evaluate_method(handle, HDEM_FN_CODE, &ev_index)) {
+ 		dev_warn(&device->dev, "failed to get event index\n");
+ 		return;
+ 	}
+@@ -284,17 +411,22 @@ static bool button_array_present(struct platform_device *device)
+ {
+ 	acpi_handle handle = ACPI_HANDLE(&device->dev);
+ 	unsigned long long event_cap;
+-	acpi_status status;
+-	bool supported = false;
+ 
+-	status = acpi_evaluate_integer(handle, "HEBC", NULL, &event_cap);
+-	if (ACPI_SUCCESS(status) && (event_cap & 0x20000))
+-		supported = true;
++	if (intel_hid_evaluate_method(handle, HEBC_V2_FN_CODE, &event_cap)) {
++		/* Check presence of 5 button array or v2 power button */
++		if (event_cap & 0x60000)
++			return true;
++	}
++
++	if (intel_hid_evaluate_method(handle, HEBC_V1_FN_CODE, &event_cap)) {
++		if (event_cap & 0x20000)
++			return true;
++	}
+ 
+ 	if (dmi_check_system(button_array_table))
+-		supported = true;
++		return true;
+ 
+-	return supported;
++	return false;
+ }
+ 
+ static int intel_hid_probe(struct platform_device *device)
+@@ -305,8 +437,9 @@ static int intel_hid_probe(struct platform_device *device)
+ 	acpi_status status;
+ 	int err;
+ 
+-	status = acpi_evaluate_integer(handle, "HDMM", NULL, &mode);
+-	if (ACPI_FAILURE(status)) {
++	intel_hid_init_dsm(handle);
++
++	if (!intel_hid_evaluate_method(handle, HDMM_FN_CODE, &mode)) {
+ 		dev_warn(&device->dev, "failed to read mode\n");
+ 		return -ENODEV;
+ 	}
+@@ -352,13 +485,16 @@ static int intel_hid_probe(struct platform_device *device)
+ 		goto err_remove_notify;
+ 
+ 	if (priv->array) {
++		unsigned long long results;
++
+ 		intel_button_array_enable(&device->dev, true);
+ 
+ 		/* Call button load method to enable HID power button */
+-		status = acpi_evaluate_object(handle, "BTNL", NULL, NULL);
+-		if (ACPI_FAILURE(status))
++		if (!intel_hid_evaluate_method(handle, BTNL_FN_CODE,
++					       &results)) {
+ 			dev_warn(&device->dev,
+ 				 "failed to enable HID power button\n");
++		}
+ 	}
+ 
+ 	device_init_wakeup(&device->dev, true);
+-- 
+2.17.1
 
-kfree(node);
-
-> +int icc_node_add(struct icc_node *node, struct icc_provider *provider)
-> +{
-> +	mutex_lock(&icc_lock);
-> +
-> +	node->provider = provider;
-> +	list_add(&node->node_list, &provider->nodes);
-> +
-> +	mutex_unlock(&icc_lock);
-> +
-> +	return 0;
-> +}
-
-The function returns always 0. Should probably be void so callers
-don't add pointless checks of the return value.
-
-> +int icc_provider_add(struct icc_provider *provider)
-> +{
-> +	if (WARN_ON(!provider->set))
-> +		return -EINVAL;
-> +
-> +	mutex_init(&icc_lock);
-
-Shouldn't this be mutex_lock()?
-
-> +int icc_provider_del(struct icc_provider *provider)
-> +{
-> +	mutex_lock(&icc_lock);
-> +	if (provider->users) {
-> +		pr_warn("interconnect provider still has %d users\n",
-> +			provider->users);
-> +		mutex_unlock(&icc_lock);
-> +		return -EBUSY;
-> +	}
-> +
-> +	if (!list_empty_careful(&provider->nodes)) {
-> +		pr_warn("interconnect provider still has nodes\n");
-> +		mutex_unlock(&icc_lock);
-> +		return -EEXIST;
-> +	}
-
-Could this be just list_empty()? If I didn't miss something icc_lock
-is held in all paths that change p->nodes (assuming that all changes
-should be done through the interfaces in this file).
-
-Actually this check will always fail if icc_node_add() was called for
-this provider, it doesn't seem nodes are ever removed.
-
-Cheers
-
-Matthias
