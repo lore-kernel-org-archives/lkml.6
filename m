@@ -6,60 +6,60 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B022C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D27C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32BB025E8E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E170B25E8E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:31:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="esJPzil5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32BB025E8E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6XFsC2/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E170B25E8E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeFZPaq (ORCPT
+        id S1752106AbeFZPbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:30:46 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33324 "EHLO
+        Tue, 26 Jun 2018 11:31:39 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45250 "EHLO
         mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751073AbeFZPal (ORCPT
+        with ESMTP id S1751072AbeFZPbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:30:41 -0400
-Received: by mail-lf0-f68.google.com with SMTP id b7-v6so6863109lfa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:30:41 -0700 (PDT)
+        Tue, 26 Jun 2018 11:31:37 -0400
+Received: by mail-lf0-f68.google.com with SMTP id m13-v6so7188849lfb.12
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:31:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=aN6HZZHl2Cz1VEDT1VHZFwOAVPnA7t5zp2KaLIWq7Kw=;
-        b=esJPzil5vZpMKd4EIumFXRihPOwpKN+dh3Q4SIUk8O21irdJwNGnuo/eBaVRAB8nxB
-         YADGXTZllCv2TJIZ4o3HKs2o3LrhqrhUKzrzR8TlA2L6V3mMTghDpbrKFHyHG6+ILCve
-         FPQ2lhjVwuzD/ZQ12BUV8IXaX8UUH/mxsUodk=
+        bh=B7+9LY2tNp/C0Mli/uekdwlXVVqMDxTnhJMNz5MMPHI=;
+        b=N6XFsC2/S6bAQ2DuOSdBDY0YZP2PG9nEzE7InaKr+T9HoLaBNvKgAbVSbDYynmfucX
+         r3v/Tdm2Jt8xzpwbpyLefSx/AFsdYyEy2mR4BqqnIh+7uSlreNoK2Ahkm5gbHUHNReeP
+         MvGGF06APcMn2AHLjQHwXv9fZQqKSAu60GNm8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aN6HZZHl2Cz1VEDT1VHZFwOAVPnA7t5zp2KaLIWq7Kw=;
-        b=OhhqsBhoOscg/gSMTa85HvvsCRzWeVSvXnM7fSi6Z39yPbU005QU24NvJa64UUb5vN
-         rP3UOfoaBttLEeOfJMz8MG75upFQvAeG/0nXoBLNQcoDSzFq2CY5AoOknxKbUgZi7EYY
-         2YF0ySDnll6T2Q90Eyhb5oqE8CZoGapaBrFbym/mWlRnCaswbx0PPtgqGbuom0kQqSVa
-         l5GgjnDA/DgTbjvE78XzSXgi2BZUl8uUw85VFn3In6t/3Kxg6O5Bo4QE9+bDXX0nKdqN
-         1nFfb1BJlvn7V78eoB6i/W8APHNDvHikPCkYdgPQRVW9vJLgJQA7/dut4S8RWRjh/AmZ
-         eDhw==
-X-Gm-Message-State: APt69E3RqvxRpus8RuY1XmP3b8og1RSWVTAz2sHj10mxxcDbZ9cinyfv
-        9BZfeLaOTIhcDDhS+0mtwPp9/P++EHQ=
-X-Google-Smtp-Source: AAOMgpeoTt49GCJ/sUtKplVr+STJ3cEyi8Y74eGvyuvQTtjbXV6DB84NxgJJcpAZEaR3MIbC7DsOvA==
-X-Received: by 2002:a19:6d11:: with SMTP id i17-v6mr1574017lfc.103.1530027040140;
-        Tue, 26 Jun 2018 08:30:40 -0700 (PDT)
+        bh=B7+9LY2tNp/C0Mli/uekdwlXVVqMDxTnhJMNz5MMPHI=;
+        b=rOpx3OX0fmq4ZUJNSMp8BFT/spezrPkznc5qFkdzYw0WU71EUjA91cTFx/oGNAu0SC
+         zCO+U9U6ihnMgR1hI+deRbar2vgm+DgDEhZR+XabCsJCwzfsGBGkOGnCDDYTSB1rJEEX
+         g91Sd2gAbruji5aR1ivezVzvTD8TAs33GmgUfgqVXJPpLSdOJ/vSApnc6HktN983GJQl
+         B1NU9jBZUauqEYom4eCSje/FzIqGe85A2W8Zjh0YffMyiSs975ai191nc1PNMHE9u/5G
+         iPJCgU8XIOqTL7qnN3+08Ns58qmuwCvdeKT6zv3/TQBD3JCIOzoLQ6PqlX/qYK0WqP/R
+         6IJw==
+X-Gm-Message-State: APt69E3dsUjlXO++wH1PphjjjRrETXNqg1fc7tkt4PDCUu36mrK1bYgk
+        TohUMq619VYSKbmb8HjH9JoIog==
+X-Google-Smtp-Source: AAOMgpfYQhuMawt26m2NyWU+kdQto09IA5xnG1sYoBGjLdNO0A/95u3+5FAtctaFOzFqMU+J15e6XQ==
+X-Received: by 2002:a19:2a5b:: with SMTP id f88-v6mr1567456lfl.63.1530027096317;
+        Tue, 26 Jun 2018 08:31:36 -0700 (PDT)
 Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
-        by smtp.gmail.com with ESMTPSA id g17-v6sm306096ljg.27.2018.06.26.08.30.39
+        by smtp.gmail.com with ESMTPSA id h6-v6sm298122ljg.16.2018.06.26.08.31.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 08:30:39 -0700 (PDT)
+        Tue, 26 Jun 2018 08:31:35 -0700 (PDT)
 From:   Anders Roxell <anders.roxell@linaro.org>
-To:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org
-Cc:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+To:     ysato@users.sourceforge.jp, dalias@libc.org
+Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
         Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] mips: configs: remove no longer needed config option
-Date:   Tue, 26 Jun 2018 17:30:35 +0200
-Message-Id: <20180626153035.361-1-anders.roxell@linaro.org>
+Subject: [PATCH] sh: configs: remove no longer needed config option
+Date:   Tue, 26 Jun 2018 17:31:25 +0200
+Message-Id: <20180626153125.515-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -72,47 +72,21 @@ in the defconfig anymore.
 
 Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- arch/mips/configs/ip27_defconfig    | 1 -
- arch/mips/configs/nlm_xlp_defconfig | 1 -
- arch/mips/configs/nlm_xlr_defconfig | 1 -
- 3 files changed, 3 deletions(-)
+ arch/sh/configs/sh7785lcr_32bit_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/mips/configs/ip27_defconfig b/arch/mips/configs/ip27_defconfig
-index 91a9c13e2c82..fbcbfc365c64 100644
---- a/arch/mips/configs/ip27_defconfig
-+++ b/arch/mips/configs/ip27_defconfig
-@@ -262,7 +262,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_EXTENDED=y
- CONFIG_SERIAL_8250_MANY_PORTS=y
- CONFIG_SERIAL_8250_SHARE_IRQ=y
+diff --git a/arch/sh/configs/sh7785lcr_32bit_defconfig b/arch/sh/configs/sh7785lcr_32bit_defconfig
+index 2ddf5ca7094e..7aa78ced9ffa 100644
+--- a/arch/sh/configs/sh7785lcr_32bit_defconfig
++++ b/arch/sh/configs/sh7785lcr_32bit_defconfig
+@@ -72,7 +72,6 @@ CONFIG_VT_HW_CONSOLE_BINDING=y
+ CONFIG_SERIAL_SH_SCI=y
+ CONFIG_SERIAL_SH_SCI_NR_UARTS=6
+ CONFIG_SERIAL_SH_SCI_CONSOLE=y
 -CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
- CONFIG_HW_RANDOM_TIMERIOMEM=m
- CONFIG_I2C_CHARDEV=m
- CONFIG_I2C_ALI1535=m
-diff --git a/arch/mips/configs/nlm_xlp_defconfig b/arch/mips/configs/nlm_xlp_defconfig
-index e8e1dd8e0e99..aec323ed6968 100644
---- a/arch/mips/configs/nlm_xlp_defconfig
-+++ b/arch/mips/configs/nlm_xlp_defconfig
-@@ -403,7 +403,6 @@ CONFIG_SERIO_SERPORT=m
- CONFIG_SERIO_LIBPS2=y
- CONFIG_SERIO_RAW=m
- CONFIG_VT_HW_CONSOLE_BINDING=y
--CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
- CONFIG_LEGACY_PTY_COUNT=0
- CONFIG_SERIAL_NONSTANDARD=y
- CONFIG_N_HDLC=m
-diff --git a/arch/mips/configs/nlm_xlr_defconfig b/arch/mips/configs/nlm_xlr_defconfig
-index c4477a4d40c1..88c185da23ce 100644
---- a/arch/mips/configs/nlm_xlr_defconfig
-+++ b/arch/mips/configs/nlm_xlr_defconfig
-@@ -336,7 +336,6 @@ CONFIG_SERIO_SERPORT=m
- CONFIG_SERIO_LIBPS2=y
- CONFIG_SERIO_RAW=m
- CONFIG_VT_HW_CONSOLE_BINDING=y
--CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
- CONFIG_LEGACY_PTY_COUNT=0
- CONFIG_SERIAL_NONSTANDARD=y
- CONFIG_N_HDLC=m
+ # CONFIG_LEGACY_PTYS is not set
+ # CONFIG_HW_RANDOM is not set
+ CONFIG_I2C=y
 -- 
 2.18.0
 
