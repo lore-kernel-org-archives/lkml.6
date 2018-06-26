@@ -2,136 +2,344 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9663FC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675FBC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51B6226AFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:17:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51B6226AFE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+	by mail.kernel.org (Postfix) with ESMTP id 162EF26B06
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:17:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162EF26B06
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=foss.arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965338AbeFZNRB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:17:01 -0400
-Received: from p3plsmtpa11-06.prod.phx3.secureserver.net ([68.178.252.107]:47602
-        "EHLO p3plsmtpa11-06.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965304AbeFZNQ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:16:56 -0400
-Received: from [192.168.0.67] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id Xnq2fknBhyBWgXnq3f2mtc; Tue, 26 Jun 2018 06:16:55 -0700
-Subject: Re: [Patch v2 06/15] CIFS: Introduce helper function to get page
- offset and length in smb_rqst
-To:     Long Li <longli@microsoft.com>, Steve French <sfrench@samba.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-References: <20180530194807.31657-1-longli@linuxonhyperv.com>
- <20180530194807.31657-7-longli@linuxonhyperv.com>
- <a6613388-0dc5-7646-b71f-75b8bec4e4d9@talpey.com>
- <CY4PR2101MB0722840106EDFEFBBA42D45FCE4A0@CY4PR2101MB0722.namprd21.prod.outlook.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <33a2f951-10fd-fa94-4fb1-cade7f72cd77@talpey.com>
-Date:   Tue, 26 Jun 2018 09:16:54 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S965359AbeFZNRV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:17:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45516 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965304AbeFZNRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:17:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A98D80D;
+        Tue, 26 Jun 2018 06:17:19 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 273943F5AF;
+        Tue, 26 Jun 2018 06:17:19 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 7C20168030C; Tue, 26 Jun 2018 14:17:17 +0100 (BST)
+Date:   Tue, 26 Jun 2018 14:17:17 +0100
+From:   Liviu Dudau <Liviu.Dudau@foss.arm.com>
+To:     Ayan Kumar Halder <ayan.halder@arm.com>
+Cc:     liviu.dudau@arm.com, brian.starkey@arm.com, malidp@foss.arm.com,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, nd@arm.com
+Subject: Re: [RFC PATCH 3/4] drm/arm/malidp: Set the AFBC register bits if
+ the framebuffer has AFBC modifier
+Message-ID: <20180626131716.GA14974@e110455-lin.cambridge.arm.com>
+References: <1529070694-21088-1-git-send-email-ayan.halder@arm.com>
+ <1529070694-21088-4-git-send-email-ayan.halder@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CY4PR2101MB0722840106EDFEFBBA42D45FCE4A0@CY4PR2101MB0722.namprd21.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNwr7X7DWhnC0/pI1g8snIX6t/gGxm3+GmdBCb9nRy9tZB34WwV5l53P01q5Wrcvm+qv7PV09RXjNgdTAPZcCTQRKHfykgyZp4+MLkc7bP1Yz0bzbgaM
- pFmLoJhfL4kPAljAW5CBpK9dEGwEXOCsaDps+6GThwve6Q6/q/dPUklv2cRYHkfVITYJU+wqvQVgQiqIov/vITSgKqD6r4DBU+xK1H1s5zo0+5sleUfhuDfM
- WU4TTCy7l+ppGRMct2KyT618ajQvYErnNCkENzw2b4dYS8TryLNPIp5nloPEOznSwASP12lVaMByKggbe2HZhQwv4G4pEQabDx2fRkcHzJ68kpeKYqEb2pUc
- Awm65xyx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1529070694-21088-4-git-send-email-ayan.halder@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/25/2018 5:14 PM, Long Li wrote:
->> Subject: Re: [Patch v2 06/15] CIFS: Introduce helper function to get page
->> offset and length in smb_rqst
->>
->> On 5/30/2018 3:47 PM, Long Li wrote:
->>> From: Long Li <longli@microsoft.com>
->>>
->>> Introduce a function rqst_page_get_length to return the page offset
->>> and length for a given page in smb_rqst. This function is to be used
->>> by following patches.
->>>
->>> Signed-off-by: Long Li <longli@microsoft.com>
->>> ---
->>>    fs/cifs/cifsproto.h |  3 +++
->>>    fs/cifs/misc.c      | 17 +++++++++++++++++
->>>    2 files changed, 20 insertions(+)
->>>
->>> diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h index
->>> 7933c5f..89dda14 100644
->>> --- a/fs/cifs/cifsproto.h
->>> +++ b/fs/cifs/cifsproto.h
->>> @@ -557,4 +557,7 @@ int cifs_alloc_hash(const char *name, struct
->> crypto_shash **shash,
->>>    		    struct sdesc **sdesc);
->>>    void cifs_free_hash(struct crypto_shash **shash, struct sdesc
->>> **sdesc);
->>>
->>> +extern void rqst_page_get_length(struct smb_rqst *rqst, unsigned int
->> page,
->>> +				unsigned int *len, unsigned int *offset);
->>> +
->>>    #endif			/* _CIFSPROTO_H */
->>> diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c index 96849b5..e951417
->>> 100644
->>> --- a/fs/cifs/misc.c
->>> +++ b/fs/cifs/misc.c
->>> @@ -905,3 +905,20 @@ cifs_free_hash(struct crypto_shash **shash,
->> struct sdesc **sdesc)
->>>    		crypto_free_shash(*shash);
->>>    	*shash = NULL;
->>>    }
->>> +
->>> +/**
->>> + * rqst_page_get_length - obtain the length and offset for a page in
->>> +smb_rqst
->>> + * Input: rqst - a smb_rqst, page - a page index for rqst
->>> + * Output: *len - the length for this page, *offset - the offset for
->>> +this page  */ void rqst_page_get_length(struct smb_rqst *rqst,
->>> +unsigned int page,
->>> +				unsigned int *len, unsigned int *offset) {
->>> +	*len = rqst->rq_pagesz;
->>> +	*offset = (page == 0) ? rqst->rq_offset : 0;
->>
->> Really? Page 0 always has a zero offset??
+Hi Ayan,
+
+Thanks for the patch! I have some small comments to make:
+
+On Fri, Jun 15, 2018 at 02:51:33PM +0100, Ayan Kumar Halder wrote:
+> Added the AFBC decoder registers for DP500 , DP550 and DP650.
+> These registers control the processing of AFBC buffers. It controls various
+> features like AFBC decoder enable, lossless transformation and block split
+> as well as setting of the left, right, top and bottom cropping of AFBC buffers
+> (in number of pixels).
+> All the layers (except DE_SMART) support framebuffers with AFBC modifiers.
+> One needs to set the pixel values of the top, left, bottom and right cropping
+> for the AFBC framebuffer.
+> Added the functionality in malidp_de_plane_update() to set the various
+> registers for AFBC decoder, depending on the modifiers.
 > 
-> I think you are misreading this line. The offset for page 0 is rq_offset, the offset for all subsequent pages are 0.
-
-Ah, yes, sorry I did read it incorrectly.
->>> +
->>> +	if (rqst->rq_npages == 1 || page == rqst->rq_npages-1)
->>> +		*len = rqst->rq_tailsz;
->>> +	else if (page == 0)
->>> +		*len = rqst->rq_pagesz - rqst->rq_offset; }
->>>
->>
->> This subroutine does what patch 5 does inline. Why not push this patch up in
->> the sequence and use the helper?
+> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+> Reviewed-by: Brian Starkey <brian.starkey@arm.com>
+> ---
+>  drivers/gpu/drm/arm/malidp_hw.c     | 27 ++++++++-----
+>  drivers/gpu/drm/arm/malidp_hw.h     |  2 +
+>  drivers/gpu/drm/arm/malidp_planes.c | 81 +++++++++++++++++++++++++++++++++----
+>  drivers/gpu/drm/arm/malidp_regs.h   | 20 +++++++++
+>  4 files changed, 111 insertions(+), 19 deletions(-)
 > 
-> This is actually a little different. This function returns the length and offset for a given page in the request. There might be multiple pages in a request.
+> diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+> index 4dbf39f..fd6b510 100644
+> --- a/drivers/gpu/drm/arm/malidp_hw.c
+> +++ b/drivers/gpu/drm/arm/malidp_hw.c
+> @@ -76,33 +76,38 @@ static const struct malidp_format_id malidp550_de_formats[] = {
+>  
+>  static const struct malidp_layer malidp500_layers[] = {
+>  	{ DE_VIDEO1, MALIDP500_DE_LV_BASE, MALIDP500_DE_LV_PTR_BASE,
+> -		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, ROTATE_ANY },
+> +		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, ROTATE_ANY,
+> +		MALIDP500_DE_LV_AD_CTRL },
+>  	{ DE_GRAPHICS1, MALIDP500_DE_LG1_BASE, MALIDP500_DE_LG1_PTR_BASE,
+> -		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY },
+> +		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY, MALIDP500_DE_LG1_AD_CTRL },
+>  	{ DE_GRAPHICS2, MALIDP500_DE_LG2_BASE, MALIDP500_DE_LG2_PTR_BASE,
+> -		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY },
+> +		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY, MALIDP500_DE_LG2_AD_CTRL },
+>  };
+>  
+>  static const struct malidp_layer malidp550_layers[] = {
+>  	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
+> -		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY },
+> +		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY,
+> +		MALIDP550_DE_LV1_AD_CTRL },
+>  	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
+> -		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY },
+> +		MALIDP_DE_LG_STRIDE, 0, ROTATE_ANY, MALIDP550_DE_LG_AD_CTRL },
+>  	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
+> -		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY },
+> +		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY,
+> +		MALIDP550_DE_LV2_AD_CTRL },
+>  	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
+> -		MALIDP550_DE_LS_R1_STRIDE, 0, ROTATE_NONE },
+> +		MALIDP550_DE_LS_R1_STRIDE, 0, ROTATE_NONE, 0 },
+>  };
+>  
+>  static const struct malidp_layer malidp650_layers[] = {
+>  	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
+> -		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY },
+> +		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY,
+> +		MALIDP550_DE_LV1_AD_CTRL },
+>  	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
+> -		MALIDP_DE_LG_STRIDE, 0, ROTATE_COMPRESSED },
+> +		MALIDP_DE_LG_STRIDE, 0, ROTATE_COMPRESSED, MALIDP550_DE_LG_AD_CTRL },
+>  	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
+> -		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY },
+> +		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, ROTATE_ANY,
+> +		MALIDP550_DE_LV2_AD_CTRL },
+>  	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
+> -		MALIDP550_DE_LS_R1_STRIDE, 0, ROTATE_NONE },
+> +		MALIDP550_DE_LS_R1_STRIDE, 0, ROTATE_NONE, 0 },
+>  };
+>  
+>  #define SE_N_SCALING_COEFFS	96
+> diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
+> index 4390243..bbe6883 100644
+> --- a/drivers/gpu/drm/arm/malidp_hw.h
+> +++ b/drivers/gpu/drm/arm/malidp_hw.h
+> @@ -67,6 +67,8 @@ struct malidp_layer {
+>  	u16 stride_offset;	/* offset to the first stride register. */
+>  	s16 yuv2rgb_offset;	/* offset to the YUV->RGB matrix entries */
+>  	enum rotation_features rot;    /* type of rotation supported */
+> +	/* address offset for the AFBC decoder registers */
+> +	u16 afbc_decoder_offset;
+>  };
+>  
+>  enum malidp_scaling_coeff_set {
+> diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
+> index 533cdde..3950504 100644
+> --- a/drivers/gpu/drm/arm/malidp_planes.c
+> +++ b/drivers/gpu/drm/arm/malidp_planes.c
+> @@ -330,6 +330,71 @@ static void malidp_de_set_color_encoding(struct malidp_plane *plane,
+>  	}
+>  }
+>  
+> +static void malidp_set_plane_base_addr(struct drm_framebuffer *fb,
+> +				       struct malidp_plane *mp,
+> +				       int plane_index)
+> +{
+> +	dma_addr_t paddr;
+> +	u16 ptr;
+> +	struct drm_plane *plane = &mp->base;
+> +	bool afbc = fb->modifier ? true : false;
 
-Ok, but I still think there is quite a bit of inline computation of
-this stuff that would more clearly and more robustly be done in a set
-of common functions. If someone ever touches the code to support a
-new upper layer, or even integrate with more complex compounding,
-things will get ugly fast.
+The decision to set afbc based on wether the fb has a modifier or not
+seems a bit weak. Should we also (at least) check that the modifier is
+an ARM one?
 
-> The other function calculates the total length of all the pages in a request.
+> +
+> +	ptr = mp->layer->ptr + (plane_index << 4);
+> +
+> +	/*
+> +	 * For AFBC buffers, cropping is handled by AFBC decoder rather than
+> +	 * pointer manipulation.
+> +	 */
+> +	if (!afbc) {
+> +		paddr = drm_fb_cma_get_gem_addr(fb, plane->state,
+> +						plane_index);
+> +	} else {
+> +		struct drm_gem_cma_object *obj;
+> +
+> +		obj = drm_fb_cma_get_gem_obj(fb, plane_index);
+> +
+> +		if (WARN_ON(!obj))
+> +			return;
+> +		paddr = obj->paddr;
+> +	}
+> +
+> +	malidp_hw_write(mp->hwdev, lower_32_bits(paddr), ptr);
+> +	malidp_hw_write(mp->hwdev, upper_32_bits(paddr), ptr + 4);
+> +}
+> +
+> +static void malidp_de_set_plane_afbc(struct drm_plane *plane)
+> +{
+> +	struct malidp_plane *mp;
+> +	u32 src_w, src_h, val = 0, src_x, src_y;
+> +	struct drm_framebuffer *fb = plane->state->fb;
+> +
+> +	mp = to_malidp_plane(plane);
+> +
+> +	/* convert src values from Q16 fixed point to integer */
+> +	src_w = plane->state->src_w >> 16;
+> +	src_h = plane->state->src_h >> 16;
+> +	src_x = plane->state->src_x >> 16;
+> +	src_y = plane->state->src_y >> 16;
+> +
+> +	val = ((fb->width - (src_x + src_w)) << MALIDP_AD_CROP_RIGHT_OFFSET) |
+> +		   src_x;
+> +	malidp_hw_write(mp->hwdev, val,
+> +			mp->layer->afbc_decoder_offset + MALIDP_AD_CROP_H);
+> +
+> +	val = ((fb->height - (src_y + src_h)) << MALIDP_AD_CROP_BOTTOM_OFFSET) |
+> +		   src_y;
+> +	malidp_hw_write(mp->hwdev, val,
+> +			mp->layer->afbc_decoder_offset + MALIDP_AD_CROP_V);
+> +
+> +	val = MALIDP_AD_EN;
+> +	if (fb->modifier & AFBC_FORMAT_MOD_SPLIT)
+> +		val |= MALIDP_AD_BS;
+> +	if (fb->modifier & AFBC_FORMAT_MOD_YTR)
+> +		val |= MALIDP_AD_YTR;
+> +
+> +	malidp_hw_write(mp->hwdev, val, mp->layer->afbc_decoder_offset);
+> +}
+> +
+>  static void malidp_de_plane_update(struct drm_plane *plane,
+>  				   struct drm_plane_state *old_state)
+>  {
+> @@ -338,6 +403,7 @@ static void malidp_de_plane_update(struct drm_plane *plane,
+>  	u32 src_w, src_h, dest_w, dest_h, val;
+>  	int i;
+>  	bool format_has_alpha = plane->state->fb->format->has_alpha;
+> +	struct drm_framebuffer *fb = plane->state->fb;
+>  
+>  	mp = to_malidp_plane(plane);
+>  
+> @@ -349,15 +415,9 @@ static void malidp_de_plane_update(struct drm_plane *plane,
+>  
+>  	malidp_hw_write(mp->hwdev, ms->format, mp->layer->base);
+>  
+> -	for (i = 0; i < ms->n_planes; i++) {
+> -		/* calculate the offset for the layer's plane registers */
+> -		u16 ptr = mp->layer->ptr + (i << 4);
+> -		dma_addr_t fb_addr = drm_fb_cma_get_gem_addr(plane->state->fb,
+> -							     plane->state, i);
+> +	for (i = 0; i < ms->n_planes; i++)
+> +		malidp_set_plane_base_addr(fb, mp, i);
+>  
+> -		malidp_hw_write(mp->hwdev, lower_32_bits(fb_addr), ptr);
+> -		malidp_hw_write(mp->hwdev, upper_32_bits(fb_addr), ptr + 4);
+> -	}
+>  	malidp_de_set_plane_pitches(mp, ms->n_planes,
+>  				    plane->state->fb->pitches);
+>  
+> @@ -381,6 +441,11 @@ static void malidp_de_plane_update(struct drm_plane *plane,
+>  				LAYER_H_VAL(src_w) | LAYER_V_VAL(src_h),
+>  				mp->layer->base + MALIDP550_LS_R1_IN_SIZE);
+>  
+> +	if (fb->modifier)
+> +		malidp_de_set_plane_afbc(plane);
+> +	else
+> +		malidp_hw_write(mp->hwdev, 0, mp->layer->afbc_decoder_offset);
 
-Again, a great candidate for a common set of subroutines, IMO.
+Given that you are testing for the non-zero value of fb->modifier inside
+malidp_de_set_plane_afbc() function before setting the afbc_decoder
+register value, I feel that you could take the 'else' branch from here
+and merge it into malidp_de_set_plane_afbc() function (possibly also
+rename it to malidp_de_set_plane).
 
-Tom.
+With those small changes:
+
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+
+Best regards,
+Liviu
+
+
+> +
+>  	/* first clear the rotation bits */
+>  	val = malidp_hw_read(mp->hwdev, mp->layer->base + MALIDP_LAYER_CONTROL);
+>  	val &= ~LAYER_ROT_MASK;
+> diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
+> index 149024f..54f4ec5 100644
+> --- a/drivers/gpu/drm/arm/malidp_regs.h
+> +++ b/drivers/gpu/drm/arm/malidp_regs.h
+> @@ -180,10 +180,13 @@
+>  #define MALIDP500_LV_YUV2RGB		((s16)(-0xB8))
+>  #define MALIDP500_DE_LV_BASE		0x00100
+>  #define MALIDP500_DE_LV_PTR_BASE	0x00124
+> +#define MALIDP500_DE_LV_AD_CTRL		0x00400
+>  #define MALIDP500_DE_LG1_BASE		0x00200
+>  #define MALIDP500_DE_LG1_PTR_BASE	0x0021c
+> +#define MALIDP500_DE_LG1_AD_CTRL	0x0040c
+>  #define MALIDP500_DE_LG2_BASE		0x00300
+>  #define MALIDP500_DE_LG2_PTR_BASE	0x0031c
+> +#define MALIDP500_DE_LG2_AD_CTRL	0x00418
+>  #define MALIDP500_SE_BASE		0x00c00
+>  #define MALIDP500_SE_CONTROL		0x00c0c
+>  #define MALIDP500_SE_PTR_BASE		0x00e0c
+> @@ -208,10 +211,13 @@
+>  #define MALIDP550_LV_YUV2RGB		0x00084
+>  #define MALIDP550_DE_LV1_BASE		0x00100
+>  #define MALIDP550_DE_LV1_PTR_BASE	0x00124
+> +#define MALIDP550_DE_LV1_AD_CTRL	0x001B8
+>  #define MALIDP550_DE_LV2_BASE		0x00200
+>  #define MALIDP550_DE_LV2_PTR_BASE	0x00224
+> +#define MALIDP550_DE_LV2_AD_CTRL	0x002B8
+>  #define MALIDP550_DE_LG_BASE		0x00300
+>  #define MALIDP550_DE_LG_PTR_BASE	0x0031c
+> +#define MALIDP550_DE_LG_AD_CTRL		0x00330
+>  #define MALIDP550_DE_LS_BASE		0x00400
+>  #define MALIDP550_DE_LS_PTR_BASE	0x0042c
+>  #define MALIDP550_DE_PERF_BASE		0x00500
+> @@ -223,6 +229,20 @@
+>  #define MALIDP550_CONFIG_VALID		0x0c014
+>  #define MALIDP550_CONFIG_ID		0x0ffd4
+>  
+> +/* AFBC register offsets relative to MALIDPXXX_DE_LX_AD_CTRL */
+> +/* The following register offsets are common for DP500, DP550 and DP650 */
+> +#define MALIDP_AD_CROP_H                0x4
+> +#define MALIDP_AD_CROP_V                0x8
+> +#define MALIDP_AD_END_PTR_LOW           0xc
+> +#define MALIDP_AD_END_PTR_HIGH          0x10
+> +
+> +/* AFBC decoder Registers */
+> +#define MALIDP_AD_EN                    BIT(0)
+> +#define MALIDP_AD_YTR                   BIT(4)
+> +#define MALIDP_AD_BS                    BIT(8)
+> +#define MALIDP_AD_CROP_RIGHT_OFFSET     16
+> +#define MALIDP_AD_CROP_BOTTOM_OFFSET    16
+> +
+>  /*
+>   * Starting with DP550 the register map blocks has been standardised to the
+>   * following layout:
+> -- 
+> 2.7.4
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
