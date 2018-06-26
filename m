@@ -2,175 +2,108 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2478EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C38C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF202157F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC9B26753
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:28:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lthS0ekw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF202157F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="u7CDCViz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC9B26753
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752512AbeFZV1x (ORCPT
+        id S1752917AbeFZV2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 17:27:53 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:41057 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeFZV1v (ORCPT
+        Tue, 26 Jun 2018 17:28:10 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:40570 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752561AbeFZV2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 17:27:51 -0400
-Received: by mail-qt0-f196.google.com with SMTP id y20-v6so16541732qto.8;
-        Tue, 26 Jun 2018 14:27:50 -0700 (PDT)
+        Tue, 26 Jun 2018 17:28:05 -0400
+Received: by mail-ot0-f195.google.com with SMTP id f17-v6so4085184otl.7
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=AZuGQ/ILxTWbPG9tyW8KTgAPM6QBSOYfIVs3skCeW9s=;
-        b=lthS0ekwd8+OTOKQpxJBMNvKrlOotmzBQBxEizkMSdM+iWBGnHTrkURORx6h+GHeM3
-         SuF3kwZUL+ggW0tUNa6efnlBhUxp5jvZuXvgoR4SirQ7VOLgSlFQsnxvr+C14Kx2+PWf
-         O3QbxX4td7K1eEvRJI0XXqz97NnIvscvPMUEM0YH7Pfqm3XrR3cVzsqYCIqpxi/wvMZ9
-         9Ka4iOH0HO6n3uUMLJlpIn6yREg0mBrNvFPYPGDkCT6pAPww+nMMn+n3IQjPK2AzYM2p
-         9cT8v0lBmOIatrsNPRXhOb8rxaHOlK+4BXVxM4PpvxSirs76qNkPXLoWOh6gX267sbgp
-         yibw==
+        bh=SjG2t5fFj3/2jMsHDH9KZr4v3krCbRdUQsdC1/IlxcU=;
+        b=u7CDCVizyTEWb98O17a3Jk8wgmF2Q5fnnlKi28NHMSRvtZ2LRuXX0qitImshWwAiLg
+         4PQtOUSaOSnr8rr1DBoO6KCu2iWb64cz0CKd8YpCi05oErOkgFOQonHQMg76OQkrIByb
+         pwBYudEUmUofJNXjzeokl5162inkmJrAR0cYcJ6gRwSkziwhf+XN7TBh5zq42EKbHiGh
+         9DZdown9WupL/AUwzw80Qw1Im00L0usq2HcEQIwJcvb4dHJI2jkP7Q4ZrokoR7H/eZeJ
+         4AhFAcZmKFIBm9V2PGo6g2QUezg/dQsBgtDVVS/HdSznM9UB8RplSnjCIukPWGOq7Qo3
+         Xk/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=AZuGQ/ILxTWbPG9tyW8KTgAPM6QBSOYfIVs3skCeW9s=;
-        b=sJuFLybQwSs16QuaIPkMVpsxZ3Ggt4r67WEfVvlE0750iCAb4IpGwyRtiRxtfzEVUF
-         8Sx089J8+VSj69wQb/HK+JDb9PlrK/Nkik6NewrvdbcudE1KqL+3YHdjOu6he2Ut5G0t
-         9hd/AyTjxJKGJiavoOqrLaKuoQ4tryyuRcNWYEv7PWxZa+xGERwpcv9J/TR8fI4EwrnR
-         ZWjIw4+860p2x6qHofuFVx1xVhTr7mdk99jGffiRc6ACS/4c+1ycjbA/sdv6+2Tp6fMT
-         0dxY6kugKiunSlGsO6sRwLiCBXGnnRH78QJFK8TrEIbfUauMG847yO9tC1V62DBajluA
-         ig9A==
-X-Gm-Message-State: APt69E3y6G87YUb3d5rxFWH2imJEjs39SGwVJU08tWdhnMUhhUf55NFD
-        a9IeKoD+kp9qaNmRQa0IEkItJXMfta3rON+DqaIgT4Uy
-X-Google-Smtp-Source: AAOMgpe3SAkiw0qYNnJB244B6GW7OZtx93TT+BzuvU5Yq00a9ecBQdbkRnlFJpj5cBsUa3DA2BvuuJBtLX+fqQ2X/m4=
-X-Received: by 2002:ac8:70d8:: with SMTP id g24-v6mr3210334qtp.192.1530048470471;
- Tue, 26 Jun 2018 14:27:50 -0700 (PDT)
+        bh=SjG2t5fFj3/2jMsHDH9KZr4v3krCbRdUQsdC1/IlxcU=;
+        b=AzQsI7a5aaifNFouiLe0qcFj3OVzttoJTBUaUykkJ17XeEjq8AARh4gvd+pgxs6/Pg
+         2d6DhafUTnt+VIOkPWVRcba56ZIzevg6a4Z6ZUs6w4U/DbB6t1Pmu5sZ2+pEANApFlsT
+         TxK7w/82+JoYifcTksb9KUa7ido7p62IUTif2XArRKVOKW82+M5pAlYD6cBOweA+g5Xk
+         ZP62boR+Ajms47v0tZBhY0I0qHke4chPYsDBE9JlGDfFcTcglSXIgtsTbbpxm+5pDntl
+         s50p4WcMbStewNcIGTvhFx72QlwL9X79oJZWZFOpY87wJZ6yUMB/7c22EDWCivStgikq
+         GuLQ==
+X-Gm-Message-State: APt69E1zP9t8uoEecembqVM7MmZFLIi2KW3ApBEh1eUNXdDt9NEoKdE1
+        tdWiPJvNOp+/spVcdOJbCaz/drCzN3Z3qnRwoX6CfQ==
+X-Google-Smtp-Source: AAOMgpf0wpQps2EaWSX4RWkKNt3lANJO8jKgkUOxPK0vKcBmRr94EhAHzt9LiNw0yfo9nIJjSeq6JHVm9RB2AHW8/us=
+X-Received: by 2002:a9d:32ca:: with SMTP id u68-v6mr2001393otb.117.1530048485208;
+ Tue, 26 Jun 2018 14:28:05 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:aed:23e8:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 14:27:10
+Received: by 2002:a9d:38eb:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 14:28:04
  -0700 (PDT)
-In-Reply-To: <CADYN=9JAOim7CvoZzWnbHNEF+4yG3Lzvry1rZLqGp+7hQxPdkw@mail.gmail.com>
-References: <20180612110510.11731-1-anders.roxell@linaro.org>
- <d6851756-ae3b-09ec-f487-1eeece6bd4c6@iogearbox.net> <CALDO+SY3qNYAOSiYC3645C7YY9LSx7ggg0GjY76m4TbBfF_t3A@mail.gmail.com>
- <CADYN=9+3V4fpqbjh-X4VUVWd_X38XSYhEbZoRBffcx=-nMtF8g@mail.gmail.com>
- <CALDO+SZXvnUU7VKd_UwnBCU0NiTHjqei4xEUCdcktkKCD3MnEg@mail.gmail.com>
- <CADYN=9KegM2wNCX7=BDct16bzzmr-02aG1c3MLDEEon1yGXnzQ@mail.gmail.com>
- <CALDO+SY2eE6DHtVmfnUpMjTjHe3shfzae48nk_OehfUyuKNYsg@mail.gmail.com> <CADYN=9JAOim7CvoZzWnbHNEF+4yG3Lzvry1rZLqGp+7hQxPdkw@mail.gmail.com>
-From:   William Tu <u9012063@gmail.com>
-Date:   Tue, 26 Jun 2018 14:27:10 -0700
-Message-ID: <CALDO+Sap3GTW3Ud4u-950ZicXpqfCh3kV5x8FVFpPmH+snOsGg@mail.gmail.com>
-Subject: Re: [PATCH] selftests: bpf: config: add config fragments
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
+In-Reply-To: <1530048093.14039.286.camel@hpe.com>
+References: <20180626175932.8899-1-ross.zwisler@linux.intel.com>
+ <20180626175932.8899-2-ross.zwisler@linux.intel.com> <CAPcyv4iWgPnHmBKhUvhManC6UL9CkLqN_d8vBo6KmcPJdPzuUw@mail.gmail.com>
+ <20180626185830.GA7171@redhat.com> <CAPcyv4h6HO6fs6k7QMD77jkz2djCeWCtWomCdNb0-1Q4VKanqw@mail.gmail.com>
+ <20180626191346.GA7233@redhat.com> <1530046327.14039.273.camel@hpe.com>
+ <CAPcyv4hP_Y3xdyCa-UkYCMJ5OtnjnkwPZDS2Z2Ge8+5ymBONwQ@mail.gmail.com> <1530048093.14039.286.camel@hpe.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 26 Jun 2018 14:28:04 -0700
+Message-ID: <CAPcyv4gXAC7imJs5qfsDNLeN545Rqyd2b1M9s5kr4f9y48LXgQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] pmem: only set QUEUE_FLAG_DAX for fsdax mode
+To:     "Kani, Toshi" <toshi.kani@hpe.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> >
->> > --- ::11 ping statistics ---
->> > 5 packets transmitted, 3 packets received, 40% packet loss
->> > round-trip min/avg/max = 0.139/1.857/5.293 ms
->> > + ip netns exec at_ns0 ping -c 3 -w 10 -q 10.1.1.200
->> > PING 10.1.1.200 (10.1.1.200): 56 data bytes
->> >
->> > --- 10.1.1.200 ping statistics ---
->> > 3 packets transmitted, 3 packets received, 0% packet loss
->> > round-trip min/avg/max = 0.214/0.256/0.305 ms
->> > + ping -c 3 -w 10 -q 10.1.1.100
->> > PING 10.1.1.100 (10.1.1.100): 56 data bytes
->> >
->> > --- 10.1.1.100 ping statistics ---
->> > 3 packets transmitted, 3 packets received, 0% packet loss
->> > round-trip min/avg/max = 0.210/0.211/0.213 ms
->> > + check_err 0
->> > + '[' 0 -eq 0 ']'
->> > + ret=0
-
-So looks like the ipv4 over ipv6 gre passes.
-
->> > + ip netns exec at_ns0 ping6 -c 3 -w 10 -q fc80::200
->> > PING fc80::200 (fc80::200): 56 data bytes
->> >
->> > --- fc80::200 ping statistics ---
->> > 10 packets transmitted, 0 packets received, 100% packet loss
-`
-but the ipv6 over ipv6 gre fails.
-Do you have any firewall rules that block this traffic?
-or if possible, the packet might get dropped at function ip6gre_xmit_ipv6
-can you print the return value of this function?
-
-
->> > + check_err 1
->> > + '[' 0 -eq 0 ']'
->> > + ret=1
->> > + ip -s link show ip6gretap11
->> > 19: ip6gretap11@NONE: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1434 qdisc
->> > pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
->> >     link/ether de:d2:0c:53:80:8c brd ff:ff:ff:ff:ff:ff
->> >     RX: bytes  packets  errors  dropped overrun mcast
->> >     2096       25       0       0       0       0
->> >     TX: bytes  packets  errors  dropped carrier collsns
->> >     5324       36       5       5       0       0
+On Tue, Jun 26, 2018 at 2:23 PM, Kani, Toshi <toshi.kani@hpe.com> wrote:
+> On Tue, 2018-06-26 at 14:02 -0700, Dan Williams wrote:
+>> On Tue, Jun 26, 2018 at 1:54 PM, Kani, Toshi <toshi.kani@hpe.com> wrote:
+[..]
+>> > When this dm change was made, the pmem driver supported DAX for both raw
+>> > and memory modes (note: sector mode does not use the pmem driver).  I
+>> > think the issue was introduced when we dropped DAX support from raw
+>> > mode.
 >>
->> So there are 5 errors at TX.
+>> Still DAX with raw mode never really worked any way. It was also
+>> something that was broken from day one. So what happens to someone who
+>> happened to avoid all the problems with page-less DAX and enabled
+>> device-mapper on top? That failure mode detail needs to be added to
+>> this changelog if we want to propose this for -stable.
 >
-> and today when I tried it on next-20180620 I saw 8 errors at TX.
+> My point is that the behavior should be consistent between pmem and
+> device-mapper.  When -o dax succeeds on a pmem, then it should succeed
+> on a device-mapper on top of that pmem.
 >
->> I couldn't reproduce in my local machine using 4.17-rc6.
->> How do I checkin the "next-20180613" source code?
->
-> You can find the source code here [1], and I would look in the latest tag that I
-> said that I was able to reproduce it on above.
->
-> Cheers,
-> Anders
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/
+> Has the drop of dax support from raw mode made to -stable back to the
+> baseline accepted 545ed20e6df6?  It will introduce inconsistency,
+> otherwise.
 
-Hi Anders,
-
-I'm still not able to reproduce the issue on next-20180620.
-Below is my test.
-
-Testing IP6GRETAP tunnel...
-PING ::11(::11) 56 data bytes
-
---- ::11 ping statistics ---
-5 packets transmitted, 3 received, 40% packet loss, time 4048ms
-rtt min/avg/max/mdev = 0.040/32.118/96.235/45.337 ms
-PING 10.1.1.200 (10.1.1.200) 56(84) bytes of data.
-
---- 10.1.1.200 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2026ms
-rtt min/avg/max/mdev = 0.074/0.099/0.117/0.018 ms
-PING 10.1.1.100 (10.1.1.100) 56(84) bytes of data.
-
---- 10.1.1.100 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2054ms
-rtt min/avg/max/mdev = 0.069/0.113/0.187/0.052 ms
-PING fc80::200(fc80::200) 56 data bytes
-
---- fc80::200 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2054ms
-rtt min/avg/max/mdev = 0.069/0.104/0.142/0.031 ms
-PASS: ip6gretap
-root@osboxes:~/linux-next/tools/testing/selftests/bpf#
-root@osboxes:~/linux-next/tools/testing/selftests/bpf# uname -a
-Linux osboxes 4.18.0-rc1-next-20180620 #1 SMP Tue Jun 26 12:26:00 PDT
-2018 x86_64 x86_64 x86_64 GNU/Linux
+That commit, 569d0365f571 "dax: require 'struct page' by default for
+filesystem dax", has not been tagged for -stable.
