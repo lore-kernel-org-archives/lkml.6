@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF10C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14646C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 607F72635E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:35:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607F72635E
+	by mail.kernel.org (Postfix) with ESMTP id CCCE62635E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:35:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCE62635E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935016AbeFZAeQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 20:34:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34380 "EHLO
+        id S965181AbeFZAeO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 20:34:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52062 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755570AbeFZAdS (ORCPT
+        by vger.kernel.org with ESMTP id S1755244AbeFZAdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 20:33:18 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q0Sbbm134135
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q0Sc3P098731
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:33:18 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96puq99-1
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju975bmep-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:33:17 -0400
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Mon, 25 Jun 2018 20:33:16 -0400
 Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 20:33:10 -0400
+        Mon, 25 Jun 2018 20:33:11 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q0X9Nr56819766
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q0XA1q61472950
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 00:33:09 GMT
+        Tue, 26 Jun 2018 00:33:10 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A9AEB205F;
+        by IMSVA (Postfix) with ESMTP id D06F1B206B;
         Mon, 25 Jun 2018 20:33:04 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39D8BB2064;
+        by IMSVA (Postfix) with ESMTP id B9DDCB2073;
         Mon, 25 Jun 2018 20:33:04 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Mon, 25 Jun 2018 20:33:04 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id B5F6016CA094; Mon, 25 Jun 2018 17:35:14 -0700 (PDT)
+        id F163616CA09F; Mon, 25 Jun 2018 17:35:14 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -59,22 +59,21 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 03/27] rcu: rcupdate.h: Get rid of Sphinx warnings at rcu_pointer_handoff()
-Date:   Mon, 25 Jun 2018 17:34:49 -0700
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 13/27] rcu: Remove "inline" from rcu_perf_print_module_parms()
+Date:   Mon, 25 Jun 2018 17:34:59 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626003448.GA26209@linux.vnet.ibm.com>
 References: <20180626003448.GA26209@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062600-0040-0000-0000-000004452896
+x-cbid: 18062600-0060-0000-0000-000002827C18
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01052336; UDB=6.00539469; IPR=6.00830262;
- MB=3.00021856; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:33:14
+ MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:33:15
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062600-0041-0000-0000-0000084B3E56
-Message-Id: <20180626003513.27812-3-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062600-0061-0000-0000-000045935748
+Message-Id: <20180626003513.27812-13-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,47 +86,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This function is in rcuperf.c, which is not an include file, so there
+is no problem dropping the "inline", especially given that this function
+is invoked only twice per rcuperf run.  This commit therefore delegates
+the inlining decision to the compiler by dropping the "inline".
 
-The code example at rcupdate.h currently produce lots of warnings:
-
-	./include/linux/rcupdate.h:572: WARNING: Unexpected indentation.
-	./include/linux/rcupdate.h:576: WARNING: Unexpected indentation.
-	./include/linux/rcupdate.h:580: WARNING: Block quote ends without a blank line; unexpected unindent.
-	./include/linux/rcupdate.h:582: WARNING: Block quote ends without a blank line; unexpected unindent.
-	./include/linux/rcupdate.h:582: WARNING: Inline literal start-string without end-string.
-
-This commit therefore changes it to a code-block.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- include/linux/rcupdate.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/rcu/rcuperf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 5cab15e7ec83..dacc90358b33 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -566,8 +566,8 @@ static inline void rcu_preempt_sleep_check(void) { }
-  * This is simply an identity function, but it documents where a pointer
-  * is handed off from RCU to some other synchronization mechanism, for
-  * example, reference counting or locking.  In C11, it would map to
-- * kill_dependency().  It could be used as follows:
-- * ``
-+ * kill_dependency().  It could be used as follows::
-+ *
-  *	rcu_read_lock();
-  *	p = rcu_dereference(gp);
-  *	long_lived = is_long_lived(p);
-@@ -578,7 +578,6 @@ static inline void rcu_preempt_sleep_check(void) { }
-  *			p = rcu_pointer_handoff(p);
-  *	}
-  *	rcu_read_unlock();
-- *``
-  */
- #define rcu_pointer_handoff(p) (p)
+diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+index 00e395c0d7d0..3e86940245d9 100644
+--- a/kernel/rcu/rcuperf.c
++++ b/kernel/rcu/rcuperf.c
+@@ -536,7 +536,7 @@ rcu_perf_writer(void *arg)
+ 	return 0;
+ }
  
+-static inline void
++static void
+ rcu_perf_print_module_parms(struct rcu_perf_ops *cur_ops, const char *tag)
+ {
+ 	pr_alert("%s" PERF_FLAG
 -- 
 2.17.1
 
