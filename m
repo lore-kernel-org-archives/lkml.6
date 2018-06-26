@@ -2,89 +2,101 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7FCC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 276ADC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7602F26A49
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:11:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7602F26A49
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D41C826A49
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:12:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aLncrsA3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D41C826A49
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935249AbeFZMLv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:11:51 -0400
-Received: from mga02.intel.com ([134.134.136.20]:32910 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934583AbeFZMLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:11:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 05:11:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
-   d="scan'208";a="52989041"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga006.jf.intel.com with ESMTP; 26 Jun 2018 05:11:44 -0700
-Message-ID: <c4ad247dd1e0b4b13a2ca4e822bc569675556a7d.camel@linux.intel.com>
-Subject: Re: [PATCH v2 2/2] eeprom: at24: Add support for address-width
- property
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     "Chiang, AlanX" <alanx.chiang@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "Yeh, Andy" <andy.yeh@intel.com>,
-        "Mani, Rajmohan" <rajmohan.mani@intel.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "brgl@bgdev.pl" <brgl@bgdev.pl>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 26 Jun 2018 15:11:43 +0300
-In-Reply-To: <0772C36F3434E145A062D024A4869A09010AA12F@PGSMSX101.gar.corp.intel.com>
-References: <1529994128-26770-1-git-send-email-alanx.chiang@intel.com>
-         <1529994128-26770-3-git-send-email-alanx.chiang@intel.com>
-         <20180626064736.msxcnsi5rsnxp62k@kekkonen.localdomain>
-         <0772C36F3434E145A062D024A4869A09010AA12F@PGSMSX101.gar.corp.intel.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S935130AbeFZMLk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:11:40 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51938 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934970AbeFZMLi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:11:38 -0400
+Received: by mail-wm0-f66.google.com with SMTP id w137-v6so1656471wmw.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 05:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kaxOqDokExo40cwHfnUNKY0iM5xw+MsC7qsbQxQnm+Y=;
+        b=aLncrsA3t6hXxFA7PS5FT2Z8OW3QjCzMISl6m2AHHn9sQLFE2e6W2WyCUQQpvZZjLx
+         Y1jWVtztYbgV9qHJEsl48Jr216NQiODLlaWnFlCszrCleetKWDdn0Oy5feAZnAHxmFPr
+         IIeGSjEiMbJcIS0nR+GFHILgfQgfGtjk1W8qc8Mx0PPHTWDoF9ofOXGtYcQlkorbKjj+
+         7a/TK7Cm0GpJ83tLEVRsxLm5SpKfENZV0tB+Oirfw8J4LHepJ2Vd5WYgf7CT+4SLZZ6S
+         4xWY+eg2i0ZswwBUMCPQVBFNBKv5sebcnLMLRh2I5haH6tnxhpDeHCVuo86Mxlq7x+FN
+         JxGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kaxOqDokExo40cwHfnUNKY0iM5xw+MsC7qsbQxQnm+Y=;
+        b=i9kh2at0fOjYw6l4wkcwAPxrXhW4tgPRazK5KgYWEXfaiPdi2sCqm6ojCZjR5SpHJU
+         x7PQlIKp3FJ2omZ4+WKH7aEZtWgUaXoKc8UISPfTuKhd8weFI8uJUz3h9FojMlY374h+
+         WE24Cam6tbR2EyotKp6v1ZzKwSHOj1F916ELSvzhZGDm0pakT28gQ50ZNwghOY6XrQ3k
+         T/KMnhsUh9PbwoZAGytZb0RlatGcuW05AVqnYqSSBq8f//lBQvrTRxAItCr8e/jzykq6
+         16ofESlkts7hyzNPW64md0QzLqW9tHxB8RwgoiuxsPYKNUSw7iFoI88Mf7u2uxxP9O06
+         YlKQ==
+X-Gm-Message-State: APt69E37n3diuND/axQMhCRBnDz71tqV8VGxueeZbUNJGykN1fbTykhx
+        6KU0QDFIsUoXqCyDbb7Vc6ggkg==
+X-Google-Smtp-Source: AAOMgpeOrQ/IS3rF7g5RMe12CJqhnKSj3uCJf2/gx/yIxQAXw95qBAGhBl5Hvt/jvKTcJK63eULAEw==
+X-Received: by 2002:a1c:4596:: with SMTP id l22-v6mr1459152wmi.33.1530015096960;
+        Tue, 26 Jun 2018 05:11:36 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id l15-v6sm1917865wrs.95.2018.06.26.05.11.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 05:11:36 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        =?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: [PATCH 3/3] ASoC: simple-amplifer: add simple-amplifier compatible
+Date:   Tue, 26 Jun 2018 14:11:28 +0200
+Message-Id: <20180626121128.28564-4-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180626121128.28564-1-jbrunet@baylibre.com>
+References: <20180626121128.28564-1-jbrunet@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-26 at 15:11 +0800, Chiang, AlanX wrote:
+Add simple-audio-amplifier to the list of available compatible
 
-> If it is, I would like to modify it as below:
-> 
-> case 8:
-> 	If (chip->flags & AT24_FLAG_ADDR16) {
-> 		chip->flags &= ~AT24_FLAG_ADDR16;
-> 		dev_warn(dev, "address-width is 8, clear the ADDR16
-> bit\n");
-> 	}
-> 	break;
+Suggested-by: Nicolò Veronese <nicveronese@gmail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/codecs/simple-amplifier.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-No need to put bit clearing inside the loop, something like below would
-be slightly better.
-
-if (chip->flags & AT24_FLAG_ADDR16)
-	dev_warn(dev, "address-width is 8, clear the ADDR16 bit\n");
-chip->flags &= ~AT24_FLAG_ADDR16;
-
-On top of this the message would sound clearer if you put it like
-
-"Override address width to be 8, while default is 16"
-
+diff --git a/sound/soc/codecs/simple-amplifier.c b/sound/soc/codecs/simple-amplifier.c
+index 6c27d4afaf3a..85524acf3e9c 100644
+--- a/sound/soc/codecs/simple-amplifier.c
++++ b/sound/soc/codecs/simple-amplifier.c
+@@ -101,6 +101,7 @@ static int simple_amp_probe(struct platform_device *pdev)
+ #ifdef CONFIG_OF
+ static const struct of_device_id simple_amp_ids[] = {
+ 	{ .compatible = "dioo,dio2125", },
++	{ .compatible = "simple-audio-amplifier", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, simple_amp_ids);
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.14.4
+
