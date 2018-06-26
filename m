@@ -2,406 +2,126 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5930C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E6DC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5723223DBE
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5723223DBE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+	by mail.kernel.org (Postfix) with ESMTP id 6D73523DBE
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:33:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D73523DBE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932228AbeFZVcH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 17:32:07 -0400
-Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:51424 "EHLO
-        faui40.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932080AbeFZVcG (ORCPT
+        id S1752965AbeFZVdY (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 17:33:24 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:44307 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751867AbeFZVdX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 17:32:06 -0400
-Received: from faui49man10 (faui49man10.informatik.uni-erlangen.de [131.188.42.182])
-        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 7EA1358C4D8;
-        Tue, 26 Jun 2018 23:32:00 +0200 (CEST)
-Received: by faui49man10 (sSMTP sendmail emulation); Tue, 26 Jun 2018 23:32:00 +0200
-From:   Daniel Graefe <daniel.graefe@fau.de>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, daniel.graefe@fau.de,
-        linux-kernel@i4.cs.fau.de, Roman Sommer <roman.sommer@fau.de>
-Subject: [PATCH v2] staging: media: omap4iss: Added SPDX license identifiers
-Date:   Tue, 26 Jun 2018 23:30:56 +0200
-Message-Id: <1530048656-4074-1-git-send-email-daniel.graefe@fau.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529932892-9036-1-git-send-email-daniel.graefe@fau.de>
-References: <1529932892-9036-1-git-send-email-daniel.graefe@fau.de>
+        Tue, 26 Jun 2018 17:33:23 -0400
+Received: by mail-yb0-f193.google.com with SMTP id a2-v6so6595719ybe.11;
+        Tue, 26 Jun 2018 14:33:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qcx6zpfu662/VdbG/ZESbkRFtJsqRNhfy/Uevqt1tKo=;
+        b=D1emLHx93jqcU81evVCruKnQ7rASlgAolBUh4Qq1YVCkw08qTjoyv47mHo1r95bmFr
+         NtHmfeS3aVPb8AXz2R9bK3vrf07m4SGzrtlRaOuCP+aGIqzAVZvhwL5E6nWSSUj6BiFR
+         nIFRkScFMEVK/PbFANmJnyYuP3RvZKV9igSCuyEh93EGl9oUDlJfZcG3+QRnd6ZHtgTk
+         jN4fBo42zlrrypiR3GbSkAVQ40ciJcduuGJSfP8NWL2IANhbxfIjCfjA+iXRYFUnRbV7
+         g3cV89sGSLLPmASbkHBliZIQQpdFJoOduzVGiAm/jrzR5THs2hVcSHCAvefE9vvXeRBy
+         N6jQ==
+X-Gm-Message-State: APt69E3pgUT/MdhnLCb+FPJhJQY5wpffW8eIjhDp384l8rDomWLu/O0f
+        PbdYHIrxMgcbIKdZlPyAew==
+X-Google-Smtp-Source: ADUXVKJLLgPhRDSJv0dBGMCegOAYM2zS+wYD7P3nxIOZTH6k9X9wfJeyguU01qcqRWbJgs0ivam+CQ==
+X-Received: by 2002:a25:ef04:: with SMTP id g4-v6mr1661511ybd.126.1530048801348;
+        Tue, 26 Jun 2018 14:33:21 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id d190-v6sm1766887ywh.105.2018.06.26.14.33.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 14:33:20 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 15:33:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     zbr@ioremap.net, mark.rutland@arm.com, szabolcs.gyurko@tlt.hu,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/4] dt-bindings: w1: document sub-node bindings for
+ DS2760
+Message-ID: <20180626213319.GA22766@rob-hp-laptop>
+References: <20180619212744.794-1-daniel@zonque.org>
+ <20180619212744.794-2-daniel@zonque.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619212744.794-2-daniel@zonque.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added missing SPDX license identifiers to all files of the omap4iss
-driver.
+On Tue, Jun 19, 2018 at 11:27:41PM +0200, Daniel Mack wrote:
+> This patch add a generic w1 bindings document that merely describes how
+> slave deviceses are grouped under master nodes. It also adds a specific
+> binding for the ds2760 battery monitor.
+> 
+> Signed-off-by: Daniel Mack <daniel@zonque.org>
+> ---
+>  .../devicetree/bindings/w1/w1-ds2760.txt        |  9 +++++++++
+>  .../devicetree/bindings/w1/w1-gpio.txt          |  6 ++++++
+>  Documentation/devicetree/bindings/w1/w1.txt     | 17 +++++++++++++++++
+>  3 files changed, 32 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/w1/w1-ds2760.txt
+>  create mode 100644 Documentation/devicetree/bindings/w1/w1.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/w1/w1-ds2760.txt b/Documentation/devicetree/bindings/w1/w1-ds2760.txt
+> new file mode 100644
+> index 000000000000..86a0f4c573eb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/w1/w1-ds2760.txt
+> @@ -0,0 +1,9 @@
+> +Devicetree bindings for Maxim DS2760
+> +====================================
+> +
+> +The ds2760 is a w1 slave device and must hence have its sub-node in DT
+> +under a w1 bus master node.
+> +
+> +Required properties:
+> +- compatible: must be "maxim,ds2760-w1"
+> +
+> diff --git a/Documentation/devicetree/bindings/w1/w1-gpio.txt b/Documentation/devicetree/bindings/w1/w1-gpio.txt
+> index 6e09c35d9f1a..a3e0e964b260 100644
+> --- a/Documentation/devicetree/bindings/w1/w1-gpio.txt
+> +++ b/Documentation/devicetree/bindings/w1/w1-gpio.txt
+> @@ -13,10 +13,16 @@ Optional properties:
+>   - linux,open-drain: if specified, the data pin is considered in
+>  		     open-drain mode.
+>  
+> +Also refer to the generic w1.txt document.
+> +
+>  Examples:
+>  
+>  	onewire@0 {
+>  		compatible = "w1-gpio";
+>  		gpios = <&gpio 126 0>, <&gpio 105 0>;
+> +
+> +		slave@0 {
 
-Most files already have license texts which clearly state them to be
-licensed under GPL 2.0 or later. SPDX identifiers were added accordingly.
+A unit-address should have a corresponding reg property. Also, the node 
+name should reflect the class of device.
 
-Some files do not have any license text. SPDX identifiers for GPL 2.0
-were added to them, in accordance with the default license of the
-kernel.
+You don't really need the unit address here, but for multiple slaves you 
+would. I'm not sure what you'd use here since the only id/address is 
+the serial number which is unknown except for the family code. If you 
+have 2 identical devices with some different DT properties, how would 
+you match? I don't see a way other than putting the serial number (or 
+some portion of it) in DT.
 
-Signed-off-by: Daniel Graefe <daniel.graefe@fau.de>
-Signed-off-by: Roman Sommer <roman.sommer@fau.de>
----
-Changes in v2:
-- replaced "GPL-2.0-or-later" with "GPL-2.0+"
-- removed boilerplate license texts
+I'm not sure how common multiple slaves are. Perhaps just support a 
+single slave for now.
 
- drivers/staging/media/omap4iss/Kconfig       | 2 ++
- drivers/staging/media/omap4iss/Makefile      | 3 +++
- drivers/staging/media/omap4iss/iss.c         | 6 +-----
- drivers/staging/media/omap4iss/iss.h         | 6 +-----
- drivers/staging/media/omap4iss/iss_csi2.c    | 6 +-----
- drivers/staging/media/omap4iss/iss_csi2.h    | 6 +-----
- drivers/staging/media/omap4iss/iss_csiphy.c  | 6 +-----
- drivers/staging/media/omap4iss/iss_csiphy.h  | 6 +-----
- drivers/staging/media/omap4iss/iss_ipipe.c   | 6 +-----
- drivers/staging/media/omap4iss/iss_ipipe.h   | 6 +-----
- drivers/staging/media/omap4iss/iss_ipipeif.c | 6 +-----
- drivers/staging/media/omap4iss/iss_ipipeif.h | 6 +-----
- drivers/staging/media/omap4iss/iss_regs.h    | 6 +-----
- drivers/staging/media/omap4iss/iss_resizer.c | 6 +-----
- drivers/staging/media/omap4iss/iss_resizer.h | 6 +-----
- drivers/staging/media/omap4iss/iss_video.c   | 6 +-----
- drivers/staging/media/omap4iss/iss_video.h   | 6 +-----
- 17 files changed, 20 insertions(+), 75 deletions(-)
-
-diff --git a/drivers/staging/media/omap4iss/Kconfig b/drivers/staging/media/omap4iss/Kconfig
-index dddd273..841cc0b 100644
---- a/drivers/staging/media/omap4iss/Kconfig
-+++ b/drivers/staging/media/omap4iss/Kconfig
-@@ -1,3 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
- config VIDEO_OMAP4
- 	tristate "OMAP 4 Camera support"
- 	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && I2C
-diff --git a/drivers/staging/media/omap4iss/Makefile b/drivers/staging/media/omap4iss/Makefile
-index a716ce9..e64d489 100644
---- a/drivers/staging/media/omap4iss/Makefile
-+++ b/drivers/staging/media/omap4iss/Makefile
-@@ -1,4 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
- # Makefile for OMAP4 ISS driver
-+#
- 
- omap4-iss-objs += \
- 	iss.o iss_csi2.o iss_csiphy.o iss_ipipeif.o iss_ipipe.o iss_resizer.o iss_video.o
-diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
-index b1036ba..f0cbcbf 100644
---- a/drivers/staging/media/omap4iss/iss.c
-+++ b/drivers/staging/media/omap4iss/iss.c
-@@ -1,14 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * TI OMAP4 ISS V4L2 Driver
-  *
-  * Copyright (C) 2012, Texas Instruments
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/staging/media/omap4iss/iss.h b/drivers/staging/media/omap4iss/iss.h
-index 760ee27..b88f952 100644
---- a/drivers/staging/media/omap4iss/iss.h
-+++ b/drivers/staging/media/omap4iss/iss.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * TI OMAP4 ISS V4L2 Driver
-  *
-  * Copyright (C) 2012 Texas Instruments.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef _OMAP4_ISS_H_
-diff --git a/drivers/staging/media/omap4iss/iss_csi2.c b/drivers/staging/media/omap4iss/iss_csi2.c
-index f6acc54..059cf5b 100644
---- a/drivers/staging/media/omap4iss/iss_csi2.c
-+++ b/drivers/staging/media/omap4iss/iss_csi2.c
-@@ -1,14 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * TI OMAP4 ISS V4L2 Driver - CSI PHY module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #include <linux/delay.h>
-diff --git a/drivers/staging/media/omap4iss/iss_csi2.h b/drivers/staging/media/omap4iss/iss_csi2.h
-index 24ab378..3f7fd9c 100644
---- a/drivers/staging/media/omap4iss/iss_csi2.h
-+++ b/drivers/staging/media/omap4iss/iss_csi2.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * TI OMAP4 ISS V4L2 Driver - CSI2 module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef OMAP4_ISS_CSI2_H
-diff --git a/drivers/staging/media/omap4iss/iss_csiphy.c b/drivers/staging/media/omap4iss/iss_csiphy.c
-index 748607f..96f2ce0 100644
---- a/drivers/staging/media/omap4iss/iss_csiphy.c
-+++ b/drivers/staging/media/omap4iss/iss_csiphy.c
-@@ -1,14 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * TI OMAP4 ISS V4L2 Driver - CSI PHY module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #include <linux/delay.h>
-diff --git a/drivers/staging/media/omap4iss/iss_csiphy.h b/drivers/staging/media/omap4iss/iss_csiphy.h
-index a0f2d97..44408e4 100644
---- a/drivers/staging/media/omap4iss/iss_csiphy.h
-+++ b/drivers/staging/media/omap4iss/iss_csiphy.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * TI OMAP4 ISS V4L2 Driver - CSI PHY module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef OMAP4_ISS_CSI_PHY_H
-diff --git a/drivers/staging/media/omap4iss/iss_ipipe.c b/drivers/staging/media/omap4iss/iss_ipipe.c
-index d86ef8a..03ec45e 100644
---- a/drivers/staging/media/omap4iss/iss_ipipe.c
-+++ b/drivers/staging/media/omap4iss/iss_ipipe.c
-@@ -1,14 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * TI OMAP4 ISS V4L2 Driver - ISP IPIPE module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #include <linux/module.h>
-diff --git a/drivers/staging/media/omap4iss/iss_ipipe.h b/drivers/staging/media/omap4iss/iss_ipipe.h
-index d5b441d..53b42aa 100644
---- a/drivers/staging/media/omap4iss/iss_ipipe.h
-+++ b/drivers/staging/media/omap4iss/iss_ipipe.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * TI OMAP4 ISS V4L2 Driver - ISP IPIPE module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef OMAP4_ISS_IPIPE_H
-diff --git a/drivers/staging/media/omap4iss/iss_ipipeif.c b/drivers/staging/media/omap4iss/iss_ipipeif.c
-index cb88b2b..bf64539 100644
---- a/drivers/staging/media/omap4iss/iss_ipipeif.c
-+++ b/drivers/staging/media/omap4iss/iss_ipipeif.c
-@@ -1,14 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * TI OMAP4 ISS V4L2 Driver - ISP IPIPEIF module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #include <linux/module.h>
-diff --git a/drivers/staging/media/omap4iss/iss_ipipeif.h b/drivers/staging/media/omap4iss/iss_ipipeif.h
-index bad32b1..6979233 100644
---- a/drivers/staging/media/omap4iss/iss_ipipeif.h
-+++ b/drivers/staging/media/omap4iss/iss_ipipeif.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * TI OMAP4 ISS V4L2 Driver - ISP IPIPEIF module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef OMAP4_ISS_IPIPEIF_H
-diff --git a/drivers/staging/media/omap4iss/iss_regs.h b/drivers/staging/media/omap4iss/iss_regs.h
-index cb415e8..09a7375 100644
---- a/drivers/staging/media/omap4iss/iss_regs.h
-+++ b/drivers/staging/media/omap4iss/iss_regs.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * TI OMAP4 ISS V4L2 Driver - Register defines
-  *
-  * Copyright (C) 2012 Texas Instruments.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef _OMAP4_ISS_REGS_H_
-diff --git a/drivers/staging/media/omap4iss/iss_resizer.c b/drivers/staging/media/omap4iss/iss_resizer.c
-index 4bbfa20..f13e33c 100644
---- a/drivers/staging/media/omap4iss/iss_resizer.c
-+++ b/drivers/staging/media/omap4iss/iss_resizer.c
-@@ -1,14 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * TI OMAP4 ISS V4L2 Driver - ISP RESIZER module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #include <linux/module.h>
-diff --git a/drivers/staging/media/omap4iss/iss_resizer.h b/drivers/staging/media/omap4iss/iss_resizer.h
-index 8b7c5fe..cb937fc 100644
---- a/drivers/staging/media/omap4iss/iss_resizer.h
-+++ b/drivers/staging/media/omap4iss/iss_resizer.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * TI OMAP4 ISS V4L2 Driver - ISP RESIZER module
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef OMAP4_ISS_RESIZER_H
-diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging/media/omap4iss/iss_video.c
-index a3a8342..b8e0ea3 100644
---- a/drivers/staging/media/omap4iss/iss_video.c
-+++ b/drivers/staging/media/omap4iss/iss_video.c
-@@ -1,14 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * TI OMAP4 ISS V4L2 Driver - Generic video node
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #include <asm/cacheflush.h>
-diff --git a/drivers/staging/media/omap4iss/iss_video.h b/drivers/staging/media/omap4iss/iss_video.h
-index d7e05d0..f22489e 100644
---- a/drivers/staging/media/omap4iss/iss_video.h
-+++ b/drivers/staging/media/omap4iss/iss_video.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * TI OMAP4 ISS V4L2 Driver - Generic video node
-  *
-  * Copyright (C) 2012 Texas Instruments, Inc.
-  *
-  * Author: Sergio Aguirre <sergio.a.aguirre@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef OMAP4_ISS_VIDEO_H
--- 
-2.7.4
-
+Rob
