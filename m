@@ -2,243 +2,99 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA19C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B11C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD9B226958
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:45:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X4zd6jFO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="elwQOYIH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9B226958
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id CDA942695E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDA942695E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755026AbeFZSpk (ORCPT
+        id S1755039AbeFZSs3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:45:40 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33410 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751749AbeFZSpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:45:38 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BF35860500; Tue, 26 Jun 2018 18:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530038737;
-        bh=y6klU258X5huGc4gj9O0cjn64m/oaBatT/weGfQlm44=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X4zd6jFOS5ZVhyLGCWcnTioYVRXegLk8vEPyV1IcJDXFKgPh7PMe+DHbAtqCwu+cq
-         /jFO/5fyLEYPjJ/Tq8gYY8BPMt4fPWd4ggRJah7Y3jNXR9dKo+3O6fO40yvQtcouOA
-         ZJ6Byt7jcxvLJZBt2qrUjw+E8je6BIsftSNAHq/g=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id B05C26021C;
-        Tue, 26 Jun 2018 18:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530038736;
-        bh=y6klU258X5huGc4gj9O0cjn64m/oaBatT/weGfQlm44=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=elwQOYIHw7aGxbXxzliubbGOkrhezZ5aRcxU0/mvV3x2wBK3KzEOS8TR6xH4vvTgU
-         bspoYDRn+uO3Xz/C0k91X6SxbIiy8c5jNswyCUKxKMiJYDHszwC8SuBAWB/GYihvfO
-         AM9JCu0//CcQU+9/59Ry4x4zBKrTSZMN6/yRMyFc=
+        Tue, 26 Jun 2018 14:48:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39088 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751901AbeFZSs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 14:48:28 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3F02E401EF14;
+        Tue, 26 Jun 2018 18:48:27 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5D897111763E;
+        Tue, 26 Jun 2018 18:48:25 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 14:48:25 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc:     Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Fix DM DAX handling
+Message-ID: <20180626184824.GA7114@redhat.com>
+References: <20180626175932.8899-1-ross.zwisler@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 27 Jun 2018 00:15:36 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v8 4/7] Bluetooth: hci_qca: Add wrapper functions for
- setting UART speed
-In-Reply-To: <20180626183207.GM129942@google.com>
-References: <20180625134013.19684-1-bgodavar@codeaurora.org>
- <20180625134013.19684-5-bgodavar@codeaurora.org>
- <20180625234354.GI129942@google.com> <20180626000529.GJ129942@google.com>
- <66681ee5281749e17394cab6f58083d8@codeaurora.org>
- <20180626183207.GM129942@google.com>
-Message-ID: <faabbe8d7f2fe764475fdda50af021a2@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626175932.8899-1-ross.zwisler@linux.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 26 Jun 2018 18:48:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 26 Jun 2018 18:48:27 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+On Tue, Jun 26 2018 at  1:59pm -0400,
+Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
 
-On 2018-06-27 00:02, Matthias Kaehlcke wrote:
-> On Tue, Jun 26, 2018 at 10:43:31AM +0530, Balakrishna Godavarthi wrote:
->> Hi Matthias,
->> 
->> On 2018-06-26 05:35, Matthias Kaehlcke wrote:
->> > On Mon, Jun 25, 2018 at 04:43:54PM -0700, Matthias Kaehlcke wrote:
->> > > This is a nice improvement, a few remaining questions inline.
->> > >
->> > > On Mon, Jun 25, 2018 at 07:10:10PM +0530, Balakrishna Godavarthi
->> > > wrote:
->> > > > In function qca_setup, we set initial and operating speeds for Qualcomm
->> > > > Bluetooth SoC's. This block of code is common across different
->> > > > Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
->> > > > a wrapper function to set the speeds. So that future coming SoC's
->> > > > can use these wrapper functions to set speeds.
->> > > >
->> > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> > > > ---
->> > > > Changes in v8:
->> > > >     * common function to set INIT and operating speeds.
->> > > >     * moved hardware flow control to qca_set_speed().
->> > > >
->> > > > Changes in v7:
->> > > >     * initial patch
->> > > >     * created wrapper functions for init and operating speeds.
->> > > > ---
->> > > >  drivers/bluetooth/hci_qca.c | 89 +++++++++++++++++++++++++++----------
->> > > >  1 file changed, 65 insertions(+), 24 deletions(-)
->> > > >
->> > > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> > > > index fe62420ef838..38b7dbe6c897 100644
->> > > > --- a/drivers/bluetooth/hci_qca.c
->> > > > +++ b/drivers/bluetooth/hci_qca.c
->> > > > @@ -119,6 +119,11 @@ struct qca_data {
->> > > >  	u64 votes_off;
->> > > >  };
->> > > >
->> > > > +enum qca_speed_type {
->> > > > +	QCA_INIT_SPEED = 1,
->> > > > +	QCA_OPER_SPEED
->> > > > +};
->> > > > +
->> > > >  struct qca_serdev {
->> > > >  	struct hci_uart	 serdev_hu;
->> > > >  	struct gpio_desc *bt_en;
->> > > > @@ -923,6 +928,60 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
->> > > >  		hci_uart_set_baudrate(hu, speed);
->> > > >  }
->> > > >
->> > > > +static unsigned int qca_get_speed(struct hci_uart *hu,
->> > > > +				  enum qca_speed_type speed_type)
->> > > > +{
->> > > > +	unsigned int speed = 0;
->> > > > +
->> > > > +	if (speed_type == QCA_INIT_SPEED) {
->> > > > +		if (hu->init_speed)
->> > > > +			speed = hu->init_speed;
->> > > > +		else if (hu->proto->init_speed)
->> > > > +			speed = hu->proto->init_speed;
->> > > > +	} else {
->> > > > +		if (hu->oper_speed)
->> > > > +			speed = hu->oper_speed;
->> > > > +		else if (hu->proto->oper_speed)
->> > > > +			speed = hu->proto->oper_speed;
->> > > > +	}
->> > > > +
->> > > > +	return speed;
->> > > > +}
->> > > > +
->> > > > +static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->> > > > +{
->> > > > +	unsigned int speed, qca_baudrate;
->> > > > +	int ret;
->> > > > +
->> > > > +	if (speed_type == QCA_INIT_SPEED) {
->> > > > +		speed = qca_get_speed(hu, QCA_INIT_SPEED);
->> > > > +		if (speed)
->> > > > +			host_set_baudrate(hu, speed);
->> > > > +		else
->> > > > +			bt_dev_err(hu->hdev, "Init speed should be non zero");
->> > >
->> > > The check for 'speed == 0' is done in multiple places. From this
->> > > code I deduce that it is expected that both INIT and OPER speed are
->> > > set to non-zero values. What happens if either of them is zero? Is the
->> > > driver still operational?
->> > >
->> > > > +		return 0;
->> > > > +	}
->> > > > +
->> > > > +	speed = qca_get_speed(hu, QCA_OPER_SPEED);
->> > > > +	if (!speed) {
->> > > > +		bt_dev_err(hu->hdev, "operating speed should be non zero");
->> > > > +		return 0;
->> > > > +	}
->> > > > +
->> > > > +	qca_baudrate = qca_get_baudrate_value(speed);
->> > > > +	bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
->> > > > +	ret = qca_set_baudrate(hu->hdev, qca_baudrate);
->> > > > +	if (ret) {
->> > > > +		bt_dev_err(hu->hdev, "Failed to change the baudrate (%d)", ret);
->> > > > +		return ret;
->> > > > +	}
->> > > > +
->> > > > +	host_set_baudrate(hu, speed);
->> > > > +
->> > > > +	return ret;
->> > > > +}
->> > >
->> > > In the discussion on "[v7,8/8] Bluetooth: hci_qca: Add support for
->> > > Qualcomm Bluetooth chip wcn3990" you mentioned the possbility to move
->> > > the hci_uart_set_flow_control() calls into _set_speed(). This seemed
->> > > interesting but finally it isn't done in this series. Did you
->> > > encounter that it is not feasible/desirable for some reason?
->> >
->> > I got that half wrong. "[v8,7/7] Bluetooth: hci_qca: Add support for
->> > Qualcomm Bluetooth chip wcn3990" adds the flow control calls to
->> > _set_speed() however there are still_set_flow_control() calls in
->> > qca_setup(), which confused/s me.
->> >
->> > Could you provide a brief summary on the situations (relevant for this
->> > driver) in which flow controls needs to be enabled/disabled?
->> 
->> you will not find enable or disable of hardware flow control in this 
->> patch.
->> there is no hardware flow control in ROME chip.
->> you will find hardware flow control in wcn3990 i.e. patch [v8 7/7]
+> This series fixes a few issues that I found with DM's handling of DAX
+> devices.  Here are some of the issues I found:
 > 
-> Makes sense, when looking first at this I forgot the flow control
-> handling was only added for wcn3990.
+>  * We can create a dm-stripe or dm-linear device which is made up of an
+>    fsdax PMEM namespace and a raw PMEM namespace but which can hold a
+>    filesystem mounted with the -o dax mount option.  DAX operations to
+>    the raw PMEM namespace part lack struct page and can fail in
+>    interesting/unexpected ways when doing things like fork(), examining
+>    memory with gdb, etc.
 > 
->> in wcn3990. we disable hardware flow control, when we sent mandatory
->> commands to BT chip.
->> 
->> i.e while sending power on pulse i.e 0xFC byte for wcn3990 to boot up
->> completely and sending change baudrate request to BT chip.
->> before sending these commands, we disable the chip flow control and 
->> enable
->> flow control once we sent these commands.
->> 
->> so in our current code after integrating wcn3990, we disable flow 
->> control
->> two times.
->> 
->> 1. Before sending power on pulse i.e. qca_send_vendor_cmd(hdev,
->> QCA_WCN3990_POWERON_PULSE); in qca_setup.
->>    so we find disable or enable hardware flow control in qca_setup()
->> 2. Before sending change BT CHIP baudrate request i.e.
->> qca_set_baudrate(hu->hdev, qca_baudrate); in qca_set_speed().
+>  * We can create a dm-stripe or dm-linear device which is made up of an
+>    fsdax PMEM namespace and a BRD ramdisk which can hold a filesystem
+>    mounted with the -o dax mount option.  All I/O to this filesystem
+>    will fail.
 > 
-> Thanks for the information!
+> ---
 > 
-> If there are more mandatory commands it could be an option to have a
-> wrapper for them or do the flow control handling in
-> qca_send_vendor_cmd() to avoid cluttering the main code path.
+> Changes since v2:
+>   * Only set QUEUE_FLAG_DAX for fsdax mode PMEM namespaces. (Mike)
+>   * Check for QUEUE_FLAG_DAX in __bdev_dax_supported(). (Mike)
+>   * Get rid of DM_TYPE_DAX_BIO_BASED reworks. (Mike)
+>   * Dropped the first 2 prep patches of v2 since they were merged for
+>     v4.18-rc1.  (Thanks, Darrick!)
 > 
-> Just an idea, no need to do this now.
+> ---
+> 
+> Mike, can you take this series through your tree?
+> 
+> Personally I think this should be treated as a bug fix and merged in the
+> v4.18-rc* series.
 
-I will check the possibilites of hiding flow control in 
-qca_send_vendor_command()
-in  [v8 7/8] patch
+I'd be fine with staging it for 4.18.  Only question is whether others
+are fine with the dax patch (and me being the one to get it to Linus)?
 
-Pls let me know if they are any changes required in this patch.
+I already replied to the 3rd patch with some feedback for v4 (but I can
+also take care of those changes if I'm the one to stage these changes).
 
-Thanks for reviewing.
+Maybe if Dan and/or others could provide their review for both the dax
+and pmem patches?  If I can get review on those I'll get the series
+staged for Linus to pull this week.
 
--- 
-Regards
-Balakrishna.
+Thanks,
+Mike
