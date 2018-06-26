@@ -2,123 +2,243 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E469C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA19C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D977226957
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:45:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD9B226958
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:45:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="EXyD080P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D977226957
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X4zd6jFO";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="elwQOYIH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9B226958
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934122AbeFZSpP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:45:15 -0400
-Received: from mail.efficios.com ([167.114.142.138]:59318 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933615AbeFZSpN (ORCPT
+        id S1755026AbeFZSpk (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:45:40 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33410 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbeFZSpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:45:13 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 4F67522B8F1;
-        Tue, 26 Jun 2018 14:45:12 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id OwxrCMlfO9Xq; Tue, 26 Jun 2018 14:45:11 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id BF4B022B8EE;
-        Tue, 26 Jun 2018 14:45:11 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com BF4B022B8EE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530038711;
-        bh=v8nSl5O6JQotaKpRZ2s3rbOoTbh14uB3IPy5ozjdjYY=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=EXyD080PS1Cij6dp/BWoIthYJ5ZdRYYHrrhzTwJtYJSXizuUhBzGIOD2VbhhJGP1A
-         5tV8BnLowaOb3NGS5vWaO6g0d7at981xfJkkDGFWL2dNfsRls0KYxA7JgcmG0tTkrw
-         2IMK9eW+jT+HDDOxUYXLRAwJVTJOnmTBRFOUHgSrweOvUj1crWhkL9xkR6EAqcG80O
-         Y6Ad7lLKAuklMGSnol+WmLBB8bwlK2K2KROlb45WeLkQVQK9mDbCMtHWM3C+STiC+b
-         WVfc9xIpEXyWzxWAj+aIkG/4cctGNafkvrajVNZTTvxONdWAcraRfho/xCXwl3DCT7
-         HTXoWX1NmMrbg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id NtQIekr6jv7F; Tue, 26 Jun 2018 14:45:11 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id AB41F22B8E5;
-        Tue, 26 Jun 2018 14:45:11 -0400 (EDT)
-Date:   Tue, 26 Jun 2018 14:45:11 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Message-ID: <170076903.5015.1530038711536.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1514459655.4190.1530034687884.JavaMail.zimbra@efficios.com>
-References: <1514459655.4190.1530034687884.JavaMail.zimbra@efficios.com>
-Subject: Re: rseq: How to test for compat task at signal delivery
+        Tue, 26 Jun 2018 14:45:38 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BF35860500; Tue, 26 Jun 2018 18:45:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530038737;
+        bh=y6klU258X5huGc4gj9O0cjn64m/oaBatT/weGfQlm44=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X4zd6jFOS5ZVhyLGCWcnTioYVRXegLk8vEPyV1IcJDXFKgPh7PMe+DHbAtqCwu+cq
+         /jFO/5fyLEYPjJ/Tq8gYY8BPMt4fPWd4ggRJah7Y3jNXR9dKo+3O6fO40yvQtcouOA
+         ZJ6Byt7jcxvLJZBt2qrUjw+E8je6BIsftSNAHq/g=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id B05C26021C;
+        Tue, 26 Jun 2018 18:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530038736;
+        bh=y6klU258X5huGc4gj9O0cjn64m/oaBatT/weGfQlm44=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=elwQOYIHw7aGxbXxzliubbGOkrhezZ5aRcxU0/mvV3x2wBK3KzEOS8TR6xH4vvTgU
+         bspoYDRn+uO3Xz/C0k91X6SxbIiy8c5jNswyCUKxKMiJYDHszwC8SuBAWB/GYihvfO
+         AM9JCu0//CcQU+9/59Ry4x4zBKrTSZMN6/yRMyFc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: How to test for compat task at signal delivery
-Thread-Index: F0bW3mNX5qaSbdCuC2GA2EC17JUeiAc/l39L
+Date:   Wed, 27 Jun 2018 00:15:36 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v8 4/7] Bluetooth: hci_qca: Add wrapper functions for
+ setting UART speed
+In-Reply-To: <20180626183207.GM129942@google.com>
+References: <20180625134013.19684-1-bgodavar@codeaurora.org>
+ <20180625134013.19684-5-bgodavar@codeaurora.org>
+ <20180625234354.GI129942@google.com> <20180626000529.GJ129942@google.com>
+ <66681ee5281749e17394cab6f58083d8@codeaurora.org>
+ <20180626183207.GM129942@google.com>
+Message-ID: <faabbe8d7f2fe764475fdda50af021a2@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 26, 2018, at 1:38 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+Hi Matthias,
 
-> Hi Andy,
+On 2018-06-27 00:02, Matthias Kaehlcke wrote:
+> On Tue, Jun 26, 2018 at 10:43:31AM +0530, Balakrishna Godavarthi wrote:
+>> Hi Matthias,
+>> 
+>> On 2018-06-26 05:35, Matthias Kaehlcke wrote:
+>> > On Mon, Jun 25, 2018 at 04:43:54PM -0700, Matthias Kaehlcke wrote:
+>> > > This is a nice improvement, a few remaining questions inline.
+>> > >
+>> > > On Mon, Jun 25, 2018 at 07:10:10PM +0530, Balakrishna Godavarthi
+>> > > wrote:
+>> > > > In function qca_setup, we set initial and operating speeds for Qualcomm
+>> > > > Bluetooth SoC's. This block of code is common across different
+>> > > > Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
+>> > > > a wrapper function to set the speeds. So that future coming SoC's
+>> > > > can use these wrapper functions to set speeds.
+>> > > >
+>> > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> > > > ---
+>> > > > Changes in v8:
+>> > > >     * common function to set INIT and operating speeds.
+>> > > >     * moved hardware flow control to qca_set_speed().
+>> > > >
+>> > > > Changes in v7:
+>> > > >     * initial patch
+>> > > >     * created wrapper functions for init and operating speeds.
+>> > > > ---
+>> > > >  drivers/bluetooth/hci_qca.c | 89 +++++++++++++++++++++++++++----------
+>> > > >  1 file changed, 65 insertions(+), 24 deletions(-)
+>> > > >
+>> > > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> > > > index fe62420ef838..38b7dbe6c897 100644
+>> > > > --- a/drivers/bluetooth/hci_qca.c
+>> > > > +++ b/drivers/bluetooth/hci_qca.c
+>> > > > @@ -119,6 +119,11 @@ struct qca_data {
+>> > > >  	u64 votes_off;
+>> > > >  };
+>> > > >
+>> > > > +enum qca_speed_type {
+>> > > > +	QCA_INIT_SPEED = 1,
+>> > > > +	QCA_OPER_SPEED
+>> > > > +};
+>> > > > +
+>> > > >  struct qca_serdev {
+>> > > >  	struct hci_uart	 serdev_hu;
+>> > > >  	struct gpio_desc *bt_en;
+>> > > > @@ -923,6 +928,60 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+>> > > >  		hci_uart_set_baudrate(hu, speed);
+>> > > >  }
+>> > > >
+>> > > > +static unsigned int qca_get_speed(struct hci_uart *hu,
+>> > > > +				  enum qca_speed_type speed_type)
+>> > > > +{
+>> > > > +	unsigned int speed = 0;
+>> > > > +
+>> > > > +	if (speed_type == QCA_INIT_SPEED) {
+>> > > > +		if (hu->init_speed)
+>> > > > +			speed = hu->init_speed;
+>> > > > +		else if (hu->proto->init_speed)
+>> > > > +			speed = hu->proto->init_speed;
+>> > > > +	} else {
+>> > > > +		if (hu->oper_speed)
+>> > > > +			speed = hu->oper_speed;
+>> > > > +		else if (hu->proto->oper_speed)
+>> > > > +			speed = hu->proto->oper_speed;
+>> > > > +	}
+>> > > > +
+>> > > > +	return speed;
+>> > > > +}
+>> > > > +
+>> > > > +static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>> > > > +{
+>> > > > +	unsigned int speed, qca_baudrate;
+>> > > > +	int ret;
+>> > > > +
+>> > > > +	if (speed_type == QCA_INIT_SPEED) {
+>> > > > +		speed = qca_get_speed(hu, QCA_INIT_SPEED);
+>> > > > +		if (speed)
+>> > > > +			host_set_baudrate(hu, speed);
+>> > > > +		else
+>> > > > +			bt_dev_err(hu->hdev, "Init speed should be non zero");
+>> > >
+>> > > The check for 'speed == 0' is done in multiple places. From this
+>> > > code I deduce that it is expected that both INIT and OPER speed are
+>> > > set to non-zero values. What happens if either of them is zero? Is the
+>> > > driver still operational?
+>> > >
+>> > > > +		return 0;
+>> > > > +	}
+>> > > > +
+>> > > > +	speed = qca_get_speed(hu, QCA_OPER_SPEED);
+>> > > > +	if (!speed) {
+>> > > > +		bt_dev_err(hu->hdev, "operating speed should be non zero");
+>> > > > +		return 0;
+>> > > > +	}
+>> > > > +
+>> > > > +	qca_baudrate = qca_get_baudrate_value(speed);
+>> > > > +	bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
+>> > > > +	ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+>> > > > +	if (ret) {
+>> > > > +		bt_dev_err(hu->hdev, "Failed to change the baudrate (%d)", ret);
+>> > > > +		return ret;
+>> > > > +	}
+>> > > > +
+>> > > > +	host_set_baudrate(hu, speed);
+>> > > > +
+>> > > > +	return ret;
+>> > > > +}
+>> > >
+>> > > In the discussion on "[v7,8/8] Bluetooth: hci_qca: Add support for
+>> > > Qualcomm Bluetooth chip wcn3990" you mentioned the possbility to move
+>> > > the hci_uart_set_flow_control() calls into _set_speed(). This seemed
+>> > > interesting but finally it isn't done in this series. Did you
+>> > > encounter that it is not feasible/desirable for some reason?
+>> >
+>> > I got that half wrong. "[v8,7/7] Bluetooth: hci_qca: Add support for
+>> > Qualcomm Bluetooth chip wcn3990" adds the flow control calls to
+>> > _set_speed() however there are still_set_flow_control() calls in
+>> > qca_setup(), which confused/s me.
+>> >
+>> > Could you provide a brief summary on the situations (relevant for this
+>> > driver) in which flow controls needs to be enabled/disabled?
+>> 
+>> you will not find enable or disable of hardware flow control in this 
+>> patch.
+>> there is no hardware flow control in ROME chip.
+>> you will find hardware flow control in wcn3990 i.e. patch [v8 7/7]
 > 
-> I would like to make the behavior rseq on compat tasks more robust
-> by ensuring that kernel/rseq.c:rseq_get_rseq_cs() clears the high
-> bits of rseq_cs->abort_ip, rseq_cs->start_ip and
-> rseq_cs->post_commit_offset when a 32-bit binary is run on a 64-bit
-> kernel.
+> Makes sense, when looking first at this I forgot the flow control
+> handling was only added for wcn3990.
 > 
-> The intent here is that if user-space has garbage rather than zeroes
-> in its struct rseq_cs fields padding, the behavior will be the same
-> whether the binary is run on 32-bit or 64 kernels.
+>> in wcn3990. we disable hardware flow control, when we sent mandatory
+>> commands to BT chip.
+>> 
+>> i.e while sending power on pulse i.e 0xFC byte for wcn3990 to boot up
+>> completely and sending change baudrate request to BT chip.
+>> before sending these commands, we disable the chip flow control and 
+>> enable
+>> flow control once we sent these commands.
+>> 
+>> so in our current code after integrating wcn3990, we disable flow 
+>> control
+>> two times.
+>> 
+>> 1. Before sending power on pulse i.e. qca_send_vendor_cmd(hdev,
+>> QCA_WCN3990_POWERON_PULSE); in qca_setup.
+>>    so we find disable or enable hardware flow control in qca_setup()
+>> 2. Before sending change BT CHIP baudrate request i.e.
+>> qca_set_baudrate(hu->hdev, qca_baudrate); in qca_set_speed().
 > 
-> I know that internally, the kernel is making a transition from
-> is_compat_task() to in_compat_syscall().
+> Thanks for the information!
 > 
-> I'm fine with using in_compat_syscall() when rseq_get_rseq_cs() is
-> invoked from a system call, but is it OK to call it when it is
-> invoked from signal delivery ? AFAIU, signals can be delivered
-> upon return from interrupt as well.
+> If there are more mandatory commands it could be an option to have a
+> wrapper for them or do the flow control handling in
+> qca_send_vendor_cmd() to avoid cluttering the main code path.
 > 
-> If not, what strategy do you recommend for arch-agnostic code ?
+> Just an idea, no need to do this now.
 
-I think what we're missing here is a new "is_compat_frame(struct ksignal *ksig)"
-which I could use in the rseq code. I'll prepare a patch and we can discuss
-from there.
+I will check the possibilites of hiding flow control in 
+qca_send_vendor_command()
+in  [v8 7/8] patch
 
-Thanks,
+Pls let me know if they are any changes required in this patch.
 
-Mathieu
-
-
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> http://www.efficios.com
+Thanks for reviewing.
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Regards
+Balakrishna.
