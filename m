@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AECCC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22EEC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE3D2267E1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:35:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59C6E267E2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZWfzmTss"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3D2267E1
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XY6nHcaE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C6E267E2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933955AbeFZJf0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:35:26 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41626 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932964AbeFZJfY (ORCPT
+        id S934041AbeFZJfo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:35:44 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38464 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933593AbeFZJfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:35:24 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v12-v6so8256947ljj.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:35:23 -0700 (PDT)
+        Tue, 26 Jun 2018 05:35:42 -0400
+Received: by mail-lf0-f67.google.com with SMTP id a4-v6so6184666lff.5
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:35:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=eS+poQUaGu5RylKjDE47h2+a/AFOcSg/ZD8cHejxkfk=;
-        b=ZWfzmTssMas7Avhfd6gfKNINmYUh972cpcDmu5FRPklK+8rloX/Nh/UobNyl7DhjvC
-         FyWcskHW7qwqlhjrmgKTpY6luYmdgVwRffeVZNspQsuzRc3pZTQ3KzPmXWI6bXWO6PDX
-         1IBSK8Wn63jtWSpJyVzw45HelPpA9q9WVrFQY=
+        bh=PZVW9Rn6MsGlL0H/an3nINAEyYJxnHuYQugD6DyiKjI=;
+        b=XY6nHcaEys6aeimchWL1gvcwiSFHI2TKI+VfYRBZd6Q3b7DgXG/ManX5roIIi3lGLk
+         se2Nh2F/sUrScOuyo5dJJHS90WnQVFszf0aj5aSjEjSiSSs+kD85Tbvtl+L96YUdwcjx
+         ou+kWDx+iW6QtRLOv5YsAdEdStQzZzyLkjg5M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eS+poQUaGu5RylKjDE47h2+a/AFOcSg/ZD8cHejxkfk=;
-        b=L1Fsjjgy052gr0f/cvtrsHo9Ts9UuQoJl9gPgSzljKXRcDI/ZYGA1R5dz4vAiqTe9A
-         j4G3SR95dz5yzb9dohHyTjpf0Dqtj+phPk7TTZE3IY22UYxrwQOeyjKmIenRIkZPnX3+
-         6BBpAkcRq9AZJwUDH4JkCXOBfIw48aBwJUNfuMZPcDVRxHsnSAcV/2Dr+d+vPXNL0ixl
-         X6FDUqkX+Auhll6m6Dhzhmwaos9YwDLyI5Px8YWDjQblxzaS2beSEKHgXQoo9mQNvw8o
-         kRgZ9VvkO+CyrstPr3HGNdL7MwLoViPS4I0l8BW8cicI05th8ynBuK9Q+INtxr+OQxiG
-         yPnQ==
-X-Gm-Message-State: APt69E0RIGowXydJ/dh54s1hMV6B55aDgZ4hNgTUqNOWa1Zhkc4o/v/y
-        kpNlVUxMnZRQhrKEDwi4Oe3PVg==
-X-Google-Smtp-Source: AAOMgpdcwd2DWhaCmbXMdCVJK01+Gcg6+Vj8JlS42lVTJfBfFtNBwFoxz+DThbk7a4NFUm8e0hTxCg==
-X-Received: by 2002:a2e:6f18:: with SMTP id k24-v6mr633899ljc.84.1530005723143;
-        Tue, 26 Jun 2018 02:35:23 -0700 (PDT)
+        bh=PZVW9Rn6MsGlL0H/an3nINAEyYJxnHuYQugD6DyiKjI=;
+        b=fOui7BsZUCdBZoqO4gSawdleiJKKs7qCsm183CuNjjsnt4Q524EDdegC/unX6kAe88
+         by+c6qNSIpe0PZSiphwSRd4fUxP3b49vM3BDu1tpao+WFkBUt98IdYtmg/rIwCHkRSBm
+         co8sCn7LkGsTSZugTay+edkV8eAXmF4UXXqqIxdd3qbs2o94yVOsKQUy0829t6PLpgbM
+         tIEihAvlrUsvvAhyA7a1CWWqCpdzMnKac76qbc/9RBZ8CwTL15k1f+sd+lgfRLO4SclJ
+         BUJD5zVx4GgEjCFiAMd9DZFUBsog0lHlWmdzQLwfBRDfiTKRvOTNcjae882Gsh12qcU/
+         7DEQ==
+X-Gm-Message-State: APt69E0F6IxWtCK6av3myNzaFA2QvKL62Rjb7E3YpoEPNg8EgfdpDDlu
+        /lFjGxyLRMtzNPTVtXN1hTH/pQ==
+X-Google-Smtp-Source: AAOMgpeoT6MtGomdk+h0YOw8lg7/PzmVXIJ5ZFw5Fn+mA7PZxw+g01BIAAEpatz8PmSDnMFKYr9KoA==
+X-Received: by 2002:a19:d754:: with SMTP id o81-v6mr681826lfg.124.1530005740720;
+        Tue, 26 Jun 2018 02:35:40 -0700 (PDT)
 Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id z184-v6sm242621lfd.82.2018.06.26.02.35.22
+        by smtp.gmail.com with ESMTPSA id f17-v6sm168186lja.85.2018.06.26.02.35.39
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 02:35:22 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 11:35:20 +0200
+        Tue, 26 Jun 2018 02:35:39 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 11:35:37 +0200
 From:   Niklas Cassel <niklas.cassel@linaro.org>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc:     broonie@kernel.org, robh+dt@kernel.org,
@@ -62,15 +62,15 @@ Cc:     broonie@kernel.org, robh+dt@kernel.org,
         linux-arm-msm@vger.kernel.org, lgirdwood@gmail.com,
         bgoswami@codeaurora.org, tiwai@suse.com, perex@perex.cz,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 08/12] ASoC: qdsp6: q6asm-dai: support dt based module
+Subject: Re: [PATCH v2 09/12] ASoC: qdsp6: q6routing: support dt based module
  loading
-Message-ID: <20180626093520.GE25217@centauri.ideon.se>
+Message-ID: <20180626093537.GF25217@centauri.ideon.se>
 References: <20180626092016.9296-1-srinivas.kandagatla@linaro.org>
- <20180626092016.9296-9-srinivas.kandagatla@linaro.org>
+ <20180626092016.9296-10-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180626092016.9296-9-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20180626092016.9296-10-srinivas.kandagatla@linaro.org>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,35 +79,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Acked-by: Niklas Cassel <niklas.cassel@linaro.org>
 
-On Tue, Jun 26, 2018 at 10:20:12AM +0100, Srinivas Kandagatla wrote:
+On Tue, Jun 26, 2018 at 10:20:13AM +0100, Srinivas Kandagatla wrote:
 > This patch uses new compatible string to make DT based module loading work.
 > 
 > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
->  sound/soc/qcom/qdsp6/q6asm-dai.c | 7 +++++++
+>  sound/soc/qcom/qdsp6/q6routing.c | 7 +++++++
 >  1 file changed, 7 insertions(+)
 > 
-> diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-> index 349c6a883c63..1196dc7483d2 100644
-> --- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-> +++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-> @@ -611,9 +611,16 @@ static int q6asm_dai_dev_remove(struct platform_device *pdev)
+> diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+> index 593f66b8622f..ab696bf8d1d3 100644
+> --- a/sound/soc/qcom/qdsp6/q6routing.c
+> +++ b/sound/soc/qcom/qdsp6/q6routing.c
+> @@ -993,9 +993,16 @@ static int q6pcm_routing_remove(struct platform_device *pdev)
 >  	return 0;
 >  }
 >  
-> +static const struct of_device_id q6asm_dai_device_id[] = {
-> +	{ .compatible = "qcom,q6asm-dais" },
+> +static const struct of_device_id q6pcm_routing_device_id[] = {
+> +	{ .compatible = "qcom,q6adm-routing" },
 > +	{},
 > +};
-> +MODULE_DEVICE_TABLE(of, q6asm_dai_device_id);
+> +MODULE_DEVICE_TABLE(of, q6pcm_routing_device_id);
 > +
->  static struct platform_driver q6asm_dai_platform_driver = {
+>  static struct platform_driver q6pcm_routing_platform_driver = {
 >  	.driver = {
->  		.name = "q6asm-dai",
-> +		.of_match_table = of_match_ptr(q6asm_dai_device_id),
+>  		.name = "q6routing",
+> +		.of_match_table = of_match_ptr(q6pcm_routing_device_id),
 >  	},
->  	.probe = q6asm_dai_probe,
->  	.remove = q6asm_dai_dev_remove,
+>  	.probe = q6pcm_routing_probe,
+>  	.remove = q6pcm_routing_remove,
 > -- 
 > 2.16.2
 > 
