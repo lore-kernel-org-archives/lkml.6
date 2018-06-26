@@ -4,154 +4,380 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5984BC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2DF0C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12C2621533
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FF452668D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:15:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vrc5/ctc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12C2621533
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxONe6fS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF452668D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752977AbeFZIPI (ORCPT
+        id S1752948AbeFZIO4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:15:08 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40951 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932103AbeFZIO6 (ORCPT
+        Tue, 26 Jun 2018 04:14:56 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36485 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752669AbeFZIOm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:14:58 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z13-v6so746740wma.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 01:14:57 -0700 (PDT)
+        Tue, 26 Jun 2018 04:14:42 -0400
+Received: by mail-lf0-f68.google.com with SMTP id n24-v6so16671129lfh.3;
+        Tue, 26 Jun 2018 01:14:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=d8UICC04ukq4QPdsvTBQtBxjQYdEIidT3Jm5ctQQFY4=;
-        b=Vrc5/ctc7WrdcJCTTs3AKOCATePA2NufcX2hi7Qf/cidVQu+sUQdpfW+V7b1KmPVtn
-         BiaevrtN+KWAcQm7FKDxF4sooDvNZ8GRMmAjgZ1FfaQ1yPnTQJ22/iY3200b0BNp5SnT
-         prQ+nGrvQpF2EtIgkzFxuB0zJlbWsLKWnvrDtZzHC9BhKgUMob07+T0Ds+M0RiKRkmGT
-         bn4yVe3kL0fYA16gXGfIj28YDpalMZHFDgOvXic3Xwz05HlWqSQkcnGPYKnP9kn+zO+Q
-         y2jvYxufn1RSq8PDgbDJDV35molfViVEuUa2GISHWcAWqoqPvj1SIOUTAuA874qCdETL
-         AepQ==
+        bh=sXg7Ly2hHNzrjG5wNU8iGTxdYK3Jbxx11AygjgUXt8Q=;
+        b=WxONe6fSNL2QHiTFVxgce2YWb1QWVYEZZUH/YAoC0pjPJMicdjdm0w1cGSsbxxG7Xg
+         KCE38hrwUSWFMs6mTf0yegrNzrdLvy2MbLDBxVNjmKbwHefIzBSkxTC56I3ycrvy6Mw9
+         uf7GVw7wZNuJPlnM2XjaAJtipFLRsPQg9naSy210cUt7CxRzmU8ZPLhkikHrBcKyHunb
+         jo8ALOE5WXObqs4T7OZb20PTh0bztgdHN5+IHRSKSVm8wrWil2SHVlaC2SljObms1PdV
+         Ffy8qDqFdct72IsLpvVLIH705dl6AGYDJBSzjgUaBxwOaqlugcC6wg+decrLh/4Zg9qn
+         TJAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=d8UICC04ukq4QPdsvTBQtBxjQYdEIidT3Jm5ctQQFY4=;
-        b=ZiPqo+E1B+3LP16HsLxTGpeNjeM4uXXS9oeWOp+Fjup4SVjHLbDN2SpeutkmJ2rTaX
-         RI4lARCfUBv51VKFFN+ozvRPdg/uD8bxkOXen1m8Af3LnDZudtF2c93JPycpq7CrgPOf
-         CwximdYNC1TU/hfGMjCHyJEzgAnIKMJTcHtCe2Rv2GlEJHRGLr69laYUlg2jFvbpUZkH
-         vj3iAbH+88/+xZVAzGlxR2PNbABm18LxgfON1WxfX9MFR+ExyVylH0Lq+s5F0xQ1qOwj
-         FIg7I0CEsnTaCxS5IsXuUjquTV4ZqxHiOfYWyC4hghHXsfY5RwJqKeRgLYdQorL4HO0B
-         Npgw==
-X-Gm-Message-State: APt69E2k/aaR6ehdvMFapniXD0lOzkA578Qx8YmwWNClrXbhZx7Sh5Ha
-        wD/26oYmdP0gOUhQj3ggFAw=
-X-Google-Smtp-Source: AAOMgpcKKCtn8ofxLVm6w7SaVEc1NZPwuIBBu+nKkvjzPL8GhaHdYxRAs0UTpYl9+RwQofckunO5LA==
-X-Received: by 2002:a1c:c90:: with SMTP id 138-v6mr716688wmm.110.1530000897341;
-        Tue, 26 Jun 2018 01:14:57 -0700 (PDT)
-Received: from arch.localdomain (x590c812a.dyn.telefonica.de. [89.12.129.42])
-        by smtp.gmail.com with ESMTPSA id 74-v6sm1946151wmt.31.2018.06.26.01.14.56
+        bh=sXg7Ly2hHNzrjG5wNU8iGTxdYK3Jbxx11AygjgUXt8Q=;
+        b=UWZxZFy8nJZy9t9vaBrPniECe4jz/eKo8+19DLNOXNCTFYai604U4ScLH0yC0g3lKW
+         m/K3MhKsxLClVKs2IZQFzuJ1viLV37X9LEe3vrYyH0sXFk8/JlOqoDLs9GmDa+xGyaqI
+         dDqfAXk6d0Bj5hX3/deml5tPXkmtq/0qHXRpfFT7HeLX0bGbux2I6qKPMTpiyGN52q2g
+         dKAjCGyS713mg65M7hDkjCuwHO/y0hVUr2ZXHnfmT/2GE08LW8/KbivRC8TPw8A7FpeH
+         R6uSjPinnDLmWOOyR1SQ2qf6tkrQ/Np+zNoTHXMlHyfdhRwrOaMATP+7IXJn9ah8F8YZ
+         tRSw==
+X-Gm-Message-State: APt69E2a2vExzErV2S/QgwF8qkpxFpkk12zg1gNVe8QH2+ro2YBTiEJ6
+        7aat02JvWREgmD98MpYrReZS4raD
+X-Google-Smtp-Source: AAOMgpecrbBmmf3HU09l+jPeodNEKHWpiK4lt0na4At8d6Fltjz/vyqWDDtin6/5nErhMVa3n06l/g==
+X-Received: by 2002:a19:cb12:: with SMTP id b18-v6mr455907lfg.64.1530000880743;
+        Tue, 26 Jun 2018 01:14:40 -0700 (PDT)
+Received: from localhost.localdomain (c-2ec26030-74736162.cust.telenor.se. [46.194.96.48])
+        by smtp.gmail.com with ESMTPSA id p28-v6sm149783lja.13.2018.06.26.01.14.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 01:14:56 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        joe@perches.com, dan.carpenter@oracle.com,
-        andy.shevchenko@gmail.com,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v3 4/4] staging: rtl8723bs: use mac_pton() in rtw_macaddr_cfg()
-Date:   Tue, 26 Jun 2018 10:14:09 +0200
-Message-Id: <20180626081409.9518-4-straube.linux@gmail.com>
+        Tue, 26 Jun 2018 01:14:39 -0700 (PDT)
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Felipe Balbi <balbi@kernel.org>, davem@davemloft.net,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v4 2/3] Documentation: usb: add documentation for USB CCID Gadget Device
+Date:   Tue, 26 Jun 2018 10:14:21 +0200
+Message-Id: <20180626081422.19237-2-marcus.folkesson@gmail.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180626081409.9518-1-straube.linux@gmail.com>
-References: <20180626081409.9518-1-straube.linux@gmail.com>
+In-Reply-To: <20180626081422.19237-1-marcus.folkesson@gmail.com>
+References: <20180626081422.19237-1-marcus.folkesson@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the mac_pton() helper to convert the mac address string.
+Add documentation to give a brief description on how to use the
+CCID Gadget Device.
+This includes a description for all attributes followed by an example on
+how to setup the device with ConfigFS.
 
-The functions key_char2num() and key_2char2num() are not used
-anywhere else and can be removed.
-
-This also has the benefit of validating the input since mac_pton()
-returns false if the string is not valid.
-
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
- .../staging/rtl8723bs/core/rtw_ieee80211.c    | 30 +++----------------
- .../staging/rtl8723bs/os_dep/ioctl_linux.c    |  3 --
- 2 files changed, 4 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-index 8af4a89e632f..8e0025e1ff14 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-@@ -1137,25 +1137,6 @@ ParseRes rtw_ieee802_11_parse_elems(u8 *start, uint len,
- 
- }
- 
--static u8 key_char2num(u8 ch);
--static u8 key_char2num(u8 ch)
--{
--		if ((ch >= '0') && (ch <= '9'))
--			return ch - '0';
--		else if ((ch >= 'a') && (ch <= 'f'))
--			return ch - 'a' + 10;
--		else if ((ch >= 'A') && (ch <= 'F'))
--			return ch - 'A' + 10;
--		else
--			return 0xff;
--}
--
--u8 key_2char2num(u8 hch, u8 lch);
--u8 key_2char2num(u8 hch, u8 lch)
--{
--		return ((key_char2num(hch) << 4) | key_char2num(lch));
--}
--
- void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
- {
- 	u8 mac[ETH_ALEN];
-@@ -1166,14 +1147,11 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
- 	if (!mac_addr)
- 		return;
- 
--	if (rtw_initmac) {	/* 	Users specify the mac address */
--		int jj, kk;
--
--		for (jj = 0, kk = 0; jj < ETH_ALEN; jj++, kk += 3) {
--			mac[jj] = key_2char2num(rtw_initmac[kk], rtw_initmac[kk + 1]);
--		}
-+	if (rtw_initmac && mac_pton(rtw_initmac, mac)) {
-+		/* Users specify the mac address */
- 		ether_addr_copy(mac_addr, mac);
--	} else{	/* 	Use the mac address stored in the Efuse */
-+	} else {
-+		/* Use the mac address stored in the Efuse */
- 		ether_addr_copy(mac, mac_addr);
- 	}
- 
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 39502156f652..4eb51f45b387 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -32,9 +32,6 @@
- #define WEXT_CSCAN_HOME_DWELL_SECTION	'H'
- #define WEXT_CSCAN_TYPE_SECTION		'T'
- 
--
--extern u8 key_2char2num(u8 hch, u8 lch);
--
- static u32 rtw_rates[] = {1000000, 2000000, 5500000, 11000000,
- 	6000000, 9000000, 12000000, 18000000, 24000000, 36000000, 48000000, 54000000};
- 
+Notes:
+    v4:
+    	- clarify how to use /dev/ccidg and BULK endpoind (thanks Randy)
+    v3:
+    	- correct the grammer (thanks Randy)
+    v2:
+    	- add the missing changelog text
+
+ Documentation/usb/gadget_ccid.rst | 269 ++++++++++++++++++++++++++++++
+ 1 file changed, 269 insertions(+)
+ create mode 100644 Documentation/usb/gadget_ccid.rst
+
+diff --git a/Documentation/usb/gadget_ccid.rst b/Documentation/usb/gadget_ccid.rst
+new file mode 100644
+index 000000000000..c8f25080c9e7
+--- /dev/null
++++ b/Documentation/usb/gadget_ccid.rst
+@@ -0,0 +1,269 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++============
++CCID Gadget
++============
++
++:Author: Marcus Folkesson <marcus.folkesson@gmail.com>
++
++Introduction
++============
++
++The CCID Gadget will present itself as a CCID device to the host system.
++The device supports two endpoints for now; BULK IN and BULK OUT.
++These endpoints are exposed to userspace via /dev/ccidgX where `X` is
++the device enumeration number.
++Use read(2) and write(3) to operate on BULK_IN and BULK_OUT respectively.
++
++All CCID commands are sent on the BULK-OUT endpoint. Each command sent to the CCID
++has an associated ending response. Some commands can also have intermediate
++responses. The response is sent on the BULK-IN endpoint.
++See Figure 3-3 in the CCID Specification [1]_ for more details.
++
++The CCID commands must be handled in userspace since the driver is only working
++as a transport layer for the TPDUs.
++
++
++CCID Commands
++--------------
++
++All CCID commands begins with a 10-byte header followed by an optional
++data field depending on message type.
++
+++--------+--------------+-------+----------------------------------+
++| Offset | Field        | Size  | Description                      |
+++========+==============+=======+==================================+
++| 0      | bMessageType | 1     | Type of message                  |
+++--------+--------------+-------+----------------------------------+
++| 1      | dwLength     | 4     | Message specific data length     |
++|        |              |       |                                  |
+++--------+--------------+-------+----------------------------------+
++| 5      | bSlot        | 1     | Identifies the slot number       |
++|        |              |       | for this command                 |
+++--------+--------------+-------+----------------------------------+
++| 6      | bSeq         | 1     | Sequence number for command      |
+++--------+--------------+-------+----------------------------------+
++| 7      | ...          | 3     | Fields depends on message type   |
+++--------+--------------+-------+----------------------------------+
++| 10     | abData       | array | Message specific data (OPTIONAL) |
+++--------+--------------+-------+----------------------------------+
++
++
++Multiple CCID gadgets
++----------------------
++
++It is possible to create multiple instances of the CCID gadget, however,
++a much more flexible way is to create one gadget and set the `nslots` attribute
++to the number of desired CCID devices.
++
++All CCID commands specify which slot is the receiver in the `bSlot` field
++of the CCID header.
++
++Usage
++=====
++
++Access from userspace
++----------------------
++All communication is by read(2) and write(2) to the corresponding /dev/ccidg* device.
++Only one file descriptor is allowed to be open to the device at a time.
++
++The buffer size provided to read(2) **must be at least** 522 (10 bytes header + 512 bytes payload)
++bytes as we are working with whole commands.
++
++The buffer size provided to write(2) **may not exceed** 522 (10 bytes header + 512 bytes payload)
++bytes as we are working with whole commands.
++
++
++Configuration with configfs
++----------------------------
++
++ConfigFS is used to create and configure the CCID gadget.
++In order to get a device to work as intended, a few attributes must
++be considered.
++
++The attributes are described below followed by an example.
++
++features
++~~~~~~~~~
++
++The `feature` attribute writes to the dwFeatures field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++The value indicates what intelligent features the CCID has.
++These values are available to user application as defined in ccid.h [2]_.
++The default value is 0x00000000.
++
++The value is a bitwise OR operation performed on the following values:
++
+++------------+----------------------------------------------------------------+
++| Value      | Description                                                    |
+++============+================================================================+
++| 0x00000000 | No special characteristics                                     |
+++------------+----------------------------------------------------------------+
++| 0x00000002 | Automatic parameter configuration based on ATR data            |
+++------------+----------------------------------------------------------------+
++| 0x00000004 | Automatic activation of ICC on inserting                       |
+++------------+----------------------------------------------------------------+
++| 0x00000008 | Automatic ICC voltage selection                                |
+++------------+----------------------------------------------------------------+
++| 0x00000010 | Automatic ICC clock frequency change according to active       |
++|            | parameters provided by the Host or self determined             |
+++------------+----------------------------------------------------------------+
++| 0x00000020 | Automatic baud rate change according to active                 |
++|            | parameters provided by the Host or self determined             |
+++------------+----------------------------------------------------------------+
++| 0x00000040 | Automatic parameters negotiation made by the CCID              |
+++------------+----------------------------------------------------------------+
++| 0x00000080 | Automatic PPS made by the CCID according to the                |
++|            | active parameters                                              |
+++------------+----------------------------------------------------------------+
++| 0x00000100 | CCID can set ICC in clock stop mode                            |
+++------------+----------------------------------------------------------------+
++| 0x00000200 | NAD value other than 00 accepted (T=1 protocol in use)         |
+++------------+----------------------------------------------------------------+
++| 0x00000400 | Automatic IFSD exchange as first exchange                      |
+++------------+----------------------------------------------------------------+
++
++
++Only one of the following values may be present to select a level of exchange:
++
+++------------+--------------------------------------------------+
++| Value      | Description                                      |
+++============+==================================================+
++| 0x00010000 | TPDU level exchanges with CCID                   |
+++------------+--------------------------------------------------+
++| 0x00020000 | Short APDU level exchange with CCID              |
+++------------+--------------------------------------------------+
++| 0x00040000 | Short and Extended APDU level exchange with CCID |
+++------------+--------------------------------------------------+
++
++If none of those values is indicated the level of exchange is
++character.
++
++
++protocols
++~~~~~~~~~~
++The `protocols` attribute writes to the dwProtocols field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++The value is a bitwise OR operation performed on the following values:
++
+++--------+--------------+
++| Value  | Description  |
+++========+==============+
++| 0x0001 | Protocol T=0 |
+++--------+--------------+
++| 0x0002 | Protocol T=1 |
+++--------+--------------+
++
++If no protocol is selected both T=0 and T=1 will be supported (`protocols` = 0x0003).
++
++nslots
++~~~~~~
++
++The `nslots` attribute writes to the bMaxSlotIndex field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++This is the index of the highest available slot on this device. All slots are consecutive starting at 00h.
++i.e. 0Fh = 16 slots on this device numbered 00h to 0Fh.
++
++The default value is 0, which means one slot.
++
++
++pinsupport
++~~~~~~~~~~~~
++
++This value indicates what PIN support features the CCID has.
++
++The `pinsupport` attribute writes to the dwPINSupport field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++
++The value is a bitwise OR operation performed on the following values:
++
+++--------+----------------------------+
++| Value  | Description                |
+++========+============================+
++| 0x00   | No PIN support             |
+++--------+----------------------------+
++| 0x01   | PIN Verification supported |
+++--------+----------------------------+
++| 0x02   | PIN Modification supported |
+++--------+----------------------------+
++
++The default value is set to 0x00.
++
++
++lcdlayout
++~~~~~~~~~~
++
++Number of lines and characters for the LCD display used to send messages for PIN entry.
++
++The `lcdLayout` attribute writes to the wLcdLayout field in the class descriptor.
++See Table 5.1-1 Smart Card Device Descriptors in the CCID Specification [1]_.
++
++
++The value is set as follows:
++
+++--------+------------------------------------+
++| Value  | Description                        |
+++========+====================================+
++| 0x0000 | No LCD                             |
+++--------+------------------------------------+
++| 0xXXYY | XX: number of lines                |
++|        | YY: number of characters per line. |
+++--------+------------------------------------+
++
++The default value is set to 0x0000.
++
++
++Example
++-------
++
++Here is an example on how to setup a CCID gadget with configfs ::
++
++    #!/bin/sh
++
++    CONFIGDIR=/sys/kernel/config
++    GADGET=$CONFIGDIR/usb_gadget/g0
++    FUNCTION=$GADGET/functions/ccid.sc0
++
++    VID=YOUR_VENDOR_ID_HERE
++    PID=YOUR_PRODUCT_ID_HERE
++    UDC=YOUR_UDC_HERE
++
++    #Mount filesystem
++    mount none -t configfs $CONFIGDIR
++
++    #Populate ID:s
++    echo $VID > $GADGET/idVendor
++    echo $PID > $GADGET/idProduct
++
++    #Create and configure the gadget
++    mkdir $FUNCTION
++    echo 0x000407B8 > $FUNCTION/features
++    echo 0x02 > $FUNCTION/protocols
++
++    #Create our English strings
++    mkdir  $GADGET/strings/0x409
++    echo 556677 > $GADGET/strings/0x409/serialnumber
++    echo "Hungry Penguins" > $GADGET/strings/0x409/manufacturer
++    echo "Harpoon With Smart Card"  > $GADGET/strings/0x409/product
++
++    #Create configuration
++    mkdir  $GADGET/configs/c.1
++    mkdir  $GADGET/configs/c.1/strings/0x409
++    echo Config1 > $GADGET/configs/c.1/strings/0x409/configuration
++
++    #Use `Config1` for our CCID gadget
++    ln -s $FUNCTION $GADGET/configs/c.1
++
++    #Execute
++    echo $UDC > $GADGET/UDC
++
++
++References
++==========
++
++.. [1] http://www.usb.org/developers/docs/devclass_docs/DWG_Smart-Card_CCID_Rev110.pdf
++.. [2] include/uapi/linux/usb/ccid.h
 -- 
 2.18.0
 
