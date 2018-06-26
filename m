@@ -2,211 +2,261 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E34C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D85F0C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8239626537
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:12:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E48242653C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:13:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gaPPiLKq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8239626537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="fz0gc8p+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48242653C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751549AbeFZGMY (ORCPT
+        id S1751737AbeFZGN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 02:12:24 -0400
-Received: from mail-eopbgr80052.outbound.protection.outlook.com ([40.107.8.52]:32544
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        Tue, 26 Jun 2018 02:13:57 -0400
+Received: from mail-eopbgr60111.outbound.protection.outlook.com ([40.107.6.111]:9159
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750942AbeFZGMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 02:12:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1750919AbeFZGNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 02:13:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X8wdoikmFGrlz+XHnSCekSWMpjmyijPlJuyl4SRklvI=;
- b=gaPPiLKq95YRuFZZyAaJUfLeLcs7CKTSlX61gg83COm2tHDyJr6WkGGgLCA596+1xLUqahE+6pCXB2jDq3kAp8kkrEiptm0/5BHMoNheQjtOGgzJhyydpWzo+v00a39jzXWJ2t1K6Ajv0z+pMNpUOPQVHCTmmXA0nDoDx1XCFWE=
+ bh=61RGXfwJltyA+K4QPusOJeIJ6IvA9cj2dt+knQ3zSJc=;
+ b=fz0gc8p+mAroCrNHzFKOJ+Gbj0atS+P4mcR/jSEU/8KU70+/SRxfE3UcWqtfjamYS9/TIMNFrG8Fj/MOAYEiTXbJETO3N1SZAbcT9wkrjy2nYO2ReKqJY/AAzsBZosWeUxGW9emL8QayuDizsLxZ4GNKSJenHVLJ+W3lWufxdnI=
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
- VI1PR04MB1325.eurprd04.prod.outlook.com (2a01:111:e400:5187::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.884.23; Tue, 26 Jun
- 2018 06:12:13 +0000
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: make pfuze switch always-on for imx platforms
-Date:   Tue, 26 Jun 2018 14:08:03 +0800
-Message-Id: <1529993283-32396-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
+ smtp.mailfrom=avagin@virtuozzo.com; 
+Received: from outlook.office365.com (73.140.212.29) by
+ AM0PR08MB3252.eurprd08.prod.outlook.com (2603:10a6:208:5e::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.22; Tue, 26 Jun 2018 06:13:49 +0000
+Date:   Mon, 25 Jun 2018 23:13:22 -0700
+From:   Andrei Vagin <avagin@virtuozzo.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
+Subject: Re: [12/24] proc: Add fs_context support to procfs [ver #7]
+Message-ID: <20180626061320.GA12548@outlook.office365.com>
+References: <152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk>
+ <20180619033450.GA11639@outlook.office365.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: HK0P153CA0009.APCP153.PROD.OUTLOOK.COM
- (2603:1096:203:18::21) To VI1PR04MB1325.eurprd04.prod.outlook.com
- (2a01:111:e400:5187::11)
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20180619033450.GA11639@outlook.office365.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-Originating-IP: [73.140.212.29]
+X-ClientProxiedBy: MWHPR20CA0041.namprd20.prod.outlook.com
+ (2603:10b6:300:ed::27) To AM0PR08MB3252.eurprd08.prod.outlook.com
+ (2603:10a6:208:5e::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d8392863-8078-405c-fd85-08d5db2bc436
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1325;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1325;3:noUy1VZzITTpxZ/n7ZMbEzcMek7ae3STkk2PK1LqoPEma3io9TjxsiE9c9ik6Gk4B26lDlnlxMEPh0Ord2aKpoo8EQ2dX69qXRL2JGqKu3yEJnTRAT3FApdG/r94BeDNWHNDvGwZtCXlOm14HkQhrcvw7EOd4t4XOF9MSoXsqI8pOLqU53xHLA1wUUM3Hy7JXEI5nhuo8dyO29YM+Q7hqPpcL7AyuedzJ4CqHJdy60iJnpeD+eqqbNeT+twr5cLz;25:M8XRD/EMIaAgnNJk2Uwd9fM1iWmw2plgju/9L8TmNLYtc8AiDOz8lMUmfhAsw/cS+8YYSzF50aJQTi9+RbR4+M9BJKErUffpIDgrZrTuK12Sz9VgtG2lOU96RVsb3SuMHfmYyOqfnrlmxQoCp6fTmRyRRzgJuF5+o9rjgj5bW/rdXVHJUssl5uhBdf4nh7ESzXGJmp1eXWJSzs9j9RexRS29/qXeae1HpjbxwrK5em4zlVaSlbXu0FgSm4hm1Y6wzGO393ijJP0qPFXk63BUxEtfZ8R6BqyyIzLMiZSmZDyqr1iWlzP2WPUPs+gJfuzU/Cl2Dnld/kDTk5ma61XSZw==;31:k6DSz3maWYkmpt2PNkxeRamqco2L2CQ7LEKGJhTowoJ9/OeQUGYHz3hgvDI8ATDjl+prehDjGy8LL35+mhLIx3XbDDDPlwzfY4FkCicwfuZy/dzxdXqsjtDaXGgl6sZkwMglW+u6sDl8hDSs2S3Yd/GbjlN3AY37BhmwukfKhiwUlFUz0ZUG/hP72+RGxHdmJ67E26J6oTiO4QpZ8H8INWjsjuXTvHf5kWg2Jn0acds=
-X-MS-TrafficTypeDiagnostic: VI1PR04MB1325:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1325;20:jTGWKTsLij0Yg7LOQ4pkTOfMouu8nzqhku6K4MR2FgCQW+GRdX1USuYn856FwmAc8fXBPqPZnoNuz3nNn57dIQT5Ii/hoQ7wBmQ5gzj1Amm0ZamFTvFPxYcWYTv7rLf16twzlYA9LG9Gfy9Kzc9mNvXFfOVuTmGNr7Y1H56d4+AW2lJYvXMFisuMw75P6X5aYX7bBicX4Kn2kLr9I8YzMBTaHV/57WZBT7FhPQXmylwJTjgc9W/v8NoK/nkukOHTfgl3LfPbsNLN3Ip/4op1W0OqXG4EwUUhcaVOQCUE5i7TJm/i+10Ldmrm73IqKjgeA3U4/WQwj1iSDOVywUoyddOrl6fm7xeiZBQuunqXoTkp7MJLhnE6NiFDmcxkU7MTWUz9Ahyi6vwCKWGjyKmMWvufG1fiQLuYvxtX5vWIfWiqndKQ348bQB5imFs/7bOdQaLHjzMugbPMOzHe/tnSqVvGmxqtnyZax7YYd1XwOlXjZUUGdw9pLsTnlEvLNnNN;4:sZu69wluK4l2TfySLBQ2Zr5Tgo2doE6MlS+/QkoFCck09YIRsaU0SS2eVILmnVvoh/iohqVrIdCFiW4WkTsivG4Kj2zSew6wO31jY92hqRv95RB2naPghMkU5XSYJdxhlFzqkajFhBzjnAq0C8kk9QztzX6hNAoctfuG/V9EDoNB+T77h/I5/XXdjL7SCVYbthswaoJu6YlEwX0cy7K5YoureXpgCfoVx62QZh7ptRlyVjgx/7eWGr6e7AduIkdSrXraFsJjeowd6A0r8GAfFDuKkc9rI5Ei6BuxCVwU/ERxCyxZ3iJ1x4b1LmOEwEKa
-X-Microsoft-Antispam-PRVS: <VI1PR04MB1325A34178DB5170F3D160CCF5490@VI1PR04MB1325.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-MS-Office365-Filtering-Correlation-Id: 85e55b29-f796-43cf-6163-08d5db2bfc7a
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3252;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3252;3:19CRSH+p/ej9Vm5xkHFIaN2YH5MvpKjrt9r/YqtedsiebdlHBDs6BQWEtJGVFTNnkpvU5JAmh32uWaa//4ZeNtba+QFSR1DDoMBr5rmGT7zWnn21C3OzWOLthbxJOeOyi2mVA6060oPh4xwMRvb/4c2s7S3nevh6Am6u2jycWpURjQwIZB31EimcZOt5GldaEgRwE03PnI8BY77ChAEBJeHA/mGn4/jwyhHlUzWLXdN5gtjxJ1CJSzwwIeGxmnCM;25:Zvy1sQsSJHT/N49LqIifwQQYroWs1ez5NuIJ10hXG/9UMQACy3elmfbjuaWMLEiTLp6EaRX5X4GsWB+FqFRFQQ3U651bpRP+At6XYST5NfVjHPcACE4O42ONvAspk3CsiN6c+ecbEDtZ42zDekMlDyw2lHLfud+18JfcWRWRcb/gDsO2gvncOWIJWN/mq7l2g96HV9R6wgFXxjO3K6POqYHYJnHjzXbulQAYjMf6la2HkFtEsHC1d061qbU9YewxD5FOp5vhU1GFkFi48AzJmjRMpPgEUEWv3mLdXjF5xDfaFUSFekpRKFonXh9EzhA1CWH+t13JljjOJ5VPWtoH+w==;31:1+s+25U7oqxHexQKoG+54z2E3hVDjxubBhMeynJgERltQpR15285lrYRdBmobxX9PfiS6LlSJ7QP6SPRvBD13CISffLhKcOR/gRqL8UZb4+gg4YDZXvDfpTK0kgv9U2tIdny826+tKcBwuPxGBWChPdBemTbViLf3kpskEl5IAKuA+aNdQaQPcbs9KdpnLf3kpbnMVXzkpjHl5dleft3FsYAwB/ZIEka5t3dl/GoJYo=
+X-MS-TrafficTypeDiagnostic: AM0PR08MB3252:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3252;20:+IkssgvfKQiqZtccZ1jrCCDzejGLKJwtWsEN9kcRjjLaxX/WG7vrY3rW1qxSBUi+VkBk9GXkhFe3XyhPW/ppxFtOdabIg77vwX2Hpfl5XM0PAgKmx1s7QGtMPh8XKgke2z1gxjnxkxEdTID3CKvIswan1xMP3aRkjRNAA6dT6hOoimRDzbNwGWwfTk9wrmA8T4gZ7Tw20O3NlnYqfAe2EUGGMyEX7n4JZwsujoKt71g0vkha2aW/E1ns9soJH0p5D0GafGeMuBfckXnwVD7rsBMxvOaGU4MVV2I6ndMHbr8sKwk51HZ6LY/TFGrnbR0psoVVk37fDJrdFYIggvlULbYneYJZNaVxAsNSV4dhe066CiNJRna5WiYFF0hIp4bR0QBKvMibUSAyCRROmeAl4LgjAo0gszuuNYb+xKcWvWPC3IvuiAgDKfi39nqjjt6bQTyLf/jwSLuPKDmqp14ZyIOtKMr3pXIcrYa4WfX0iSmjhGmCfmupVow+R8EP1BjP;4:HYmLVuXfVaOHgNMEtc34XwbUHPUGoZBU+1h+HCMASu9zz+BRQn7CxAcFFsR8kSzIp+JTj3pFEUf6yXjxeV6ZqBMoWE8ZmHAKdcGHFSbC5ugq/yuSVFkjFpIx4limI498jPVCHXUQ6r2aOVyB+YDB4kcZ4+exm3tZhIRIOHjZIS8jCnbhwBpPfK77WElI9P8OSXgU9tGtWyGm4m/scfuThs79KL42NSnjqv/MutOjculOo5LALe0bMISCWgmekQaKy3FSkFbJqWFyE7S6pD6vNw==
+X-Microsoft-Antispam-PRVS: <AM0PR08MB325257A10B336CA5FD6D0EA1CF490@AM0PR08MB3252.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR04MB1325;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1325;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM0PR08MB3252;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3252;
 X-Forefront-PRVS: 071518EF63
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(346002)(39860400002)(396003)(199004)(189003)(97736004)(36756003)(51416003)(2906002)(53936002)(26005)(8936002)(6486002)(6116002)(50226002)(106356001)(16526019)(3846002)(105586002)(52116002)(1857600001)(5660300001)(8676002)(16586007)(47776003)(316002)(186003)(386003)(50466002)(478600001)(7736002)(48376002)(486006)(6506007)(86362001)(476003)(2616005)(81166006)(4326008)(956004)(25786009)(68736007)(81156014)(6666003)(305945005)(6512007)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1325;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39850400004)(366004)(376002)(346002)(189003)(199004)(66066001)(47776003)(6506007)(956004)(446003)(76176011)(476003)(478600001)(386003)(486006)(186003)(26005)(6666003)(86362001)(52116002)(7696005)(6916009)(11346002)(97736004)(5660300001)(3846002)(2906002)(23686003)(6116002)(16526019)(4326008)(316002)(53936002)(55016002)(1076002)(50466002)(68736007)(229853002)(33656002)(58126008)(9686003)(8936002)(6246003)(16586007)(305945005)(7736002)(105586002)(53416004)(106356001)(81156014)(8676002)(69596002)(81166006)(14444005)(25786009)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM0PR08MB3252;H:outlook.office365.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB1325;23:EHMKXDwRzbuOafiOMg/DojGk2TN9m0TCDXp7Zfkfj?=
- =?us-ascii?Q?XJ6CpXWOerltd6d2JOf3vaRpDPcVJxQuGKrREYwAdZeWM5j5idxxd24QckFL?=
- =?us-ascii?Q?lfb+5yhuyr+B6ld/D0x4AduRRs83xCSAFJ5idBVqhWVp0BvNgsg62O2pJ8Nk?=
- =?us-ascii?Q?QMeJnreat6u8XlzGIVXC2jb7VAFS2eJkAvz4nckW6wjKRqIk2RE7hMjNphTJ?=
- =?us-ascii?Q?ztRuqkoCk6aM1BguIHGfjx2zZfLMFl0XZvrra1xiWHwGOdIXqPskDy2LkIbq?=
- =?us-ascii?Q?ZPBS+XUPJfhMpq/KA2EzVnSUY7ud8tyMYWU6TkEEm0gpMoio83woswGk+Du4?=
- =?us-ascii?Q?f/dna118wv+pJhNHQUtX4wzEOw5T4XaI+C/KnMSLAXcQTK6hE4hoCKF68HCM?=
- =?us-ascii?Q?BHNIn9Oq4OpLXsNpyv7Lme+d/g79Nz9Lf15oov1tMtylfV4JvwYjiwQVyHsH?=
- =?us-ascii?Q?vyCHXET5XmpYz0F5ZLS1eAcCHlxZv+3w1cHZLDTCo55BNshaOOBy0C1ptzZt?=
- =?us-ascii?Q?eSr0pPV7mleUhMm6iNK32icPhe6iPURKlF3abtrgArOJX6Gfvsgn0Tvd18n6?=
- =?us-ascii?Q?Sojhu1vHvvuBSmKaUYjFUnA3TZI1/ww8InQNppxp0lD1yzhPmG9RNShaqA3i?=
- =?us-ascii?Q?YPiXKerKwIbFSePKgMYPhT8hCbQeF6MBxzvAXgupWNI5+UuqRMbg6xJ+Sk5u?=
- =?us-ascii?Q?AUzT3qE9y7xZxR4QCktGmWD/RGfihi7EIY9hqw8DqLR/7SpqbnK1DCPnxq74?=
- =?us-ascii?Q?HUsFYE0ipgAmFy61fx+7YJ7LCI7/P+P9e+6HnOV+YXKDtGuf8xvTjRdFrpis?=
- =?us-ascii?Q?MfHHi1de+n15HSQ+tDFNezApO72RZ4HY5MC1DypVJSV+WbIIEk5nYNMExlA8?=
- =?us-ascii?Q?D8FMKaTCfhPr6Amsc+ZUEF8HUiJ2+crKILksEpdbkx1qC/rqHBQzfESsNYUP?=
- =?us-ascii?Q?vnCe55j3T8lA+yyCcJv5DUw2n3SayXESLqVV0bZ0QVb+ty9ayYsCv2f/Y33B?=
- =?us-ascii?Q?uwYONss6D/4Dhg15QDvPhPlZ5By9GdsrG7Dyvc9T2oCoMSY5psnH2zraTha+?=
- =?us-ascii?Q?20aW475gkKxsNNvMiya9KqpXCbWiEhm5ji08GX51M1VvhGwnbXKWmbi2sRVB?=
- =?us-ascii?Q?L+Ay/EU0S0=3D?=
-X-Microsoft-Antispam-Message-Info: TbO2n9WevQyycrpaM+Hz759ZuUVvv+Dxwe6ipntacPcH7OWTQSipKk4IEAhZVkWkUC/Wscl1zeVb6BxkkcOS/T4zLm6K4N13+w1D8Jj4TEaEqDpm7mNzSQ/iWnTPOuif0YM6IqHPSodwp2acCdHJnNLVfrdFnnTOQMrQLeGDk9Ay8ZILPYWibfS6MI8TYBxMmq0cWNVqSQ7GHUDyOZK9rl0THqVS1uLI8JvWNnPk7taCOYN5IRyE8CrbGvbMWxlzq15OaZZqHzzNH4SvZD64FKkU8OaX9s2aoWf8diNv2jas8nE3MvVyZm9iiWwXH4/DR3sQpEXnEUWEuD3GxY7Wfd3jV5WGpkKmFqmMdLCYvp4=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1325;6:IPO7ev2Q47Z06YCJFVAl7leBdl/PgNd4IXNbd0n9D6gU6uIudAA6G0EjEbEv3eSrcDGYWB9YdrWxo720xoV0o4tYKfKztIu70h4nWZjwOT0IgB2oFcGzooUfOy5ZUlepDb9SxqudiU0LN7MwJ76z2SwZTiVEwWJmQXsArZD3maNQofr2MuAvlF8nJKVcCQatqHiwrTMGFujesIPUfi6ygLMrUyPChDxQgV2guHj/xI+ILUaqun0GcIHxobzgXE0+07dTdZETvngzwmW3ZZ1lJslNmsjZ9yIm9PUZBAd3ZRQU60zrlgk3/Yo1XPOMUf5oU8atIJ39/jYcDrYVIwtzbKjvz+m1dK5HS3kEThS361xZ+4+8Wh9zQhT03ipfb4mRb7v8JmbjQ4iIHo31c4pWBa6v/tq1sJczvCw1t+slQtXSwFd0zwUgVeoUH3gUwCIHM+BVCVTeUb2u1UIWmPDPjg==;5:tElgn5q6zQaWJqCcJTL7efFsGlZtwSDq01IBJB3TTZ29i0d5tNNPJaZKWfbRSBH0ROX9yp3dXWfTLs4GnCIJlxfNz90qCssOI0Lfe1+agJe0triaukMzFZ362X4aWwStMFfQWvuJKdzWO3NFNePL/u7x841djNJzXclWpMFonfI=;24:YdfRWJxERnOsvPZQC0lNwBw5Yl1ITRaIRqGjTjG4ZCAJfaHn0Ne9gvMSVIuS0c4+H57DogiFSHQyJNVC80Kae78A+9Kbpob7eDWVt04X75A=
+X-Microsoft-Exchange-Diagnostics: =?koi8-r?Q?1;AM0PR08MB3252;23:zXyKkco4sL1CznR9GQn3R/NEADViM7aUwmQ9s/TAgxO?=
+ =?koi8-r?Q?8rPMt3cPzENg656XTBqQLVrUsJwkWMG7AdkZ/sNh8cgVMiGL2Ff5D7U03sgVR6?=
+ =?koi8-r?Q?zyrd+nlXIuxtp3RfdAcJ3ogN8KzxvLKNeTZBLx540H21XQJJatD/0mLJAOKG09?=
+ =?koi8-r?Q?f0vqSv90GvhIQ4MoYYETqshMMTq9irTjIzXbHTiT4tFhi/kRubMb+zCv7P0tX2?=
+ =?koi8-r?Q?PTXhiJtWfw9JZYCJ+sybp8J+vQfR3wRrj0/ZuQ5Yl+TeA7Wd0V3VPJBbko/v1u?=
+ =?koi8-r?Q?s2iyIQcGuk2cRaqsFNMKLrYU6HpV2s14mTN1ko7uh3feVYEfN1VqjE69+nFgcO?=
+ =?koi8-r?Q?gwfN/Lx7+zoO0RjepSkwc3/JlYEsGEXcOLM0BLb/AfJZWI8eprFKy3+1eCSSdo?=
+ =?koi8-r?Q?hYPgfbLuYhpLOwjTQjsOJCrn2okvX8B13cZ6+JG6s4d9igv8Z72GZzUitxjKpA?=
+ =?koi8-r?Q?mPnYQVnbnQdPkHvd0QpxbikfSlWyjBqrIhB3TbZ2qDTNYSasLC6pIxETWvruaF?=
+ =?koi8-r?Q?F90FIZQWLvORQXg/hnlujd2CrVb86vWLjAK5AOdhKHJ5+a7Y64g7/Ohipau1+N?=
+ =?koi8-r?Q?TIo7kNgZUbI3PJrNr9mkNGadmEskqNI0imNzDr3satyXpHR+R77uqFUsnTudqS?=
+ =?koi8-r?Q?neOJtazxkpoh/D9YmtiaE3/F31HI3tArEFyTBchbrTDdL2Smiaios9WJmgC7jO?=
+ =?koi8-r?Q?ZEBGydCQx8qtX3/lBRTsXKJJ86WxADluvaY2QDRNuDs8n6XBUZluriKDlRcC9e?=
+ =?koi8-r?Q?qLBzLbVkPXimCVuleNXYUK1XTul/fio2ElcvKeGw8xHTmHufh7j4F6yYzG0Vef?=
+ =?koi8-r?Q?PZXhyqCVX3nORZFZRmHx2c/xOgcAJ9vm3ToystrBgT+Fc2ddwCZNW6Idc7nkD8?=
+ =?koi8-r?Q?QGU0iBOE82OATwvtmakkiJ811cLMGQv0nRgCVaIEm2WLvtMt5ukhjeNq0nbWeG?=
+ =?koi8-r?Q?g20RscXrLureJnGrMQCJu4tUGhH9BrFudBlNv6klm97J8XvSAetIVpNnJOo6t2?=
+ =?koi8-r?Q?5Hj/cs0E2N+WfAOKIi7N1LQyQD2mmTzksAEPCvub638nNG8FmnT7TyIRH46WNx?=
+ =?koi8-r?Q?GTWheMsUOuRMC0XinitoaWQUi3QCtUp/Lt3z/968AY38BYR4c+nsIJSYBigGVc?=
+ =?koi8-r?Q?QW7Tr+bFY9V0N9k+eCES7MnHBLF2BbIjOffxWuWqq6AdnoJZJLcGka+PLAf2ec?=
+ =?koi8-r?Q?urkG0h7GpupZuBSw8u3fB77sXedxMqMOoo2CJUtygKB7cB4mqcAlCpnDUFZo8m?=
+ =?koi8-r?Q?oAFpwbt4jzBILU3nCAw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: dWqeraKT9ePOvzG9n1SMPB+dhbVxYso/BvPmTTWlakm1myLxXVKTR6fgoDHSHMLYAHE9f0eVtvuDdRtPj6hdh5pbk9yCkujfD0isvP1sYikLaHpG9GPc6wrrcpFmSFBupGUDZr1qX6wq582z5JsrT4R9Nx0S07gaTjs5lpbMDL+gdSH2+IeKioxvul/p70QnqQRpvjT5VqRbuIB/wMaOjuHoJ/ZBmj5RwwS5yK0D5gFQCRcvxSkfzJ+SLIpXIOkJRnHGRYLQPiOVAsNgGEUCgcupa4NNimERSuOdsyEl8hyrT+mSjanA+QNdU/hgHLa1/74P+EBuzHwYTJL9vUYEyTK4ph16WsF8M4TPs7VdZCk=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3252;6:W8XvjOkDUDBZ466rqU8nvMH7thgNK/vAmmWKNGsbIvGNh7u91SGUwd06VEV4pWyEvaUBMpJ2/UkranxzhGviK9UyeWQ5vasi3PYgxxQ4NizYhXmTyrK6AOQolo6vJnq+wC3QA6z2xEZOutAqgyOsuv9SJsugJBhqhYOc3FIy+8xIsQXR3U46uLm1Y1Suq6Bq+6pOChc4/aTwtPdlEDrkecP1Tur6mZLjkzU9T6nC/CZNqla29HW6B91Djk2GCk50PHovIjhLqfJBZSWonh3glF1z7uVsmyL0RsXJZkRA8QtpmnfCHSSbzwK3AvW4rWzfmJPDok4Zf3ccke7sdQtXPUwSpghzcquG5S59jHmpYQv860BGIzopUb+jtYowNZlrxCcGCheUXua/dqvPueQhxx7irU7oSL4SqG2yOhjyoxFyzPMu7lLKRcRrGc/0ji9aqmjhoXvvXddifR4cnwTDfQ==;5:TuAf9OEHu5Qdb9/14QjLiQZvohgUWXakCDyEXxYQgCPxfxIH2jdNEWspTfbSJYMIEDy5KXonvJq8ROjug0uK64enLiJXk8DD0yiHU7zq4A0q/IosxDU3cU2pcaxD387DncetPKH4FWBSEH06US3W2V9BnOxkXZeEjC8ZdR8ORoI=;24:gcZFmfg5R1eVFWDAXukVLpseEnjCdookFT9zD4QUD6Y0Jy/dPmAz0A6bMfUe2OfaLnz5o1JgIQ1UTHW0q1HK2dkpGL++ISOhl2udAhvGNTM=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB1325;7:66+8gw9ZRco2ckAqGLCDbOPSSAGm0CpK1VQ3LwTdwXbhGd5/isOZcpc2L3n/70esdApk/5O3zLIJ/dKqG8yH0HiQRQ0xIm99yWWb2U+QNw1JBlUuRslqBv4uvl75ljKiTgSCcSVGnI4yXKUU0VsJEeU7e+8UXIllEyEi3HxWVfAxZdEFRC7tYEJ5jHewMct6NPRAPhclgMw5dj4mJKzOKHx0SnNnBOsYPnFQIcjpW/yLAxJvSskqogYC89md1oP/
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2018 06:12:13.4493
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8392863-8078-405c-fd85-08d5db2bc436
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3252;7:djQYhMjcuomgZPz4FL8v2rQJlqyFqbRDvGhFjjKpQtq0QnIrp/PUqE2Zt1b4qQGrQSa9nmiR7VRt9rANcLZHGIhBOEdGS7Ifq2j78AKpe3b3xznuIXJTKH+MpNQp71oNM9uSNgT/E80z9Yhs2Qgjti9vu/kgsh/dH4iKL9+YvBZqg7huFQ/dtB1bnZ57A2DL4a9pPUiMo0xpfvJKHqF9Fj9mlrih/jbHdeNcfM4W0NBzEG53dKKG/6jKHG0xaQEH;20:nsj7ssyMSZ4lzjoHKD2ZpD/yPyEaO5ZGuXTtznC/M9g5KqwY1uZnfjocvyrf/wEY7r4zeP8VmwT+lcQgvhAz7hbqzeRDZPTiIpeI8vsjb/l/yyDlcOjYHF7jA2bYx/I7OfEo71PPL4lvqjnpVdqTh9nyp1SXUtzqUFPIoZHNO7Q=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2018 06:13:49.2342 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85e55b29-f796-43cf-6163-08d5db2bfc7a
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1325
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3252
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit (5fe156f regulator: pfuze100: add enable/disable
-for switch) will cause those unreferenced switches being
-turned off if "regulator-always-on" is NOT present, as
-pfuze switches are normally used by critical modules which
-must be always ON or shared by many peripherals which
-do NOT implement power domain control, so just make sure
-all switches always ON to avoid any system issue caused
-by unexpectedly turning off switches.
+On Mon, Jun 18, 2018 at 08:34:50PM -0700, Andrei Vagin wrote:
+> Hi David,
+> 
+> We run CRIU tests for vfs/for-next, and today a few of these test failed. I
+> found that the problem appears after this patch..
+> 
+> >  int pid_ns_prepare_proc(struct pid_namespace *ns)
+> >  {
+> > +	struct proc_fs_context *ctx;
+> > +	struct fs_context *fc;
+> >  	struct vfsmount *mnt;
+> > +	int ret;
+> > +
+> > +	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
+> > +				FS_CONTEXT_FOR_KERNEL_MOUNT);
+> > +	if (IS_ERR(fc))
+> > +		return PTR_ERR(fc);
+> > +
+> > +	ctx = container_of(fc, struct proc_fs_context, fc);
+> > +	if (ctx->pid_ns != ns) {
+> > +		put_pid_ns(ctx->pid_ns);
+> > +		get_pid_ns(ns);
+> > +		ctx->pid_ns = ns;
+> > +	}
+> > +
+> > +	ret = vfs_get_tree(fc);
+> > +	if (ret < 0) {
+> > +		put_fs_context(fc);
+> > +		return ret;
+> > +	}
+> >  
+> > -	mnt = kern_mount_data(&proc_fs_type, ns, 0);
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx6q-display5.dtsi  | 1 +
- arch/arm/boot/dts/imx6q-mccmon6.dts    | 1 +
- arch/arm/boot/dts/imx6q-novena.dts     | 1 +
- arch/arm/boot/dts/imx6q-pistachio.dts  | 1 +
- arch/arm/boot/dts/imx6qdl-gw54xx.dtsi  | 1 +
- arch/arm/boot/dts/imx6qdl-sabresd.dtsi | 1 +
- arch/arm/boot/dts/imx6sx-sdb-reva.dts  | 1 +
- 7 files changed, 7 insertions(+)
+Here ns->user_ns and get_current_cred()->user_ns are not always equal
 
-diff --git a/arch/arm/boot/dts/imx6q-display5.dtsi b/arch/arm/boot/dts/imx6q-display5.dtsi
-index 85232c7..33d266f 100644
---- a/arch/arm/boot/dts/imx6q-display5.dtsi
-+++ b/arch/arm/boot/dts/imx6q-display5.dtsi
-@@ -326,6 +326,7 @@
- 			sw4_reg: sw4 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
- 			};
- 
- 			swbst_reg: swbst {
-diff --git a/arch/arm/boot/dts/imx6q-mccmon6.dts b/arch/arm/boot/dts/imx6q-mccmon6.dts
-index b7e9f38..e6429c5 100644
---- a/arch/arm/boot/dts/imx6q-mccmon6.dts
-+++ b/arch/arm/boot/dts/imx6q-mccmon6.dts
-@@ -166,6 +166,7 @@
- 			sw4_reg: sw4 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
- 			};
- 
- 			swbst_reg: swbst {
-diff --git a/arch/arm/boot/dts/imx6q-novena.dts b/arch/arm/boot/dts/imx6q-novena.dts
-index fcd824d..0b3c651 100644
---- a/arch/arm/boot/dts/imx6q-novena.dts
-+++ b/arch/arm/boot/dts/imx6q-novena.dts
-@@ -341,6 +341,7 @@
- 			reg_sw4: sw4 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
- 			};
- 
- 			reg_swbst: swbst {
-diff --git a/arch/arm/boot/dts/imx6q-pistachio.dts b/arch/arm/boot/dts/imx6q-pistachio.dts
-index a31e83c..6ea09f9 100644
---- a/arch/arm/boot/dts/imx6q-pistachio.dts
-+++ b/arch/arm/boot/dts/imx6q-pistachio.dts
-@@ -253,6 +253,7 @@
- 			sw4_reg: sw4 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
- 			};
- 
- 			swbst_reg: swbst {
-diff --git a/arch/arm/boot/dts/imx6qdl-gw54xx.dtsi b/arch/arm/boot/dts/imx6qdl-gw54xx.dtsi
-index a1a6fb5..281cae5 100644
---- a/arch/arm/boot/dts/imx6qdl-gw54xx.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-gw54xx.dtsi
-@@ -268,6 +268,7 @@
- 			sw4_reg: sw4 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
- 			};
- 
- 			swbst_reg: swbst {
-diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-index 15744ad..6e46a19 100644
---- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-@@ -341,6 +341,7 @@
- 			sw4_reg: sw4 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
- 			};
- 
- 			swbst_reg: swbst {
-diff --git a/arch/arm/boot/dts/imx6sx-sdb-reva.dts b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-index e3533e7..9cc6ff2 100644
---- a/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-+++ b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-@@ -63,6 +63,7 @@
- 			sw4_reg: sw4 {
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
- 			};
- 
- 			swbst_reg: swbst {
--- 
-2.7.4
+> > +	mnt = vfs_create_mount(fc);
+> > +	put_fs_context(fc);
+> >  	if (IS_ERR(mnt))
+> >  		return PTR_ERR(mnt);
+> >  
+
+> #define _GNU_SOURCE
+> #include <sys/types.h>
+> #include <sched.h>
+> #include <unistd.h>
+> #include <stdio.h>
+> #include <sys/mount.h>
+> #include <sys/wait.h>
+> #include <sys/stat.h>
+> #include <fcntl.h>
+> #include <stdlib.h>
+> #include <grp.h>
+> #include <linux/limits.h>
+> 
+> 
+> #define NS_STACK_SIZE	4096
+> 
+> #define __stack_aligned__	__attribute__((aligned(16)))
+> 
+> /* All arguments should be above stack, because it grows down */
+> struct ns_exec_args {
+> 	char stack[NS_STACK_SIZE] __stack_aligned__;
+> 	char stack_ptr[0];
+> 	int pfd[2];
+> };
+> 
+> static int ns_exec(void *_arg)
+> {
+> 	struct ns_exec_args *args = (struct ns_exec_args *) _arg;
+> 	int ret;
+> 
+> 	close(args->pfd[1]);
+> 	if (read(args->pfd[0], &ret, sizeof(ret)) != sizeof(ret))
+> 		return -1;
+> 
+> 	setsid();
+> 
+> 	if (setuid(0) || setgid(0) || setgroups(0, NULL)) {
+> 		fprintf(stderr, "set*id failed: %m\n");
+> 		return -1;
+> 	}
+> 
+> 	if (mount("proc", "/mnt", "proc", MS_MGC_VAL | MS_NOSUID | MS_NOEXEC | MS_NODEV, NULL)) {
+> 		fprintf(stderr, "mount(/proc) failed: %m\n");
+> 		return -1;
+> 	}
+> 
+> 	return 0;
+> }
+> 
+> #define UID_MAP "0 100000 100000\n100000 200000 50000"
+> #define GID_MAP "0 400000 50000\n50000 500000 100000"
+> int main()
+> {
+> 	pid_t pid;
+> 	int ret, status;
+> 	struct ns_exec_args args;
+> 	int flags;
+> 	char pname[PATH_MAX];
+> 	int fd, pfd[2];
+> 
+> 	if (pipe(pfd))
+> 		return 1;
+> 
+> 	args.pfd[0] = pfd[0];
+> 	args.pfd[1] = pfd[1];
+> 
+> 	flags = CLONE_NEWPID | CLONE_NEWNS | CLONE_NEWUTS |
+> 		CLONE_NEWNET | CLONE_NEWIPC | CLONE_NEWUSER | SIGCHLD;
+> 
+> 	pid = clone(ns_exec, args.stack_ptr, flags, &args);
+> 	if (pid < 0) {
+> 		fprintf(stderr, "clone() failed: %m\n");
+> 		exit(1);
+> 	}
+> 
+> 
+> 	snprintf(pname, sizeof(pname), "/proc/%d/uid_map", pid);
+> 	fd = open(pname, O_WRONLY);
+> 	if (fd < 0) {
+> 		fprintf(stderr, "open(%s): %m\n", pname);
+> 		exit(1);
+> 	}
+> 	if (write(fd, UID_MAP, sizeof(UID_MAP)) < 0) {
+> 		fprintf(stderr, "write(" UID_MAP "): %m\n");
+> 		exit(1);
+> 	}
+> 	close(fd);
+> 
+> 	snprintf(pname, sizeof(pname), "/proc/%d/gid_map", pid);
+> 	fd = open(pname, O_WRONLY);
+> 	if (fd < 0) {
+> 		fprintf(stderr, "open(%s): %m\n", pname);
+> 		exit(1);
+> 	}
+> 	if (write(fd, GID_MAP, sizeof(GID_MAP)) < 0) {
+> 		fprintf(stderr, "write(" GID_MAP "): %m\n");
+> 		exit(1);
+> 	}
+> 	close(fd);
+> 
+> 	if (write(pfd[1], &ret, sizeof(ret)) != sizeof(ret))
+> 		return 1;
+> 
+> 	if (waitpid(pid, &status, 0) != pid)
+> 		return 1;
+> 	if (status)
+> 		return 1;
+> 
+> 	return 0;
+> }
 
