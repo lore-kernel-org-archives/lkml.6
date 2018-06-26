@@ -2,100 +2,190 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B93CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0014C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D00726D4E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:58:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Dn2sZPEM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D00726D4E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 6181626D4F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:58:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6181626D4F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752409AbeFZP6A (ORCPT
+        id S1752498AbeFZP6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:58:00 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:54320 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751450AbeFZP57 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:57:59 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5QFsjn9139448;
-        Tue, 26 Jun 2018 15:57:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2017-10-26;
- bh=DgWiyR2H+ABpuS1gRaaIM8ZIiZGmS6s9mIXKgchRqqI=;
- b=Dn2sZPEM5EQzMXc3HTNRIh4/zhrNB+On0Bh3ueXP4ZYxvtWF0f1HZY+GBPnFDPh4NIXa
- JezcUS6D2bevJ9RTnPiNPaRDAzGiKUCZ1iXUBHOibW0XfIi1VRgZaLIEhvqju+PMmJnc
- w6z8xH7gpYBQduz5yJgnjMN+psDknB3aQYRm1ZvAJ+Vzfd50Lzpb9FUCGWFA7StAZUwc
- WK0GD0yDuAjl0ffVcJccrX8XqzLHFxbwY6v5B4ClS8hrOLt3OT7SP8+c7f1E4wavTB51
- GlcUfY4mtPn26Xel6GcA6RQ0XK0+F5TL8UFmOnXPNcdVysnTgItwcKr5DTdTLnsx95Xv Xw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jum57s748-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 15:57:50 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5QFvoK5020703
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 15:57:50 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5QFvm3N027745;
-        Tue, 26 Jun 2018 15:57:49 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Jun 2018 08:57:48 -0700
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        y2038@lists.linaro.org,
-        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-        Raghava Aditya Renukunta 
-        <RaghavaAditya.Renukunta@microsemi.com>,
-        Dave Carroll <david.carroll@microsemi.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] aacraid: stop using deprated get_seconds()
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180618152734.1705907-1-arnd@arndb.de>
-Date:   Tue, 26 Jun 2018 11:57:45 -0400
-In-Reply-To: <20180618152734.1705907-1-arnd@arndb.de> (Arnd Bergmann's message
-        of "Mon, 18 Jun 2018 17:26:47 +0200")
-Message-ID: <yq11sct5yme.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Tue, 26 Jun 2018 11:58:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:47718 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752414AbeFZP6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 11:58:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C940D7A9;
+        Tue, 26 Jun 2018 08:58:02 -0700 (PDT)
+Received: from red-moon (unknown [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7B0F3F5AD;
+        Tue, 26 Jun 2018 08:58:00 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 16:59:40 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Scott Branden <scott.branden@broadcom.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ley Foon Tan <lftan@altera.com>
+Subject: Re: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch
+ Kconfig
+Message-ID: <20180626155928.GA7233@red-moon>
+References: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8935 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=301
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806260179
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 19, 2018 at 12:21:05PM +0100, Lorenzo Pieralisi wrote:
+> Commit 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
+> added configuration options to allow PCI host controller drivers to be
+> compile tested on all architectures.
+> 
+> Some host controller drivers (eg PCIE_ALTERA) config entries select
+> the PCI_DOMAINS config option to enable PCI domains management in
+> the kernel. Now that host controller drivers can be compiled on
+> all architectures, this triggers build regressions on arches that
+> do not implement the PCI_DOMAINS required API (ie pci_domain_nr()):
+> 
+> drivers/ata/pata_ali.c: In function 'ali_init_chipset':
+> drivers/ata/pata_ali.c:469:38: error:
+>         implicit declaration of function 'pci_domain_nr';
+>                                           did you mean 'pci_iomap_wc'?
+> 
+> Furthemore, some software configurations (ie Jailhouse) require a
+> PCI_DOMAINS enabled kernel to configure multiple host controllers
+> without having an explicit dependency on the ARM platform on which
+> they run.
+> 
+> Make PCI_DOMAINS a visible configuration option on ARM so that software
+> configurations that need it can manually select it and move the
+> PCI_DOMAINS selection from PCI controllers configuration file to ARM
+> sub-arch config entries that currently require it, fixing the issue.
+> 
+> Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
+> Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us.net
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Scott Branden <scott.branden@broadcom.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Ley Foon Tan <lftan@altera.com>
+> ---
 
-Arnd,
+Bjorn, Rob,
 
-> get_seconds() can overflow on 32-bit architectures and is deprecated
-> because of that. The use in the aacraid driver has the same problem
-> due to a limited firmware interface, it also overflows in the year
-> 2106.
->
-> This changes all calls to get_seconds() to the non-deprecated
-> ktime_get_real_seconds(), which unfortunately doesn't solve that
-> problem but gets rid of one user of the deprecated interface.
+if you are OK with this patch I think it is ready to go, hopefully for
+-rc3 since currently sparc allmodconfig is still broken as Guenter
+reported in the Link I embedded in the patch itself, please let me
+know, thanks.
 
-Applied to 4.19/scsi-queue. Thanks!
+Lorenzo
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> v1 -> v2
+> 	- Removed ARCH_VIRT PCI_DOMAINS selection
+> 	- Added PCI_DOMAINS visible config option
+> 
+> v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
+> 
+>  arch/arm/Kconfig               | 8 +++++++-
+>  arch/arm/mach-bcm/Kconfig      | 1 +
+>  arch/arm/mach-socfpga/Kconfig  | 1 +
+>  drivers/pci/controller/Kconfig | 3 ---
+>  4 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 54eeb8d00bc6..843edfd000be 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1245,8 +1245,14 @@ config PCI
+>  	  VESA. If you have PCI, say Y, otherwise N.
+>  
+>  config PCI_DOMAINS
+> -	bool
+> +	bool "Support for multiple PCI domains"
+>  	depends on PCI
+> +	help
+> +	  Enable PCI domains kernel management. Say Y if your machine
+> +	  has a PCI bus hierarchy that requires more than one PCI
+> +	  domain (aka segment) to be correctly managed. Say N otherwise.
+> +
+> +	  If you don't know what to do here, say N.
+>  
+>  config PCI_DOMAINS_GENERIC
+>  	def_bool PCI_DOMAINS
+> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+> index c46a728df44e..25aac6ee2ab1 100644
+> --- a/arch/arm/mach-bcm/Kconfig
+> +++ b/arch/arm/mach-bcm/Kconfig
+> @@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
+>  	select GPIOLIB
+>  	select ARM_AMBA
+>  	select PINCTRL
+> +	select PCI_DOMAINS if PCI
+>  	help
+>  	  This enables support for systems based on Broadcom IPROC architected SoCs.
+>  	  The IPROC complex contains one or more ARM CPUs along with common
+> diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-socfpga/Kconfig
+> index d0f62eacf59d..4adb901dd5eb 100644
+> --- a/arch/arm/mach-socfpga/Kconfig
+> +++ b/arch/arm/mach-socfpga/Kconfig
+> @@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
+>  	select HAVE_ARM_SCU
+>  	select HAVE_ARM_TWD if SMP
+>  	select MFD_SYSCON
+> +	select PCI_DOMAINS if PCI
+>  
+>  if ARCH_SOCFPGA
+>  config SOCFPGA_SUSPEND
+> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> index 18fa09b3ac8f..cc9fa02d32a0 100644
+> --- a/drivers/pci/controller/Kconfig
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
+>  	depends on OF
+>  	select PCI_HOST_COMMON
+>  	select IRQ_DOMAIN
+> -	select PCI_DOMAINS
+>  	help
+>  	  Say Y here if you want to support a simple generic PCI host
+>  	  controller, such as the one emulated by kvmtool.
+> @@ -138,7 +137,6 @@ config PCI_VERSATILE
+>  
+>  config PCIE_IPROC
+>  	tristate
+> -	select PCI_DOMAINS
+>  	help
+>  	  This enables the iProc PCIe core controller support for Broadcom's
+>  	  iProc family of SoCs. An appropriate bus interface driver needs
+> @@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
+>  config PCIE_ALTERA
+>  	bool "Altera PCIe controller"
+>  	depends on ARM || NIOS2 || COMPILE_TEST
+> -	select PCI_DOMAINS
+>  	help
+>  	  Say Y here if you want to enable PCIe controller support on Altera
+>  	  FPGA.
+> -- 
+> 2.15.0
+> 
