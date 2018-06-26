@@ -2,136 +2,173 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6637DC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABD5C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E8D326AD5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 249A42667F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:00:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hj1Ox2Eu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8D326AD5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="evOhmuTN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 249A42667F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965277AbeFZM5o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:57:44 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:37076 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965077AbeFZM5m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:57:42 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelnx194.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5QCuaRd009654;
-        Tue, 26 Jun 2018 07:56:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530017796;
-        bh=h+ba3SBoqesjXRvrCnsBOulnTji2/MF6egfPo0XzV+o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Hj1Ox2Eufoeox1VirJrAmi0X4G1r41HyLl3rB6303hdKQN1lykawkxr/TXNrONxqJ
-         14oCK7ItWOtgwFbtsHOjVurcbZ/f+nNXl/FVyAVLdaoIMIRfMEfrhwTAcRDCpdVkxi
-         RnOaUDAcimUPFueCxSgLvcD9TVoOBZIDDLBw7lVU=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5QCuaA9028003;
-        Tue, 26 Jun 2018 07:56:36 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 26
- Jun 2018 07:56:35 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 26 Jun 2018 07:56:35 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5QCuVfb007095;
-        Tue, 26 Jun 2018 07:56:32 -0500
-Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
- =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
-To:     David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180518164829.27052-1-david@lechnology.com>
- <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
- <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <a45f20fe-61f1-6c10-c44d-655f9960d824@ti.com>
-Date:   Tue, 26 Jun 2018 18:26:31 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S965205AbeFZNAb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:00:31 -0400
+Received: from m50-138.163.com ([123.125.50.138]:48354 "EHLO m50-138.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964940AbeFZNAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:00:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=CSrVdAsoWRS9WDnWpp
+        4YvwqD5yWqFKwe2S5B8SRpWwU=; b=evOhmuTNI/XcVP6KYwQ9g3BDp1fIOjTkCn
+        DbRXE7mXC0DZ3nNWU7q/R0uCzGBA9GIPg3Ga+vBBYiXjy9OzQ2wZNNnvuDKXlxLf
+        8fRJHsyUPQ74/hBiQ/gj21MzKrtlnR10sayvPh8Z6u4NzTUbHowN5IuABPq04a45
+        ypcnmUcHI=
+Received: from localhost.localdomain (unknown [61.167.60.250])
+        by smtp1 (Coremail) with SMTP id C9GowAB3v4_VODJbZyY8BQ--.479S2;
+        Tue, 26 Jun 2018 21:00:05 +0800 (CST)
+From:   LiuYang <yiqiaoxihui@163.com>
+To:     avi@redhat.com
+Cc:     mtosatti@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, LiuYang <yiqiaoxihui@163.com>
+Subject: [PATCH] KVM: VMX: modify macro definition 'R' to 'R ' because of gcc-5+
+Date:   Tue, 26 Jun 2018 20:59:48 +0800
+Message-Id: <1530017988-8026-1-git-send-email-yiqiaoxihui@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: C9GowAB3v4_VODJbZyY8BQ--.479S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZFyUtrW3JFy3ury3KF15urg_yoWrWr1fpr
+        WfCF42kw4rtF15J3W7Xr13KFZrX3WfCr13Xr9IkF45Gr98Gr1xGr10kFnYk345XFW8Z3Z3
+        AF15ZFyq9r45Z37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UvApOUUUUU=
+X-Originating-IP: [61.167.60.250]
+X-CM-SenderInfo: 51ltxtxr0lx3rl6rljoofrz/1tbiTBVxSlSIZ5AhRAAAss
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 25 May 2018 11:51 PM, David Lechner wrote:
-> On 05/22/2018 04:38 AM, Sekhar Nori wrote:
->> Hi David,
->>
->> On Friday 18 May 2018 10:18 PM, David Lechner wrote:
->>> This series converts mach-davinci to use the common clock framework.
->>>
->>> The series works like this, the first 3 patches fix some issues with
->>> the clock
->>> drivers that have already been accepted into the mainline kernel.
->>>
->>> Then, starting with "ARM: davinci: pass clock as parameter to
->>> davinci_timer_init()", we get the mach code ready for the switch by
->>> adding the
->>> code needed for the new clock drivers and adding #ifndef
->>> CONFIG_COMMON_CLK
->>> around the legacy clocks so that we can switch easily between the old
->>> and the
->>> new.
->>>
->>> "ARM: davinci: switch to common clock framework" actually flips the
->>> switch
->>> to start using the new clock drivers. Then the next 8 patches remove all
->>> of the old clock code.
->>>
->>> The final four patches add device tree clock support to the one SoC that
->>> supports it.
->>>
->>> This series has been tested on TI OMAP-L138 LCDK (both device tree
->>> and legacy
->>> board file).
->>
->> If you do end up sending a v12, you can leave out the mach-davinci
->> portions unless there are any changes you need to make. I will pick them
->> up from this series once the driver dependencies are merged.
->>
->> I do hope the drivers/clk/* changes can be merged from v4.18.
->>
-> 
-> I have resent all of the clk patches (including all of the ones I listed as
-> dependencies in addition to the three remaining in this series) under the
-> cover "clk: davinci: outstanding fixes​".
-> 
-> I also found that we need to add power-domains properties to the PWM nodes
-> in "ARM: dts: da850: Add clocks". I probably should just take your advice
-> and just globally added them even if they are not documented for some types
-> ofnodes.
+GCC 5.4.0 enables raw strings by default and they have higher priority
+than macros, thus R is interpreted incorrectly.
+Fix it by putting a space between macro R and a string literal.
 
-I think doing it en masse will be controversial. Just add it to PWM
-nodes for now (I am assuming the binding documentation agrees).
+Signed-off-by: LiuYang <yiqiaoxihui@163.com>
+---
+ arch/x86/kvm/vmx.c | 54 +++++++++++++++++++++++++++---------------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-I have applied this series so please send any more changes as follow-on
-patches.
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index d48ec60..3e4ffaa 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4169,30 +4169,30 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
 
-Thanks
-Sekhar
+	asm(
+		/* Store host registers */
+-		"push %%"R"dx; push %%"R"bp;"
+-		"push %%"R"cx \n\t" /* placeholder for guest rcx */
+-		"push %%"R"cx \n\t"
+-		"cmp %%"R"sp, %c[host_rsp](%0) \n\t"
++		"push %%"R "dx; push %%"R "bp;"
++		"push %%"R "cx \n\t" /* placeholder for guest rcx */
++		"push %%"R "cx \n\t"
++		"cmp %%"R "sp, %c[host_rsp](%0) \n\t"
+		"je 1f \n\t"
+-		"mov %%"R"sp, %c[host_rsp](%0) \n\t"
++		"mov %%"R "sp, %c[host_rsp](%0) \n\t"
+		__ex(ASM_VMX_VMWRITE_RSP_RDX) "\n\t"
+		"1: \n\t"
+		/* Reload cr2 if changed */
+-		"mov %c[cr2](%0), %%"R"ax \n\t"
+-		"mov %%cr2, %%"R"dx \n\t"
+-		"cmp %%"R"ax, %%"R"dx \n\t"
++		"mov %c[cr2](%0), %%"R "ax \n\t"
++		"mov %%cr2, %%"R "dx \n\t"
++		"cmp %%"R "ax, %%"R "dx \n\t"
+		"je 2f \n\t"
+-		"mov %%"R"ax, %%cr2 \n\t"
++		"mov %%"R "ax, %%cr2 \n\t"
+		"2: \n\t"
+		/* Check if vmlaunch of vmresume is needed */
+		"cmpl $0, %c[launched](%0) \n\t"
+		/* Load guest registers.  Don't clobber flags. */
+-		"mov %c[rax](%0), %%"R"ax \n\t"
+-		"mov %c[rbx](%0), %%"R"bx \n\t"
+-		"mov %c[rdx](%0), %%"R"dx \n\t"
+-		"mov %c[rsi](%0), %%"R"si \n\t"
+-		"mov %c[rdi](%0), %%"R"di \n\t"
+-		"mov %c[rbp](%0), %%"R"bp \n\t"
++		"mov %c[rax](%0), %%"R "ax \n\t"
++		"mov %c[rbx](%0), %%"R "bx \n\t"
++		"mov %c[rdx](%0), %%"R "dx \n\t"
++		"mov %c[rsi](%0), %%"R "si \n\t"
++		"mov %c[rdi](%0), %%"R "di \n\t"
++		"mov %c[rbp](%0), %%"R "bp \n\t"
+ #ifdef CONFIG_X86_64
+		"mov %c[r8](%0),  %%r8  \n\t"
+		"mov %c[r9](%0),  %%r9  \n\t"
+@@ -4203,7 +4203,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+		"mov %c[r14](%0), %%r14 \n\t"
+		"mov %c[r15](%0), %%r15 \n\t"
+ #endif
+-		"mov %c[rcx](%0), %%"R"cx \n\t" /* kills %0 (ecx) */
++		"mov %c[rcx](%0), %%"R "cx \n\t" /* kills %0 (ecx) */
+
+		/* Enter guest mode */
+		"jne .Llaunched \n\t"
+@@ -4212,15 +4212,15 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+		".Llaunched: " __ex(ASM_VMX_VMRESUME) "\n\t"
+		".Lkvm_vmx_return: "
+		/* Save guest registers, load host registers, keep flags */
+-		"mov %0, %c[wordsize](%%"R"sp) \n\t"
++		"mov %0, %c[wordsize](%%"R "sp) \n\t"
+		"pop %0 \n\t"
+-		"mov %%"R"ax, %c[rax](%0) \n\t"
+-		"mov %%"R"bx, %c[rbx](%0) \n\t"
++		"mov %%"R "ax, %c[rax](%0) \n\t"
++		"mov %%"R "bx, %c[rbx](%0) \n\t"
+		"pop"Q" %c[rcx](%0) \n\t"
+-		"mov %%"R"dx, %c[rdx](%0) \n\t"
+-		"mov %%"R"si, %c[rsi](%0) \n\t"
+-		"mov %%"R"di, %c[rdi](%0) \n\t"
+-		"mov %%"R"bp, %c[rbp](%0) \n\t"
++		"mov %%"R "dx, %c[rdx](%0) \n\t"
++		"mov %%"R "si, %c[rsi](%0) \n\t"
++		"mov %%"R "di, %c[rdi](%0) \n\t"
++		"mov %%"R "bp, %c[rbp](%0) \n\t"
+ #ifdef CONFIG_X86_64
+		"mov %%r8,  %c[r8](%0) \n\t"
+		"mov %%r9,  %c[r9](%0) \n\t"
+@@ -4231,10 +4231,10 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+		"mov %%r14, %c[r14](%0) \n\t"
+		"mov %%r15, %c[r15](%0) \n\t"
+ #endif
+-		"mov %%cr2, %%"R"ax   \n\t"
+-		"mov %%"R"ax, %c[cr2](%0) \n\t"
++		"mov %%cr2, %%"R "ax   \n\t"
++		"mov %%"R "ax, %c[cr2](%0) \n\t"
+
+-		"pop  %%"R"bp; pop  %%"R"dx \n\t"
++		"pop  %%"R "bp; pop  %%"R "dx \n\t"
+		"setbe %c[fail](%0) \n\t"
+	      : : "c"(vmx), "d"((unsigned long)HOST_RSP),
+		[launched]"i"(offsetof(struct vcpu_vmx, launched)),
+@@ -4260,7 +4260,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+		[cr2]"i"(offsetof(struct vcpu_vmx, vcpu.arch.cr2)),
+		[wordsize]"i"(sizeof(ulong))
+	      : "cc", "memory"
+-		, R"ax", R"bx", R"di", R"si"
++		, R "ax", R "bx", R "di", R "si"
+ #ifdef CONFIG_X86_64
+		, "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15"
+ #endif
+--
+2.7.4
+
