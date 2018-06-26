@@ -1,140 +1,154 @@
 Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B392C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD757C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA39224940
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:49:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7s1Z9qJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA39224940
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 93FE924EAF
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:52:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FE924EAF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752237AbeFZGti (ORCPT
+        id S1751977AbeFZGwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 02:49:38 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41621 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751176AbeFZGtf (ORCPT
+        Tue, 26 Jun 2018 02:52:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:32933 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750942AbeFZGwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 02:49:35 -0400
-Received: by mail-wr0-f196.google.com with SMTP id h10-v6so15951492wrq.8;
-        Mon, 25 Jun 2018 23:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8BUtu2CN80g81knJE6Ebusy5tFXC3/NCEIOM92toX3k=;
-        b=h7s1Z9qJ7EieINKMxVITcs9QrxPAlGFXQI6e1R621Zq973Kd2ZniD/VEYXWgN8cuE9
-         qzSIOAwIvH3hRaVUurAsg12K2f86vBDM8rZeuURNQPS1T+cqwW48RrcK4QoVeD5gJVFh
-         sGmNG2YgsMPS3jo/Q4ebGlNbOKS9ROB9jte2vzTLQ8ZUURGt7eyAJqNXeadciZ7TDv7h
-         504cGT1NZexpU4B2041gz8BnLjMSMwo1guNBXW59S7B2a52vQ57Pewx6qbSVdayrk2oh
-         osPON3Zon9wnSb7gD4ZRbDhoVAZ1h9GkOgX9uwbvOt9k6Y6t6PQjiTnySB0XjbzFc5VT
-         b5ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8BUtu2CN80g81knJE6Ebusy5tFXC3/NCEIOM92toX3k=;
-        b=cWpIcctrMRXIaGZ/z0WVc6KfBGo+u+bad4PYdDr6QL8GzgATtOEsULSEiwLXmBZBMR
-         ATxSXyaOnoufqugMIpAWLkOlnfpOx68qaNreE1jV7XcxN36hzO1G8Gufmnv/ttiANCt6
-         rqoeSjjHl9MiIFtAEqkynNxlUM4/7EedCv2uO1hMucV4QLkpCguWOhfdPly/dX9qlEIY
-         0ahjUaCWBUaWWOILDcUmoNKazvObDPwGUJ4jnwstarntI/wJ9MAiWlXuMt3uFkhpmnQZ
-         oWvczarl/aL1y5Ivu4BxyQQXquDjO6qDxhdmI72UANkOwKJhJRczpn8giGuMNGkM6zyD
-         dW6g==
-X-Gm-Message-State: APt69E22qwdzemQ5PUnnnBmK2tMBbYtlxHbFXqbmhaQWKyhnokHANsZe
-        SNoMwHZQW8MiBjtdD8mlAps=
-X-Google-Smtp-Source: AAOMgpeZAKfPT9DM7MQE+W1ZEspnOisTr2qRKbuXDuAXX0yClIeluUCFASrMhCz/1nZUoMqapevYyQ==
-X-Received: by 2002:adf:f482:: with SMTP id l2-v6mr251455wro.259.1529995773848;
-        Mon, 25 Jun 2018 23:49:33 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id z5-v6sm782567wrh.10.2018.06.25.23.49.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 23:49:33 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 08:49:30 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, linux-crypto@vger.kernel.org,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        tglx@linutronix.de, luto@kernel.org, peterz@infradead.org,
-        brgerst@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        dvlasenk@redhat.com, h.peter.anvin@intel.com,
-        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH] x86/crypto: Add missing RETs
-Message-ID: <20180626064930.GB25879@gmail.com>
-References: <20180617120012.GB16877@zn.tnic>
- <1529242717.4472.3.camel@gmx.de>
- <1529244178.4674.1.camel@gmx.de>
- <20180617194747.GA21160@zn.tnic>
- <1529289279.31745.3.camel@gmx.de>
- <20180623103622.GA2760@zn.tnic>
- <20180624071105.GA29407@gmail.com>
- <20180624104449.GA20159@avx2>
- <20180625072438.GA19063@gmail.com>
- <20180625131932.sge43esxdb5ejoxg@treble>
+        Tue, 26 Jun 2018 02:52:01 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5Q6pmT01591095
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 25 Jun 2018 23:51:48 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5Q6pmmw1591092;
+        Mon, 25 Jun 2018 23:51:48 -0700
+Date:   Mon, 25 Jun 2018 23:51:48 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-01766229533f9bdb1144a41b4345c8c7286da7b4@git.kernel.org>
+Cc:     heiko.carstens@de.ibm.com, brueckner@linux.ibm.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org,
+        tmricht@linux.ibm.com, acme@redhat.com, schwidefsky@de.ibm.com,
+        tglx@linutronix.de, hpa@zytor.com
+Reply-To: acme@redhat.com, tmricht@linux.ibm.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          schwidefsky@de.ibm.com, brueckner@linux.ibm.com,
+          heiko.carstens@de.ibm.com, mingo@kernel.org
+In-Reply-To: <20180611073153.15592-1-tmricht@linux.ibm.com>
+References: <20180611073153.15592-1-tmricht@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf record: Support s390 random socket_id
+ assignment
+Git-Commit-ID: 01766229533f9bdb1144a41b4345c8c7286da7b4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180625131932.sge43esxdb5ejoxg@treble>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  01766229533f9bdb1144a41b4345c8c7286da7b4
+Gitweb:     https://git.kernel.org/tip/01766229533f9bdb1144a41b4345c8c7286da7b4
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Mon, 11 Jun 2018 09:31:52 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 25 Jun 2018 11:59:35 -0300
 
-* Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+perf record: Support s390 random socket_id assignment
 
-> On Mon, Jun 25, 2018 at 09:24:38AM +0200, Ingo Molnar wrote:
-> > 
-> > * Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > 
-> > > On Sun, Jun 24, 2018 at 09:11:05AM +0200, Ingo Molnar wrote:
-> > > > > Add explicit RETs to the tail calls of AEGIS and MORUS crypto algorithms
-> > > > > otherwise they run into INT3 padding due to
-> > > > > 
-> > > > >   51bad67ffbce ("x86/asm: Pad assembly functions with INT3 instructions")
-> > > > > 
-> > > > > leading to spurious debug exceptions.
-> > > > > 
-> > > > > Mike Galbraith <efault@gmx.de> took care of all the remaining callsites.
-> > > > 
-> > > > Note that 51bad67ffbce has been zapped because it caused too many problems like 
-> > > > this, but the explicit RETs make sense nevertheless.
-> > > 
-> > > So commit which found real bug(s) was zapped.
-> > > 
-> > > OK
-> > 
-> > No, what happened is that the commit was first moved into WIP.x86/debug showing 
-> > its work-in-progress status, because it was incomplete and caused bugs:
-> > 
-> >    https://lore.kernel.org/lkml/20180518073644.GA8593@gmail.com/T/#u
-> > 
-> > ... and finally, after weeks of inaction I zapped it because I didn't see progress 
-> > and you didn't answer my question.
-> > 
-> > If a fixed patch with updated tooling to detect these crashes before they occur on 
-> > live systems is submitted we'll reconsider - it didn't get NAK-ed, it's just 
-> > incomplete in the current form.
-> 
-> Hm, what happened to the objtool patch to detect these at build time?
-> Did it not work?
-> 
->   https://lore.kernel.org/lkml/20180517134934.eog2fgoby5azq5a7@treble
+On s390 the socket identifier assigned to a CPU identifier is random and
+(depending on the configuration of the LPAR) may be higher than the CPU
+identifier. This is currently not supported.
 
-So that's still incomplete in that doesn't analyze the 32-bit build yet, right?
+Fix this by allowing arbitrary socket identifiers being assigned to
+CPU id.
 
-Thanks,
+Output before:
 
-	Ingo
+  [root@p23lp27 perf]# ./perf report --header -I -v
+  ...
+  socket_id number is too big.You may need to upgrade the perf tool.
+  Error:
+  The perf.data file has no samples!
+  # ========
+  # captured on    : Tue May 29 09:29:57 2018
+  # header version : 1
+  ...
+  # Core ID and Socket ID information is not available
+  ...
+  [root@p23lp27 perf]#
+
+Output after:
+
+  [root@p23lp27 perf]# ./perf report --header -I -v
+  ...
+  Error:
+  The perf.data file has no samples!
+  # ========
+  # captured on    : Tue May 29 09:29:57 2018
+  # header version : 1
+  ...
+  # CPU 0: Core ID 0, Socket ID 6
+  # CPU 1: Core ID 1, Socket ID 3
+  # CPU 2: Core ID -1, Socket ID -1
+  ...
+  [root@p23lp27 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180611073153.15592-1-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/header.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 540cd2dcd3e7..59fcc790c865 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2129,6 +2129,7 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 	int cpu_nr = ff->ph->env.nr_cpus_avail;
+ 	u64 size = 0;
+ 	struct perf_header *ph = ff->ph;
++	bool do_core_id_test = true;
+ 
+ 	ph->env.cpu = calloc(cpu_nr, sizeof(*ph->env.cpu));
+ 	if (!ph->env.cpu)
+@@ -2183,6 +2184,13 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 		return 0;
+ 	}
+ 
++	/* On s390 the socket_id number is not related to the numbers of cpus.
++	 * The socket_id number might be higher than the numbers of cpus.
++	 * This depends on the configuration.
++	 */
++	if (ph->env.arch && !strncmp(ph->env.arch, "s390", 4))
++		do_core_id_test = false;
++
+ 	for (i = 0; i < (u32)cpu_nr; i++) {
+ 		if (do_read_u32(ff, &nr))
+ 			goto free_cpu;
+@@ -2192,7 +2200,7 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 		if (do_read_u32(ff, &nr))
+ 			goto free_cpu;
+ 
+-		if (nr != (u32)-1 && nr > (u32)cpu_nr) {
++		if (do_core_id_test && nr != (u32)-1 && nr > (u32)cpu_nr) {
+ 			pr_debug("socket_id number is too big."
+ 				 "You may need to upgrade the perf tool.\n");
+ 			goto free_cpu;
