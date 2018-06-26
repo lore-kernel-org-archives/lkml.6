@@ -2,222 +2,136 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F40C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6637DC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0B926ACA
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:55:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC0B926ACA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E8D326AD5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:57:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hj1Ox2Eu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8D326AD5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965255AbeFZMzo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:55:44 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:55453 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965028AbeFZMzD (ORCPT
+        id S965277AbeFZM5o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:57:44 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:37076 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965077AbeFZM5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:55:03 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5QCsQvb005725;
-        Tue, 26 Jun 2018 14:54:31 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2jumuy8bvk-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 26 Jun 2018 14:54:31 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7CC1731;
-        Tue, 26 Jun 2018 12:54:30 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 587C52A30;
-        Tue, 26 Jun 2018 12:54:30 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun
- 2018 14:54:30 +0200
-Received: from localhost (10.201.23.65) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun 2018 14:54:28
- +0200
-From:   Lionel Debieve <lionel.debieve@st.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Alexandre Torgue" <alexandre.torgue@st.com>,
-        <linux-crypto@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 1/3] crypto: stm32/cryp - Add power management support
-Date:   Tue, 26 Jun 2018 14:52:44 +0200
-Message-ID: <1530017566-14779-2-git-send-email-lionel.debieve@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530017566-14779-1-git-send-email-lionel.debieve@st.com>
-References: <1530017566-14779-1-git-send-email-lionel.debieve@st.com>
+        Tue, 26 Jun 2018 08:57:42 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelnx194.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5QCuaRd009654;
+        Tue, 26 Jun 2018 07:56:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530017796;
+        bh=h+ba3SBoqesjXRvrCnsBOulnTji2/MF6egfPo0XzV+o=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Hj1Ox2Eufoeox1VirJrAmi0X4G1r41HyLl3rB6303hdKQN1lykawkxr/TXNrONxqJ
+         14oCK7ItWOtgwFbtsHOjVurcbZ/f+nNXl/FVyAVLdaoIMIRfMEfrhwTAcRDCpdVkxi
+         RnOaUDAcimUPFueCxSgLvcD9TVoOBZIDDLBw7lVU=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5QCuaA9028003;
+        Tue, 26 Jun 2018 07:56:36 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 26
+ Jun 2018 07:56:35 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 26 Jun 2018 07:56:35 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5QCuVfb007095;
+        Tue, 26 Jun 2018 07:56:32 -0500
+Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
+ =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
+To:     David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180518164829.27052-1-david@lechnology.com>
+ <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
+ <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <a45f20fe-61f1-6c10-c44d-655f9960d824@ti.com>
+Date:   Tue, 26 Jun 2018 18:26:31 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.65]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_07:,,
- signatures=0
+In-Reply-To: <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding pm and pm_runtime support to STM32 CRYP.
+On Friday 25 May 2018 11:51 PM, David Lechner wrote:
+> On 05/22/2018 04:38 AM, Sekhar Nori wrote:
+>> Hi David,
+>>
+>> On Friday 18 May 2018 10:18 PM, David Lechner wrote:
+>>> This series converts mach-davinci to use the common clock framework.
+>>>
+>>> The series works like this, the first 3 patches fix some issues with
+>>> the clock
+>>> drivers that have already been accepted into the mainline kernel.
+>>>
+>>> Then, starting with "ARM: davinci: pass clock as parameter to
+>>> davinci_timer_init()", we get the mach code ready for the switch by
+>>> adding the
+>>> code needed for the new clock drivers and adding #ifndef
+>>> CONFIG_COMMON_CLK
+>>> around the legacy clocks so that we can switch easily between the old
+>>> and the
+>>> new.
+>>>
+>>> "ARM: davinci: switch to common clock framework" actually flips the
+>>> switch
+>>> to start using the new clock drivers. Then the next 8 patches remove all
+>>> of the old clock code.
+>>>
+>>> The final four patches add device tree clock support to the one SoC that
+>>> supports it.
+>>>
+>>> This series has been tested on TI OMAP-L138 LCDK (both device tree
+>>> and legacy
+>>> board file).
+>>
+>> If you do end up sending a v12, you can leave out the mach-davinci
+>> portions unless there are any changes you need to make. I will pick them
+>> up from this series once the driver dependencies are merged.
+>>
+>> I do hope the drivers/clk/* changes can be merged from v4.18.
+>>
+> 
+> I have resent all of the clk patches (including all of the ones I listed as
+> dependencies in addition to the three remaining in this series) under the
+> cover "clk: davinci: outstanding fixes​".
+> 
+> I also found that we need to add power-domains properties to the PWM nodes
+> in "ARM: dts: da850: Add clocks". I probably should just take your advice
+> and just globally added them even if they are not documented for some types
+> ofnodes.
 
-Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
----
- drivers/crypto/stm32/stm32-cryp.c | 62 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+I think doing it en masse will be controversial. Just add it to PWM
+nodes for now (I am assuming the binding documentation agrees).
 
-diff --git a/drivers/crypto/stm32/stm32-cryp.c b/drivers/crypto/stm32/stm32-cryp.c
-index c5d3efc..23b0b7b 100644
---- a/drivers/crypto/stm32/stm32-cryp.c
-+++ b/drivers/crypto/stm32/stm32-cryp.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/reset.h>
- 
- #include <crypto/aes.h>
-@@ -105,6 +106,7 @@
- #define GCM_CTR_INIT            2
- #define _walked_in              (cryp->in_walk.offset - cryp->in_sg->offset)
- #define _walked_out             (cryp->out_walk.offset - cryp->out_sg->offset)
-+#define CRYP_AUTOSUSPEND_DELAY	50
- 
- struct stm32_cryp_caps {
- 	bool                    swap_final;
-@@ -519,6 +521,8 @@ static int stm32_cryp_hw_init(struct stm32_cryp *cryp)
- 	int ret;
- 	u32 cfg, hw_mode;
- 
-+	pm_runtime_get_sync(cryp->dev);
-+
- 	/* Disable interrupt */
- 	stm32_cryp_write(cryp, CRYP_IMSCR, 0);
- 
-@@ -638,6 +642,9 @@ static void stm32_cryp_finish_req(struct stm32_cryp *cryp, int err)
- 		free_pages((unsigned long)buf_out, pages);
- 	}
- 
-+	pm_runtime_mark_last_busy(cryp->dev);
-+	pm_runtime_put_autosuspend(cryp->dev);
-+
- 	if (is_gcm(cryp) || is_ccm(cryp)) {
- 		crypto_finalize_aead_request(cryp->engine, cryp->areq, err);
- 		cryp->areq = NULL;
-@@ -1969,6 +1976,13 @@ static int stm32_cryp_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	pm_runtime_set_autosuspend_delay(dev, CRYP_AUTOSUSPEND_DELAY);
-+	pm_runtime_use_autosuspend(dev);
-+
-+	pm_runtime_get_noresume(dev);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+
- 	rst = devm_reset_control_get(dev, NULL);
- 	if (!IS_ERR(rst)) {
- 		reset_control_assert(rst);
-@@ -2008,6 +2022,8 @@ static int stm32_cryp_probe(struct platform_device *pdev)
- 
- 	dev_info(dev, "Initialized\n");
- 
-+	pm_runtime_put_sync(dev);
-+
- 	return 0;
- 
- err_aead_algs:
-@@ -2020,6 +2036,11 @@ static int stm32_cryp_probe(struct platform_device *pdev)
- 	list_del(&cryp->list);
- 	spin_unlock(&cryp_list.lock);
- 
-+	pm_runtime_disable(dev);
-+	pm_runtime_put_noidle(dev);
-+	pm_runtime_disable(dev);
-+	pm_runtime_put_noidle(dev);
-+
- 	clk_disable_unprepare(cryp->clk);
- 
- 	return ret;
-@@ -2028,10 +2049,15 @@ static int stm32_cryp_probe(struct platform_device *pdev)
- static int stm32_cryp_remove(struct platform_device *pdev)
- {
- 	struct stm32_cryp *cryp = platform_get_drvdata(pdev);
-+	int ret;
- 
- 	if (!cryp)
- 		return -ENODEV;
- 
-+	ret = pm_runtime_get_sync(cryp->dev);
-+	if (ret < 0)
-+		return ret;
-+
- 	crypto_unregister_aeads(aead_algs, ARRAY_SIZE(aead_algs));
- 	crypto_unregister_algs(crypto_algs, ARRAY_SIZE(crypto_algs));
- 
-@@ -2041,16 +2067,52 @@ static int stm32_cryp_remove(struct platform_device *pdev)
- 	list_del(&cryp->list);
- 	spin_unlock(&cryp_list.lock);
- 
-+	pm_runtime_disable(cryp->dev);
-+	pm_runtime_put_noidle(cryp->dev);
-+
-+	clk_disable_unprepare(cryp->clk);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+static int stm32_cryp_runtime_suspend(struct device *dev)
-+{
-+	struct stm32_cryp *cryp = dev_get_drvdata(dev);
-+
- 	clk_disable_unprepare(cryp->clk);
- 
- 	return 0;
- }
- 
-+static int stm32_cryp_runtime_resume(struct device *dev)
-+{
-+	struct stm32_cryp *cryp = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(cryp->clk);
-+	if (ret) {
-+		dev_err(cryp->dev, "Failed to prepare_enable clock\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops stm32_cryp_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+	SET_RUNTIME_PM_OPS(stm32_cryp_runtime_suspend,
-+			   stm32_cryp_runtime_resume, NULL)
-+};
-+
- static struct platform_driver stm32_cryp_driver = {
- 	.probe  = stm32_cryp_probe,
- 	.remove = stm32_cryp_remove,
- 	.driver = {
- 		.name           = DRIVER_NAME,
-+		.pm		= &stm32_cryp_pm_ops,
- 		.of_match_table = stm32_dt_ids,
- 	},
- };
--- 
-2.7.4
+I have applied this series so please send any more changes as follow-on
+patches.
 
+Thanks
+Sekhar
