@@ -2,165 +2,367 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853BBC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6492EC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1F626BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:22:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gezv0TeK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1F626BED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 069C526C31
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:22:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 069C526C31
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935933AbeFZOWE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 10:22:04 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37311 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935914AbeFZOWB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:22:01 -0400
-Received: by mail-oi0-f67.google.com with SMTP id k81-v6so2111900oib.4;
-        Tue, 26 Jun 2018 07:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=HPNjzR4U7XLYu1cPOEWXlCADcfGulR3lOnGgoOhE26o=;
-        b=Gezv0TeKdVKkOv/WAvQQt/vpRtVuZzi0bzJWBlLHNxp+U3U8TYKd1WCGM4UpJonDxX
-         NQJ6gIYZWJjLjW0bz2qj3TfXHXzQSzrcOtOeuFJm4H69QJeGdaaC5T2oTdx1qrcL2cna
-         qPeawrwyufbWm94xYhQOo7qdx8gunCeB4Pa5ccKJ+r/07P7YebAzf1OisLn8VXo7pu70
-         ll5BvBs/zkioiBMm+AKtObgtlynnWiYHNgRJAwGgrQteyCV8wHhd08RQT9+TONXi92ac
-         2YQwdBAfyhEyI5yWbWmebeX5HnPVw8yWFdSweLVXrdyboqslCh7vp1ret6k9s/i9RFdg
-         HFEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=HPNjzR4U7XLYu1cPOEWXlCADcfGulR3lOnGgoOhE26o=;
-        b=hBOjjrzAV29ZFUW8vgQnKkeFDvnMX5jNuLUrksH0058bk7b8JMJC2nw13s6kYMkzTP
-         mGCBlugKvPQy3Nl2J/B1THZIZVvdNysdoOhmBhO6Nl1IXMbdBIDJu2c4hpbuFJV8tIFd
-         30A7lHKTSv8bnep8TEKl4sGsnIAlgbMtY0vfOo7PO9MmACQZMMEXYM+tLD5vAU82xBGR
-         lzGoq6aW9oC+tSGrvunXc/ZzRok8MbSbDDHBUNEUaIGvF1AypTlm5g1qzK3uF9w9vXcf
-         v9Myi/kis9beSSIoj6nuH4i74uOmTKh4MimFhZ7b59x84poXVIRLs6ciMtosyKV8aJM1
-         9Q+Q==
-X-Gm-Message-State: APt69E2L6udygZsWRRmP9RlH1WFRaWtQqFMyxt+1YVoS8PA+wTD9+IUL
-        daAPdHkurcda6lRby/3kpM6CTXdX9zzar7YzXB8=
-X-Google-Smtp-Source: AAOMgpdieNrrYAjIYiZPvRsZz2mvh7yvQo6Z0i55tEyUPBkTwuMU5gMsOIYSkA6WDgggLmlmDL1qD+/Z1viUkBo8vHo=
-X-Received: by 2002:aca:e143:: with SMTP id y64-v6mr925107oig.282.1530022920631;
- Tue, 26 Jun 2018 07:22:00 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 07:22:00
- -0700 (PDT)
-In-Reply-To: <20180626140115.GA146680@bhelgaas-glaptop.roam.corp.google.com>
-References: <35587465.8Nave9aG7d@aspire.rjw.lan> <20180626140115.GA146680@bhelgaas-glaptop.roam.corp.google.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 26 Jun 2018 16:22:00 +0200
-X-Google-Sender-Auth: n2lNDXxmDVNlm-zk1MXe_G7rqBU
-Message-ID: <CAJZ5v0jc5oJzEX6QVDVjsQLmLxXHg3PSyepbh50dLXOtnHPgrA@mail.gmail.com>
-Subject: Re: [PATCH] PCI / ACPI / PM: Resume bridges w/o drivers on suspend-to-RAM
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PCI <linux-pci@vger.kernel.org>, n0000b.n000b@gmail.com,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>
-Content-Type: text/plain; charset="UTF-8"
+        id S936004AbeFZOW6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 10:22:58 -0400
+Received: from mga07.intel.com ([134.134.136.100]:13422 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935944AbeFZOWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 10:22:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 07:22:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
+   d="scan'208";a="53024950"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 26 Jun 2018 07:22:49 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 99A1B59B; Tue, 26 Jun 2018 17:22:51 +0300 (EEST)
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv4 04/18] mm/page_alloc: Handle allocation for encrypted memory
+Date:   Tue, 26 Jun 2018 17:22:31 +0300
+Message-Id: <20180626142245.82850-5-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
+References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 4:01 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Tue, Jun 26, 2018 at 12:06:01PM +0200, Rafael J. Wysocki wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> It is reported that commit c62ec4610c40 (PM / core: Fix direct_complete
->> handling for devices with no callbacks) introduced a system suspend
->> regression on Samsung 305V4A by allowing a PCI bridge (not a PCIe
->> port) to stay in D3 over suspend-to-RAM, which is a side effect of
->> setting power.direct_complete for the children of that bridge that
->> have no PM callbacks.
->>
->> On the majority of systems PCI bridges are not allowed to be
->> runtime-suspended (the power/control sysfs attribute is set to "on"
->> for them by default), but user space can change that setting and if
->> it does so and a given bridge has no children with PM callbacks, the
->> direct_complete optimization will be applied to it and it will stay
->> in suspend over system suspend.  Apparently, that confuses the
->
-> "stay in D3 over system suspend"? (just to be explicit about what "in
-> suspend" means)
+For encrypted memory, we need to allocate pages for a specific
+encryption KeyID.
 
-OK
+There are two cases when we need to allocate a page for encryption:
 
->> platform firmware on the affected machine and that may very well
->> happen elsewhere, so avoid the direct_complete optimization for
->> PCI bridges with no drivers (if there is a driver, it should take
->> care of the PM handling) on suspend-to-RAM altogether (that should
->> not matter for suspend-to-idle as platform firmware is not involved
->> in it).
->>
->> Fixes: c62ec4610c40 (PM / core: Fix direct_complete handling for devices with no callbacks)
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=199941
->> Reported-by: n0000b.n000b@gmail.com
->> Tested-by: n0000b.n000b@gmail.com
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>  drivers/pci/pci-acpi.c |    8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> Index: linux-pm/drivers/pci/pci-acpi.c
->> ===================================================================
->> --- linux-pm.orig/drivers/pci/pci-acpi.c
->> +++ linux-pm/drivers/pci/pci-acpi.c
->> @@ -638,6 +638,14 @@ static bool acpi_pci_need_resume(struct
->>       if (acpi_target_system_state() == ACPI_STATE_S0)
->>               return false;
->>
->> +     /*
->> +      * In some cases (eg. Samsung 305V4A) leaving a bridge in suspend
->> +      * confuses the platform firmware, so avoid doing that, unless the
->> +      * bridge has a driver that should take care of PM handling.
->> +      */
->> +     if (pci_is_bridge(dev) && !dev->driver)
->> +             return true;
->
-> It sounds like the question of whether leaving a bridge in D3 confuses
-> the firmware has a platform-specific answer.
+ - Allocation for an encrypted VMA;
 
-Well, it may confuse the platform firmware in general.
+ - Allocation for migration of encrypted page;
 
-> How does the driver PM handling know how to do the right thing?
+The first case can be covered within alloc_page_vma(). We know KeyID
+from the VMA.
 
-For endpoints this is not an issue as they always have been expected
-to be in D3 before passing control to the platform firmware on S3
-entry, but we've never done that for bridges by default, except for
-PCIe ports with PM enabled (in which case the driver decides whether
-or not to enable it).
+The second case requires few new page allocation routines that would
+allocate the page for a specific KeyID.
 
-> Does it need to know whether
-> it's safe to put the device in D3?  Or maybe a device is never put in
-> D3 for system suspend if it has a driver?
+An encrypted page has to be cleared after KeyID set. This is handled
+in prep_encrypted_page() that will be provided by arch-specific code.
 
-As per the above, endpoints should be OK (or they are quirky if not),
-but bridges are sort of a gray area.  PCIe ports for which we enable
-PM should be fine, for the rest it's better to be conservative and
-resume them IMO.
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ include/linux/gfp.h     | 48 ++++++++++++++++++++++++++++++++++++-----
+ include/linux/migrate.h | 12 ++++++++---
+ mm/compaction.c         |  1 +
+ mm/mempolicy.c          | 28 ++++++++++++++++++------
+ mm/migrate.c            |  4 ++--
+ mm/page_alloc.c         | 47 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 123 insertions(+), 17 deletions(-)
 
-> But I'm just kibbitzing; since you merged c62ec4610c40, I'm happy if
-> you also merge this:
->
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->
->>       return !!adev->power.flags.dsw_present;
->>  }
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 66f395737990..347a40558cfc 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -446,16 +446,46 @@ static inline void arch_free_page(struct page *page, int order) { }
+ static inline void arch_alloc_page(struct page *page, int order) { }
+ #endif
+ 
++#ifndef prep_encrypted_page
++static inline void prep_encrypted_page(struct page *page, int order,
++		int keyid, bool zero)
++{
++}
++#endif
++
++/*
++ * Encrypted page has to be cleared once keyid is set, not on allocation.
++ */
++static inline bool encrypted_page_needs_zero(int keyid, gfp_t *gfp_mask)
++{
++	if (!keyid)
++		return false;
++
++	if (*gfp_mask & __GFP_ZERO) {
++		*gfp_mask &= ~__GFP_ZERO;
++		return true;
++	}
++
++	return false;
++}
++
+ struct page *
+ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+ 							nodemask_t *nodemask);
+ 
++struct page *
++__alloc_pages_nodemask_keyid(gfp_t gfp_mask, unsigned int order,
++		int preferred_nid, nodemask_t *nodemask, int keyid);
++
+ static inline struct page *
+ __alloc_pages(gfp_t gfp_mask, unsigned int order, int preferred_nid)
+ {
+ 	return __alloc_pages_nodemask(gfp_mask, order, preferred_nid, NULL);
+ }
+ 
++struct page *__alloc_pages_node_keyid(int nid, int keyid,
++		gfp_t gfp_mask, unsigned int order);
++
+ /*
+  * Allocate pages, preferring the node given as nid. The node must be valid and
+  * online. For more general interface, see alloc_pages_node().
+@@ -483,6 +513,19 @@ static inline struct page *alloc_pages_node(int nid, gfp_t gfp_mask,
+ 	return __alloc_pages_node(nid, gfp_mask, order);
+ }
+ 
++static inline struct page *alloc_pages_node_keyid(int nid, int keyid,
++		gfp_t gfp_mask, unsigned int order)
++{
++	if (nid == NUMA_NO_NODE)
++		nid = numa_mem_id();
++
++	return __alloc_pages_node_keyid(nid, keyid, gfp_mask, order);
++}
++
++extern struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
++			struct vm_area_struct *vma, unsigned long addr,
++			int node, bool hugepage);
++
+ #ifdef CONFIG_NUMA
+ extern struct page *alloc_pages_current(gfp_t gfp_mask, unsigned order);
+ 
+@@ -491,14 +534,9 @@ alloc_pages(gfp_t gfp_mask, unsigned int order)
+ {
+ 	return alloc_pages_current(gfp_mask, order);
+ }
+-extern struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
+-			struct vm_area_struct *vma, unsigned long addr,
+-			int node, bool hugepage);
+ #else
+ #define alloc_pages(gfp_mask, order) \
+ 		alloc_pages_node(numa_node_id(), gfp_mask, order)
+-#define alloc_pages_vma(gfp_mask, order, vma, addr, node, false)\
+-	alloc_pages(gfp_mask, order)
+ #endif
+ #define alloc_page(gfp_mask) alloc_pages(gfp_mask, 0)
+ #define alloc_page_vma(gfp_mask, vma, addr)			\
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index f2b4abbca55e..fede9bfa89d9 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -38,9 +38,15 @@ static inline struct page *new_page_nodemask(struct page *page,
+ 	unsigned int order = 0;
+ 	struct page *new_page = NULL;
+ 
+-	if (PageHuge(page))
++	if (PageHuge(page)) {
++		/*
++		 * HugeTLB doesn't support encryption. We shouldn't see
++		 * such pages.
++		 */
++		WARN_ON(page_keyid(page));
+ 		return alloc_huge_page_nodemask(page_hstate(compound_head(page)),
+ 				preferred_nid, nodemask);
++	}
+ 
+ 	if (PageTransHuge(page)) {
+ 		gfp_mask |= GFP_TRANSHUGE;
+@@ -50,8 +56,8 @@ static inline struct page *new_page_nodemask(struct page *page,
+ 	if (PageHighMem(page) || (zone_idx(page_zone(page)) == ZONE_MOVABLE))
+ 		gfp_mask |= __GFP_HIGHMEM;
+ 
+-	new_page = __alloc_pages_nodemask(gfp_mask, order,
+-				preferred_nid, nodemask);
++	new_page = __alloc_pages_nodemask_keyid(gfp_mask, order,
++				preferred_nid, nodemask, page_keyid(page));
+ 
+ 	if (new_page && PageTransHuge(new_page))
+ 		prep_transhuge_page(new_page);
+diff --git a/mm/compaction.c b/mm/compaction.c
+index faca45ebe62d..fd51aa32ad96 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1187,6 +1187,7 @@ static struct page *compaction_alloc(struct page *migratepage,
+ 	list_del(&freepage->lru);
+ 	cc->nr_freepages--;
+ 
++	prep_encrypted_page(freepage, 0, page_keyid(migratepage), false);
+ 	return freepage;
+ }
+ 
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 9ac49ef17b4e..b0fc42642f8f 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -920,22 +920,28 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
+ /* page allocation callback for NUMA node migration */
+ struct page *alloc_new_node_page(struct page *page, unsigned long node)
+ {
+-	if (PageHuge(page))
++	if (PageHuge(page)) {
++		/*
++		 * HugeTLB doesn't support encryption. We shouldn't see
++		 * such pages.
++		 */
++		WARN_ON(page_keyid(page));
+ 		return alloc_huge_page_node(page_hstate(compound_head(page)),
+ 					node);
+-	else if (PageTransHuge(page)) {
++	} else if (PageTransHuge(page)) {
+ 		struct page *thp;
+ 
+-		thp = alloc_pages_node(node,
++		thp = alloc_pages_node_keyid(node, page_keyid(page),
+ 			(GFP_TRANSHUGE | __GFP_THISNODE),
+ 			HPAGE_PMD_ORDER);
+ 		if (!thp)
+ 			return NULL;
+ 		prep_transhuge_page(thp);
+ 		return thp;
+-	} else
+-		return __alloc_pages_node(node, GFP_HIGHUSER_MOVABLE |
+-						    __GFP_THISNODE, 0);
++	} else {
++		return __alloc_pages_node_keyid(node, page_keyid(page),
++				GFP_HIGHUSER_MOVABLE | __GFP_THISNODE, 0);
++	}
+ }
+ 
+ /*
+@@ -2012,9 +2018,16 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
+ {
+ 	struct mempolicy *pol;
+ 	struct page *page;
+-	int preferred_nid;
++	bool zero = false;
++	int keyid, preferred_nid;
+ 	nodemask_t *nmask;
+ 
++	keyid = vma_keyid(vma);
++	if (keyid && (gfp & __GFP_ZERO)) {
++		zero = true;
++		gfp &= ~__GFP_ZERO;
++	}
++
+ 	pol = get_vma_policy(vma, addr);
+ 
+ 	if (pol->mode == MPOL_INTERLEAVE) {
+@@ -2057,6 +2070,7 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
+ 	page = __alloc_pages_nodemask(gfp, order, preferred_nid, nmask);
+ 	mpol_cond_put(pol);
+ out:
++	prep_encrypted_page(page, order, keyid, zero);
+ 	return page;
+ }
+ 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 8c0af0f7cab1..eb8dea219dcb 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1847,7 +1847,7 @@ static struct page *alloc_misplaced_dst_page(struct page *page,
+ 	int nid = (int) data;
+ 	struct page *newpage;
+ 
+-	newpage = __alloc_pages_node(nid,
++	newpage = __alloc_pages_node_keyid(nid, page_keyid(page),
+ 					 (GFP_HIGHUSER_MOVABLE |
+ 					  __GFP_THISNODE | __GFP_NOMEMALLOC |
+ 					  __GFP_NORETRY | __GFP_NOWARN) &
+@@ -2030,7 +2030,7 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
+ 	if (numamigrate_update_ratelimit(pgdat, HPAGE_PMD_NR))
+ 		goto out_dropref;
+ 
+-	new_page = alloc_pages_node(node,
++	new_page = alloc_pages_node_keyid(node, page_keyid(page),
+ 		(GFP_TRANSHUGE_LIGHT | __GFP_THISNODE),
+ 		HPAGE_PMD_ORDER);
+ 	if (!new_page)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 1521100f1e63..aae5fdb235ac 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3697,6 +3697,39 @@ should_compact_retry(struct alloc_context *ac, unsigned int order, int alloc_fla
+ }
+ #endif /* CONFIG_COMPACTION */
+ 
++#ifndef CONFIG_NUMA
++struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
++		struct vm_area_struct *vma, unsigned long addr,
++		int node, bool hugepage)
++{
++	struct page *page;
++	bool need_zero;
++	int keyid = vma_keyid(vma);
++
++	need_zero = encrypted_page_needs_zero(keyid, &gfp_mask);
++	page = alloc_pages(gfp_mask, order);
++	prep_encrypted_page(page, order, keyid, need_zero);
++
++	return page;
++}
++#endif
++
++struct page * __alloc_pages_node_keyid(int nid, int keyid,
++		gfp_t gfp_mask, unsigned int order)
++{
++	struct page *page;
++	bool need_zero;
++
++	VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
++	VM_WARN_ON(!node_online(nid));
++
++	need_zero = encrypted_page_needs_zero(keyid, &gfp_mask);
++	page = __alloc_pages(gfp_mask, order, nid);
++	prep_encrypted_page(page, order, keyid, need_zero);
++
++	return page;
++}
++
+ #ifdef CONFIG_LOCKDEP
+ static struct lockdep_map __fs_reclaim_map =
+ 	STATIC_LOCKDEP_MAP_INIT("fs_reclaim", &__fs_reclaim_map);
+@@ -4401,6 +4434,20 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+ }
+ EXPORT_SYMBOL(__alloc_pages_nodemask);
+ 
++struct page *
++__alloc_pages_nodemask_keyid(gfp_t gfp_mask, unsigned int order,
++		int preferred_nid, nodemask_t *nodemask, int keyid)
++{
++	struct page *page;
++	bool need_zero;
++
++	need_zero = encrypted_page_needs_zero(keyid, &gfp_mask);
++	page = __alloc_pages_nodemask(gfp_mask, order, preferred_nid, nodemask);
++	prep_encrypted_page(page, order, keyid, need_zero);
++	return page;
++}
++EXPORT_SYMBOL(__alloc_pages_nodemask_keyid);
++
+ /*
+  * Common helper functions.
+  */
+-- 
+2.18.0
 
-Thanks!
