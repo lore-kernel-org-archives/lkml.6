@@ -2,309 +2,167 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C689FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACED6C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B21F20A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:54:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B21F20A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 658BD26720
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:54:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 658BD26720
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932724AbeFZIyG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:54:06 -0400
-Received: from regular1.263xmail.com ([211.150.99.131]:47213 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932206AbeFZIyD (ORCPT
+        id S1752976AbeFZIyw (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 04:54:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37026 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752669AbeFZIys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:54:03 -0400
-Received: from hjc?rock-chips.com (unknown [192.168.167.76])
-        by regular1.263xmail.com (Postfix) with ESMTP id 557465E08;
-        Tue, 26 Jun 2018 16:53:52 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 5D67E323;
-        Tue, 26 Jun 2018 16:53:48 +0800 (CST)
-X-RL-SENDER: hjc@rock-chips.com
-X-FST-TO: dri-devel@lists.freedesktop.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: hjc@rock-chips.com
-X-UNIQUE-TAG: <f7d8ad340e59440ac27fb2eecfcb6d21>
-X-ATTACHMENT-NUM: 0
-X-SENDER: hjc@rock-chips.com
-X-DNS-TYPE: 0
-Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 27298DG8PVC;
-        Tue, 26 Jun 2018 16:53:50 +0800 (CST)
-From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org, Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/rockchip: vop: add px30 vop support
-Date:   Tue, 26 Jun 2018 16:53:35 +0800
-Message-Id: <1530003215-46593-3-git-send-email-hjc@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530003215-46593-1-git-send-email-hjc@rock-chips.com>
-References: <1530003215-46593-1-git-send-email-hjc@rock-chips.com>
+        Tue, 26 Jun 2018 04:54:48 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q8sJRu108221
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 04:54:48 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2juhcyau7c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 04:54:48 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Tue, 26 Jun 2018 09:54:45 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Jun 2018 09:54:43 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q8sgWY16974006
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 08:54:42 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3123942041;
+        Tue, 26 Jun 2018 09:54:36 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C804D42047;
+        Tue, 26 Jun 2018 09:54:35 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.152.224.43])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Jun 2018 09:54:35 +0100 (BST)
+Subject: Re: s390 qemu boot failure in -next
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-s390x <qemu-s390x@nongnu.org>,
+        qemu-devel <qemu-devel@nongnu.org>,
+        Thomas Huth <thuth@redhat.com>
+References: <20180622194736.GA5794@roeck-us.net>
+ <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
+ <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
+ <20180625100548.64222dad.cohuck@redhat.com>
+ <d56829a3-fecf-b812-d002-8ee22ae08da2@de.ibm.com>
+ <20180626102954.73965b42.cohuck@redhat.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Tue, 26 Jun 2018 10:54:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180626102954.73965b42.cohuck@redhat.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18062608-0012-0000-0000-0000028391C1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062608-0013-0000-0000-000020B4EF05
+Message-Id: <8617698e-0d1a-15d8-7e6d-e63408857b1c@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=500 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PX30 have vop big and vop lite, just like rk3036 and rk3126
-the max input and output resolution is 1920x1080, the main
-difference between the two vop is:
 
-vop big:
-    win0 support yuv and rgb format;
-    win1 and win2 support rgb format;
-vop lit:
-    win1 support rgb format;
 
-Signed-off-by: Sandy Huang <hjc@rock-chips.com>
----
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 126 ++++++++++++++++++++++++++++
- drivers/gpu/drm/rockchip/rockchip_vop_reg.h |  74 ++++++++++++++++
- 2 files changed, 200 insertions(+)
+On 06/26/2018 10:29 AM, Cornelia Huck wrote:
+[...]
+>>>>  
+>>>>          if (ipl->initrd) {
+>>>>              ram_addr_t initrd_offset;
+>>>>
+>>>> would put the command line in no matter what the start address is.  
+>>>
+>>> I'm for putting that one in (and backporting it to qemu-stable). It's a
+>>> bit worrying, though, that our ipl code is so fragile...  
+>>
+>> We actually have to combine this with Thomas fix (to check for rom_ptr returning
+>> something sane). It seems that ipl->commandline is always there, so we have to
+>> check for strlen!=0 it seems..
+>>
+>> I mean if somebody ask for "-append something" we can certainly always write something
+>> if there is rom/ram.
+> 
+> Given that the uncompressed image is not supposed to be bootable
+> anymore, does it make sense to add this anyway?
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-index 08023d3..5af60eb 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-@@ -177,6 +177,128 @@ static const struct vop_data rk3126_vop = {
- 	.win_size = ARRAY_SIZE(rk3126_vop_win_data),
- };
- 
-+static const int px30_vop_intrs[] = {
-+	FS_INTR,
-+	0, 0,
-+	LINE_FLAG_INTR,
-+	0,
-+	BUS_ERROR_INTR,
-+	0, 0,
-+	DSP_HOLD_VALID_INTR,
-+};
-+
-+static const struct vop_intr px30_intr = {
-+	.intrs = px30_vop_intrs,
-+	.nintrs = ARRAY_SIZE(px30_vop_intrs),
-+	.line_flag_num[0] = VOP_REG(PX30_LINE_FLAG, 0xfff, 12),
-+	.status = VOP_REG_SYNC(PX30_INTR_STATUS, 0xf, 0),
-+	.enable = VOP_REG_SYNC(PX30_INTR_EN, 0xf, 4),
-+	.clear = VOP_REG_SYNC(PX30_INTR_CLEAR, 0xf, 8),
-+};
-+
-+static const struct vop_common px30_common = {
-+	.standby = VOP_REG_SYNC(PX30_SYS_CTRL2, 0x1, 1),
-+	.out_mode = VOP_REG(PX30_DSP_CTRL2, 0xf, 16),
-+	.dsp_blank = VOP_REG(PX30_DSP_CTRL2, 0x1, 14),
-+	.cfg_done = VOP_REG_SYNC(PX30_REG_CFG_DONE, 0x1, 0),
-+};
-+
-+static const struct vop_modeset px30_modeset = {
-+	.htotal_pw = VOP_REG(PX30_DSP_HTOTAL_HS_END, 0x0fff0fff, 0),
-+	.hact_st_end = VOP_REG(PX30_DSP_HACT_ST_END, 0x0fff0fff, 0),
-+	.vtotal_pw = VOP_REG(PX30_DSP_VTOTAL_VS_END, 0x0fff0fff, 0),
-+	.vact_st_end = VOP_REG(PX30_DSP_VACT_ST_END, 0x0fff0fff, 0),
-+};
-+
-+static const struct vop_output px30_output = {
-+	.rgb_pin_pol = VOP_REG(PX30_DSP_CTRL0, 0xf, 1),
-+	.hdmi_pin_pol = VOP_REG(PX30_DSP_CTRL0, 0xf, 9),
-+	.mipi_pin_pol = VOP_REG(PX30_DSP_CTRL0, 0xf, 25),
-+	.rgb_en = VOP_REG(PX30_DSP_CTRL0, 0x1, 0),
-+	.hdmi_en = VOP_REG(PX30_DSP_CTRL0, 0x1, 8),
-+	.mipi_en = VOP_REG(PX30_DSP_CTRL0, 0x1, 24),
-+};
-+
-+static const struct vop_scl_regs px30_win_scl = {
-+	.scale_yrgb_x = VOP_REG(PX30_WIN0_SCL_FACTOR_YRGB, 0xffff, 0x0),
-+	.scale_yrgb_y = VOP_REG(PX30_WIN0_SCL_FACTOR_YRGB, 0xffff, 16),
-+	.scale_cbcr_x = VOP_REG(PX30_WIN0_SCL_FACTOR_CBR, 0xffff, 0x0),
-+	.scale_cbcr_y = VOP_REG(PX30_WIN0_SCL_FACTOR_CBR, 0xffff, 16),
-+};
-+
-+static const struct vop_win_phy px30_win0_data = {
-+	.scl = &px30_win_scl,
-+	.data_formats = formats_win_full,
-+	.nformats = ARRAY_SIZE(formats_win_full),
-+	.enable = VOP_REG(PX30_WIN0_CTRL0, 0x1, 0),
-+	.format = VOP_REG(PX30_WIN0_CTRL0, 0x7, 1),
-+	.rb_swap = VOP_REG(PX30_WIN0_CTRL0, 0x1, 12),
-+	.act_info = VOP_REG(PX30_WIN0_ACT_INFO, 0xffffffff, 0),
-+	.dsp_info = VOP_REG(PX30_WIN0_DSP_INFO, 0xffffffff, 0),
-+	.dsp_st = VOP_REG(PX30_WIN0_DSP_ST, 0xffffffff, 0),
-+	.yrgb_mst = VOP_REG(PX30_WIN0_YRGB_MST0, 0xffffffff, 0),
-+	.uv_mst = VOP_REG(PX30_WIN0_CBR_MST0, 0xffffffff, 0),
-+	.yrgb_vir = VOP_REG(PX30_WIN0_VIR, 0x1fff, 0),
-+	.uv_vir = VOP_REG(PX30_WIN0_VIR, 0x1fff, 16),
-+};
-+
-+static const struct vop_win_phy px30_win1_data = {
-+	.data_formats = formats_win_lite,
-+	.nformats = ARRAY_SIZE(formats_win_lite),
-+	.enable = VOP_REG(PX30_WIN1_CTRL0, 0x1, 0),
-+	.format = VOP_REG(PX30_WIN1_CTRL0, 0x7, 4),
-+	.rb_swap = VOP_REG(PX30_WIN1_CTRL0, 0x1, 12),
-+	.dsp_info = VOP_REG(PX30_WIN1_DSP_INFO, 0xffffffff, 0),
-+	.dsp_st = VOP_REG(PX30_WIN1_DSP_ST, 0xffffffff, 0),
-+	.yrgb_mst = VOP_REG(PX30_WIN1_MST, 0xffffffff, 0),
-+	.yrgb_vir = VOP_REG(PX30_WIN1_VIR, 0x1fff, 0),
-+};
-+
-+static const struct vop_win_phy px30_win2_data = {
-+	.data_formats = formats_win_lite,
-+	.nformats = ARRAY_SIZE(formats_win_lite),
-+	.gate = VOP_REG(PX30_WIN2_CTRL0, 0x1, 0),
-+	.enable = VOP_REG(PX30_WIN2_CTRL0, 0x1, 4),
-+	.format = VOP_REG(PX30_WIN2_CTRL0, 0x3, 5),
-+	.rb_swap = VOP_REG(PX30_WIN2_CTRL0, 0x1, 20),
-+	.dsp_info = VOP_REG(PX30_WIN2_DSP_INFO0, 0x0fff0fff, 0),
-+	.dsp_st = VOP_REG(PX30_WIN2_DSP_ST0, 0x1fff1fff, 0),
-+	.yrgb_mst = VOP_REG(PX30_WIN2_MST0, 0xffffffff, 0),
-+	.yrgb_vir = VOP_REG(PX30_WIN2_VIR0_1, 0x1fff, 0),
-+};
-+
-+static const struct vop_win_data px30_vop_lit_win_data[] = {
-+	{ .base = 0x00, .phy = &px30_win1_data,
-+	  .type = DRM_PLANE_TYPE_PRIMARY },
-+};
-+
-+static const struct vop_win_data px30_vop_big_win_data[] = {
-+	{ .base = 0x00, .phy = &px30_win0_data,
-+	  .type = DRM_PLANE_TYPE_PRIMARY },
-+	{ .base = 0x00, .phy = &px30_win1_data,
-+	  .type = DRM_PLANE_TYPE_OVERLAY },
-+	{ .base = 0x00, .phy = &px30_win2_data,
-+	  .type = DRM_PLANE_TYPE_CURSOR },
-+};
-+
-+static const struct vop_data px30_vop_lit = {
-+	.intr = &px30_intr,
-+	.common = &px30_common,
-+	.modeset = &px30_modeset,
-+	.output = &px30_output,
-+	.win = px30_vop_lit_win_data,
-+	.win_size = ARRAY_SIZE(px30_vop_lit_win_data),
-+};
-+
-+static const struct vop_data px30_vop_big = {
-+	.intr = &px30_intr,
-+	.common = &px30_common,
-+	.modeset = &px30_modeset,
-+	.output = &px30_output,
-+	.win = px30_vop_big_win_data,
-+	.win_size = ARRAY_SIZE(px30_vop_big_win_data),
-+};
-+
- static const struct vop_scl_extension rk3288_win_full_scl_ext = {
- 	.cbcr_vsd_mode = VOP_REG(RK3288_WIN0_CTRL1, 0x1, 31),
- 	.cbcr_vsu_mode = VOP_REG(RK3288_WIN0_CTRL1, 0x1, 30),
-@@ -541,6 +663,10 @@ static const struct of_device_id vop_driver_dt_match[] = {
- 	  .data = &rk3036_vop },
- 	{ .compatible = "rockchip,rk3126-vop",
- 	  .data = &rk3126_vop },
-+	{ .compatible = "rockchip,px30-vop-lit",
-+	  .data = &rk3126_vop }
-+	{ .compatible = "rockchip,px30-vop-big",
-+	  .data = &rk3126_vop }
- 	{ .compatible = "rockchip,rk3288-vop",
- 	  .data = &rk3288_vop },
- 	{ .compatible = "rockchip,rk3368-vop",
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.h b/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-index f81b510..71527cb 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-@@ -884,4 +884,78 @@
- #define RK3126_WIN1_DSP_ST		0x54
- /* rk3126 register definition end */
- 
-+/* px30 register definition */
-+#define PX30_REG_CFG_DONE			0x00000
-+#define PX30_VERSION				0x00004
-+#define PX30_DSP_BG				0x00008
-+#define PX30_MCU_CTRL				0x0000c
-+#define PX30_SYS_CTRL0				0x00010
-+#define PX30_SYS_CTRL1				0x00014
-+#define PX30_SYS_CTRL2				0x00018
-+#define PX30_DSP_CTRL0				0x00020
-+#define PX30_DSP_CTRL2				0x00028
-+#define PX30_VOP_STATUS				0x0002c
-+#define PX30_LINE_FLAG				0x00030
-+#define PX30_INTR_EN				0x00034
-+#define PX30_INTR_CLEAR				0x00038
-+#define PX30_INTR_STATUS			0x0003c
-+#define PX30_WIN0_CTRL0				0x00050
-+#define PX30_WIN0_CTRL1				0x00054
-+#define PX30_WIN0_COLOR_KEY			0x00058
-+#define PX30_WIN0_VIR				0x0005c
-+#define PX30_WIN0_YRGB_MST0			0x00060
-+#define PX30_WIN0_CBR_MST0			0x00064
-+#define PX30_WIN0_ACT_INFO			0x00068
-+#define PX30_WIN0_DSP_INFO			0x0006c
-+#define PX30_WIN0_DSP_ST			0x00070
-+#define PX30_WIN0_SCL_FACTOR_YRGB		0x00074
-+#define PX30_WIN0_SCL_FACTOR_CBR		0x00078
-+#define PX30_WIN0_SCL_OFFSET			0x0007c
-+#define PX30_WIN0_ALPHA_CTRL			0x00080
-+#define PX30_WIN1_CTRL0				0x00090
-+#define PX30_WIN1_CTRL1				0x00094
-+#define PX30_WIN1_VIR				0x00098
-+#define PX30_WIN1_MST				0x000a0
-+#define PX30_WIN1_DSP_INFO			0x000a4
-+#define PX30_WIN1_DSP_ST			0x000a8
-+#define PX30_WIN1_COLOR_KEY			0x000ac
-+#define PX30_WIN1_ALPHA_CTRL			0x000bc
-+#define PX30_HWC_CTRL0				0x000e0
-+#define PX30_HWC_CTRL1				0x000e4
-+#define PX30_HWC_MST				0x000e8
-+#define PX30_HWC_DSP_ST				0x000ec
-+#define PX30_HWC_ALPHA_CTRL			0x000f0
-+#define PX30_DSP_HTOTAL_HS_END			0x00100
-+#define PX30_DSP_HACT_ST_END			0x00104
-+#define PX30_DSP_VTOTAL_VS_END			0x00108
-+#define PX30_DSP_VACT_ST_END			0x0010c
-+#define PX30_DSP_VS_ST_END_F1			0x00110
-+#define PX30_DSP_VACT_ST_END_F1			0x00114
-+#define PX30_BCSH_CTRL				0x00160
-+#define PX30_BCSH_COL_BAR			0x00164
-+#define PX30_BCSH_BCS				0x00168
-+#define PX30_BCSH_H				0x0016c
-+#define PX30_FRC_LOWER01_0			0x00170
-+#define PX30_FRC_LOWER01_1			0x00174
-+#define PX30_FRC_LOWER10_0			0x00178
-+#define PX30_FRC_LOWER10_1			0x0017c
-+#define PX30_FRC_LOWER11_0			0x00180
-+#define PX30_FRC_LOWER11_1			0x00184
-+#define PX30_MCU_RW_BYPASS_PORT			0x0018c
-+#define PX30_WIN2_CTRL0				0x00190
-+#define PX30_WIN2_CTRL1				0x00194
-+#define PX30_WIN2_VIR0_1			0x00198
-+#define PX30_WIN2_VIR2_3			0x0019c
-+#define PX30_WIN2_MST0				0x001a0
-+#define PX30_WIN2_DSP_INFO0			0x001a4
-+#define PX30_WIN2_DSP_ST0			0x001a8
-+#define PX30_WIN2_COLOR_KEY			0x001ac
-+#define PX30_WIN2_ALPHA_CTRL			0x001bc
-+#define PX30_BLANKING_VALUE			0x001f4
-+#define PX30_FLAG_REG_FRM_VALID			0x001f8
-+#define PX30_FLAG_REG				0x001fc
-+#define PX30_HWC_LUT_ADDR			0x00600
-+#define PX30_GAMMA_LUT_ADDR			0x00a00
-+/* px30 register definition end */
-+
- #endif /* _ROCKCHIP_VOP_REG_H */
--- 
-2.7.4
+I think we can drop this patch for now.
 
+> 
+> I'll go ahead and queue Thomas' fix, though.
+
+yes, please
 
