@@ -2,273 +2,111 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392C1C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83903C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5E426A4F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:20:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5E426A4F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4724826A66
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4724826A66
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935144AbeFZMUp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:20:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42058 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933823AbeFZMUn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:20:43 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QCJU1p054675
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:20:42 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jukrcvwwj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:20:42 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 08:20:40 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 08:20:38 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QCKbTL61014244
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 12:20:37 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8AEF2B206C;
-        Tue, 26 Jun 2018 08:20:31 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 541F7B2065;
-        Tue, 26 Jun 2018 08:20:31 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.202.60])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 08:20:31 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8492B16C5DDD; Tue, 26 Jun 2018 05:22:42 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 05:22:42 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     SeongJae Park <sj38.park@gmail.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH] locking/memory-barriers.txt/kokr: Update Korean
- translation to fix broken DMA vs. MMIO ordering example
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180617051608.2128-1-sj38.park@gmail.com>
- <20180626004738.GA20783@X58A-UD3R>
- <alpine.DEB.2.20.1806261218490.1528@hxeon>
- <20180626045609.GB20783@X58A-UD3R>
- <alpine.DEB.2.20.1806261406220.1528@hxeon>
- <20180626065827.GC20783@X58A-UD3R>
+        id S935260AbeFZMU4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:20:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49218 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933823AbeFZMUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:20:53 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3D91430820F4;
+        Tue, 26 Jun 2018 12:20:53 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F5FB7EE7C;
+        Tue, 26 Jun 2018 12:20:53 +0000 (UTC)
+Received: from zmail23.collab.prod.int.phx2.redhat.com (zmail23.collab.prod.int.phx2.redhat.com [10.5.83.28])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id A552C4BB78;
+        Tue, 26 Jun 2018 12:20:52 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 08:20:52 -0400 (EDT)
+From:   Chunyu Hu <chuhu@redhat.com>
+Reply-To: Chunyu Hu <chuhu@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org
+Message-ID: <1113263100.13594710.1530015652549.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180611062354.GA32641@lst.de>
+References: <1528573884-9133-1-git-send-email-chuhu@redhat.com> <20180611062354.GA32641@lst.de>
+Subject: Re: [PATCH] proc: add proc_seq_release
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180626065827.GC20783@X58A-UD3R>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062612-0068-0000-0000-0000030E6486
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009258; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052572; UDB=6.00539611; IPR=6.00830497;
- MB=3.00021860; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 12:20:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062612-0069-0000-0000-000044D091FC
-Message-Id: <20180626122242.GX3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260140
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.68.5.41, 10.4.195.29]
+Thread-Topic: proc: add proc_seq_release
+Thread-Index: vbxOw6lDQSrIXGETAu5l3gKdnHGdHQ==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 26 Jun 2018 12:20:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 03:58:27PM +0900, Byungchul Park wrote:
-> On Tue, Jun 26, 2018 at 02:10:17PM +0900, SeongJae Park wrote:
-> > 
-> > 
-> > On Tue, 26 Jun 2018, Byungchul Park wrote:
-> > 
-> > > On Tue, Jun 26, 2018 at 12:21:23PM +0900, sjpark wrote:
-> > > > Hello Byungchul,
-> > > >
-> > > >
-> > > > On Tue, 26 Jun 2018, Byungchul Park wrote:
-> > > >
-> > > > > On Sun, Jun 17, 2018 at 02:16:08PM +0900, SeongJae Park wrote:
-> > > > > > Translate this commit to Korean:
-> > > > > >
-> > > > > >   5846581e3563 ("locking/memory-barriers.txt: Fix broken DMA vs. MMIO ordering example")
-> > > > >
-> > > > > Hi SeongJae,
-> > > > >
-> > > > > You keep doing good jobs ;)
-> > > > >
-> > > > > I believe it would be better if you consider the little things below
-> > > > > more. What do you think about it, SeongJae?
-> > > >
-> > > > Thank you for great comments!
-> > > >
-> > > > >
-> > > > > > Signed-off-by: SeongJae Park <sj38.park@gmail.com>
-> > > > > > ---
-> > > > > >  Documentation/translations/ko_KR/memory-barriers.txt | 15 +++++++--------
-> > > > > >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > > > > >
-> > > > > > diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
-> > > > > > index 921739d00f69..ada0a709cce1 100644
-> > > > > > --- a/Documentation/translations/ko_KR/memory-barriers.txt
-> > > > > > +++ b/Documentation/translations/ko_KR/memory-barriers.txt
-> > > > > > @@ -1891,19 +1891,18 @@ Mandatory 배리어들은 SMP 시스템에서도 UP 시스템에서도 SMP 효
-> > > > > >  		/* 소유권을 수정 */
-> > > > > >  		desc->status = DEVICE_OWN;
-> > > > > >
-> > > > > > -		/* MMIO 를 통해 디바이스에 공지를 하기 전에 메모리를 동기화 */
-> > > > > > -		wmb();
-> > > > > > -
-> > > > > >  		/* 업데이트된 디스크립터의 디바이스에 공지 */
-> > > > > >  		writel(DESC_NOTIFY, doorbell);
-> > > > > >  	}
-> > > > > >
-> > > > > >       dma_rmb() 는 디스크립터로부터 데이터를 읽어오기 전에 디바이스가 소유권을
-> > > > > > -     내놓았음을 보장하게 하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
-> > > > > > -     가졌음을 보기 전에 디스크립터에 데이터가 쓰였음을 보장합니다.  wmb() 는
-> > > > > > -     캐시 일관성이 없는 (cache incoherent) MMIO 영역에 쓰기를 시도하기 전에
-> > > > > > -     캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 완료되었음을
-> > > > > > -     보장해주기 위해 필요합니다.
-> > > > > > +     내려놓았을 것을 보장하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
-> > > > > > +     가졌음을 보기 전에 디스크립터에 데이터가 쓰였을 것을 보장합니다.  writel()
-> > > > >                                                                         ^
-> > > > >                                                                      참고로,
-> > > >
-> > > > Nice comment.  This will enhance the readability a lot.
-> > >
-> > > Could you add this, too? A quite little thing tho.
-> > 
-> > Oops, I missed that.  Sorry.  Attaching the patch below.
-> > 
-> > 
-> > Thanks, SeongJae Park
+
+
+----- Original Message -----
+> From: "Christoph Hellwig" <hch@lst.de>
+> To: "Chunyu Hu" <chuhu@redhat.com>
+> Cc: viro@zeniv.linux.org.uk, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+> Sent: Monday, June 11, 2018 2:23:54 PM
+> Subject: Re: [PATCH] proc: add proc_seq_release
 > 
-> Thanks a lot, SeongJae.
+> On Sun, Jun 10, 2018 at 03:51:24AM +0800, Chunyu Hu wrote:
+> > kmemleak reported some memory leak on reading proc files. After adding
+> > some debug lines, find that proc_seq_fops is using seq_release as
+> > release handler, which won't handle the free of 'private' field of
+> > seq_file, while in fact the open handler proc_seq_open could create
+> > the private data with __seq_open_private when state_size is greater
+> > than zero. So after reading files created with proc_create_seq_private,
+> > such as /proc/timer_list and /proc/vmallocinfo, the private mem of a
+> > seq_file is not freed. Fix it by adding the paired proc_seq_release
+> > as the default release handler of proc_seq_ops instead of seq_release.
 > 
-> Acked-by: Byungchul Park <byungchul.park@lge.com>
-
-Thank you both!
-
-The patch below is the complete patch, so that I should replace
-what I have with it, correct?  If not, please help me out here.  ;-)
-
-							Thanx, Paul
-
-> > ============================= >8 =====================================
-> > 
-> > >From bcfb52af5d1f6c6aa171d105bdd7376b4dfabf13 Mon Sep 17 00:00:00 2001
-> > From: SeongJae Park <sj38.park@gmail.com>
-> > Date: Sun, 17 Jun 2018 14:08:42 +0900
-> > Subject: [PATCH v3] locking/memory-barriers.txt/kokr: Update Korean
-> >  translation to fix broken DMA vs. MMIO ordering example
-> > 
-> > Translate this commit to Korean:
-> > 
-> >   5846581e3563 ("locking/memory-barriers.txt: Fix broken DMA vs. MMIO ordering example")
-> > 
-> > Signed-off-by: SeongJae Park <sj38.park@gmail.com>
-> > ---
-> > Changes since v1:
-> >  - Applied comments from Byungchul Park
-> >  - Rebased on v4.18-rc2
-> > 
-> >  .../translations/ko_KR/memory-barriers.txt         | 22 +++++++++++-----------
-> >  1 file changed, 11 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
-> > index 921739d00f69..7f01fb1c1084 100644
-> > --- a/Documentation/translations/ko_KR/memory-barriers.txt
-> > +++ b/Documentation/translations/ko_KR/memory-barriers.txt
-> > @@ -1891,22 +1891,22 @@ Mandatory 배리어들은 SMP 시스템에서도 UP 시스템에서도 SMP 효
-> >  		/* 소유권을 수정 */
-> >  		desc->status = DEVICE_OWN;
-> > 
-> > -		/* MMIO 를 통해 디바이스에 공지를 하기 전에 메모리를 동기화 */
-> > -		wmb();
-> > -
-> >  		/* 업데이트된 디스크립터의 디바이스에 공지 */
-> >  		writel(DESC_NOTIFY, doorbell);
-> >  	}
-> > 
-> >       dma_rmb() 는 디스크립터로부터 데이터를 읽어오기 전에 디바이스가 소유권을
-> > -     내놓았음을 보장하게 하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
-> > -     가졌음을 보기 전에 디스크립터에 데이터가 쓰였음을 보장합니다.  wmb() 는
-> > -     캐시 일관성이 없는 (cache incoherent) MMIO 영역에 쓰기를 시도하기 전에
-> > -     캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 완료되었음을
-> > -     보장해주기 위해 필요합니다.
-> > -
-> > -     consistent memory 에 대한 자세한 내용을 위해선 Documentation/DMA-API.txt
-> > -     문서를 참고하세요.
-> > +     내려놓았을 것을 보장하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
-> > +     가졌음을 보기 전에 디스크립터에 데이터가 쓰였을 것을 보장합니다.  참고로,
-> > +     writel() 을 사용하면 캐시 일관성이 있는 메모리 (cache coherent memory)
-> > +     쓰기가 MMIO 영역에의 쓰기 전에 완료되었을 것을 보장하므로 writel() 앞에
-> > +     wmb() 를 실행할 필요가 없음을 알아두시기 바랍니다.  writel() 보다 비용이
-> > +     저렴한 writel_relaxed() 는 이런 보장을 제공하지 않으므로 여기선 사용되지
-> > +     않아야 합니다.
-> > +
-> > +     writel_relaxed() 와 같은 완화된 I/O 접근자들에 대한 자세한 내용을 위해서는
-> > +     "커널 I/O 배리어의 효과" 섹션을, consistent memory 에 대한 자세한 내용을
-> > +     위해선 Documentation/DMA-API.txt 문서를 참고하세요.
-> > 
-> > 
-> >  MMIO 쓰기 배리어
-> > -- 
-> > 2.13.0
-> > 
-> > 
-> > >
-> > > > > > +     을 사용하면 캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 MMIO
-> > > > > > +     영역에의 쓰기 전에 완료되었을 것을 보장하므로 writel() 앞에 wmb() 를
-> > > > > > +     실행할 필요가 없음을 알아두시기 바랍니다.  writel() 보다 비용이 저렴한
-> > > > > > +     writel_relaxed() 는 이런 보장을 제공하지 않으므로 여기선 사용되지 않아야
-> > > > > > +     합니다.
-> > > > > >
-> > > > > >       consistent memory 에 대한 자세한 내용을 위해선 Documentation/DMA-API.txt
-> > > > > >       문서를 참고하세요.
-> > > > >
-> > > > >      See the subsection "Kernel I/O barrier effects" for more information on
-> > > > >      relaxed I/O accessors and the Documentation/DMA-API.txt file for more
-> > > > >      information on consistent memory.
-> > > > >
-> > > > > Don't you think the whole sentence need to be translated? If yes, then
-> > > > > it would be better to do that as well ;)
-> > > >
-> > > > Oh, my mistake!  It should be.
-> > > >
-> > > > I applied your comments to the second version.
-> > >
-> > > Thank you SeongJae :)
-> > >
-> > > > Thanks,
-> > > > SeongJae Park
-> > > >
-> > > > >
-> > > > > > --
-> > > > > > 2.13.0
-> > > > >
-> > > > > --
-> > > > > Thanks,
-> > > > > Byungchul
-> > > > >
-> > >
-> > >
+> Indeed, thanks for the patch.
 > 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+
+What's our plan for this issue? We can still see the leaking in 4.18-RC2. 
+
+1) Run 'cat /proc/timer_list' then
+2) echo scan > /sys/kernel/debug/kmemleak
+3) cat /sys/kernel/debug/kmemleak
+
+each time, it leaks 16 bytes.
+
+unreferenced object 0xffff880017525120 (size 16):
+  comm "cat", pid 4682, jiffies 4294964743 (age 46.880s)
+  hex dump (first 16 bytes):
+    04 00 00 00 01 00 00 00 42 00 96 e7 3f 00 00 00  ........B...?...
+  backtrace:
+    [<000000006f6b5d90>] seq_open_private+0x25/0x40
+    [<00000000d94d91aa>] proc_seq_open+0xca/0x120
+    [<00000000d5609077>] proc_reg_open+0x1d4/0x5b0
+    [<0000000036a3d49c>] do_dentry_open+0x7d6/0x1010
+    [<00000000d4fb0a82>] vfs_open+0x170/0x2b0
+    [<00000000f3bf21b4>] path_openat+0x760/0x3750
+    [<00000000b0d4e66c>] do_filp_open+0x1bb/0x2c0
+    [<0000000063b53236>] do_sys_open+0x2b2/0x490
+    [<00000000a5249c62>] do_syscall_64+0xd3/0x6e0
+    [<000000006f9f8436>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+    [<000000001d702cb2>] 0xffffffffffffffff
+
+
+-- 
+Regards,
+Chunyu Hu
 
