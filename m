@@ -2,124 +2,115 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D3EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F9BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6F026822
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:47:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DNWhG6SA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DNWhG6SA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6F026822
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 7E76C26822
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:47:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E76C26822
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934001AbeFZJrT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:47:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48790 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932963AbeFZJrR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:47:17 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E83A760274; Tue, 26 Jun 2018 09:47:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530006436;
-        bh=OHgGGnpQo0r9tRs769deeVIWPAj896d+HvkDsOUp+So=;
-        h=Date:From:To:Cc:Subject:From;
-        b=DNWhG6SAfur7V+/TQzX9/ZwD5i+oQPvO6LtO7MU9oBotZOpb5vAM7Amvc6yDHIvJI
-         7SqVKSVqY5Zc3ZSKOZAhcww098i+W6ngya4PvrbYBnNqk1JZ+jezZg/CpZK5VJznbc
-         Gc3EtMcp5mtE5iFcK6jnfkMv8Oabq0Y1JdwhYxQY=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pkondeti@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 90362600ED;
-        Tue, 26 Jun 2018 09:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530006436;
-        bh=OHgGGnpQo0r9tRs769deeVIWPAj896d+HvkDsOUp+So=;
-        h=Date:From:To:Cc:Subject:From;
-        b=DNWhG6SAfur7V+/TQzX9/ZwD5i+oQPvO6LtO7MU9oBotZOpb5vAM7Amvc6yDHIvJI
-         7SqVKSVqY5Zc3ZSKOZAhcww098i+W6ngya4PvrbYBnNqk1JZ+jezZg/CpZK5VJznbc
-         Gc3EtMcp5mtE5iFcK6jnfkMv8Oabq0Y1JdwhYxQY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90362600ED
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
-Date:   Tue, 26 Jun 2018 15:17:12 +0530
-From:   Pavan Kondeti <pkondeti@codeaurora.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Question about wakeup granularity calculation in
- wakeup_preempt_entity()
-Message-ID: <20180626094712.GF9208@codeaurora.org>
+        id S934129AbeFZJrc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:47:32 -0400
+Received: from mga14.intel.com ([192.55.52.115]:52738 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932963AbeFZJr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 05:47:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 02:47:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
+   d="scan'208";a="52315406"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by orsmga008.jf.intel.com with ESMTP; 26 Jun 2018 02:47:27 -0700
+Subject: Re: 4.17.0-rc3+ BUG kmalloc-2048: Poison overwritten (USB hub
+ disconnect)
+To:     Vegard Nossum <vegard.nossum@gmail.com>, linux-usb@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org
+References: <CAOMGZ=ErZHAY7XF8XnPP-rAZahx4giOcntJj+JENuZOH-kZ3kg@mail.gmail.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <e81b49c5-4239-3e45-21bc-23e842b7ebf5@linux.intel.com>
+Date:   Tue, 26 Jun 2018 12:50:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAOMGZ=ErZHAY7XF8XnPP-rAZahx4giOcntJj+JENuZOH-kZ3kg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Hi
 
-I have a question about wakeup granularity calculation while checking
-if the waking fair task can preempt the current running fair task.
+On 26.06.2018 11:20, Vegard Nossum wrote:
+> Hi,
+> 
+> I've been seeing variants of this when I plug/unplug my ThinkPad T460
+> from the docking station:
+> 
+> usb 2-4: USB disconnect, device number 30
+> usb 2-4.1: USB disconnect, device number 31
+> thinkpad_acpi: undocked from hotplug port replicator
+> thinkpad_acpi: EC reports that Thermal Table has changed
+> usb 1-4: USB disconnect, device number 61
+> usb 1-4.1: USB disconnect, device number 63
+> usb 1-4.4: USB disconnect, device number 62
+> =============================================================================
+> BUG kmalloc-2048 (Tainted: G    B            ): Poison overwritten
+> -----------------------------------------------------------------------------
+> 
+> INFO: 0x00000000f262b063-0x00000000ccb4f11c. First byte 0x0 instead of 0x6b
+> INFO: Allocated in usb_alloc_dev+0x35/0x329 age=6894431 cpu=0 pid=27384
+>          __slab_alloc+0x20/0x40
+>          kmem_cache_alloc_trace+0x1ee/0x230
+>          usb_alloc_dev+0x35/0x329
+>          hub_event+0xba8/0x15c0
+>          process_one_work+0x148/0x3d0
+>          worker_thread+0x4b/0x460
+>          kthread+0x102/0x140
+>          ret_from_fork+0x35/0x40
+> INFO: Freed in usb_release_dev+0x60/0x70 age=0 cpu=0 pid=32750
+>          kfree+0x176/0x1a0
+>          usb_release_dev+0x60/0x70
+>          device_release+0x32/0x90
+>          kobject_put+0x82/0x190
+>          put_device+0x17/0x20
+>          usb_disconnect+0x1b2/0x290
+>          usb_disconnect+0x1f3/0x290
+>          hub_event+0x94f/0x15c0
+>          process_one_work+0x148/0x3d0
+>          worker_thread+0x4b/0x460
+>          kthread+0x102/0x140
+>          ret_from_fork+0x35/0x40
+> INFO: Slab 0x00000000f6509278 objects=13 used=13 fp=0x          (null)
+> flags=0x17fffc000008100
+> INFO: Object 0x00000000a7692b6c @offset=4776 fp=0x0000000078ed8ddc
+> 
+> I don't have the source/config for this kernel anymore, sorry. Will
+> probably try a newer kernel at some point to see if it's still
+> present, it might already be fixed. I just wanted to send a report
+> just in case it has enough info for somebody to spot what went wrong
+> without too much effort.
+> 
+> See attachment for fuller log + timestamps. The tainted bits are from
+> earlier reports of the same type.
+> 
+> 
 
-static unsigned long
-wakeup_gran(struct sched_entity *curr, struct sched_entity *se)
-{
-	unsigned long gran = sysctl_sched_wakeup_granularity;
+Does  patch
+2278446 xhci: Fix USB3 NULL pointer dereference at logical disconnect.
+help?
 
-	/*
-	 * Since its curr running now, convert the gran from real-time
-	 * to virtual-time in his units.
-	 *
-	 * By using 'se' instead of 'curr' we penalize light tasks, so
-	 * they get preempted easier. That is, if 'se' < 'curr' then
-	 * the resulting gran will be larger, therefore penalizing the
-	 * lighter, if otoh 'se' > 'curr' then the resulting gran will
-	 * be smaller, again penalizing the lighter task.
-	 *
-	 * This is especially important for buddies when the leftmost
-	 * task is higher priority than the buddy.
-	 */
-	return calc_delta_fair(gran, se);
-}
+It should be in 4.17-rc6
 
-The above comment says that the wakeup granularity will be larger when
-'se' < 'curr'. But we completely ignore the weight of the curr and
-scale the wakeup granularity solely based on the weight of the waking
-task i.e se. 
-
-For example, when curr is nice:0 and se is nice:0, the wakeup granularity
-is unchanged. However when curr is nice:-15 and se is nice:-15, the
-granularity becomes 3% of its original value and favour the waking task.
-
-The git history around these functions revealed that there was once a
-sched feature called ASYM_GRAN with which we can control the granularity
-scaling wrt curr or se. However if we scale granularity wrt curr, then
-preemption becomes difficult for a higher waking up task. 
-
-Is there any reason why we don't want to take both curr and se into account?
-
-scaled_granularity = granularity * (W(curr)/W(se))
-
-I don't have any particular usecase that actually shows a regression. I
-spotted this behavior in traces where a lower or default prio task that
-is riding on the wakeup bonus is preempting a higher prio task which started
-just running. Setting sched_wakeup_granularity to a value higher than the
-wakeup bouns may prevent this, but that would make things difficult for
-a normal prio tasks preempting a lower prio running task.
-
-Thanks,
-Pavan
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+-Mathias
