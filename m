@@ -2,177 +2,131 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574B4C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BF3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:38:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015962481C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36526269E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:38:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOxtouS3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015962481C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=hmh.eng.br header.i=@hmh.eng.br header.b="Nq5Gyxr0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vTzYmxdu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36526269E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hmh.eng.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934748AbeFZLhS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:37:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933780AbeFZLhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:37:16 -0400
-Received: from localhost (unknown [5.29.173.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFBA82481C;
-        Tue, 26 Jun 2018 11:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530013035;
-        bh=7TxqeP4LtIGwHAHb3ATQQGc50brd8EuBWHYSZtyUelc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JOxtouS3TpscKjttiKo1kY40DDxo29nKzdxEsHL6J/yuHdrK3axRQdbyPCjgumHy/
-         zPdWDZTDDWDL/VM+qp1XmbSn03RJnXYoonoBwS4TrRcVUZkdnxoyc7XF7JCAug2B9m
-         CDPz97TiiaqYB+ziUqhEelWbZtJANzhakAnCzEko=
-Date:   Tue, 26 Jun 2018 14:37:12 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Hadar Hen Zion <hadarh@mellanox.com>,
-        Matan Barak <matanb@mellanox.com>,
-        Michael J Ruhl <michael.j.ruhl@intel.com>,
-        Noa Osherovich <noaos@mellanox.com>,
-        Raed Salem <raeds@mellanox.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        linux-netdev <netdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH rdma-next 08/12] overflow.h: Add arithmetic shift helper
-Message-ID: <20180626113712.GB30877@mtr-leonro.mtl.com>
-References: <20180624082353.16138-1-leon@kernel.org>
- <20180624082353.16138-9-leon@kernel.org>
- <CAKwiHFhgsyWYD+q+JFb2HJEphnjiiOp=o4Airv3MW031q2jx8w@mail.gmail.com>
- <20180625171157.GE5356@mellanox.com>
- <CAKwiHFiRYbyiJqDYCgKXKZYRr0KjCt8q9AwKwfqoCA1sT2KFyQ@mail.gmail.com>
+        id S934811AbeFZLib (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:38:31 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:47361 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933780AbeFZLi3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 07:38:29 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 1EF8721D65;
+        Tue, 26 Jun 2018 07:38:29 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 26 Jun 2018 07:38:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hmh.eng.br; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; bh=ElMQ7Ghl55g6qIiDh1qRe9jNlpV4pYIbd8G9LkpZKOU=; b=Nq5Gyxr0
+        L6XE91KIAxdhK6InKF+holQXcSToDHAsur1F6ENUwOBzJsIIZO1q/4XDneU66q9i
+        UTNDqB70WVD1mdDLfM7shaUEeG3tVY5BJttXHqlO8QYdm4ca5w4MBgYJZQ16zakP
+        +RkhUidp8WCskLpbRskLJpVt9JZWnqvESQNFl7JJEej/GQXlprtmZIGCEoQjmWjT
+        1bVTljPd3y6v7Ttj1TWdUCFr8jjZdMwyZdeLKB77oistDWUH2a/2x++WzTQlYgWz
+        uuWZbR7xjACUo3XK0/AESQ8llAbrKw6OOEF5piAvMLMHrVkKGR9cZ/ERvgKgh2Fz
+        ZYkQKqoli92EVQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=ElMQ7Ghl55g6qIiDh1qRe9jNlpV4p
+        YIbd8G9LkpZKOU=; b=vTzYmxdu4X1fUpvU1BI/xzE0a7trH2Y8TLn0cHyxRpK7i
+        7jcC0yvFB7SxR5fD84EEAG1CDH/zfUgYvvK6FeTnDmdLayLyU8o2lP8ZA2f5ovqU
+        eaOkYmwu+DW0Uow6laQ6CsxYycahrT0c8SbEg7YPZm+S3Vqt8KrVDUMQ+h4TYimH
+        DhlTNBSYV3aaG9W6WVl2FoCTBhZkbJECSyGrPuG26CVbJ777kOX5JkpuDYQ9kQ69
+        MP4qz6BO+lFR3eHbd+p3ZkzppM4YlHN3IFvrNNCLifC6OPAey8wq2q8jTKqDj/kP
+        Wq65vYeJin62fjZ4hE4qumT/WkEW0fhL9LgijD1AQ==
+X-ME-Proxy: <xmx:tCUyW6OYNMB566JkFxC-T8WlEfTSdfFVAkACCk0uJRaJqTNw3qPWfQ>
+    <xmx:tCUyW27LsvybtuOtJtLEF0FVNIZTkY_k9QGIiVZ7_lknu_YdMEHTSQ>
+    <xmx:tCUyW4CvdQLZjiWGiFI2exbHhGNw1fgCqlasw_CL7LKpjh-q_D4f_w>
+    <xmx:tCUyW-AcY1ZsXJvqpbuEDmS0Dm9BWiwIQpjISIWt73QrOVxmqWT7cA>
+    <xmx:tCUyW-oDmQF6BPkEZOdjgedEzl-SbZSuqW99k1Z16MMPKJNOFWvtIw>
+    <xmx:tSUyWzCEf-QlrwC4nyqifPVL3QHynJAMQ-4oL3I8sknO6bmTK5AMWQ>
+X-ME-Sender: <xms:tCUyW_m6ypAEsBAxOqsTZBhQZc8rsv3B4ZnpTN6519FEMN7K-5tLoQ>
+Received: from khazad-dum.debian.net (unknown [201.53.245.99])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8F14710298;
+        Tue, 26 Jun 2018 07:38:28 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by localhost.khazad-dum.debian.net (Postfix) with ESMTP id F322E340133A;
+        Tue, 26 Jun 2018 08:38:26 -0300 (-03)
+X-Virus-Scanned: Debian amavisd-new at khazad-dum.debian.net
+Received: from khazad-dum.debian.net ([127.0.0.1])
+        by localhost (khazad-dum2.khazad-dum.debian.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id Jvy4VZmOQavS; Tue, 26 Jun 2018 08:38:23 -0300 (-03)
+Received: by khazad-dum.debian.net (Postfix, from userid 1000)
+        id 14DBE3400BEA; Tue, 26 Jun 2018 08:38:22 -0300 (-03)
+Date:   Tue, 26 Jun 2018 08:38:22 -0300
+From:   Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+To:     Jan Beulich <JBeulich@suse.com>
+Cc:     mingo@elte.hu, rdunlap@infradead.org, tglx@linutronix.de,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86-64: use 32-bit XOR to zero registers
+Message-ID: <20180626113822.ch3erlyud5wsxvvg@khazad-dum.debian.net>
+References: <5B30C32902000078001CD6D5@prv1-mh.provo.novell.com>
+ <a68a703f-5d74-a2eb-4b26-0fe3e6e48705@infradead.org>
+ <5B31DDFF02000078001CDC03@prv1-mh.provo.novell.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwiHFiRYbyiJqDYCgKXKZYRr0KjCt8q9AwKwfqoCA1sT2KFyQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <5B31DDFF02000078001CDC03@prv1-mh.provo.novell.com>
+X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
+ 0BD9 E811 39CB 4807
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 26 Jun 2018, Jan Beulich wrote:
+> >>> On 25.06.18 at 18:33, <rdunlap@infradead.org> wrote:
+> > On 06/25/2018 03:25 AM, Jan Beulich wrote:
+> >> Some Intel CPUs don't recognize 64-bit XORs as zeroing idioms - use
+> >> 32-bit ones instead.
+> > 
+> > Hmph.  Is that considered a bug (errata)?
+> 
+> No.
+> 
+> > URL/references?
+> 
+> Intel's Optimization Reference Manual says so (in rev 040 this is in section
+> 16.2.2.5 "Zeroing Idioms" as a subsection of the Goldmont/Silvermont
+> descriptions).
+> 
+> > Are these changes really only zeroing the lower 32 bits of the register?
+> > and that's all that the code cares about?
+> 
+> No - like all operations targeting a 32-bit register, the result is zero
+> extended to the entire 64-bit destination register.
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Missing information that would have been helpful in the commit message:
 
-On Tue, Jun 26, 2018 at 10:07:07AM +0200, Rasmus Villemoes wrote:
-> On 25 June 2018 at 19:11, Jason Gunthorpe <jgg@mellanox.com> wrote:
->
-> > On Mon, Jun 25, 2018 at 11:26:05AM +0200, Rasmus Villemoes wrote:
-> >
-> > >    check_shift_overflow(a, s, d) {
-> > >        unsigned _nbits = 8*sizeof(a);
-> > >        typeof(a) _a = (a);
-> > >        typeof(s) _s = (s);
-> > >        typeof(d) _d = (d);
-> > >
-> > >        *_d = ((u64)(_a) << (_s & (_nbits-1)));
-> > >        _s >= _nbits || (_s > 0 && (_a >> (_nbits - _s -
-> > >    is_signed_type(a))) != 0);
-> > >    }
-> >
-> > Those types are not quite right.. What about this?
-> >
-> >     check_shift_overflow(a, s, d) ({
-> >         unsigned int _nbits = 8*sizeof(d) - is_signed_type(d);
-> >         typeof(d) _a = a;  // Shift is always performed on type 'd'
-> >         typeof(s) _s = s;
-> >         typeof(d) _d = d;
-> >
-> >         *_d = (_a << (_s & (_nbits-1)));
-> >
-> >         (((*_d) >> (_s & (_nbits-1)) != _a);
-> >     })
-> >
->
-> No, because, the check_*_overflow (and the __builtin_*_overflow cousins)
-> functions must do their job without causing undefined behaviour, regardless
-> of what crazy input values and types they are given. Also, the output must
-> be completely defined for all inputs [1]. I omitted it for brevity, but I
-> also wanted a and *d to have the same type, so there should also be one of
-> those (void)(&_a == _d); statements. See the other check_*_overflow and the
-> commit adding them. Without the (u64) cast, any signed (and negative) a
-> would cause UB in your suggestion. Also, having _nbits be 31 when a (and/or
-> *d) has type int, and then and'ing the shift by 30 doesn't make any sense;
-> I have no idea what you're trying to do. I haven't tested the above, but I
-> know from when I wrote the other ones that gcc is smart enough not to
-> actually do the arithmetic in 64 bits when only <= 32 bit types are
-> involved (i.e., gcc sees that the result is anyway implicitly truncated to
-> 32 bits, so only bothers to compute the lower 32 bits).
->
-> [1] For this one, it would probably be most consistent to say that the
-> result is a*2^s computed in infinite-precision, then truncated to fit in d.
-> So for too large s, that would just yield 0. But that becomes a bit
-> annoying when s is negative; we don't want to start handling a negative
-> left shift as a right shift. That's also why I said that one should sit
-> down and think about the semantics one really wants, then implement that,
-> and write tests. For a first implementation, it might be completely
-> reasonable to simply say BUILD_BUG_ON(is_signed_type(a)), but that still
-> leaves open what to put in *d when s is negative. But maybe another
-> BUILD_BUG_ON(is_signed_type(s)) could handle that, though that's a bit
-> annoying for integer literals.
->
-> And can we use mathamatcial invertability to prove no overlow and
-> > bound _a ? As above.
-> >
->
-> It's quite possible that the expression determining whether overflow
-> occured can be written differently, possibly in terms of shifting back, but
-> it definitely needs to return true when s is greater than nbits;
-> check_shift_overflow(1U, 32, &d) must be true. And that expression also
-> must not involve UB.
+When the processor can recognize something as a zeroing idiom, it
+optimizes that operation on the front-end.  Only 32-bit XOR r,r is
+documented as a zeroing idiom according to the Intel optimization
+manual.  While a few Intel processors recognize the 64-bit version of
+XOR r,r as a zeroing idiom, many won't.
 
-Rasmus,
+Note that the 32-bit operation extends to the high part of the 64-bit
+register, so it will zero the entire 64-bit register.  The 32-bit
+instruction is also one byte shorter.
 
-RDMA doesn't really need specific size_t variant, but wants to prevent
-shift overflows from users commands, so any true/false function/macro
-will work for us.
+The last sentence is just a reminder, for completeness...
 
-https://patchwork.kernel.org/patch/10484055/
-https://patchwork.kernel.org/patch/10484053/
-
-Thanks
-
->
-> Rasmus
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbMiVoAAoJEORje4g2clinyhoP/jvAlHo5XvMqqp4/1XHRIICH
-uHGOAJc4GLnbNcjNb2uBjewUlr6+nZw/bXAgDxT9SPj+k5akX+s63LTtUcv5TNZO
-DALicgU7GA5bq05M2tXQWyryQ/42635heVQsXP4u9EBiTKshONE8C/wGYCYIRg39
-dp4z6tFMV6jKXz0dK72TmhqZ/tY5un6Rl7Gx6uNV6+adU4hqVK/ntWgL6Kr579KL
-Sdb4bdaol+hft545MoC4P7P1WS0f1JmY5457lEfk9c9GjCS55ObI47ninBETos81
-VhSOoOecbGE9lUcXR2XzqqT4KCyr9bSshcrENSyjlsPZetxIxx2USbVzJkoglhRI
-rih8pvc1DQsdxEOd6DcSavUHitHtHZ6YJzMEiFrbfI51l2+nxflBPU3obZAQG5k8
-Hd64OSNL5l+WV0CG9cycVkxqqJP6SKDMUMgdMji2vnmd1O8ypv27E7K39Gb0t3tJ
-f/nGyE9G7uTzs9zYvW6XN76yQVIUUW+UYjeY4m6OOWkLBv8KAru58nV4nik2uVkb
-lqbwwN7q1UxRNw3OrnESGriGkDU5a3qwG9+P6NLV9fepZvVl4VKqcRyOm9Y2l8ch
-xZdWc43ySmvRxoDDuz+Fyghre4a6G8yoc88Q62VqSTJ6PuEM0cELUQ8qo2boXGlS
-Y9r3CsHYzsjq8G3sdAk5
-=25tp
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
+-- 
+  Henrique Holschuh
