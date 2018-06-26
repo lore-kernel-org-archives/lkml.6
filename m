@@ -2,174 +2,83 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB26C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4DDC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 770ED24053
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770ED24053
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BD7A8240F7
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:55:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7A8240F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965107AbeFZMxi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:53:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55930 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964799AbeFZMxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:53:37 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 010684067720;
-        Tue, 26 Jun 2018 12:53:37 +0000 (UTC)
-Received: from crecklin.bos.csb (ovpn-121-147.rdu2.redhat.com [10.10.121.147])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7EE78111AF22;
-        Tue, 26 Jun 2018 12:53:36 +0000 (UTC)
-Subject: Re: [v2 PATCH] add param that allows bootline control of hardened
- usercopy
-From:   Christoph von Recklinghausen <crecklin@redhat.com>
-To:     keescook@chromium.org, labbott@redhat.com, pabeni@redhat.com,
-        "linux-mm@kvack.org >> Linux-MM" <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org
-References: <1530017430-5394-1-git-send-email-crecklin@redhat.com>
-Organization: Red Hat
-Message-ID: <06bde22f-3e28-e6f3-dab0-9bc8bd5973b8@redhat.com>
-Date:   Tue, 26 Jun 2018 08:53:36 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S965139AbeFZMzE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:55:04 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42788 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S964803AbeFZMzC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:55:02 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5QCsA4V021482;
+        Tue, 26 Jun 2018 14:54:30 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2jumup8asp-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 26 Jun 2018 14:54:30 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C720C34;
+        Tue, 26 Jun 2018 12:54:27 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 71B802A59;
+        Tue, 26 Jun 2018 12:54:27 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun
+ 2018 14:54:27 +0200
+Received: from localhost (10.201.23.65) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 26 Jun 2018 14:54:26
+ +0200
+From:   Lionel Debieve <lionel.debieve@st.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@st.com>,
+        <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH 0/3] crypto: stm32 - Add power mamagement support
+Date:   Tue, 26 Jun 2018 14:52:43 +0200
+Message-ID: <1530017566-14779-1-git-send-email-lionel.debieve@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1530017430-5394-1-git-send-email-crecklin@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 12:53:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 12:53:37 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.65]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/26/2018 08:50 AM, Chris von Recklinghausen wrote:
-> Enabling HARDENED_USER_COPY causes measurable regressions in the
-> networking performances, up to 8% under UDP flood.
->
-> A generic distro may want to enable HARDENED_USER_COPY in their default
-> kernel config, but at the same time, such distro may want to be able to
-> avoid the performance penalties in with the default configuration and
-> disable the stricter check on a per-boot basis.
->
-> This change adds a boot parameter that to conditionally disable
-> HARDENED_USERCOPY at boot time.
->
-> v1->v2:
-> 	remove CONFIG_HUC_DEFAULT_OFF
-> 	default is now enabled, boot param disables
-> 	move check to __check_object_size so as to not break optimization of
-> 		__builtin_constant_p()
-> 	include linux/atomic.h before linux/jump_label.h
->
-> Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
-> ---
->  .../admin-guide/kernel-parameters.rst         |  1 +
->  .../admin-guide/kernel-parameters.txt         |  3 +++
->  include/linux/thread_info.h                   |  5 ++++
->  mm/usercopy.c                                 | 27 +++++++++++++++++++
->  4 files changed, 36 insertions(+)
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentation/admin-guide/kernel-parameters.rst
-> index b8d0bc07ed0a..87a1200a1db6 100644
-> --- a/Documentation/admin-guide/kernel-parameters.rst
-> +++ b/Documentation/admin-guide/kernel-parameters.rst
-> @@ -100,6 +100,7 @@ parameter is applicable::
->  	FB	The frame buffer device is enabled.
->  	FTRACE	Function tracing enabled.
->  	GCOV	GCOV profiling is enabled.
-> +	HUC	Hardened usercopy is enabled
->  	HW	Appropriate hardware is enabled.
->  	IA-64	IA-64 architecture is enabled.
->  	IMA     Integrity measurement architecture is enabled.
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index efc7aa7a0670..d14be0038aed 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -816,6 +816,9 @@
->  	disable=	[IPV6]
->  			See Documentation/networking/ipv6.txt.
->  
-> +	disable_hardened_usercopy [HUC]
-> +			Disable hardened usercopy checks
-> +
->  	disable_radix	[PPC]
->  			Disable RADIX MMU mode on POWER9
->  
-> diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-> index 8d8821b3689a..ab24fe2d3f87 100644
-> --- a/include/linux/thread_info.h
-> +++ b/include/linux/thread_info.h
-> @@ -109,6 +109,11 @@ static inline int arch_within_stack_frames(const void * const stack,
->  #endif
->  
->  #ifdef CONFIG_HARDENED_USERCOPY
-> +#include <linux/atomic.h>
-> +#include <linux/jump_label.h>
-> +
-> +DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
-> +
->  extern void __check_object_size(const void *ptr, unsigned long n,
->  					bool to_user);
->  
-> diff --git a/mm/usercopy.c b/mm/usercopy.c
-> index e9e9325f7638..6a1265e1a54e 100644
-> --- a/mm/usercopy.c
-> +++ b/mm/usercopy.c
-> @@ -20,6 +20,8 @@
->  #include <linux/sched/task.h>
->  #include <linux/sched/task_stack.h>
->  #include <linux/thread_info.h>
-> +#include <linux/atomic.h>
-> +#include <linux/jump_label.h>
->  #include <asm/sections.h>
->  
->  /*
-> @@ -248,6 +250,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
->   */
->  void __check_object_size(const void *ptr, unsigned long n, bool to_user)
->  {
-> +	if (static_branch_likely(&bypass_usercopy_checks))
-> +		return;
-> +
->  	/* Skip all tests if size is zero. */
->  	if (!n)
->  		return;
-> @@ -279,3 +284,25 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
->  	check_kernel_text_object((const unsigned long)ptr, n, to_user);
->  }
->  EXPORT_SYMBOL(__check_object_size);
-> +
-> +DEFINE_STATIC_KEY_FALSE(bypass_usercopy_checks);
-> +EXPORT_SYMBOL(bypass_usercopy_checks);
-> +
-> +static bool disable_huc_atboot = false;
-> +
-> +static int __init parse_disable_usercopy(char *str)
-> +{
-> +	disable_huc_atboot = true;
-> +	return 1;
-> +}
-> +
-> +static int __init set_disable_usercopy(void)
-> +{
-> +	if (disable_huc_atboot == true)
-> +		static_branch_enable(&bypass_usercopy_checks);
-> +	return 1;
-> +}
-> +
-> +__setup("disable_hardened_usercopy", parse_disable_usercopy);
-> +
-> +late_initcall(set_disable_usercopy);
+This set of patches add pm and pm_runtime feature to stm32 crypto
+drivers.
 
+Lionel Debieve (3):
+  crypto: stm32/cryp - Add power management support
+  crypto: stm32/hash - Add power management support
+  crypto: stm32/crc - Add power management support
+
+ drivers/crypto/stm32/stm32-cryp.c  | 62 +++++++++++++++++++++++++++++++++
+ drivers/crypto/stm32/stm32-hash.c  | 71 ++++++++++++++++++++++++++++++++++++++
+ drivers/crypto/stm32/stm32_crc32.c | 62 +++++++++++++++++++++++++++++++++
+ 3 files changed, 195 insertions(+)
+
+-- 
+2.7.4
 
