@@ -3,453 +3,166 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AA4C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D710DC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E75F526A8F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:31:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75F526A8F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8EE7C26A98
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:32:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE7C26A98
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935417AbeFZMbc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:31:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33950 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935173AbeFZMa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:30:58 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4A952207D4; Tue, 26 Jun 2018 14:30:56 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 145B1203B0;
-        Tue, 26 Jun 2018 14:30:56 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     "David S . Miller" <davem@davemloft.net>
-Cc:     Allan Nielsen <Allan.Nielsen@microsemi.com>,
-        razvan.stefanescu@nxp.com, po.liu@nxp.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH net-next v2 2/2] net: mscc: ocelot: add VLAN filtering
-Date:   Tue, 26 Jun 2018 14:28:49 +0200
-Message-Id: <20180626122849.13174-3-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180626122849.13174-1-alexandre.belloni@bootlin.com>
-References: <20180626122849.13174-1-alexandre.belloni@bootlin.com>
+        id S935466AbeFZMcB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:32:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934690AbeFZMb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:31:59 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2A8A440744F3;
+        Tue, 26 Jun 2018 12:31:58 +0000 (UTC)
+Received: from treble (ovpn-120-92.rdu2.redhat.com [10.10.120.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F35581117626;
+        Tue, 26 Jun 2018 12:31:55 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 07:31:54 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, linux-crypto@vger.kernel.org,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        tglx@linutronix.de, luto@kernel.org, peterz@infradead.org,
+        brgerst@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        dvlasenk@redhat.com, h.peter.anvin@intel.com,
+        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] x86/crypto: Add missing RETs
+Message-ID: <20180626123154.unjji5glpokedwal@treble>
+References: <1529242717.4472.3.camel@gmx.de>
+ <1529244178.4674.1.camel@gmx.de>
+ <20180617194747.GA21160@zn.tnic>
+ <1529289279.31745.3.camel@gmx.de>
+ <20180623103622.GA2760@zn.tnic>
+ <20180624071105.GA29407@gmail.com>
+ <20180624104449.GA20159@avx2>
+ <20180625072438.GA19063@gmail.com>
+ <20180625131932.sge43esxdb5ejoxg@treble>
+ <20180626064930.GB25879@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180626064930.GB25879@gmail.com>
+User-Agent: NeoMutt/20180323
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 26 Jun 2018 12:31:58 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 26 Jun 2018 12:31:58 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+On Tue, Jun 26, 2018 at 08:49:30AM +0200, Ingo Molnar wrote:
+> 
+> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> 
+> > On Mon, Jun 25, 2018 at 09:24:38AM +0200, Ingo Molnar wrote:
+> > > 
+> > > * Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> > > 
+> > > > On Sun, Jun 24, 2018 at 09:11:05AM +0200, Ingo Molnar wrote:
+> > > > > > Add explicit RETs to the tail calls of AEGIS and MORUS crypto algorithms
+> > > > > > otherwise they run into INT3 padding due to
+> > > > > > 
+> > > > > >   51bad67ffbce ("x86/asm: Pad assembly functions with INT3 instructions")
+> > > > > > 
+> > > > > > leading to spurious debug exceptions.
+> > > > > > 
+> > > > > > Mike Galbraith <efault@gmx.de> took care of all the remaining callsites.
+> > > > > 
+> > > > > Note that 51bad67ffbce has been zapped because it caused too many problems like 
+> > > > > this, but the explicit RETs make sense nevertheless.
+> > > > 
+> > > > So commit which found real bug(s) was zapped.
+> > > > 
+> > > > OK
+> > > 
+> > > No, what happened is that the commit was first moved into WIP.x86/debug showing 
+> > > its work-in-progress status, because it was incomplete and caused bugs:
+> > > 
+> > >    https://lore.kernel.org/lkml/20180518073644.GA8593@gmail.com/T/#u
+> > > 
+> > > ... and finally, after weeks of inaction I zapped it because I didn't see progress 
+> > > and you didn't answer my question.
+> > > 
+> > > If a fixed patch with updated tooling to detect these crashes before they occur on 
+> > > live systems is submitted we'll reconsider - it didn't get NAK-ed, it's just 
+> > > incomplete in the current form.
+> > 
+> > Hm, what happened to the objtool patch to detect these at build time?
+> > Did it not work?
+> > 
+> >   https://lore.kernel.org/lkml/20180517134934.eog2fgoby5azq5a7@treble
+> 
+> So that's still incomplete in that doesn't analyze the 32-bit build yet, right?
 
-Add hardware VLAN filtering offloading on ocelot.
+We could do INT3s on 64-bit and NOPs on 32-bit.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/net/ethernet/mscc/ocelot.c | 285 ++++++++++++++++++++++++++++-
- 1 file changed, 283 insertions(+), 2 deletions(-)
+Or, possibly even better, we could just keep NOPs everywhere and instead
+make objtool smart enough to detect function fallthroughs.  That should
+be pretty easy, actually.  It already does it for C files.
 
-diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
-index e154bdd1d12d..88d6c6396489 100644
---- a/drivers/net/ethernet/mscc/ocelot.c
-+++ b/drivers/net/ethernet/mscc/ocelot.c
-@@ -148,12 +148,191 @@ static inline int ocelot_vlant_wait_for_completion(struct ocelot *ocelot)
- 	return 0;
- }
+Something like the below should work, though it's still got a few
+issues:
+
+  a) objtool is currently disabled for crypto code because it doesn't
+     yet understand crypto stack re-alignments (which really needs
+     fixing anyway); and
+
+  b) it complains about the blank xen hypercalls falling through.  Those
+     aren't actual functions anyway, so we should probably annotate
+     those somehow so that objtool ignores them anyway.
+
+I'm a bit swamped at the moment but I can fix those once I get a little
+more bandwidth.  I at least verified that this patch caught the crypto
+missing RETs.
+
+
+diff --git a/arch/x86/crypto/Makefile b/arch/x86/crypto/Makefile
+index a450ad573dcb..a2c52eec2863 100644
+--- a/arch/x86/crypto/Makefile
++++ b/arch/x86/crypto/Makefile
+@@ -3,8 +3,6 @@
+ # Arch-specific CryptoAPI modules.
+ #
  
-+static int ocelot_vlant_set_mask(struct ocelot *ocelot, u16 vid, u32 mask)
-+{
-+	/* Select the VID to configure */
-+	ocelot_write(ocelot, ANA_TABLES_VLANTIDX_V_INDEX(vid),
-+		     ANA_TABLES_VLANTIDX);
-+	/* Set the vlan port members mask and issue a write command */
-+	ocelot_write(ocelot, ANA_TABLES_VLANACCESS_VLAN_PORT_MASK(mask) |
-+			     ANA_TABLES_VLANACCESS_CMD_WRITE,
-+		     ANA_TABLES_VLANACCESS);
-+
-+	return ocelot_vlant_wait_for_completion(ocelot);
-+}
-+
-+static void ocelot_vlan_mode(struct ocelot_port *port,
-+			     netdev_features_t features)
-+{
-+	struct ocelot *ocelot = port->ocelot;
-+	u8 p = port->chip_port;
-+	u32 val;
-+
-+	/* Filtering */
-+	val = ocelot_read(ocelot, ANA_VLANMASK);
-+	if (features & NETIF_F_HW_VLAN_CTAG_FILTER)
-+		val |= BIT(p);
-+	else
-+		val &= ~BIT(p);
-+	ocelot_write(ocelot, val, ANA_VLANMASK);
-+}
-+
-+static void ocelot_vlan_port_apply(struct ocelot *ocelot,
-+				   struct ocelot_port *port)
-+{
-+	u32 val;
-+
-+	/* Ingress clasification (ANA_PORT_VLAN_CFG) */
-+	/* Default vlan to clasify for untagged frames (may be zero) */
-+	val = ANA_PORT_VLAN_CFG_VLAN_VID(port->pvid);
-+	if (port->vlan_aware)
-+		val |= ANA_PORT_VLAN_CFG_VLAN_AWARE_ENA |
-+		       ANA_PORT_VLAN_CFG_VLAN_POP_CNT(1);
-+
-+	ocelot_rmw_gix(ocelot, val,
-+		       ANA_PORT_VLAN_CFG_VLAN_VID_M |
-+		       ANA_PORT_VLAN_CFG_VLAN_AWARE_ENA |
-+		       ANA_PORT_VLAN_CFG_VLAN_POP_CNT_M,
-+		       ANA_PORT_VLAN_CFG, port->chip_port);
-+
-+	/* Drop frames with multicast source address */
-+	val = ANA_PORT_DROP_CFG_DROP_MC_SMAC_ENA;
-+	if (port->vlan_aware && !port->vid)
-+		/* If port is vlan-aware and tagged, drop untagged and priority
-+		 * tagged frames.
-+		 */
-+		val |= ANA_PORT_DROP_CFG_DROP_UNTAGGED_ENA |
-+		       ANA_PORT_DROP_CFG_DROP_PRIO_S_TAGGED_ENA |
-+		       ANA_PORT_DROP_CFG_DROP_PRIO_C_TAGGED_ENA;
-+	ocelot_write_gix(ocelot, val, ANA_PORT_DROP_CFG, port->chip_port);
-+
-+	/* Egress configuration (REW_TAG_CFG): VLAN tag type to 8021Q. */
-+	val = REW_TAG_CFG_TAG_TPID_CFG(0);
-+
-+	if (port->vlan_aware) {
-+		if (port->vid)
-+			/* Tag all frames except when VID == DEFAULT_VLAN */
-+			val |= REW_TAG_CFG_TAG_CFG(1);
-+		else
-+			/* Tag all frames */
-+			val |= REW_TAG_CFG_TAG_CFG(3);
-+	}
-+	ocelot_rmw_gix(ocelot, val,
-+		       REW_TAG_CFG_TAG_TPID_CFG_M |
-+		       REW_TAG_CFG_TAG_CFG_M,
-+		       REW_TAG_CFG, port->chip_port);
-+
-+	/* Set default VLAN and tag type to 8021Q. */
-+	val = REW_PORT_VLAN_CFG_PORT_TPID(ETH_P_8021Q) |
-+	      REW_PORT_VLAN_CFG_PORT_VID(port->vid);
-+	ocelot_rmw_gix(ocelot, val,
-+		       REW_PORT_VLAN_CFG_PORT_TPID_M |
-+		       REW_PORT_VLAN_CFG_PORT_VID_M,
-+		       REW_PORT_VLAN_CFG, port->chip_port);
-+}
-+
-+static int ocelot_vlan_vid_add(struct net_device *dev, u16 vid, bool pvid,
-+			       bool untagged)
-+{
-+	struct ocelot_port *port = netdev_priv(dev);
-+	struct ocelot *ocelot = port->ocelot;
-+	int ret;
-+
-+	/* Add the port MAC address to with the right VLAN information */
-+	ocelot_mact_learn(ocelot, PGID_CPU, dev->dev_addr, vid,
-+			  ENTRYTYPE_LOCKED);
-+
-+	/* Make the port a member of the VLAN */
-+	ocelot->vlan_mask[vid] |= BIT(port->chip_port);
-+	ret = ocelot_vlant_set_mask(ocelot, vid, ocelot->vlan_mask[vid]);
-+	if (ret)
-+		return ret;
-+
-+	/* Default ingress vlan classification */
-+	if (pvid)
-+		port->pvid = vid;
-+
-+	/* Untagged egress vlan clasification */
-+	if (untagged)
-+		port->vid = vid;
-+
-+	ocelot_vlan_port_apply(ocelot, port);
-+
-+	return 0;
-+}
-+
-+static int ocelot_vlan_vid_del(struct net_device *dev, u16 vid)
-+{
-+	struct ocelot_port *port = netdev_priv(dev);
-+	struct ocelot *ocelot = port->ocelot;
-+	int ret;
-+
-+	/* 8021q removes VID 0 on module unload for all interfaces
-+	 * with VLAN filtering feature. We need to keep it to receive
-+	 * untagged traffic.
-+	 */
-+	if (vid == 0)
-+		return 0;
-+
-+	/* Del the port MAC address to with the right VLAN information */
-+	ocelot_mact_forget(ocelot, dev->dev_addr, vid);
-+
-+	/* Stop the port from being a member of the vlan */
-+	ocelot->vlan_mask[vid] &= ~BIT(port->chip_port);
-+	ret = ocelot_vlant_set_mask(ocelot, vid, ocelot->vlan_mask[vid]);
-+	if (ret)
-+		return ret;
-+
-+	/* Ingress */
-+	if (port->pvid == vid)
-+		port->pvid = 0;
-+
-+	/* Egress */
-+	if (port->vid == vid)
-+		port->vid = 0;
-+
-+	ocelot_vlan_port_apply(ocelot, port);
-+
-+	return 0;
-+}
-+
- static void ocelot_vlan_init(struct ocelot *ocelot)
- {
-+	u16 port, vid;
-+
- 	/* Clear VLAN table, by default all ports are members of all VLANs */
- 	ocelot_write(ocelot, ANA_TABLES_VLANACCESS_CMD_INIT,
- 		     ANA_TABLES_VLANACCESS);
- 	ocelot_vlant_wait_for_completion(ocelot);
-+
-+	/* Configure the port VLAN memberships */
-+	for (vid = 1; vid < VLAN_N_VID; vid++) {
-+		ocelot->vlan_mask[vid] = 0;
-+		ocelot_vlant_set_mask(ocelot, vid, ocelot->vlan_mask[vid]);
-+	}
-+
-+	/* Because VLAN filtering is enabled, we need VID 0 to get untagged
-+	 * traffic.  It is added automatically if 8021q module is loaded, but
-+	 * we can't rely on it since module may be not loaded.
-+	 */
-+	ocelot->vlan_mask[0] = GENMASK(ocelot->num_phys_ports - 1, 0);
-+	ocelot_vlant_set_mask(ocelot, 0, ocelot->vlan_mask[0]);
-+
-+	/* Configure the CPU port to be VLAN aware */
-+	ocelot_write_gix(ocelot, ANA_PORT_VLAN_CFG_VLAN_VID(0) |
-+				 ANA_PORT_VLAN_CFG_VLAN_AWARE_ENA |
-+				 ANA_PORT_VLAN_CFG_VLAN_POP_CNT(1),
-+			 ANA_PORT_VLAN_CFG, ocelot->num_phys_ports);
-+
-+	/* Set vlan ingress filter mask to all ports but the CPU port by
-+	 * default.
-+	 */
-+	ocelot_write(ocelot, GENMASK(9, 0), ANA_VLANMASK);
-+
-+	for (port = 0; port < ocelot->num_phys_ports; port++) {
-+		ocelot_write_gix(ocelot, 0, REW_PORT_VLAN_CFG, port);
-+		ocelot_write_gix(ocelot, 0, REW_TAG_CFG, port);
-+	}
- }
+-OBJECT_FILES_NON_STANDARD := y
+-
+ avx_supported := $(call as-instr,vpxor %xmm0$(comma)%xmm0$(comma)%xmm0,yes,no)
+ avx2_supported := $(call as-instr,vpgatherdd %ymm0$(comma)(%eax$(comma)%ymm1\
+ 				$(comma)4)$(comma)%ymm2,yes,no)
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 2928939b98ec..f740fd828cba 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1798,13 +1798,14 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 	while (1) {
+ 		next_insn = next_insn_same_sec(file, insn);
  
- /* Watermark encode
-@@ -538,6 +717,20 @@ static int ocelot_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
- 	struct ocelot_port *port = netdev_priv(dev);
- 	struct ocelot *ocelot = port->ocelot;
- 
-+	if (!vid) {
-+		if (!port->vlan_aware)
-+			/* If the bridge is not VLAN aware and no VID was
-+			 * provided, set it to pvid to ensure the MAC entry
-+			 * matches incoming untagged packets
-+			 */
-+			vid = port->pvid;
-+		else
-+			/* If the bridge is VLAN aware a VID must be provided as
-+			 * otherwise the learnt entry wouldn't match any frame.
-+			 */
-+			return -EINVAL;
-+	}
-+
- 	return ocelot_mact_learn(ocelot, port->chip_port, addr, vid,
- 				 ENTRYTYPE_NORMAL);
- }
-@@ -689,6 +882,30 @@ static int ocelot_fdb_dump(struct sk_buff *skb, struct netlink_callback *cb,
- 	return ret;
- }
- 
-+static int ocelot_vlan_rx_add_vid(struct net_device *dev, __be16 proto,
-+				  u16 vid)
-+{
-+	return ocelot_vlan_vid_add(dev, vid, false, true);
-+}
-+
-+static int ocelot_vlan_rx_kill_vid(struct net_device *dev, __be16 proto,
-+				   u16 vid)
-+{
-+	return ocelot_vlan_vid_del(dev, vid);
-+}
-+
-+static int ocelot_set_features(struct net_device *dev,
-+			       netdev_features_t features)
-+{
-+	struct ocelot_port *port = netdev_priv(dev);
-+	netdev_features_t changed = dev->features ^ features;
-+
-+	if (changed & NETIF_F_HW_VLAN_CTAG_FILTER)
-+		ocelot_vlan_mode(port, features);
-+
-+	return 0;
-+}
-+
- static const struct net_device_ops ocelot_port_netdev_ops = {
- 	.ndo_open			= ocelot_port_open,
- 	.ndo_stop			= ocelot_port_stop,
-@@ -700,6 +917,9 @@ static const struct net_device_ops ocelot_port_netdev_ops = {
- 	.ndo_fdb_add			= ocelot_fdb_add,
- 	.ndo_fdb_del			= ocelot_fdb_del,
- 	.ndo_fdb_dump			= ocelot_fdb_dump,
-+	.ndo_vlan_rx_add_vid		= ocelot_vlan_rx_add_vid,
-+	.ndo_vlan_rx_kill_vid		= ocelot_vlan_rx_kill_vid,
-+	.ndo_set_features		= ocelot_set_features,
- };
- 
- static void ocelot_get_strings(struct net_device *netdev, u32 sset, u8 *data)
-@@ -915,6 +1135,10 @@ static int ocelot_port_attr_set(struct net_device *dev,
- 	case SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME:
- 		ocelot_port_attr_ageing_set(ocelot_port, attr->u.ageing_time);
- 		break;
-+	case SWITCHDEV_ATTR_ID_BRIDGE_VLAN_FILTERING:
-+		ocelot_port->vlan_aware = attr->u.vlan_filtering;
-+		ocelot_vlan_port_apply(ocelot_port->ocelot, ocelot_port);
-+		break;
- 	case SWITCHDEV_ATTR_ID_BRIDGE_MC_DISABLED:
- 		ocelot_port_attr_mc_set(ocelot_port, !attr->u.mc_disabled);
- 		break;
-@@ -926,6 +1150,40 @@ static int ocelot_port_attr_set(struct net_device *dev,
- 	return err;
- }
- 
-+static int ocelot_port_obj_add_vlan(struct net_device *dev,
-+				    const struct switchdev_obj_port_vlan *vlan,
-+				    struct switchdev_trans *trans)
-+{
-+	int ret;
-+	u16 vid;
-+
-+	for (vid = vlan->vid_begin; vid <= vlan->vid_end; vid++) {
-+		ret = ocelot_vlan_vid_add(dev, vid,
-+					  vlan->flags & BRIDGE_VLAN_INFO_PVID,
-+					  vlan->flags & BRIDGE_VLAN_INFO_UNTAGGED);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ocelot_port_vlan_del_vlan(struct net_device *dev,
-+				     const struct switchdev_obj_port_vlan *vlan)
-+{
-+	int ret;
-+	u16 vid;
-+
-+	for (vid = vlan->vid_begin; vid <= vlan->vid_end; vid++) {
-+		ret = ocelot_vlan_vid_del(dev, vid);
-+
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static struct ocelot_multicast *ocelot_multicast_get(struct ocelot *ocelot,
- 						     const unsigned char *addr,
- 						     u16 vid)
-@@ -952,7 +1210,7 @@ static int ocelot_port_obj_add_mdb(struct net_device *dev,
- 	bool new = false;
- 
- 	if (!vid)
--		vid = 1;
-+		vid = port->pvid;
- 
- 	mc = ocelot_multicast_get(ocelot, mdb->addr, vid);
- 	if (!mc) {
-@@ -993,7 +1251,7 @@ static int ocelot_port_obj_del_mdb(struct net_device *dev,
- 	u16 vid = mdb->vid;
- 
- 	if (!vid)
--		vid = 1;
-+		vid = port->pvid;
- 
- 	mc = ocelot_multicast_get(ocelot, mdb->addr, vid);
- 	if (!mc)
-@@ -1025,6 +1283,11 @@ static int ocelot_port_obj_add(struct net_device *dev,
- 	int ret = 0;
- 
- 	switch (obj->id) {
-+	case SWITCHDEV_OBJ_ID_PORT_VLAN:
-+		ret = ocelot_port_obj_add_vlan(dev,
-+					       SWITCHDEV_OBJ_PORT_VLAN(obj),
-+					       trans);
-+		break;
- 	case SWITCHDEV_OBJ_ID_PORT_MDB:
- 		ret = ocelot_port_obj_add_mdb(dev, SWITCHDEV_OBJ_PORT_MDB(obj),
- 					      trans);
-@@ -1042,6 +1305,10 @@ static int ocelot_port_obj_del(struct net_device *dev,
- 	int ret = 0;
- 
- 	switch (obj->id) {
-+	case SWITCHDEV_OBJ_ID_PORT_VLAN:
-+		ret = ocelot_port_vlan_del_vlan(dev,
-+						SWITCHDEV_OBJ_PORT_VLAN(obj));
-+		break;
- 	case SWITCHDEV_OBJ_ID_PORT_MDB:
- 		ret = ocelot_port_obj_del_mdb(dev, SWITCHDEV_OBJ_PORT_MDB(obj));
- 		break;
-@@ -1087,6 +1354,11 @@ static void ocelot_port_bridge_leave(struct ocelot_port *ocelot_port,
- 
- 	if (!ocelot->bridge_mask)
- 		ocelot->hw_bridge_dev = NULL;
-+
-+	/* Clear bridge vlan settings before calling ocelot_vlan_port_apply */
-+	ocelot_port->vlan_aware = 0;
-+	ocelot_port->pvid = 0;
-+	ocelot_port->vid = 0;
- }
- 
- static void ocelot_set_aggr_pgids(struct ocelot *ocelot)
-@@ -1245,6 +1517,9 @@ static int ocelot_netdevice_port_event(struct net_device *dev,
- 			else
- 				ocelot_port_bridge_leave(ocelot_port,
- 							 info->upper_dev);
-+
-+			ocelot_vlan_port_apply(ocelot_port->ocelot,
-+					       ocelot_port);
+-		if (file->c_file && func && insn->func && func != insn->func->pfunc) {
++		if (func && insn->func && func != insn->func->pfunc) {
+ 			WARN("%s() falls through to next function %s()",
+ 			     func->name, insn->func->name);
+ 			return 1;
  		}
- 		if (netif_is_lag_master(info->upper_dev)) {
- 			if (info->linking)
-@@ -1330,6 +1605,9 @@ int ocelot_probe_port(struct ocelot *ocelot, u8 port,
- 	dev->ethtool_ops = &ocelot_ethtool_ops;
- 	dev->switchdev_ops = &ocelot_port_switchdev_ops;
  
-+	dev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER;
-+	dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
-+
- 	memcpy(dev->dev_addr, ocelot->base_mac, ETH_ALEN);
- 	dev->dev_addr[ETH_ALEN - 1] += port;
- 	ocelot_mact_learn(ocelot, PGID_CPU, dev->dev_addr, ocelot_port->pvid,
-@@ -1341,6 +1619,9 @@ int ocelot_probe_port(struct ocelot *ocelot, u8 port,
- 		goto err_register_netdev;
- 	}
+-		func = insn->func ? insn->func->pfunc : NULL;
++		if (insn->type != INSN_NOP)
++			func = insn->func ? insn->func->pfunc : NULL;
  
-+	/* Basic L2 initialization */
-+	ocelot_vlan_port_apply(ocelot, ocelot_port);
-+
- 	return 0;
- 
- err_register_netdev:
--- 
-2.18.0
-
+ 		if (func && insn->ignore) {
+ 			WARN_FUNC("BUG: why am I validating an ignored function?",
