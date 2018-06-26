@@ -2,91 +2,103 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D27C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09965C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E170B25E8E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:31:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F1525E8E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:32:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6XFsC2/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E170B25E8E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="o+8VhsHk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F1525E8E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=infineon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeFZPbj (ORCPT
+        id S1752114AbeFZPcG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:31:39 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:45250 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbeFZPbh (ORCPT
+        Tue, 26 Jun 2018 11:32:06 -0400
+Received: from smtp2.infineon.com ([217.10.52.18]:20228 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbeFZPcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:31:37 -0400
-Received: by mail-lf0-f68.google.com with SMTP id m13-v6so7188849lfb.12
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:31:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=B7+9LY2tNp/C0Mli/uekdwlXVVqMDxTnhJMNz5MMPHI=;
-        b=N6XFsC2/S6bAQ2DuOSdBDY0YZP2PG9nEzE7InaKr+T9HoLaBNvKgAbVSbDYynmfucX
-         r3v/Tdm2Jt8xzpwbpyLefSx/AFsdYyEy2mR4BqqnIh+7uSlreNoK2Ahkm5gbHUHNReeP
-         MvGGF06APcMn2AHLjQHwXv9fZQqKSAu60GNm8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=B7+9LY2tNp/C0Mli/uekdwlXVVqMDxTnhJMNz5MMPHI=;
-        b=rOpx3OX0fmq4ZUJNSMp8BFT/spezrPkznc5qFkdzYw0WU71EUjA91cTFx/oGNAu0SC
-         zCO+U9U6ihnMgR1hI+deRbar2vgm+DgDEhZR+XabCsJCwzfsGBGkOGnCDDYTSB1rJEEX
-         g91Sd2gAbruji5aR1ivezVzvTD8TAs33GmgUfgqVXJPpLSdOJ/vSApnc6HktN983GJQl
-         B1NU9jBZUauqEYom4eCSje/FzIqGe85A2W8Zjh0YffMyiSs975ai191nc1PNMHE9u/5G
-         iPJCgU8XIOqTL7qnN3+08Ns58qmuwCvdeKT6zv3/TQBD3JCIOzoLQ6PqlX/qYK0WqP/R
-         6IJw==
-X-Gm-Message-State: APt69E3dsUjlXO++wH1PphjjjRrETXNqg1fc7tkt4PDCUu36mrK1bYgk
-        TohUMq619VYSKbmb8HjH9JoIog==
-X-Google-Smtp-Source: AAOMgpfYQhuMawt26m2NyWU+kdQto09IA5xnG1sYoBGjLdNO0A/95u3+5FAtctaFOzFqMU+J15e6XQ==
-X-Received: by 2002:a19:2a5b:: with SMTP id f88-v6mr1567456lfl.63.1530027096317;
-        Tue, 26 Jun 2018 08:31:36 -0700 (PDT)
-Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
-        by smtp.gmail.com with ESMTPSA id h6-v6sm298122ljg.16.2018.06.26.08.31.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 08:31:35 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     ysato@users.sourceforge.jp, dalias@libc.org
-Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] sh: configs: remove no longer needed config option
-Date:   Tue, 26 Jun 2018 17:31:25 +0200
-Message-Id: <20180626153125.515-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Tue, 26 Jun 2018 11:32:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1530027124; x=1561563124;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=8ftjibznq9nGlfuGeASch1wLZ9zMXEp5tmadRq+oqeg=;
+  b=o+8VhsHkt1832DXgi677G5KlDvINgnPeTbPvJZ0J2DAFYwiGWHyzWOBj
+   y9zk0ygKpNsmV70ihxR4AZCEdJRmm3XRP0OUnvbuVR8PaZ+uJwdh6UYjN
+   tudwzPcm3vWNjK+4Z3hXtUQMIgUKvDGMi/5yB/lMbgaGTO1Ahsx82uMJS
+   0=;
+X-SBRS: None
+X-IronPort-AV: E=McAfee;i="5900,7806,8935"; a="69990639"
+X-IronPort-AV: E=Sophos;i="5.51,274,1526335200"; 
+   d="scan'208";a="69990639"
+Received: from unknown (HELO mucxv003.muc.infineon.com) ([172.23.11.20])
+  by smtp2.infineon.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2018 17:32:02 +0200
+Received: from MUCSE706.infineon.com (MUCSE706.infineon.com [172.23.7.80])
+        by mucxv003.muc.infineon.com (Postfix) with ESMTPS;
+        Tue, 26 Jun 2018 17:32:02 +0200 (CEST)
+Received: from MUCSE716.infineon.com (172.23.7.67) by MUCSE706.infineon.com
+ (172.23.7.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1466.3; Tue, 26
+ Jun 2018 17:32:02 +0200
+Received: from schwaric-VirtualBox.agb.infineon.com (172.23.8.247) by
+ MUCSE716.infineon.com (172.23.7.67) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.1.1466.3; Tue, 26 Jun 2018 17:32:02 +0200
+From:   Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+To:     <linux-integrity@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <peterhuewe@gmx.de>,
+        <jarkko.sakkinen@linux.intel.com>, <jgg@ziepe.ca>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>,
+        Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+Subject: [PATCH v5] tpm: Return the actual size when receiving an unsupported command
+Date:   Tue, 26 Jun 2018 17:31:45 +0200
+Message-ID: <20180626153145.7408-1-Ricardo.Schwarzmeier@infineon.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [172.23.8.247]
+X-ClientProxiedBy: MUCSE715.infineon.com (172.23.7.66) To
+ MUCSE716.infineon.com (172.23.7.67)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit eedf265aa003 ("devpts: Make each mount of devpts an
-independent filesystem.") CONFIG_DEVPTS_MULTIPLE_INSTANCES isn't needed
-in the defconfig anymore.
+The userpace expects to read the number of bytes stated in the header.
+Returning the size of the buffer instead would be unexpected.
+Fixes: 095531f891e6 ("tpm: return a TPM_RC_COMMAND_CODE response if command is not implemented")
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
 ---
- arch/sh/configs/sh7785lcr_32bit_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+v2: *Add fixes tag
+v3: *Avoid endianness problem
+    *Make commit message more clear
+v4: *Fix commit message style
+v5: *Add change log
 
-diff --git a/arch/sh/configs/sh7785lcr_32bit_defconfig b/arch/sh/configs/sh7785lcr_32bit_defconfig
-index 2ddf5ca7094e..7aa78ced9ffa 100644
---- a/arch/sh/configs/sh7785lcr_32bit_defconfig
-+++ b/arch/sh/configs/sh7785lcr_32bit_defconfig
-@@ -72,7 +72,6 @@ CONFIG_VT_HW_CONSOLE_BINDING=y
- CONFIG_SERIAL_SH_SCI=y
- CONFIG_SERIAL_SH_SCI_NR_UARTS=6
- CONFIG_SERIAL_SH_SCI_CONSOLE=y
--CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
- # CONFIG_LEGACY_PTYS is not set
- # CONFIG_HW_RANDOM is not set
- CONFIG_I2C=y
+ drivers/char/tpm/tpm-interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index e32f6e85dc6d..7f2e2d54894d 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -423,7 +423,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+ 		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+ 						  TSS2_RESMGR_TPM_RC_LAYER);
+-		return bufsiz;
++		return sizeof(*header);
+ 	}
+ 
+ 	if (bufsiz > TPM_BUFSIZE)
 -- 
-2.18.0
+2.17.1
 
