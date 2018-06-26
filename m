@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1132C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F86C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93DB826323
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:13:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93DB826323
+	by mail.kernel.org (Postfix) with ESMTP id 5015C26326
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:13:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5015C26326
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935479AbeFZANG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 20:13:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48542 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934306AbeFZAHE (ORCPT
+        id S935466AbeFZANE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 20:13:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40564 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934338AbeFZAHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 20:07:04 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q04ixi029824
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q03kZ2068840
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:03 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju975ar6q-1
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju96qapmk-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:02 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:03 -0400
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Mon, 25 Jun 2018 20:07:01 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Jun 2018 20:06:57 -0400
+        Mon, 25 Jun 2018 20:06:58 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06ucp61997090
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06ub98454556
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 00:06:56 GMT
+        Tue, 26 Jun 2018 00:06:57 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4072DB2066;
+        by IMSVA (Postfix) with ESMTP id 90512B2065;
         Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 19C7AB2078;
+        by IMSVA (Postfix) with ESMTP id 5E1C0B205F;
         Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 3FBA916CA0A1; Mon, 25 Jun 2018 17:09:01 -0700 (PDT)
+        id 54DA116CA0A4; Mon, 25 Jun 2018 17:09:01 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,20 +60,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 15/40] rcu: Convert grace-period requests to ->gp_seq
-Date:   Mon, 25 Jun 2018 17:08:34 -0700
+Subject: [PATCH tip/core/rcu 18/40] rcu: Move from ->need_future_gp[] to ->gp_seq_needed
+Date:   Mon, 25 Jun 2018 17:08:37 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626000841.GA15696@linux.vnet.ibm.com>
 References: <20180626000841.GA15696@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062600-2213-0000-0000-000002BFDEBE
+x-cbid: 18062600-0064-0000-0000-000003202F95
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01052327; UDB=6.00539464; IPR=6.00830253;
- MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:07:00
+ MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:07:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062600-2214-0000-0000-00005A9B9536
-Message-Id: <20180626000859.23572-15-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062600-0065-0000-0000-000039B7444C
+Message-Id: <20180626000859.23572-18-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,231 +86,187 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit converts the grace-period request code paths from ->completed
-and ->gpnum to ->gp_seq.  The need_future_gp_element() macro encapsulates
-the shift operation required to use ->gp_seq as an index to the
-->need_future_gp[] array.  The rcu_cbs_completed() function is removed
-in favor of the rcu_seq_snap() function.  The rcu_start_this_gp()
-gets some temporary consistency checks and uses rcu_seq_done(),
-rcu_seq_current(), rcu_seq_state(), and rcu_gp_in_progress() in place
-of the earlier open-coded comparisons of ->gpnum and ->completed.
-The rcu_future_gp_cleanup() function replaces use of ->completed
-with ->gp_seq.  The rcu_accelerate_cbs() function replaces a call to
-rcu_cbs_completed() with one to rcu_seq_snap().  The rcu_advance_cbs()
-function replaces an access to >completed with one to ->gp_seq and adds
-some temporary warnings.  The rcu_nocb_wait_gp() function replaces a
-call to rcu_cbs_completed() with one to rcu_seq_snap() and an open-coded
-comparison with rcu_seq_done().
+One problem with the ->need_future_gp[] array is that the grace-period
+assignment of each element changes as the grace periods complete.
+This means that it is necessary to hold a lock when checking this
+array to learn if a given grace period has already been requested.
+This increase lock contention, which is the opposite of helpful.
+This commit therefore replaces the ->need_future_gp[] with a single
+->gp_seq_needed value and keeps it updated in the rcu_data structure.
 
-The temporary warnings will be removed when the various ->gpnum and
-->completed fields are removed.  Their purpose is to locate code who
-might still be using ->gpnum and ->completed.  (Much easier that way
-than trying to trace down the causes of too-short grace periods and
-grace-period hangs!)
+This will enable reliable lockless checking of whether or not a given
+grace period has already been requested.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c        | 84 ++++++++++------------------------------
- kernel/rcu/tree.h        |  2 +-
- kernel/rcu/tree_plugin.h |  6 +--
- 3 files changed, 24 insertions(+), 68 deletions(-)
+ kernel/rcu/tree.c | 33 ++++++++++++++++++---------------
+ kernel/rcu/tree.h | 19 ++-----------------
+ 2 files changed, 20 insertions(+), 32 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 85d14ae49ffc..6f9a564e82d3 100644
+index 779db9644177..e5d1369e099f 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -1548,52 +1548,6 @@ void rcu_cpu_stall_reset(void)
- 		WRITE_ONCE(rsp->jiffies_stall, jiffies + ULONG_MAX / 2);
- }
- 
--/*
-- * Determine the value that ->completed will have at the end of the
-- * next subsequent grace period.  This is used to tag callbacks so that
-- * a CPU can invoke callbacks in a timely fashion even if that CPU has
-- * been dyntick-idle for an extended period with callbacks under the
-- * influence of RCU_FAST_NO_HZ.
-- *
-- * The caller must hold rnp->lock with interrupts disabled.
-- */
--static unsigned long rcu_cbs_completed(struct rcu_state *rsp,
--				       struct rcu_node *rnp)
--{
--	raw_lockdep_assert_held_rcu_node(rnp);
--
--	/*
--	 * If RCU is idle, we just wait for the next grace period.
--	 * But we can only be sure that RCU is idle if we are looking
--	 * at the root rcu_node structure -- otherwise, a new grace
--	 * period might have started, but just not yet gotten around
--	 * to initializing the current non-root rcu_node structure.
--	 */
--	if (rcu_get_root(rsp) == rnp && rnp->gpnum == rnp->completed)
--		return rnp->completed + 1;
--
--	/*
--	 * If the current rcu_node structure believes that RCU is
--	 * idle, and if the rcu_state structure does not yet reflect
--	 * the start of a new grace period, then the next grace period
--	 * will suffice.  The memory barrier is needed to accurately
--	 * sample the rsp->gpnum, and pairs with the second lock
--	 * acquisition in rcu_gp_init(), which is augmented with
--	 * smp_mb__after_unlock_lock() for this purpose.
--	 */
--	if (rnp->gpnum == rnp->completed) {
--		smp_mb(); /* See above block comment. */
--		if (READ_ONCE(rsp->gpnum) == rnp->completed)
--			return rnp->completed + 1;
--	}
--
--	/*
--	 * Otherwise, wait for a possible partial grace period and
--	 * then the subsequent full grace period.
--	 */
--	return rnp->completed + 2;
--}
--
- /* Trace-event wrapper function for trace_rcu_future_grace_period.  */
- static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
- 			      unsigned long c, const char *s)
-@@ -1629,16 +1583,16 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
- 	 * not be released.
- 	 */
- 	raw_lockdep_assert_held_rcu_node(rnp);
-+	WARN_ON_ONCE(c & 0x2); /* Catch any lingering use of ->gpnum. */
-+	WARN_ON_ONCE(((rnp->completed << RCU_SEQ_CTR_SHIFT) >> RCU_SEQ_CTR_SHIFT) != rcu_seq_ctr(rnp->gp_seq)); /* Catch any ->completed/->gp_seq mismatches. */
- 	trace_rcu_this_gp(rnp, rdp, c, TPS("Startleaf"));
+@@ -1560,7 +1560,7 @@ static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+ /*
+  * Start the specified grace period, as needed to handle newly arrived
+  * callbacks.  The required future grace periods are recorded in each
+- * rcu_node structure's ->need_future_gp[] field.  Returns true if there
++ * rcu_node structure's ->gp_seq_needed field.  Returns true if there
+  * is reason to awaken the grace-period kthread.
+  *
+  * The caller must hold the specified rcu_node structure's ->lock, which
+@@ -1589,14 +1589,14 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
  	for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
  		if (rnp_root != rnp)
  			raw_spin_lock_rcu_node(rnp_root);
--		WARN_ON_ONCE(ULONG_CMP_LT(rnp_root->gpnum +
--					  need_future_gp_mask(), c));
- 		if (need_future_gp_element(rnp_root, c) ||
--		    ULONG_CMP_GE(rnp_root->gpnum, c) ||
-+		    rcu_seq_done(&rnp_root->gp_seq, c) ||
+-		if (need_future_gp_element(rnp_root, c) ||
++		if (ULONG_CMP_GE(rnp_root->gp_seq_needed, c) ||
+ 		    rcu_seq_done(&rnp_root->gp_seq, c) ||
  		    (rnp != rnp_root &&
--		     rnp_root->gpnum != rnp_root->completed)) {
-+		     rcu_seq_state(rcu_seq_current(&rnp_root->gp_seq)))) {
+ 		     rcu_seq_state(rcu_seq_current(&rnp_root->gp_seq)))) {
  			trace_rcu_this_gp(rnp_root, rdp, c, TPS("Prestarted"));
  			goto unlock_out;
  		}
-@@ -1650,7 +1604,7 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
- 	}
- 
- 	/* If GP already in progress, just leave, otherwise start one. */
--	if (rnp_root->gpnum != rnp_root->completed) {
-+	if (rcu_gp_in_progress(rsp)) {
- 		trace_rcu_this_gp(rnp_root, rdp, c, TPS("Startedleafroot"));
- 		goto unlock_out;
- 	}
-@@ -1675,7 +1629,7 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
-  */
- static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
- {
--	unsigned long c = rnp->completed;
-+	unsigned long c = rnp->gp_seq;
+-		need_future_gp_element(rnp_root, c) = true;
++		rnp_root->gp_seq_needed = c;
+ 		if (rnp_root != rnp && rnp_root->parent != NULL)
+ 			raw_spin_unlock_rcu_node(rnp_root);
+ 		if (!rnp_root->parent)
+@@ -1633,8 +1633,9 @@ static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
  	bool needmore;
  	struct rcu_data *rdp = this_cpu_ptr(rsp->rda);
  
-@@ -1703,14 +1657,14 @@ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
- }
+-	need_future_gp_element(rnp, c) = false;
+-	needmore = need_any_future_gp(rnp);
++	needmore = ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed);
++	if (!needmore)
++		rnp->gp_seq_needed = rnp->gp_seq; /* Avoid counter wrap. */
+ 	trace_rcu_this_gp(rnp, rdp, c,
+ 			  needmore ? TPS("CleanupMore") : TPS("Cleanup"));
+ 	return needmore;
+@@ -2046,7 +2047,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
+ 	rsp->gp_state = RCU_GP_IDLE;
+ 	/* Check for GP requests since above loop. */
+ 	rdp = this_cpu_ptr(rsp->rda);
+-	if (need_any_future_gp(rnp)) {
++	if (ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed)) {
+ 		trace_rcu_this_gp(rnp, rdp, rsp->completed - 1,
+ 				  TPS("CleanupMore"));
+ 		needgp = true;
+@@ -2700,7 +2701,8 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
+ 	struct rcu_node *rnp_root = rcu_get_root(rsp);
+ 	static atomic_t warned = ATOMIC_INIT(0);
  
- /*
-- * If there is room, assign a ->completed number to any callbacks on
-- * this CPU that have not already been assigned.  Also accelerate any
-- * callbacks that were previously assigned a ->completed number that has
-- * since proven to be too conservative, which can happen if callbacks get
-- * assigned a ->completed number while RCU is idle, but with reference to
-- * a non-root rcu_node structure.  This function is idempotent, so it does
-- * not hurt to call it repeatedly.  Returns an flag saying that we should
-- * awaken the RCU grace-period kthread.
-+ * If there is room, assign a ->gp_seq number to any callbacks on this
-+ * CPU that have not already been assigned.  Also accelerate any callbacks
-+ * that were previously assigned a ->gp_seq number that has since proven
-+ * to be too conservative, which can happen if callbacks get assigned a
-+ * ->gp_seq number while RCU is idle, but with reference to a non-root
-+ * rcu_node structure.  This function is idempotent, so it does not hurt
-+ * to call it repeatedly.  Returns an flag saying that we should awaken
-+ * the RCU grace-period kthread.
-  *
-  * The caller must hold rnp->lock with interrupts disabled.
-  */
-@@ -1736,7 +1690,7 @@ static bool rcu_accelerate_cbs(struct rcu_state *rsp, struct rcu_node *rnp,
- 	 * accelerating callback invocation to an earlier grace-period
- 	 * number.
- 	 */
--	c = rcu_cbs_completed(rsp, rnp);
-+	c = rcu_seq_snap(&rsp->gp_seq);
- 	if (rcu_segcblist_accelerate(&rdp->cblist, c))
- 		ret = rcu_start_this_gp(rnp, rdp, c);
- 
-@@ -1751,7 +1705,7 @@ static bool rcu_accelerate_cbs(struct rcu_state *rsp, struct rcu_node *rnp,
- /*
-  * Move any callbacks whose grace period has completed to the
-  * RCU_DONE_TAIL sublist, then compact the remaining sublists and
-- * assign ->completed numbers to any callbacks in the RCU_NEXT_TAIL
-+ * assign ->gp_seq numbers to any callbacks in the RCU_NEXT_TAIL
-  * sublist.  This function is idempotent, so it does not hurt to
-  * invoke it repeatedly.  As long as it is not invoked -too- often...
-  * Returns true if the RCU grace-period kthread needs to be awakened.
-@@ -1768,10 +1722,10 @@ static bool rcu_advance_cbs(struct rcu_state *rsp, struct rcu_node *rnp,
- 		return false;
- 
- 	/*
--	 * Find all callbacks whose ->completed numbers indicate that they
-+	 * Find all callbacks whose ->gp_seq numbers indicate that they
- 	 * are ready to invoke, and put them into the RCU_DONE_TAIL sublist.
- 	 */
--	rcu_segcblist_advance(&rdp->cblist, rnp->completed);
-+	rcu_segcblist_advance(&rdp->cblist, rnp->gp_seq);
- 
- 	/* Classify any remaining callbacks. */
- 	return rcu_accelerate_cbs(rsp, rnp, rdp);
-@@ -1889,6 +1843,8 @@ static bool rcu_gp_init(struct rcu_state *rsp)
- 	smp_store_release(&rsp->gpnum, rsp->gpnum + 1);
- 	smp_mb(); /* Pairs with barriers in stall-warning code. */
- 	rcu_seq_start(&rsp->gp_seq);
-+	if (WARN_ON_ONCE(((rnp->completed << RCU_SEQ_CTR_SHIFT) >> RCU_SEQ_CTR_SHIFT) != rcu_seq_ctr(rnp->gp_seq))) /* Catch any ->completed/->gp_seq mismatches. */
-+		pr_info("%s ->completed: %#lx (%#lx) ->gp_seq %#lx (%#lx)\n", __func__, rnp->completed, (rnp->completed << RCU_SEQ_CTR_SHIFT) >> RCU_SEQ_CTR_SHIFT, rnp->gp_seq, rcu_seq_ctr(rnp->gp_seq));
- 	trace_rcu_grace_period(rsp->name, rsp->gpnum, TPS("start"));
- 	raw_spin_unlock_irq_rcu_node(rnp);
- 
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 6d6cbc8b3a9c..a21d403a6010 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -174,7 +174,7 @@ struct rcu_node {
- #define need_future_gp_mask() \
- 	(ARRAY_SIZE(((struct rcu_node *)NULL)->need_future_gp) - 1)
- #define need_future_gp_element(rnp, c) \
--	((rnp)->need_future_gp[(c) & need_future_gp_mask()])
-+	((rnp)->need_future_gp[(c >> RCU_SEQ_CTR_SHIFT) & need_future_gp_mask()])
- #define need_any_future_gp(rnp)						\
- ({									\
- 	int __i;							\
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 2a81d243521f..2036dc7426ac 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -2105,7 +2105,7 @@ static void rcu_nocb_wait_gp(struct rcu_data *rdp)
- 	struct rcu_node *rnp = rdp->mynode;
+-	if (rcu_gp_in_progress(rsp) || !need_any_future_gp(rcu_get_root(rsp)))
++	if (rcu_gp_in_progress(rsp) ||
++	    ULONG_CMP_GE(rnp_root->gp_seq, rnp_root->gp_seq_needed))
+ 		return;
+ 	j = jiffies; /* Expensive access, and in common case don't get here. */
+ 	if (time_before(j, READ_ONCE(rsp->gp_req_activity) + HZ) ||
+@@ -2710,7 +2712,8 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
  
  	raw_spin_lock_irqsave_rcu_node(rnp, flags);
--	c = rcu_cbs_completed(rdp->rsp, rnp);
-+	c = rcu_seq_snap(&rdp->rsp->gp_seq);
- 	needwake = rcu_start_this_gp(rnp, rdp, c);
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	if (needwake)
-@@ -2118,8 +2118,8 @@ static void rcu_nocb_wait_gp(struct rcu_data *rdp)
- 	trace_rcu_this_gp(rnp, rdp, c, TPS("StartWait"));
- 	for (;;) {
- 		swait_event_interruptible(
--			rnp->nocb_gp_wq[c & 0x1],
--			(d = ULONG_CMP_GE(READ_ONCE(rnp->completed), c)));
-+			rnp->nocb_gp_wq[rcu_seq_ctr(c) & 0x1],
-+			(d = rcu_seq_done(&rnp->gp_seq, c)));
- 		if (likely(d))
- 			break;
- 		WARN_ON(signal_pending(current));
+ 	j = jiffies;
+-	if (rcu_gp_in_progress(rsp) || !need_any_future_gp(rcu_get_root(rsp)) ||
++	if (rcu_gp_in_progress(rsp) ||
++	    ULONG_CMP_GE(rnp_root->gp_seq, rnp_root->gp_seq_needed) ||
+ 	    time_before(j, READ_ONCE(rsp->gp_req_activity) + HZ) ||
+ 	    time_before(j, READ_ONCE(rsp->gp_activity) + HZ) ||
+ 	    atomic_read(&warned)) {
+@@ -2721,7 +2724,8 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
+ 
+ 	raw_spin_lock_rcu_node(rnp_root); /* irqs already disabled. */
+ 	j = jiffies;
+-	if (rcu_gp_in_progress(rsp) || !need_any_future_gp(rcu_get_root(rsp)) ||
++	if (rcu_gp_in_progress(rsp) ||
++	    ULONG_CMP_GE(rnp_root->gp_seq, rnp_root->gp_seq_needed) ||
+ 	    time_before(j, rsp->gp_req_activity + HZ) ||
+ 	    time_before(j, rsp->gp_activity + HZ) ||
+ 	    atomic_xchg(&warned, 1)) {
+@@ -2729,12 +2733,9 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
+ 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 		return;
+ 	}
+-	pr_alert("%s: g%lu %d%d%d%d gar:%lu ga:%lu f%#x %s->state:%#lx\n",
+-		 __func__, READ_ONCE(rsp->gpnum),
+-		 need_future_gp_element(rcu_get_root(rsp), 0),
+-		 need_future_gp_element(rcu_get_root(rsp), 1),
+-		 need_future_gp_element(rcu_get_root(rsp), 2),
+-		 need_future_gp_element(rcu_get_root(rsp), 3),
++	pr_alert("%s: g%ld->%ld gar:%lu ga:%lu f%#x %s->state:%#lx\n",
++		 __func__, (long)READ_ONCE(rsp->gp_seq),
++		 (long)READ_ONCE(rnp_root->gp_seq_needed),
+ 		 j - rsp->gp_req_activity, j - rsp->gp_activity,
+ 		 rsp->gp_flags, rsp->name,
+ 		 rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL);
+@@ -3524,6 +3525,7 @@ rcu_init_percpu_data(int cpu, struct rcu_state *rsp)
+ 	rdp->gpnum = rnp->completed; /* Make CPU later note any new GP. */
+ 	rdp->completed = rnp->completed;
+ 	rdp->gp_seq = rnp->gp_seq;
++	rdp->gp_seq_needed = rnp->gp_seq;
+ 	rdp->cpu_no_qs.b.norm = true;
+ 	rdp->rcu_qs_ctr_snap = per_cpu(rcu_dynticks.rcu_qs_ctr, cpu);
+ 	rdp->core_needs_qs = false;
+@@ -3904,6 +3906,7 @@ static void __init rcu_init_one(struct rcu_state *rsp)
+ 			rnp->gpnum = rsp->gpnum;
+ 			rnp->completed = rsp->completed;
+ 			rnp->gp_seq = rsp->gp_seq;
++			rnp->gp_seq_needed = rsp->gp_seq;
+ 			rnp->completedqs = rsp->gp_seq;
+ 			rnp->qsmask = 0;
+ 			rnp->qsmaskinit = 0;
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index a21d403a6010..9329c1ff695f 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -88,6 +88,7 @@ struct rcu_node {
+ 				/*  This will either be equal to or one */
+ 				/*  behind the root rcu_node's gpnum. */
+ 	unsigned long gp_seq;	/* Track rsp->rcu_gp_seq. */
++	unsigned long gp_seq_needed; /* Track rsp->rcu_gp_seq_needed. */
+ 	unsigned long completedqs; /* All QSes done for this node. */
+ 	unsigned long qsmask;	/* CPUs or groups that need to switch in */
+ 				/*  order for current grace period to proceed.*/
+@@ -160,7 +161,6 @@ struct rcu_node {
+ 	struct swait_queue_head nocb_gp_wq[2];
+ 				/* Place for rcu_nocb_kthread() to wait GP. */
+ #endif /* #ifdef CONFIG_RCU_NOCB_CPU */
+-	u8 need_future_gp[4];	/* Counts of upcoming GP requests. */
+ 	raw_spinlock_t fqslock ____cacheline_internodealigned_in_smp;
+ 
+ 	spinlock_t exp_lock ____cacheline_internodealigned_in_smp;
+@@ -170,22 +170,6 @@ struct rcu_node {
+ 	bool exp_need_flush;	/* Need to flush workitem? */
+ } ____cacheline_internodealigned_in_smp;
+ 
+-/* Accessors for ->need_future_gp[] array. */
+-#define need_future_gp_mask() \
+-	(ARRAY_SIZE(((struct rcu_node *)NULL)->need_future_gp) - 1)
+-#define need_future_gp_element(rnp, c) \
+-	((rnp)->need_future_gp[(c >> RCU_SEQ_CTR_SHIFT) & need_future_gp_mask()])
+-#define need_any_future_gp(rnp)						\
+-({									\
+-	int __i;							\
+-	bool __nonzero = false;						\
+-									\
+-	for (__i = 0; __i < ARRAY_SIZE((rnp)->need_future_gp); __i++)	\
+-		__nonzero = __nonzero ||				\
+-			    READ_ONCE((rnp)->need_future_gp[__i]);	\
+-	__nonzero;							\
+-})
+-
+ /*
+  * Bitmasks in an rcu_node cover the interval [grplo, grphi] of CPU IDs, and
+  * are indexed relative to this interval rather than the global CPU ID space.
+@@ -213,6 +197,7 @@ struct rcu_data {
+ 	unsigned long	gpnum;		/* Highest gp number that this CPU */
+ 					/*  is aware of having started. */
+ 	unsigned long	gp_seq;		/* Track rsp->rcu_gp_seq counter. */
++	unsigned long	gp_seq_needed;	/* Track rsp->rcu_gp_seq_needed ctr. */
+ 	unsigned long	rcu_qs_ctr_snap;/* Snapshot of rcu_qs_ctr to check */
+ 					/*  for rcu_all_qs() invocations. */
+ 	union rcu_noqs	cpu_no_qs;	/* No QSes yet for this CPU. */
 -- 
 2.17.1
 
