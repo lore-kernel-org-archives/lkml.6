@@ -2,166 +2,157 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54D7C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E609C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D59326B89
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:38:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="p8N9fUZc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D59326B89
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id B937326B8A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B937326B8A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965652AbeFZNiy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:38:54 -0400
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:46504 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965108AbeFZNiw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:38:52 -0400
-Received: by mail-wr0-f170.google.com with SMTP id l14-v6so12242480wrq.13
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 06:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=7dRVgX+D+YzRT8Eu6vm/4OkT6lsQA+ky7Rza9h5k484=;
-        b=p8N9fUZc392h6QYU3rWhdF4OnmIuTg4CdXUbZSTSoVSOTa39sMP4ImeG5OZbjFi2Zs
-         1XLHXOrVa67JhhMB7xAuZItx4xel76K4PyANx9cA/w7a2WqeKAS5E0TKtHrYtmjMQxzu
-         bXg7P36ulIWNRdan1sXlqPY0p8l+GW5u+oAQE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=7dRVgX+D+YzRT8Eu6vm/4OkT6lsQA+ky7Rza9h5k484=;
-        b=DcUO45p1CNm4mXx08dIKzlML+k6pkSJsetpDH5SCHQc5K4elZLNZoSWbmEsZt0JSll
-         fksER3N9MVAjcNjgJEvjnZ9ZXMf8G8c+6fEfftCvbbIOSQ+PJRiqnyehf9qbuT90wfoU
-         7TwtBJVqj/fGqVXKOBsXKP7GXFqTun0WUNpAcMS2QcFL+fi5iq1DqPT1vU8oMyh+ChR3
-         TIKzCcqtcNhckil1PMVNS7LX7+M0S9N4xrubJguGg4OcA4hIoDb45flnaknArffnXfxb
-         J1bOznvspri39F2NcfSpv9ksOFR80VKcOZCPtYhXV0s24YsVhtvWmIEVTz+HYU7hKeYn
-         AZGA==
-X-Gm-Message-State: APt69E1xW1v7Utp3qY50DMhlZSzfc0mfNFWlwoVcruTPF0pmFABctTik
-        IRMpCqns0HZE9tAzXKgGhV0OX6wuGuc7m7QPyIbn0Q==
-X-Google-Smtp-Source: AAOMgpfmHt+PP1dwp8CjpQNgmif+tA55B13Wot+D1oXSxPG44lFwSDSftt2JA1kkCQtvVwEUVvbfR5IrehmpgQ1JbVM=
-X-Received: by 2002:adf:f181:: with SMTP id h1-v6mr1653873wro.214.1530020331562;
- Tue, 26 Jun 2018 06:38:51 -0700 (PDT)
+        id S965671AbeFZNjl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:39:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49732 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935299AbeFZNjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:39:40 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C5D4981A4EB8;
+        Tue, 26 Jun 2018 13:39:39 +0000 (UTC)
+Received: from [10.36.118.60] (unknown [10.36.118.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 709C62026D6A;
+        Tue, 26 Jun 2018 13:39:38 +0000 (UTC)
+Subject: Re: [PATCH] userfaultfd: hugetlbfs: Fix userfaultfd_huge_must_wait
+ pte access
+To:     Janosch Frank <frankja@linux.ibm.com>, mike.kravetz@oracle.com,
+        aarcange@redhat.com
+Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+References: <20180626132421.78084-1-frankja@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <7f1d8e55-d90a-d61a-a087-ff879018e8e4@redhat.com>
+Date:   Tue, 26 Jun 2018 15:39:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:adf:8684:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 06:38:50
- -0700 (PDT)
-In-Reply-To: <233d6808-4d44-9e47-7e3f-4f35cf731706@redhat.com>
-References: <CAOf5uwmSeugMHBBFc8ZQKY=wEsVD-YwD=YSWi=XbysU58Gp=Ww@mail.gmail.com>
- <9fb661e6-482b-76e0-2af0-a62a70e5606d@redhat.com> <CAOf5uwk2cf_+27nk9i9MQmbfJ8LCfPYopkcX__9M64jMYmhu1A@mail.gmail.com>
- <CAOf5uwkEuDgAJ7e8rNFyiKpUZPA3NhQGREtOGsm1EVSofW3rzQ@mail.gmail.com> <233d6808-4d44-9e47-7e3f-4f35cf731706@redhat.com>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Tue, 26 Jun 2018 15:38:50 +0200
-Message-ID: <CAOf5uwkJimhGJd_BtUuDyxaD5-ZYGe3JZtgC4pDKc_jnvaV21g@mail.gmail.com>
-Subject: Re: simple-framebuffer enquire
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     artlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180626132421.78084-1-frankja@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 26 Jun 2018 13:39:39 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 26 Jun 2018 13:39:39 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On 26.06.2018 15:24, Janosch Frank wrote:
+> Use huge_ptep_get to translate huge ptes to normal ptes so we can
+> check them with the huge_pte_* functions. Otherwise some architectures
+> will check the wrong values and will not wait for userspace to bring
+> in the memory.
+> 
+> Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+> Fixes: 369cd2121be4 ("userfaultfd: hugetlbfs: userfaultfd_huge_must_wait for hugepmd ranges")
+> ---
+>  fs/userfaultfd.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 123bf7d516fc..594d192b2331 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -222,24 +222,26 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+>  					 unsigned long reason)
+>  {
+>  	struct mm_struct *mm = ctx->mm;
+> -	pte_t *pte;
+> +	pte_t *ptep, pte;
+>  	bool ret = true;
+>  
+>  	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
+>  
+> -	pte = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
+> -	if (!pte)
+> +	ptep = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
+> +
+> +	if (!ptep)
+>  		goto out;
+>  
+>  	ret = false;
+> +	pte = huge_ptep_get(ptep);
+>  
+>  	/*
+>  	 * Lockless access: we're in a wait_event so it's ok if it
+>  	 * changes under us.
+>  	 */
+> -	if (huge_pte_none(*pte))
+> +	if (huge_pte_none(pte))
+>  		ret = true;
+> -	if (!huge_pte_write(*pte) && (reason & VM_UFFD_WP))
+> +	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
+>  		ret = true;
+>  out:
+>  	return ret;
+> 
 
-On Tue, Jun 26, 2018 at 3:36 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> Hi,
->
->
-> On 26-06-18 15:29, Michael Nazzareno Trimarchi wrote:
->>
->> Hi
->>
->> to be more specific
->>
->> On Tue, Jun 26, 2018 at 3:06 PM, Michael Nazzareno Trimarchi
->> <michael@amarulasolutions.com> wrote:
->>>
->>> Hi
->>>
->>> On Tue., 26 Jun. 2018, 12:01 pm Hans de Goede, <hdegoede@redhat.com>
->>> wrote:
->>>>
->>>>
->>>> Hi,
->>>>
->>>> On 25-06-18 15:29, Michael Nazzareno Trimarchi wrote:
->>>>>
->>>>> Hi Hans
->>>>>
->>>>> In order to let it even registered the simplefb I have added this
->>>>> change. According on what I understand
->>>>> from the code seems that this is the way to acquire memory with the
->>>>> correct attribute
->>>>>
->>>>> diff --git a/drivers/video/fbdev/simplefb.c
->>>>> b/drivers/video/fbdev/simplefb.c
->>>>> index a3c44ec..7e61ce3 100644
->>>>> --- a/drivers/video/fbdev/simplefb.c
->>>>> +++ b/drivers/video/fbdev/simplefb.c
->>>>> @@ -466,8 +466,8 @@ static int simplefb_probe(struct platform_device
->>>>> *pdev)
->>>>>
->>>>>           info->fbops = &simplefb_ops;
->>>>>           info->flags = FBINFO_DEFAULT | FBINFO_MISC_FIRMWARE;
->>>>> -       info->screen_base = ioremap_wc(info->fix.smem_start,
->>>>> -                                      info->fix.smem_len);
->>>>> +       info->screen_base = arch_memremap_wb(info->fix.smem_start,
->>>>> +                                            info->fix.smem_len);
->>>>
->>>>
->>>> I'm not sure why you need this?  wb certainly is not optimal
->>>> for a framebuffer, the existing wc mapping is really what you
->>>> want.
->>>>
->>>
->>> Well in this way raise a WARN and get a nice NULL on memory remap on
->>> imx6ull
->>> SoC
->>>
->>
->> [    0.397484] WARNING: CPU: 0 PID: 1 at arch/arm/mm/ioremap.c:303
->> __arm_ioremap_pfn_caller+0x80/0x1cc
->
->
->
-> This is causes by a mismatch in memory attributes, which means the
-> memory is already mapped by the kernel as regular RAM and may
-> already be used for other purposes by the kernel!
->
-> Memory used by a simplefb framebuffer must be reserved by the
-> bootloader, so that it does not get used by the kernel as regular
-> RAM. See e.g.:
->
-> http://git.denx.de/?p=u-boot.git;a=blob;f=drivers/video/sunxi/sunxi_display.c
->
-> Near the end of the file where the framebuffer RAM gets excluded from
-> the memory-range reported to the kernel as usable RAM. Note this relies
-> on the u-boot sunxi video code putting the framebuffer at the end of the
-> RAM.
->
+Indeed, this only works by luck on x86 and ppc, but not on s390x.
 
-Thank you very much for this lesson ;). I will try to document better
-after my tour ;)
-
-Michael
-
-> Regards,
->
-> Hans
-
-
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
+
+Thanks,
+
+David / dhildenb
