@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9158C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B14C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F2826E9F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:27:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F2826E9F
+	by mail.kernel.org (Postfix) with ESMTP id EE33426EAB
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:27:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE33426EAB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753556AbeFZR1F (ORCPT
+        id S1753944AbeFZR1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:27:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:49964 "EHLO foss.arm.com"
+        Tue, 26 Jun 2018 13:27:17 -0400
+Received: from foss.arm.com ([217.140.101.70]:50014 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752732AbeFZR1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:27:04 -0400
+        id S1752976AbeFZR1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 13:27:15 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B901A7A9;
-        Tue, 26 Jun 2018 10:27:03 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29062ED1;
+        Tue, 26 Jun 2018 10:27:15 -0700 (PDT)
 Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5AB673F5AD;
-        Tue, 26 Jun 2018 10:27:03 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C1A543F5AD;
+        Tue, 26 Jun 2018 10:27:14 -0700 (PDT)
 From:   Punit Agrawal <punit.agrawal@arm.com>
 To:     Jonathan Cameron <jonathan.cameron@huawei.com>
 Cc:     Michal Hocko <mhocko@kernel.org>,
@@ -48,6 +48,8 @@ Cc:     Michal Hocko <mhocko@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         zhongjiang <zhongjiang@huawei.com>, <wanghuiqiang@huawei.com>
 Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
+In-Reply-To: <20180622184223.00007bc3@huawei.com> (Jonathan Cameron's message
+        of "Fri, 22 Jun 2018 18:42:23 +0100")
 References: <20180619120714.GE13685@dhcp22.suse.cz>
         <874lhz3pmn.fsf@e105922-lin.cambridge.arm.com>
         <20180619140818.GA16927@e107981-ln.cambridge.arm.com>
@@ -61,11 +63,9 @@ References: <20180619120714.GE13685@dhcp22.suse.cz>
         <20180622091153.GU10465@dhcp22.suse.cz>
         <87y3f7yv89.fsf@e105922-lin.cambridge.arm.com>
         <20180622184223.00007bc3@huawei.com>
-Date:   Tue, 26 Jun 2018 18:27:01 +0100
-In-Reply-To: <20180622184223.00007bc3@huawei.com> (Jonathan Cameron's message
-        of "Fri, 22 Jun 2018 18:42:23 +0100")
-Message-ID: <87muvhwja2.fsf@e105922-lin.cambridge.arm.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+Date:   Tue, 26 Jun 2018 18:27:13 +0100
+Message-ID: <87lgb1wj9q.fsf@e105922-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
