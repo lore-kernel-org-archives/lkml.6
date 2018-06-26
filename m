@@ -2,100 +2,152 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEADC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD10FC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99497264D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88499264CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:24:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="leZqQJ8/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99497264D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHA7Agxy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88499264CD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751079AbeFZEWP (ORCPT
+        id S1751081AbeFZEYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 00:22:15 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35881 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeFZEWN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 00:22:13 -0400
-Received: by mail-pg0-f66.google.com with SMTP id m5-v6so7041108pgd.3;
-        Mon, 25 Jun 2018 21:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=szF8TaYKotUnPfMK9dcCkI6FOs931Ofcy5Mcbo7b+X0=;
-        b=leZqQJ8/kia35ohLpoE4Agsdz0MwafU18t7AernzByVkM+1MIS1raPjMa7d/OTkag5
-         yp3rwot4VP9W1UrScKaY8gwVojDIWzUmN7lBj5MgteIa6OjHpZA0ktoZDhCiQbAJtOhT
-         AKoM1/7dA/mmpME07hb7Q5GBSdRKT0SGxTyWPvt1XgdWM2bqQPGP7eVDn8C/G68CKrQu
-         xTquhHgGgt2nlpl8IpIwwv2AVskeqvjgDxZjmRBlrafJRDVNLSPWqEXfrl5Y4u//1QqQ
-         CW9cZEcq0CPM+qhV56tpDB5CXtDwF435K+46jfmIqWe0U5dsqVBkJDImq6Uvdxn8dwmj
-         lzbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=szF8TaYKotUnPfMK9dcCkI6FOs931Ofcy5Mcbo7b+X0=;
-        b=Gp/C1wFvGIjIsromKOaJNoo3YI44oNY2fzKA/4aW3p8PnDKzDZfyUWp6ex2K/T8bTM
-         HAIhfy57ejOXkUzjJjRU/6I/sPfxLyhdXUj3LFU6Rqsm6w218AEO2Tuytiqw2LCg7q5p
-         JzfdMUmGXRv5yc2IN4RSBpxFMWssKaD4OldICv36DnX6yfaYGHmktdm50H4LxuaAzuCf
-         IQOGvGZpy3hL83zArloBP7QILycGd+aV3p3/y0/LVICDh8U9c/0FiA0RgJp+SnTXwYZK
-         bdTvyc1UzgVpxRTW3YFXQK5xm+XbVIjEI3QLNns7KvNKfgfioiKMfvENmZc+GyHaeFaA
-         bGZQ==
-X-Gm-Message-State: APt69E03XIDgltlyyZjZspt7xLdxJTxQoDuxM+2o1dfl/iS75uhNdUfO
-        Uyp0cG+ala+jCW67tcfVWmg=
-X-Google-Smtp-Source: ADUXVKJcm/aXC6lGzFBW/1lPK5suG3n9aiYRIm2KCQD/Ks6vI4USdNXk1ozxTTJ+k0Flh/rZJBp0eA==
-X-Received: by 2002:a62:5c47:: with SMTP id q68-v6mr3640822pfb.81.1529986932845;
-        Mon, 25 Jun 2018 21:22:12 -0700 (PDT)
-Received: from localhost ([175.223.48.122])
-        by smtp.gmail.com with ESMTPSA id f123-v6sm925536pfc.4.2018.06.25.21.22.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 21:22:11 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 13:22:08 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        syzbot <syzbot+d29d18215e477cfbfbdd@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, pmladek@suse.com,
-        sergey.senozhatsky@gmail.com, syzkaller-bugs@googlegroups.com,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: INFO: rcu detected stall in vprintk_emit
-Message-ID: <20180626042208.GA31439@jagdpanzerIV>
-References: <000000000000720530056f7f9b63@google.com>
- <20180626014924.GB11229@jagdpanzerIV>
- <20180625225937.43aee76c@vmware.local.home>
+        Tue, 26 Jun 2018 00:24:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750822AbeFZEYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 00:24:08 -0400
+Received: from localhost (unknown [5.29.173.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5C5820847;
+        Tue, 26 Jun 2018 04:24:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529987048;
+        bh=wTBc80a5Hz++zLtPxfpNbikZA9w6TUuDXaetON11PCs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sHA7AgxyNd9q9U6Duk1ep3uzDq6ggGUfZR4L9TEleOlWhV7pTaZph7tt0Z4y/oBoD
+         0tTlDXGPiLBkcxv1n4SDiDhUt0UxIZkJOXozue+wy6ImzK6lQKN7xUXvZCCMi587x5
+         nXmW7BsqpJVccfjcV6r5g8OSw6dCQJNPiuxNGpVc=
+Date:   Tue, 26 Jun 2018 07:24:05 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Kees Cook <keescook@chromium.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Hadar Hen Zion <hadarh@mellanox.com>,
+        Matan Barak <matanb@mellanox.com>,
+        Michael J Ruhl <michael.j.ruhl@intel.com>,
+        Noa Osherovich <noaos@mellanox.com>,
+        Raed Salem <raeds@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        linux-netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH rdma-next 08/12] overflow.h: Add arithmetic shift helper
+Message-ID: <20180626042405.GN17747@mtr-leonro.mtl.com>
+References: <20180624082353.16138-1-leon@kernel.org>
+ <20180624082353.16138-9-leon@kernel.org>
+ <CAKwiHFhgsyWYD+q+JFb2HJEphnjiiOp=o4Airv3MW031q2jx8w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="MdEjg5WkSuUg8x46"
 Content-Disposition: inline
-In-Reply-To: <20180625225937.43aee76c@vmware.local.home>
+In-Reply-To: <CAKwiHFhgsyWYD+q+JFb2HJEphnjiiOp=o4Airv3MW031q2jx8w@mail.gmail.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/25/18 22:59), Steven Rostedt wrote:
-> > Or ratelimited error reporting and cond_resched()
-> > [that would be option B]:
-> 
-> I don't think this is a printk() issue per se, so I think Option B is
-> the only option. You should not get stuck in an infinite loop if we run
-> short on memory. Perhaps we could have an Option C which would exit
-> this loop gracefully with some kind of error. But I haven't looked at
-> the surrounding code to be sure if that is possible.
 
-Agree. I like Option B - an endless loop is the root cause, at the same
-time filling up logbuf with useless data is useless. Can't tell if Option C
-is feasible, up to networking people.
+--MdEjg5WkSuUg8x46
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	-ss
+On Mon, Jun 25, 2018 at 11:26:05AM +0200, Rasmus Villemoes wrote:
+> On 24 June 2018 at 10:23, Leon Romanovsky <leon@kernel.org> wrote:
+>
+> > From: Leon Romanovsky <leonro@mellanox.com>
+> >
+> > Add shift_overflow() helper to help driver authors to ensure that
+> > shift operand doesn't cause to overflow, which is very common pattern
+> > for RDMA drivers.
+> >
+>
+> Not a huge fan. The other _overflow functions have a different behaviour
+> (in how they return the result and the overflow status) and are
+> type-generic, and I think someone at some point will use such a
+> generically-named helper for stuff other than size_t. At least the
+> array_size and struct_size helpers have size in their name and are
+> specifically about computing the size of something, and are designed to be
+> used directly as arguments to allocators, where SIZE_MAX is a suitable
+> sentinel. I can't see the other patches in this series, so I don't know how
+> you plan on using it, but it should also be usable outside rdma.
+>
+> Aside: why does b have type size_t?
+>
+> Does __must_check really make sense for a function without side effects? It
+> doesn't tell gcc to warn if the result is not used in a conditional, it
+> just warns if the result is not used at all, which wouldn't realistically
+> happen for a pure function.
+>
+> I'd much rather see a type-generic check_shift_overflow (we can agree to
+> leave "left" out of the name) with semantics similar to the other
+> check_*_overflow functions. Then, if a size_t-eating, SIZE_MAX-returning
+> helper is more convenient for rdma, that should be easy to implement on top
+> of that. It shouldn't really be that hard to do. Something like
+>
+> check_shift_overflow(a, s, d) {
+>     unsigned _nbits = 8*sizeof(a);
+>     typeof(a) _a = (a);
+>     typeof(s) _s = (s);
+>     typeof(d) _d = (d);
+>
+>     *_d = ((u64)(_a) << (_s & (_nbits-1)));
+>
+>     _s >= _nbits || (_s > 0 && (_a >> (_nbits - _s - is_signed_type(a))) !=
+> 0);
+> }
+>
+> which should also handle shifts of signed types (though it allows << 0 for
+> negative values; that's easy to also disallow). But the exact semantics
+> should be documented via a bunch of tests (hint hint) exercising corner
+> cases.
+
+I'll respin.
+
+Thanks for the feedback.
+
+>
+> Rasmus
+
+--MdEjg5WkSuUg8x46
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbMb/lAAoJEORje4g2clinA0UP/1wEsqeZqLyxrMn+BKXOTs8R
+QuEQ/Bwcwq9tEEt5dl51NFAqliFIifh6+fdghet0gAo2G/uKxbrIyd/WR3NQVvp/
+8W65VA9Ms1LJHUi8Gx/IloaocXvjlKXK1cqlj4l3VNqxU+7xQ3c51kspih+ND4qW
+aMHk9xK2fzk05vOtuwDtyCxNNPKSTz4et11MdMet2t8z6fAIvYD+zfLtfSq/wbRA
+PYYVa3mFxygrc+NWyKWdlchJEOpAnzCXC6Llu9nyxUrhdZnKcsLAT1fM7LQDnBrH
+zyfqbiUCv7XnkKaG/pkcT2+qC1YqLc/BXjtfjMwUN4FZWDyh1UhTdtDxnGugG8FD
+RhZade6sabLvC1V8NJKgaoHD8L6E/Fk8FpB1ep+CYNydJgcW6YED0myNt2jcFNW1
+t/cpX0D7hm5wz+HWQ7qj7aF/yt66lwCwEqlqf1lpEUAXXusd+b8k6hFJahgT8BPd
+fqkAwHE6Dv2DBfSdiErDSIYMBtH6ZMHw4o8bfsmfrO94VZN3wIlcWYkIkhqV6WD4
+jBDSN/3IHBbETzsBmYLgtIvX/Vo2SlfGepIsR7zRj/fX93gy4xzmOLTFMc0cbJEV
+xWY/x6VYTsE5/8sqZ12ecfpk5VLc2v3zNXe1K3SlPnOdfTC4zoX4+dLsVfk2Pyvw
+3ZD3bb24h3h1zWKSUJqD
+=ySnk
+-----END PGP SIGNATURE-----
+
+--MdEjg5WkSuUg8x46--
