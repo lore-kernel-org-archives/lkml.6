@@ -2,108 +2,97 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E84DFC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74657C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DBA225090
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DBA225090
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 299CC25A34
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:06:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFHGCOwi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299CC25A34
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752758AbeFZIGz (ORCPT
+        id S1752873AbeFZIG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:06:55 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:54150
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751869AbeFZIGv (ORCPT
+        Tue, 26 Jun 2018 04:06:57 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36094 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752169AbeFZIGv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Jun 2018 04:06:51 -0400
-X-IronPort-AV: E=Sophos;i="5.51,274,1526335200"; 
-   d="scan'208";a="269949661"
-Received: from dhcp-64-47.ens-lyon.fr ([140.77.64.47])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 10:06:48 +0200
-Date:   Tue, 26 Jun 2018 10:06:48 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Joe Perches <joe@perches.com>
-cc:     Chengguang Xu <cgxu519@gmx.com>, jakub.kicinski@netronome.com,
-        davem@davemloft.net, LKML <linux-kernel@vger.kernel.org>,
-        cocci <cocci@systeme.lip6.fr>, oss-drivers@netronome.com,
-        netdev@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v2 net] nfp: cast sizeof() to int when comparing with
- error code
-In-Reply-To: <ff0b2834b771a467246b9f7c1b4600c38f5bb463.camel@perches.com>
-Message-ID: <alpine.DEB.2.20.1806261005190.4512@hadrien>
-References: <20180626011631.22717-1-cgxu519@gmx.com> <ff0b2834b771a467246b9f7c1b4600c38f5bb463.camel@perches.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+Received: by mail-wm0-f66.google.com with SMTP id u18-v6so730369wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 01:06:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8wmp8XuRgee6r0NO95Q/0rN/WmLfc7FHfgZYycPOYgo=;
+        b=QFHGCOwiFwp0UeU8mDfDE/sf2rq3ODMB9tqflefUntTUXn0WqayF7PwWeRRexS0LeQ
+         9Nkhhlpl+50GHR1erWcFWzI6BBedMv+AC9djTIrUkM+XRQ+O7UKR2VCae3gM9FensgEN
+         rxhkRwD9iOaykOAlRVy0Ul2Qp4oLtSlfUe9nt2IiXD6RfNgaShK1jQKHSUuqFIcvgASB
+         9GmbZ1OeCcrMVU8htcUlMmqOXFHpZmHR1nbD9OPCJqglsifY8zCVfFwYiJf1oL7V2W1x
+         mhgcMaPWrpeJElMSePK3eMnTV7+cIYHi8NqFRLjBJKbo4VK/lcRfpJRRdjrkNpchPzLI
+         Jjbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8wmp8XuRgee6r0NO95Q/0rN/WmLfc7FHfgZYycPOYgo=;
+        b=IBsINPVCrmha/6qudMEiG93qEkQIEvcYi/kU7VJtMgKzFIPpZiB1GBxoC44z8nqLKV
+         pOs5orjKxMEKdZYBob62tTVrSLzoCDr/Q2UPxG0sCwpT3+rIcJOztnTH9W80gz83/xai
+         BsQgTbUW+vyjgP4eose3lmct/Vpn9rHv/f0hxfvS3ER0t8WrYmV88OsjPM85i17A4b27
+         oS8Bld5F5BN4XpkEiCI810YCEuI11dZ2dfJhrbYR0zwz0r37i/P/68PiTDYJiymHl/0Y
+         CiDiLVIUMErQPdGU5iycxvirO6MepjRrPzEgPyFCurdwCP4TumFXcVzAFIDa/U/53fG+
+         qHaw==
+X-Gm-Message-State: APt69E3ZFBgNk8BC6SKU/PILk6mhlcDBeT/PZ9mAlmmKs/AXN9t+vHwk
+        5vMTI9HG6bpxFaxi0y6Fe+j4JqP6
+X-Google-Smtp-Source: AAOMgpfBm2U+9xDw5brS9/L9AU6K2+GKyWRKgA+5QcjU3iUPqAvWcsGFMarqh8xpRK889kFGtaTXzw==
+X-Received: by 2002:a1c:d8:: with SMTP id 207-v6mr668191wma.99.1530000410203;
+        Tue, 26 Jun 2018 01:06:50 -0700 (PDT)
+Received: from [192.168.1.4] (x590c812a.dyn.telefonica.de. [89.12.129.42])
+        by smtp.gmail.com with ESMTPSA id p10-v6sm891006wmc.17.2018.06.26.01.06.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 01:06:49 -0700 (PDT)
+Subject: Re: [PATCH v2 4/4] staging: rtl8723bs: use mac_pton() in
+ rtw_macaddr_cfg()
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        joe@perches.com, dan.carpenter@oracle.com,
+        andy.shevchenko@gmail.com
+References: <20180625151238.23147-1-straube.linux@gmail.com>
+ <20180625151238.23147-4-straube.linux@gmail.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <a8ce935e-719f-46a9-1095-19be95ae3405@gmail.com>
+Date:   Tue, 26 Jun 2018 10:06:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180625151238.23147-4-straube.linux@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/25/18 17:12, Michael Straube wrote:
 
+> +	} else{
+> +		/* Use the mac address stored in the Efuse */
+>   		ether_addr_copy(mac, mac_addr);
+>   	}
 
-On Mon, 25 Jun 2018, Joe Perches wrote:
+} else {
 
-> On Tue, 2018-06-26 at 09:16 +0800, Chengguang Xu wrote:
-> > sizeof() will return unsigned value so in the error check
-> > negative error code will be always larger than sizeof().
->
-> This looks like a general class of error in the kernel
-> where a signed result that could be returning a -errno
-> is tested against < or <= sizeof()
->
-> A couple examples:
->
-> drivers/input/mouse/elan_i2c_smbus.c:
->
-> 		len = i2c_smbus_read_block_data(client,
-> 						ETP_SMBUS_IAP_PASSWORD_READ,
-> 						val);
-> 		if (len < sizeof(u16)) {
->
-> i2c_smbus_read_block_data can return a negative errno
->
->
-> net/smc/smc_clc.c:
->
-> 	len = kernel_sendmsg(smc->clcsock, &msg, &vec, 1,
-> 			     sizeof(struct smc_clc_msg_decline));
-> 	if (len < sizeof(struct smc_clc_msg_decline))
->
-> where kernel_sendmsg can return a negative errno
->
-> There are probably others, I didn't look hard.
->
-> Perhaps a cocci script to find these could be generated?
+I'll resend the series with this corrected.
 
-Here's another one:
-
-drivers/usb/serial/ir-usb.c
-@@ -126,13 +126,8 @@ irda_usb_find_class_desc(struct usb_seri
- 	if (!desc)
- 		return NULL;
-
--	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
--			USB_REQ_CS_IRDA_GET_CLASS_DESC,
--			USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
--			0, ifnum, desc, sizeof(*desc), 1000);
-
- 	dev_dbg(&serial->dev->dev, "%s -  ret=%d\n", __func__, ret);
--	if (ret < sizeof(*desc)) {
- 		dev_dbg(&serial->dev->dev,
- 			"%s - class descriptor read %s (%d)\n", __func__,
- 			(ret < 0) ? "failed" : "too short", ret);
-
-There are other results, but I haven't checked all of them.
-
-julia
+Regards,
+Michael
