@@ -2,121 +2,93 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C67E9C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E93DC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74AC6266F3
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:42:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="lRsuzzMf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74AC6266F3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id C60BC266F6
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:44:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C60BC266F6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933122AbeFZImG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:42:06 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:32881 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752708AbeFZImA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:42:00 -0400
-Received: by mail-it0-f65.google.com with SMTP id k17-v6so14696937ita.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 01:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ryvLtNh/eR8Aw9M2GublIeEeGpW5oTmK4F8PJTexoSE=;
-        b=lRsuzzMf1YVG48eVRW9vbY0vTXv6NlrH+g/s6pkJBrGN6JcgnYmGSURkLQJ+x6p3Vp
-         ax0tHEgbB5X9XPw89KYFY08C60Owe86iQvEC+BMIe2pvl4nujQSV3cGmYObdJv3nHFJ1
-         9xVIUgKwvxmBiB5vF7SB6iSr9OZbvQRmmdbh4GryPsm49jNemjwTrU1/+7pZQf04PfG6
-         VP2gt9itq9X29+ppa0Aw0x/di+IZ97vCCywf0R30PCGd+jkZORjijfaRTd2MM4eg91l9
-         tkqhRoShcRp5ZWOTGrzmQQ5ghoDX6+Zd3CF0sSxme+t+x4xhUvzA1eLlOEufLi/FoIYi
-         erKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ryvLtNh/eR8Aw9M2GublIeEeGpW5oTmK4F8PJTexoSE=;
-        b=C5SD9CXc/l52phIX279pZGXvZtEgksBVzMGq0HcKLyLVOl3K6ULKOtXb6A0r7JMlte
-         JhhwLPYtd9zsDVB9RUh9OAcNnzu5DrdfxFyAEEd+9urvBJE3fnN6DcJAdyLpdXykEEGD
-         o4bnYJTSazAbsfnqPXSK5haNx7JtszsUuz6Attxc64LtH8khKdWRUYmWcMpzR9D+jcSd
-         5s1YwFQb950KX1Rn5E2fmmi5SfUOvjD7Sx/hJSHHoh0h/Zv5NXcthgVJug8C6PF6wLm9
-         CF1PLTGJUhR9+Ed9T1gqmhqe1HGwux40v5DVOeHyo0U1UXBT0aiC7DQ48NSeX04jQq7P
-         0E4Q==
-X-Gm-Message-State: APt69E0MSZVDwje+B/KQiyQnGB+HIquw9CcsH7y80Uq+nKkT7Lrlkezx
-        OCfWvveT9CCiJZ4oqwDEwpczlGUl
-X-Google-Smtp-Source: AAOMgpcy8sO10BECr8tXYenVCpH5cM8tScM9aehaIFGTAayxGXWP8kLT/Fj2UjYQiPVu0NsKfY+JMw==
-X-Received: by 2002:a02:b559:: with SMTP id z25-v6mr448561jaj.27.1530002519913;
-        Tue, 26 Jun 2018 01:41:59 -0700 (PDT)
-Received: from [10.86.48.245] (rap-us.hgst.com. [199.255.44.250])
-        by smtp.googlemail.com with ESMTPSA id q14-v6sm153806ioh.64.2018.06.26.01.41.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 01:41:58 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: pblk: assume that chunks are closed on 1.2
- devices
-To:     hans.ml.holmberg@owltronix.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        javier@cnexlabs.com, hans.holmberg@cnexlabs.com
-References: <1529399189-3239-1-git-send-email-hans.ml.holmberg@owltronix.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <a2bb1959-5244-f8af-b747-6d87e8d456a4@lightnvm.io>
-Date:   Tue, 26 Jun 2018 10:41:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <1529399189-3239-1-git-send-email-hans.ml.holmberg@owltronix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+        id S933130AbeFZIoW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 04:44:22 -0400
+Received: from mga05.intel.com ([192.55.52.43]:59622 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752763AbeFZIoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 04:44:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 01:44:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
+   d="scan'208";a="52304068"
+Received: from jsakkine-mobl1.tm.intel.com (HELO jyrjanai-mobl2.ger.corp.intel.com) ([10.237.50.56])
+  by orsmga008.jf.intel.com with ESMTP; 26 Jun 2018 01:43:47 -0700
+Message-ID: <689641dc26a91f7b4b6bfdb763fec90bf7c3e984.camel@linux.intel.com>
+Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
+ launch enclave
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     npmccallum@redhat.com,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>, nhorman@redhat.com,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        intel-sgx-kernel-dev@lists.01.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andy@infradead.org,
+        Peter Jones <pjones@redhat.com>
+Date:   Tue, 26 Jun 2018 11:43:46 +0300
+In-Reply-To: <CALCETrXos3b-VJxLCb1nwP1x2s5jiDmuQDWVahTVdXGxhqqsDw@mail.gmail.com>
+References: <20180608171216.26521-14-jarkko.sakkinen@linux.intel.com>
+         <CALCETrW3aZJMMm1GqgPm-cOD3p7JvKxLj7j85KJwfNW2iHTj4A@mail.gmail.com>
+         <CALCETrVp1ZhrxF5bQDSaZpLucS88tErejj5JC6Jb0fB5etWRbA@mail.gmail.com>
+         <20180611115255.GC22164@hmswarspite.think-freely.org>
+         <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
+         <20180612174535.GE19168@hmswarspite.think-freely.org>
+         <CALCETrV-4D-M2ap1EFHQiQerYf_XgwLmBAx5WMvcCUefOODjOA@mail.gmail.com>
+         <CAOASepN9t3jF4ajfKLG_odTZddOvXjY_DqLQhRPWhJ-imtjkgg@mail.gmail.com>
+         <e3f8e5b9-aa1e-20da-37ac-3c3caafa66bc@fortanix.com>
+         <b5c81504-83cd-8150-ebe4-41355026590f@fortanix.com>
+         <20180620210158.GA24328@linux.intel.com>
+         <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
+         <73b7e4e3712074b73f4ac8211699d24dfdced6bf.camel@linux.intel.com>
+         <CALCETrXos3b-VJxLCb1nwP1x2s5jiDmuQDWVahTVdXGxhqqsDw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/19/2018 11:06 AM, Hans Holmberg wrote:
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> 
-> We can't know if a block is closed or not on 1.2 devices, so assume
-> closed state to make sure that blocks are erased before writing.
-> 
-> Fixes: 32ef9412c114 ("lightnvm: pblk: implement get log report chunk")
-> 
-> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> ---
-> 
-> This patch applies on:
-> ssh://github.com/OpenChannelSSD/linux branch for-4.19/core
-> 
->   drivers/lightnvm/pblk-init.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-> index aa24264..3b8aa4a 100644
-> --- a/drivers/lightnvm/pblk-init.c
-> +++ b/drivers/lightnvm/pblk-init.c
-> @@ -717,10 +717,11 @@ static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
->   
->   		/*
->   		 * In 1.2 spec. chunk state is not persisted by the device. Thus
-> -		 * some of the values are reset each time pblk is instantiated.
-> +		 * some of the values are reset each time pblk is instantiated,
-> +		 * so we have to assume that the block is closed.
->   		 */
->   		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
-> -			chunk->state =  NVM_CHK_ST_FREE;
-> +			chunk->state =  NVM_CHK_ST_CLOSED;
->   		else
->   			chunk->state = NVM_CHK_ST_OFFLINE;
->   
-> 
+On Mon, 2018-06-25 at 08:45 -0700, Andy Lutomirski wrote:
+> I'm personally rather strongly in favor of the vastly simpler model in
+> which we first merge SGX without LE support at all.  Instead we use
+> the approach where we just twiddle the MSRs to launch normal enclaves
+> without an init token at all, which is probably considerably faster
+> and will remove several thousand lines of code.  If and when a bona
+> fide use case for LE support shows up, we can work out the details and
+> merge it.
 
-pblk should scan (or the lightnvm subsystem) the blocks for their state, 
-such that it doesn't have to reinitialize a full drive if it is already 
-in a closed state. If marking closed, it does a full erase cycle on 
-initialization, which should be avoided since it is a limited resource.
+Andy, I was going to propose exactly the same :-)
+
+We can upstream SGX that supports only unlocked MSRs and that does
+not preventing to upstream support for locked MSRs later. Even if
+we had a consensus for locked MSRs, making two milestones for the
+mainline would make perfect sense.
+
+I came into this conclusion last night because all the other review
+comments not concerning the launch control are easily sorted out.
+
+/Jarkko
