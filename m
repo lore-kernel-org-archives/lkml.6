@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B69C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A8AC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE09A2679D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D3542679A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:26:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ZihOxNcW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE09A2679D
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="GFs2c/xA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3542679A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934387AbeFZJZt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:25:49 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:34823 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933822AbeFZJZp (ORCPT
+        id S934415AbeFZJZ7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:25:59 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52548 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933876AbeFZJZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:25:45 -0400
-Received: by mail-wm0-f46.google.com with SMTP id z137-v6so1027056wmc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:25:44 -0700 (PDT)
+        Tue, 26 Jun 2018 05:25:48 -0400
+Received: by mail-wm0-f68.google.com with SMTP id p126-v6so1052847wmb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:25:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nSXHzvqybEtdzHkD2l9M3rTvO3mzizZqvz9MLG8cxdI=;
-        b=ZihOxNcWt8I2IrcYtLniKap7133OE90t+0o6BqveW0t89xMk6U6pkDs1JTPnDoxTe7
-         7V9GKfDDLdiMLV0S9x9IKpbmHfydBn6+XKJYvuWM1yFGhFQByPWb7sVi7dELNMv5s+39
-         y7e2Qrd94axoeZjO/Gykt9Vi8xUsJHh3RcAoVwgE9P1UJ5eqL3mfa3jY4WGSu7wXPC7p
-         gFf1QJS9T/mirtNzIRGFvihXyPZ+Yhok7U06sGqo9aLXyE9BspthPnegPFelBK+249H0
-         VWNs6yQ73CGyBPJBDMxTOphKXvC0ETkws294DJiC68J32QJM2OPAfhEzc7GxAdmAoiYB
-         sDsg==
+        bh=pofyQ6FgMsDD6pm9jY/9qPsZRPAHxS5ZCh6KlS8j4r0=;
+        b=GFs2c/xAysy1Tp1JCMI+A2ITv9zFBFOAhoONz5pE8v/xz4JjZtWhthe3drKDktp5KZ
+         K29ZInK+gwjhDB2qFuny/afQdi4Tuds+tU1URL22xGe27zL2HGcruggjARbmc9UKwduo
+         DC0+Kwz0IaPi79uxbXQVLFmoFq9znp+RVC67r7kUFwJ1rKf7k5zZf5Jsm/126qsLJNb2
+         qfaiqRmDNwPbp4Yy6h9J2L/JU03ZOVoh16mB6hyXFaHiVaexVw3qFtLLb8NcQ/uPkcka
+         SOvelFtJAHuegwCj08FEbu9wW2Y6freftCasvYchPQVgKvpVTNWP5giVAf+3baK3qJyJ
+         Zo/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nSXHzvqybEtdzHkD2l9M3rTvO3mzizZqvz9MLG8cxdI=;
-        b=s5HBo3/uUKfAjjrv5qm6hTnicCwSNpY4ei/7wxZjWrpRv0PcClxcjakrP7ClyrZm3c
-         POuPIz9rSPnNOBO5XazY1nw5RQZAEHJi/whK3mUzA7v5CqNa6rbl42gEQCvXpnYoD14n
-         I6VKNRkBVH82wH/rVZ614IbqLPIDaKO8eEQNCKJMcZQYixWVOp9aL+rOYMdtcM7CZnRw
-         H8+X6xaQMhLQA5N6Or87WT4n44pHPN2wAR5u9aZSd8oG1WvWRcGoBiuK1Edr+BdYLXVR
-         cs7TaYMUAixCn+/mHTgNTiSW7LfbizGZTt1NEUNz3gY6wf/NMpBc5hnjZc9qKpq7PZsy
-         kR9w==
-X-Gm-Message-State: APt69E1Q6RHatMzs2EJe8JDdwO7XYt6BSwjnClxLui96/z8LNSNU4Ndp
-        lHTuXFhHsVdKPhgzHf0R/u3RKA==
-X-Google-Smtp-Source: AAOMgpdAjDemF3/g+FKRl/chg1QS0Dx3xi5o2lNR2vgQHjN5QRAO8TzmMadC8xZUAYsPeviQSppgfw==
-X-Received: by 2002:a1c:e846:: with SMTP id f67-v6mr938285wmh.63.1530005144137;
-        Tue, 26 Jun 2018 02:25:44 -0700 (PDT)
+        bh=pofyQ6FgMsDD6pm9jY/9qPsZRPAHxS5ZCh6KlS8j4r0=;
+        b=DA/wzSTsaEhPs7eIIxOGQ78rG8OGB0i1fh2NZucAqdG6N2UBCnEMJf0z2dQG4TL24F
+         LBN5vXIpfMVdyjNPBf2z7I0bwbDuuU50fersuguEHanzhV+o51lA8y6AN7AQ4jG8aFxz
+         emFmQdSN0pgShxC11mYrKAgx0GBELKjj7yF7zeFrRHV1Ix1patgAZrAjl24B2nnAt/fo
+         lOLh41u4yG7T53vPT4SYcpWBvY7JR3O8c3o3SbYIIALacgHl0X1tKGBt6J/VSMtBRTEG
+         2FECkHLmO/lwxpK/Q8u24hh7jlFORtr2aU//LaD4K8TzCkGHckgqEmCba5DJovYk8y2H
+         Yt3g==
+X-Gm-Message-State: APt69E0U/Imm5w0Dudyjub0buG5UQzThwBXaXav66IywbN80hT9LqkC7
+        lq+hCrHAQe3tv7uA3h7784IH5Q==
+X-Google-Smtp-Source: AAOMgpfjTyQGjhNYeyZ15Kq4OOfGXEbGc0Bwo1AZJ1vqqrnD1D8gf89R6Wjos0rJbkBmYwSXRFBXSg==
+X-Received: by 2002:a1c:d7c3:: with SMTP id o186-v6mr914858wmg.67.1530005147382;
+        Tue, 26 Jun 2018 02:25:47 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-NIC-1-55-10.w2-15.abo.wanadoo.fr. [2.15.147.10])
-        by smtp.gmail.com with ESMTPSA id a8-v6sm1528791wrn.50.2018.06.26.02.25.42
+        by smtp.gmail.com with ESMTPSA id a8-v6sm1528791wrn.50.2018.06.26.02.25.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 02:25:43 -0700 (PDT)
+        Tue, 26 Jun 2018 02:25:46 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -65,9 +65,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 02/13] clk: davinci: psc-dm365: use two lookup entries for the aemif clock
-Date:   Tue, 26 Jun 2018 11:25:26 +0200
-Message-Id: <20180626092537.6737-3-brgl@bgdev.pl>
+Subject: [PATCH v2 05/13] clk: davinci: psc-da830: add a lookup entry for aemif clock
+Date:   Tue, 26 Jun 2018 11:25:29 +0200
+Message-Id: <20180626092537.6737-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
 References: <20180626092537.6737-1-brgl@bgdev.pl>
@@ -78,28 +78,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We want to be able to get the clock both from the board file by its
-con_id and from the aemif driver by dev_id.
+We want to use the ti-aemif platform driver for da830-evm. To make it
+work we need a lookup entry for the aemif clock.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/clk/davinci/psc-dm365.c | 3 ++-
+ drivers/clk/davinci/psc-da830.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
-index 8c73086cc676..c75424f4ea3b 100644
---- a/drivers/clk/davinci/psc-dm365.c
-+++ b/drivers/clk/davinci/psc-dm365.c
-@@ -21,7 +21,8 @@ LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"da830-mmc.1");
- LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
- LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
- LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
--LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
-+LPSC_CLKDEV2(aemif_clkdev,		"aemif",	NULL,
-+					NULL,		"ti-aemif");
- LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"da830-mmc.0");
- LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
- LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
+diff --git a/drivers/clk/davinci/psc-da830.c b/drivers/clk/davinci/psc-da830.c
+index 081b039fcb02..6481337382a6 100644
+--- a/drivers/clk/davinci/psc-da830.c
++++ b/drivers/clk/davinci/psc-da830.c
+@@ -14,6 +14,7 @@
+ 
+ #include "psc.h"
+ 
++LPSC_CLKDEV1(aemif_clkdev,	NULL,	"ti-aemif");
+ LPSC_CLKDEV1(spi0_clkdev,	NULL,	"spi_davinci.0");
+ LPSC_CLKDEV1(mmcsd_clkdev,	NULL,	"da830-mmc.0");
+ LPSC_CLKDEV1(uart0_clkdev,	NULL,	"serial8250.0");
+@@ -22,7 +23,7 @@ static const struct davinci_lpsc_clk_info da830_psc0_info[] = {
+ 	LPSC(0,  0, tpcc,     pll0_sysclk2, NULL,         LPSC_ALWAYS_ENABLED),
+ 	LPSC(1,  0, tptc0,    pll0_sysclk2, NULL,         LPSC_ALWAYS_ENABLED),
+ 	LPSC(2,  0, tptc1,    pll0_sysclk2, NULL,         LPSC_ALWAYS_ENABLED),
+-	LPSC(3,  0, aemif,    pll0_sysclk3, NULL,         LPSC_ALWAYS_ENABLED),
++	LPSC(3,  0, aemif,    pll0_sysclk3, aemif_clkdev, LPSC_ALWAYS_ENABLED),
+ 	LPSC(4,  0, spi0,     pll0_sysclk2, spi0_clkdev,  0),
+ 	LPSC(5,  0, mmcsd,    pll0_sysclk2, mmcsd_clkdev, 0),
+ 	LPSC(6,  0, aintc,    pll0_sysclk4, NULL,         LPSC_ALWAYS_ENABLED),
 -- 
 2.17.1
 
