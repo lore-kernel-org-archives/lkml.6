@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974FDC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A78C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5620D2631C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:12:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5620D2631C
+	by mail.kernel.org (Postfix) with ESMTP id A54B326320
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:12:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54B326320
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935159AbeFZAMs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 20:12:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50810 "EHLO
+        id S935331AbeFZAMw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 20:12:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42736 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934423AbeFZAHE (ORCPT
+        by vger.kernel.org with ESMTP id S934420AbeFZAHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Jun 2018 20:07:04 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q03lj2079138
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:04 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ju96qagk6-1
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q03l7G079307
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:03 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ju96rakt7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:07:03 -0400
 Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 25 Jun 2018 20:07:02 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 25 Jun 2018 20:07:03 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Mon, 25 Jun 2018 20:06:57 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06vWb19005798
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06vY91769890
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Tue, 26 Jun 2018 00:06:57 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 99F32B2068;
+        by IMSVA (Postfix) with ESMTP id 7D39BB2070;
         Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8494FB2071;
+        by IMSVA (Postfix) with ESMTP id 5EEACB2065;
         Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Mon, 25 Jun 2018 20:06:51 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9EBEF16CA0AC; Mon, 25 Jun 2018 17:09:01 -0700 (PDT)
+        id 59E2D16CA0A5; Mon, 25 Jun 2018 17:09:01 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,20 +60,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 31/40] doc: Update RCU CPU stall-warning documentation
-Date:   Mon, 25 Jun 2018 17:08:50 -0700
+Subject: [PATCH tip/core/rcu 19/40] rcu: Make rcu_nocb_wait_gp() check if GP already requested
+Date:   Mon, 25 Jun 2018 17:08:38 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626000841.GA15696@linux.vnet.ibm.com>
 References: <20180626000841.GA15696@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062600-0060-0000-0000-00000282665F
+x-cbid: 18062600-0040-0000-0000-000004451314
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052328; UDB=6.00539464; IPR=6.00830253;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052327; UDB=6.00539464; IPR=6.00830253;
  MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:07:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062600-0061-0000-0000-0000459336AF
-Message-Id: <20180626000859.23572-31-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062600-0041-0000-0000-0000084B28C9
+Message-Id: <20180626000859.23572-19-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,63 +86,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- Documentation/RCU/stallwarn.txt | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+This commit makes rcu_nocb_wait_gp() check rdp->gp_seq_needed to see
+if the current CPU already knows about the needed grace period having
+already been requested.  If so, it avoids acquiring the corresponding
+leaf rcu_node structure's ->lock, thus decreasing contention.  This
+optimization is intended for cases where either multiple leader rcuo
+kthreads are running on the same CPU or these kthreads are running on
+a non-offloaded (e.g., housekeeping) CPU.
 
-diff --git a/Documentation/RCU/stallwarn.txt b/Documentation/RCU/stallwarn.txt
-index 4259f95c3261..f99cf11b314b 100644
---- a/Documentation/RCU/stallwarn.txt
-+++ b/Documentation/RCU/stallwarn.txt
-@@ -172,7 +172,7 @@ it will print a message similar to the following:
- 	INFO: rcu_sched detected stalls on CPUs/tasks:
- 	2-...: (3 GPs behind) idle=06c/0/0 softirq=1453/1455 fqs=0
- 	16-...: (0 ticks this GP) idle=81c/0/0 softirq=764/764 fqs=0
--	(detected by 32, t=2603 jiffies, g=7073, c=7072, q=625)
-+	(detected by 32, t=2603 jiffies, g=7075, q=625)
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+[ paulmck: Move lock release past "if" as suggested by Joel Fernandes. ]
+[ paulmck: Fix caching of furthest-future requested grace period. ]
+---
+ kernel/rcu/tree.c        |  5 +++++
+ kernel/rcu/tree_plugin.h | 15 ++++++++++-----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index e5d1369e099f..0da0db1128d0 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1618,6 +1618,11 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+ 	trace_rcu_grace_period(rsp->name, READ_ONCE(rsp->gpnum), TPS("newreq"));
+ 	ret = true;  /* Caller must wake GP kthread. */
+ unlock_out:
++	/* Push furthest requested GP to leaf node and rcu_data structure. */
++	if (ULONG_CMP_LT(c, rnp_root->gp_seq_needed)) {
++		rnp->gp_seq_needed = rnp_root->gp_seq_needed;
++		rdp->gp_seq_needed = rnp_root->gp_seq_needed;
++	}
+ 	if (rnp != rnp_root)
+ 		raw_spin_unlock_rcu_node(rnp_root);
+ 	return ret;
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index f4a88e3c388d..ca73931f7b30 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -2104,12 +2104,17 @@ static void rcu_nocb_wait_gp(struct rcu_data *rdp)
+ 	bool needwake;
+ 	struct rcu_node *rnp = rdp->mynode;
  
- This message indicates that CPU 32 detected that CPUs 2 and 16 were both
- causing stalls, and that the stall was affecting RCU-sched.  This message
-@@ -215,11 +215,10 @@ CPU since the last time that this CPU noted the beginning of a grace
- period.
+-	raw_spin_lock_irqsave_rcu_node(rnp, flags);
++	local_irq_save(flags);
+ 	c = rcu_seq_snap(&rdp->rsp->gp_seq);
+-	needwake = rcu_start_this_gp(rnp, rdp, c);
+-	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+-	if (needwake)
+-		rcu_gp_kthread_wake(rdp->rsp);
++	if (!rdp->gpwrap && ULONG_CMP_GE(rdp->gp_seq_needed, c)) {
++		local_irq_restore(flags);
++	} else {
++		raw_spin_lock_rcu_node(rnp); /* irqs already disabled. */
++		needwake = rcu_start_this_gp(rnp, rdp, c);
++		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++		if (needwake)
++			rcu_gp_kthread_wake(rdp->rsp);
++	}
  
- The "detected by" line indicates which CPU detected the stall (in this
--case, CPU 32), how many jiffies have elapsed since the start of the
--grace period (in this case 2603), the number of the last grace period
--to start and to complete (7073 and 7072, respectively), and an estimate
--of the total number of RCU callbacks queued across all CPUs (625 in
--this case).
-+case, CPU 32), how many jiffies have elapsed since the start of the grace
-+period (in this case 2603), the grace-period sequence number (7075), and
-+an estimate of the total number of RCU callbacks queued across all CPUs
-+(625 in this case).
- 
- In kernels with CONFIG_RCU_FAST_NO_HZ, more information is printed
- for each CPU:
-@@ -266,15 +265,16 @@ If the relevant grace-period kthread has been unable to run prior to
- the stall warning, as was the case in the "All QSes seen" line above,
- the following additional line is printed:
- 
--	kthread starved for 23807 jiffies! g7073 c7072 f0x0 RCU_GP_WAIT_FQS(3) ->state=0x1
-+	kthread starved for 23807 jiffies! g7075 f0x0 RCU_GP_WAIT_FQS(3) ->state=0x1 ->cpu=5
- 
- Starving the grace-period kthreads of CPU time can of course result
- in RCU CPU stall warnings even when all CPUs and tasks have passed
--through the required quiescent states.  The "g" and "c" numbers flag the
--number of the last grace period started and completed, respectively,
--the "f" precedes the ->gp_flags command to the grace-period kthread,
--the "RCU_GP_WAIT_FQS" indicates that the kthread is waiting for a short
--timeout, and the "state" precedes value of the task_struct ->state field.
-+through the required quiescent states.  The "g" number shows the current
-+grace-period sequence number, the "f" precedes the ->gp_flags command
-+to the grace-period kthread, the "RCU_GP_WAIT_FQS" indicates that the
-+kthread is waiting for a short timeout, the "state" precedes value of the
-+task_struct ->state field, and the "cpu" indicates that the grace-period
-+kthread last ran on CPU 5.
- 
- 
- Multiple Warnings From One Stall
+ 	/*
+ 	 * Wait for the grace period.  Do so interruptibly to avoid messing
 -- 
 2.17.1
 
