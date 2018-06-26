@@ -2,111 +2,236 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83903C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163D3C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4724826A66
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4724826A66
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C39DA26A6D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:21:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39DA26A6D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935260AbeFZMU4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:20:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49218 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933823AbeFZMUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:20:53 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S935306AbeFZMVG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:21:06 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41484 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935148AbeFZMUz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:20:55 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3D91430820F4;
-        Tue, 26 Jun 2018 12:20:53 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F5FB7EE7C;
-        Tue, 26 Jun 2018 12:20:53 +0000 (UTC)
-Received: from zmail23.collab.prod.int.phx2.redhat.com (zmail23.collab.prod.int.phx2.redhat.com [10.5.83.28])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id A552C4BB78;
-        Tue, 26 Jun 2018 12:20:52 +0000 (UTC)
-Date:   Tue, 26 Jun 2018 08:20:52 -0400 (EDT)
-From:   Chunyu Hu <chuhu@redhat.com>
-Reply-To: Chunyu Hu <chuhu@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Christoph Hellwig <hch@lst.de>
-Cc:     linux-kernel@vger.kernel.org
-Message-ID: <1113263100.13594710.1530015652549.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180611062354.GA32641@lst.de>
-References: <1528573884-9133-1-git-send-email-chuhu@redhat.com> <20180611062354.GA32641@lst.de>
-Subject: Re: [PATCH] proc: add proc_seq_release
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id C7958634C7F;
+        Tue, 26 Jun 2018 15:20:53 +0300 (EEST)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1fXmxp-0000rA-Im; Tue, 26 Jun 2018 15:20:53 +0300
+Date:   Tue, 26 Jun 2018 15:20:53 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 6/8] media: imx274: add helper function to fill a
+ reg_8 table chunk
+Message-ID: <20180626122053.gd5jmt2wr35s5oh2@valkosipuli.retiisi.org.uk>
+References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
+ <1528716939-17015-7-git-send-email-luca@lucaceresoli.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.68.5.41, 10.4.195.29]
-Thread-Topic: proc: add proc_seq_release
-Thread-Index: vbxOw6lDQSrIXGETAu5l3gKdnHGdHQ==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 26 Jun 2018 12:20:53 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1528716939-17015-7-git-send-email-luca@lucaceresoli.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Luca,
 
-
------ Original Message -----
-> From: "Christoph Hellwig" <hch@lst.de>
-> To: "Chunyu Hu" <chuhu@redhat.com>
-> Cc: viro@zeniv.linux.org.uk, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-> Sent: Monday, June 11, 2018 2:23:54 PM
-> Subject: Re: [PATCH] proc: add proc_seq_release
+On Mon, Jun 11, 2018 at 01:35:37PM +0200, Luca Ceresoli wrote:
+> Tables of struct reg_8 are used to simplify multi-byte register
+> assignment. However filling these snippets with values computed at
+> runtime is currently implemented by very similar functions doing the
+> needed shift & mask manipulation.
 > 
-> On Sun, Jun 10, 2018 at 03:51:24AM +0800, Chunyu Hu wrote:
-> > kmemleak reported some memory leak on reading proc files. After adding
-> > some debug lines, find that proc_seq_fops is using seq_release as
-> > release handler, which won't handle the free of 'private' field of
-> > seq_file, while in fact the open handler proc_seq_open could create
-> > the private data with __seq_open_private when state_size is greater
-> > than zero. So after reading files created with proc_create_seq_private,
-> > such as /proc/timer_list and /proc/vmallocinfo, the private mem of a
-> > seq_file is not freed. Fix it by adding the paired proc_seq_release
-> > as the default release handler of proc_seq_ops instead of seq_release.
+> Replace all those functions with a unique helper function to fill
+> reg_8 tables in a simple and clean way.
+
+What's the purpose of writing these registers as multiple I²C writes, when
+this can be done as a single write (i.e. the address followed by two or
+three octets of data)?
+
 > 
-> Indeed, thanks for the patch.
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+> Changed v3 -> v4: nothing
 > 
-
-What's our plan for this issue? We can still see the leaking in 4.18-RC2. 
-
-1) Run 'cat /proc/timer_list' then
-2) echo scan > /sys/kernel/debug/kmemleak
-3) cat /sys/kernel/debug/kmemleak
-
-each time, it leaks 16 bytes.
-
-unreferenced object 0xffff880017525120 (size 16):
-  comm "cat", pid 4682, jiffies 4294964743 (age 46.880s)
-  hex dump (first 16 bytes):
-    04 00 00 00 01 00 00 00 42 00 96 e7 3f 00 00 00  ........B...?...
-  backtrace:
-    [<000000006f6b5d90>] seq_open_private+0x25/0x40
-    [<00000000d94d91aa>] proc_seq_open+0xca/0x120
-    [<00000000d5609077>] proc_reg_open+0x1d4/0x5b0
-    [<0000000036a3d49c>] do_dentry_open+0x7d6/0x1010
-    [<00000000d4fb0a82>] vfs_open+0x170/0x2b0
-    [<00000000f3bf21b4>] path_openat+0x760/0x3750
-    [<00000000b0d4e66c>] do_filp_open+0x1bb/0x2c0
-    [<0000000063b53236>] do_sys_open+0x2b2/0x490
-    [<00000000a5249c62>] do_syscall_64+0xd3/0x6e0
-    [<000000006f9f8436>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    [<000000001d702cb2>] 0xffffffffffffffff
-
+> Changed v2 -> v3:
+>  - minor reformatting in prepare_reg() documentation
+> 
+> Changed v1 -> v2:
+>  - add "media: " prefix to commit message
+> ---
+>  drivers/media/i2c/imx274.c | 90 ++++++++++++++++++++++++++++------------------
+>  1 file changed, 55 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+> index 48343c2ade83..e5ba19b97083 100644
+> --- a/drivers/media/i2c/imx274.c
+> +++ b/drivers/media/i2c/imx274.c
+> @@ -597,6 +597,58 @@ static inline struct stimx274 *to_imx274(struct v4l2_subdev *sd)
+>  }
+>  
+>  /*
+> + * Fill consecutive reg_8 items in order to set a multibyte register.
+> + *
+> + * The sensor has many 2-bytes registers and a 3-byte register. This
+> + * simplifies code to set them by filling consecutive entries of a
+> + * struct reg_8 table with the data to set a register.
+> + *
+> + * The number of table entries that is filled is the minimum needed
+> + * for the given number of bits (i.e. nbits / 8, rounded up). If nbits
+> + * is not a multiple of 8, extra bits in the most significant byte are
+> + * zeroed.
+> + *
+> + * Example:
+> + *   Calling prepare_reg(&regs[10], 0x3000, 0xcafe, 12) will set:
+> + *   regs[10] = { .addr = 0x3000, .val = 0xfe }
+> + *   regs[11] = { .addr = 0x3001, .val = 0x0a }
+> + *
+> + * @table_base: Pointer to the first reg_8 struct to be filled.  The
+> + *              following entries will also be set, make sure they are
+> + *              properly allocated!
+> + * @addr_lsb: Address of the LSB register.  Other registers must be
+> + *            consecutive, least-to-most significant.
+> + * @value: Value to be written to the register.
+> + * @nbits: Number of bits to write (range: [1..24])
+> + */
+> +static void prepare_reg(struct reg_8 *table_base,
+> +			u16 addr_lsb,
+> +			u32 value,
+> +			size_t nbits)
+> +{
+> +	struct reg_8 *cmd = table_base;
+> +	u16 addr = addr_lsb;
+> +	size_t bits; /* how many bits at this round */
+> +
+> +	WARN_ON(nbits > 24);
+> +
+> +	if (nbits > 24)
+> +		nbits = 24;
+> +
+> +	while (nbits > 0) {
+> +		bits = min_t(size_t, 8, nbits);
+> +
+> +		cmd->addr = addr;
+> +		cmd->val = value & ((1 << bits) - 1);
+> +
+> +		nbits -= bits;
+> +		value >>= 8;
+> +		addr++;
+> +		cmd++;
+> +	}
+> +}
+> +
+> +/*
+>   * Writing a register table
+>   *
+>   * @priv: Pointer to device
+> @@ -1163,15 +1215,6 @@ static int imx274_set_digital_gain(struct stimx274 *priv, u32 dgain)
+>  				reg_val & IMX274_MASK_LSB_4_BITS);
+>  }
+>  
+> -static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
+> -{
+> -	regs->addr = IMX274_ANALOG_GAIN_ADDR_MSB;
+> -	regs->val = (gain >> IMX274_SHIFT_8_BITS) & IMX274_MASK_LSB_3_BITS;
+> -
+> -	(regs + 1)->addr = IMX274_ANALOG_GAIN_ADDR_LSB;
+> -	(regs + 1)->val = (gain) & IMX274_MASK_LSB_8_BITS;
+> -}
+> -
+>  /*
+>   * imx274_set_gain - Function called when setting gain
+>   * @priv: Pointer to device structure
+> @@ -1229,7 +1272,7 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+>  	if (gain_reg > IMX274_GAIN_REG_MAX)
+>  		gain_reg = IMX274_GAIN_REG_MAX;
+>  
+> -	imx274_calculate_gain_regs(reg_list, (u16)gain_reg);
+> +	prepare_reg(reg_list, IMX274_ANALOG_GAIN_ADDR_LSB, gain_reg, 11);
+>  
+>  	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+>  		err = imx274_write_reg(priv, reg_list[i].addr,
+> @@ -1258,16 +1301,6 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+>  	return err;
+>  }
+>  
+> -static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
+> -						     u32 coarse_time)
+> -{
+> -	regs->addr = IMX274_SHR_REG_MSB;
+> -	regs->val = (coarse_time >> IMX274_SHIFT_8_BITS)
+> -			& IMX274_MASK_LSB_8_BITS;
+> -	(regs + 1)->addr = IMX274_SHR_REG_LSB;
+> -	(regs + 1)->val = (coarse_time) & IMX274_MASK_LSB_8_BITS;
+> -}
+> -
+>  /*
+>   * imx274_set_coarse_time - Function called when setting SHR value
+>   * @priv: Pointer to device structure
+> @@ -1292,7 +1325,7 @@ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
+>  		goto fail;
+>  
+>  	/* prepare SHR registers */
+> -	imx274_calculate_coarse_time_regs(reg_list, coarse_time);
+> +	prepare_reg(reg_list, IMX274_SHR_REG_LSB, coarse_time, 16);
+>  
+>  	/* write to SHR registers */
+>  	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+> @@ -1429,19 +1462,6 @@ static int imx274_set_test_pattern(struct stimx274 *priv, int val)
+>  	return err;
+>  }
+>  
+> -static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
+> -						      u32 frame_length)
+> -{
+> -	regs->addr = IMX274_VMAX_REG_1;
+> -	regs->val = (frame_length >> IMX274_SHIFT_16_BITS)
+> -			& IMX274_MASK_LSB_4_BITS;
+> -	(regs + 1)->addr = IMX274_VMAX_REG_2;
+> -	(regs + 1)->val = (frame_length >> IMX274_SHIFT_8_BITS)
+> -			& IMX274_MASK_LSB_8_BITS;
+> -	(regs + 2)->addr = IMX274_VMAX_REG_3;
+> -	(regs + 2)->val = (frame_length) & IMX274_MASK_LSB_8_BITS;
+> -}
+> -
+>  /*
+>   * imx274_set_frame_length - Function called when setting frame length
+>   * @priv: Pointer to device structure
+> @@ -1463,7 +1483,7 @@ static int imx274_set_frame_length(struct stimx274 *priv, u32 val)
+>  
+>  	frame_length = (u32)val;
+>  
+> -	imx274_calculate_frame_length_regs(reg_list, frame_length);
+> +	prepare_reg(reg_list, IMX274_VMAX_REG_3, frame_length, 20);
+>  	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+>  		err = imx274_write_reg(priv, reg_list[i].addr,
+>  				       reg_list[i].val);
+> -- 
+> 2.7.4
+> 
 
 -- 
-Regards,
-Chunyu Hu
-
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
