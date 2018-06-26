@@ -2,346 +2,191 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E761C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAFBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F38D7264B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:42:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F38D7264B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D52182083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:45:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="OmuZhbpV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52182083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965403AbeFZDmi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 23:42:38 -0400
-Received: from mga06.intel.com ([134.134.136.31]:33540 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965340AbeFZDmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 23:42:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2018 20:42:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,273,1526367600"; 
-   d="scan'208";a="70000837"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by orsmga002.jf.intel.com with ESMTP; 25 Jun 2018 20:42:33 -0700
-Message-ID: <5B31B71B.6080709@intel.com>
-Date:   Tue, 26 Jun 2018 11:46:35 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S965404AbeFZDpS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 23:45:18 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:65113 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965355AbeFZDpR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 23:45:17 -0400
+Received: from mail-ua0-f169.google.com (mail-ua0-f169.google.com [209.85.217.169]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w5Q3j6Q3024721;
+        Tue, 26 Jun 2018 12:45:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w5Q3j6Q3024721
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1529984707;
+        bh=Efr7k6qAYbUotOyhcFh47XAVztCKrSASKKyFo/P4LxI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=OmuZhbpV0GZNmhVmUyIwMi89n1ToOeOCkFxRgfbT9IMOvF5MUCyJGRMeV1iVIW5qP
+         sa7DbuOKpo6Eumj7CanVH7+BEvCYb/G8Pyo+DHRRl/RpXWFsImHSg+Ad/vTfDJ7KYa
+         5iR1ahQlWyItyqEZHZyyoCBgCm3532faXO+haTsMyXEvThUzgac1S5DWxwCSY1nzBc
+         OWxKfY5l2cs4FjQd+yF2oyWCxyRz+WHGYLaX9uO5hkrd1PbTemLr0adXtT7WcXaBRf
+         zVaA2SfTSsXFiciG73DGPRCoZhFT/+IxNjsB0hZ8EoBKKcxHVanqSgEoSBsJ21Nb4R
+         iXIsBvllQXmGQ==
+X-Nifty-SrcIP: [209.85.217.169]
+Received: by mail-ua0-f169.google.com with SMTP id z16-v6so10020830uaz.10;
+        Mon, 25 Jun 2018 20:45:07 -0700 (PDT)
+X-Gm-Message-State: APt69E07Qnq+SiVgve8skVQryUhKsgJL+MiGaJo1Rw3HjKyqLho+ixSt
+        cXCCDsoJKF2B54myBQAk78Wn9hCLmnKn1kJgprY=
+X-Google-Smtp-Source: AAOMgpfc/UZRI8JLiITFFEJLhCd4xznxXEiKy42t7Wfmddl307ZqzSm1fCc/Bw/aqe7uPSB4FYaolzrEFsrIq0Q3rTo=
+X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr2900822ual.141.1529984706338;
+ Mon, 25 Jun 2018 20:45:06 -0700 (PDT)
 MIME-Version: 1.0
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-Subject: Re: [PATCH v34 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com> <1529928312-30500-3-git-send-email-wei.w.wang@intel.com> <20180626002822-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180626002822-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 20:44:25
+ -0700 (PDT)
+In-Reply-To: <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
+References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
+ <1528987172-19810-3-git-send-email-yamada.masahiro@socionext.com> <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 26 Jun 2018 12:44:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQKOz1zccBrX2vgqA7Wu5c397W=GkAj1AMR+r56UybXeg@mail.gmail.com>
+Message-ID: <CAK7LNAQKOz1zccBrX2vgqA7Wu5c397W=GkAj1AMR+r56UybXeg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] bpfilter: include bpfilter_umh in assembly instead
+ of using objcopy
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/26/2018 09:37 AM, Michael S. Tsirkin wrote:
-> On Mon, Jun 25, 2018 at 08:05:10PM +0800, Wei Wang wrote:
->
->> @@ -326,17 +353,6 @@ static void stats_handle_request(struct virtio_balloon *vb)
->>   	virtqueue_kick(vq);
->>   }
->>   
->> -static void virtballoon_changed(struct virtio_device *vdev)
->> -{
->> -	struct virtio_balloon *vb = vdev->priv;
->> -	unsigned long flags;
+Hi Alexei,
+
+
+2018-06-15 9:47 GMT+09:00 Alexei Starovoitov <alexei.starovoitov@gmail.com>:
+> On Thu, Jun 14, 2018 at 11:39:31PM +0900, Masahiro Yamada wrote:
+>> What we want here is to embed a user-space program into the kernel.
+>> Instead of the complex ELF magic, let's simply wrap it in the assembly
+>> with the '.incbin' directive.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>> Changes in v2:
+>>   - Rebase
+>>
+>>  net/bpfilter/Makefile            | 15 ++-------------
+>>  net/bpfilter/bpfilter_kern.c     | 11 +++++------
+>>  net/bpfilter/bpfilter_umh_blob.S |  7 +++++++
+>>  3 files changed, 14 insertions(+), 19 deletions(-)
+>>  create mode 100644 net/bpfilter/bpfilter_umh_blob.S
+>>
+>> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+>> index e0bbe75..39c6980 100644
+>> --- a/net/bpfilter/Makefile
+>> +++ b/net/bpfilter/Makefile
+>> @@ -15,18 +15,7 @@ ifeq ($(CONFIG_BPFILTER_UMH), y)
+>>  HOSTLDFLAGS += -static
+>>  endif
+>>
+>> -# a bit of elf magic to convert bpfilter_umh binary into a binary blob
+>> -# inside bpfilter_umh.o elf file referenced by
+>> -# _binary_net_bpfilter_bpfilter_umh_start symbol
+>> -# which bpfilter_kern.c passes further into umh blob loader at run-time
+>> -quiet_cmd_copy_umh = GEN $@
+>> -      cmd_copy_umh = echo ':' > $(obj)/.bpfilter_umh.o.cmd; \
+>> -      $(OBJCOPY) -I binary -O `$(OBJDUMP) -f $<|grep format|cut -d' ' -f8` \
+>> -      -B `$(OBJDUMP) -f $<|grep architecture|cut -d, -f1|cut -d' ' -f2` \
+>> -      --rename-section .data=.init.rodata $< $@
 >> -
->> -	spin_lock_irqsave(&vb->stop_update_lock, flags);
->> -	if (!vb->stop_update)
->> -		queue_work(system_freezable_wq, &vb->update_balloon_size_work);
->> -	spin_unlock_irqrestore(&vb->stop_update_lock, flags);
->> -}
+>> -$(obj)/bpfilter_umh.o: $(obj)/bpfilter_umh
+>> -     $(call cmd,copy_umh)
+>> +$(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
+>>
+>>  obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
+>> -bpfilter-objs += bpfilter_kern.o bpfilter_umh.o
+>> +bpfilter-objs += bpfilter_kern.o bpfilter_umh_blob.o
+>> diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+>> index 0952257..6de3ae5 100644
+>> --- a/net/bpfilter/bpfilter_kern.c
+>> +++ b/net/bpfilter/bpfilter_kern.c
+>> @@ -10,11 +10,8 @@
+>>  #include <linux/file.h>
+>>  #include "msgfmt.h"
+>>
+>> -#define UMH_start _binary_net_bpfilter_bpfilter_umh_start
+>> -#define UMH_end _binary_net_bpfilter_bpfilter_umh_end
 >> -
->>   static inline s64 towards_target(struct virtio_balloon *vb)
->>   {
->>   	s64 target;
->> @@ -353,6 +369,35 @@ static inline s64 towards_target(struct virtio_balloon *vb)
->>   	return target - vb->num_pages;
->>   }
->>   
->> +static void virtballoon_changed(struct virtio_device *vdev)
->> +{
->> +	struct virtio_balloon *vb = vdev->priv;
->> +	unsigned long flags;
->> +	s64 diff = towards_target(vb);
->> +
->> +	if (diff) {
->> +		spin_lock_irqsave(&vb->stop_update_lock, flags);
->> +		if (!vb->stop_update)
->> +			queue_work(system_freezable_wq,
->> +				   &vb->update_balloon_size_work);
->> +		spin_unlock_irqrestore(&vb->stop_update_lock, flags);
->> +	}
->> +
->> +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
->> +		virtio_cread(vdev, struct virtio_balloon_config,
->> +			     free_page_report_cmd_id, &vb->cmd_id_received);
->> +		if (vb->cmd_id_received !=
->> +		    VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID &&
->> +		    vb->cmd_id_received != vb->cmd_id_active) {
->> +			spin_lock_irqsave(&vb->stop_update_lock, flags);
->> +			if (!vb->stop_update)
->> +				queue_work(vb->balloon_wq,
->> +					   &vb->report_free_page_work);
->> +			spin_unlock_irqrestore(&vb->stop_update_lock, flags);
->> +		}
->> +	}
->> +}
->> +
->>   static void update_balloon_size(struct virtio_balloon *vb)
->>   {
->>   	u32 actual = vb->num_pages;
->> @@ -425,44 +470,253 @@ static void update_balloon_size_func(struct work_struct *work)
->>   		queue_work(system_freezable_wq, work);
->>   }
->>   
->> +static void free_page_vq_cb(struct virtqueue *vq)
->> +{
->> +	unsigned int len;
->> +	void *buf;
->> +	struct virtio_balloon *vb = vq->vdev->priv;
->> +
->> +	while (1) {
->> +		buf = virtqueue_get_buf(vq, &len);
->> +
->> +		if (!buf || buf == &vb->cmd_start || buf == &vb->cmd_stop)
->> +			break;
-> If there's any buffer after this one we might never get another
-> callback.
-
-I think every used buffer can get the callback, because host takes from 
-the arrays one by one, and puts back each with a vq notify.
-
-
-
->> +		free_pages((unsigned long)buf, ARRAY_ALLOC_ORDER);
->> +	}
->> +}
->> +
->>   static int init_vqs(struct virtio_balloon *vb)
->>   {
->> -	struct virtqueue *vqs[3];
->> -	vq_callback_t *callbacks[] = { balloon_ack, balloon_ack, stats_request };
->> -	static const char * const names[] = { "inflate", "deflate", "stats" };
->> -	int err, nvqs;
->> +	struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
->> +	vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
->> +	const char *names[VIRTIO_BALLOON_VQ_MAX];
->> +	struct scatterlist sg;
->> +	int ret;
->>   
->>   	/*
->> -	 * We expect two virtqueues: inflate and deflate, and
->> -	 * optionally stat.
->> +	 * Inflateq and deflateq are used unconditionally. The names[]
->> +	 * will be NULL if the related feature is not enabled, which will
->> +	 * cause no allocation for the corresponding virtqueue in find_vqs.
->>   	 */
->> -	nvqs = virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ) ? 3 : 2;
->> -	err = virtio_find_vqs(vb->vdev, nvqs, vqs, callbacks, names, NULL);
->> -	if (err)
->> -		return err;
->> +	callbacks[VIRTIO_BALLOON_VQ_INFLATE] = balloon_ack;
->> +	names[VIRTIO_BALLOON_VQ_INFLATE] = "inflate";
->> +	callbacks[VIRTIO_BALLOON_VQ_DEFLATE] = balloon_ack;
->> +	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
->> +	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
->> +	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
->>   
->> -	vb->inflate_vq = vqs[0];
->> -	vb->deflate_vq = vqs[1];
->>   	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
->> -		struct scatterlist sg;
->> -		unsigned int num_stats;
->> -		vb->stats_vq = vqs[2];
->> +		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
->> +		callbacks[VIRTIO_BALLOON_VQ_STATS] = stats_request;
->> +	}
->>   
->> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
->> +		names[VIRTIO_BALLOON_VQ_FREE_PAGE] = "free_page_vq";
->> +		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = free_page_vq_cb;
->> +	}
->> +
->> +	ret = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
->> +					 vqs, callbacks, names, NULL, NULL);
->> +	if (ret)
->> +		return ret;
->> +
->> +	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
->> +	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
->> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
->> +		vb->stats_vq = vqs[VIRTIO_BALLOON_VQ_STATS];
->>   		/*
->>   		 * Prime this virtqueue with one buffer so the hypervisor can
->>   		 * use it to signal us later (it can't be broken yet!).
->>   		 */
->> -		num_stats = update_balloon_stats(vb);
->> -
->> -		sg_init_one(&sg, vb->stats, sizeof(vb->stats[0]) * num_stats);
->> -		if (virtqueue_add_outbuf(vb->stats_vq, &sg, 1, vb, GFP_KERNEL)
->> -		    < 0)
->> -			BUG();
->> +		sg_init_one(&sg, vb->stats, sizeof(vb->stats));
->> +		ret = virtqueue_add_outbuf(vb->stats_vq, &sg, 1, vb,
->> +					   GFP_KERNEL);
->> +		if (ret) {
->> +			dev_warn(&vb->vdev->dev, "%s: add stat_vq failed\n",
->> +				 __func__);
->> +			return ret;
->> +		}
-> Why the change? Is it more likely to happen now?
-
-Actually this part remains the same as the previous versions (e.g. v32). 
-It is changed because we agreed that using BUG() isn't necessary here, 
-and better to bail out nicely.
-
-
-
+>> -extern char UMH_start;
+>> -extern char UMH_end;
+>> +extern char bpfilter_umh_start;
+>> +extern char bpfilter_umh_end;
+>>
+>>  static struct umh_info info;
+>>  /* since ip_getsockopt() can run in parallel, serialize access to umh */
+>> @@ -93,7 +90,9 @@ static int __init load_umh(void)
+>>       int err;
+>>
+>>       /* fork usermode process */
+>> -     err = fork_usermode_blob(&UMH_start, &UMH_end - &UMH_start, &info);
+>> +     err = fork_usermode_blob(&bpfilter_umh_end,
+>> +                              &bpfilter_umh_end - &bpfilter_umh_start,
+>> +                              &info);
+>>       if (err)
+>>               return err;
+>>       pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
+>> diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
+>> new file mode 100644
+>> index 0000000..40311d1
+>> --- /dev/null
+>> +++ b/net/bpfilter/bpfilter_umh_blob.S
+>> @@ -0,0 +1,7 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +     .section .init.rodata, "a"
+>> +     .global bpfilter_umh_start
+>> +bpfilter_umh_start:
+>> +     .incbin "net/bpfilter/bpfilter_umh"
+>> +     .global bpfilter_umh_end
+>> +bpfilter_umh_end:
 >
-> +/*
-> + * virtio_balloon_send_hints - send arrays of hints to host
-> + * @vb: the virtio_balloon struct
-> + * @arrays: the arrays of hints
-> + * @array_num: the number of arrays give by the caller
-> + * @last_array_hints: the number of hints in the last array
-> + *
-> + * Send hints to host array by array. This begins by sending a start cmd,
-> + * which contains a cmd id received from host and the free page block size in
-> + * bytes of each hint. At the end, a stop cmd is sent to host to indicate the
-> + * end of this reporting. If host actively requests to stop the reporting, free
-> + * the arrays that have not been sent.
-> + */
-> +static void virtio_balloon_send_hints(struct virtio_balloon *vb,
-> +				      __le64 **arrays,
-> +				      uint32_t array_num,
-> +				      uint32_t last_array_hints)
-> +{
-> +	int err, i = 0;
-> +	struct scatterlist sg;
-> +	struct virtqueue *vq = vb->free_page_vq;
-> +
-> +	/* Start by sending the received cmd id to host with an outbuf. */
-> +	err = send_start_cmd_id(vb);
-> +	if (unlikely(err))
-> +		goto out_err;
-> +	/* Kick host to start taking entries from the vq. */
-> +	virtqueue_kick(vq);
-> +
-> +	for (i = 0; i < array_num; i++) {
-> +		/*
-> +		 * If a stop id or a new cmd id was just received from host,
-> +		 * stop the reporting, and free the remaining arrays that
-> +		 * haven't been sent to host.
-> +		 */
-> +		if (vb->cmd_id_received != vb->cmd_id_active)
-> +			goto out_free;
-> +
-> +		if (i + 1 == array_num)
-> +			sg_init_one(&sg, (void *)arrays[i],
-> +				    last_array_hints * sizeof(__le64));
-> +		else
-> +			sg_init_one(&sg, (void *)arrays[i], ARRAY_ALLOC_SIZE);
-> +		err = virtqueue_add_inbuf(vq, &sg, 1, (void *)arrays[i],
-> +					  GFP_KERNEL);
-> +		if (unlikely(err))
-> +			goto out_err;
-> +	}
-> +
-> +	/* End by sending a stop id to host with an outbuf. */
-> +	err = send_stop_cmd_id(vb);
-> +	if (unlikely(err))
-> +		goto out_err;
-> Don't we need to kick here?
-
-I think not needed, because we have kicked host about starting the 
-report, and the host side optimization won't exit unless receiving this 
-stop sign or the migration thread asks to exit.
-
+> for some reason it doesn't work.
+> fork_usermode_blob() returns ENOEXEC
+> You should be able to test it simply running 'iptables -L'.
+> Without this patch you should see:
+> [   12.696937] bpfilter: Loaded bpfilter_umh pid 225
+> Started bpfilter
 >
->> +	int i;
->> +
->> +	max_entries = max_free_page_blocks(ARRAY_ALLOC_ORDER);
->> +	entries_per_page = PAGE_SIZE / sizeof(__le64);
->> +	entries_per_array = entries_per_page * (1 << ARRAY_ALLOC_ORDER);
->> +	max_array_num = max_entries / entries_per_array +
->> +			!!(max_entries % entries_per_array);
->> +	arrays = kmalloc_array(max_array_num, sizeof(__le64 *), GFP_KERNEL);
-> Instead of all this mess, how about get_free_pages here as well?
+> where first line comes from kernel module and second from umh.
 
-Sounds good, will replace kmalloc_array with __get_free_pages(), but 
-still need the above calculation to get max_array_num.
 
->
-> Also why do we need GFP_KERNEL for this?
+Sorry for the late reply.
 
-I guess it is better to use "__GFP_ATOMIC | __GFP_NOMEMALLOC", thanks.
+Unfortunately, I will be busy for a while.
 
->
->
->> +	if (!arrays)
->> +		return NULL;
->> +
->> +	for (i = 0; i < max_array_num; i++) {
-> So we are getting a ton of memory here just to free it up a bit later.
-> Why doesn't get_from_free_page_list get the pages from free list for us?
-> We could also avoid the 1st allocation then - just build a list
-> of these.
+I will come back eventually
+to check it out, but I cannot tell when.
 
-That wouldn't be a good choice for us. If we check how the regular 
-allocation works, there are many many things we need to consider when 
-pages are allocated to users. For example, we need to take care of the 
-nr_free counter, we need to check the watermark and perform the related 
-actions. Also the folks working on arch_alloc_page to monitor page 
-allocation activities would get a surprise..if page allocation is 
-allowed to work in this way.
+
+Somebody else sent a patch equivalent to 1/3, so it is fine.
+
+3/3 can go independently, so it will send it as a separate patch for now.
 
 
 
 
 
->
->> +		arrays[i] =
->> +		(__le64 *)__get_free_pages(__GFP_ATOMIC | __GFP_NOMEMALLOC,
->> +					   ARRAY_ALLOC_ORDER);
-> Coding style says:
->
-> Descendants are always substantially shorter than the parent and
-> are placed substantially to the right.
-
-Thanks, will rearrange it:
-
-arrays[i] = (__le64 *)__get_free_pages(__GFP_ATOMIC |
-				__GFP_NOMEMALLOC, ARRAY_ALLOC_ORDER);
-
-
-
->
->> +		if (!arrays[i]) {
-> Also if it does fail (small guest), shall we try with less arrays?
-
-I think it's not needed. If the free list is empty, no matter it is a 
-huge guest or a small guest, get_from_free_page_list() will load nothing 
-even we pass a small array to it.
-
-
-Best,
-Wei
+-- 
+Best Regards
+Masahiro Yamada
