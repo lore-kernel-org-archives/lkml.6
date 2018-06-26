@@ -2,109 +2,92 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C61C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D92C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDDB326F35
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:19:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003D226F27
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:21:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAy33REW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDDB326F35
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vjhjN/2b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003D226F27
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754935AbeFZTTf (ORCPT
+        id S1752409AbeFZTVk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 15:19:35 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40697 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeFZTTd (ORCPT
+        Tue, 26 Jun 2018 15:21:40 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54858 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751409AbeFZTVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 15:19:33 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z13-v6so2985115wma.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 12:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0xcxM/8tnnO0b0krXYVIdU5WlM5lC9ytV4EZhx3BAyo=;
-        b=nAy33REWp7j3KCZ5QYdohnlwZDsonAOvYbuVqBPp/4WdqsAJHztCjRjKGsbSv7zEiJ
-         GBw/jXlZB75Z0+iYfFFmgfwbwmMfg9i7Jgkm7tgVyXcGCbDvxjwfzy9ZhXNMcYmfCVmU
-         jY1eG+frUphVYMLZQ0nLZXV5Sd50rOzjOkPGctml+IiK3cfNMUOW3FlUiWK+Xxnx8ypP
-         NtEYF5QiKnnJopL2KC4OGGFHAb6rx/XVDRxEE60r6jb9LzCT5Oi0US2sIIbq9s7g9NyP
-         O24xpoyE1Pf8bmngKM++0TqbO3IuV/Q6GnfQebTV1vu9OYpSm0S5K/yZAAnje9/v35Gc
-         VIVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0xcxM/8tnnO0b0krXYVIdU5WlM5lC9ytV4EZhx3BAyo=;
-        b=YSObFTp4nPxIBzP8javmEEj6XpUzsnCg6sxGqwnSYcy/xmj6im5GzUbLojc795TjtX
-         jRj3JUT3l5HijOu55XOBwhsJtMZJ+nHdSbV4AzKOHdENZKGd6Lrcn5aVM3RRu16yLpM9
-         3Klt5w7S9ppC24uUI+p/bDryzj4zXrwY71iTzKOD4AUkVfi6zqH35eQsTJgWi/Yfei6T
-         IIVYqTBfoHjqkX/sXoDh8d1YjvI2D5opQyQN9lHgDyqMwL8xW847wsHCCzRX2KWjeAi+
-         wFh9+rVMF2hZlur0xTOq8gN9MVJPdctTkBTObaWtgTIDLD96/Edb3AS4904dhyZzis1t
-         XfFg==
-X-Gm-Message-State: APt69E3ehHP3iJwQw7A6nosPIHloW01HgnaxVYkcOskh5Ypb83MLr71a
-        1FclAkZeefqB51aPTOZrAY0=
-X-Google-Smtp-Source: AAOMgpfZSHh+dkWniZW9zH6XVmNeZ9B2mC0M09LSr5LB1vMtf+yIwitCSvkeM5XfdiMq4fcJ/vYUYw==
-X-Received: by 2002:a1c:b6c3:: with SMTP id g186-v6mr2636215wmf.40.1530040771958;
-        Tue, 26 Jun 2018 12:19:31 -0700 (PDT)
-Received: from [192.168.1.4] (x590c812a.dyn.telefonica.de. [89.12.129.42])
-        by smtp.gmail.com with ESMTPSA id o13-v6sm1752908wmc.8.2018.06.26.12.19.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 12:19:31 -0700 (PDT)
-Subject: Re: [PATCH v3 2/4] staging: rtl8723bs: refactor rtw_macaddr_cfg()
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <20180626081409.9518-1-straube.linux@gmail.com>
- <20180626081409.9518-2-straube.linux@gmail.com>
- <CAHp75Ve7tKAQU9sfCUvWnwHaYkFXHiMS6PTbLdqh-AJOfYQpCw@mail.gmail.com>
-From:   Michael Straube <straube.linux@gmail.com>
-Message-ID: <91b18a3f-260b-44a6-466b-5074f78f3cbd@gmail.com>
-Date:   Tue, 26 Jun 2018 21:19:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 15:21:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VUKUFhyaojLz/2g1FkYPnStlyJi5/TRWc1jk89XzZZM=; b=vjhjN/2brGJuVaLDeqh9UGhvJ
+        4NX+xuZrThHCak32reMvnVNqdt40i490TJ/OV25lfkbLECCOqi9eUf2ullRQTgh09/dULZo0/j62B
+        zfwUjPIyL47QtRMtW73Y3SNGKpYUnrcKT1vfCGgRhFbMTh0VaAEe9/1hIcct+sNiMe/ZdOYfq8Px/
+        BCcuWLhofrZFElbhpj2zK8IcfZMSZyWwEf4rVZkbV/SJUzA5+MUmAKMf8inyAohWO3E0zcDTR9H1y
+        yzULAHHFM8PiKaXOXtgBIfdBjnpCx2m2oIolAT4PT/pgEFGh8K5LUWCC91xVpwf+291nm2jBT6pBf
+        sqVtWHf3Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXtWe-0005Ma-N5; Tue, 26 Jun 2018 19:21:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DBDE62029FA0A; Tue, 26 Jun 2018 21:21:13 +0200 (CEST)
+Date:   Tue, 26 Jun 2018 21:21:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 16/27] rcu: Add comment documenting how
+ rcu_seq_snap works
+Message-ID: <20180626192113.GM2494@hirez.programming.kicks-ass.net>
+References: <20180626003448.GA26209@linux.vnet.ibm.com>
+ <20180626003513.27812-16-paulmck@linux.vnet.ibm.com>
+ <20180626171454.GI2494@hirez.programming.kicks-ass.net>
+ <20180626180855.GE3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Ve7tKAQU9sfCUvWnwHaYkFXHiMS6PTbLdqh-AJOfYQpCw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626180855.GE3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/26/18 19:29, Andy Shevchenko wrote:
-> On Tue, Jun 26, 2018 at 11:14 AM, Michael Straube
-> <straube.linux@gmail.com> wrote:
->> Using is_broadcast_ether_addr() and is_zero_ether_addr() instead of
->> testing each byte of the mac[] array for 0xff and 0x00 shortens the
->> code and improves readability.
->>
->> If np == NULL, of_get_property() returns NULL, hence the "np" check
->> is not needed.
->>
->> Instead of a fixed default mac address use a random one to reduce the
->> likelihood of mac address collision.
->>
+On Tue, Jun 26, 2018 at 11:08:55AM -0700, Paul E. McKenney wrote:
+> On Tue, Jun 26, 2018 at 07:14:54PM +0200, Peter Zijlstra wrote:
+> > On Mon, Jun 25, 2018 at 05:35:02PM -0700, Paul E. McKenney wrote:
+> > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > > 
+> > > rcu_seq_snap may be tricky to decipher. Lets document how it works with
+> > > an example to make it easier.
+> > 
+> > Since you had me looking at them functions; why isn't rcu_seq_snap()
+> > using smp_load_acquire() and rcu_seq_end() using smp_store_release() ?
+> > Their respective comments seem to suggest that would be sufficent.
 > 
->> Thanks to Joe Perches and Dan Carpenter.
-> 
-> I guess you may use Suggested-by tag as well.
-> 
+> I do not believe that this would suffice.  Would it make sense to refer
+> to Documentation/RCU/Design/Memory-Ordering in the comment header?
 
-Thanks for the hint, I will add it.
+No, because I can't read that thing in an editor.
 
-Regards
-Michael
+> Except that this would invite sprinkling this pathname far and wide...
+> 
+> The key point is that these functions are part of the any-to-any
+> memory-ordering guarantee that RCU grace periods provide.
+
+Then the existing comment is misleading and really needs change.
