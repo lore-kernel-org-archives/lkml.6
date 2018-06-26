@@ -2,122 +2,499 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E55C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87663C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1DE208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:40:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1DE208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 214BF26525
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:49:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMwMaC9g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 214BF26525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751286AbeFZFko (ORCPT
+        id S1751535AbeFZFtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 01:40:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43450 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751019AbeFZFkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 01:40:42 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5FCAA406E87A;
-        Tue, 26 Jun 2018 05:40:41 +0000 (UTC)
-Received: from [10.40.204.33] (ovpn-204-33.brq.redhat.com [10.40.204.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9B5172026D6A;
-        Tue, 26 Jun 2018 05:40:38 +0000 (UTC)
-Subject: Re: s390 qemu boot failure in -next
-To:     Georgi Guninski <guninski@guninski.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-s390x <qemu-s390x@nongnu.org>,
-        qemu-devel <qemu-devel@nongnu.org>,
-        Cornelia Huck <cohuck@redhat.com>
-References: <20180622194736.GA5794@roeck-us.net>
- <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
- <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
- <20180626053246.6kyvrj7jbuhgdkgv@sivokote.iziade.m$>
-From:   Thomas Huth <thuth@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=thuth@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <f6c25172-573e-a7d2-8264-f44f0a5a0a27@redhat.com>
-Date:   Tue, 26 Jun 2018 07:40:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 01:49:52 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:32898 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeFZFtu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 01:49:50 -0400
+Received: by mail-yb0-f195.google.com with SMTP id e84-v6so6122720ybb.0;
+        Mon, 25 Jun 2018 22:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=tvmA7a+IkhHRekCcpomkdE6DuwWjJgXmJ3kLKDT2TGM=;
+        b=RMwMaC9gqDH2yw2Fl4cVxhzwJy32xfonA1tldhl9WGGBSrLA6UCbZ7moSAPce9b2i+
+         +IUFOXM6PKqHk+jMRYtkRn4My/V52lOAd1056uGD/YAHVaoh9NJ/U1+tgIfJWBFJ4Eh3
+         tuJezYQaiZNyJW8J5s+eEn5cp8SQWcRmtY/u/m7Z8TbV3kaSsKmuSaOZsXpGnhHyVks/
+         fxghrIKNl2Xb54VMIT+TuvNVLvQO7iY1VqN6MStzu1AB2aGpFHB9VfpeRAyPrhru9lrR
+         O+mX5FsoC6xO6LjT4OX5IOsbcr5oTEcD5rqTfgZO49Z1+X2/eHrwsIhTwNbBqUTbHgxQ
+         HdZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=tvmA7a+IkhHRekCcpomkdE6DuwWjJgXmJ3kLKDT2TGM=;
+        b=SHOnNw5KEgBAEHVihETQgkhRhwtRYICRHW8ewf0DZAvWb/MgRAv7aNw4mKGMajjnjw
+         ZEIcqdFXeX9nbP0iAtWmc+OEC1AcNpGQ2X8jlmmUNfh1NVJMdKOLI8QYzSOoyV/qVQfY
+         VTZVI06Y9sLfqMQLa7Tl2pO9PtJ7/07pAHzNcgvqdR/sahpQgZREgxbMjPVhd6EOAWeO
+         MsgBibQlLSJOJ0Ob9USwUvX37xMY26I6kwzPAC3EAFliDAPFMIVaHY/Pe7SRP0yZQr4b
+         aJEtoY2eESBBk3udWpoFA4wbKjfonMOGKoqT108A6fL17O4fUHNH+xbrEPu5svlTaeDR
+         MCzQ==
+X-Gm-Message-State: APt69E1kce3qLQVCYbR4GM7vTRAhcqf3y3aOEmI4+0AMvRrCkTgf+pB1
+        hWKEXmfgFW+jQL1mweht6ISkJx16jNOC9qc2658=
+X-Google-Smtp-Source: ADUXVKLbyp6IDsggOeotAGsujtZUIbhf0UGqk34Wf9YvpKOlrAQv/e1oBY2hyAN46zCdt9/CbrIF+FhbRMhNFHEyHfg=
+X-Received: by 2002:a5b:10c:: with SMTP id 12-v6mr34778ybx.377.1529992189203;
+ Mon, 25 Jun 2018 22:49:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180626053246.6kyvrj7jbuhgdkgv@sivokote.iziade.m$>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 05:40:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 05:40:41 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'thuth@redhat.com' RCPT:''
+Received: by 2002:a81:1b04:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 22:49:48
+ -0700 (PDT)
+In-Reply-To: <20180625230659.139822-2-shakeelb@google.com>
+References: <20180625230659.139822-1-shakeelb@google.com> <20180625230659.139822-2-shakeelb@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 26 Jun 2018 08:49:48 +0300
+Message-ID: <CAOQ4uxiV75+X3dMLS93iXqwmSU6eKPOUocdkXiR7MQZhEjotQg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: fsnotify: account fsnotify metadata to kmemcg
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
+        Roman Gushchin <guro@fb.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        cgroups@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.06.2018 07:32, Georgi Guninski wrote:
-> On Mon, Jun 25, 2018 at 09:27:59AM +0200, Christian Borntraeger wrote:
->> -            /* Overwrite parameters in the kernel image, which are "rom" */
->> -            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
-> 
->> +            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
-> 
-> Why not replace strcpy() with strncpy() or snprintf()?
-> strcpy() may overflow.
+On Tue, Jun 26, 2018 at 2:06 AM, Shakeel Butt <shakeelb@google.com> wrote:
+> A lot of memory can be consumed by the events generated for the huge or
+> unlimited queues if there is either no or slow listener.  This can cause
+> system level memory pressure or OOMs.  So, it's better to account the
+> fsnotify kmem caches to the memcg of the listener.
+>
+> However the listener can be in a different memcg than the memcg of the
+> producer and these allocations happen in the context of the event
+> producer. This patch introduces remote memcg charging scope API which the
+> producer can use to charge the allocations to the memcg of the listener.
+>
+> There are seven fsnotify kmem caches and among them allocations from
+> dnotify_struct_cache, dnotify_mark_cache, fanotify_mark_cache and
+> inotify_inode_mark_cachep happens in the context of syscall from the
+> listener.  So, SLAB_ACCOUNT is enough for these caches.
+>
+> The objects from fsnotify_mark_connector_cachep are not accounted as they
+> are small compared to the notification mark or events and it is unclear
+> whom to account connector to since it is shared by all events attached to
+> the inode.
+>
+> The allocations from the event caches happen in the context of the event
+> producer.  For such caches we will need to remote charge the allocations
+> to the listener's memcg.  Thus we save the memcg reference in the
+> fsnotify_group structure of the listener.
+>
+> This patch has also moved the members of fsnotify_group to keep the size
+> same, at least for 64 bit build, even with additional member by filling
+> the holes.
+>
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Greg Thelen <gthelen@google.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> Cc: Roman Gushchin <guro@fb.com>
+> ---
+> Changelog since v6:
+> - Removed Jan's ACK as the code has changed a lot
+> - Squashed the separate remote charging API path into this one
+> - Removed kmalloc* & kmem_cache_alloc* APIs and only kept the scope API
+> - Changed fsnotify remote charging code to use scope API
+>
+> Changelog since v5:
+> - None
+>
+> Changelog since v4:
+> - Fixed the build for CONFIG_MEMCG=n
+>
+> Changelog since v3:
+> - Rebased over Jan's patches.
+> - Some cleanup based on Amir's comments.
+>
+> Changelog since v2:
+> - None
+>
+> Changelog since v1:
+> - no more charging fsnotify_mark_connector objects
+> - Fixed the build for SLOB
+>
+>  fs/notify/dnotify/dnotify.c          |  5 ++--
+>  fs/notify/fanotify/fanotify.c        | 17 ++++++++++--
+>  fs/notify/fanotify/fanotify_user.c   |  5 +++-
+>  fs/notify/group.c                    |  4 +++
+>  fs/notify/inotify/inotify_fsnotify.c | 15 +++++++++-
+>  fs/notify/inotify/inotify_user.c     |  5 +++-
+>  include/linux/fsnotify_backend.h     | 12 +++++---
+>  include/linux/memcontrol.h           |  7 +++++
+>  include/linux/sched.h                |  3 ++
+>  include/linux/sched/mm.h             | 41 ++++++++++++++++++++++++++++
+>  kernel/fork.c                        |  3 ++
+>  mm/memcontrol.c                      | 38 +++++++++++++++++++++++---
+>  12 files changed, 139 insertions(+), 16 deletions(-)
+>
+> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+> index e2bea2ac5dfb..a6365e6bc047 100644
+> --- a/fs/notify/dnotify/dnotify.c
+> +++ b/fs/notify/dnotify/dnotify.c
+> @@ -384,8 +384,9 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+>
+>  static int __init dnotify_init(void)
+>  {
+> -       dnotify_struct_cache = KMEM_CACHE(dnotify_struct, SLAB_PANIC);
+> -       dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC);
+> +       dnotify_struct_cache = KMEM_CACHE(dnotify_struct,
+> +                                         SLAB_PANIC|SLAB_ACCOUNT);
+> +       dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC|SLAB_ACCOUNT);
+>
+>         dnotify_group = fsnotify_alloc_group(&dnotify_fsnotify_ops);
+>         if (IS_ERR(dnotify_group))
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index f90842efea13..d6dfcf0ec21f 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/types.h>
+>  #include <linux/wait.h>
+>  #include <linux/audit.h>
+> +#include <linux/sched/mm.h>
+>
+>  #include "fanotify.h"
+>
+> @@ -140,8 +141,9 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
+>                                                  struct inode *inode, u32 mask,
+>                                                  const struct path *path)
+>  {
+> -       struct fanotify_event_info *event;
+> +       struct fanotify_event_info *event = NULL;
+>         gfp_t gfp = GFP_KERNEL;
+> +       struct mem_cgroup *old_memcg = NULL;
+>
+>         /*
+>          * For queues with unlimited length lost events are not expected and
+> @@ -151,19 +153,25 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
+>         if (group->max_events == UINT_MAX)
+>                 gfp |= __GFP_NOFAIL;
+>
+> +       /* Whoever is interested in the event, pays for the allocation. */
+> +       if (group->memcg) {
+> +               gfp |= __GFP_ACCOUNT;
+> +               old_memcg = memalloc_use_memcg(group->memcg);
+> +       }
+> +
+>         if (fanotify_is_perm_event(mask)) {
+>                 struct fanotify_perm_event_info *pevent;
+>
+>                 pevent = kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
+>                 if (!pevent)
+> -                       return NULL;
+> +                       goto out;
+>                 event = &pevent->fae;
+>                 pevent->response = 0;
+>                 goto init;
+>         }
+>         event = kmem_cache_alloc(fanotify_event_cachep, gfp);
+>         if (!event)
+> -               return NULL;
+> +               goto out;
+>  init: __maybe_unused
+>         fsnotify_init_event(&event->fse, inode, mask);
+>         event->tgid = get_pid(task_tgid(current));
+> @@ -174,6 +182,9 @@ init: __maybe_unused
+>                 event->path.mnt = NULL;
+>                 event->path.dentry = NULL;
+>         }
+> +out:
+> +       if (group->memcg)
+> +               memalloc_unuse_memcg(old_memcg);
+>         return event;
+>  }
+>
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index ec4d8c59d0e3..0cf45041dc32 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/compat.h>
+>  #include <linux/sched/signal.h>
+> +#include <linux/memcontrol.h>
+>
+>  #include <asm/ioctls.h>
+>
+> @@ -756,6 +757,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>
+>         group->fanotify_data.user = user;
+>         atomic_inc(&user->fanotify_listeners);
+> +       group->memcg = get_mem_cgroup_from_mm(current->mm);
+>
+>         oevent = fanotify_alloc_event(group, NULL, FS_Q_OVERFLOW, NULL);
+>         if (unlikely(!oevent)) {
+> @@ -957,7 +959,8 @@ COMPAT_SYSCALL_DEFINE6(fanotify_mark,
+>   */
+>  static int __init fanotify_user_setup(void)
+>  {
+> -       fanotify_mark_cache = KMEM_CACHE(fsnotify_mark, SLAB_PANIC);
+> +       fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+> +                                        SLAB_PANIC|SLAB_ACCOUNT);
+>         fanotify_event_cachep = KMEM_CACHE(fanotify_event_info, SLAB_PANIC);
+>         if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
+>                 fanotify_perm_event_cachep =
+> diff --git a/fs/notify/group.c b/fs/notify/group.c
+> index aa5468f23e45..cbcda1cb9a74 100644
+> --- a/fs/notify/group.c
+> +++ b/fs/notify/group.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/srcu.h>
+>  #include <linux/rculist.h>
+>  #include <linux/wait.h>
+> +#include <linux/memcontrol.h>
+>
+>  #include <linux/fsnotify_backend.h>
+>  #include "fsnotify.h"
+> @@ -36,6 +37,9 @@ static void fsnotify_final_destroy_group(struct fsnotify_group *group)
+>         if (group->ops->free_group_priv)
+>                 group->ops->free_group_priv(group);
+>
+> +       if (group->memcg)
+> +               mem_cgroup_put(group->memcg);
+> +
+>         kfree(group);
+>  }
+>
+> diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+> index 9ab6dde38a14..73b4d6c55497 100644
+> --- a/fs/notify/inotify/inotify_fsnotify.c
+> +++ b/fs/notify/inotify/inotify_fsnotify.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/types.h>
+>  #include <linux/sched.h>
+>  #include <linux/sched/user.h>
+> +#include <linux/sched/mm.h>
+>
+>  #include "inotify.h"
+>
+> @@ -73,9 +74,11 @@ int inotify_handle_event(struct fsnotify_group *group,
+>         struct inotify_inode_mark *i_mark;
+>         struct inotify_event_info *event;
+>         struct fsnotify_event *fsn_event;
+> +       struct mem_cgroup *old_memcg = NULL;
+>         int ret;
+>         int len = 0;
+>         int alloc_len = sizeof(struct inotify_event_info);
+> +       gfp_t gfp = GFP_KERNEL;
+>
+>         if (WARN_ON(fsnotify_iter_vfsmount_mark(iter_info)))
+>                 return 0;
+> @@ -98,7 +101,17 @@ int inotify_handle_event(struct fsnotify_group *group,
+>         i_mark = container_of(inode_mark, struct inotify_inode_mark,
+>                               fsn_mark);
+>
+> -       event = kmalloc(alloc_len, GFP_KERNEL);
+> +       /* Whoever is interested in the event, pays for the allocation. */
+> +       if (group->memcg) {
+> +               gfp |= __GFP_ACCOUNT;
+> +               old_memcg = memalloc_use_memcg(group->memcg);
+> +       }
+> +
+> +       event = kmalloc(alloc_len, gfp);
+> +
+> +       if (group->memcg)
+> +               memalloc_unuse_memcg(old_memcg);
+> +
+>         if (unlikely(!event)) {
+>                 /*
+>                  * Treat lost event due to ENOMEM the same way as queue
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 1cf5b779d862..749c46ababa0 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -38,6 +38,7 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/poll.h>
+>  #include <linux/wait.h>
+> +#include <linux/memcontrol.h>
+>
+>  #include "inotify.h"
+>  #include "../fdinfo.h"
+> @@ -636,6 +637,7 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
+>         oevent->name_len = 0;
+>
+>         group->max_events = max_events;
+> +       group->memcg = get_mem_cgroup_from_mm(current->mm);
+>
+>         spin_lock_init(&group->inotify_data.idr_lock);
+>         idr_init(&group->inotify_data.idr);
+> @@ -808,7 +810,8 @@ static int __init inotify_user_setup(void)
+>
+>         BUG_ON(hweight32(ALL_INOTIFY_BITS) != 21);
+>
+> -       inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark, SLAB_PANIC);
+> +       inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark,
+> +                                              SLAB_PANIC|SLAB_ACCOUNT);
+>
+>         inotify_max_queued_events = 16384;
+>         init_user_ns.ucount_max[UCOUNT_INOTIFY_INSTANCES] = 128;
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index b38964a7a521..a0c4790c5302 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -84,6 +84,8 @@ struct fsnotify_event_private_data;
+>  struct fsnotify_fname;
+>  struct fsnotify_iter_info;
+>
+> +struct mem_cgroup;
+> +
+>  /*
+>   * Each group much define these ops.  The fsnotify infrastructure will call
+>   * these operations for each relevant group.
+> @@ -127,6 +129,8 @@ struct fsnotify_event {
+>   * everything will be cleaned up.
+>   */
+>  struct fsnotify_group {
+> +       const struct fsnotify_ops *ops; /* how this group handles things */
+> +
+>         /*
+>          * How the refcnt is used is up to each group.  When the refcnt hits 0
+>          * fsnotify will clean up all of the resources associated with this group.
+> @@ -137,8 +141,6 @@ struct fsnotify_group {
+>          */
+>         refcount_t refcnt;              /* things with interest in this group */
+>
+> -       const struct fsnotify_ops *ops; /* how this group handles things */
+> -
+>         /* needed to send notification to userspace */
+>         spinlock_t notification_lock;           /* protect the notification_list */
+>         struct list_head notification_list;     /* list of event_holder this group needs to send to userspace */
+> @@ -160,6 +162,8 @@ struct fsnotify_group {
+>         atomic_t num_marks;             /* 1 for each mark and 1 for not being
+>                                          * past the point of no return when freeing
+>                                          * a group */
+> +       atomic_t user_waits;            /* Number of tasks waiting for user
+> +                                        * response */
+>         struct list_head marks_list;    /* all inode marks for this group */
+>
+>         struct fasync_struct *fsn_fa;    /* async notification */
+> @@ -167,8 +171,8 @@ struct fsnotify_group {
+>         struct fsnotify_event *overflow_event;  /* Event we queue when the
+>                                                  * notification list is too
+>                                                  * full */
+> -       atomic_t user_waits;            /* Number of tasks waiting for user
+> -                                        * response */
+> +
+> +       struct mem_cgroup *memcg;       /* memcg to charge allocations */
+>
+>         /* groups can define private fields here or use the void *private */
+>         union {
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 3607913032be..6c857be8a9b7 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -378,6 +378,8 @@ struct lruvec *mem_cgroup_page_lruvec(struct page *, struct pglist_data *);
+>  bool task_in_mem_cgroup(struct task_struct *task, struct mem_cgroup *memcg);
+>  struct mem_cgroup *mem_cgroup_from_task(struct task_struct *p);
+>
+> +struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm);
+> +
+>  static inline
+>  struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
+>         return css ? container_of(css, struct mem_cgroup, css) : NULL;
+> @@ -857,6 +859,11 @@ static inline bool task_in_mem_cgroup(struct task_struct *task,
+>         return true;
+>  }
+>
+> +static inline struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
+> +{
+> +       return NULL;
+> +}
+> +
+>  static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+>  {
+>  }
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 87bf02d93a27..9cba7f874443 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1149,6 +1149,9 @@ struct task_struct {
+>
+>         /* Number of pages to reclaim on returning to userland: */
+>         unsigned int                    memcg_nr_pages_over_high;
+> +
+> +       /* Used by memcontrol for targeted memcg charge: */
+> +       struct mem_cgroup               *active_memcg;
+>  #endif
+>
+>  #ifdef CONFIG_UPROBES
+> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> index 44d356f5e47c..75f2d6ee2b72 100644
+> --- a/include/linux/sched/mm.h
+> +++ b/include/linux/sched/mm.h
+> @@ -248,6 +248,47 @@ static inline void memalloc_noreclaim_restore(unsigned int flags)
+>         current->flags = (current->flags & ~PF_MEMALLOC) | flags;
+>  }
+>
+> +#ifdef CONFIG_MEMCG
+> +/**
+> + * memalloc_use_memcg - Starts the remote memcg charging scope.
+> + * @memcg: memcg to charge.
+> + *
+> + * This function marks the beginning of the remote memcg charging scope. All the
+> + * __GFP_ACCOUNT allocations till the end of the scope will be charged to the
+> + * given memcg. Passing NULL will disable the remote memcg charging of the outer
+> + * scope.
+> + */
+> +static inline struct mem_cgroup *memalloc_use_memcg(struct mem_cgroup *memcg)
+> +{
+> +       struct mem_cgroup *old_memcg = current->active_memcg;
+> +
+> +       current->active_memcg = memcg;
+> +       return old_memcg;
+> +}
+> +
+> +/**
+> + * memalloc_unuse_memcg - Ends the remote memcg charging scope.
+> + * @memcg: outer scope memcg to restore.
+> + *
+> + * This function marks the end of the remote memcg charging scope started by
+> + * memalloc_use_memcg(). Always make sure the given memcg is the return valure
+> + * from the pairing memalloc_use_memcg call.
+> + */
+> +static inline void memalloc_unuse_memcg(struct mem_cgroup *memcg)
+> +{
+> +       current->active_memcg = memcg;
+> +}
 
-This will be fixed by
-https://lists.gnu.org/archive/html/qemu-devel/2018-06/msg04227.html by
-adding a check for a valid size.
+The verb 'unuse' takes an argument memcg and 'uses' it - too weird.
+You can use 'override'/'revert' verbs like override_creds or just call
+memalloc_use_memcg(old_memcg) since there is no reference taken
+anyway in use_memcg and no reference released in unuse_memcg.
 
- Thomas
+Otherwise looks good to me.
+
+Thanks,
+Amir,
