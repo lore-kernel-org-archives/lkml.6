@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCBCC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50338C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89DC126479
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04C4526479
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSQesRVu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DC126479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgT0ogcl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C4526479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965478AbeFZDAS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 23:00:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33346 "EHLO mail.kernel.org"
+        id S965493AbeFZDAZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 23:00:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965415AbeFZDAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 23:00:16 -0400
+        id S965415AbeFZDAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 23:00:21 -0400
 Received: from localhost.localdomain (h2133.porttelecom.ru [193.189.69.133])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B727826478;
-        Tue, 26 Jun 2018 03:00:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6928926477;
+        Tue, 26 Jun 2018 03:00:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529982015;
-        bh=ljAT32L9UBaW8LArgWFf08T1nZ/YLX17MoIoj1+L7R8=;
+        s=default; t=1529982021;
+        bh=796wM8kZs0714cNQRwe9jXqOq809rFIeEEaVQFZt0vk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MSQesRVuA9nYumHk9lRzVfeP8zWTTkwbiHMnJT/ahEGz+x+SbVL/rFLsCXcbZ4gLR
-         q7prEQ7y79SsuastIR+hcXCirGzDhhqQ8f3B3q8zW8N63cUtE4BUVwKBIPiiyzopZg
-         qbQX2/duXyp3pYzTTlpSjO94MJwh3MUzm88clpjw=
+        b=qgT0ogclgd8O8M0hinawIrmIbkoOPcWZJ/0GaM1UqDwEmEQoiZxoDLzvOFrwcZ1Pn
+         LLtlFJ49eLxXebUcnioccy14bxLnWj3a3nP7JCxbvxdNZgHKvOy+h7EY57YXiv2eyh
+         5xIRRuzG+KotX+mO7h9NE6kJrPJn5h1ZEDdQ2kL4=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -58,9 +58,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 10/12] perf/breakpoint: Remove default hw_breakpoint_arch_parse()
-Date:   Tue, 26 Jun 2018 04:58:57 +0200
-Message-Id: <1529981939-8231-11-git-send-email-frederic@kernel.org>
+Subject: [PATCH 11/12] perf/breakpoint: Pass new breakpoint type to modify_breakpoint_slot()
+Date:   Tue, 26 Jun 2018 04:58:58 +0200
+Message-Id: <1529981939-8231-12-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529981939-8231-1-git-send-email-frederic@kernel.org>
 References: <1529981939-8231-1-git-send-email-frederic@kernel.org>
@@ -69,8 +69,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All architectures have implemented it, we can now remove the poor weak
-version.
+We soon won't be able to rely on bp->attr anymore to get the new
+type of the modifying breakpoint because the new attributes are going
+to be copied only once we successfully modified the breakpoint slot.
+
+This will fix the current misdesigned layout where the new attr are
+copied to the modifying breakpoint before we actually know if the
+modification will be validated.
+
+In order to prepare for that, allow modify_breakpoint_slot() to take
+the new breakpoint type.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -94,115 +102,53 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Joel Fernandes <joel.opensrc@gmail.com>
 ---
- arch/arm/include/asm/hw_breakpoint.h     |  1 -
- arch/arm64/include/asm/hw_breakpoint.h   |  1 -
- arch/powerpc/include/asm/hw_breakpoint.h |  1 -
- arch/sh/include/asm/hw_breakpoint.h      |  1 -
- arch/x86/include/asm/hw_breakpoint.h     |  1 -
- arch/xtensa/include/asm/hw_breakpoint.h  |  1 -
- kernel/events/hw_breakpoint.c            | 17 -----------------
- 7 files changed, 23 deletions(-)
+ kernel/events/hw_breakpoint.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/include/asm/hw_breakpoint.h b/arch/arm/include/asm/hw_breakpoint.h
-index 1e02925..ac54c06 100644
---- a/arch/arm/include/asm/hw_breakpoint.h
-+++ b/arch/arm/include/asm/hw_breakpoint.h
-@@ -122,7 +122,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
- extern int hw_breakpoint_arch_parse(struct perf_event *bp,
- 				    const struct perf_event_attr *attr,
- 				    struct arch_hw_breakpoint *hw);
--#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
- extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 					   unsigned long val, void *data);
- 
-diff --git a/arch/arm64/include/asm/hw_breakpoint.h b/arch/arm64/include/asm/hw_breakpoint.h
-index bf9c305..6a53e59 100644
---- a/arch/arm64/include/asm/hw_breakpoint.h
-+++ b/arch/arm64/include/asm/hw_breakpoint.h
-@@ -129,7 +129,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
- extern int hw_breakpoint_arch_parse(struct perf_event *bp,
- 				    const struct perf_event_attr *attr,
- 				    struct arch_hw_breakpoint *hw);
--#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
- extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 					   unsigned long val, void *data);
- 
-diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
-index 38ae180..27d6e3c 100644
---- a/arch/powerpc/include/asm/hw_breakpoint.h
-+++ b/arch/powerpc/include/asm/hw_breakpoint.h
-@@ -65,7 +65,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
- extern int hw_breakpoint_arch_parse(struct perf_event *bp,
- 				    const struct perf_event_attr *attr,
- 				    struct arch_hw_breakpoint *hw);
--#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
- extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 						unsigned long val, void *data);
- int arch_install_hw_breakpoint(struct perf_event *bp);
-diff --git a/arch/sh/include/asm/hw_breakpoint.h b/arch/sh/include/asm/hw_breakpoint.h
-index 867edcc..199d17b 100644
---- a/arch/sh/include/asm/hw_breakpoint.h
-+++ b/arch/sh/include/asm/hw_breakpoint.h
-@@ -58,7 +58,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
- extern int hw_breakpoint_arch_parse(struct perf_event *bp,
- 				    const struct perf_event_attr *attr,
- 				    struct arch_hw_breakpoint *hw);
--#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
- extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 					   unsigned long val, void *data);
- 
-diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
-index 6c88e8e2..a1f0e90 100644
---- a/arch/x86/include/asm/hw_breakpoint.h
-+++ b/arch/x86/include/asm/hw_breakpoint.h
-@@ -57,7 +57,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
- extern int hw_breakpoint_arch_parse(struct perf_event *bp,
- 				    const struct perf_event_attr *attr,
- 				    struct arch_hw_breakpoint *hw);
--#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
- extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 					   unsigned long val, void *data);
- 
-diff --git a/arch/xtensa/include/asm/hw_breakpoint.h b/arch/xtensa/include/asm/hw_breakpoint.h
-index f347c21..9f119c1 100644
---- a/arch/xtensa/include/asm/hw_breakpoint.h
-+++ b/arch/xtensa/include/asm/hw_breakpoint.h
-@@ -40,7 +40,6 @@ int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
- int hw_breakpoint_arch_parse(struct perf_event *bp,
- 			     const struct perf_event_attr *attr,
- 			     struct arch_hw_breakpoint *hw);
--#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
- int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 				    unsigned long val, void *data);
- 
 diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 89fe94c..e7bc8d0 100644
+index e7bc8d0..7138770 100644
 --- a/kernel/events/hw_breakpoint.c
 +++ b/kernel/events/hw_breakpoint.c
-@@ -400,23 +400,6 @@ int dbg_release_bp_slot(struct perf_event *bp)
- 	return 0;
+@@ -345,13 +345,13 @@ void release_bp_slot(struct perf_event *bp)
+ 	mutex_unlock(&nr_bp_mutex);
  }
  
--#ifndef hw_breakpoint_arch_parse
--int hw_breakpoint_arch_parse(struct perf_event *bp,
--			     const struct perf_event_attr *attr,
--			     struct arch_hw_breakpoint *hw)
--{
--	int err;
--
--	err = arch_validate_hwbkpt_settings(bp);
--	if (err)
--		return err;
--
--	*hw = bp->hw.info;
--
--	return 0;
--}
--#endif
--
- static int hw_breakpoint_parse(struct perf_event *bp,
- 			       const struct perf_event_attr *attr,
- 			       struct arch_hw_breakpoint *hw)
+-static int __modify_bp_slot(struct perf_event *bp, u64 old_type)
++static int __modify_bp_slot(struct perf_event *bp, u64 old_type, u64 new_type)
+ {
+ 	int err;
+ 
+ 	__release_bp_slot(bp, old_type);
+ 
+-	err = __reserve_bp_slot(bp, bp->attr.bp_type);
++	err = __reserve_bp_slot(bp, new_type);
+ 	if (err) {
+ 		/*
+ 		 * Reserve the old_type slot back in case
+@@ -367,12 +367,12 @@ static int __modify_bp_slot(struct perf_event *bp, u64 old_type)
+ 	return err;
+ }
+ 
+-static int modify_bp_slot(struct perf_event *bp, u64 old_type)
++static int modify_bp_slot(struct perf_event *bp, u64 old_type, u64 new_type)
+ {
+ 	int ret;
+ 
+ 	mutex_lock(&nr_bp_mutex);
+-	ret = __modify_bp_slot(bp, old_type);
++	ret = __modify_bp_slot(bp, old_type, new_type);
+ 	mutex_unlock(&nr_bp_mutex);
+ 	return ret;
+ }
+@@ -481,7 +481,7 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
+ 
+ 	err = hw_breakpoint_parse(bp, attr, &hw);
+ 	if (!err && modify)
+-		err = modify_bp_slot(bp, old_type);
++		err = modify_bp_slot(bp, old_type, bp->attr.bp_type);
+ 
+ 	if (err) {
+ 		bp->attr.bp_addr = old_addr;
 -- 
 2.7.4
 
