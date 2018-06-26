@@ -7,159 +7,154 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702D3C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A56C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 221352178F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:34:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5378026AAC
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:36:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTa3+Txd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 221352178F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9UTc9yE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5378026AAC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933904AbeFZReJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:34:09 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:42576 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933876AbeFZReH (ORCPT
+        id S933943AbeFZRgT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 13:36:19 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:44768 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933906AbeFZRgS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:34:07 -0400
-Received: by mail-ua0-f195.google.com with SMTP id x18-v6so11449874uaj.9
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 10:34:07 -0700 (PDT)
+        Tue, 26 Jun 2018 13:36:18 -0400
+Received: by mail-vk0-f65.google.com with SMTP id x4-v6so10531429vkx.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 10:36:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=bHzKaTMcq3WJpgnQFu42binSsmFd5l5rYApGziJpKQw=;
-        b=dTa3+TxdM0O8A8l1vIezAvYEDzWyv+vUSEKKufbB5GymUiu+DrhcstvU1wZ9Ywodoh
-         1CZs68qV/qLRqjPrWKHbkkR9bkHa2oZrDC1xhbudW8Ms3WEQEGSlVz/5Uz7FDcz0zg3A
-         t1kMAz1de1Od0bmy7GVJLuGRffZ9NwLKeMT5m0pMG3AdfrekQSFftF4vgvdqHglEZHLm
-         PRMTzPAmUKweY7TJ5fzQzBSAE7q9t3tryJ3nQ3kH0J2nwupKhCVTIu02rOfJNlKR1BsG
-         JPIAkVhhe7kpj1o3YjiwpDjbZevPKl4hyPD70fSFztd8GAVZvKqa5I11rseyhek7753w
-         6ZHg==
+        bh=W7d12bvV04atbsAOGPjeJFCf3JdUdGFuDP+f8RQQ4VM=;
+        b=A9UTc9yEPepmJ134vDxFn8VKTyqiHLb/vidCesv2yFXHkj4Mn+uP4RCenrW9eE9+Bm
+         iCuG5RB/Ag8F51vFj+O+P1T4VxZBnHvdTj9AmIP6ckU2/o4VyNYeih3PUNNN3ndgwAjd
+         omrF29nXnqXV897ONLQtorI0jL9phYJA7AnnVLb+EmuVRfhdEkxO9Hna1II9lluUeNLE
+         lDRYIopAMJ87t9Z/3Gof98pAwR8HC73ZtXzYWFs9iSkGRc9N7pVd2xL9ZxVML7DAiyOy
+         8RjeakO2uRRZaikrLcrS36gWmZStzPWWgG0mTnFPbQKxjRrkpSyHijijU+TGCu3d6G5O
+         nrDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=bHzKaTMcq3WJpgnQFu42binSsmFd5l5rYApGziJpKQw=;
-        b=XR4eWN87GEIy/ArLm8R2ghXwVhLutxPpcDDU4R9s1ycrk5o77Pud7SAgCPB3cHC/0x
-         tZAt4AgnIxCcI3pz2TCq+7ps+MGqOigGWkMB3F2MW7ZCrEWhUVjazOudLfaMEDeuegwR
-         2ogfuEGbUbAYrC+ZtNMvFJmcbK+vulmDCmNf0jw6nJsBntgQcJaGvaxTzH/Pykim/Yb/
-         /wapLJJdGYuvYwPZV9TVNIP8PK01HnK0BFFFmMUxj0ABS0fZdpFs6au30qu5FAyhcG4V
-         9hcCnSlSbD1Gjon+4sPsZa6/cK68v/9Qg+sOaaka4AXHJ4nhPCQXaPMXVqe9GEbec+Da
-         X1Ow==
-X-Gm-Message-State: APt69E0cDwlOdadWQ+fjJ0x5r2AoX8zVJETTvg3/eU9OsXejs3UDRGM9
-        NIP6oQRTl8imYkoywaQR2bi8wggQrxop2a0FxEQ=
-X-Google-Smtp-Source: AAOMgpfqoADYqTE8vLyIIrl8mXTSz9o/5i1UVzZMAegdFLKqeGePTLIt/wq4UD6XJHnl1ywtFZmZmm3JeNd+kTl0tDU=
-X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr1574605uai.47.1530034447195;
- Tue, 26 Jun 2018 10:34:07 -0700 (PDT)
+        bh=W7d12bvV04atbsAOGPjeJFCf3JdUdGFuDP+f8RQQ4VM=;
+        b=MGBvNpzE7DB8HnNQTCNQuc89J84RKpa/3xqLtShQI6lw4f7L42ugXU77yHxA1te8hO
+         z4vHS7JVyldT7mc6M8RoyMIIkmjQXPo7+EXvXN1Dg3rvCZstADWRzJ9TF7R1e2rLJN2b
+         a8VElrSzpcOLL1RAX/PdKhbBeoBMLr9/4AVuGltuifid+Qt2oVAtzkbSbM52Xh7MXQuA
+         VYTCxWEKuJWMU5LoiYGkyO+rLa9InrlAxMWKatSaD1h0HHCUC+I9RKq5vv/gpN9LsJdT
+         JuwtzTcUj1Q03ZhUC8vseL/eXjIISVDtS5nxbIjaGgybjoRM6VlIdYhg0EmxKKC0bF7q
+         O4Tw==
+X-Gm-Message-State: APt69E3xqrpykGteRXuzotH1OQUHqVDjHu+qEFE8w3uYDGmpcRfhPIU7
+        UG6P0wIh9VKYwdzX8dU1IqQqd25ww6kXEue+Mj4=
+X-Google-Smtp-Source: AAOMgpen2dL3T0q2whza6Qdu4Y4aHLjNXCVEnmRytjkiuRrzFe0BoknQqOtojxu/qBnLnxctgt5ER7A/QSZKSeBFfB4=
+X-Received: by 2002:a1f:d1c5:: with SMTP id i188-v6mr353761vkg.131.1530034577270;
+ Tue, 26 Jun 2018 10:36:17 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 10:34:06
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 10:36:16
  -0700 (PDT)
-In-Reply-To: <20180626081409.9518-4-straube.linux@gmail.com>
-References: <20180626081409.9518-1-straube.linux@gmail.com> <20180626081409.9518-4-straube.linux@gmail.com>
+In-Reply-To: <20180626072843.158906-1-dvyukov@gmail.com>
+References: <20180626072843.158906-1-dvyukov@gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 26 Jun 2018 20:34:06 +0300
-Message-ID: <CAHp75Ve8JTY7KiQcRnD+DV-oEWnqFgA9uu2Ufz22zaOvf_xiGw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] staging: rtl8723bs: use mac_pton() in rtw_macaddr_cfg()
-To:     Michael Straube <straube.linux@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
+Date:   Tue, 26 Jun 2018 20:36:16 +0300
+Message-ID: <CAHp75VeBCOFvem=Bu5Q04X=eZkTGtJKK79HhsoerVgLerxmTcw@mail.gmail.com>
+Subject: Re: [PATCH v3] arch/x86: get rid of KERN_CONT in show_fault_oops()
+To:     Dmitry Vyukov <dvyukov@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 11:14 AM, Michael Straube
-<straube.linux@gmail.com> wrote:
-> Use the mac_pton() helper to convert the mac address string.
+On Tue, Jun 26, 2018 at 10:28 AM, Dmitry Vyukov <dvyukov@gmail.com> wrote:
+> From: Dmitry Vyukov <dvyukov@google.com>
 >
-> The functions key_char2num() and key_2char2num() are not used
-> anywhere else and can be removed.
+> KERN_CONT leads to split lines in kernel output
+> and complicates useful changes to printk like
+> printing context before each line.
 >
-> This also has the benefit of validating the input since mac_pton()
-> returns false if the string is not valid.
+> Only acceptable use of continuations is basically
+> boot-time testing.
+>
+> Get rid of it.
+>
+> Also tidy up code around as asked by reviewers.
 >
 
 FWIW,
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> Signed-off-by: Michael Straube <straube.linux@gmail.com>
+> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+>
 > ---
->  .../staging/rtl8723bs/core/rtw_ieee80211.c    | 30 +++----------------
->  .../staging/rtl8723bs/os_dep/ioctl_linux.c    |  3 --
->  2 files changed, 4 insertions(+), 29 deletions(-)
 >
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-> index 8af4a89e632f..8e0025e1ff14 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-> @@ -1137,25 +1137,6 @@ ParseRes rtw_ieee802_11_parse_elems(u8 *start, uint len,
+> Changes since v1:
+>  - use pr_alert() instead of printk(KERN_ALERT)
 >
+> Changes since v2:
+>  - drop unnecessary parenthesis
+>  - remove once used nx_warning and smep_warning
+> ---
+>  arch/x86/mm/fault.c | 21 +++++++--------------
+>  1 file changed, 7 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index 9a84a0d08727..a73575cacfd9 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -641,11 +641,6 @@ static int is_f00f_bug(struct pt_regs *regs, unsigned long address)
+>         return 0;
 >  }
 >
-> -static u8 key_char2num(u8 ch);
-> -static u8 key_char2num(u8 ch)
-> -{
-> -               if ((ch >= '0') && (ch <= '9'))
-> -                       return ch - '0';
-> -               else if ((ch >= 'a') && (ch <= 'f'))
-> -                       return ch - 'a' + 10;
-> -               else if ((ch >= 'A') && (ch <= 'F'))
-> -                       return ch - 'A' + 10;
-> -               else
-> -                       return 0xff;
-> -}
+> -static const char nx_warning[] = KERN_CRIT
+> -"kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n";
+> -static const char smep_warning[] = KERN_CRIT
+> -"unable to execute userspace code (SMEP?) (uid: %d)\n";
 > -
-> -u8 key_2char2num(u8 hch, u8 lch);
-> -u8 key_2char2num(u8 hch, u8 lch)
-> -{
-> -               return ((key_char2num(hch) << 4) | key_char2num(lch));
-> -}
-> -
->  void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
->  {
->         u8 mac[ETH_ALEN];
-> @@ -1166,14 +1147,11 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
->         if (!mac_addr)
->                 return;
+>  static void
+>  show_fault_oops(struct pt_regs *regs, unsigned long error_code,
+>                 unsigned long address)
+> @@ -664,20 +659,18 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
+>                 pte = lookup_address_in_pgd(pgd, address, &level);
 >
-> -       if (rtw_initmac) {      /*      Users specify the mac address */
-> -               int jj, kk;
-> -
-> -               for (jj = 0, kk = 0; jj < ETH_ALEN; jj++, kk += 3) {
-> -                       mac[jj] = key_2char2num(rtw_initmac[kk], rtw_initmac[kk + 1]);
-> -               }
-> +       if (rtw_initmac && mac_pton(rtw_initmac, mac)) {
-> +               /* Users specify the mac address */
->                 ether_addr_copy(mac_addr, mac);
-> -       } else{ /*      Use the mac address stored in the Efuse */
-> +       } else {
-> +               /* Use the mac address stored in the Efuse */
->                 ether_addr_copy(mac, mac_addr);
+>                 if (pte && pte_present(*pte) && !pte_exec(*pte))
+> -                       printk(nx_warning, from_kuid(&init_user_ns, current_uid()));
+> +                       pr_crit("kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n",
+> +                               from_kuid(&init_user_ns, current_uid()));
+>                 if (pte && pte_present(*pte) && pte_exec(*pte) &&
+>                                 (pgd_flags(*pgd) & _PAGE_USER) &&
+>                                 (__read_cr4() & X86_CR4_SMEP))
+> -                       printk(smep_warning, from_kuid(&init_user_ns, current_uid()));
+> +                       pr_crit("unable to execute userspace code (SMEP?) (uid: %d)\n",
+> +                               from_kuid(&init_user_ns, current_uid()));
 >         }
 >
-> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-> index 39502156f652..4eb51f45b387 100644
-> --- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-> +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-> @@ -32,9 +32,6 @@
->  #define WEXT_CSCAN_HOME_DWELL_SECTION  'H'
->  #define WEXT_CSCAN_TYPE_SECTION                'T'
->
+> -       printk(KERN_ALERT "BUG: unable to handle kernel ");
+> -       if (address < PAGE_SIZE)
+> -               printk(KERN_CONT "NULL pointer dereference");
+> -       else
+> -               printk(KERN_CONT "paging request");
 > -
-> -extern u8 key_2char2num(u8 hch, u8 lch);
-> -
->  static u32 rtw_rates[] = {1000000, 2000000, 5500000, 11000000,
->         6000000, 9000000, 12000000, 18000000, 24000000, 36000000, 48000000, 54000000};
+> -       printk(KERN_CONT " at %px\n", (void *) address);
+> +       pr_alert("BUG: unable to handle kernel %s at %px\n",
+> +               address < PAGE_SIZE ? "NULL pointer dereference" :
+> +               "paging request", (void *) address);
 >
+>         dump_pagetable(address);
+>  }
 > --
-> 2.18.0
+> 2.18.0.rc2.346.g013aa6912e-goog
 >
 
 
