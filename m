@@ -3,53 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9353EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A580C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF71265AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:01:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF71265AD
+	by mail.kernel.org (Postfix) with ESMTP id 0E0D0265B4
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:01:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0D0265B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752626AbeFZHBI (ORCPT
+        id S1752645AbeFZHBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:01:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50247 "EHLO
+        Tue, 26 Jun 2018 03:01:36 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37103 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751965AbeFZHBE (ORCPT
+        with ESMTP id S1752428AbeFZHBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:01:04 -0400
+        Tue, 26 Jun 2018 03:01:33 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5Q70qbP1592275
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5Q70Mse1592243
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 26 Jun 2018 00:00:52 -0700
+        Tue, 26 Jun 2018 00:00:22 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5Q70q2T1592272;
-        Tue, 26 Jun 2018 00:00:52 -0700
-Date:   Tue, 26 Jun 2018 00:00:52 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5Q70MFK1592240;
+        Tue, 26 Jun 2018 00:00:22 -0700
+Date:   Tue, 26 Jun 2018 00:00:22 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Ravi Bangoria <tipbot@zytor.com>
-Message-ID: <tip-92ead7ee30c80f8852d28735cbcb9d79bc85f715@git.kernel.org>
-Cc:     mingo@kernel.org, davidcc@google.com, hpa@zytor.com,
-        jolsa@redhat.com, ravi.bangoria@linux.ibm.com, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        dsahern@gmail.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        yao.jin@linux.intel.com, namhyung@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com,
-          namhyung@kernel.org, yao.jin@linux.intel.com, ak@linux.intel.com,
-          alexander.shishkin@linux.intel.com, dsahern@gmail.com,
-          tglx@linutronix.de, hpa@zytor.com, jolsa@redhat.com,
-          ravi.bangoria@linux.ibm.com, mingo@kernel.org, davidcc@google.com
-In-Reply-To: <20180625124220.6434-4-ravi.bangoria@linux.ibm.com>
-References: <20180625124220.6434-4-ravi.bangoria@linux.ibm.com>
+Message-ID: <tip-a3af66f51bd0bca72881ead4bf2bd19cb366582b@git.kernel.org>
+Cc:     dsahern@gmail.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, ravi.bangoria@linux.ibm.com,
+        acme@redhat.com, ak@linux.intel.com,
+        alexander.shishkin@linux.intel.com, yao.jin@linux.intel.com,
+        namhyung@kernel.org, davidcc@google.com, hpa@zytor.com,
+        mingo@kernel.org, jolsa@redhat.com
+Reply-To: acme@redhat.com, alexander.shishkin@linux.intel.com,
+          ak@linux.intel.com, yao.jin@linux.intel.com, dsahern@gmail.com,
+          ravi.bangoria@linux.ibm.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, mingo@kernel.org, jolsa@redhat.com,
+          namhyung@kernel.org, davidcc@google.com, hpa@zytor.com
+In-Reply-To: <20180625124220.6434-3-ravi.bangoria@linux.ibm.com>
+References: <20180625124220.6434-3-ravi.bangoria@linux.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Fix crash caused by accessing
- feat_ops[HEADER_LAST_FEATURE]
-Git-Commit-ID: 92ead7ee30c80f8852d28735cbcb9d79bc85f715
+Subject: [tip:perf/urgent] perf script: Fix crash because of missing
+ evsel->priv
+Git-Commit-ID: a3af66f51bd0bca72881ead4bf2bd19cb366582b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,36 +63,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  92ead7ee30c80f8852d28735cbcb9d79bc85f715
-Gitweb:     https://git.kernel.org/tip/92ead7ee30c80f8852d28735cbcb9d79bc85f715
+Commit-ID:  a3af66f51bd0bca72881ead4bf2bd19cb366582b
+Gitweb:     https://git.kernel.org/tip/a3af66f51bd0bca72881ead4bf2bd19cb366582b
 Author:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-AuthorDate: Mon, 25 Jun 2018 18:12:20 +0530
+AuthorDate: Mon, 25 Jun 2018 18:12:19 +0530
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 25 Jun 2018 11:59:37 -0300
 
-perf tools: Fix crash caused by accessing feat_ops[HEADER_LAST_FEATURE]
+perf script: Fix crash because of missing evsel->priv
 
-perf_event__process_feature() accesses feat_ops[HEADER_LAST_FEATURE]
-which is not defined and thus perf is crashing. HEADER_LAST_FEATURE is
-used as an end marker for the perf report but it's unused for perf
-script/annotate. Ignore HEADER_LAST_FEATURE for perf script/annotate,
-just like it is done in 'perf report'.
+'perf script' in piped mode is crashing because evsel->priv is not set
+properly. Fix it.
 
 Before:
-  # perf record -o - ls | perf script
+
+  # perf record -o - -- ls | perf script
   <SNIP 'ls' output>
-  Segmentation fault (core dumped)
+    Segmentation fault (core dumped)
   #
 
 After:
-  # perf record -o - ls | perf script
+
+  # perf record -o - -- ls | perf script
   <SNIP 'ls' output>
-  Segmentation fault (core dumped)
-  ls 7031 4392.099856:  250000 cpu-clock:uhH:  7f5e0ce7cd60
-  ls 7031 4392.100355:  250000 cpu-clock:uhH:  7f5e0c706ef7
+  ls 2282 1031.731974:  250000 cpu-clock:uhH:  7effe4b3d29e
+  ls 2282 1031.732222:  250000 cpu-clock:uhH:  7effe4b3a650
   #
 
 Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
@@ -100,98 +99,42 @@ Cc: David Carrillo-Cisneros <davidcc@google.com>
 Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 57b5de463925 ("perf report: Support forced leader feature in pipe mode")
-Link: http://lkml.kernel.org/r/20180625124220.6434-4-ravi.bangoria@linux.ibm.com
+Fixes: a14390fde64e ("perf script: Allow creating per-event dump files")
+Link: http://lkml.kernel.org/r/20180625124220.6434-3-ravi.bangoria@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-annotate.c | 11 ++++++++++-
- tools/perf/builtin-report.c   |  3 ++-
- tools/perf/builtin-script.c   | 11 ++++++++++-
- tools/perf/util/header.c      |  2 +-
- 4 files changed, 23 insertions(+), 4 deletions(-)
+ tools/perf/builtin-script.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 5eb22cc56363..8180319285af 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -283,6 +283,15 @@ out_put:
- 	return ret;
- }
- 
-+static int process_feature_event(struct perf_tool *tool,
-+				 union perf_event *event,
-+				 struct perf_session *session)
-+{
-+	if (event->feat.feat_id < HEADER_LAST_FEATURE)
-+		return perf_event__process_feature(tool, event, session);
-+	return 0;
-+}
-+
- static int hist_entry__tty_annotate(struct hist_entry *he,
- 				    struct perf_evsel *evsel,
- 				    struct perf_annotate *ann)
-@@ -471,7 +480,7 @@ int cmd_annotate(int argc, const char **argv)
- 			.attr	= perf_event__process_attr,
- 			.build_id = perf_event__process_build_id,
- 			.tracing_data   = perf_event__process_tracing_data,
--			.feature	= perf_event__process_feature,
-+			.feature	= process_feature_event,
- 			.ordered_events = true,
- 			.ordering_requires_timestamps = true,
- 		},
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index cdb5b6949832..c04dc7b53797 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -217,7 +217,8 @@ static int process_feature_event(struct perf_tool *tool,
- 	}
- 
- 	/*
--	 * All features are received, we can force the
-+	 * (feat_id = HEADER_LAST_FEATURE) is the end marker which
-+	 * means all features are received, now we can force the
- 	 * group if needed.
- 	 */
- 	setup_forced_leader(rep, session->evlist);
 diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index ad2ac1300420..568ddfac3213 100644
+index f3fefbcc4503..ad2ac1300420 100644
 --- a/tools/perf/builtin-script.c
 +++ b/tools/perf/builtin-script.c
-@@ -3044,6 +3044,15 @@ int process_cpu_map_event(struct perf_tool *tool __maybe_unused,
- 	return set_maps(script);
- }
+@@ -1834,6 +1834,7 @@ static int process_attr(struct perf_tool *tool, union perf_event *event,
+ 	struct perf_evlist *evlist;
+ 	struct perf_evsel *evsel, *pos;
+ 	int err;
++	static struct perf_evsel_script *es;
  
-+static int process_feature_event(struct perf_tool *tool,
-+				 union perf_event *event,
-+				 struct perf_session *session)
-+{
-+	if (event->feat.feat_id < HEADER_LAST_FEATURE)
-+		return perf_event__process_feature(tool, event, session);
-+	return 0;
-+}
+ 	err = perf_event__process_attr(tool, event, pevlist);
+ 	if (err)
+@@ -1842,6 +1843,19 @@ static int process_attr(struct perf_tool *tool, union perf_event *event,
+ 	evlist = *pevlist;
+ 	evsel = perf_evlist__last(*pevlist);
+ 
++	if (!evsel->priv) {
++		if (scr->per_event_dump) {
++			evsel->priv = perf_evsel_script__new(evsel,
++						scr->session->data);
++		} else {
++			es = zalloc(sizeof(*es));
++			if (!es)
++				return -ENOMEM;
++			es->fp = stdout;
++			evsel->priv = es;
++		}
++	}
 +
- #ifdef HAVE_AUXTRACE_SUPPORT
- static int perf_script__process_auxtrace_info(struct perf_tool *tool,
- 					      union perf_event *event,
-@@ -3088,7 +3097,7 @@ int cmd_script(int argc, const char **argv)
- 			.attr		 = process_attr,
- 			.event_update   = perf_event__process_event_update,
- 			.tracing_data	 = perf_event__process_tracing_data,
--			.feature	 = perf_event__process_feature,
-+			.feature	 = process_feature_event,
- 			.build_id	 = perf_event__process_build_id,
- 			.id_index	 = perf_event__process_id_index,
- 			.auxtrace_info	 = perf_script__process_auxtrace_info,
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 59fcc790c865..653ff65aa2c3 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3464,7 +3464,7 @@ int perf_event__process_feature(struct perf_tool *tool,
- 		pr_warning("invalid record type %d in pipe-mode\n", type);
+ 	if (evsel->attr.type >= PERF_TYPE_MAX &&
+ 	    evsel->attr.type != PERF_TYPE_SYNTH)
  		return 0;
- 	}
--	if (feat == HEADER_RESERVED || feat > HEADER_LAST_FEATURE) {
-+	if (feat == HEADER_RESERVED || feat >= HEADER_LAST_FEATURE) {
- 		pr_warning("invalid record type %d in pipe-mode\n", type);
- 		return -1;
- 	}
