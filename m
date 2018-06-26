@@ -2,145 +2,232 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC00C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE28C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E65D626F0C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5848A26F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:32:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g44ZldtQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65D626F0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hFmOHGRj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5848A26F0B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754926AbeFZSbv (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:31:51 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:54534 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752624AbeFZSbt (ORCPT
+        id S932908AbeFZScM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:32:12 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37310 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754930AbeFZScJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:31:49 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5QISTFi093913;
-        Tue, 26 Jun 2018 18:31:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=5mNhj+kUDYwGZvMJ6A7SVANZvW6G0lBdmIRIMbD8vCU=;
- b=g44ZldtQ05NrCniM1Kug1VcDHAWuuHUMVAuR62D7gi47x6AdYTL6KQv29SvB2gCZXyD3
- cvnWzkW8wMO+6tEVvId4Mx/20Wr0QncAzg50ODPL1kEB88ifcW0+ybLs84ZA08AKExWd
- xiCmTpp8LMvwDVCPowbUDnHLNPLThxiN1fQA13sz2SkPpl3JFHnxZ9zF6s9EFGPQq4Ve
- TDYEjyuK+VlKpS2qVdBEjpGuDPHrT+y5hnkXqGw9JbU2QyEGd/urL4t6kwNLmey8DyJV
- jmlxECZtwtp5z9FMhO1swbtSt/WkyJBN3+WMBo6jxImhlFy7PO8JNk/cjuh5LeMHxD4/ Ow== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2jukmtsvj4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 18:31:23 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5QIVMBc011323
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 18:31:23 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5QIVM1B019733;
-        Tue, 26 Jun 2018 18:31:22 GMT
-Received: from [10.175.202.73] (/10.175.202.73)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Jun 2018 11:31:22 -0700
-Subject: Re: [PATCH] objtool: Fix GCC 8 cold function processing without
- -freorder-functions
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org
-References: <20180626162045.25516-1-allan.x.xavier@oracle.com>
- <20180626164338.GH2458@hirez.programming.kicks-ass.net>
-From:   Allan Xavier <allan.x.xavier@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=allan.x.xavier@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jycc5aNW5OOSmgYj
-Message-ID: <3a9a1cfa-4357-264e-3333-220a7f83a51d@oracle.com>
-Date:   Tue, 26 Jun 2018 19:31:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 14:32:09 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 31-v6so8954112plc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:32:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=k+FhrddAyK5AvpjIYUj5KEVi546GEyZaS3i8sWSRbsg=;
+        b=hFmOHGRjS4HFuNOJLtNHFpeZ+CKROLGJyUvwAzRS7BY6e+91U1Jxfd6zfGJlWpMv1q
+         tg8eeMc8Ys1jNrGFPoyquLRZqV8J8kxPTe3eQyEHBD+UNMKNsgOKTVcimxYfuXFY80Z0
+         B4TOMZzTez3kI6NKrL0fASMw4eLBH0VmLb+XQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k+FhrddAyK5AvpjIYUj5KEVi546GEyZaS3i8sWSRbsg=;
+        b=CPFEDNx4jxGak37Qk/Yp12a6kDhIJCYOQPpvELVkZ2/lyUD75P2eQnt5HuhY+y/s9S
+         fv/9W5DDDMzRQhsHvZ8N82pAaVtdW7zIRT6TxpE2Qz70ZGQ7g+yKdaTXop6U+tFd38hj
+         fV7unhO6MrRlYEvoOGrraKp3nrFVMswMqTqeBxajGtZ7QwQX1PEBsEjPu6JMcYPFkaqo
+         Y9+ee2+zud8SW7gIZS1aPKZETojZYLnDeOunUotqFKwS9m7zfHlHVYuu8NbgkhCy29Kz
+         K/OZw8n1fyONziwG8bXGp0kk6NMifM1sQCD5Jgz/Kj5irOm96ubwn/wHBF648+urXQR+
+         rpCg==
+X-Gm-Message-State: APt69E1rjl1Pero9eKbA6qWWrnX5bc/JfhLMUQuWP45f9HP647rruSky
+        kzT7PhDtmdsQHUra2Rgt7I8P1w==
+X-Google-Smtp-Source: ADUXVKKCi0Vy1ZTryySbwVzL2ZCx7hCdn8V4uMs40RlCeeT4HyQ0BNvHXWER2Rd2B80O2nN/k49XlQ==
+X-Received: by 2002:a17:902:b20d:: with SMTP id t13-v6mr2790564plr.121.1530037928649;
+        Tue, 26 Jun 2018 11:32:08 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id r26-v6sm10858690pfj.180.2018.06.26.11.32.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 11:32:08 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 11:32:07 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v8 4/7] Bluetooth: hci_qca: Add wrapper functions for
+ setting UART speed
+Message-ID: <20180626183207.GM129942@google.com>
+References: <20180625134013.19684-1-bgodavar@codeaurora.org>
+ <20180625134013.19684-5-bgodavar@codeaurora.org>
+ <20180625234354.GI129942@google.com>
+ <20180626000529.GJ129942@google.com>
+ <66681ee5281749e17394cab6f58083d8@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180626164338.GH2458@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8936 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=613
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806260207
+Content-Disposition: inline
+In-Reply-To: <66681ee5281749e17394cab6f58083d8@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-On 26/06/18 17:43, Peter Zijlstra wrote:
-> On Tue, Jun 26, 2018 at 05:20:45PM +0100, Allan Xavier wrote:
->> 0000000000000500 g     F .text  0000000000000034 nmi_panic
->> 0000000000000528 l     F .text  000000000000000c nmi_panic.cold.7
->>
->> This doesn't happen with -freorder-functions in the first example as the
->> symbols don't overlap. 
+On Tue, Jun 26, 2018 at 10:43:31AM +0530, Balakrishna Godavarthi wrote:
+> Hi Matthias,
 > 
-> Urgh and I don't suppose we can 'fix' the overlap in read_symbols() ?
+> On 2018-06-26 05:35, Matthias Kaehlcke wrote:
+> > On Mon, Jun 25, 2018 at 04:43:54PM -0700, Matthias Kaehlcke wrote:
+> > > This is a nice improvement, a few remaining questions inline.
+> > > 
+> > > On Mon, Jun 25, 2018 at 07:10:10PM +0530, Balakrishna Godavarthi
+> > > wrote:
+> > > > In function qca_setup, we set initial and operating speeds for Qualcomm
+> > > > Bluetooth SoC's. This block of code is common across different
+> > > > Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
+> > > > a wrapper function to set the speeds. So that future coming SoC's
+> > > > can use these wrapper functions to set speeds.
+> > > >
+> > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> > > > ---
+> > > > Changes in v8:
+> > > >     * common function to set INIT and operating speeds.
+> > > >     * moved hardware flow control to qca_set_speed().
+> > > >
+> > > > Changes in v7:
+> > > >     * initial patch
+> > > >     * created wrapper functions for init and operating speeds.
+> > > > ---
+> > > >  drivers/bluetooth/hci_qca.c | 89 +++++++++++++++++++++++++++----------
+> > > >  1 file changed, 65 insertions(+), 24 deletions(-)
+> > > >
+> > > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> > > > index fe62420ef838..38b7dbe6c897 100644
+> > > > --- a/drivers/bluetooth/hci_qca.c
+> > > > +++ b/drivers/bluetooth/hci_qca.c
+> > > > @@ -119,6 +119,11 @@ struct qca_data {
+> > > >  	u64 votes_off;
+> > > >  };
+> > > >
+> > > > +enum qca_speed_type {
+> > > > +	QCA_INIT_SPEED = 1,
+> > > > +	QCA_OPER_SPEED
+> > > > +};
+> > > > +
+> > > >  struct qca_serdev {
+> > > >  	struct hci_uart	 serdev_hu;
+> > > >  	struct gpio_desc *bt_en;
+> > > > @@ -923,6 +928,60 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+> > > >  		hci_uart_set_baudrate(hu, speed);
+> > > >  }
+> > > >
+> > > > +static unsigned int qca_get_speed(struct hci_uart *hu,
+> > > > +				  enum qca_speed_type speed_type)
+> > > > +{
+> > > > +	unsigned int speed = 0;
+> > > > +
+> > > > +	if (speed_type == QCA_INIT_SPEED) {
+> > > > +		if (hu->init_speed)
+> > > > +			speed = hu->init_speed;
+> > > > +		else if (hu->proto->init_speed)
+> > > > +			speed = hu->proto->init_speed;
+> > > > +	} else {
+> > > > +		if (hu->oper_speed)
+> > > > +			speed = hu->oper_speed;
+> > > > +		else if (hu->proto->oper_speed)
+> > > > +			speed = hu->proto->oper_speed;
+> > > > +	}
+> > > > +
+> > > > +	return speed;
+> > > > +}
+> > > > +
+> > > > +static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+> > > > +{
+> > > > +	unsigned int speed, qca_baudrate;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (speed_type == QCA_INIT_SPEED) {
+> > > > +		speed = qca_get_speed(hu, QCA_INIT_SPEED);
+> > > > +		if (speed)
+> > > > +			host_set_baudrate(hu, speed);
+> > > > +		else
+> > > > +			bt_dev_err(hu->hdev, "Init speed should be non zero");
+> > > 
+> > > The check for 'speed == 0' is done in multiple places. From this
+> > > code I deduce that it is expected that both INIT and OPER speed are
+> > > set to non-zero values. What happens if either of them is zero? Is the
+> > > driver still operational?
+> > > 
+> > > > +		return 0;
+> > > > +	}
+> > > > +
+> > > > +	speed = qca_get_speed(hu, QCA_OPER_SPEED);
+> > > > +	if (!speed) {
+> > > > +		bt_dev_err(hu->hdev, "operating speed should be non zero");
+> > > > +		return 0;
+> > > > +	}
+> > > > +
+> > > > +	qca_baudrate = qca_get_baudrate_value(speed);
+> > > > +	bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
+> > > > +	ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+> > > > +	if (ret) {
+> > > > +		bt_dev_err(hu->hdev, "Failed to change the baudrate (%d)", ret);
+> > > > +		return ret;
+> > > > +	}
+> > > > +
+> > > > +	host_set_baudrate(hu, speed);
+> > > > +
+> > > > +	return ret;
+> > > > +}
+> > > 
+> > > In the discussion on "[v7,8/8] Bluetooth: hci_qca: Add support for
+> > > Qualcomm Bluetooth chip wcn3990" you mentioned the possbility to move
+> > > the hci_uart_set_flow_control() calls into _set_speed(). This seemed
+> > > interesting but finally it isn't done in this series. Did you
+> > > encounter that it is not feasible/desirable for some reason?
+> > 
+> > I got that half wrong. "[v8,7/7] Bluetooth: hci_qca: Add support for
+> > Qualcomm Bluetooth chip wcn3990" adds the flow control calls to
+> > _set_speed() however there are still_set_flow_control() calls in
+> > qca_setup(), which confused/s me.
+> > 
+> > Could you provide a brief summary on the situations (relevant for this
+> > driver) in which flow controls needs to be enabled/disabled?
 > 
+> you will not find enable or disable of hardware flow control in this patch.
+> there is no hardware flow control in ROME chip.
+> you will find hardware flow control in wcn3990 i.e. patch [v8 7/7]
 
-It should be fixable in read_symbols too if you don't mind sym->len not being
-the same as sym->st_size in the ELF.
+Makes sense, when looking first at this I forgot the flow control
+handling was only added for wcn3990.
 
-Is there a particular concern you're trying to address by having the logic there
-instead?
+> in wcn3990. we disable hardware flow control, when we sent mandatory
+> commands to BT chip.
+> 
+> i.e while sending power on pulse i.e 0xFC byte for wcn3990 to boot up
+> completely and sending change baudrate request to BT chip.
+> before sending these commands, we disable the chip flow control and enable
+> flow control once we sent these commands.
+> 
+> so in our current code after integrating wcn3990, we disable flow control
+> two times.
+> 
+> 1. Before sending power on pulse i.e. qca_send_vendor_cmd(hdev,
+> QCA_WCN3990_POWERON_PULSE); in qca_setup.
+>    so we find disable or enable hardware flow control in qca_setup()
+> 2. Before sending change BT CHIP baudrate request i.e.
+> qca_set_baudrate(hu->hdev, qca_baudrate); in qca_set_speed().
 
-Will have a look into reworking the patch in any case.
+Thanks for the information!
 
-Thanks,
-Allan
+If there are more mandatory commands it could be an option to have a
+wrapper for them or do the flow control handling in
+qca_send_vendor_cmd() to avoid cluttering the main code path.
+
+Just an idea, no need to do this now.
