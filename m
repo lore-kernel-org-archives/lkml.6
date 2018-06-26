@@ -2,93 +2,113 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600F8C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FBCC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18F9F267DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E639B267C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iDG6dQt/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F9F267DA
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TJNvtGLV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E639B267C8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934293AbeFZJah (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:30:37 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:41032 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933680AbeFZJad (ORCPT
+        id S933655AbeFZJW0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:22:26 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:32856 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932206AbeFZJWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:30:33 -0400
-Received: by mail-io0-f195.google.com with SMTP id k16-v6so12564533ioa.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:30:33 -0700 (PDT)
+        Tue, 26 Jun 2018 05:22:24 -0400
+Received: by mail-wm0-f68.google.com with SMTP id z6-v6so14761080wma.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:22:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fl2MpFEGWGkaSJmXtrwUyVSXVcH5opogVHZk2v2SIQ4=;
-        b=iDG6dQt/AfrQ+1ZWbcYfX7LDfD3JhqdV4kKkMXj7gNChcNAIgEf4SmI0n1JBv+buDc
-         5iIeU4t1sZBPtJbUNJnVNSnd+ldywHu9+IorHhq9MbD/qI+c0EQnd3L21GRLfgb+CAOp
-         wYeDyY9D8i7e1anwnoeiIOHHgrnjR4XFn5OOM=
+        h=from:to:cc:subject:date:message-id;
+        bh=TZ6cUfKXefN+TcVs0TvWgag07nTtV4/QmuUGNuFfdG8=;
+        b=TJNvtGLVUbjQSe3SuHYNOxRhcUBtZQxtn2MqV6w10QJE56znw8MTirL14cE9Sg84JC
+         vu0NE70jCQg/J21Rbnq5rLI4NCMZtZp1F963W+UWj9bV8/ZP7D23plStOWnuYQ06iPwm
+         uYaGBvFdU1Lor+UKq8s6ZgfcMFQcj/4uNElZ8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fl2MpFEGWGkaSJmXtrwUyVSXVcH5opogVHZk2v2SIQ4=;
-        b=iFmRuAQu0KAZVwrYVdcfIyb/c6DSCEFku+iL6tQnk4CmehzAxRnPLTM2h/VZluD1Zn
-         ERzeHpCKqHqh3UzqfRZNND3ZMWkQCyPVn6UspX27dbdmPVDy7QIijC0YfEYQufGo++aV
-         rBvWNtDHQFjaU+GEIxQinWlZO5qrwq5TwckOObjsh+ezNZ+8gyZ1h+NRL3r9xF+zl2Gn
-         6YOiA6lhiJd7jJoNoTAKBxZVudalSLDGQfOGvhQV0X0s3SfhNCeSh8LEcAVRQgk20Y+e
-         SlmXvG8pWPIWS125+l033XESaWg5ArJQZe7rEAbvIvzNQvCxlhTzwiWXk5GTyowNLfUl
-         KKaQ==
-X-Gm-Message-State: APt69E2ZKS90vkn0jbf3444xov6abBWNacRGH9H3xFxv0CLIbo3GxxKe
-        f/y8Q7ZEuKgeDVsFIfxBxX+9JHHiThB4gRc16nWrFw==
-X-Google-Smtp-Source: AAOMgpdgNzVOv+SbdykvDSzV9IC3k1S/TCjE9YQ1oCrDFOkTXtntEj+CuxWvCSSjDUA6SHiE1SB5bDfSAOnDctcSyAM=
-X-Received: by 2002:a6b:1902:: with SMTP id 2-v6mr545886ioz.304.1530005433076;
- Tue, 26 Jun 2018 02:30:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com> <1528235011-30691-20-git-send-email-suzuki.poulose@arm.com>
-In-Reply-To: <1528235011-30691-20-git-send-email-suzuki.poulose@arm.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 26 Jun 2018 11:30:21 +0200
-Message-ID: <CACRpkda17Txr4X=En8HUeE6z6a5WQOVXy8HObbKy7sOJ1V-DUg@mail.gmail.com>
-Subject: Re: [PATCH 19/20] dts: ste-dbx5x0: Update coresight bindings for
- hardware port
-To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        mathieu poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>, arm-soc <arm@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        matt.sealey@arm.com, john.horley@arm.com,
-        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
-        coresight@lists.linaro.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, mike.leach@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TZ6cUfKXefN+TcVs0TvWgag07nTtV4/QmuUGNuFfdG8=;
+        b=kTylGqvLhqHUOmIl2HIufJLjxXaUjd5nLutqkUIKLvrALMV52mtRTyKFO5m4qxMe/6
+         0te7/Haom0+v86BI+mLIAoAWq9Os7lSIOP+qwEyL2NqaTleSTCi0wU69bitOF+rbTUPj
+         JrhzAF7EkeqrBt4AXFevm0DzL2Ipcjpok/E3HYAfB8T/MKDERHm0KUVmb+blunsShZcv
+         3ue+w3OjPBkgYNuDd9FTNnvJyYrYSsb2kn0WeTsowE0vGFiuvISCL8FXwYcu/WXsvKRs
+         h0DDQd6CFRwE/XjOCS1zsoHgT4/mf179PN00cjlLSJZJx6qTFIXI/1/nmlfVuejhqcce
+         dgLg==
+X-Gm-Message-State: APt69E0APPQvE0LuQ5+HUBkLl+7JJfmrTLnOZEseQ4oKb1ruJghodT1p
+        s8EH+lG4urkv3NnQK3M2xqGlqg==
+X-Google-Smtp-Source: AAOMgpcWpImQcR6dKhHjgQzqvG324TQ39J0K/a9ReO6JEl7nh3OudcFxwIF1GxvikGCKxqhWtlc8DA==
+X-Received: by 2002:a1c:3e94:: with SMTP id l142-v6mr950601wma.120.1530004942722;
+        Tue, 26 Jun 2018 02:22:22 -0700 (PDT)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id x5-v6sm1438456wrr.3.2018.06.26.02.22.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 26 Jun 2018 02:22:22 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org, robh+dt@kernel.org, alsa-devel@alsa-project.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        lgirdwood@gmail.com, bgoswami@codeaurora.org, tiwai@suse.com,
+        perex@perex.cz, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, niklas.cassel@linaro.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 00/12] ASoC: qdsp6: Fix dt based module loading and minor fixes
+Date:   Tue, 26 Jun 2018 10:20:04 +0100
+Message-Id: <20180626092016.9296-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 11:45 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+Recent discussion on https://lkml.org/lkml/2018/6/18/1282 suggested
+that qdsp6 code is using less common of_platform apis which would
+not give dt based module loading support.
 
-> Switch to the new coresight bindings
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Suggestion from Rob was to add compatible strings to the dais nodes
+This patchset adds this. Also this patchset has 3 trivial fixes which
+is removing redundant owner, remove unused struct member and fix a
+error check in q6routing.
 
-I think I was requested in another mail to hold back applying this
-patch until it's been discussed.
+Changes since v1:
+- Addressed few trivial comments from Niklas
 
-I will apply once Mathieu (etc) ACKs the series.
+Thanks,
+srini
 
-Yours,
-Linus Walleij
+Srinivas Kandagatla (12):
+  ASoC: q6adm: dt-bindings: add compatible string to routing
+  ASoC: q6asm: dt-bindings: add compatible string to dais
+  ASoC: q6afe: dt-bindings: add compatible string to dais
+  ASoC: qdsp6: q6adm: use of_platform_populate/depopulate()
+  ASoC: qdsp6: q6asm: use of_platform_populate/depopulate()
+  ASoC: qdsp6: q6afe: use of_platform_populate/depopulate()
+  ASoC: qdsp6: q6afe-dai: support dt based module loading
+  ASoC: qdsp6: q6asm-dai: support dt based module loading
+  ASoC: qdsp6: q6routing: support dt based module loading
+  ASoC: qcom: apq8096: remove redundant owner assignment
+  ASoC: qdsp6: q6routing: add proper error check
+  ASoC: qdsp6: q6asm: remove unused struct q6asm member
+
+ Documentation/devicetree/bindings/sound/qcom,q6adm.txt |  6 ++++++
+ Documentation/devicetree/bindings/sound/qcom,q6afe.txt |  6 ++++++
+ Documentation/devicetree/bindings/sound/qcom,q6asm.txt |  6 ++++++
+ sound/soc/qcom/apq8096.c                               |  1 -
+ sound/soc/qcom/qdsp6/q6adm.c                           | 16 ++--------------
+ sound/soc/qcom/qdsp6/q6afe-dai.c                       |  7 +++++++
+ sound/soc/qcom/qdsp6/q6afe.c                           | 16 ++--------------
+ sound/soc/qcom/qdsp6/q6asm-dai.c                       |  7 +++++++
+ sound/soc/qcom/qdsp6/q6asm.c                           | 17 ++---------------
+ sound/soc/qcom/qdsp6/q6routing.c                       |  9 ++++++++-
+ 10 files changed, 46 insertions(+), 45 deletions(-)
+
+-- 
+2.16.2
+
