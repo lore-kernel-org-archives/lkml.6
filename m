@@ -2,211 +2,179 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBBABC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2B9C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37806255D2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27AB3255D2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:48:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="sxhQwWWA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37806255D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RD16sgEN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27AB3255D2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934001AbeFZUrG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:47:06 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:50692 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933482AbeFZUrE (ORCPT
+        id S934034AbeFZUsX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:48:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51589 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933472AbeFZUsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:47:04 -0400
-Received: by mail-wm0-f47.google.com with SMTP id e16-v6so3380427wmd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:47:03 -0700 (PDT)
+        Tue, 26 Jun 2018 16:48:22 -0400
+Received: by mail-wm0-f65.google.com with SMTP id w137-v6so3409532wmw.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:48:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PeoFP3TQ+jL34Z7z2KDfzHEGSxz80XsvHL183l9rn3g=;
-        b=sxhQwWWAGETiAdHR4C/FBa1OGQB34cuJesNhaoXL3ICKy77zM/w48vpkahqdnkyBVj
-         7x9Asis+n/2wrN2LbHXRCXtmL42pm+tSy3t1wuN45EQdPzMs5DhdVLaAwGxXcpc0kVLx
-         XdrYovPBjLu9f3vw6leFyWXSXTkcoU+quK1RQ3lb3yJx4qpCe0crj/RedZ9lurliBKVy
-         M/IWdrb24VxK3uKPNX9Xl1liqEZJnozfgYGZ/0zdoUZxqyy72Fbl6VY6zjtF3o26Vji1
-         wk0Kc5ykB0D8equ6L4NKZKcAamDnzDDVrS5w/UrU1z3foX0vZrJKn4xge6w6qM2yF1MS
-         3VBQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XIDmgmHqM1AEaY8GAGiC2LMCjtGRrO6ExRDNP3OWyvg=;
+        b=RD16sgENRmiK4Z1fh4KLMk+0M85vY3qmP/n2rb05S5FJ9odlSHLwEiv9drM7JXi1YQ
+         EPykqUtnPNvOFKyNyQ14vjyiNYRmO3oorZ1nMTWZ/fkzACWH/xMXktqVJfvzSh/EkJLg
+         D7fsF/ercwZPIoB3Jvc8MCyxeH07pBXuFV6WkEt2kHO0vfzv71UnEzIrFDNP/nvkmqon
+         mM4Hzztkm1mJh6HMqFxvc2Rc4jRlueWpPBbY8Qmitlndz9SKu8Pb/kWhsRbzs+jEUC3R
+         mjbu4yMsnnu+FGgzLJFFoBN/xgA+C1CbSMKvTHGDxeK4FLwk6DWE87tfdpzQRg5k8ufB
+         WilQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PeoFP3TQ+jL34Z7z2KDfzHEGSxz80XsvHL183l9rn3g=;
-        b=forDtfwmcwYB4i0WwdgwDQ+//S5SuuMzrahMadUK8c45mqarmXrDxD0tsrnBV7R3Vv
-         gxwKkSqbYb2p2RjVz55WMoGw/L+xllQRA6QpRoUYeg8uM82CUevOt8ZFwA9WEc8jM0sD
-         UHe+nwOjXJFXIFgoNTNLSGdJ8inC6KpZSgSnSowL0y7AwA5QdRmNasZvy4ddaFQPtqH0
-         CfEXS3M+iOQitQbZBkB436aW2tazGRlofrUozccLMAy+WWu7XNJFg+eKkNnFCCKkEjHZ
-         Y/0nSe5bLZzEdgqV6hRYRZ3xvlVW/zQTc/DAelZj1s0JchEwWZJ8QkkEN38plpfVTTIZ
-         vgqw==
-X-Gm-Message-State: APt69E2vfDO++6qZsaj4zsJ7VUHktNg195SxITYL3n0qoy6vl/Nr2fSG
-        cSOU9CvHy1rV/mOpCHjnHGLalYloerHIk4KO5pi4BQ==
-X-Google-Smtp-Source: AAOMgpddGRMd4Tg0gT3mBFB4jWVyvyFNgHiMOoKexshZcn0zvY4KKz7nuCLEuZKSGYw9Mme+VBwIRHLRwL4ub36t9hM=
-X-Received: by 2002:a1c:f902:: with SMTP id x2-v6mr2658955wmh.116.1530046022554;
- Tue, 26 Jun 2018 13:47:02 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XIDmgmHqM1AEaY8GAGiC2LMCjtGRrO6ExRDNP3OWyvg=;
+        b=H1uj36EFHZGiuTgWNuMeRefdWe2cvc+Mj8hM7/0NzMrG9uvW5gdHQirlWv7S3seuhk
+         mb7+aKw/oy4IR6BQY752kZVx8xSdNjDSKPznLNU16xhv9f/eKL0zVtcGZSGUXtHJ8AH3
+         A5EXm/Dikzvgms8FQFeccQ2gz/5gLIWHH/3mXFl6aMjPk4G4TuGJHIjJxP7veIvhodXD
+         63LWBPVwhyxUnJiCO4bLyWQaEQn7pjtR1cnIl2M3N9AX7i3cFe0g0IE5r3fZLNqqzpQy
+         iDCUWL7u4I1rKhUwTYNlnAwaKFbXtVPzfIF3Kcok0tCaQXTxLhl0GUPHZU9k5edDzJqd
+         YYpQ==
+X-Gm-Message-State: APt69E3E7ZwQxYERCwwAp63h6VGqEvjpnhWlfKe5JsO3nIZd37Z3CFXP
+        tlrUMElifJ8fEhpLQigB8sE=
+X-Google-Smtp-Source: AAOMgpdKFVVkO/lIzdI9ReET36PyxeqsmTEXfm084B6DmtnInya4Kq/t0bbbtyUEVsng1I6HIemZIw==
+X-Received: by 2002:a1c:91c4:: with SMTP id t187-v6mr2935058wmd.51.1530046100815;
+        Tue, 26 Jun 2018 13:48:20 -0700 (PDT)
+Received: from [192.168.1.4] (x590c812a.dyn.telefonica.de. [89.12.129.42])
+        by smtp.gmail.com with ESMTPSA id k82-v6sm4846935wmg.10.2018.06.26.13.48.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 13:48:20 -0700 (PDT)
+Subject: Re: [PATCH v3 4/4] staging: rtl8723bs: use mac_pton() in
+ rtw_macaddr_cfg()
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <20180626081409.9518-1-straube.linux@gmail.com>
+ <20180626081409.9518-4-straube.linux@gmail.com>
+ <CAHp75Ve8JTY7KiQcRnD+DV-oEWnqFgA9uu2Ufz22zaOvf_xiGw@mail.gmail.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <40882fdb-bac1-9aad-1560-60e59cfa09f5@gmail.com>
+Date:   Tue, 26 Jun 2018 22:48:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1514459655.4190.1530034687884.JavaMail.zimbra@efficios.com>
- <170076903.5015.1530038711536.JavaMail.zimbra@efficios.com>
- <CALCETrXimh61U7Tn9KShr6sKag7NCL3qfraN18Oy2Bk+0VRAUA@mail.gmail.com>
- <1277536320.5963.1530042608296.JavaMail.zimbra@efficios.com>
- <CALCETrWhY_+SxKt9Xq2ruiGk8GQeYvrojy84w_Quosrf5fpApQ@mail.gmail.com> <1352608225.6039.1530043932895.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1352608225.6039.1530043932895.JavaMail.zimbra@efficios.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Tue, 26 Jun 2018 13:46:50 -0700
-Message-ID: <CALCETrVs57TZf4V4vrCkh2Aa_x=+HuVO5hYB5yFmS1VqE5rcuw@mail.gmail.com>
-Subject: Re: rseq: How to test for compat task at signal delivery
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-arch <linux-arch@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75Ve8JTY7KiQcRnD+DV-oEWnqFgA9uu2Ufz22zaOvf_xiGw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 1:12 PM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> ----- On Jun 26, 2018, at 3:55 PM, Andy Lutomirski luto@amacapital.net wrote:
->
-> > On Tue, Jun 26, 2018 at 12:50 PM Mathieu Desnoyers
-> > <mathieu.desnoyers@efficios.com> wrote:
-> >>
-> >> ----- On Jun 26, 2018, at 3:32 PM, Andy Lutomirski luto@amacapital.net wrote:
-> >>
-> >> > On Tue, Jun 26, 2018 at 11:45 AM Mathieu Desnoyers
-> >> > <mathieu.desnoyers@efficios.com> wrote:
-> >> >>
-> >> >> ----- On Jun 26, 2018, at 1:38 PM, Mathieu Desnoyers
-> >> >> mathieu.desnoyers@efficios.com wrote:
-> >> >>
-> >> >> > Hi Andy,
-> >> >> >
-> >> >> > I would like to make the behavior rseq on compat tasks more robust
-> >> >> > by ensuring that kernel/rseq.c:rseq_get_rseq_cs() clears the high
-> >> >> > bits of rseq_cs->abort_ip, rseq_cs->start_ip and
-> >> >> > rseq_cs->post_commit_offset when a 32-bit binary is run on a 64-bit
-> >> >> > kernel.
-> >> >> >
-> >> >> > The intent here is that if user-space has garbage rather than zeroes
-> >> >> > in its struct rseq_cs fields padding, the behavior will be the same
-> >> >> > whether the binary is run on 32-bit or 64 kernels.
-> >> >> >
-> >> >> > I know that internally, the kernel is making a transition from
-> >> >> > is_compat_task() to in_compat_syscall().
-> >> >> >
-> >> >> > I'm fine with using in_compat_syscall() when rseq_get_rseq_cs() is
-> >> >> > invoked from a system call, but is it OK to call it when it is
-> >> >> > invoked from signal delivery ? AFAIU, signals can be delivered
-> >> >> > upon return from interrupt as well.
-> >> >> >
-> >> >> > If not, what strategy do you recommend for arch-agnostic code ?
-> >> >>
-> >> >> I think what we're missing here is a new "is_compat_frame(struct ksignal *ksig)"
-> >> >> which I could use in the rseq code. I'll prepare a patch and we can discuss
-> >> >> from there.
-> >> >>
-> >> >
-> >> > That sounds about right.
-> >> >
-> >> > I'm confused, though.  Wouldn't it be more consistent to just segfault
-> >> > if the high 32 bits are not clear when rseq transitions to a 32-bit
-> >> > context?  If there's garbage in 64-bit mode, the program will crash.
-> >> > Why should 32-bit mode be any different?
-> >>
-> >> Currently, if a 32-bit binary puts garbage in the high bits of
-> >> start_ip, post_commit_offset, and abort_ip in
-> >>
-> >> include/uapi/linux/rseq.h:
-> >>
-> >> struct rseq_cs {
-> >>         /* Version of this structure. */
-> >>         __u32 version;
-> >>         /* enum rseq_cs_flags */
-> >>         __u32 flags;
-> >>         LINUX_FIELD_u32_u64(start_ip);
-> >>         /* Offset from start_ip. */
-> >>         LINUX_FIELD_u32_u64(post_commit_offset);
-> >>         LINUX_FIELD_u32_u64(abort_ip);
-> >> } __attribute__((aligned(4 * sizeof(__u64))));
-> >
-> > This ABI isn't real ABI until a stable kernel happens, right?  So how
-> > about just making all those fields be u64?
->
-> Good point. Unlike the rseq_cs field in the struct rseq TLS, those
-> fields don't need to be word-sized/word-aligned, so we could simply
-> declare them as __u64.
->
-> >
-> >>
-> >> A 32-bit kernel just never reads the padding, thus in reality acting
-> >> as if those were zeroes. However, a 64-bit kernel dealing with this
-> >> 32-bit compat task will read that padding, handling those as very
-> >> large values.
-> >
-> > Sounds like a design error.  Have all kernels read the fields no
-> > matter what.  A 32-bit kernel will send SIGSEGV if the high bits are
-> > set.  A 64-bit kernel running compat userspace should make sure that a
-> > 32-bit task dies if the high bits are set.
->
-> If we end up declaring those as __u64, that approach makes sense.
->
-> >
-> >>
-> >> We need to improve that by introducing a consistent behavior across
-> >> native 32-bit kernels and 32-bit compat mode on 64-bit kernels.
-> >>
-> >> There are two ways to achieve this: either the 32-bit kernel validates
-> >> the padding by killing the process if padding is non-zero, or the
-> >> 64-bit kernel treats compat mode by zeroing the high bits of padding.
-> >>
-> >> If we look at system call interfaces in general, I think the usual
-> >> approach is to clear the top bits whenever a value read from a
-> >> compat task ends up being used as a pointer. This is why I am tempted
-> >> to go for the "clear high bits" approach rather than killing the task.
-> >
-> > I think the modern preference is to use fields of fixed size rather
-> > than long when UABI is involved.
-> >
-> > In any event, I think the test you want is user_64bit_mode().
->
-> Currently, user_64bit_mode is only implemented on x86.
->
-> Should we introduce an architecture-agnostic user_64bit_mode(struct pt_regs *)
-> which maps to is_compat_task() for non-x86 ? I'm just worried that ptrace
-> code could try to use it from the context of another task and get mixed up.
+On 06/26/18 19:34, Andy Shevchenko wrote:
+> On Tue, Jun 26, 2018 at 11:14 AM, Michael Straube
+> <straube.linux@gmail.com> wrote:
+>> Use the mac_pton() helper to convert the mac address string.
+>>
+>> The functions key_char2num() and key_2char2num() are not used
+>> anywhere else and can be removed.
+>>
+>> This also has the benefit of validating the input since mac_pton()
+>> returns false if the string is not valid.
+>>
+> 
+> FWIW,
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> 
 
-I'm not sure other archs can do this.  It might need to have a
-task_struct pointer, too.
+Thanks.
 
-But I think the only actual consideration is that a lot of
-architectures might fail to kill the task if the task is 32-bit and
-regs->ip or regs->sp ends up with garbage in the high bits.  Certainly
-x86 is not consistent about this.  So maybe a helper to fully validate
-all 64 bits of ip and sp or perhaps helpers to set them and check for
-full validity would be better.  Like:
-
-void set_task_64bit_ip_or_signal(struct task_struct *, u64 value);
-
-that promises to actually signal the task if value is garbage?
-
-Let's ask linux-arch here.  I'm not nearly familiar enough with the
-nasty details of other compat-capable architectures.  x86 is very,
-very, very inconsistent about how what the high bits of the registers
-mean, and there are cases where the "high bits" involved are actually
-the high 48 bits, not the high 32 bits.  Sigh.
-
---Andy
+>> Signed-off-by: Michael Straube <straube.linux@gmail.com>
+>> ---
+>>   .../staging/rtl8723bs/core/rtw_ieee80211.c    | 30 +++----------------
+>>   .../staging/rtl8723bs/os_dep/ioctl_linux.c    |  3 --
+>>   2 files changed, 4 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+>> index 8af4a89e632f..8e0025e1ff14 100644
+>> --- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+>> +++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+>> @@ -1137,25 +1137,6 @@ ParseRes rtw_ieee802_11_parse_elems(u8 *start, uint len,
+>>
+>>   }
+>>
+>> -static u8 key_char2num(u8 ch);
+>> -static u8 key_char2num(u8 ch)
+>> -{
+>> -               if ((ch >= '0') && (ch <= '9'))
+>> -                       return ch - '0';
+>> -               else if ((ch >= 'a') && (ch <= 'f'))
+>> -                       return ch - 'a' + 10;
+>> -               else if ((ch >= 'A') && (ch <= 'F'))
+>> -                       return ch - 'A' + 10;
+>> -               else
+>> -                       return 0xff;
+>> -}
+>> -
+>> -u8 key_2char2num(u8 hch, u8 lch);
+>> -u8 key_2char2num(u8 hch, u8 lch)
+>> -{
+>> -               return ((key_char2num(hch) << 4) | key_char2num(lch));
+>> -}
+>> -
+>>   void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
+>>   {
+>>          u8 mac[ETH_ALEN];
+>> @@ -1166,14 +1147,11 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
+>>          if (!mac_addr)
+>>                  return;
+>>
+>> -       if (rtw_initmac) {      /*      Users specify the mac address */
+>> -               int jj, kk;
+>> -
+>> -               for (jj = 0, kk = 0; jj < ETH_ALEN; jj++, kk += 3) {
+>> -                       mac[jj] = key_2char2num(rtw_initmac[kk], rtw_initmac[kk + 1]);
+>> -               }
+>> +       if (rtw_initmac && mac_pton(rtw_initmac, mac)) {
+>> +               /* Users specify the mac address */
+>>                  ether_addr_copy(mac_addr, mac);
+>> -       } else{ /*      Use the mac address stored in the Efuse */
+>> +       } else {
+>> +               /* Use the mac address stored in the Efuse */
+>>                  ether_addr_copy(mac, mac_addr);
+>>          }
+>>
+>> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+>> index 39502156f652..4eb51f45b387 100644
+>> --- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+>> +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+>> @@ -32,9 +32,6 @@
+>>   #define WEXT_CSCAN_HOME_DWELL_SECTION  'H'
+>>   #define WEXT_CSCAN_TYPE_SECTION                'T'
+>>
+>> -
+>> -extern u8 key_2char2num(u8 hch, u8 lch);
+>> -
+>>   static u32 rtw_rates[] = {1000000, 2000000, 5500000, 11000000,
+>>          6000000, 9000000, 12000000, 18000000, 24000000, 36000000, 48000000, 54000000};
+>>
+>> --
+>> 2.18.0
+>>
+> 
+> 
+> 
