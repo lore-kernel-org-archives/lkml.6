@@ -1,345 +1,116 @@
 Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27713C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF522C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:30:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72488266DC
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:29:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72488266DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 56221266DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:30:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56221266DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752957AbeFZI3a (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:29:30 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9129 "EHLO huawei.com"
+        id S932829AbeFZIaB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 04:30:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47790 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752606AbeFZI3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:29:23 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7787F5A3FE9D1;
-        Tue, 26 Jun 2018 16:29:05 +0800 (CST)
-Received: from localhost (10.202.226.43) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Tue, 26 Jun 2018
- 16:29:03 +0800
-Date:   Tue, 26 Jun 2018 09:28:41 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Peter Rosin <peda@axentia.se>
-CC:     <linux-kernel@vger.kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
-        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "Sekhar Nori" <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        "Haavard Skinnemoen" <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        "Peter Meerwald-Stadler" <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        <linux-integrity@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>
-Subject: Re: [PATCH v2 10/10] i2c: remove i2c_lock_adapter and use
- i2c_lock_bus directly
-Message-ID: <20180626092841.00003277@huawei.com>
-In-Reply-To: <20180620051803.12206-11-peda@axentia.se>
-References: <20180620051803.12206-1-peda@axentia.se>
-        <20180620051803.12206-11-peda@axentia.se>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S932206AbeFZI36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 04:29:58 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2C731406E81E;
+        Tue, 26 Jun 2018 08:29:58 +0000 (UTC)
+Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B49A52026D6A;
+        Tue, 26 Jun 2018 08:29:56 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 10:29:54 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-s390x <qemu-s390x@nongnu.org>,
+        qemu-devel <qemu-devel@nongnu.org>,
+        Thomas Huth <thuth@redhat.com>
+Subject: Re: s390 qemu boot failure in -next
+Message-ID: <20180626102954.73965b42.cohuck@redhat.com>
+In-Reply-To: <d56829a3-fecf-b812-d002-8ee22ae08da2@de.ibm.com>
+References: <20180622194736.GA5794@roeck-us.net>
+        <126ac556-0602-b927-58f5-cb5f65a5e0ec@de.ibm.com>
+        <88d9afed-f91d-c320-13c8-9a93fc52b700@de.ibm.com>
+        <20180625100548.64222dad.cohuck@redhat.com>
+        <d56829a3-fecf-b812-d002-8ee22ae08da2@de.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 08:29:58 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 08:29:58 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018 07:18:03 +0200
-Peter Rosin <peda@axentia.se> wrote:
+On Mon, 25 Jun 2018 10:29:46 +0200
+Christian Borntraeger <borntraeger@de.ibm.com> wrote:
 
-> The i2c_lock_adapter name is ambiguous since it is unclear if it
-> refers to the root adapter or the adapter you name in the argument.
-> The natural interpretation is the adapter you name in the argument,
-> but there are historical reasons for that not being the case; it
-> in fact locks the root adapter. Just remove the function and force
-> users to spell out the I2C_LOCK_ROOT_ADAPTER name to indicate what
-> is really going on. Also remove i2c_unlock_adapter, of course.
-> 
-> This patch was generated with
-> 
-> git grep -l 'i2c_\(un\)\?lock_adapter' \
-> | xargs sed -i 's/i2c_\(un\)\?lock_adapter(\([^)]*\))/'\
-> 'i2c_\1lock_bus(\2, I2C_LOCK_ROOT_ADAPTER)/g'
-> 
-> followed by white-space touch-up.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> On 06/25/2018 10:05 AM, Cornelia Huck wrote:
+> > On Mon, 25 Jun 2018 09:27:59 +0200
+> > Christian Borntraeger <borntraeger@de.ibm.com> wrote:
 
-For IIO: Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-> ---
->  drivers/i2c/busses/i2c-brcmstb.c   |  8 ++++----
->  drivers/i2c/busses/i2c-davinci.c   |  4 ++--
->  drivers/i2c/busses/i2c-gpio.c      | 40 +++++++++++++++++++-------------------
->  drivers/i2c/busses/i2c-s3c2410.c   |  4 ++--
->  drivers/i2c/busses/i2c-sprd.c      |  8 ++++----
->  drivers/i2c/i2c-core-slave.c       |  8 ++++----
->  drivers/iio/temperature/mlx90614.c |  4 ++--
->  include/linux/i2c.h                | 12 ------------
->  8 files changed, 38 insertions(+), 50 deletions(-)
+> >> Something like this in QEMU 
+> >>
+> >> diff --git a/hw/s390x/ipl.c b/hw/s390x/ipl.c
+> >> index f278036fa7..14153ce880 100644
+> >> --- a/hw/s390x/ipl.c
+> >> +++ b/hw/s390x/ipl.c
+> >> @@ -187,11 +187,13 @@ static void s390_ipl_realize(DeviceState *dev, Error **errp)
+> >>           */
+> >>          if (pentry == KERN_IMAGE_START || pentry == 0x800) {
+> >>              ipl->start_addr = KERN_IMAGE_START;
+> >> -            /* Overwrite parameters in the kernel image, which are "rom" */
+> >> -            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
+> >>          } else {
+> >>              ipl->start_addr = pentry;
+> >>          }
+> >> +       if (ipl->cmdline) {
+> >> +            /* If there is a command line, put it in the right place */
+> >> +            strcpy(rom_ptr(KERN_PARM_AREA), ipl->cmdline);
+> >> +       }  
+> > 
+> > Check for the magic Linux string (like in the non-elf case) first?  
 > 
-> diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
-> index 78792b4d6437..826d32049996 100644
-> --- a/drivers/i2c/busses/i2c-brcmstb.c
-> +++ b/drivers/i2c/busses/i2c-brcmstb.c
-> @@ -689,9 +689,9 @@ static int brcmstb_i2c_suspend(struct device *dev)
->  {
->  	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->  
-> -	i2c_lock_adapter(&i2c_dev->adapter);
-> +	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
->  	i2c_dev->is_suspended = true;
-> -	i2c_unlock_adapter(&i2c_dev->adapter);
-> +	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
->  
->  	return 0;
->  }
-> @@ -700,10 +700,10 @@ static int brcmstb_i2c_resume(struct device *dev)
->  {
->  	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->  
-> -	i2c_lock_adapter(&i2c_dev->adapter);
-> +	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
->  	brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
->  	i2c_dev->is_suspended = false;
-> -	i2c_unlock_adapter(&i2c_dev->adapter);
-> +	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
->  
->  	return 0;
->  }
-> diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-> index 75d6ab177055..d945a2654c2f 100644
-> --- a/drivers/i2c/busses/i2c-davinci.c
-> +++ b/drivers/i2c/busses/i2c-davinci.c
-> @@ -714,14 +714,14 @@ static int i2c_davinci_cpufreq_transition(struct notifier_block *nb,
->  
->  	dev = container_of(nb, struct davinci_i2c_dev, freq_transition);
->  
-> -	i2c_lock_adapter(&dev->adapter);
-> +	i2c_lock_bus(&dev->adapter, I2C_LOCK_ROOT_ADAPTER);
->  	if (val == CPUFREQ_PRECHANGE) {
->  		davinci_i2c_reset_ctrl(dev, 0);
->  	} else if (val == CPUFREQ_POSTCHANGE) {
->  		i2c_davinci_calc_clk_dividers(dev);
->  		davinci_i2c_reset_ctrl(dev, 1);
->  	}
-> -	i2c_unlock_adapter(&dev->adapter);
-> +	i2c_unlock_bus(&dev->adapter, I2C_LOCK_ROOT_ADAPTER);
->  
->  	return 0;
->  }
-> diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-> index 005e6e0330c2..9d63337efa82 100644
-> --- a/drivers/i2c/busses/i2c-gpio.c
-> +++ b/drivers/i2c/busses/i2c-gpio.c
-> @@ -78,24 +78,24 @@ static struct dentry *i2c_gpio_debug_dir;
->  #define getscl(bd)	((bd)->getscl((bd)->data))
->  
->  #define WIRE_ATTRIBUTE(wire) \
-> -static int fops_##wire##_get(void *data, u64 *val)	\
-> -{							\
-> -	struct i2c_gpio_private_data *priv = data;	\
-> -							\
-> -	i2c_lock_adapter(&priv->adap);			\
-> -	*val = get##wire(&priv->bit_data);		\
-> -	i2c_unlock_adapter(&priv->adap);		\
-> -	return 0;					\
-> -}							\
-> -static int fops_##wire##_set(void *data, u64 val)	\
-> -{							\
-> -	struct i2c_gpio_private_data *priv = data;	\
-> -							\
-> -	i2c_lock_adapter(&priv->adap);			\
-> -	set##wire(&priv->bit_data, val);		\
-> -	i2c_unlock_adapter(&priv->adap);		\
-> -	return 0;					\
-> -}							\
-> +static int fops_##wire##_get(void *data, u64 *val)		\
-> +{								\
-> +	struct i2c_gpio_private_data *priv = data;		\
-> +								\
-> +	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
-> +	*val = get##wire(&priv->bit_data);			\
-> +	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
-> +	return 0;						\
-> +}								\
-> +static int fops_##wire##_set(void *data, u64 val)		\
-> +{								\
-> +	struct i2c_gpio_private_data *priv = data;		\
-> +								\
-> +	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
-> +	set##wire(&priv->bit_data, val);			\
-> +	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);	\
-> +	return 0;						\
-> +}								\
->  DEFINE_DEBUGFS_ATTRIBUTE(fops_##wire, fops_##wire##_get, fops_##wire##_set, "%llu\n")
->  
->  WIRE_ATTRIBUTE(scl);
-> @@ -113,7 +113,7 @@ static int fops_incomplete_transfer_set(void *data, u64 addr)
->  	/* ADDR (7 bit) + RD (1 bit) + SDA hi (1 bit) */
->  	pattern = (addr << 2) | 3;
->  
-> -	i2c_lock_adapter(&priv->adap);
-> +	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
->  
->  	/* START condition */
->  	setsda(bit_data, 0);
-> @@ -129,7 +129,7 @@ static int fops_incomplete_transfer_set(void *data, u64 addr)
->  		udelay(bit_data->udelay);
->  	}
->  
-> -	i2c_unlock_adapter(&priv->adap);
-> +	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
->  
->  	return 0;
->  }
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 9fe2b6951895..2f2e28d60ef5 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -919,9 +919,9 @@ static int s3c24xx_i2c_cpufreq_transition(struct notifier_block *nb,
->  
->  	if ((val == CPUFREQ_POSTCHANGE && delta_f < 0) ||
->  	    (val == CPUFREQ_PRECHANGE && delta_f > 0)) {
-> -		i2c_lock_adapter(&i2c->adap);
-> +		i2c_lock_bus(&i2c->adap, I2C_LOCK_ROOT_ADAPTER);
->  		ret = s3c24xx_i2c_clockrate(i2c, &got);
-> -		i2c_unlock_adapter(&i2c->adap);
-> +		i2c_unlock_bus(&i2c->adap, I2C_LOCK_ROOT_ADAPTER);
->  
->  		if (ret < 0)
->  			dev_err(i2c->dev, "cannot find frequency (%d)\n", ret);
-> diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
-> index 4053259bccb8..a94e724f51dc 100644
-> --- a/drivers/i2c/busses/i2c-sprd.c
-> +++ b/drivers/i2c/busses/i2c-sprd.c
-> @@ -590,9 +590,9 @@ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
->  {
->  	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
->  
-> -	i2c_lock_adapter(&i2c_dev->adap);
-> +	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->  	i2c_dev->is_suspended = true;
-> -	i2c_unlock_adapter(&i2c_dev->adap);
-> +	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->  
->  	return pm_runtime_force_suspend(pdev);
->  }
-> @@ -601,9 +601,9 @@ static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
->  {
->  	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
->  
-> -	i2c_lock_adapter(&i2c_dev->adap);
-> +	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->  	i2c_dev->is_suspended = false;
-> -	i2c_unlock_adapter(&i2c_dev->adap);
-> +	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->  
->  	return pm_runtime_force_resume(pdev);
->  }
-> diff --git a/drivers/i2c/i2c-core-slave.c b/drivers/i2c/i2c-core-slave.c
-> index 4a78c65e9971..47a9f70a24a9 100644
-> --- a/drivers/i2c/i2c-core-slave.c
-> +++ b/drivers/i2c/i2c-core-slave.c
-> @@ -47,9 +47,9 @@ int i2c_slave_register(struct i2c_client *client, i2c_slave_cb_t slave_cb)
->  
->  	client->slave_cb = slave_cb;
->  
-> -	i2c_lock_adapter(client->adapter);
-> +	i2c_lock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
->  	ret = client->adapter->algo->reg_slave(client);
-> -	i2c_unlock_adapter(client->adapter);
-> +	i2c_unlock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
->  
->  	if (ret) {
->  		client->slave_cb = NULL;
-> @@ -69,9 +69,9 @@ int i2c_slave_unregister(struct i2c_client *client)
->  		return -EOPNOTSUPP;
->  	}
->  
-> -	i2c_lock_adapter(client->adapter);
-> +	i2c_lock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
->  	ret = client->adapter->algo->unreg_slave(client);
-> -	i2c_unlock_adapter(client->adapter);
-> +	i2c_unlock_bus(client->adapter, I2C_LOCK_ROOT_ADAPTER);
->  
->  	if (ret == 0)
->  		client->slave_cb = NULL;
-> diff --git a/drivers/iio/temperature/mlx90614.c b/drivers/iio/temperature/mlx90614.c
-> index d619e8634a00..13a4cec64ea8 100644
-> --- a/drivers/iio/temperature/mlx90614.c
-> +++ b/drivers/iio/temperature/mlx90614.c
-> @@ -433,11 +433,11 @@ static int mlx90614_wakeup(struct mlx90614_data *data)
->  
->  	dev_dbg(&data->client->dev, "Requesting wake-up");
->  
-> -	i2c_lock_adapter(data->client->adapter);
-> +	i2c_lock_bus(data->client->adapter, I2C_LOCK_ROOT_ADAPTER);
->  	gpiod_direction_output(data->wakeup_gpio, 0);
->  	msleep(MLX90614_TIMING_WAKEUP);
->  	gpiod_direction_input(data->wakeup_gpio);
-> -	i2c_unlock_adapter(data->client->adapter);
-> +	i2c_unlock_bus(data->client->adapter, I2C_LOCK_ROOT_ADAPTER);
->  
->  	data->ready_timestamp = jiffies +
->  			msecs_to_jiffies(MLX90614_TIMING_STARTUP);
-> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-> index 254cd34eeae2..795e3a860afe 100644
-> --- a/include/linux/i2c.h
-> +++ b/include/linux/i2c.h
-> @@ -754,18 +754,6 @@ i2c_unlock_bus(struct i2c_adapter *adapter, unsigned int flags)
->  	adapter->lock_ops->unlock_bus(adapter, flags);
->  }
->  
-> -static inline void
-> -i2c_lock_adapter(struct i2c_adapter *adapter)
-> -{
-> -	i2c_lock_bus(adapter, I2C_LOCK_ROOT_ADAPTER);
-> -}
-> -
-> -static inline void
-> -i2c_unlock_adapter(struct i2c_adapter *adapter)
-> -{
-> -	i2c_unlock_bus(adapter, I2C_LOCK_ROOT_ADAPTER);
-> -}
-> -
->  /*flags for the client struct: */
->  #define I2C_CLIENT_PEC		0x04	/* Use Packet Error Checking */
->  #define I2C_CLIENT_TEN		0x10	/* we have a ten bit chip address */
+> Even that does not exists in vmlinux but only in bzImage with the latest patchset
+> (in next, but not upstream yet)
 
+Ok.
 
+> >   
+> >>  
+> >>          if (ipl->initrd) {
+> >>              ram_addr_t initrd_offset;
+> >>
+> >> would put the command line in no matter what the start address is.  
+> > 
+> > I'm for putting that one in (and backporting it to qemu-stable). It's a
+> > bit worrying, though, that our ipl code is so fragile...  
+> 
+> We actually have to combine this with Thomas fix (to check for rom_ptr returning
+> something sane). It seems that ipl->commandline is always there, so we have to
+> check for strlen!=0 it seems..
+> 
+> I mean if somebody ask for "-append something" we can certainly always write something
+> if there is rom/ram.
+
+Given that the uncompressed image is not supposed to be bootable
+anymore, does it make sense to add this anyway?
+
+I'll go ahead and queue Thomas' fix, though.
