@@ -2,107 +2,180 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3DDC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C57C7C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30DF721104
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:29:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DF721104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3927B2146B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:32:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uzsRlFAh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3927B2146B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934129AbeFZX3f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 19:29:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36254 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752445AbeFZX3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 19:29:34 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AC01240201CE;
-        Tue, 26 Jun 2018 23:29:33 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D0921C665;
-        Tue, 26 Jun 2018 23:29:33 +0000 (UTC)
-Subject: Re: [PATCH] get_maintainer.pl: Add optional
- .get_maintainer.MAINTAINERS override
-To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Cc:     dzickus@redhat.com, jtoppins@redhat.com
-References: <20180626182505.4176-1-prarit@redhat.com>
- <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
- <98fe3602-864a-3963-ac56-a743f1b61700@redhat.com>
- <56a7221b36f3969d340c72bac34942dd59cdc47f.camel@perches.com>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <21a533fc-f76d-caa0-8586-e7631e3721bf@redhat.com>
-Date:   Tue, 26 Jun 2018 19:29:33 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754795AbeFZXcc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 19:32:32 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42838 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752441AbeFZXca (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 19:32:30 -0400
+Received: by mail-pf0-f193.google.com with SMTP id w7-v6so75319pfn.9;
+        Tue, 26 Jun 2018 16:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=1RzXHFGeSM130pufeKLdLU5IFJl2YXuHbr0RuzWF2jA=;
+        b=uzsRlFAhFIKY3U1Ce7z21KPIb6NNwpmTfJ27O7kfYFM0ePmiGeAtGE+SeVnXom81c7
+         e/2j0+Jud5Td0j6qtj0f/AIPeCXFubQ+chpcWz7BqLA3mCGJj59g1w9G1hQOjXbtXQ7J
+         RpViex+JSrhlN2q2QLyXT1w46vAXfDaW/KzifPJ+FRbMc4FEtua5ZkhAv2u+VW+7KcBE
+         bB7rwM11BCExO1AcA5vT6AaH133LaXOUaa5Y3bQ8yFNrQsonSE9T+6vhSHdW9KRE4oXr
+         7x5++DKH2Qe08I1lrn43Hxqy5x+tnAH4GuXSL7IJ8STVWh0ZOwDbWyHvkgy6ty5RJqhI
+         Z5uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=1RzXHFGeSM130pufeKLdLU5IFJl2YXuHbr0RuzWF2jA=;
+        b=e2iN/xNW+h+vvEZB0J5DkmmgKuRVQfQM2uwzpzp35TJUa6sr5eLruy+1U+193ijCef
+         zwc6v0AMUbVeN4kYUHOinIa9G6JZlZ/i/4aT8+2cKn4fl7+oQ9ltdPzJ0fQhdjzDkoaC
+         q3as8VVY/pnxY9xvYf3rNS5AWFTNumrKV8oXUQ7xmj+wr/S2eK+t9omzaaGhWkm179vT
+         HJ83r81bUErUMVqfvujXkc21IqOGvLojclIX3KdIlweHrXfJTpjBToEblngxkqrnurK1
+         MuAOSEzGhKKjfioRZ9kFeg/lQXpgnLDwV7jRTUJ8BibTPNfb8NJ7dGrWuziVMEw/DffJ
+         kYdA==
+X-Gm-Message-State: APt69E3z6OOOp276w8ky2re4ozTZxLTv7+kFSAOCy/xDAWMLRlYqWJAk
+        3ljK0TaUShMV6q3de0kitEp7BKwD
+X-Google-Smtp-Source: AAOMgpcvk5Wi3VDGpp7e6S3D5JilMdq4p8c3eeZC7w73YoPkY9cnzVWZ0wekyEV6y97s0MsguOESJQ==
+X-Received: by 2002:a62:4bc8:: with SMTP id d69-v6mr3475878pfj.244.1530055949412;
+        Tue, 26 Jun 2018 16:32:29 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id f16-v6sm4711930pff.57.2018.06.26.16.32.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 16:32:28 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 16:32:26 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v4.18-rc2
+Message-ID: <20180626233226.GA170294@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <56a7221b36f3969d340c72bac34942dd59cdc47f.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 26 Jun 2018 23:29:33 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 26 Jun 2018 23:29:33 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
+
+Please pull from:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+
+to receive updates for the input subsystem:
+
+- the main change is a fix for my brain-dead patch to PS/2 button
+  reporting for some protocols that made it in 4.17
+
+- there is a new driver for Spreadtum vibrator that I intended to send
+  during merge window but ended up not sending the 2nd pull request.
+  Given that this is a brand new driver we should not see regressions
+  here
+
+- a fixup to Elantech PS/2 driver to avoid decoding errors on Thinkpad
+  P52
+
+- addition of few more ACPI IDs for Silead and Elan drivers
+
+- RMI4 is switched to using IRQ domain code instead of rolling its own
+  implementation
 
 
-On 06/26/2018 07:04 PM, Joe Perches wrote:
-> On Tue, 2018-06-26 at 18:52 -0400, Prarit Bhargava wrote:
->>
->> On 06/26/2018 04:16 PM, Joe Perches wrote:
->>> On Tue, 2018-06-26 at 14:25 -0400, Prarit Bhargava wrote:
->>>> OSes have additional maintainers that should be cc'd on patches or may
->>>> want to circulate internal patches.
->>>>
->>>> Parse the .get_maintainer.MAINTAINERS file.  Entries in the file
->>>> can begin with a '+' to indicate the email and list entries should be
->>>> added to the exiting MAINTAINERS output, or a '-' to indicate that the
->>>> entries should override the existing MAINTAINERS file.
->>>>
->>>> Also add a help entry for the .get_maintainers.ignore file.
->>>
->>> I see no reason for this patch to be applied.
->>> Why should it?
->>
->> The kernel has other vendor/OS changes like my patch, for example, 4efb442cc12e
->> ("kernel/panic.c: add TAINT_AUX").  From that commit message
->>
->>     Add an auxiliary taint flag to be used by distros and others.  This
->>     obviates the need to forward-port whatever internal solutions people
->>     have in favor of a single flag which they can map arbitrarily to a
->>     definition of their pleasing.
->>
->> The same principle should be applied to my patch in that distros no longer would
->> need to forward-port internal solutions similar to this.
->>
->>> Why shouldn't this be in your private repository?
->>
->> If you don't want it I'll carry it forward but that's a loss for both of us, and
->> as pointed out in the above commit, other distros.  If you do want to reject the
->> patch please let me know and I'll only submit the "get_maintainer.ignore" help
->> chunk.
-> 
-> I doubt it's a really a loss for others as whatever
-> .get_maintainers.<foo> files would likely need to
-> be customized for each distro.
+Changelog:
+---------
 
-That's the point of the patch.  Each distro would customize their own internal
-.get_maintainers.MAINTAINERS file.
+??? (1):
+      Input: elantech - fix V4 report decoding for module with middle key
 
-In any case, consider it dropped.
+Aaron Ma (1):
+      Input: elantech - enable middle button of touchpads on ThinkPad P52
 
-P.
+Alexandr Savca (1):
+      Input: elan_i2c - add ELAN0618 (Lenovo v330 15IKB) ACPI ID
 
-> 
-> I think the whole thing should be ignored.
-> 
+Ben Hutchings (1):
+      Input: elan_i2c_smbus - fix more potential stack buffer overflows
+
+Dmitry Torokhov (3):
+      Input: make input_report_slot_state() return boolean
+      Input: do not assign new tracking ID when changing tool type
+      Input: psmouse - fix button reporting for basic protocols
+
+Enno Boland (1):
+      Input: xpad - fix GPD Win 2 controller name
+
+Hans de Goede (1):
+      Input: silead - add MSSL0002 ACPI HID
+
+Lucas Stach (1):
+      Input: synaptics-rmi4 - fix axis-swap behavior
+
+Nick Dyer (1):
+      Input: synaptics-rmi4 - convert irq distribution to irq_domain
+
+Roman Kiryanov (1):
+      Input: goldfish_events - fix checkpatch warnings
+
+Wei Yongjun (1):
+      Input: synaptics-rmi4 - fix the error return code in rmi_probe_interrupts()
+
+Xiaotong Lu (1):
+      Input: add Spreadtrum vibrator driver
+
+Diffstat:
+--------
+
+ .../bindings/input/sprd,sc27xx-vibra.txt           |  23 +++
+ drivers/input/input-mt.c                           |  12 +-
+ drivers/input/joystick/xpad.c                      |   2 +-
+ drivers/input/keyboard/goldfish_events.c           |   9 +-
+ drivers/input/misc/Kconfig                         |  10 ++
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/sc27xx-vibra.c                  | 154 +++++++++++++++++++++
+ drivers/input/mouse/elan_i2c.h                     |   2 +
+ drivers/input/mouse/elan_i2c_core.c                |   3 +-
+ drivers/input/mouse/elan_i2c_smbus.c               |  10 +-
+ drivers/input/mouse/elantech.c                     |  11 +-
+ drivers/input/mouse/psmouse-base.c                 |  12 +-
+ drivers/input/rmi4/Kconfig                         |   1 +
+ drivers/input/rmi4/rmi_2d_sensor.c                 |  34 +++--
+ drivers/input/rmi4/rmi_bus.c                       |  50 ++++++-
+ drivers/input/rmi4/rmi_bus.h                       |  10 +-
+ drivers/input/rmi4/rmi_driver.c                    |  52 +++----
+ drivers/input/rmi4/rmi_f01.c                       |  10 +-
+ drivers/input/rmi4/rmi_f03.c                       |   9 +-
+ drivers/input/rmi4/rmi_f11.c                       |  42 +++---
+ drivers/input/rmi4/rmi_f12.c                       |   8 +-
+ drivers/input/rmi4/rmi_f30.c                       |   9 +-
+ drivers/input/rmi4/rmi_f34.c                       |   5 +-
+ drivers/input/rmi4/rmi_f54.c                       |   6 -
+ drivers/input/touchscreen/silead.c                 |   1 +
+ include/linux/input/mt.h                           |   2 +-
+ include/linux/rmi.h                                |   2 +
+ 27 files changed, 366 insertions(+), 124 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt
+ create mode 100644 drivers/input/misc/sc27xx-vibra.c
+
+Thanks.
+
+
+-- 
+Dmitry
