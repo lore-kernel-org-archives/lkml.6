@@ -2,93 +2,102 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66720C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE27C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06CFD26B4A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:27:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C320F26E2F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:29:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Te0Oc3/W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06CFD26B4A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nI1bKaew"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C320F26E2F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeFZT1u (ORCPT
+        id S1754659AbeFZT3D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 15:27:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59906 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750907AbeFZT1s (ORCPT
+        Tue, 26 Jun 2018 15:29:03 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37263 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752203AbeFZT3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 15:27:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N+sopYf2CE+gPMZbtFcxCgUf5l/4mnkBWEBnbcgwMJA=; b=Te0Oc3/WAuy0n30l8wN1uvRov
-        Q9eWEw9ttZ7vUdxJAB1L3/k+ptjn/+CayF54UELWUEQ2OZ9cAJ+O4ivKRvFm1c801/Eo4/JYztORg
-        u6q5p/UhH3kIygav1KYyh1kp1KRaUsI5/EC12YPlk4JfjFPEgIOAZbWuvvOYaK28qXynhI8r/0o3a
-        POQtr8Yxce7JMEstGZsXlO1j9XlHbf6bvCLrFtz7MPCpyxqGkIpM8Sb8rp3fbMs3rAV/n6I/QoSEx
-        DKC2NUPqG4/uEOiTpCDJhqIGewROKN3U+v7hRcMlgwStNR+Hnq548tYdk6m+mw9SI8J0ChIXa+stb
-        /fGL2vqeg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXtcg-000558-Bd; Tue, 26 Jun 2018 19:27:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 931382029FA0A; Tue, 26 Jun 2018 21:27:28 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 21:27:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 16/27] rcu: Add comment documenting how
- rcu_seq_snap works
-Message-ID: <20180626192728.GN2494@hirez.programming.kicks-ass.net>
-References: <20180626003448.GA26209@linux.vnet.ibm.com>
- <20180626003513.27812-16-paulmck@linux.vnet.ibm.com>
- <20180626173055.GJ2494@hirez.programming.kicks-ass.net>
- <20180626181025.GF3593@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626181025.GF3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 26 Jun 2018 15:29:01 -0400
+Received: by mail-wr0-f196.google.com with SMTP id k6-v6so18358066wrp.4;
+        Tue, 26 Jun 2018 12:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=OS1TVBgwkeKnhEXrjaJxSXw7lK2npkpf69eTiAJe1AQ=;
+        b=nI1bKaewhP1kxvEqbc3DW/ZD2pg36G6TOvlOKZIpwQGKWDqlbFnhhdh2fI5N6a0ZHp
+         zrv1sWyYYDKCRKMvZ+EA8tQrtzGuc+jexuigjkeLlyifLLI0rSe60BhiweVZmmeRXmxI
+         iC9besiqIsAPZfZSfjiS8gtBKoZZDovtQ9XtQQ5HDUuyjMtfaqb1DOaJCbUirpsmBM9G
+         2/8RlTo2nQdTKPILFkItRUgVL6UihRSyRyMQyZZK5n2Px0GM98N/RMCnmq5d8udSM46N
+         dZwpCe1xRcyiaUGSC+FHaM21u+aTnCJHflLaQAhz9fKVx5LSHKYOs3E3MG7sI6WE79Js
+         avGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=OS1TVBgwkeKnhEXrjaJxSXw7lK2npkpf69eTiAJe1AQ=;
+        b=Kk7yhC/fZhxKtQdyUS+xJ9WcYZaReC+0KJQxeimcVf+rLSfDiWmYv4x3agpD6i7rKB
+         vbmukBoD7Ol5VwScHQNAXszdW6ubav/58Pt+noZq816ik2ZwhdpB0jqdOC7tjWuBFnGo
+         1EQC1ENusUq9poangY0YZShWk9NHGcZczFCsfUEUoLtYk7OiAKBkKBr/X5w9ytwrk1R4
+         iC7nmPyugZHwlIx82HcaLmBd2giCxMpt7LDzK+0wEV3o8o+Ke2T9AL8inHKReTo7DqpD
+         XBEGjN0ZS64AuxToHoxGZx2LwWuKx3jovpaKiDqXR0qMlc7+J5wocVDzo7FJ+acZ95pk
+         yLbw==
+X-Gm-Message-State: APt69E2Ad3w/qoRi6WgfZKj+HPsEDPaNe1zgb8jw4pYI9fopeNQIf7tx
+        Pa0GEM7K18WPj77GfFms0OY=
+X-Google-Smtp-Source: AAOMgpfuXlPU6Q117L9ZHu48pp9+hO7yRYmEeQStMQT/RX9um0+iMRh4tFM5P8ALpV8N64f5P+ZdIw==
+X-Received: by 2002:adf:ed52:: with SMTP id u18-v6mr2480872wro.262.1530041340481;
+        Tue, 26 Jun 2018 12:29:00 -0700 (PDT)
+Received: from localhost.localdomain (p5B3F7A58.dip0.t-ipconnect.de. [91.63.122.88])
+        by smtp.gmail.com with ESMTPSA id g11-v6sm1789197wrr.46.2018.06.26.12.28.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 12:28:59 -0700 (PDT)
+From:   Saravanan Sekar <sravanhome@gmail.com>
+To:     afaerber@suse.de, sboyd@kernel.org
+Cc:     pn@denx.de, linux-arm-kernel@lists.infradead.org,
+        mturquette@baylibre.com, manivannan.sadhasivam@linaro.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, devicetree@vger.kernel.org,
+        Saravanan Sekar <sravanhome@gmail.com>
+Subject: [PATCH 0/2] Add clock driver for Actions S700 SoC 
+Date:   Tue, 26 Jun 2018 21:28:18 +0200
+Message-Id: <20180626192820.28237-1-sravanhome@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 11:10:25AM -0700, Paul E. McKenney wrote:
-> > Is the below not much simpler:
-> > 
-> > >  static inline unsigned long rcu_seq_snap(unsigned long *sp)
-> > >  {
-> > >  	unsigned long s;
-> > 
-> > 	s = smp_load_aquire(sp);
-> > 
-> > 	/* Add one GP */
-> > 	s += 1 << RCU_SEQ_CTR_SHIFT;
-> > 
-> > 	/* Complete any pending state by rounding up */
-> > 	s = __ALIGN_MASK(s, RCU_SEQ_STATE_MASK);
-> > 
-> > 	return s;
-> > }
-> 
-> Seems equivalent to me, but with more lines.  To say nothing of more
-> levels of lookup of macro definitions.  ;-)
+This patchset adds clock support for Actions Semi OWL series
+S700 SoC with relevant clock bindings and device tree info.
 
-But it does explain the various parts in the equation, or at least gives
-a fair clue as to how the thing composes. And I find the alignment thing
-far easier to read that an open coded variant, but whatever.
+Changed the UART clock using CMU instance and changes are
+tested in cubieboard7 
+
+Thanks and regards,
+Saravanan,
+Parthiban
+
+Saravanan Sekar (2):
+  arm64: dts: actions: Enable clock controller for S700
+  clk: actions: Add S700 SoC clock support
+
+ .../boot/dts/actions/s700-cubieboard7.dts     |   7 -
+ arch/arm64/boot/dts/actions/s700.dtsi         |   8 +
+ drivers/clk/actions/Kconfig                   |   7 +
+ drivers/clk/actions/Makefile                  |   1 +
+ drivers/clk/actions/owl-s700.c                | 614 ++++++++++++++++++
+ include/dt-bindings/clock/actions,s700-cmu.h  | 128 ++++
+ 6 files changed, 758 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/actions/owl-s700.c
+ create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+
+-- 
+2.18.0
+
