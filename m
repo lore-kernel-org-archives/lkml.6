@@ -2,109 +2,114 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDF4C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A187C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BCEA26E2B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB7BA26F40
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:32:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdcUWXhL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BCEA26E2B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oHiHfMcZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7BA26F40
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933908AbeFZUcU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:32:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932579AbeFZUcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:32:17 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7EBB26E2B;
-        Tue, 26 Jun 2018 20:32:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530045137;
-        bh=qEbp+x3UqJknhlUEq5P0RgEssI/L+jC6scgy1qEBUso=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QdcUWXhLkYrj1E8vmvK3Byk1ZwKIOnJKk4ZRAcCsmUgZfNgON7eJlunuMcxeQKTly
-         L8H+pFahKIOKp/17t7gcgTcWTChzvoNw4hBIk7ZtYXg55OHmF3Z//EhKzcZ7s20Vvj
-         1/ZtHlCofc+13ngDt982EOu/WilzRphhXOWcdqS0=
-Date:   Tue, 26 Jun 2018 15:32:14 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PCI <linux-pci@vger.kernel.org>, n0000b.n000b@gmail.com,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH] PCI / ACPI / PM: Resume bridges w/o drivers on
- suspend-to-RAM
-Message-ID: <20180626203214.GA181504@bhelgaas-glaptop.roam.corp.google.com>
-References: <35587465.8Nave9aG7d@aspire.rjw.lan>
- <20180626140115.GA146680@bhelgaas-glaptop.roam.corp.google.com>
- <CAJZ5v0jc5oJzEX6QVDVjsQLmLxXHg3PSyepbh50dLXOtnHPgrA@mail.gmail.com>
- <20180626171406.GC146680@bhelgaas-glaptop.roam.corp.google.com>
- <CAJZ5v0gt+4FiiBxEjdsEYLT+dQq=Q=mC7JtZPsYxps0_a1w-rg@mail.gmail.com>
+        id S933982AbeFZUcX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:32:23 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36813 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933050AbeFZUcS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 16:32:18 -0400
+Received: by mail-wr0-f195.google.com with SMTP id f16-v6so18522752wrm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Q764Gp4PWxLNJtP7XFQVaMpRK/3uK+/IB4VilfSUX3Y=;
+        b=oHiHfMcZAbPrqtERB5AMJWLzZZaZ9dwUs4BTomsjHyQI4ajsTmq3ewdasIDs7h+vv1
+         43sX3aLulh2zQbjiLBbewjP/IG70ueNXHQwIcAqgfSvc+TypBHN0LU0squ2k96vYkCzZ
+         0KfLEEP2iuqQNhRGh//CqYl8Yw7PpHJO/5MzIze90b93pIsfKI4Oxq9VqLLznudG7k7M
+         A5g9Nl5G3P84d2LduDIOhKQu43mjZ8Gd96cV0YM41mpbd5RVwAPExKo0CW0x+b0D9SlA
+         oUyeqR10DWIxE5ImX7Sx8zmPicninvDqEvqry72VpQP6t0p5TPAakzSU/PCobkOlH6mn
+         5ofA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q764Gp4PWxLNJtP7XFQVaMpRK/3uK+/IB4VilfSUX3Y=;
+        b=DPWpbIPhXxzzp6h3stRoOARJ5GMpLrhv14rbUwi6tkT/DZdJIFQafx5JBvKQG20ScE
+         zdG7no6iQB0KlR56OHny4e/ma/34olojdz1uX8EJU+jQ9y2rU8rh8lRKrx0+tN+g5WCF
+         gEd8WX1QBfNnJFmxvufpXKhu5r/Hn52hdjQK/0II3bng2P4RYQ4m8639ZQ24aioZrIcd
+         bjCikbrEYmmLlyIdMPHzM6vvn9XyzH1uih1lVVBOYJUHNpDpMEre3q9dvZNJBYDLOfBb
+         S8DtvXyy+oZV3RjeiLY9m/tBmJlj4sc+uE5NJTXRqZ/c2J8c3X6XhoA7IwWdGFSqhDCe
+         j86Q==
+X-Gm-Message-State: APt69E3eQHZhDxXxuZpkc19j147MMEzrX5MJzQZEFfYQkZhPvTluErLT
+        aPigyn85RhaZb8ZEpYNsisLCu5hy
+X-Google-Smtp-Source: AAOMgpeby+FKQ+h2l86cXso6NJHCI1x/8lbWLJtazyM2PBJBWk3rI3X3LwPL9rigii2MsJRLE6oUkQ==
+X-Received: by 2002:adf:f60a:: with SMTP id t10-v6mr2547742wrp.97.1530045137849;
+        Tue, 26 Jun 2018 13:32:17 -0700 (PDT)
+Received: from [192.168.1.4] (x590c812a.dyn.telefonica.de. [89.12.129.42])
+        by smtp.gmail.com with ESMTPSA id n10-v6sm3913165wrs.64.2018.06.26.13.32.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 13:32:17 -0700 (PDT)
+Subject: Re: [PATCH v3 3/4] staging: rtl8723bs: use ether_addr_copy() in
+ rtw_macaddr_cfg()
+To:     Joe Perches <joe@perches.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <20180626081409.9518-1-straube.linux@gmail.com>
+ <20180626081409.9518-3-straube.linux@gmail.com>
+ <CAHp75Vc3gEyP+h_XtJV7zKZV0J++Nyr04au7Rtu3h5y0JJASXg@mail.gmail.com>
+ <37cca7e4-3c1f-b1ab-14b3-fd3dbbae8b01@gmail.com>
+ <96782a8bbc8d5a8a911447beda78ca4eed6b9f04.camel@perches.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <2a49e8e7-15ef-af4f-1039-b15ae60df11b@gmail.com>
+Date:   Tue, 26 Jun 2018 22:32:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gt+4FiiBxEjdsEYLT+dQq=Q=mC7JtZPsYxps0_a1w-rg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <96782a8bbc8d5a8a911447beda78ca4eed6b9f04.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 07:19:29PM +0200, Rafael J. Wysocki wrote:
-> On Tue, Jun 26, 2018 at 7:14 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Tue, Jun 26, 2018 at 04:22:00PM +0200, Rafael J. Wysocki wrote:
-> >> On Tue, Jun 26, 2018 at 4:01 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> >> > On Tue, Jun 26, 2018 at 12:06:01PM +0200, Rafael J. Wysocki wrote:
-> >> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> >> >> +     /*
-> >> >> +      * In some cases (eg. Samsung 305V4A) leaving a bridge in suspend
-> >> >> +      * confuses the platform firmware, so avoid doing that, unless the
-> >> >> +      * bridge has a driver that should take care of PM handling.
-> >> >> +      */
-> >> >> +     if (pci_is_bridge(dev) && !dev->driver)
-> >> >> +             return true;
-> >> >
-> >> > It sounds like the question of whether leaving a bridge in D3 confuses
-> >> > the firmware has a platform-specific answer.
-> >>
-> >> Well, it may confuse the platform firmware in general.
-> >>
-> >> > How does the driver PM handling know how to do the right thing?
-> >>
-> >> For endpoints this is not an issue as they always have been expected
-> >> to be in D3 before passing control to the platform firmware on S3
-> >> entry, but we've never done that for bridges by default, except for
-> >> PCIe ports with PM enabled (in which case the driver decides whether
-> >> or not to enable it).
-> >
-> > If there's any spec reference for the expected power states of devices
-> > when entering S3, that would be useful here.  I can't tell if there's
-> > any guidance for this or if it's just figured out experimentally.
-> 
-> It is not direct, but Section 16.1.6 of ACPI 6.2 says this in step 4
-> of the system suspend outline:
-> 
-> OSPM places all device drivers into their respective Dx state. If the
-> device is enabled for wake,
-> it enters the Dx state associated with the wake capability. If the
-> device is not enabled to wake
-> the system, it enters the D3 state.
 
-Thanks, that's a very useful citation!
-
-Bjorn
+On 06/26/18 22:17, Joe Perches wrote:
+> On Tue, 2018-06-26 at 21:44 +0200, Michael Straube wrote:
+>> On 06/26/18 19:32, Andy Shevchenko wrote:
+>>> On Tue, Jun 26, 2018 at 11:14 AM, Michael Straube
+>>> <straube.linux@gmail.com> wrote:
+>>>> Use ether_addr_copy() instead of memcpy() to copy the mac address.
+>>>>
+>>>
+>>> Suggested-by ?
+>>>
+>>
+>> I'll add it. Sorry, I was not aware of the Suggested-by tag.
+>>
+>>> Btw, ensure that the source and destination buffers are aligned to u16
+>>> as required by API.
+>>
+>> To be honest I'm not sure how to do that excactly.
+>>
+>> Use __align(2) in the array declarations? e.g.:
+>>
+>>           u8 mac[ETH_ALEN] __align(2);
+> 
+> All initial function automatics are naturally aligned.
+>>
+So there is nothing to change? Now I'm confused.
