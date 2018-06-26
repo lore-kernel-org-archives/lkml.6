@@ -2,122 +2,80 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D45C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79324C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB7EF20836
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:38:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB7EF20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B5A526E1B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:39:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2vSGtOWU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B5A526E1B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933904AbeFZUif (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:38:35 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51646 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754946AbeFZUie (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:38:34 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QKXiTr125044
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 16:38:34 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2juu5um02r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 16:38:34 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 16:38:32 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 16:38:29 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QKcSnR8913280
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 20:38:28 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B4769B2066;
-        Tue, 26 Jun 2018 16:38:21 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D784B2068;
-        Tue, 26 Jun 2018 16:38:21 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 16:38:21 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id C3FAD16CA159; Tue, 26 Jun 2018 13:40:33 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 13:40:33 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
- race with CPU offline
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180626002052.GA24146@linux.vnet.ibm.com>
- <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
- <20180626174424.GK2494@hirez.programming.kicks-ass.net>
- <20180626181937.GG3593@linux.vnet.ibm.com>
- <20180626194807.GQ2494@hirez.programming.kicks-ass.net>
+        id S933995AbeFZUja (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:39:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933719AbeFZUj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 16:39:28 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2EF020836;
+        Tue, 26 Jun 2018 20:39:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530045567;
+        bh=nJtp3IMWr92STv5aO38C3vZVErDspAkg1ratFzCIOrQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2vSGtOWUK8eejwlSNVBJbxWudmVKuLfVQi50BiWKk+Dyf/hu5G7V/W9MnKlFZ65ZM
+         Gu1OmU5+RDQ8e/uEG6eLf3A2wBgWPWmmhz/W7R6MGkLDSrnRRiO9wS5o48q6QmyNL7
+         tF36lP8nZzyDxe2hbNCKWZmpFc5Zo54SHr8O0ZJo=
+Date:   Tue, 26 Jun 2018 15:39:26 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] PCI: shpchp: NULL pointer fix and cleanups
+Message-ID: <20180626203926.GB181504@bhelgaas-glaptop.roam.corp.google.com>
+References: <152996746234.260522.11381067633352986554.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180626194807.GQ2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062620-2213-0000-0000-000002C0595E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052738; UDB=6.00539710; IPR=6.00830662;
- MB=3.00021868; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 20:38:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062620-2214-0000-0000-00005A9E2499
-Message-Id: <20180626204033.GM3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260227
+In-Reply-To: <152996746234.260522.11381067633352986554.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 09:48:07PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 26, 2018 at 11:19:37AM -0700, Paul E. McKenney wrote:
-> > The initial reason for ____cacheline_internodealigned_in_smp was that
-> > some of the fields can be accessed by random CPUs, while others are
-> > used more locally, give or take our usual contention over the handling
-> > of CPU numbers.  ;-)
+On Mon, Jun 25, 2018 at 05:59:33PM -0500, Bjorn Helgaas wrote:
+> The first patch fixes a NULL pointer dereference reported by Marc and would
+> be targeted for v4.18.
 > 
-> So that whole internode thing only matters for the insane VSMP case,
-> where they take node to mean a cluster node, not a numa node.
+> The others simplify the shpchp probe path and would be for v4.19.
 > 
-> VSMP is a networked shared memory machine where, by necessity, the MESI
-> protocol operates on page granularity.
+> ---
 > 
-> In general I tend to completely and utterly ignore that and let the VSMP
-> people worry about things.
+> Bjorn Helgaas (4):
+>       PCI: shpchp: Manage SHPC unconditionally on non-ACPI systems
+>       PCI: shpchp: Separate existence of SHPC and permission to use it
+>       PCI: shpchp: Inline shpchp_is_native()
+>       PCI: hotplug: Implement hotplug_is_native() only when CONFIG_ACPI=y
 
-Sounds like I should queue a patch to replace them all with
-____cacheline_aligned_in_smp.
+I applied the first (with Marc's tested-by and Mika's reviewed-by) to
+for-linus for v4.18.
 
-Any objections?
+I applied the others with Mika's reviewed-by to pci/hotplug for v4.19.
 
-(I don't consider this an emergency, so I would queue it for the merge
-window following the next one.)
-
-							Thanx, Paul
-
+>  drivers/pci/hotplug/acpi_pcihp.c  |   40 +++++++++++++++++++++++--------------
+>  drivers/pci/hotplug/shpchp_core.c |   21 +++++++++++++++++++
+>  drivers/pci/pci-acpi.c            |   29 ---------------------------
+>  include/linux/pci.h               |    1 +
+>  include/linux/pci_hotplug.h       |   20 ++++++++++---------
+>  5 files changed, 58 insertions(+), 53 deletions(-)
