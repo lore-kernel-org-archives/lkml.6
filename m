@@ -2,120 +2,79 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E741CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B80C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 668DF223C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:35:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qvLw38Za"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668DF223C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C8C0268C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:36:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8C0268C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932838AbeFZVe7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 17:34:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53960 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752258AbeFZVe6 (ORCPT
+        id S1754290AbeFZVgG (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 17:36:06 -0400
+Received: from smtprelay0111.hostedemail.com ([216.40.44.111]:37565 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752213AbeFZVgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 17:34:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OgSwYmnGww2ElL7BKZyxeu0ytNz07pvRvAYnrB0tfuU=; b=qvLw38ZaMlHMRgKPU9gbjtcmH
-        rz+oD6uHpfArtS8X3UgUJ9fv8Irr3zNmXfTnbj1kY5V0KloZ9SgsFj2snrmmqt402KJz4GahX7sXd
-        /CgB7r/KsojpvsE98DfM2JYpTy4FLGt8FCS1MUMCw6WA12/JsfnCnQPtBwG/i0iEOHriuxh9DcdCq
-        ToeHS0Dr69nG7ugLhunnHt99EeVR7rtlXf2VwtkzFiSR4IO+J6leYrJDcE/BULxS9KWMcBwrZiNd4
-        o8fKaL8KfrKV3rVt58rkLRJ2RQLoiHFr2dNbjetxW7757JRiGR7KJJgFuDYqvB5ZOeB44hkd8orUy
-        UmJ/guvVA==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXvbv-0004t1-Q6; Tue, 26 Jun 2018 21:34:51 +0000
-Date:   Tue, 26 Jun 2018 14:34:50 -0700
-From:   Darren Hart <dvhart@infradead.org>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Colin King <colin.king@canonical.com>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: dell-smbios: make a function and a pointer
- static
-Message-ID: <20180626213450.GB4945@fury>
-References: <20180621181524.30550-1-colin.king@canonical.com>
- <20180623002237.GG27466@fury>
- <alpine.DEB.2.20.1806230823500.2696@hadrien>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1806230823500.2696@hadrien>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 26 Jun 2018 17:36:05 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 44125181D340F;
+        Tue, 26 Jun 2018 21:36:04 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: goat28_8c0a1a41cd856
+X-Filterd-Recvd-Size: 2137
+Received: from XPS-9350 (unknown [172.58.27.131])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 26 Jun 2018 21:36:02 +0000 (UTC)
+Message-ID: <997ac97e1dcfcaf4d0b1fa7003d4611dd7821f5d.camel@perches.com>
+Subject: Re: [PATCH v3 3/4] staging: rtl8723bs: use ether_addr_copy() in
+ rtw_macaddr_cfg()
+From:   Joe Perches <joe@perches.com>
+To:     Michael Straube <straube.linux@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Tue, 26 Jun 2018 14:36:00 -0700
+In-Reply-To: <2a49e8e7-15ef-af4f-1039-b15ae60df11b@gmail.com>
+References: <20180626081409.9518-1-straube.linux@gmail.com>
+         <20180626081409.9518-3-straube.linux@gmail.com>
+         <CAHp75Vc3gEyP+h_XtJV7zKZV0J++Nyr04au7Rtu3h5y0JJASXg@mail.gmail.com>
+         <37cca7e4-3c1f-b1ab-14b3-fd3dbbae8b01@gmail.com>
+         <96782a8bbc8d5a8a911447beda78ca4eed6b9f04.camel@perches.com>
+         <2a49e8e7-15ef-af4f-1039-b15ae60df11b@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 08:24:26AM +0200, Julia Lawall wrote:
-> 
-> 
-> On Fri, 22 Jun 2018, Darren Hart wrote:
-> 
-> > On Thu, Jun 21, 2018 at 07:15:24PM +0100, Colin King wrote:
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > >
-> > > The function dell_smbios_smm_call and pointer platform_device are
-> > > local to the source and do not need to be in global scope, so make
-> > > them static.
-> > >
-> > > Cleans up sparse warnings:
-> > > warning: symbol 'platform_device' was not declared. Should it be static?
-> > > warning: symbol 'dell_smbios_smm_call' was not declared. Should it be
-> > > static?
-> > >
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/platform/x86/dell-smbios-smm.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/platform/x86/dell-smbios-smm.c b/drivers/platform/x86/dell-smbios-smm.c
-> > > index e9e9da556318..97a90bebc360 100644
-> > > --- a/drivers/platform/x86/dell-smbios-smm.c
-> > > +++ b/drivers/platform/x86/dell-smbios-smm.c
-> > > @@ -24,7 +24,7 @@
-> > >  static int da_command_address;
-> > >  static int da_command_code;
-> > >  static struct calling_interface_buffer *buffer;
-> > > -struct platform_device *platform_device;
-> > > +static struct platform_device *platform_device;
-> > >  static DEFINE_MUTEX(smm_mutex);
-> > >
-> > >  static const struct dmi_system_id dell_device_table[] __initconst = {
-> > > @@ -82,7 +82,7 @@ static void find_cmd_address(const struct dmi_header *dm, void *dummy)
-> > >  	}
-> > >  }
-> > >
-> > > -int dell_smbios_smm_call(struct calling_interface_buffer *input)
-> > > +static int dell_smbios_smm_call(struct calling_interface_buffer *input)
-> >
-> > Hrm. So these are passed by pointer to dell_smbios_register_device(), which is in
-> > turn called by dell_smbios_call() from dell-smbios-base.c.
-> >
-> > So while it is valid to make these static, since we're not referencing the
-> > symbol, but the pointer value instead - I do worry about the "static" suggesting
-> > to someone reading the code that this data is not used outside of this file,
-> > when it is.
-> 
-> Static protects the name.  The name in this case is very generic.
+On Tue, 2018-06-26 at 22:32 +0200, Michael Straube wrote:
+> On 06/26/18 22:17, Joe Perches wrote:
+> > On Tue, 2018-06-26 at 21:44 +0200, Michael Straube wrote:
+> > > On 06/26/18 19:32, Andy Shevchenko wrote:
+> > > > On Tue, Jun 26, 2018 at 11:14 AM, Michael Straube
+> > > > <straube.linux@gmail.com> wrote:
+> > > > > Use ether_addr_copy() instead of memcpy() to copy the mac address.
+[]
+> > > > Btw, ensure that the source and destination buffers are aligned to u16
+> > > > as required by API.
+> > > To be honest I'm not sure how to do that excactly.
+> > > Use __align(2) in the array declarations? e.g.:
+> > >           u8 mac[ETH_ALEN] __align(2);
+> > All initial function automatics are naturally aligned.
+> So there is nothing to change? Now I'm confused.
 
-Indeed "platform_device" is even more generic than I'd like for a static ;-)
+There's nothing to change.  You could add __aligned(2)
+if you wanted to, but it's already aligned.
 
--- 
-Darren Hart
-VMware Open Source Technology Center
