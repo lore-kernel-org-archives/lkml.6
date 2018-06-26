@@ -2,159 +2,238 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E4CC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80EDC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D003826685
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:13:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D003826685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CA1320846
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:13:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA1320846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932135AbeFZINI convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:13:08 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:43350 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752411AbeFZINF (ORCPT
+        id S932351AbeFZINe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 04:13:34 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33122 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932174AbeFZINa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:13:05 -0400
-Received: by mail-ot0-f194.google.com with SMTP id i19-v6so18072867otk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 01:13:04 -0700 (PDT)
+        Tue, 26 Jun 2018 04:13:30 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t21-v6so8083413lji.0;
+        Tue, 26 Jun 2018 01:13:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ehUi2NdUBruSWdambVBl+nlgQdEFy/BZPwp4ki45MIU=;
-        b=q46PWz/Ab6HbE1CMn4lmoDFTZjKK//AX/VS0QtulkWPTYI4SFDDzElPvY8ASpyjCFz
-         NERCgqpoccDSIQPa6s+ZcAAZQbXQs/CoBbluMZa/QqHXCrKAqN7Z7186iNSFnuKA2fsO
-         lsy5d5zDpTkCNk2BCYINERjY8GqNmr2r/2QePB3Kih9pZxOdGCO8Cfs+h7BXuG9Xpe6h
-         Yo8WC6jsrrgH4uL9WqKRy/mxjQPy3NaS9EFD29GxaVS6b4PD76R89IaPjqMS0h/MhLF8
-         QPRVZK52GULowtOlM2BYkXlDwU9lU5I0rsLGd0rb+n7eiN3e7GiOhSyHmlOb9ikXTC55
-         etCQ==
-X-Gm-Message-State: APt69E0N8ufmANi/ZxX/udQcn+b5hOZokWNZqz7S9JTUYPkF/z5Nm2o9
-        ie4voDQgpqPChDMQJDnX0qppPdJXgmuKKsc0HiqH+Q==
-X-Google-Smtp-Source: AAOMgpeEvlVFK0veNlKgcHkUfuLmIMalDakF8IcQJY6A7LrujBtCTYdACk3qoCi4ens+Qxr+3V3axkd/IHr7MlE+4Xw=
-X-Received: by 2002:a9d:4115:: with SMTP id o21-v6mr225762ote.259.1530000784335;
- Tue, 26 Jun 2018 01:13:04 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4wmUGQGvbdG/KHyn0pRgJwCdvuttsUSlpjialTf7rk8=;
+        b=a4RFKMpVEKLh7OeeIQS+TKMTngAqYU4vI4CkB0EmlXp8fLEmcNBxIieSFyXb26l/2c
+         2ITm7lTSoqXPMNADV+1svgk2fRyX79wIGIkc2kDW+RFd44XXbEfvOxxmWYOxDL8hPQJR
+         DVcxe8Eka3/DokxXVXV0lOaXPgky6bYIFsCrfOVMingw3WT9nZHgLZe6TnZzfSe8z/Os
+         DRETZh/V1TNcQI+y62QLma1rj5wi+UQr4MtXaatHGH9dYfDTw28yDQ4n5OcryWPzEHQO
+         13wdKojU/p+EI7xtA+AzkfntaLcGO0wR2f+AQ0THucuxfOJxD2e85gsTTiS+e1KXYRfP
+         9XDA==
+X-Gm-Message-State: APt69E2hXQ/Bx58IRallux4C2CQ6C3gkzqcNJkkpDchV7ZIjpve2+1J8
+        sp78t74EH6t62+dwuyWbR4w=
+X-Google-Smtp-Source: AAOMgpcW+3e3RPB6cTPm1evp0MugBhAaeBx0tJ9oGyvnZCiSfGAwGtMCPItlXAT8gC9LgKC9m+etUg==
+X-Received: by 2002:a2e:5b4a:: with SMTP id p71-v6mr409030ljb.13.1530000808785;
+        Tue, 26 Jun 2018 01:13:28 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id l25-v6sm143929ljj.30.2018.06.26.01.13.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 01:13:27 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 11:13:19 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>, broonie@kernel.org,
+        lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
+Message-ID: <20180626081319.GA2118@localhost.localdomain>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
+ <20180612082354.GG20078@localhost.localdomain>
+ <152997029783.143105.16692843405899913246@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20180625065532.7268-1-omosnace@redhat.com> <CAHC9VhSQwAH1k-cnpQ4iYs-gtHiQRfFvX9aSVW1_-cFEtJ1JCg@mail.gmail.com>
-In-Reply-To: <CAHC9VhSQwAH1k-cnpQ4iYs-gtHiQRfFvX9aSVW1_-cFEtJ1JCg@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 26 Jun 2018 10:12:58 +0200
-Message-ID: <CAFqZXNs5y4AWCnPntGhR_DcrX1d-6h4uPuMKy-WoyCN2Wh1H+A@mail.gmail.com>
-Subject: Re: [PATCH -next v2] cred: conditionally declare groups-related functions
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Eric Paris <eparis@redhat.com>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-next@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        dhowells@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <152997029783.143105.16692843405899913246@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-po 25. 6. 2018 o 23:04 Paul Moore <paul@paul-moore.com> napÃ­sal(a):
->
-> On Mon, Jun 25, 2018 at 2:56 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > The groups-related functions declared in include/linux/cred.h are
-> > defined in kernel/groups.c, which is compiled only when
-> > CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
-> > CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-> > CONFIG_MULTIUSER might be disabled.
-> >
-> > This patch also adds a fallback for groups_search(). Currently this
-> > function is only called from kernel/groups.c itself and
-> > keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
-> > audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
-> > function in -next, so the fallback will be needed to avoid compilation
-> > errors or ugly workarounds.
-> >
-> > See also:
-> > https://lkml.org/lkml/2018/6/20/670
-> > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
-> >
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >  include/linux/cred.h | 15 ++++++++++-----
-> >  1 file changed, 10 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/include/linux/cred.h b/include/linux/cred.h
-> > index 631286535d0f..7eed6101c791 100644
-> > --- a/include/linux/cred.h
-> > +++ b/include/linux/cred.h
-> > @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
-> >
-> >  extern int in_group_p(kgid_t);
-> >  extern int in_egroup_p(kgid_t);
-> > +extern int groups_search(const struct group_info *, kgid_t);
-> > +
-> > +extern int set_current_groups(struct group_info *);
-> > +extern void set_groups(struct cred *, struct group_info *);
-> > +extern bool may_setgroups(void);
-> > +extern void groups_sort(struct group_info *);
-> >  #else
-> >  static inline void groups_free(struct group_info *group_info)
-> >  {
-> > @@ -78,12 +84,11 @@ static inline int in_egroup_p(kgid_t grp)
-> >  {
-> >          return 1;
-> >  }
-> > +static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-> > +{
-> > +       return 1;
-> > +}
-> >  #endif
-> > -extern int set_current_groups(struct group_info *);
-> > -extern void set_groups(struct cred *, struct group_info *);
-> > -extern int groups_search(const struct group_info *, kgid_t);
-> > -extern bool may_setgroups(void);
-> > -extern void groups_sort(struct group_info *);
->
-> I was going through the list of functions to make sure it was safe to
-> move all of these under CONFIG_MULTIUSER and I believe there may be an
-> issue with key_task_permission() and groups_search(), specifically one
-> can disable CONFIG_MULTIUSER yet keep CONFIG_KEYS enabled.
+Hello Stephen, Rob and all others
 
-Oh, you're right, CONFIG_KEYS does not depend on CONFIG_MULTIUSER, for
-some reason I was looking at CONFIG_SECURITY instead, which does :/ I
-will need to update the commit message...
+Thanks again Stephen. I appreciate your help. And just to help you
+sorting your inbox a bit - I have written patch series v6 and v7 before
+receiving these comments. I will write v8 after I get some further input
+from you and Rob on how to solve the issue with having the clk stuff in
+parent node and usage of devm_of_clk_add_hw_provider where DT node is
+fetched from dev pointer. 
 
-> I'm going to guess that the fix is going to be to have CONFIG_KEYS
-> depend on CONFIG_MULTIUSER, but I would talk with the keys folks (I've
-> CC'd David Howells) to see what they would prefer.
+The v8 should then address rest of the issues - except the regmap wrappers
+which I will send as separate patch. So I guess you can skip the v6 and v7
+and just please check for the v8 when I get it done.
 
-I was wondering why the security/keys/permissions.c did not give the
-link error and it turns out that it is due to the definition of
-__kgid_val(), which is hard-coded to 0 if CINFIG_MULTIUSER=n, so the
-compiler just optimizes out most of the code in key_task_permission()
-(including the groups_search() call). Thus, for permissions.c it does
-not matter which fallback we choose (and since this patch always
-defines groups_search(), it will not lead to compile errors in
-permissions.c either).
+On Mon, Jun 25, 2018 at 04:44:57PM -0700, Stephen Boyd wrote:
+> Quoting Matti Vaittinen (2018-06-12 01:23:54)
+> > On Tue, Jun 12, 2018 at 12:44:11AM -0700, Stephen Boyd wrote:
+> > > Quoting Matti Vaittinen (2018-06-04 06:19:13)
+> > > Use u8 instead of uint8_t.
+> > can you please educate me as to what is this reason?
+> 
+> This is kernel style to prefer the shorter types within the kernel code.
+> Outside of the kernel proper, uint*_t types are used in the UAPI
+> headers. You can look through the mailing list about this, but this is
+> how I've known it to be for a while now.
 
-TL;DR: There is no need to fix anything in the keys code (beyond this
-patch). I also checked the other functions and they are only used in
-places that either depend on MULTIUSER or use also groups_alloc(),
-which is already declared only when CONFIG_MULTIUSER=y.
+Thanks. I have changed this from patch v6 onwards.
+> > > > +
+> > > > +       rval = devm_clk_hw_register(&pdev->dev, &c->hw);
+> > > > +       if (rval) {
+> > > > +               dev_err(&pdev->dev, "failed to register 32K clk");
+> > > > +               goto err_out;
+> > > > +       }
+> > > > +
+> > > > +       if (pdev->dev.parent->of_node) {
+> > > > +               rval = of_clk_add_hw_provider(pdev->dev.parent->of_node,
+> > > > +                                            of_clk_hw_simple_get,
+> > > > +                                            &c->hw);
+> > > > +               if (rval) {
+> > > > +                       dev_err(&pdev->dev, "adding clk provider failed\n");
+> > > > +                       goto err_out;
+> > > 
+> > > Just return rval instead of goto and then remove err_out label.
+> > 
+> > Is this 'hard requirement'? I prefer single point of exit from functions
+> > (when easily doable) because I have done so many errors with locks /
+> > resources being reserved when exiting from some error branch. For my
+> > personal taste maintaining the one nice cleanup sequence is easier. But
+> > if this is 'hard requirement' this can of course be changed.
+> 
+> There are no locks though. And this uses devm. So please remove the goto
+> so my style alarms don't go off. Thanks!
 
->
-> --
-> paul moore
-> www.paul-moore.com
+I did rework this piece from patch v6 onwards so that there is no goto but
+we still have single exit point. I hope that is Ok, so please re-check
+this when you find the time.
 
---
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+> > > > +       rval = clk_hw_register_clkdev(&c->hw, init.name, NULL);
+> > > 
+> > > This leaks a clkdev lookup. Sad we don't have a devm version. Maybe it
+> > > should be added. But I really doubt this chip will be used with clkdev
+> > > lookups so please remove clkdev until you have a user who needs it.
+> > 
+> > Yep. It leaks. I tried to look for an example where the clkdev was
+> > nicely freed at remove - but I didn't find any. Every example I spotted
+> > did leak the clkdev in same way as this does :( And I agree, devm
+> > variant for freeing would be nice - or freeing routines based on hw.
+> > 
+> > As the leaked clkdev can cause oops at module unload/reload/use your
+> > suggestion about removing it for now makes sense. I'll drop it.
+> 
+> Ok! Sometimes drivers don't free them because they're lazy and don't
+> expect to be unloaded or to fail. I guess you ran into those. I'm happy
+> to apply patches to clean those up.
+
+When I get the moment of "hmm, what should I do next" - I'll keep this
+in mind... Unfortunately those moments have been pretty rare occasions
+since I found my wife and got my kids - but OTOH, we have working
+pension scheme in Finland - so I expect this to change during the next
+30 years or so =] (Truth is that I'll keep this in mind but can't
+promise anything more as promises might be empty).
+
+> > > > +       if (rval) {
+> > > > +               dev_err(&pdev->dev, "failed to register clkdev for bd71837");
+> > > > +               goto err_clean_provider;
+> > > > +       }
+> > > > +
+> > > > +       platform_set_drvdata(pdev, c);
+> > > > +
+> > > > +       return 0;
+> > > > +
+> > > > +err_clean_provider:
+> > > > +       of_clk_del_provider(pdev->dev.parent->of_node);
+> > > > +err_out:
+> > > > +       return rval;
+> > > > +}
+> > > > +
+> > > > +static int bd71837_clk_remove(struct platform_device *pdev)
+> > > > +{
+> > > > +       if (pdev->dev.parent->of_node)
+> > > > +               of_clk_del_provider(pdev->dev.parent->of_node);
+> > > 
+> > > Use devm so this can go away. Or is devm not used because the parent
+> > > of_node is the provider? That's annoying.
+> > 
+> > What would be the correct workaround for this?
+> 
+> Smash the clk driver into the overall PMIC node. That should work. Or
+> possibly assign the same of_node to the child device when creating it?
+> I'm not sure if that causes some sort of problem with DT code though, so
+> it would be good to check with Rob H if that's a bad idea or not.
+
+I'd rather keep the clk in own subdevice so that it can be used or not
+used based on the clk Kconfig options. I also rather keep the clk codes
+in clk folders. So I guess the use of devm is not correct justification
+for bundling the MFD and clk. I basically see 3 ways:
+
+1. Assign MFD node to subdevice node in MFD when creating the cells.
+2. Assign parent->of_node to dev.of_node in clk subdevice.
+3. Create devm_of_clk_add_hw_provider_w_node() which does something
+like (not compiled pseudo) code below
+
+int devm_of_clk_add_hw_provider_w_node(struct device *dev,
+			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+					      void *data),
+			struct device_node *of_node,
+			void *data)
+{
+	struct device_node **ptr;
+	int ret;
+	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
+			   GFP_KERNEL);
+	if (!ptr)
+		return -ENOMEM;
+
+	*ptr = of_node;
+	ret = of_clk_add_hw_provider(of_node, get, data);
+	if (!ret)
+		devres_add(dev, ptr);
+	else
+		devres_free(ptr);
+
+	return ret;
+}
+EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider_w_node);
+
+int devm_of_clk_add_hw_provider(struct device *dev,
+			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+					      void *data),
+			void *data)
+{
+	return devm_of_clk_add_hw_provider_w_node(dev, get, dev->of_node,
+						  data);
+}
+EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
+
+To me the third option sounds like correct one - but you guys probably
+have the idea how these subsystems should look like in the future - so I
+trust on your judgement on this. So whatäs your take on this?
+
+I'll also add Rob in the 'to' field of this email so maybe we get his opinion
+on this.
+
+Best Regards
+    Matti Vaittinen
+
