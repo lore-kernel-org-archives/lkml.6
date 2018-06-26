@@ -2,165 +2,117 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B185C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68271C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E3A4268E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:54:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3A4268E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id B898C2694A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 23:56:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B898C2694A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934322AbeFZXyy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 19:54:54 -0400
-Received: from gate.crashing.org ([63.228.1.57]:38513 "EHLO gate.crashing.org"
+        id S934323AbeFZX4f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 19:56:35 -0400
+Received: from mga07.intel.com ([134.134.136.100]:1613 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934216AbeFZXy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 19:54:29 -0400
-Received: from pasglop.au.ibm.com (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5QNQ6qZ022979;
-        Tue, 26 Jun 2018 18:26:22 -0500
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        devicetree@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
-        linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: [PATCH 02/14] fsi: Move code around to avoid forward declaration
-Date:   Wed, 27 Jun 2018 09:25:53 +1000
-Message-Id: <20180626232605.13420-3-benh@kernel.crashing.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180626232605.13420-1-benh@kernel.crashing.org>
-References: <20180626232605.13420-1-benh@kernel.crashing.org>
+        id S1752209AbeFZX4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 19:56:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 16:56:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,276,1526367600"; 
+   d="scan'208";a="50794618"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by fmsmga008.fm.intel.com with ESMTP; 26 Jun 2018 16:56:30 -0700
+Message-ID: <9ae4955e8026e1ddf0567e5cc210c5713668b631.camel@linux.intel.com>
+Subject: Re: [PATCH v2 10/21] cpufreq: intel_pstate: use match_string()
+ helper
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Yisheng Xie <xieyisheng1@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
+        Len Brown <lenb@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org
+Date:   Tue, 26 Jun 2018 16:56:30 -0700
+In-Reply-To: <1633797.WhvbXNE1Nx@aspire.rjw.lan>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+         <1527765086-19873-11-git-send-email-xieyisheng1@huawei.com>
+         <1633797.WhvbXNE1Nx@aspire.rjw.lan>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move fsi_slave_set_smode() and its helpers to before it's
-first user and remove the corresponding forward declaration.
+On Tue, 2018-06-26 at 17:23 +0200, Rafael J. Wysocki wrote:
+> On Thursday, May 31, 2018 1:11:15 PM CEST Yisheng Xie wrote:
+> > match_string() returns the index of an array for a matching string,
+> > which can be used instead of open coded variant.
+> > 
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
----
- drivers/fsi/fsi-core.c | 94 +++++++++++++++++++++---------------------
- 1 file changed, 46 insertions(+), 48 deletions(-)
-
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index 565218872635..2f6f9b8c75e4 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -215,7 +215,52 @@ static int fsi_slave_report_and_clear_errors(struct fsi_slave *slave)
- 			&irq, sizeof(irq));
- }
- 
--static int fsi_slave_set_smode(struct fsi_master *master, int link, int id);
-+/* Encode slave local bus echo delay */
-+static inline uint32_t fsi_smode_echodly(int x)
-+{
-+	return (x & FSI_SMODE_ED_MASK) << FSI_SMODE_ED_SHIFT;
-+}
-+
-+/* Encode slave local bus send delay */
-+static inline uint32_t fsi_smode_senddly(int x)
-+{
-+	return (x & FSI_SMODE_SD_MASK) << FSI_SMODE_SD_SHIFT;
-+}
-+
-+/* Encode slave local bus clock rate ratio */
-+static inline uint32_t fsi_smode_lbcrr(int x)
-+{
-+	return (x & FSI_SMODE_LBCRR_MASK) << FSI_SMODE_LBCRR_SHIFT;
-+}
-+
-+/* Encode slave ID */
-+static inline uint32_t fsi_smode_sid(int x)
-+{
-+	return (x & FSI_SMODE_SID_MASK) << FSI_SMODE_SID_SHIFT;
-+}
-+
-+static uint32_t fsi_slave_smode(int id)
-+{
-+	return FSI_SMODE_WSC | FSI_SMODE_ECRC
-+		| fsi_smode_sid(id)
-+		| fsi_smode_echodly(0xf) | fsi_smode_senddly(0xf)
-+		| fsi_smode_lbcrr(0x8);
-+}
-+
-+static int fsi_slave_set_smode(struct fsi_master *master, int link, int id)
-+{
-+	uint32_t smode;
-+	__be32 data;
-+
-+	/* set our smode register with the slave ID field to 0; this enables
-+	 * extended slave addressing
-+	 */
-+	smode = fsi_slave_smode(id);
-+	data = cpu_to_be32(smode);
-+
-+	return fsi_master_write(master, link, id, FSI_SLAVE_BASE + FSI_SMODE,
-+			&data, sizeof(data));
-+}
- 
- static int fsi_slave_handle_error(struct fsi_slave *slave, bool write,
- 				  uint32_t addr, size_t size)
-@@ -569,53 +614,6 @@ static const struct bin_attribute fsi_slave_term_attr = {
- 	.write = fsi_slave_sysfs_term_write,
- };
- 
--/* Encode slave local bus echo delay */
--static inline uint32_t fsi_smode_echodly(int x)
--{
--	return (x & FSI_SMODE_ED_MASK) << FSI_SMODE_ED_SHIFT;
--}
--
--/* Encode slave local bus send delay */
--static inline uint32_t fsi_smode_senddly(int x)
--{
--	return (x & FSI_SMODE_SD_MASK) << FSI_SMODE_SD_SHIFT;
--}
--
--/* Encode slave local bus clock rate ratio */
--static inline uint32_t fsi_smode_lbcrr(int x)
--{
--	return (x & FSI_SMODE_LBCRR_MASK) << FSI_SMODE_LBCRR_SHIFT;
--}
--
--/* Encode slave ID */
--static inline uint32_t fsi_smode_sid(int x)
--{
--	return (x & FSI_SMODE_SID_MASK) << FSI_SMODE_SID_SHIFT;
--}
--
--static uint32_t fsi_slave_smode(int id)
--{
--	return FSI_SMODE_WSC | FSI_SMODE_ECRC
--		| fsi_smode_sid(id)
--		| fsi_smode_echodly(0xf) | fsi_smode_senddly(0xf)
--		| fsi_smode_lbcrr(0x8);
--}
--
--static int fsi_slave_set_smode(struct fsi_master *master, int link, int id)
--{
--	uint32_t smode;
--	__be32 data;
--
--	/* set our smode register with the slave ID field to 0; this enables
--	 * extended slave addressing
--	 */
--	smode = fsi_slave_smode(id);
--	data = cpu_to_be32(smode);
--
--	return fsi_master_write(master, link, id, FSI_SLAVE_BASE + FSI_SMODE,
--			&data, sizeof(data));
--}
--
- static void fsi_slave_release(struct device *dev)
- {
- 	struct fsi_slave *slave = to_fsi_slave(dev);
--- 
-2.17.1
-
+> > Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> > Cc: Len Brown <lenb@kernel.org>
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: linux-pm@vger.kernel.org
+> > Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> > ---
+> > v2:
+> >  - add Reviewed-by tag.
+> > 
+> >  drivers/cpufreq/intel_pstate.c | 15 ++++++---------
+> >  1 file changed, 6 insertions(+), 9 deletions(-)
+> > performance
+> > diff --git a/drivers/cpufreq/intel_pstate.c
+> > b/drivers/cpufreq/intel_pstate.c
+> > index 17e566af..d701e26 100644
+> > --- a/drivers/cpufreq/intel_pstate.c
+> > +++ b/drivers/cpufreq/intel_pstate.c
+> > @@ -645,21 +645,18 @@ static ssize_t
+> > store_energy_performance_preference(
+> >  {
+> >  	struct cpudata *cpu_data = all_cpu_data[policy->cpu];
+> >  	char str_preference[21];
+> > -	int ret, i = 0;
+> > +	int ret;
+> >  
+> >  	ret = sscanf(buf, "%20s", str_preference);
+> >  	if (ret != 1)
+> >  		return -EINVAL;
+> >  
+> > -	while (energy_perf_strings[i] != NULL) {
+> > -		if (!strcmp(str_preference,
+> > energy_perf_strings[i])) {
+> > -			intel_pstate_set_energy_pref_index(cpu_dat
+> > a, i);
+> > -			return count;
+> > -		}
+> > -		++i;
+> > -	}
+> > +	ret = match_string(energy_perf_strings, -1,
+> > str_preference);
+> > +	if (ret < 0)
+> > +		return ret;
+> >  
+> > -	return -EINVAL;
+> > +	intel_pstate_set_energy_pref_index(cpu_data, ret);
+> > +	return count;
+> >  }
+> >  
+> >  static ssize_t show_energy_performance_preference(
+> > 
+> 
+> Srinivas, any concerns?
+> 
