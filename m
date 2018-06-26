@@ -1,158 +1,120 @@
 Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7BCC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F02C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D9F22DFB
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:09:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4qJZQbi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D9F22DFB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5AEDF265BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:10:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AEDF265BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeFZHJG (ORCPT
+        id S1752127AbeFZHKn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:09:06 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51310 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751597AbeFZHJF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:09:05 -0400
-Received: by mail-wm0-f66.google.com with SMTP id w137-v6so568366wmw.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 00:09:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=N7YFuugXGLZn+v6TNm2WAHOXVZQY0S01FoB+zNKrHzw=;
-        b=b4qJZQbieEJr4/xLHtU9dgTR4UrlYmbX+7yayQInuY0lpWsnDD8lFEXXelAVTYFk3m
-         UvdUT+stN7iLRvSywu7gU/tZYIdmSPMSIODQ7LC4VCwPEeKB3385J+QDQXMVaSjs1qpN
-         3v/A5nU0AGxW4vcktUMF//Nv4GlcxzEXn2ojgZup3awiMA+SlstYZ0B3U55qNr8C0fPR
-         GSRSk+w4CfEwp+QRSv+C8OxHBywtYMeRJ7PRvlRr3DQ8jgnuiXIDUEG9RPp5milfCiAw
-         HdoilsYFqRk4uLBIfvaLhYWODC5arhnA5WKY8xrc4E1CcYR3255rVHblZdHkCaGPragj
-         GQ/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N7YFuugXGLZn+v6TNm2WAHOXVZQY0S01FoB+zNKrHzw=;
-        b=IAgMkP5rgpqZCgqhCIYHOefPHEYJSPFI0l0ZTXSIRSFYdMSYx+vCqg24Ms+8VApp/H
-         iRkmWSMGSKb7ifmwx+pZ2RZIq1c9fUSfS5IH0o5HlCfBxtg7gv8Ju/wnJbgz5++tOOF3
-         VVDzF7/7EmI23B0jOc013lFP73kCs7Jj7jBoXCDY1D29aZL2BvDzK61H3RIX1KTPIKLj
-         1eooQmZCwbm1tg4jTb7yvdO3+pWnmo5iar4KbWOZ+E2mbZvodtM6rzxOJ3ZXxipbcbYX
-         63KecwV9YtqzcrEiS3nMLvZzKNo/IVsiFHtEWtStyf+IsSYyMHnYxnFC32pgZlKcLdv8
-         6h/A==
-X-Gm-Message-State: APt69E350N2qQcgmVIuDK+J8Xqmj2XJndA0/rQ3OyBWrcJxA9kiMX48P
-        /157OZuAcoP/Vt+c7KVtweE=
-X-Google-Smtp-Source: AAOMgpc4cVMMnbdzMLbuZH5UXVWLkpKLSwJ+5CGdeYdrNrLZn5L9b+ZdPIjAfcy+kRx52tVEhh9sOw==
-X-Received: by 2002:a1c:8f8b:: with SMTP id r133-v6mr547565wmd.1.1529996943787;
-        Tue, 26 Jun 2018 00:09:03 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id g14-v6sm808541wro.86.2018.06.26.00.09.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 00:09:03 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 09:09:00 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Joel Fernandes <joel.opensrc@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Rich Felker <dalias@libc.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [GIT PULL] breakpoint: Rework arch validation v4
-Message-ID: <20180626070900.GC26169@gmail.com>
-References: <1529981939-8231-1-git-send-email-frederic@kernel.org>
+        Tue, 26 Jun 2018 03:10:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48663 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751846AbeFZHKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 03:10:42 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3705B206D8; Tue, 26 Jun 2018 09:10:40 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9B28B2087B;
+        Tue, 26 Jun 2018 09:10:06 +0200 (CEST)
+Date:   Tue, 26 Jun 2018 09:10:05 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: mxc: remove __init qualifier from
+ mxcnd_probe_dt
+Message-ID: <20180626091005.08d56b2a@xps13>
+In-Reply-To: <1529679025-5735-1-git-send-email-martin@kaiser.cx>
+References: <1529679025-5735-1-git-send-email-martin@kaiser.cx>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529981939-8231-1-git-send-email-frederic@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Martin, Boris,
 
-* Frederic Weisbecker <frederic@kernel.org> wrote:
+On Fri, 22 Jun 2018 16:50:25 +0200, Martin Kaiser <martin@kaiser.cx>
+wrote:
 
-> Ingo,
+> mxcnd_probe_dt is called from mxcnd_probe, which is not marked as __init.
 > 
-> Please pull the perf/breakpoint-v4 branch that can be found at:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
-> 	perf/breakpoint-v4
-> 
-> HEAD: ba25ee9c7b3ef1543c2a24a7ca6a621433803ee4
-> 
-> Only change since v3 is a rebase against latest tip:perf/core
-> 
-> ---
-> When we modify a hardware breakpoint, the architecture code fills up
-> the architecture data as the validation of generic attributes progresses.
-> If something goes wrong in the middle, the architecture data changes
-> aren't rolled back and we are left with a halfway fiddled breakpoint.
-> 
-> This set fixes the various misdesigns that back this bad behaviour.
-> 
-> Thanks,
-> 	Frederic
-> ---
-> 
-> Frederic Weisbecker (12):
->       perf/breakpoint: Split attribute parse and commit
->       perf/breakpoint: Pass arch breakpoint struct to arch_check_bp_in_kernelspace()
->       x86: Implement hw_breakpoint_arch_parse()
->       powerpc: Implement hw_breakpoint_arch_parse()
->       arm: Implement hw_breakpoint_arch_parse()
->       arm64: Implement hw_breakpoint_arch_parse()
->       sh: Remove "struct arch_hw_breakpoint::name" unused field
->       sh: Implement hw_breakpoint_arch_parse()
->       xtensa: Implement hw_breakpoint_arch_parse()
->       perf/breakpoint: Remove default hw_breakpoint_arch_parse()
->       perf/breakpoint: Pass new breakpoint type to modify_breakpoint_slot()
->       perf/breakpoint: Clean up and consolidate modify_user_hw_breakpoint_check()
-> 
-> 
->  arch/arm/include/asm/hw_breakpoint.h     |   7 +-
->  arch/arm/kernel/hw_breakpoint.c          |  78 +++++++++---------
->  arch/arm64/include/asm/hw_breakpoint.h   |   7 +-
->  arch/arm64/kernel/hw_breakpoint.c        |  86 ++++++++++----------
->  arch/powerpc/include/asm/hw_breakpoint.h |   7 +-
->  arch/powerpc/kernel/hw_breakpoint.c      |  47 ++++++-----
->  arch/sh/include/asm/hw_breakpoint.h      |   8 +-
->  arch/sh/kernel/hw_breakpoint.c           |  53 ++++++-------
->  arch/x86/include/asm/hw_breakpoint.h     |   7 +-
->  arch/x86/kernel/hw_breakpoint.c          | 131 ++++++++++++++++---------------
->  arch/xtensa/include/asm/hw_breakpoint.h  |   7 +-
->  arch/xtensa/kernel/hw_breakpoint.c       |  40 ++++------
->  kernel/events/hw_breakpoint.c            |  92 +++++++++++++---------
->  13 files changed, 294 insertions(+), 276 deletions(-)
 
-Ok, this looks really good. Applied to the v4.19 queue, thanks a lot Frederic!
+I think this line is just a side note and should be at the end of the
+commit log.
 
-I'll push it out once it passes testing.
+> Using the sysfs unbind, bind nodes, mxcnd_probe and mxcnd_probe_dt can
+> potentially be called at any time. After the __init functions are cleaned,
+> mxcnd_probe_dt is no longer available. Calling it anyway causes a crash.
+
+The above paragraph explains the problem and the solution, you can just
+add something like "mcvnd_probe is untouched because it is already not
+marked as __init" instead of the first line.
+
+> 
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+
+Boris, do you think this patch is a good candidate for stable?
+
+If yes, Martin, could you please add a couple of stable/fixes tags above
+your SoB?
 
 Thanks,
+Miquèl
 
-	Ingo
+> ---
+> I hope that my understanding is correct.
+> 
+> In practice, I could not get the kernel to crash, my compiler would
+> inline mxcnd_probe_dt into mxcnd_probe and ignore the __init.
+> 
+> If I marked mxcnd_probe_dt as noinline, I could trigger a crash as
+> follows
+> 
+> [root@host ]# echo bb000000.nand > /sys/bus/platform/drivers/mxc_nand/unbind
+> [root@host ]# echo bb000000.nand > /sys/bus/platform/drivers/mxc_nand/bind
+> Internal error: Oops - undefined instruction: 0 [#1] ARM
+> ...
+> 
+>  drivers/mtd/nand/raw/mxc_nand.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
+> index 26cef21..90cfb5e 100644
+> --- a/drivers/mtd/nand/raw/mxc_nand.c
+> +++ b/drivers/mtd/nand/raw/mxc_nand.c
+> @@ -1686,7 +1686,7 @@ static const struct of_device_id mxcnd_dt_ids[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, mxcnd_dt_ids);
+>  
+> -static int __init mxcnd_probe_dt(struct mxc_nand_host *host)
+> +static int mxcnd_probe_dt(struct mxc_nand_host *host)
+>  {
+>  	struct device_node *np = host->dev->of_node;
+>  	const struct of_device_id *of_id =
+> @@ -1700,7 +1700,7 @@ static int __init mxcnd_probe_dt(struct mxc_nand_host *host)
+>  	return 0;
+>  }
+>  #else
+> -static int __init mxcnd_probe_dt(struct mxc_nand_host *host)
+> +static int mxcnd_probe_dt(struct mxc_nand_host *host)
+>  {
+>  	return 1;
+>  }
