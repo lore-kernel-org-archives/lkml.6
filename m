@@ -2,194 +2,164 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9A3C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A99C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75172262BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:05:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dgn+sf59"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75172262BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id A0AEF262ED
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 00:06:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0AEF262ED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755781AbeFZAFd (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 20:05:33 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45945 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754980AbeFZAFb (ORCPT
+        id S934212AbeFZAGp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 20:06:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46250 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932073AbeFZAGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 20:05:31 -0400
-Received: by mail-pl0-f67.google.com with SMTP id o18-v6so6906224pll.12
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 17:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9Ezy/Lem0rIEKXNibWSZX7yYpcuQTIvqQqWys6W340k=;
-        b=Dgn+sf59t0ximuB0zH8r3Dv/Oj+K2ln8bwohe/7pJaJ0VTkCWXejBZiuAYk0B8wIkR
-         pxC0FJAZwxkzkW0Jcnl8TJabGnVEGhuJeKgTvheen/lk7vqaL7qWlzSfrYqByQq/4Gbq
-         fgsMaWyR6lkXf3fC1zjZ5vNZQ5hL/z80y/kng=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9Ezy/Lem0rIEKXNibWSZX7yYpcuQTIvqQqWys6W340k=;
-        b=mu+uV8OWG0mM7qba1n9crds6sKugDkY6pRKNyfSFZW5wCDqYUzaQlJQHVD3/x9PScw
-         MQViLFBYR3IBnthN7GOhNl69HXEf0wP1djH6FtD7CQcI0YBV6VJxumzUEhjrNQsk4ScG
-         JQ5EC49Civ6nIVhe9dTHh5+/YOCaPzcJ69bJp3Kbvm2udm7szdBJuuRQUosrSokrmD3c
-         HUWm5c/O6tCTbnKtAkiitZw928EnEcJlxVRdiAUGFUpg3KLj2vCzRcMJOuvEgUyFaHi6
-         Y5PX/lhc33DiWxoFGQ8AxQhTw+mzhY0ckl6wOV49+7SGCjUDKLWOZaUUyb9MVRB8hP4g
-         JoRw==
-X-Gm-Message-State: APt69E0Lbek4hXxzxe4jSHsaUXyWKwkSH/UAylbqozDUt+va39ujlzg2
-        bJmi0i8Be3Gm1Rn497B0u3RfFw==
-X-Google-Smtp-Source: ADUXVKKtSbCPSHDV9h8u7RoV5iSyayFfwgkGg5Dq/32TDfgDZZK7UsCsZ3tVEeERZCVSfYPCGK52eA==
-X-Received: by 2002:a17:902:8b8c:: with SMTP id ay12-v6mr14382186plb.74.1529971530572;
-        Mon, 25 Jun 2018 17:05:30 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id x2-v6sm176345pgq.33.2018.06.25.17.05.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 17:05:29 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 17:05:29 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v8 4/7] Bluetooth: hci_qca: Add wrapper functions for
- setting UART speed
-Message-ID: <20180626000529.GJ129942@google.com>
-References: <20180625134013.19684-1-bgodavar@codeaurora.org>
- <20180625134013.19684-5-bgodavar@codeaurora.org>
- <20180625234354.GI129942@google.com>
+        Mon, 25 Jun 2018 20:06:43 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q04jXo029970
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:06:43 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ju975aqtb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 20:06:43 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 25 Jun 2018 20:06:41 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Jun 2018 20:06:37 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q06bZC15729028
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 00:06:37 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AB0FBB2067;
+        Mon, 25 Jun 2018 20:06:31 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 79626B205F;
+        Mon, 25 Jun 2018 20:06:31 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Jun 2018 20:06:31 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id E368C16CA092; Mon, 25 Jun 2018 17:08:41 -0700 (PDT)
+Date:   Mon, 25 Jun 2018 17:08:41 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/40] RCU ->gp_seq conversion for v4.19
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180625234354.GI129942@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062600-0072-0000-0000-000003746050
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009255; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052327; UDB=6.00539464; IPR=6.00830253;
+ MB=3.00021855; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 00:06:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062600-0073-0000-0000-0000487C51B3
+Message-Id: <20180626000841.GA15696@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-25_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=749 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 04:43:54PM -0700, Matthias Kaehlcke wrote:
-> This is a nice improvement, a few remaining questions inline.
-> 
-> On Mon, Jun 25, 2018 at 07:10:10PM +0530, Balakrishna Godavarthi wrote:
-> > In function qca_setup, we set initial and operating speeds for Qualcomm
-> > Bluetooth SoC's. This block of code is common across different
-> > Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
-> > a wrapper function to set the speeds. So that future coming SoC's
-> > can use these wrapper functions to set speeds.
-> > 
-> > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> > ---
-> > Changes in v8:
-> >     * common function to set INIT and operating speeds.
-> >     * moved hardware flow control to qca_set_speed().
-> > 	
-> > Changes in v7:
-> >     * initial patch
-> >     * created wrapper functions for init and operating speeds.
-> > ---
-> >  drivers/bluetooth/hci_qca.c | 89 +++++++++++++++++++++++++++----------
-> >  1 file changed, 65 insertions(+), 24 deletions(-)
-> > 
-> > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> > index fe62420ef838..38b7dbe6c897 100644
-> > --- a/drivers/bluetooth/hci_qca.c
-> > +++ b/drivers/bluetooth/hci_qca.c
-> > @@ -119,6 +119,11 @@ struct qca_data {
-> >  	u64 votes_off;
-> >  };
-> >  
-> > +enum qca_speed_type {
-> > +	QCA_INIT_SPEED = 1,
-> > +	QCA_OPER_SPEED
-> > +};
-> > +
-> >  struct qca_serdev {
-> >  	struct hci_uart	 serdev_hu;
-> >  	struct gpio_desc *bt_en;
-> > @@ -923,6 +928,60 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
-> >  		hci_uart_set_baudrate(hu, speed);
-> >  }
-> >  
-> > +static unsigned int qca_get_speed(struct hci_uart *hu,
-> > +				  enum qca_speed_type speed_type)
-> > +{
-> > +	unsigned int speed = 0;
-> > +
-> > +	if (speed_type == QCA_INIT_SPEED) {
-> > +		if (hu->init_speed)
-> > +			speed = hu->init_speed;
-> > +		else if (hu->proto->init_speed)
-> > +			speed = hu->proto->init_speed;
-> > +	} else {
-> > +		if (hu->oper_speed)
-> > +			speed = hu->oper_speed;
-> > +		else if (hu->proto->oper_speed)
-> > +			speed = hu->proto->oper_speed;
-> > +	}
-> > +
-> > +	return speed;
-> > +}
-> > +
-> > +static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
-> > +{
-> > +	unsigned int speed, qca_baudrate;
-> > +	int ret;
-> > +
-> > +	if (speed_type == QCA_INIT_SPEED) {
-> > +		speed = qca_get_speed(hu, QCA_INIT_SPEED);
-> > +		if (speed)
-> > +			host_set_baudrate(hu, speed);
-> > +		else
-> > +			bt_dev_err(hu->hdev, "Init speed should be non zero");
-> 
-> The check for 'speed == 0' is done in multiple places. From this
-> code I deduce that it is expected that both INIT and OPER speed are
-> set to non-zero values. What happens if either of them is zero? Is the
-> driver still operational?
-> 
-> > +		return 0;
-> > +	}
-> > +
-> > +	speed = qca_get_speed(hu, QCA_OPER_SPEED);
-> > +	if (!speed) {
-> > +		bt_dev_err(hu->hdev, "operating speed should be non zero");
-> > +		return 0;
-> > +	}
-> > +
-> > +	qca_baudrate = qca_get_baudrate_value(speed);
-> > +	bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
-> > +	ret = qca_set_baudrate(hu->hdev, qca_baudrate);
-> > +	if (ret) {
-> > +		bt_dev_err(hu->hdev, "Failed to change the baudrate (%d)", ret);
-> > +		return ret;
-> > +	}
-> > +
-> > +	host_set_baudrate(hu, speed);
-> > +
-> > +	return ret;
-> > +}
-> 
-> In the discussion on "[v7,8/8] Bluetooth: hci_qca: Add support for
-> Qualcomm Bluetooth chip wcn3990" you mentioned the possbility to move
-> the hci_uart_set_flow_control() calls into _set_speed(). This seemed
-> interesting but finally it isn't done in this series. Did you
-> encounter that it is not feasible/desirable for some reason?
+Hello!
 
-I got that half wrong. "[v8,7/7] Bluetooth: hci_qca: Add support for
-Qualcomm Bluetooth chip wcn3990" adds the flow control calls to
-_set_speed() however there are still_set_flow_control() calls in
-qca_setup(), which confused/s me.
+This series moves from the two-variable ->gpnum and ->completed to
+a single-variable ->gp_seq approach.  The key point is that ->gpnum
+and ->completed are either identical or ->gpnum is only one greater,
+which means that we are using a full unsigned long were a single bit
+would do.  This series therefore applies the pre-existing grace-period
+sequence-number code used by expedited grace periods, _rcu_barrier(),
+and SRCU.  This change also has the beneficial effect of allowing the
+grace-period state to be sampled with a single load, which will be used
+to improve the grace-period start code.  The individual commits are
+as follows:
 
-Could you provide a brief summary on the situations (relevant for this
-driver) in which flow controls needs to be enabled/disabled?
+1.	Introduce grace-period sequence numbers (->gp_seq) to normal RCU.
+
+2-17.	Make core RCU code use ->gp_seq instead of ->gpnum and ->completed.
+
+18.	Move from ->need_future_gp[] to ->gp_seq_needed, which allows
+	simpler grace-period-already-requested checks.
+
+19.	Use the new ->gp_seq_needed to make rcu_nocb_wait_gp() check if
+	a given grace has already been requested, thus reducing overhead
+	for no-CBs CPUs.
+
+20-26.	Move RCU tracepoints to ->gp_seq.
+
+27.	Remove ->gpnum and ->completed.
+
+28.	Make simple callback acceleration refer to rdp->gp_seq_needed.
+
+29-31.	Update documentation to reflect ->gp_seq.
+
+32.	Don't funnel-lock above the leaf rcu_node structure if a grace period
+	is in progress, thus saving an upper-level rcu_node ->lock
+	acquisition.
+
+33.	Produce the last CleanupMore trace only if the corresponding
+	grace-period request was quite recent, courtesy of Joel Fernandes.
+
+34.	Fix cpustart tracepoint ->gp_seq number, courtesy of Joel Fernandes.
+
+35.	Make rcu_start_this_gp() check for grace period already started.
+
+36.	Correctly handle grace-period sequence (->gp_seq) wrap in
+	rcutorture.
+
+37.	Regularize resetting of rcu_data wrap indicator.
+
+38-39.	Rename grace-period-request variables and parameters, courtesy
+	of Joel Fernandes.
+
+40.	Check current node rather than leaf node for requested grace
+	period already being in progress.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/RCU/Design/Data-Structures/Data-Structures.html          |  118 -
+ Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html |   22 
+ Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp-cleanup.svg        |  123 -
+ Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp-init-1.svg         |   16 
+ Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp-init-3.svg         |   56 
+ Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp.svg                |  237 +--
+ Documentation/RCU/Design/Memory-Ordering/TreeRCU-qs.svg                |   12 
+ Documentation/RCU/stallwarn.txt                                        |   24 
+ include/trace/events/rcu.h                                             |  114 -
+ kernel/rcu/rcu.h                                                       |   70 -
+ kernel/rcu/rcuperf.c                                                   |   44 
+ kernel/rcu/rcutorture.c                                                |   93 -
+ kernel/rcu/srcutree.c                                                  |    5 
+ kernel/rcu/tree.c                                                      |  678 ++++------
+ kernel/rcu/tree.h                                                      |   40 
+ kernel/rcu/tree_plugin.h                                               |   54 
+ 16 files changed, 832 insertions(+), 874 deletions(-)
+
