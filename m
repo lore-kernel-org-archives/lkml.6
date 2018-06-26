@@ -2,112 +2,100 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA7DC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86223C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D3626B6C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:30:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="n1e5RgAT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D3626B6C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 43E322430D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:34:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E322430D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965654AbeFZNaf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:30:35 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:53124 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965412AbeFZNad (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:30:33 -0400
-Received: by mail-it0-f66.google.com with SMTP id m194-v6so2320330itg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 06:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=P2P2H0fm437n6tTQ49a9eBicnB/nfuRydIxc3Gjt56c=;
-        b=n1e5RgATpo+2uShehgpOHVhMlisoMinRNyVhE7ITVtS8b0Rc0787ULFZFov1uBfxy1
-         z2cM/34AzhqOdHAdneS40GgJiZgrgioFoipcSclXaAktbVmb+B4hq6XcSplzWTJqjItD
-         w1MroQaU4FQtAj/nh9bImOlr4hmrh5Gz9O8ufoMX7+n6SeFPwoDtzOvunoI/zcimqJ39
-         lL3fcv5uZpfLOwsYXskf4tSzl6XNFTCN71d6PhtPaZfYBe/TZ2dv+EoywXd3ZbBulX0g
-         rb3dPuOjIfgm/jmCHDUk2gKnqrl5O8SOIXSuUt+QukOTCC3l8ETIBCfeI8BE6HqE3PCf
-         y/Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=P2P2H0fm437n6tTQ49a9eBicnB/nfuRydIxc3Gjt56c=;
-        b=qmtmeOtmmmInUKkjn0AcxgO5Fs4CTtdhmNoInq8GEyyqsfi2AooqliuF0fDmMyo+KV
-         DBqOuPwAHD5qdQkcderUV2V3lEMkTxblNtVFAfiun/g0zpGR9Uv0DldLh5WXFsJLOuIx
-         CFuG0tWTAKQnHptayMA2TBrjZSec/eT6e+5Q/ZVZHU3r5u+uEtYwc/bDBKF8kjh1ktsX
-         s2YM51L9pR8l/koWJZDw1s8Icm9reYFvlNF1HDlae5xNkQTQ8XmCFHT4kmIhRzlhtnZA
-         9DjaLM7jIAgf9S2BHk1K5avvSHV6mKXQ4gGVvOn92Jg3z887Vi4Qus+3d7/MJA8XvRIQ
-         KPKg==
-X-Gm-Message-State: APt69E0yN71FDlYbk3N3hue4s8cEyXgysPCA/BhxnMmGzGM+L4rg9KNA
-        36uewEh2oVO/qNGHyc4c/q/lZUu3d5ewiBeX3NYZtQ==
-X-Google-Smtp-Source: ADUXVKKseEOEEuRRQj1oVO8/mfomWwETT6FioVy8zSL+nxEHYoBDGu1G+WgbGWodZgYCvqeqF0Ii5H6DlNjasLtVwrU=
-X-Received: by 2002:a24:d80a:: with SMTP id b10-v6mr1392936itg.141.1530019832417;
- Tue, 26 Jun 2018 06:30:32 -0700 (PDT)
+        id S935658AbeFZNef (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:34:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57068 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933522AbeFZNee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:34:34 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A88404067720;
+        Tue, 26 Jun 2018 13:34:33 +0000 (UTC)
+Received: from redhat.com (ovpn-122-22.rdu2.redhat.com [10.10.122.22])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 125221C5BA;
+        Tue, 26 Jun 2018 13:34:27 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 16:34:27 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com
+Subject: Re: [PATCH v34 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Message-ID: <20180626163139-mutt-send-email-mst@kernel.org>
+References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com>
+ <1529928312-30500-3-git-send-email-wei.w.wang@intel.com>
+ <20180626002822-mutt-send-email-mst@kernel.org>
+ <5B31B71B.6080709@intel.com>
+ <20180626064338-mutt-send-email-mst@kernel.org>
+ <5B323140.1000306@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:9c51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 06:30:31
- -0700 (PDT)
-In-Reply-To: <3a07d0d9fbe7178bbe9efa99fcb331df213a461f.camel@linux.intel.com>
-References: <1529994128-26770-1-git-send-email-alanx.chiang@intel.com>
- <CAMRc=Me-Tm8Q5_hGu2r1uqeYFAvCM9ssr7o=w1KZUyXcAn_uCw@mail.gmail.com>
- <ff4c668d0807657940a4cddc6f7eb63d19be327c.camel@linux.intel.com>
- <CAMRc=Me511S4Qw_-SPNkpPXcby7rZApbgm9g2=W=irmy9Gsu3g@mail.gmail.com> <3a07d0d9fbe7178bbe9efa99fcb331df213a461f.camel@linux.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 26 Jun 2018 15:30:31 +0200
-Message-ID: <CAMRc=MdvW_k3ZgrZAffD45r_zxOMWCyXoDx-YgXMQ2=-tSjyGw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Add a property in at24.c
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     alanx.chiang@intel.com, linux-i2c <linux-i2c@vger.kernel.org>,
-        andy.yeh@intel.com, Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B323140.1000306@intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 13:34:33 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 26 Jun 2018 13:34:33 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-26 15:23 GMT+02:00 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
-> On Tue, 2018-06-26 at 14:36 +0200, Bartosz Golaszewski wrote:
->> 2018-06-26 14:14 GMT+02:00 Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com>:
->> > On Tue, 2018-06-26 at 09:41 +0200, Bartosz Golaszewski wrote:
->
->> > > What is your use case exactly? Do you have an EEPROM model that's
->> > > not
->> > > yet supported explicitly in the driver? Why would you need this
->> > > option?
->> >
->> > The current at24 driver has no address width support,
->
->> >  thus, reusing same
->> > (allocated) IDs (non-DT case) is hard.
->
-> ^^^^^
->
->> Every supported compatible has the width already specified in its
->> corresponding chip data.
->
->
-> Please, read again carefully what I wrote before.
->
+On Tue, Jun 26, 2018 at 08:27:44PM +0800, Wei Wang wrote:
+> On 06/26/2018 11:56 AM, Michael S. Tsirkin wrote:
+> > On Tue, Jun 26, 2018 at 11:46:35AM +0800, Wei Wang wrote:
+> > 
+> 
+> > > 
+> > > > 
+> > > > > +	if (!arrays)
+> > > > > +		return NULL;
+> > > > > +
+> > > > > +	for (i = 0; i < max_array_num; i++) {
+> > > > So we are getting a ton of memory here just to free it up a bit later.
+> > > > Why doesn't get_from_free_page_list get the pages from free list for us?
+> > > > We could also avoid the 1st allocation then - just build a list
+> > > > of these.
+> > > That wouldn't be a good choice for us. If we check how the regular
+> > > allocation works, there are many many things we need to consider when pages
+> > > are allocated to users.
+> > > For example, we need to take care of the nr_free
+> > > counter, we need to check the watermark and perform the related actions.
+> > > Also the folks working on arch_alloc_page to monitor page allocation
+> > > activities would get a surprise..if page allocation is allowed to work in
+> > > this way.
+> > > 
+> > mm/ code is well positioned to handle all this correctly.
+> 
+> I'm afraid that would be a re-implementation of the alloc functions,
 
-Ok makes sense in that case. Could you just point me towards an
-example model which has the address width different than the default
-for its type?
+A re-factoring - you can share code. The main difference is locking.
 
-Bart
+> and
+> that would be much more complex than what we have. I think your idea of
+> passing a list of pages is better.
+> 
+> Best,
+> Wei
+
+How much memory is this allocating anyway?
+
+-- 
+MST
