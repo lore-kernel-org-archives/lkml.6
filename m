@@ -2,80 +2,76 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC3AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D864C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 529D326A3E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:08:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 529D326A3E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EA19C25461
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:08:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ysPgDByB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA19C25461
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964904AbeFZMIY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:08:24 -0400
-Received: from mga01.intel.com ([192.55.52.88]:29748 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933658AbeFZMIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:08:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 05:08:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
-   d="scan'208";a="67372902"
-Received: from skovflem-mobl1.ger.corp.intel.com ([10.249.254.74])
-  by fmsmga001.fm.intel.com with ESMTP; 26 Jun 2018 05:08:01 -0700
-Message-ID: <6131ffd5cd7455426ea5f68633d5a8c8dd8457bb.camel@linux.intel.com>
-Subject: Re: [PATCH v2 01/10] tpm/tpm_i2c_infineon: switch to
- i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Peter Rosin <peda@axentia.se>
-Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Date:   Tue, 26 Jun 2018 15:07:59 +0300
-In-Reply-To: <6169da633eab7e68d645e6b933b605dcc9ae09f1.camel@linux.intel.com>
-References: <20180620051803.12206-1-peda@axentia.se>
-         <20180620051803.12206-2-peda@axentia.se>
-         <20180625102454.GA3845@linux.intel.com>
-         <7703d6a2-b22c-104c-7390-b5143a504725@infineon.com>
-         <6169da633eab7e68d645e6b933b605dcc9ae09f1.camel@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S965021AbeFZMIo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:08:44 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50252 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964929AbeFZMIn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:08:43 -0400
+Received: by mail-wm0-f65.google.com with SMTP id e16-v6so1631863wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 05:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jbgCHz2vbvtvy0SwoU9JJFegHLoZ9nOkEVfqNuoH/d0=;
+        b=ysPgDByBhA302zm+tPaPunILPcYw3rh3jPXBSa9TntoUwhaTNSmxb1oLdjtQYkv/3O
+         VoBplj4k0NjzRQOtqS0g4lcgFoGmDQh9Y6iVd1ODvRrc8NlCoe2PESuJpCbzIdipWzMB
+         WxJ1s+RcT6OSu/uRYhedYM6DZws6hKhMLHAeZ4r3oYQxdvnRhwJrGbRAb0GuCFQcsYKT
+         3ub14b0WYYD3RCQss3x2yemFfR3xjjVm0FvD8EMDyeK//3ljURXIZeZd5XkRL4EtBPRj
+         1/KxgHcQN/mVwGdMvlYvkaN97t24J78uDJa05X0A7Ix5U4OE0cmMdz9IPXval2mJuaZ8
+         UbPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jbgCHz2vbvtvy0SwoU9JJFegHLoZ9nOkEVfqNuoH/d0=;
+        b=lmj0UFT/hfjQ9FSnU86KtdjIs4eaDnYcXLUHvkWQQDCUCM3Lir/Ck95Cm4gmoA184y
+         c9N+eam84kDoKo3tQEpboxBjt0rJOpbjay93JkEL/J1ArZElZmOXegaGVc/KJfM+rI7D
+         qbQRoly7JKlD03DlzG+Yo0Eefre5/oFiwD0nnEgjZ0MBpoGxsszgOloRYx75lr1d0Gh9
+         phH1i0Vj6ply7OqlUsvgdHFs7t+9Wrx/OCKrFPndutrZpM8Goe7z/jREOqzUv0fPhiEs
+         d37+g0ggfX5rp9ZPF841Bz+9vLknmZ9qhojcopNxWgVNQwXfNxar2BBP31IB4OASuk9i
+         WIrA==
+X-Gm-Message-State: APt69E2Jg4yOmaQD5wuR/5JxSMq1QWrXNtfdQdt5ydwol8vSCmtB4UxS
+        n0TdJIj+XXLyzytopwaQMywAuQ==
+X-Google-Smtp-Source: AAOMgpdo4dBnddPOLlKs8ama6hElBdw/PaH0uaKMa/hvaJHRIn1IDdvk8V8hL7sK2TXb3ZxsXisQyg==
+X-Received: by 2002:a1c:5451:: with SMTP id p17-v6mr1430718wmi.69.1530014921734;
+        Tue, 26 Jun 2018 05:08:41 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm11814152wmb.3.2018.06.26.05.08.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 05:08:41 -0700 (PDT)
+Message-ID: <1530014920.2900.50.camel@baylibre.com>
+Subject: Re: [alsa-devel] [PATCH 1/1] ASoC: soc-pcm: DPCM cares BE channel
+ constraint
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     jiada_wang@mentor.com, lgirdwood@gmail.com, perex@perex.cz,
+        tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 26 Jun 2018 14:08:40 +0200
+In-Reply-To: <20180626115526.GC1779@sirena.org.uk>
+References: <20180620092520.14101-1-jiada_wang@mentor.com>
+         <1530008318.2900.44.camel@baylibre.com>
+         <20180626115526.GC1779@sirena.org.uk>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,35 +79,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-26 at 15:05 +0300, Jarkko Sakkinen wrote:
-> On Tue, 2018-06-26 at 12:07 +0200, Alexander Steffen wrote:
-> > On 25.06.2018 12:24, Jarkko Sakkinen wrote:
-> > > On Wed, Jun 20, 2018 at 07:17:54AM +0200, Peter Rosin wrote:
-> > > > Locking the root adapter for __i2c_transfer will deadlock if the
-> > > > device sits behind a mux-locked I2C mux. Switch to the finer-grained
-> > > > i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-> > > > sit behind a mux-locked mux, the two locking variants are equivalent.
-> > > > 
-> > > > Signed-off-by: Peter Rosin <peda@axentia.se>
-> > > 
-> > > Studied enough so that I can give
-> > > 
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > 
-> > > Do not have hardware to test this, however.
-> > 
-> > I don't have a mux-locked I2C mux either, but at least I can confirm 
-> > that this change did not break my existing test setup (SLB9635/SLB9645 
-> > on Raspberry Pi 2B).
-> > 
-> > Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> > 
-> > Alexander
+On Tue, 2018-06-26 at 12:55 +0100, Mark Brown wrote:
+> On Tue, Jun 26, 2018 at 12:18:38PM +0200, Jerome Brunet wrote:
+> > On Wed, 2018-06-20 at 18:25 +0900, jiada_wang@mentor.com wrote:
+> > > +	/* DPCM used FE & BE merged channel */
+> > > +	unsigned int dpcm_merged_chan:1;
+> > Jiada, Mark,
+> > Do you think we could extend this flag to let the link choose whether the merge
+> > should be performed on the codec dais (as done here) or on the backend cpu dais
+> > ?
+> > I have more less the same need as Jiada but since my card uses multicodec links,
+> > merging on the codec dais does not work for me.
+> > Like in soc_pcm_init_runtime_hw(), we can't enforce channels min/max based on
+> > the codec when there is multiple codecs on the link.
 > 
-> Given the scope of the change and since analogous change works for
-> every other subsystem, this should be enough! Thank you.
+> Ugh, probably that'd work.  The ideal thing would be to remove DPCM but
+> we're stuck with it for the time being :(
 
-It is now applied to my tree (master). I will move it to the
-next branch once James has updated security/next-general.
+From comment here and in other mails, I get that you are not big fan of DPCM :)
+It is indeed a complex beast ...
 
-/Jarkko
+It there anything else we can use to represent audio routing within the SoC ?
+The SoC I'm working on make heavy use of this, unfortunately. 
+
