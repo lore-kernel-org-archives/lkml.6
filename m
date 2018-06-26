@@ -2,178 +2,371 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1FDC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D28C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FDE264C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:54:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vatiFVbo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FDE264C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B77B9264BD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:56:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B77B9264BD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934823AbeFZDyx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 23:54:53 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34437 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755745AbeFZDyv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 23:54:51 -0400
-Received: by mail-pg0-f67.google.com with SMTP id y1-v6so1417712pgv.1;
-        Mon, 25 Jun 2018 20:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nDOq0Bx/Tbtrv5bJrUJZ9B5jCboi95jhaMovMrQCRfI=;
-        b=vatiFVbom3iGs/rNbMsiRMVYFCUU62hgKR0y81uSLTJavcTCGYmU0m4wBzKTP3xxa5
-         /+3dkh4IadQuHIHZh/tDV77olHKBZLNfJXUcu/D50lGrAR+/6wSFsBhJniC+MuGoRHsl
-         JKnJu0dlTtuDA3+ryRS4xZGDgcFiSxMPLlxIcO+s2VUI/DODi2pNVfmI37Mw+nNwjy9S
-         leVUnu+v8qO1tzPvJ2pVqCS/kvTJVLXu81l43R2pd1b7OJXCd/2t97lPbBU5n2MIauI7
-         +dbofw0e2AhJCwSTNg8cfVWb4N11pslyZqHyj0TdRNeBGcGzo22BKMjv/VAZdSgv9dmM
-         Chdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nDOq0Bx/Tbtrv5bJrUJZ9B5jCboi95jhaMovMrQCRfI=;
-        b=Bn2yJvslwmu81LKCMpLGeWBxd5K6mHQVpcSvuPOL4cqGmHa6QmfuCv5FFpclaouEBJ
-         8Kw9xqlATzRpONLTFxL92fLKteFo5zD9+nSu7shN7IiamhhonILR4acNfDM1lVbRMTIB
-         1TPd0uENiowksWf+4Wr1M+n+qhVyDdMTXpLf9AZvryqCUr+0Co+gX/TQiLPsJ0nJ0ThL
-         00Yzu2eCl3RhqDQkWLlLZ2yQ6Yupg2lQJZgThBPGe7Viv1fpVbWZ17Vb5TbrwsCzoU8E
-         11A5h8gLkcc3qpDI/TOP48MQqjtf0gFMeKQ7MsXU/42Xp1BajaLwVGwstW2h6LoAIh4u
-         AbMg==
-X-Gm-Message-State: APt69E0uhEp2hKvEU2oQqXr79jhT2jOuSeuxY7Vu0Hg6qMt9F2sTM9MO
-        VXqMN4Y87EZEgdByfjJGLkadNciuuo0UgP2uFkDczg==
-X-Google-Smtp-Source: ADUXVKJs7Hbm1sVPLl9MhG2gocN4QHBcUPCUXLQdbNQyCsql4luvVApngQUBq+bOEScVQooPOHO8ogQJ/Ft/hYoiqkY=
-X-Received: by 2002:a62:2c46:: with SMTP id s67-v6mr901442pfs.153.1529985290827;
- Mon, 25 Jun 2018 20:54:50 -0700 (PDT)
+        id S965046AbeFZD4b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 23:56:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47522 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755836AbeFZD4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 23:56:30 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A27337A7E8;
+        Tue, 26 Jun 2018 03:56:29 +0000 (UTC)
+Received: from redhat.com (ovpn-122-22.rdu2.redhat.com [10.10.122.22])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 171572026D6A;
+        Tue, 26 Jun 2018 03:56:25 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 06:56:25 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com
+Subject: Re: [PATCH v34 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Message-ID: <20180626064338-mutt-send-email-mst@kernel.org>
+References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com>
+ <1529928312-30500-3-git-send-email-wei.w.wang@intel.com>
+ <20180626002822-mutt-send-email-mst@kernel.org>
+ <5B31B71B.6080709@intel.com>
 MIME-Version: 1.0
-References: <77967693-040b-734a-8e18-be95d97478b3@redhat.com>
-In-Reply-To: <77967693-040b-734a-8e18-be95d97478b3@redhat.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 25 Jun 2018 22:54:40 -0500
-Message-ID: <CAH2r5muV49o7aTco1757UwuW-c6Fn5r=EW3QMCMfU7FFLZNMTw@mail.gmail.com>
-Subject: Re: F_OFD_GETLK implemented wrong with CIFS protocol version 2.0+
-To:     labbott@redhat.com
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Adam Williamson <awilliam@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B31B71B.6080709@intel.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 26 Jun 2018 03:56:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 26 Jun 2018 03:56:29 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are taking a look at this - Ronnie had some ideas.  Probably simply
-not implemented - hopefully not too hard to fix.
-On Mon, Jun 25, 2018 at 6:58 PM Laura Abbott <labbott@redhat.com> wrote:
->
-> Hi,
->
-> A while back, someone reported a failure on Fedora when trying to boot
-> a QEMU image off of a CIFS share. The issue was reduced down to a
-> test case (https://bugzilla.redhat.com/show_bug.cgi?id=1484130#c8)
->
-> # cat test-ofd-lock.c
-> #define _GNU_SOURCE
-> #include <errno.h>
-> #include <stdio.h>
-> #include <unistd.h>
-> #include <fcntl.h>
->
-> int main(int argc, char **argv)
-> {
->      int ret;
->      int fd;
->      struct flock fl = {
->          .l_whence = SEEK_SET,
->          .l_start  = 0,
->          .l_len    = 0,
->          .l_type   = F_RDLCK,
->      };
->      if (argc < 2) {
->              fprintf(stderr, "Usage: %s <file>\n", argv[0]);
->              return 1;
->      }
->      fd = open(argv[1], O_RDWR);
->      if (fd < 0) {
->              perror("open");
->              return errno;
->      }
->      ret = fcntl(fd, F_OFD_SETLK, &fl);
->      if (ret) {
->              perror("setlk");
->              return errno;
->      }
->      fl.l_type = F_WRLCK;
->      ret = fcntl(fd, F_OFD_GETLK, &fl);
->      if (ret) {
->              perror("getlk");
->              return errno;
->      }
->      if (fl.l_type != F_UNLCK) {
->              fprintf(stderr, "get lock test failed\n");
->              return 1;
->      }
->      return 0;
-> }
-> [root@localhost ~]# make test-ofd-lock
-> cc     test-ofd-lock.c   -o test-ofd-lock
-> [root@localhost ~]# touch /tmp/test && ./test-ofd-lock /tmp/test
-> [root@localhost ~]# echo $?
-> 0
-> [root@localhost ~]# touch /mnt/test && ./test-ofd-lock /mnt/test
-> get lock test failed
-> [root@localhost ~]# mount | grep /mnt
-> //192.168.31.1/tddownload on /mnt type cifs (rw,relatime,vers=3.0,
-> cache=strict,username=admin,domain=,uid=0,
-> noforceuid,gid=0,noforcegid,addr=192.168.31.1,file_mode=0755,
-> dir_mode=0755,nounix,serverino,mapposix,rsize=1048576,
-> wsize=1048576,echo_interval=60,actimeo=1,user=admin)
->
->
-> As explained by one of the QEMU developers
-> (https://bugzilla.redhat.com/show_bug.cgi?id=1484130#c37)
->
-> '''
-> It is a kernel bug. The code snippet in comment 8 shows clearly that the kernel
-> is doing the wrong thing, which cannot be fixed/worked around by QEMU.
->
-> In man 2 fcntl:
->
->         F_OFD_GETLK (struct flock *)
->                On input to this call, lock describes an open file description lock
-> we would like to place on the file.  If the lock could  be  placed,  fcntl()  does  not
->                actually  place  it,  but  returns F_UNLCK in the l_type field of lock
-> and leaves the other fields of the structure unchanged.  If one or more incompatible
->                locks would prevent this lock being placed, then details about one of
-> these locks are returned via lock, as described above for F_GETLK.
->
-> which is not the case with the new CIFS behaviour.
-> ''
->
-> You can read the full context at https://bugzilla.redhat.com/show_bug.cgi?id=1484130
->
-> Any suggestions?
->
-> Thanks,
-> Laura
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Tue, Jun 26, 2018 at 11:46:35AM +0800, Wei Wang wrote:
+> On 06/26/2018 09:37 AM, Michael S. Tsirkin wrote:
+> > On Mon, Jun 25, 2018 at 08:05:10PM +0800, Wei Wang wrote:
+> > 
+> > > @@ -326,17 +353,6 @@ static void stats_handle_request(struct virtio_balloon *vb)
+> > >   	virtqueue_kick(vq);
+> > >   }
+> > > -static void virtballoon_changed(struct virtio_device *vdev)
+> > > -{
+> > > -	struct virtio_balloon *vb = vdev->priv;
+> > > -	unsigned long flags;
+> > > -
+> > > -	spin_lock_irqsave(&vb->stop_update_lock, flags);
+> > > -	if (!vb->stop_update)
+> > > -		queue_work(system_freezable_wq, &vb->update_balloon_size_work);
+> > > -	spin_unlock_irqrestore(&vb->stop_update_lock, flags);
+> > > -}
+> > > -
+> > >   static inline s64 towards_target(struct virtio_balloon *vb)
+> > >   {
+> > >   	s64 target;
+> > > @@ -353,6 +369,35 @@ static inline s64 towards_target(struct virtio_balloon *vb)
+> > >   	return target - vb->num_pages;
+> > >   }
+> > > +static void virtballoon_changed(struct virtio_device *vdev)
+> > > +{
+> > > +	struct virtio_balloon *vb = vdev->priv;
+> > > +	unsigned long flags;
+> > > +	s64 diff = towards_target(vb);
+> > > +
+> > > +	if (diff) {
+> > > +		spin_lock_irqsave(&vb->stop_update_lock, flags);
+> > > +		if (!vb->stop_update)
+> > > +			queue_work(system_freezable_wq,
+> > > +				   &vb->update_balloon_size_work);
+> > > +		spin_unlock_irqrestore(&vb->stop_update_lock, flags);
+> > > +	}
+> > > +
+> > > +	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+> > > +		virtio_cread(vdev, struct virtio_balloon_config,
+> > > +			     free_page_report_cmd_id, &vb->cmd_id_received);
+> > > +		if (vb->cmd_id_received !=
+> > > +		    VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID &&
+> > > +		    vb->cmd_id_received != vb->cmd_id_active) {
+> > > +			spin_lock_irqsave(&vb->stop_update_lock, flags);
+> > > +			if (!vb->stop_update)
+> > > +				queue_work(vb->balloon_wq,
+> > > +					   &vb->report_free_page_work);
+> > > +			spin_unlock_irqrestore(&vb->stop_update_lock, flags);
+> > > +		}
+> > > +	}
+> > > +}
+> > > +
+> > >   static void update_balloon_size(struct virtio_balloon *vb)
+> > >   {
+> > >   	u32 actual = vb->num_pages;
+> > > @@ -425,44 +470,253 @@ static void update_balloon_size_func(struct work_struct *work)
+> > >   		queue_work(system_freezable_wq, work);
+> > >   }
+> > > +static void free_page_vq_cb(struct virtqueue *vq)
+> > > +{
+> > > +	unsigned int len;
+> > > +	void *buf;
+> > > +	struct virtio_balloon *vb = vq->vdev->priv;
+> > > +
+> > > +	while (1) {
+> > > +		buf = virtqueue_get_buf(vq, &len);
+> > > +
+> > > +		if (!buf || buf == &vb->cmd_start || buf == &vb->cmd_stop)
+> > > +			break;
+> > If there's any buffer after this one we might never get another
+> > callback.
+> 
+> I think every used buffer can get the callback, because host takes from the
+> arrays one by one, and puts back each with a vq notify.
+
+It's probabky racy even in this case. Besides, host is free to do it in
+any way that's legal in spec.
+
+> 
+> 
+> > > +		free_pages((unsigned long)buf, ARRAY_ALLOC_ORDER);
+> > > +	}
+> > > +}
+> > > +
+> > >   static int init_vqs(struct virtio_balloon *vb)
+> > >   {
+> > > -	struct virtqueue *vqs[3];
+> > > -	vq_callback_t *callbacks[] = { balloon_ack, balloon_ack, stats_request };
+> > > -	static const char * const names[] = { "inflate", "deflate", "stats" };
+> > > -	int err, nvqs;
+> > > +	struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
+> > > +	vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
+> > > +	const char *names[VIRTIO_BALLOON_VQ_MAX];
+> > > +	struct scatterlist sg;
+> > > +	int ret;
+> > >   	/*
+> > > -	 * We expect two virtqueues: inflate and deflate, and
+> > > -	 * optionally stat.
+> > > +	 * Inflateq and deflateq are used unconditionally. The names[]
+> > > +	 * will be NULL if the related feature is not enabled, which will
+> > > +	 * cause no allocation for the corresponding virtqueue in find_vqs.
+> > >   	 */
+> > > -	nvqs = virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ) ? 3 : 2;
+> > > -	err = virtio_find_vqs(vb->vdev, nvqs, vqs, callbacks, names, NULL);
+> > > -	if (err)
+> > > -		return err;
+> > > +	callbacks[VIRTIO_BALLOON_VQ_INFLATE] = balloon_ack;
+> > > +	names[VIRTIO_BALLOON_VQ_INFLATE] = "inflate";
+> > > +	callbacks[VIRTIO_BALLOON_VQ_DEFLATE] = balloon_ack;
+> > > +	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
+> > > +	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
+> > > +	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+> > > -	vb->inflate_vq = vqs[0];
+> > > -	vb->deflate_vq = vqs[1];
+> > >   	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> > > -		struct scatterlist sg;
+> > > -		unsigned int num_stats;
+> > > -		vb->stats_vq = vqs[2];
+> > > +		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
+> > > +		callbacks[VIRTIO_BALLOON_VQ_STATS] = stats_request;
+> > > +	}
+> > > +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+> > > +		names[VIRTIO_BALLOON_VQ_FREE_PAGE] = "free_page_vq";
+> > > +		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = free_page_vq_cb;
+> > > +	}
+> > > +
+> > > +	ret = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
+> > > +					 vqs, callbacks, names, NULL, NULL);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
+> > > +	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
+> > > +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> > > +		vb->stats_vq = vqs[VIRTIO_BALLOON_VQ_STATS];
+> > >   		/*
+> > >   		 * Prime this virtqueue with one buffer so the hypervisor can
+> > >   		 * use it to signal us later (it can't be broken yet!).
+> > >   		 */
+> > > -		num_stats = update_balloon_stats(vb);
+> > > -
+> > > -		sg_init_one(&sg, vb->stats, sizeof(vb->stats[0]) * num_stats);
+> > > -		if (virtqueue_add_outbuf(vb->stats_vq, &sg, 1, vb, GFP_KERNEL)
+> > > -		    < 0)
+> > > -			BUG();
+> > > +		sg_init_one(&sg, vb->stats, sizeof(vb->stats));
+> > > +		ret = virtqueue_add_outbuf(vb->stats_vq, &sg, 1, vb,
+> > > +					   GFP_KERNEL);
+> > > +		if (ret) {
+> > > +			dev_warn(&vb->vdev->dev, "%s: add stat_vq failed\n",
+> > > +				 __func__);
+> > > +			return ret;
+> > > +		}
+> > Why the change? Is it more likely to happen now?
+> 
+> Actually this part remains the same as the previous versions (e.g. v32). It
+> is changed because we agreed that using BUG() isn't necessary here, and
+> better to bail out nicely.
+
+Why is this part of the hinting patch though? I'd rather have
+a separate one.
+
+> 
+> 
+> > 
+> > +/*
+> > + * virtio_balloon_send_hints - send arrays of hints to host
+> > + * @vb: the virtio_balloon struct
+> > + * @arrays: the arrays of hints
+> > + * @array_num: the number of arrays give by the caller
+> > + * @last_array_hints: the number of hints in the last array
+> > + *
+> > + * Send hints to host array by array. This begins by sending a start cmd,
+> > + * which contains a cmd id received from host and the free page block size in
+> > + * bytes of each hint. At the end, a stop cmd is sent to host to indicate the
+> > + * end of this reporting. If host actively requests to stop the reporting, free
+> > + * the arrays that have not been sent.
+> > + */
+> > +static void virtio_balloon_send_hints(struct virtio_balloon *vb,
+> > +				      __le64 **arrays,
+> > +				      uint32_t array_num,
+> > +				      uint32_t last_array_hints)
+> > +{
+> > +	int err, i = 0;
+> > +	struct scatterlist sg;
+> > +	struct virtqueue *vq = vb->free_page_vq;
+> > +
+> > +	/* Start by sending the received cmd id to host with an outbuf. */
+> > +	err = send_start_cmd_id(vb);
+> > +	if (unlikely(err))
+> > +		goto out_err;
+> > +	/* Kick host to start taking entries from the vq. */
+> > +	virtqueue_kick(vq);
+> > +
+> > +	for (i = 0; i < array_num; i++) {
+> > +		/*
+> > +		 * If a stop id or a new cmd id was just received from host,
+> > +		 * stop the reporting, and free the remaining arrays that
+> > +		 * haven't been sent to host.
+> > +		 */
+> > +		if (vb->cmd_id_received != vb->cmd_id_active)
+> > +			goto out_free;
+> > +
+> > +		if (i + 1 == array_num)
+> > +			sg_init_one(&sg, (void *)arrays[i],
+> > +				    last_array_hints * sizeof(__le64));
+> > +		else
+> > +			sg_init_one(&sg, (void *)arrays[i], ARRAY_ALLOC_SIZE);
+> > +		err = virtqueue_add_inbuf(vq, &sg, 1, (void *)arrays[i],
+> > +					  GFP_KERNEL);
+> > +		if (unlikely(err))
+> > +			goto out_err;
+> > +	}
+> > +
+> > +	/* End by sending a stop id to host with an outbuf. */
+> > +	err = send_stop_cmd_id(vb);
+> > +	if (unlikely(err))
+> > +		goto out_err;
+> > Don't we need to kick here?
+> 
+> I think not needed, because we have kicked host about starting the report,
+> and the host side optimization won't exit unless receiving this stop sign or
+> the migration thread asks to exit.
+
+You can't assume that. Host might want to sleep.
+If it doesn't then it will disable notifications and kick will be free.
+
+> > 
+> > > +	int i;
+> > > +
+> > > +	max_entries = max_free_page_blocks(ARRAY_ALLOC_ORDER);
+> > > +	entries_per_page = PAGE_SIZE / sizeof(__le64);
+> > > +	entries_per_array = entries_per_page * (1 << ARRAY_ALLOC_ORDER);
+> > > +	max_array_num = max_entries / entries_per_array +
+> > > +			!!(max_entries % entries_per_array);
+> > > +	arrays = kmalloc_array(max_array_num, sizeof(__le64 *), GFP_KERNEL);
+> > Instead of all this mess, how about get_free_pages here as well?
+> 
+> Sounds good, will replace kmalloc_array with __get_free_pages(),
+
+Or alloc_pages, __ APIs are better avoided if possible.
+
+> but still
+> need the above calculation to get max_array_num.
+
+Maybe alloc_pages?
+
+> > 
+> > Also why do we need GFP_KERNEL for this?
+> 
+> I guess it is better to use "__GFP_ATOMIC | __GFP_NOMEMALLOC", thanks.
+> 
+> > 
+> > 
+> > > +	if (!arrays)
+> > > +		return NULL;
+> > > +
+> > > +	for (i = 0; i < max_array_num; i++) {
+> > So we are getting a ton of memory here just to free it up a bit later.
+> > Why doesn't get_from_free_page_list get the pages from free list for us?
+> > We could also avoid the 1st allocation then - just build a list
+> > of these.
+> 
+> That wouldn't be a good choice for us. If we check how the regular
+> allocation works, there are many many things we need to consider when pages
+> are allocated to users.
+> For example, we need to take care of the nr_free
+> counter, we need to check the watermark and perform the related actions.
+> Also the folks working on arch_alloc_page to monitor page allocation
+> activities would get a surprise..if page allocation is allowed to work in
+> this way.
+> 
+
+mm/ code is well positioned to handle all this correctly.
 
 
+> 
+> 
+> 
+> > 
+> > > +		arrays[i] =
+> > > +		(__le64 *)__get_free_pages(__GFP_ATOMIC | __GFP_NOMEMALLOC,
+> > > +					   ARRAY_ALLOC_ORDER);
+> > Coding style says:
+> > 
+> > Descendants are always substantially shorter than the parent and
+> > are placed substantially to the right.
+> 
+> Thanks, will rearrange it:
+> 
+> arrays[i] = (__le64 *)__get_free_pages(__GFP_ATOMIC |
+> 				__GFP_NOMEMALLOC, ARRAY_ALLOC_ORDER);
+> 
+> 
+> 
+> > 
+> > > +		if (!arrays[i]) {
+> > Also if it does fail (small guest), shall we try with less arrays?
+> 
+> I think it's not needed. If the free list is empty, no matter it is a huge
+> guest or a small guest, get_from_free_page_list() will load nothing even we
+> pass a small array to it.
+> 
+> 
+> Best,
+> Wei
+
+Yes but the reason it's empty is maybe because we used a ton of
+memory for all of the arrays. Why allocate a top level array at all?
+Can't we pass in a list?
 
 -- 
-Thanks,
-
-Steve
+MST
