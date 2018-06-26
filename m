@@ -2,172 +2,120 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA49DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874FBC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4C2E26C08
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:17:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pisfk5sf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4C2E26C08
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 116BD26996
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:25:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 116BD26996
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932718AbeFZWR1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 18:17:27 -0400
-Received: from mail.efficios.com ([167.114.142.138]:44702 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752863AbeFZWRY (ORCPT
+        id S933470AbeFZWZx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 18:25:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53180 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932920AbeFZWZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 18:17:24 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 66D5E22D66E;
-        Tue, 26 Jun 2018 18:17:23 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 88WgwhZt-1hj; Tue, 26 Jun 2018 18:17:23 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id E5F3F22D66B;
-        Tue, 26 Jun 2018 18:17:22 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E5F3F22D66B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530051442;
-        bh=ITrLFb2+kuvkM3T4EeU5OI5lRnUjFaGcc+gpOhLtOmo=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=pisfk5sfuadyYx6O1qlmFhk+404n3pzwfHN3TOtyrlmIVe2w1aETejduzvmCs1GlJ
-         aBK4jTObAHVUablWN6Mqu4OIL+w1vL5pw2sZiZlBeecBsUsvtMtW424vF84R38Of/3
-         rFrxC66iay0YR7sW871L3C+A3v/jbm0MI6ublQSOi8osw2aY5Z+bv4rPdEzw0OM/74
-         zxxt46JrEHMwwLHCkNuthN/csfhu+9cjVCaDe+IwIuxqciHpW8HqkTi+xNcwdurWRA
-         cP0XnxUXlgDopABcKXThxP4/4L2llS0hrSdjJP3rdfQs+7+J2XU7PvygfIhw14XdhY
-         oKCFxQT6yMNGw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id W_4YYFusHGF5; Tue, 26 Jun 2018 18:17:22 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id C84AB22D660;
-        Tue, 26 Jun 2018 18:17:22 -0400 (EDT)
-Date:   Tue, 26 Jun 2018 18:17:22 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Watson <davejwatson@fb.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Andrew Hunter <ahh@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Paul Turner <pjt@google.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>, Ben Maurer <bmaurer@fb.com>,
-        linux-api <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>, x86 <x86@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <107389573.6464.1530051442686.JavaMail.zimbra@efficios.com>
-In-Reply-To: <D9B93DE9-F61C-4488-B109-432C2DFDCEC2@amacapital.net>
-References: <20180626211617.8933-1-mathieu.desnoyers@efficios.com> <20180626211617.8933-2-mathieu.desnoyers@efficios.com> <D9B93DE9-F61C-4488-B109-432C2DFDCEC2@amacapital.net>
-Subject: Re: [RFC PATCH for 4.18 2/2] rseq: compat: clear high bits of
- rseq_cs fields
+        Tue, 26 Jun 2018 18:25:50 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QMPG8d114478
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 18:25:49 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2juv4nw1xn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 18:25:49 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 26 Jun 2018 18:25:48 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Jun 2018 18:25:42 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QMPfXQ17039748
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 22:25:42 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 494DBB2064;
+        Tue, 26 Jun 2018 18:25:35 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 214FBB2065;
+        Tue, 26 Jun 2018 18:25:35 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Jun 2018 18:25:35 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8CEC216CA20B; Tue, 26 Jun 2018 15:27:47 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 15:27:47 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 16/27] rcu: Add comment documenting how
+ rcu_seq_snap works
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180626003448.GA26209@linux.vnet.ibm.com>
+ <20180626003513.27812-16-paulmck@linux.vnet.ibm.com>
+ <20180626171454.GI2494@hirez.programming.kicks-ass.net>
+ <20180626180855.GE3593@linux.vnet.ibm.com>
+ <20180626192113.GM2494@hirez.programming.kicks-ass.net>
+ <20180626193146.GK3593@linux.vnet.ibm.com>
+ <20180626201503.GS2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: compat: clear high bits of rseq_cs fields
-Thread-Index: zlTfuRBxhDPVt/I6Vlni5mSLhjY16g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626201503.GS2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062622-0064-0000-0000-00000320B210
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009260; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052774; UDB=6.00539732; IPR=6.00830698;
+ MB=3.00021870; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 22:25:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062622-0065-0000-0000-000039BA0A5D
+Message-Id: <20180626222747.GP3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=995 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260245
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 26, 2018, at 5:58 PM, Andy Lutomirski luto@amacapital.net wrot=
-e:
+On Tue, Jun 26, 2018 at 10:15:03PM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 26, 2018 at 12:31:46PM -0700, Paul E. McKenney wrote:
+> > > Then the existing comment is misleading and really needs change.
+> > 
+> > Would it be sufficient to add something like "The memory barrier is
+> > required to support the many-to-many ordering guaranteed by RCU grace
+> > periods"?
+> 
+> What would lead me to wonder why after the load and not (also) before.
 
->> On Jun 26, 2018, at 2:16 PM, Mathieu Desnoyers <mathieu.desnoyers@effici=
-os.com>
->> wrote:
->>=20
->> Make the behavior rseq on compat tasks more robust by ensuring that
->> kernel/rseq.c:rseq_get_rseq_cs() clears the high bits of
->> rseq_cs->abort_ip, rseq_cs->start_ip and rseq_cs->post_commit_offset
->> when a 32-bit binary is run on a 64-bit kernel.
->>=20
->> The intent here is that if user-space has garbage rather than zeroes
->> in its struct rseq_cs fields padding, the behavior will be the same
->> whether the binary is run on 32-bit or 64-bit kernels.
->>=20
->> Use in_compat_syscall() when rseq_get_rseq_cs() is invoked from
->> system call context, and use is_compat_frame() when invoked from
->> signal delivery.
->>=20
->=20
-> And when it=E2=80=99s invoked due to preemption unrelated to a syscall or=
- signal, you
-> malfunction?
+The memory barriers on the other sides of these primitives are supplied
+by the caller.  For example, in srcu_gp_end(), there is a set of
+spin_unlock_irq_rcu_node()/spin_lock_irq_rcu_node() pairs between the
+rcu_seq_end() of the prior SRCU grace period and the rcu_seq_start()
+of the next one.
 
-Fair point! Hence the "RFC". ;)
+However, these things aren't anywhere near a fastpath, so I could add
+the smp_mb() calls on the other sides for readability, if that would
+be useful.
 
-So I understand better your intent to use the pt_regs to figure out whether=
- it
-is compat or not. My is_compat_frame()+in_compat_syscall() approach does no=
-t
-handle this correctly.
+							Thanx, Paul
 
->=20
-> I think the only sane solution is to make these fields be u64,
-
-I'm OK with turning the rseq_cs start_ip, post_commit_offset, and abort_ip
-fields into normal u64.
-
-> delete the
-> LINUX_FIELD_ macros,
-
-The LINUX_FIELD_ macros are still needed to ensure single-copy updates of
-the (struct rseq *__tls_abi)->rseq_cs pointer by 32-bit user-space.
-
-> and possibly teach the x86 slowpath return to inject a
-> signal if it=E2=80=99s trying to return to a 32-bit context with garbage =
-in the high
-> bits of regs->ip so that we determistically fail if the user screws up.
-
-I like the approach of dealing with the rseq_cs fields as u64 even on 32-bi=
-t
-architectures. As a downside, it will require 32-bit architectures to do
-arithmetic on 64-bit values, but it's not a fast-path. As you point out, th=
-e
-tricky bit is to decide what happens when architecture code returns to
-userspace with regs->ip containing garbage in the high bits.
-
-An alternative approach is to ensure the high bits are cleared when returni=
-ng
-to an IP with garbage in the high bits.
-
-> Rseq is brand new. It should not need compat code at all.
-
-Dealing with u64 for start_ip, post_commit_offset, and abort_ip at the kern=
-el
-level would indeed provide this characteristic. However, I'm uneasy adding
-64-bit arithmetic on operations really caring about 32 bits on 32-bit archs=
-,
-even though those are not fast paths.
-
-Thanks,
-
-Mathieu
-
---=20
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
