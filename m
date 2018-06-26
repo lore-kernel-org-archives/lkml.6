@@ -2,253 +2,109 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6334EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEEC0C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 067B92650A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 744842650E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:12:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qSDH8uFH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 067B92650A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oOKaLRVG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 744842650E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751241AbeFZFKY (ORCPT
+        id S1751298AbeFZFM1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 01:10:24 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:32789 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeFZFKW (ORCPT
+        Tue, 26 Jun 2018 01:12:27 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:44354 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750907AbeFZFM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 01:10:22 -0400
-Received: by mail-pf0-f196.google.com with SMTP id b17-v6so7540317pfi.0;
-        Mon, 25 Jun 2018 22:10:22 -0700 (PDT)
+        Tue, 26 Jun 2018 01:12:26 -0400
+Received: by mail-pg0-f67.google.com with SMTP id b10-v6so3419728pgq.11;
+        Mon, 25 Jun 2018 22:12:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=xrk+GqouRkO2sMqxpXnSsY+YoLo/L2MiMcF1ddS4UQk=;
-        b=qSDH8uFH339XY8ZhnyVuxdp+ewFAp9FdegeIt11s3MlYvylqG7o90Yvj42P37PuXZA
-         DjHVrKHNBjsNpmBhQAh40CTSqYjjdiZmhLlGVu+X6QpILas6HiTpJtGv+ByjOf+w1m0O
-         yfVlpGhINxFxQfEZNShEAYcWjGb2SDjSnZcK9HnzAAQ4dcBHx+7Q7Bp6vfn++JAN7rTG
-         JvofzMwOZkqyiwZ24GNau1zZEvtDSlHsyuNq/ZE4ecc68ewNf7bvuLmnxI8bkRjDDOlf
-         xFh0puS+o0LpIcs+gomuY+N1qm+uAr+hoNCB6jqkCKWScZFYs1FNkVBccdSTpn5WMExP
-         DmBQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uAKIHZXZYbRAAW53/5saTrZnS9wXHK6GV5lLJrJ8egI=;
+        b=oOKaLRVGSbiUliqpHWcRTXdhAxsxW6lVWYT9xkwhJrIJWcmFvHwS6Yzhs8c+IMxNLq
+         h5lVD+t3LN9CeEYd00wOVvh4gJQbCX8KfBB8gTxENQbLGroPdy+uSbbJuJp1UcpdLZE/
+         AewUOR+v7Q5pbYuMnYAqJBAOsMjHgewuzHCiP5Cr71qdU2h9Mq3pahaoFrkZyFNZWrip
+         Kkh736KsoTkZDqM/3wqtVadj2/vuv7TAkz3jF0CuvZEWNFNmz95pd44EYvZ9q+KzLZRE
+         OWIPMFJSNq9ZoFNY0UFqZeHhBWOkvNeexBoY+gB3UFUOJTtErX88fZeL6XMN7MInDjk1
+         h3yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=xrk+GqouRkO2sMqxpXnSsY+YoLo/L2MiMcF1ddS4UQk=;
-        b=ewx60x40coMw4hF4jUANEfnru2ecSuQiAJ9FyRnF5MG/hLjGCdr31wdSSWpsoKfDfu
-         tCi89XZVnqT+Vt9qCtpKCu2xvjnGkPqMtoOPh8w9Pw+wEVoI8xkIlvWwtBj+bkrbOxhJ
-         GxIaEPPfpr30HnUXUqWX38+0jImA5R1kHMQ6k7nLAmxNnnWZqqgkNnpyxOQoJ+y7w/qy
-         93djSnb04/a4samPtW+/fWJSumJz0tBrZVvu8dAeQ34atqIDPutgFuh3VYjBhLDGDPz7
-         EtUSSl/OqGSi5Ph/dYR1OpC6hNll0njSCbx6+GNHPNP+KGNMvEMqqK1XNGWwUKWsNHi5
-         khbg==
-X-Gm-Message-State: APt69E0g+UB/zvycHdByPtuCm4FcCTxlln21S8LUHIWfcy++1B9Mr370
-        hFxs2U8f5PQeAtQprSmhksQ=
-X-Google-Smtp-Source: ADUXVKIfm8HDqBfp/cPQkVYC/F92lJOwGsgnlPL8V2wvbp1W62Q2qrQprbBJ/tn8dZrjJyVhfFZ8tA==
-X-Received: by 2002:a63:7986:: with SMTP id u128-v6mr12672017pgc.273.1529989821563;
-        Mon, 25 Jun 2018 22:10:21 -0700 (PDT)
-Received: from hxeon ([147.46.241.218])
-        by smtp.gmail.com with ESMTPSA id g78-v6sm983986pfe.39.2018.06.25.22.10.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Jun 2018 22:10:20 -0700 (PDT)
-From:   SeongJae Park <sj38.park@gmail.com>
-X-Google-Original-From: SeongJae Park <sjpark@hxeon>
-Date:   Tue, 26 Jun 2018 14:10:17 +0900 (KST)
-To:     Byungchul Park <byungchul.park@lge.com>
-cc:     sjpark <sj38.park@gmail.com>, paulmck@linux.vnet.ibm.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [PATCH] locking/memory-barriers.txt/kokr: Update Korean translation
- to fix broken DMA vs. MMIO ordering example
-In-Reply-To: <20180626045609.GB20783@X58A-UD3R>
-Message-ID: <alpine.DEB.2.20.1806261406220.1528@hxeon>
-References: <20180617051608.2128-1-sj38.park@gmail.com> <20180626004738.GA20783@X58A-UD3R> <alpine.DEB.2.20.1806261218490.1528@hxeon> <20180626045609.GB20783@X58A-UD3R>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uAKIHZXZYbRAAW53/5saTrZnS9wXHK6GV5lLJrJ8egI=;
+        b=ADagpomIOBgrBelf7MR/MZhj7VNnz4/TGNGMygQfvaIEBv098y/g1xfcnyJQ9PMDRp
+         TJLeYCAESn9iFbCz7uojPtzIuJWIMGj1HkFcOThOhvJr23ifalEo3Ku8hjeJxrlfVdSC
+         Abr7/nfIn1V9P7FCFlO5EZ1rtto4Ryp3QuhihLnlnK15Vz6Uo85Nw8MrIX/UkNSDpPc5
+         ZLb7WJSaPvHqAsBDwJ750gwwNyYuJciOkRRwRZKKWh7sANi9N7Ksw1jJIVkq3xFQz3XD
+         mhsWLUlZo+54hVi01bxrzPmMCfBJCoSOhGyLDVqLnnqi53jpAGlGEJda7lloSd/pOzgD
+         xijQ==
+X-Gm-Message-State: APt69E3n5Hj2UvhOOgGjMq4BGxz7laLxXpjGn4ixpe0m6p+kOvd7xApf
+        IKpJjZTHlXwLdOuMp009e9o=
+X-Google-Smtp-Source: AAOMgpcb0Bb60hFV4J+ddluGpTnefidwSyuTFiOIdI43ZjyyvjW4zXfZ6VX769rAZM9wklgcAy+y2g==
+X-Received: by 2002:a65:5246:: with SMTP id q6-v6mr29506pgp.152.1529989945510;
+        Mon, 25 Jun 2018 22:12:25 -0700 (PDT)
+Received: from localhost ([175.223.48.122])
+        by smtp.gmail.com with ESMTPSA id q10-v6sm964782pfj.7.2018.06.25.22.12.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Jun 2018 22:12:24 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 14:12:21 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-wireless@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d29d18215e477cfbfbdd@syzkaller.appspotmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] NFC: llcp: fix nfc_llcp_send_ui_frame() lockup
+Message-ID: <20180626051221.GC31439@jagdpanzerIV>
+References: <20180626044119.30118-1-sergey.senozhatsky@gmail.com>
+ <CACT4Y+ZvLqzEwXgdB25MrmAS_j2_HsS8NFaJaMojzMV3prXypg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="781441777-375754469-1529989820=:1528"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ZvLqzEwXgdB25MrmAS_j2_HsS8NFaJaMojzMV3prXypg@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On (06/26/18 07:07), Dmitry Vyukov wrote:
+[..]
+> >  #include <net/nfc/nfc.h>
+> > @@ -755,7 +756,8 @@ int nfc_llcp_send_ui_frame(struct nfc_llcp_sock *sock, u8 ssap, u8 dsap,
+> >                 pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
+> >                                          frag_len + LLCP_HEADER_SIZE, &err);
+> >                 if (pdu == NULL) {
+> > -                       pr_err("Could not allocate PDU\n");
+> > +                       pr_err_ratelimited("Could not allocate PDU\n");
+> > +                       cond_resched();
+> >                         continue;
+> >                 }
+> 
+> 
+> But this thread is still in an infinite (unkillable?) loop? If yes, we
+> are waiting for the next syzbot report ;)
 
---781441777-375754469-1529989820=:1528
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+The loop is still infinite, correct, but we have a preemption point now.
+Sure, net people can come with a much better solution, I'll be happy to
+scratch my patch.
 
-
-
-On Tue, 26 Jun 2018, Byungchul Park wrote:
-
-> On Tue, Jun 26, 2018 at 12:21:23PM +0900, sjpark wrote:
-> > Hello Byungchul,
-> >
-> >
-> > On Tue, 26 Jun 2018, Byungchul Park wrote:
-> >
-> > > On Sun, Jun 17, 2018 at 02:16:08PM +0900, SeongJae Park wrote:
-> > > > Translate this commit to Korean:
-> > > >
-> > > >   5846581e3563 ("locking/memory-barriers.txt: Fix broken DMA vs. MMIO ordering example")
-> > >
-> > > Hi SeongJae,
-> > >
-> > > You keep doing good jobs ;)
-> > >
-> > > I believe it would be better if you consider the little things below
-> > > more. What do you think about it, SeongJae?
-> >
-> > Thank you for great comments!
-> >
-> > >
-> > > > Signed-off-by: SeongJae Park <sj38.park@gmail.com>
-> > > > ---
-> > > >  Documentation/translations/ko_KR/memory-barriers.txt | 15 +++++++--------
-> > > >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
-> > > > index 921739d00f69..ada0a709cce1 100644
-> > > > --- a/Documentation/translations/ko_KR/memory-barriers.txt
-> > > > +++ b/Documentation/translations/ko_KR/memory-barriers.txt
-> > > > @@ -1891,19 +1891,18 @@ Mandatory 배리어들은 SMP 시스템에서도 UP 시스템에서도 SMP 효
-> > > >  		/* 소유권을 수정 */
-> > > >  		desc->status = DEVICE_OWN;
-> > > >
-> > > > -		/* MMIO 를 통해 디바이스에 공지를 하기 전에 메모리를 동기화 */
-> > > > -		wmb();
-> > > > -
-> > > >  		/* 업데이트된 디스크립터의 디바이스에 공지 */
-> > > >  		writel(DESC_NOTIFY, doorbell);
-> > > >  	}
-> > > >
-> > > >       dma_rmb() 는 디스크립터로부터 데이터를 읽어오기 전에 디바이스가 소유권을
-> > > > -     내놓았음을 보장하게 하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
-> > > > -     가졌음을 보기 전에 디스크립터에 데이터가 쓰였음을 보장합니다.  wmb() 는
-> > > > -     캐시 일관성이 없는 (cache incoherent) MMIO 영역에 쓰기를 시도하기 전에
-> > > > -     캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 완료되었음을
-> > > > -     보장해주기 위해 필요합니다.
-> > > > +     내려놓았을 것을 보장하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
-> > > > +     가졌음을 보기 전에 디스크립터에 데이터가 쓰였을 것을 보장합니다.  writel()
-> > >                                                                         ^
-> > >                                                                      참고로,
-> >
-> > Nice comment.  This will enhance the readability a lot.
->
-> Could you add this, too? A quite little thing tho.
-
-Oops, I missed that.  Sorry.  Attaching the patch below.
-
-
-Thanks, SeongJae Park
-
-
-============================= >8 =====================================
-
-From bcfb52af5d1f6c6aa171d105bdd7376b4dfabf13 Mon Sep 17 00:00:00 2001
-From: SeongJae Park <sj38.park@gmail.com>
-Date: Sun, 17 Jun 2018 14:08:42 +0900
-Subject: [PATCH v3] locking/memory-barriers.txt/kokr: Update Korean
- translation to fix broken DMA vs. MMIO ordering example
-
-Translate this commit to Korean:
-
-  5846581e3563 ("locking/memory-barriers.txt: Fix broken DMA vs. MMIO ordering example")
-
-Signed-off-by: SeongJae Park <sj38.park@gmail.com>
----
-Changes since v1:
- - Applied comments from Byungchul Park
- - Rebased on v4.18-rc2
-
- .../translations/ko_KR/memory-barriers.txt         | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
-index 921739d00f69..7f01fb1c1084 100644
---- a/Documentation/translations/ko_KR/memory-barriers.txt
-+++ b/Documentation/translations/ko_KR/memory-barriers.txt
-@@ -1891,22 +1891,22 @@ Mandatory 배리어들은 SMP 시스템에서도 UP 시스템에서도 SMP 효
- 		/* 소유권을 수정 */
- 		desc->status = DEVICE_OWN;
-
--		/* MMIO 를 통해 디바이스에 공지를 하기 전에 메모리를 동기화 */
--		wmb();
--
- 		/* 업데이트된 디스크립터의 디바이스에 공지 */
- 		writel(DESC_NOTIFY, doorbell);
- 	}
-
-      dma_rmb() 는 디스크립터로부터 데이터를 읽어오기 전에 디바이스가 소유권을
--     내놓았음을 보장하게 하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
--     가졌음을 보기 전에 디스크립터에 데이터가 쓰였음을 보장합니다.  wmb() 는
--     캐시 일관성이 없는 (cache incoherent) MMIO 영역에 쓰기를 시도하기 전에
--     캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 완료되었음을
--     보장해주기 위해 필요합니다.
--
--     consistent memory 에 대한 자세한 내용을 위해선 Documentation/DMA-API.txt
--     문서를 참고하세요.
-+     내려놓았을 것을 보장하고, dma_wmb() 는 디바이스가 자신이 소유권을 다시
-+     가졌음을 보기 전에 디스크립터에 데이터가 쓰였을 것을 보장합니다.  참고로,
-+     writel() 을 사용하면 캐시 일관성이 있는 메모리 (cache coherent memory)
-+     쓰기가 MMIO 영역에의 쓰기 전에 완료되었을 것을 보장하므로 writel() 앞에
-+     wmb() 를 실행할 필요가 없음을 알아두시기 바랍니다.  writel() 보다 비용이
-+     저렴한 writel_relaxed() 는 이런 보장을 제공하지 않으므로 여기선 사용되지
-+     않아야 합니다.
-+
-+     writel_relaxed() 와 같은 완화된 I/O 접근자들에 대한 자세한 내용을 위해서는
-+     "커널 I/O 배리어의 효과" 섹션을, consistent memory 에 대한 자세한 내용을
-+     위해선 Documentation/DMA-API.txt 문서를 참고하세요.
-
-
- MMIO 쓰기 배리어
--- 
-2.13.0
-
-
->
-> > > > +     을 사용하면 캐시 일관성이 있는 메모리 (cache coherent memory) 쓰기가 MMIO
-> > > > +     영역에의 쓰기 전에 완료되었을 것을 보장하므로 writel() 앞에 wmb() 를
-> > > > +     실행할 필요가 없음을 알아두시기 바랍니다.  writel() 보다 비용이 저렴한
-> > > > +     writel_relaxed() 는 이런 보장을 제공하지 않으므로 여기선 사용되지 않아야
-> > > > +     합니다.
-> > > >
-> > > >       consistent memory 에 대한 자세한 내용을 위해선 Documentation/DMA-API.txt
-> > > >       문서를 참고하세요.
-> > >
-> > >      See the subsection "Kernel I/O barrier effects" for more information on
-> > >      relaxed I/O accessors and the Documentation/DMA-API.txt file for more
-> > >      information on consistent memory.
-> > >
-> > > Don't you think the whole sentence need to be translated? If yes, then
-> > > it would be better to do that as well ;)
-> >
-> > Oh, my mistake!  It should be.
-> >
-> > I applied your comments to the second version.
->
-> Thank you SeongJae :)
->
-> > Thanks,
-> > SeongJae Park
-> >
-> > >
-> > > > --
-> > > > 2.13.0
-> > >
-> > > --
-> > > Thanks,
-> > > Byungchul
-> > >
->
->
---781441777-375754469-1529989820=:1528--
+	-ss
