@@ -2,134 +2,196 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E03C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9353EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76B7E265AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:01:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="dokDTdMU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76B7E265AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FF71265AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:01:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF71265AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeFZHBC (ORCPT
+        id S1752626AbeFZHBI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:01:02 -0400
-Received: from mail-eopbgr60089.outbound.protection.outlook.com ([40.107.6.89]:47904
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751181AbeFZHA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:00:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mTQmAe5efPgkFvtbCwCl7+kMvVGcttEkkF+u8cLqOSg=;
- b=dokDTdMUL8pwOtQvm9ob7SlKGuFhfTlCv2nVVgvghWuCA3JEA6WlP00UIae8vDM5lre9xQAfjwbNVe2DP5HHsFwSeT6zpdyPPDA+z/Iyjkhjnqg3H8HK9EyeB9qjx2nr7vI50wBzfXWAtRyrqn9iycFPZV34/0ebWesCCBTDDBo=
-Received: from AM6PR04MB4008.eurprd04.prod.outlook.com (52.135.160.153) by
- AM6PR04MB4679.eurprd04.prod.outlook.com (20.177.39.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.20; Tue, 26 Jun 2018 07:00:56 +0000
-Received: from AM6PR04MB4008.eurprd04.prod.outlook.com
- ([fe80::db7:da35:1a5c:d7e7]) by AM6PR04MB4008.eurprd04.prod.outlook.com
- ([fe80::db7:da35:1a5c:d7e7%5]) with mapi id 15.20.0884.024; Tue, 26 Jun 2018
- 07:00:56 +0000
-From:   Madalin-cristian Bucur <madalin.bucur@nxp.com>
-To:     David Miller <davem@davemloft.net>,
-        "bas@daedalean.ai" <bas@daedalean.ai>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] fman: don't set node on dpaa-ethernet platform device
-Thread-Topic: [PATCH] fman: don't set node on dpaa-ethernet platform device
-Thread-Index: AQHUCVT3W+RjeCsJ3kGTssDKpidIkKRtEAMAgAUTbLA=
-Date:   Tue, 26 Jun 2018 07:00:56 +0000
-Message-ID: <AM6PR04MB40085FE9AED3D8698FF505B6EC490@AM6PR04MB4008.eurprd04.prod.outlook.com>
-References: <20180621114222.8326-1-bas@daedalean.ai>
- <20180623.102724.1590504977410505871.davem@davemloft.net>
-In-Reply-To: <20180623.102724.1590504977410505871.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=madalin.bucur@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB4679;7:Ih4qCLyZoCAHzIgOg8zxo7fvDkEWz/CuYnoPw5ERUe5noxWVHmELOO0CnEFoj5YOsaKUiNmPlui2RxyWZDGGMbSxKELmNXJjnAnfwRev0nHOl0QkATLLkGUZYGA0dh/ZH031+hZtX3Rn7P07Joe8iWb+IRCVVNRjsB8C/mEoULDH+DtoM714rXYDw95MPEvIa7L319QJX738v+RH4qrYoMMceq7XrN8DgV7v24OuflErfxKqmDChrhSczvP+Prvv
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d51aca80-c092-426f-7d5c-08d5db32907f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4679;
-x-ms-traffictypediagnostic: AM6PR04MB4679:
-x-microsoft-antispam-prvs: <AM6PR04MB4679A7BA3059B2629F93E885EC490@AM6PR04MB4679.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM6PR04MB4679;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4679;
-x-forefront-prvs: 071518EF63
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(136003)(366004)(346002)(39860400002)(13464003)(189003)(199004)(478600001)(14454004)(256004)(66066001)(5660300001)(2501003)(5250100002)(8936002)(446003)(11346002)(486006)(81156014)(81166006)(8676002)(476003)(102836004)(3846002)(6116002)(76176011)(316002)(186003)(86362001)(26005)(575784001)(110136005)(7696005)(54906003)(53546011)(6506007)(9686003)(6246003)(68736007)(6436002)(2900100001)(55016002)(229853002)(99286004)(25786009)(53936002)(97736004)(74316002)(2906002)(105586002)(33656002)(305945005)(7736002)(106356001)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4679;H:AM6PR04MB4008.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: UWTJ0FoAQ1nUbsgvJct0EYcumFmiwpcZ3XzPMHcXPepLJixccVMJqZbZvQGpHU8TqdRFvupaswTSvRZH+yJSwKKjjSzVoWcPnX4OOodnX9ZH9SsCOzithGwjs2LOHnrBX2LUTG2G1xBmk0+pZ8VVH9ug+vwnCXX1BVBkO4z8QIQGutm5hl2yYgC2p7MFZmf8sZ2Bq4oc9Jznzs3rdXk4kyW23rtMgS1OsybG0DiSz5xOpSetayr3PGXjuQRziahJfCkVC+slKkKj18R0hHbndImPOta2v2YPoP0Sl658jqHbwbWkFNYYKWOmQp8TiXgTXlrFBuLl4C31HdncG60XQEjL6rx2SByk4pnnEbqhkzc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 Jun 2018 03:01:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50247 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751965AbeFZHBE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 03:01:04 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5Q70qbP1592275
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 26 Jun 2018 00:00:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5Q70q2T1592272;
+        Tue, 26 Jun 2018 00:00:52 -0700
+Date:   Tue, 26 Jun 2018 00:00:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Ravi Bangoria <tipbot@zytor.com>
+Message-ID: <tip-92ead7ee30c80f8852d28735cbcb9d79bc85f715@git.kernel.org>
+Cc:     mingo@kernel.org, davidcc@google.com, hpa@zytor.com,
+        jolsa@redhat.com, ravi.bangoria@linux.ibm.com, ak@linux.intel.com,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        dsahern@gmail.com, linux-kernel@vger.kernel.org, acme@redhat.com,
+        yao.jin@linux.intel.com, namhyung@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com,
+          namhyung@kernel.org, yao.jin@linux.intel.com, ak@linux.intel.com,
+          alexander.shishkin@linux.intel.com, dsahern@gmail.com,
+          tglx@linutronix.de, hpa@zytor.com, jolsa@redhat.com,
+          ravi.bangoria@linux.ibm.com, mingo@kernel.org, davidcc@google.com
+In-Reply-To: <20180625124220.6434-4-ravi.bangoria@linux.ibm.com>
+References: <20180625124220.6434-4-ravi.bangoria@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf tools: Fix crash caused by accessing
+ feat_ops[HEADER_LAST_FEATURE]
+Git-Commit-ID: 92ead7ee30c80f8852d28735cbcb9d79bc85f715
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d51aca80-c092-426f-7d5c-08d5db32907f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2018 07:00:56.0764
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4679
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: David Miller [mailto:davem@davemloft.net]
-> Sent: Saturday, June 23, 2018 4:27 AM
-> To: bas@daedalean.ai
-> Cc: netdev@vger.kernel.org; Madalin-cristian Bucur <madalin.bucur@nxp.com=
->;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] fman: don't set node on dpaa-ethernet platform devic=
-e
->=20
-> From: Bas Vermeulen <bas@daedalean.ai>
-> Date: Thu, 21 Jun 2018 13:42:22 +0200
->=20
-> > Setting dev->node to the mac_node in dpaa_eth_add_device during probe
-> > causes the mac_probe to be called again for the dpaa-ethernet.* device
-> > that was just added.
-> >
-> > Fix this by not setting dev->node, as it is not needed.
-> >
-> > Signed-off-by: Bas Vermeulen <bas@daedalean.ai>
->=20
-> This patch doesn't apply to the current sources.
+Commit-ID:  92ead7ee30c80f8852d28735cbcb9d79bc85f715
+Gitweb:     https://git.kernel.org/tip/92ead7ee30c80f8852d28735cbcb9d79bc85f715
+Author:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+AuthorDate: Mon, 25 Jun 2018 18:12:20 +0530
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 25 Jun 2018 11:59:37 -0300
 
-Hi,
+perf tools: Fix crash caused by accessing feat_ops[HEADER_LAST_FEATURE]
 
-The line the patch is trying to remove was added in this commit
+perf_event__process_feature() accesses feat_ops[HEADER_LAST_FEATURE]
+which is not defined and thus perf is crashing. HEADER_LAST_FEATURE is
+used as an end marker for the perf report but it's unused for perf
+script/annotate. Ignore HEADER_LAST_FEATURE for perf script/annotate,
+just like it is done in 'perf report'.
 
-	commit a1a50c8e4c241a505b7270e1a3c6e50d94e794b1
-	Author: Florian Fainelli <f.fainelli@gmail.com>
-	Date:   Tue Aug 22 15:24:47 2017 -0700
+Before:
+  # perf record -o - ls | perf script
+  <SNIP 'ls' output>
+  Segmentation fault (core dumped)
+  #
 
-	    fsl/man: Inherit parent device and of_node
+After:
+  # perf record -o - ls | perf script
+  <SNIP 'ls' output>
+  Segmentation fault (core dumped)
+  ls 7031 4392.099856:  250000 cpu-clock:uhH:  7f5e0ce7cd60
+  ls 7031 4392.100355:  250000 cpu-clock:uhH:  7f5e0c706ef7
+  #
 
-and was already removed in this commit
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David Carrillo-Cisneros <davidcc@google.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 57b5de463925 ("perf report: Support forced leader feature in pipe mode")
+Link: http://lkml.kernel.org/r/20180625124220.6434-4-ravi.bangoria@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-annotate.c | 11 ++++++++++-
+ tools/perf/builtin-report.c   |  3 ++-
+ tools/perf/builtin-script.c   | 11 ++++++++++-
+ tools/perf/util/header.c      |  2 +-
+ 4 files changed, 23 insertions(+), 4 deletions(-)
 
-	commit 48167c9ce0b91c068430345bf039c7be23fa2f3f
-	Author: Madalin Bucur <madalin.bucur@nxp.com>
-	Date:   Mon Oct 16 21:36:05 2017 +0300
-
-	    fsl/fman: remove of_node
-
-Regards,
-Madalin
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index 5eb22cc56363..8180319285af 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -283,6 +283,15 @@ out_put:
+ 	return ret;
+ }
+ 
++static int process_feature_event(struct perf_tool *tool,
++				 union perf_event *event,
++				 struct perf_session *session)
++{
++	if (event->feat.feat_id < HEADER_LAST_FEATURE)
++		return perf_event__process_feature(tool, event, session);
++	return 0;
++}
++
+ static int hist_entry__tty_annotate(struct hist_entry *he,
+ 				    struct perf_evsel *evsel,
+ 				    struct perf_annotate *ann)
+@@ -471,7 +480,7 @@ int cmd_annotate(int argc, const char **argv)
+ 			.attr	= perf_event__process_attr,
+ 			.build_id = perf_event__process_build_id,
+ 			.tracing_data   = perf_event__process_tracing_data,
+-			.feature	= perf_event__process_feature,
++			.feature	= process_feature_event,
+ 			.ordered_events = true,
+ 			.ordering_requires_timestamps = true,
+ 		},
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index cdb5b6949832..c04dc7b53797 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -217,7 +217,8 @@ static int process_feature_event(struct perf_tool *tool,
+ 	}
+ 
+ 	/*
+-	 * All features are received, we can force the
++	 * (feat_id = HEADER_LAST_FEATURE) is the end marker which
++	 * means all features are received, now we can force the
+ 	 * group if needed.
+ 	 */
+ 	setup_forced_leader(rep, session->evlist);
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index ad2ac1300420..568ddfac3213 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3044,6 +3044,15 @@ int process_cpu_map_event(struct perf_tool *tool __maybe_unused,
+ 	return set_maps(script);
+ }
+ 
++static int process_feature_event(struct perf_tool *tool,
++				 union perf_event *event,
++				 struct perf_session *session)
++{
++	if (event->feat.feat_id < HEADER_LAST_FEATURE)
++		return perf_event__process_feature(tool, event, session);
++	return 0;
++}
++
+ #ifdef HAVE_AUXTRACE_SUPPORT
+ static int perf_script__process_auxtrace_info(struct perf_tool *tool,
+ 					      union perf_event *event,
+@@ -3088,7 +3097,7 @@ int cmd_script(int argc, const char **argv)
+ 			.attr		 = process_attr,
+ 			.event_update   = perf_event__process_event_update,
+ 			.tracing_data	 = perf_event__process_tracing_data,
+-			.feature	 = perf_event__process_feature,
++			.feature	 = process_feature_event,
+ 			.build_id	 = perf_event__process_build_id,
+ 			.id_index	 = perf_event__process_id_index,
+ 			.auxtrace_info	 = perf_script__process_auxtrace_info,
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 59fcc790c865..653ff65aa2c3 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3464,7 +3464,7 @@ int perf_event__process_feature(struct perf_tool *tool,
+ 		pr_warning("invalid record type %d in pipe-mode\n", type);
+ 		return 0;
+ 	}
+-	if (feat == HEADER_RESERVED || feat > HEADER_LAST_FEATURE) {
++	if (feat == HEADER_RESERVED || feat >= HEADER_LAST_FEATURE) {
+ 		pr_warning("invalid record type %d in pipe-mode\n", type);
+ 		return -1;
+ 	}
