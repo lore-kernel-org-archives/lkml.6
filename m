@@ -3,177 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4DCC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA48C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFD2F26B4F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:28:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD2F26B4F
+	by mail.kernel.org (Postfix) with ESMTP id D4E2826B50
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:28:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E2826B50
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965529AbeFZN2D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:28:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49892 "EHLO
+        id S965515AbeFZN2C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:28:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49885 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965482AbeFZN2A (ORCPT
+        with ESMTP id S965480AbeFZN2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Jun 2018 09:28:00 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1fXo0l-0001Pd-3S; Tue, 26 Jun 2018 15:27:59 +0200
-Message-ID: <20180626132705.018623573@linutronix.de>
+        id 1fXo0k-0001PT-2h; Tue, 26 Jun 2018 15:27:58 +0200
+Message-ID: <20180626132130.345959379@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 26 Jun 2018 15:21:32 +0200
+Date:   Tue, 26 Jun 2018 15:21:30 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     John Stultz <john.stultz@linaro.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         air icy <icytxw@gmail.com>
-Subject: [patch 2/2] posix-timers: Sanitize overrun handling
-References: <20180626132130.345959379@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Subject: [patch 0/2] posix-timers: Sanitize posix timer overrun handling
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The posix timer overrun handling is broken because the forwarding functions
-can return a huge number of overruns which does not fit in an int. As a
-consequence timer_getoverrun(2) and siginfo::si_overrun can turn into
-random number generators.
+Icy reported an UBSAN splat in the posix timer code, which is caused by the
+way the overrun accounting works. Depending on interval and expiry time the
+overrun can be larger than INT_MAX, but the accounting is int based which
+basically makes the accounting values, which are visible to user space via
+timer_getoverrrun(2) and siginfo::si_overrun, random.
 
-The k_clock::timer_forward() callbacks return a 64 bit value now. Make
-k_itimer::ti_overrun[_last] 64bit as well, so the kernel internal
-accounting is correct. 3Remove the temporary (int) casts.
+The following series addresses this by converting the internal accounting
+to 64bit and clamping the user space visible values to INT_MAX.
 
-Add a helper function which clamps the overrun value returned to user space
-via timer_getoverrun(2) or siginfo::si_overrun limited to a positive value
-between 0 and INT_MAX. INT_MAX is an indicator for user space that the
-overrun value has been clamped.
+Thanks,
 
-Reported-by: air icy <icytxw@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- include/linux/posix-timers.h   |    4 ++--
+	tglx
+
+8<-------------------
+ b/include/linux/posix-timers.h |    4 ++--
+ kernel/time/alarmtimer.c       |    4 ++--
  kernel/time/posix-cpu-timers.c |    2 +-
- kernel/time/posix-timers.c     |   31 ++++++++++++++++++++-----------
- 3 files changed, 23 insertions(+), 14 deletions(-)
+ kernel/time/posix-timers.c     |   33 +++++++++++++++++++++------------
+ kernel/time/posix-timers.h     |    2 +-
+ 5 files changed, 27 insertions(+), 18 deletions(-)
 
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -95,8 +95,8 @@ struct k_itimer {
- 	clockid_t		it_clock;
- 	timer_t			it_id;
- 	int			it_active;
--	int			it_overrun;
--	int			it_overrun_last;
-+	s64			it_overrun;
-+	s64			it_overrun_last;
- 	int			it_requeue_pending;
- 	int			it_sigev_notify;
- 	ktime_t			it_interval;
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -85,7 +85,7 @@ static void bump_cpu_timer(struct k_itim
- 			continue;
- 
- 		timer->it.cpu.expires += incr;
--		timer->it_overrun += 1 << i;
-+		timer->it_overrun += 1LL << i;
- 		delta -= incr;
- 	}
- }
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -283,6 +283,17 @@ static __init int init_posix_timers(void
- }
- __initcall(init_posix_timers);
- 
-+/*
-+ * The siginfo si_overrun field and the return value of timer_getoverrun(2)
-+ * are of type int. Clamp the overrun value to INT_MAX
-+ */
-+static inline int timer_overrun_to_int(struct k_itimer *timr, int baseval)
-+{
-+	s64 sum = timr->it_overrun_last + (s64)baseval;
-+
-+	return sum > (s64)INT_MAX ? INT_MAX : (int)sum;
-+}
-+
- static void common_hrtimer_rearm(struct k_itimer *timr)
- {
- 	struct hrtimer *timer = &timr->it.real.timer;
-@@ -290,9 +301,8 @@ static void common_hrtimer_rearm(struct
- 	if (!timr->it_interval)
- 		return;
- 
--	timr->it_overrun += (unsigned int) hrtimer_forward(timer,
--						timer->base->get_time(),
--						timr->it_interval);
-+	timr->it_overrun += hrtimer_forward(timer, timer->base->get_time(),
-+					    timr->it_interval);
- 	hrtimer_restart(timer);
- }
- 
-@@ -321,10 +331,10 @@ void posixtimer_rearm(struct siginfo *in
- 
- 		timr->it_active = 1;
- 		timr->it_overrun_last = timr->it_overrun;
--		timr->it_overrun = -1;
-+		timr->it_overrun = -1LL;
- 		++timr->it_requeue_pending;
- 
--		info->si_overrun += timr->it_overrun_last;
-+		info->si_overrun = timer_overrun_to_int(timr, info->si_overrun);
- 	}
- 
- 	unlock_timer(timr, flags);
-@@ -418,9 +428,8 @@ static enum hrtimer_restart posix_timer_
- 					now = ktime_add(now, kj);
- 			}
- #endif
--			timr->it_overrun += (unsigned int)
--				hrtimer_forward(timer, now,
--						timr->it_interval);
-+			timr->it_overrun += hrtimer_forward(timer, now,
-+							    timr->it_interval);
- 			ret = HRTIMER_RESTART;
- 			++timr->it_requeue_pending;
- 			timr->it_active = 1;
-@@ -524,7 +533,7 @@ static int do_timer_create(clockid_t whi
- 	new_timer->it_id = (timer_t) new_timer_id;
- 	new_timer->it_clock = which_clock;
- 	new_timer->kclock = kc;
--	new_timer->it_overrun = -1;
-+	new_timer->it_overrun = -1LL;
- 
- 	if (event) {
- 		rcu_read_lock();
-@@ -702,7 +711,7 @@ void common_timer_get(struct k_itimer *t
- 	 * expiry time forward by intervals, so expiry is > now.
- 	 */
- 	if (iv && (timr->it_requeue_pending & REQUEUE_PENDING || sig_none))
--		timr->it_overrun += (int)kc->timer_forward(timr, now);
-+		timr->it_overrun += kc->timer_forward(timr, now);
- 
- 	remaining = kc->timer_remaining(timr, now);
- 	/* Return 0 only, when the timer is expired and not pending */
-@@ -791,7 +800,7 @@ SYSCALL_DEFINE1(timer_getoverrun, timer_
- 	if (!timr)
- 		return -EINVAL;
- 
--	overrun = timr->it_overrun_last;
-+	overrun = timer_overrun_to_int(timr, 0);
- 	unlock_timer(timr, flags);
- 
- 	return overrun;
+
 
 
