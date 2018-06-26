@@ -2,40 +2,38 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C60C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD76C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B2926F20
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:12:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B2926F20
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D09D226A69
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:13:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D09D226A69
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754538AbeFZTMj (ORCPT
+        id S1753065AbeFZTNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 15:12:39 -0400
-Received: from mga09.intel.com ([134.134.136.24]:45496 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752020AbeFZTMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 15:12:37 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 12:12:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,275,1526367600"; 
-   d="scan'208";a="52449814"
-Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
-  by orsmga008.jf.intel.com with ESMTP; 26 Jun 2018 12:12:35 -0700
-Date:   Tue, 26 Jun 2018 13:12:35 -0600
-From:   Ross Zwisler <ross.zwisler@linux.intel.com>
+        Tue, 26 Jun 2018 15:13:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51894 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751155AbeFZTNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 15:13:49 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E67D368800;
+        Tue, 26 Jun 2018 19:13:48 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C28DC1C661;
+        Tue, 26 Jun 2018 19:13:46 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 15:13:46 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
 To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Mike Snitzer <snitzer@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
+Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>,
         Toshi Kani <toshi.kani@hpe.com>,
         device-mapper development <dm-devel@redhat.com>,
         linux-nvdimm <linux-nvdimm@lists.01.org>,
@@ -44,16 +42,7 @@ Cc:     Mike Snitzer <snitzer@redhat.com>,
         linux-xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Subject: Re: [PATCH v3 1/3] pmem: only set QUEUE_FLAG_DAX for fsdax mode
-Message-ID: <20180626191235.GB18273@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mike Snitzer <snitzer@redhat.com>, Toshi Kani <toshi.kani@hpe.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Message-ID: <20180626191346.GA7233@redhat.com>
 References: <20180626175932.8899-1-ross.zwisler@linux.intel.com>
  <20180626175932.8899-2-ross.zwisler@linux.intel.com>
  <CAPcyv4iWgPnHmBKhUvhManC6UL9CkLqN_d8vBo6KmcPJdPzuUw@mail.gmail.com>
@@ -63,13 +52,18 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <CAPcyv4h6HO6fs6k7QMD77jkz2djCeWCtWomCdNb0-1Q4VKanqw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 26 Jun 2018 19:13:49 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 26 Jun 2018 19:13:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 12:07:40PM -0700, Dan Williams wrote:
+On Tue, Jun 26 2018 at  3:07pm -0400,
+Dan Williams <dan.j.williams@intel.com> wrote:
+
 > On Tue, Jun 26, 2018 at 11:58 AM, Mike Snitzer <snitzer@redhat.com> wrote:
 > > On Tue, Jun 26 2018 at  2:52pm -0400,
 > > Dan Williams <dan.j.williams@intel.com> wrote:
@@ -101,5 +95,9 @@ On Tue, Jun 26, 2018 at 12:07:40PM -0700, Dan Williams wrote:
 > is not a regression. It does not identify which commit it is repairing
 > or the user visible failure mode.
 
-Ah, do I need a Fixes: tag for patch 2, then?  That one *does* need to go to
-stable, I think.
+So you're taking issue with making stacked dax configs work in older
+kernels?  That's fine.  We can drop the stable cc if you like.
+
+But I mean we intended for this to work.. so the Fixes commit references
+can easily be added, e.g.: 545ed20e6df68a4d2584a29a2a28ee8b2f7e9547
+("dm: add infrastructure for DAX support")
