@@ -2,111 +2,126 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C18C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8374C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A1DC26D50
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:08:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1DC26D50
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eso.teric.us
+	by mail.kernel.org (Postfix) with ESMTP id 1693B26CEE
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 19:09:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CiEV0db0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1693B26CEE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754706AbeFZTI0 (ORCPT
+        id S1754721AbeFZTJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 15:08:26 -0400
-Received: from eso.teric.us ([69.164.192.171]:59628 "EHLO eso.teric.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752437AbeFZTIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 15:08:24 -0400
-X-Greylist: delayed 564 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Jun 2018 15:08:24 EDT
-Received: from neo.teric.us (neo.teric.us [198.58.100.135])
-        by eso.teric.us (Postfix) with ESMTPS id 6705A1036E;
-        Tue, 26 Jun 2018 13:59:00 -0500 (CDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eso.teric.us;
-        s=mail; t=1530039540;
-        bh=u0EoG65BWuYx4wB7/fi9WqtQerA8g5/L0RbQ/i+5wMI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iaX8lUzySQY1bKmb4huRh3JFzH1y2+KYAYUPW5sqFPWQB+mJXKJIEYmrv7tKPe0M0
-         6ycinEqQZjoujBKdpT6HbDro8Zs+fqZpmWzBedx0wrQBspGfdsHr7ioFaW2bwdzLNe
-         khjpEZshndzAB7rTHBrgXJhQrg15zP7hQFx3ptQkXSQtmG3NXSZA3jlsgkJkxJJ9Ji
-         APknXlekhGceqzWDX2nbO418Jyzdt7h5wqes1093fKBO7DFbxBCSQpB8Ui+Aa4aXLb
-         EI7HPCvpgPi2igG+lrm9KkmF4QyEsRrvzicREkgE26fwGLHxA8BPKWZvTHqkiEyfVV
-         UfofQLTCLYmgg==
-Received: by neo.teric.us (Postfix, from userid 1002)
-        id 2AFE326665; Tue, 26 Jun 2018 13:59:00 -0500 (CDT)
-Date:   Tue, 26 Jun 2018 13:59:00 -0500
-From:   Julia Cartwright <juliac@eso.teric.us>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        artlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: simple-framebuffer enquire
-Message-ID: <20180626185900.GA20755@kryptos.localdomain>
-References: <CAOf5uwmSeugMHBBFc8ZQKY=wEsVD-YwD=YSWi=XbysU58Gp=Ww@mail.gmail.com>
- <9fb661e6-482b-76e0-2af0-a62a70e5606d@redhat.com>
- <CAOf5uwk2cf_+27nk9i9MQmbfJ8LCfPYopkcX__9M64jMYmhu1A@mail.gmail.com>
- <CAOf5uwkEuDgAJ7e8rNFyiKpUZPA3NhQGREtOGsm1EVSofW3rzQ@mail.gmail.com>
- <233d6808-4d44-9e47-7e3f-4f35cf731706@redhat.com>
- <CAOf5uwkJimhGJd_BtUuDyxaD5-ZYGe3JZtgC4pDKc_jnvaV21g@mail.gmail.com>
- <CAOf5uwnVoXw1MA=n3vphMhtto=fc+NVf11idLF8nwC6JCvf4+A@mail.gmail.com>
- <7b996681-3a94-1f93-10c0-5369fe843cbc@redhat.com>
- <CAOf5uwmxZxxKG0CnstnNaTYdt-1+=YZHr8eSac5TdwfANdobxQ@mail.gmail.com>
- <996603c6-9779-7412-d998-bd7b49194490@redhat.com>
+        Tue, 26 Jun 2018 15:09:35 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33339 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752498AbeFZTJe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 15:09:34 -0400
+Received: by mail-ua0-f193.google.com with SMTP id u21-v6so2326243uao.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 12:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+z+MnntGYev9PwMYnXinO4dZq7CrIa1ZELfbU6xOWLA=;
+        b=CiEV0db0jxVdXt4Wb3yW39uepFM3fVImG48WD0xRQvtl6T39sDYg4/hZ1QQLrvGvrN
+         /WtOn5NVXInrHZ+gzclwwwwrzCEefQZ29C7mePj4iNDLy+B2VdhYxtJA6e3WQP3mRhZa
+         Ywght5RPC9i76CPte+Balmdn60VbU9TXI3zMZXNxeFyb4etlTuIj5m1FQGWs34e0xSto
+         RCOfp396IbnWMYBLal1RHAih7lm4BUjlHuMHGGle6IP7tAmnaGvE8U2VURLu4XnHlUgf
+         VSrUk2IkuztzPxu4muuIF0n2vvwtpVZTLlRkubaa9hVBj27fNc82BOiic44a3MTCNY98
+         GbBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+z+MnntGYev9PwMYnXinO4dZq7CrIa1ZELfbU6xOWLA=;
+        b=OaFD/i2lEM+Z9EO03ZHCCPVqlNKttmJWAOKiDv2wczodXHDD0zvjPXa4eaUVcNKhAx
+         Oc8SChe+oBbIvsA7mS5R3zKPao7un146OhDnvVH8mlezk6x+mU/5aDIZP7rpwUBUz700
+         /Gki1Lgr3+o3ULeGED3ii7WSGJRvs2BKUTZmoMB3ViYrti/0/8yYoGzGdLLybR0u4Y0B
+         NG+IJJWCRUn7E7BTSULomysGJFoHk53aydVNHYOU/0ez0zi5cbVUNhtbUy2dbPGGIhpW
+         DjY0gHpWqFf5mAnzHgpLBzrf84skOi8t4+OwGZtz0MvylLw+Yf0wg67lFmvSsZLkQsVE
+         1QPA==
+X-Gm-Message-State: APt69E1gyqCY1/YByMQ8DTiF53J2XpqWeB8Y9HMWE1+jPk/djmIfN/iN
+        nSPyaL/Pf5JrMNFbacvsOhy/EWFIVEqEcbnUAnDVmx6x
+X-Google-Smtp-Source: AAOMgpev4SVifaBQcrTyjARqRzZFoc3KGl36gvBE3LxUVFImOAsT2aZ12YzIc6jgmUNqxpmQ1Ao7Qm0ruv0TiFrkvfk=
+X-Received: by 2002:ab0:6037:: with SMTP id n23-v6mr1166930ual.28.1530040173376;
+ Tue, 26 Jun 2018 12:09:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <996603c6-9779-7412-d998-bd7b49194490@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 12:09:32
+ -0700 (PDT)
+In-Reply-To: <20180625122453.souir6wzzyhbkj4m@mwanda>
+References: <20180621182155.27769-1-michael.straube@posteo.de>
+ <20180622102800.4p6wabmte4yf4rtp@mwanda> <CAHp75VeASBAsBrrq65qhkAGXHoSE8Hg-9dSGcgjT2bNND-1MBw@mail.gmail.com>
+ <20180625122453.souir6wzzyhbkj4m@mwanda>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 26 Jun 2018 22:09:32 +0300
+Message-ID: <CAHp75VeO3dDRYwVFY+jeCngwOY-rZVr7XLxvwYNxkfR_cHZaFg@mail.gmail.com>
+Subject: Re: [PATCH] staging: rtl8723bs: fix brace coding style issues
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Straube <michael.straube@posteo.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 08:44:58PM +0200, Hans de Goede wrote:
-> Hi,
-> 
-> On 26-06-18 18:35, Michael Nazzareno Trimarchi wrote:
-[..]
-> > cat memblock/reserved
-> >     0: 0x80004000..0x80007fff
-> >     1: 0x80100000..0x81e030b3
-> >     2: 0x83000000..0x83007fff
-> >     3: 0x84000000..0x85ffffff
-> >     4: 0x86fa2000..0x87021fff
-> > 
-> > +       reserved-memory {
-> > +               #address-cells = <1>;
-> > +               #size-cells = <1>;
-> > +               ranges;
-> > +
-> > +               display_reserved: framebuffer@86fa2000 {
-> > +                       reg = <0x86fa2000 0x80000>;
-> > +               };
-> > +
-> > +       };
-[..]
-> > Still have the same on ioremap.
-> 
-> Hmm, I guess the kernel does map the entire region its get
-> passed and simply makes sure to not touch the reserved mem,
-> where as with the changes to the passed in mem-region the
-> sunxi u-boot code does the memory does not get mapped by
-> the kernel at all ?
+On Mon, Jun 25, 2018 at 3:24 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On Mon, Jun 25, 2018 at 12:47:44PM +0300, Andy Shevchenko wrote:
+>> On Fri, Jun 22, 2018 at 1:28 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>> > On Thu, Jun 21, 2018 at 08:21:55PM +0200, Michael Straube wrote:
+>> >> Remove braces from single line if statements.
+>> >> Also fix a comparsion to NULL in one of the conditions.
+>> >> Issues found by checkpatch.
 
-If the intent is to reserve memory _and_ prevent it from being included
-in the kernel's linear map, then it is also necessary to include the
-'no-map' property for this reserved-mem node.
+>> >> --- a/drivers/staging/rtl8723bs/core/rtw_debug.c
+>> >> +++ b/drivers/staging/rtl8723bs/core/rtw_debug.c
+>> >> @@ -618,9 +618,8 @@ ssize_t proc_set_wait_hiq_empty(struct file *file, const char __user *buffer, si
+>> >>       if (count < 1)
+>> >>               return -EFAULT;
+>> >>
+>> >> -     if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp))) {
+>> >> +     if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp)))
+>> >>               sscanf(tmp, "%u", &g_wait_hiq_empty);
+>> >> -     }
+>> >
+>> >
+>> > The original code is kind of bad.  The NULL check isn't required.
+>> > The sscanf call should have error checking.  The error code is wrong if
+>> > the copy from user fails.  The tmp buffer isn't NUL terminated.
+>> >
+>> >         if (copy_from_user(tmp, buffer, sizeof(tmp)))
+>> >                 return -EFAULT;
+>> >         tmp[sizeof(tmp) - 1] = '\0';
+>> >
+>> >         if (sscanf(tmp, "%u", &g_wait_hiq_empty) != 1)
+>> >                 return -EINVAL;
+>> >
+>> >         return count;
+>>
+>> Shouldn't this be
+>>
+>> kstrtouint_from_user()
+>>
+>> instead of all those lines?
+>
+> I wasn't sure kstrtoint() was the exact same as sscanf()...  If so then
+> sure.
 
-From Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt:
+In this case it's very close to what sscanf() is doing here including
+all user buffer handing.
 
-   no-map (optional) - empty property
-       - Indicates the operating system must not create a virtual mapping
-         of the region as part of its standard mapping of system memory,
-         nor permit speculative access to it under any circumstances other
-         than under the control of the device driver using the region.
-
-    Julia
+-- 
+With Best Regards,
+Andy Shevchenko
