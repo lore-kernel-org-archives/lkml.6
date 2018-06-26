@@ -2,130 +2,163 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 650C3C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B199C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B97F25018
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:04:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B97F25018
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 036EE26999
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:06:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RMO+eSzZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036EE26999
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933969AbeFZLE5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:04:57 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34804 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932888AbeFZLEz (ORCPT
+        id S934451AbeFZLGZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:06:25 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42056 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932888AbeFZLGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:04:55 -0400
-Received: by mail-wm0-f66.google.com with SMTP id l15-v6so14951772wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 04:04:54 -0700 (PDT)
+        Tue, 26 Jun 2018 07:06:22 -0400
+Received: by mail-wr0-f194.google.com with SMTP id p1-v6so1205828wrs.9
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 04:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+mJeQGFTRJHE/3BL5qTKTwaKOqkKEVbq51/K2yU6YPY=;
+        b=RMO+eSzZ/eU+E+dEQCspknDnYcS9aKCX3+TJ+cvYvE0/KzAt3vkBJEd3KMPDS+ls1R
+         YxO14JXsfkVfDC/DCARXRXHJyZIZ89T4muiRaOVcEzY1epNFiRUSECf8bWv7M5Ib5lGt
+         AVyj+V4MbRMbGmL36F/kqfjCAWBaR2GgJLlz8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=M6z+i6FIjp7gbh6Z9Fnp1s2+Rqk2PbSGRHqLs3BXJ5Q=;
-        b=lrPYPcDbIys3F5Xnuadtw6YOUhXPDdSklADB+BFU0tasnc38Q2zAwYN/GpkJclthVT
-         yA/r/AgZ7LKj5egSCyOoFeZVjPWX5u1GUjDfMpzf6djMkpTheulAs1T/oXIfSp9Zu1KX
-         ymPTzDnKiw1Cu6umVUyXyu15ESrbrxjAM9coIu7Lww+NHN+yaYrLeZhsGxb4wy24oVGa
-         Eztj8w4JbeOy+lxRHJBzBGY8X/L5Oe52wKRENDVo+Lp8UEag9enD83ZM2gKx/A9DiMlv
-         jOpgyuH5YLpa5v1qPM3RPS8L1YF4ZIgPxSOXLK43DpSC2KnUbuqlimrzG8jFsqZq8xh+
-         XIPA==
-X-Gm-Message-State: APt69E11uFY7Dke6TFfL13MYjyY9FKP/O2PkJ5HP/oBlODNXkPLrIGcv
-        JVo5ynoiPwggcShqM1dqyy1uXA==
-X-Google-Smtp-Source: AAOMgpd8WVV5sEPvTM7KXYJDEjpbca8d4jKkq4fwxb6sJ7DXGla4Orp3QzbSdBcBF7hn+iISR17b7w==
-X-Received: by 2002:a1c:d004:: with SMTP id h4-v6mr1198391wmg.151.1530011094016;
-        Tue, 26 Jun 2018 04:04:54 -0700 (PDT)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id q17-v6sm1430997wrs.5.2018.06.26.04.04.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 04:04:53 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-audit@redhat.com
-Subject: [PATCH -next v3] cred: conditionally declare groups-related functions
-Date:   Tue, 26 Jun 2018 13:04:42 +0200
-Message-Id: <20180626110442.21014-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+mJeQGFTRJHE/3BL5qTKTwaKOqkKEVbq51/K2yU6YPY=;
+        b=FyeTnQ7D/eTJWnUthZbCNtJx4AnVN9w+of3jlWB0qgIOA22EFjP/iib9++DniFVR4e
+         ETBORaeXjXa8BRnuYLM1Qq606OLXmHH0nDI7INYLpNRzO8o1MCYFkODFnXLhPNukfst3
+         qBNHIxVfjP5qxNkVn+hNdu/sy0s9cGD0BRJzoSvf6Ph+kdVZglGeCqh01bAszY/mcowq
+         KLFQhwx4B9MwHYM7CFKEwKJFz6F5l0cz1mQuzlgA24asUjiZYC1/F8tRhK+iv4a3jYvG
+         buPJ3C1tSKNG6Y4xNluADpTTz9x7U8YVmvDti+Ep5rJetZmFLFbK7lfx2Jw186fVx9SW
+         izoQ==
+X-Gm-Message-State: APt69E2/1wb1ESFkXghrXTvLGA5kXzztD+ZGwF9+9msOarRPQNSXdAyH
+        Z2Bg3VS6v4nxontDTcb5YiCm2Q==
+X-Google-Smtp-Source: AAOMgpe8fS83aqn/Fgt6ZPLmdpT6yV1+FeJQZ4uopfkpg+JCq3jbt8UVfYeOVa4Lx9u2jQoVtNKJ1A==
+X-Received: by 2002:adf:af27:: with SMTP id z36-v6mr1037888wrc.59.1530011181164;
+        Tue, 26 Jun 2018 04:06:21 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id e188-v6sm6231724wmf.21.2018.06.26.04.06.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 04:06:20 -0700 (PDT)
+Subject: Re: [PATCH v2 01/15] nvmem: add support for cell lookups
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180626102245.30711-1-brgl@bgdev.pl>
+ <20180626102245.30711-2-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <25ebceca-8cdd-edae-6393-dd29eb323c53@linaro.org>
+Date:   Tue, 26 Jun 2018 12:06:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180626102245.30711-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The groups-related functions declared in include/linux/cred.h are
-defined in kernel/groups.c, which is compiled only when
-CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
-CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-CONFIG_MULTIUSER might be disabled.
+Thanks for the patch,
 
-This patch also adds a fallback for groups_search(). Currently this
-function is only called from kernel/groups.c itself and
-security/keys/permissions.c, where the call is (by coincidence)
-optimized away in case CONFIG_MULTIUSER=n. However, the audit subsystem
-(which does not depend on CONFIG_MULTIUSER) calls this function in
--next, so the fallback will be needed to avoid compilation errors or
-ugly workarounds.
+On 26/06/18 11:22, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We can currently only register nvmem cells from device tree or by
+> manually calling nvmem_add_cells(). The latter options however forces
+> users to make sure that the nvmem provider with which the cells are
+> associated is registered before the call.
+> 
+> This patch proposes a new solution inspired by other frameworks that
+> offer resource lookups (GPIO, PWM etc.). It adds a function that allows
+> machine code to register nvmem lookup which are later lazily used to
+> add corresponding nvmem cells.
+> 
+Overall the idea look fine to me.
 
-See also:
-https://lkml.org/lkml/2018/6/20/670
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
+This needs to be documented in ./Documentation/nvmem/nvmem.txt
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   drivers/nvmem/core.c           | 57 +++++++++++++++++++++++++++++++++-
+>   include/linux/nvmem-consumer.h |  6 ++++
+>   include/linux/nvmem-provider.h |  6 ++++
+>   3 files changed, 68 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index b5b0cdc21d01..a2e87b464319 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -62,6 +62,9 @@ static DEFINE_IDA(nvmem_ida);
+>   static LIST_HEAD(nvmem_cells);
+>   static DEFINE_MUTEX(nvmem_cells_mutex);
+>   
+> +static LIST_HEAD(nvmem_cell_lookups);
+> +static DEFINE_MUTEX(nvmem_lookup_mutex);
+> +
+>   #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>   static struct lock_class_key eeprom_lock_key;
+>   #endif
+> @@ -247,6 +250,23 @@ static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
+>   	NULL,
+>   };
+>   
+> +/**
+> + * nvmem_register_lookup() - register a number of nvmem cell lookup entries
+> + *
 
-Changes:
-    v2->v3: commit message corrections
-    v1->v2: change default return value of groups_search() to 1
+Can we rename this to nvmem_add_lookup_table()?
+register sound bit heavy here.
 
- include/linux/cred.h | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+We should also have something like nvmem_remove_lookup_table() for 
+consistency, and it should ensure that it clears the cells entry too.
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 631286535d0f..7eed6101c791 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
- 
- extern int in_group_p(kgid_t);
- extern int in_egroup_p(kgid_t);
-+extern int groups_search(const struct group_info *, kgid_t);
-+
-+extern int set_current_groups(struct group_info *);
-+extern void set_groups(struct cred *, struct group_info *);
-+extern bool may_setgroups(void);
-+extern void groups_sort(struct group_info *);
- #else
- static inline void groups_free(struct group_info *group_info)
- {
-@@ -78,12 +84,11 @@ static inline int in_egroup_p(kgid_t grp)
- {
-         return 1;
- }
-+static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-+{
-+	return 1;
-+}
- #endif
--extern int set_current_groups(struct group_info *);
--extern void set_groups(struct cred *, struct group_info *);
--extern int groups_search(const struct group_info *, kgid_t);
--extern bool may_setgroups(void);
--extern void groups_sort(struct group_info *);
- 
- /*
-  * The security context of a task
--- 
-2.17.1
-
+> + * @lookup: array of nvmem cell lookup entries
+> + * @nentries: number of lookup entries in the array
+> + */
+> +void nvmem_register_lookup(struct nvmem_cell_lookup *lookup, size_t nentries)
+> +{
+> +	int i;
+> + > +	mutex_lock(&nvmem_lookup_mutex);
+> +	for (i = 0; i < nentries; i++)
+> +		list_add_tail(&lookup[i].list, &nvmem_cell_lookups);
+> +	mutex_unlock(&nvmem_lookup_mutex);
+> +}
+> +EXPORT_SYMBOL_GPL(nvmem_register_lookup);
+> +
+>   static void nvmem_release(struct device *dev)
+>   {
+>   	struct nvmem_device *nvmem = to_nvmem_device(dev);
+> @@ -916,6 +936,37 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
+>   EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
+>   #endif
+>   
