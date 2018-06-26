@@ -2,112 +2,128 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28733C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162A1C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4AEC2584C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2D08259E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:45:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScSXIVCC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4AEC2584C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="rWS0zCXH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C+Gtd+V2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2D08259E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752485AbeFZQpJ (ORCPT
+        id S1752636AbeFZQpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 12:45:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751730AbeFZQpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 12:45:07 -0400
-Received: from mail-io0-f182.google.com (mail-io0-f182.google.com [209.85.223.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07BE826C03;
-        Tue, 26 Jun 2018 16:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530031507;
-        bh=jj1x94cUnVXL6neY2k3LHiA3Afq7+NPR1mrHXnDWxZE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ScSXIVCCsOoRhtzTeNWTXoJp+ePI5KvLx7XVXlmeVNwZ9DCGhnj8gz5RbELZVN9+U
-         9CzGiwE3+j2ACSearUEAgshYNvwebT1mv5vVrwe5JmgLdoRqFobykabOc/sgriWnB0
-         fOQvqd1jcXkknNu5mXhy0sCIBP32sVTSLrv7mwa0=
-Received: by mail-io0-f182.google.com with SMTP id l19-v6so16585109ioj.5;
-        Tue, 26 Jun 2018 09:45:07 -0700 (PDT)
-X-Gm-Message-State: APt69E1GgdOfLbvKqn1bt33rq3WGsUtkGmivHKZOqmgniTnbGYN4zjvr
-        mSdMhF8OgaOwjvagCgpn5c1vX9EZdSY/8GsCkw==
-X-Google-Smtp-Source: AAOMgpdUhOSMuk+PH+tDgmtJ8WeZJlBqO2PBeEOZbE/qfpy3YKz1Ef8lreN1w9zwTR92gh+2WrsgwyTqFOhVM0f2slM=
-X-Received: by 2002:a6b:c696:: with SMTP id w144-v6mr1890709iof.79.1530031506432;
- Tue, 26 Jun 2018 09:45:06 -0700 (PDT)
+        Tue, 26 Jun 2018 12:45:16 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:41971 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752215AbeFZQpK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 12:45:10 -0400
+Received: by mail-yb0-f195.google.com with SMTP id y187-v6so5886334yby.8
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 09:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=f3P/2GUaNNmyvgMsxP0iPouVUKbOuGn2h38+V/ujWzw=;
+        b=rWS0zCXHaP2r74M+VXMM+nEKYGI0ZWERpEq6TLQrX8diZp5wvZgT9N8yCndXyVBhsS
+         KlLYig0SeYeo4T4r6jUxubRdIo2uYMHuiTYUT1KabJpf+ftO1NQuresCI4tmgxvQoVcz
+         iZnUg6E7lefBWSuVl1APU1t8uDfZRMznQyZAoZZJ4ay6QksjO0/h76BxmomAqMeMvfkx
+         Y7mhYaJK/nlZ9kNbMXLSH/IgDEydGQzAQP+j5DYPqXAA7n4H1X0q3pNEEhCT19+hLzzI
+         VllRsLYS2KKEhFYsb09Jo7B425aodzEYdDSaHgLOlfmNU8g0/xKEy3cG64UTOG0ZiE4n
+         TeIQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=f3P/2GUaNNmyvgMsxP0iPouVUKbOuGn2h38+V/ujWzw=;
+        b=C+Gtd+V2jlPBByLTMq71NCJtocHi2ZkQOitdKDNh6JoaOIwIhCZ69Skr6IF3EG5P0V
+         Nc+x3NMtWAbTDfhT8+WEa+Apod1YM589jUNc/hThUxUk3bDh6aCrRlSW9PuA7icYqAjY
+         vxx6IuRTyOrzQlxwjLgbThZlmsmQW9yspre+c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=f3P/2GUaNNmyvgMsxP0iPouVUKbOuGn2h38+V/ujWzw=;
+        b=Kr9v09GK5Pb8nIBdgqOOPP2IbbERKuuQqOZLgVOCYiNj+gaTXZstL9cYyjVSoO2RVx
+         YIJuv+T5qGJICI3v6t4q6wKC8ZKXCAL/d/qWuB13uBYGRiTxGuFrXEx6VrAb2SVMItby
+         FDC5iYATSdtKz2f7rMEaVSMC5ODsMkabS2LownGdLARdQSFNfbvcE/qfgLVgMuCT57Us
+         sBsbLXBBM/x0UQfoo0PfPaQ9qChxoROV+j0r3GSqKV5Ix2bMMDXPKqgn6dq5eKz+u6NU
+         PhvUPO9PfGAmrELEtxXdp0H18JvwBTar9R/NmIhgAcmYqy82TP5D/taq5nARNP31hLAB
+         t34g==
+X-Gm-Message-State: APt69E1uFyunO+FAo2WUaQsJcfEpwiMQEQzaeYS5W3xD9xNh5Zj8AAmY
+        woPPRT/nopqthfqbjNVTHsbCMabM970KpZTf275Siw==
+X-Google-Smtp-Source: ADUXVKJQ23R8OGfmYHmzabm7WTDmMFhbWisIhlZodW9CbEmhL6F0wXUW2iZfyB+3FnYEVVK6y6pLyBBWyZ+HQZf2AQI=
+X-Received: by 2002:a25:ce8b:: with SMTP id x133-v6mr1175320ybe.118.1530031510024;
+ Tue, 26 Jun 2018 09:45:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <1529994128-26770-1-git-send-email-alanx.chiang@intel.com> <1529994128-26770-2-git-send-email-alanx.chiang@intel.com>
-In-Reply-To: <1529994128-26770-2-git-send-email-alanx.chiang@intel.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 26 Jun 2018 10:44:53 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLEK5gevV6N6qiqX2xya+S+pWfwbWsmhD3rjKoJyy-shA@mail.gmail.com>
-Message-ID: <CAL_JsqLEK5gevV6N6qiqX2xya+S+pWfwbWsmhD3rjKoJyy-shA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: at24: Add address-width property
-To:     Alan Chiang <alanx.chiang@intel.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Andy Yeh <andy.yeh@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Mark Rutland <mark.rutland@arm.com>,
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 09:45:09
+ -0700 (PDT)
+In-Reply-To: <20180626092041.mxfg4lxcvxfivzc2@gondor.apana.org.au>
+References: <20180625211026.15819-1-keescook@chromium.org> <20180625211026.15819-12-keescook@chromium.org>
+ <20180626092041.mxfg4lxcvxfivzc2@gondor.apana.org.au>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 26 Jun 2018 09:45:09 -0700
+X-Google-Sender-Auth: aoBJ25LblkmlO__Xa0_adn7svsk
+Message-ID: <CAGXu5jKYb-0NNvOcN79hzqU7O6vCFhMTBDGBL8Knuoc-YHamPg@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, qat-linux@intel.com,
+        dm-devel@redhat.com, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 12:22 AM <alanx.chiang@intel.com> wrote:
+On Tue, Jun 26, 2018 at 2:20 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Mon, Jun 25, 2018 at 02:10:26PM -0700, Kees Cook wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> caps the skcipher request size similar to other limits and adds a
+>> sanity check at registration. In a manual review of the callers of
+>> crypto_skcipher_set_reqsize(), the largest was 384:
+>>
+>> 4     sun4i_cipher_req_ctx
+>> 6     safexcel_cipher_req
+>> 8     cryptd_skcipher_request_ctx
+>> 80    cipher_req_ctx
+>> 80    skcipher_request
+>> 96    crypto_rfc3686_req_ctx
+>> 104   nitrox_kcrypt_request
+>> 144   mv_cesa_skcipher_std_req
+>> 384   rctx
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+>> Cc: "David S. Miller" <davem@davemloft.net>
+>> Cc: linux-crypto@vger.kernel.org
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
 >
-> From: "alanx.chiang" <alanx.chiang@intel.com>
+> This has the same issue as the ahash reqsize patch.
 
-Please fix your author name and send bindings to the DT list if you
-want them reviewed.
+Which are likely to be wrapped together? Should I take this to 512 or
+something else?
 
->
-> The AT24 series chips use 8-bit address by default. If some
-> chips would like to support more than 8 bits, should add the compatible
-> field for specfic chips in the driver.
->
-> Provide a flexible way to determine the addressing bits through
-> address-width in this patch.
->
-> Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
-> Signed-off-by: Andy Yeh <andy.yeh@intel.com>
->
-> ---
-> since v1:
-> -- Remove the address-width field in the example.
->
-> ---
->  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
-> index 61d833a..9467482 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.txt
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.txt
-> @@ -72,6 +72,8 @@ Optional properties:
->
->    - wp-gpios: GPIO to which the write-protect pin of the chip is connected.
->
-> +  - address-width : number of address bits (one of 8, 16).
-> +
->  Example:
->
->  eeprom@52 {
-> --
-> 2.7.4
->
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
