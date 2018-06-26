@@ -2,80 +2,120 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E718C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 156FFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4454A26AC5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:17:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4454A26AC5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id AAACF21D69
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:19:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAACF21D69
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933684AbeFZURu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:17:50 -0400
-Received: from smtprelay0168.hostedemail.com ([216.40.44.168]:54979 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933482AbeFZURs (ORCPT
+        id S1755068AbeFZUTv (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:19:51 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:43807 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754177AbeFZUTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:17:48 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 9539E181D340F;
-        Tue, 26 Jun 2018 20:17:47 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: girl64_269f09773ef39
-X-Filterd-Recvd-Size: 1851
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 26 Jun 2018 20:17:45 +0000 (UTC)
-Message-ID: <96782a8bbc8d5a8a911447beda78ca4eed6b9f04.camel@perches.com>
-Subject: Re: [PATCH v3 3/4] staging: rtl8723bs: use ether_addr_copy() in
- rtw_macaddr_cfg()
-From:   Joe Perches <joe@perches.com>
-To:     Michael Straube <straube.linux@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Tue, 26 Jun 2018 13:17:44 -0700
-In-Reply-To: <37cca7e4-3c1f-b1ab-14b3-fd3dbbae8b01@gmail.com>
-References: <20180626081409.9518-1-straube.linux@gmail.com>
-         <20180626081409.9518-3-straube.linux@gmail.com>
-         <CAHp75Vc3gEyP+h_XtJV7zKZV0J++Nyr04au7Rtu3h5y0JJASXg@mail.gmail.com>
-         <37cca7e4-3c1f-b1ab-14b3-fd3dbbae8b01@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 26 Jun 2018 16:19:47 -0400
+Received: by mail-yw0-f196.google.com with SMTP id r19-v6so6532346ywc.10;
+        Tue, 26 Jun 2018 13:19:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=sEs8xYQqaOmmEu9IKPYDXtH4HFrJC1G3e+oD+2L+L/4=;
+        b=Naf1UVQCmbfcX+0c1fvlBPpZJruxjK3yGRweNR/90fDmNc1/r3ysNUFdMCYKkvNaAQ
+         MBzSoD/7GIitW7eGe1+XlL8uUe4htJsoZYpCmHal1mssiFkGuJuUMcyPkZekWRqCgqi7
+         UJfWJ/phjup8HyzELmHhuE4+jdrkIma04lMNTSViAaYvo/nnmMcwR1VK8e3V9JeTkviF
+         4LeFpeoYzzdg8BUUztr3LS/UD1obAXD4tPeAY8AwuzdiE44Kfgw4ICRiL1KaqHMMMIeq
+         wR4CFv/PXuu2J8Mm2fwEL1JslAhCjpWbs4zSguTOt8GQWc37pGHxJdvq5c4p4QMA9tOj
+         1hSw==
+X-Gm-Message-State: APt69E19RPS1DLwAwyKp+SePxaZ4W/70ec1M7k14/jUwHAA5z9ZPJl4V
+        KYH+fmS348Ainu2prELX8g==
+X-Google-Smtp-Source: AAOMgpfovofvozXKjQrtR+6W/wFDBC37fbSObvademvSjcDZPlQhcokgfS45A9ZUOWsNONw2hQJ4Mg==
+X-Received: by 2002:a0d:fb81:: with SMTP id l123-v6mr1590462ywf.47.1530044386010;
+        Tue, 26 Jun 2018 13:19:46 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id d203-v6sm936351ywe.5.2018.06.26.13.19.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 13:19:45 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 14:19:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc:     devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Anthony Kim <anthony.kim@hideep.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mips@linux-mips.org,
+        netdev@vger.kernel.org, linux-pm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
+Message-ID: <20180626201944.GA24678@rob-hp-laptop>
+References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-26 at 21:44 +0200, Michael Straube wrote:
-> On 06/26/18 19:32, Andy Shevchenko wrote:
-> > On Tue, Jun 26, 2018 at 11:14 AM, Michael Straube
-> > <straube.linux@gmail.com> wrote:
-> > > Use ether_addr_copy() instead of memcpy() to copy the mac address.
-> > > 
-> > 
-> > Suggested-by ?
-> > 
+On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
+> Multiple binding documents have various forms of unbalanced quotation
+> marks. Fix them.
 > 
-> I'll add it. Sorry, I was not aware of the Suggested-by tag.
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> ---
 > 
-> > Btw, ensure that the source and destination buffers are aligned to u16
-> > as required by API.
-> 
-> To be honest I'm not sure how to do that excactly.
-> 
-> Use __align(2) in the array declarations? e.g.:
-> 
->          u8 mac[ETH_ALEN] __align(2);
+> Should I split this patch so that different parts can go through different trees?
 
-All initial function automatics are naturally aligned.
-> 
+No, I applied it. Thanks.
+
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
+>  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
+>  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
+>  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
+>  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
+>  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
+>  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
+>  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
+>  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
+>  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
+>  12 files changed, 12 insertions(+), 12 deletions(-)
