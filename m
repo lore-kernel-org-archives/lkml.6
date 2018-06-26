@@ -6,53 +6,54 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50991C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B88C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 133692658A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 133692658A
+	by mail.kernel.org (Postfix) with ESMTP id 47FC02658D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:54:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47FC02658D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751895AbeFZGyI (ORCPT
+        id S1752273AbeFZGyS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 02:54:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44851 "EHLO
+        Tue, 26 Jun 2018 02:54:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47185 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750919AbeFZGyG (ORCPT
+        with ESMTP id S1751998AbeFZGyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 02:54:06 -0400
+        Tue, 26 Jun 2018 02:54:16 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5Q6rHk11591190
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5Q6rlTt1591209
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 25 Jun 2018 23:53:17 -0700
+        Mon, 25 Jun 2018 23:53:47 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5Q6rHFq1591187;
-        Mon, 25 Jun 2018 23:53:17 -0700
-Date:   Mon, 25 Jun 2018 23:53:17 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5Q6rlrI1591206;
+        Mon, 25 Jun 2018 23:53:47 -0700
+Date:   Mon, 25 Jun 2018 23:53:47 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-933ccf2002aaef1037cb676622a694f5390c3d59@git.kernel.org>
-Cc:     namhyung@kernel.org, mingo@kernel.org, jolsa@kernel.org,
-        tglx@linutronix.de, brueckner@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, tmricht@linux.ibm.com,
-        dsahern@gmail.com, hpa@zytor.com, kim.phillips@arm.com,
-        schwidefsky@de.ibm.com, peterz@infradead.org, acme@redhat.com,
-        heiko.carstens@de.ibm.com, alexander.shishkin@linux.intel.com
-Reply-To: kim.phillips@arm.com, schwidefsky@de.ibm.com,
-          peterz@infradead.org, acme@redhat.com,
-          alexander.shishkin@linux.intel.com, heiko.carstens@de.ibm.com,
-          mingo@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
-          jolsa@kernel.org, brueckner@linux.vnet.ibm.com,
-          linux-kernel@vger.kernel.org, tmricht@linux.ibm.com,
-          dsahern@gmail.com, hpa@zytor.com
-In-Reply-To: <20180611093422.1005-1-jolsa@kernel.org>
-References: <20180611093422.1005-1-jolsa@kernel.org>
+Message-ID: <tip-16ddcfbf7f3d07aa781e26b39f2c28636a4ed2fd@git.kernel.org>
+Cc:     mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, dsahern@gmail.com, kim.phillips@arm.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        tmricht@linux.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, brueckner@linux.vnet.ibm.com,
+        acme@redhat.com, hpa@zytor.com, tglx@linutronix.de,
+        jolsa@kernel.org
+Reply-To: hpa@zytor.com, acme@redhat.com, tglx@linutronix.de,
+          jolsa@kernel.org, heiko.carstens@de.ibm.com,
+          brueckner@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+          tmricht@linux.ibm.com, schwidefsky@de.ibm.com,
+          peterz@infradead.org, kim.phillips@arm.com, dsahern@gmail.com,
+          alexander.shishkin@linux.intel.com, mingo@kernel.org,
+          namhyung@kernel.org
+In-Reply-To: <20180611093422.1005-2-jolsa@kernel.org>
+References: <20180611093422.1005-2-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tests: Add event parsing error handling to
- parse events test
-Git-Commit-ID: 933ccf2002aaef1037cb676622a694f5390c3d59
+Subject: [tip:perf/urgent] perf tests: Add valid callback for parse-events
+ test
+Git-Commit-ID: 16ddcfbf7f3d07aa781e26b39f2c28636a4ed2fd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -66,90 +67,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  933ccf2002aaef1037cb676622a694f5390c3d59
-Gitweb:     https://git.kernel.org/tip/933ccf2002aaef1037cb676622a694f5390c3d59
+Commit-ID:  16ddcfbf7f3d07aa781e26b39f2c28636a4ed2fd
+Gitweb:     https://git.kernel.org/tip/16ddcfbf7f3d07aa781e26b39f2c28636a4ed2fd
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 11 Jun 2018 11:34:21 +0200
+AuthorDate: Mon, 11 Jun 2018 11:34:22 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 25 Jun 2018 11:59:36 -0300
 
-perf tests: Add event parsing error handling to parse events test
+perf tests: Add valid callback for parse-events test
 
-Add missing error handling for parse_events calls in test_event function
-that led to following segfault on s390:
+Adding optional 'valid' callback for events tests in parse-events
+object, so we don't try to parse PMUs, which are not supported.
 
-  running test 52 'intel_pt//u'
-  perf: Segmentation fault
-  ...
-  /lib64/libc.so.6(vasprintf+0xe6) [0x3fffca3f106]
-  /lib64/libc.so.6(asprintf+0x46) [0x3fffca1aa96]
-  ./perf(parse_events_add_pmu+0xb8) [0x80132088]
-  ./perf(parse_events_parse+0xc62) [0x8019529a]
-  ./perf(parse_events+0x98) [0x801341c0]
-  ./perf(test__parse_events+0x48) [0x800cd140]
-  ./perf(cmd_test+0x26a) [0x800bd44a]
-  test child interrupted
+Following line is displayed for skipped test:
 
-Adding the struct parse_events_error argument to parse_events call. Also
-adding parse_events_print_error to get more details on the parsing
-failures, like:
-
-  # perf test 6 -v
-  running test 52 'intel_pt//u'failed to parse event 'intel_pt//u', err 1, str 'Cannot find PMU `intel_pt'. Missing kernel support?'
-  event syntax error: 'intel_pt//u'
-                       \___ Cannot find PMU `intel_pt'. Missing kernel support?
+  running test 52 'intel_pt//u'... SKIP
 
 Committer note:
 
-Use named initializers in the struct parse_events_error variable to
-avoid breaking the build on centos5, 6 and others with a similar gcc:
+Use named initializers in the struct evlist_test variable to avoid
+breaking the build on centos:5, 6 and others with a similar gcc:
 
   cc1: warnings being treated as errors
-  tests/parse-events.c: In function 'test_event':
-  tests/parse-events.c:1696: error: missing initializer
-  tests/parse-events.c:1696: error: (near initialization for 'err.str')
+  tests/parse-events.c: In function 'test_pmu_events':
+  tests/parse-events.c:1817: error: missing initializer
+  tests/parse-events.c:1817: error: (near initialization for 'e.type')
 
-Reported-by: Kim Phillips <kim.phillips@arm.com>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Kim Phillips <kim.phillips@arm.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Kim Phillips <kim.phillips@arm.com>
 Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: http://lkml.kernel.org/r/20180611093422.1005-1-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180611093422.1005-2-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/parse-events.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/perf/tests/parse-events.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 7d4077068454..9751e7563a45 100644
+index 9751e7563a45..61211918bfba 100644
 --- a/tools/perf/tests/parse-events.c
 +++ b/tools/perf/tests/parse-events.c
-@@ -1686,6 +1686,7 @@ static struct terms_test test__terms[] = {
+@@ -1309,6 +1309,11 @@ static int test__checkevent_config_cache(struct perf_evlist *evlist)
+ 	return 0;
+ }
  
- static int test_event(struct evlist_test *e)
++static bool test__intel_pt_valid(void)
++{
++	return !!perf_pmu__find("intel_pt");
++}
++
+ static int test__intel_pt(struct perf_evlist *evlist)
  {
-+	struct parse_events_error err = { .idx = 0, };
+ 	struct perf_evsel *evsel = perf_evlist__first(evlist);
+@@ -1375,6 +1380,7 @@ struct evlist_test {
+ 	const char *name;
+ 	__u32 type;
+ 	const int id;
++	bool (*valid)(void);
+ 	int (*check)(struct perf_evlist *evlist);
+ };
+ 
+@@ -1648,6 +1654,7 @@ static struct evlist_test test__events[] = {
+ 	},
+ 	{
+ 		.name  = "intel_pt//u",
++		.valid = test__intel_pt_valid,
+ 		.check = test__intel_pt,
+ 		.id    = 52,
+ 	},
+@@ -1690,6 +1697,11 @@ static int test_event(struct evlist_test *e)
  	struct perf_evlist *evlist;
  	int ret;
  
-@@ -1693,10 +1694,11 @@ static int test_event(struct evlist_test *e)
++	if (e->valid && !e->valid()) {
++		pr_debug("... SKIP");
++		return 0;
++	}
++
+ 	evlist = perf_evlist__new();
  	if (evlist == NULL)
  		return -ENOMEM;
+@@ -1716,10 +1728,11 @@ static int test_events(struct evlist_test *events, unsigned cnt)
+ 	for (i = 0; i < cnt; i++) {
+ 		struct evlist_test *e = &events[i];
  
--	ret = parse_events(evlist, e->name, NULL);
-+	ret = parse_events(evlist, e->name, &err);
- 	if (ret) {
--		pr_debug("failed to parse event '%s', err %d\n",
--			 e->name, ret);
-+		pr_debug("failed to parse event '%s', err %d, str '%s'\n",
-+			 e->name, ret, err.str);
-+		parse_events_print_error(&err, e->name);
- 	} else {
- 		ret = e->check(evlist);
+-		pr_debug("running test %d '%s'\n", e->id, e->name);
++		pr_debug("running test %d '%s'", e->id, e->name);
+ 		ret1 = test_event(e);
+ 		if (ret1)
+ 			ret2 = ret1;
++		pr_debug("\n");
  	}
+ 
+ 	return ret2;
+@@ -1801,7 +1814,7 @@ static int test_pmu_events(void)
+ 	}
+ 
+ 	while (!ret && (ent = readdir(dir))) {
+-		struct evlist_test e;
++		struct evlist_test e = { .id = 0, };
+ 		char name[2 * NAME_MAX + 1 + 12 + 3];
+ 
+ 		/* Names containing . are special and cannot be used directly */
