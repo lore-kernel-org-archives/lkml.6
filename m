@@ -2,157 +2,87 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E609C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3724C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B937326B8A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:39:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B937326B8A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 92EE226B84
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:46:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92EE226B84
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965671AbeFZNjl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:39:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49732 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935299AbeFZNjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:39:40 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C5D4981A4EB8;
-        Tue, 26 Jun 2018 13:39:39 +0000 (UTC)
-Received: from [10.36.118.60] (unknown [10.36.118.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 709C62026D6A;
-        Tue, 26 Jun 2018 13:39:38 +0000 (UTC)
-Subject: Re: [PATCH] userfaultfd: hugetlbfs: Fix userfaultfd_huge_must_wait
- pte access
-To:     Janosch Frank <frankja@linux.ibm.com>, mike.kravetz@oracle.com,
-        aarcange@redhat.com
-Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20180626132421.78084-1-frankja@linux.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <7f1d8e55-d90a-d61a-a087-ff879018e8e4@redhat.com>
-Date:   Tue, 26 Jun 2018 15:39:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935522AbeFZNqQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:46:16 -0400
+Received: from sauhun.de ([88.99.104.3]:52782 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933522AbeFZNqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:46:15 -0400
+Received: from localhost (unknown [82.202.112.231])
+        by pokefinder.org (Postfix) with ESMTPSA id D550256A485;
+        Tue, 26 Jun 2018 15:46:12 +0200 (CEST)
+Date:   Tue, 26 Jun 2018 17:46:07 +0400
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     linux-kernel@vger.kernel.org,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        Michael Shych <michaelsh@mellanox.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 1/5] i2c: smbus: add unlocked __i2c_smbus_xfer variant
+Message-ID: <20180626134606.h4ciolw23t6qnrjb@ninjato>
+References: <20180620085157.30121-1-peda@axentia.se>
+ <20180620085157.30121-2-peda@axentia.se>
+ <20180626023757.l54suaryim2fieq3@ninjato>
+ <79E4A06C-26EF-4FF4-AFEA-7E7769FDF995@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <20180626132421.78084-1-frankja@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 26 Jun 2018 13:39:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 26 Jun 2018 13:39:39 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hauj3d2ynysbmlnz"
+Content-Disposition: inline
+In-Reply-To: <79E4A06C-26EF-4FF4-AFEA-7E7769FDF995@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.06.2018 15:24, Janosch Frank wrote:
-> Use huge_ptep_get to translate huge ptes to normal ptes so we can
-> check them with the huge_pte_* functions. Otherwise some architectures
-> will check the wrong values and will not wait for userspace to bring
-> in the memory.
-> 
-> Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-> Fixes: 369cd2121be4 ("userfaultfd: hugetlbfs: userfaultfd_huge_must_wait for hugepmd ranges")
-> ---
->  fs/userfaultfd.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 123bf7d516fc..594d192b2331 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -222,24 +222,26 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
->  					 unsigned long reason)
->  {
->  	struct mm_struct *mm = ctx->mm;
-> -	pte_t *pte;
-> +	pte_t *ptep, pte;
->  	bool ret = true;
->  
->  	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
->  
-> -	pte = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
-> -	if (!pte)
-> +	ptep = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
-> +
-> +	if (!ptep)
->  		goto out;
->  
->  	ret = false;
-> +	pte = huge_ptep_get(ptep);
->  
->  	/*
->  	 * Lockless access: we're in a wait_event so it's ok if it
->  	 * changes under us.
->  	 */
-> -	if (huge_pte_none(*pte))
-> +	if (huge_pte_none(pte))
->  		ret = true;
-> -	if (!huge_pte_write(*pte) && (reason & VM_UFFD_WP))
-> +	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
->  		ret = true;
->  out:
->  	return ret;
-> 
 
-Indeed, this only works by luck on x86 and ppc, but not on s390x.
+--hauj3d2ynysbmlnz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
 
--- 
+> I don't think it's that easy as I just thought about another problem
+> with lifting the locking from the emulation function. It calls
+> kzalloc(..., GFP_KERNEL), at least in some cases, and that's not a
+> very good idea from atomic/irq context...
 
-Thanks,
+Right. However, we could simply bail out early when we are in atomic
+context. Simply no DMA then...
 
-David / dhildenb
+
+--hauj3d2ynysbmlnz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsyQ54ACgkQFA3kzBSg
+KbbisxAAgJ1Hqsg7KSWJ8Nhdf/n/x4KMtajyVDYr6gcblvLd6vm4JNmmBscMtJve
+LfHaU1qFRJMMmEUQOzjNcLdC7q5ZnFWEz6YgX2yuoRp4VMw9RAFVmlM16zoZyMOA
+0jKNfJ8nTudVonSBB/4nfGYUqGbKEqJqklaGhqu4Ga7SnF1JWgrWyAbXGEHiQSez
+Xzpm76VeDCyp2/WYP8V1Lw46zC5j5Zkh3PH7sStw2BMCIDOYK8ipXzU3rl8akdbi
+DM0FuB9CzY2MnTfhvhIM6RsNBeJo1KDMlzYG9WY2yTI4kQ/GcNO2lqFsSUTxsrKT
+sJ8vRiVhgY0KmBKBB3hsGCVvYt6meof1TaLHb2iUK2IYjc1XAlC26JM9hLSEg+X4
+6qi3gr/xi8vU53Fgmjs3KkA6rUr+ivaXU4pkIy0WFTWwRpJQ4pBLzEzdQEQ7VE0J
+MPWQ1WWVMcI8FkCL+krUsaPdR1yhVZH7DNAj6xxfGu9QDdBGNLz/c8pd2ghk4CuP
+2kIIjC1v4oIOx5kxFXoBe3NhtAWhYY7MrTJnUDKIUnVtj2Z+FZiQIcJisu8e7Zob
+5LdQdcFa1qhBw8jRkgUlQhAsil4sycWQcwSoaV/CCxquP2Yc0LYCJ9nzThn24p2H
+V66XHFValUM+jOqxQkFg5SA7wXu9U+Omm6gZTObiJEza0LzFhpY=
+=cn0W
+-----END PGP SIGNATURE-----
+
+--hauj3d2ynysbmlnz--
