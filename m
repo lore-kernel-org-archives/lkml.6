@@ -2,136 +2,117 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47022C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B022C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0BC8267C8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:30:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32BB025E8E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:30:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nN6IzVN4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0BC8267C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="esJPzil5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32BB025E8E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751914AbeFZPak (ORCPT
+        id S1752056AbeFZPaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:30:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47930 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751073AbeFZPai (ORCPT
+        Tue, 26 Jun 2018 11:30:46 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33324 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751073AbeFZPal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:30:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4CCX95g5OocRVXIYw8EEcqFqu4FWgLlxdZJrizsnFvs=; b=nN6IzVN4Fw1x6g8XJkUHPxU3C
-        PIs4xKtlQYqCnWQ9lr0vJg7/1A8dvXWAMShldTiBJNgHw2h5LOBfIVWx3ebFWnmB/fY4uTY0qIEof
-        p+RIHHQOOLZfYaJnfmn4s7LHw3Ynw18fIn9ESZvlQKJRlP2Y2DFXKmR2gsL3vxkupIcuwxGP8wK2e
-        M/6bBPC/uj54ZXMW0qBdnAestoUk7IXqYOIZwQa689VZcDi91xy9NEvUmmwNdRAmpja4NlZK16nZX
-        WothseLcTWTx5XO+Bl46PlyAJkwr4Cn/rdDXzz0CUs4hL7QNn7Ep6m5JyzivTKBdx95lQQMcb7JFO
-        zcSUhWsBA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXpvH-0008Lo-Bd; Tue, 26 Jun 2018 15:30:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CF4C82029F1D7; Tue, 26 Jun 2018 17:30:25 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 17:30:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] doc: Update wake_up() & co. memory-barrier guarantees
-Message-ID: <20180626153025.GD2458@hirez.programming.kicks-ass.net>
-References: <1529918258-7295-1-git-send-email-andrea.parri@amarulasolutions.com>
- <20180625095031.GX2494@hirez.programming.kicks-ass.net>
- <20180625105618.GA12676@andrea>
- <20180625123121.GY2494@hirez.programming.kicks-ass.net>
- <20180625131643.GA15126@andrea>
- <20180625141830.GC2494@hirez.programming.kicks-ass.net>
- <20180625145611.GA16333@andrea>
- <20180625163705.GE2494@hirez.programming.kicks-ass.net>
- <20180626100942.GA8295@andrea>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626100942.GA8295@andrea>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 26 Jun 2018 11:30:41 -0400
+Received: by mail-lf0-f68.google.com with SMTP id b7-v6so6863109lfa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=aN6HZZHl2Cz1VEDT1VHZFwOAVPnA7t5zp2KaLIWq7Kw=;
+        b=esJPzil5vZpMKd4EIumFXRihPOwpKN+dh3Q4SIUk8O21irdJwNGnuo/eBaVRAB8nxB
+         YADGXTZllCv2TJIZ4o3HKs2o3LrhqrhUKzrzR8TlA2L6V3mMTghDpbrKFHyHG6+ILCve
+         FPQ2lhjVwuzD/ZQ12BUV8IXaX8UUH/mxsUodk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aN6HZZHl2Cz1VEDT1VHZFwOAVPnA7t5zp2KaLIWq7Kw=;
+        b=OhhqsBhoOscg/gSMTa85HvvsCRzWeVSvXnM7fSi6Z39yPbU005QU24NvJa64UUb5vN
+         rP3UOfoaBttLEeOfJMz8MG75upFQvAeG/0nXoBLNQcoDSzFq2CY5AoOknxKbUgZi7EYY
+         2YF0ySDnll6T2Q90Eyhb5oqE8CZoGapaBrFbym/mWlRnCaswbx0PPtgqGbuom0kQqSVa
+         l5GgjnDA/DgTbjvE78XzSXgi2BZUl8uUw85VFn3In6t/3Kxg6O5Bo4QE9+bDXX0nKdqN
+         1nFfb1BJlvn7V78eoB6i/W8APHNDvHikPCkYdgPQRVW9vJLgJQA7/dut4S8RWRjh/AmZ
+         eDhw==
+X-Gm-Message-State: APt69E3RqvxRpus8RuY1XmP3b8og1RSWVTAz2sHj10mxxcDbZ9cinyfv
+        9BZfeLaOTIhcDDhS+0mtwPp9/P++EHQ=
+X-Google-Smtp-Source: AAOMgpeoTt49GCJ/sUtKplVr+STJ3cEyi8Y74eGvyuvQTtjbXV6DB84NxgJJcpAZEaR3MIbC7DsOvA==
+X-Received: by 2002:a19:6d11:: with SMTP id i17-v6mr1574017lfc.103.1530027040140;
+        Tue, 26 Jun 2018 08:30:40 -0700 (PDT)
+Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
+        by smtp.gmail.com with ESMTPSA id g17-v6sm306096ljg.27.2018.06.26.08.30.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 08:30:39 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org
+Cc:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] mips: configs: remove no longer needed config option
+Date:   Tue, 26 Jun 2018 17:30:35 +0200
+Message-Id: <20180626153035.361-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 12:09:42PM +0200, Andrea Parri wrote:
-> > > Same RFC for the first comment:
-> > > 
-> > >   /*
-> > >    * The above implies an smp_mb(), which matches with the smp_wmb() from
-> > >    * woken_wake_function() such that if we observe WQ_FLAG_WOKEN we must
-> > >    * also observe all state before the wakeup.
-> > >    */
-> > > 
-> > > What is the corresponding snippet & BUG_ON()?
-> > 
-> > The comment there suggest:
-> > 
-> > 	if (condition)
-> > 		break;
-> > 
-> > 	set_current_state(UNINTERRUPTIBLE);		condition = true;
-> > 	/* smp_mb() */					smp_wmb();
-> > 							wq_entry->flags |= WQ_FLAG_WOKEN;
-> > 	if (!wq_entry->flags & WQ_FLAG_WOKEN)
-> > 		schedule();
-> > 
-> > 
-> > 	BUG_ON((wq_entry->flags & WQ_FLAG_WOKEN) && !condition);
-> > 
-> > 
-> > But looking at that now, I think that's wrong. Because the the purpose
-> > was that, if we don't do the try_to_wake_up(), our task still needs to
-> > observe the condition store.
-> > 
-> > But for that we need a barrier between the wq_entry->flags load and the
-> > second condition test, which would (again) be B, not A.
-> 
-> Agreed.  Now that I stared at the code a bit more, I think that (A) is
-> still needed for the synchronization on "->state" and "->flags" (an SB
-> pattern seems again to be hidden in the call to try_to_wake_up()):
-> 
->   p->state = mode;                           wq_entry->flags |= WQ_FLAG_WOKEN;
->   smp_mb(); // A                             try_to_wake_up():
->   if (!(wq_entry->flags & WQ_FLAG_WOKEN))      <full barrier>
->      schedule()                                if (!(p->state & mode))
->                                                  goto out;
-> 
->   BUG_ON(!(wq_entry->flags & WQ_FLAG_WOKEN) && !(p->state & mode))
-> 
-> So, I think that we should keep (A).
+Since commit eedf265aa003 ("devpts: Make each mount of devpts an
+independent filesystem.") CONFIG_DEVPTS_MULTIPLE_INSTANCES isn't needed
+in the defconfig anymore.
 
-Yes, very much so. Once we actually get to use ttwu() that barrier is
-required.
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ arch/mips/configs/ip27_defconfig    | 1 -
+ arch/mips/configs/nlm_xlp_defconfig | 1 -
+ arch/mips/configs/nlm_xlr_defconfig | 1 -
+ 3 files changed, 3 deletions(-)
 
-> I am planning to send these changes (smp_mb() in woken_wake_function()
-> and fixes to the comments) as a separate patch.
+diff --git a/arch/mips/configs/ip27_defconfig b/arch/mips/configs/ip27_defconfig
+index 91a9c13e2c82..fbcbfc365c64 100644
+--- a/arch/mips/configs/ip27_defconfig
++++ b/arch/mips/configs/ip27_defconfig
+@@ -262,7 +262,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_8250_EXTENDED=y
+ CONFIG_SERIAL_8250_MANY_PORTS=y
+ CONFIG_SERIAL_8250_SHARE_IRQ=y
+-CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+ CONFIG_HW_RANDOM_TIMERIOMEM=m
+ CONFIG_I2C_CHARDEV=m
+ CONFIG_I2C_ALI1535=m
+diff --git a/arch/mips/configs/nlm_xlp_defconfig b/arch/mips/configs/nlm_xlp_defconfig
+index e8e1dd8e0e99..aec323ed6968 100644
+--- a/arch/mips/configs/nlm_xlp_defconfig
++++ b/arch/mips/configs/nlm_xlp_defconfig
+@@ -403,7 +403,6 @@ CONFIG_SERIO_SERPORT=m
+ CONFIG_SERIO_LIBPS2=y
+ CONFIG_SERIO_RAW=m
+ CONFIG_VT_HW_CONSOLE_BINDING=y
+-CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+ CONFIG_LEGACY_PTY_COUNT=0
+ CONFIG_SERIAL_NONSTANDARD=y
+ CONFIG_N_HDLC=m
+diff --git a/arch/mips/configs/nlm_xlr_defconfig b/arch/mips/configs/nlm_xlr_defconfig
+index c4477a4d40c1..88c185da23ce 100644
+--- a/arch/mips/configs/nlm_xlr_defconfig
++++ b/arch/mips/configs/nlm_xlr_defconfig
+@@ -336,7 +336,6 @@ CONFIG_SERIO_SERPORT=m
+ CONFIG_SERIO_LIBPS2=y
+ CONFIG_SERIO_RAW=m
+ CONFIG_VT_HW_CONSOLE_BINDING=y
+-CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+ CONFIG_LEGACY_PTY_COUNT=0
+ CONFIG_SERIAL_NONSTANDARD=y
+ CONFIG_N_HDLC=m
+-- 
+2.18.0
 
-Probably makes sense. Thanks for looking at this, I have vague memories
-of being slightly confused when I wrote all that :-)
