@@ -2,120 +2,97 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4243C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5869C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB4326CB7
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:00:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="tIliX7xe";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PQhzTSVo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AB4326CB7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 74E4426CBE
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:01:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E4426CBE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751927AbeFZPAg (ORCPT
+        id S1751074AbeFZPBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:00:36 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:34799 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeFZPAc (ORCPT
+        Tue, 26 Jun 2018 11:01:48 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33076 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbeFZPBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:00:32 -0400
-Received: by mail-vk0-f65.google.com with SMTP id q135-v6so10229547vkh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=8VWG8ND0Y6qAVmL34KXuajFXUm8NNrKQbdxw6E5XBPE=;
-        b=tIliX7xe+wh0XJiY6u3CTNVq6omaw4sSFGe8JqH1kZaJ3Po6ayvzmPICW3iuVC9cSz
-         E8lAoWihDqX+cz827aWRpU77R3QbRB4HsX9rsg4SQlONxoMEpmFWH4gxcsDlm+EE0Trl
-         OwWImfwvqdf/YNFNNUc/Isi1gGQRaY/uicUw5Bjj9pb/jJXa2tfS2YwHV1cBtdVJukvn
-         vGX52fDcNH09YN0KjiPGU3g79FRo97v8HDpu8oDg1PuI8DPpuSm7VSqPpADw81hTZk/Q
-         aN++TXoFl9i3WN1qI/xiUyBK5sbJmRWiNT+g/M20ylDie4kMX/j0p/aZMc4C9TFY2m0Q
-         IX7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=8VWG8ND0Y6qAVmL34KXuajFXUm8NNrKQbdxw6E5XBPE=;
-        b=PQhzTSVozzT/uO/SvzMZBDx+Lsw9S8+zzjaEfsoUEj5shCVibcrJYZopwWptnQPyp/
-         ZG32BISEPy0jjyZTee/tKPm7GKbRfcUqqof6q+h/zmLru22dxTqTxHCVzISSViWqiuaX
-         tSRuZ+K8axRFhkKsM70phqvGZ1LEc+5/ImltQ=
+        Tue, 26 Jun 2018 11:01:46 -0400
+Received: by mail-oi0-f68.google.com with SMTP id c6-v6so16312922oiy.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:01:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=8VWG8ND0Y6qAVmL34KXuajFXUm8NNrKQbdxw6E5XBPE=;
-        b=TfxzHzcgVwh2As3QycfuvyGxJHejLAHo4G3ljnShbWoeDFNPAteYCP3rvyQd5Tj4Uc
-         FgFM/T2cfhjTIUtn54xZu8uwjmA10Wc4NbYZYgwbHbLvGUZvRnULAvuN7UJl3T5koRHM
-         /5sdbWDKqbbDpS/tdcFElQumaPwcQ6GrKvFkNHd3yW0T6vMU1M23/qvXcQOLn80rwuVB
-         jf+7Iq9hh+uBTwYuylVm/OSZzp+HHCc76DMLKPKC+ztII6MEdjqLCwp8R+xSyrS69TnJ
-         Nf29e43K7dlZNvCryTQfeL5yAKcjT2+nIUnKn0uA4TvDHrAF0VJsvJwaPGmAVat1dB6n
-         93Ow==
-X-Gm-Message-State: APt69E3TxSAizJb2yGRNe7YrOhbisqTsPZrWDW6ETO4cavqwhzgWJWIP
-        C5Od/mBCOBLSHU2nVCXZgHRE0OeVFvj6C8EYxvR+sQ==
-X-Google-Smtp-Source: AAOMgpe7Ux+Jj39ARK4U7SufmvWilrEDJQ3aXkVXw07tc51W45qe1oYO/UNSIoMiJj+wGaCQfwjzl8ypUB2eTsz94ZA=
-X-Received: by 2002:a1f:2758:: with SMTP id n85-v6mr1160687vkn.117.1530025229893;
- Tue, 26 Jun 2018 08:00:29 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0IeRJqtCb6u37ZiRjnoecCIdORLnSm5nvg4cyKtipbg=;
+        b=nXjZ/T4dO8D3Ej0oVHoFP0kL2OZIJHtmFuaunxX1HGqlxzrtxMB/8/8NA/yEyeGAv2
+         jiE7WmT00GIfyFv5ec0b2CQgubhxbFa70Feg0nuJw9JfNKxs0JiskmgQzGcdeZYni8V+
+         8tASnMuU/lJ3fH6UHmB9snYkdPD0nWzQrl42nbnY25Gy/wWlsU/OC+Ov2cuSgteEB30C
+         NJ9A2sXuvzOM2NQqfW5BTj4CKKbk8liv+a32mE4Kpq/qk5VfpkzxH6oOI+3th+OLcy+5
+         4lgzFcQRy67eiIE4kyIDKQy10fEJP0dxqETLLfR6SOK9BKHGmT4fb0Xz59MFNnce+wox
+         WVIw==
+X-Gm-Message-State: APt69E3S5S7y949AT/tjiYFiUZj2GkuI6VZ93lSBUsXdxFdY368rIdfa
+        gE8P6UjktnL3AcShHQoFPboLS5+H7LJDClJwGXqoRQ==
+X-Google-Smtp-Source: AAOMgpez4DWM+kfiJAGa++mmFi2qRduZlmSuIhvdbc6g/rWG91+GZ1/ycgFehlpCwNTxOVbeTchOcQrsSQPkrqlyJh0=
+X-Received: by 2002:aca:5585:: with SMTP id j127-v6mr1034285oib.202.1530025305429;
+ Tue, 26 Jun 2018 08:01:45 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 08:00:29
- -0700 (PDT)
-In-Reply-To: <20180626120733.GD1779@sirena.org.uk>
-References: <cover.1529712888.git.collinsd@codeaurora.org> <35c4ea70cdf5caba560fb6f40e866ee8bc456d93.1529712888.git.collinsd@codeaurora.org>
- <CAD=FV=XVEEPgjBXxR+-46RgxLOq63Xvq-jtruoaCxccmMoKUuA@mail.gmail.com> <20180626120733.GD1779@sirena.org.uk>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 26 Jun 2018 08:00:29 -0700
-X-Google-Sender-Auth: xs74OPy14WLhqZdzwZ1OmzIh5ng
-Message-ID: <CAD=FV=X1E8Cz=L93G-zJwhM0R=N3YuBBhkvCnLvWuxMU9KJkTw@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] regulator: add QCOM RPMh regulator driver
-To:     Mark Brown <broonie@kernel.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <20180608171216.26521-14-jarkko.sakkinen@linux.intel.com>
+ <CALCETrW3aZJMMm1GqgPm-cOD3p7JvKxLj7j85KJwfNW2iHTj4A@mail.gmail.com>
+ <CALCETrVp1ZhrxF5bQDSaZpLucS88tErejj5JC6Jb0fB5etWRbA@mail.gmail.com>
+ <20180611115255.GC22164@hmswarspite.think-freely.org> <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
+ <20180612174535.GE19168@hmswarspite.think-freely.org> <CALCETrV-4D-M2ap1EFHQiQerYf_XgwLmBAx5WMvcCUefOODjOA@mail.gmail.com>
+ <CAOASepN9t3jF4ajfKLG_odTZddOvXjY_DqLQhRPWhJ-imtjkgg@mail.gmail.com>
+ <e3f8e5b9-aa1e-20da-37ac-3c3caafa66bc@fortanix.com> <b5c81504-83cd-8150-ebe4-41355026590f@fortanix.com>
+ <20180620210158.GA24328@linux.intel.com> <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
+ <73b7e4e3712074b73f4ac8211699d24dfdced6bf.camel@linux.intel.com>
+ <CALCETrXos3b-VJxLCb1nwP1x2s5jiDmuQDWVahTVdXGxhqqsDw@mail.gmail.com> <689641dc26a91f7b4b6bfdb763fec90bf7c3e984.camel@linux.intel.com>
+In-Reply-To: <689641dc26a91f7b4b6bfdb763fec90bf7c3e984.camel@linux.intel.com>
+From:   Nathaniel McCallum <npmccallum@redhat.com>
+Date:   Tue, 26 Jun 2018 11:01:34 -0400
+Message-ID: <CAOASepOq52tmDx5ycd6hDhKg9_+beZ0Y8zoVeOBbJu=LX8_2mA@mail.gmail.com>
+Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
+ launch enclave
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     luto@kernel.org, sean.j.christopherson@intel.com,
+        jethro@fortanix.com, Neil Horman <nhorman@redhat.com>,
+        x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        intel-sgx-kernel-dev@lists.01.org, hpa@zytor.com,
+        dvhart@infradead.org, tglx@linutronix.de, andy@infradead.org,
+        Peter Jones <pjones@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jun 26, 2018 at 4:44 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Mon, 2018-06-25 at 08:45 -0700, Andy Lutomirski wrote:
+> > I'm personally rather strongly in favor of the vastly simpler model in
+> > which we first merge SGX without LE support at all.  Instead we use
+> > the approach where we just twiddle the MSRs to launch normal enclaves
+> > without an init token at all, which is probably considerably faster
+> > and will remove several thousand lines of code.  If and when a bona
+> > fide use case for LE support shows up, we can work out the details and
+> > merge it.
+>
+> Andy, I was going to propose exactly the same :-)
+>
+> We can upstream SGX that supports only unlocked MSRs and that does
+> not preventing to upstream support for locked MSRs later. Even if
+> we had a consensus for locked MSRs, making two milestones for the
+> mainline would make perfect sense.
+>
+> I came into this conclusion last night because all the other review
+> comments not concerning the launch control are easily sorted out.
 
-On Tue, Jun 26, 2018 at 5:07 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Mon, Jun 25, 2018 at 11:50:52AM -0700, Doug Anderson wrote:
->
->> ...to this patch.  Speaking of which it might be getting very close to
->> time for this series to land along with David's other series, AKA:
->
->> * [1/2] regulator: of: add property for allowed modes specification
->>   https://patchwork.kernel.org/patch/10395731/
->
->> * [2/2] regulator: of: add support for allowed modes configuration
->>   https://patchwork.kernel.org/patch/10395725/
->
-> Please do not submit new versions of already applied patches, please
-> submit incremental updates to the existing code.  Modifying existing
-> commits creates problems for other users building on top of those
-> commits so it's best practice to only change pubished git commits if
-> absolutely essential.
-
-Sorry, wasn't suggesting making any changes to those two patches, just
-was noting the dependency.  ...but, as you said, the two dependent
-patches have already landed and I just didn't notice.  :(  Sorry for
-the noise.
-
--Doug
++1. Let's do this and get it merged without launch enclave support
+lockdown now. We can revisit this once we have hands on experience
+with the technology.
