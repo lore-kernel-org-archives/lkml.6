@@ -2,414 +2,123 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28F3C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A70C3C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46909264CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 204AD264D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 04:15:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IyDjSzuT";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MXBILQBM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46909264CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="GnWjFotU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204AD264D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751133AbeFZEEg (ORCPT
+        id S1751055AbeFZEPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 00:04:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47640 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751087AbeFZEEe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 00:04:34 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 976176081B; Tue, 26 Jun 2018 04:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529985873;
-        bh=on4Nki5MadikfUgoywnBX6cPf6LZUbDMNEDbJ6pjnZ4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IyDjSzuT6eMr+SJClR6nEPlhUmQ/sSlC7kkQ7BYEO97b2rjgD3LCTi8UDPxYveFkL
-         9iqpLjWi8mMHAKUY85mqzGw+4S5A0VpBVPtMxvG8kCzC5huLZne4TSqXkN2rleegnN
-         fiCmCVMVmie8lNuIfAj8viVF1GUCaUJ3P1Czb1SQ=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A6F0A60376;
-        Tue, 26 Jun 2018 04:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529985872;
-        bh=on4Nki5MadikfUgoywnBX6cPf6LZUbDMNEDbJ6pjnZ4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXBILQBM193kpAQdzoqT//T6gY6pa/tVkvb4nNVoU/QsBaTUw1N8PdyeP+gkCyhnb
-         NzER/nhJroYPVRIt4XlVqK6+yESX7JW6bCXd5+NKxTB2wMSQ7F10PaKFz9Vbx/rXEe
-         5/vpJ47f/YvHe+xYT1rOYA5Gebb2RBZ6eKj78wFI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6F0A60376
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org
-Cc:     linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V4 3/3] scsi: ufs: Add configfs support for ufs provisioning
-Date:   Tue, 26 Jun 2018 09:33:49 +0530
-Message-Id: <1529985829-18689-4-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529985829-18689-1-git-send-email-sayalil@codeaurora.org>
-References: <1529985829-18689-1-git-send-email-sayalil@codeaurora.org>
+        Tue, 26 Jun 2018 00:15:19 -0400
+Received: from mail-sn1nam01on0120.outbound.protection.outlook.com ([104.47.32.120]:53459
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750873AbeFZEPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 00:15:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4sfLhERWw+uYrLl/MPvP7NOlAcbr4qhGG13y29NmTcU=;
+ b=GnWjFotUQVDWUIOTwxAcptP1oonlYiBvQ7W2ANangxymUo2FDb6fBT+wLmQgXN0k5regY54HNJTjzHvZXUZYnkg6vAIPgkyPRD4Hl6M7MoNqxTQZnd0e+YkKYcq7Q9ajkBllQBVQfaA/m28YJzIzCLVPi1dZnwh8xUF8W6lixAg=
+Received: from DM5PR2101MB0728.namprd21.prod.outlook.com (10.167.110.153) by
+ DM5PR2101MB0728.namprd21.prod.outlook.com (10.167.110.153) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.930.5; Tue, 26 Jun 2018 04:15:15 +0000
+Received: from DM5PR2101MB0728.namprd21.prod.outlook.com
+ ([fe80::c9b4:8268:f6ba:8724]) by DM5PR2101MB0728.namprd21.prod.outlook.com
+ ([fe80::c9b4:8268:f6ba:8724%2]) with mapi id 15.20.0930.005; Tue, 26 Jun 2018
+ 04:15:15 +0000
+From:   Long Li <longli@microsoft.com>
+To:     Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Subject: RE: [Patch v2 11/15] CIFS: Pass page offset for calculating signature
+Thread-Topic: [Patch v2 11/15] CIFS: Pass page offset for calculating
+ signature
+Thread-Index: AQHT+E9kTqmTQaE0dUWSlwGWkLpLc6Ru1R8AgANB/VA=
+Date:   Tue, 26 Jun 2018 04:15:15 +0000
+Message-ID: <DM5PR2101MB0728DDBD53A756B6CEB9EEAECE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
+References: <20180530194807.31657-1-longli@linuxonhyperv.com>
+ <20180530194807.31657-12-longli@linuxonhyperv.com>
+ <7a9ee28d-4c18-c4fd-259b-1feeeb3fb83b@talpey.com>
+In-Reply-To: <7a9ee28d-4c18-c4fd-259b-1feeeb3fb83b@talpey.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2001:4898:80e8:a:fdde:db5c:c6fe:798]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0728;7:tCY7cKBAYsex0/ocVozqfil9JdWpSQs95Ahd/xUhwbg1Wgi0PWdn8DQ5Eas6cZ8aIuK0alT7uQhOezy1F+Liqr9d+d0BuiL906HB1dB225AqScbLcFRNuVVz30lGXt2NOlIwb88f9gSh5AdBgyGXIpi+enFECfJSGQm6VgbhiWNktR3pOq2WI03nkt/l6S4ZQgXE/eidtcXS3qspYkeWAEwSbj+6GxaXnOyKrEweiQJwbkxj+P1A7ju2th9Dl3BZ
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 0762c0fe-8923-492c-23e4-08d5db1b6ba7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0728;
+x-ms-traffictypediagnostic: DM5PR2101MB0728:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=longli@microsoft.com; 
+x-microsoft-antispam-prvs: <DM5PR2101MB07285497728E1395AF8051B8CE490@DM5PR2101MB0728.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(2018427008)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM5PR2101MB0728;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0728;
+x-forefront-prvs: 071518EF63
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(39860400002)(346002)(376002)(199004)(189003)(2906002)(478600001)(22452003)(316002)(25786009)(105586002)(76176011)(110136005)(7696005)(9686003)(8990500004)(68736007)(7736002)(74316002)(5660300001)(305945005)(2900100001)(8936002)(8676002)(106356001)(81156014)(81166006)(33656002)(10290500003)(446003)(11346002)(486006)(5250100002)(476003)(10090500001)(55016002)(86362001)(2201001)(14454004)(102836004)(6436002)(86612001)(53936002)(99286004)(2501003)(6116002)(186003)(46003)(229853002)(53546011)(6246003)(6506007)(14444005)(97736004)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0728;H:DM5PR2101MB0728.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: uy2Npo+eNPzAg1dMVowmizBMfaSuEsdTUvsLvnYMiLGxWdNDdo0sN6LkTW1a7UpQfjCj6Bywa7dr65BDJECu/P3hp+wfNwmu1OJRB6twmd60Ngldzgn8mFQpufDW/yhOeSamJQgKXIh5O7+JawFdd3OBNJKarInjzHpiaEgTNyGMU8GlUdK04MswlJRBafp4J2TYjbmZe9HaBKdO7ecGu1p8bs9OKJA0E5ydh0v3/a0vgL4W2PZ4Of+gS1ib6e6FfR/OcbJflb0Q6sXDYsh6/+SLCGfPM+H6ZvshaJjLunXDgRZuEM8Md/42OThzuLe0JwLwww6V3mAPJ3G7+ZLui+fHXSCDzNNdZ98u+fJWsgI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0762c0fe-8923-492c-23e4-08d5db1b6ba7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2018 04:15:15.8258
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0728
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add configfs support to provision ufs device at runtime.
-Usage:
-echo <desc_buf> > /config/ufshcd/ufs_provision
-To check provisioning status:
-cat /config/ufshcd/ufs_provision
-1 -> Success (Reboot device to check updated provisioning)
-
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- Documentation/ABI/testing/configfs-driver-ufs |  15 ++
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-configfs.c               | 198 ++++++++++++++++++++++++++
- drivers/scsi/ufs/ufs.h                        |   2 +
- drivers/scsi/ufs/ufshcd.c                     |   2 +
- drivers/scsi/ufs/ufshcd.h                     |  18 +++
- 6 files changed, 236 insertions(+)
- create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
- create mode 100644 drivers/scsi/ufs/ufs-configfs.c
-
-diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-new file mode 100644
-index 0000000..f6ef38e
---- /dev/null
-+++ b/Documentation/ABI/testing/configfs-driver-ufs
-@@ -0,0 +1,15 @@
-+What:		/config/ufshcd/ufs_provision
-+Date:		Jun 2018
-+KernelVersion:	4.14
-+Description:
-+		This file shows the status of runtime ufs provisioning.
-+		This can be used to provision ufs device if bConfigDescrLock is 0.
-+		Configuration buffer needs to be written in space separated format
-+		specificied as below:
-+		echo <bNumberLU> <bBootEnable> <bDescrAccessEn> <bInitPowerMode>
-+		<bHighPriorityLUN> <bSecureRemovalType> <bInitActiveICCLevel>
-+		<wPeriodicRTCUpdate> <bConfigDescrLock> <LUNum> <bLUEnable>
-+		<bBootLunID> <size_in_kb> <bDataReliability> <bLUWriteProtect>
-+		<bMemoryType> <bLogicalBlockSize> <bProvisioningType>
-+		<wContextCapabilities> <LUNtoGrow> <commit> <NumofLUNs>
-+		> /config/ufshcd/ufs_provision
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..d438e74 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
- ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+obj-$(CONFIG_CONFIGFS_FS) += ufs-configfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-new file mode 100644
-index 0000000..614b017
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-configfs.c
-@@ -0,0 +1,198 @@
-+/*
-+ * Copyright (c) 2018, Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/string.h>
-+#include <asm/unaligned.h>
-+#include <linux/configfs.h>
-+
-+#include "ufs.h"
-+#include "ufshcd.h"
-+
-+struct ufs_hba *hba;
-+
-+static ssize_t ufs_provision_show(struct config_item *item, char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE, "provision_enabled = %x\n",
-+		hba->provision_enabled);
-+}
-+
-+ssize_t ufshcd_desc_configfs_store(const char *buf, size_t count)
-+{
-+	struct ufs_config_descr *cfg = &hba->cfgs;
-+	char *strbuf;
-+	char *strbuf_copy;
-+	int desc_buf[count];
-+	int *pt;
-+	char *token;
-+	int i, ret;
-+	int value, commit = 0;
-+	int num_luns = 0;
-+	int KB_per_block = 4;
-+
-+	/* reserve one byte for null termination */
-+	strbuf = kmalloc(count + 1, GFP_KERNEL);
-+	if (!strbuf)
-+		return -ENOMEM;
-+
-+	strbuf_copy = strbuf;
-+	strlcpy(strbuf, buf, count + 1);
-+	memset(desc_buf, 0, count);
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
-+	if (ret) {
-+		dev_err(hba->dev, "%s: Failed reading bConfigDescrLock %d, cannot re-provision device!\n",
-+			__func__, ret);
-+		hba->provision_enabled = 0;
-+		goto out;
-+	}
-+	if (cfg->bConfigDescrLock == 1) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+		__func__, cfg->bConfigDescrLock);
-+		hba->provision_enabled = 0;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < count; i++) {
-+		token = strsep(&strbuf, " ");
-+		if (!token && i) {
-+			num_luns = desc_buf[i-1];
-+			dev_dbg(hba->dev, "%s: token %s, num_luns %d\n",
-+				__func__, token, num_luns);
-+			if (num_luns > 8) {
-+				dev_err(hba->dev, "%s: Invalid num_luns %d\n",
-+				__func__, num_luns);
-+				hba->provision_enabled = 0;
-+				goto out;
-+			}
-+			break;
-+		}
-+
-+		ret = kstrtoint(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
-+				__func__, ret, token);
-+			break;
-+		}
-+		desc_buf[i] = value;
-+		dev_dbg(hba->dev, " desc_buf[%d] 0x%x", i, desc_buf[i]);
-+	}
-+
-+	/* Fill in the descriptors with parsed configuration data */
-+	pt = desc_buf;
-+	cfg->bNumberLU = *pt++;
-+	cfg->bBootEnable = *pt++;
-+	cfg->bDescrAccessEn = *pt++;
-+	cfg->bInitPowerMode = *pt++;
-+	cfg->bHighPriorityLUN = *pt++;
-+	cfg->bSecureRemovalType = *pt++;
-+	cfg->bInitActiveICCLevel = *pt++;
-+	cfg->wPeriodicRTCUpdate = *pt++;
-+	cfg->bConfigDescrLock = *pt++;
-+	dev_dbg(hba->dev, "%s: %u %u %u %u %u %u %u %u %u\n", __func__,
-+	cfg->bNumberLU, cfg->bBootEnable, cfg->bDescrAccessEn,
-+	cfg->bInitPowerMode, cfg->bHighPriorityLUN, cfg->bSecureRemovalType,
-+	cfg->bInitActiveICCLevel, cfg->wPeriodicRTCUpdate,
-+	cfg->bConfigDescrLock);
-+
-+	for (i = 0; i < num_luns; i++) {
-+		cfg->unit[i].LUNum = *pt++;
-+		cfg->unit[i].bLUEnable = *pt++;
-+		cfg->unit[i].bBootLunID = *pt++;
-+		/* dNumAllocUnits = size_in_kb/KB_per_block */
-+		cfg->unit[i].dNumAllocUnits = (u32)(*pt++ / KB_per_block);
-+		cfg->unit[i].bDataReliability = *pt++;
-+		cfg->unit[i].bLUWriteProtect = *pt++;
-+		cfg->unit[i].bMemoryType = *pt++;
-+		cfg->unit[i].bLogicalBlockSize = *pt++;
-+		cfg->unit[i].bProvisioningType = *pt++;
-+		cfg->unit[i].wContextCapabilities = *pt++;
-+	}
-+
-+	cfg->lun_to_grow = *pt++;
-+	commit = *pt++;
-+	cfg->num_luns = *pt;
-+	dev_dbg(hba->dev, "%s: lun_to_grow %u, commit %u num_luns %u\n",
-+		__func__, cfg->lun_to_grow, commit, cfg->num_luns);
-+	if (commit == 1) {
-+		ret = ufshcd_do_config_device(hba);
-+		if (!ret) {
-+			hba->provision_enabled = 1;
-+			dev_err(hba->dev,
-+			"%s: UFS Provisioning completed,num_luns %u, reboot now !\n",
-+			__func__, cfg->num_luns);
-+		}
-+	} else
-+		dev_err(hba->dev, "%s: Invalid commit %u\n", __func__, commit);
-+out:
-+	kfree(strbuf_copy);
-+	return count;
-+}
-+
-+static ssize_t ufs_provision_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(buf, count);
-+}
-+
-+static struct configfs_attribute ufshcd_attr_provision = {
-+	.ca_name	= "ufs_provision",
-+	.ca_mode	= S_IRUGO | S_IWUGO,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_provision_show,
-+	.store		= ufs_provision_store,
-+};
-+
-+static struct configfs_attribute *ufshcd_attrs[] = {
-+	&ufshcd_attr_provision,
-+	NULL,
-+};
-+
-+static struct config_item_type ufscfg_type = {
-+	.ct_attrs	= ufshcd_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static struct configfs_subsystem ufscfg_subsys = {
-+	.su_group = {
-+		.cg_item = {
-+			.ci_namebuf = "ufshcd",
-+			.ci_type = &ufscfg_type,
-+		},
-+	},
-+};
-+
-+int ufshcd_configfs_init(struct ufs_hba *hba_ufs)
-+{
-+	int ret;
-+	struct configfs_subsystem *subsys = &ufscfg_subsys;
-+
-+	hba = hba_ufs;
-+	config_group_init(&subsys->su_group);
-+	mutex_init(&subsys->su_mutex);
-+	ret = configfs_register_subsystem(subsys);
-+	if (ret) {
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret,
-+		       subsys->su_group.cg_item.ci_namebuf);
-+	}
-+	return ret;
-+}
-+
-+void ufshcd_configfs_exit(void)
-+{
-+	configfs_unregister_subsystem(&ufscfg_subsys);
-+}
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 1f99904..0b497fc 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -427,6 +427,7 @@ enum {
- };
- 
- struct ufs_unit_desc {
-+	u8	   LUNum;
- 	u8     bLUEnable;              /* 1 for enabled LU */
- 	u8     bBootLunID;             /* 0 for using this LU for boot */
- 	u8     bLUWriteProtect;        /* 1 = power on WP, 2 = permanent WP */
-@@ -451,6 +452,7 @@ struct ufs_config_descr {
- 	u32    qVendorConfigCode;      /* Vendor specific configuration code */
- 	struct ufs_unit_desc unit[8];
- 	u8	lun_to_grow;
-+	u8 num_luns;
- };
- 
- /* Task management service response */
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 370a7c6..e980d5a 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7892,6 +7892,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- void ufshcd_remove(struct ufs_hba *hba)
- {
- 	ufs_sysfs_remove_nodes(hba->dev);
-+	ufshcd_configfs_exit();
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -8145,6 +8146,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
-+	ufshcd_configfs_init(hba);
- 
- 	return 0;
- 
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 0e6bf30..7d2fa89 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -41,6 +41,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/configfs.h>
- #include <linux/io.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
-@@ -550,6 +551,7 @@ struct ufs_hba {
- 	bool is_irq_enabled;
- 	u32 dev_ref_clk_freq;
- 	struct ufs_config_descr cfgs;
-+	bool provision_enabled;
- 
- 	/* Interrupt aggregation support is broken */
- 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
-@@ -869,6 +871,22 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
- int ufshcd_do_config_device(struct ufs_hba *hba);
-+/* Expose UFS configfs API's */
-+ssize_t ufshcd_desc_configfs_store(const char *buf, size_t count);
-+
-+#ifdef CONFIG_CONFIGFS_FS
-+int ufshcd_configfs_init(struct ufs_hba *hba_ufs);
-+void ufshcd_configfs_exit(void);
-+#else /* CONFIG_CONFIGFS_FS */
-+int ufshcd_configfs_init(struct ufs_hba *hba_ufs)
-+{
-+	return 0;
-+}
-+
-+void ufshcd_configfs_exit(void)
-+{
-+}
-+#endif /* CONFIG_CONFIGFS_FS */
- 
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+PiBTdWJqZWN0OiBSZTogW1BhdGNoIHYyIDExLzE1XSBDSUZTOiBQYXNzIHBhZ2Ugb2Zmc2V0IGZv
+ciBjYWxjdWxhdGluZyBzaWduYXR1cmUNCj4gDQo+IE9uIDUvMzAvMjAxOCAzOjQ4IFBNLCBMb25n
+IExpIHdyb3RlOg0KPiA+IEZyb206IExvbmcgTGkgPGxvbmdsaUBtaWNyb3NvZnQuY29tPg0KPiA+
+DQo+ID4gV2hlbiBjYWxjdWxhdGluZyBzaWduYXR1cmUgZm9yIHRoZSBwYWNrZXQsIGl0IG5lZWRz
+IHRvIHJlYWQgaW50byB0aGUNCj4gPiBjb3JyZWN0IHBhZ2Ugb2Zmc2V0IGZvciB0aGUgZGF0YS4N
+Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IExvbmcgTGkgPGxvbmdsaUBtaWNyb3NvZnQuY29tPg0K
+PiA+IC0tLQ0KPiA+ICAgZnMvY2lmcy9jaWZzZW5jcnlwdC5jIHwgOSArKysrKy0tLS0NCj4gPiAg
+IDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+ID4NCj4g
+PiBkaWZmIC0tZ2l0IGEvZnMvY2lmcy9jaWZzZW5jcnlwdC5jIGIvZnMvY2lmcy9jaWZzZW5jcnlw
+dC5jIGluZGV4DQo+ID4gYTZlZjA4OC4uZTg4MzAzYyAxMDA2NDQNCj4gPiAtLS0gYS9mcy9jaWZz
+L2NpZnNlbmNyeXB0LmMNCj4gPiArKysgYi9mcy9jaWZzL2NpZnNlbmNyeXB0LmMNCj4gPiBAQCAt
+NjgsMTEgKzY4LDEyIEBAIGludCBfX2NpZnNfY2FsY19zaWduYXR1cmUoc3RydWN0IHNtYl9ycXN0
+ICpycXN0LA0KPiA+DQo+ID4gICAJLyogbm93IGhhc2ggb3ZlciB0aGUgcnFfcGFnZXMgYXJyYXkg
+Ki8NCj4gPiAgIAlmb3IgKGkgPSAwOyBpIDwgcnFzdC0+cnFfbnBhZ2VzOyBpKyspIHsNCj4gPiAt
+CQl2b2lkICprYWRkciA9IGttYXAocnFzdC0+cnFfcGFnZXNbaV0pOw0KPiA+IC0JCXNpemVfdCBs
+ZW4gPSBycXN0LT5ycV9wYWdlc3o7DQo+ID4gKwkJdm9pZCAqa2FkZHI7DQo+ID4gKwkJdW5zaWdu
+ZWQgaW50IGxlbiwgb2Zmc2V0Ow0KPiA+DQo+ID4gLQkJaWYgKGkgPT0gcnFzdC0+cnFfbnBhZ2Vz
+IC0gMSkNCj4gPiAtCQkJbGVuID0gcnFzdC0+cnFfdGFpbHN6Ow0KPiA+ICsJCXJxc3RfcGFnZV9n
+ZXRfbGVuZ3RoKHJxc3QsIGksICZsZW4sICZvZmZzZXQpOw0KPiA+ICsNCj4gPiArCQlrYWRkciA9
+IChjaGFyICopIGttYXAocnFzdC0+cnFfcGFnZXNbaV0pICsgb2Zmc2V0Ow0KPiANCj4gSSBzdXBw
+b3NlIGl0J3MgbW9yZSByb2J1c3QgdG8gbWFwIGEgcGFnZSBhdCBhIHRpbWUsIGJ1dCBpdCdzIHBy
+ZXR0eSBleHBlbnNpdmUuDQo+IElzIHRoaXMgdGhlIG9ubHkgd2F5IHRvIGl0ZXJhdGUgb3ZlciBh
+IHBvdGVudGlhbGx5IHZlcnkgbGFyZ2UgYmxvY2sgb2YgZGF0YT8gRm9yDQo+IGV4YW1wbGUsIGEg
+MU1CIHNlZ21lbnQgbWVhbnMgMjU2IGttYXAva3VubWFwcy4NCg0KSSB3aWxsIGxvb2sgaW50byBu
+b3QgbWFwcGluZyB0aG9zZSBwYWdlcyB3aGlsZSBkb2luZyBJL08uDQoNClRoaXMgY29kZSBwYXRo
+IGlzIGZvciBSRE1BIHNlbmQvcmVjZWl2ZSwgYW5kIGl0J3MgcmFyZWx5IHVzZWQgZm9yIHRyYW5z
+ZmVycmluZyBsYXJnZSBhbW91bnQgb2YgZGF0YS4NCg0KPiANCj4gVG9tLg0KPiANCj4gPg0KPiA+
+ICAgCQljcnlwdG9fc2hhc2hfdXBkYXRlKHNoYXNoLCBrYWRkciwgbGVuKTsNCj4gPg0KPiA+DQo=
