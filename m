@@ -2,126 +2,139 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 750B7C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEDEC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F21026CE4
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:12:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="v+BZklU7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F21026CE4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F01BA26CD1
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:13:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F01BA26CD1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752048AbeFZPM2 (ORCPT
+        id S1752005AbeFZPNw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:12:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49756 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751144AbeFZPLL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:11:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=FF60Z2N9Rz0QIyELQpIDXL8m0gGwUxjfp7ZQfyb8qrM=; b=v+BZklU7EfdE
-        FCCk8eKgvDFPyMpkFK6Nq0o591Y9aUKAzsG+tF0AolaBPqRCvKwCeC1Y0WO48LoCVDdnrNp6cZ2zE
-        uZKko1H7zjx/Gy90RKeU2KQy+FGuoO2fN2BkSjVfLNn7OdvFqN8nUSlunBT6V7zrQZhprujw6s2vv
-        lxm9k=;
-Received: from host109-146-194-33.range109-146.btcentralplus.com ([109.146.194.33] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fXpcU-0001Jv-SO; Tue, 26 Jun 2018 15:11:02 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 612F1440070; Tue, 26 Jun 2018 16:11:02 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        robh+dt@kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, bgoswami@codeaurora.org,
-        lgirdwood@gmail.com, linux-arm-msm@vger.kernel.org, tiwai@suse.com,
-        linux-arm-kernel@lists.infradead.org, niklas.cassel@linaro.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6asm-dai: support dt based module loading" to the asoc tree
-In-Reply-To:  <20180626092016.9296-9-srinivas.kandagatla@linaro.org>
-Message-Id: <20180626151102.612F1440070@finisterre.ee.mobilebroadband>
-Date:   Tue, 26 Jun 2018 16:11:02 +0100 (BST)
+        Tue, 26 Jun 2018 11:13:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:47162 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751867AbeFZPNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 11:13:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E37C80D;
+        Tue, 26 Jun 2018 08:13:50 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4EF1F3F5AD;
+        Tue, 26 Jun 2018 08:13:50 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id E1F631AE2E48; Tue, 26 Jun 2018 16:14:27 +0100 (BST)
+Date:   Tue, 26 Jun 2018 16:14:27 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        peter maydell <peter.maydell@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 3/3] rseq/selftests: Add support for arm64
+Message-ID: <20180626151427.GF23375@arm.com>
+References: <1529949285-11013-1-git-send-email-will.deacon@arm.com>
+ <1529949285-11013-4-git-send-email-will.deacon@arm.com>
+ <501929863.3051.1529950210436.JavaMail.zimbra@efficios.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <501929863.3051.1529950210436.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi Mathieu,
 
-   ASoC: qdsp6: q6asm-dai: support dt based module loading
+On Mon, Jun 25, 2018 at 02:10:10PM -0400, Mathieu Desnoyers wrote:
+> ----- On Jun 25, 2018, at 1:54 PM, Will Deacon will.deacon@arm.com wrote:
+> > +#define __RSEQ_ASM_DEFINE_TABLE(label, version, flags, start_ip,		\
+> > +				post_commit_offset, abort_ip)			\
+> > +	"	.pushsection	__rseq_table, \"aw\"\n"				\
+> > +	"	.balign	32\n"							\
+> > +	__rseq_str(label) ":\n"							\
+> > +	"	.long	" __rseq_str(version) ", " __rseq_str(flags) "\n"	\
+> > +	"	.quad	" __rseq_str(start_ip) ", "				\
+> > +			  __rseq_str(post_commit_offset) ", "			\
+> > +			  __rseq_str(abort_ip) "\n"				\
+> > +	"	.popsection\n"
+> > +
+> > +#define RSEQ_ASM_DEFINE_TABLE(label, start_ip, post_commit_ip, abort_ip)	\
+> > +	__RSEQ_ASM_DEFINE_TABLE(label, 0x0, 0x0, start_ip,			\
+> > +				(post_commit_ip - start_ip), abort_ip)
+> > +
+> > +#define RSEQ_ASM_STORE_RSEQ_CS(label, cs_label, rseq_cs)			\
+> > +	RSEQ_INJECT_ASM(1)							\
+> > +	"	adrp	" RSEQ_ASM_TMP_REG ", " __rseq_str(cs_label) "\n"	\
+> > +	"	add	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
+> > +			", :lo12:" __rseq_str(cs_label) "\n"			\
+> > +	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(rseq_cs) "]\n"	\
+> > +	__rseq_str(label) ":\n"
+> > +
+> > +#define RSEQ_ASM_DEFINE_ABORT(label, abort_label)				\
+> > +	"	.pushsection	__rseq_failure, \"ax\"\n"			\
+> > +	"	.long 	"	__rseq_str(RSEQ_SIG) "\n"			\
+> > +	__rseq_str(label) ":\n"							\
+> > +	"	b	%l[" __rseq_str(abort_label) "]\n"			\
+> > +	"	.popsection\n"
+> 
+> Thanks Will for porting rseq to arm64 !
 
-has been applied to the asoc tree at
+That's ok, it was good fun :)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+I'm going to chat with our compiler guys to see if there's any room for
+improving the flexibility in the critical section, since having a temporary
+in the clobber list is pretty grotty.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> I notice you are using the instructions
+> 
+>   adrp
+>   add
+>   str
+> 
+> to implement RSEQ_ASM_STORE_RSEQ_CS(). Did you compare
+> performance-wise with an approach using a literal pool
+> near the instruction pointer like I did on arm32 ?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I didn't, no. Do you have a benchmark to hand so I can give this a go?
+The two reasons I didn't go down this route are:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+1. It introduces data which is mapped as executable. I don't have a
+   specific security concern here, but the way things have gone so far
+   this year, I've realised that I'm not bright enough to anticipate
+   these things.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+2. It introduces a branch over the table on the fast path, which is likely
+   to have a relatively higher branch misprediction cost on more advanced
+   CPUs.
 
-Thanks,
-Mark
+I also find it grotty that we emit two tables so that debuggers can cope,
+but that's just a cosmetic nit.
 
-From 1ce09ef36fb190fa207fdb3e31fc1c8caa292125 Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 26 Jun 2018 10:20:12 +0100
-Subject: [PATCH] ASoC: qdsp6: q6asm-dai: support dt based module loading
+> With that approach, this ends up being simply
+> 
+>   adr
+>   str
+> 
+> which provides significantly better performance on my test
+> platform over loading a pointer targeting a separate data
+> section.
 
-This patch uses new compatible string to make DT based module loading work.
+My understanding is that your test platform is based on Cortex-A7, so I'd
+be wary about concluding too much about general performance from that CPU
+since its a pretty straightforward in-order design.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Acked-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/qcom/qdsp6/q6asm-dai.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index 349c6a883c63..1196dc7483d2 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -611,9 +611,16 @@ static int q6asm_dai_dev_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct of_device_id q6asm_dai_device_id[] = {
-+	{ .compatible = "qcom,q6asm-dais" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, q6asm_dai_device_id);
-+
- static struct platform_driver q6asm_dai_platform_driver = {
- 	.driver = {
- 		.name = "q6asm-dai",
-+		.of_match_table = of_match_ptr(q6asm_dai_device_id),
- 	},
- 	.probe = q6asm_dai_probe,
- 	.remove = q6asm_dai_dev_remove,
--- 
-2.17.1
-
+Will
