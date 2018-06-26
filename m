@@ -2,97 +2,174 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F6EC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD45C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AC9B219CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AC9B219CA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A6AF2408D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:29:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjRpK3hS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6AF2408D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934041AbeFZS3N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:29:13 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40043 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932509AbeFZS3K (ORCPT
+        id S934063AbeFZS3O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:29:14 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43619 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752786AbeFZS2v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:29:10 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z13-v6so2854252wma.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:29:10 -0700 (PDT)
+        Tue, 26 Jun 2018 14:28:51 -0400
+Received: by mail-wr0-f193.google.com with SMTP id c5-v6so7056980wrs.10
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7rtDqZRn08p6IrU2qqSvkpaXuaNX+BLXDAxvrNGfhOo=;
+        b=EjRpK3hSgSPZ2IbhYyfsOubGNygDOsFKwCM0O9hlft6LOomb81jMgHZLG1WCI+dNvN
+         vwGB/iCq21birz/AHBNXyBGsrgQ3lbnnHrZNJiAiEeBSCceRQxS55arQGPVFuWr7/Pbl
+         NbboOjYq/dzf210TIurgGShTofSDL0QKmSEho=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+CC/jjQ9PI6r3pw6gJkgwB2ZG00Mz7S0Cuf6inRAS/U=;
-        b=DEdgqKCLdtk7GJQghWtckdV3rZtjvqDfNY2lVN5TvVbv+6QL1Mb+TdFvwXRZkPg8j/
-         IhowThfLQtI92IE09GgQPe1XCTqit9OABLfbN+Qu/7m/NcYgkoO810iGm1AUmYlpAfQ0
-         c96KTGVUg4cN09PJJCoA+zlDfTlFFowgwYgIHPp9/szNG05229Zjzq6OELecuEY48nik
-         CFaeKo0/WbNcsBjEunELKn9Vg3qJGyiJsixXJ95UGHPrUP4Vh2WEHKcHFpmCL2XBveXg
-         qzkWjy5vUlRnwladYZ+5fLzr6fjLht9BICE35pqZU7ueGAkvN75kV+CtuOQ769ACbuGp
-         2VSA==
-X-Gm-Message-State: APt69E2O/JQ3tf08IAcb1bGUVjnJeOtBLIuuXWacmRMP/ddBmqztplS/
-        ZMVoY3QlH0/+KKX35NnfuRbYL7JhuXM=
-X-Google-Smtp-Source: AAOMgpdbenF7tyDYLZVcNybIxqxRgGfnkpfO8JByXVbmx/6aGslWarLx9UM88iSh7D2WVZe1+3DF/Q==
-X-Received: by 2002:a1c:2d15:: with SMTP id t21-v6mr2454697wmt.42.1530037749343;
-        Tue, 26 Jun 2018 11:29:09 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id k12-v6sm2988196wrr.40.2018.06.26.11.29.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7rtDqZRn08p6IrU2qqSvkpaXuaNX+BLXDAxvrNGfhOo=;
+        b=am1TWE3DgI1tiLy7Bh18CSDaN8IIFJU9lBdnSks4lh2R9B1TnMkDn7nv9DX4gOxN4T
+         Kni/Y52Jki6uZCF1hKmYwpfMTWSHVzRJL42JQBBxAHWDz5bXQiWSaTpCeZJKuy7HZAme
+         V2XoyT9+Ruuf3gTPCeJO8Kv5Nl9E5s7/+TV0Dzrx35NpYxD8r5zQXLkZEfCFhECWVD29
+         Ddb7bf0PKUoJY+vRee3Fw8KF6ictIJCwbqHfKARt0Sip/HWuFvwke4/t5wAS5IUOKu2H
+         iokZ45klytsFDKH4JLSBLYNJh47ceysHLNWqSzlWnGzroYW6VzgeHf5/0qvwYXGmRIcZ
+         EyjA==
+X-Gm-Message-State: APt69E0gFlVc8yqpWGuQZDJtsWViSgyp2pBBIh7S6cM/ceCIG9mVAqY7
+        WOznHZIYUl/WHhuaq+RdmL72iEUCe/k=
+X-Google-Smtp-Source: AAOMgpeqCv6MP65JB2MZyHSB5NRIj76tnLImVw+2rpBcVe9+O7CH4hwqsUezXu42dAe+1h4BQlRAlw==
+X-Received: by 2002:adf:8425:: with SMTP id 34-v6mr2402558wrf.72.1530037729483;
+        Tue, 26 Jun 2018 11:28:49 -0700 (PDT)
+Received: from rev02.home ([2a01:cb1d:112:6f00:d037:e907:f0a2:a5ea])
+        by smtp.gmail.com with ESMTPSA id s17-v6sm1707664wmc.34.2018.06.26.11.28.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 11:29:08 -0700 (PDT)
-Subject: Re: [PATCH v3 2/3] fbcon: Call WARN_CONSOLE_UNLOCKED() where
- applicable
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
+        Tue, 26 Jun 2018 11:28:48 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Mackerras <paulus@samba.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180626135535.2990-1-hdegoede@redhat.com>
- <20180626135535.2990-3-hdegoede@redhat.com>
- <20180626104740.0067bd5e@gandalf.local.home>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <91a98281-979f-9479-a31a-363243948372@redhat.com>
-Date:   Tue, 26 Jun 2018 20:29:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180626104740.0067bd5e@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: [PATCH v9 5/6] PCI: Add support for relative addressing in quirk tables
+Date:   Tue, 26 Jun 2018 20:28:00 +0200
+Message-Id: <20180626182802.19932-6-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
+References: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Allow the PCI quirk tables to be emitted in a way that avoids absolute
+references to the hook functions. This reduces the size of the entries,
+and, more importantly, makes them invariant under runtime relocation
+(e.g., for KASLR)
 
-On 26-06-18 16:47, Steven Rostedt wrote:
-> On Tue, 26 Jun 2018 15:55:34 +0200
-> Hans de Goede <hdegoede@redhat.com> wrote:
-> 
->> Replace comments about places where the console lock should be held with
->> calls to WARN_CONSOLE_UNLOCKED() to assert that it is actually held.
-> 
-> Why replace the comments? I prefer them, even with the WARN. The reason
-> is, when using functions, I don't tend to look inside the function I'm
-> about to use, but instead, I expect the comment above the function to
-> have basic information I need to use it. Especially what locks are
-> expected to be held.
-> 
-> Please keep the comments in place, but the WARNs are fine. They are not
-> a replacement for the comments.
-> 
-> Nack on removing comments.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ drivers/pci/quirks.c | 12 +++++++++---
+ include/linux/pci.h  | 20 ++++++++++++++++++++
+ 2 files changed, 29 insertions(+), 3 deletions(-)
 
-Ok, I will submit a v4 with the comments left in place.
-
-Regards,
-
-Hans
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index f439de848658..0ba4e446e5db 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -64,9 +64,15 @@ static void pci_do_fixups(struct pci_dev *dev, struct pci_fixup *f,
+ 		     f->vendor == (u16) PCI_ANY_ID) &&
+ 		    (f->device == dev->device ||
+ 		     f->device == (u16) PCI_ANY_ID)) {
+-			calltime = fixup_debug_start(dev, f->hook);
+-			f->hook(dev);
+-			fixup_debug_report(dev, calltime, f->hook);
++			void (*hook)(struct pci_dev *dev);
++#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
++			hook = offset_to_ptr(&f->hook_offset);
++#else
++			hook = f->hook;
++#endif
++			calltime = fixup_debug_start(dev, hook);
++			hook(dev);
++			fixup_debug_report(dev, calltime, hook);
+ 		}
+ }
+ 
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 340029b2fb38..51baa3ab5195 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1795,7 +1795,11 @@ struct pci_fixup {
+ 	u16 device;			/* Or PCI_ANY_ID */
+ 	u32 class;			/* Or PCI_ANY_ID */
+ 	unsigned int class_shift;	/* should be 0, 8, 16 */
++#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
++	int hook_offset;
++#else
+ 	void (*hook)(struct pci_dev *dev);
++#endif
+ };
+ 
+ enum pci_fixup_pass {
+@@ -1809,12 +1813,28 @@ enum pci_fixup_pass {
+ 	pci_fixup_suspend_late,	/* pci_device_suspend_late() */
+ };
+ 
++#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
++#define __DECLARE_PCI_FIXUP_SECTION(sec, name, vendor, device, class,	\
++				    class_shift, hook)			\
++	__ADDRESSABLE(hook)						\
++	asm(".section "	#sec ", \"a\"				\n"	\
++	    ".balign	16					\n"	\
++	    ".short "	#vendor ", " #device "			\n"	\
++	    ".long "	#class ", " #class_shift "		\n"	\
++	    ".long "	#hook " - .				\n"	\
++	    ".previous						\n");
++#define DECLARE_PCI_FIXUP_SECTION(sec, name, vendor, device, class,	\
++				  class_shift, hook)			\
++	__DECLARE_PCI_FIXUP_SECTION(sec, name, vendor, device, class,	\
++				  class_shift, hook)
++#else
+ /* Anonymous variables would be nice... */
+ #define DECLARE_PCI_FIXUP_SECTION(section, name, vendor, device, class,	\
+ 				  class_shift, hook)			\
+ 	static const struct pci_fixup __PASTE(__pci_fixup_##name,__LINE__) __used	\
+ 	__attribute__((__section__(#section), aligned((sizeof(void *)))))    \
+ 		= { vendor, device, class, class_shift, hook };
++#endif
+ 
+ #define DECLARE_PCI_FIXUP_CLASS_EARLY(vendor, device, class,		\
+ 					 class_shift, hook)		\
+-- 
+2.11.0
 
