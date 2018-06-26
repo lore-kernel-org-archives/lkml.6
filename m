@@ -2,171 +2,260 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEF6C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C006BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9A321A05
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A5C321A16
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:42:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIBhQIW2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9A321A05
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mlu/Mfa4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A5C321A16
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753906AbeFZSlj (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:41:39 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:47063 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752732AbeFZSli (ORCPT
+        id S933219AbeFZSmw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:42:52 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:33816 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752285AbeFZSmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:41:38 -0400
-Received: by mail-ua0-f195.google.com with SMTP id r18-v6so5573033ual.13
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:41:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=rZMe/zZG/lhVIRB2o5nVF2Y4yi/wdkftqNYBNdg3OKY=;
-        b=nIBhQIW2bsrO8+cygRo8i2lcP9b7UfPlguzyb7JEKDHn6TB9VMH0uk/Kr4FQuDevtb
-         jbq/Hns2+5+3ah1iwIQzBK2MjZcuTZ/+xsmfnSb9vMtwQWXPwXr+whAODGlsncKKxkCP
-         EkN3fykReUnTED5PcMtHNwoL3vY7DVRdhS0lj1TTY5yYkqf2naKmxHL8YObgVx/bpw1A
-         2K80N+vP2AhFEmUjIPnRifrjxXBp0ldRk0rdwxivzWnMzsETFtyMpAmH961IN9LBZdjU
-         tqAtLfO7i0OiZERf9PeLSdbY+ZM3L9d44p520wo7NHVK6KY58gRvuDlAFQjJhCzvP/do
-         zE4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=rZMe/zZG/lhVIRB2o5nVF2Y4yi/wdkftqNYBNdg3OKY=;
-        b=HjYxDUN87jst9wGsHrgV7jxLF2f0IrWCWpvJiaDX4Enq+xLgujPzgUBCcr6Rs+n6iO
-         2F2vzNQum9Shcnb1038kgnLE2rohJmuk0T2+tVYTVWE18jzKpplL2oZqe5KLv+h20Gxc
-         wK74xj0MhpHvTSIJKPhlH7AA8C5Y7ZVtvD7bZ3rR/pnEBqe1ReX3F+5Kzv+XJJ3Qbuqm
-         KJ7RulaZfkX8xnhrr3JK0guTOHXy2hiPH6qU5guSmeOBwSb8z+SU6lvHMYl02+VHOxp+
-         4DAAP6HBuqgmaHplIADdDYkgpbPel5t2wSfMvQYDFezw0wzBN6hrUsW8Zgc15GCTL1VR
-         lJbw==
-X-Gm-Message-State: APt69E0GzPdjzmIOh/Q2bgORFvNhirN6ZJBgK7mJkPCO+adUQtf/dQhJ
-        z4CbONFFT/m1R8H+174QTH1CHwOAuCspGxxa+Oc=
-X-Google-Smtp-Source: AAOMgpeCFC/D/GTu041yQ0uPXntuZ4GY/3d073bmFa/PhgAXCvCQQFJWUC3pSyRtrn4/deu6M3jatsbp39xUbEYHHBk=
-X-Received: by 2002:ab0:1b9b:: with SMTP id k27-v6mr1754030uai.122.1530038497514;
- Tue, 26 Jun 2018 11:41:37 -0700 (PDT)
+        Tue, 26 Jun 2018 14:42:50 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5QIe0t2102811;
+        Tue, 26 Jun 2018 18:42:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=3J9DSDLz9nsLv43HQKxoGHpt8HsrtT/+o2r3LCFvNzY=;
+ b=mlu/Mfa4T5YRNQ3UB/CcIgY7xTHNXGH/ebbQVeygTwwlcrdWjpjhAMZ3CzQja4Epekri
+ a4jY/8ynaGNo4HvqMOsh0yYT3M1rhYynwC41umWF/nn46F0gQcAr4KGsZhZWIC015ljM
+ S3R+gYZqYu5DQwa2LCG3ooSFZry++2xZOqveVDVXytQQ+4Omj0owFA8B6GozEMUo4ZtN
+ Qg1lT3cEF2meQGa5PI0LKVYUDWg9TI5uGSNi46QK1CuhMHb0NhubV9Z0jUpugLzzYJRA
+ v+SDsgzEEb/FoDOWRo6L2I9vk9o6lSzwyjDLH6uMOVlUaSdFy94R1v9tgqQkAXdNY3j6 VQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2jukmtswqj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Jun 2018 18:42:50 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5QIglpM001911
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Jun 2018 18:42:47 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5QIgkRx024992;
+        Tue, 26 Jun 2018 18:42:47 GMT
+Received: from mail-ot0-f177.google.com (/74.125.82.177)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 26 Jun 2018 11:42:46 -0700
+Received: by mail-ot0-f177.google.com with SMTP id a6-v6so5623796otf.2;
+        Tue, 26 Jun 2018 11:42:46 -0700 (PDT)
+X-Gm-Message-State: APt69E36OzNU1B3Df/qavn/3OKNk9zYapWGiRC47GoY33zvzkvkDYs2C
+        wSqoq7pYnGpZ2rVAbG/pU3/0B0+5JpPnN7Yggdc=
+X-Google-Smtp-Source: AAOMgpciQAZxrUrzcwYDswYnwSLuVtz0R7/vCrvRiY/tfNmQvsXr8h7JIw403eA1xDfGfDRYzC7eTuapGv8cQUmWsLE=
+X-Received: by 2002:a9d:5b39:: with SMTP id x54-v6mr1435664oth.275.1530038566271;
+ Tue, 26 Jun 2018 11:42:46 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 11:41:36
- -0700 (PDT)
-In-Reply-To: <1530035183.3205.6.camel@arista.com>
-References: <20180626162438.16306-1-dima@arista.com> <CAHp75VchWpr+76rBCmXctpYi5a06pr-MT==FrNDy03g=boxfog@mail.gmail.com>
- <1530035183.3205.6.camel@arista.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 26 Jun 2018 21:41:36 +0300
-Message-ID: <CAHp75VfxajbTK3azfRWVBY6+f91JjGZwzHKrhQcHXDw9xeO_HA@mail.gmail.com>
-Subject: Re: [PATCHv2] lib/ratelimit: Lockless ratelimiting
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
+ <20180621212518.19914-10-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
+ <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com>
+ <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806261725510.1587@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1806261725510.1587@nanos.tec.linutronix.de>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Tue, 26 Jun 2018 14:42:09 -0400
+X-Gmail-Original-Message-ID: <CAGM2reYQ23XhQHAOO0Oo8MGvgrjpNZPZkwp+wwsU8Fb+jfANyA@mail.gmail.com>
+Message-ID: <CAGM2reYQ23XhQHAOO0Oo8MGvgrjpNZPZkwp+wwsU8Fb+jfANyA@mail.gmail.com>
+Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
+To:     tglx@linutronix.de
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8936 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806260209
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 8:46 PM, Dmitry Safonov <dima@arista.com> wrote:
-> On Tue, 2018-06-26 at 20:04 +0300, Andy Shevchenko wrote
+Hi Thomas,
 
->> >  #define RATELIMIT_STATE_INIT(name, interval_init, burst_init)
->> > {                \
->> > -               .lock           =
->> > __RAW_SPIN_LOCK_UNLOCKED(name.lock),  \
->>
->> name is now redundant, isn't it?
+On Tue, Jun 26, 2018 at 11:44 AM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
-> It is. Worth to split on the second patch or keep callers changes in
-> this patch?
-
-For me sounds like a part of this change, though weakly tighten to the
-main purpose.
-Otherwise in the middle of the series you introduce some bogus stuff
-(not sure if compiler or some static analyzers would warn about it).
-
->> > @@ -42,9 +41,10 @@ static inline void ratelimit_state_init(struct
->> > ratelimit_state *rs,
->> >  {
->> >         memset(rs, 0, sizeof(*rs));
->> >
->> > -       raw_spin_lock_init(&rs->lock);
->> >         rs->interval    = interval;
->> >         rs->burst       = burst;
->> > +       atomic_set(&rs->printed, 0);
->> > +       atomic_set(&rs->missed, 0);
->>
->> Can it be
->>
->> *rs = RATELIMIT_STATE_INIT(interval, burst);
->>
->> ?
->>
->> (Yes, the '(struct ratelimit_state)' has to be added to macro to
->> allow this)
+> Pavel,
 >
-> Sure.
+> first of all, sorry for my last outburst. I just was in a lousy mood after
+> staring into too much half baken stuff and failed to make myself stay away
+> from the computer.
 
-This part, by the way, potentially can be split into preparatory
-patch. Please, double check if it possible to do this way.
+Thank you.
 
->> > -       if (rs->missed) {
->> > +       if ((missed = atomic_xchg(&rs->missed, 0)))
->>
->> Perhaps
->>
->> missed = ...
->> if (missed)
->>
->> ?
 >
-> Ok, will change - checkpatch has warned me, but I thought it's just a
-> preference than a rule.
-
-In general, yes and no. In this case it would increase readability and
-assignment inside conditionals is not the best practice.
-
->> Instead of casting, perhaps
->>
->> int missed = ...
->>
->> I think you already has a guard against going it below zero. Or I
->> missed something?
+> On Sun, 24 Jun 2018, Thomas Gleixner wrote:
+> > On Sat, 23 Jun 2018, Pavel Tatashin wrote:
+> > And this early init sequence also needs to pull over the tsc adjust
+> > magic. So tsc_early_delay_calibrate() which should btw. be renamed to
+> > tsc_early_init() should have:
+> >
+> > {
+> >       cpu_khz = x86_platform.calibrate_cpu();
+> >         tsc_khz = x86_platform.calibrate_tsc();
+> >
+> >         tsc_khz = tsc_khz ? : cpu_khz;
+> >         if (!tsc_khz)
+> >                 return;
+> >
+> >         /* Sanitize TSC ADJUST before cyc2ns gets initialized */
+> >         tsc_store_and_check_tsc_adjust(true);
+> >
+> >       calc_lpj(tsc_khz);
+> >
+> >       tsc_sched_clock_init();
+> > }
 >
-> No, I do:
-> atomic_add_unless(&rs->missed, 1, -1);
+> Peter made me look deeper into this and there are a few issues, which I
+> missed, depending on when some of the resources become available. So we
+> probably cannot hook all of this into tsc_early_delay_calibrate().
 >
-> So, it's guard against overflow, but not against negative.
-> That's why I do print it as unsigned.
+> I have an idea how to distangle it and we'll end up in a staged approach,
+> which looks like this:
+>
+>     1) Earliest one (not sure how early yet)
+>
+>        Attempt to use MSR/CPUID. If not running on a hypervisor this can
+>        try the quick PIT calibration, but nothing else.
+>
+>     2) Post init_hypervisor_platform()
+>
+>        An attempt to use the hypervisor data can be made.
+>
+>     3) Post early_acpi_boot_init()
+>
+>        This can do PIT/HPET based calibration
+>
+>     4) Post x86_dtb_init()
+>
+>        PIT/PMTIMER based calibration
+>
+> Once tsc_khz is known, no further attempts of calibration are made. I'll
+> look into that later tonight.
 
-Hmm...
-If you increment the variable, it would become 2^n, then 2^n + 1, ...
-which in unsigned form quite far from -1.
+I think, there are no reasons to try staged attempts. It usually gets
+harder to maintain overtime. In my opinion it is best if do it in two
+tries, as right now, but just cleaner. The first attempt we get a
+crude result, using the lowest denominator to which current logic
+might fallback if something else is not available that early in boot:
+i.e cpu calibration loop in native_calibrate_cpu() but later get
+something better. Also, even if early clock does not work because we
+could not get tsc early, it is not a problem, we still will probably
+determine it later during tsc_init call.
 
-So, this check is against revolving the value.
-Otherwise you are using atomic_t as unsigned type indeed.
+I have re-wrote tsc_early_init()/tsc_init(), they are much simpler now:
 
-But in case of use you assign signed to unsigned which would not
-overflow, so, the casting is superfluous.
+void __init tsc_early_init(void)
+{
+        if (!boot_cpu_has(X86_FEATURE_TSC))
+                return;
 
-(and I would rather go with unsigned int type instead of unsigned if
-it fits style of the module)
+        if (!determine_cpu_tsc_frequncies())
+                return;
 
--- 
-With Best Regards,
-Andy Shevchenko
+        cyc2ns_init_boot_cpu();
+        static_branch_enable(&__use_tsc);
+
+        loops_per_jiffy = get_loops_per_jiffy(tsc_khz);
+}
+
+void __init tsc_init(void)
+{
+        if (!boot_cpu_has(X86_FEATURE_TSC))
+                return;
+
+        if (!determine_cpu_tsc_frequncies()) {
+                setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
+                return;
+        }
+
+        /* Sanitize TSC ADJUST before cyc2ns gets initialized */
+        tsc_store_and_check_tsc_adjust(true);
+
+        cyc2ns_reinit_boot_cpu();
+        cyc2ns_init_secondary_cpus();
+        static_branch_enable(&__use_tsc);
+
+        if (!no_sched_irq_time)
+                enable_sched_clock_irqtime();
+
+        lpj_fine = get_loops_per_jiffy(tsc_khz);
+        use_tsc_delay();
+        check_system_tsc_reliable();
+
+        if (unsynchronized_tsc()) {
+                mark_tsc_unstable("TSCs unsynchronized");
+                return;
+        }
+
+        clocksource_register_khz(&clocksource_tsc_early, tsc_khz);
+        detect_art();
+}
+
+All the new functions are self explanatory. I added three cyc2ns
+related functions based on your suggestions on how to clean-up that
+code:
+
+static void __init cyc2ns_init_boot(void)
+{
+        struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
+
+        seqcount_init(&c2n->seq);
+        __set_cyc2ns_scale(tsc_khz, smp_processor_id(), rdtsc());
+}
+
+static void __init cyc2ns_init_secondary(void)
+{
+        unsigned int cpu, this_cpu = smp_processor_id();
+        struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
+        struct cyc2ns_data *data = c2n->data;
+
+        for_each_possible_cpu(cpu) {
+                if (cpu != this_cpu) {
+                        seqcount_init(&c2n->seq);
+                        c2n = per_cpu_ptr(&cyc2ns, cpu);
+                        c2n->data[0] = data[0];
+                        c2n->data[1] = data[1];
+                }
+        }
+}
+
+/* Reinitialize boot cpu c2ns, using the offset of the current
+sched_clock() value */
+static void __init cyc2ns_reinit_boot(void)
+{
+        struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
+        unsigned long sched_now = sched_clock();
+
+        __set_cyc2ns_scale(tsc_khz, smp_processor_id(), rdtsc());
+        c2n->data[0].cyc2ns_offset += sched_now;
+        c2n->data[1].cyc2ns_offset += sched_now;
+}
+
+I know, conceptually, it is similar to what I had before, but I think
+it is simple enough, easy to maintain, but more importantly safe. What
+do you think?
+
+Thank you,
+Pavel
