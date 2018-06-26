@@ -2,113 +2,163 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FBCC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF698C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E639B267C8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70172267D1
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:31:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TJNvtGLV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E639B267C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="J/G64Gr/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70172267D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933655AbeFZJW0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:22:26 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32856 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932206AbeFZJWY (ORCPT
+        id S933853AbeFZJbu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:31:50 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37027 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932558AbeFZJbr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:22:24 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z6-v6so14761080wma.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:22:23 -0700 (PDT)
+        Tue, 26 Jun 2018 05:31:47 -0400
+Received: by mail-it0-f65.google.com with SMTP id j129-v6so1356354ita.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:31:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=TZ6cUfKXefN+TcVs0TvWgag07nTtV4/QmuUGNuFfdG8=;
-        b=TJNvtGLVUbjQSe3SuHYNOxRhcUBtZQxtn2MqV6w10QJE56znw8MTirL14cE9Sg84JC
-         vu0NE70jCQg/J21Rbnq5rLI4NCMZtZp1F963W+UWj9bV8/ZP7D23plStOWnuYQ06iPwm
-         uYaGBvFdU1Lor+UKq8s6ZgfcMFQcj/4uNElZ8=
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QAv+Wc+vGVHrF87X/+IXHVfExpu3kNJslqoKsf44TTA=;
+        b=J/G64Gr/4ms8zoXrDQx6iGH8TKR5wripiln0WbK+m1r3lspqHX/3AfLtfDIbLjxgc1
+         sLCJsnKRM5IuEe2m6D3V+oylJtmkHqPx0Drbrsrbo1NMVLmQn9lSgzc81CNb1r4YTuSE
+         m1F+Cr6kKCsM7qEQom/nrVBn0FOMHtWidhWrsjkwoZkWWt+w8IDYB3hgjvxc/ceiSoEp
+         X0TInaUFAhdSfm7Gn/RraRoksGzu8gvLT++P2cJdY9VZv4/XPfIl7ANNCvB8elva3gsR
+         imKOvDWs52/TEuoog9Qfr/iHA5p3KSe6oiY6hcQb9/qFIvHMgzbAk3S3YzEnULHHGUy5
+         IC+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TZ6cUfKXefN+TcVs0TvWgag07nTtV4/QmuUGNuFfdG8=;
-        b=kTylGqvLhqHUOmIl2HIufJLjxXaUjd5nLutqkUIKLvrALMV52mtRTyKFO5m4qxMe/6
-         0te7/Haom0+v86BI+mLIAoAWq9Os7lSIOP+qwEyL2NqaTleSTCi0wU69bitOF+rbTUPj
-         JrhzAF7EkeqrBt4AXFevm0DzL2Ipcjpok/E3HYAfB8T/MKDERHm0KUVmb+blunsShZcv
-         3ue+w3OjPBkgYNuDd9FTNnvJyYrYSsb2kn0WeTsowE0vGFiuvISCL8FXwYcu/WXsvKRs
-         h0DDQd6CFRwE/XjOCS1zsoHgT4/mf179PN00cjlLSJZJx6qTFIXI/1/nmlfVuejhqcce
-         dgLg==
-X-Gm-Message-State: APt69E0APPQvE0LuQ5+HUBkLl+7JJfmrTLnOZEseQ4oKb1ruJghodT1p
-        s8EH+lG4urkv3NnQK3M2xqGlqg==
-X-Google-Smtp-Source: AAOMgpcWpImQcR6dKhHjgQzqvG324TQ39J0K/a9ReO6JEl7nh3OudcFxwIF1GxvikGCKxqhWtlc8DA==
-X-Received: by 2002:a1c:3e94:: with SMTP id l142-v6mr950601wma.120.1530004942722;
-        Tue, 26 Jun 2018 02:22:22 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm1438456wrr.3.2018.06.26.02.22.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 26 Jun 2018 02:22:22 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     broonie@kernel.org, robh+dt@kernel.org, alsa-devel@alsa-project.org
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        lgirdwood@gmail.com, bgoswami@codeaurora.org, tiwai@suse.com,
-        perex@perex.cz, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, niklas.cassel@linaro.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 00/12] ASoC: qdsp6: Fix dt based module loading and minor fixes
-Date:   Tue, 26 Jun 2018 10:20:04 +0100
-Message-Id: <20180626092016.9296-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QAv+Wc+vGVHrF87X/+IXHVfExpu3kNJslqoKsf44TTA=;
+        b=Eo/4D//pn0mYNq8wY3utpz+l8bjHOidp3RJXV57DsGi/DH29XltodxmYs9WrMFxxsp
+         DwDB6WcVAO1qN4qrayLcbD/PquMkwIiXcQkGLKJzp7E1sTM1nMek3F/veu7LuYArzHPP
+         tzP0osU0AwShdYqzjrw90bUHWoZECwDkzsg/eVhNlyZfKKTUZyduifPvBZQ9rQHx+RCg
+         nGbtlRJH8JE1jXkLywvwvcMs95LUdAlcIio1+YxXdQ6GTC9RN/5LXkFF975OubLPCnt1
+         9VR3b9sXqNkI7XQ/2S9ZP/x5oKeRZL+K+kFFTJ8r0pPvtBG95wOPAP6lnSD+LaPOWfkK
+         LO1g==
+X-Gm-Message-State: APt69E0z0eWG+Rw2MSBglzvx/nbz7H5XJz1qKaDK+4vseexJ6x2dJyCu
+        sTg0i1kXvCwcbxCCpwYTyw6UC1GUzArtrleAuRV7KA==
+X-Google-Smtp-Source: ADUXVKKSg0RO3g2YSgerGU7jNVQpijI6smOqH11G2JOF/sJWZWOgUdt6S9QtAjdYYCt0pPo7JFrS08wLRa8sJU63yYg=
+X-Received: by 2002:a24:ddc5:: with SMTP id t188-v6mr777125itf.125.1530005506759;
+ Tue, 26 Jun 2018 02:31:46 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:9c51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 02:31:46
+ -0700 (PDT)
+In-Reply-To: <20180626083823.GA28068@lunn.ch>
+References: <20180625155025.12567-1-brgl@bgdev.pl> <20180625174024.GB17417@lunn.ch>
+ <CAMRc=MdEn74G5SJAaGLAfNSS7Zy7wqH04aN5CMZ45UXqhu_58g@mail.gmail.com>
+ <20180625180237.GC17417@lunn.ch> <CAMRc=MejDn=t6EPbKOfhMfRAb_O-5hxtWRyjAWH1mb5BUySrDA@mail.gmail.com>
+ <20180626083823.GA28068@lunn.ch>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 26 Jun 2018 11:31:46 +0200
+Message-ID: <CAMRc=Mdvh+1enpD3qDoamhPfaBPin2v3amneQELApgoC0bS2FQ@mail.gmail.com>
+Subject: Re: [PATCH 00/14] ARM: davinci: step towards removing at24_platform_data
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent discussion on https://lkml.org/lkml/2018/6/18/1282 suggested
-that qdsp6 code is using less common of_platform apis which would
-not give dt based module loading support.
+2018-06-26 10:38 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
+> On Tue, Jun 26, 2018 at 09:44:19AM +0200, Bartosz Golaszewski wrote:
+>> 2018-06-25 20:02 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
+>> >> With my patch 1/14 you'll get -EPROBE_DEFER from nvmem_cell_get() if
+>> >> the nvmem provider is not yet registered. Will that help in your case?
+>> >
+>> > I don't think so. My driver instantiates the AT24 device. So if i get
+>> > -EPROBE_DEFER, i need to cleanup the probe, and return -EPROBDE_DEFER
+>> > to the code. Which means i need to remove the AT24 device...
+>> >
+>> >        Andrew
+>>
+>> Are you sure this is the correct approach? I understand that you want
+>> to use something like board files for your machine? Wouldn't it be
+>> better to register a platform device for at24, register a cell lookup
+>> and then depend on that cell from your driver?
+>
+> Hi Bartosz
+>
+> The machine is based around a Kontron Com Express module, with an
+> intel Ivy Bridge CPU. This is then placed into a custom carrier board,
+> which has a number of i2c devices.
+>
+> I have a platform driver which matches on the DMI system ID for the
+> Kontron module.
+>
+> The Com Express module has a PLD which implements i2c, gpio,
+> etc. There is an MFD for this, which instantiates the i2c-kempld i2c
+> bus driver.
+>
+> My platform driver finds this i2c-kempld bus driver. If it does not
+> exist yet, it return -EPROBE_DEFER. If it is found it instantiates an
+> at24 device on it. I need to look at the content of the EEPROM to
+> determine the hardware revision, plus do a checksum.  From that, i
+> need to instantiates 1 or 2 additional AT24, up to 4 GPIO expanders,
+> and i2c to spi converter, add some gpio-leds on the gpio expanders,
+> create a bit-banging MDIO bus, instantiate an Ethernet switch on the
+> MDIO bus, maybe add an Ethernet switch to the SPI bus, etc.
+>
+> As you can see, i have a chain of events. I cannot move onto the next
+> part of the chain until i know the probe for the previous part has
+> finished. e.g. i cannot add gpio-leds until i know the gpio expander
+> has probed. But the gpio expander provides a call back, similar to the
+> at24 setup(). The MDIO bus and the SPI bus has a mechanism to register
+> an info structure, just like you have done for NVMEM cells. So that
+> works out.
+>
+> The weak link in this chain is that first at24 probe, and knowing when
+> i can access the nvmem cells for the revision and checksum
+> information. -EPROBE_DEFER does not help me here. I need either some
+> sort of blocking wait for the cells to become available, or a callback
+> in a context which allows me to instantiate more devices.
+>
+> I also have some steps which cannot be undone. You don't provide a
+> mechanism to unregister the nvmem info structure. The I2C and MDIO
+> equivalent also does not provide an unregister for bus info. So once i
+> register the first info structure, i'm past the point of no return. I
+> cannot return -EPROBE_DEFER because i cannot unregister the info
+> structures, so that i can register them again the next time the
+> platform driver gets probed.
+>
+>          Andrew
+>
 
-Suggestion from Rob was to add compatible strings to the dais nodes
-This patchset adds this. Also this patchset has 3 trivial fixes which
-is removing redundant owner, remove unused struct member and fix a
-error check in q6routing.
+I see. I see it this way: the setup callback comes from the time when
+we didn't have nvmem and should go away. I will protest loud whenever
+someone will try to use it again and will work towards removing it as
+soon as possible.
 
-Changes since v1:
-- Addressed few trivial comments from Niklas
+I will give your problem a thought and will try to get back with some
+proposals - maybe we should, as you suggested, extend nvmem even
+further to allow to remove nvmem info entries etc.
 
-Thanks,
-srini
-
-Srinivas Kandagatla (12):
-  ASoC: q6adm: dt-bindings: add compatible string to routing
-  ASoC: q6asm: dt-bindings: add compatible string to dais
-  ASoC: q6afe: dt-bindings: add compatible string to dais
-  ASoC: qdsp6: q6adm: use of_platform_populate/depopulate()
-  ASoC: qdsp6: q6asm: use of_platform_populate/depopulate()
-  ASoC: qdsp6: q6afe: use of_platform_populate/depopulate()
-  ASoC: qdsp6: q6afe-dai: support dt based module loading
-  ASoC: qdsp6: q6asm-dai: support dt based module loading
-  ASoC: qdsp6: q6routing: support dt based module loading
-  ASoC: qcom: apq8096: remove redundant owner assignment
-  ASoC: qdsp6: q6routing: add proper error check
-  ASoC: qdsp6: q6asm: remove unused struct q6asm member
-
- Documentation/devicetree/bindings/sound/qcom,q6adm.txt |  6 ++++++
- Documentation/devicetree/bindings/sound/qcom,q6afe.txt |  6 ++++++
- Documentation/devicetree/bindings/sound/qcom,q6asm.txt |  6 ++++++
- sound/soc/qcom/apq8096.c                               |  1 -
- sound/soc/qcom/qdsp6/q6adm.c                           | 16 ++--------------
- sound/soc/qcom/qdsp6/q6afe-dai.c                       |  7 +++++++
- sound/soc/qcom/qdsp6/q6afe.c                           | 16 ++--------------
- sound/soc/qcom/qdsp6/q6asm-dai.c                       |  7 +++++++
- sound/soc/qcom/qdsp6/q6asm.c                           | 17 ++---------------
- sound/soc/qcom/qdsp6/q6routing.c                       |  9 ++++++++-
- 10 files changed, 46 insertions(+), 45 deletions(-)
-
--- 
-2.16.2
-
+Best regards,
+Bartosz Golaszewski
