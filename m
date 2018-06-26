@@ -2,117 +2,171 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30ECC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADE4C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0EF26C05
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:16:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="E1T2U/6I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0EF26C05
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id AA92626C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:16:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA92626C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965882AbeFZOQU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 10:16:20 -0400
-Received: from imap.thunk.org ([74.207.234.97]:56094 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934518AbeFZOQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:16:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=0MimxU6a2WqxYotoDIoEUejNWn1sOiQpiebz0bEb4bY=; b=E1T2U/6INTcpvEzVVo1cq8X8Su
-        Vvlc0ddRLbC1CLaYDWKcm3MfYrWzo2MX99LWQqzL3BMBP1mbjm454toIwwTl1+xWm+URabe5yZ+8z
-        fhHB/mq/cnupm34Stmd7uCY/pcBr2j+SpkmOrtdbfELjuvEXMSyi3O2GBAGsrIjTR7cE=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fXolH-00086Q-Ov; Tue, 26 Jun 2018 14:16:03 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id A8C047A4480; Tue, 26 Jun 2018 10:16:02 -0400 (EDT)
-Date:   Tue, 26 Jun 2018 10:16:02 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Guenter Roeck <groeck@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Wu Fengguang <fengguang.wu@intel.com>
-Subject: Re: what trees/branches to test on syzbot
-Message-ID: <20180626141602.GA17788@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Guenter Roeck <groeck@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Wu Fengguang <fengguang.wu@intel.com>
-References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
- <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
- <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
- <873735n3dy.fsf@xmission.com>
- <20180116173440.GA15893@kroah.com>
- <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
- <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
- <CA+55aFzJaHyKBg_PTS85Y5RxUsQEerJ_Lc5HY1dd1YNztf==Wg@mail.gmail.com>
- <b9aa57f5-9204-dc97-bfd6-d53ed2e0ae12@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b9aa57f5-9204-dc97-bfd6-d53ed2e0ae12@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        id S965893AbeFZOQp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 10:16:45 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:57926 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934518AbeFZOQn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 10:16:43 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie3.idc.renesas.com with ESMTP; 26 Jun 2018 23:16:42 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 1911E84C91;
+        Tue, 26 Jun 2018 23:16:42 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,274,1526310000"; 
+   d="scan'208";a="283643696"
+Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.229])
+  by relmlii1.idc.renesas.com with ESMTP; 26 Jun 2018 23:16:39 +0900
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] ARM: Debug kernel copy by printing
+Date:   Tue, 26 Jun 2018 15:16:35 +0100
+Message-Id: <1530022595-6806-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 07:54:53PM +0900, Tetsuo Handa wrote:
-> I hope we can accept NOW either "reviving linux-next.git" or "allowing debug printk()
-> patches for linux.git". For example, "INFO: task hung in __sb_start_write" got 900
-> crashes in 81 days but still unable to find a reproducer. Dmitry tried to reproduce
-> locally with debug printk() patches but not yet successful. I think that testing with
-> http://lkml.kernel.org/r/f91e1c82-9693-cca3-4ab7-ecd9d9881fb4@i-love.sakura.ne.jp
-> on linux.git or linux-next.git is the only realistic way for debugging this bug.
-> More we postpone revival of the linux-next, more syzbot reports we will get...
+It may happen that when we relocate the kernel we corrupt other
+sensible memory (e.g. the memory needed by U-Boot for dealing
+with bootm command) while copying the kernel. If we overwrite
+the content of the memory area used by U-Boot's command bootm
+(described by U-Boot's parameters bootm_low and bootm_size),
+the kernel won't be able to boot. Troubleshooting the problem
+then is not straightforward.
 
-Here's a proposal for adding linux-next back:
+This commit allows the user to easily print information on
+where the kernel gets copied from/to in order to help with the
+design of the system memory map (e.g. bootm_low and bootm_size)
+at boot up.
 
-*) Subsystems or maintainers need to have a way to opt out of getting
-   spammed with Syzkaller reports that have no reproducer.  More often
-   than not, they are not actionable, and just annoy the maintainers,
-   with the net result that they tune out all Syzkaller reports as
-   noise.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Acked-by: Biju Das <biju.das@bp.renesas.com>
+---
+Dear All,
 
-*) Email reports for failures on linux-next that correspond to known
-   failures on mainline should be suppressed.  Another way of doing
-   this would be to only report a problem found by a specific
-   reproducer to the mailing list unless the recipient has agreed to
-   be spammed by Syskaller noise.
+shmobile_defconfig doesn't use kernel modules, everything gets
+built-in. iwg20d and iwg22d platforms from iWave use uImage
+to boot, DRAM starts at address 0x40000000, the kernel gets
+loaded up in memory at address 0x40007fc0, bootm_low is
+0x40e00000, and bootm_size is 0x100000.
 
-And please please please, Syzkaller needs to figure out how to do
-bisection runs once you have a reproducer.
+The kernel is getting larger and larger, so much so that during
+the relocation the kernel is copying itself right where the
+bootm memory area lives, preventing Linux from booting.
+Here is what this patch prints when applied on top of tag
+next-20180625 and running on the iwg22d:
 
-						- Ted
+C:0x400080C0-0x404922A0->0x40E90800-0x4131A9E0
+
+The designer then has to pick up a suitable memory range for
+bootm memory area to fix this, but the only way to successfully
+achieve this is by knowing where the kernel is going to copy
+itself in memory, so that he can stay clear of it.
+
+Other platforms that use the same defconfig suffer from the same
+issue (e.g. Koelsch et al.) as they have been designed some time
+ago or the original BSP was based on an LTS kernel.
+
+Debugging this basically requires a JTAG debugger at this stage.
+
+Do you think this patch could be considered acceptable? If not,
+what would be the best way to get useful/sensible/debug
+information out of the kernel when the problem occours?
+
+Comments welcome!
+
+Thanks,
+Fab
+
+ arch/arm/boot/compressed/head.S | 43 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
+index 517e0e1..6c7ccb4 100644
+--- a/arch/arm/boot/compressed/head.S
++++ b/arch/arm/boot/compressed/head.S
+@@ -114,6 +114,35 @@
+ #endif
+ 		.endm
+ 
++		/*
++		 * Debug kernel copy by printing the memory addresses involved
++		 */
++		.macro dbgkc, begin, end, cbegin, cend
++#ifdef DEBUG
++		kputc   #'\n'
++		kputc   #'C'
++		kputc   #':'
++		kputc   #'0'
++		kputc   #'x'
++		kphex   \begin, 8	/* Start of compressed kernel */
++		kputc	#'-'
++		kputc	#'0'
++		kputc	#'x'
++		kphex	\end, 8		/* End of compressed kernel */
++		kputc	#'-'
++		kputc	#'>'
++		kputc   #'0'
++		kputc   #'x'
++		kphex   \cbegin, 8	/* Start of kernel copy */
++		kputc	#'-'
++		kputc	#'0'
++		kputc	#'x'
++		kphex	\cend, 8	/* End of kernel copy */
++		kputc	#'\n'
++		kputc	#'\r'
++#endif
++		.endm
++
+ 		.section ".start", #alloc, #execinstr
+ /*
+  * sort out different calling conventions
+@@ -450,6 +479,20 @@ dtb_check_done:
+ 		add	r6, r9, r5
+ 		add	r9, r9, r10
+ 
++#ifdef DEBUG
++		sub     r10, r6, r5
++		sub     r10, r9, r10
++		/*
++		 * We are about to copy the kernel to a new memory area.
++		 * The boundaries of the new memory area can be found in
++		 * r10 and r9, whilst r5 and r6 contain the boundaries
++		 * of the memory we are going to copy.
++		 * Calling dbgkc will help with the printing of this
++		 * information.
++		 */
++		dbgkc	r5, r6, r10, r9
++#endif
++
+ 1:		ldmdb	r6!, {r0 - r3, r10 - r12, lr}
+ 		cmp	r6, r5
+ 		stmdb	r9!, {r0 - r3, r10 - r12, lr}
+-- 
+2.7.4
+
