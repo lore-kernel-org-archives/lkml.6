@@ -2,126 +2,103 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E6DC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6F6C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D73523DBE
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:33:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D73523DBE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E88C223C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:34:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HLL8T4vO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E88C223C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752965AbeFZVdY (ORCPT
+        id S1753310AbeFZVeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 17:33:24 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:44307 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751867AbeFZVdX (ORCPT
+        Tue, 26 Jun 2018 17:34:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53292 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752299AbeFZVeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 17:33:23 -0400
-Received: by mail-yb0-f193.google.com with SMTP id a2-v6so6595719ybe.11;
-        Tue, 26 Jun 2018 14:33:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qcx6zpfu662/VdbG/ZESbkRFtJsqRNhfy/Uevqt1tKo=;
-        b=D1emLHx93jqcU81evVCruKnQ7rASlgAolBUh4Qq1YVCkw08qTjoyv47mHo1r95bmFr
-         NtHmfeS3aVPb8AXz2R9bK3vrf07m4SGzrtlRaOuCP+aGIqzAVZvhwL5E6nWSSUj6BiFR
-         nIFRkScFMEVK/PbFANmJnyYuP3RvZKV9igSCuyEh93EGl9oUDlJfZcG3+QRnd6ZHtgTk
-         jN4fBo42zlrrypiR3GbSkAVQ40ciJcduuGJSfP8NWL2IANhbxfIjCfjA+iXRYFUnRbV7
-         g3cV89sGSLLPmASbkHBliZIQQpdFJoOduzVGiAm/jrzR5THs2hVcSHCAvefE9vvXeRBy
-         N6jQ==
-X-Gm-Message-State: APt69E3pgUT/MdhnLCb+FPJhJQY5wpffW8eIjhDp384l8rDomWLu/O0f
-        PbdYHIrxMgcbIKdZlPyAew==
-X-Google-Smtp-Source: ADUXVKJLLgPhRDSJv0dBGMCegOAYM2zS+wYD7P3nxIOZTH6k9X9wfJeyguU01qcqRWbJgs0ivam+CQ==
-X-Received: by 2002:a25:ef04:: with SMTP id g4-v6mr1661511ybd.126.1530048801348;
-        Tue, 26 Jun 2018 14:33:21 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id d190-v6sm1766887ywh.105.2018.06.26.14.33.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 14:33:20 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 15:33:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Daniel Mack <daniel@zonque.org>
-Cc:     zbr@ioremap.net, mark.rutland@arm.com, szabolcs.gyurko@tlt.hu,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/4] dt-bindings: w1: document sub-node bindings for
- DS2760
-Message-ID: <20180626213319.GA22766@rob-hp-laptop>
-References: <20180619212744.794-1-daniel@zonque.org>
- <20180619212744.794-2-daniel@zonque.org>
+        Tue, 26 Jun 2018 17:34:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ej8jc6giKxYXMysRblkTvftP2k9huG1UoYwTt7xug2c=; b=HLL8T4vOBSxD0U10ecp11LdCe
+        KxJK6u9Y+wF1Aiqs0RZjXR8HEyGkKQkcM2eJNDPoDKKNoZ+JijgNW82U/h/eZBpXHcgzBVdlJWKPp
+        IGzRtwH4a25binZ7AxRNWAkbNv8mQ/P8vrMx803dgqlBCSsiVL/A8MlX4iyEkq9fJeUjScQYDPBTo
+        tAyW68g87HS8j1MVdABZWC5KYcTX+kdLsUmk1KmFsp40WqL2u32MvI9GlJTDvzNTRKZoabDRtqsdh
+        BA9lBbCJ+q7enXZ4sbcFLU1dwRV5kR0rX98sM3RuVXo9Zs46ehJIFA+YkzKubcqdWd3i+DdWne4PK
+        PsGbBbSEQ==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXvb7-0004b7-Nc; Tue, 26 Jun 2018 21:34:01 +0000
+Date:   Tue, 26 Jun 2018 14:33:58 -0700
+From:   Darren Hart <dvhart@infradead.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: dell-smbios: make a function and a pointer
+ static
+Message-ID: <20180626213358.GA4945@fury>
+References: <20180621181524.30550-1-colin.king@canonical.com>
+ <20180623002237.GG27466@fury>
+ <CAHp75VfWcosNzM03zsGnQrL6yRh0=uidV+SU-06hyYtwdJo3EQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619212744.794-2-daniel@zonque.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAHp75VfWcosNzM03zsGnQrL6yRh0=uidV+SU-06hyYtwdJo3EQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 11:27:41PM +0200, Daniel Mack wrote:
-> This patch add a generic w1 bindings document that merely describes how
-> slave deviceses are grouped under master nodes. It also adds a specific
-> binding for the ds2760 battery monitor.
+On Tue, Jun 26, 2018 at 10:32:17PM +0300, Andy Shevchenko wrote:
+> On Sat, Jun 23, 2018 at 3:22 AM, Darren Hart <dvhart@infradead.org> wrote:
+> > On Thu, Jun 21, 2018 at 07:15:24PM +0100, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> The function dell_smbios_smm_call and pointer platform_device are
+> >> local to the source and do not need to be in global scope, so make
+> >> them static.
+> >>
+> >> Cleans up sparse warnings:
+> >> warning: symbol 'platform_device' was not declared. Should it be static?
+> >> warning: symbol 'dell_smbios_smm_call' was not declared. Should it be
+> >> static?
 > 
-> Signed-off-by: Daniel Mack <daniel@zonque.org>
-> ---
->  .../devicetree/bindings/w1/w1-ds2760.txt        |  9 +++++++++
->  .../devicetree/bindings/w1/w1-gpio.txt          |  6 ++++++
->  Documentation/devicetree/bindings/w1/w1.txt     | 17 +++++++++++++++++
->  3 files changed, 32 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/w1/w1-ds2760.txt
->  create mode 100644 Documentation/devicetree/bindings/w1/w1.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/w1/w1-ds2760.txt b/Documentation/devicetree/bindings/w1/w1-ds2760.txt
-> new file mode 100644
-> index 000000000000..86a0f4c573eb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/w1/w1-ds2760.txt
-> @@ -0,0 +1,9 @@
-> +Devicetree bindings for Maxim DS2760
-> +====================================
-> +
-> +The ds2760 is a w1 slave device and must hence have its sub-node in DT
-> +under a w1 bus master node.
-> +
-> +Required properties:
-> +- compatible: must be "maxim,ds2760-w1"
-> +
-> diff --git a/Documentation/devicetree/bindings/w1/w1-gpio.txt b/Documentation/devicetree/bindings/w1/w1-gpio.txt
-> index 6e09c35d9f1a..a3e0e964b260 100644
-> --- a/Documentation/devicetree/bindings/w1/w1-gpio.txt
-> +++ b/Documentation/devicetree/bindings/w1/w1-gpio.txt
-> @@ -13,10 +13,16 @@ Optional properties:
->   - linux,open-drain: if specified, the data pin is considered in
->  		     open-drain mode.
->  
-> +Also refer to the generic w1.txt document.
-> +
->  Examples:
->  
->  	onewire@0 {
->  		compatible = "w1-gpio";
->  		gpios = <&gpio 126 0>, <&gpio 105 0>;
-> +
-> +		slave@0 {
+> >> -int dell_smbios_smm_call(struct calling_interface_buffer *input)
+> >> +static int dell_smbios_smm_call(struct calling_interface_buffer *input)
+> >
+> > Hrm. So these are passed by pointer to dell_smbios_register_device(), which is in
+> > turn called by dell_smbios_call() from dell-smbios-base.c.
+> >
+> > So while it is valid to make these static, since we're not referencing the
+> > symbol, but the pointer value instead - I do worry about the "static" suggesting
+> > to someone reading the code that this data is not used outside of this file,
+> > when it is.
+> >
+> > I'm not finding a position on this in coding-style.
+> >
+> > Andy, do you care to weigh in on this?
+> 
+> We are using static keyword by almost all callback defined functions,
+> so, for my point of view it's pretty much okay.
 
-A unit-address should have a corresponding reg property. Also, the node 
-name should reflect the class of device.
+OK, just wanted to double check.
 
-You don't really need the unit address here, but for multiple slaves you 
-would. I'm not sure what you'd use here since the only id/address is 
-the serial number which is unknown except for the family code. If you 
-have 2 identical devices with some different DT properties, how would 
-you match? I don't see a way other than putting the serial number (or 
-some portion of it) in DT.
-
-I'm not sure how common multiple slaves are. Perhaps just support a 
-single slave for now.
-
-Rob
+-- 
+Darren Hart
+VMware Open Source Technology Center
