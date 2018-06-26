@@ -2,191 +2,149 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAFBC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFAAC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D52182083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:45:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD5B264B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 03:47:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="OmuZhbpV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52182083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WO0I+Uth"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD5B264B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965404AbeFZDpS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 23:45:18 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:65113 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965355AbeFZDpR (ORCPT
+        id S965419AbeFZDrI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 23:47:08 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:58852 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965341AbeFZDrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 23:45:17 -0400
-Received: from mail-ua0-f169.google.com (mail-ua0-f169.google.com [209.85.217.169]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w5Q3j6Q3024721;
-        Tue, 26 Jun 2018 12:45:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w5Q3j6Q3024721
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529984707;
-        bh=Efr7k6qAYbUotOyhcFh47XAVztCKrSASKKyFo/P4LxI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=OmuZhbpV0GZNmhVmUyIwMi89n1ToOeOCkFxRgfbT9IMOvF5MUCyJGRMeV1iVIW5qP
-         sa7DbuOKpo6Eumj7CanVH7+BEvCYb/G8Pyo+DHRRl/RpXWFsImHSg+Ad/vTfDJ7KYa
-         5iR1ahQlWyItyqEZHZyyoCBgCm3532faXO+haTsMyXEvThUzgac1S5DWxwCSY1nzBc
-         OWxKfY5l2cs4FjQd+yF2oyWCxyRz+WHGYLaX9uO5hkrd1PbTemLr0adXtT7WcXaBRf
-         zVaA2SfTSsXFiciG73DGPRCoZhFT/+IxNjsB0hZ8EoBKKcxHVanqSgEoSBsJ21Nb4R
-         iXIsBvllQXmGQ==
-X-Nifty-SrcIP: [209.85.217.169]
-Received: by mail-ua0-f169.google.com with SMTP id z16-v6so10020830uaz.10;
-        Mon, 25 Jun 2018 20:45:07 -0700 (PDT)
-X-Gm-Message-State: APt69E07Qnq+SiVgve8skVQryUhKsgJL+MiGaJo1Rw3HjKyqLho+ixSt
-        cXCCDsoJKF2B54myBQAk78Wn9hCLmnKn1kJgprY=
-X-Google-Smtp-Source: AAOMgpfc/UZRI8JLiITFFEJLhCd4xznxXEiKy42t7Wfmddl307ZqzSm1fCc/Bw/aqe7uPSB4FYaolzrEFsrIq0Q3rTo=
-X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr2900822ual.141.1529984706338;
- Mon, 25 Jun 2018 20:45:06 -0700 (PDT)
+        Mon, 25 Jun 2018 23:47:06 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5Q3hcke192731;
+        Tue, 26 Jun 2018 03:47:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=ld/ghtcJfFDiS8mFcJfDLkjNV12ZeBssEVfk1PeHwtE=;
+ b=WO0I+UthdXzB/Ux8eQ18MFNRWpOphu2x4Q+H0hZqKiNkWNhttM5QHDtqVGV1GwI22gIZ
+ ihlZUOzWqscPDOuT8EPPMbITsB3gqyZ4pmSzZ5eJVLeo4R5bK9EX/stJ88w57EcJYhtu
+ 2hI260lxhlqULYRr9D4EHG3ZZOfR4w3yAlJST0oQlUupcMPIQYTJWgNrpi4YjXsGlanj
+ D2FMjWx+tczYXWf1lcDElUrtgH0eMq/7hXudVKFH411L2Z7ovtYBdYNfS6FXkfDHo/vv
+ R4ARxn7ePyjSViEUR6hZiIlvdJnd6d0TqEa0NQv0hfxyCiXThHcR5k5HfYq0XvAOID/2 dA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2ju1wfj8ec-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Jun 2018 03:47:04 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5Q3l3D8019000
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Jun 2018 03:47:03 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5Q3l2gs030027;
+        Tue, 26 Jun 2018 03:47:03 GMT
+Received: from [10.182.69.179] (/10.182.69.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 25 Jun 2018 20:47:02 -0700
+Subject: Re: [PATCH] blk-mq: use mutex_trylock to avoid lock inversion
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+References: <1529391637-1704-1-git-send-email-jianchao.w.wang@oracle.com>
+ <2409013d789ca266879d24c815b76c2193e23fe3.camel@wdc.com>
+ <d528a730-8e44-225b-2a35-3544160761dc@oracle.com>
+ <2c2003ff1baac05688495677f67239d52f6d9527.camel@wdc.com>
+ <2a1dda06-5c7c-b75b-c1ae-75d1a2a49694@oracle.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <a0350d07-3c11-c04c-d9ba-94a5868e7d8f@oracle.com>
+Date:   Tue, 26 Jun 2018 11:46:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Mon, 25 Jun 2018 20:44:25
- -0700 (PDT)
-In-Reply-To: <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
-References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
- <1528987172-19810-3-git-send-email-yamada.masahiro@socionext.com> <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 26 Jun 2018 12:44:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQKOz1zccBrX2vgqA7Wu5c397W=GkAj1AMR+r56UybXeg@mail.gmail.com>
-Message-ID: <CAK7LNAQKOz1zccBrX2vgqA7Wu5c397W=GkAj1AMR+r56UybXeg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] bpfilter: include bpfilter_umh in assembly instead
- of using objcopy
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2a1dda06-5c7c-b75b-c1ae-75d1a2a49694@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8935 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=471
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806260040
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexei,
+Hi Bart
 
-
-2018-06-15 9:47 GMT+09:00 Alexei Starovoitov <alexei.starovoitov@gmail.com>:
-> On Thu, Jun 14, 2018 at 11:39:31PM +0900, Masahiro Yamada wrote:
->> What we want here is to embed a user-space program into the kernel.
->> Instead of the complex ELF magic, let's simply wrap it in the assembly
->> with the '.incbin' directive.
+On 06/21/2018 04:23 PM, jianchao.wang wrote:
+> Hi Bart
+> 
+> On 06/21/2018 12:18 AM, Bart Van Assche wrote:
+>> On Wed, 2018-06-20 at 10:09 +0800, jianchao.wang wrote:
+>>> It is very easy to reproduce with following scripts.
+>>>
+>>> script 0
+>>> while true
+>>> do
+>>> 	modprobe null_blk queue_mode=2 shared_tags=1
+>>> 	sleep 0.1
+>>> 	rmmod null_blk
+>>> 	sleep 0.1
+>>> done
+>>>
+>>> script 1
+>>> file0="/sys/block/nullb0/mq/0/nr_tags"
+>>> file1="/sys/block/nullb0/mq/0/cpu0/rq_list"
+>>> while true;
+>>> do
+>>> 	if [ -e $file0 ];then
+>>> 		cat $file0
+>>> 	fi
+>>> 	if [ -e $file1 ];then
+>>> 		cat $file1
+>>> 	fi
+>>> done
 >>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
+>> Hello Jianchao,
 >>
->> Changes in v2:
->>   - Rebase
+>> Thanks for having shared a reproducer. However, the approach of the patch you
+>> posted doesn't seem like the right approach to me. I propose to proceed as
+>> follows:
+>> * Convert the reproducer into a blktests test and submit is as a patch to the
+>>   blktests project (https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_osandov_blktests&d=DwIGaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=_TjwODcX-0o-OZfrVTFMpvbS0QbYxoya17aHM9pZAXw&s=wdVpTkE6PJX3GXvjXNwEup3opdflyCGY324CAYXSixY&e=).
+>> * Remove the mutex_lock/unlock(&sysfs_lock) calls from blk_cleanup_queue().
+>>   These calls are useless.  Block drivers are required to call del_gendisk()
+>>   before calling blk_cleanup_queue(). That means that sysfs attributes are
+>>   removed synchronously before blk_cleanup_queue() is called. The following
+>>   statement in blk_cleanup_queue() verifies that:
+>>     WARN_ON_ONCE(q->kobj.state_in_sysfs);
+>>   BTW, this also means that the blk_queue_dying() checks in various show and
+>>   store methods are superfluous.
+>> * Introduce a new mutex to serialize blk_mq_register_dev() and
+>>   blk_mq_sysfs_register() and blk_mq_sysfs_unregister(). I think it is wrong
+>>   that these functions use sysfs_mutex.
+>> * Document the purpose of sysfs_mutex in include/linux/blkdev.h, namely to
+>>   serialize the sysfs .show() and .store() callback functions and also to
+>>   serialize elevator changes.
 >>
->>  net/bpfilter/Makefile            | 15 ++-------------
->>  net/bpfilter/bpfilter_kern.c     | 11 +++++------
->>  net/bpfilter/bpfilter_umh_blob.S |  7 +++++++
->>  3 files changed, 14 insertions(+), 19 deletions(-)
->>  create mode 100644 net/bpfilter/bpfilter_umh_blob.S
->>
->> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
->> index e0bbe75..39c6980 100644
->> --- a/net/bpfilter/Makefile
->> +++ b/net/bpfilter/Makefile
->> @@ -15,18 +15,7 @@ ifeq ($(CONFIG_BPFILTER_UMH), y)
->>  HOSTLDFLAGS += -static
->>  endif
->>
->> -# a bit of elf magic to convert bpfilter_umh binary into a binary blob
->> -# inside bpfilter_umh.o elf file referenced by
->> -# _binary_net_bpfilter_bpfilter_umh_start symbol
->> -# which bpfilter_kern.c passes further into umh blob loader at run-time
->> -quiet_cmd_copy_umh = GEN $@
->> -      cmd_copy_umh = echo ':' > $(obj)/.bpfilter_umh.o.cmd; \
->> -      $(OBJCOPY) -I binary -O `$(OBJDUMP) -f $<|grep format|cut -d' ' -f8` \
->> -      -B `$(OBJDUMP) -f $<|grep architecture|cut -d, -f1|cut -d' ' -f2` \
->> -      --rename-section .data=.init.rodata $< $@
->> -
->> -$(obj)/bpfilter_umh.o: $(obj)/bpfilter_umh
->> -     $(call cmd,copy_umh)
->> +$(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
->>
->>  obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
->> -bpfilter-objs += bpfilter_kern.o bpfilter_umh.o
->> +bpfilter-objs += bpfilter_kern.o bpfilter_umh_blob.o
->> diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
->> index 0952257..6de3ae5 100644
->> --- a/net/bpfilter/bpfilter_kern.c
->> +++ b/net/bpfilter/bpfilter_kern.c
->> @@ -10,11 +10,8 @@
->>  #include <linux/file.h>
->>  #include "msgfmt.h"
->>
->> -#define UMH_start _binary_net_bpfilter_bpfilter_umh_start
->> -#define UMH_end _binary_net_bpfilter_bpfilter_umh_end
->> -
->> -extern char UMH_start;
->> -extern char UMH_end;
->> +extern char bpfilter_umh_start;
->> +extern char bpfilter_umh_end;
->>
->>  static struct umh_info info;
->>  /* since ip_getsockopt() can run in parallel, serialize access to umh */
->> @@ -93,7 +90,9 @@ static int __init load_umh(void)
->>       int err;
->>
->>       /* fork usermode process */
->> -     err = fork_usermode_blob(&UMH_start, &UMH_end - &UMH_start, &info);
->> +     err = fork_usermode_blob(&bpfilter_umh_end,
->> +                              &bpfilter_umh_end - &bpfilter_umh_start,
->> +                              &info);
->>       if (err)
->>               return err;
->>       pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
->> diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
->> new file mode 100644
->> index 0000000..40311d1
->> --- /dev/null
->> +++ b/net/bpfilter/bpfilter_umh_blob.S
->> @@ -0,0 +1,7 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +     .section .init.rodata, "a"
->> +     .global bpfilter_umh_start
->> +bpfilter_umh_start:
->> +     .incbin "net/bpfilter/bpfilter_umh"
->> +     .global bpfilter_umh_end
->> +bpfilter_umh_end:
->
-> for some reason it doesn't work.
-> fork_usermode_blob() returns ENOEXEC
-> You should be able to test it simply running 'iptables -L'.
-> Without this patch you should see:
-> [   12.696937] bpfilter: Loaded bpfilter_umh pid 225
-> Started bpfilter
->
-> where first line comes from kernel module and second from umh.
+> 
+> Really appreciate your kindly and detailed directive.
+> I will post the V2 version based on your suggestions later.
+> 
 
+V2 patch has been posted, would you please take a look at on them ?
+https://marc.info/?l=linux-block&m=152965143412927&w=2
 
-Sorry for the late reply.
+In addition, it is hard to add test case for this issue in blktests,
+because it is hard to decide how many times or how long time to run
+the test two scripts. If too long, it may delay the whole test, if
+too short, the issue may cannot be exposed.
 
-Unfortunately, I will be busy for a while.
-
-I will come back eventually
-to check it out, but I cannot tell when.
-
-
-Somebody else sent a patch equivalent to 1/3, so it is fine.
-
-3/3 can go independently, so it will send it as a separate patch for now.
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks
+Jianchao
