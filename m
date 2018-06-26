@@ -6,53 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A62C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CE3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 320BB26314
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:09:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 320BB26314
+	by mail.kernel.org (Postfix) with ESMTP id E2E4226E4A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:10:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2E4226E4A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753177AbeFZRJR (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:09:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58616 "EHLO
+        id S932413AbeFZRJI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 13:09:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52728 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932080AbeFZRIw (ORCPT
+        by vger.kernel.org with ESMTP id S932120AbeFZRIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Jun 2018 13:08:52 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QH5Nxo076396
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:51 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jus52s73x-1
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QH5Qvb120507
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:52 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jus52s7dd-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:51 -0400
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:08:52 -0400
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 13:08:50 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 26 Jun 2018 13:08:51 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 13:08:45 -0400
+        Tue, 26 Jun 2018 13:08:47 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QH8i4j15794522
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QH8kBG6226542
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 17:08:45 GMT
+        Tue, 26 Jun 2018 17:08:46 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 881AFB206A;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id AA28AB2067;
+        Tue, 26 Jun 2018 13:08:39 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48C65B206E;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 81C14B206E;
+        Tue, 26 Jun 2018 13:08:39 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 13:08:38 -0400 (EDT)
+        Tue, 26 Jun 2018 13:08:39 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id C798816CA0A8; Tue, 26 Jun 2018 10:10:49 -0700 (PDT)
+        id E340316CA0AD; Tue, 26 Jun 2018 10:10:49 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,149 +60,106 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to race with CPU offline
-Date:   Tue, 26 Jun 2018 10:10:39 -0700
+Subject: [PATCH tip/core/rcu 18/22] rcu: Remove CPU-hotplug failsafe from force-quiescent-state code path
+Date:   Tue, 26 Jun 2018 10:10:44 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180626002052.GA24146@linux.vnet.ibm.com>
 References: <20180626002052.GA24146@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062617-2213-0000-0000-000002C0462A
+x-cbid: 18062617-0072-0000-0000-00000374C873
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052668; UDB=6.00539669; IPR=6.00830592;
- MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:08:49
+ PH=3.00000004; SC=3.00000266; SDB=6.01052668; UDB=6.00539668; IPR=6.00830593;
+ MB=3.00021864; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 17:08:51
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062617-2214-0000-0000-00005A9DB919
-Message-Id: <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18062617-0073-0000-0000-0000487E75F5
+Message-Id: <20180626171048.2181-18-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=990 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=957 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1806260192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without special fail-safe quiescent-state-propagation checks, grace-period
-hangs can result from the following scenario:
+Now that quiescent states for newly offlined CPUs are reported either
+when that CPU goes offline or at the end of grace-period initialization,
+the CPU-hotplug failsafe in the force-quiescent-state code path is no
+longer needed.
 
-1.	CPU 1 goes offline.
-
-2.	Because CPU 1 is the only CPU in the system blocking the current
-	grace period, as soon as rcu_cleanup_dying_idle_cpu()'s call to
-	rcu_report_qs_rnp() returns.
-
-3.	At this point, the leaf rcu_node structure's ->lock is no longer
-	held: rcu_report_qs_rnp() has released it, as it must in order
-	to awaken the RCU grace-period kthread.
-
-4.	At this point, that same leaf rcu_node structure's ->qsmaskinitnext
-	field still records CPU 1 as being online.  This is absolutely
-	necessary because the scheduler uses RCU, and ->qsmaskinitnext
-	contains RCU's idea as to which CPUs are online.  Therefore,
-	invoking rcu_report_qs_rnp() after clearing CPU 1's bit from
-	->qsmaskinitnext would result in a lockdep-RCU splat due to
-	RCU being used from an offline CPU.
-
-5.	RCU's grace-period kthread awakens, sees that the old grace period
-	has completed and that a new one is needed.  It therefore starts
-	a new grace period, but because CPU 1's leaf rcu_node structure's
-	->qsmaskinitnext field still shows CPU 1 as being online, this new
-	grace period is initialized to wait for a quiescent state from the
-	now-offline CPU 1.
-
-6.	Without the fail-safe force-quiescent-state checks, there would
-	be no quiescent state from the now-offline CPU 1, which would
-	eventually result in RCU CPU stall warnings and memory exhaustion.
-
-It would be good to get rid of the special fail-safe quiescent-state
-propagation checks, and thus it would be good to fix things so that
-the above scenario cannot happen.  This commit therefore adds a new
-->ofl_lock to the rcu_state structure.  This lock is held by rcu_gp_init()
-across the applying of buffered online and offline operations to the
-rcu_node tree, and it is also held by rcu_cleanup_dying_idle_cpu()
-when buffering a new offline operation.  This prevents rcu_gp_init()
-from acquiring the leaf rcu_node structure's lock during the interval
-between when rcu_cleanup_dying_idle_cpu() invokes rcu_report_qs_rnp(),
-which releases ->lock and the re-acquisition of that same lock.
-This in turn prevents the failure scenario outlined above, and will
-hopefully eventually allow removal of the offline-CPU checks from the
-force-quiescent-state code path.
+This commit therefore removes this failsafe.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c | 6 ++++++
- kernel/rcu/tree.h | 4 ++++
- 2 files changed, 10 insertions(+)
+ include/trace/events/rcu.h | 10 +++++-----
+ kernel/rcu/tree.c          |  9 +--------
+ kernel/rcu/tree.h          |  1 -
+ 3 files changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 2cfd5d3da4f8..bb8f45c0fa68 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -101,6 +101,7 @@ struct rcu_state sname##_state = { \
- 	.abbr = sabbr, \
- 	.exp_mutex = __MUTEX_INITIALIZER(sname##_state.exp_mutex), \
- 	.exp_wake_mutex = __MUTEX_INITIALIZER(sname##_state.exp_wake_mutex), \
-+	.ofl_lock = __SPIN_LOCK_UNLOCKED(sname##_state.ofl_lock), \
- }
- 
- RCU_STATE_INITIALIZER(rcu_sched, 's', call_rcu_sched);
-@@ -1900,11 +1901,13 @@ static bool rcu_gp_init(struct rcu_state *rsp)
- 	 */
- 	rcu_for_each_leaf_node(rsp, rnp) {
- 		rcu_gp_slow(rsp, gp_preinit_delay);
-+		spin_lock(&rsp->ofl_lock);
- 		raw_spin_lock_irq_rcu_node(rnp);
- 		if (rnp->qsmaskinit == rnp->qsmaskinitnext &&
- 		    !rnp->wait_blkd_tasks) {
- 			/* Nothing to do on this leaf rcu_node structure. */
- 			raw_spin_unlock_irq_rcu_node(rnp);
-+			spin_unlock(&rsp->ofl_lock);
- 			continue;
- 		}
- 
-@@ -1940,6 +1943,7 @@ static bool rcu_gp_init(struct rcu_state *rsp)
- 		}
- 
- 		raw_spin_unlock_irq_rcu_node(rnp);
-+		spin_unlock(&rsp->ofl_lock);
- 	}
- 
- 	/*
-@@ -3747,6 +3751,7 @@ static void rcu_cleanup_dying_idle_cpu(int cpu, struct rcu_state *rsp)
- 
- 	/* Remove outgoing CPU from mask in the leaf rcu_node structure. */
- 	mask = rdp->grpmask;
-+	spin_lock(&rsp->ofl_lock);
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags); /* Enforce GP memory-order guarantee. */
- 	if (rnp->qsmask & mask) { /* RCU waiting on outgoing CPU? */
- 		/* Report quiescent state -before- changing ->qsmaskinitnext! */
-@@ -3755,6 +3760,7 @@ static void rcu_cleanup_dying_idle_cpu(int cpu, struct rcu_state *rsp)
- 	}
- 	rnp->qsmaskinitnext &= ~mask;
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-+	spin_unlock(&rsp->ofl_lock);
- }
+diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+index 759e7e83733d..a8d07feff6a0 100644
+--- a/include/trace/events/rcu.h
++++ b/include/trace/events/rcu.h
+@@ -391,11 +391,11 @@ TRACE_EVENT(rcu_quiescent_state_report,
  
  /*
+  * Tracepoint for quiescent states detected by force_quiescent_state().
+- * These trace events include the type of RCU, the grace-period number that
+- * was blocked by the CPU, the CPU itself, and the type of quiescent state,
+- * which can be "dti" for dyntick-idle mode, "ofl" for CPU offline, "kick"
+- * when kicking a CPU that has been in dyntick-idle mode for too long, or
+- * "rqc" if the CPU got a quiescent state via its rcu_qs_ctr.
++ * These trace events include the type of RCU, the grace-period number
++ * that was blocked by the CPU, the CPU itself, and the type of quiescent
++ * state, which can be "dti" for dyntick-idle mode, "kick" when kicking
++ * a CPU that has been in dyntick-idle mode for too long, or "rqc" if the
++ * CPU got a quiescent state via its rcu_qs_ctr.
+  */
+ TRACE_EVENT(rcu_fqs,
+ 
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 8704b31b696d..c698a595b932 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1188,14 +1188,6 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
+ 		smp_store_release(ruqp, true);
+ 	}
+ 
+-	/* Check for the CPU being offline. */
+-	if (!(rdp->grpmask & rcu_rnp_online_cpus(rnp))) {
+-		trace_rcu_fqs(rdp->rsp->name, rdp->gp_seq, rdp->cpu, TPS("ofl"));
+-		rdp->offline_fqs++;
+-		rcu_gpnum_ovf(rnp, rdp);
+-		return 1;
+-	}
+-
+ 	/*
+ 	 * A CPU running for an extended time within the kernel can
+ 	 * delay RCU grace periods.  When the CPU is in NO_HZ_FULL mode,
+@@ -3716,6 +3708,7 @@ void rcu_cpu_starting(unsigned int cpu)
+ 		nbits = bitmap_weight(&oldmask, BITS_PER_LONG);
+ 		/* Allow lockless access for expedited grace periods. */
+ 		smp_store_release(&rsp->ncpus, rsp->ncpus + nbits); /* ^^^ */
++		rcu_gpnum_ovf(rnp, rdp); /* Offline-induced counter wrap? */
+ 		if (rnp->qsmask & mask) { /* RCU waiting on incoming CPU? */
+ 			/* Report QS -after- changing ->qsmaskinitnext! */
+ 			rcu_report_qs_rnp(mask, rsp, rnp, rnp->gp_seq, flags);
 diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 3def94fc9c74..6683da6e4ecc 100644
+index 6683da6e4ecc..795d469c6f67 100644
 --- a/kernel/rcu/tree.h
 +++ b/kernel/rcu/tree.h
-@@ -363,6 +363,10 @@ struct rcu_state {
- 	const char *name;			/* Name of structure. */
- 	char abbr;				/* Abbreviated name. */
- 	struct list_head flavors;		/* List of RCU flavors. */
-+
-+	spinlock_t ofl_lock ____cacheline_internodealigned_in_smp;
-+						/* Synchronize offline with */
-+						/*  GP pre-initialization. */
- };
+@@ -217,7 +217,6 @@ struct rcu_data {
  
- /* Values for rcu_state structure's gp_flags field. */
+ 	/* 4) reasons this CPU needed to be kicked by force_quiescent_state */
+ 	unsigned long dynticks_fqs;	/* Kicked due to dynticks idle. */
+-	unsigned long offline_fqs;	/* Kicked due to being offline. */
+ 	unsigned long cond_resched_completed;
+ 					/* Grace period that needs help */
+ 					/*  from cond_resched(). */
 -- 
 2.17.1
 
