@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E30C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12B2C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5782226471
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 813A226475
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:59:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwFSDG7+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5782226471
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5nR4rqz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813A226475
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965299AbeFZC70 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 22:59:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60674 "EHLO mail.kernel.org"
+        id S965324AbeFZC7e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 22:59:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965232AbeFZC7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 22:59:24 -0400
+        id S965232AbeFZC7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 22:59:30 -0400
 Received: from localhost.localdomain (h2133.porttelecom.ru [193.189.69.133])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 978BD2646C;
-        Tue, 26 Jun 2018 02:59:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EEAA2646D;
+        Tue, 26 Jun 2018 02:59:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529981963;
-        bh=UAkgJk305p84rl6vpzKEz9bcWLq3QcQs6m/HrVDGqX8=;
+        s=default; t=1529981969;
+        bh=Af2H64Ru5k8VxyvfmVva1+wm0CvDodIMwIRk02W6Y1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZwFSDG7+aNzuwztcMvuTJ2K0TzHoyA37W24rYpnNQgol2+MQfwJtRnqpPNSesfpV2
-         wdV8MOJiO/4FrVtnmJwqhPIkxRYBjiutfTYoIbxTGjebGjslF2cXpIgt08F/OT1MdO
-         H/bgSQY5pOo/AZ3Hx2lqyqEofHkTFu7lZGxpm6Ag=
+        b=p5nR4rqzktITVfRBystE7eXAUdC1ipFVrQDj4Em61XRebLXelazdrIv68qMHE9U9Q
+         AQue6LWbwcumaNKBHmH32cO2jyrtYNo+rCB5NOONMpti02Mc/i7A/+u7Lc2LBKiikg
+         7jqyL1iMvzgKE0MlWDxfzSJ+3ETw62PbyYmdYDAA=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -58,9 +58,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 01/12] perf/breakpoint: Split attribute parse and commit
-Date:   Tue, 26 Jun 2018 04:58:48 +0200
-Message-Id: <1529981939-8231-2-git-send-email-frederic@kernel.org>
+Subject: [PATCH 02/12] perf/breakpoint: Pass arch breakpoint struct to arch_check_bp_in_kernelspace()
+Date:   Tue, 26 Jun 2018 04:58:49 +0200
+Message-Id: <1529981939-8231-3-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529981939-8231-1-git-send-email-frederic@kernel.org>
 References: <1529981939-8231-1-git-send-email-frederic@kernel.org>
@@ -69,21 +69,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arch_validate_hwbkpt_settings() mixes up attribute check and commit into
-a single code entity. Therefore the validation may return an error due to
-incorrect atributes while still leaving halfway modified architecture
-breakpoint data.
+We can't pass the breakpoint directly on arch_check_bp_in_kernelspace()
+anymore because its architecture internal datas (struct arch_hw_breakpoint)
+are not yet filled by the time we call the function, and most
+implementation need this backend to be up to date. So arrange the
+function to take the probing struct instead.
 
-This is harmless when we deal with a new breakpoint but it becomes a
-problem when we modify an existing breakpoint.
-
-Split attribute parse and commit to fix that. The architecture is
-passed a "struct arch_hw_breakpoint" to fill on top of the new attr
-and the core takes care about copying the backend data once it's fully
-validated. The architectures then need to implement the new API.
-
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Original-patch-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -106,114 +97,354 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Joel Fernandes <joel.opensrc@gmail.com>
 ---
- kernel/events/hw_breakpoint.c | 57 +++++++++++++++++++++++++++++++------------
- 1 file changed, 41 insertions(+), 16 deletions(-)
+ arch/arm/include/asm/hw_breakpoint.h     |  2 +-
+ arch/arm/kernel/hw_breakpoint.c          | 11 +++--
+ arch/arm64/include/asm/hw_breakpoint.h   |  2 +-
+ arch/arm64/kernel/hw_breakpoint.c        |  9 ++--
+ arch/powerpc/include/asm/hw_breakpoint.h |  2 +-
+ arch/powerpc/kernel/hw_breakpoint.c      |  6 +--
+ arch/sh/include/asm/hw_breakpoint.h      |  2 +-
+ arch/sh/kernel/hw_breakpoint.c           |  9 ++--
+ arch/x86/include/asm/hw_breakpoint.h     |  2 +-
+ arch/x86/kernel/hw_breakpoint.c          | 71 +++++++++++++++++---------------
+ arch/xtensa/include/asm/hw_breakpoint.h  |  2 +-
+ arch/xtensa/kernel/hw_breakpoint.c       |  7 ++--
+ kernel/events/hw_breakpoint.c            |  2 +-
+ 13 files changed, 63 insertions(+), 64 deletions(-)
 
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 6e28d28..314e2a9 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -400,16 +400,35 @@ int dbg_release_bp_slot(struct perf_event *bp)
- 	return 0;
- }
+diff --git a/arch/arm/include/asm/hw_breakpoint.h b/arch/arm/include/asm/hw_breakpoint.h
+index e46e4e7..d5a0f52 100644
+--- a/arch/arm/include/asm/hw_breakpoint.h
++++ b/arch/arm/include/asm/hw_breakpoint.h
+@@ -117,7 +117,7 @@ struct pmu;
  
--static int validate_hw_breakpoint(struct perf_event *bp)
-+#ifndef hw_breakpoint_arch_parse
-+int hw_breakpoint_arch_parse(struct perf_event *bp,
-+			     const struct perf_event_attr *attr,
-+			     struct arch_hw_breakpoint *hw)
+ extern int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
+ 				  int *gen_len, int *gen_type);
+-extern int arch_check_bp_in_kernelspace(struct perf_event *bp);
++extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
+diff --git a/arch/arm/kernel/hw_breakpoint.c b/arch/arm/kernel/hw_breakpoint.c
+index 629e251..385dcf4 100644
+--- a/arch/arm/kernel/hw_breakpoint.c
++++ b/arch/arm/kernel/hw_breakpoint.c
+@@ -456,14 +456,13 @@ static int get_hbp_len(u8 hbp_len)
+ /*
+  * Check whether bp virtual address is in kernel space.
+  */
+-int arch_check_bp_in_kernelspace(struct perf_event *bp)
++int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
  {
--	int ret;
-+	int err;
+ 	unsigned int len;
+ 	unsigned long va;
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
  
--	ret = arch_validate_hwbkpt_settings(bp);
--	if (ret)
--		return ret;
-+	err = arch_validate_hwbkpt_settings(bp);
-+	if (err)
-+		return err;
-+
-+	*hw = bp->hw.info;
-+
-+	return 0;
-+}
-+#endif
-+
-+static int hw_breakpoint_parse(struct perf_event *bp,
-+			       const struct perf_event_attr *attr,
-+			       struct arch_hw_breakpoint *hw)
-+{
-+	int err;
-+
-+	err = hw_breakpoint_arch_parse(bp, attr, hw);
-+	if (err)
-+		return err;
+-	va = info->address;
+-	len = get_hbp_len(info->ctrl.len);
++	va = hw->address;
++	len = get_hbp_len(hw->ctrl.len);
  
- 	if (arch_check_bp_in_kernelspace(bp)) {
--		if (bp->attr.exclude_kernel)
-+		if (attr->exclude_kernel)
+ 	return (va >= TASK_SIZE) && ((va + len - 1) >= TASK_SIZE);
+ }
+@@ -576,7 +575,7 @@ static int arch_build_bp_info(struct perf_event *bp)
+ 
+ 	/* Privilege */
+ 	info->ctrl.privilege = ARM_BREAKPOINT_USER;
+-	if (arch_check_bp_in_kernelspace(bp))
++	if (arch_check_bp_in_kernelspace(info))
+ 		info->ctrl.privilege |= ARM_BREAKPOINT_PRIV;
+ 
+ 	/* Enabled? */
+@@ -640,7 +639,7 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
  			return -EINVAL;
+ 
+ 		/* We don't allow mismatch breakpoints in kernel space. */
+-		if (arch_check_bp_in_kernelspace(bp))
++		if (arch_check_bp_in_kernelspace(info))
+ 			return -EPERM;
+ 
  		/*
- 		 * Don't let unprivileged users set a breakpoint in the trap
-@@ -424,19 +443,22 @@ static int validate_hw_breakpoint(struct perf_event *bp)
+diff --git a/arch/arm64/include/asm/hw_breakpoint.h b/arch/arm64/include/asm/hw_breakpoint.h
+index 4177076..9f4a3d4 100644
+--- a/arch/arm64/include/asm/hw_breakpoint.h
++++ b/arch/arm64/include/asm/hw_breakpoint.h
+@@ -124,7 +124,7 @@ struct pmu;
  
- int register_perf_hw_breakpoint(struct perf_event *bp)
+ extern int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
+ 				  int *gen_len, int *gen_type, int *offset);
+-extern int arch_check_bp_in_kernelspace(struct perf_event *bp);
++extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
+diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
+index 413dbe5..6a90d12 100644
+--- a/arch/arm64/kernel/hw_breakpoint.c
++++ b/arch/arm64/kernel/hw_breakpoint.c
+@@ -343,14 +343,13 @@ static int get_hbp_len(u8 hbp_len)
+ /*
+  * Check whether bp virtual address is in kernel space.
+  */
+-int arch_check_bp_in_kernelspace(struct perf_event *bp)
++int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
  {
--	int ret;
-+	struct arch_hw_breakpoint hw;
-+	int err;
+ 	unsigned int len;
+ 	unsigned long va;
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
  
--	ret = reserve_bp_slot(bp);
--	if (ret)
--		return ret;
-+	err = reserve_bp_slot(bp);
-+	if (err)
-+		return err;
+-	va = info->address;
+-	len = get_hbp_len(info->ctrl.len);
++	va = hw->address;
++	len = get_hbp_len(hw->ctrl.len);
  
--	ret = validate_hw_breakpoint(bp);
+ 	return (va >= TASK_SIZE) && ((va + len - 1) >= TASK_SIZE);
+ }
+@@ -502,7 +501,7 @@ static int arch_build_bp_info(struct perf_event *bp)
+ 	 * Note that we disallow combined EL0/EL1 breakpoints because
+ 	 * that would complicate the stepping code.
+ 	 */
+-	if (arch_check_bp_in_kernelspace(bp))
++	if (arch_check_bp_in_kernelspace(info))
+ 		info->ctrl.privilege = AARCH64_BREAKPOINT_EL1;
+ 	else
+ 		info->ctrl.privilege = AARCH64_BREAKPOINT_EL0;
+diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
+index 8e7b097..4d0b1bf 100644
+--- a/arch/powerpc/include/asm/hw_breakpoint.h
++++ b/arch/powerpc/include/asm/hw_breakpoint.h
+@@ -60,7 +60,7 @@ struct perf_sample_data;
+ 
+ extern int hw_breakpoint_slots(int type);
+ extern int arch_bp_generic_fields(int type, int *gen_bp_type);
+-extern int arch_check_bp_in_kernelspace(struct perf_event *bp);
++extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 						unsigned long val, void *data);
+diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
+index 80547da..899bcec 100644
+--- a/arch/powerpc/kernel/hw_breakpoint.c
++++ b/arch/powerpc/kernel/hw_breakpoint.c
+@@ -119,11 +119,9 @@ void arch_unregister_hw_breakpoint(struct perf_event *bp)
+ /*
+  * Check for virtual address in kernel space.
+  */
+-int arch_check_bp_in_kernelspace(struct perf_event *bp)
++int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
+ {
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 -
--	/* if arch_validate_hwbkpt_settings() fails then release bp slot */
--	if (ret)
-+	err = hw_breakpoint_parse(bp, &bp->attr, &hw);
-+	if (err) {
- 		release_bp_slot(bp);
-+		return err;
-+	}
- 
--	return ret;
-+	bp->hw.info = hw;
-+
-+	return 0;
+-	return is_kernel_addr(info->address);
++	return is_kernel_addr(hw->address);
  }
  
- /**
-@@ -464,6 +486,7 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
- 	u64 old_len  = bp->attr.bp_len;
- 	int old_type = bp->attr.bp_type;
- 	bool modify  = attr->bp_type != old_type;
-+	struct arch_hw_breakpoint hw;
- 	int err = 0;
+ int arch_bp_generic_fields(int type, int *gen_bp_type)
+diff --git a/arch/sh/include/asm/hw_breakpoint.h b/arch/sh/include/asm/hw_breakpoint.h
+index 7431c17..8a88ed0 100644
+--- a/arch/sh/include/asm/hw_breakpoint.h
++++ b/arch/sh/include/asm/hw_breakpoint.h
+@@ -54,7 +54,7 @@ static inline int hw_breakpoint_slots(int type)
+ }
  
- 	bp->attr.bp_addr = attr->bp_addr;
-@@ -473,7 +496,7 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
- 	if (check && memcmp(&bp->attr, attr, sizeof(*attr)))
- 		return -EINVAL;
+ /* arch/sh/kernel/hw_breakpoint.c */
+-extern int arch_check_bp_in_kernelspace(struct perf_event *bp);
++extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
+diff --git a/arch/sh/kernel/hw_breakpoint.c b/arch/sh/kernel/hw_breakpoint.c
+index 8648ed0..38791fe 100644
+--- a/arch/sh/kernel/hw_breakpoint.c
++++ b/arch/sh/kernel/hw_breakpoint.c
+@@ -124,14 +124,13 @@ static int get_hbp_len(u16 hbp_len)
+ /*
+  * Check for virtual address in kernel space.
+  */
+-int arch_check_bp_in_kernelspace(struct perf_event *bp)
++int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
+ {
+ 	unsigned int len;
+ 	unsigned long va;
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
  
--	err = validate_hw_breakpoint(bp);
-+	err = hw_breakpoint_parse(bp, attr, &hw);
- 	if (!err && modify)
- 		err = modify_bp_slot(bp, old_type);
+-	va = info->address;
+-	len = get_hbp_len(info->len);
++	va = hw->address;
++	len = get_hbp_len(hw->len);
  
-@@ -484,7 +507,9 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
- 		return err;
+ 	return (va >= TASK_SIZE) && ((va + len - 1) >= TASK_SIZE);
+ }
+@@ -346,7 +345,7 @@ static int __kprobes hw_breakpoint_handler(struct die_args *args)
+ 		perf_bp_event(bp, args->regs);
+ 
+ 		/* Deliver the signal to userspace */
+-		if (!arch_check_bp_in_kernelspace(bp)) {
++		if (!arch_check_bp_in_kernelspace(&bp->hw.info)) {
+ 			force_sig_fault(SIGTRAP, TRAP_HWBKPT,
+ 					(void __user *)NULL, current);
+ 		}
+diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
+index f59c398..7892459 100644
+--- a/arch/x86/include/asm/hw_breakpoint.h
++++ b/arch/x86/include/asm/hw_breakpoint.h
+@@ -52,7 +52,7 @@ static inline int hw_breakpoint_slots(int type)
+ struct perf_event;
+ struct pmu;
+ 
+-extern int arch_check_bp_in_kernelspace(struct perf_event *bp);
++extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
+diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
+index 8771766..c433791 100644
+--- a/arch/x86/kernel/hw_breakpoint.c
++++ b/arch/x86/kernel/hw_breakpoint.c
+@@ -169,28 +169,29 @@ void arch_uninstall_hw_breakpoint(struct perf_event *bp)
+ 		set_dr_addr_mask(0, i);
+ }
+ 
+-/*
+- * Check for virtual address in kernel space.
+- */
+-int arch_check_bp_in_kernelspace(struct perf_event *bp)
++static int arch_bp_generic_len(int x86_len)
+ {
+-	unsigned int len;
+-	unsigned long va;
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+-
+-	va = info->address;
+-	len = bp->attr.bp_len;
+-
+-	/*
+-	 * We don't need to worry about va + len - 1 overflowing:
+-	 * we already require that va is aligned to a multiple of len.
+-	 */
+-	return (va >= TASK_SIZE_MAX) || ((va + len - 1) >= TASK_SIZE_MAX);
++	switch (x86_len) {
++	case X86_BREAKPOINT_LEN_1:
++		return HW_BREAKPOINT_LEN_1;
++	case X86_BREAKPOINT_LEN_2:
++		return HW_BREAKPOINT_LEN_2;
++	case X86_BREAKPOINT_LEN_4:
++		return HW_BREAKPOINT_LEN_4;
++#ifdef CONFIG_X86_64
++	case X86_BREAKPOINT_LEN_8:
++		return HW_BREAKPOINT_LEN_8;
++#endif
++	default:
++		return -EINVAL;
++	}
+ }
+ 
+ int arch_bp_generic_fields(int x86_len, int x86_type,
+ 			   int *gen_len, int *gen_type)
+ {
++	int len;
++
+ 	/* Type */
+ 	switch (x86_type) {
+ 	case X86_BREAKPOINT_EXECUTE:
+@@ -211,28 +212,32 @@ int arch_bp_generic_fields(int x86_len, int x86_type,
  	}
  
-+	bp->hw.info = hw;
- 	bp->attr.disabled = attr->disabled;
-+
+ 	/* Len */
+-	switch (x86_len) {
+-	case X86_BREAKPOINT_LEN_1:
+-		*gen_len = HW_BREAKPOINT_LEN_1;
+-		break;
+-	case X86_BREAKPOINT_LEN_2:
+-		*gen_len = HW_BREAKPOINT_LEN_2;
+-		break;
+-	case X86_BREAKPOINT_LEN_4:
+-		*gen_len = HW_BREAKPOINT_LEN_4;
+-		break;
+-#ifdef CONFIG_X86_64
+-	case X86_BREAKPOINT_LEN_8:
+-		*gen_len = HW_BREAKPOINT_LEN_8;
+-		break;
+-#endif
+-	default:
++	len = arch_bp_generic_len(x86_len);
++	if (len < 0)
+ 		return -EINVAL;
+-	}
++	*gen_len = len;
+ 
  	return 0;
  }
  
++/*
++ * Check for virtual address in kernel space.
++ */
++int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
++{
++	unsigned long va;
++	int len;
++
++	va = hw->address;
++	len = arch_bp_generic_len(hw->len);
++	WARN_ON_ONCE(len < 0);
++
++	/*
++	 * We don't need to worry about va + len - 1 overflowing:
++	 * we already require that va is aligned to a multiple of len.
++	 */
++	return (va >= TASK_SIZE_MAX) || ((va + len - 1) >= TASK_SIZE_MAX);
++}
+ 
+ static int arch_build_bp_info(struct perf_event *bp)
+ {
+diff --git a/arch/xtensa/include/asm/hw_breakpoint.h b/arch/xtensa/include/asm/hw_breakpoint.h
+index dbe3053b..2525bf6 100644
+--- a/arch/xtensa/include/asm/hw_breakpoint.h
++++ b/arch/xtensa/include/asm/hw_breakpoint.h
+@@ -35,7 +35,7 @@ struct pt_regs;
+ struct task_struct;
+ 
+ int hw_breakpoint_slots(int type);
+-int arch_check_bp_in_kernelspace(struct perf_event *bp);
++int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ int arch_validate_hwbkpt_settings(struct perf_event *bp);
+ int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 				    unsigned long val, void *data);
+diff --git a/arch/xtensa/kernel/hw_breakpoint.c b/arch/xtensa/kernel/hw_breakpoint.c
+index b35656a..6e34c38 100644
+--- a/arch/xtensa/kernel/hw_breakpoint.c
++++ b/arch/xtensa/kernel/hw_breakpoint.c
+@@ -33,14 +33,13 @@ int hw_breakpoint_slots(int type)
+ 	}
+ }
+ 
+-int arch_check_bp_in_kernelspace(struct perf_event *bp)
++int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
+ {
+ 	unsigned int len;
+ 	unsigned long va;
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+ 
+-	va = info->address;
+-	len = bp->attr.bp_len;
++	va = hw->address;
++	len = hw->len;
+ 
+ 	return (va >= TASK_SIZE) && ((va + len - 1) >= TASK_SIZE);
+ }
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 314e2a9..89fe94c 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -427,7 +427,7 @@ static int hw_breakpoint_parse(struct perf_event *bp,
+ 	if (err)
+ 		return err;
+ 
+-	if (arch_check_bp_in_kernelspace(bp)) {
++	if (arch_check_bp_in_kernelspace(hw)) {
+ 		if (attr->exclude_kernel)
+ 			return -EINVAL;
+ 		/*
 -- 
 2.7.4
 
