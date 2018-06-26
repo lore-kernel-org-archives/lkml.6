@@ -3,62 +3,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE62C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8988EC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11F9326545
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:26:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11F9326545
+	by mail.kernel.org (Postfix) with ESMTP id 491A526546
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 06:27:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491A526546
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751496AbeFZGZ6 convert rfc822-to-8bit (ORCPT
+        id S1751798AbeFZG1U convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 02:25:58 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:42557 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751109AbeFZGZ5 (ORCPT
+        Tue, 26 Jun 2018 02:27:20 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:42685 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751109AbeFZG1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 02:25:57 -0400
-Received: by mail-ot0-f193.google.com with SMTP id 92-v6so17811682otw.9
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 23:25:56 -0700 (PDT)
+        Tue, 26 Jun 2018 02:27:19 -0400
+Received: by mail-ot0-f196.google.com with SMTP id 92-v6so17814928otw.9
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 23:27:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=e/ZLmL+XN36JwntG3/TpDae/Gfa2zE+Ti5w8DOqaZTM=;
-        b=EioEuCMTqCtlBrwrSkgrQuWrg9bU/Nl3ehYnkErrh36vhhWsxxVHl6hVBwFJyhbvHc
-         uLwYDVQc+vtz3h3LvSq4/PS7wsaiIUnrDEinAa0jPZPDqKivuDuuGzU+NffGl4OS+jYf
-         KoAysyyIPlMB0SDPyUdqsCIYid+1gNjjeQmKP+6g7unG1vop2gvQkSWPb5nXlRm8Ik6C
-         KfT6OKvdQcPGkXeNscub5aRCvWR86znMRdA4HX1NGK+XNRlx9Erp2EPc+r5S/Bl3seZ6
-         vjiU1JJQ4MMUOGDm1ExAqkgRc5zaQGfSLvXDTj3yeef6F8WKdV/xvu3XarC59bNOiXMu
-         BNHg==
-X-Gm-Message-State: APt69E35YYSxlCbSacD0k+LaLayN3dMwVXeQwuNcXX9OHEIwtzXmP61Q
-        dTbTEUaUl7zueplacn4AGT7sf5r2Z5/bbqwpjoo=
-X-Google-Smtp-Source: AAOMgpcJLrFrqDBd2UwKBQvS8hvNkpxTN4PUkHpCQM+K8Ko1Utb+hT+xDFhut75XHl09up9WTa+pdt8QFPHKvTsfRk0=
-X-Received: by 2002:a9d:3666:: with SMTP id w93-v6mr100026otb.394.1529994356378;
- Mon, 25 Jun 2018 23:25:56 -0700 (PDT)
+        bh=FU3m4WFtWgDkVNK8d/93dQdyw+3LyGH4+StOO7gYhic=;
+        b=j9TpR6nuWoyNLj5RJ1Wk07J3rLeP+fIoVZSLxxWfN4SL54uqKz26ji1tD+o7S+EsLo
+         uZhWtEAuMAv99s0ZzK8GEFG013XjpSf857bv3RFO41LFPGTh0rPL2A1/DNhfV+4RLntN
+         YAspcrBiYv0AwqG1KpvsLa5eFj2RD8TMDVmTmwrNKPO5cGu5Y9UDJ5tTY7G3JAdsrI+W
+         qW64ee3uigfL1qOOIpaKkgIBT3FtkeCUprx/z1foo62vPGTlhVUXuvzDflkhpDrS9oWc
+         y/HgQcBJ1zZwLBj3IyrFipCITCEKeGiARTlHs4vOuweCXmZNY13HWYbrOUbIzSSUSHZY
+         Ri6A==
+X-Gm-Message-State: APt69E3nASS7JC8ZrO4BY1z9pvkBFrHWNhdzg+Ez3tgk8vhMwzo4h1rG
+        JlCZUPGunzJO3cGTcxydAi1svvjWFNgnRluGt6I=
+X-Google-Smtp-Source: AAOMgpeBY0CX7Uo/2Drhk6J8Sh9a9E1jVQgEbbtlIPDrIoXkKwG2AApdt+6WFfEE4C7rjgOg3ReumSiqTMAK3dePtB8=
+X-Received: by 2002:a9d:41ea:: with SMTP id v39-v6mr111125oti.125.1529994438511;
+ Mon, 25 Jun 2018 23:27:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180622192749.24954-1-malat@debian.org> <c182ca65-f41e-4a1c-95ee-6cb979a6e76b@c-s.fr>
-In-Reply-To: <c182ca65-f41e-4a1c-95ee-6cb979a6e76b@c-s.fr>
+References: <20180622192718.24242-1-malat@debian.org> <b41b244e-78b8-c85f-9122-427ad04cccf8@c-s.fr>
+ <20180623194716.GY16221@gate.crashing.org>
+In-Reply-To: <20180623194716.GY16221@gate.crashing.org>
 From:   Mathieu Malaterre <malat@debian.org>
-Date:   Tue, 26 Jun 2018 08:25:44 +0200
-Message-ID: <CA+7wUsy9j8Zfxs1dB-bR-dYrzWjpNRm=BZYqkvEH5c1UzHrZMA@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_powerpc=2Fmm=3A_remove_warning_about_=E2=80=98type?=
-        =?UTF-8?Q?=E2=80=99_being_set?=
-To:     a.p.zijlstra@chello.nl
+Date:   Tue, 26 Jun 2018 08:27:06 +0200
+Message-ID: <CA+7wUsx4wpiP+q7NusNgFYfAM3gbnvOOPgrjq4QV7iA510noCg@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_powerpc=2Fxmon=3A_avoid_warnings_about_varia?=
+        =?UTF-8?Q?bles_that_might_be_clobbered_by_=E2=80=98longjmp=E2=80=99?=
+To:     Segher Boessenkool <segher@kernel.crashing.org>
 Cc:     Christophe LEROY <christophe.leroy@c-s.fr>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yisheng Xie <xieyisheng1@huawei.com>,
+        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Paul Mackerras <paulus@samba.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+        Breno Leitao <leitao@debian.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,60 +67,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 7:12 PM christophe leroy
-<christophe.leroy@c-s.fr> wrote:
+On Sat, Jun 23, 2018 at 9:47 PM Segher Boessenkool
+<segher@kernel.crashing.org> wrote:
 >
->
->
-> Le 22/06/2018 à 21:27, Mathieu Malaterre a écrit :
-> > ‘type’ is only used when CONFIG_DEBUG_HIGHMEM is set. So add a possibly
-> > unused tag to variable. Remove warning treated as error with W=1:
+> On Sat, Jun 23, 2018 at 06:59:27PM +0200, christophe leroy wrote:
 > >
-> >    arch/powerpc/mm/highmem.c:59:6: error: variable ‘type’ set but not used [-Werror=unused-but-set-variable]
+> >
+> > Le 22/06/2018 à 21:27, Mathieu Malaterre a écrit :
+> > >Move initialization of variables after data definitions. This silence
+> > >warnings treated as error with W=1:
+> > >
+> > >   arch/powerpc/xmon/xmon.c:3389:14: error: variable ‘name’ might be
+> > >   clobbered by ‘longjmp’ or ‘vfork’ [-Werror=clobbered]
+> > >   arch/powerpc/xmon/xmon.c:3100:22: error: variable ‘tsk’ might be
+> > >   clobbered by ‘longjmp’ or ‘vfork’ [-Werror=clobbered]
+> >
+> > Is that an invalid warning ?
 >
-> Is type neeeded at all when CONFIG_DEBUG_HIGHMEM is not set ?
->
-> The call        type = kmap_atomic_idx();          seems useless when
-> CONFIG_DEBUG_HIGHMEM isn't set. Couldn't we just most type definition
-> and setting inside the CONFIG_DEBUG_HIGHMEM {} below ?
->
-> Alternatively, maybe you could replace the #ifdef CONFIG_DEBUG_HIGHMEM
-> by an    if (IS_ENABLED(CONFIG_DEBUG_HIGHMEM)) ?
+> No, both are correct warnings.  GCC can not see which functions it only
+> has a declaration of can call longjmp.
 
-I am not familiar with this code. But starring at other arch
-implementations (eg. `arch/x86/mm/highmem_32.c`), it feels like
-powerpc is skipping `pte_clear(&init_mm, vaddr, kmap_pte-idx);` unless
-`CONFIG_DEBUG_HIGHMEM=y`. Could someone please confirm this is the
-correct behavior ?
+I assumed those were false positive warnings, given how easy it was to
+defeat them. Let give it another try.
 
-Or else I can rewrite the code a bit like `arch/arm/mm/highmem.c`
-which skips `set_fixmap_pte(idx, __pte(0));` unless
-`CONFIG_DEBUG_HIGHMEM=y`.
-
-> Christophe
+> > Otherwise, I'd expect one to fix the warning, not just cheat on GCC.
 >
-> >
-> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> > ---
-> >   arch/powerpc/mm/highmem.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/powerpc/mm/highmem.c b/arch/powerpc/mm/highmem.c
-> > index 668e87d03f9e..82a0e37557a5 100644
-> > --- a/arch/powerpc/mm/highmem.c
-> > +++ b/arch/powerpc/mm/highmem.c
-> > @@ -56,7 +56,7 @@ EXPORT_SYMBOL(kmap_atomic_prot);
-> >   void __kunmap_atomic(void *kvaddr)
-> >   {
-> >       unsigned long vaddr = (unsigned long) kvaddr & PAGE_MASK;
-> > -     int type;
-> > +     int type __maybe_unused;
-> >
-> >       if (vaddr < __fix_to_virt(FIX_KMAP_END)) {
-> >               pagefault_enable();
-> >
+> Yes, the patch seems to change the code in such a way that some versions
+> of GCC will no longer warn.  Which does not make to code any more correct.
 >
-> ---
-> L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-> https://www.avast.com/antivirus
+> Either restructure the code, or make the var non-automatic, or make it
+> volatile.
 >
+>
+> Segher
