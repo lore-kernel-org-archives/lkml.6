@@ -2,235 +2,119 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38931C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B889C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9C802643B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E95882643C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 02:22:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Be2W2N9a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C802643B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="WZ6XF0ZM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E95882643C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965280AbeFZCUg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Jun 2018 22:20:36 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:34616 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965195AbeFZCUe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Jun 2018 22:20:34 -0400
-Received: by mail-pf0-f196.google.com with SMTP id g3-v6so2597422pfi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Jun 2018 19:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Kf/Fqw+xoG5gLjneSYKH1a0BvJxDVhq6dz9ar7nv1HA=;
-        b=Be2W2N9av7pUCDZs9Nv3iNxnEYcJxzCcdPeeOOxYYW1GkxXgWguvEE+4ShvI8eIZDf
-         /csF0ACNU6xoENAcQYZrUi/J+BLAVBpY/6R3+PNo5tV6+yFknqG26EbhxnS/dtT3Vfzb
-         t9o8wT9RUYMNifHqlgqYMhO/AxqSnTiAVCd3U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Kf/Fqw+xoG5gLjneSYKH1a0BvJxDVhq6dz9ar7nv1HA=;
-        b=SSHNzQvfQiVx4bYwGFOyIiQhKt7oE78Hhx9DuXdakq357aHYhS38LK6T9xgWC1Agtj
-         ag5dwwrnixq6E9yVRSajSYpyy4W0bYW9Bm/59aKEHhe/T2XHEkr96WPpybUv2U3tfXXE
-         2H4n9NTa0AKu2ghZ68tYf9UZPKU3DQpj+VlshCPVACKJc/b6DJooui4s07OCN+gOB4X3
-         9WLO2lDSkLXv/UsQUI7Jys0H11gs6q/WzILa0I3ftG/I0XZRSvrdp8LYuS/hXuPuGBH0
-         eR854xmg62Qo1/mkv47MXuht6KWjLbhXx7rorxoaCJ3zWr7dHu7gthVbkES/BhnZg/mL
-         LVLg==
-X-Gm-Message-State: APt69E0t/5Qx2EuI7IS/bprXfd/qkHgRsk7l7GBS/66p/TrLYyXpM6Ir
-        b0nHhW5k/W6vBuKUF559DO+AVqDrql4=
-X-Google-Smtp-Source: ADUXVKKnNJHPjz6wx1vy6NavXGt4/4FsW5ZEjIAtZhv6yXcK1DnYREZLWMbCkMfOURg2YNDEuLTVFw==
-X-Received: by 2002:a65:5144:: with SMTP id g4-v6mr3855925pgq.21.1529979634044;
-        Mon, 25 Jun 2018 19:20:34 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y22-v6sm504626pfi.166.2018.06.25.19.20.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Jun 2018 19:20:33 -0700 (PDT)
-Date:   Mon, 25 Jun 2018 19:22:59 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Alex Elder <elder@linaro.org>
-Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH resend 1/5] remoteproc: Rename subdev functions to
- start/stop
-Message-ID: <20180626022259.GH1860@tuxbook-pro>
-References: <20180626013409.5125-1-elder@linaro.org>
- <20180626013409.5125-2-elder@linaro.org>
+        id S965273AbeFZCWu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 25 Jun 2018 22:22:50 -0400
+Received: from mail-eopbgr70082.outbound.protection.outlook.com ([40.107.7.82]:63931
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965199AbeFZCWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Jun 2018 22:22:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y6epo9iWY7jTG5MwEz+qNEEl+/2WKmlLjQ3Z0L/fB3k=;
+ b=WZ6XF0ZMQxBbQVXRgdbjlT068xBmFHPywSBqJA04HTIq1YzUd2CPMbeTo3KO0MbIB9Xpyg/mbUX0WpIVZlZvDmFpFIFDe+D3U6+Ap4A/pkcB82/lE5JhZxkYYoWCjCKQLSItO14egkmZtP/7MDDtUcJuiC0xByH/q8+6bsOf/eE=
+Received: from HE1PR04MB1450.eurprd04.prod.outlook.com (10.163.176.12) by
+ HE1PR04MB0954.eurprd04.prod.outlook.com (10.162.24.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.22; Tue, 26 Jun 2018 02:22:43 +0000
+Received: from HE1PR04MB1450.eurprd04.prod.outlook.com
+ ([fe80::6c56:638d:9996:7449]) by HE1PR04MB1450.eurprd04.prod.outlook.com
+ ([fe80::6c56:638d:9996:7449%4]) with mapi id 15.20.0884.024; Tue, 26 Jun 2018
+ 02:22:43 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+CC:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: RE: [PATCH] usb: chipidea: tegra: Use aligned DMA on Tegra114/124
+Thread-Topic: [PATCH] usb: chipidea: tegra: Use aligned DMA on Tegra114/124
+Thread-Index: AQHUDFpm0PE1NBcUBUKlRUz+xBOptKRx0DSg
+Date:   Tue, 26 Jun 2018 02:22:42 +0000
+Message-ID: <HE1PR04MB1450E820FEC8C9B31251057E8B490@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <20180625075843.31878-1-marcel@ziswiler.com>
+In-Reply-To: <20180625075843.31878-1-marcel@ziswiler.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR04MB0954;7:pECi4+4BXUZC95haI3aYTtPrBiq4O4MNs47WKx+VQ2l8BZOpA5T0meriWtwnNEnzSX1wJHhD98au7uv5ZMj9Y8znWHfWJUdBg0EaBIWDcxJAUgeH4ux4SaNbamBNbqg4dGItbvVj3FoYQrUWWxJFI8OrDQ0SCRMdBNQtIvOosVJ5QMrX2Mgb1t6LM1k3C5YaF4/X7gUxkosuE+dEzVRHEh685sIK4rWqWr+vJqbrEYlUCB/As7XHzMxzJIlK/zS6
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e98846f9-ce8e-47d2-640b-08d5db0bb2f1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB0954;
+x-ms-traffictypediagnostic: HE1PR04MB0954:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <HE1PR04MB09543521CF6CC0EFD7A854658B490@HE1PR04MB0954.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB0954;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB0954;
+x-forefront-prvs: 071518EF63
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(346002)(376002)(136003)(39860400002)(189003)(199004)(99286004)(229853002)(8936002)(68736007)(7696005)(256004)(66066001)(44832011)(486006)(9686003)(5660300001)(55016002)(6116002)(6436002)(3846002)(2501003)(33656002)(2201001)(446003)(476003)(2906002)(25786009)(11346002)(5250100002)(6246003)(14454004)(4326008)(7736002)(86362001)(53936002)(39060400002)(478600001)(74316002)(8676002)(81166006)(81156014)(76176011)(106356001)(6506007)(105586002)(316002)(2900100001)(186003)(305945005)(26005)(102836004)(110136005)(97736004)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB0954;H:HE1PR04MB1450.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: +GQMhbRGE8Sy2fe2Np2Lrol4LR4eJ7fRnnZS/p2h6CB3RFXFDhjkIA+OPxzV7jvRKBzj6CcyCVjHnwHfkf0vLKgpwklHws7geJq0TimcYlkP2uDPAYwsQPejDci41ys4VomiB0/kYCb4/eQp6QWs6BIPQ9Qe5SaCLBl0YZrVAf8W6Xa7Iqih8m2yJdtvV+zStQSk84h8d1d9fHJhHQTKVB7WYq7lPLJy2KMYzD72FayHn6oQE6eHKrETe8kLoxnJjUPbUCKc/AREVjWhfLp4IyibDMXXUaiT8t7sfSlFhU+RuBHnRCtF7B9MqLg6E2Ds90vaAXuNyUu20YSvtqfK77P8gl2pRyYFa+nJ/GQRWwQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626013409.5125-2-elder@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e98846f9-ce8e-47d2-640b-08d5db0bb2f1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2018 02:22:42.5922
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB0954
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 25 Jun 18:34 PDT 2018, Alex Elder wrote:
-
-> From: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> "start" and "stop" are more suitable names for how these two operations
-> are used, and they fit better with the upcoming introduction of two
-> additional operations in the struct.
-> 
-> [elder@linaro.org: minor comment edits]
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Alex Elder <elder@linaro.org>
-> Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
-
-Sorry for not spotting this before, but per section 11 of
-Documentation/process/submitting-patches.rst the tag part should read:
-
-
-Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-[elder@linaro.org: minor comment edits]
-Signed-off-by: Alex Elder <elder@linaro.org>
-
-
-I.e. as you're sending the email you must be the last one certifying the
-origin of the patch.
-
-Regards,
-Bjorn
-
-> ---
->  drivers/remoteproc/remoteproc_core.c | 30 ++++++++++++++--------------
->  include/linux/remoteproc.h           | 14 ++++++-------
->  2 files changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index a9609d971f7f..5dd58e6bea88 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -774,13 +774,13 @@ static int rproc_handle_resources(struct rproc *rproc,
->  	return ret;
->  }
->  
-> -static int rproc_probe_subdevices(struct rproc *rproc)
-> +static int rproc_start_subdevices(struct rproc *rproc)
->  {
->  	struct rproc_subdev *subdev;
->  	int ret;
->  
->  	list_for_each_entry(subdev, &rproc->subdevs, node) {
-> -		ret = subdev->probe(subdev);
-> +		ret = subdev->start(subdev);
->  		if (ret)
->  			goto unroll_registration;
->  	}
-> @@ -789,17 +789,17 @@ static int rproc_probe_subdevices(struct rproc *rproc)
->  
->  unroll_registration:
->  	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
-> -		subdev->remove(subdev, true);
-> +		subdev->stop(subdev, true);
->  
->  	return ret;
->  }
->  
-> -static void rproc_remove_subdevices(struct rproc *rproc, bool crashed)
-> +static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
->  {
->  	struct rproc_subdev *subdev;
->  
->  	list_for_each_entry_reverse(subdev, &rproc->subdevs, node)
-> -		subdev->remove(subdev, crashed);
-> +		subdev->stop(subdev, crashed);
->  }
->  
->  /**
-> @@ -901,8 +901,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  		return ret;
->  	}
->  
-> -	/* probe any subdevices for the remote processor */
-> -	ret = rproc_probe_subdevices(rproc);
-> +	/* Start any subdevices for the remote processor */
-> +	ret = rproc_start_subdevices(rproc);
->  	if (ret) {
->  		dev_err(dev, "failed to probe subdevices for %s: %d\n",
->  			rproc->name, ret);
-> @@ -1014,8 +1014,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
->  	struct device *dev = &rproc->dev;
->  	int ret;
->  
-> -	/* remove any subdevices for the remote processor */
-> -	rproc_remove_subdevices(rproc, crashed);
-> +	/* Stop any subdevices for the remote processor */
-> +	rproc_stop_subdevices(rproc, crashed);
->  
->  	/* the installed resource table is no longer accessible */
->  	rproc->table_ptr = rproc->cached_table;
-> @@ -1657,16 +1657,16 @@ EXPORT_SYMBOL(rproc_del);
->   * rproc_add_subdev() - add a subdevice to a remoteproc
->   * @rproc: rproc handle to add the subdevice to
->   * @subdev: subdev handle to register
-> - * @probe: function to call when the rproc boots
-> - * @remove: function to call when the rproc shuts down
-> + * @start: function to call after the rproc is started
-> + * @stop: function to call before the rproc is stopped
->   */
->  void rproc_add_subdev(struct rproc *rproc,
->  		      struct rproc_subdev *subdev,
-> -		      int (*probe)(struct rproc_subdev *subdev),
-> -		      void (*remove)(struct rproc_subdev *subdev, bool crashed))
-> +		      int (*start)(struct rproc_subdev *subdev),
-> +		      void (*stop)(struct rproc_subdev *subdev, bool crashed))
->  {
-> -	subdev->probe = probe;
-> -	subdev->remove = remove;
-> +	subdev->start = start;
-> +	subdev->stop = stop;
->  
->  	list_add_tail(&subdev->node, &rproc->subdevs);
->  }
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index dfdaede9139e..bf55bf2a5ee1 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -477,15 +477,15 @@ struct rproc {
->  /**
->   * struct rproc_subdev - subdevice tied to a remoteproc
->   * @node: list node related to the rproc subdevs list
-> - * @probe: probe function, called as the rproc is started
-> - * @remove: remove function, called as the rproc is being stopped, the @crashed
-> - *	    parameter indicates if this originates from the a recovery
-> + * @start: start function, called after the rproc has been started
-> + * @stop: stop function, called before the rproc is stopped; the @crashed
-> + *	    parameter indicates if this originates from a recovery
->   */
->  struct rproc_subdev {
->  	struct list_head node;
->  
-> -	int (*probe)(struct rproc_subdev *subdev);
-> -	void (*remove)(struct rproc_subdev *subdev, bool crashed);
-> +	int (*start)(struct rproc_subdev *subdev);
-> +	void (*stop)(struct rproc_subdev *subdev, bool crashed);
+=20
+> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/=
+ci_hdrc_tegra.c
+> index 7f4d2b6af37a..772851bee99b 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> @@ -33,11 +33,11 @@ static const struct tegra_udc_soc_info
+> tegra30_udc_soc_info =3D {  };
+>=20
+>  static const struct tegra_udc_soc_info tegra114_udc_soc_info =3D {
+> -	.flags =3D 0,
+> +	.flags =3D CI_HDRC_REQUIRES_ALIGNED_DMA,
 >  };
->  
->  /* we currently support only two vrings per rvdev */
-> @@ -568,8 +568,8 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
->  
->  void rproc_add_subdev(struct rproc *rproc,
->  		      struct rproc_subdev *subdev,
-> -		      int (*probe)(struct rproc_subdev *subdev),
-> -		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
-> +		      int (*start)(struct rproc_subdev *subdev),
-> +		      void (*stop)(struct rproc_subdev *subdev, bool crashed));
->  
->  void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
->  
-> -- 
-> 2.17.1
-> 
+>=20
+>  static const struct tegra_udc_soc_info tegra124_udc_soc_info =3D {
+> -	.flags =3D 0,
+> +	.flags =3D CI_HDRC_REQUIRES_ALIGNED_DMA,
+>  };
+>=20
+>  static const struct of_device_id tegra_udc_of_match[] =3D {
+> --
+
+Applied, thanks.
+
+Peter
