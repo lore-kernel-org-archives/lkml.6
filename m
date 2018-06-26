@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3A8C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5305CC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D9E426F70
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B17CD26F3B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 21:16:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Rgw3nowL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D9E426F70
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="C/3keOi5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17CD26F3B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752620AbeFZVQk (ORCPT
+        id S1752734AbeFZVQn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 17:16:40 -0400
-Received: from mail.efficios.com ([167.114.142.138]:41000 "EHLO
+        Tue, 26 Jun 2018 17:16:43 -0400
+Received: from mail.efficios.com ([167.114.142.138]:40998 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751894AbeFZVQh (ORCPT
+        with ESMTP id S1752048AbeFZVQh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Jun 2018 17:16:37 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 88AFA22DAE0;
+        by mail.efficios.com (Postfix) with ESMTP id 96BA522DAE2;
         Tue, 26 Jun 2018 17:16:36 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id Ot20XGlPZCTu; Tue, 26 Jun 2018 17:16:35 -0400 (EDT)
+        with ESMTP id IZkYaDCE8Pu0; Tue, 26 Jun 2018 17:16:36 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id BC91322DAD6;
-        Tue, 26 Jun 2018 17:16:35 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com BC91322DAD6
+        by mail.efficios.com (Postfix) with ESMTP id 1F37B22DADD;
+        Tue, 26 Jun 2018 17:16:36 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 1F37B22DADD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530047795;
-        bh=40zVm4fxxpUlNASy/ALDWkXeA72jWSKyt8DoN6qtPH0=;
+        s=default; t=1530047796;
+        bh=WBwv6QEJ+AnZsA+DKfS+FkbwPQxsu9f9rU/PGtoYXzg=;
         h=From:To:Date:Message-Id;
-        b=Rgw3nowLKm/1EfvY/ixQ2k2ZkY37ro7ikEPrNgr9M0VbyxbYOhGI9e6/zcjKMZUZ9
-         fRB8z6AMt49fwqoFGgjqbSu3jjW4oKqApZQEsO9pclS50t6s9eIvipvMz0/E4tvK9J
-         quuWVTHtKRSUvFxL06rlvWuv8xZQP1UKGXoelYRi9nosnT2OnWlg1qlYfu9px6XlhS
-         wLsA8pdmKaw7OsYQWVucm8JFjLuxO3i7nxMRSbTGX/ssQbvhXPQLLute0sTkiqtl5n
-         HaDUQlIuETg4fPVwF5RgUKXu9A+MLhneNlTXfjfEnZ/UWKopzOHlhqsCTm+qpyRzXq
-         32lhgcba0QiLA==
+        b=C/3keOi5nGTUvTdllc4wwTvK8OyvHDwyMYFJGs3TlLcxP7w4zV8YafFwbmBZV7VHY
+         +oPA8Bbg9/egtbEa1sTqrGaSf/pf2PRqPqzQIpSJ142r0MZQ2U0vSGR1ZFOnE7sMuE
+         8JtZwHi+r1zoEmQPN3TKHgN7VMiw1y1O2BdDu33ua2u5qdyEuK2UPaTi1mTGqd8xCy
+         k1w1KWNXVWtQgul3Ph4Umrs5TrdCwgKXghFcSiK/D4tHY9AI/YQKMnlY6OGU3Kppoy
+         0XMvWu8yH8Jnhb4PTufqAr7Ogcr6jDtAus8McD6FJUsJD1Ljx2HKBm786i9uWcEorw
+         H8TQgfq0wmSQg==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id a1bL8rbmBZ2g; Tue, 26 Jun 2018 17:16:35 -0400 (EDT)
+        with ESMTP id InlXhG8xKQCn; Tue, 26 Jun 2018 17:16:36 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 54B2722DAD0;
+        by mail.efficios.com (Postfix) with ESMTPSA id B358822DAD1;
         Tue, 26 Jun 2018 17:16:35 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -76,28 +76,29 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, x86@kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC PATCH for 4.18 1/2] compat: Introduce is_compat_frame
-Date:   Tue, 26 Jun 2018 17:16:16 -0400
-Message-Id: <20180626211617.8933-1-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 2/2] rseq: compat: clear high bits of rseq_cs fields
+Date:   Tue, 26 Jun 2018 17:16:17 -0400
+Message-Id: <20180626211617.8933-2-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180626211617.8933-1-mathieu.desnoyers@efficios.com>
+References: <20180626211617.8933-1-mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-x86 is moving from is_compat_task() to in_compat_syscall(). However,
-in_compat_syscall cannot be used to check whether a signal is being
-delivered on a compat task.
+Make the behavior rseq on compat tasks more robust by ensuring that
+kernel/rseq.c:rseq_get_rseq_cs() clears the high bits of
+rseq_cs->abort_ip, rseq_cs->start_ip and rseq_cs->post_commit_offset
+when a 32-bit binary is run on a 64-bit kernel.
 
-Introduce is_compat_frame to allow performing this check from
-architecture agnostic code. On all architectures except x86, it
-invokes is_compat_task(). On x86, it uses is_ia32_frame() and
-is_x32_frame() to check whether the signal frame is 32-bit.
+The intent here is that if user-space has garbage rather than zeroes
+in its struct rseq_cs fields padding, the behavior will be the same
+whether the binary is run on 32-bit or 64-bit kernels.
 
-This is needed by restartable sequences to detect whether it needs
-to clear the top bits of the start_ip, abort_ip, and post_commit_offset
-rseq_cs fields on signal delivery, thus ensuring identical behavior
-for a 32-bit binary executed on 32-bit and 64-bit kernels.
+Use in_compat_syscall() when rseq_get_rseq_cs() is invoked from
+system call context, and use is_compat_frame() when invoked from
+signal delivery.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -125,114 +126,89 @@ Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- arch/x86/include/asm/compat.h | 24 ++++++++++++++++++++++++
- arch/x86/kernel/signal.c      | 17 -----------------
- include/linux/compat.h        | 17 +++++++++++++++++
- 3 files changed, 41 insertions(+), 17 deletions(-)
+ kernel/rseq.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/compat.h b/arch/x86/include/asm/compat.h
-index fb97cf7c4137..1405a8df5215 100644
---- a/arch/x86/include/asm/compat.h
-+++ b/arch/x86/include/asm/compat.h
-@@ -8,6 +8,7 @@
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 22b6acf1ad63..7b1d51b965fc 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -13,6 +13,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/rseq.h>
  #include <linux/types.h>
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
-+#include <linux/signal.h>
- #include <asm/processor.h>
- #include <asm/user32.h>
- #include <asm/unistd.h>
-@@ -242,4 +243,27 @@ struct compat_siginfo;
- int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
- 		const siginfo_t *from, bool x32_ABI);
++#include <linux/compat.h>
+ #include <asm/ptrace.h>
  
-+static inline int is_ia32_compat_frame(struct ksignal *ksig)
-+{
-+	return IS_ENABLED(CONFIG_IA32_EMULATION) &&
-+		ksig->ka.sa.sa_flags & SA_IA32_ABI;
-+}
-+
-+static inline int is_ia32_frame(struct ksignal *ksig)
-+{
-+	return IS_ENABLED(CONFIG_X86_32) || is_ia32_compat_frame(ksig);
-+}
-+
-+static inline int is_x32_frame(struct ksignal *ksig)
-+{
-+	return IS_ENABLED(CONFIG_X86_X32_ABI) &&
-+		ksig->ka.sa.sa_flags & SA_X32_ABI;
-+}
-+
-+static inline bool is_compat_frame(struct ksignal *ksig)
-+{
-+	return is_ia32_frame(ksig) || is_x32_frame(ksig);
-+}
-+#define is_compat_frame	is_compat_frame		/* override the generic impl */
-+
- #endif /* _ASM_X86_COMPAT_H */
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 92a3b312a53c..cb488e3e952d 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -664,23 +664,6 @@ SYSCALL_DEFINE0(rt_sigreturn)
+ #define CREATE_TRACE_POINTS
+@@ -112,7 +113,23 @@ static int rseq_reset_rseq_cpu_id(struct task_struct *t)
  	return 0;
  }
  
--static inline int is_ia32_compat_frame(struct ksignal *ksig)
--{
--	return IS_ENABLED(CONFIG_IA32_EMULATION) &&
--		ksig->ka.sa.sa_flags & SA_IA32_ABI;
--}
--
--static inline int is_ia32_frame(struct ksignal *ksig)
--{
--	return IS_ENABLED(CONFIG_X86_32) || is_ia32_compat_frame(ksig);
--}
--
--static inline int is_x32_frame(struct ksignal *ksig)
--{
--	return IS_ENABLED(CONFIG_X86_X32_ABI) &&
--		ksig->ka.sa.sa_flags & SA_X32_ABI;
--}
--
- static int
- setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+-static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
++#ifdef CONFIG_COMPAT
++static void rseq_cs_compat(struct ksignal *ksig, struct rseq_cs *rseq_cs)
++{
++	if (!(ksig ? is_compat_frame(ksig) : in_compat_syscall()))
++		return;
++
++	rseq_cs->abort_ip = (compat_uptr_t) rseq_cs->abort_ip;
++	rseq_cs->start_ip = (compat_uptr_t) rseq_cs->start_ip;
++	rseq_cs->post_commit_offset =
++		(compat_uptr_t) rseq_cs->post_commit_offset;
++}
++#else
++static void rseq_cs_compat(struct ksignal *ksig, struct rseq_cs *rseq_cs) { }
++#endif
++
++static int rseq_get_rseq_cs(struct ksignal *ksig, struct task_struct *t,
++			    struct rseq_cs *rseq_cs)
  {
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index b1a5562b3215..2e1ffba65117 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -1022,6 +1022,19 @@ static inline struct compat_timeval ns_to_compat_timeval(s64 nsec)
- 	return ctv;
+ 	struct rseq_cs __user *urseq_cs;
+ 	unsigned long ptr;
+@@ -132,6 +149,7 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+ 		return -EFAULT;
+ 	if (rseq_cs->version > 0)
+ 		return -EINVAL;
++	rseq_cs_compat(ksig, rseq_cs);
+ 
+ 	/* Ensure that abort_ip is not in the critical section. */
+ 	if (rseq_cs->abort_ip - rseq_cs->start_ip < rseq_cs->post_commit_offset)
+@@ -209,14 +227,14 @@ static bool in_rseq_cs(unsigned long ip, struct rseq_cs *rseq_cs)
+ 	return ip - rseq_cs->start_ip < rseq_cs->post_commit_offset;
  }
  
-+/*
-+ * For most but not all architectures, "is this a compat sigframe?" and
-+ * "am I a compat task?" are the same question.  For architectures on which
-+ * they aren't the same question, arch code can override is_compat_frame.
-+ */
-+
-+#ifndef is_compat_frame
-+static inline bool is_compat_frame(struct ksignal *ksig)
-+{
-+	return is_compat_task();
-+}
-+#endif
-+
- #else /* !CONFIG_COMPAT */
+-static int rseq_ip_fixup(struct pt_regs *regs)
++static int rseq_ip_fixup(struct ksignal *ksig, struct pt_regs *regs)
+ {
+ 	unsigned long ip = instruction_pointer(regs);
+ 	struct task_struct *t = current;
+ 	struct rseq_cs rseq_cs;
+ 	int ret;
  
- #define is_compat_task() (0)
-@@ -1029,6 +1042,10 @@ static inline struct compat_timeval ns_to_compat_timeval(s64 nsec)
- static inline bool in_compat_syscall(void) { return false; }
- #endif
+-	ret = rseq_get_rseq_cs(t, &rseq_cs);
++	ret = rseq_get_rseq_cs(ksig, t, &rseq_cs);
+ 	if (ret)
+ 		return ret;
  
-+#ifndef is_compat_frame
-+static inline bool is_compat_frame(struct ksignal *ksig) { return false; }
-+#endif
-+
- #endif /* CONFIG_COMPAT */
+@@ -260,7 +278,7 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+ 		return;
+ 	if (unlikely(!access_ok(VERIFY_WRITE, t->rseq, sizeof(*t->rseq))))
+ 		goto error;
+-	ret = rseq_ip_fixup(regs);
++	ret = rseq_ip_fixup(ksig, regs);
+ 	if (unlikely(ret < 0))
+ 		goto error;
+ 	if (unlikely(rseq_update_cpu_id(t)))
+@@ -287,7 +305,7 @@ void rseq_syscall(struct pt_regs *regs)
+ 	if (!t->rseq)
+ 		return;
+ 	if (!access_ok(VERIFY_READ, t->rseq, sizeof(*t->rseq)) ||
+-	    rseq_get_rseq_cs(t, &rseq_cs) || in_rseq_cs(ip, &rseq_cs))
++	    rseq_get_rseq_cs(NULL, t, &rseq_cs) || in_rseq_cs(ip, &rseq_cs))
+ 		force_sig(SIGSEGV, t);
+ }
  
- #endif /* _LINUX_COMPAT_H */
 -- 
 2.11.0
 
