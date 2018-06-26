@@ -2,117 +2,107 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B128EC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18398C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 666EE26C74
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:44:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666EE26C74
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id C65D426C83
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 14:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C65D426C83
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935260AbeFZOoe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 10:44:34 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:34813 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934936AbeFZOoc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:44:32 -0400
-X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
-   d="scan'208";a="16369667"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 26 Jun 2018 07:44:31 -0700
-Received: from localhost.localdomain (10.10.76.4) by
- CHN-SV-EXCH01.mchp-main.com (10.10.76.37) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 26 Jun 2018 07:44:30 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: Re: [RFC PATCH 1/2] spi: Add QuadSPI driver for Atmel SAMA5D2
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Piotr Bugalski <bugalski.piotr@gmail.com>
-CC:     Mark Brown <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
-        Piotr Bugalski <pbu@cryptera.com>
-References: <20180618162124.21749-1-bugalski.piotr@gmail.com>
- <20180618162124.21749-2-bugalski.piotr@gmail.com>
- <20180621233321.0f25f572@bbrezillon>
- <alpine.DEB.2.20.1806220719190.21824@carbonite>
- <20180622093905.62a3b936@bbrezillon>
-Message-ID: <455adb76-530a-1fd5-303c-cfa158ad7870@microchip.com>
-Date:   Tue, 26 Jun 2018 17:44:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S935344AbeFZOo7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 10:44:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49443 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934936AbeFZOo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 10:44:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 86597ABEA;
+        Tue, 26 Jun 2018 14:44:57 +0000 (UTC)
+Date:   Tue, 26 Jun 2018 16:44:56 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        JianKang Chen <chenjiankang1@huawei.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, xieyisheng1@huawei.com,
+        guohanjun@huawei.com, wangkefeng.wang@huawei.com
+Subject: Re: [PATCH] mm: drop VM_BUG_ON from __get_free_pages
+Message-ID: <20180626144456.GZ28965@dhcp22.suse.cz>
+References: <20180622162841.25114-1-mhocko@kernel.org>
+ <6886dee0-3ac4-ef5d-3597-073196c81d88@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180622093905.62a3b936@bbrezillon>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6886dee0-3ac4-ef5d-3597-073196c81d88@suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Piotr,
-
-General things to consider for the limitation in performance:
-- is the serial flash memory operating in Quad SPI?
-- QSCLK should be as high as possible
-- transfer delays - I checked them, they have default values, we should be good.
-- use DMA, as you suggested
-
-On 06/22/2018 10:39 AM, Boris Brezillon wrote:
-> [...]
+On Tue 26-06-18 15:57:39, Vlastimil Babka wrote:
+> On 06/22/2018 06:28 PM, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > There is no real reason to blow up just because the caller doesn't know
+> > that __get_free_pages cannot return highmem pages. Simply fix that up
+> > silently. Even if we have some confused users such a fixup will not be
+> > harmful.
+> > 
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> > Hi Andrew,
+> > previously posted [1] but it fell through cracks. Can we merge it now?
+> > 
+> > [1] http://lkml.kernel.org/r/20171129160446.jluzpv3n6mjc3fwv@dhcp22.suse.cz
+> > 
+> >  mm/page_alloc.c | 10 +++-------
+> >  1 file changed, 3 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 1521100f1e63..5f56f662a52d 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -4402,18 +4402,14 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+> >  EXPORT_SYMBOL(__alloc_pages_nodemask);
+> >  
+> >  /*
+> > - * Common helper functions.
+> > + * Common helper functions. Never use with __GFP_HIGHMEM because the returned
+> > + * address cannot represent highmem pages. Use alloc_pages and then kmap if
+> > + * you need to access high mem.
+> >   */
+> >  unsigned long __get_free_pages(gfp_t gfp_mask, unsigned int order)
+> >  {
+> >  	struct page *page;
+> >  
+> > -	/*
+> > -	 * __get_free_pages() returns a virtual address, which cannot represent
+> > -	 * a highmem page
+> > -	 */
+> > -	VM_BUG_ON((gfp_mask & __GFP_HIGHMEM) != 0);
+> > -
+> >  	page = alloc_pages(gfp_mask, order);
 > 
->>>> +/*
->>>> + * Atmel SAMA5D2 QuadSPI driver.
->>>> + *
->>>> + * Copyright (C) 2018 Cryptera A/S  
->>>
->>> A non-negligible portion of this code has been copied from the existing
->>> driver. Please keep the existing copyright (you can still add Cryptera's
->>> one).
->>>  
->>
->> Technically this driver were written from scratch, with spi-fsl-qspi
->> as example of new interface. Hence the name and code structure.
->> But it's the same peripheral as Atmel's driver uses so code looks
->> similar. I can unify the code to make comparsion even simpler and
->> then update copyright.
+> The previous version had also replaced the line above with:
 > 
-> Hm, ok. Some constructs really looked like they were copied
-> from the old driver, hence my comment. I'll let Nicolas give his
-> opinion on this aspect.
-
-This driver will be a conversion of the legacy one to the spi-mem interface. I
-would keep the legacy copyright and add Cryptera's below, as Boris suggested.
-
-[...]
-
->>>> +#define QSPI_SR_CMD_COMPLETED           (QSPI_SR_INSTRE | QSPI_SR_CSR)  
->>>
->>> Do you really to wait for both INSTRE and CSR to consider the command
->>> as complete?
->>>  
->>
->> This part were really copied from Atmel driver. I wasn't sure so I
->> used tested solution.
+> +	page = alloc_pages(gfp_mask & ~__GFP_HIGHMEM, order);
 > 
-> Okay. I guess that's a question for Cyrille and/or Tudor then.
+> This one doesn't, yet you say "fix that up silently". Bug?
 
-We have to wait for both INSTRE and CSR.
+got lost somewhere on the way during the discussion. Thanks for spotting
+that.
 
-Best,
-ta
+Andrew, could you add gfp_mask & ~__GFP_HIGHMEM please? Or should I
+resubmit?
+
+-- 
+Michal Hocko
+SUSE Labs
