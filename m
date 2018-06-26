@@ -2,242 +2,244 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C1DC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EBBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2D2269B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:21:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B2D2269B8
+	by mail.kernel.org (Postfix) with ESMTP id 70B8D269C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:22:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B8D269C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934541AbeFZLVk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:21:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43990 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932544AbeFZLVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:21:39 -0400
+        id S934635AbeFZLWS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:22:18 -0400
+Received: from foss.arm.com ([217.140.101.70]:44034 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932544AbeFZLWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 07:22:16 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A459980D;
-        Tue, 26 Jun 2018 04:21:38 -0700 (PDT)
-Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67AD53F5C0;
-        Tue, 26 Jun 2018 04:21:37 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] arm64/mm: Move {tramp_pg_dir, swapper_pg_dir} to
- .rodata section
-To:     Jun Yao <yaojun8558363@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-References: <20180625113921.21854-1-yaojun8558363@gmail.com>
- <20180625113921.21854-3-yaojun8558363@gmail.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <f9dfd840-1d90-96f9-2915-7e1bc4bd43a4@arm.com>
-Date:   Tue, 26 Jun 2018 12:21:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F7B880D;
+        Tue, 26 Jun 2018 04:22:16 -0700 (PDT)
+Received: from red-moon (unknown [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61CCB3F5C0;
+        Tue, 26 Jun 2018 04:22:14 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 12:23:53 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Ley Foon Tan <ley.foon.tan@intel.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch
+ Kconfig
+Message-ID: <20180626112344.GA6850@red-moon>
+References: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
+ <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
+ <20180621165400.GB14519@e107981-ln.cambridge.arm.com>
+ <5e9b0aa4-ded1-725d-c401-49c13b7d5f9d@broadcom.com>
+ <1529683148.2729.6.camel@intel.com>
+ <20180625092758.GA6412@red-moon>
+ <1cf91447-6e17-a7cb-c827-210835179db9@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <20180625113921.21854-3-yaojun8558363@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1cf91447-6e17-a7cb-c827-210835179db9@broadcom.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jun,
+On Mon, Jun 25, 2018 at 11:48:11PM -0700, Scott Branden wrote:
+> Hi Lorenzo,
+> 
+> 
+> On 18-06-25 02:27 AM, Lorenzo Pieralisi wrote:
+> >On Fri, Jun 22, 2018 at 11:59:08PM +0800, Ley Foon Tan wrote:
+> >>On Thu, 2018-06-21 at 22:08 -0700, Scott Branden wrote:
+> >>>
+> >>>On 18-06-21 09:54 AM, Lorenzo Pieralisi wrote:
+> >>>>
+> >>>>On Wed, Jun 20, 2018 at 10:07:33AM +0200, Jan Kiszka wrote:
+> >>>>>
+> >>>>>On 2018-06-19 13:21, Lorenzo Pieralisi wrote:
+> >>>>>>
+> >>>>>>Commit 51bc085d6454 ("PCI: Improve host drivers compile test
+> >>>>>>coverage")
+> >>>>>>added configuration options to allow PCI host controller
+> >>>>>>drivers to be
+> >>>>>>compile tested on all architectures.
+> >>>>>>
+> >>>>>>Some host controller drivers (eg PCIE_ALTERA) config entries
+> >>>>>>select
+> >>>>>>the PCI_DOMAINS config option to enable PCI domains management
+> >>>>>>in
+> >>>>>>the kernel. Now that host controller drivers can be compiled on
+> >>>>>>all architectures, this triggers build regressions on arches
+> >>>>>>that
+> >>>>>>do not implement the PCI_DOMAINS required API (ie
+> >>>>>>pci_domain_nr()):
+> >>>>>>
+> >>>>>>drivers/ata/pata_ali.c: In function 'ali_init_chipset':
+> >>>>>>drivers/ata/pata_ali.c:469:38: error:
+> >>>>>>          implicit declaration of function 'pci_domain_nr';
+> >>>>>>                                            did you mean
+> >>>>>>'pci_iomap_wc'?
+> >>>>>>
+> >>>>>>Furthemore, some software configurations (ie Jailhouse) require
+> >>>>>>a
+> >>>>>>PCI_DOMAINS enabled kernel to configure multiple host
+> >>>>>>controllers
+> >>>>>>without having an explicit dependency on the ARM platform on
+> >>>>>>which
+> >>>>>>they run.
+> >>>>>>
+> >>>>>>Make PCI_DOMAINS a visible configuration option on ARM so that
+> >>>>>>software
+> >>>>>>configurations that need it can manually select it and move the
+> >>>>>>PCI_DOMAINS selection from PCI controllers configuration file
+> >>>>>>to ARM
+> >>>>>>sub-arch config entries that currently require it, fixing the
+> >>>>>>issue.
+> >>>>>>
+> >>>>>>Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test
+> >>>>>>coverage")
+> >>>>>>Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us
+> >>>>>>.net
+> >>>>>>Reported-by: Guenter Roeck <linux@roeck-us.net>
+> >>>>>>Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> >>>>>>Cc: Scott Branden <scott.branden@broadcom.com>
+> >>>>>>Cc: Will Deacon <will.deacon@arm.com>
+> >>>>>>Cc: Bjorn Helgaas <bhelgaas@google.com>
+> >>>>>>Cc: Rob Herring <robh@kernel.org>
+> >>>>>>Cc: Russell King <linux@armlinux.org.uk>
+> >>>>>>Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> >>>>>>Cc: Guenter Roeck <linux@roeck-us.net>
+> >>>>>>Cc: Ley Foon Tan <lftan@altera.com>
+> >>>>>>---
+> >>>>>>v1 -> v2
+> >>>>>>     - Removed ARCH_VIRT PCI_DOMAINS selection
+> >>>>>>     - Added PCI_DOMAINS visible config option
+> >>>>>>
+> >>>>>>v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
+> >>>>>>
+> >>>>>>   arch/arm/Kconfig               | 8 +++++++-
+> >>>>>>   arch/arm/mach-bcm/Kconfig      | 1 +
+> >>>>>>   arch/arm/mach-socfpga/Kconfig  | 1 +
+> >>>>>>   drivers/pci/controller/Kconfig | 3 ---
+> >>>>>>   4 files changed, 9 insertions(+), 4 deletions(-)
+> >>>>>>
+> >>>>>>diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> >>>>>>index 54eeb8d00bc6..843edfd000be 100644
+> >>>>>>--- a/arch/arm/Kconfig
+> >>>>>>+++ b/arch/arm/Kconfig
+> >>>>>>@@ -1245,8 +1245,14 @@ config PCI
+> >>>>>>       VESA. If you have PCI, say Y, otherwise N.
+> >>>>>>
+> >>>>>>   config PCI_DOMAINS
+> >>>>>>-   bool
+> >>>>>>+   bool "Support for multiple PCI domains"
+> >>>>>>     depends on PCI
+> >>>>>>+   help
+> >>>>>>+     Enable PCI domains kernel management. Say Y if your
+> >>>>>>machine
+> >>>>>>+     has a PCI bus hierarchy that requires more than one PCI
+> >>>>>>+     domain (aka segment) to be correctly managed. Say N
+> >>>>>>otherwise.
+> >>>>>>+
+> >>>>>>+     If you don't know what to do here, say N.
+> >>>>>>
+> >>>>>>   config PCI_DOMAINS_GENERIC
+> >>>>>>     def_bool PCI_DOMAINS
+> >>>>>>diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-
+> >>>>>>bcm/Kconfig
+> >>>>>>index c46a728df44e..25aac6ee2ab1 100644
+> >>>>>>--- a/arch/arm/mach-bcm/Kconfig
+> >>>>>>+++ b/arch/arm/mach-bcm/Kconfig
+> >>>>>>@@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
+> >>>>>>     select GPIOLIB
+> >>>>>>     select ARM_AMBA
+> >>>>>>     select PINCTRL
+> >>>>>>+   select PCI_DOMAINS if PCI
+> >>>>>>     help
+> >>>>>>       This enables support for systems based on Broadcom IPROC
+> >>>>>>architected SoCs.
+> >>>>>>       The IPROC complex contains one or more ARM CPUs along
+> >>>>>>with common
+> >>>>>>diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-
+> >>>>>>socfpga/Kconfig
+> >>>>>>index d0f62eacf59d..4adb901dd5eb 100644
+> >>>>>>--- a/arch/arm/mach-socfpga/Kconfig
+> >>>>>>+++ b/arch/arm/mach-socfpga/Kconfig
+> >>>>>>@@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
+> >>>>>>     select HAVE_ARM_SCU
+> >>>>>>     select HAVE_ARM_TWD if SMP
+> >>>>>>     select MFD_SYSCON
+> >>>>>>+   select PCI_DOMAINS if PCI
+> >>>>>>
+> >>>>>>   if ARCH_SOCFPGA
+> >>>>>>   config SOCFPGA_SUSPEND
+> >>>>>>diff --git a/drivers/pci/controller/Kconfig
+> >>>>>>b/drivers/pci/controller/Kconfig
+> >>>>>>index 18fa09b3ac8f..cc9fa02d32a0 100644
+> >>>>>>--- a/drivers/pci/controller/Kconfig
+> >>>>>>+++ b/drivers/pci/controller/Kconfig
+> >>>>>>@@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
+> >>>>>>     depends on OF
+> >>>>>>     select PCI_HOST_COMMON
+> >>>>>>     select IRQ_DOMAIN
+> >>>>>>-   select PCI_DOMAINS
+> >>>>>>     help
+> >>>>>>       Say Y here if you want to support a simple generic PCI
+> >>>>>>host
+> >>>>>>       controller, such as the one emulated by kvmtool.
+> >>>>>>@@ -138,7 +137,6 @@ config PCI_VERSATILE
+> >>>>>>
+> >>>>>>   config PCIE_IPROC
+> >>>>>>     tristate
+> >>>>>>-   select PCI_DOMAINS
+> >>>>>>     help
+> >>>>>>       This enables the iProc PCIe core controller support for
+> >>>>>>Broadcom's
+> >>>>>>       iProc family of SoCs. An appropriate bus interface driver
+> >>>>>>needs
+> >>>>>>@@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
+> >>>>>>   config PCIE_ALTERA
+> >>>>>>     bool "Altera PCIe controller"
+> >>>>>>     depends on ARM || NIOS2 || COMPILE_TEST
+> >>>>>>-   select PCI_DOMAINS
+> >>>>>>     help
+> >>>>>>       Say Y here if you want to enable PCIe controller support
+> >>>>>>on Altera
+> >>>>>>       FPGA.
+> >>>>>>
+> >>>>>Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+> >>>>Thanks a lot. Scott, Ley Foon, does it work for you ? I would like
+> >>>>to ask Bjorn to send it asap since the build on sparc is still
+> >>>>broken.
+> >>>Change will have to be made for arm64 for ARCH_BCM_IPROC as well.
+> >>Yes, need to add it to arm64 too. Others are okay.
+> >On arm64 CONFIG_PCI_DOMAINS defaults to CONFIG_PCI so there is no need
+> >to select it, if that's all you need changed there is nothing to
+> >change and this patch is read to be merged.
+> I see that now: arm64 is doing things properly.  The same should be
+> done for arm: default to CONFIG_PCI so there is no need to select
+> it.
+> I didn't like the change to have select to begin with.
 
-On 25/06/18 12:39, Jun Yao wrote:
-> When CONFIG_ARM64_VA_BITS_36/CONFIG_ARM64_VA_BITS_39/
-> CONFIG_ARM64_VA_BITS_42 are selected, a block-mapping can be
-> written to swapper_pg_dir. To defend 'KSMA', we move swapper_pg_dir
-> to .rodata section when these configurations are selected. At the
-> same time, we update swapper_pg_dir by fixmap.
-
-I don't think we should consider individual MMU configurations. KSMA is the
-motivation for making swapper_pg_dir read-only.
-When making swapper_pg_dir read-only it should work in the same way for all
-configurations as its simpler.
-
-
-> diff --git a/arch/arm64/include/asm/fixmap.h b/arch/arm64/include/asm/fixmap.h
-> index 62908eeedcdc..881784b43965 100644
-> --- a/arch/arm64/include/asm/fixmap.h
-> +++ b/arch/arm64/include/asm/fixmap.h
-> @@ -83,6 +83,7 @@ enum fixed_addresses {
->  	FIX_PTE,
->  	FIX_PMD,
->  	FIX_PUD,
-> +	FIX_SWAPPER,
-
-Please leave this as FIX_PGD that you removed in the previous patch. Depending
-on the folding pmd/pud can be used as the top level. If we always use the fixmap
-entry that goes with the name, its clear how these operate.
-
-
->  	__end_of_fixed_addresses
->  };
-> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
-> index 2e05bcd944c8..62512ad9c310 100644
-> --- a/arch/arm64/include/asm/pgalloc.h
-> +++ b/arch/arm64/include/asm/pgalloc.h
-
-How come you don't touch pgd_populate()? Surely with a 4-level configuration we
-may need to put a new pud-table in when we use a fresh chunk of vmalloc space...
-
-(ah, this is because you are conditionally doing all this on configurations
-where the MMU has top-level block mappings. I think this is unnecessarily
-complicated, we should just do it all the time)
-
-
-> @@ -49,6 +49,22 @@ static inline void __pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
->  
->  static inline void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmdp)
->  {
-> +#ifdef CONFIG_ARM64_VA_BITS_39
-
-Please make this depend on the number of levels not the VA size. We also have
-3-level page tables for 64K with 48bit VA space, and 16K with 47bit VA space.
-
-I'd prefer some "if (CONFIG_PGTABLE_LEVELS == 3)" style check, as that way the
-compiler will always parse the code that is currently hidden behind #ifdefs.
-
-We can avoid use of fixmap entries for subsequent levels by making the check
-something like:
-| if (CONFIG_PGTABLE_LEVELS == 3 && magic_helper(pud) == swapper_pg_dir)
-
-
-> +	if (mm == &init_mm) {
-> +		pud_t *pud;
-> +		unsigned long offset;
-> +		extern spinlock_t pgdir_lock;
-> +
-> +		spin_lock(&pgdir_lock);
-> +		pud = (pud_t *)swapper_set_fixmap();
-
-Can't we use pud_set_fixmap for pud levels?
-
-Do we need an extra spinlock?, won't init_mm.page_table_lock always be held?
-(we can put a lockdep_assert_held() in here to find cases that aren't).
-
-
-> +		offset = (unsigned long)pudp - (unsigned long)swapper_pg_dir;
-> +		pud = (pud_t *)((unsigned long)pud + offset);
-
-It feels like there should be a helper for this.
-
-I'm not comfortable assuming mm=init_mm means we are actually modifying
-swapper_pg_dir. Hibernate does this on the grounds that the tables it generates
-will be used as the kernel's mm when it starts restoring. This field wasn't used
-before, so it wasn't clear what the field was for. I'm sure we will find
-something else doing this...
-
-Could we test that the provided pudp is within swapper_pg_dir before invoking
-the fixmap path.
-
-
-> +		__pud_populate(pud, __pa(pmdp), PMD_TYPE_TABLE);
-> +		swapper_clear_fixmap();
-> +		spin_unlock(&pgdir_lock);
-> +		return;
-> +	}
-> +#endif
->  	__pud_populate(pudp, __pa(pmdp), PMD_TYPE_TABLE);
->  }
->  #else
-
-
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index 9677deb7b6c7..9db187024b44 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-
-(Changes here are cleanup, they should be in a separate patch)
-
-
-> @@ -300,7 +300,7 @@ __create_page_tables:
->  	 * dirty cache lines being evicted.
->  	 */
->  	adrp	x0, idmap_pg_dir
-> -	adrp	x1, swapper_pg_end
-> +	adrp	x1, idmap_pg_end
->  	sub	x1, x1, x0
->  	bl	__inval_dcache_area
-
-As we no longer modify swapper_pg_dir with the MMU disabled I think this is safe.
-
-
-> @@ -313,7 +313,7 @@ __create_page_tables:
->  	 * Clear the idmap and init page tables.
->  	 */
->  	adrp	x0, idmap_pg_dir
-> -	adrp	x1, swapper_pg_end
-> +	adrp	x1, idmap_pg_end
->  	sub	x1, x1, x0
->  	clear_pages x0, x1
-
-With the current placement of swapper_pg_dir after the BSS we rely on this to
-zero that memory. It may have junk left over from the boot loader as this is the
-area where the kernel's memory-footprint is bigger than the Image file.
-
-Your vmlinux.lds.S changes below conditionally move swapper_pg_dir around.
-Sometimes you need this, sometimes you don't.
-
-Please always keep these pgd in the read-only section. I think we should keep
-the page-zeroing as a sanity check, we only do it once during boot, and
-corruption here isn't something we would be able to debug easily.
-
-
-> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-> index b0e4255fcba4..db72c4680f1d 100644
-> --- a/arch/arm64/kernel/vmlinux.lds.S
-> +++ b/arch/arm64/kernel/vmlinux.lds.S
-> @@ -219,6 +219,28 @@ SECTIONS
->  	. = ALIGN(PAGE_SIZE);
->  	idmap_pg_dir = .;
->  	. += IDMAP_DIR_SIZE;
-> +	idmap_pg_end = .;
-> +
-> +#if defined(CONFIG_ARM64_VA_BITS_39) || \
-> +	defined(CONFIG_ARM64_VA_BITS_36) || \
-> +	defined(CONFIG_ARM64_VA_BITS_42)
-
-I think we should always do this read-only-swapper, even if there aren't any
-top-level block-mappings. The code will be much more maintainable this way.
-
-
-> +	.rodata : {
-> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-> +		. = ALIGN(PAGE_SIZE);
-> +		tramp_pg_dir = .;
-> +		. += PAGE_SIZE;
-> +#endif
-> +
-> +#ifdef CONFIG_ARM64_SW_TTBR0_PAN
-> +		reserved_ttbr0 = .;
-> +		. += RESERVED_TTBR0_SIZE;
-> +#endif
-> +		swapper_pg_dir = .;
-> +		. += PAGE_SIZE;
-> +		swapper_pg_end = .;
-> +	}
-> +
-> +#else
->  
->  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->  	tramp_pg_dir = .;
-> @@ -232,6 +254,7 @@ SECTIONS
->  	swapper_pg_dir = .;
->  	. += PAGE_SIZE;
->  	swapper_pg_end = .;
-> +#endif
-
-
+I can't select PCI_DOMAINS by default on ARM 32-bit since this would
+force it on platforms (eg non-DT legacy) that never relied on it; this
+can easily trigger regressions. This patch is ready to go as-is, I do
+not like it either but as I tried to explain it is the only reasonable
+way forward.
 
 Thanks,
-
-James
+Lorenzo
