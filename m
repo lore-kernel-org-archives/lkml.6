@@ -2,126 +2,100 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2161C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A59C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7227B26EB9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:01:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7227B26EB9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EA60E26D11
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:01:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="blCmN+rB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA60E26D11
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754908AbeFZSBH (ORCPT
+        id S1754918AbeFZSBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:01:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40500 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751448AbeFZSBF (ORCPT
+        Tue, 26 Jun 2018 14:01:13 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43329 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752053AbeFZSBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:01:05 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QHsY3q122552
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:01:05 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2juqcps0w7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:01:04 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 14:01:03 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 14:00:59 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QI0wQT19005926
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 18:00:58 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 94273B206B;
-        Tue, 26 Jun 2018 14:00:51 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 739B9B2064;
-        Tue, 26 Jun 2018 14:00:51 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 14:00:51 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6615316C15BE; Tue, 26 Jun 2018 11:03:03 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 11:03:03 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 06/27] rcu: Mark task as .need_qs less
- aggressively
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180626003448.GA26209@linux.vnet.ibm.com>
- <20180626003513.27812-6-paulmck@linux.vnet.ibm.com>
- <20180626170812.GH2494@hirez.programming.kicks-ass.net>
+        Tue, 26 Jun 2018 14:01:07 -0400
+Received: by mail-wr0-f196.google.com with SMTP id c5-v6so6987121wrs.10
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=heX1f2CgGl3o496OINg/xkciw0CIxICRoeLjeNzNB8I=;
+        b=blCmN+rB92ggkg97DX3WhoaU2AbUmshLBzwVLHRQPN/+/M8ilEObphnd1xr8/J+zsV
+         AW8Rj8yOHxWnEljCjolT+El7uduYY88Bq/h3d9VPTmWkOFAjoNRLpYOhC+crvQOSq3RE
+         zjr7sCZ1q7GwgVNlyasCg13F+XbWQC164E3byLPkx3e225YSUEyvyBtCaKwH94mf3RsC
+         KGHvnm+EZD7rAIw25s4FMR6mNVRo9ZCZx9BnMndbPSoLmURDogisyU5aCIhf1YnqNnul
+         84JWydFmIQQQYg+sq28n8zfcQeDlFu8U9for7PNm3+cB3LitFoPjxhyqtpDrKm6MRnUI
+         c/VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=heX1f2CgGl3o496OINg/xkciw0CIxICRoeLjeNzNB8I=;
+        b=XQmOSrya6im1qE2K/TDt9I7QACpPUgPbMDSJrhcJ09Pu1hzW8F1V3FTbFHPevSnufE
+         sALzt9idDmi6y3o3LwhWXS40hB6yjVZSkAbJuCRVtA70E36WLLlKJJ88paDrGQFo4SYp
+         FyR8xc+jFfUa5difd7XjagkslfznC3/LYp373wxvpRl/PsLpuh1AlW8QZ786kz3WB4/7
+         Y/1kOkZb9yTC+KAgK8L0YMKVDAJFJZQyvJ9h2QUI6cLT1PqvN0YveWgZHLqHD/ob94GD
+         xhB/CScUHFxlHl+YyXgQ2GOvlyjqOoH5GsdSr+ZvZ0GWTM5OnkEfFyZ35DxYj5c+PmLj
+         WDPw==
+X-Gm-Message-State: APt69E3huHBs4BMs7T2s4/HUCXl8E6U88yS5bzmmqdbnKnEuUwf/HLV0
+        2oXkpr9BnxqIDKA5MLvdZM2gA1Vu9q4ejbRguaaZwA==
+X-Google-Smtp-Source: AAOMgpeTQdnxRDM/MkNj2ivudoIOaIVjDSQFi9sqrKI3GBu+M7R7rb35OsoJ4DUCc+ED4PBpOXhvXMfEL9SIqsenpjA=
+X-Received: by 2002:adf:e48e:: with SMTP id i14-v6mr2553914wrm.8.1530036065492;
+ Tue, 26 Jun 2018 11:01:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626170812.GH2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062618-0060-0000-0000-00000282D2C9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052686; UDB=6.00539679; IPR=6.00830610;
- MB=3.00021865; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 18:01:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062618-0061-0000-0000-0000459572C0
-Message-Id: <20180626180303.GD3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=938 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260202
+References: <20180625230659.139822-1-shakeelb@google.com> <20180625230659.139822-2-shakeelb@google.com>
+ <CAOQ4uxiV75+X3dMLS93iXqwmSU6eKPOUocdkXiR7MQZhEjotQg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiV75+X3dMLS93iXqwmSU6eKPOUocdkXiR7MQZhEjotQg@mail.gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 26 Jun 2018 11:00:53 -0700
+Message-ID: <CALvZod5ARMZL+eD8-mrxeBvxJcuVPXaCwWEgUyQw85xXWxHauA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: fsnotify: account fsnotify metadata to kmemcg
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
+        Roman Gushchin <guro@fb.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 07:08:12PM +0200, Peter Zijlstra wrote:
-> On Mon, Jun 25, 2018 at 05:34:52PM -0700, Paul E. McKenney wrote:
-> > If any scheduling-clock interrupt interrupts an RCU-preempt read-side
-> > critical section, the interrupted task's ->rcu_read_unlock_special.b.need_qs
-> > field is set.  This causes the outermost rcu_read_unlock() to incur the
-> > extra overhead of calling into rcu_read_unlock_special().  This commit
-> > reduces that overhead by setting ->rcu_read_unlock_special.b.need_qs only
-> > if the grace period has been in effect for more than one second.
-> 
-> Even less agressive is never setting it at all.
+On Mon, Jun 25, 2018 at 10:49 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+...
+>
+> The verb 'unuse' takes an argument memcg and 'uses' it - too weird.
+> You can use 'override'/'revert' verbs like override_creds or just call
+> memalloc_use_memcg(old_memcg) since there is no reference taken
+> anyway in use_memcg and no reference released in unuse_memcg.
+>
+> Otherwise looks good to me.
+>
 
-True, but if the CPU has been in an RCU read-side critical section for
-a full second (which is the case with high probability when .b.need_qs
-is set after this change), we might want to respond to the end of that
-critical section sooner rather than later.
+Thanks for your feedback. Just using memalloc_use_memcg(old_memcg) and
+ignoring the return seems more simple. I will wait for feedback from
+other before changing anything.
 
-> Changelog fails to explain why not setting it every tick is correct, nor
-> why 1s is a 'safe' value to use.
-
-The RCU CPU stall warning cannot be set to less than 3s, so 1s is
-reasonable.  It is a tradeoff -- setting it lower causes a greater
-fraction of RCU read-side critical sections to incur extra overhead at
-rcu_read_unlock() time, while setting it higher keeps a lazy approach
-to reporting the quiescent state to core RCU for longer critical sections.
-
-The upcoming RCU-bh/RCU-preempt/RCU-sched consolidation will raise
-contention and overhead, so this is one of several things done to
-lower overhead and contention to compensate for that.
-
-							Thanx, Paul
-
+thanks,
+Shakeel
