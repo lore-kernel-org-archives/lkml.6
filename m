@@ -2,103 +2,86 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09965C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4653C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F1525E8E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CD3B26D3B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:32:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="o+8VhsHk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F1525E8E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=infineon.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NIwuVjwx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CD3B26D3B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752114AbeFZPcG (ORCPT
+        id S1752152AbeFZPc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:32:06 -0400
-Received: from smtp2.infineon.com ([217.10.52.18]:20228 "EHLO
-        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeFZPcE (ORCPT
+        Tue, 26 Jun 2018 11:32:29 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45301 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752061AbeFZPc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:32:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
-  t=1530027124; x=1561563124;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=8ftjibznq9nGlfuGeASch1wLZ9zMXEp5tmadRq+oqeg=;
-  b=o+8VhsHkt1832DXgi677G5KlDvINgnPeTbPvJZ0J2DAFYwiGWHyzWOBj
-   y9zk0ygKpNsmV70ihxR4AZCEdJRmm3XRP0OUnvbuVR8PaZ+uJwdh6UYjN
-   tudwzPcm3vWNjK+4Z3hXtUQMIgUKvDGMi/5yB/lMbgaGTO1Ahsx82uMJS
-   0=;
-X-SBRS: None
-X-IronPort-AV: E=McAfee;i="5900,7806,8935"; a="69990639"
-X-IronPort-AV: E=Sophos;i="5.51,274,1526335200"; 
-   d="scan'208";a="69990639"
-Received: from unknown (HELO mucxv003.muc.infineon.com) ([172.23.11.20])
-  by smtp2.infineon.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2018 17:32:02 +0200
-Received: from MUCSE706.infineon.com (MUCSE706.infineon.com [172.23.7.80])
-        by mucxv003.muc.infineon.com (Postfix) with ESMTPS;
-        Tue, 26 Jun 2018 17:32:02 +0200 (CEST)
-Received: from MUCSE716.infineon.com (172.23.7.67) by MUCSE706.infineon.com
- (172.23.7.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1466.3; Tue, 26
- Jun 2018 17:32:02 +0200
-Received: from schwaric-VirtualBox.agb.infineon.com (172.23.8.247) by
- MUCSE716.infineon.com (172.23.7.67) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
- 15.1.1466.3; Tue, 26 Jun 2018 17:32:02 +0200
-From:   Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
-To:     <linux-integrity@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <peterhuewe@gmx.de>,
-        <jarkko.sakkinen@linux.intel.com>, <jgg@ziepe.ca>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>,
-        Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
-Subject: [PATCH v5] tpm: Return the actual size when receiving an unsupported command
-Date:   Tue, 26 Jun 2018 17:31:45 +0200
-Message-ID: <20180626153145.7408-1-Ricardo.Schwarzmeier@infineon.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.23.8.247]
-X-ClientProxiedBy: MUCSE715.infineon.com (172.23.7.66) To
- MUCSE716.infineon.com (172.23.7.67)
+        Tue, 26 Jun 2018 11:32:27 -0400
+Received: by mail-lf0-f66.google.com with SMTP id m13-v6so7190831lfb.12
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:32:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=VAIDyeMmFFj0UadIGkDkYS/5YaxUvBOhpRmvp/uTwkA=;
+        b=NIwuVjwxZa6Fnz+QL4CRTe92CR8W9PURrui+gAwZ2Fp1WIyonSghhLr8huX0fW+sIn
+         dbEpIkrLIpgJciKpCwIF6hJeUWtm6C8S0ljP+LsGEgjhwYHzyyOfVmMsMUiVDsXJ5mxv
+         JLDBfLBd+b09qERVuR2X+zIjWfhOpY0KMaetA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VAIDyeMmFFj0UadIGkDkYS/5YaxUvBOhpRmvp/uTwkA=;
+        b=Fnh38BuE+Evtz6gLbz05rldhgXquXT5ULAXwdbVx+DYzDz5w0oa2DNJBhNU1cLOpjF
+         6cvuyzMij80lw7iCFtR/N2nfSxwASoQIR+xrtKYbhKiRYHltcmyPZ23Phv0T+wdrHMEw
+         59s3zxhFtP2AolXwuCwjGMGnk1XrQVHu+LAH6ERNNf/y8LHU57rEXvI+CKrwhq0lAF6z
+         tMa39HiFChb6myXA0bxBpm+nNDIyHT0RBcj9EybzNYMUDzGsr4sh+7ga3LCq0zczEinM
+         1OwB5aHauniJ2XsRs0r6Rn7xfUrjLEYHQeFu2kvLCu+NG9x4qIICsUgOlU3yut8AL/Nd
+         F2kQ==
+X-Gm-Message-State: APt69E15moqMV8xvGOl1Yz5EndZtL9kW3JBSUTIE3HPq+Ket0yAtCFXg
+        GLHUnD6zRDdFo0NZYP8u3nDo5g==
+X-Google-Smtp-Source: AAOMgpehdR6qVwU00a6GGScWnxD03RFUNlPY406V1KaqUMwLvpCzdNd8lFN2i5y1yIX+SLC0V3YiAQ==
+X-Received: by 2002:a19:9b49:: with SMTP id d70-v6mr1552660lfe.137.1530027145900;
+        Tue, 26 Jun 2018 08:32:25 -0700 (PDT)
+Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
+        by smtp.gmail.com with ESMTPSA id o9-v6sm69118ljd.18.2018.06.26.08.32.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 08:32:25 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests: mount: remove no longer needed config option
+Date:   Tue, 26 Jun 2018 17:32:13 +0200
+Message-Id: <20180626153213.676-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The userpace expects to read the number of bytes stated in the header.
-Returning the size of the buffer instead would be unexpected.
-Fixes: 095531f891e6 ("tpm: return a TPM_RC_COMMAND_CODE response if command is not implemented")
+Since commit eedf265aa003 ("devpts: Make each mount of devpts an
+independent filesystem.") CONFIG_DEVPTS_MULTIPLE_INSTANCES isn't needed
+in the defconfig anymore.
 
-Signed-off-by: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
-v2: *Add fixes tag
-v3: *Avoid endianness problem
-    *Make commit message more clear
-v4: *Fix commit message style
-v5: *Add change log
+ tools/testing/selftests/mount/config | 1 -
+ 1 file changed, 1 deletion(-)
 
- drivers/char/tpm/tpm-interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index e32f6e85dc6d..7f2e2d54894d 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -423,7 +423,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
- 		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
- 						  TSS2_RESMGR_TPM_RC_LAYER);
--		return bufsiz;
-+		return sizeof(*header);
- 	}
- 
- 	if (bufsiz > TPM_BUFSIZE)
+diff --git a/tools/testing/selftests/mount/config b/tools/testing/selftests/mount/config
+index b5d881e48548..416bd53ce982 100644
+--- a/tools/testing/selftests/mount/config
++++ b/tools/testing/selftests/mount/config
+@@ -1,2 +1 @@
+ CONFIG_USER_NS=y
+-CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
 -- 
-2.17.1
+2.18.0
 
