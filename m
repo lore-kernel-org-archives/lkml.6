@@ -2,165 +2,278 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77919C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF050C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1531B21BC7
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C12326C74
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:55:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KuglPlnv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1531B21BC7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GcejPAU4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C12326C74
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755077AbeFZUyo (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:54:44 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35427 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751989AbeFZUym (ORCPT
+        id S934125AbeFZUzE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:55:04 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:44841 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933810AbeFZUzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:54:42 -0400
-Received: by mail-pl0-f66.google.com with SMTP id k1-v6so9117884plt.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:54:41 -0700 (PDT)
+        Tue, 26 Jun 2018 16:55:00 -0400
+Received: by mail-ot0-f195.google.com with SMTP id w13-v6so20542894ote.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:55:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/nwxPNwJFphxdtI9dq+6Zok5KnCs4rNQjErDzOD6xac=;
-        b=KuglPlnviMvA0L6V8Vke705IG6CjVFP8f2E1Ap+oH42tx+RhyDx+oLEM7UDkTjkFsa
-         TwL+MjzgULhAJQwRv1Y4KztZtxHCa+Btzkue/qW3lDp10hCPCIC3qp5HDqRPPiqEb+Q8
-         r7yf3DE7mv8l+5zxP4vmTalpluhMfb7JqWveU=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZM+bJQWF7l/EjU3i3mcRHRPbKph38WHpiFKd1YMHhBo=;
+        b=GcejPAU4js1eCabY8h9ISXWW/bAyCfGotUspL+sQlkSTdr1x/njS6YqFbesENrWbKW
+         0bz0gxxn28ZXI6KUp4podPv09EJKLSWGYCx2qL6sSYKbOCjSmotgwsf3irL90k2NTQA2
+         /BuC8ExWGwhLlgceJk91TOnjdn5CetuxPhOhc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/nwxPNwJFphxdtI9dq+6Zok5KnCs4rNQjErDzOD6xac=;
-        b=PD6NvTy2oXKINOg0ZfEVWhlL9aviSKfW/7T8WI9LD2eS4lP1mINBSHY/QfsTz+JuY+
-         ryGbAgzf/A1IebKF7aKcd0TH1thvHlcgYgaBAO9saD90qD0EogXa/+EO6S1ZEpT6KXiQ
-         iTQtP8aiKQ8zQs1+DpEQVuRhslPAA2YFK5EVE1Vd83X8MMDLOBAmPyVkBMGhcVdU72X3
-         Trk9mLvLr62SBd5+e9d/FUkdbvEBhgeYtjxE2diorUdp9YnUy781mqDQA6X7sgGnkGzQ
-         kLs9S51LCpo6iPjjS3nhocu/M20nTqRjaBA6Qn0bAtDAr7LqxZkz1rQCMPYAQBjLh2A6
-         osnw==
-X-Gm-Message-State: APt69E26GlR8/KMuug5djftYBSjRsnM0/n+sX4rcHsqlTd4yIWlt90Tz
-        lGNTePVkLPsbkYjPTK+4gWod0IncuDQ=
-X-Google-Smtp-Source: ADUXVKLWufNzmQUz8ypmH1fpodz9pgJJC7X+ldUBwTlpWHaD/cBj1TITdRPD74+hFX37tbuMl4ghNQ==
-X-Received: by 2002:a17:902:8210:: with SMTP id x16-v6mr3107783pln.307.1530046481516;
-        Tue, 26 Jun 2018 13:54:41 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id e10-v6sm3033052pgv.48.2018.06.26.13.54.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 13:54:40 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 13:54:39 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     ohad@wizery.com, broonie@kernel.org, linux-spi@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] hwspinlock: Add one new API to support getting a
- specific hwlock by the name
-Message-ID: <20180626205438.GG3206@builder>
-References: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZM+bJQWF7l/EjU3i3mcRHRPbKph38WHpiFKd1YMHhBo=;
+        b=fCxmpB9ycqaNyBlUP94UQmpDHNr8Mnh+j9ONdM/hfENy7M1ZypDSZviKuYJQV5uMFk
+         rGYH9oIXBmZYViLhSMvOEGxaE4tEzIJ5r6GycoT7+g+XZ8YO1qYyuBlAM+ahHHOg9CLe
+         xe9RVdE/YqzeRVsBsKWsNOHdHnGHr0TXP1nTEw+WZAN1wTQjn5mG6V5aLDYcmhJFaJJk
+         TcX0I0B7iHJNqdpQoACQJXTaLNqBkZP7cV84pGyTVogkbD2P+3Yf8H2R9CSupAArgClb
+         Zpb2O+autB7f9Gq/aVuZ0iYWxO89KxdYoscYysyNfytMZAYfTYS1eKs9ZVZ3nlE4Nvg1
+         mWjw==
+X-Gm-Message-State: APt69E3uCbtaz+CUDILu3ilLJG+NyJCyl9EKrlHAnIofv54Bdo5+ZiMW
+        eM00LscIAO7yDgqHU0cNyuLkM54dggc=
+X-Google-Smtp-Source: AAOMgpemOE9rRvhXVOWulP3+xMdb4Nn7y7d99vrRw8uqg+abgUWDMqKRtEqJt8RTchzgq/IPJOQulA==
+X-Received: by 2002:a9d:4905:: with SMTP id e5-v6mr1927633otf.101.1530046499368;
+        Tue, 26 Jun 2018 13:54:59 -0700 (PDT)
+Received: from mail-ot0-f182.google.com (mail-ot0-f182.google.com. [74.125.82.182])
+        by smtp.gmail.com with ESMTPSA id b26-v6sm1156836otl.41.2018.06.26.13.54.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 13:54:59 -0700 (PDT)
+Received: by mail-ot0-f182.google.com with SMTP id l15-v6so20560691oth.6
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:54:58 -0700 (PDT)
+X-Received: by 2002:a9d:350a:: with SMTP id o10-v6mr1700137otc.247.1530046109535;
+ Tue, 26 Jun 2018 13:48:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <20180620121141.15403-1-georgi.djakov@linaro.org> <20180620121141.15403-5-georgi.djakov@linaro.org>
+In-Reply-To: <20180620121141.15403-5-georgi.djakov@linaro.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 26 Jun 2018 13:47:52 -0700
+X-Gmail-Original-Message-ID: <CAE=gft7+S7MJHB2jw8SNewNcr2OvK+1a-PdJdcaonTphJX7c8A@mail.gmail.com>
+Message-ID: <CAE=gft7+S7MJHB2jw8SNewNcr2OvK+1a-PdJdcaonTphJX7c8A@mail.gmail.com>
+Subject: Re: [PATCH v5 4/8] interconnect: qcom: Add RPM communication
+To:     georgi.djakov@linaro.org
+Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 22 Jun 01:08 PDT 2018, Baolin Wang wrote:
+Hi Georgi,
 
-> The hardware spinlock binding already supplied the 'hwlock-names' property
-> to match and get a specific hwlock, but did not supply one API for users
-> to get a specific hwlock by the hwlock name. So this patch introduces one
-> API to support this requirement.
-> 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-
-Thanks Baolin,
-
-Picked up all but patch 6 from the series; including 7 and 8 with Mark's
-ack.
-
-Regards,
-Bjorn
-
+On Wed, Jun 20, 2018 at 5:11 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> On some Qualcomm SoCs, there is a remote processor, which controls some of
+> the Network-On-Chip interconnect resources. Other CPUs express their needs
+> by communicating with this processor. Add a driver to handle comminication
+> with this remote processor.
+>
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 > ---
->  drivers/hwspinlock/hwspinlock_core.c |   29 +++++++++++++++++++++++++++++
->  include/linux/hwspinlock.h           |    7 +++++++
->  2 files changed, 36 insertions(+)
-> 
-> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-> index d16e6a3..bea3586 100644
-> --- a/drivers/hwspinlock/hwspinlock_core.c
-> +++ b/drivers/hwspinlock/hwspinlock_core.c
-> @@ -367,6 +367,35 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
->  }
->  EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id);
->  
-> +/**
-> + * of_hwspin_lock_get_id_byname() - get lock id for an specified hwlock name
-> + * @np: device node from which to request the specific hwlock
-> + * @name: hwlock name
+>  .../bindings/interconnect/qcom-smd.txt        | 32 +++++++
+>  drivers/interconnect/qcom/Makefile            |  2 +
+>  drivers/interconnect/qcom/smd-rpm.c           | 90 +++++++++++++++++++
+>  drivers/interconnect/qcom/smd-rpm.h           | 15 ++++
+>  4 files changed, 139 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+>  create mode 100644 drivers/interconnect/qcom/Makefile
+>  create mode 100644 drivers/interconnect/qcom/smd-rpm.c
+>  create mode 100644 drivers/interconnect/qcom/smd-rpm.h
+>
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom-smd.txt b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+> new file mode 100644
+> index 000000000000..88a5aeb50935
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+> @@ -0,0 +1,32 @@
+> +Qualcomm SMD-RPM interconnect driver binding
+> +------------------------------------------------
+> +The RPM (Resource Power Manager) is a dedicated hardware engine
+> +for managing the shared SoC resources in order to keep the lowest
+> +power profile. It communicates with other hardware subsystems via
+> +the shared memory driver (SMD) back-end and accepts requests for
+> +various resources.
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +                       "qcom,interconnect-smd-rpm"
+> +
+> +Example:
+> +       smd {
+> +               compatible = "qcom,smd";
+> +
+> +               rpm {
+> +                       interrupts = <0 168 1>;
+> +                       qcom,ipc = <&apcs 8 0>;
+> +                       qcom,smd-edge = <15>;
+> +
+> +                       rpm_requests {
+> +                               compatible = "qcom,rpm-msm8916";
+> +                               qcom,smd-channels = "rpm_requests";
+> +
+> +                               interconnect-smd-rpm {
+> +                                       compatible = "qcom,interconnect-smd-rpm";
+> +                               };
+> +
+> +                       };
+> +               };
+> +       };
+> diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
+> new file mode 100644
+> index 000000000000..2a0c41db91c4
+> --- /dev/null
+> +++ b/drivers/interconnect/qcom/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +obj-y += smd-rpm.o
+
+This new file has an unexpressed dependency on CONFIG_QCOM_SMD_RPM due
+to qcom_rpm_smd_write. RPMh-based systems won't need this file, right?
+Maybe this file should live behind some config?
+
+> diff --git a/drivers/interconnect/qcom/smd-rpm.c b/drivers/interconnect/qcom/smd-rpm.c
+> new file mode 100644
+> index 000000000000..0cf772f51642
+> --- /dev/null
+> +++ b/drivers/interconnect/qcom/smd-rpm.c
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RPM over SMD communication wrapper for interconects
 > + *
-> + * This function provides a means for DT users of the hwspinlock module to
-> + * get the global lock id of a specific hwspinlock using the specified name of
-> + * the hwspinlock device, so that it can be requested using the normal
-> + * hwspin_lock_request_specific() API.
-> + *
-> + * Returns the global lock id number on success, -EPROBE_DEFER if the hwspinlock
-> + * device is not yet registered, -EINVAL on invalid args specifier value or an
-> + * appropriate error as returned from the OF parsing of the DT client node.
+> + * Copyright (C) 2018 Linaro Ltd
+> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
 > + */
-> +int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
+> +
+> +#include <linux/interconnect-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/soc/qcom/smd-rpm.h>
+> +#include "smd-rpm.h"
+> +
+> +#define        RPM_KEY_BW      0x00007762
+> +
+> +static struct qcom_icc_rpm {
+> +       struct qcom_smd_rpm *rpm;
+> +} icc_rpm_smd;
+> +
+> +struct icc_rpm_smd_req {
+> +       __le32 key;
+> +       __le32 nbytes;
+> +       __le32 value;
+> +};
+> +
+> +bool qcom_icc_rpm_smd_available(void)
 > +{
-> +	int index;
+> +       if (!icc_rpm_smd.rpm)
+> +               return false;
 > +
-> +	if (!name)
-> +		return -EINVAL;
-> +
-> +	index = of_property_match_string(np, "hwlock-names", name);
-> +	if (index < 0)
-> +		return index;
-> +
-> +	return of_hwspin_lock_get_id(np, index);
-> +}
-> +EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id_byname);
-> +
->  static int hwspin_lock_register_single(struct hwspinlock *hwlock, int id)
->  {
->  	struct hwspinlock *tmp;
-> diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
-> index 57537e6..2b6f389 100644
-> --- a/include/linux/hwspinlock.h
-> +++ b/include/linux/hwspinlock.h
-> @@ -66,6 +66,7 @@ int __hwspin_lock_timeout(struct hwspinlock *, unsigned int, int,
->  							unsigned long *);
->  int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
->  void __hwspin_unlock(struct hwspinlock *, int, unsigned long *);
-> +int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name);
->  
->  #else /* !CONFIG_HWSPINLOCK */
->  
-> @@ -125,6 +126,12 @@ static inline int hwspin_lock_get_id(struct hwspinlock *hwlock)
->  	return 0;
->  }
->  
-> +static inline
-> +int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
-> +{
-> +	return 0;
+> +       return true;
 > +}
 > +
->  #endif /* !CONFIG_HWSPINLOCK */
->  
->  /**
-> -- 
-> 1.7.9.5
-> 
+> +int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val)
+> +{
+> +       struct icc_rpm_smd_req req = {
+> +               .key = cpu_to_le32(RPM_KEY_BW),
+> +               .nbytes = cpu_to_le32(sizeof(u32)),
+> +               .value = cpu_to_le32(val),
+> +       };
+> +
+> +       return qcom_rpm_smd_write(icc_rpm_smd.rpm, ctx, rsc_type, id, &req,
+> +                                 sizeof(req));
+> +}
+> +EXPORT_SYMBOL(qcom_icc_rpm_smd_send);
+> +
+> +static int qcom_icc_rpm_smd_probe(struct platform_device *pdev)
+> +{
+> +       icc_rpm_smd.rpm = dev_get_drvdata(pdev->dev.parent);
+> +       if (!icc_rpm_smd.rpm) {
+> +               dev_err(&pdev->dev, "unable to retrieve handle to RPM\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id qcom_icc_rpm_smd_dt_match[] = {
+> +       { .compatible = "qcom,interconnect-smd-rpm", },
+> +       { },
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, qcom_interconnect_rpm_smd_dt_match);
+> +
+> +static struct platform_driver qcom_interconnect_rpm_smd_driver = {
+> +       .driver = {
+> +               .name           = "qcom-interconnect-smd-rpm",
+> +               .of_match_table = qcom_icc_rpm_smd_dt_match,
+> +       },
+> +       .probe = qcom_icc_rpm_smd_probe,
+> +};
+> +
+> +static int __init rpm_smd_interconnect_init(void)
+> +{
+> +       return platform_driver_register(&qcom_interconnect_rpm_smd_driver);
+> +}
+> +subsys_initcall(rpm_smd_interconnect_init);
+> +
+> +static void __exit rpm_smd_interconnect_exit(void)
+> +{
+> +       platform_driver_unregister(&qcom_interconnect_rpm_smd_driver);
+> +}
+> +module_exit(rpm_smd_interconnect_exit)
+> +
+> +MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
+> +MODULE_DESCRIPTION("Qualcomm SMD RPM interconnect driver");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/interconnect/qcom/smd-rpm.h b/drivers/interconnect/qcom/smd-rpm.h
+> new file mode 100644
+> index 000000000000..0f4a3da31cf6
+> --- /dev/null
+> +++ b/drivers/interconnect/qcom/smd-rpm.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2018, Linaro Ltd.
+> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
+> + */
+> +
+> +#ifndef __LINUX_INTERCONNECT_QCOM_RPM_H
+> +#define __LINUX_INTERCONNECT_QCOM_RPM_H
+
+This doesn't really reflect the path, should this be something different?
+
+> +
+> +#include <linux/soc/qcom/smd-rpm.h>
+> +
+> +bool qcom_icc_rpm_smd_available(void);
+> +int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val);
+> +
+> +#endif
