@@ -2,138 +2,242 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71660C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88676C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2918E267C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ggJPD2B/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2918E267C0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E21D267C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:30:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E21D267C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934416AbeFZJaL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:30:11 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38063 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934129AbeFZJaH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:30:07 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v15-v6so8250452ljk.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3Jnf7218AXUCjBmCe8t2os8+VXaqMn12ZaVbFxWeItI=;
-        b=ggJPD2B/RkiX6POL/fiduO3MfYuswxlHq1fTnElaQZ17h5eyoayvGqmTmElRs2Q395
-         dgE/OI+HWyyKCpNaZ3WJCSXG4nCvwVD8l8XpKkWIITYwou87cyiAACFszKxn0r44eG8I
-         +JHoxT6uQItjzr/WhQUegL6FPmwEG1oiSRWcs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3Jnf7218AXUCjBmCe8t2os8+VXaqMn12ZaVbFxWeItI=;
-        b=Nh1MTA0l8HUK4JwBmVKDDaPZDeFzFzCgVDtBnAnejFg1Tsf65A8+XeAhtBqkcT1TOs
-         j5N5rVN3CvVQuCyS6TLeJbLXTVdm607/G5yWtBgKw3Qjaz5JKQDV2VWShYsw9dCDLxh6
-         8t28Nfiq/xuWWJaGu31cD/mSkcvQ4fOL586aqcmJWFjkgfOmNhPxdi8dI+A4Z6j9Z2vn
-         2o2T7lK70z68HCmvVUmGK2duJ7dkkSAl1Ivccazo1Fs88xzrJi+Blm7IHBOX05JK52uA
-         sZ/2hyi2jduZcy0wgprnhUNmAwR0be6AuX1TMRcqTCONbZwo/oLez6HLDFvR1luRevw8
-         lV5Q==
-X-Gm-Message-State: APt69E3NfoH6l+49f57OCLEowdUwpPUwHfo4tDzFlxEU8REDpoXq3ggv
-        CMFFtRa0Gz1ssXkwwnJBEQ3D7g==
-X-Google-Smtp-Source: ADUXVKIbMkmx48aZOCo6Otpf3UqrZ1pysXi4Lz8uPN3+SU3a0uuqsgBhAbOGTLursAiYx5Sfdn4JGg==
-X-Received: by 2002:a2e:8184:: with SMTP id e4-v6mr586341ljg.93.1530005406357;
-        Tue, 26 Jun 2018 02:30:06 -0700 (PDT)
-Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id q16-v6sm246828lfi.68.2018.06.26.02.30.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 02:30:05 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 11:30:03 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     broonie@kernel.org, robh+dt@kernel.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, lgirdwood@gmail.com,
-        bgoswami@codeaurora.org, tiwai@suse.com, perex@perex.cz,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 04/12] ASoC: qdsp6: q6adm: use
- of_platform_populate/depopulate()
-Message-ID: <20180626093003.GB25217@centauri.ideon.se>
-References: <20180626092016.9296-1-srinivas.kandagatla@linaro.org>
- <20180626092016.9296-5-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626092016.9296-5-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S933913AbeFZJ34 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:29:56 -0400
+Received: from osg.samsung.com ([64.30.133.232]:52716 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933920AbeFZJYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 05:24:48 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by osg.samsung.com (Postfix) with ESMTP id 5100730B4B;
+        Tue, 26 Jun 2018 02:24:48 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+Received: from osg.samsung.com ([127.0.0.1])
+        by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Sxn0r0mTiaoX; Tue, 26 Jun 2018 02:24:47 -0700 (PDT)
+Received: from smtp.s-opensource.com (177.41.130.70.dynamic.adsl.gvt.net.br [177.41.130.70])
+        by osg.samsung.com (Postfix) with ESMTPSA id DD96130B2E;
+        Tue, 26 Jun 2018 02:24:44 -0700 (PDT)
+Received: from mchehab by smtp.s-opensource.com with local (Exim 4.91)
+        (envelope-from <mchehab@smtp.s-opensource.com>)
+        id 1fXkDK-0000Xg-2e; Tue, 26 Jun 2018 06:24:42 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Takashi Iwai <tiwai@suse.com>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org
+Subject: [PATCH 3/4] alsa: multisound.sh: update module namespace
+Date:   Tue, 26 Jun 2018 06:24:39 -0300
+Message-Id: <5dbfe342b316515c88650fe7aadb2816e4312d3d.1530004939.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1530004939.git.mchehab+samsung@kernel.org>
+References: <cover.1530004939.git.mchehab+samsung@kernel.org>
+In-Reply-To: <cover.1530004939.git.mchehab+samsung@kernel.org>
+References: <cover.1530004939.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Niklas Cassel <niklas.cassel@linaro.org>
+The modules for the cards described here changed their names.
+Update accordingly.
 
-On Tue, Jun 26, 2018 at 10:20:08AM +0100, Srinivas Kandagatla wrote:
-> Now that the child nodes have there own compatible strings,
-> Use of_platform_populate/depopulate() instead of less common
-> of_platform_device_create()/destroy().
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  sound/soc/qcom/qdsp6/q6adm.c | 16 ++--------------
->  1 file changed, 2 insertions(+), 14 deletions(-)
-> 
-> diff --git a/sound/soc/qcom/qdsp6/q6adm.c b/sound/soc/qcom/qdsp6/q6adm.c
-> index 9983c665a941..932c3ebfd252 100644
-> --- a/sound/soc/qcom/qdsp6/q6adm.c
-> +++ b/sound/soc/qcom/qdsp6/q6adm.c
-> @@ -64,7 +64,6 @@ struct q6adm {
->  	struct aprv2_ibasic_rsp_result_t result;
->  	struct mutex lock;
->  	wait_queue_head_t matrix_map_wait;
-> -	struct platform_device *pdev_routing;
->  };
->  
->  struct q6adm_cmd_device_open_v5 {
-> @@ -588,7 +587,6 @@ EXPORT_SYMBOL_GPL(q6adm_close);
->  static int q6adm_probe(struct apr_device *adev)
->  {
->  	struct device *dev = &adev->dev;
-> -	struct device_node *dais_np;
->  	struct q6adm *adm;
->  
->  	adm = devm_kzalloc(&adev->dev, sizeof(*adm), GFP_KERNEL);
-> @@ -605,22 +603,12 @@ static int q6adm_probe(struct apr_device *adev)
->  	INIT_LIST_HEAD(&adm->copps_list);
->  	spin_lock_init(&adm->copps_list_lock);
->  
-> -	dais_np = of_get_child_by_name(dev->of_node, "routing");
-> -	if (dais_np) {
-> -		adm->pdev_routing = of_platform_device_create(dais_np,
-> -							   "q6routing", dev);
-> -		of_node_put(dais_np);
-> -	}
-> -
-> -	return 0;
-> +	return of_platform_populate(dev->of_node, NULL, NULL, dev);
->  }
->  
->  static int q6adm_remove(struct apr_device *adev)
->  {
-> -	struct q6adm *adm = dev_get_drvdata(&adev->dev);
-> -
-> -	if (adm->pdev_routing)
-> -		of_platform_device_destroy(&adm->pdev_routing->dev, NULL);
-> +	of_platform_depopulate(&adev->dev);
->  
->  	return 0;
->  }
-> -- 
-> 2.16.2
-> 
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ Documentation/sound/cards/multisound.sh | 72 ++++++++++++-------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
+
+diff --git a/Documentation/sound/cards/multisound.sh b/Documentation/sound/cards/multisound.sh
+index 0e0cb029421b..a915a1affcde 100755
+--- a/Documentation/sound/cards/multisound.sh
++++ b/Documentation/sound/cards/multisound.sh
+@@ -34,12 +34,12 @@
+ #  composed of the following modules (these can also operate compiled
+ #  into the kernel):
+ #
+-#  msnd               - MultiSound base (requires soundcore)
++#  snd-msnd-lib           - MultiSound base (requires snd)
+ #
+-#  msnd_classic       - Base audio/mixer support for Classic, Monetery and
+-#                       Tahiti cards
++#  snd-msnd-classic       - Base audio/mixer support for Classic, Monetery and
++#                           Tahiti cards
+ #
+-#  msnd_pinnacle      - Base audio/mixer support for Pinnacle and Fiji cards
++#  snd-msnd-pinnacle      - Base audio/mixer support for Pinnacle and Fiji cards
+ #
+ #
+ #  Important Notes - Read Before Using
+@@ -66,7 +66,7 @@
+ #
+ #  * Classic/Monterey/Tahiti
+ #
+-#  These cards are configured through the driver msnd_classic.  You must
++#  These cards are configured through the driver snd-msnd-classic.  You must
+ #  know the io port, then the driver will select the irq and memory resources
+ #  on the card.  It is up to you to know if these are free locations or now,
+ #  a conflict can lock the machine up.
+@@ -81,10 +81,10 @@
+ #  can be used to configure the card in non-PnP mode, and in PnP mode
+ #  you can use isapnptools.  These are described briefly here.
+ #
+-#  pinnaclecfg is not required; you can use the msnd_pinnacle module
++#  pinnaclecfg is not required; you can use the snd-msnd-pinnacle module
+ #  to fully configure the card as well.  However, pinnaclecfg can be
+ #  used to change the resource values of a particular device after the
+-#  msnd_pinnacle module has been loaded.  If you are compiling the
++#  snd-msnd-pinnacle module has been loaded.  If you are compiling the
+ #  driver into the kernel, you must set these values during compile
+ #  time, however other peripheral resource values can be changed with
+ #  the pinnaclecfg program after the kernel is loaded.
+@@ -96,7 +96,7 @@
+ #  to obtain one with the command `pnpdump 1 0x203' -- this may vary
+ #  for you (running pnpdump by itself did not work for me).  Then,
+ #  edit this file and use isapnp to uncomment and set the card values.
+-#  Use these values when inserting the msnd_pinnacle module.  Using
++#  Use these values when inserting the snd-msnd-pinnacle module.  Using
+ #  this method, you can set the resources for the DSP and the Kurzweil
+ #  synth (Pinnacle).  Since Linux does not directly support PnP
+ #  devices, you may have difficulty when using the card in PnP mode
+@@ -133,16 +133,16 @@
+ #  pinnaclecfg program.  Using this program, you can assign the
+ #  resource values to the card's devices, or disable the devices.  As
+ #  an alternative to using pinnaclecfg, you can specify many of the
+-#  configuration values when loading the msnd_pinnacle module (or
++#  configuration values when loading the snd-msnd-pinnacle module (or
+ #  during kernel configuration when compiling the driver into the
+ #  kernel).
+ #
+-#  If you specify cfg=0x250 for the msnd_pinnacle module, it
++#  If you specify cfg=0x250 for the snd-msnd-pinnacle module, it
+ #  automatically configure the card to the given io, irq and memory
+ #  values using that config port (the config port is jumper selectable
+ #  on the card to 0x250, 0x260 or 0x270).
+ #
+-#  See the `msnd_pinnacle Additional Options' section below for more
++#  See the `snd-msnd-pinnacle Additional Options' section below for more
+ #  information on these parameters (also, if you compile the driver
+ #  directly into the kernel, these extra parameters can be useful
+ #  here).
+@@ -157,44 +157,44 @@
+ #
+ #  * MultiSound Classic/Monterey/Tahiti:
+ #
+-#  modprobe soundcore
+-#  insmod msnd
+-#  insmod msnd_classic io=0x290 irq=7 mem=0xd0000
++#  modprobe snd
++#  insmod snd-msnd-lib
++#  insmod snd-msnd-classic io=0x290 irq=7 mem=0xd0000
+ #
+ #  * MultiSound Pinnacle in PnP mode:
+ #
+-#  modprobe soundcore
+-#  insmod msnd
++#  modprobe snd
++#  insmod snd-msnd-lib
+ #  isapnp mypinnacle.conf
+-#  insmod msnd_pinnacle io=0x210 irq=5 mem=0xd8000 <-- match mypinnacle.conf values
++#  insmod snd-msnd-pinnacle io=0x210 irq=5 mem=0xd8000 <-- match mypinnacle.conf values
+ #
+ #  * MultiSound Pinnacle in non-PnP mode (replace 0x250 with your configuration port,
+ #    one of 0x250, 0x260 or 0x270):
+ #
+-#  insmod soundcore
+-#  insmod msnd
+-#  insmod msnd_pinnacle cfg=0x250 io=0x290 irq=5 mem=0xd0000
++#  modprobe snd
++#  insmod snd-msnd-lib
++#  insmod snd-msnd-pinnacle cfg=0x250 io=0x290 irq=5 mem=0xd0000
+ #
+ # * To use the MPU-compatible Kurzweil synth on the Pinnacle in PnP
+ #   mode, add the following (assumes you did `isapnp mypinnacle.conf'):
+ #
+-#  insmod sound
++#  insmod snd
+ #  insmod mpu401 io=0x330 irq=9                    <-- match mypinnacle.conf values
+ #
+ # * To use the MPU-compatible Kurzweil synth on the Pinnacle in non-PnP
+ #   mode, add the following.  Note how we first configure the peripheral's
+ #   resources, _then_ install a Linux driver for it:
+ #
+-#  insmod sound
++#  insmod snd
+ #  pinnaclecfg 0x250 mpu 0x330 9
+ #  insmod mpu401 io=0x330 irq=9
+ #
+ #  -- OR you can use the following sequence without pinnaclecfg in non-PnP mode:
+ #
+-#  insmod soundcore
+-#  insmod msnd
+-#  insmod msnd_pinnacle cfg=0x250 io=0x290 irq=5 mem=0xd0000 mpu_io=0x330 mpu_irq=9
+-#  insmod sound
++#  modprobe snd
++#  insmod snd-msnd-lib
++#  insmod snd-msnd-pinnacle cfg=0x250 io=0x290 irq=5 mem=0xd0000 mpu_io=0x330 mpu_irq=9
++#  insmod snd
+ #  insmod mpu401 io=0x330 irq=9
+ #
+ # * To setup the joystick port on the Pinnacle in non-PnP mode (though
+@@ -203,15 +203,15 @@
+ #
+ #   pinnaclecfg 0x250 joystick 0x200
+ #
+-#  -- OR you can configure this using msnd_pinnacle with the following:
++#  -- OR you can configure this using snd-msnd-pinnacle with the following:
+ #
+-#  insmod soundcore
+-#  insmod msnd
+-#  insmod msnd_pinnacle cfg=0x250 io=0x290 irq=5 mem=0xd0000 joystick_io=0x200
++#  modprobe snd
++#  insmod snd-msnd-lib
++#  insmod snd-msnd-pinnacle cfg=0x250 io=0x290 irq=5 mem=0xd0000 joystick_io=0x200
+ #
+ #
+-#  msnd_classic, msnd_pinnacle Required Options
+-#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++#  snd-msnd-classic, snd-msnd-pinnacle Required Options
++#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ #
+ #  If the following options are not given, the module will not load.
+ #  Examine the kernel message log for informative error messages.
+@@ -223,8 +223,8 @@
+ #  mem                  Shared memory area, e.g. mem=0xd8000
+ #
+ #
+-#  msnd_classic, msnd_pinnacle Additional Options
+-#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++#  snd-msnd-classic, snd-msnd-pinnacle Additional Options
++#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ #
+ #  fifosize             The digital audio FIFOs, in kilobytes.  If not
+ #                       specified, the default will be used.  Increasing
+@@ -244,8 +244,8 @@
+ #                       to zero).
+ #
+ #
+-#  msnd_pinnacle Additional Options
+-#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++#  snd-msnd-pinnacle Additional Options
++#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ #
+ #  digital              Specify digital=1 to enable the S/PDIF input
+ #                       if you have the digital daughterboard
+-- 
+2.17.1
+
