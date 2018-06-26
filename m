@@ -2,126 +2,82 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 819F4C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D928C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33338269CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4826269D1
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 11:31:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ikMPNtkK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33338269CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gr8awIT7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4826269D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934672AbeFZL2S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 07:28:18 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:34480 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934276AbeFZL2N (ORCPT
+        id S934572AbeFZLbP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 07:31:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46308 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933576AbeFZLbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 07:28:13 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5QBO080040475;
-        Tue, 26 Jun 2018 11:27:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=dy9THHLyv2DDW000Xhe0GuH1RZXO63QpIAr1lF7KC9M=;
- b=ikMPNtkKO5JKS6tVnP+3VbG+sgCa56N39cX0j30olkyG9qnbgJpB0xpJkJcmvWqPEHk4
- 3qpcZXqOLAbD7vbrt+vaxg3j/URKm0htsnoESeVRdF7SXuyPkRyecG1NsicMKWGFe3pw
- eSO+/3EhO6AlBcFQ4OabsEMiDyD9aprrw4J7+TuFsUmqIBe+hJs2OgYM8B97t3JC1zyq
- dS2TBIHii2un/efJjbO/TXQ/i6y2Ca5LCF0hPS5ZmJHy6l8fYKiUMQ5IxDkpZYRlq2+E
- 6g9lbOv2eBhXnvX9+FvhiVQIqtNWjwKU0e77pb/ESHkoy77xn9+t62fYPhQxkAt1mNO+ UA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2jum57r30f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 11:27:14 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5QBRCQV027198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Jun 2018 11:27:12 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5QBRAHS024359;
-        Tue, 26 Jun 2018 11:27:10 GMT
-Received: from xakep.localdomain (/73.69.118.222)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Jun 2018 04:27:08 -0700
-Date:   Tue, 26 Jun 2018 07:27:05 -0400
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, prarit@redhat.com, feng.tang@intel.com,
-        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v12 10/11] sched: early boot clock
-Message-ID: <20180626112705.4dxrsd5acvobla5y@xakep.localdomain>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
- <20180621212518.19914-11-pasha.tatashin@oracle.com>
- <20180625085543.GT2494@hirez.programming.kicks-ass.net>
- <20180625192320.kzmqkvmfh5aeuhhx@xakep.localdomain>
- <20180626090003.GA2458@hirez.programming.kicks-ass.net>
+        Tue, 26 Jun 2018 07:31:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=g3CYTxThdejzIUPC/s3asGC0UiYzpA2rj+ae9F3ytt0=; b=gr8awIT7jRTV7+y7j8A33twen
+        cA2/IcV+NJcRffUx3+YriWcsgChaK2hQG4VC75PKonkZyhZJiUCghaTe+65UR5YpK0KcH9HIPNBXn
+        o6SZfpAEh31reoKj/eE5nIYoqNW2PhpsXHJEO7+32cnAOZNN6iSkkHzTthOqfK3zOAd6yoj5mP9pO
+        K91pv7gfCGklcQP4ri1gXlfQ/ex1xmbODWkUzCuwS4zhM36RBT4xjOZxSDPWD4G43prrDepYt7TVB
+        NWNtLsO7vt0U7qvL60BnkYZpzezOxBbJN5oqtsMlR3YGKbM5HPW+F4k3N6SHPak/wfyGwRePZnEmc
+        1cVlqEK9A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXmBd-00080z-P1; Tue, 26 Jun 2018 11:31:06 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6A4752029F1D9; Tue, 26 Jun 2018 13:31:03 +0200 (CEST)
+Date:   Tue, 26 Jun 2018 13:31:03 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Alan Cox <alan@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 06/16] x86/split_lock: Save #AC setting for split
+ lock in firmware in boot time and restore the setting in reboot
+Message-ID: <20180626113103.GB2458@hirez.programming.kicks-ass.net>
+References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
+ <1527435965-202085-7-git-send-email-fenghua.yu@intel.com>
+ <20180621195823.GD13636@worktop.programming.kicks-ass.net>
+ <1529680267.4364.50.camel@linux.intel.com>
+ <20180626090521.GF2494@hirez.programming.kicks-ass.net>
+ <20180626120221.7fbd0eff@alans-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180626090003.GA2458@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180622
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8935 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=676
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806260129
+In-Reply-To: <20180626120221.7fbd0eff@alans-desktop>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 26, 2018 at 12:02:21PM +0100, Alan Cox wrote:
+> > But then how do we deal with SMIs ?
 > 
-> How's something like this? That moves sched_clock_init() to right before
-> we enable IRQs for the first time (which is after we've started the
-> whole timekeeping business).
-> 
-> The thing is, sched_clock_init_late() reall is far too late, we need to
-> switch to unstable before we bring up SMP.
+> On a system doing that level of real time you don't do SMIs.
 
-OK, sure.
-
-> -	sched_clock_postinit();
-> +	sched_clock_init();
-
-Yes, we can move sched_clock_init(). But placing it after time_init() would
-work on all arches with unstable clock except for x86.
-
-See comment above time_init x86:
-arch/x86/kernel/time.c
-
- 99/*
-100 * Initialize TSC and delay the periodic timer init to
-101 * late x86_late_time_init() so ioremap works.
-102 */
-103void __init time_init(void)
-104{
-105	late_time_init = x86_late_time_init;
-106}
-
-Only After this:
-> >     late_time_init()
-> >         x86_late_time_init()
-> >             x86_init.timers.timer_init()
-> > 	        hpet_time_init() Only after this call we finally start
-> > 		getting clock interrupts, and can get precise output from
-> > 		sched_clock_local().
-
-We start getting timer interrupts. Is it acceptable to move
-sched_clock_init() after late_time_init()?
-
-Thank you,
-Pavel
+And where do I buy one of those systems? SMIs are a real problem today,
+we need help to make them go away.
