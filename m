@@ -2,108 +2,171 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 030B1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEF6C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9BB926EE3
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:38:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9BB926EE3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B9A321A05
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:41:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIBhQIW2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9A321A05
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934129AbeFZSiK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:38:10 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33425 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753135AbeFZSiI (ORCPT
+        id S1753906AbeFZSlj (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 14:41:39 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:47063 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752732AbeFZSli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:38:08 -0400
-Received: by mail-wr0-f193.google.com with SMTP id k16-v6so18256993wro.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:38:08 -0700 (PDT)
+        Tue, 26 Jun 2018 14:41:38 -0400
+Received: by mail-ua0-f195.google.com with SMTP id r18-v6so5573033ual.13
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:41:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rZMe/zZG/lhVIRB2o5nVF2Y4yi/wdkftqNYBNdg3OKY=;
+        b=nIBhQIW2bsrO8+cygRo8i2lcP9b7UfPlguzyb7JEKDHn6TB9VMH0uk/Kr4FQuDevtb
+         jbq/Hns2+5+3ah1iwIQzBK2MjZcuTZ/+xsmfnSb9vMtwQWXPwXr+whAODGlsncKKxkCP
+         EkN3fykReUnTED5PcMtHNwoL3vY7DVRdhS0lj1TTY5yYkqf2naKmxHL8YObgVx/bpw1A
+         2K80N+vP2AhFEmUjIPnRifrjxXBp0ldRk0rdwxivzWnMzsETFtyMpAmH961IN9LBZdjU
+         tqAtLfO7i0OiZERf9PeLSdbY+ZM3L9d44p520wo7NHVK6KY58gRvuDlAFQjJhCzvP/do
+         zE4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oTXwBtxwySX+nORClgtcdjUKbLz7P/w6h26iV3grRnc=;
-        b=tYHtnXges7n/nKOdkRwfs1x70RMAQIjDOTPzPQ5vRYQxMuj9k2/IqUi+qvZR6wKE6e
-         frVTqXONK/JJ2zRZFXSxwbbDcKxhxFv7Es0C5oV/lTf/wduFsCA4PUuq5OqpKXro7FM5
-         89GxHvkIKNa6zT7NpLUIdTd1NdvO5pe5cAeZkVYJ4xC+dqQ+Z2PG2G93z5l6O+f+ZCis
-         vx0gsKfH7aHBd6L4bebs6DKCQeUyhJRONwXs4mqFa7h03TKGRbP3hiKYyAhPQ20bGvxo
-         WEQzdMDu8URHan7IU7hVAvL2Nei+jh0MDgnJaIZTPNGzIvsBV4uHA9pqJJV4CPT3k9UZ
-         JYqA==
-X-Gm-Message-State: APt69E0+80aR1DQZ2NFi3pVH3PvG9nGgaQBFSt93Jzn/EvQii5VL6Mcv
-        d95D1IssJ29IlOAS0manzFJ7UA0YT44=
-X-Google-Smtp-Source: AAOMgpfe3Q4OgrC+KTUJfSueN4nnkv50S1rPxUZoyDHZBcNEENcLFidZXcmuViL+aDdr/HCuUdW8zA==
-X-Received: by 2002:adf:b69c:: with SMTP id j28-v6mr2340186wre.200.1530038287549;
-        Tue, 26 Jun 2018 11:38:07 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id c18-v6sm3956068wrq.17.2018.06.26.11.38.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 11:38:06 -0700 (PDT)
-Subject: Re: [PATCH v3 1/3] printk: Export is_console_locked
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-References: <20180626183612.321-1-hdegoede@redhat.com>
- <20180626183612.321-2-hdegoede@redhat.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <562ee932-f163-d085-818d-2f8545da546f@redhat.com>
-Date:   Tue, 26 Jun 2018 20:38:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rZMe/zZG/lhVIRB2o5nVF2Y4yi/wdkftqNYBNdg3OKY=;
+        b=HjYxDUN87jst9wGsHrgV7jxLF2f0IrWCWpvJiaDX4Enq+xLgujPzgUBCcr6Rs+n6iO
+         2F2vzNQum9Shcnb1038kgnLE2rohJmuk0T2+tVYTVWE18jzKpplL2oZqe5KLv+h20Gxc
+         wK74xj0MhpHvTSIJKPhlH7AA8C5Y7ZVtvD7bZ3rR/pnEBqe1ReX3F+5Kzv+XJJ3Qbuqm
+         KJ7RulaZfkX8xnhrr3JK0guTOHXy2hiPH6qU5guSmeOBwSb8z+SU6lvHMYl02+VHOxp+
+         4DAAP6HBuqgmaHplIADdDYkgpbPel5t2wSfMvQYDFezw0wzBN6hrUsW8Zgc15GCTL1VR
+         lJbw==
+X-Gm-Message-State: APt69E0GzPdjzmIOh/Q2bgORFvNhirN6ZJBgK7mJkPCO+adUQtf/dQhJ
+        z4CbONFFT/m1R8H+174QTH1CHwOAuCspGxxa+Oc=
+X-Google-Smtp-Source: AAOMgpeCFC/D/GTu041yQ0uPXntuZ4GY/3d073bmFa/PhgAXCvCQQFJWUC3pSyRtrn4/deu6M3jatsbp39xUbEYHHBk=
+X-Received: by 2002:ab0:1b9b:: with SMTP id k27-v6mr1754030uai.122.1530038497514;
+ Tue, 26 Jun 2018 11:41:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180626183612.321-2-hdegoede@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 11:41:36
+ -0700 (PDT)
+In-Reply-To: <1530035183.3205.6.camel@arista.com>
+References: <20180626162438.16306-1-dima@arista.com> <CAHp75VchWpr+76rBCmXctpYi5a06pr-MT==FrNDy03g=boxfog@mail.gmail.com>
+ <1530035183.3205.6.camel@arista.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 26 Jun 2018 21:41:36 +0300
+Message-ID: <CAHp75VfxajbTK3azfRWVBY6+f91JjGZwzHKrhQcHXDw9xeO_HA@mail.gmail.com>
+Subject: Re: [PATCHv2] lib/ratelimit: Lockless ratelimiting
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jun 26, 2018 at 8:46 PM, Dmitry Safonov <dima@arista.com> wrote:
+> On Tue, 2018-06-26 at 20:04 +0300, Andy Shevchenko wrote
 
-As the cover letter's subject correctly indicates this is v4 of the
-patch-set, I forgot to bump the subject-prefix when sending, so the
-v3 in the subject here really should be v4.
+>> >  #define RATELIMIT_STATE_INIT(name, interval_init, burst_init)
+>> > {                \
+>> > -               .lock           =
+>> > __RAW_SPIN_LOCK_UNLOCKED(name.lock),  \
+>>
+>> name is now redundant, isn't it?
+>
+> It is. Worth to split on the second patch or keep callers changes in
+> this patch?
 
-Regards,
+For me sounds like a part of this change, though weakly tighten to the
+main purpose.
+Otherwise in the middle of the series you introduce some bogus stuff
+(not sure if compiler or some static analyzers would warn about it).
 
-Hans
+>> > @@ -42,9 +41,10 @@ static inline void ratelimit_state_init(struct
+>> > ratelimit_state *rs,
+>> >  {
+>> >         memset(rs, 0, sizeof(*rs));
+>> >
+>> > -       raw_spin_lock_init(&rs->lock);
+>> >         rs->interval    = interval;
+>> >         rs->burst       = burst;
+>> > +       atomic_set(&rs->printed, 0);
+>> > +       atomic_set(&rs->missed, 0);
+>>
+>> Can it be
+>>
+>> *rs = RATELIMIT_STATE_INIT(interval, burst);
+>>
+>> ?
+>>
+>> (Yes, the '(struct ratelimit_state)' has to be added to macro to
+>> allow this)
+>
+> Sure.
 
+This part, by the way, potentially can be split into preparatory
+patch. Please, double check if it possible to do this way.
 
-On 26-06-18 20:36, Hans de Goede wrote:
-> This is a preparation patch for adding a number of WARN_CONSOLE_UNLOCKED()
-> calls to the fbcon code, which may be built as a module (event though
-> usually it is not).
-> 
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> Changes in v3:
-> -New patch in v3 of this patchset
-> ---
->   kernel/printk/printk.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 247808333ba4..3f041e7cbfc9 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2243,6 +2243,7 @@ int is_console_locked(void)
->   {
->   	return console_locked;
->   }
-> +EXPORT_SYMBOL(is_console_locked);
->   
->   /*
->    * Check if we have any console that is capable of printing while cpu is
-> 
+>> > -       if (rs->missed) {
+>> > +       if ((missed = atomic_xchg(&rs->missed, 0)))
+>>
+>> Perhaps
+>>
+>> missed = ...
+>> if (missed)
+>>
+>> ?
+>
+> Ok, will change - checkpatch has warned me, but I thought it's just a
+> preference than a rule.
+
+In general, yes and no. In this case it would increase readability and
+assignment inside conditionals is not the best practice.
+
+>> Instead of casting, perhaps
+>>
+>> int missed = ...
+>>
+>> I think you already has a guard against going it below zero. Or I
+>> missed something?
+>
+> No, I do:
+> atomic_add_unless(&rs->missed, 1, -1);
+>
+> So, it's guard against overflow, but not against negative.
+> That's why I do print it as unsigned.
+
+Hmm...
+If you increment the variable, it would become 2^n, then 2^n + 1, ...
+which in unsigned form quite far from -1.
+
+So, this check is against revolving the value.
+Otherwise you are using atomic_t as unsigned type indeed.
+
+But in case of use you assign signed to unsigned which would not
+overflow, so, the casting is superfluous.
+
+(and I would rather go with unsigned int type instead of unsigned if
+it fits style of the module)
+
+-- 
+With Best Regards,
+Andy Shevchenko
