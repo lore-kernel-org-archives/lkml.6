@@ -2,195 +2,124 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC072C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D3EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22F8F26826
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6F026822
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:47:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="FJE6RHha"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22F8F26826
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=earthlink.net
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DNWhG6SA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DNWhG6SA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6F026822
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933723AbeFZJqx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:46:53 -0400
-Received: from elasmtp-galgo.atl.sa.earthlink.net ([209.86.89.61]:35074 "EHLO
-        elasmtp-galgo.atl.sa.earthlink.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752606AbeFZJqv (ORCPT
+        id S934001AbeFZJrT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:47:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48790 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932963AbeFZJrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:46:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=earthlink.net;
-        s=dk12062016; t=1530006600; bh=yge4cx/cWjq4umpAhwc50cAo/LauqVDqk02r
-        BNX51yw=; h=Received:Subject:To:Cc:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-ELNK-Trace:X-Originating-IP; b=FJE6RHh
-        ahmDvNnJHcfv4Qyiht8sPlT8eEVlVU1012rpnCW6oMd9pqovNltl2sJbA3NPW0n8vr5
-        wt3VIhB+5A3DZQYDrTN8GfKhEqKNC0O2CsrxLJQ+IAIRV4TYYQUYH7gHF3W5hBo0JBF
-        N7L75uBfEXzqLnFc256uBz2DtSV9ikX0FlohVXaJfUXMk3No7e2tGh9s84LvpOyRMBo
-        57qUOtZQE+CtSG6ZUb4FjzN60ZfuJk5/h9opSV8nXp9VopjqAIS5+VAFVCQi/fqP4IQ
-        mkDGl9KSx8nprnA0OJjpleUzAq88rcTnUNWCqMyDPZayvqFzy6psICcSPAR39xGP8gg
-        ==
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
-  s=dk12062016; d=earthlink.net;
-  b=R2ud/KAqaqzMc0xl19dpR3w10f42BXmwDANNyHxsRAPmkd4KRyrEHGPbqQb3oKqSdnkBZJlqn5ch9nT+uj743v1OaaBufvAiX3cFiFDe0mth0AzyOQVy1znDgHB9WRsdeqjeQvC7r75LbpKUWJCdw7qPNIRzIBLqrNExCqcew9EqxzlPEbOhJ2i65Y/1Q7svOGwpeXIXBYgw4p5EQ36zsLyrAwctPWKcF/dMyhj73Ru3AxBz4LHQhhqmwXQhCTu8LwwWypAdFVNzWiZVAy3rPGSbgyTvRreDiOv5WiNak1a3z9nLum1LEYCY6EfVRbkjoYMZrzlL0J7CfJTv2n3tDw==;
-  h=Received:Subject:To:Cc:References:From:Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:Content-Transfer-Encoding:X-ELNK-Trace:X-Originating-IP;
-Received: from [68.183.100.61] (helo=[192.168.37.199])
-        by elasmtp-galgo.atl.sa.earthlink.net with esmtpa (Exim 4)
-        (envelope-from <jdow@earthlink.net>)
-        id 1fXkbk-000GrU-9a; Tue, 26 Jun 2018 05:49:56 -0400
-Subject: Re: moving affs + RDB partition support to staging?
-To:     Martin Steigerwald <martin@lichtvoll.de>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Sterba <dsterba@suse.cz>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-References: <20180425154602.GA8546@bombadil.infradead.org>
- <CAOmrzk+CuuraUnWWKDKen9FV6=UcgKgc6+qJ3g-Fx+tkt5HHQw@mail.gmail.com>
- <45e05e92-e2b1-d46c-11fb-4bd75e793712@earthlink.net>
- <1954225.EY2fU3p6yy@merkaba>
-From:   jdow <jdow@earthlink.net>
-Message-ID: <3030f647-1744-8cd6-4ce8-f619aa064a2f@earthlink.net>
-Date:   Tue, 26 Jun 2018 02:46:44 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 05:47:17 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E83A760274; Tue, 26 Jun 2018 09:47:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530006436;
+        bh=OHgGGnpQo0r9tRs769deeVIWPAj896d+HvkDsOUp+So=;
+        h=Date:From:To:Cc:Subject:From;
+        b=DNWhG6SAfur7V+/TQzX9/ZwD5i+oQPvO6LtO7MU9oBotZOpb5vAM7Amvc6yDHIvJI
+         7SqVKSVqY5Zc3ZSKOZAhcww098i+W6ngya4PvrbYBnNqk1JZ+jezZg/CpZK5VJznbc
+         Gc3EtMcp5mtE5iFcK6jnfkMv8Oabq0Y1JdwhYxQY=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pkondeti@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 90362600ED;
+        Tue, 26 Jun 2018 09:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530006436;
+        bh=OHgGGnpQo0r9tRs769deeVIWPAj896d+HvkDsOUp+So=;
+        h=Date:From:To:Cc:Subject:From;
+        b=DNWhG6SAfur7V+/TQzX9/ZwD5i+oQPvO6LtO7MU9oBotZOpb5vAM7Amvc6yDHIvJI
+         7SqVKSVqY5Zc3ZSKOZAhcww098i+W6ngya4PvrbYBnNqk1JZ+jezZg/CpZK5VJznbc
+         Gc3EtMcp5mtE5iFcK6jnfkMv8Oabq0Y1JdwhYxQY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90362600ED
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
+Date:   Tue, 26 Jun 2018 15:17:12 +0530
+From:   Pavan Kondeti <pkondeti@codeaurora.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Question about wakeup granularity calculation in
+ wakeup_preempt_entity()
+Message-ID: <20180626094712.GF9208@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1954225.EY2fU3p6yy@merkaba>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ELNK-Trace: bb89ecdb26a8f9f24d2b10475b571120e34ac1e402a3b8c1bd41581886a29d77a6100a05dea77183350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
-X-Originating-IP: 68.183.100.61
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Get everybody)
-Speak to the high level driver folks about that. The low level stuff is 
-basically dumb. It tells you what it finds. It tells the rest of the OS (the 
-file systems) what it found. The amiga-makefs (or whatever it is called) needs 
-to grow some added intelligence just as HDToolBox needs to grow more 
-intelligence. The step from RDB uint32_t to RDB uint64_t probably needs a great 
-deal of thought. Personally I'd be tempted to adopt GUID based partitioning 
-system. It has already considered this stuff.
+Hi Peter,
 
-{^_^}
+I have a question about wakeup granularity calculation while checking
+if the waking fair task can preempt the current running fair task.
 
-On 20180626 01:12, Martin Steigerwald wrote:
-> Joanne.
-> 
-> jdow - 26.06.18, 07:17:
->> As long as it preserves compatibility it should be OK, I suppose.
->> Personally I'd make any partitioning tool front end gently force the
->> block size towards 8k as the disk size gets larger. The file systems
->> may also run into 2TB issues that are not obvious. An unused blocks
->> list will have to go beyond a uint32_t size, for example. But a block
->> list (OFS for sure, don't remember for the newer AFS) uses a tad
->> under 1% of the disk all by itself. A block bitmap is not quite so
->> bad. {^_-}
->>
->> Just be sure you are aware of all the ramifications when you make a
->> change. I remember thinking about this for awhile and then
->> determining I REALLY did not want to think about it as my brain was
->> getting tied into a gordian knot.
-> 
-> Heh… :)
-> 
-> Well, all I can say it that it just worked on AmigaOS 4. I did not see
-> any data corruption in any of the filesystems. Well as far as I have
-> been able to check. There has been no repair tool for JXFS I think. But
-> as I migrated the data on it to SFS, I was able to copy everything.
-> 
-> Famous last words.
-> 
-> Well especially the disk size was detected properly and there was no
-> overflow like on Linux. So I´d say rather have on error less than one
-> error more.
-> 
-> Of course, it could also be an option to outright *refuse* to detect
-> such disks with a big fat warning in kernel log that it may unsafe. But
-> overflowing and thus on writes overwriting existing data is not safe.
-> 
-> I do think it is safe enough, but what I do know about the internals
-> about RDB (more than the average user certainly, but not as much as you
-> or some other AmigaOS developer who digged  deeper into that).
-> 
-> So in case you´d rather see Linux to refuse to handle disks like that,
-> that would also be fine with me. Just do not handle them in the broken
-> way that they are handled in Linux now. I.e. do not deliberately corrupt
-> things as in "Its dangerous, so let´s overwrite data straight away, so
-> the user gets it." :)
-> 
-> Anyway, in my opinion RDB still just so much more advanced than MBR and
-> in some parts even on par with the much later GPT. With some limitations
-> it is a quite brilliant partition format, if you ask me.
-> 
->> {^_^}
->>
->> On 20180625 19:23, Michael Schmitz wrote:
->>> Joanne,
->>>
->>> Martin's boot log (including your patch) says:
->>>
->>> Jun 19 21:19:09 merkaba kernel: [ 7891.843284]  sdb: RDSK (512) sdb1
->>> (LNX^@)(res 2 spb 1) sdb2 (JXF^D)(res 2 spb 1) sdb3 (DOS^C)(res 2
->>> spb
->>> 4)
->>> Jun 19 21:19:09 merkaba kernel: [ 7891.844055] sd 7:0:0:0: [sdb]
->>> Attached SCSI disk
->>>
->>> so it's indeed a case of self inflicted damage (RDSK (512) means 512
->>> byte blocks) and can be worked around by using a different block
->>> size.
->>>
->>> Your memory serves right indeed - blocksize is in 512 bytes units.
->>> I'll still submit a patch to Jens anyway as this may bite others
->>> yet.
->>>
->>> Cheers,
->>>
->>>     Michael
->>>
->>> On Sun, Jun 24, 2018 at 11:40 PM, jdow <jdow@earthlink.net> wrote:
->>>> BTW - anybody who uses 512 byte blocks with an Amiga file system is
->>>> a famn dool.
->>>>
->>>> If memory serves the RDBs think in blocks rather than bytes so it
->>>> should work up to 2 gigablocks whatever your block size is. 512
->>>> blocks is 2199023255552 bytes. But that wastes just a WHOLE LOT of
->>>> disk in block maps. Go up to 4096 or 8192. The latter is 35 TB.
->>>>
->>>> {^_^}
->>>>
->>>> On 20180624 02:06, Martin Steigerwald wrote:
->>>>> Hi.
->>>>>
->>>>> Michael Schmitz - 27.04.18, 04:11:
->>>>>> test results at https://bugzilla.kernel.org/show_bug.cgi?id=43511
->>>>>> indicate the RDB parser bug is fixed by the patch given there, so
->>>>>> if
->>>>>> Martin now submits the patch, all should be well?
->>>>>
->>>>> Ok, better be honest than having anyone waiting for it:
->>>>>
->>>>> I do not care enough about this, in order to motivate myself
->>>>> preparing the a patch from Joanne Dow´s fix.
->>>>>
->>>>> I am not even using my Amiga boxes anymore, not even the Sam440ep
->>>>> which I still have in my apartment.
->>>>>
->>>>> So RDB support in Linux it remains broken for disks larger 2 TB,
->>>>> unless someone else does.
->>>>>
->>>>> Thanks.
-> […]
-> 
+static unsigned long
+wakeup_gran(struct sched_entity *curr, struct sched_entity *se)
+{
+	unsigned long gran = sysctl_sched_wakeup_granularity;
+
+	/*
+	 * Since its curr running now, convert the gran from real-time
+	 * to virtual-time in his units.
+	 *
+	 * By using 'se' instead of 'curr' we penalize light tasks, so
+	 * they get preempted easier. That is, if 'se' < 'curr' then
+	 * the resulting gran will be larger, therefore penalizing the
+	 * lighter, if otoh 'se' > 'curr' then the resulting gran will
+	 * be smaller, again penalizing the lighter task.
+	 *
+	 * This is especially important for buddies when the leftmost
+	 * task is higher priority than the buddy.
+	 */
+	return calc_delta_fair(gran, se);
+}
+
+The above comment says that the wakeup granularity will be larger when
+'se' < 'curr'. But we completely ignore the weight of the curr and
+scale the wakeup granularity solely based on the weight of the waking
+task i.e se. 
+
+For example, when curr is nice:0 and se is nice:0, the wakeup granularity
+is unchanged. However when curr is nice:-15 and se is nice:-15, the
+granularity becomes 3% of its original value and favour the waking task.
+
+The git history around these functions revealed that there was once a
+sched feature called ASYM_GRAN with which we can control the granularity
+scaling wrt curr or se. However if we scale granularity wrt curr, then
+preemption becomes difficult for a higher waking up task. 
+
+Is there any reason why we don't want to take both curr and se into account?
+
+scaled_granularity = granularity * (W(curr)/W(se))
+
+I don't have any particular usecase that actually shows a regression. I
+spotted this behavior in traces where a lower or default prio task that
+is riding on the wakeup bonus is preempting a higher prio task which started
+just running. Setting sched_wakeup_granularity to a value higher than the
+wakeup bouns may prevent this, but that would make things difficult for
+a normal prio tasks preempting a lower prio running task.
+
+Thanks,
+Pavan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+
