@@ -2,116 +2,128 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADE5C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E352C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B825726D96
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E548626D95
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 16:07:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="bqm5O+0P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B825726D96
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qjRqGdVE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E548626D95
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751959AbeFZQGf (ORCPT
+        id S1751634AbeFZQHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 12:06:35 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:33114 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750919AbeFZQGd (ORCPT
+        Tue, 26 Jun 2018 12:07:41 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35533 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbeFZQHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 12:06:33 -0400
-Received: by mail-ot0-f193.google.com with SMTP id h6-v6so19649352otj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 09:06:33 -0700 (PDT)
+        Tue, 26 Jun 2018 12:07:39 -0400
+Received: by mail-lj1-f196.google.com with SMTP id i125-v6so9223502lji.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 09:07:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=qSQcr03qsieCwbx9tQviqcvej0FpnzCPgyWDfnbPD4o=;
-        b=bqm5O+0PCVjk2+lRAvYqOwzUsdVcZmo+n/eq20/QigNHdLLTBXBjxtTuMO1wtiCHXT
-         Dj9plcIHv9n2fkRP0QAOBiCYKp4j207nuCi6qjOYJ51K4Hn+X1Gaj5EHfUBpsUesNcV8
-         spmtUFp3GOdK+WbtLGayjciUvxvTtBwKZEFvKaUUVhq5yNFPR6A88IaRyd50YXMRpLlo
-         t/Dpdxgbu1oVc12v8Rj2zRADDX5mUHM9ovp6+uB69HK/QS7O9IiuodIG2w4xy+4Hhlxb
-         H1ndyVbfUPjSTgoxSvjC4lGDrTrAk9Rvrfs4W5Mkmr1pHCezRHwu6UPsen9Vrtc5FfPX
-         tA5A==
+        bh=64Yny3TqXwaa7mqIy2JDzaqluupIMk8XlR/3NcikW/A=;
+        b=qjRqGdVEOSBUXq6HA5EsjRYNiCu0No5DClnGqGBDe8JBJmtSW/7ArfaYURfLMWL2Hd
+         xxvUU03lMKSM6s1FupJQ4sG9kvI+uGL8KtKpuSaWcVExuEeKU8FpBdNSud86ql1uVLM2
+         TOteBPfZcWGnHSaFFXRf2xQ3q29dM9VG9JLBauZuJ6sfEaZ/wfyu8l8wcTJshzHFCDEg
+         wXnL7jSDpC3K6H37uN3kkjPaSKJ6HM0rKwa5OL5mQOQSgOeSR3vSK9EtUlBB2N+CHWrb
+         LC/aPHwx/wJ65S/j84mBfrdqmEc8FemI9N9MA2xBmRS6Mnr561ZFAeEE3hM38CKORUJd
+         jTbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=qSQcr03qsieCwbx9tQviqcvej0FpnzCPgyWDfnbPD4o=;
-        b=JbO1x5HgEsSDUin3P5+FzQl39bhXn6rv4DAbdAS2woHFsJH0uY68Yzt0BIrS0x8c/s
-         KgNUAf7489kl0I82NjurIWzh1m9LqmRfigGsDOdlfq9Llk334ZFatSe9ouGYUh6A/W7k
-         pRLWcuLpmdXYjqQaCpqEn9mkj7TnQB+4Hq8i8V+RTZKdIuxYjVC+ZwdQwsdIXHZ7hMUa
-         xaCArUFcbAG6jhEOLNmd+cCCrF9jbVa1mJDW/mLb+cQ6XiWT2mvADJIf7wEhyqIdOQFt
-         B1CXDzmBfH6s1hsjBfMi2maSZ0c2Ogm8FcuD5vHH2Fwmihh3huqpwVg7YEMqgbYxCjLY
-         GoLA==
-X-Gm-Message-State: APt69E03UcNIqRewyDJ3IycnLqJmjIGE6qM8ofpY75CN2Eea66X2Ds8N
-        vVXmRXd/etq0jnlAC3Gw3vppTc+OBZmmyXBsC7LWQw==
-X-Google-Smtp-Source: AAOMgpdLKQR+NQPmL86Sd1f+gLolPF2BrgIBaSixeoTtmR40SGbM7lrCccNDNcLV2HdoOmTR3FLqZY1grQNm/WleSts=
-X-Received: by 2002:a9d:3072:: with SMTP id w47-v6mr1281652otd.387.1530029192884;
- Tue, 26 Jun 2018 09:06:32 -0700 (PDT)
+        bh=64Yny3TqXwaa7mqIy2JDzaqluupIMk8XlR/3NcikW/A=;
+        b=B2iEi1+lro11Zsgm7YSjfFpyu6MeEc4A/QDU58641YbBh+sLc1c4aE1x77Gk9Ao4+u
+         8XIuV0KiFuVFT+2Z0x7D6W+sbA7xIjZMqDcWuttZdF/WwSZgRt+lgUGPon8uLVUjuGZ8
+         o4p/7Y+weAkzolgOgocN+ZKmFNhcjk7FVPwTdW9959s2RYOhhUYP1WnFGVXTvOF1YhZi
+         +H9rYCTVWq5HtM1o7HZyOAA86jWYueW0+ONYmO0TSGhY3FSPnouB+xAF3AEFFE8X52Ys
+         McskIjgtCFy7Jo5jh+CKub8vbDoe8wDw3Q9MbM3WBchf96lhFghg9m6UVl/gyBRpChdq
+         2o5g==
+X-Gm-Message-State: APt69E25iJiYy0mbOx6ktJLn7p6jH7zpPVbDuuAX1lhyScV1jzKwuxv3
+        A7vpfZt+6goiZHJ/E/fzvZfzVsFC0EFN1QP5eK4=
+X-Google-Smtp-Source: AAOMgpepdfpdTRWcqc5XAcsMjQHoe+jsSfchRn72tfPRWtR5360jpuJzmUbJ+xEmyWchqh0d5fN+mMCjnS1oV8Qbnwg=
+X-Received: by 2002:a2e:91d6:: with SMTP id u22-v6mr1652190ljg.64.1530029258320;
+ Tue, 26 Jun 2018 09:07:38 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:38c2:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 09:06:32
+Received: by 2002:a19:2b43:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 09:07:37
  -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.21.1806261217140.2204@nanos.tec.linutronix.de>
-References: <20180626121853.0b4ce17c@canb.auug.org.au> <alpine.DEB.2.21.1806261217140.2204@nanos.tec.linutronix.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 26 Jun 2018 09:06:32 -0700
-Message-ID: <CAPcyv4hdpkFGHZ4sv7Od-ezMXg8JZg+-E=CEsmN1tea+z75hkg@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the nvdimm tree with the tip tree
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>
+In-Reply-To: <20180626153740.GA17271@n2100.armlinux.org.uk>
+References: <20180510150448.GA26306@jordon-HP-15-Notebook-PC>
+ <20180511092205.GB16141@n2100.armlinux.org.uk> <CAFqt6zY2amJC4bkRZJgjs7=wCuTTxZbufk9cXcMZLE8VGh_dww@mail.gmail.com>
+ <CAFqt6zYyL6YfvmiX90=Te3PQdcK32irdPPU0awEbp9Q16Bz9=w@mail.gmail.com>
+ <CAFqt6zbQxx+20SNT8r1q2ZjtQZLTh=CC50s4LkHExkBju-1KJA@mail.gmail.com>
+ <CAFqt6zacTP-HgQzkXS=d2w-+=QbhkPA0oH9X5Py_GJ0+8_PcYQ@mail.gmail.com> <20180626153740.GA17271@n2100.armlinux.org.uk>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 26 Jun 2018 21:37:37 +0530
+Message-ID: <CAFqt6zYoTTBjeiprsoaEronQV_if+5bB=LWqo1A6QxYMtPJong@mail.gmail.com>
+Subject: Re: [PATCH v2] gpu: drm: armada: Adding new typedef vm_fault_t
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 3:21 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Tue, 26 Jun 2018, Stephen Rothwell wrote:
->> Today's linux-next merge of the nvdimm tree got a conflict in:
+On Tue, Jun 26, 2018 at 9:07 PM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> On Tue, Jun 19, 2018 at 10:42:15AM +0530, Souptick Joarder wrote:
+>> On Mon, Jun 4, 2018 at 10:46 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> > On Wed, May 23, 2018 at 3:09 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> >> On Wed, May 16, 2018 at 10:05 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> >>> On Fri, May 11, 2018 at 2:52 PM, Russell King - ARM Linux
+>> >>> <linux@armlinux.org.uk> wrote:
+>> >>>> On Thu, May 10, 2018 at 08:34:48PM +0530, Souptick Joarder wrote:
+>> >>>>> Use new return type vm_fault_t for fault handler in
+>> >>>>> struct vm_operations_struct. For now, this is just
+>> >>>>> documenting that the function returns a VM_FAULT
+>> >>>>> value rather than an errno. Once all instances are
+>> >>>>> converted, vm_fault_t will become a distinct type.
+>> >>>>>
+>> >>>>> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>> >>>>>
+>> >>>>> Previously vm_insert_pfn() returns err which driver
+>> >>>>> mapped into VM_FAULT_* type. The new function
+>> >>>>> vmf_insert_pfn() will replace this inefficiency by
+>> >>>>> returning VM_FAULT_* type.
+>> >>>>>
+>> >>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> >>>>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> >>>>
+>> >>>> Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+>> >>>>
+>> >>>> Thanks.
+>> >>>
+>> >>> If no further comment, we would like to get this patch in queue
+>> >>> for 4.18.
+>> >>
+>> >> We would like to get this patch in queue
+>> >> for 4.18.
+>> >
+>> > We  would like to get this patch in 4.18.
 >>
->>   arch/x86/kernel/cpu/mcheck/mce.c
->>
->> between commit:
->>
->>   d3d6923cd1ae ("x86/mce: Carve out the crashing_cpu check")
->>
->> from the tip tree and commit:
->>
->>   f6785eac562b ("x86/memory_failure: Introduce {set,clear}_mce_nospec()")
->>
->> from the nvdimm tree.
+>> Russell, This patch is not merged in 4.18-rc-1.
 >
-> Dan, we have rules how to deal with that stuff and there is no excuse for
-> you to collect random patches and apply them as you see fit. Stop this
-> please.
+> Correct, I wasn't able to add it to my tree because David Airlie hadn't
+> pulled the previous merge request, so it missed the 4.18 merge window.
+>
+> The reason for me acking the patch was so that /someone else/ could
+> pick it up instead, and that obviously also didn't happen - maybe the
+> drm-misc tree was closed for new work at the point you sent the patch.
+>
+> I've picked this patch up now, thanks.
 >
 
-Yes, it was stale from the merge window when I was getting late 0day
-and -next testing coverage. I held them back from the merge window
-precisely due to lack of acks and review comments. My mistake was not
-immediately pulling them down from my -next branch when it was clear
-that I needed to circle back and try again for 4.19.
-
-> MCE/RAS patches have a well established and working route and if something
-> in your tree really depends on this, which I'm not seeing at all, then
-> there are well documented and established procedures to do that.
-
-Sorry, again I had no intention of bypassing x86 and the offending
-patches have been pulled from my -next branch.
-
-I need them for teaching memory_failure() how to handle DAX and
-persistent memory. The primary challenge DAX and PMEM pose to the
-existing error handling flow is that the errors can be repaired and
-that the same poison pages can be accessed safely through the
-device-driver with memcpy_mcsafe().
+Thanks. Queued for 4.19 merge window ?
