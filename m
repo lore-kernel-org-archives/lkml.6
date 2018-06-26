@@ -6,66 +6,67 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2586FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F19C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D0C2612A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:07:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3750208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 08:09:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="i43kR1dt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D0C2612A
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YheDxS9A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3750208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932243AbeFZIHd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 04:07:33 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36158 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932103AbeFZIH3 (ORCPT
+        id S932262AbeFZIJG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 04:09:06 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36305 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752529AbeFZIJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:07:29 -0400
-Received: by mail-wm0-f68.google.com with SMTP id u18-v6so732481wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 01:07:28 -0700 (PDT)
+        Tue, 26 Jun 2018 04:09:02 -0400
+Received: by mail-wr0-f194.google.com with SMTP id f16-v6so16226471wrm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 01:09:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=sN3Qeh962eQrzvQBbDrqYVXr+KyWKG7m8xLF/LqyWVM=;
-        b=i43kR1dtxl3xUG/8Udi0lF3NuHcpYPcAob4NCWTX1WKidaLv3KYq2UkCzouOWyNA3V
-         kouYIwUROqgfR3Ynp17HZE+fFP4mDzuRSXRVNqhp4buXXNteYGWHnFO/G1xOTZD/xWZ4
-         JJZCsu08m1lfX4fQgqKg6WOTN8RDgOGloEMpPJeO4xkpEChvKBDnSTFBJ0dVdk0ECiD9
-         GDhWe+mhEp5j0nUEC+Y2CdP9UTkd296CRx/RuExyc5T8yp16am6G4BHHsAKgoG+iHSdF
-         dP7zsKkkSsv5no/4JYgxUjxPKGy38oX9wKRKl7srmylHtEQSxf1kYeDMQR9K2WqJSc4I
-         zwsQ==
+        bh=e5cuWqqWRNBRsnT/kpYyCj7huv/AQ5RQelCikvf4BsE=;
+        b=YheDxS9AGwgeISGgsXolQMOr6sRqEhVvGr5ACkTMR0AiLXonJ3ZpcO2D/31+vsk34w
+         ou2nzpApAzH21OmzaS7EOOkEY+8sQoN2hHLBTmIsBxnpSpdd7T41VD+ytPPZIJO1Q77K
+         /aTYKl5HPSRfIKhnyaezVkUkXBsifq+6KxeUbp/DtU9ig7WaO2dOZlLq37FUy13IB3bl
+         V2vujsGMnqcnZwfhea2EPAPE7nkT2FQOIsyzMx70xRt6+RB7PzgunM6vAoNu2frwFM65
+         WImOjAXeJzWUNElDDNK8rSbortO1/o1NC1/9RwMr2GVTWhRG0+W+0EFLipPSendGBlKF
+         M+4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=sN3Qeh962eQrzvQBbDrqYVXr+KyWKG7m8xLF/LqyWVM=;
-        b=BaXAEDEJozIELj3M8wmEPSAljQT+B6ZcMvK8M++9e6DiE0HdbF7Y0Xj7wov1m/k3kF
-         MKwX77Jbq5oENKp57ooOyIoT8rgEnaw5qPZsE15x3acoLgNOqPHos2zetOj5MKGBHipf
-         2obWjpvdeSiLoG0+nXbU+NeJXEdWiDdnraOZZQBCrV5UNIzXbt5AmItYrQUxp1hzc7hi
-         2DRzfpEj5sCc5ad+Hzl+xDFrp7z1x/BPbpaKDGF+0sJJ8tQHKjFEvOc+YhTqO8exP62j
-         +ajmvPbtu+GuvdD/izHtUmLstshsB/cN9ywThSX1cH6QidpzwNEUbTTzI0Qab97eJqXU
-         0SpQ==
-X-Gm-Message-State: APt69E0DsKTsAFq94YZQIQi7xFkP4yeSAD5fTvuLShNIa9PmlXVp1BkP
-        yLSGtxGnn/rALz0Ce9kbjizZdw==
-X-Google-Smtp-Source: AAOMgpfcHuqMi1+dcJBBIDh7Do8fZP1vg3OI/Zjc/nPD7q40wxgHj9Qm4Y1KKkrtfQBWcFNthsJpLQ==
-X-Received: by 2002:a1c:894f:: with SMTP id l76-v6mr686932wmd.103.1530000447635;
-        Tue, 26 Jun 2018 01:07:27 -0700 (PDT)
+        bh=e5cuWqqWRNBRsnT/kpYyCj7huv/AQ5RQelCikvf4BsE=;
+        b=rsUZuHVickvGE/5c+za3zfxHdcd33RFfZuxQh5F7uVDfhNVc//XLQ4kEr83lVI07JV
+         pafQmjXXn1MrGjKxdu2/7Y3RQh1qt3ssANV6ENnQUs/tkdkG4G1oPZGV6u+VBCZxGmRK
+         j/qWi0/WHiywT1/lbnhhVAZ3W65ebQITT7fSOJcRYdZbUcocjZC98nFnISmqMIrxZMes
+         0aQ04m3tMk46XEDAx9YLI/iXbfZaWyWYuRR86P/BArpztBN7drXWOpWdYCFL4e/Wf1Lz
+         LKTgJ7sr4WXJEF6CjGkTtpBycuybHqv7Cfzz9wrMcL2k1ReDlAOgfpgiLMfXxds44CIP
+         pCEA==
+X-Gm-Message-State: APt69E0lsK28QnSpU8/Iso8vQ/61MTOqAzqQWMst/dKEqBqfdoTTZYDq
+        VSesdU6i1dt1WX+KEF7/xi+KEG3srF8=
+X-Google-Smtp-Source: AAOMgpecD3vEXUnOSC5gbF7fUBaC8K7uRR2QRjOw5K/zpmI3aRKAGHUE3qwKzl1vxRcTZmEI8R018A==
+X-Received: by 2002:adf:ea87:: with SMTP id s7-v6mr492484wrm.150.1530000540737;
+        Tue, 26 Jun 2018 01:09:00 -0700 (PDT)
 Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 74-v6sm1917683wmt.31.2018.06.26.01.07.26
+        by smtp.gmail.com with ESMTPSA id o13-v6sm967749wmc.8.2018.06.26.01.08.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 01:07:26 -0700 (PDT)
-Subject: Re: [PATCH] ARM64: dts: meson-axg: fix ethernet stability issue
+        Tue, 26 Jun 2018 01:08:59 -0700 (PDT)
+Subject: Re: [PATCH 1/2] clk: meson: stop rate propagation for audio clocks
 To:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Carlo Caione <carlo@caione.org>
-Cc:     devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180625125653.3404-1-jbrunet@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180620100610.29010-1-jbrunet@baylibre.com>
+ <20180620100610.29010-2-jbrunet@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -93,12 +94,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
  Acmp6h8g
 Organization: Baylibre
-Message-ID: <d59a60d1-d5fc-6d89-f89b-148c8e3f3521@baylibre.com>
-Date:   Tue, 26 Jun 2018 10:07:26 +0200
+Message-ID: <76edc9c1-8fd2-de0a-ea88-ebb037a4775c@baylibre.com>
+Date:   Tue, 26 Jun 2018 10:08:59 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180625125653.3404-1-jbrunet@baylibre.com>
+In-Reply-To: <20180620100610.29010-2-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -107,23 +108,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/2018 14:56, Jerome Brunet wrote:
-> Like the odroid-c2 and wetek, the s400 uses the RTL8211F and seems to
-> suffer from the kind of stability issue.
+On 20/06/2018 12:06, Jerome Brunet wrote:
+> It is actually a lot easier to setup the PLL with carefully chosen rates
+> than relying on CCF clock propagation for this audio use case.
+> This way, we can make sure we will always be able to provide the common
+> audio clock rates, while having the PLL in the optimal operating range.
 > 
-> Doing an iperf3 download test, we can see a significant number of LPI
-> interrupts on the tx path. After a short while (5 to 15 seconds), the
-> network connection dies. If using rootfs over NFS, the connection may
-> also break during the boot sequence.
+> For this, we stop the rate propagation at the mux picking the
+> PLL and let it round to the closest matching PLL.
 > 
-> We still don't have a real explanation for this problem so let's disable
-> EEE once again.
+> Doing so, we can use the generic divider for the i2s clock.
+> clk-audio-divider is no longer required. It was a (poor) attempt
+> to use CCF rate propagation while making sure the PLL rate would
+> be high enough to work with audio use cases.
 > 
-> Fixes: f6f6ac914b82 ("ARM64: dts: meson-axg: enable ethernet for A113D S400 board")
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+>  drivers/clk/meson/gxbb.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
 > 
 [...]
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
