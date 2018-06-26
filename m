@@ -2,167 +2,116 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F24C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DEBC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB4D226D11
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:02:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB4D226D11
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E5C6426EAB
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:06:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C6426EAB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752260AbeFZSCf convert rfc822-to-8bit (ORCPT
+        id S1752326AbeFZSG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:02:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45552 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751081AbeFZSCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:02:33 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4C4DA2079D; Tue, 26 Jun 2018 20:02:31 +0200 (CEST)
-Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9B5F3206D8;
-        Tue, 26 Jun 2018 20:02:30 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 20:02:29 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Abhishek Sahu <absahu@codeaurora.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v4 14/15] mtd: rawnand: qcom: erased page bitflips
- detection
-Message-ID: <20180626200229.7f638f7e@xps13>
-In-Reply-To: <1529479662-4026-15-git-send-email-absahu@codeaurora.org>
-References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
-        <1529479662-4026-15-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 26 Jun 2018 14:06:57 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36904 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751953AbeFZSG4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 14:06:56 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QHsnxZ001416
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:06:55 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2juq8b8n87-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:06:55 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 26 Jun 2018 14:06:54 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Jun 2018 14:06:51 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QI6oDg5112280
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 18:06:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D9DBAB2067;
+        Tue, 26 Jun 2018 14:06:43 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B4550B2064;
+        Tue, 26 Jun 2018 14:06:43 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Jun 2018 14:06:43 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id AB08316C15BE; Tue, 26 Jun 2018 11:08:55 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 11:08:55 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 16/27] rcu: Add comment documenting how
+ rcu_seq_snap works
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180626003448.GA26209@linux.vnet.ibm.com>
+ <20180626003513.27812-16-paulmck@linux.vnet.ibm.com>
+ <20180626171454.GI2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626171454.GI2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062618-0068-0000-0000-0000030E8709
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052687; UDB=6.00539680; IPR=6.00830612;
+ MB=3.00021865; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 18:06:54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062618-0069-0000-0000-000044D14EC5
+Message-Id: <20180626180855.GE3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260202
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
-
-On Wed, 20 Jun 2018 12:57:41 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
-
-> NAND parts can have bitflips in an erased page due to the
-> process technology used. In this case, QCOM NAND controller
-> is not able to identify that page as an erased page.
-> Currently the driver calls nand_check_erased_ecc_chunk() for
-> identifying the erased pages but this won’t work always since the
-> checking is being with ECC engine returned data. In case of
-> bitflips, the ECC engine tries to correct the data and then it
-> generates the uncorrectable error. Now, this data is not equal to
-> original raw data. For erased CW identification, the raw data
-> should be read again from NAND device and this
-> nand_check_erased_ecc_chunk function() should be called for raw
-> data only.
+On Tue, Jun 26, 2018 at 07:14:54PM +0200, Peter Zijlstra wrote:
+> On Mon, Jun 25, 2018 at 05:35:02PM -0700, Paul E. McKenney wrote:
+> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > 
+> > rcu_seq_snap may be tricky to decipher. Lets document how it works with
+> > an example to make it easier.
 > 
-> Now following logic is being added to identify the erased
-> codeword bitflips.
-> 
-> 1. In most of the cases, not all the codewords will have bitflips
->    and only single CW will have bitflips. So, there is no need to
->    read the complete raw page data. The NAND raw read can be
->    scheduled for any CW in page. The NAND controller works on CW
->    basis and it will update the status register after each CW read.
->    Maintain the bitmask for the CW which generated the uncorrectable
->    error.
-> 2. Do raw read for all the CW's which generated the uncorrectable
->    error.
-> 3. Both DATA and OOB need to be checked for number of 0. The
->    top-level API can be called with only data buf or OOB buf so use
->    chip->databuf if data buf is null and chip->oob_poi if
->    OOB buf is null for copying the raw bytes temporarily.
-> 4. For each CW, check the number of 0 in cw_data and usable
->    oob bytes, The bbm and spare (unused) bytes bit flip won’t
->    affect the ECC so don’t check the number of bitflips in this area.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
-> * Changes from v3:
-> 
->  1. Major changes in erased codeword detection for
->     raw read function
+> Since you had me looking at them functions; why isn't rcu_seq_snap()
+> using smp_load_acquire() and rcu_seq_end() using smp_store_release() ?
+> Their respective comments seem to suggest that would be sufficent.
 
-I really prefer this version, much more readable from my point of view!
+I do not believe that this would suffice.  Would it make sense to refer
+to Documentation/RCU/Design/Memory-Ordering in the comment header?
 
-> 
-> * Changes from v2:
->   NONE
-> 
-> * Changes from v1:
->  1. Minor change in commit message
->  2. invalidate pagebuf if databuf or oob_poi is used
-> 
->  drivers/mtd/nand/raw/qcom_nandc.c | 127 +++++++++++++++++++++++++++-----------
->  1 file changed, 90 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-> index 160acdf..e34edf1 100644
-> --- a/drivers/mtd/nand/raw/qcom_nandc.c
-> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
-> @@ -1656,20 +1656,95 @@ static int check_flash_errors(struct qcom_nand_host *host, int cw_cnt)
->  }
->  
->  /*
-> + * Bitflips can happen in erased codewords also so this function counts the
-> + * number of 0 in each CW for which ECC engine returns the uncorrectable
-> + * error. The page will be assumed as erased if this count is less than or
-> + * equal to the ecc->strength for each CW.
-> + *
-> + * 1. Both DATA and OOB need to be checked for number of 0. The
-> + *    top-level API can be called with only data buf or OOB buf so use
-> + *    chip->data_buf if data buf is null and chip->oob_poi if oob buf
-> + *    is null for copying the raw bytes.
-> + * 2. Perform raw read for all the CW which has uncorrectable errors.
-> + * 3. For each CW, check the number of 0 in cw_data and usable OOB bytes.
-> + *    The BBM and spare bytes bit flip won’t affect the ECC so don’t check
-> + *    the number of bitflips in this area.
-> + */
-> +static int
-> +check_for_erased_page(struct qcom_nand_host *host, u8 *data_buf,
-> +		      u8 *oob_buf, unsigned long uncorrectable_cws,
-> +		      int page, unsigned int max_bitflips)
-> +{
-> +	struct nand_chip *chip = &host->chip;
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	struct nand_ecc_ctrl *ecc = &chip->ecc;
-> +	int cw, data_size, oob_size, ret = 0;
-> +
-> +	if (!data_buf) {
-> +		data_buf = chip->data_buf;
-> +		chip->pagebuf = -1;
-> +	}
-> +
-> +	if (!oob_buf) {
-> +		oob_buf = chip->oob_poi;
-> +		chip->pagebuf = -1;
-> +	}
-> +
-> +	for (cw = 0; cw < ecc->steps && uncorrectable_cws; cw++) {
+Except that this would invite sprinkling this pathname far and wide...
 
-Last nitpick:
+The key point is that these functions are part of the any-to-any
+memory-ordering guarantee that RCU grace periods provide.
 
-Could you have a look to bitmap.c and bitops.h and use a
-for_each_set_bit() loop?
+							Thanx, Paul
 
-No need to resend all the patches, you can send a v5 just for this
-patch, the others are fine for me.
-
-Thanks,
-Miquèl
