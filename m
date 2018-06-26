@@ -6,46 +6,59 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 052DDC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127F6C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B90982694D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B90982694D
+	by mail.kernel.org (Postfix) with ESMTP id BFA9C2694F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 10:33:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA9C2694F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964951AbeFZKdA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 06:33:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51075 "EHLO
+        id S934735AbeFZKc6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 06:32:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36379 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933784AbeFZKc4 (ORCPT
+        with ESMTP id S933509AbeFZKcz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 06:32:56 -0400
+        Tue, 26 Jun 2018 06:32:55 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5QAWZi81649134
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5QAVviR1649072
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 26 Jun 2018 03:32:35 -0700
+        Tue, 26 Jun 2018 03:31:57 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5QAWZmj1649128;
-        Tue, 26 Jun 2018 03:32:35 -0700
-Date:   Tue, 26 Jun 2018 03:32:35 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5QAVvsj1649069;
+        Tue, 26 Jun 2018 03:31:57 -0700
+Date:   Tue, 26 Jun 2018 03:31:57 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jan Beulich <tipbot@zytor.com>
-Message-ID: <tip-236f0cd286b67291796362feeac4f342900cfa82@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        JBeulich@suse.com, jbeulich@suse.com, mingo@kernel.org,
-        luto@kernel.org, torvalds@linux-foundation.org,
-        peterz@infradead.org
-Reply-To: torvalds@linux-foundation.org, luto@kernel.org,
-          peterz@infradead.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, JBeulich@suse.com, jbeulich@suse.com
-In-Reply-To: <5B30C24702000078001CD6A6@prv1-mh.provo.novell.com>
-References: <5B30C24702000078001CD6A6@prv1-mh.provo.novell.com>
+From:   tip-bot for Frederic Weisbecker <tipbot@zytor.com>
+Message-ID: <tip-26c6ccdf5c06aa83bb78518c72cb287f043db3df@git.kernel.org>
+Cc:     benh@kernel.crashing.org, joel.opensrc@gmail.com,
+        mark.rutland@arm.com, frederic@kernel.org, tglx@linutronix.de,
+        namhyung@kernel.org, acme@kernel.org, peterz@infradead.org,
+        will.deacon@arm.com, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        paulus@samba.org, mingo@kernel.org, acme@redhat.com,
+        ysato@users.sourceforge.jp, dalias@libc.org, hpa@zytor.com,
+        luto@kernel.org, chris@zankel.net, mpe@ellerman.id.au,
+        torvalds@linux-foundation.org, jcmvbkbc@gmail.com,
+        alexander.shishkin@linux.intel.com
+Reply-To: alexander.shishkin@linux.intel.com, jcmvbkbc@gmail.com,
+          torvalds@linux-foundation.org, mpe@ellerman.id.au,
+          chris@zankel.net, luto@kernel.org, hpa@zytor.com,
+          dalias@libc.org, ysato@users.sourceforge.jp, acme@redhat.com,
+          mingo@kernel.org, paulus@samba.org, catalin.marinas@arm.com,
+          linux-kernel@vger.kernel.org, jolsa@redhat.com,
+          peterz@infradead.org, will.deacon@arm.com, acme@kernel.org,
+          tglx@linutronix.de, namhyung@kernel.org, frederic@kernel.org,
+          joel.opensrc@gmail.com, mark.rutland@arm.com,
+          benh@kernel.crashing.org
+In-Reply-To: <1529981939-8231-13-git-send-email-frederic@kernel.org>
+References: <1529981939-8231-13-git-send-email-frederic@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/entry/32: Add explicit 'l' instruction suffix
-Git-Commit-ID: 236f0cd286b67291796362feeac4f342900cfa82
+Subject: [tip:perf/core] perf/hw_breakpoint: Clean up and consolidate
+ modify_user_hw_breakpoint_check()
+Git-Commit-ID: 26c6ccdf5c06aa83bb78518c72cb287f043db3df
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,43 +72,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  236f0cd286b67291796362feeac4f342900cfa82
-Gitweb:     https://git.kernel.org/tip/236f0cd286b67291796362feeac4f342900cfa82
-Author:     Jan Beulich <JBeulich@suse.com>
-AuthorDate: Mon, 25 Jun 2018 04:21:59 -0600
+Commit-ID:  26c6ccdf5c06aa83bb78518c72cb287f043db3df
+Gitweb:     https://git.kernel.org/tip/26c6ccdf5c06aa83bb78518c72cb287f043db3df
+Author:     Frederic Weisbecker <frederic@kernel.org>
+AuthorDate: Tue, 26 Jun 2018 04:58:59 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 26 Jun 2018 09:20:31 +0200
+CommitDate: Tue, 26 Jun 2018 09:07:59 +0200
 
-x86/entry/32: Add explicit 'l' instruction suffix
+perf/hw_breakpoint: Clean up and consolidate modify_user_hw_breakpoint_check()
 
-Omitting suffixes from instructions in AT&T mode is bad practice when
-operand size cannot be determined by the assembler from register
-operands, and is likely going to be warned about by upstream GAS in the
-future (mine does already).
+Remove the dance around old and new attributes. Just don't modify the
+previous breakpoint at all until we have verified everything.
 
-Add the single missing 'l' suffix here.
-
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Original-patch-by: Andy Lutomirski <luto@kernel.org>
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Joel Fernandes <joel.opensrc@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rich Felker <dalias@libc.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/5B30C24702000078001CD6A6@prv1-mh.provo.novell.com
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Link: http://lkml.kernel.org/r/1529981939-8231-13-git-send-email-frederic@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/entry_32.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/hw_breakpoint.c | 44 ++++++++++++++++++++++++-------------------
+ 1 file changed, 25 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 2582881d19ce..c371bfee137a 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -477,7 +477,7 @@ ENTRY(entry_SYSENTER_32)
- 	 * whereas POPF does not.)
- 	 */
- 	addl	$PT_EFLAGS-PT_DS, %esp	/* point esp at pt_regs->flags */
--	btr	$X86_EFLAGS_IF_BIT, (%esp)
-+	btrl	$X86_EFLAGS_IF_BIT, (%esp)
- 	popfl
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 71387703b5f1..b3814fce5ecb 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -461,37 +461,43 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
+ }
+ EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
  
- 	/*
++static void hw_breakpoint_copy_attr(struct perf_event_attr *to,
++				    struct perf_event_attr *from)
++{
++	to->bp_addr = from->bp_addr;
++	to->bp_type = from->bp_type;
++	to->bp_len  = from->bp_len;
++	to->disabled = from->disabled;
++}
++
+ int
+ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
+ 			        bool check)
+ {
+-	u64 old_addr = bp->attr.bp_addr;
+-	u64 old_len  = bp->attr.bp_len;
+-	int old_type = bp->attr.bp_type;
+-	bool modify  = attr->bp_type != old_type;
+ 	struct arch_hw_breakpoint hw;
+-	int err = 0;
++	int err;
+ 
+-	bp->attr.bp_addr = attr->bp_addr;
+-	bp->attr.bp_type = attr->bp_type;
+-	bp->attr.bp_len  = attr->bp_len;
++	err = hw_breakpoint_parse(bp, attr, &hw);
++	if (err)
++		return err;
+ 
+-	if (check && memcmp(&bp->attr, attr, sizeof(*attr)))
+-		return -EINVAL;
++	if (check) {
++		struct perf_event_attr old_attr;
+ 
+-	err = hw_breakpoint_parse(bp, attr, &hw);
+-	if (!err && modify)
+-		err = modify_bp_slot(bp, old_type, bp->attr.bp_type);
++		old_attr = bp->attr;
++		hw_breakpoint_copy_attr(&old_attr, attr);
++		if (memcmp(&old_attr, attr, sizeof(*attr)))
++			return -EINVAL;
++	}
+ 
+-	if (err) {
+-		bp->attr.bp_addr = old_addr;
+-		bp->attr.bp_type = old_type;
+-		bp->attr.bp_len  = old_len;
+-		return err;
++	if (bp->attr.bp_type != attr->bp_type) {
++		err = modify_bp_slot(bp, bp->attr.bp_type, attr->bp_type);
++		if (err)
++			return err;
+ 	}
+ 
++	hw_breakpoint_copy_attr(&bp->attr, attr);
+ 	bp->hw.info = hw;
+-	bp->attr.disabled = attr->disabled;
+ 
+ 	return 0;
+ }
