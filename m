@@ -2,291 +2,211 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C883C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 365CFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6AD2673A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:00:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K9qwAQMn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6AD2673A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E131A26741
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:01:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E131A26741
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933706AbeFZJAw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:00:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48422 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752826AbeFZJAr (ORCPT
+        id S933756AbeFZJBD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:01:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57792 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933714AbeFZJAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:00:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=knbt4nsNDlw6BJyCk3blM79cAITpFNowfwduF4lvq2E=; b=K9qwAQMni/UKZokBSdXN6c/tm
-        3MwjZt40C6v2OOSKio4v+BQviJUt2Bx3qOvWcU97E9WhP3SbOZuqWcgWCPoGNLAClaG6IBcayXK56
-        Ve8DSWaIVTUiDGJampTlvfkMwz+ynx/nl9GhbwCc+6bu1U75/CL/pKgW4bJPD1btFtUHYSRvbkC3b
-        s+zYuXyzeiYpMwsGT/hL+Yn6PhShTw8EjW8SWL7CE+iOlbjUO9mRrfLVFHiIQhGvTZF5Vj6lsCB6X
-        Iu2xJV18cDKXeVUSQ5+CTY5wd6hJCJn5UtobRSLBfwuAjVn/fP1FBjs7pvBpTp7/y0PUOyyOZo21b
-        oFu16UK2A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fXjpV-0005IG-Qu; Tue, 26 Jun 2018 09:00:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 453B62029F1D7; Tue, 26 Jun 2018 11:00:03 +0200 (CEST)
-Date:   Tue, 26 Jun 2018 11:00:03 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, prarit@redhat.com, feng.tang@intel.com,
-        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v12 10/11] sched: early boot clock
-Message-ID: <20180626090003.GA2458@hirez.programming.kicks-ass.net>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
- <20180621212518.19914-11-pasha.tatashin@oracle.com>
- <20180625085543.GT2494@hirez.programming.kicks-ass.net>
- <20180625192320.kzmqkvmfh5aeuhhx@xakep.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625192320.kzmqkvmfh5aeuhhx@xakep.localdomain>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 26 Jun 2018 05:00:55 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5Q8xkZA058205
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 05:00:55 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2juf0crk46-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 05:00:54 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
+        Tue, 26 Jun 2018 03:00:54 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Jun 2018 03:00:51 -0600
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5Q90oQV12452246
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Jun 2018 02:00:50 -0700
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E09C7C6069;
+        Tue, 26 Jun 2018 03:00:49 -0600 (MDT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BE7E5C6063;
+        Tue, 26 Jun 2018 03:00:46 -0600 (MDT)
+Received: from [9.193.92.47] (unknown [9.193.92.47])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Jun 2018 03:00:46 -0600 (MDT)
+Subject: [next-20180601][nvme][ppc] Kernel Oops is triggered when creating
+ lvm snapshots on nvme disks
+From:   Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        sachinp <sachinp@linux.vnet.ibm.com>,
+        sim <sim@linux.vnet.ibm.com>,
+        manvanth <manvanth@linux.vnet.ibm.com>, mpe <mpe@ellerman.id.au>,
+        Brian King <brking@linux.vnet.ibm.com>
+Date:   Tue, 26 Jun 2018 14:30:45 +0530
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18062609-8235-0000-0000-00000DC8964B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009257; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01052506; UDB=6.00539571; IPR=6.00830430;
+ MB=3.00021860; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 09:00:53
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062609-8236-0000-0000-000041A8F86F
+Message-Id: <1530003645.24245.7.camel@abdul.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=740 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806260102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 03:23:20PM -0400, Pavel Tatashin wrote:
-> Unfortunatly the above suggestion won't work. And here is why.
-> 
-> We have a call sequence like this:
-> 
-> start_kernel
->     sched_init()
->         sched_clock_init()
-> 	     In this call sched_clock_running is set to 1. Which means
-> 	     that sched_clock_cpu() starts doing the following sequence:
-> 	     scd = cpu_sdc(cpu);
-> 	     clock = sched_clock_local(scd);
-> 	     Where we try to filter the output of sched_clock() based
-> 	     on the value of scd. But, that won't work, because to get
-> 	     this functionality, we need to have: timer initialized
-> 	     that wakes up and updates scd, and we need timekeeping
-> 	     initialized, so we can call ktime_get_ns(). Both of which
-> 	     are called later.
->     ...
->     timekeeping_init() After this we can call ktime_get_ns()
->     time_init()  Here we configure x86_late_time_init pointer.
->     ...
->     late_time_init()
->         x86_late_time_init()
->             x86_init.timers.timer_init()
-> 	        hpet_time_init() Only after this call we finally start
-> 		getting clock interrupts, and can get precise output from
-> 		sched_clock_local().
-> 
-> The way I solved the above, is I changed sched_clock() to keep outputing
-> time based on early boot sched_clock() until sched_clock_init_late(), at
-> whic point everything is configured and we can switch to the permanent
-> clock, eventhough this happens after smp init.
-> 
-> If you have a better solution, please let me know.
+Greeting's
 
-How's something like this? That moves sched_clock_init() to right before
-we enable IRQs for the first time (which is after we've started the
-whole timekeeping business).
+Kernel Oops is seen on 4.17.0-rc7-next-20180601 kernel on a bare-metal
+machine when running lvm snapshot tests on nvme disks.
 
-The thing is, sched_clock_init_late() reall is far too late, we need to
-switch to unstable before we bring up SMP.
+Machine Type: Power 8 bare-metal
+kernel : 4.17.0-rc7-next-20180601
+test:  
+$ pvcreate -y /dev/nvme0n1
+$ vgcreate avocado_vg /dev/nvme0n1
+$ lvcreate --size 1.4T --name avocado_lv avocado_vg -y
+$ mkfs.ext2 /dev/avocado_vg/avocado_lv
+$ lvcreate --size 1G --snapshot --name avocado_sn /dev/avocado_vg/avocado_lv -y
+$ lvconvert --merge /dev/avocado_vg/avocado_sn
 
----
- include/linux/sched_clock.h |  5 -----
- init/main.c                 |  4 ++--
- kernel/sched/clock.c        | 49 +++++++++++++++++++++++++++++++++++----------
- kernel/sched/core.c         |  1 -
- kernel/time/sched_clock.c   |  2 +-
- 5 files changed, 41 insertions(+), 20 deletions(-)
+the last command results in Oops:
 
-diff --git a/include/linux/sched_clock.h b/include/linux/sched_clock.h
-index 411b52e424e1..2d223677740f 100644
---- a/include/linux/sched_clock.h
-+++ b/include/linux/sched_clock.h
-@@ -9,17 +9,12 @@
- #define LINUX_SCHED_CLOCK
- 
- #ifdef CONFIG_GENERIC_SCHED_CLOCK
--extern void sched_clock_postinit(void);
--
- extern void sched_clock_register(u64 (*read)(void), int bits,
- 				 unsigned long rate);
- #else
--static inline void sched_clock_postinit(void) { }
--
- static inline void sched_clock_register(u64 (*read)(void), int bits,
- 					unsigned long rate)
- {
--	;
- }
- #endif
- 
-diff --git a/init/main.c b/init/main.c
-index 3b4ada11ed52..162d931c9511 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -79,7 +79,7 @@
- #include <linux/pti.h>
- #include <linux/blkdev.h>
- #include <linux/elevator.h>
--#include <linux/sched_clock.h>
-+#include <linux/sched/clock.h>
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/context_tracking.h>
-@@ -642,7 +642,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	softirq_init();
- 	timekeeping_init();
- 	time_init();
--	sched_clock_postinit();
-+	sched_clock_init();
- 	printk_safe_init();
- 	perf_event_init();
- 	profile_init();
-diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-index 10c83e73837a..c8286b9fc593 100644
---- a/kernel/sched/clock.c
-+++ b/kernel/sched/clock.c
-@@ -68,11 +68,6 @@ EXPORT_SYMBOL_GPL(sched_clock);
- 
- __read_mostly int sched_clock_running;
- 
--void sched_clock_init(void)
--{
--	sched_clock_running = 1;
--}
--
- #ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
- /*
-  * We must start with !__sched_clock_stable because the unstable -> stable
-@@ -199,6 +194,23 @@ void clear_sched_clock_stable(void)
- 		__clear_sched_clock_stable();
- }
- 
-+static void __sched_clock_gtod_offset(void)
-+{
-+	__gtod_offset = (sched_clock() + __sched_clock_offset) - ktime_get_ns();
-+}
-+
-+void __init sched_clock_init(void)
-+{
-+	/*
-+	 * Set __gtod_offset such that once we mark sched_clock_running,
-+	 * sched_clock_tick() continues where sched_clock() left off.
-+	 *
-+	 * Even if TSC is buggered, we're still UP at this point so it
-+	 * can't really be out of sync.
-+	 */
-+	__sched_clock_gtod_offset();
-+	sched_clock_running = 1;
-+}
- /*
-  * We run this as late_initcall() such that it runs after all built-in drivers,
-  * notably: acpi_processor and intel_idle, which can mark the TSC as unstable.
-@@ -351,7 +363,7 @@ u64 sched_clock_cpu(int cpu)
- 		return sched_clock() + __sched_clock_offset;
- 
- 	if (unlikely(!sched_clock_running))
--		return 0ull;
-+		return sched_clock(); /* __sched_clock_offset == 0 */
- 
- 	preempt_disable_notrace();
- 	scd = cpu_sdc(cpu);
-@@ -385,8 +397,6 @@ void sched_clock_tick(void)
- 
- void sched_clock_tick_stable(void)
- {
--	u64 gtod, clock;
--
- 	if (!sched_clock_stable())
- 		return;
- 
-@@ -398,9 +408,7 @@ void sched_clock_tick_stable(void)
- 	 * TSC to be unstable, any computation will be computing crap.
- 	 */
- 	local_irq_disable();
--	gtod = ktime_get_ns();
--	clock = sched_clock();
--	__gtod_offset = (clock + __sched_clock_offset) - gtod;
-+	__sched_clock_gtod_offset();
- 	local_irq_enable();
- }
- 
-@@ -434,6 +442,24 @@ EXPORT_SYMBOL_GPL(sched_clock_idle_wakeup_event);
- 
- #else /* CONFIG_HAVE_UNSTABLE_SCHED_CLOCK */
- 
-+#ifdef CONFIG_GENERIC_SCHED_CLOCK
-+
-+/*
-+ * kernel/time/sched_clock.c:sched_clock_init()
-+ */
-+
-+u64 sched_clock_cpu(int cpu)
-+{
-+	return sched_clock();
-+}
-+
-+#else /* CONFIG_GENERIC_SCHED_CLOCK */
-+
-+void __init sched_clock_init(void)
-+{
-+	sched_clock_running = 1;
-+}
-+
- u64 sched_clock_cpu(int cpu)
- {
- 	if (unlikely(!sched_clock_running))
-@@ -442,6 +468,7 @@ u64 sched_clock_cpu(int cpu)
- 	return sched_clock();
- }
- 
-+#endif /* CONFIG_GENERIC_SCHED_CLOCK */
- #endif /* CONFIG_HAVE_UNSTABLE_SCHED_CLOCK */
- 
- /*
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index a98d54cd5535..b27d034ef4a7 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5953,7 +5953,6 @@ void __init sched_init(void)
- 	int i, j;
- 	unsigned long alloc_size = 0, ptr;
- 
--	sched_clock_init();
- 	wait_bit_init();
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
-diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-index 2d8f05aad442..b4fedf312979 100644
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -237,7 +237,7 @@ sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
- 	pr_debug("Registered %pF as sched_clock source\n", read);
- }
- 
--void __init sched_clock_postinit(void)
-+void __init sched_clock_init(void)
- {
- 	/*
- 	 * If no sched_clock() function has been provided at that point,
+Unable to handle kernel paging request for data at address 0x000000d0
+Faulting instruction address: 0xc0000000002dced4
+Oops: Kernel access of bad area, sig: 11 [#1]
+LE SMP NR_CPUS=2048 NUMA PowerNV
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in: dm_snapshot dm_bufio nvme bnx2x iptable_mangle
+ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
+nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4
+xt_tcpudp tun bridge stp llc iptable_filter dm_mirror dm_region_hash
+dm_log dm_service_time vmx_crypto powernv_rng rng_core dm_multipath
+kvm_hv binfmt_misc kvm nfsd ip_tables x_tables autofs4 xfs lpfc
+crc_t10dif crct10dif_generic mdio nvme_fc libcrc32c nvme_fabrics
+nvme_core crct10dif_common [last unloaded: nvme]
+CPU: 70 PID: 157763 Comm: lvconvert Not tainted 4.17.0-rc7-next-20180601-autotest-autotest #1
+NIP:  c0000000002dced4 LR: c000000000244d14 CTR: c000000000244cf0
+REGS: c000001f81d6b5a0 TRAP: 0300   Not tainted  (4.17.0-rc7-next-20180601-autotest-autotest)
+MSR:  900000010280b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22442444  XER: 20000000
+CFAR: c000000000008934 DAR: 00000000000000d0 DSISR: 40000000 SOFTE: 0
+GPR00: c000000000244d14 c000001f81d6b820 c00000000109c400 c000003c9d080180
+GPR04: 0000000000000001 c000001fad510000 c000001fad510000 0000000000000001
+GPR08: 0000000000000000 f000000000000000 f000000000000008 0000000000000000
+GPR12: c000000000244cf0 c000001ffffc4f80 00007fffa0e31090 00007fffd9d9b470
+GPR16: 0000000000000000 000000000000005c 00007fffa0e3a5b0 00007fffa0e62040
+GPR20: 0000010014ad7d50 0000010014ad7d20 00007fffa0e64210 0000000000000001
+GPR24: 0000000000000000 c00000000081bae0 c000001ed2461b00 d00000000f859d08
+GPR28: c000003c9d080180 c000000000244d14 0000000000000001 0000000000000000
+NIP [c0000000002dced4] kmem_cache_free+0x1a4/0x2b0
+LR [c000000000244d14] mempool_free_slab+0x24/0x40
+Call Trace:
+[c000001f81d6b820] [c0000000002dcfbc] kmem_cache_free+0x28c/0x2b0 (unreliable)
+[c000001f81d6b8b0] [c000000000244d14] mempool_free_slab+0x24/0x40
+[c000001f81d6b8d0] [c000000000244e10] mempool_exit+0x50/0x90
+[c000001f81d6b900] [c00000000081d730] dm_io_client_destroy+0x20/0x50
+[c000001f81d6b930] [c00000000081f1dc] dm_kcopyd_client_destroy+0x9c/0x140
+[c000001f81d6b9a0] [d00000000f851da4] dm_exception_table_exit.isra.14+0x204/0xaa0 [dm_snapshot]
+[c000001f81d6ba40] [c0000000008162d0] dm_table_destroy+0xa0/0x190
+[c000001f81d6bad0] [c00000000081bc24] dev_suspend+0x144/0x330
+[c000001f81d6bb10] [c00000000081c870] ctl_ioctl+0x350/0x4e0
+[c000001f81d6bd00] [c00000000081ca18] dm_ctl_ioctl+0x18/0x30
+[c000001f81d6bd20] [c000000000329b38] do_vfs_ioctl+0xc8/0x8b0
+[c000001f81d6bdc0] [c00000000032a37c] ksys_ioctl+0x5c/0xe0
+[c000001f81d6be10] [c00000000032a420] sys_ioctl+0x20/0x80
+[c000001f81d6be30] [c00000000000b9e0] system_call+0x58/0x6c
+Instruction dump:
+39295e50 7bca8502 794a3664 e9290000 7d495214 7d495378 e94a0008 794807e1
+40c2010c ebe90018 7fbcf840 419e00f8 <e93f00d0> 7fbc4800 419efe9c e8bc0058
+---[ end trace d60580773711c361 ]---
+essage from syslogd@localhost at Jun  4 08:34:20 ...
+ kernel:Dumping ftrace buffer:
+
+[cache_from_obj: Wrong slab cache. ksm_rmap_item but object is from kmalloc-128
+[WARNING: CPU: 0 PID: 157807 at mm/slab.h:381 kmem_cache_free+0x1d0/0x2b0
+[Modules linked in: dm_snapshot dm_bufio nvme bnx2x iptable_mangle
+ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
+nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4
+xt_tcpudp tun bridge stp llc iptable_filter dm_mirror dm_region_hash
+dm_log dm_service_time vmx_crypto powernv_rng rng_core dm_multipath
+kvm_hv binfmt_misc kvm nfsd ip_tables x_tables autofs4 xfs lpfc
+crc_t10dif crct10dif_generic mdio nvme_fc libcrc32c nvme_fabrics
+nvme_core crct10dif_common [last unloaded: nvme]
+[CPU: 0 PID: 157807 Comm: vgremove Tainted: G      D           4.17.0-rc7-next-20180601-autotest-autotest #1
+[NIP:  c0000000002dcf00 LR: c0000000002dcefc CTR: 0000000000000000
+[REGS: c000001ee130f500 TRAP: 0700   Tainted: G      D            (4.17.0-rc7-next-20180601-autotest-autotest)
+[MSR:  900000010282b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22442422  XER: 20000000
+[CFAR: c0000000001668f4 SOFTE: 0
+[GPR00: c0000000002dcefc c000001ee130f780 c00000000109c400 000000000000004e
+[GPR04: c000001ff5c0cdd0 c000001ff5c23a70 0000000000000001 ffffffffffffffff
+[GPR08: 0000000000000000 c000001ff5c13880 0000001ff4e90000 9000000102803003
+[GPR12: 0000000000002200 c000000001260000 00007fff7f2e1090 00007fffecda3550
+[GPR16: 0000000000000000 000000000000005c 00007fff7f2ea5b0 00007fff7f312040
+[GPR20: 0000010022679490 0000010022679460 00007fff7f314210 0000000000000003
+[GPR24: 0000000000000000 c00000000081be10 c000001fad301500 d00000000f859d08
+[GPR28: c000003c9d080180 c000000000244d14 c000001f63723908 c000001ff401f480
+[NIP [c0000000002dcf00] kmem_cache_free+0x1d0/0x2b0
+[LR [c0000000002dcefc] kmem_cache_free+0x1cc/0x2b0
+[Call Trace:
+[[c000001ee130f780] [c0000000002dcefc] kmem_cache_free+0x1cc/0x2b0 (unreliable)
+[[c000001ee130f810] [c000000000244d14] mempool_free_slab+0x24/0x40
+[[c000001ee130f830] [c000000000244e10] mempool_exit+0x50/0x90
+[[c000001ee130f860] [c00000000081d730] dm_io_client_destroy+0x20/0x50
+[[c000001ee130f890] [c00000000081f1dc] dm_kcopyd_client_destroy+0x9c/0x140
+[[c000001ee130f900] [d00000000f851da4] dm_exception_table_exit.isra.14+0x204/0xaa0 [dm_snapshot]
+[[c000001ee130f9a0] [c0000000008162d0] dm_table_destroy+0xa0/0x190
+[[c000001ee130fa30] [c0000000008118e8] __dm_destroy+0x198/0x230
+[[c000001ee130fac0] [c00000000081bf64] dev_remove+0x154/0x1d0
+[[c000001ee130fb10] [c00000000081c870] ctl_ioctl+0x350/0x4e0
+[[c000001ee130fd00] [c00000000081ca18] dm_ctl_ioctl+0x18/0x30
+[[c000001ee130fd20] [c000000000329b38] do_vfs_ioctl+0xc8/0x8b0
+[[c000001ee130fdc0] [c00000000032a37c] ksys_ioctl+0x5c/0xe0
+[[c000001ee130fe10] [c00000000032a420] sys_ioctl+0x20/0x80
+[[c000001ee130fe30] [c00000000000b9e0] system_call+0x58/0x6c
+[419e00f8 e93f00d0 7fbc4800 419efe9c e8bc0058 e8df0058 3c62ffb5 3c82ff99
+[3863f0a8 38846d18 4be899bd 60000000 <0fe00000> 7f9fe378 4bfffe70 60420000
+[---[ end trace d60580773711c362 ]---
+[cache_from_obj: Wrong slab cache. ksm_rmap_item but object is from kmalloc-128
+
+-- 
+Regard's
+
+Abdul Haleem
+IBM Linux Technology Centre
+
+
+
