@@ -2,120 +2,229 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874FBC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F866C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 116BD26996
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:25:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 116BD26996
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D9208269E9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 22:27:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="CsLwgfbi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9208269E9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933470AbeFZWZx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 18:25:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53180 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932920AbeFZWZu (ORCPT
+        id S933595AbeFZW1p (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 18:27:45 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:57930 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752984AbeFZW1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 18:25:50 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QMPG8d114478
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 18:25:49 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2juv4nw1xn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 18:25:49 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 18:25:48 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 18:25:42 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QMPfXQ17039748
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 22:25:42 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 494DBB2064;
-        Tue, 26 Jun 2018 18:25:35 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 214FBB2065;
-        Tue, 26 Jun 2018 18:25:35 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 18:25:35 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8CEC216CA20B; Tue, 26 Jun 2018 15:27:47 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 15:27:47 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 16/27] rcu: Add comment documenting how
- rcu_seq_snap works
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180626003448.GA26209@linux.vnet.ibm.com>
- <20180626003513.27812-16-paulmck@linux.vnet.ibm.com>
- <20180626171454.GI2494@hirez.programming.kicks-ass.net>
- <20180626180855.GE3593@linux.vnet.ibm.com>
- <20180626192113.GM2494@hirez.programming.kicks-ass.net>
- <20180626193146.GK3593@linux.vnet.ibm.com>
- <20180626201503.GS2494@hirez.programming.kicks-ass.net>
+        Tue, 26 Jun 2018 18:27:44 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QMPHvp010171;
+        Tue, 26 Jun 2018 15:27:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=nQ3r02xpssT8S3aXb8qjm3X8bMR8dwnJl2ytARqMQQc=;
+ b=CsLwgfbij+smIEmmbv7FXi+PEAn22p4RnTId9Sw5qX640CE6ogL3PPnSh2EE0QCUQIJT
+ 0k0OTx46FY7fuTxXiG7fN82nWy8t4/niI0I5Alh3i8fzMv92bni/qY4cl2BlpuHq8uWT
+ dZ5CyNPgC2vcEFM6ajUlDBkrdx2NZCJ2UxE= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2juvreg8bv-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 26 Jun 2018 15:27:22 -0700
+Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
+ mail.thefacebook.com (192.168.16.15) with Microsoft SMTP Server (TLS) id
+ 14.3.361.1; Tue, 26 Jun 2018 15:27:10 -0700
+Date:   Tue, 26 Jun 2018 15:27:09 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+CC:     Okash Khawaja <osk@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
+        "Alexei Starovoitov" <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 2/3] bpf: btf: add btf json print functionality
+Message-ID: <20180626222709.fsznwqauxojhhx7v@kafai-mbp.dhcp.thefacebook.com>
+References: <20180621172523.6cd00ed1@cakuba.netronome.com>
+ <20180622012052.htkvholi674x6i4f@kafai-mbp.dhcp.thefacebook.com>
+ <20180622114032.162b2a76@cakuba.netronome.com>
+ <20180622205535.c6vjhdwt5er4wc32@kafai-mbp.dhcp.thefacebook.com>
+ <20180622142743.2b890d0f@cakuba.netronome.com>
+ <20180622225408.jor7lpvsksnwiiec@kafai-mbp.dhcp.thefacebook.com>
+ <20180622163200.20564ec4@cakuba.netronome.com>
+ <20180623002639.h4qxy7aakypi6t7b@kafai-mbp.dhcp.thefacebook.com>
+ <20180626164820.GA12981@w1t1fb>
+ <20180626133133.618af1d3@cakuba.netronome.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180626201503.GS2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062622-0064-0000-0000-00000320B210
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009260; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052774; UDB=6.00539732; IPR=6.00830698;
- MB=3.00021870; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 22:25:47
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062622-0065-0000-0000-000039BA0A5D
-Message-Id: <20180626222747.GP3593@linux.vnet.ibm.com>
+In-Reply-To: <20180626133133.618af1d3@cakuba.netronome.com>
+User-Agent: NeoMutt/20180512
+X-Originating-IP: [192.168.52.123]
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=995 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260245
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 10:15:03PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 26, 2018 at 12:31:46PM -0700, Paul E. McKenney wrote:
-> > > Then the existing comment is misleading and really needs change.
+On Tue, Jun 26, 2018 at 01:31:33PM -0700, Jakub Kicinski wrote:
+> On Tue, 26 Jun 2018 17:48:22 +0100, Okash Khawaja wrote:
+> > On Fri, Jun 22, 2018 at 05:26:39PM -0700, Martin KaFai Lau wrote:
+> > > On Fri, Jun 22, 2018 at 04:32:00PM -0700, Jakub Kicinski wrote:  
+> > > > On Fri, 22 Jun 2018 15:54:08 -0700, Martin KaFai Lau wrote:  
+> > > > > > > > > > > > > >         "value": ["0x02","0x00","0x00","0x00","0x00","0x00","0x00","0x00"
+> > > > > > > > > > > > > >         ],
+> > > > > > > > > > > > > > 	"value_struct":{
+> > > > > > > > > > > > > > 		"src_ip":2,        
+> > > > > > > > > If for the same map the user changes the "src_ip" to an array of int[4]
+> > > > > > > > > later (e.g. to support ipv6), it will become "src_ip": [1, 2, 3, 4].
+> > > > > > > > > Is it breaking backward compat?
+> > > > > > > > > i.e.
+> > > > > > > > > struct five_tuples {
+> > > > > > > > > -	int src_ip;
+> > > > > > > > > +	int src_ip[4];
+> > > > > > > > > /* ... */
+> > > > > > > > > };      
+> > > > > > > > 
+> > > > > > > > Well, it is breaking backward compat, but it's the program doing it,
+> > > > > > > > not bpftool :)  BTF changes so does the output.      
+> > > > > > > As we see, the key/value's btf-output is inherently not backward compat.
+> > > > > > > Hence, "-j" and "-p" will stay as is.  The whole existing json will
+> > > > > > > be backward compat instead of only partly backward compat.    
+> > > > > > 
+> > > > > > No.  There is a difference between user of a facility changing their
+> > > > > > input and kernel/libraries providing different output in response to
+> > > > > > that, and the libraries suddenly changing the output on their own.
+> > > > > > 
+> > > > > > Your example is like saying if user started using IPv6 addresses
+> > > > > > instead of IPv4 the netlink attributes in dumps will be different so
+> > > > > > kernel didn't keep backwards compat.  While what you're doing is more
+> > > > > > equivalent to dropping support for old ioctl interfaces because there
+> > > > > > is a better mechanism now.    
+> > > > > Sorry, I don't follow this.  I don't see netlink suffer json issue like
+> > > > > the one on "key" and "value".
+> > > > > 
+> > > > > All I can grasp is, the json should normally be backward compat but now
+> > > > > we are saying anything added by btf-output is an exception because
+> > > > > the script parsing it will treat it differently than "key" and "value"  
+> > > > 
+> > > > Backward compatibility means that if I run *the same* program against
+> > > > different kernels/libraries it continues to work.  If someone decides
+> > > > to upgrade their program to work with IPv6 (which was your example)
+> > > > obviously there is no way system as a whole will look 1:1 the same.
+> > > >   
+> > > > > > BTF in JSON is very useful, and will help people who writes simple
+> > > > > > orchestration/scripts based on bpftool *a* *lot*.  I really appreciate    
+> > > > > Can you share what the script will do?  I want to understand why
+> > > > > it cannot directly use the BTF format and the map data.  
+> > > > 
+> > > > Think about a python script which wants to read a counter in a map.
+> > > > Right now it would have to get the BTF, find out which bytes are the
+> > > > counter, then convert the bytes into a larger int.  With JSON BTF if
+> > > > just does entry["formatted"]["value"]["counter"].
+> > > > 
+> > > > Real life example from my test code (conversion of 3 element counter
+> > > > array):
+> > > > 
+> > > > def str2int(strtab):
+> > > >     inttab = []
+> > > >     for i in strtab:
+> > > >         inttab.append(int(i, 16))
+> > > >     ba = bytearray(inttab)
+> > > >     if len(strtab) == 4:
+> > > >         fmt = "I"
+> > > >     elif len(strtab) == 8:
+> > > >         fmt = "Q"
+> > > >     else:
+> > > >         raise Exception("String array of len %d can't be unpacked to an int" %
+> > > >                         (len(strtab)))
+> > > >     return struct.unpack(fmt, ba)[0]
+> > > > 
+> > > > def convert(elems, idx):
+> > > >     val = []
+> > > >     for i in range(3):
+> > > >         part = elems[idx]["value"][i * length:(i + 1) * length]
+> > > >         val.append(str2int(part))
+> > > >     return val
+> > > > 
+> > > > With BTF it would be:
+> > > > 
+> > > > 	elems[idx]["formatted"]["value"]
+> > > > 
+> > > > Which is fairly awesome.  
+> > > Thanks for the example.  Agree that with BTF, things are easier in general.
+> > > 
+> > > btw, what more awesome is,  
+> > > #> bpftool map find id 100 key 1  
+> > > {
+> > > 	"counter_x": 1,
+> > > 	"counter_y": 10
+> > > }
+> > >   
+> > > >   
+> > > > > > this addition to bpftool and will start using it myself as soon as it
+> > > > > > lands.  I'm not sure why the reluctance to slightly change the output
+> > > > > > format?    
+> > > > > The initial change argument is because the json has to be backward compat.
+> > > > > 
+> > > > > Then we show that btf-output is inherently not backward compat, so
+> > > > > printing it in json does not make sense at all.
+> > > > > 
+> > > > > However, now it is saying part of it does not have to be backward compat.  
+> > > > 
+> > > > Compatibility of "formatted" member is defined as -> fields broken out
+> > > > according to BTF.  So it is backward compatible.  The definition of
+> > > > "value" member is -> an array of unfortunately formatted array of
+> > > > ugly hex strings :(
+> > > >   
+> > > > > I am fine putting it under "formatted" for "-j" or "-p" if that is the
+> > > > > case, other than the double output is still confusing.  Lets wait for
+> > > > > Okash's input.
+> > > > >
+> > > > > At the same time, the same output will be used as the default plaintext
+> > > > > output when BTF is available.  Then the plaintext BTF output
+> > > > > will not be limited by the json restrictions when we want
+> > > > > to improve human readability later.  Apparently, the
+> > > > > improvements on plaintext will not be always applicable
+> > > > > to json output.  
+> > > >   
 > > 
-> > Would it be sufficient to add something like "The memory barrier is
-> > required to support the many-to-many ordering guaranteed by RCU grace
-> > periods"?
+> > hi,
+> > 
+> > so i guess following is what we want:
+> > 
+> > 1. a "formatted" object nested inside -p and -j switches for bpf map
+> >   dump. this will be JSON and backward compatible
+> > 2. an output for humans - which is like the current output. this will
+> > not be JSON. this won't have to be backward compatible. this output will
+> > be shown when neither of -j and -p are supplied and btf info is
+> > available.
+> > 
+> > i can update the patches to v2 which covers 2 above + all other comments
+> > on the patchset. later we can follow up with a patch for 1.
 > 
-> What would lead me to wonder why after the load and not (also) before.
+> Please do both at the same time.  I've learnt not to trust people when
+> they say things like "we can follow up with xyz" :(  In my experience it
+> _always_ backfires.
+> 
+> Implementing both outputs in one series will help you structure your
+> code to best suit both of the formats up front.
+hex and "formatted" are the only things missing?  As always, things
+can be refactored when new use case comes up.  Lets wait for
+Okash input.
 
-The memory barriers on the other sides of these primitives are supplied
-by the caller.  For example, in srcu_gp_end(), there is a set of
-spin_unlock_irq_rcu_node()/spin_lock_irq_rcu_node() pairs between the
-rcu_seq_end() of the prior SRCU grace period and the rcu_seq_start()
-of the next one.
-
-However, these things aren't anywhere near a fastpath, so I could add
-the smp_mb() calls on the other sides for readability, if that would
-be useful.
-
-							Thanx, Paul
-
+Regardless, plaintext is our current use case.  Having the current
+patchset in does not stop us or others from contributing other use
+cases (json, "bpftool map find"...etc),  and IMO it is actually
+the opposite.  Others may help us get there faster than us alone.
+We should not stop making forward progress and take this patch
+as hostage because "abc" and "xyz" are not done together.
