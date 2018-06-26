@@ -2,91 +2,82 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D5CC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15948C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D436221655
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C355C21655
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:29:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UDfGJj2c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D436221655
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="XInUn69E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C355C21655
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752059AbeFZP3D (ORCPT
+        id S1752093AbeFZP3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:29:03 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46801 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751334AbeFZP3C (ORCPT
+        Tue, 26 Jun 2018 11:29:36 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:10596 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751614AbeFZP3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:29:02 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u6-v6so5954011lju.13
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:29:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=p7A1aQmfvY7GY8s6P7Kr2lz8w8Yq9WaZaNeDeX7lA+I=;
-        b=UDfGJj2cRcstuXxvBuug5dNckOuHe35B/+Pc+zjiYOn3UOrno/UpFukxCIBiIAdv+O
-         Jvrq73usgw+v5JJK0IlnmEF32EK0+v2WWGxD3LWtnRQkh3IOgYT/bNB1eH/44/ffkmod
-         ooPOK36epeXhqf+qj+Tt4IQR8I49EfBfPFszA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=p7A1aQmfvY7GY8s6P7Kr2lz8w8Yq9WaZaNeDeX7lA+I=;
-        b=R6lPkUheYw1CeEr8wAsIeJVMw3nH1xzEjlfyk2gLhYWOXTIrIkZuP4bSOTvKQyC6Db
-         xGUyc35Pr4Oa0YP4Iu0siSIkiW9rwVfE6FnEKkmEwNavOtxVbOeHbTcP0uUT3Xv7147x
-         t1dnK3eJnpP+6Lyv/0jP/6mbQlqgb5P74lWwUT2JVXGqDxCTJLydlZcfK9eLbV49jc1F
-         dtFq1YRy6dhewMuEz4F1FWS+GKj1ZSelO6RxScq6+YdINXRftxyKn9LVtHhs2jyJ22sA
-         h9lO2kbFatR4OeTZTgwfwXzXuVAp5nAFHUqqExJBuLcEOX4oUefArg1GSOldSu4Cs6Ns
-         qbzg==
-X-Gm-Message-State: APt69E2nPC7gNCM5gTlEqqqsCk5pqc0TiUR+NAzkE5XKmZH2/sbL0Ule
-        4sMXel28pXyWpOy9XCAXQ0r4/w==
-X-Google-Smtp-Source: ADUXVKJuwaMmprWQ9ijmlDgkIpxp2b4p1gUa6qqj5nDg2CWlDvhtsaIlXeMtFTh3RaQVFSBiVp0FIA==
-X-Received: by 2002:a2e:2f02:: with SMTP id v2-v6mr1579587ljv.113.1530026940536;
-        Tue, 26 Jun 2018 08:29:00 -0700 (PDT)
-Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
-        by smtp.gmail.com with ESMTPSA id n62-v6sm298504lja.32.2018.06.26.08.28.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 08:28:59 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     vgupta@synopsys.com
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] arc: configs: remove no longer needed config option
-Date:   Tue, 26 Jun 2018 17:28:51 +0200
-Message-Id: <20180626152851.32674-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Tue, 26 Jun 2018 11:29:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1530026974; x=1561562974;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=lOKmCM77Hd/NqRG7yjJZ4zCFpC+Q1NnnCZ/45CTdueI=;
+  b=XInUn69EZdMZZ8j7Ic4xnnoBCoBLEbUxNi6Wm11Ib8FK72OSUsUrq2IC
+   G1HTRxuef4th1DWOfTy3Jb6HgN1IO19lWNiNhnLU/BbvvU5vkVvsHCPDv
+   ihmJMx1G63ClDAMMzQw5NnB8GZtv/DV6NUdFd8WOJU97ezFDBh9lAC/iL
+   fgLEkgIvty8Fb8a30ITjI2XnHLR4KCvaojjKkPLHqCya/UAUzgrC0zAuH
+   WiHaqi4efWJ/nUf2akdo3oXrQT6KlEY4oztoeYxGJVi9Ucsi6k/WQduPx
+   9FOcop1gcRPwXCejwcwwtzAaMq9ih5ey19K6v8AxUbkSNwhAHDW3dAz05
+   g==;
+X-IronPort-AV: E=Sophos;i="5.51,274,1526313600"; 
+   d="scan'208";a="81935108"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 26 Jun 2018 23:29:34 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 26 Jun 2018 08:18:53 -0700
+Received: from thinkpad-bart.sdcorp.global.sandisk.com (HELO [10.111.67.248]) ([10.111.67.248])
+  by uls-op-cesaip01.wdc.com with ESMTP; 26 Jun 2018 08:29:34 -0700
+Subject: Re: [PATCH] blk-mq-fs: invoke queue_for_each_hw_ctx under sysfs_lock
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1529907699-2054-1-git-send-email-jianchao.w.wang@oracle.com>
+From:   Bart Van Assche <bart.vanassche@wdc.com>
+Message-ID: <d7b196bf-be18-a8f0-29ce-4f705689babe@wdc.com>
+Date:   Tue, 26 Jun 2018 08:29:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1529907699-2054-1-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit eedf265aa003 ("devpts: Make each mount of devpts an
-independent filesystem.") CONFIG_DEVPTS_MULTIPLE_INSTANCES isn't needed
-in the defconfig anymore.
+On 06/24/18 23:20, Jianchao Wang wrote:
+> blk_mq_run_hw_queues and blk_mq_start_stopped_hw_queues in
+> queue_state_write will invoke queue_for_each_hw_ctx. It will race
+> with blk_mq_realloc_hw_ctxs and incur NULL pointer reference. Put
+> them under sysfs_lock to serialize the accessing to queue_hw_ctx
+> and nr_hw_queues.
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- arch/arc/configs/tb10x_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+The above looks wrong to me. blk_mq_realloc_hw_ctxs() starts with 
+calling blk_mq_unregister_hctx(). That last function uses kobject_del() 
+and kobject_del() waits until all pending sysfs callback functions for 
+the deleted objects have finished.
 
-diff --git a/arch/arc/configs/tb10x_defconfig b/arch/arc/configs/tb10x_defconfig
-index 1aca2e8fd1ba..2cc87f909747 100644
---- a/arch/arc/configs/tb10x_defconfig
-+++ b/arch/arc/configs/tb10x_defconfig
-@@ -56,7 +56,6 @@ CONFIG_STMMAC_ETH=y
- # CONFIG_INPUT is not set
- # CONFIG_SERIO is not set
- # CONFIG_VT is not set
--CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
- # CONFIG_LEGACY_PTYS is not set
- # CONFIG_DEVKMEM is not set
- CONFIG_SERIAL_8250=y
--- 
-2.18.0
+Bart.
 
