@@ -1,164 +1,88 @@
 Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24157C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA25CC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D754221777
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:16:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D754221777
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 679C1219E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 07:17:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHp7qaY9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 679C1219E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752305AbeFZHQS (ORCPT
+        id S1752373AbeFZHRK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 03:16:18 -0400
-Received: from regular1.263xmail.com ([211.150.99.140]:49561 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751885AbeFZHQQ (ORCPT
+        Tue, 26 Jun 2018 03:17:10 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44002 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751641AbeFZHRJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:16:16 -0400
-Received: from hjc?rock-chips.com (unknown [192.168.167.76])
-        by regular1.263xmail.com (Postfix) with ESMTP id 6265E4A6E;
-        Tue, 26 Jun 2018 15:16:08 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 12D8D39A;
-        Tue, 26 Jun 2018 15:16:05 +0800 (CST)
-X-RL-SENDER: hjc@rock-chips.com
-X-FST-TO: dri-devel@lists.freedesktop.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: hjc@rock-chips.com
-X-UNIQUE-TAG: <5fab89b86e7e88b84bc1ac679f3f0128>
-X-ATTACHMENT-NUM: 0
-X-SENDER: hjc@rock-chips.com
-X-DNS-TYPE: 0
-Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 2568OG7VBV;
-        Tue, 26 Jun 2018 15:16:08 +0800 (CST)
-From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org, Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     seanpaul@chromium.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/2] devicetree/bindings: display: Add document for rockchip RGB output
-Date:   Tue, 26 Jun 2018 15:15:39 +0800
-Message-Id: <1529997340-156879-2-git-send-email-hjc@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529997340-156879-1-git-send-email-hjc@rock-chips.com>
-References: <1529997340-156879-1-git-send-email-hjc@rock-chips.com>
+        Tue, 26 Jun 2018 03:17:09 -0400
+Received: by mail-wr0-f194.google.com with SMTP id c5-v6so4885804wrs.10
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 00:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0gMSjV+NKILsP+I551i/YZUQOki/c2LrqnzxYGoR1hA=;
+        b=fHp7qaY9fxCZX4PT1VPfFTSKl6TxL2IFfwcyQkSlF9Z9wdOT7wFsZRynd9nFcseokG
+         FdzSRtdLKdqThRZEQwyrFZmeQp0SXg4gMc7OrTKXhxIgVn97mJdZiiyV/HThuczCC6J0
+         FM9Ve4dXiSyieAMykZpR8SCMvmIwDyOmafOJPfAXEhUYYuNvuA9QMTucBlQO8V5iiFis
+         UgTwYipHuDIgIEBQoU7TYhKaiFcGEqpAyOmj//YTUoRjrRY25YQO4NOkyXODlpcyli9s
+         1FOB2HsYkNDShKKu7BiXNtHl+JN5dbYKLSLlo4Ribx3q3M5ozmUTXVGmN5EYZHKLgZik
+         Vqiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0gMSjV+NKILsP+I551i/YZUQOki/c2LrqnzxYGoR1hA=;
+        b=IWsGlCUAbmJ3XH2Mu6rzdM7H5jok5ELXBup/uapLvbRHhp5Y/K5WCsXMvaLIvYPZ+W
+         omSoNuZHcvSetOp8TiJsmDcmNb5OlgWtPMYI9gNArXTmrzl4vFIcGO5Wzx+doZrQU7ki
+         J0umyAVSQkZOEp8jRzBMZs9YBGMKdDketnc2Bqm0Qvtl2xthDmpbXeDv0xlijTncZ1tZ
+         Q1kB8g6Yxe8+5K1g4L5hVkQrhldnH51Vov8qdamrYTy8wqLovtpUAEGxoaKsFCMnWwBJ
+         TW2+J4+zIZIwaMrK96jebNJYYWydk9KrgN4bqyNk7a0sJ4nv9SYoQhR/vGYzGDxKyusb
+         Pdxw==
+X-Gm-Message-State: APt69E2MuOS7R/nzD3rALjvbhHtpiuXv7YU6ijnWKEsZvyH1Mrv2JJ7t
+        fJvOqcDvOcH65RqvbExvBEj01Q==
+X-Google-Smtp-Source: AAOMgpf2xtZkQzObpA4IXGaRdXC3PfhwEWROBGHT1JtOG72NvpebXAh1l2qxOBXmDNimc2HTRV8r5A==
+X-Received: by 2002:adf:9736:: with SMTP id r51-v6mr342366wrb.5.1529997428415;
+        Tue, 26 Jun 2018 00:17:08 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id c201-v6sm1230791wmh.18.2018.06.26.00.17.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 00:17:07 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 09:17:05 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Jan Beulich <JBeulich@suse.com>
+Cc:     mingo@elte.hu, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86-64: use 32-bit XOR to zero registers
+Message-ID: <20180626071705.GB26761@gmail.com>
+References: <5B30C32902000078001CD6D5@prv1-mh.provo.novell.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B30C32902000078001CD6D5@prv1-mh.provo.novell.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This path add support rv1108 and px30 rgb output interface driver.
 
-Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1509522765-118759-1-git-send-email-hjc@rock-chips.com
----
+* Jan Beulich <JBeulich@suse.com> wrote:
 
-Changes in v4: Add support px30
-Changes in v3: None
-Changes in v2: None
+> Some Intel CPUs don't recognize 64-bit XORs as zeroing idioms
 
-.../bindings/display/rockchip/rockchip-rgb.txt     | 73 ++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
+Please write out the consequence of that in the changelog.
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt b/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
-new file mode 100644
-index 0000000..077b9ad
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
-@@ -0,0 +1,73 @@
-+Rockchip RV1108 RGB interface
-+================================
-+
-+Required properties:
-+- compatible: matching the soc type:
-+	- "rockchip,px30-rgb";
-+	- "rockchip,rv1108-rgb";
-+
-+Optional properties:
-+- pinctrl-names: should be a "lcdc" entry or a "default" entry.
-+- pinctrl-0: pin control group to be used for this interface.
-+
-+The rgb has two video ports described by:
-+	Documentation/devicetree/bindings/media/video-interfaces.txt
-+Their connections are modeled using the OF graph bindings specified in
-+	Documentation/devicetree/bindings/graph.txt.
-+
-+- video port 0 for the VOP input, the remote endpoint maybe vopb/vopl/vop
-+- video port 1 for either a panel or subsequent encoder
-+
-+the panel described by:
-+	Documentation/devicetree/bindings/display/panel/simple-panel.txt
-+rgb-mode nodes described by:
-+	Documentation/devicetree/bindings/display/panel/panel-rgb.txt
-+Panel other required properties:
-+- ports for remote rgb output.
-+
-+Example:
-+
-+panel: panel {
-+	compatible = "auo,b101ean01";
-+	enable-gpios = <&gpio7 21 GPIO_ACTIVE_HIGH>;
-+	rgb-mode = "p888";
-+
-+	ports {
-+		panel_in_rgb: endpoint {
-+			remote-endpoint = <&rgb_out_panel>;
-+		};
-+	};
-+};
-+
-+For Rockchip RV1108:
-+
-+	rgb: rgb {
-+		compatible = "rockchip,rv1108-rgb";
-+		pinctrl-names = "lcdc";
-+		pinctrl-0 = <&lcdc_ctl>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			rgb_in: port@0 {
-+				reg = <0>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				rgb_in_vop: endpoint {
-+					remote-endpoint = <&vop_out_rgb>;
-+				};
-+			};
-+
-+			rgb_out: port@1 {
-+				reg = <1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				rgb_out_panel: endpoint {
-+					remote-endpoint = <&panel_in_rgb>;
-+				};
-+			};
-+		};
-+	};
--- 
-2.7.4
+Thanks,
 
-
+	Ingo
