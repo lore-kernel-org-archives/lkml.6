@@ -2,236 +2,90 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163D3C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B41C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39DA26A6D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:21:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39DA26A6D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 8A5D226709
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 12:23:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A5D226709
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935306AbeFZMVG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 08:21:06 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41484 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935148AbeFZMUz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 08:20:55 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id C7958634C7F;
-        Tue, 26 Jun 2018 15:20:53 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1fXmxp-0000rA-Im; Tue, 26 Jun 2018 15:20:53 +0300
-Date:   Tue, 26 Jun 2018 15:20:53 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 6/8] media: imx274: add helper function to fill a
- reg_8 table chunk
-Message-ID: <20180626122053.gd5jmt2wr35s5oh2@valkosipuli.retiisi.org.uk>
-References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
- <1528716939-17015-7-git-send-email-luca@lucaceresoli.net>
+        id S935096AbeFZMXr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 08:23:47 -0400
+Received: from mga14.intel.com ([192.55.52.115]:58491 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933509AbeFZMXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 08:23:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 05:23:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,274,1526367600"; 
+   d="scan'208";a="51997031"
+Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
+  by orsmga007.jf.intel.com with ESMTP; 26 Jun 2018 05:23:42 -0700
+Message-ID: <5B323140.1000306@intel.com>
+Date:   Tue, 26 Jun 2018 20:27:44 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528716939-17015-7-git-send-email-luca@lucaceresoli.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com
+Subject: Re: [PATCH v34 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com> <1529928312-30500-3-git-send-email-wei.w.wang@intel.com> <20180626002822-mutt-send-email-mst@kernel.org> <5B31B71B.6080709@intel.com> <20180626064338-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180626064338-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luca,
+On 06/26/2018 11:56 AM, Michael S. Tsirkin wrote:
+> On Tue, Jun 26, 2018 at 11:46:35AM +0800, Wei Wang wrote:
+>
 
-On Mon, Jun 11, 2018 at 01:35:37PM +0200, Luca Ceresoli wrote:
-> Tables of struct reg_8 are used to simplify multi-byte register
-> assignment. However filling these snippets with values computed at
-> runtime is currently implemented by very similar functions doing the
-> needed shift & mask manipulation.
-> 
-> Replace all those functions with a unique helper function to fill
-> reg_8 tables in a simple and clean way.
+>>
+>>>
+>>>> +	if (!arrays)
+>>>> +		return NULL;
+>>>> +
+>>>> +	for (i = 0; i < max_array_num; i++) {
+>>> So we are getting a ton of memory here just to free it up a bit later.
+>>> Why doesn't get_from_free_page_list get the pages from free list for us?
+>>> We could also avoid the 1st allocation then - just build a list
+>>> of these.
+>> That wouldn't be a good choice for us. If we check how the regular
+>> allocation works, there are many many things we need to consider when pages
+>> are allocated to users.
+>> For example, we need to take care of the nr_free
+>> counter, we need to check the watermark and perform the related actions.
+>> Also the folks working on arch_alloc_page to monitor page allocation
+>> activities would get a surprise..if page allocation is allowed to work in
+>> this way.
+>>
+> mm/ code is well positioned to handle all this correctly.
 
-What's the purpose of writing these registers as multiple I²C writes, when
-this can be done as a single write (i.e. the address followed by two or
-three octets of data)?
+I'm afraid that would be a re-implementation of the alloc functions, and 
+that would be much more complex than what we have. I think your idea of 
+passing a list of pages is better.
 
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> ---
-> Changed v3 -> v4: nothing
-> 
-> Changed v2 -> v3:
->  - minor reformatting in prepare_reg() documentation
-> 
-> Changed v1 -> v2:
->  - add "media: " prefix to commit message
-> ---
->  drivers/media/i2c/imx274.c | 90 ++++++++++++++++++++++++++++------------------
->  1 file changed, 55 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-> index 48343c2ade83..e5ba19b97083 100644
-> --- a/drivers/media/i2c/imx274.c
-> +++ b/drivers/media/i2c/imx274.c
-> @@ -597,6 +597,58 @@ static inline struct stimx274 *to_imx274(struct v4l2_subdev *sd)
->  }
->  
->  /*
-> + * Fill consecutive reg_8 items in order to set a multibyte register.
-> + *
-> + * The sensor has many 2-bytes registers and a 3-byte register. This
-> + * simplifies code to set them by filling consecutive entries of a
-> + * struct reg_8 table with the data to set a register.
-> + *
-> + * The number of table entries that is filled is the minimum needed
-> + * for the given number of bits (i.e. nbits / 8, rounded up). If nbits
-> + * is not a multiple of 8, extra bits in the most significant byte are
-> + * zeroed.
-> + *
-> + * Example:
-> + *   Calling prepare_reg(&regs[10], 0x3000, 0xcafe, 12) will set:
-> + *   regs[10] = { .addr = 0x3000, .val = 0xfe }
-> + *   regs[11] = { .addr = 0x3001, .val = 0x0a }
-> + *
-> + * @table_base: Pointer to the first reg_8 struct to be filled.  The
-> + *              following entries will also be set, make sure they are
-> + *              properly allocated!
-> + * @addr_lsb: Address of the LSB register.  Other registers must be
-> + *            consecutive, least-to-most significant.
-> + * @value: Value to be written to the register.
-> + * @nbits: Number of bits to write (range: [1..24])
-> + */
-> +static void prepare_reg(struct reg_8 *table_base,
-> +			u16 addr_lsb,
-> +			u32 value,
-> +			size_t nbits)
-> +{
-> +	struct reg_8 *cmd = table_base;
-> +	u16 addr = addr_lsb;
-> +	size_t bits; /* how many bits at this round */
-> +
-> +	WARN_ON(nbits > 24);
-> +
-> +	if (nbits > 24)
-> +		nbits = 24;
-> +
-> +	while (nbits > 0) {
-> +		bits = min_t(size_t, 8, nbits);
-> +
-> +		cmd->addr = addr;
-> +		cmd->val = value & ((1 << bits) - 1);
-> +
-> +		nbits -= bits;
-> +		value >>= 8;
-> +		addr++;
-> +		cmd++;
-> +	}
-> +}
-> +
-> +/*
->   * Writing a register table
->   *
->   * @priv: Pointer to device
-> @@ -1163,15 +1215,6 @@ static int imx274_set_digital_gain(struct stimx274 *priv, u32 dgain)
->  				reg_val & IMX274_MASK_LSB_4_BITS);
->  }
->  
-> -static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
-> -{
-> -	regs->addr = IMX274_ANALOG_GAIN_ADDR_MSB;
-> -	regs->val = (gain >> IMX274_SHIFT_8_BITS) & IMX274_MASK_LSB_3_BITS;
-> -
-> -	(regs + 1)->addr = IMX274_ANALOG_GAIN_ADDR_LSB;
-> -	(regs + 1)->val = (gain) & IMX274_MASK_LSB_8_BITS;
-> -}
-> -
->  /*
->   * imx274_set_gain - Function called when setting gain
->   * @priv: Pointer to device structure
-> @@ -1229,7 +1272,7 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
->  	if (gain_reg > IMX274_GAIN_REG_MAX)
->  		gain_reg = IMX274_GAIN_REG_MAX;
->  
-> -	imx274_calculate_gain_regs(reg_list, (u16)gain_reg);
-> +	prepare_reg(reg_list, IMX274_ANALOG_GAIN_ADDR_LSB, gain_reg, 11);
->  
->  	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
->  		err = imx274_write_reg(priv, reg_list[i].addr,
-> @@ -1258,16 +1301,6 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
->  	return err;
->  }
->  
-> -static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
-> -						     u32 coarse_time)
-> -{
-> -	regs->addr = IMX274_SHR_REG_MSB;
-> -	regs->val = (coarse_time >> IMX274_SHIFT_8_BITS)
-> -			& IMX274_MASK_LSB_8_BITS;
-> -	(regs + 1)->addr = IMX274_SHR_REG_LSB;
-> -	(regs + 1)->val = (coarse_time) & IMX274_MASK_LSB_8_BITS;
-> -}
-> -
->  /*
->   * imx274_set_coarse_time - Function called when setting SHR value
->   * @priv: Pointer to device structure
-> @@ -1292,7 +1325,7 @@ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
->  		goto fail;
->  
->  	/* prepare SHR registers */
-> -	imx274_calculate_coarse_time_regs(reg_list, coarse_time);
-> +	prepare_reg(reg_list, IMX274_SHR_REG_LSB, coarse_time, 16);
->  
->  	/* write to SHR registers */
->  	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
-> @@ -1429,19 +1462,6 @@ static int imx274_set_test_pattern(struct stimx274 *priv, int val)
->  	return err;
->  }
->  
-> -static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
-> -						      u32 frame_length)
-> -{
-> -	regs->addr = IMX274_VMAX_REG_1;
-> -	regs->val = (frame_length >> IMX274_SHIFT_16_BITS)
-> -			& IMX274_MASK_LSB_4_BITS;
-> -	(regs + 1)->addr = IMX274_VMAX_REG_2;
-> -	(regs + 1)->val = (frame_length >> IMX274_SHIFT_8_BITS)
-> -			& IMX274_MASK_LSB_8_BITS;
-> -	(regs + 2)->addr = IMX274_VMAX_REG_3;
-> -	(regs + 2)->val = (frame_length) & IMX274_MASK_LSB_8_BITS;
-> -}
-> -
->  /*
->   * imx274_set_frame_length - Function called when setting frame length
->   * @priv: Pointer to device structure
-> @@ -1463,7 +1483,7 @@ static int imx274_set_frame_length(struct stimx274 *priv, u32 val)
->  
->  	frame_length = (u32)val;
->  
-> -	imx274_calculate_frame_length_regs(reg_list, frame_length);
-> +	prepare_reg(reg_list, IMX274_VMAX_REG_3, frame_length, 20);
->  	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
->  		err = imx274_write_reg(priv, reg_list[i].addr,
->  				       reg_list[i].val);
-> -- 
-> 2.7.4
-> 
+Best,
+Wei
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+
+
+
+
+
