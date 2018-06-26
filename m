@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C633C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 750B7C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0E7D26CE2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F21026CE4
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:12:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ANVA9jIt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E7D26CE2
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="v+BZklU7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F21026CE4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeFZPL6 (ORCPT
+        id S1752048AbeFZPM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:11:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50598 "EHLO
+        Tue, 26 Jun 2018 11:12:28 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49756 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751253AbeFZPLi (ORCPT
+        with ESMTP id S1751144AbeFZPLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:11:38 -0400
+        Tue, 26 Jun 2018 11:11:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=vK3QWXn50j9wGdDAjupEEC/8UUi8wMEy11sq87MzCIY=; b=ANVA9jItX1WK
-        y6LLVneaLvBKjhZFCMAdWaaeRZ9brP3A1hKwbXrWvqO4M42oq7XgUoemaq9ERvLMK4Kud+jkHxO5k
-        YDz0+9iOu7Th3DB7iygLKAbAfIPMXgY9P3ywZ9Y2OCltJQPICFFrDmkVvPb3nYfwNZiR9R12//V7G
-        BXLXg=;
+        List-Archive; bh=FF60Z2N9Rz0QIyELQpIDXL8m0gGwUxjfp7ZQfyb8qrM=; b=v+BZklU7EfdE
+        FCCk8eKgvDFPyMpkFK6Nq0o591Y9aUKAzsG+tF0AolaBPqRCvKwCeC1Y0WO48LoCVDdnrNp6cZ2zE
+        uZKko1H7zjx/Gy90RKeU2KQy+FGuoO2fN2BkSjVfLNn7OdvFqN8nUSlunBT6V7zrQZhprujw6s2vv
+        lxm9k=;
 Received: from host109-146-194-33.range109-146.btcentralplus.com ([109.146.194.33] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fXpcx-0001Ks-MH; Tue, 26 Jun 2018 15:11:31 +0000
+        id 1fXpcU-0001Jv-SO; Tue, 26 Jun 2018 15:11:02 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 337B6440070; Tue, 26 Jun 2018 16:11:31 +0100 (BST)
+        id 612F1440070; Tue, 26 Jun 2018 16:11:02 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
@@ -51,10 +51,10 @@ Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
         lgirdwood@gmail.com, linux-arm-msm@vger.kernel.org, tiwai@suse.com,
         linux-arm-kernel@lists.infradead.org, niklas.cassel@linaro.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6adm: use of_platform_populate/depopulate()" to the asoc tree
-In-Reply-To:  <20180626092016.9296-5-srinivas.kandagatla@linaro.org>
-Message-Id: <20180626151131.337B6440070@finisterre.ee.mobilebroadband>
-Date:   Tue, 26 Jun 2018 16:11:31 +0100 (BST)
+Subject: Applied "ASoC: qdsp6: q6asm-dai: support dt based module loading" to the asoc tree
+In-Reply-To:  <20180626092016.9296-9-srinivas.kandagatla@linaro.org>
+Message-Id: <20180626151102.612F1440070@finisterre.ee.mobilebroadband>
+Date:   Tue, 26 Jun 2018 16:11:02 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: q6adm: use of_platform_populate/depopulate()
+   ASoC: qdsp6: q6asm-dai: support dt based module loading
 
 has been applied to the asoc tree at
 
@@ -87,67 +87,41 @@ to this mail.
 Thanks,
 Mark
 
-From f614c9b070ed149bbaac4edefb2b5fcb7755c4b0 Mon Sep 17 00:00:00 2001
+From 1ce09ef36fb190fa207fdb3e31fc1c8caa292125 Mon Sep 17 00:00:00 2001
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 26 Jun 2018 10:20:08 +0100
-Subject: [PATCH] ASoC: qdsp6: q6adm: use of_platform_populate/depopulate()
+Date: Tue, 26 Jun 2018 10:20:12 +0100
+Subject: [PATCH] ASoC: qdsp6: q6asm-dai: support dt based module loading
 
-Now that the child nodes have there own compatible strings,
-Use of_platform_populate/depopulate() instead of less common
-of_platform_device_create()/destroy().
+This patch uses new compatible string to make DT based module loading work.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Acked-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6adm.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/sound/soc/qcom/qdsp6/q6adm.c b/sound/soc/qcom/qdsp6/q6adm.c
-index 9983c665a941..932c3ebfd252 100644
---- a/sound/soc/qcom/qdsp6/q6adm.c
-+++ b/sound/soc/qcom/qdsp6/q6adm.c
-@@ -64,7 +64,6 @@ struct q6adm {
- 	struct aprv2_ibasic_rsp_result_t result;
- 	struct mutex lock;
- 	wait_queue_head_t matrix_map_wait;
--	struct platform_device *pdev_routing;
- };
- 
- struct q6adm_cmd_device_open_v5 {
-@@ -588,7 +587,6 @@ EXPORT_SYMBOL_GPL(q6adm_close);
- static int q6adm_probe(struct apr_device *adev)
- {
- 	struct device *dev = &adev->dev;
--	struct device_node *dais_np;
- 	struct q6adm *adm;
- 
- 	adm = devm_kzalloc(&adev->dev, sizeof(*adm), GFP_KERNEL);
-@@ -605,22 +603,12 @@ static int q6adm_probe(struct apr_device *adev)
- 	INIT_LIST_HEAD(&adm->copps_list);
- 	spin_lock_init(&adm->copps_list_lock);
- 
--	dais_np = of_get_child_by_name(dev->of_node, "routing");
--	if (dais_np) {
--		adm->pdev_routing = of_platform_device_create(dais_np,
--							   "q6routing", dev);
--		of_node_put(dais_np);
--	}
--
--	return 0;
-+	return of_platform_populate(dev->of_node, NULL, NULL, dev);
- }
- 
- static int q6adm_remove(struct apr_device *adev)
- {
--	struct q6adm *adm = dev_get_drvdata(&adev->dev);
--
--	if (adm->pdev_routing)
--		of_platform_device_destroy(&adm->pdev_routing->dev, NULL);
-+	of_platform_depopulate(&adev->dev);
- 
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index 349c6a883c63..1196dc7483d2 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -611,9 +611,16 @@ static int q6asm_dai_dev_remove(struct platform_device *pdev)
  	return 0;
  }
+ 
++static const struct of_device_id q6asm_dai_device_id[] = {
++	{ .compatible = "qcom,q6asm-dais" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, q6asm_dai_device_id);
++
+ static struct platform_driver q6asm_dai_platform_driver = {
+ 	.driver = {
+ 		.name = "q6asm-dai",
++		.of_match_table = of_match_ptr(q6asm_dai_device_id),
+ 	},
+ 	.probe = q6asm_dai_probe,
+ 	.remove = q6asm_dai_dev_remove,
 -- 
 2.17.1
 
