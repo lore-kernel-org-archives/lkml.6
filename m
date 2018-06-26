@@ -5,101 +5,136 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D617CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCF1C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99F5026B83
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F5026B83
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 8C80426B83
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 13:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C80426B83
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965440AbeFZNhE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 09:37:04 -0400
-Received: from ozlabs.org ([203.11.71.1]:51539 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934583AbeFZNhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 09:37:02 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41FRsl6NtMz9ryk;
-        Tue, 26 Jun 2018 23:36:59 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        sachinp <sachinp@linux.vnet.ibm.com>,
-        sim <sim@linux.vnet.ibm.com>,
-        manvanth <manvanth@linux.vnet.ibm.com>,
-        Brian King <brking@linux.vnet.ibm.com>
-Subject: Re: [next-20180601][nvme][ppc] Kernel Oops is triggered when creating lvm snapshots on nvme disks
-In-Reply-To: <1530003645.24245.7.camel@abdul.in.ibm.com>
-References: <1530003645.24245.7.camel@abdul.in.ibm.com>
-Date:   Tue, 26 Jun 2018 23:36:58 +1000
-Message-ID: <87d0wd7jph.fsf@concordia.ellerman.id.au>
+        id S935787AbeFZNhx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 09:37:53 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.23]:25729 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934324AbeFZNhv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 09:37:51 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 778EF80DDD
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:37:50 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id Xo9zfOa9HbXuJXoACfaFKX; Tue, 26 Jun 2018 08:37:50 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=33294 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fXo9y-001n0g-Dv; Tue, 26 Jun 2018 08:37:30 -0500
+Subject: Re: [PATCH] drm/gma500: Fix compile warning
+To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Stone <daniels@collabora.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20180625123355.GA16757@embeddedor.com>
+ <20180626132828.GY20518@intel.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <27f371cf-797e-7ae8-cb27-95e642c7dff0@embeddedor.com>
+Date:   Tue, 26 Jun 2018 08:37:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180626132828.GY20518@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fXo9y-001n0g-Dv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:33294
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Abdul Haleem <abdhalee@linux.vnet.ibm.com> writes:
 
-> Greeting's
->
-> Kernel Oops is seen on 4.17.0-rc7-next-20180601 kernel on a bare-metal
-> machine when running lvm snapshot tests on nvme disks.
->
-> Machine Type: Power 8 bare-metal
-> kernel : 4.17.0-rc7-next-20180601
-> test:  
-> $ pvcreate -y /dev/nvme0n1
-> $ vgcreate avocado_vg /dev/nvme0n1
-> $ lvcreate --size 1.4T --name avocado_lv avocado_vg -y
-> $ mkfs.ext2 /dev/avocado_vg/avocado_lv
-> $ lvcreate --size 1G --snapshot --name avocado_sn /dev/avocado_vg/avocado_lv -y
-> $ lvconvert --merge /dev/avocado_vg/avocado_sn
 
-> the last command results in Oops:
->
-> Unable to handle kernel paging request for data at address 0x000000d0
-> Faulting instruction address: 0xc0000000002dced4
-> Oops: Kernel access of bad area, sig: 11 [#1]
-> LE SMP NR_CPUS=2048 NUMA PowerNV
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in: dm_snapshot dm_bufio nvme bnx2x iptable_mangle
-> ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
-> nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4
-> xt_tcpudp tun bridge stp llc iptable_filter dm_mirror dm_region_hash
-> dm_log dm_service_time vmx_crypto powernv_rng rng_core dm_multipath
-> kvm_hv binfmt_misc kvm nfsd ip_tables x_tables autofs4 xfs lpfc
-> crc_t10dif crct10dif_generic mdio nvme_fc libcrc32c nvme_fabrics
-> nvme_core crct10dif_common [last unloaded: nvme]
-> CPU: 70 PID: 157763 Comm: lvconvert Not tainted 4.17.0-rc7-next-20180601-autotest-autotest #1
-> NIP:  c0000000002dced4 LR: c000000000244d14 CTR: c000000000244cf0
-> REGS: c000001f81d6b5a0 TRAP: 0300   Not tainted  (4.17.0-rc7-next-20180601-autotest-autotest)
-> MSR:  900000010280b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22442444  XER: 20000000
-> CFAR: c000000000008934 DAR: 00000000000000d0 DSISR: 40000000 SOFTE: 0
-> GPR00: c000000000244d14 c000001f81d6b820 c00000000109c400 c000003c9d080180
-> GPR04: 0000000000000001 c000001fad510000 c000001fad510000 0000000000000001
-> GPR08: 0000000000000000 f000000000000000 f000000000000008 0000000000000000
-> GPR12: c000000000244cf0 c000001ffffc4f80 00007fffa0e31090 00007fffd9d9b470
-> GPR16: 0000000000000000 000000000000005c 00007fffa0e3a5b0 00007fffa0e62040
-> GPR20: 0000010014ad7d50 0000010014ad7d20 00007fffa0e64210 0000000000000001
-> GPR24: 0000000000000000 c00000000081bae0 c000001ed2461b00 d00000000f859d08
-> GPR28: c000003c9d080180 c000000000244d14 0000000000000001 0000000000000000
-> NIP [c0000000002dced4] kmem_cache_free+0x1a4/0x2b0
-> LR [c000000000244d14] mempool_free_slab+0x24/0x40
+On 06/26/2018 08:28 AM, Ville Syrjälä wrote:
+> On Mon, Jun 25, 2018 at 07:33:55AM -0500, Gustavo A. R. Silva wrote:
+>> Fix the following compile warning:
+>>
+>> warning: unused variable ‘psbfb’ [-Wunused-variable]
+>>   struct psb_framebuffer *psbfb = to_psb_fb(fb);
+>>
+>> Fixes: c7cbed560ce2 ("drm/gma500: Fix Medfield for drm_framebuffer move")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> I sent the same patch a few days ago. Instead of hunting for an r-b
+> I just went ahead and pushed your version. Thanks for the patch.
+> 
 
-Are you running with slub debugging enabled?
-Try booting with slub_debug=FZP
+Glad to help :)
 
-cheers
+Thanks
+--
+Gustavo
