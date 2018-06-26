@@ -2,218 +2,153 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69740C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683B2C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0468F21096
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1541F2651E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 05:17:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TT86A/42";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TT86A/42"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0468F21096
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="ZjR63X23"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1541F2651E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=earthlink.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751524AbeFZFNf (ORCPT
+        id S1751446AbeFZFRT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 01:13:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33360 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750972AbeFZFNd (ORCPT
+        Tue, 26 Jun 2018 01:17:19 -0400
+Received: from elasmtp-dupuy.atl.sa.earthlink.net ([209.86.89.62]:52320 "EHLO
+        elasmtp-dupuy.atl.sa.earthlink.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751014AbeFZFRQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 01:13:33 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D2D1960AD8; Tue, 26 Jun 2018 05:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529990012;
-        bh=m5Ld/nEyFJJBJSoQ/53e8Ownms65BKwcc1Dmp//QpJ8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TT86A/42p1Ej5eiu8bii1T5Zrgtcs31pd1VpDT6/txvz0FXSUB4AHgh2qoYDqZ1Hn
-         xAsCCA/MaNXk91wbPI+z1BiGbo5jTz1xnnkSLWOTRHlgRo9z1UVk6aAwyOB2C1lNoM
-         S31dF0swp3OfhDOCfGdDEo4SrdyAwTrkUi4piln8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id EA4A0606FC;
-        Tue, 26 Jun 2018 05:13:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529990012;
-        bh=m5Ld/nEyFJJBJSoQ/53e8Ownms65BKwcc1Dmp//QpJ8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TT86A/42p1Ej5eiu8bii1T5Zrgtcs31pd1VpDT6/txvz0FXSUB4AHgh2qoYDqZ1Hn
-         xAsCCA/MaNXk91wbPI+z1BiGbo5jTz1xnnkSLWOTRHlgRo9z1UVk6aAwyOB2C1lNoM
-         S31dF0swp3OfhDOCfGdDEo4SrdyAwTrkUi4piln8=
+        Tue, 26 Jun 2018 01:17:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=earthlink.net;
+        s=dk12062016; t=1529990250; bh=azfJpdiWFauDJihyPI5BBGrluh8NMyMHta3F
+        55Ug0XI=; h=Received:Subject:To:Cc:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-ELNK-Trace:X-Originating-IP; b=ZjR63X2
+        3oU1ok6bF798kvJMESbc3XZ0faAU5GCLfZZF3IdRKUNeP/3eBHBT8Mp3pwoDcDfFbf9
+        qyyG6z0/1p0SLe4PGzEjeQPpO95VHJRZoGXo3PDYy2FG/OfUeh3HeU3cxuiQD/tr3bv
+        tLdfFl9e83jIECsslgGzrDRqFJXAYVUirZ+3xUYz8bPXBE7nYhz2h2ZvTrw+nYLNvhV
+        poC0z9WkmmX2u0wRepZ1Fa8ik2TPvXXKyDgWevyTCEEL4lgh4JcCrDYOiKYpgKmZBrK
+        2GqE6KtaMwKZ12O4bDGWbVP4WNei383Fc17eUQCWhk9+4Nn+a6FD0jgTPRjbKsUHiHQ
+        ==
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+  s=dk12062016; d=earthlink.net;
+  b=NAi0QCOdkLcfQws7jLMTJcxEaI99B3e+9jIwhWnbnyXXitDu3QMhUyWzMe+ygT4JqwCwzFY7PMion9mgrQRqW42oSwWApIQN86h9R1TRotqLNtLcM3J/Z1LduyOjskXWi8QyhVZQJu3kQpB0iA2jKWs0dw5z20YdMVkEe2b7btSqzRnR77NEyHLgPxM5z2yBIajyn+R5avNBVOBOIdLAnQNaxcXEBpZVluDXx05aGhsBUCz5IcRwBrTavgVEhP3gt/zvhWA/WXYgcTHzqQJcrduJ54dphyUcuXTbiPrHEPb8luP3FfHYZrVXIFLeng8HPTGOPAV6Qlx7enhb0kv/0Q==;
+  h=Received:Subject:To:Cc:References:From:Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:Content-Transfer-Encoding:X-ELNK-Trace:X-Originating-IP;
+Received: from [68.183.100.61] (helo=[192.168.37.199])
+        by elasmtp-dupuy.atl.sa.earthlink.net with esmtpa (Exim 4)
+        (envelope-from <jdow@earthlink.net>)
+        id 1fXgM2-000A1x-VM; Tue, 26 Jun 2018 01:17:27 -0400
+Subject: Re: moving affs + RDB partition support to staging?
+To:     Michael Schmitz <schmitzmic@gmail.com>
+Cc:     Martin Steigerwald <martin@lichtvoll.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Sterba <dsterba@suse.cz>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+References: <20180425154602.GA8546@bombadil.infradead.org>
+ <CAMuHMdXt11A-3wZ2uhxF9WE-3+=VV-AbQhpXrkxnV_nwa+E4tA@mail.gmail.com>
+ <CAOmrzkKunsjZzwpj9gtovKwXVkj1kTt81ea1zmB7BCDtZz409g@mail.gmail.com>
+ <1910962.ItDVNtUG5Q@merkaba>
+ <c76b4e4d-7e8e-13ac-81e4-9132f4235eb8@earthlink.net>
+ <CAOmrzk+CuuraUnWWKDKen9FV6=UcgKgc6+qJ3g-Fx+tkt5HHQw@mail.gmail.com>
+From:   jdow <jdow@earthlink.net>
+Message-ID: <45e05e92-e2b1-d46c-11fb-4bd75e793712@earthlink.net>
+Date:   Mon, 25 Jun 2018 22:17:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 26 Jun 2018 10:43:31 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v8 4/7] Bluetooth: hci_qca: Add wrapper functions for
- setting UART speed
-In-Reply-To: <20180626000529.GJ129942@google.com>
-References: <20180625134013.19684-1-bgodavar@codeaurora.org>
- <20180625134013.19684-5-bgodavar@codeaurora.org>
- <20180625234354.GI129942@google.com> <20180626000529.GJ129942@google.com>
-Message-ID: <66681ee5281749e17394cab6f58083d8@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <CAOmrzk+CuuraUnWWKDKen9FV6=UcgKgc6+qJ3g-Fx+tkt5HHQw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ELNK-Trace: bb89ecdb26a8f9f24d2b10475b571120dffac9ef49ac61154fceb338c4e57b978284c0d70cdf2f37350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
+X-Originating-IP: 68.183.100.61
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+As long as it preserves compatibility it should be OK, I suppose. Personally I'd 
+make any partitioning tool front end gently force the block size towards 8k as 
+the disk size gets larger. The file systems may also run into 2TB issues that 
+are not obvious. An unused blocks list will have to go beyond a uint32_t size, 
+for example. But a block list (OFS for sure, don't remember for the newer AFS) 
+uses a tad under 1% of the disk all by itself. A block bitmap is not quite so 
+bad. {^_-}
 
-On 2018-06-26 05:35, Matthias Kaehlcke wrote:
-> On Mon, Jun 25, 2018 at 04:43:54PM -0700, Matthias Kaehlcke wrote:
->> This is a nice improvement, a few remaining questions inline.
->> 
->> On Mon, Jun 25, 2018 at 07:10:10PM +0530, Balakrishna Godavarthi 
->> wrote:
->> > In function qca_setup, we set initial and operating speeds for Qualcomm
->> > Bluetooth SoC's. This block of code is common across different
->> > Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
->> > a wrapper function to set the speeds. So that future coming SoC's
->> > can use these wrapper functions to set speeds.
->> >
->> > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> > ---
->> > Changes in v8:
->> >     * common function to set INIT and operating speeds.
->> >     * moved hardware flow control to qca_set_speed().
->> >
->> > Changes in v7:
->> >     * initial patch
->> >     * created wrapper functions for init and operating speeds.
->> > ---
->> >  drivers/bluetooth/hci_qca.c | 89 +++++++++++++++++++++++++++----------
->> >  1 file changed, 65 insertions(+), 24 deletions(-)
->> >
->> > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> > index fe62420ef838..38b7dbe6c897 100644
->> > --- a/drivers/bluetooth/hci_qca.c
->> > +++ b/drivers/bluetooth/hci_qca.c
->> > @@ -119,6 +119,11 @@ struct qca_data {
->> >  	u64 votes_off;
->> >  };
->> >
->> > +enum qca_speed_type {
->> > +	QCA_INIT_SPEED = 1,
->> > +	QCA_OPER_SPEED
->> > +};
->> > +
->> >  struct qca_serdev {
->> >  	struct hci_uart	 serdev_hu;
->> >  	struct gpio_desc *bt_en;
->> > @@ -923,6 +928,60 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
->> >  		hci_uart_set_baudrate(hu, speed);
->> >  }
->> >
->> > +static unsigned int qca_get_speed(struct hci_uart *hu,
->> > +				  enum qca_speed_type speed_type)
->> > +{
->> > +	unsigned int speed = 0;
->> > +
->> > +	if (speed_type == QCA_INIT_SPEED) {
->> > +		if (hu->init_speed)
->> > +			speed = hu->init_speed;
->> > +		else if (hu->proto->init_speed)
->> > +			speed = hu->proto->init_speed;
->> > +	} else {
->> > +		if (hu->oper_speed)
->> > +			speed = hu->oper_speed;
->> > +		else if (hu->proto->oper_speed)
->> > +			speed = hu->proto->oper_speed;
->> > +	}
->> > +
->> > +	return speed;
->> > +}
->> > +
->> > +static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->> > +{
->> > +	unsigned int speed, qca_baudrate;
->> > +	int ret;
->> > +
->> > +	if (speed_type == QCA_INIT_SPEED) {
->> > +		speed = qca_get_speed(hu, QCA_INIT_SPEED);
->> > +		if (speed)
->> > +			host_set_baudrate(hu, speed);
->> > +		else
->> > +			bt_dev_err(hu->hdev, "Init speed should be non zero");
->> 
->> The check for 'speed == 0' is done in multiple places. From this
->> code I deduce that it is expected that both INIT and OPER speed are
->> set to non-zero values. What happens if either of them is zero? Is the
->> driver still operational?
->> 
->> > +		return 0;
->> > +	}
->> > +
->> > +	speed = qca_get_speed(hu, QCA_OPER_SPEED);
->> > +	if (!speed) {
->> > +		bt_dev_err(hu->hdev, "operating speed should be non zero");
->> > +		return 0;
->> > +	}
->> > +
->> > +	qca_baudrate = qca_get_baudrate_value(speed);
->> > +	bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
->> > +	ret = qca_set_baudrate(hu->hdev, qca_baudrate);
->> > +	if (ret) {
->> > +		bt_dev_err(hu->hdev, "Failed to change the baudrate (%d)", ret);
->> > +		return ret;
->> > +	}
->> > +
->> > +	host_set_baudrate(hu, speed);
->> > +
->> > +	return ret;
->> > +}
->> 
->> In the discussion on "[v7,8/8] Bluetooth: hci_qca: Add support for
->> Qualcomm Bluetooth chip wcn3990" you mentioned the possbility to move
->> the hci_uart_set_flow_control() calls into _set_speed(). This seemed
->> interesting but finally it isn't done in this series. Did you
->> encounter that it is not feasible/desirable for some reason?
+Just be sure you are aware of all the ramifications when you make a change. I 
+remember thinking about this for awhile and then determining I REALLY did not 
+want to think about it as my brain was getting tied into a gordian knot.
+
+{^_^}
+
+On 20180625 19:23, Michael Schmitz wrote:
+> Joanne,
 > 
-> I got that half wrong. "[v8,7/7] Bluetooth: hci_qca: Add support for
-> Qualcomm Bluetooth chip wcn3990" adds the flow control calls to
-> _set_speed() however there are still_set_flow_control() calls in
-> qca_setup(), which confused/s me.
+> Martin's boot log (including your patch) says:
 > 
-> Could you provide a brief summary on the situations (relevant for this
-> driver) in which flow controls needs to be enabled/disabled?
-
-you will not find enable or disable of hardware flow control in this 
-patch.
-there is no hardware flow control in ROME chip.
-you will find hardware flow control in wcn3990 i.e. patch [v8 7/7]
-
-in wcn3990. we disable hardware flow control, when we sent mandatory 
-commands to BT chip.
-
-i.e while sending power on pulse i.e 0xFC byte for wcn3990 to boot up 
-completely and sending change baudrate request to BT chip.
-before sending these commands, we disable the chip flow control and 
-enable flow control once we sent these commands.
-
-so in our current code after integrating wcn3990, we disable flow 
-control two times.
-
-1. Before sending power on pulse i.e. qca_send_vendor_cmd(hdev, 
-QCA_WCN3990_POWERON_PULSE); in qca_setup.
-    so we find disable or enable hardware flow control in qca_setup()
-2. Before sending change BT CHIP baudrate request i.e.  
-qca_set_baudrate(hu->hdev, qca_baudrate); in qca_set_speed().
-
-
-
--- 
-Regards
-Balakrishna.
+> Jun 19 21:19:09 merkaba kernel: [ 7891.843284]  sdb: RDSK (512) sdb1
+> (LNX^@)(res 2 spb 1) sdb2 (JXF^D)(res 2 spb 1) sdb3 (DOS^C)(res 2 spb
+> 4)
+> Jun 19 21:19:09 merkaba kernel: [ 7891.844055] sd 7:0:0:0: [sdb]
+> Attached SCSI disk
+> 
+> so it's indeed a case of self inflicted damage (RDSK (512) means 512
+> byte blocks) and can be worked around by using a different block size.
+> 
+> Your memory serves right indeed - blocksize is in 512 bytes units.
+> I'll still submit a patch to Jens anyway as this may bite others yet.
+> 
+> Cheers,
+> 
+>    Michael
+> 
+> 
+> On Sun, Jun 24, 2018 at 11:40 PM, jdow <jdow@earthlink.net> wrote:
+>> BTW - anybody who uses 512 byte blocks with an Amiga file system is a famn
+>> dool.
+>>
+>> If memory serves the RDBs think in blocks rather than bytes so it should
+>> work up to 2 gigablocks whatever your block size is. 512 blocks is
+>> 2199023255552 bytes. But that wastes just a WHOLE LOT of disk in block maps.
+>> Go up to 4096 or 8192. The latter is 35 TB.
+>>
+>> {^_^}
+>> On 20180624 02:06, Martin Steigerwald wrote:
+>>>
+>>> Hi.
+>>>
+>>> Michael Schmitz - 27.04.18, 04:11:
+>>>>
+>>>> test results at https://bugzilla.kernel.org/show_bug.cgi?id=43511
+>>>> indicate the RDB parser bug is fixed by the patch given there, so if
+>>>> Martin now submits the patch, all should be well?
+>>>
+>>>
+>>> Ok, better be honest than having anyone waiting for it:
+>>>
+>>> I do not care enough about this, in order to motivate myself preparing
+>>> the a patch from Joanne Dow´s fix.
+>>>
+>>> I am not even using my Amiga boxes anymore, not even the Sam440ep which
+>>> I still have in my apartment.
+>>>
+>>> So RDB support in Linux it remains broken for disks larger 2 TB, unless
+>>> someone else does.
+>>>
+>>> Thanks.
+>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-m68k" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
