@@ -2,172 +2,211 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8162AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBBABC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10FE0208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37806255D2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:47:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuG59Bn6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10FE0208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="sxhQwWWA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37806255D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934015AbeFZUom (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:44:42 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:39170 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933191AbeFZUoj (ORCPT
+        id S934001AbeFZUrG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:47:06 -0400
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:50692 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933482AbeFZUrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:44:39 -0400
-Received: by mail-ua0-f193.google.com with SMTP id n4-v6so11798539uad.6;
-        Tue, 26 Jun 2018 13:44:38 -0700 (PDT)
+        Tue, 26 Jun 2018 16:47:04 -0400
+Received: by mail-wm0-f47.google.com with SMTP id e16-v6so3380427wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:47:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nfOtQiQHZ+wi2NG1xVzLSk3SFSAgbgKPgSuzz4qK8fo=;
-        b=iuG59Bn6usjcFnFs4CV35JsJ0FRReAKI9QmMgE3PK0iqIO9maDgbclk8R4v3EMBhvY
-         F8Upcehbqn7P9qfFRxa7BPAEbNW2Xx+glh+aHdoOsKWbutXFDhV51j4B6wkZl6G/CfwL
-         VuA/HA6caQhrFrLIlh6Jhm+I0zVuNUIXnbMz5LU4ZskihQ1M2lux09H5s1oseK+Fn3Ru
-         qjpKrlcqwqJuk2F+XWq4Pk8w45OPNmD6wVywZU+tehjOdvLcZclJKgZR7el+uDVxPJuQ
-         GPYemnP+GqFGVvWMbx6bmTYoUFc4nPGy8oPASkvOxlo3Z1vscVh9m6nS0HEa7jbm5M8o
-         8K6Q==
+        bh=PeoFP3TQ+jL34Z7z2KDfzHEGSxz80XsvHL183l9rn3g=;
+        b=sxhQwWWAGETiAdHR4C/FBa1OGQB34cuJesNhaoXL3ICKy77zM/w48vpkahqdnkyBVj
+         7x9Asis+n/2wrN2LbHXRCXtmL42pm+tSy3t1wuN45EQdPzMs5DhdVLaAwGxXcpc0kVLx
+         XdrYovPBjLu9f3vw6leFyWXSXTkcoU+quK1RQ3lb3yJx4qpCe0crj/RedZ9lurliBKVy
+         M/IWdrb24VxK3uKPNX9Xl1liqEZJnozfgYGZ/0zdoUZxqyy72Fbl6VY6zjtF3o26Vji1
+         wk0Kc5ykB0D8equ6L4NKZKcAamDnzDDVrS5w/UrU1z3foX0vZrJKn4xge6w6qM2yF1MS
+         3VBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nfOtQiQHZ+wi2NG1xVzLSk3SFSAgbgKPgSuzz4qK8fo=;
-        b=rMFZVA3MkEQeeHIogM9ixMr5vBwfPW6uM89GT1rOPyLoV/ID0+J5p7HLPMWoLnWvky
-         P660yLzavMnRk956d37CSBdRbqFTR7wzmo2d7cA1MgaSnvSOysvE+xjOl66BUgeR6r2q
-         Oi1mmT0/ZR5jhbQUoqvFUpfHXusbvLQ3eQWiCDoNT+JtNxNkucNsu11MKI/LjDjoqO3E
-         1JoM4BvAFKoBVfGM1bfmjDBOLsh8jgpo4Y8+ZtXSN/l9Yq0FSQ4b6IgtkHoTl/55qtIt
-         +uDkmSb7GWhlH8FM6R8nohJ0YR7lkGhO71LJ4sSmaPH9HwZ4pwEsURgcPu7oYhYWPjBS
-         lrjg==
-X-Gm-Message-State: APt69E3PwVWiRlvquGJc7mIYubw/cNTVs42rhjz6wwUd1ANtTWyrQzCD
-        TV7fkqi9GIHoLUCGNjwQUI7U5APdKLhSybw/Jxo=
-X-Google-Smtp-Source: AAOMgpcyePGt4F6P1c+lxoqDOFkHK+pzDDR2qwKo6khdtmM60soMD4jUK7Hb9va+tSCrLoIyNVnSBkHfn8AIgX8el0M=
-X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr1983563ual.141.1530045877911;
- Tue, 26 Jun 2018 13:44:37 -0700 (PDT)
+        bh=PeoFP3TQ+jL34Z7z2KDfzHEGSxz80XsvHL183l9rn3g=;
+        b=forDtfwmcwYB4i0WwdgwDQ+//S5SuuMzrahMadUK8c45mqarmXrDxD0tsrnBV7R3Vv
+         gxwKkSqbYb2p2RjVz55WMoGw/L+xllQRA6QpRoUYeg8uM82CUevOt8ZFwA9WEc8jM0sD
+         UHe+nwOjXJFXIFgoNTNLSGdJ8inC6KpZSgSnSowL0y7AwA5QdRmNasZvy4ddaFQPtqH0
+         CfEXS3M+iOQitQbZBkB436aW2tazGRlofrUozccLMAy+WWu7XNJFg+eKkNnFCCKkEjHZ
+         Y/0nSe5bLZzEdgqV6hRYRZ3xvlVW/zQTc/DAelZj1s0JchEwWZJ8QkkEN38plpfVTTIZ
+         vgqw==
+X-Gm-Message-State: APt69E2vfDO++6qZsaj4zsJ7VUHktNg195SxITYL3n0qoy6vl/Nr2fSG
+        cSOU9CvHy1rV/mOpCHjnHGLalYloerHIk4KO5pi4BQ==
+X-Google-Smtp-Source: AAOMgpddGRMd4Tg0gT3mBFB4jWVyvyFNgHiMOoKexshZcn0zvY4KKz7nuCLEuZKSGYw9Mme+VBwIRHLRwL4ub36t9hM=
+X-Received: by 2002:a1c:f902:: with SMTP id x2-v6mr2658955wmh.116.1530046022554;
+ Tue, 26 Jun 2018 13:47:02 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 13:44:36
- -0700 (PDT)
-In-Reply-To: <20180626215648.1472b96e@bbrezillon>
-References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
- <20180622104930.32050-10-boris.brezillon@bootlin.com> <CAHp75Vdxg49q6aQj0dDpzM4q2WnQbGoCECWR1roda7aMR+u4gg@mail.gmail.com>
- <20180626215648.1472b96e@bbrezillon>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 26 Jun 2018 23:44:36 +0300
-Message-ID: <CAHp75VcVvOzgOM87rSrwsCxh+WAK-z+zVCJifnY+Xeeu=cPFiA@mail.gmail.com>
-Subject: Re: [PATCH v5 09/10] gpio: Add a driver for Cadence I3C GPIO expander
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Przemyslaw Gaj <pgaj@cadence.com>
+References: <1514459655.4190.1530034687884.JavaMail.zimbra@efficios.com>
+ <170076903.5015.1530038711536.JavaMail.zimbra@efficios.com>
+ <CALCETrXimh61U7Tn9KShr6sKag7NCL3qfraN18Oy2Bk+0VRAUA@mail.gmail.com>
+ <1277536320.5963.1530042608296.JavaMail.zimbra@efficios.com>
+ <CALCETrWhY_+SxKt9Xq2ruiGk8GQeYvrojy84w_Quosrf5fpApQ@mail.gmail.com> <1352608225.6039.1530043932895.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1352608225.6039.1530043932895.JavaMail.zimbra@efficios.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Tue, 26 Jun 2018 13:46:50 -0700
+Message-ID: <CALCETrVs57TZf4V4vrCkh2Aa_x=+HuVO5hYB5yFmS1VqE5rcuw@mail.gmail.com>
+Subject: Re: rseq: How to test for compat task at signal delivery
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-arch <linux-arch@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 10:56 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> On Tue, 26 Jun 2018 22:07:03 +0300
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> On Fri, Jun 22, 2018 at 1:49 PM, Boris Brezillon
->> <boris.brezillon@bootlin.com> wrote:
->> > Add a driver for Cadence I3C GPIO expander.
->> >
->> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->>
->> > +       scratchbuf = kmalloc(sizeof(*scratchbuf) * 2, GFP_KERNEL);
->>
->> kmalloc_array() ?
->>
->> > +       ret = i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
->> > +                                      ARRAY_SIZE(xfers));
->>
->> One line?
->>
-
->> You don't change mask here, why do you need a pointer to it?
+On Tue, Jun 26, 2018 at 1:12 PM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
 >
-> What are you talking about??!!! This is part of the gpio_chip interface
-> that drivers have to implement. You can't decide that mask should not be
-> a pointer. And if you actually look at the code, you'll probably see
-> that the reason we're passed a pointer here is that the GPIO chip might
-> expose more GPIOs than can be represented by an unsigned long, hence
-> the array of unsigned long.
+> ----- On Jun 26, 2018, at 3:55 PM, Andy Lutomirski luto@amacapital.net wrote:
 >
+> > On Tue, Jun 26, 2018 at 12:50 PM Mathieu Desnoyers
+> > <mathieu.desnoyers@efficios.com> wrote:
+> >>
+> >> ----- On Jun 26, 2018, at 3:32 PM, Andy Lutomirski luto@amacapital.net wrote:
+> >>
+> >> > On Tue, Jun 26, 2018 at 11:45 AM Mathieu Desnoyers
+> >> > <mathieu.desnoyers@efficios.com> wrote:
+> >> >>
+> >> >> ----- On Jun 26, 2018, at 1:38 PM, Mathieu Desnoyers
+> >> >> mathieu.desnoyers@efficios.com wrote:
+> >> >>
+> >> >> > Hi Andy,
+> >> >> >
+> >> >> > I would like to make the behavior rseq on compat tasks more robust
+> >> >> > by ensuring that kernel/rseq.c:rseq_get_rseq_cs() clears the high
+> >> >> > bits of rseq_cs->abort_ip, rseq_cs->start_ip and
+> >> >> > rseq_cs->post_commit_offset when a 32-bit binary is run on a 64-bit
+> >> >> > kernel.
+> >> >> >
+> >> >> > The intent here is that if user-space has garbage rather than zeroes
+> >> >> > in its struct rseq_cs fields padding, the behavior will be the same
+> >> >> > whether the binary is run on 32-bit or 64 kernels.
+> >> >> >
+> >> >> > I know that internally, the kernel is making a transition from
+> >> >> > is_compat_task() to in_compat_syscall().
+> >> >> >
+> >> >> > I'm fine with using in_compat_syscall() when rseq_get_rseq_cs() is
+> >> >> > invoked from a system call, but is it OK to call it when it is
+> >> >> > invoked from signal delivery ? AFAIU, signals can be delivered
+> >> >> > upon return from interrupt as well.
+> >> >> >
+> >> >> > If not, what strategy do you recommend for arch-agnostic code ?
+> >> >>
+> >> >> I think what we're missing here is a new "is_compat_frame(struct ksignal *ksig)"
+> >> >> which I could use in the rseq code. I'll prepare a patch and we can discuss
+> >> >> from there.
+> >> >>
+> >> >
+> >> > That sounds about right.
+> >> >
+> >> > I'm confused, though.  Wouldn't it be more consistent to just segfault
+> >> > if the high 32 bits are not clear when rseq transitions to a 32-bit
+> >> > context?  If there's garbage in 64-bit mode, the program will crash.
+> >> > Why should 32-bit mode be any different?
+> >>
+> >> Currently, if a 32-bit binary puts garbage in the high bits of
+> >> start_ip, post_commit_offset, and abort_ip in
+> >>
+> >> include/uapi/linux/rseq.h:
+> >>
+> >> struct rseq_cs {
+> >>         /* Version of this structure. */
+> >>         __u32 version;
+> >>         /* enum rseq_cs_flags */
+> >>         __u32 flags;
+> >>         LINUX_FIELD_u32_u64(start_ip);
+> >>         /* Offset from start_ip. */
+> >>         LINUX_FIELD_u32_u64(post_commit_offset);
+> >>         LINUX_FIELD_u32_u64(abort_ip);
+> >> } __attribute__((aligned(4 * sizeof(__u64))));
+> >
+> > This ABI isn't real ABI until a stable kernel happens, right?  So how
+> > about just making all those fields be u64?
+>
+> Good point. Unlike the rseq_cs field in the struct rseq TLS, those
+> fields don't need to be word-sized/word-aligned, so we could simply
+> declare them as __u64.
+>
+> >
+> >>
+> >> A 32-bit kernel just never reads the padding, thus in reality acting
+> >> as if those were zeroes. However, a 64-bit kernel dealing with this
+> >> 32-bit compat task will read that padding, handling those as very
+> >> large values.
+> >
+> > Sounds like a design error.  Have all kernels read the fields no
+> > matter what.  A 32-bit kernel will send SIGSEGV if the high bits are
+> > set.  A 64-bit kernel running compat userspace should make sure that a
+> > 32-bit task dies if the high bits are set.
+>
+> If we end up declaring those as __u64, that approach makes sense.
+>
+> >
+> >>
+> >> We need to improve that by introducing a consistent behavior across
+> >> native 32-bit kernels and 32-bit compat mode on 64-bit kernels.
+> >>
+> >> There are two ways to achieve this: either the 32-bit kernel validates
+> >> the padding by killing the process if padding is non-zero, or the
+> >> 64-bit kernel treats compat mode by zeroing the high bits of padding.
+> >>
+> >> If we look at system call interfaces in general, I think the usual
+> >> approach is to clear the top bits whenever a value read from a
+> >> compat task ends up being used as a pointer. This is why I am tempted
+> >> to go for the "clear high bits" approach rather than killing the task.
+> >
+> > I think the modern preference is to use fields of fixed size rather
+> > than long when UABI is involved.
+> >
+> > In any event, I think the test you want is user_64bit_mode().
+>
+> Currently, user_64bit_mode is only implemented on x86.
+>
+> Should we introduce an architecture-agnostic user_64bit_mode(struct pt_regs *)
+> which maps to is_compat_task() for non-x86 ? I'm just worried that ptrace
+> code could try to use it from the context of another task and get mixed up.
 
-> I'll say it here because this is not the first time I'm pissed off by
-> one of your review.
+I'm not sure other archs can do this.  It might need to have a
+task_struct pointer, too.
 
-Like 'I like offending people, because I think people who get offended
-should be offended.' ?
-I'm not that guy, relax.
+But I think the only actual consideration is that a lot of
+architectures might fail to kill the task if the task is 32-bit and
+regs->ip or regs->sp ends up with garbage in the high bits.  Certainly
+x86 is not consistent about this.  So maybe a helper to fully validate
+all 64 bits of ip and sp or perhaps helpers to set them and check for
+full validity would be better.  Like:
 
->  You seem to review everything that is posted on the LKML,
+void set_task_64bit_ip_or_signal(struct task_struct *, u64 value);
 
-That's not true.
+that promises to actually signal the task if value is garbage?
 
-> and most of the time your reviews are superficial (focused on tiny
-> details or coding style issues). Don't you have better things to do?
+Let's ask linux-arch here.  I'm not nearly familiar enough with the
+nasty details of other compat-capable architectures.  x86 is very,
+very, very inconsistent about how what the high bits of the registers
+mean, and there are cases where the "high bits" involved are actually
+the high 48 bits, not the high 32 bits.  Sigh.
 
-If your code is written using ancient style and / or API it's not good
-to start with.
-Isn't it? Otherwise, why we do introduce new internal APIs, for what purpose?
-
-On top of that you might find more interesting reviews where I pointed
-out to a memory leak or other nasty stuff. But of course you prefer
-not to norice that.
-I understand you.
-
-> I mean, I'm fine when I get such comments from people that also do
-> useful comments, but yours are most of the time useless and sometime
-> even wrong because you didn't time to look at the code in details.
-
-Calm down, please.
-You would simple ignore them. Your choice.
-
-But okay, I would try to avoid your stuff to make you happier. Sorry
-for disturbing.
-
->> Ditto.
-
-In these two comments I'm indeed wrong.
-
--- 
-With Best Regards,
-Andy Shevchenko
+--Andy
