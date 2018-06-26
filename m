@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CCBC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F95DC43145
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1BC72677D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDD5E2677A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 09:22:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OrQYumjQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1BC72677D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FZNQGjeK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDD5E2677A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933899AbeFZJWh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 05:22:37 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53189 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933784AbeFZJWb (ORCPT
+        id S933982AbeFZJWj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 05:22:39 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44534 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933794AbeFZJWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 05:22:31 -0400
-Received: by mail-wm0-f67.google.com with SMTP id p126-v6so1040242wmb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:22:30 -0700 (PDT)
+        Tue, 26 Jun 2018 05:22:32 -0400
+Received: by mail-wr0-f193.google.com with SMTP id p12-v6so14823106wrn.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 02:22:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9ntn7tvil3gnvbRPyAg0hZqRPLNr9XRiNe9LjAxmLwo=;
-        b=OrQYumjQI+tnScHt4ElZzhag3QVDdpjFroKkraRlfebj8KKGyZXtzb7vL9MuyhXwaC
-         m5bsQRZXcUMPBZqzSnch419tdNcJoqf3DmJDt0vsZh4lRDUT4Cv7y6Dxi+4pthPWto68
-         EYLyfGbl83PioMQ6V/nOSPuirpGbv6b16EHf0=
+        bh=Pyv1sGt65yF554e8vZ0B1y+2vFmmAQCdYZPZIKxIZYM=;
+        b=FZNQGjeKjhaMGmMQFLsKYA0/FjQDWD06mn2tZ67deyQBKg/HntOIvXMZ22FEzv72p1
+         SdF/ZuQ3EQZbmbv8jLd8QsICeJyYgtWaRCOvB1AalvoYZeAdUGMMnTbx5mPr+FUiMJQS
+         OUPf/3EdgECvrbai4HCqXD1sCp0ZHwoN7hoKI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9ntn7tvil3gnvbRPyAg0hZqRPLNr9XRiNe9LjAxmLwo=;
-        b=BT+A8W4d/ksGD4KoT3fde0ZoHJsSxJva2qnlVlCe631hVhjr57jjEF+lpv1njvpq7Z
-         AvnedXmIQmT2qTTwK2s4kzIj3aUPM5dDEQ1GUt4udUlQsmrGzBqHk3xTxalzUR+pxGlC
-         FUhNiV+MkWG2+t9KLA6+Xr/JdpcB8XHy+aJWxFkQSxFJZKK60biPBeDBCWdgwQ1Qo/D+
-         pEkzo/TI+REy36jI5WhAtTN63jPqGBclb9qxT/rkDFw7fCLFUazElFKoJ3uDdGzbnLhp
-         wKkriTLWAIuOZyeruIrUZDcrd3GKicq3E1of41VMgALazQ1rArouHpjKzyQWGA6BRI0R
-         G1Dg==
-X-Gm-Message-State: APt69E3yNxP8CAxuHWYS2vGcrB3/N8BjFS9mwUUC25jxsiF4MiUL5xWC
-        U3khpsDjo5LXlqOaehhCccIn6Q==
-X-Google-Smtp-Source: AAOMgpfXxRRU6Qz0gU8X83f2nn2bOt89rKFbnvLzhkYLT+d9wfW1yEJCw3s85M5wt1MCOGYmACSpoA==
-X-Received: by 2002:a1c:8893:: with SMTP id k141-v6mr931940wmd.133.1530004950022;
-        Tue, 26 Jun 2018 02:22:30 -0700 (PDT)
+        bh=Pyv1sGt65yF554e8vZ0B1y+2vFmmAQCdYZPZIKxIZYM=;
+        b=UgQWYTOYW8hiZr/8amxZ/a9tykJlldoCmjAFrRSOLhOSM4KmH4JDEqGO19h4yZVYCV
+         ejcJmri7SjUPa0Lrezb6Q2oANqSTUZU3jH7PnPkS2yiuM3DgOiq1cAPVqZa+X8Rfr6Ge
+         rNzEIFeqC2dEl2iTveG0MRwZ+Y8ZZAywtcIyMPdjCYAtEFt1ii9b7LbB2IGFLvkZKfA+
+         EB0lFbJNMdDhwm5uYLr6rWhAAQs8oTZoXPqkF1SzlAUAfbo6ejb9iqcTKssCrlr7BZ9O
+         RUB+5k2F8DshGAXkdxtOlfkazEQnOG3DvNThZXgsq9Ub0cvQDOez0NE+Wj41ynoyH/vO
+         WT+A==
+X-Gm-Message-State: APt69E3DJjWIiWlETNM4r1gHoXgmgby9zZOSbsidGoaqPdJhy+cOGp6a
+        POVJzvymH7wefTLtZgSjm+FjPA==
+X-Google-Smtp-Source: AAOMgpffIwoHFQ9gWeh21w+CSbJQCTVUnuqUPx50XdB1jM6YLo4Dp+Aov2GtD4D8/eTud+oEbPVEFg==
+X-Received: by 2002:adf:b710:: with SMTP id l16-v6mr741965wre.115.1530004951104;
+        Tue, 26 Jun 2018 02:22:31 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm1438456wrr.3.2018.06.26.02.22.28
+        by smtp.gmail.com with ESMTPSA id x5-v6sm1438456wrr.3.2018.06.26.02.22.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 26 Jun 2018 02:22:29 -0700 (PDT)
+        Tue, 26 Jun 2018 02:22:30 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     broonie@kernel.org, robh+dt@kernel.org, alsa-devel@alsa-project.org
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         perex@perex.cz, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, niklas.cassel@linaro.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 06/12] ASoC: qdsp6: q6afe: use of_platform_populate/depopulate()
-Date:   Tue, 26 Jun 2018 10:20:10 +0100
-Message-Id: <20180626092016.9296-7-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 07/12] ASoC: qdsp6: q6afe-dai: support dt based module loading
+Date:   Tue, 26 Jun 2018 10:20:11 +0100
+Message-Id: <20180626092016.9296-8-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180626092016.9296-1-srinivas.kandagatla@linaro.org>
 References: <20180626092016.9296-1-srinivas.kandagatla@linaro.org>
@@ -71,61 +71,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the child nodes have there own compatible strings,
-Use of_platform_populate/depopulate() instead of less common
-of_platform_device_create()/destroy().
+This patch uses new compatible string to make DT based module loading work.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Acked-by: Niklas Cassel <niklas.cassel@linaro.org>
 ---
- sound/soc/qcom/qdsp6/q6afe.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ sound/soc/qcom/qdsp6/q6afe-dai.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-index 01f43218984b..621b67b34db9 100644
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -316,7 +316,6 @@ struct q6afe {
- 	struct mutex lock;
- 	struct list_head port_list;
- 	spinlock_t port_list_lock;
--	struct platform_device *pdev_dais;
- };
- 
- struct afe_port_cmd_device_start {
-@@ -1438,7 +1437,6 @@ static int q6afe_probe(struct apr_device *adev)
- {
- 	struct q6afe *afe;
- 	struct device *dev = &adev->dev;
--	struct device_node *dais_np;
- 
- 	afe = devm_kzalloc(dev, sizeof(*afe), GFP_KERNEL);
- 	if (!afe)
-@@ -1453,22 +1451,12 @@ static int q6afe_probe(struct apr_device *adev)
- 
- 	dev_set_drvdata(dev, afe);
- 
--	dais_np = of_get_child_by_name(dev->of_node, "dais");
--	if (dais_np) {
--		afe->pdev_dais = of_platform_device_create(dais_np,
--							   "q6afe-dai", dev);
--		of_node_put(dais_np);
--	}
--
--	return 0;
-+	return of_platform_populate(dev->of_node, NULL, NULL, dev);
- }
- 
- static int q6afe_remove(struct apr_device *adev)
- {
--	struct q6afe *afe = dev_get_drvdata(&adev->dev);
--
--	if (afe->pdev_dais)
--		of_platform_device_destroy(&afe->pdev_dais->dev, NULL);
-+	of_platform_depopulate(&adev->dev);
- 
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+index 5002dd05bf27..1d2e5013c121 100644
+--- a/sound/soc/qcom/qdsp6/q6afe-dai.c
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -1290,9 +1290,16 @@ static int q6afe_dai_dev_remove(struct platform_device *pdev)
  	return 0;
  }
+ 
++static const struct of_device_id q6afe_dai_device_id[] = {
++	{ .compatible = "qcom,q6afe-dais" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, q6afe_dai_device_id);
++
+ static struct platform_driver q6afe_dai_platform_driver = {
+ 	.driver = {
+ 		.name = "q6afe-dai",
++		.of_match_table = of_match_ptr(q6afe_dai_device_id),
+ 	},
+ 	.probe = q6afe_dai_dev_probe,
+ 	.remove = q6afe_dai_dev_remove,
 -- 
 2.16.2
 
