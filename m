@@ -2,159 +2,252 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492F6C43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0EFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0187226EFA
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:27:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0187226EFA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4402C24CA8
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 18:28:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="josTfnd+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4402C24CA8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeFZS1y (ORCPT
+        id S1752763AbeFZS2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 14:27:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40174 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752231AbeFZS1w (ORCPT
+        Tue, 26 Jun 2018 14:28:44 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45050 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750962AbeFZS2m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 14:27:52 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5QIQFZJ085443
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:27:52 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jutrtg1tt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 14:27:52 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 26 Jun 2018 14:27:51 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Jun 2018 14:27:45 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5QIRinU8585548
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Jun 2018 18:27:44 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6025BB2065;
-        Tue, 26 Jun 2018 14:27:38 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2EEE9B205F;
-        Tue, 26 Jun 2018 14:27:38 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Jun 2018 14:27:38 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 2C0A516C15BE; Tue, 26 Jun 2018 11:29:50 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 11:29:50 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
- race with CPU offline
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180626002052.GA24146@linux.vnet.ibm.com>
- <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
- <20180626175119.GL2494@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626175119.GL2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062618-0068-0000-0000-0000030E8884
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009259; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01052695; UDB=6.00539684; IPR=6.00830618;
- MB=3.00021866; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-26 18:27:49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062618-0069-0000-0000-000044D15980
-Message-Id: <20180626182950.GH3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-26_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=928 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806260206
+        Tue, 26 Jun 2018 14:28:42 -0400
+Received: by mail-wr0-f193.google.com with SMTP id p12-v6so16575766wrn.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 11:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=h/uH5uFPgIYctKtBHMqt1daYgUmBFyfBNK679IqD3Gs=;
+        b=josTfnd+C5MIScuq0oMZ9FaB0tVijFFrF9itzRljgDF8hlQBicyYObkrR92Qhw3a9V
+         N7RRPDVjG2mYrptx9lwbOA5EsrbevIp6d295sJfKttzJ3uxE8mPpLQfnnpJuONF7jczU
+         PPg5Ey51g4WW4Y2KoNW5cT0Jk9YYuZNDmkCGA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=h/uH5uFPgIYctKtBHMqt1daYgUmBFyfBNK679IqD3Gs=;
+        b=rL62MzTaNhe7b4wznWlDw2kUTkqFev1IAhRa6neF1A4BiLz/5BbCaJpfc8Ns6HCxLg
+         UZO43vqfMXDzhfk+FIp9t8eQD8DVeopssVLvkneNHl7vXV4ZdGU8RWy82EJdFufuAPHI
+         FcTSq8yNhIO3DUZg9+Ctah7E/WWdiTb/VEMcADeznhpQ4L4hzCx+K+bVRPW42bpMN4BF
+         l1MlwGAlK3u0sML6jbxzScvuT/9oLCF6SFaXjIsFBcMw0kpEGV09gM6PXh/rZO5E9bdM
+         iogt+PKjY2vw6sbk0Ga3mgL/kls1obDIzBnkF5mc9z2gVUTMCmp1o+QYIUET/rPYVnkQ
+         q7Cg==
+X-Gm-Message-State: APt69E3S6//V4ufNpJYMNau7dmWxqFUTDCaHGmxW1Ph/ZsD8RSCU/t59
+        XgUqQBMNbiRsE/+vGLbhv4rLR/Z3K7U=
+X-Google-Smtp-Source: AAOMgpcf9bTmHZr2JbFP8gHSS5gfuOuce76u4yt3TCcYhKavo2GSTjzJ/EYBsXZBuHqzQA/GlwFTxw==
+X-Received: by 2002:adf:9d93:: with SMTP id p19-v6mr2507676wre.12.1530037720726;
+        Tue, 26 Jun 2018 11:28:40 -0700 (PDT)
+Received: from rev02.home ([2a01:cb1d:112:6f00:d037:e907:f0a2:a5ea])
+        by smtp.gmail.com with ESMTPSA id s17-v6sm1707664wmc.34.2018.06.26.11.28.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 11:28:39 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Mackerras <paulus@samba.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: [PATCH v9 0/6] add support for relative references in special sections
+Date:   Tue, 26 Jun 2018 20:27:55 +0200
+Message-Id: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 07:51:19PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 26, 2018 at 10:10:39AM -0700, Paul E. McKenney wrote:
-> > Without special fail-safe quiescent-state-propagation checks, grace-period
-> > hangs can result from the following scenario:
-> > 
-> > 1.	CPU 1 goes offline.
-> > 
-> > 2.	Because CPU 1 is the only CPU in the system blocking the current
-> > 	grace period, as soon as rcu_cleanup_dying_idle_cpu()'s call to
-> > 	rcu_report_qs_rnp() returns.
-> > 
-> > 3.	At this point, the leaf rcu_node structure's ->lock is no longer
-> > 	held: rcu_report_qs_rnp() has released it, as it must in order
-> > 	to awaken the RCU grace-period kthread.
-> > 
-> > 4.	At this point, that same leaf rcu_node structure's ->qsmaskinitnext
-> > 	field still records CPU 1 as being online.  This is absolutely
-> > 	necessary because the scheduler uses RCU, and ->qsmaskinitnext
-> 
-> Can you expand a bit on this, where does the scheduler care about the
-> online state of the CPU that's about to call into arch_cpu_idle_dead()?
+This adds support for emitting special sections such as initcall arrays,
+PCI fixups and tracepoints as relative references rather than absolute
+references. This reduces the size by 50% on 64-bit architectures, but
+more importantly, it removes the need for carrying relocation metadata
+for these sections in relocatable kernels (e.g., for KASLR) that needs
+to be fixed up at boot time. On arm64, this reduces the vmlinux footprint
+of such a reference by 8x (8 byte absolute reference + 24 byte RELA entry
+vs 4 byte relative reference)
 
-Because the CPU does a context switch between the time that the CPU gets
-marked offline from the viewpoint of cpu_offline() and the time that
-the CPU finally makes it to arch_cpu_idle_dead().  Plus reporting the
-quiescent state (rcu_report_qs_rnp()) can result in waking up RCU's
-grace-period kthread.  During that context switch and that wakeup,
-the scheduler needs RCU to continue paying attention to the outgoing
-CPU, right?
+Patch #3 was sent out before as a single patch. This series supersedes
+the previous submission. This version makes relative ksymtab entries
+dependent on the new Kconfig symbol HAVE_ARCH_PREL32_RELOCATIONS rather
+than trying to infer from kbuild test robot replies for which architectures
+it should be blacklisted.
 
-> > 	contains RCU's idea as to which CPUs are online.  Therefore,
-> > 	invoking rcu_report_qs_rnp() after clearing CPU 1's bit from
-> > 	->qsmaskinitnext would result in a lockdep-RCU splat due to
-> > 	RCU being used from an offline CPU.
-> > 
-> > 5.	RCU's grace-period kthread awakens, sees that the old grace period
-> > 	has completed and that a new one is needed.  It therefore starts
-> > 	a new grace period, but because CPU 1's leaf rcu_node structure's
-> > 	->qsmaskinitnext field still shows CPU 1 as being online, this new
-> > 	grace period is initialized to wait for a quiescent state from the
-> > 	now-offline CPU 1.
-> 
-> If we're past cpuhp_report_idle_cpu() -> rcu_report_dead(), then
-> cpu_offline() is true. Is that not sufficient state to avoid this?
+Patch #1 introduces the new Kconfig symbol HAVE_ARCH_PREL32_RELOCATIONS,
+and sets it for the main architectures that are expected to benefit the
+most from this feature, i.e., 64-bit architectures or ones that use
+runtime relocations.
 
-Not from what I can see.  To avoid this, I need to synchronize
-with rcu_gp_init(), but I cannot rely on the usual rcu_node ->lock
-synchronization without severely complicating quiescent-state reporting.
-For one thing, quiescent-state reporting can require waking up the
-grace-period kthread, which cannot be done while holding any rcu_node
-->lock due to deadlock.  I -could- defer the wakeup (as is done in
-several other places), but adding the separate lock is much simpler,
-and given that both grace-period initialization and CPU hotplug are
-relatively rare operations, the extra overhead is way down in the noise.
+Patch #2 add support for #define'ing __DISABLE_EXPORTS to get rid of
+ksymtab/kcrctab sections in decompressor and EFI stub objects when
+rebuilding existing C files to run in a different context.
 
-Or am I missing a trick here?
+Patches #4 - #6 implement relative references for initcalls, PCI fixups
+and tracepoints, respectively, all of which produce sections with order
+~1000 entries on an arm64 defconfig kernel with tracing enabled. This
+means we save about 28 KB of vmlinux space for each of these patches.
 
-							Thanx, Paul
+[From the v7 series blurb, which included the jump_label patches as well]:
+  For the arm64 kernel, all patches combined reduce the memory footprint of
+  vmlinux by about 1.3 MB (using a config copied from Ubuntu that has KASLR
+  enabled), of which ~1 MB is the size reduction of the RELA section in .init,
+  and the remaining 300 KB is reduction of .text/.data.
 
-> > 6.	Without the fail-safe force-quiescent-state checks, there would
-> > 	be no quiescent state from the now-offline CPU 1, which would
-> > 	eventually result in RCU CPU stall warnings and memory exhaustion.
-> 
+Branch:
+git://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git relative-special-sections-v9
+
+Changes since v8:
+- add Nico's ack (#2)
+- drop 'const' qualifier from __ADDRESSABLE(sym) to prevent mismatching
+  attributes for the .discard section (#3)
+- drop all uses of VMLINUX_SYMBOL_STR(), which is on its way out (#3 - #6)
+
+Changes since v7:
+- dropped the jump_label patches, these will be revisited in a separate series
+- reorder __DISABLE_EXPORTS with __KSYM_DEPS__ check in #2
+- use offset_to_ptr() helper function to abstract the relative pointer
+  conversion [int *off -> (ulong)off + *off] (#3 - #6)
+- rebase onto v4.16-rc3
+
+Changes since v6:
+- drop S390 from patch #1 introducing HAVE_ARCH_PREL32_RELOCATIONS: kbuild
+  robot threw me some s390 curveballs, and given that s390 does not define
+  CONFIG_RELOCATABLE in the first place, it does not benefit as much from
+  relative references as arm64, x86 and power do
+- add patch to allow symbol exports to be disabled at compilation unit
+  granularity (#2)
+- get rid of arm64 vmlinux.lds.S hunk to ensure code generated by __ADDRESSABLE
+  gets discarded from the EFI stub - it is no longer needed after adding #2 (#1)
+- change _ADDRESSABLE() to emit a data reference, not a code reference - this
+  is another simplification made possible by patch #2 (#3)
+- add Steven's ack to #6
+- split x86 jump_label patch into two (#9, #10)
+
+Changes since v5:
+- add missing jump_label prototypes to s390 jump_label.h (#6)
+- fix inverted condition in call to jump_entry_is_module_init() (#6)
+
+Changes since v4:
+- add patches to convert x86 and arm64 to use relative references for jump
+  tables (#6 - #8)
+- rename PCI patch and add Bjorn's ack (#4)
+- rebase onto v4.15-rc5
+
+Changes since v3:
+- fix module unload issue in patch #5 reported by Jessica, by reusing the
+  updated routine for_each_tracepoint_range() for the quiescent check at
+  module unload time; this requires this routine to be moved before
+  tracepoint_module_going() in kernel/tracepoint.c
+- add Jessica's ack to #2
+- rebase onto v4.14-rc1
+
+Changes since v2:
+- Revert my slightly misguided attempt to appease checkpatch, which resulted
+  in needless churn and worse code. This v3 is based on v1 with a few tweaks
+  that were actually reasonable checkpatch warnings: unnecessary braces (as
+  pointed out by Ingo) and other minor whitespace misdemeanors.
+
+Changes since v1:
+- Remove checkpatch errors to the extent feasible: in some cases, this
+  involves moving extern declarations into C files, and switching to
+  struct definitions rather than typedefs. Some errors are impossible
+  to fix: please find the remaining ones after the diffstat.
+- Used 'int' instead if 'signed int' for the various offset fields: there
+  is no ambiguity between architectures regarding its signedness (unlike
+  'char')
+- Refactor the different patches to be more uniform in the way they define
+  the section entry type and accessors in the .h file, and avoid the need to
+  add #ifdefs to the C code.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Thomas Garnier <thgarnie@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Nicolas Pitre <nico@linaro.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jessica Yu <jeyu@kernel.org>
+
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: x86@kernel.org
+
+Ard Biesheuvel (6):
+  arch: enable relative relocations for arm64, power and x86
+  module: allow symbol exports to be disabled
+  module: use relative references for __ksymtab entries
+  init: allow initcall tables to be emitted using relative references
+  PCI: Add support for relative addressing in quirk tables
+  kernel: tracepoints: add support for relative references
+
+ arch/Kconfig                          | 10 ++++
+ arch/arm64/Kconfig                    |  1 +
+ arch/powerpc/Kconfig                  |  1 +
+ arch/x86/Kconfig                      |  1 +
+ arch/x86/boot/compressed/kaslr.c      |  5 +-
+ arch/x86/include/asm/Kbuild           |  1 +
+ arch/x86/include/asm/export.h         |  5 --
+ drivers/firmware/efi/libstub/Makefile |  3 +-
+ drivers/pci/quirks.c                  | 12 +++--
+ include/asm-generic/export.h          | 12 ++++-
+ include/linux/compiler.h              | 19 +++++++
+ include/linux/export.h                | 57 +++++++++++++++-----
+ include/linux/init.h                  | 44 +++++++++++----
+ include/linux/pci.h                   | 20 +++++++
+ include/linux/tracepoint.h            | 19 +++++--
+ init/main.c                           | 32 +++++------
+ kernel/module.c                       | 32 ++++++++---
+ kernel/printk/printk.c                | 16 +++---
+ kernel/tracepoint.c                   | 49 +++++++++--------
+ security/security.c                   | 17 +++---
+ 20 files changed, 255 insertions(+), 101 deletions(-)
+ delete mode 100644 arch/x86/include/asm/export.h
+
+-- 
+2.11.0
 
