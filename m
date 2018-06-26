@@ -2,121 +2,91 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D15C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D5CC43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE02120779
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D436221655
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:29:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="a8U0QMO3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE02120779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UDfGJj2c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D436221655
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeFZP2g (ORCPT
+        id S1752059AbeFZP3D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:28:36 -0400
-Received: from vern.gendns.com ([206.190.152.46]:44832 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751054AbeFZP2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:28:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
-        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YVl30gjMfzJNY/U7TcpVpMSh6wOSq1RXEvH5tCkgy4k=; b=a8U0QMO3DSPO9+udUK+QgxguvI
-        G9jJk66f/cYgjfEDhHoZPn93DEOHGiC2gESAduyVSnB1cEpF3PxYcyC/vDDWLKi9jIl+LVFVRgQTb
-        /SK/NFsnsad12ACdeeI58shFEw9ApObwnYHd7X4ttZDTHld1zsvEtGKRNaxB7uJa55mWF6SYl9/dp
-        jsVh8B1WnDDBlxI44ZcCl8mrpFVzYReWwzHxYHxNY2z03OGelNFX49JgwVZroNvT+sgENIuG7MqtQ
-        wsI8H4+DnMqUrpWzq5rg/Z1LBqpWNqqq1hlGOLJqxliDmQ38lTjMGTkxugxh7YW68aF+c7EGvsVrS
-        tp1Z1tHQ==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:48342 helo=freyr.lechnology.com)
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1fXptR-005KZi-Jm; Tue, 26 Jun 2018 11:28:33 -0400
-From:   David Lechner <david@lechnology.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: da850: Add power-domains to PWM nodes
-Date:   Tue, 26 Jun 2018 10:28:17 -0500
-Message-Id: <20180626152817.16803-1-david@lechnology.com>
-X-Mailer: git-send-email 2.17.1
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Tue, 26 Jun 2018 11:29:03 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46801 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751334AbeFZP3C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 11:29:02 -0400
+Received: by mail-lj1-f193.google.com with SMTP id u6-v6so5954011lju.13
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 08:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=p7A1aQmfvY7GY8s6P7Kr2lz8w8Yq9WaZaNeDeX7lA+I=;
+        b=UDfGJj2cRcstuXxvBuug5dNckOuHe35B/+Pc+zjiYOn3UOrno/UpFukxCIBiIAdv+O
+         Jvrq73usgw+v5JJK0IlnmEF32EK0+v2WWGxD3LWtnRQkh3IOgYT/bNB1eH/44/ffkmod
+         ooPOK36epeXhqf+qj+Tt4IQR8I49EfBfPFszA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=p7A1aQmfvY7GY8s6P7Kr2lz8w8Yq9WaZaNeDeX7lA+I=;
+        b=R6lPkUheYw1CeEr8wAsIeJVMw3nH1xzEjlfyk2gLhYWOXTIrIkZuP4bSOTvKQyC6Db
+         xGUyc35Pr4Oa0YP4Iu0siSIkiW9rwVfE6FnEKkmEwNavOtxVbOeHbTcP0uUT3Xv7147x
+         t1dnK3eJnpP+6Lyv/0jP/6mbQlqgb5P74lWwUT2JVXGqDxCTJLydlZcfK9eLbV49jc1F
+         dtFq1YRy6dhewMuEz4F1FWS+GKj1ZSelO6RxScq6+YdINXRftxyKn9LVtHhs2jyJ22sA
+         h9lO2kbFatR4OeTZTgwfwXzXuVAp5nAFHUqqExJBuLcEOX4oUefArg1GSOldSu4Cs6Ns
+         qbzg==
+X-Gm-Message-State: APt69E2nPC7gNCM5gTlEqqqsCk5pqc0TiUR+NAzkE5XKmZH2/sbL0Ule
+        4sMXel28pXyWpOy9XCAXQ0r4/w==
+X-Google-Smtp-Source: ADUXVKJuwaMmprWQ9ijmlDgkIpxp2b4p1gUa6qqj5nDg2CWlDvhtsaIlXeMtFTh3RaQVFSBiVp0FIA==
+X-Received: by 2002:a2e:2f02:: with SMTP id v2-v6mr1579587ljv.113.1530026940536;
+        Tue, 26 Jun 2018 08:29:00 -0700 (PDT)
+Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
+        by smtp.gmail.com with ESMTPSA id n62-v6sm298504lja.32.2018.06.26.08.28.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 08:28:59 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     vgupta@synopsys.com
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] arc: configs: remove no longer needed config option
+Date:   Tue, 26 Jun 2018 17:28:51 +0200
+Message-Id: <20180626152851.32674-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the power-domains property to both the ECAP and EHRPWM PWM
-nodes. Both have drivers that use pm_runtime to enable the clocks, so
-they need this property in order to find and enable the clock properly.
+Since commit eedf265aa003 ("devpts: Make each mount of devpts an
+independent filesystem.") CONFIG_DEVPTS_MULTIPLE_INSTANCES isn't needed
+in the defconfig anymore.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- arch/arm/boot/dts/da850.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arc/configs/tb10x_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index de9a8bea100e..d60198e2ae4e 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -532,6 +532,7 @@
- 			reg = <0x300000 0x2000>;
- 			clocks = <&psc1 17>, <&ehrpwm_tbclk>;
- 			clock-names = "fck", "tbclk";
-+			power-domains = <&psc1 17>;
- 			status = "disabled";
- 		};
- 		ehrpwm1: pwm@302000 {
-@@ -541,6 +542,7 @@
- 			reg = <0x302000 0x2000>;
- 			clocks = <&psc1 17>, <&ehrpwm_tbclk>;
- 			clock-names = "fck", "tbclk";
-+			power-domains = <&psc1 17>;
- 			status = "disabled";
- 		};
- 		ecap0: ecap@306000 {
-@@ -550,6 +552,7 @@
- 			reg = <0x306000 0x80>;
- 			clocks = <&psc1 20>;
- 			clock-names = "fck";
-+			power-domains = <&psc1 20>;
- 			status = "disabled";
- 		};
- 		ecap1: ecap@307000 {
-@@ -559,6 +562,7 @@
- 			reg = <0x307000 0x80>;
- 			clocks = <&psc1 20>;
- 			clock-names = "fck";
-+			power-domains = <&psc1 20>;
- 			status = "disabled";
- 		};
- 		ecap2: ecap@308000 {
-@@ -568,6 +572,7 @@
- 			reg = <0x308000 0x80>;
- 			clocks = <&psc1 20>;
- 			clock-names = "fck";
-+			power-domains = <&psc1 20>;
- 			status = "disabled";
- 		};
- 		spi0: spi@41000 {
+diff --git a/arch/arc/configs/tb10x_defconfig b/arch/arc/configs/tb10x_defconfig
+index 1aca2e8fd1ba..2cc87f909747 100644
+--- a/arch/arc/configs/tb10x_defconfig
++++ b/arch/arc/configs/tb10x_defconfig
+@@ -56,7 +56,6 @@ CONFIG_STMMAC_ETH=y
+ # CONFIG_INPUT is not set
+ # CONFIG_SERIO is not set
+ # CONFIG_VT is not set
+-CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+ # CONFIG_LEGACY_PTYS is not set
+ # CONFIG_DEVKMEM is not set
+ CONFIG_SERIAL_8250=y
 -- 
-2.17.1
+2.18.0
 
