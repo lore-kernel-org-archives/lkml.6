@@ -2,158 +2,115 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D85C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D37C43144
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930ED26E0C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:05:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930ED26E0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BB9226E1A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 17:06:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FfO4rF8m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BB9226E1A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753020AbeFZRFa (ORCPT
+        id S1752972AbeFZRGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 13:05:30 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.91]:48258 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752278AbeFZRF2 (ORCPT
+        Tue, 26 Jun 2018 13:06:48 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:37462 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751491AbeFZRGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 13:05:28 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 2593B400E6CC1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 12:05:28 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id XrOsfcLndBcCXXrP4fNpfT; Tue, 26 Jun 2018 12:05:27 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=37564 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fXrOs-000425-9t; Tue, 26 Jun 2018 12:05:06 -0500
-Subject: Re: [PATCH v2 01/11] crypto: xcbc: Remove VLA usage
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180625211026.15819-1-keescook@chromium.org>
- <20180625211026.15819-2-keescook@chromium.org>
- <4d9f90abbf87539d3588f88117806f76c6826030.camel@perches.com>
- <CAGXu5j+PE9WpeO7eSX87uxrtwybBbX=J+F9d9H7sdoXAcWjUEw@mail.gmail.com>
- <1ed829f4-ee39-2a46-e0d9-5c7ea584cfff@embeddedor.com>
- <CAGXu5j+HNSMbORYEApw67MHX_0MNeEwO23=f_U3KE-9kAk16Fg@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
- CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
- l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
- obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
- cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
- ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
- JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
- JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
- PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
- R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
- 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
- e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
- H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
- DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
- 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
- otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
- l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
- jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
- zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
- I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
- ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
- EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
- UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
- XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
- WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
- imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
- fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
- 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
- ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
- YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
- GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <271701cc-63a8-cac7-fcb6-d30dea9223e8@embeddedor.com>
-Date:   Tue, 26 Jun 2018 12:05:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 26 Jun 2018 13:06:46 -0400
+Received: by mail-ua0-f194.google.com with SMTP id c2-v6so11391866uae.4
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 10:06:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1F0BeIQpefA85zjy6xELJQgZVCG6eUhSCkdCOy8goGY=;
+        b=FfO4rF8m6ONV/ST4m62pYvLzvtWafetKCcXOmBKKg4yMwGw7yK7OTh37geNmoolTqX
+         mArBDmDqXUmKE0QXXMMsa61AlDYcRbGDBuMvSY0F+iZxVR+wedd+AZt3TCFc54jggNF0
+         mf0mBtIO0s9NVKwT6pXuxGFIxW4T4mlEAOKwg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1F0BeIQpefA85zjy6xELJQgZVCG6eUhSCkdCOy8goGY=;
+        b=OoYr7ww2DFCvS2C3FPg8nslpKrQ++S6wyZKF1zLklJGCG/JLYeIiONbN0d3OA9wjEY
+         hS0RmlpydQ8VPMcBR2mg9sqZY4x2JjrIoct2PY1JbKhKeOa4zfeQJyPWNy17kPT97ozw
+         fMo1Q3S5Y+d6to/yx3v7fylYvFn2SFjovHHbhhV9qLabOCxvI6W9jo/aKOkUSHyialof
+         dzwUreXdJL6jPFPjKGkzeUNTg2yUJ8XYo9AffmEJbgzJQlHLIMNKn4z5gn9Zb4AyOmPf
+         Cqv371Ze8WCOmj5bLtklUgk7PkeTcnBcuR6ikRWvKN9uxVFXUO5ynDnPcgCm9mqBDRhP
+         hJgQ==
+X-Gm-Message-State: APt69E1WhnZF7NLYY1lXLgyHiORcfTEuGJaBpx2ygRc/db9HqBjb5635
+        H32HHso0tppASSkmEj3+fvkdRA==
+X-Google-Smtp-Source: AAOMgpcFzKgEMjYJhoOIlZe7OXA50EDnIReSg70lsL5F/RXpgLjz2BFBmq59EGXRJNU18FNct6Er8Q==
+X-Received: by 2002:ab0:4eef:: with SMTP id x47-v6mr1531944uah.23.1530032805662;
+        Tue, 26 Jun 2018 10:06:45 -0700 (PDT)
+Received: from localhost ([201.191.143.207])
+        by smtp.gmail.com with ESMTPSA id a10-v6sm476842uap.37.2018.06.26.10.06.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 10:06:44 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 11:06:43 -0600
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>, rafael.tinoco@linaro.org,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: qemu-system-x86_64: mov_ss_trap_64 PANIC: double fault,
+ error_code: 0x0
+Message-ID: <20180626170643.r2znwqmc57gxep7p@xps>
+References: <CA+G9fYu0E0fM+WaFim1WKup5BZvjtGZ_4ii5FhTUjNZEqaAuwA@mail.gmail.com>
+ <CALCETrWZ=sipwoVic16LM08+-FKV5knO7Cv3pSM_5w=KLCqTKw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+HNSMbORYEApw67MHX_0MNeEwO23=f_U3KE-9kAk16Fg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fXrOs-000425-9t
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:37564
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWZ=sipwoVic16LM08+-FKV5knO7Cv3pSM_5w=KLCqTKw@mail.gmail.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/26/2018 11:50 AM, Kees Cook wrote:
-> On Mon, Jun 25, 2018 at 5:54 PM, Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->>
->> On 06/25/2018 06:06 PM, Kees Cook wrote:
->>> On Mon, Jun 25, 2018 at 2:23 PM, Joe Perches <joe@perches.com> wrote:
->>>>  warning-3 += -Wswitch-default
->>>
->>> This reminds me, though. Should _this_ one get moved to warning-1?
->>>
->>> $ git log next-20180625 --no-merges --grep 'mark expected switch
->>> fall-through' --oneline | wc -l
->>> 129
->>>
->>> Gustavo, have you checked recently how many of these are left? Maybe
->>> we can move this to default too?
->>>
->>
->> I just built today's kernel and we have a total of 704 fall-through warnings with -Wimplicit-fallthrough=2
+On Mon, Jun 25, 2018 at 08:47:40AM -0700, Andy Lutomirski wrote:
+> On Sun, Jun 24, 2018 at 10:41 PM Naresh Kamboju
+> <naresh.kamboju@linaro.org> wrote:
+> >
+> > Kselftest test case mov_ss_trap_64 is causing kernel panic on
+> > qemu-system-x86_64 and PASS on real x86_64 hardware.
+> >
+> > Test code snippet,
+> > main() {
+> > <>
+> >       printf("[RUN]\tMOV SS; CS CS INT3\n");
+> >       asm volatile ("mov %[ss], %%ss; .byte 0x2e, 0x2e; int3" :: [ss] "m" (ss));
+> > <>
+> > }
+> >
 > 
-> Wow; that's still a lot!
+> This smells like CVE-2018-1087.  Can you confirm that your *host*
+> kernel is patched?
 > 
->> I think we might be able to do that in this development cycle.
-> 
-> Do you think we could finish the rest of the unannotated ones this
-> cycle? If not, we could upgrade from W=3 to W=1 since it's a condition
-> we're actively trying to remove from the kernel...
-> 
+> CVE-2018-1087 is extremely severe, and if your host kernel is not
+> patched, I think you need to apply some serious pressure on your
+> vendor to get with the program.
 
-Most definitely. I'm already on that!
+Thanks Andy - that was exactly it. We updated our host running debian
+stretch to the latest kernel (per
+https://security-tracker.debian.org/tracker/CVE-2018-1087), and the
+symptom was no longer seen. Thanks for the pointer.
 
-Thanks
---
-Gustavo
+Dan
+
+-- 
+Linux Kernel Functional Testing (LKFT)
+https://lkft.linaro.org/
