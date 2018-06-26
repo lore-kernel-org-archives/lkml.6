@@ -2,142 +2,117 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C187C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 372D0C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08EDF260DF
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:06:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB8A7260DF
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Egiy5RCh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08EDF260DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J8t0nXNd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB8A7260DF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933221AbeFZUGL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:06:11 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37915 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754979AbeFZUGJ (ORCPT
+        id S1753044AbeFZUIB (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:08:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47316 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751980AbeFZUH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:06:09 -0400
-Received: by mail-wr0-f196.google.com with SMTP id e18-v6so18450045wrs.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:06:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X7FVMGJWHOZkxWyXcdo36JkO3xwzZOdCUPu5WvzQPEg=;
-        b=Egiy5RCh6DAmIf2HiXn77yjfDD3Xjah/greibEYUXcxxlqczW0R+a4TtrKJb0sYqRD
-         j+3fhiqOQ8eOyscy+60SO1yTfNZxJPD4/cOPaCwPUBm5d9MPB9srwBSbaTZ7QUasJ7lv
-         Er6YuGbTJ07eGC7achVVqTnMGxK9UPrhGBPeYOOPOs9dy/PR2Yth+OH8a6M8e5CcMuuz
-         0gb384MUTDY8o6a3n8i2Y9lCfdURGuqkeb4Tfx5upQuOZUdd80jdNt0QtYtrpUrp6uIz
-         r9MSGR+l2r1FmroiqPAwaFum4mSsjvQUD2iGYJtaFLyoM9b2sSKlHSm5xLEsl0NXtz0N
-         zLDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X7FVMGJWHOZkxWyXcdo36JkO3xwzZOdCUPu5WvzQPEg=;
-        b=kSm9NDOFM79/dtuVb7k0t7IiJkKc74vr55u9ovgZ/zIC+2fE1K5C7t/PRZSpPlyJ4T
-         +f6ipQKCIMcpBG3WoOG1rWht1Fyy4fFYJXVBDvZ8/tIYmen0zQFfDouwvtSV5KqbH02p
-         n+nptiMKt7DyqQ2M3jxWzW6aOUYwxMrGcsVFF4960/ZNh8d7J4wCkuJfXVlqMjtM06Bg
-         I7Y7PMxhImCv9CdCalXUzflQpdveRIPV0Spb7JgrIxOW6Wa+iDyqEJwaoifyW0Jcq+wu
-         amOnGwfWmTcsS0QVFwNGjxoiRW/o5L4YSSKgPb26/3eJuAimfv4txk8WMYMjOEymm+k1
-         YYvQ==
-X-Gm-Message-State: APt69E2nRHQuGP6fs/7CBhUeLdhQTAZ7YjUn3OuXgPtbuStLVuN3qr29
-        Oyj5FI231pYKhMeiwvYR76GVlmgm3Kyd5wgorMoCqA==
-X-Google-Smtp-Source: AAOMgpec1EmzFqpBvmkCinVLCtChTprcNDsoQRjYGA+Do9F7h9go30EdPel2Dbkk81ftniSAfYk5tIQCkXVMHEgTf8s=
-X-Received: by 2002:adf:e48e:: with SMTP id i14-v6mr2861555wrm.8.1530043567387;
- Tue, 26 Jun 2018 13:06:07 -0700 (PDT)
+        Tue, 26 Jun 2018 16:07:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2KwjFI0WfqHFZrRjTq3BfJkBFtR1fu+yQxjXOxNAh0I=; b=J8t0nXNdCD5YnxTFh+Jcrp6iJ
+        iWoCu6qkvbrUIipactZ3TPNDH+YlwwdgFMzKHroKv4V7Tv0aSoTHvp8830KGUQ51evZYo3Azd+l0r
+        cIyZJ80KxHe9IYecGR+rlzIoQ/jABEiY4DRfEKo9MlJHrsFVqWHUkCv5UQL/gaMBLb0RbQBcfwN7w
+        +bWYtRiuG81PFc0UhNpePG4EqaPhk4e9TCU61YSmbd88dUv5nizV1JBBGst3S57FsdeDaz0JyhQ8a
+        +255AZnyMmQK88BGy9kbfVntJaape7zY7g9x46TA3SzACVdrHvon+V8VIqGr0ys1AS72OcdmTfEnS
+        foipNTqRA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fXuFe-0005jM-K0; Tue, 26 Jun 2018 20:07:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1878A2029FA0A; Tue, 26 Jun 2018 22:07:45 +0200 (CEST)
+Date:   Tue, 26 Jun 2018 22:07:45 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
+ race with CPU offline
+Message-ID: <20180626200745.GR2494@hirez.programming.kicks-ass.net>
+References: <20180626002052.GA24146@linux.vnet.ibm.com>
+ <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
+ <20180626175119.GL2494@hirez.programming.kicks-ass.net>
+ <20180626182950.GH3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <20180625230659.139822-1-shakeelb@google.com> <20180625230659.139822-2-shakeelb@google.com>
- <20180626190619.GB3958@cmpxchg.org>
-In-Reply-To: <20180626190619.GB3958@cmpxchg.org>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Tue, 26 Jun 2018 13:05:55 -0700
-Message-ID: <CALvZod5VU0_==ggX82P19v=X7zpKj1xO5qPZ1mep4yRVhr7qaw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs: fsnotify: account fsnotify metadata to kmemcg
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626182950.GH3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 12:03 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Mon, Jun 25, 2018 at 04:06:58PM -0700, Shakeel Butt wrote:
-> > @@ -140,8 +141,9 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
-> >                                                struct inode *inode, u32 mask,
-> >                                                const struct path *path)
-> >  {
-> > -     struct fanotify_event_info *event;
-> > +     struct fanotify_event_info *event = NULL;
-> >       gfp_t gfp = GFP_KERNEL;
-> > +     struct mem_cgroup *old_memcg = NULL;
-> >
-> >       /*
-> >        * For queues with unlimited length lost events are not expected and
-> > @@ -151,19 +153,25 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
-> >       if (group->max_events == UINT_MAX)
-> >               gfp |= __GFP_NOFAIL;
-> >
-> > +     /* Whoever is interested in the event, pays for the allocation. */
-> > +     if (group->memcg) {
-> > +             gfp |= __GFP_ACCOUNT;
-> > +             old_memcg = memalloc_use_memcg(group->memcg);
-> > +     }
->
-> group->memcg is only NULL when memcg is disabled or there is some
-> offlining race. Can you make memalloc_use_memcg(NULL) mean that it
-> should charge root_mem_cgroup instead of current->mm->memcg? That way
-> we can make this site unconditional while retaining the behavior:
->
->         gfp_t gfp = GFP_KERNEL | __GFP_ACCOUNT;
->
->         memalloc_use_memcg(group->memcg);
->         kmem_cache_alloc(..., gfp);
-> out:
->         memalloc_unuse_memcg();
->
-> (dropping old_memcg and the unuse parameter as per the other mail)
->
+On Tue, Jun 26, 2018 at 11:29:50AM -0700, Paul E. McKenney wrote:
+> On Tue, Jun 26, 2018 at 07:51:19PM +0200, Peter Zijlstra wrote:
+> > On Tue, Jun 26, 2018 at 10:10:39AM -0700, Paul E. McKenney wrote:
+> > > Without special fail-safe quiescent-state-propagation checks, grace-period
+> > > hangs can result from the following scenario:
+> > > 
+> > > 1.	CPU 1 goes offline.
+> > > 
+> > > 2.	Because CPU 1 is the only CPU in the system blocking the current
+> > > 	grace period, as soon as rcu_cleanup_dying_idle_cpu()'s call to
+> > > 	rcu_report_qs_rnp() returns.
+> > > 
+> > > 3.	At this point, the leaf rcu_node structure's ->lock is no longer
+> > > 	held: rcu_report_qs_rnp() has released it, as it must in order
+> > > 	to awaken the RCU grace-period kthread.
+> > > 
+> > > 4.	At this point, that same leaf rcu_node structure's ->qsmaskinitnext
+> > > 	field still records CPU 1 as being online.  This is absolutely
+> > > 	necessary because the scheduler uses RCU, and ->qsmaskinitnext
+> > 
+> > Can you expand a bit on this, where does the scheduler care about the
+> > online state of the CPU that's about to call into arch_cpu_idle_dead()?
+> 
+> Because the CPU does a context switch between the time that the CPU gets
+> marked offline from the viewpoint of cpu_offline() and the time that
+> the CPU finally makes it to arch_cpu_idle_dead().  Plus reporting the
+> quiescent state (rcu_report_qs_rnp()) can result in waking up RCU's
+> grace-period kthread.  During that context switch and that wakeup,
+> the scheduler needs RCU to continue paying attention to the outgoing
+> CPU, right?
 
-group->memcg is only NULL when memcg is disabled (i.e.
-get_mem_cgroup_from_mm() returns root_mem_cgroup for offlined
-mm->memcg). Though group->memcg can point to an offlined memcg.
+What you say is right, but I'm confused to its relevance. Afaict 2 above is:
 
-If I understand you correctly this is what we want:
+	do_idle()
+	  if (cpu_offline()) // true
+	    cpuhp_report_idle_dead()
+	      rcu_report_dead()
+	        rcu_cleanup_dying_idle_cpu()
+	    arch_cpu_idle_dead()
 
-1. If group->memcg is NULL then __GFP_ACCOUNT is a noop i.e. memcg is disabled.
-2. If group->memcg is root_mem_cgroup, then __GFP_ACCOUNT again is a
-kind of noop (charges to root_mem_cgroups are bypassed).
-3. If group->memcg is offlined memcg, then make __GFP_ACCOUNT noop by
-returning root_mem_cgroup from get_mem_cgroup_from_current().
-4. Else charge group->memcg.
+There is no scheduling between that and the slightly later call to
+arch_cpu_idle_dead(), we're in the middle of the idle task, preemption
+is firmly disabled.
 
-This seems reasonable. After your Ack and Amir's or Jan's answer to
-the nesting query, I will resend the next version of this patch
-series.
+AFAICT rcu_cleanup_dying_idle_cpu() can mark your CPU as offline, it's
+about to die. Also, we have a comment in cpuhp_report_idle_dead() that
+we can't use complete() because RCU just took our CPU out.
 
-In future if we find any use-cases of memalloc_use_memcg nesting then
-we can make it work for nesting.
-
-thanks,
-Shakeel
