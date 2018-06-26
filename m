@@ -1,158 +1,143 @@
 Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0CAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C187C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD68924AE6
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:05:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08EDF260DF
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 20:06:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXFolKHR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD68924AE6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Egiy5RCh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08EDF260DF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754652AbeFZUFe (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 16:05:34 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34571 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751980AbeFZUFd (ORCPT
+        id S933221AbeFZUGL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 16:06:11 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37915 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754979AbeFZUGJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 16:05:33 -0400
-Received: by mail-wm0-f68.google.com with SMTP id l15-v6so16175152wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:05:32 -0700 (PDT)
+        Tue, 26 Jun 2018 16:06:09 -0400
+Received: by mail-wr0-f196.google.com with SMTP id e18-v6so18450045wrs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 13:06:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pv6lexECMMM3oxSXTQ5SSr5EFYRUipJU+boFFIidPxE=;
-        b=jXFolKHR8QQtBk0VbulroIc/Al35se7WD3+hC+nj9d6CZu50MN8OE1TiWyluUnkRNA
-         BB4HVEru7I/7zf5mny4nga4ed1BpWQ1vexFhnzucNw3+4/K6kdJMTb3Ngv347zSlPhRm
-         yLwZcGuqu9UWhpbHvTTNzsYm1JREpRVOUyTbnuk73ppl/LlZcLdSS7RidrqUfstvsKUP
-         NWC5K/13ol0l1F1/Ee6KvzWt3wM4UV2227ZQZWhm5ZAVH4q/JiS69aEDu1cvCiX6VaMc
-         jMbsfcQUv7wMuaZRJuE0zU73nzvy/zq7XVaq8pAWCaNVWaSTroV0fiUMPKLW+5rsSV6J
-         ZMBA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X7FVMGJWHOZkxWyXcdo36JkO3xwzZOdCUPu5WvzQPEg=;
+        b=Egiy5RCh6DAmIf2HiXn77yjfDD3Xjah/greibEYUXcxxlqczW0R+a4TtrKJb0sYqRD
+         j+3fhiqOQ8eOyscy+60SO1yTfNZxJPD4/cOPaCwPUBm5d9MPB9srwBSbaTZ7QUasJ7lv
+         Er6YuGbTJ07eGC7achVVqTnMGxK9UPrhGBPeYOOPOs9dy/PR2Yth+OH8a6M8e5CcMuuz
+         0gb384MUTDY8o6a3n8i2Y9lCfdURGuqkeb4Tfx5upQuOZUdd80jdNt0QtYtrpUrp6uIz
+         r9MSGR+l2r1FmroiqPAwaFum4mSsjvQUD2iGYJtaFLyoM9b2sSKlHSm5xLEsl0NXtz0N
+         zLDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pv6lexECMMM3oxSXTQ5SSr5EFYRUipJU+boFFIidPxE=;
-        b=C7auC7w2oLuC7KZ/qxop/w237PNmeftw3mfyMYGvLfNZs+1I+iI5UOaMYIc2VyymYb
-         fXuRLoYqXL9468hN4+v98YpX7rGbAPh1z9fkxx6CWGr56Jfmc7m8sB0kXbqwfgUk742H
-         f9oFFKXza1paw0o/OymFvFhqlUt2n0VTNt0SFQ4JT7gvZ15mlZ+rDR5Vm8aKzr7ODD4i
-         0J7t3CKhpDOZskmsl1pMuldUNEGCpUGGxAGYJEtSL1gRy0WI+0hg3JG4ENYXxLI4M0nj
-         nOI1625HC8NmunrHqLE7aH/SnTpSA136vg4B/l75KCbXsPm2YrY6dya8jYxgLOUqQvRI
-         xwsA==
-X-Gm-Message-State: APt69E1bx4lPUnnHaZjyqYTzXKylLPaYr+LzovoQf4z9x/FrOwxIPB36
-        zaxBfrLhYHNIWYezZ+NWO+qXgA==
-X-Google-Smtp-Source: AAOMgpd3OF5Gf3HuxqbPHTx5AU06rnOWDqZsf4j4ejYUhjzaGd2bce3txzEYLujzNB/fa0Lzqb64Sw==
-X-Received: by 2002:a1c:a8a:: with SMTP id 132-v6mr2813655wmk.44.1530043532222;
-        Tue, 26 Jun 2018 13:05:32 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x11-v6sm3039478wrm.78.2018.06.26.13.05.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 13:05:31 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 22:05:29 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Dmitry Vyukov <dvyukov@gmail.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, sergey.senozhatsky.work@gmail.com,
-        andy.shevchenko@gmail.com, Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH v3] arch/x86: get rid of KERN_CONT in show_fault_oops()
-Message-ID: <20180626200528.GA29307@gmail.com>
-References: <20180626072843.158906-1-dvyukov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X7FVMGJWHOZkxWyXcdo36JkO3xwzZOdCUPu5WvzQPEg=;
+        b=kSm9NDOFM79/dtuVb7k0t7IiJkKc74vr55u9ovgZ/zIC+2fE1K5C7t/PRZSpPlyJ4T
+         +f6ipQKCIMcpBG3WoOG1rWht1Fyy4fFYJXVBDvZ8/tIYmen0zQFfDouwvtSV5KqbH02p
+         n+nptiMKt7DyqQ2M3jxWzW6aOUYwxMrGcsVFF4960/ZNh8d7J4wCkuJfXVlqMjtM06Bg
+         I7Y7PMxhImCv9CdCalXUzflQpdveRIPV0Spb7JgrIxOW6Wa+iDyqEJwaoifyW0Jcq+wu
+         amOnGwfWmTcsS0QVFwNGjxoiRW/o5L4YSSKgPb26/3eJuAimfv4txk8WMYMjOEymm+k1
+         YYvQ==
+X-Gm-Message-State: APt69E2nRHQuGP6fs/7CBhUeLdhQTAZ7YjUn3OuXgPtbuStLVuN3qr29
+        Oyj5FI231pYKhMeiwvYR76GVlmgm3Kyd5wgorMoCqA==
+X-Google-Smtp-Source: AAOMgpec1EmzFqpBvmkCinVLCtChTprcNDsoQRjYGA+Do9F7h9go30EdPel2Dbkk81ftniSAfYk5tIQCkXVMHEgTf8s=
+X-Received: by 2002:adf:e48e:: with SMTP id i14-v6mr2861555wrm.8.1530043567387;
+ Tue, 26 Jun 2018 13:06:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626072843.158906-1-dvyukov@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180625230659.139822-1-shakeelb@google.com> <20180625230659.139822-2-shakeelb@google.com>
+ <20180626190619.GB3958@cmpxchg.org>
+In-Reply-To: <20180626190619.GB3958@cmpxchg.org>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 26 Jun 2018 13:05:55 -0700
+Message-ID: <CALvZod5VU0_==ggX82P19v=X7zpKj1xO5qPZ1mep4yRVhr7qaw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: fsnotify: account fsnotify metadata to kmemcg
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 26, 2018 at 12:03 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+> On Mon, Jun 25, 2018 at 04:06:58PM -0700, Shakeel Butt wrote:
+> > @@ -140,8 +141,9 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
+> >                                                struct inode *inode, u32 mask,
+> >                                                const struct path *path)
+> >  {
+> > -     struct fanotify_event_info *event;
+> > +     struct fanotify_event_info *event = NULL;
+> >       gfp_t gfp = GFP_KERNEL;
+> > +     struct mem_cgroup *old_memcg = NULL;
+> >
+> >       /*
+> >        * For queues with unlimited length lost events are not expected and
+> > @@ -151,19 +153,25 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
+> >       if (group->max_events == UINT_MAX)
+> >               gfp |= __GFP_NOFAIL;
+> >
+> > +     /* Whoever is interested in the event, pays for the allocation. */
+> > +     if (group->memcg) {
+> > +             gfp |= __GFP_ACCOUNT;
+> > +             old_memcg = memalloc_use_memcg(group->memcg);
+> > +     }
+>
+> group->memcg is only NULL when memcg is disabled or there is some
+> offlining race. Can you make memalloc_use_memcg(NULL) mean that it
+> should charge root_mem_cgroup instead of current->mm->memcg? That way
+> we can make this site unconditional while retaining the behavior:
+>
+>         gfp_t gfp = GFP_KERNEL | __GFP_ACCOUNT;
+>
+>         memalloc_use_memcg(group->memcg);
+>         kmem_cache_alloc(..., gfp);
+> out:
+>         memalloc_unuse_memcg();
+>
+> (dropping old_memcg and the unuse parameter as per the other mail)
+>
 
-* Dmitry Vyukov <dvyukov@gmail.com> wrote:
+group->memcg is only NULL when memcg is disabled (i.e.
+get_mem_cgroup_from_mm() returns root_mem_cgroup for offlined
+mm->memcg). Though group->memcg can point to an offlined memcg.
 
-> From: Dmitry Vyukov <dvyukov@google.com>
-> 
-> KERN_CONT leads to split lines in kernel output
-> and complicates useful changes to printk like
-> printing context before each line.
-> 
-> Only acceptable use of continuations is basically
-> boot-time testing.
-> 
-> Get rid of it.
-> 
-> Also tidy up code around as asked by reviewers.
-> 
-> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> 
-> ---
-> 
-> Changes since v1:
->  - use pr_alert() instead of printk(KERN_ALERT)
-> 
-> Changes since v2:
->  - drop unnecessary parenthesis
->  - remove once used nx_warning and smep_warning
-> ---
->  arch/x86/mm/fault.c | 21 +++++++--------------
->  1 file changed, 7 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 9a84a0d08727..a73575cacfd9 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -641,11 +641,6 @@ static int is_f00f_bug(struct pt_regs *regs, unsigned long address)
->  	return 0;
->  }
->  
-> -static const char nx_warning[] = KERN_CRIT
-> -"kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n";
-> -static const char smep_warning[] = KERN_CRIT
-> -"unable to execute userspace code (SMEP?) (uid: %d)\n";
-> -
->  static void
->  show_fault_oops(struct pt_regs *regs, unsigned long error_code,
->  		unsigned long address)
-> @@ -664,20 +659,18 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
->  		pte = lookup_address_in_pgd(pgd, address, &level);
->  
->  		if (pte && pte_present(*pte) && !pte_exec(*pte))
-> -			printk(nx_warning, from_kuid(&init_user_ns, current_uid()));
-> +			pr_crit("kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n",
-> +				from_kuid(&init_user_ns, current_uid()));
->  		if (pte && pte_present(*pte) && pte_exec(*pte) &&
->  				(pgd_flags(*pgd) & _PAGE_USER) &&
->  				(__read_cr4() & X86_CR4_SMEP))
-> -			printk(smep_warning, from_kuid(&init_user_ns, current_uid()));
-> +			pr_crit("unable to execute userspace code (SMEP?) (uid: %d)\n",
-> +				from_kuid(&init_user_ns, current_uid()));
->  	}
->  
-> -	printk(KERN_ALERT "BUG: unable to handle kernel ");
-> -	if (address < PAGE_SIZE)
-> -		printk(KERN_CONT "NULL pointer dereference");
-> -	else
-> -		printk(KERN_CONT "paging request");
-> -
-> -	printk(KERN_CONT " at %px\n", (void *) address);
-> +	pr_alert("BUG: unable to handle kernel %s at %px\n",
-> +		address < PAGE_SIZE ? "NULL pointer dereference" :
-> +		"paging request", (void *) address);
+If I understand you correctly this is what we want:
 
-I already applied the last hunk in a bit different way - could you send the rest 
-as a separate clean-up patch please?
+1. If group->memcg is NULL then __GFP_ACCOUNT is a noop i.e. memcg is disabled.
+2. If group->memcg is root_mem_cgroup, then __GFP_ACCOUNT again is a
+kind of noop (charges to root_mem_cgroups are bypassed).
+3. If group->memcg is offlined memcg, then make __GFP_ACCOUNT noop by
+returning root_mem_cgroup from get_mem_cgroup_from_current().
+4. Else charge group->memcg.
 
-Thanks,
+This seems reasonable. After your Ack and Amir's or Jan's answer to
+the nesting query, I will resend the next version of this patch
+series.
 
-	Ingo
+In future if we find any use-cases of memalloc_use_memcg nesting then
+we can make it work for nesting.
+
+thanks,
+Shakeel
