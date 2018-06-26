@@ -2,121 +2,136 @@ Return-Path: <SRS0=cv1S=JM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1922CC43144
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C602C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D4B26CC4
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D972B26CAC
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Jun 2018 15:03:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SuUU1Iv7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D4B26CC4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0dy5hTmE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D972B26CAC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751680AbeFZPDx (ORCPT
+        id S1751957AbeFZPD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 11:03:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37356 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbeFZPDv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 11:03:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=f/V/2metfeRPCwwAB8zId3CU3ZEdLIRYYeOhngxIqco=; b=SuUU1Iv7VEq9
-        sk5h38Mnl4JUuK808v+mwbXD0D0VrpoX7jGRQ9wTd45NjXk/4QD3MMisDaKyeUUZuV63kN3ZeFkDm
-        2zEqAvf01nTuJWKMxWbeKBwsmautyedaZX22Xzxm1v543fh5oWHLmnNxfZsoJlU8FsZMsxoq3zKFs
-        SKmtE=;
-Received: from host109-146-194-33.range109-146.btcentralplus.com ([109.146.194.33] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fXpVO-0001Is-IF; Tue, 26 Jun 2018 15:03:42 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 127D1440070; Tue, 26 Jun 2018 16:03:42 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: trace: remove snd_soc_codec" to the asoc tree
-In-Reply-To:  <87vadh3pz1.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <20180626150342.127D1440070@finisterre.ee.mobilebroadband>
-Date:   Tue, 26 Jun 2018 16:03:42 +0100 (BST)
+        Tue, 26 Jun 2018 11:03:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751072AbeFZPDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 11:03:54 -0400
+Received: from mail-it0-f54.google.com (mail-it0-f54.google.com [209.85.214.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 844E226CC6;
+        Tue, 26 Jun 2018 15:03:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530025433;
+        bh=54OLBR43CgMIHqaa1Y5x4+gzttcLVTIx8RD1cZhJ+Pw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0dy5hTmE4PB/CBTppgHNH0Iz8dZoYMACnenjZE0h4iRPeMqtE3X4J+eUo3zDb0HHB
+         KHwhl0pRzwT6joX6xQ3aKudKWK2RTt0Dx9bxwwn8vGLWz5J9U4Qor0J3X5rU772uZE
+         9A8xonMdOVJwjV6VW488NX1jHeitxhYb1NWWm+UM=
+Received: by mail-it0-f54.google.com with SMTP id v83-v6so2787025itc.3;
+        Tue, 26 Jun 2018 08:03:53 -0700 (PDT)
+X-Gm-Message-State: APt69E1wjnB2jxzjoq6ijXFskw1umTlX9IdCSxeBHBovQrcBCEF+yTG7
+        q8y1U+K5KlGYPSz/tGS9OGqgyQTrKJXbkmVOFg==
+X-Google-Smtp-Source: AAOMgpemXPgg0ELGMi4ewqhaYtBjUkt7eKP8a9dF2Plh/L9KxxcAGGQeMaas93LBuEQ93fldvXKf025izOlQyYc07uU=
+X-Received: by 2002:a24:798f:: with SMTP id z137-v6mr1653068itc.19.1530025432814;
+ Tue, 26 Jun 2018 08:03:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180624124155.82412-1-tmaimon77@gmail.com> <20180624124155.82412-2-tmaimon77@gmail.com>
+ <20180625171417.GA16379@rob-hp-laptop> <CAP6Zq1h-M6YDS67pkgHy-GMmiVk1D-RScLgDyG65JQM+S35rEQ@mail.gmail.com>
+In-Reply-To: <CAP6Zq1h-M6YDS67pkgHy-GMmiVk1D-RScLgDyG65JQM+S35rEQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 26 Jun 2018 09:03:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJCYPLw+jqx+7Cy=cXFFb-CNp=Ezew7FNT=cfAndqWe5A@mail.gmail.com>
+Message-ID: <CAL_JsqJCYPLw+jqx+7Cy=cXFFb-CNp=Ezew7FNT=cfAndqWe5A@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-binding: hwmon: Add NPCM7xx PWM and Fan
+ controller documentation
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Patrick Venture <venture@google.com>,
+        Joel Stanley <joel@jms.id.au>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux HWMON List <linux-hwmon@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, Jun 25, 2018 at 4:20 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
+>
+> Hi Rob,
+>
+>
+> On 25 June 2018 at 20:14, Rob Herring <robh@kernel.org> wrote:
+>>
+>> On Sun, Jun 24, 2018 at 03:41:54PM +0300, Tomer Maimon wrote:
+>> > Added device tree binding documentation for Nuvoton BMC
+>> > NPCM7xx Pulse Width Modulation (PWM)  and Fan tach controller.
+>> > The PWM controller can support upto 8 PWM output ports.
+>> > The Fan tach controller can support upto 16 tachometer inputs.
+>> >
+>> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+>> > ---
+>> >  .../devicetree/bindings/hwmon/npcm750-pwm-fan.txt  | 84 ++++++++++++++++++++++
+>> >  1 file changed, 84 insertions(+)
+>> >  create mode 100644 Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+>> > new file mode 100644
+>> > index 000000000000..a9eacda34f92
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+>> > @@ -0,0 +1,84 @@
+>> > +Nuvoton NPCM7xx PWM and Fan Tacho controller device driver
+>>
+>> Bindings are for h/w, not drivers.
+>>
+>> > +
+>> > +The NPCM7xx has two identical Pulse-width modulation (PWM) controller modules,
+>> > +Each PWM module has four PWM controller outputs, Totally 8 PWM controller outputs.
+>> > +
+>> > +The NPCM7xx has eight identical Fan tachometer controller modules,
+>> > +Each Fan module has two Fan controller inputs, Totally 16 Fan controller inputs.
+>>
+>> Have you looked at other fan ctrlr bindings?f This looks like similar
+>> h/w to ASpeed. Really, I'd like to see a common doc that describes the
+>
+>
+> We do not have the same H/W as Aspeed, I believe in the near future we will need to add
+> more DT properties that will used only in the NPCM7xx module.
 
-   ASoC: trace: remove snd_soc_codec
+I didn't say it was the same. Both are multi-channel PWMs with tach
+inputs. Presumably, they can attach to the same types of fans as there
+are only a limited number of types of fans and none of them are
+specific to any fan controller.
 
-has been applied to the asoc tree at
+>> structure and common properties.
+>
+>
+> what do you mean by common structure and common properties?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+When we have multiple bindings for the same class of device/hw, we
+define all the common parts in a common binding doc. This often
+doesn't happen at first, so we end up with a variety of bindings until
+we see some commonality.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+In this case, for structure, having sub-nodes for fans. As fans are
+not specific to the controllers, their node should not be defined by
+the controller binding. It's also how you describe the fan type,
+number of fans, the PWM connections, the tach connections, etc.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 211b4415ecb254e167837206756dea123342689c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 28 Mar 2018 02:18:13 +0000
-Subject: [PATCH] ASoC: trace: remove snd_soc_codec
-
-snd_soc_codec is replaced to snd_soc_component,
-and it is not used in this file.
-Let's remove it
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/trace/events/asoc.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/trace/events/asoc.h b/include/trace/events/asoc.h
-index ccd1a3bdff46..40c300fe704d 100644
---- a/include/trace/events/asoc.h
-+++ b/include/trace/events/asoc.h
-@@ -12,7 +12,6 @@
- #define DAPM_ARROW(dir) (((dir) == SND_SOC_DAPM_DIR_OUT) ? "->" : "<-")
- 
- struct snd_soc_jack;
--struct snd_soc_codec;
- struct snd_soc_card;
- struct snd_soc_dapm_widget;
- struct snd_soc_dapm_path;
--- 
-2.17.1
-
+Rob
