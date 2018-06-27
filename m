@@ -2,112 +2,112 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A564C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EDAC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A3F26696
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:39:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aleb5pKB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A3F26696
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 49D142667E
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:43:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D142667E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeF0FjZ (ORCPT
+        id S1752789AbeF0Fne (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 01:39:25 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38470 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750942AbeF0FjY (ORCPT
+        Wed, 27 Jun 2018 01:43:34 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:35835 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752495AbeF0Fnc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 01:39:24 -0400
-Received: by mail-pf0-f194.google.com with SMTP id j17-v6so460814pfn.5;
-        Tue, 26 Jun 2018 22:39:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=6E+wHhx51pJJmdd94vw7QaSoXk3opVizm/j2hinYz1A=;
-        b=Aleb5pKBQcEy/5smnypk4Re3Ur+rM5UhfH+cT0SqbFXuMX8N39Vhjbx/gp8aiG58xi
-         GozoJ7A4N6dhsQ5eRr8zMKRUVz4viGIAZX3CH/ID5YCJgux2e16onb6Yt6djl1Tj3TzT
-         l5tgLk/GVOWPL6UYRs643GdwWndP4yqI7thdngfm2gL9HKPcMcMhPYPErA9xPao61gi0
-         p4fATWLdTaQRMyPN1XbuAhvUro4ACJKoictl303YvdXiYWJjijP8hzMo4t9iN/8hV/Ux
-         O4qvypFxBVsAzXhqFx55f4BA3CcJDTo/QHzOZwepgUMpiQ7I8po9tUSzhMqHCvLMm03Z
-         5yaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=6E+wHhx51pJJmdd94vw7QaSoXk3opVizm/j2hinYz1A=;
-        b=Rx2dpZXdGM65JWErx7isJ0zqj4CHswqFMDioVXal5tuKyjZ/vDa7g+Z86NOUYuMxPm
-         RbgK3KkB+SjyarlhvYXmmZAiNy8vy2MBu11g1DANvDWu9bQOFhhvM3Px7FsH+qrLW4i7
-         DHUfJlRObxtC/trJTcSulaHWHg3doer789M6BMduv6xIxqe2XvpFrhP06emFtbqWnEOX
-         7Icd9/Ogx3JxSgASKBjJtmjvDrzDN5dvkpxRywOQdd1QW1WVojTFydvX0xZfhOxf5U8F
-         QBC09HHfrswpaIW3MDaBjeMcjMKI21rQ6mIR06mZQ4j9kDRL5IoO6gucM8HxTtuAyIP1
-         Go+Q==
-X-Gm-Message-State: APt69E0IL/6hxeaJPPimd2T/WFkZAymlOEffqNurYMjMAUWVF5gBbgit
-        BjMBemYaLM88Jd/wSFV3k+jTXHR4
-X-Google-Smtp-Source: ADUXVKLunhUQAi9HNoZV6sTx2bGjGZrNeka5qQgpsP4O3Mkh/YHSpOVEia+6Al1nf9XLS6KJFENcyQ==
-X-Received: by 2002:a63:a543:: with SMTP id r3-v6mr3891316pgu.336.1530077963721;
-        Tue, 26 Jun 2018 22:39:23 -0700 (PDT)
-Received: from [192.168.1.101] (222-154-41-72-adsl.bb.spark.co.nz. [222.154.41.72])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm5333839pgs.52.2018.06.26.22.39.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 22:39:23 -0700 (PDT)
-Subject: Re: [PATCH v3 00/12] macintosh: Resolve various PMU driver problems
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Finn Thain <fthain@telegraphics.com.au>, geert@linux-m68k.org
-References: <cover.1528885172.git.fthain@telegraphics.com.au>
- <alpine.LNX.2.21.1806242119180.34@nippy.intranet>
- <874lhp6i4d.fsf@concordia.ellerman.id.au>
- <cacaecac00c1ac941a78da772bbcfb05142df87d.camel@kernel.crashing.org>
-Cc:     linux-m68k@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <5d4d7ca4-1d2f-268f-e5d2-eddb213e894d@gmail.com>
-Date:   Wed, 27 Jun 2018 17:39:15 +1200
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+        Wed, 27 Jun 2018 01:43:32 -0400
+X-UUID: b40d56ea0a754c18b9c7ed2e3463b27e-20180627
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 944696649; Wed, 27 Jun 2018 13:43:29 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 27 Jun 2018 13:43:27 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 27 Jun 2018 13:43:27 +0800
+From:   <sean.wang@mediatek.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <marcel@holtmann.org>, <johan.hedberg@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v4 1/7] dt-bindings: net: bluetooth: Add mediatek-bluetooth
+Date:   Wed, 27 Jun 2018 13:43:19 +0800
+Message-ID: <bf30a97c1721c6b62273cbe6a8cb88f05debf41b.1530004712.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1530004712.git.sean.wang@mediatek.com>
+References: <cover.1530004712.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <cacaecac00c1ac941a78da772bbcfb05142df87d.camel@kernel.crashing.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ben,
+From: Sean Wang <sean.wang@mediatek.com>
 
-Am 27.06.2018 um 15:27 schrieb Benjamin Herrenschmidt:
-> On Wed, 2018-06-27 at 13:08 +1000, Michael Ellerman wrote:
->>> I will rewrite patch 10/12 after Arnd's fixes and this series have all
->>> made their way through both powerpc and m68k trees, and submit it
->>> separately.
->>
->> drivers/macintosh is supposedly maintained by Ben, but I'm not sure this
->> series is high on his todo list.
->
-> We need at least to pull out a couple of powerbooks we have sitting in
-> drawers and try it out.
+Add binding document for a SoC built-in device using MediaTek protocol.
+Which could be found on MT7622 SoC or other similar MediaTek SoCs.
 
-No need to root around in drawers - I'm sitting in front of one (G3 
-Titanium) writing this. Let me know if that would help (I've forgotten 
-most of what I knew about powerpc kernels).
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/net/mediatek-bluetooth.txt | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
 
-Cheers,
+diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+new file mode 100644
+index 0000000..1335429
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+@@ -0,0 +1,35 @@
++MediaTek SoC built-in Bluetooth Devices
++==================================
++
++This device is a serial attached device to BTIF device and thus it must be a
++child node of the serial node with BTIF. The dt-bindings details for BTIF
++device can be known via Documentation/devicetree/bindings/serial/8250.txt.
++
++Required properties:
++
++- compatible:	Must be one of
++		  "mediatek,mt7622-bluetooth"": for MT7622 SoC
++- clocks:	Should be the clock specifiers corresponding to the entry in
++		clock-names property.
++- clock-names:	Should contain "ref" entries.
++- power-domains: Phandle to the power domain that the device is part of
++
++Example:
++
++	btif: serial@1100c000 {
++		compatible = "mediatek,mt7622-btif",
++			     "mediatek,mtk-btif";
++		reg = <0 0x1100c000 0 0x1000>;
++		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&pericfg CLK_PERI_BTIF_PD>;
++		clock-names = "main";
++		reg-shift = <2>;
++		reg-io-width = <4>;
++
++		bluetooth {
++			compatible = "mediatek,mt7622-bluetooth";
++			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
++			clocks = <&clk25m>;
++			clock-names = "ref";
++		};
++	};
+-- 
+2.7.4
 
-	Michael
-
-
->
->>
->> Should it just go in via the m68k tree?
->>
->> Or I can create a topic branch to share it between ppc and m68k?
