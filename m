@@ -2,130 +2,151 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B386CC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1289C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9B225E73
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:37:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9B225E73
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FA1C25D02
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:39:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pmuQCuN2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FA1C25D02
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754973AbeF0QhO (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:37:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:34280 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753490AbeF0QhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:37:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A12B218A;
-        Wed, 27 Jun 2018 09:37:12 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 72F3A3F318;
-        Wed, 27 Jun 2018 09:37:12 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 5C8701AE3692; Wed, 27 Jun 2018 17:37:50 +0100 (BST)
-Date:   Wed, 27 Jun 2018 17:37:50 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        pdaly@codeaurora.org
-Subject: Re: [PATCH 1/1] iommu/arm-smmu: Add support to use Last level cache
-Message-ID: <20180627163749.GA8729@arm.com>
-References: <20180615105329.26800-1-vivek.gautam@codeaurora.org>
- <20180615165232.GE2202@arm.com>
- <CAFp+6iFm29ufb2Pr7Gb-2O_aN3GQLH4rcyWhbQGZ3QiwCC8vPg@mail.gmail.com>
+        id S965340AbeF0QjK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:39:10 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33431 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752267AbeF0QjI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 12:39:08 -0400
+Received: by mail-ua0-f196.google.com with SMTP id u21-v6so1682762uao.0;
+        Wed, 27 Jun 2018 09:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gjI3Ne/ln21BdK+QUDq4mpxavjfPCFRmsNpo76PxHPo=;
+        b=pmuQCuN2Apa/CdvY1aK5L2UcE6y03WV6XW+jJkhc3uTgCjqfL98rxN9ZEexLeIXELE
+         VtgdFspD4gn3RIsKVnXexetW1+7yTLZ2iRt1L2aIJYEBNVzITPoqhfzu9shRUSbZshzu
+         cmMA6ooqaYejvP1NizKQ/Epwn2gnarLCAnCc6ki//YFCTGT+DNAkSTx4OIB4Gp5J8i1i
+         OC5wv4Q5w6GpMgYt3KbAuWMokkCNtAWpKfXLAtYV5lj3d3BjslyGo06hD4mtJW/x2kyi
+         6XrG7vebmkEGf6kyPdhgDkwGFuns+p/HSlQDK2ccQchvZz9WK5Xdim2G44zzR1458Q2s
+         IJEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gjI3Ne/ln21BdK+QUDq4mpxavjfPCFRmsNpo76PxHPo=;
+        b=G8JQupIrdOQOApyBOYW6tnRLiFAli538Ie8LSZM77i1Uipj0PKvQ6xStcDFhu2UbLp
+         7D75QwO3I/KMGmKbaTuTIo0GNtROaW5uyVdKExq2uu06JN9VrGXQ+xPxM7FHaJgsdhvM
+         9bWEmwL9gw2CTg5LZmNBZ5Wef5bNQQi1TlBspeBVjnFoYvn/AXNFpP03Sq6ld0mzhyua
+         bBh9hqeRVdksp2i7x3fbVcVPxD821XwDDLTQFmO1wbMg6Q3BN6EvM8NGniZcv6RQjo29
+         nDDvvDtVe5JRvvqnViznXE65Nq+6xnVppRF7Ml7fJK/C9mWv++0P3pbCqhFd8NIR4DAm
+         PjJA==
+X-Gm-Message-State: APt69E082pONdCWI+lmC9edkL51KC2609iQ0wgK0J9Q3iM/j7yxzje/i
+        v0BZ5FLbpT4fkxr+olb3NE2/sc0ZX9rvb/y+MJk=
+X-Google-Smtp-Source: AAOMgpdbrbiLKrV5JYhIkYxkEFIJWvMJqysdytM3giKEwyv7TxfrPp8SZOrUxDu1oon/HtbEK2P8LgEFghUOdoCsy0U=
+X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr4199375uai.47.1530117547254;
+ Wed, 27 Jun 2018 09:39:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iFm29ufb2Pr7Gb-2O_aN3GQLH4rcyWhbQGZ3QiwCC8vPg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 09:39:06
+ -0700 (PDT)
+In-Reply-To: <1530091298-28120-5-git-send-email-honghui.zhang@mediatek.com>
+References: <1530091298-28120-1-git-send-email-honghui.zhang@mediatek.com> <1530091298-28120-5-git-send-email-honghui.zhang@mediatek.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 27 Jun 2018 19:39:06 +0300
+Message-ID: <CAHp75VdsSZifb5xZ2Q8cmJV=PgAaoN=iOhMfyVX4uE4vNpo=Mg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] PCI: mediatek: Add loadable kernel module support
+To:     Honghui Zhang <honghui.zhang@mediatek.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        yingjoe.chen@mediatek.com, Eddie Huang <eddie.huang@mediatek.com>,
+        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
+        youlin.pei@mediatek.com, yong.wu@mediatek.com,
+        YT Shen <yt.shen@mediatek.com>, sean.wang@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vivek,
+On Wed, Jun 27, 2018 at 12:21 PM,  <honghui.zhang@mediatek.com> wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+>
+> Implement remove callback function for Mediatek PCIe driver to add
+> loadable kernel module support.
 
-On Tue, Jun 19, 2018 at 02:04:44PM +0530, Vivek Gautam wrote:
-> On Fri, Jun 15, 2018 at 10:22 PM, Will Deacon <will.deacon@arm.com> wrote:
-> > On Fri, Jun 15, 2018 at 04:23:29PM +0530, Vivek Gautam wrote:
-> >> Qualcomm SoCs have an additional level of cache called as
-> >> System cache or Last level cache[1]. This cache sits right
-> >> before the DDR, and is tightly coupled with the memory
-> >> controller.
-> >> The cache is available to all the clients present in the
-> >> SoC system. The clients request their slices from this system
-> >> cache, make it active, and can then start using it. For these
-> >> clients with smmu, to start using the system cache for
-> >> dma buffers and related page tables [2], few of the memory
-> >> attributes need to be set accordingly.
-> >> This change makes the related memory Outer-Shareable, and
-> >> updates the MAIR with necessary protection.
-> >>
-> >> The MAIR attribute requirements are:
-> >>     Inner Cacheablity = 0
-> >>     Outer Cacheablity = 1, Write-Back Write Allocate
-> >>     Outer Shareablity = 1
-> >
-> > Hmm, so is this cache coherent with the CPU or not?
-> 
-> Thanks for reviewing.
-> Yes, this LLC is cache coherent with CPU, so we mark for Outer-cacheable.
-> The different masters such as GPU as able to allocated and activate a slice
-> in this Last Level Cache.
+> +static void mtk_pcie_irq_teardown(struct mtk_pcie *pcie)
+> +{
+> +       struct mtk_pcie_port *port, *tmp;
+> +
 
-What I mean is, for example, if the CPU writes some data using Normal, Inner
-Shareable, Inner/Outer Cacheable, Inner/Outer Write-back, Non-transient
-Read/Write-allocate and a device reads that data using your MAIR encoding
-above, is the device guaranteed to see the CPU writes after the CPU has
-executed a DSB instruction?
+> +       if (list_empty(&pcie->ports))
+> +               return;
 
-I don't think so, because the ARM ARM would say that there's a mismatch on
-the Inner Cacheability attribute.
+This is redundant.
 
-> > Why don't normal
-> > non-cacheable mappings allocated in the LLC by default?
-> 
-> Sorry, I couldn't fully understand your question here.
-> Few of the masters on qcom socs are not io-coherent, so for them
-> the IC has to be marked as 0.
+> +
+> +       list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+> +               irq_set_chained_handler_and_data(port->irq, NULL, NULL);
+> +
+> +               if (port->irq_domain)
+> +                       irq_domain_remove(port->irq_domain);
+> +
+> +               if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> +                       if (port->msi_domain)
+> +                               irq_domain_remove(port->msi_domain);
+> +                       if (port->inner_domain)
+> +                               irq_domain_remove(port->inner_domain);
+> +               }
+> +
+> +               irq_dispose_mapping(port->irq);
+> +       }
+> +}
 
-By IC you mean Inner Cacheability? In your MAIR encoding above, it is zero
-so I don't understand the problem. What goes wrong if non-coherent devices
-use your MAIR encoding for their DMA buffers?
+> +static void mtk_pcie_free_resources(struct mtk_pcie *pcie)
+> +{
+> +       struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> +       struct list_head *windows = &host->windows;
+> +
+> +       pci_unmap_iospace(&pcie->pio);
+> +       pci_free_resource_list(windows);
+> +}
+> +
+> +static int mtk_pcie_remove(struct platform_device *pdev)
+> +{
+> +       struct mtk_pcie *pcie = platform_get_drvdata(pdev);
+> +       struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> +
+> +       pci_stop_root_bus(host->bus);
+> +       pci_remove_root_bus(host->bus);
+> +       mtk_pcie_free_resources(pcie);
+> +
+> +       mtk_pcie_irq_teardown(pcie);
+> +
 
-> But they are able to use the LLC with OC marked as 1.
+> +       if (!list_empty(&pcie->ports))
 
-The issue here is that whatever attributes we put in the SMMU need to align
-with the attributes used by the CPU in order to avoid introducing mismatched
-aliases. Currently, we support three types of mapping in the SMMU:
+I think this is also not needed. Do you put runtime PM by the way?
 
-1. DMA non-coherent (e.g. "dma-coherent" is not set on the device)
-	Normal, Inner Shareable, Inner/Outer Non-Cacheable
+> +               mtk_pcie_put_resources(pcie);
+> +
+> +       return 0;
+> +}
 
-2. DMA coherent (e.g. "dma-coherent" is set on the device) [IOMMU_CACHE]
-	Normal, Inner Shareable, Inner/Outer Cacheable, Inner/Outer
-	Write-back, Non-transient Read/Write-allocate
-
-3. MMIO (e.g. MSI doorbell) [IOMMU_MMIO]
-	Device-nGnRE (Outer Shareable)
-
-So either you override one of these types (I was suggesting (1)) or you need
-to create a new memory type, along with the infrastructure for it to be
-recognised on a per-device basis and used by the DMA API so that we don't
-get mismatched aliases on the CPU.
-
-Will
+-- 
+With Best Regards,
+Andy Shevchenko
