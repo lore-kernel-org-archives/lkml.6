@@ -2,257 +2,136 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F97C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB264C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 892D026175
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:25:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ih/OvKy1";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PRe5jGqY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892D026175
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 7661626182
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7661626182
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965208AbeF0OZ1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 10:25:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34120 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965062AbeF0OZY (ORCPT
+        id S965294AbeF0O0V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 10:26:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50642 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S964916AbeF0O0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 10:25:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 371E560B10; Wed, 27 Jun 2018 14:25:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530109524;
-        bh=6oqiUu+F5qoo5sysj153WgmrgKsqJUnEtFwleAW+JmA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ih/OvKy1ixtc83QW6DVZdf+Ay6eRQJPsT7v1zEhsPMk93KqooZIWrlj1v/ci/PF+n
-         RzJKkr5UihBz160HGeHD6hQ3CZvLYXfs63vVu0ZJzclpA4uZHRwdOzKAuk2gDCLqMt
-         sob6RZL4IH48zmJM5el4k/W3HanBgZVdFQ6i7dM4=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1425160AD8;
-        Wed, 27 Jun 2018 14:25:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530109523;
-        bh=6oqiUu+F5qoo5sysj153WgmrgKsqJUnEtFwleAW+JmA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PRe5jGqYEf/03noNNK76W3wb4kglco0p0jDyIhZ5aCo+FOQ76LMv9be0VNv+lKlDT
-         2zFZkHqn4GmGeZKF5Xq+Zq3jHY5wxaZYa9qpE633y5fJoVIyFd94+yhGLjC4jCKYg6
-         5ZgKe6EZWrZctBqN0wzXVL0IeIZdCfP7cLMJt7bk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1425160AD8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc:     bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        kyan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v6 2/8] reset: qcom: AOSS (always on subsystem) reset controller
-Date:   Wed, 27 Jun 2018 19:54:43 +0530
-Message-Id: <20180627142443.1570-2-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180627142443.1570-1-sibis@codeaurora.org>
-References: <20180627142443.1570-1-sibis@codeaurora.org>
+        Wed, 27 Jun 2018 10:26:20 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5REK6CG064544
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 10:26:20 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvb5wumnq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 10:26:19 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 27 Jun 2018 10:26:19 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Jun 2018 10:26:16 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5REQFlP7864596
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Jun 2018 14:26:15 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DEAEBB206A;
+        Wed, 27 Jun 2018 10:26:07 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB88EB2064;
+        Wed, 27 Jun 2018 10:26:07 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Jun 2018 10:26:07 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2791116CA20F; Wed, 27 Jun 2018 07:28:22 -0700 (PDT)
+Date:   Wed, 27 Jun 2018 07:28:22 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
+ killer.
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <alpine.DEB.2.21.1806201528490.16984@chino.kir.corp.google.com>
+ <20180621073142.GA10465@dhcp22.suse.cz>
+ <2d8c3056-1bc2-9a32-d745-ab328fd587a1@i-love.sakura.ne.jp>
+ <20180626170345.GA3593@linux.vnet.ibm.com>
+ <f40d85e0-1d90-2261-99a4-4db315df4860@i-love.sakura.ne.jp>
+ <20180626235014.GS3593@linux.vnet.ibm.com>
+ <c0aeb719-ccb7-46c7-2ad9-b0630bf4d542@i-love.sakura.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c0aeb719-ccb7-46c7-2ad9-b0630bf4d542@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062714-0060-0000-0000-0000028345B1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009263; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01053094; UDB=6.00539924; IPR=6.00831018;
+ MB=3.00021880; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-27 14:26:18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062714-0061-0000-0000-00004598059B
+Message-Id: <20180627142822.GV3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=866 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806270158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add reset controller driver for Qualcomm SDM845 SoC to
-control reset signals provided by AOSS for Modem, Venus
-ADSP, GPU, Camera, Wireless, Display subsystem
+On Wed, Jun 27, 2018 at 07:52:23PM +0900, Tetsuo Handa wrote:
+> On 2018/06/27 8:50, Paul E. McKenney wrote:
+> > On Wed, Jun 27, 2018 at 05:10:48AM +0900, Tetsuo Handa wrote:
+> >> As far as I can see,
+> >>
+> >> -	atomic_set(&oom_callback_count, 1);
+> >> +	atomic_inc(&oom_callback_count);
+> >>
+> >> should be sufficient.
+> > 
+> > I don't see how that helps.  For example, suppose that two tasks
+> > invoked rcu_oom_notify() at about the same time.  Then they could
+> > both see oom_callback_count equal to zero, both atomically increment
+> > oom_callback_count, then both do the IPI invoking rcu_oom_notify_cpu()
+> > on each online CPU.
+> > 
+> > So far, so good.  But rcu_oom_notify_cpu() enqueues a per-CPU RCU
+> > callback, and enqueuing the same callback twice in quick succession
+> > would fatally tangle RCU's callback lists.
+> > 
+> > What am I missing here?
+> 
+> You are pointing out that "number of rsp->call() is called" > "number of
+> rcu_oom_callback() is called" can happen if concurrently called, aren't you?
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/reset/Kconfig           |   9 +++
- drivers/reset/Makefile          |   1 +
- drivers/reset/reset-qcom-aoss.c | 133 ++++++++++++++++++++++++++++++++
- 3 files changed, 143 insertions(+)
- create mode 100644 drivers/reset/reset-qcom-aoss.c
+Yes.  Reusing an rcu_head before invocation of the earlier use is
+very bad indeed.  ;-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index c0b292be1b72..756ad2b27d0f 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -82,6 +82,15 @@ config RESET_PISTACHIO
- 	help
- 	  This enables the reset driver for ImgTec Pistachio SoCs.
- 
-+config RESET_QCOM_AOSS
-+	bool "Qcom AOSS Reset Driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  This enables the AOSS (always on subsystem) reset driver
-+	  for Qualcomm SDM845 SoCs. Say Y if you want to control
-+	  reset signals provided by AOSS for Modem, Venus, ADSP,
-+	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
-+
- config RESET_SIMPLE
- 	bool "Simple Reset Controller Driver" if COMPILE_TEST
- 	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index c1261dcfe9ad..6881e4d287f0 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
- obj-$(CONFIG_RESET_MESON) += reset-meson.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
-+obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
-new file mode 100644
-index 000000000000..36db96750450
---- /dev/null
-+++ b/drivers/reset/reset-qcom-aoss.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of_device.h>
-+#include <dt-bindings/reset/qcom,sdm845-aoss.h>
-+
-+struct qcom_aoss_reset_map {
-+	unsigned int reg;
-+};
-+
-+struct qcom_aoss_desc {
-+	const struct qcom_aoss_reset_map *resets;
-+	size_t num_resets;
-+};
-+
-+struct qcom_aoss_reset_data {
-+	struct reset_controller_dev rcdev;
-+	void __iomem *base;
-+	const struct qcom_aoss_desc *desc;
-+};
-+
-+static const struct qcom_aoss_reset_map sdm845_aoss_resets[] = {
-+	[AOSS_CC_MSS_RESTART] = {0x10000},
-+	[AOSS_CC_CAMSS_RESTART] = {0x11000},
-+	[AOSS_CC_VENUS_RESTART] = {0x12000},
-+	[AOSS_CC_GPU_RESTART] = {0x13000},
-+	[AOSS_CC_DISPSS_RESTART] = {0x14000},
-+	[AOSS_CC_WCSS_RESTART] = {0x20000},
-+	[AOSS_CC_LPASS_RESTART] = {0x30000},
-+};
-+
-+static const struct qcom_aoss_desc sdm845_aoss_desc = {
-+	.resets = sdm845_aoss_resets,
-+	.num_resets = ARRAY_SIZE(sdm845_aoss_resets),
-+};
-+
-+static inline struct qcom_aoss_reset_data *to_qcom_aoss_reset_data(
-+				struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct qcom_aoss_reset_data, rcdev);
-+}
-+
-+static int qcom_aoss_control_assert(struct reset_controller_dev *rcdev,
-+				    unsigned long idx)
-+{
-+	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-+	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-+
-+	writel(1, data->base + map->reg);
-+	/* Wait 6 32kHz sleep cycles for reset */
-+	usleep_range(200, 300);
-+	return 0;
-+}
-+
-+static int qcom_aoss_control_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long idx)
-+{
-+	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-+	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-+
-+	writel(0, data->base + map->reg);
-+	/* Wait 6 32kHz sleep cycles for reset */
-+	usleep_range(200, 300);
-+	return 0;
-+}
-+
-+static int qcom_aoss_control_reset(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	qcom_aoss_control_assert(rcdev, idx);
-+
-+	return qcom_aoss_control_deassert(rcdev, idx);
-+}
-+
-+static const struct reset_control_ops qcom_aoss_reset_ops = {
-+	.reset = qcom_aoss_control_reset,
-+	.assert = qcom_aoss_control_assert,
-+	.deassert = qcom_aoss_control_deassert,
-+};
-+
-+static int qcom_aoss_reset_probe(struct platform_device *pdev)
-+{
-+	struct qcom_aoss_reset_data *data;
-+	struct device *dev = &pdev->dev;
-+	const struct qcom_aoss_desc *desc;
-+	struct resource *res;
-+
-+	desc = of_device_get_match_data(dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->desc = desc;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(data->base))
-+		return PTR_ERR(data->base);
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.ops = &qcom_aoss_reset_ops;
-+	data->rcdev.nr_resets = desc->num_resets;
-+	data->rcdev.of_node = dev->of_node;
-+
-+	return devm_reset_controller_register(dev, &data->rcdev);
-+}
-+
-+static const struct of_device_id qcom_aoss_reset_of_match[] = {
-+	{ .compatible = "qcom,sdm845-aoss-cc", .data = &sdm845_aoss_desc },
-+	{}
-+};
-+
-+static struct platform_driver qcom_aoss_reset_driver = {
-+	.probe = qcom_aoss_reset_probe,
-+	.driver  = {
-+		.name = "qcom_aoss_reset",
-+		.of_match_table = qcom_aoss_reset_of_match,
-+	},
-+};
-+
-+builtin_platform_driver(qcom_aoss_reset_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm AOSS Reset Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Then, you are not missing anything. You will need to use something equivalent
+> to oom_lock even if you can convert rcu_oom_notify() to use shrinkers.
+
+What should I look at to work out whether it makes sense to convert
+rcu_oom_notify() to shrinkers, and if so, how to go about it?
+
+Or are you simply asking me to serialize rcu_oom_notify()?  (Which is
+of course not difficult, so please just let me know.)
+
+							Thanx, Paul
 
