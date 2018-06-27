@@ -2,429 +2,106 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C3AC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EF7C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6D526800
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6D526800
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0433B269BC
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:11:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMjqn1Y/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0433B269BC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752917AbeF0GKX (ORCPT
+        id S1753047AbeF0GLs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 02:10:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57345 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752347AbeF0GKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 02:10:21 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 064AD2073C; Wed, 27 Jun 2018 08:10:19 +0200 (CEST)
-Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B29CC20733;
-        Wed, 27 Jun 2018 08:10:08 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Dennis Gilmore <dennis@ausil.us>
-Cc:     linux-kernel@vger.kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
-        sebastian.hesselbarth@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, aditya@kobol.io, gauthier@kobol.io
-Subject: Re: [PATCH V4] ARM: dts: armada388-helios4
-References: <20180605221545.32257-1-dennis@ausil.us>
-Date:   Wed, 27 Jun 2018 08:10:09 +0200
-In-Reply-To: <20180605221545.32257-1-dennis@ausil.us> (Dennis Gilmore's
-        message of "Tue, 5 Jun 2018 17:15:45 -0500")
-Message-ID: <8736x8ahfi.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 27 Jun 2018 02:11:48 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:44308 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750942AbeF0GLq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 02:11:46 -0400
+Received: by mail-ot0-f195.google.com with SMTP id w13-v6so940556ote.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 23:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/PtBEJWELEzoXatmkRUr8yiWdJNElDzL3Bh53RIN5SM=;
+        b=YMjqn1Y/ElemFa8NjsWSCwnKkaNm2BC+y6anTvUpD/FUMYsWmDzNxiLvlpSrbGSmha
+         YVV38PLIttnsWuUoMsi2DaN7pGZ4oHNy1nfDjEI2wvkLLKbLvuCT6aN6w+JuM8NSnuRc
+         AGvRhsnS6WoT+/bhjmwz7BAr8azDsqxy0j5kA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/PtBEJWELEzoXatmkRUr8yiWdJNElDzL3Bh53RIN5SM=;
+        b=bzAxO8njbHLa3KcZD2ECk835PHFB4fVIpBRTKlzF218iiu6aW7d+L+OUAYmV3+sonU
+         sqsZiFwAx5p5nuudXutDYZ7U5HpxnBG1yDNdsfvkVOtytm0IgES9JQGZMA3NeCrfP+Cq
+         oJ7K2eWXxnsdrDOzZeNNzAQKYMcR/1J/6lj7JRMHl5oIyLEeJcNfz1sX1WfixtfjPJ/n
+         FrplGibbROUEDDR+d8JmT3h5ml57diXlp4WDX0Sckh+tSGxbAfvgi7eZmJ6BAbMnx5l7
+         8TqdkNfn5jSLJajbIJgy4ESfNlHo8PrKGO/eI63B6gTkVkataYUlbQF9BEc7U8UCMpTe
+         Nysg==
+X-Gm-Message-State: APt69E2j8T5RGej8VYXad7ioM5xyAQMuybWz/+xkjaCpudWV+wMmxJRx
+        uVb0U2hIUUYZv7H5aWARC2M2hriwd2kGRnBoaFPleA==
+X-Google-Smtp-Source: AAOMgpdGEuqnOWdlXyhWazfnwQ35XoWQ+wOwLzEPfng13Q3LesqABfpUgCeootaeX8TrzWq3XbFY3WUGEqR44zDbUoI=
+X-Received: by 2002:a9d:7c3:: with SMTP id 61-v6mr2562429oto.40.1530079906315;
+ Tue, 26 Jun 2018 23:11:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a4a:79c:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 23:11:45 -0700 (PDT)
+In-Reply-To: <20180621162101.GB11859@linux.intel.com>
+References: <20180608065438.110109-1-louiscollard@chromium.org>
+ <20180618180712.GB20697@linux.intel.com> <20180618193306.GF6805@ziepe.ca> <20180621162101.GB11859@linux.intel.com>
+From:   Louis Collard <louiscollard@chromium.org>
+Date:   Wed, 27 Jun 2018 14:11:45 +0800
+Message-ID: <CAKNRAJVJD5b388iwhoOBVC5V-x=wV2YTZHJ+mRrBWv3H-pbNFg@mail.gmail.com>
+Subject: Re: [PATCH] tpm: Add module parameter for hwrng quality.
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dennis,
- 
- On mar., juin 05 2018, Dennis Gilmore <dennis@ausil.us> wrote:
+Thanks for all the replies, let me add some background around the
+motivation for this change.
 
-> The helios4 is a Armada388 based nas board designed by SolidRun and
-> based on their SOM. It is sold by kobol.io the dts file came from
-> https://raw.githubusercontent.com/armbian/build/master/patch/kernel/mvebu-default/95-helios4-device-tree.patch
-> I added a SPDX license line to match the clearfog it says it was based
-> on and a compatible line for "kobol,helios4"
->
-> Signed-off-by: Dennis Gilmore <dennis@ausil.us>
+On some systems we have seen large delays in boot time, due to
+blocking on a call to getrandom() before the entropy pool has been
+initialized. On these systems the usual sources of entropy are not
+sufficient to initialize the pool in any kind of reasonable time -
+delays of minutes have been observed; the most common workaround is to
+mash the keyboard for a bit ;)
 
-Applied on mvebu/dt
+Setting a non-zero quality score causes the hwrng to be used as a
+source of entropy for the pool, the pool is therefore initialized
+early during boot, and no delay is observed.
 
-Thanks,
+I don't believe that the quality score is used anywhere else, so I
+don't think setting it should impact anything other than how the
+entropy pool is populated.
 
-Gregory
+It's my understanding that to be useful in the above situation, the
+parameter needs to be set on the kernel command line, so I'm not sure
+if a sysfs file would work.
 
+On Fri, Jun 22, 2018 at 12:21 AM, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+> On Mon, Jun 18, 2018 at 01:33:06PM -0600, Jason Gunthorpe wrote:
+>> > > +module_param(override_rng_quality, short, 0644);
+>> >
+>> > Should this be 600 i.e. not to leak this information?
+>>
+>> There is a real push these days against adding module parameters, and
+>> apparently, IMA can't function with TPM as a module.
+>>
+>> Are you sure this shouldn't be done in some other way?
 >
-> ---
+> Maybe a sysfs file would be a better choice for this?
 >
-> changes since first submission
-> change solidrun to kobol in compatible line based on feedback
->
-> changes since v2
->
-> remove commented out nodes based on feedback
->
-> changes since v3
->
-> update copyright info for the dts based on a request from kobol
-> ---
->  arch/arm/boot/dts/Makefile               |   1 +
->  arch/arm/boot/dts/armada-388-helios4.dts | 313 +++++++++++++++++++++++
->  2 files changed, 314 insertions(+)
->  create mode 100644 arch/arm/boot/dts/armada-388-helios4.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 7e2424957809..490bfd586198 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -1123,6 +1123,7 @@ dtb-$(CONFIG_MACH_ARMADA_38X) += \
->  	armada-388-clearfog-pro.dtb \
->  	armada-388-db.dtb \
->  	armada-388-gp.dtb \
-> +	armada-388-helios4.dtb \
->  	armada-388-rd.dtb
->  dtb-$(CONFIG_MACH_ARMADA_39X) += \
->  	armada-398-db.dtb
-> diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
-> new file mode 100644
-> index 000000000000..705adfa8c680
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/armada-388-helios4.dts
-> @@ -0,0 +1,313 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Device Tree file for Helios4
-> + * based on SolidRun Clearfog revision A1 rev 2.0 (88F6828)
-> + *
-> + *  Copyright (C) 2017 Aditya Prayoga <aditya@kobol.io>
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +#include "armada-388.dtsi"
-> +#include "armada-38x-solidrun-microsom.dtsi"
-> +
-> +/ {
-> +	model = "Helios4";
-> +	compatible = "kobol,helios4", "marvell,armada388",
-> +		"marvell,armada385", "marvell,armada380";
-> +
-> +	memory {
-> +		device_type = "memory";
-> +		reg = <0x00000000 0x80000000>; /* 2 GB */
-> +	};
-> +
-> +	aliases {
-> +		/* So that mvebu u-boot can update the MAC addresses */
-> +		ethernet1 = &eth0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	reg_12v: regulator-12v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "power_brick_12V";
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	reg_3p3v: regulator-3p3v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "3P3V";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +		vin-supply = <&reg_12v>;
-> +	};
-> +
-> +	reg_5p0v_hdd: regulator-5v-hdd {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "5V_HDD";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		regulator-always-on;
-> +		vin-supply = <&reg_12v>;
-> +	};
-> +
-> +	reg_5p0v_usb: regulator-5v-usb {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "USB-PWR";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		enable-active-high;
-> +		gpio = <&expander0 6 GPIO_ACTIVE_HIGH>;
-> +		vin-supply = <&reg_12v>;
-> +	};
-> +
-> +	system-leds {
-> +		compatible = "gpio-leds";
-> +		status-led {
-> +			label = "helios4:green:status";
-> +			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "heartbeat";
-> +			default-state = "on";
-> +		};
-> +
-> +		fault-led {
-> +			label = "helios4:red:fault";
-> +			gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
-> +			default-state = "keep";
-> +		};
-> +	};
-> +
-> +	io-leds {
-> +		compatible = "gpio-leds";
-> +		sata1-led {
-> +			label = "helios4:green:ata1";
-> +			gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "ata1";
-> +			default-state = "off";
-> +		};
-> +		sata2-led {
-> +			label = "helios4:green:ata2";
-> +			gpios = <&gpio1 18 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "ata2";
-> +			default-state = "off";
-> +		};
-> +		sata3-led {
-> +			label = "helios4:green:ata3";
-> +			gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "ata3";
-> +			default-state = "off";
-> +		};
-> +		sata4-led {
-> +			label = "helios4:green:ata4";
-> +			gpios = <&gpio1 21 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "ata4";
-> +			default-state = "off";
-> +		};
-> +		usb-led {
-> +			label = "helios4:green:usb";
-> +			gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "usb-host";
-> +			default-state = "off";
-> +		};
-> +	};
-> +
-> +	fan1: j10-pwm {
-> +		compatible = "pwm-fan";
-> +		pwms = <&gpio1 9 40000>;	/* Target freq:25 kHz */
-> +	};
-> +
-> +	fan2: j17-pwm {
-> +		compatible = "pwm-fan";
-> +		pwms = <&gpio1 23 40000>;	/* Target freq:25 kHz */
-> +	};
-> +
-> +	usb2_phy: usb2-phy {
-> +		compatible = "usb-nop-xceiv";
-> +		vbus-regulator = <&reg_5p0v_usb>;
-> +	};
-> +
-> +	usb3_phy: usb3-phy {
-> +		compatible = "usb-nop-xceiv";
-> +	};
-> +
-> +	soc {
-> +		internal-regs {
-> +			i2c@11000 {
-> +				clock-frequency = <400000>;
-> +				pinctrl-0 = <&i2c0_pins>;
-> +				pinctrl-names = "default";
-> +				status = "okay";
-> +
-> +				/*
-> +				 * PCA9655 GPIO expander, up to 1MHz clock.
-> +				 *  0-Board Revision bit 0 #
-> +				 *  1-Board Revision bit 1 #
-> +				 *  5-USB3 overcurrent
-> +				 *  6-USB3 power
-> +				 */
-> +				expander0: gpio-expander@20 {
-> +					/*
-> +					 * This is how it should be:
-> +					 * compatible = "onnn,pca9655",
-> +					 *	 "nxp,pca9555";
-> +					 * but you can't do this because of
-> +					 * the way I2C works.
-> +					 */
-> +					compatible = "nxp,pca9555";
-> +					gpio-controller;
-> +					#gpio-cells = <2>;
-> +					reg = <0x20>;
-> +					pinctrl-names = "default";
-> +					pinctrl-0 = <&pca0_pins>;
-> +					interrupt-parent = <&gpio0>;
-> +					interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
-> +					interrupt-controller;
-> +					#interrupt-cells = <2>;
-> +
-> +					board_rev_bit_0 {
-> +						gpio-hog;
-> +						gpios = <0 GPIO_ACTIVE_LOW>;
-> +						input;
-> +						line-name = "board-rev-0";
-> +					};
-> +					board_rev_bit_1 {
-> +						gpio-hog;
-> +						gpios = <1 GPIO_ACTIVE_LOW>;
-> +						input;
-> +						line-name = "board-rev-1";
-> +					};
-> +					usb3_ilimit {
-> +						gpio-hog;
-> +						gpios = <5 GPIO_ACTIVE_HIGH>;
-> +						input;
-> +						line-name = "usb-overcurrent-status";
-> +					};
-> +				};
-> +
-> +				temp_sensor: temp@4c {
-> +					compatible = "ti,lm75";
-> +					reg = <0x4c>;
-> +					vcc-supply = <&reg_3p3v>;
-> +				};
-> +			};
-> +
-> +			i2c@11100 {
-> +				/*
-> +				 * External I2C Bus for user peripheral
-> +				 */
-> +				clock-frequency = <400000>;
-> +				pinctrl-0 = <&helios_i2c1_pins>;
-> +				pinctrl-names = "default";
-> +				status = "okay";
-> +			};
-> +
-> +			sata@a8000 {
-> +				status = "okay";
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				sata0: sata-port@0 {
-> +					reg = <0>;
-> +				};
-> +
-> +				sata1: sata-port@1 {
-> +					reg = <1>;
-> +				};
-> +			};
-> +
-> +			sata@e0000 {
-> +				status = "okay";
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				sata2: sata-port@0 {
-> +					reg = <0>;
-> +				};
-> +
-> +				sata3: sata-port@1 {
-> +					reg = <1>;
-> +				};
-> +			};
-> +
-> +			spi@10680 {
-> +				pinctrl-0 = <&spi1_pins
-> +					     &microsom_spi1_cs_pins>;
-> +				pinctrl-names = "default";
-> +				status = "okay";
-> +			};
-> +
-> +			sdhci@d8000 {
-> +				bus-width = <4>;
-> +				cd-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
-> +				no-1-8-v;
-> +				pinctrl-0 = <&helios_sdhci_pins
-> +					     &helios_sdhci_cd_pins>;
-> +				pinctrl-names = "default";
-> +				status = "okay";
-> +				vmmc = <&reg_3p3v>;
-> +				wp-inverted;
-> +			};
-> +
-> +			usb@58000 {
-> +				usb-phy = <&usb2_phy>;
-> +				status = "okay";
-> +			};
-> +
-> +			usb3@f0000 {
-> +				status = "okay";
-> +			};
-> +
-> +			usb3@f8000 {
-> +				status = "okay";
-> +			};
-> +
-> +			pinctrl@18000 {
-> +				pca0_pins: pca0-pins {
-> +					marvell,pins = "mpp23";
-> +					marvell,function = "gpio";
-> +				};
-> +				microsom_phy0_int_pins: microsom-phy0-int-pins {
-> +					marvell,pins = "mpp18";
-> +					marvell,function = "gpio";
-> +				};
-> +				helios_i2c1_pins: i2c1-pins {
-> +					marvell,pins = "mpp26", "mpp27";
-> +					marvell,function = "i2c1";
-> +				};
-> +				helios_sdhci_cd_pins: helios-sdhci-cd-pins {
-> +					marvell,pins = "mpp20";
-> +					marvell,function = "gpio";
-> +				};
-> +				helios_sdhci_pins: helios-sdhci-pins {
-> +					marvell,pins = "mpp21", "mpp28",
-> +						       "mpp37", "mpp38",
-> +						       "mpp39", "mpp40";
-> +					marvell,function = "sd0";
-> +				};
-> +				helios_led_pins: helios-led-pins {
-> +					marvell,pins = "mpp24", "mpp25",
-> +						       "mpp49", "mpp50",
-> +						       "mpp52", "mpp53",
-> +						       "mpp54";
-> +					marvell,function = "gpio";
-> +				};
-> +				helios_fan_pins: helios-fan-pins {
-> +					marvell,pins = "mpp41", "mpp43",
-> +						       "mpp48", "mpp55";
-> +					marvell,function = "gpio";
-> +				};
-> +				microsom_spi1_cs_pins: spi1-cs-pins {
-> +					marvell,pins = "mpp59";
-> +					marvell,function = "spi1";
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> -- 
-> 2.17.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
--- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+> /Jarkko
