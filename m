@@ -3,289 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 469BAC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45345C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E766823F3E
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:47:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E766823F3E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id ECC4226091
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:47:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC4226091
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753430AbeF0IrE (ORCPT
+        id S1753477AbeF0IrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 04:47:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60162 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752642AbeF0IrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 04:47:01 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AC66440704B7;
-        Wed, 27 Jun 2018 08:47:00 +0000 (UTC)
-Received: from localhost (ovpn-116-71.ams2.redhat.com [10.36.116.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 250B82156880;
-        Wed, 27 Jun 2018 08:46:59 +0000 (UTC)
-From:   Niels de Vos <ndevos@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Niels de Vos <ndevos@redhat.com>
-Subject: [PATCH v2] fuse: add support for copy_file_range()
-Date:   Wed, 27 Jun 2018 10:46:48 +0200
-Message-Id: <20180627084648.16892-1-ndevos@redhat.com>
-In-Reply-To: <20180627074534.7307-1-ndevos@redhat.com>
-References: <20180627074534.7307-1-ndevos@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 27 Jun 2018 08:47:00 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 27 Jun 2018 08:47:00 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ndevos@redhat.com' RCPT:''
+        Wed, 27 Jun 2018 04:47:15 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:37711 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752642AbeF0IrK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 04:47:10 -0400
+Received: by mail-ua0-f194.google.com with SMTP id c2-v6so764158uae.4;
+        Wed, 27 Jun 2018 01:47:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E3mAUNDm5OQkqoa8fA7K1JaLqPW7To/+nJxHr15xBE0=;
+        b=b3UBgkl0oq6Qc+wJZuTNr5s59ya/J6xihLun6kPYuK205HTBqMKT97NOTuZ2lg43Ln
+         fx+hHJr/LRC/dzSVe3oCvKsA4Wq/M68k+IutYHK/A7a8xGICSJ6PXFzbqevE52QHicrt
+         VwxCyyg35PEAQJ807LoSLpBARRg9DM2jUaSP+LFNjEajMfg+U0gRGYhdfC4c5mlrcNDc
+         AEUhcQmLSoGF9CDeLqlKXwmrkiCBD+VxfOvmUc7rJD9i/uorvgfIDzmSARiV3GruGE/B
+         bF4ZfqHmc2MxQGTOHj/7osQexglRRmjQZjjeRpLEOj8E9nTeDJ4uMN+qCGOPwIXxBkXK
+         pvYw==
+X-Gm-Message-State: APt69E012PvalvV3m7o3OLqGnMTsEjBoKV9ELRjFrCC4U82hzAS8ORbK
+        knMtk8XN3cCzipGGmv6rV/NVPmn0CLvgiS7EUBA=
+X-Google-Smtp-Source: AAOMgpfgbabHfVVER2VMbZHd7RtyS8/xg/ug/sQNCnoN4omuc2H6Hop+tDPCzhyiJg1M98n3wCtKtfv1JW+bVczHHY0=
+X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr3165947uae.12.1530089229285;
+ Wed, 27 Jun 2018 01:47:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180619194421.3432-1-nm@ti.com> <20180619194421.3432-2-nm@ti.com>
+In-Reply-To: <20180619194421.3432-2-nm@ti.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Jun 2018 10:46:58 +0200
+Message-ID: <CAMuHMdVLLir_U7cu-p=hVv_A1hOuTGhHJRBnad2BYSQdV+rJHQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] Documentation: dt: keystone: ti-sci: Add optional
+ host-id parameter
+To:     Nishanth Menon <nm@ti.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several FUSE filesystems that can implement server-side copy
-or other efficient copy/duplication/clone methods. The copy_file_range()
-syscall is the standard interface that users have access to while not
-depending on external libraries that bypass FUSE.
+Hi Nishanth,
 
-Signed-off-by: Niels de Vos <ndevos@redhat.com>
+On Tue, Jun 19, 2018 at 9:45 PM Nishanth Menon <nm@ti.com> wrote:
+> Texas Instrument's System Control Interface (TISCI) permits
+> the ability for OSs running in virtual machines to be able to
+> independently communicate with the firmware without the need going
+> through an hypervisor.
+>
+> The "host-id" in effect is the hardware representation of the
+> host (example: VMs locked to a core) as identified to the System
+> Controller. Hypervisors can either fill in appropriate host-ids in dt
+> used for each VM instance OR may use prebuilt blobs where the host-ids
+> are pre-populated, as appropriate for the OS running in the VMs.
+>
+> This is introduced as an optional parameter to maintain consistency
+> with legacy device tree blobs.
+>
+> We call this with a vendor prefix to prevent any possible confusion
+> with SCSI ID (m68k) kernel option.
 
----
-v2: return ssize_t instead of long
----
- fs/fuse/file.c            |  65 +++++++++++++++++++++++
- fs/fuse/fuse_i.h          |   3 ++
- include/uapi/linux/fuse.h | 106 ++++++++++++++++++++++----------------
- 3 files changed, 130 insertions(+), 44 deletions(-)
+I'd omit the above paragraph. There's no "host-id" literal involved in the
+m68k kernel option, and it is not related to DT at all.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 67648ccbdd43..be8b3da4b788 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3009,6 +3009,70 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	return err;
- }
- 
-+static ssize_t fuse_copy_file_range(struct file *file_in, loff_t pos_in,
-+				    struct file *file_out, loff_t pos_out,
-+				    size_t len, unsigned int flags)
-+{
-+	struct fuse_file *ff_in = file_in->private_data;
-+	struct fuse_file *ff_out = file_out->private_data;
-+	struct inode *inode_out = file_inode(file_out);
-+	struct fuse_inode *fi_out = get_fuse_inode(inode_out);
-+	struct fuse_conn *fc = ff_in->fc;
-+	FUSE_ARGS(args);
-+	struct fuse_copy_file_range_in inarg = {
-+		.fh_in = ff_in->fh,
-+		.off_in = pos_in,
-+		.fh_out = ff_out->fh,
-+		.off_out = pos_out,
-+		.len = len,
-+		.flags = flags
-+	};
-+	struct fuse_copy_file_range_out outarg;
-+	ssize_t err;
-+
-+	if (fc->no_copy_file_range)
-+		return -EOPNOTSUPP;
-+
-+	inode_lock(inode_out);
-+	set_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
-+
-+	args.in.h.opcode = FUSE_COPY_FILE_RANGE;
-+	args.in.h.nodeid = ff_in->nodeid;
-+	args.in.numargs = 1;
-+	args.in.args[0].size = sizeof(inarg);
-+	args.in.args[0].value = &inarg;
-+	args.out.numargs = 1;
-+	args.out.args[0].size = sizeof(outarg);
-+	args.out.args[0].value = &outarg;
-+	err = fuse_simple_request(fc, &args);
-+	if (err == -ENOSYS) {
-+		fc->no_copy_file_range = 1;
-+		err = -EOPNOTSUPP;
-+	}
-+	if (err)
-+		goto out;
-+
-+	/* we might have extended the file */
-+	if (outarg.size > 0) {
-+		/* Size of inode_out may not have changed in case of
-+		 * overwrites, oh well. */
-+		bool changed = fuse_write_update_size(inode_out,
-+						      pos_out + outarg.size);
-+
-+		if (changed && fc->writeback_cache)
-+			file_update_time(file_out);
-+	}
-+
-+	fuse_invalidate_attr(inode_out);
-+
-+	err = outarg.size;
-+out:
-+	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
-+	inode_unlock(inode_out);
-+
-+	return err;
-+}
-+
- static const struct file_operations fuse_file_operations = {
- 	.llseek		= fuse_file_llseek,
- 	.read_iter	= fuse_file_read_iter,
-@@ -3025,6 +3089,7 @@ static const struct file_operations fuse_file_operations = {
- 	.compat_ioctl	= fuse_file_compat_ioctl,
- 	.poll		= fuse_file_poll,
- 	.fallocate	= fuse_file_fallocate,
-+	.copy_file_range = fuse_copy_file_range,
- };
- 
- static const struct file_operations fuse_direct_io_file_operations = {
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 5256ad333b05..ea848bb7d9e2 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -637,6 +637,9 @@ struct fuse_conn {
- 	/** Allow other than the mounter user to access the filesystem ? */
- 	unsigned allow_other:1;
- 
-+	/** Does the filesystem support copy_file_range? */
-+	unsigned no_copy_file_range:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 92fa24c24c92..77330fa510f1 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -116,6 +116,9 @@
-  *
-  *  7.27
-  *  - add FUSE_ABORT_ERROR
-+ *
-+ *  7.28
-+ *  - add FUSE_COPY_FILE_RANGE
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -337,50 +340,51 @@ struct fuse_file_lock {
- #define FUSE_POLL_SCHEDULE_NOTIFY (1 << 0)
- 
- enum fuse_opcode {
--	FUSE_LOOKUP	   = 1,
--	FUSE_FORGET	   = 2,  /* no reply */
--	FUSE_GETATTR	   = 3,
--	FUSE_SETATTR	   = 4,
--	FUSE_READLINK	   = 5,
--	FUSE_SYMLINK	   = 6,
--	FUSE_MKNOD	   = 8,
--	FUSE_MKDIR	   = 9,
--	FUSE_UNLINK	   = 10,
--	FUSE_RMDIR	   = 11,
--	FUSE_RENAME	   = 12,
--	FUSE_LINK	   = 13,
--	FUSE_OPEN	   = 14,
--	FUSE_READ	   = 15,
--	FUSE_WRITE	   = 16,
--	FUSE_STATFS	   = 17,
--	FUSE_RELEASE       = 18,
--	FUSE_FSYNC         = 20,
--	FUSE_SETXATTR      = 21,
--	FUSE_GETXATTR      = 22,
--	FUSE_LISTXATTR     = 23,
--	FUSE_REMOVEXATTR   = 24,
--	FUSE_FLUSH         = 25,
--	FUSE_INIT          = 26,
--	FUSE_OPENDIR       = 27,
--	FUSE_READDIR       = 28,
--	FUSE_RELEASEDIR    = 29,
--	FUSE_FSYNCDIR      = 30,
--	FUSE_GETLK         = 31,
--	FUSE_SETLK         = 32,
--	FUSE_SETLKW        = 33,
--	FUSE_ACCESS        = 34,
--	FUSE_CREATE        = 35,
--	FUSE_INTERRUPT     = 36,
--	FUSE_BMAP          = 37,
--	FUSE_DESTROY       = 38,
--	FUSE_IOCTL         = 39,
--	FUSE_POLL          = 40,
--	FUSE_NOTIFY_REPLY  = 41,
--	FUSE_BATCH_FORGET  = 42,
--	FUSE_FALLOCATE     = 43,
--	FUSE_READDIRPLUS   = 44,
--	FUSE_RENAME2       = 45,
--	FUSE_LSEEK         = 46,
-+	FUSE_LOOKUP	     = 1,
-+	FUSE_FORGET	     = 2,  /* no reply */
-+	FUSE_GETATTR	     = 3,
-+	FUSE_SETATTR	     = 4,
-+	FUSE_READLINK	     = 5,
-+	FUSE_SYMLINK	     = 6,
-+	FUSE_MKNOD	     = 8,
-+	FUSE_MKDIR	     = 9,
-+	FUSE_UNLINK	     = 10,
-+	FUSE_RMDIR	     = 11,
-+	FUSE_RENAME	     = 12,
-+	FUSE_LINK	     = 13,
-+	FUSE_OPEN	     = 14,
-+	FUSE_READ	     = 15,
-+	FUSE_WRITE	     = 16,
-+	FUSE_STATFS	     = 17,
-+	FUSE_RELEASE         = 18,
-+	FUSE_FSYNC           = 20,
-+	FUSE_SETXATTR        = 21,
-+	FUSE_GETXATTR        = 22,
-+	FUSE_LISTXATTR       = 23,
-+	FUSE_REMOVEXATTR     = 24,
-+	FUSE_FLUSH           = 25,
-+	FUSE_INIT            = 26,
-+	FUSE_OPENDIR         = 27,
-+	FUSE_READDIR         = 28,
-+	FUSE_RELEASEDIR      = 29,
-+	FUSE_FSYNCDIR        = 30,
-+	FUSE_GETLK           = 31,
-+	FUSE_SETLK           = 32,
-+	FUSE_SETLKW          = 33,
-+	FUSE_ACCESS          = 34,
-+	FUSE_CREATE          = 35,
-+	FUSE_INTERRUPT       = 36,
-+	FUSE_BMAP            = 37,
-+	FUSE_DESTROY         = 38,
-+	FUSE_IOCTL           = 39,
-+	FUSE_POLL            = 40,
-+	FUSE_NOTIFY_REPLY    = 41,
-+	FUSE_BATCH_FORGET    = 42,
-+	FUSE_FALLOCATE       = 43,
-+	FUSE_READDIRPLUS     = 44,
-+	FUSE_RENAME2         = 45,
-+	FUSE_LSEEK           = 46,
-+	FUSE_COPY_FILE_RANGE = 47,
- 
- 	/* CUSE specific operations */
- 	CUSE_INIT          = 4096,
-@@ -792,4 +796,18 @@ struct fuse_lseek_out {
- 	uint64_t	offset;
- };
- 
-+struct fuse_copy_file_range_in {
-+	uint64_t	fh_in;
-+	uint64_t	off_in;
-+	uint64_t	fh_out;
-+	uint64_t	off_out;
-+	uint64_t	len;
-+	uint32_t	flags;
-+};
-+
-+struct fuse_copy_file_range_out {
-+	uint32_t	size;
-+	uint32_t	padding;
-+};
-+
- #endif /* _LINUX_FUSE_H */
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
