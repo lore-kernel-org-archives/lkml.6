@@ -2,266 +2,258 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB0BC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE16FC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E085D26508
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:51:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UTs26fxC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VZ+rf2Ca"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E085D26508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 702E326530
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:52:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 702E326530
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934467AbeF0Mvg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:51:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44396 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933674AbeF0Mvb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:51:31 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C0F3E60AFF; Wed, 27 Jun 2018 12:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530103890;
-        bh=7CKLpKtujKHMWe2C62+YLKSkuED9MhXKCTFPmWBApho=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UTs26fxCNZCyqcQdCzpRTQdAC7TvvjOJPoUJsJ32tk7MyOxCa0dUen3uCsi0oKWHg
-         WU1NnP76owVRdvCweEPSWxm36YELnkj7YHZb6GgrZkOGXXrT6OAP1etInx1l0OU3z8
-         EAW1npKSkPI3fQF32RZMSxD0Bw9LrXA2y3QXVSes=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S934571AbeF0Mwy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:52:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39264 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964855AbeF0MrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:47:12 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DCAFD60234;
-        Wed, 27 Jun 2018 12:51:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530103878;
-        bh=7CKLpKtujKHMWe2C62+YLKSkuED9MhXKCTFPmWBApho=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VZ+rf2CaQj3d0V6zX67ZYiQYI8BsuDAjI2Y7+7Yj4+v/lESJy7zQWmu5TNgIVsD8y
-         uFBVrGx+a9lb9GOt1gO+hRCyoO/JqdjjvM7qTS5aa1cmqgo53rY5vPm8zYw/QdBK1l
-         ATizoDFljEY0PYFs0f1DBSyq62R7vuSfHmQ7Hx/U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DCAFD60234
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Robin Murphy <robin.murphy@arm.com>, linux-doc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH 1/2] device core: Rename flag AUTOREMOVE to AUTOREMOVE_CONSUMER
-Date:   Wed, 27 Jun 2018 18:20:55 +0530
-Message-Id: <20180627125056.12851-1-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+        by mx1.redhat.com (Postfix) with ESMTPS id 6D1B3401EF04;
+        Wed, 27 Jun 2018 12:47:11 +0000 (UTC)
+Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 08CE411166E3;
+        Wed, 27 Jun 2018 12:47:00 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH V7 06/24] block: unexport bio_clone_bioset
+Date:   Wed, 27 Jun 2018 20:45:30 +0800
+Message-Id: <20180627124548.3456-7-ming.lei@redhat.com>
+In-Reply-To: <20180627124548.3456-1-ming.lei@redhat.com>
+References: <20180627124548.3456-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:47:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:47:11 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we want to add another flag to autoremove the device link
-on supplier unbind, it's fair to rename the existing flag from
-DL_FLAG_AUTOREMOVE to DL_FLAG_AUTOREMOVE_CONSUMER so that we can
-add similar flag for supplier later.
-And, while we are touching device.h, fix a doc build warning.
+From: Christoph Hellwig <hch@lst.de>
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: linux-doc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
+Now only used by the bounce code, so move it there and mark the function
+static.
+
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- Documentation/driver-api/device_link.rst |  8 ++++----
- drivers/base/core.c                      | 15 ++++++++-------
- drivers/gpu/drm/tegra/dc.c               |  2 +-
- drivers/gpu/ipu-v3/ipu-pre.c             |  3 ++-
- drivers/gpu/ipu-v3/ipu-prg.c             |  3 ++-
- drivers/soc/imx/gpc.c                    |  2 +-
- include/linux/device.h                   | 12 ++++++------
- 7 files changed, 24 insertions(+), 21 deletions(-)
+ block/bio.c         | 77 -----------------------------------------------------
+ block/bounce.c      | 69 ++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/bio.h |  1 -
+ 3 files changed, 68 insertions(+), 79 deletions(-)
 
-diff --git a/Documentation/driver-api/device_link.rst b/Documentation/driver-api/device_link.rst
-index 70e328e16aad..a005b904a264 100644
---- a/Documentation/driver-api/device_link.rst
-+++ b/Documentation/driver-api/device_link.rst
-@@ -81,10 +81,10 @@ integration is desired.
- Two other flags are specifically targeted at use cases where the device
- link is added from the consumer's ``->probe`` callback:  ``DL_FLAG_RPM_ACTIVE``
- can be specified to runtime resume the supplier upon addition of the
--device link.  ``DL_FLAG_AUTOREMOVE`` causes the device link to be automatically
--purged when the consumer fails to probe or later unbinds.  This obviates
--the need to explicitly delete the link in the ``->remove`` callback or in
--the error path of the ``->probe`` callback.
-+device link.  ``DL_FLAG_AUTOREMOVE_CONSUMER`` causes the device link to be
-+automatically purged when the consumer fails to probe or later unbinds.
-+This obviates the need to explicitly delete the link in the ``->remove``
-+callback or in the error path of the ``->probe`` callback.
- 
- Limitations
- ===========
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index df3e1a44707a..14c1e3151e08 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -178,10 +178,10 @@ void device_pm_move_to_tail(struct device *dev)
-  * of the link.  If DL_FLAG_PM_RUNTIME is not set, DL_FLAG_RPM_ACTIVE will be
-  * ignored.
-  *
-- * If the DL_FLAG_AUTOREMOVE is set, the link will be removed automatically
-- * when the consumer device driver unbinds from it.  The combination of both
-- * DL_FLAG_AUTOREMOVE and DL_FLAG_STATELESS set is invalid and will cause NULL
-- * to be returned.
-+ * If the DL_FLAG_AUTOREMOVE_CONSUMER is set, the link will be removed
-+ * automatically when the consumer device driver unbinds from it.
-+ * The combination of both DL_FLAG_AUTOREMOVE_CONSUMER and DL_FLAG_STATELESS
-+ * set is invalid and will cause NULL to be returned.
-  *
-  * A side effect of the link creation is re-ordering of dpm_list and the
-  * devices_kset list by moving the consumer device and all devices depending
-@@ -198,7 +198,8 @@ struct device_link *device_link_add(struct device *consumer,
- 	struct device_link *link;
- 
- 	if (!consumer || !supplier ||
--	    ((flags & DL_FLAG_STATELESS) && (flags & DL_FLAG_AUTOREMOVE)))
-+	    ((flags & DL_FLAG_STATELESS) &&
-+	     (flags & DL_FLAG_AUTOREMOVE_CONSUMER)))
- 		return NULL;
- 
- 	device_links_write_lock();
-@@ -479,7 +480,7 @@ static void __device_links_no_driver(struct device *dev)
- 		if (link->flags & DL_FLAG_STATELESS)
- 			continue;
- 
--		if (link->flags & DL_FLAG_AUTOREMOVE)
-+		if (link->flags & DL_FLAG_AUTOREMOVE_CONSUMER)
- 			kref_put(&link->kref, __device_link_del);
- 		else if (link->status != DL_STATE_SUPPLIER_UNBIND)
- 			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
-@@ -515,7 +516,7 @@ void device_links_driver_cleanup(struct device *dev)
- 		if (link->flags & DL_FLAG_STATELESS)
- 			continue;
- 
--		WARN_ON(link->flags & DL_FLAG_AUTOREMOVE);
-+		WARN_ON(link->flags & DL_FLAG_AUTOREMOVE_CONSUMER);
- 		WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
- 		WRITE_ONCE(link->status, DL_STATE_DORMANT);
- 	}
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index c3afe7b2237e..965088afcfad 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2312,7 +2312,7 @@ static int tegra_dc_couple(struct tegra_dc *dc)
- 	 * POWER_CONTROL registers during CRTC enabling.
- 	 */
- 	if (dc->soc->coupled_pm && dc->pipe == 1) {
--		u32 flags = DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE;
-+		u32 flags = DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_CONSUMER;
- 		struct device_link *link;
- 		struct device *partner;
- 
-diff --git a/drivers/gpu/ipu-v3/ipu-pre.c b/drivers/gpu/ipu-v3/ipu-pre.c
-index 0f70e8847540..2f8db9d62551 100644
---- a/drivers/gpu/ipu-v3/ipu-pre.c
-+++ b/drivers/gpu/ipu-v3/ipu-pre.c
-@@ -128,7 +128,8 @@ ipu_pre_lookup_by_phandle(struct device *dev, const char *name, int index)
- 	list_for_each_entry(pre, &ipu_pre_list, list) {
- 		if (pre_node == pre->dev->of_node) {
- 			mutex_unlock(&ipu_pre_list_mutex);
--			device_link_add(dev, pre->dev, DL_FLAG_AUTOREMOVE);
-+			device_link_add(dev, pre->dev,
-+					DL_FLAG_AUTOREMOVE_CONSUMER);
- 			of_node_put(pre_node);
- 			return pre;
- 		}
-diff --git a/drivers/gpu/ipu-v3/ipu-prg.c b/drivers/gpu/ipu-v3/ipu-prg.c
-index 83f9dd934a5d..38a3a9764e49 100644
---- a/drivers/gpu/ipu-v3/ipu-prg.c
-+++ b/drivers/gpu/ipu-v3/ipu-prg.c
-@@ -100,7 +100,8 @@ ipu_prg_lookup_by_phandle(struct device *dev, const char *name, int ipu_id)
- 	list_for_each_entry(prg, &ipu_prg_list, list) {
- 		if (prg_node == prg->dev->of_node) {
- 			mutex_unlock(&ipu_prg_list_mutex);
--			device_link_add(dev, prg->dev, DL_FLAG_AUTOREMOVE);
-+			device_link_add(dev, prg->dev,
-+					DL_FLAG_AUTOREMOVE_CONSUMER);
- 			prg->id = ipu_id;
- 			of_node_put(prg_node);
- 			return prg;
-diff --git a/drivers/soc/imx/gpc.c b/drivers/soc/imx/gpc.c
-index 32f0748fd067..aa9e65bc965e 100644
---- a/drivers/soc/imx/gpc.c
-+++ b/drivers/soc/imx/gpc.c
-@@ -202,7 +202,7 @@ static int imx_pgc_power_domain_probe(struct platform_device *pdev)
- 			goto genpd_err;
- 	}
- 
--	device_link_add(dev, dev->parent, DL_FLAG_AUTOREMOVE);
-+	device_link_add(dev, dev->parent, DL_FLAG_AUTOREMOVE_CONSUMER);
- 
- 	return 0;
- 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 055a69dbcd18..3929805cdd59 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -90,7 +90,7 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
-  * @num_vf:	Called to find out how many virtual functions a device on this
-  *		bus supports.
-  * @dma_configure:	Called to setup DMA configuration on a device on
--			this bus.
-+ *			this bus.
-  * @pm:		Power management operations of this bus, callback the specific
-  *		device driver's pm-ops.
-  * @iommu_ops:  IOMMU specific operations for this bus, used to attach IOMMU
-@@ -784,14 +784,14 @@ enum device_link_state {
-  * Device link flags.
-  *
-  * STATELESS: The core won't track the presence of supplier/consumer drivers.
-- * AUTOREMOVE: Remove this link automatically on consumer driver unbind.
-+ * AUTOREMOVE_CONSUMER: Remove the link automatically on consumer driver unbind.
-  * PM_RUNTIME: If set, the runtime PM framework will use this link.
-  * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during link creation.
-  */
--#define DL_FLAG_STATELESS	BIT(0)
--#define DL_FLAG_AUTOREMOVE	BIT(1)
--#define DL_FLAG_PM_RUNTIME	BIT(2)
--#define DL_FLAG_RPM_ACTIVE	BIT(3)
-+#define DL_FLAG_STATELESS		BIT(0)
-+#define DL_FLAG_AUTOREMOVE_CONSUMER	BIT(1)
-+#define DL_FLAG_PM_RUNTIME		BIT(2)
-+#define DL_FLAG_RPM_ACTIVE		BIT(3)
+diff --git a/block/bio.c b/block/bio.c
+index 9710e275f230..43698bcff737 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -645,83 +645,6 @@ struct bio *bio_clone_fast(struct bio *bio, gfp_t gfp_mask, struct bio_set *bs)
+ EXPORT_SYMBOL(bio_clone_fast);
  
  /**
-  * struct device_link - Device link representation.
+- * 	bio_clone_bioset - clone a bio
+- * 	@bio_src: bio to clone
+- *	@gfp_mask: allocation priority
+- *	@bs: bio_set to allocate from
+- *
+- *	Clone bio. Caller will own the returned bio, but not the actual data it
+- *	points to. Reference count of returned bio will be one.
+- */
+-struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
+-			     struct bio_set *bs)
+-{
+-	struct bvec_iter iter;
+-	struct bio_vec bv;
+-	struct bio *bio;
+-
+-	/*
+-	 * Pre immutable biovecs, __bio_clone() used to just do a memcpy from
+-	 * bio_src->bi_io_vec to bio->bi_io_vec.
+-	 *
+-	 * We can't do that anymore, because:
+-	 *
+-	 *  - The point of cloning the biovec is to produce a bio with a biovec
+-	 *    the caller can modify: bi_idx and bi_bvec_done should be 0.
+-	 *
+-	 *  - The original bio could've had more than BIO_MAX_PAGES biovecs; if
+-	 *    we tried to clone the whole thing bio_alloc_bioset() would fail.
+-	 *    But the clone should succeed as long as the number of biovecs we
+-	 *    actually need to allocate is fewer than BIO_MAX_PAGES.
+-	 *
+-	 *  - Lastly, bi_vcnt should not be looked at or relied upon by code
+-	 *    that does not own the bio - reason being drivers don't use it for
+-	 *    iterating over the biovec anymore, so expecting it to be kept up
+-	 *    to date (i.e. for clones that share the parent biovec) is just
+-	 *    asking for trouble and would force extra work on
+-	 *    __bio_clone_fast() anyways.
+-	 */
+-
+-	bio = bio_alloc_bioset(gfp_mask, bio_segments(bio_src), bs);
+-	if (!bio)
+-		return NULL;
+-	bio->bi_disk		= bio_src->bi_disk;
+-	bio->bi_opf		= bio_src->bi_opf;
+-	bio->bi_write_hint	= bio_src->bi_write_hint;
+-	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
+-	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
+-
+-	switch (bio_op(bio)) {
+-	case REQ_OP_DISCARD:
+-	case REQ_OP_SECURE_ERASE:
+-	case REQ_OP_WRITE_ZEROES:
+-		break;
+-	case REQ_OP_WRITE_SAME:
+-		bio->bi_io_vec[bio->bi_vcnt++] = bio_src->bi_io_vec[0];
+-		break;
+-	default:
+-		bio_for_each_segment(bv, bio_src, iter)
+-			bio->bi_io_vec[bio->bi_vcnt++] = bv;
+-		break;
+-	}
+-
+-	if (bio_integrity(bio_src)) {
+-		int ret;
+-
+-		ret = bio_integrity_clone(bio, bio_src, gfp_mask);
+-		if (ret < 0) {
+-			bio_put(bio);
+-			return NULL;
+-		}
+-	}
+-
+-	bio_clone_blkcg_association(bio, bio_src);
+-
+-	return bio;
+-}
+-EXPORT_SYMBOL(bio_clone_bioset);
+-
+-/**
+  *	bio_add_pc_page	-	attempt to add page to bio
+  *	@q: the target queue
+  *	@bio: destination bio
+diff --git a/block/bounce.c b/block/bounce.c
+index fd31347b7836..bc63b3a2d18c 100644
+--- a/block/bounce.c
++++ b/block/bounce.c
+@@ -195,6 +195,73 @@ static void bounce_end_io_read_isa(struct bio *bio)
+ 	__bounce_end_io_read(bio, &isa_page_pool);
+ }
+ 
++static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
++		struct bio_set *bs)
++{
++	struct bvec_iter iter;
++	struct bio_vec bv;
++	struct bio *bio;
++
++	/*
++	 * Pre immutable biovecs, __bio_clone() used to just do a memcpy from
++	 * bio_src->bi_io_vec to bio->bi_io_vec.
++	 *
++	 * We can't do that anymore, because:
++	 *
++	 *  - The point of cloning the biovec is to produce a bio with a biovec
++	 *    the caller can modify: bi_idx and bi_bvec_done should be 0.
++	 *
++	 *  - The original bio could've had more than BIO_MAX_PAGES biovecs; if
++	 *    we tried to clone the whole thing bio_alloc_bioset() would fail.
++	 *    But the clone should succeed as long as the number of biovecs we
++	 *    actually need to allocate is fewer than BIO_MAX_PAGES.
++	 *
++	 *  - Lastly, bi_vcnt should not be looked at or relied upon by code
++	 *    that does not own the bio - reason being drivers don't use it for
++	 *    iterating over the biovec anymore, so expecting it to be kept up
++	 *    to date (i.e. for clones that share the parent biovec) is just
++	 *    asking for trouble and would force extra work on
++	 *    __bio_clone_fast() anyways.
++	 */
++
++	bio = bio_alloc_bioset(gfp_mask, bio_segments(bio_src), bs);
++	if (!bio)
++		return NULL;
++	bio->bi_disk		= bio_src->bi_disk;
++	bio->bi_opf		= bio_src->bi_opf;
++	bio->bi_write_hint	= bio_src->bi_write_hint;
++	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
++	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
++
++	switch (bio_op(bio)) {
++	case REQ_OP_DISCARD:
++	case REQ_OP_SECURE_ERASE:
++	case REQ_OP_WRITE_ZEROES:
++		break;
++	case REQ_OP_WRITE_SAME:
++		bio->bi_io_vec[bio->bi_vcnt++] = bio_src->bi_io_vec[0];
++		break;
++	default:
++		bio_for_each_segment(bv, bio_src, iter)
++			bio->bi_io_vec[bio->bi_vcnt++] = bv;
++		break;
++	}
++
++	if (bio_integrity(bio_src)) {
++		int ret;
++
++		ret = bio_integrity_clone(bio, bio_src, gfp_mask);
++		if (ret < 0) {
++			bio_put(bio);
++			return NULL;
++		}
++	}
++
++	bio_clone_blkcg_association(bio, bio_src);
++
++	return bio;
++}
++
+ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
+ 			       mempool_t *pool)
+ {
+@@ -222,7 +289,7 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
+ 		generic_make_request(*bio_orig);
+ 		*bio_orig = bio;
+ 	}
+-	bio = bio_clone_bioset(*bio_orig, GFP_NOIO, passthrough ? NULL :
++	bio = bounce_clone_bio(*bio_orig, GFP_NOIO, passthrough ? NULL :
+ 			&bounce_bio_set);
+ 
+ 	bio_for_each_segment_all(to, bio, i) {
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 430807f9f44b..21d07858ddef 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -429,7 +429,6 @@ extern void bio_put(struct bio *);
+ 
+ extern void __bio_clone_fast(struct bio *, struct bio *);
+ extern struct bio *bio_clone_fast(struct bio *, gfp_t, struct bio_set *);
+-extern struct bio *bio_clone_bioset(struct bio *, gfp_t, struct bio_set *bs);
+ 
+ extern struct bio_set fs_bio_set;
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.9.5
 
