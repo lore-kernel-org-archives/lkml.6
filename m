@@ -2,95 +2,280 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983D4C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E02C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40130216E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:43:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JN2ixLKc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40130216E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E0DA25E08
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:46:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E0DA25E08
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934479AbeF0Mnw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:43:52 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41742 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934434AbeF0Mnu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:43:50 -0400
-X-Greylist: delayed 895 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Jun 2018 08:43:50 EDT
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5RCSkbh101746;
-        Wed, 27 Jun 2018 07:28:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530102526;
-        bh=Bq+zJspI5iXtki90MgFw3SfgywwjqPRjiXCpzJAAOC4=;
-        h=From:To:CC:Subject:Date;
-        b=JN2ixLKc2iLfVvehVdgYZR9ZuB/s1fe+sYJqCYKRLF10YIslMxcUUuGoyZSlA3WS+
-         /STE3Ai3jnwQeS3WiIo6M0IBIbci9hzStHLBuJxbCl6itcIz16f+ezgnwxbE4wcjer
-         r9QKefTZRBGusnilinKblVrihYE5HHoMMVJuK9ek=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RCSkXh000668;
-        Wed, 27 Jun 2018 07:28:46 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 27
- Jun 2018 07:28:46 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 27 Jun 2018 07:28:46 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RCSgMr027559;
-        Wed, 27 Jun 2018 07:28:43 -0500
-From:   Vignesh R <vigneshr@ti.com>
-To:     Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
-Subject: [PATCH v2 0/4] pci-dra7xx: Enable errata i870 workaround for RC mode
-Date:   Wed, 27 Jun 2018 17:59:15 +0530
-Message-ID: <20180627122919.23926-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S965013AbeF0MqE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:46:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60764 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932758AbeF0MqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:46:03 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F47D81A4EBC;
+        Wed, 27 Jun 2018 12:46:02 +0000 (UTC)
+Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B4942156888;
+        Wed, 27 Jun 2018 12:45:53 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V7 00/24] block: support multipage bvec
+Date:   Wed, 27 Jun 2018 20:45:24 +0800
+Message-Id: <20180627124548.3456-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 12:46:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 12:46:02 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make workaround for errata i870 applicable in Host mode as
-well(previously it was enabled only for EP mode) as per errata
-documentation: http://www.ti.com/lit/er/sprz450/sprz450.pdf
+Hi,
 
-Tested on DRA72 EVM
+This patchset brings multipage bvec into block layer:
 
-Changes since v1:
-Drop IRQ handling rework (will be sent out separately)
+1) what is multipage bvec?
 
-v1: https://lkml.org/lkml/2017/12/1/59
+Multipage bvecs means that one 'struct bio_bvec' can hold multiple pages
+which are physically contiguous instead of one single page used in linux
+kernel for long time.
 
-Vignesh R (4):
-  dt-bindings: PCI: dra7xx: Add bindings for unaligned access in host
-    mode
-  pci: dwc: pci-dra7xx: Enable errata i870 for both EP and RC mode
-  ARM: dts: dra7: Enable workaround for errata i870 in PCIe host mode
-  ARM: dts: dra7: Fix up unaligned access setting for PCIe EP
+2) why is multipage bvec introduced?
 
- Documentation/devicetree/bindings/pci/ti-pci.txt |  5 +++++
- arch/arm/boot/dts/dra7.dtsi                      |  4 +++-
- drivers/pci/controller/dwc/pci-dra7xx.c          | 12 ++++++------
- 3 files changed, 14 insertions(+), 7 deletions(-)
+Kent proposed the idea[1] first. 
+
+As system's RAM becomes much bigger than before, and huge page, transparent
+huge page and memory compaction are widely used, it is a bit easy now
+to see physically contiguous pages from fs in I/O. On the other hand, from
+block layer's view, it isn't necessary to store intermediate pages into bvec,
+and it is enough to just store the physicallly contiguous 'segment' in each
+io vector.
+
+Also huge pages are being brought to filesystem and swap [2][6], we can
+do IO on a hugepage each time[3], which requires that one bio can transfer
+at least one huge page one time. Turns out it isn't flexiable to change
+BIO_MAX_PAGES simply[3][5]. Multipage bvec can fit in this case very well.
+As we saw, if CONFIG_THP_SWAP is enabled, BIO_MAX_PAGES can be configured
+as much bigger, such as 512, which requires at least two 4K pages for holding
+the bvec table.
+
+With multipage bvec:
+
+- Inside block layer, both bio splitting and sg map can become more
+efficient than before by just traversing the physically contiguous
+'segment' instead of each page.
+
+- segment handling in block layer can be improved much in future since it
+should be quite easy to convert multipage bvec into segment easily. For
+example, we might just store segment in each bvec directly in future.
+
+- bio size can be increased and it should improve some high-bandwidth IO
+case in theory[4].
+
+- there is opportunity in future to improve memory footprint of bvecs. 
+
+3) how is multipage bvec implemented in this patchset?
+
+The 1st 9 patches are prepare patches for multipage bvec, from Christoph
+and Mike.
+
+The patches of 10 ~ 22 implement multipage bvec in block layer:
+
+	- put all tricks into bvec/bio/rq iterators, and as far as
+	drivers and fs use these standard iterators, they are happy
+	with multipage bvec
+
+	- introduce bio_for_each_bvec() to iterate over multipage bvec for splitting
+	bio and mapping sg
+
+	- keep current bio_for_each_segment*() to itereate over singlepage bvec and
+	make sure current users won't be broken; especailly, convert to this
+	new helper prototype in single patch 21 given it is bascially a mechanism
+	conversion
+
+	- enalbe multipage bvec in patch 22
+
+The patch 23 redefines BIO_MAX_PAGES as 256.
+
+The patch 24 documents usages of bio iterator helpers.
+
+These patches can be found in the following git tree:
+
+	gitweb: https://github.com/ming1/linux/commits/v4.18-rc-mp-bvec-V7
+	git:  https://github.com/ming1/linux.git  #v4.18-rc-mp-bvec-V7
+
+Lots of test(blktest, xfstests, ltp io, ...) have been run with this patchset,
+and not see regression.
+
+Thanks Christoph for reviewing the early version and providing very good
+suggestions, such as: introduce bio_init_with_vec_table(), remove another
+unnecessary helpers for cleanup and so on.
+
+Any comments are welcome!
+
+V7:
+	- include Christoph and Mike's bio_clone_bioset() patches, which is
+	  actually prepare patches for multipage bvec
+	- address Christoph's comments
+
+V6:
+	- avoid to introduce lots of renaming, follow Jen's suggestion of
+	using the name of chunk for multipage io vector
+	- include Christoph's three prepare patches
+	- decrease stack usage for using bio_for_each_chunk_segment_all()
+	- address Kent's comment
+
+V5:
+	- remove some of prepare patches, which have been merged already
+	- add bio_clone_seg_bioset() to fix DM's bio clone, which
+	is introduced by 18a25da84354c6b (dm: ensure bio submission follows
+	a depth-first tree walk)
+	- rebase on the latest block for-v4.18
+
+V4:
+	- rename bio_for_each_segment*() as bio_for_each_page*(), rename
+	bio_segments() as bio_pages(), rename rq_for_each_segment() as
+	rq_for_each_pages(), because these helpers never return real
+	segment, and they always return single page bvec
+	
+	- introducing segment_for_each_page_all()
+
+	- introduce new bio_for_each_segment*()/rq_for_each_segment()/bio_segments()
+	for returning real multipage segment
+
+	- rewrite segment_last_page()
+
+	- rename bvec iterator helper as suggested by Christoph
+
+	- replace comment with applying bio helpers as suggested by Christoph
+
+	- document usage of bio iterator helpers
+
+	- redefine BIO_MAX_PAGES as 256 to make the biggest bvec table
+	accommodated in 4K page
+
+	- move bio_alloc_pages() into bcache as suggested by Christoph
+
+V3:
+	- rebase on v4.13-rc3 with for-next of block tree
+	- run more xfstests: xfs/ext4 over NVMe, Sata, DM(linear),
+	MD(raid1), and not see regressions triggered
+	- add Reviewed-by on some btrfs patches
+	- remove two MD patches because both are merged to linus tree
+	  already
+
+V2:
+	- bvec table direct access in raid has been cleaned, so NO_MP
+	flag is dropped
+	- rebase on recent Neil Brown's change on bio and bounce code
+	- reorganize the patchset
+
+V1:
+	- against v4.10-rc1 and some cleanup in V0 are in -linus already
+	- handle queue_virt_boundary() in mp bvec change and make NVMe happy
+	- further BTRFS cleanup
+	- remove QUEUE_FLAG_SPLIT_MP
+	- rename for two new helpers of bio_for_each_segment_all()
+	- fix bounce convertion
+	- address comments in V0
+
+[1], http://marc.info/?l=linux-kernel&m=141680246629547&w=2
+[2], https://patchwork.kernel.org/patch/9451523/
+[3], http://marc.info/?t=147735447100001&r=1&w=2
+[4], http://marc.info/?l=linux-mm&m=147745525801433&w=2
+[5], http://marc.info/?t=149569484500007&r=1&w=2
+[6], http://marc.info/?t=149820215300004&r=1&w=2
+
+
+Christoph Hellwig (8):
+  bcache: don't clone bio in bch_data_verify
+  exofs: use bio_clone_fast in _write_mirror
+  block: remove bio_clone_kmalloc
+  md: remove a bogus comment
+  block: unexport bio_clone_bioset
+  block: simplify bio_check_pages_dirty
+  block: bio_set_pages_dirty can't see NULL bv_page in a valid bio_vec
+  block: use bio_add_page in bio_iov_iter_get_pages
+
+Mike Snitzer (1):
+  dm: use bio_split() when splitting out the already processed bio
+
+Ming Lei (15):
+  block: introduce multipage page bvec helpers
+  block: introduce bio_for_each_bvec()
+  block: use bio_for_each_bvec() to compute multipage bvec count
+  block: use bio_for_each_bvec() to map sg
+  block: introduce bvec_last_segment()
+  fs/buffer.c: use bvec iterator to truncate the bio
+  btrfs: use bvec_last_segment to get bio's last page
+  btrfs: move bio_pages_all() to btrfs
+  block: introduce bio_bvecs()
+  block: loop: pass multipage bvec to iov_iter
+  bcache: avoid to use bio_for_each_segment_all() in
+    bch_bio_alloc_pages()
+  block: allow bio_for_each_segment_all() to iterate over multipage bvec
+  block: enable multipage bvecs
+  block: always define BIO_MAX_PAGES as 256
+  block: document usage of bio iterator helpers
+
+ Documentation/block/biovecs.txt |  27 +++++
+ block/bio.c                     | 232 ++++++++++++++--------------------------
+ block/blk-merge.c               | 162 ++++++++++++++++++++++------
+ block/blk-zoned.c               |   5 +-
+ block/bounce.c                  |  75 ++++++++++++-
+ drivers/block/loop.c            |  24 ++---
+ drivers/md/bcache/btree.c       |   3 +-
+ drivers/md/bcache/debug.c       |   6 +-
+ drivers/md/bcache/util.c        |   2 +-
+ drivers/md/dm-crypt.c           |   3 +-
+ drivers/md/dm.c                 |   5 +-
+ drivers/md/md.c                 |   4 -
+ drivers/md/raid1.c              |   3 +-
+ fs/block_dev.c                  |   6 +-
+ fs/btrfs/compression.c          |   8 +-
+ fs/btrfs/disk-io.c              |   3 +-
+ fs/btrfs/extent_io.c            |  29 +++--
+ fs/btrfs/inode.c                |   6 +-
+ fs/btrfs/raid56.c               |   3 +-
+ fs/buffer.c                     |   5 +-
+ fs/crypto/bio.c                 |   3 +-
+ fs/direct-io.c                  |   4 +-
+ fs/exofs/ore.c                  |   7 +-
+ fs/exofs/ore_raid.c             |   3 +-
+ fs/ext4/page-io.c               |   3 +-
+ fs/ext4/readpage.c              |   3 +-
+ fs/f2fs/data.c                  |   9 +-
+ fs/gfs2/lops.c                  |   6 +-
+ fs/gfs2/meta_io.c               |   3 +-
+ fs/iomap.c                      |   3 +-
+ fs/mpage.c                      |   3 +-
+ fs/xfs/xfs_aops.c               |   5 +-
+ include/linux/bio.h             |  90 +++++++++++-----
+ include/linux/bvec.h            | 155 +++++++++++++++++++++++++--
+ 34 files changed, 626 insertions(+), 282 deletions(-)
 
 -- 
-2.18.0
+2.9.5
 
