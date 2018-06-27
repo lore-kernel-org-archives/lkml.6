@@ -2,101 +2,149 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 395EBC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F1EC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA12A26508
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:50:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA12A26508
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9849E26508
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:51:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W1uC4us7";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fZxU5uIM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9849E26508
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965339AbeF0Mux (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:50:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55694 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752257AbeF0Muv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:50:51 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S934350AbeF0Mv2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:51:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44208 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933674AbeF0MvZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:51:25 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A107C60B19; Wed, 27 Jun 2018 12:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530103884;
+        bh=lhkpGk75F3pQcTHccC1itm+8WL/mmT5/GA0tQYpHhrQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=W1uC4us7FCWmiJvDPBfBzp5slp/KSlq+oSg2PqZ8T5CaiS5d+7pNb8FtWSceNslAp
+         Oyyt0nhC4RYJMKnSNGy7AHPwQ9f0CcPKRxt+i5i6QGoAxbwblrt39V4AZxbX7O01m7
+         OawwiiCbPQDaVyAmV8KWNHA82jL7dKcs1cczZvpE=
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9ACD4BF578;
-        Wed, 27 Jun 2018 12:50:50 +0000 (UTC)
-Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 857AA1C5B9;
-        Wed, 27 Jun 2018 12:50:39 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V7 24/24] block: document usage of bio iterator helpers
-Date:   Wed, 27 Jun 2018 20:45:48 +0800
-Message-Id: <20180627124548.3456-25-ming.lei@redhat.com>
-In-Reply-To: <20180627124548.3456-1-ming.lei@redhat.com>
-References: <20180627124548.3456-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 12:50:50 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 12:50:50 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4B2E560714;
+        Wed, 27 Jun 2018 12:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530103882;
+        bh=lhkpGk75F3pQcTHccC1itm+8WL/mmT5/GA0tQYpHhrQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fZxU5uIMI3VfX0QW1+kljCXJFZlioyXVYgZCfn7eUrjT66E/iUd0n+bhBNXcuKYLr
+         gaiSN3m1+i0AYWDU37q6eQ2CqYbMjXmvJgftKNw9W5tG5Y+znk+Vrnwm3xpmPfS1R0
+         14POuiq27dFMTAopOzJQr2jZ+T+uvSYkaJTXJtUo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B2E560714
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Robin Murphy <robin.murphy@arm.com>, linux-doc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH 2/2] device core: Add flag to autoremove device link on supplier unbind
+Date:   Wed, 27 Jun 2018 18:20:56 +0530
+Message-Id: <20180627125056.12851-2-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+In-Reply-To: <20180627125056.12851-1-vivek.gautam@codeaurora.org>
+References: <20180627125056.12851-1-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now multipage bvec is supported, and some helpers may return page by
-page, and some may return segment by segment, this patch documents the
-usage for helping us use them correctly.
+Add a flag to autoremove the device links on supplier driver
+unbind. This obviates the need to explicitly delete the link
+in the remove path.
+We remove these links only when the supplier's link to its
+consumers has gone to DL_STATE_SUPPLIER_UNBIND state.
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Suggested-by: Lukas Wunner <lukas@wunner.de>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
 ---
- Documentation/block/biovecs.txt | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ Documentation/driver-api/device_link.rst |  4 ++++
+ drivers/base/core.c                      | 10 ++++++++++
+ include/linux/device.h                   |  2 ++
+ 3 files changed, 16 insertions(+)
 
-diff --git a/Documentation/block/biovecs.txt b/Documentation/block/biovecs.txt
-index 25689584e6e0..f63af564ae89 100644
---- a/Documentation/block/biovecs.txt
-+++ b/Documentation/block/biovecs.txt
-@@ -117,3 +117,30 @@ Other implications:
-    size limitations and the limitations of the underlying devices. Thus
-    there's no need to define ->merge_bvec_fn() callbacks for individual block
-    drivers.
+diff --git a/Documentation/driver-api/device_link.rst b/Documentation/driver-api/device_link.rst
+index a005b904a264..d6763272e747 100644
+--- a/Documentation/driver-api/device_link.rst
++++ b/Documentation/driver-api/device_link.rst
+@@ -86,6 +86,10 @@ automatically purged when the consumer fails to probe or later unbinds.
+ This obviates the need to explicitly delete the link in the ``->remove``
+ callback or in the error path of the ``->probe`` callback.
+ 
++Similarly, when the device link is added from supplier's ``->probe`` callback,
++``DL_FLAG_AUTOREMOVE_SUPPLIER`` causes the device link to be automatically
++purged when the supplier fails to probe or later unbinds.
 +
-+Usage of helpers:
-+=================
+ Limitations
+ ===========
+ 
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 14c1e3151e08..e721218bf352 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -518,6 +518,16 @@ void device_links_driver_cleanup(struct device *dev)
+ 
+ 		WARN_ON(link->flags & DL_FLAG_AUTOREMOVE_CONSUMER);
+ 		WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
 +
-+* The following helpers which name has suffix of "_all" can only be used on
-+non-BIO_CLONED bio, and ususally they are used by filesystem code, and driver
-+shouldn't use them becasue bio may have been splitted before they got to the
-+driver:
++		/*
++		 * autoremove the links between this @dev and its consumer
++		 * devices that are not active, i.e. where the link state
++		 * has moved to DL_STATE_SUPPLIER_UNBIND.
++		 */
++		if (link->status == DL_STATE_SUPPLIER_UNBIND &&
++		    link->flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
++			kref_put(&link->kref, __device_link_del);
 +
-+	bio_for_each_segment_all()
-+	bio_first_bvec_all()
-+	bio_first_page_all()
-+	bio_last_bvec_all()
-+
-+* The following helpers iterate over singlepage bvec, and the local
-+variable of 'struct bio_vec' or the reference records single page io
-+vector during the itearation:
-+
-+	bio_for_each_segment()
-+	bio_for_each_segment_all()
-+
-+* The following helper iterates over multipage bvec, and each bvec may
-+include multiple physically contiguous pages, and the local variable of
-+'struct bio_vec' or the reference records multi page io vector during the
-+itearation:
-+
-+	bio_for_each_bvec()
+ 		WRITE_ONCE(link->status, DL_STATE_DORMANT);
+ 	}
+ 
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 3929805cdd59..e80920452b49 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -787,11 +787,13 @@ enum device_link_state {
+  * AUTOREMOVE_CONSUMER: Remove the link automatically on consumer driver unbind.
+  * PM_RUNTIME: If set, the runtime PM framework will use this link.
+  * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during link creation.
++ * AUTOREMOVE_SUPPLIER: Remove the link automatically on supplier driver unbind.
+  */
+ #define DL_FLAG_STATELESS		BIT(0)
+ #define DL_FLAG_AUTOREMOVE_CONSUMER	BIT(1)
+ #define DL_FLAG_PM_RUNTIME		BIT(2)
+ #define DL_FLAG_RPM_ACTIVE		BIT(3)
++#define DL_FLAG_AUTOREMOVE_SUPPLIER	BIT(4)
+ 
+ /**
+  * struct device_link - Device link representation.
 -- 
-2.9.5
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
