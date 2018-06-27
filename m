@@ -2,107 +2,114 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF36C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E032C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDBCB23D47
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:48:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBCB23D47
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2483623E5E
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:48:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HNW1rU2C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2483623E5E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752905AbeF0Xsl (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 19:48:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43618 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752298AbeF0Xsk (ORCPT
+        id S932133AbeF0Xs5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 19:48:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44402 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932068AbeF0Xsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 19:48:40 -0400
-Received: from localhost (113x41x139x141.ap113.ftth.ucom.ne.jp [113.41.139.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62164BC6;
-        Wed, 27 Jun 2018 23:48:39 +0000 (UTC)
-Date:   Thu, 28 Jun 2018 07:48:36 +0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org,
-        gnomes@lxorguk.ukuu.org.uk, Alexander Graf <agraf@suse.de>,
-        shubhraj@xilinx.com, robh@kernel.org, Jiri Slaby <jslaby@suse.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH v2 1/6] serial: uartps: Do not initialize field to
- zero again
-Message-ID: <20180627234836.GA1691@kroah.com>
-References: <cover.1528288895.git.michal.simek@xilinx.com>
- <e8b0169887855a5ef2c1a0456842f650601b451c.1528288895.git.michal.simek@xilinx.com>
- <e7b01bd9-5763-75c0-1384-2536313f5854@monstr.eu>
- <20180627100917.GA20940@kroah.com>
- <05e553c2-202b-0b4b-8b88-60e330c80fa3@xilinx.com>
+        Wed, 27 Jun 2018 19:48:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ucy7nMzedmnMqbA2yf9rk1Za77JYGQcK2CzmrWW4MsA=; b=HNW1rU2CnrEuY3uJ7HU9OrBQm
+        QAtcDzDdquOt/yajJxVACCHlC3LW5sGY1VQ1eWopCmsQZ2yEulAhaUVUBZFobfR/Ge/hWIhNwp/se
+        I8+z88HotSgy7uWhWugmKKWMDEuR0ZT2wD+I6v0NLx2YEQY9aw3sFrHmmUFxQ9FpH1vYjLpg4W0Nm
+        VG5OZ3xcrvTJwpqH5o/uPCKt35iX3dcTwLCFeMac0Rov/UvlDM9VcQPOS0Zw15WquSocelqqn/sDa
+        vtMJi9jXI8ITStTs/rLE2uVA4hWINT+QwhXaa82AvY3eFmMy6afSpCFf25iSEyYvmOTUvxCOUk6OT
+        z7Zu93RgA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fYKBB-00039X-VO; Wed, 27 Jun 2018 23:48:54 +0000
+Subject: Re: [PATCHv4 18/18] x86: Introduce CONFIG_X86_INTEL_MKTME
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
+ <20180626142245.82850-19-kirill.shutemov@linux.intel.com>
+ <ecf92475-93b4-295c-f1fc-7efba4843d98@infradead.org>
+ <20180627215726.l5syzdcc26hgihtt@black.fi.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <3a284a7a-821e-f539-0fe8-90f35cd8ff08@infradead.org>
+Date:   Wed, 27 Jun 2018 16:48:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05e553c2-202b-0b4b-8b88-60e330c80fa3@xilinx.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180627215726.l5syzdcc26hgihtt@black.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 04:19:46PM +0200, Michal Simek wrote:
-> On 27.6.2018 12:09, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 19, 2018 at 10:09:05AM +0200, Michal Simek wrote:
-> >> On 6.6.2018 14:41, Michal Simek wrote:
-> >>> Writing zero and NULLs to already initialized fields is not needed.
-> >>> Remove this additional writes.
-> >>>
-> >>> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> >>> ---
-> >>>
-> >>> Changes in v2:
-> >>> - new patch - it can be sent separately too
-> >>>
-> >>>  drivers/tty/serial/xilinx_uartps.c | 3 ---
-> >>>  1 file changed, 3 deletions(-)
-> >>>
-> >>> diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-> >>> index 8a3e34234e98..5f116f3ecd4a 100644
-> >>> --- a/drivers/tty/serial/xilinx_uartps.c
-> >>> +++ b/drivers/tty/serial/xilinx_uartps.c
-> >>> @@ -1510,15 +1510,12 @@ static int cdns_uart_probe(struct platform_device *pdev)
-> >>>  
-> >>>  	/* At this point, we've got an empty uart_port struct, initialize it */
-> >>>  	spin_lock_init(&port->lock);
-> >>> -	port->membase	= NULL;
-> >>> -	port->irq	= 0;
-> >>>  	port->type	= PORT_UNKNOWN;
-> >>>  	port->iotype	= UPIO_MEM32;
-> >>>  	port->flags	= UPF_BOOT_AUTOCONF;
-> >>>  	port->ops	= &cdns_uart_ops;
-> >>>  	port->fifosize	= CDNS_UART_FIFO_SIZE;
-> >>>  	port->line	= id;
-> >>> -	port->dev	= NULL;
-> >>>  
-> >>>  	/*
-> >>>  	 * Register the port.
-> >>>
-> >>
-> >> Alan, Rob, Greg: Any comment about this RFC?
-> > 
-> > I rarely review RFC patchesets as obviously you don't think it is good
-> > enough to be submitted "for real" :)
+On 06/27/2018 02:57 PM, Kirill A. Shutemov wrote:
+> On Tue, Jun 26, 2018 at 05:30:12PM +0000, Randy Dunlap wrote:
+>> On 06/26/2018 07:22 AM, Kirill A. Shutemov wrote:
+>>> Add new config option to enabled/disable Multi-Key Total Memory
+>>> Encryption support.
+>>>
+>>> MKTME uses MEMORY_PHYSICAL_PADDING to reserve enough space in per-KeyID
+>>> direct mappings for memory hotplug.
+>>>
+>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>> ---
+>>>  arch/x86/Kconfig | 19 ++++++++++++++++++-
+>>>  1 file changed, 18 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>>> index fa5e1ec09247..9a843bd63108 100644
+>>> --- a/arch/x86/Kconfig
+>>> +++ b/arch/x86/Kconfig
+>>> @@ -1523,6 +1523,23 @@ config ARCH_USE_MEMREMAP_PROT
+>>>  	def_bool y
+>>>  	depends on AMD_MEM_ENCRYPT
+>>>  
+>>> +config X86_INTEL_MKTME
+>>> +	bool "Intel Multi-Key Total Memory Encryption"
+>>> +	select DYNAMIC_PHYSICAL_MASK
+>>> +	select PAGE_EXTENSION
+>>> +	depends on X86_64 && CPU_SUP_INTEL
+>>> +	---help---
+>>> +	  Say yes to enable support for Multi-Key Total Memory Encryption.
+>>> +	  This requires an Intel processor that has support of the feature.
+>>> +
+>>> +	  Multikey Total Memory Encryption (MKTME) is a technology that allows
+>>> +	  transparent memory encryption in and upcoming Intel platforms.
+>>
+>> huh?  Maybe drop the "and"?
 > 
-> There is one missing minor part but I want to review concept first
-> because I didn't find any driver which is using this style.
-> 
-> > If you think this is all good, great, please resend it without the RFC
-> > and it will end up in my queue.
-> 
-> I will definitely do it but please look at the concept itself because I
-> would like to use this with at least 3 other drivers.
+> Ugh.. It has to be "an".
 
-I don't have the time right now to review "concepts", sorry.
+an ... platform.
+or
+in upcoming Intel platforms.
 
-greg k-h
+
+-- 
+~Randy
