@@ -2,118 +2,102 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75201C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1C5C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36F84259B9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:58:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36F84259B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BE0CC25A92
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:00:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QTD/8vSU";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jxQ7xwwx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0CC25A92
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754904AbeF0P6Y (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:58:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40080 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753229AbeF0P6V (ORCPT
+        id S934896AbeF0QAL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:00:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46228 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934246AbeF0QAK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:58:21 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RFs6KZ107683
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:58:21 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jvd8ms561-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:58:20 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 16:58:18 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 16:58:15 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RFwE1m26935444
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 15:58:14 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3CD8911C04A;
-        Wed, 27 Jun 2018 16:58:06 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60AC811C050;
-        Wed, 27 Jun 2018 16:58:05 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.205.67])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 27 Jun 2018 16:58:05 +0100 (BST)
-Date:   Wed, 27 Jun 2018 18:58:12 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     mhocko@kernel.org, linux-mm@kvack.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: why do we still need bootmem allocator?
-References: <20180625140754.GB29102@dhcp22.suse.cz>
- <CABGGisyVpfYCz7-5AGB-3Ld9hcuikPVk=19xPc1AwffjhsV+kg@mail.gmail.com>
- <20180627101144.GC4291@rapoport-lnx>
- <CAL_Jsq+evsgh9Qi6FfG4vUZWtpC0UrFjTWSrzukMxY==TD_mrg@mail.gmail.com>
+        Wed, 27 Jun 2018 12:00:10 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7F9BC606FA; Wed, 27 Jun 2018 16:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530115209;
+        bh=9buYP9JNXr3/dDrUYfosn6t21hOfEfD4v5QN9FTmo+4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=QTD/8vSUmdjVPVhrUXW+TrdfX0JRoSpHgrJNRrsssgkpbOIH/8bmcxSmP7yzeemrp
+         N8wp7vG4f/fcldPhSCDT0poaNv+vlu/6Oq7xEwfGBRQwJEby2DG6T4aFj5Jgw2wVoH
+         ucMEf+DMVglfMnHYUViIPhn9t7Ix/PyecIyWLyUc=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A313B601EA;
+        Wed, 27 Jun 2018 16:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530115208;
+        bh=9buYP9JNXr3/dDrUYfosn6t21hOfEfD4v5QN9FTmo+4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=jxQ7xwwxRlx3Xyukus0quN8ns5b7LtG5EnXxYbziPCD0+K+ynOpeHoSZjXCZ+rJ2z
+         ORh3stOXB+Otc/xs2LGiO+6Eo6DGpzT4DA04V3h4scByHbUHeXWvdn94/0jUs8f7Vk
+         Mcf94WAk4oODn+Rx4+qaZ9rBEvriQrDQnZP7Qxz8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A313B601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+evsgh9Qi6FfG4vUZWtpC0UrFjTWSrzukMxY==TD_mrg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18062715-4275-0000-0000-00000292879A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062715-4276-0000-0000-00003799F0DE
-Message-Id: <20180627155811.GA19182@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=590 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270171
+Content-Transfer-Encoding: 7bit
+Subject: Re: [v6,(resend),1/3] bitfield: fix *_encode_bits()
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180620065830.6612-2-johannes@sipsolutions.net>
+References: <20180620065830.6612-2-johannes@sipsolutions.net>
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180627160009.7F9BC606FA@smtp.codeaurora.org>
+Date:   Wed, 27 Jun 2018 16:00:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 07:58:19AM -0600, Rob Herring wrote:
-> On Wed, Jun 27, 2018 at 4:11 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> >
-> > On Mon, Jun 25, 2018 at 10:09:41AM -0600, Rob Herring wrote:
-> > > On Mon, Jun 25, 2018 at 8:08 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > > >
-> > > > Hi,
-> > > > I am wondering why do we still keep mm/bootmem.c when most architectures
-> > > > already moved to nobootmem. Is there any fundamental reason why others
-> > > > cannot or this is just a matter of work?
-> > >
-> > > Just because no one has done the work. I did a couple of arches
-> > > recently (sh, microblaze, and h8300) mainly because I broke them with
-> > > some DT changes.
-> >
-> > I have a patch for alpha nearly ready.
-> > That leaves m68k and ia64
-> 
-> And c6x, hexagon, mips, nios2, unicore32. Those are all the platforms
-> which don't select NO_BOOTMEM.
+Johannes Berg <johannes@sipsolutions.net> wrote:
 
-Yeah, you are right. I've somehow excluded those that HAVE_MEMBLOCK...
- 
-> Rob
+> There's a bug in *_encode_bits() in using ~field_multiplier() for
+> the check whether or not the constant value fits into the field,
+> this is wrong and clearly ~field_mask() was intended. This was
+> triggering for me for both constant and non-constant values.
 > 
+> Additionally, make this case actually into an compile error.
+> Declaring the extern function that will never exist with just a
+> warning is pointless as then later we'll just get a link error.
+> 
+> While at it, also fix the indentation in those lines I'm touching.
+> 
+> Finally, as suggested by Andy Shevchenko, add some tests and for
+> that introduce also u8 helpers. The tests don't compile without
+> the fix, showing that it's necessary.
+> 
+> Fixes: 00b0c9b82663 ("Add primitives for manipulating bitfields both in host- and fixed-endian.")
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
+
+3 patches applied to wireless-drivers-next.git, thanks.
+
+e7d4a95da86e bitfield: fix *_encode_bits()
+37a3862e1238 bitfield: add u8 helpers
+0e2dc70e3d0d bitfield: add tests
 
 -- 
-Sincerely yours,
-Mike.
+https://patchwork.kernel.org/patch/10476545/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
