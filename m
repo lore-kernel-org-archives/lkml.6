@@ -2,174 +2,112 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E09C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF72C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2608525FC9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:54:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2608525FC9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0875125FE9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:54:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="CNM4nCzA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0875125FE9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965828AbeF0QyF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:54:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47650 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965107AbeF0QyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:54:03 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 39481401CC41;
-        Wed, 27 Jun 2018 16:54:03 +0000 (UTC)
-Received: from redhat.com (ovpn-122-22.rdu2.redhat.com [10.10.122.22])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B06A111166E8;
-        Wed, 27 Jun 2018 16:53:57 +0000 (UTC)
-Date:   Wed, 27 Jun 2018 19:53:57 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-Subject: Re: [virtio-dev] Re: [PATCH v34 2/4] virtio-balloon:
- VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Message-ID: <20180627192306-mutt-send-email-mst@kernel.org>
-References: <20180626002822-mutt-send-email-mst@kernel.org>
- <5B31B71B.6080709@intel.com>
- <20180626064338-mutt-send-email-mst@kernel.org>
- <5B323140.1000306@intel.com>
- <20180626163139-mutt-send-email-mst@kernel.org>
- <5B32E742.8080902@intel.com>
- <20180627053952-mutt-send-email-mst@kernel.org>
- <5B32FDB5.4040506@intel.com>
- <20180627065637-mutt-send-email-mst@kernel.org>
- <5B33205B.2040702@intel.com>
+        id S965849AbeF0Qy4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:54:56 -0400
+Received: from vern.gendns.com ([206.190.152.46]:41572 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965107AbeF0Qyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 12:54:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=bxZtoUxHppEzvDJ8++z4JMFxocpoo4FjR2yNovxK8kY=; b=CNM4nCzAXxbIZhCjWs1hqINcoK
+        vgJzp5kauzlp47gWl6fyFSj/dCBZeuwIBOPIxZmM1LnoaDH2Sd1DMgia42/To1s45FKk4ftla3JM2
+        BV5yk6w/MEpY1go95c3UNEiQt7Y0newNgh+FsdJ2fKWcRhG26mJdv+Dv+MK5BklsDNqWxDjB1DYys
+        fbc8rFOQMZJN74deP5MUHA4stge9kV3knR9e6qyGGOxaqvNO7NnMFFa464mTZ62NAa6aISgSuB7d6
+        JQP+/Kjn6l6bAIs7SPSt7yqzUgXnctNSIHTYeBo+d6dyOnP269qDUfRsIFBbNG7DiO74OkFee9+8m
+        HZbhUtaw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:49546 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fYDiW-00AnmB-4G; Wed, 27 Jun 2018 12:54:52 -0400
+Subject: Re: [PATCH v2 04/13] clk: davinci: psc-dm646x: use two lookup entries
+ for the aemif clock
+To:     Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
+ <20180626092537.6737-5-brgl@bgdev.pl>
+ <1da88059-2d5b-f035-1d4c-9e21ae141017@ti.com>
+ <CAMpxmJXpAECkA7FTLx-nR_w0ZEBUw_A7qpu2P6e_mS6k=pTsUQ@mail.gmail.com>
+ <28c47ca0-60ca-beb2-cd78-63ef6595fcd5@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <af78c876-a801-e16a-4983-0efcf8f85f56@lechnology.com>
+Date:   Wed, 27 Jun 2018 11:54:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B33205B.2040702@intel.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 16:54:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 16:54:03 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <28c47ca0-60ca-beb2-cd78-63ef6595fcd5@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 01:27:55PM +0800, Wei Wang wrote:
-> On 06/27/2018 11:58 AM, Michael S. Tsirkin wrote:
-> > On Wed, Jun 27, 2018 at 11:00:05AM +0800, Wei Wang wrote:
-> > > On 06/27/2018 10:41 AM, Michael S. Tsirkin wrote:
-> > > > On Wed, Jun 27, 2018 at 09:24:18AM +0800, Wei Wang wrote:
-> > > > > On 06/26/2018 09:34 PM, Michael S. Tsirkin wrote:
-> > > > > > On Tue, Jun 26, 2018 at 08:27:44PM +0800, Wei Wang wrote:
-> > > > > > > On 06/26/2018 11:56 AM, Michael S. Tsirkin wrote:
-> > > > > > > > On Tue, Jun 26, 2018 at 11:46:35AM +0800, Wei Wang wrote:
-> > > > > > > > 
-> > > > > > > > > > > +	if (!arrays)
-> > > > > > > > > > > +		return NULL;
-> > > > > > > > > > > +
-> > > > > > > > > > > +	for (i = 0; i < max_array_num; i++) {
-> > > > > > > > > > So we are getting a ton of memory here just to free it up a bit later.
-> > > > > > > > > > Why doesn't get_from_free_page_list get the pages from free list for us?
-> > > > > > > > > > We could also avoid the 1st allocation then - just build a list
-> > > > > > > > > > of these.
-> > > > > > > > > That wouldn't be a good choice for us. If we check how the regular
-> > > > > > > > > allocation works, there are many many things we need to consider when pages
-> > > > > > > > > are allocated to users.
-> > > > > > > > > For example, we need to take care of the nr_free
-> > > > > > > > > counter, we need to check the watermark and perform the related actions.
-> > > > > > > > > Also the folks working on arch_alloc_page to monitor page allocation
-> > > > > > > > > activities would get a surprise..if page allocation is allowed to work in
-> > > > > > > > > this way.
-> > > > > > > > > 
-> > > > > > > > mm/ code is well positioned to handle all this correctly.
-> > > > > > > I'm afraid that would be a re-implementation of the alloc functions,
-> > > > > > A re-factoring - you can share code. The main difference is locking.
-> > > > > > 
-> > > > > > > and
-> > > > > > > that would be much more complex than what we have. I think your idea of
-> > > > > > > passing a list of pages is better.
-> > > > > > > 
-> > > > > > > Best,
-> > > > > > > Wei
-> > > > > > How much memory is this allocating anyway?
-> > > > > > 
-> > > > > For every 2TB memory that the guest has, we allocate 4MB.
-> > > > Hmm I guess I'm missing something, I don't see it:
-> > > > 
-> > > > 
-> > > > +       max_entries = max_free_page_blocks(ARRAY_ALLOC_ORDER);
-> > > > +       entries_per_page = PAGE_SIZE / sizeof(__le64);
-> > > > +       entries_per_array = entries_per_page * (1 << ARRAY_ALLOC_ORDER);
-> > > > +       max_array_num = max_entries / entries_per_array +
-> > > > +                       !!(max_entries % entries_per_array);
-> > > > 
-> > > > Looks like you always allocate the max number?
-> > > Yes. We allocated the max number and then free what's not used.
-> > > For example, a 16TB guest, we allocate Four 4MB buffers and pass the 4
-> > > buffers to get_from_free_page_list. If it uses 3, then the remaining 1 "4MB
-> > > buffer" will end up being freed.
-> > > 
-> > > For today's guests, max_array_num is usually 1.
-> > > 
-> > > Best,
-> > > Wei
-> > I see, it's based on total ram pages. It's reasonable but might
-> > get out of sync if memory is onlined quickly. So you want to
-> > detect that there's more free memory than can fit and
-> > retry the reporting.
-> > 
+On 06/27/2018 05:26 AM, Sekhar Nori wrote:
+> On Wednesday 27 June 2018 03:33 PM, Bartosz Golaszewski wrote:
+>> 2018-06-27 12:01 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+>>> On Tuesday 26 June 2018 02:55 PM, Bartosz Golaszewski wrote:
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> We want to be able to get the clock both from the board file by its
+>>>> con_id and from the aemif driver by dev_id.
+>>>>
+>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> I see the DM365 and DM644x EVM board files getting reference to aemif
+>>> clock using just the con_id, but don't see that for DM646x. Am I
+>>> overlooking something?
+>>>
+>>> Thanks,
+>>> Sekhar
+>>
+>> It's being done indirectly from mach-davinci/aemif.c. I guess we can
+>> remove it again after last patch.
 > 
-> 
-> - AFAIK, memory hotplug isn't expected to happen during live migration
-> today. Hypervisors (e.g. QEMU) explicitly forbid this.
+> I see. One way to avoid that would be to merge this into 11/13. I prefer
+> that, but it prevents clean separation of clock and machine patches. So
+> okay with current way too.
 
-That's a temporary limitation.
+I think da850 has a con_id-only lookup that can be removed as well. I'm
+in favor of doing another series to clean these up later.
 
-> - Allocating buffers based on total ram pages already gives some headroom
-> for newly plugged memory if that could happen in any case. Also, we can
-> think about why people plug in more memory - usually because the existing
-> memory isn't enough, which implies that the free page list is very likely to
-> be close to empty.
 
-Or maybe because guest is expected to use more memory.
-
-> - This method could be easily scaled if people really need more headroom for
-> hot-plugged memory. For example, calculation based on "X * total_ram_pages",
-> X could be a number passed from the hypervisor.
-
-All this in place of a simple retry loop within guest?
-
-> - This is an optimization feature, and reporting less free memory in that
-> rare case doesn't hurt anything.
-
-People working on memory hotplug can't be expected to worry about
-balloon. And maintainers have other things to do than debug hard to
-trigger failure reports from the field.
-
-> 
-> So I think it is good to start from a fundamental implementation, which
-> doesn't confuse people, and complexities can be added when there is a real
-> need in the future.
-> 
-> Best,
-> Wei
-
-The usefulness of the whole patchset hasn't been proven in the field yet.
-The more uncovered corner cases there are, the higher the chance that
-it will turn out not to be useful after all.
-
-> 
-> 
-> ---------------------------------------------------------------------
-> To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
