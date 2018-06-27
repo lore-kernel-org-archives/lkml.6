@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22764C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 140B9C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D78C426461
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D78C426461
+	by mail.kernel.org (Postfix) with ESMTP id C90CF26542
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:22:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C90CF26542
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933021AbeF0JWU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:22:20 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:19088 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752615AbeF0JV7 (ORCPT
+        id S932326AbeF0JVu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:21:50 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31688 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750936AbeF0JVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:21:59 -0400
-X-UUID: a7d192c42ede4af89f3fc1b873330ad7-20180627
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Wed, 27 Jun 2018 05:21:47 -0400
+X-UUID: a100d1d06d6845e184de6069d44f5393-20180627
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <honghui.zhang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2034429156; Wed, 27 Jun 2018 17:21:53 +0800
+        with ESMTP id 944701599; Wed, 27 Jun 2018 17:21:45 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 27 Jun 2018 17:21:52 +0800
+ 15.0.1210.3; Wed, 27 Jun 2018 17:21:43 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 27 Jun 2018 17:21:50 +0800
+ Transport; Wed, 27 Jun 2018 17:21:42 +0800
 From:   <honghui.zhang@mediatek.com>
 To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
         <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
@@ -44,9 +44,9 @@ To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
 CC:     <honghui.zhang@mediatek.com>, <hongkun.cao@mediatek.com>,
         <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
         <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
-Subject: [PATCH 3/4] PCI: mediatek: Add system pm support for MT2712 and MT7622
-Date:   Wed, 27 Jun 2018 17:21:37 +0800
-Message-ID: <1530091298-28120-4-git-send-email-honghui.zhang@mediatek.com>
+Subject: [PATCH 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
+Date:   Wed, 27 Jun 2018 17:21:35 +0800
+Message-ID: <1530091298-28120-2-git-send-email-honghui.zhang@mediatek.com>
 X-Mailer: git-send-email 2.6.4
 In-Reply-To: <1530091298-28120-1-git-send-email-honghui.zhang@mediatek.com>
 References: <1530091298-28120-1-git-send-email-honghui.zhang@mediatek.com>
@@ -60,129 +60,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-The MTCMOS of PCIe Host for MT2712 and MT7622 will be off when system
-suspend, and all the internal control register will be reset after system
-resume. The PCIe link should be re-established and the related control
-register values should be re-set after system resume.
+Mediatek's host controller have two slots, each have it's own control
+registers. The host driver need to identify which slot was connected
+in order to access the device's configuration space. There's problem
+for current host driver to find out which slot was connected to for
+a given EP device.
+
+Assuming each slot have connect with one EP device as below:
+
+                host bridge
+  bus 0 --> __________|_______
+           |                  |
+           |                  |
+         slot 0             slot 1
+  bus 1 -->|        bus 2 --> |
+           |                  |
+         EP 0               EP 1
+
+While PCI emulation, system software will scan all the PCI device
+starting from devfn 0. So it will get the proper port for slot0 and
+slot1 device when using PCI_SLOT(devfn) for match. But it will get
+the wrong slot for EP1: The devfn will be start from 0 when scanning
+EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+for port0's slot value. So the host driver should not using EP's devfn
+but the slot's devfn(the slot which EP was connected to) for match.
+
+This patch fix the mtk_pcie_find_port's logical by using the slot's
+devfn for match.
 
 Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
 Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- drivers/pci/controller/pcie-mediatek.c | 68 ++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+ drivers/pci/controller/pcie-mediatek.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 17bf99b..cac01ab 100644
+index 0baabe3..9cf7ecf 100644
 --- a/drivers/pci/controller/pcie-mediatek.c
 +++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -134,12 +134,14 @@ struct mtk_pcie_port;
- /**
-  * struct mtk_pcie_soc - differentiate between host generations
-  * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-+ * @pm_support: whether the host's MTCMOS will be off when suspend
-  * @ops: pointer to configuration access functions
-  * @startup: pointer to controller setting functions
-  * @setup_irq: pointer to initialize IRQ functions
-  */
- struct mtk_pcie_soc {
- 	bool need_fix_class_id;
-+	bool pm_support;
- 	struct pci_ops *ops;
- 	int (*startup)(struct mtk_pcie_port *port);
- 	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-@@ -1195,12 +1197,76 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	return err;
- }
+@@ -337,10 +337,23 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+ {
+ 	struct mtk_pcie *pcie = bus->sysdata;
+ 	struct mtk_pcie_port *port;
++	struct pci_dev *dev;
++	struct pci_bus *pbus;
  
-+#ifdef CONFIG_PM_SLEEP
-+static int mtk_pcie_suspend_noirq(struct device *dev)
-+{
-+	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-+	const struct mtk_pcie_soc *soc = pcie->soc;
-+	struct mtk_pcie_port *port;
-+
-+	if (!soc->pm_support)
-+		return 0;
-+
-+	if (list_empty(&pcie->ports))
-+		return 0;
-+
+-	list_for_each_entry(port, &pcie->ports, list)
+-		if (port->slot == PCI_SLOT(devfn))
 +	list_for_each_entry(port, &pcie->ports, list) {
-+		clk_disable_unprepare(port->pipe_ck);
-+		clk_disable_unprepare(port->obff_ck);
-+		clk_disable_unprepare(port->axi_ck);
-+		clk_disable_unprepare(port->aux_ck);
-+		clk_disable_unprepare(port->ahb_ck);
-+		clk_disable_unprepare(port->sys_ck);
-+		phy_power_off(port->phy);
-+		phy_exit(port->phy);
++		if (bus->number == 0 && port->slot == PCI_SLOT(devfn)) {
+ 			return port;
++		} else if (bus->number != 0) {
++			pbus = bus;
++			do {
++				dev = pbus->self;
++				if (port->slot == PCI_SLOT(dev->devfn))
++					return port;
++
++				pbus = dev->bus;
++			} while (dev->bus->number != 0);
++		}
 +	}
-+
-+	mtk_pcie_subsys_powerdown(pcie);
-+
-+	return 0;
-+}
-+
-+static int mtk_pcie_resume_noirq(struct device *dev)
-+{
-+	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-+	const struct mtk_pcie_soc *soc = pcie->soc;
-+	struct mtk_pcie_port *port;
-+
-+	if (!soc->pm_support)
-+		return 0;
-+
-+	if (list_empty(&pcie->ports))
-+		return 0;
-+
-+	if (dev->pm_domain) {
-+		pm_runtime_enable(dev);
-+		pm_runtime_get_sync(dev);
-+	}
-+
-+	clk_prepare_enable(pcie->free_ck);
-+
-+	list_for_each_entry(port, &pcie->ports, list)
-+		mtk_pcie_enable_port(port);
-+
-+	if (list_empty(&pcie->ports))
-+		mtk_pcie_subsys_powerdown(pcie);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops mtk_pcie_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_pcie_suspend_noirq,
-+				      mtk_pcie_resume_noirq)
-+};
-+
- static const struct mtk_pcie_soc mtk_pcie_soc_v1 = {
- 	.ops = &mtk_pcie_ops,
- 	.startup = mtk_pcie_startup_port,
- };
  
- static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
-+	.pm_support = true,
- 	.ops = &mtk_pcie_ops_v2,
- 	.startup = mtk_pcie_startup_port_v2,
- 	.setup_irq = mtk_pcie_setup_irq,
-@@ -1208,6 +1274,7 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
- 
- static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
- 	.need_fix_class_id = true,
-+	.pm_support = true,
- 	.ops = &mtk_pcie_ops_v2,
- 	.startup = mtk_pcie_startup_port_v2,
- 	.setup_irq = mtk_pcie_setup_irq,
-@@ -1227,6 +1294,7 @@ static struct platform_driver mtk_pcie_driver = {
- 		.name = "mtk-pcie",
- 		.of_match_table = mtk_pcie_ids,
- 		.suppress_bind_attrs = true,
-+		.pm = &mtk_pcie_pm_ops,
- 	},
- };
- builtin_platform_driver(mtk_pcie_driver);
+ 	return NULL;
+ }
 -- 
 2.6.4
 
