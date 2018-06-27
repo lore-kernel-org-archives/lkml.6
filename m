@@ -2,128 +2,111 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140B9C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B78C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C90CF26542
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:22:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C90CF26542
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 284B826427
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:25:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284B826427
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932326AbeF0JVu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:21:50 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:31688 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750936AbeF0JVr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:21:47 -0400
-X-UUID: a100d1d06d6845e184de6069d44f5393-20180627
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 944701599; Wed, 27 Jun 2018 17:21:45 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 27 Jun 2018 17:21:43 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 27 Jun 2018 17:21:42 +0800
-From:   <honghui.zhang@mediatek.com>
-To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
-        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <ryder.lee@mediatek.com>
-CC:     <honghui.zhang@mediatek.com>, <hongkun.cao@mediatek.com>,
-        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
-        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
-Subject: [PATCH 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
-Date:   Wed, 27 Jun 2018 17:21:35 +0800
-Message-ID: <1530091298-28120-2-git-send-email-honghui.zhang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
-In-Reply-To: <1530091298-28120-1-git-send-email-honghui.zhang@mediatek.com>
-References: <1530091298-28120-1-git-send-email-honghui.zhang@mediatek.com>
+        id S1752602AbeF0JZX (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:25:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60858 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751314AbeF0JZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 05:25:21 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F92F401EF06;
+        Wed, 27 Jun 2018 09:25:21 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 500362156880;
+        Wed, 27 Jun 2018 09:25:19 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     "the arch\/x86 maintainers" <x86@kernel.org>,
+        devel@linuxdriverproject.org, LKML <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Tianyu.Lan@microsoft.com,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>
+Subject: Re: [PATCH 0/4] x86/hyper-v: optimize PV IPIs
+References: <20180622170625.30688-1-vkuznets@redhat.com>
+        <CANRm+CwNfOkosECeSGaXXDaqTDvh1u228ztU8C5Xe95FGgNsFQ@mail.gmail.com>
+Date:   Wed, 27 Jun 2018 11:25:18 +0200
+In-Reply-To: <CANRm+CwNfOkosECeSGaXXDaqTDvh1u228ztU8C5Xe95FGgNsFQ@mail.gmail.com>
+        (Wanpeng Li's message of "Wed, 27 Jun 2018 08:49:08 +0800")
+Message-ID: <877emkh98h.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 09:25:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 09:25:21 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+Wanpeng Li <kernellwp@gmail.com> writes:
 
-Mediatek's host controller have two slots, each have it's own control
-registers. The host driver need to identify which slot was connected
-in order to access the device's configuration space. There's problem
-for current host driver to find out which slot was connected to for
-a given EP device.
+> Hi Vitaly, (fix my reply mess this time)
+> On Sat, 23 Jun 2018 at 01:09, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>>
+>> When reviewing my "x86/hyper-v: use cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_
+>> {LIST,SPACE} hypercalls when possible" patch Michael suggested to apply the
+>> same idea to PV IPIs. Here we go!
+>>
+>> Despite what Hyper-V TLFS says about HVCALL_SEND_IPI hypercall, it can
+>> actually be 'fast' (passing parameters through registers). Use that too.
+>>
+>> This series can collide with my "KVM: x86: hyperv: PV IPI support for
+>> Windows guests" series as I rename ipi_arg_non_ex/ipi_arg_ex structures
+>> there. Depending on which one gets in first we may need to do tiny
+>> adjustments.
+>
+> As hyperv PV TLB flush has already been merged, is there any other
+> obvious multicast IPIs scenarios? qemu supports interrupt remapping
+> since two years ago, I think windows guest can switch to cluster mode
+> after entering x2APIC, so sending IPI per cluster. 
 
-Assuming each slot have connect with one EP device as below:
+When we manifest ourselves as Hyper-V Windows 'forgets' about x2apic
+mode: Hyper-V has a concept of 'Synthetic interrupt controller' - an
+xapic extension which we also support in KVM. I don't really know any
+obvious scenarios for mass IPIs in Windows besides TLB flush but I'm
+worried they may exist. Without PV IPIs any such attempt will likely
+lead to a crash.
 
-                host bridge
-  bus 0 --> __________|_______
-           |                  |
-           |                  |
-         slot 0             slot 1
-  bus 1 -->|        bus 2 --> |
-           |                  |
-         EP 0               EP 1
+In general, I do care more about completeness and correctness of our
+Hyper-V emulation at this point: Windows is only being tested on 'real'
+Hyper-Vs so when we emulate a subset of enlightenments we're on our own
+when something is not working. It is also very helpfult for
+Linux-on-Hyper-V depelopment as we can see how Windows-on-Hyper-v
+behaves :-)
 
-While PCI emulation, system software will scan all the PCI device
-starting from devfn 0. So it will get the proper port for slot0 and
-slot1 device when using PCI_SLOT(devfn) for match. But it will get
-the wrong slot for EP1: The devfn will be start from 0 when scanning
-EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
-for port0's slot value. So the host driver should not using EP's devfn
-but the slot's devfn(the slot which EP was connected to) for match.
+> In addition, you
+> can also post the benchmark result for this PV IPI optimization,
+> although it also fixes the bug which you mentioned above.
 
-This patch fix the mtk_pcie_find_port's logical by using the slot's
-devfn for match.
+I'd love to get to know how to trigger mass IPIs in Windows so a
+benchmark can be performed...
 
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/pci/controller/pcie-mediatek.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+> I can post one variant for Linux guest PV IPI if it also makes
+> sense. :)
 
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 0baabe3..9cf7ecf 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -337,10 +337,23 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
- {
- 	struct mtk_pcie *pcie = bus->sysdata;
- 	struct mtk_pcie_port *port;
-+	struct pci_dev *dev;
-+	struct pci_bus *pbus;
- 
--	list_for_each_entry(port, &pcie->ports, list)
--		if (port->slot == PCI_SLOT(devfn))
-+	list_for_each_entry(port, &pcie->ports, list) {
-+		if (bus->number == 0 && port->slot == PCI_SLOT(devfn)) {
- 			return port;
-+		} else if (bus->number != 0) {
-+			pbus = bus;
-+			do {
-+				dev = pbus->self;
-+				if (port->slot == PCI_SLOT(dev->devfn))
-+					return port;
-+
-+				pbus = dev->bus;
-+			} while (dev->bus->number != 0);
-+		}
-+	}
- 
- 	return NULL;
- }
+With x2apic support I'm actually not sure. Maybe configurations with
+a very large number of vCPUs and IPIs going to > 256 vCPUs can benefit
+from a 'single hypercall' solution.
+
 -- 
-2.6.4
-
+  Vitaly
