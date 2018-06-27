@@ -2,131 +2,136 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDDEC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197CCC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03FCF26913
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B38824BD5
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:29:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ERCr6Mjb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03FCF26913
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QdkFDHHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B38824BD5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755059AbeF0BXI (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 21:23:08 -0400
-Received: from mail-eopbgr00076.outbound.protection.outlook.com ([40.107.0.76]:3776
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        id S934686AbeF0B3q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 21:29:46 -0400
+Received: from mail-eopbgr20084.outbound.protection.outlook.com ([40.107.2.84]:1152
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751491AbeF0BXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 21:23:06 -0400
+        id S1752484AbeF0B3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 21:29:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=miL0++cNyFW5vfXTquuzxyLaJtPdTFTFHQJSTK+3pGA=;
- b=ERCr6MjbQZw1QHwwhkVHewjNS2qtCPmbchCE+4t3VMXtJh41FLHUzMTgCoxJwqDdv0DQ+tAFDqSVSPu0YtaaTsZT8EQywjuHEpK5/Onyozr9GXp8EDWQT4v2Izuf04r6O+34t50m4LDOx6xnXnEUAYXt0yxrLlQBU0hh/byknvk=
-Received: from DB5PR04MB1320.eurprd04.prod.outlook.com (10.162.157.139) by
- DB5PR04MB0869.eurprd04.prod.outlook.com (10.161.195.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.24; Wed, 27 Jun 2018 01:23:02 +0000
-Received: from DB5PR04MB1320.eurprd04.prod.outlook.com
- ([fe80::bdee:ee45:1fa8:7f8]) by DB5PR04MB1320.eurprd04.prod.outlook.com
- ([fe80::bdee:ee45:1fa8:7f8%3]) with mapi id 15.20.0906.023; Wed, 27 Jun 2018
- 01:23:01 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: make pfuze switch always-on for imx platforms
-Thread-Topic: [PATCH] ARM: dts: make pfuze switch always-on for imx platforms
-Thread-Index: AQHUDRSjJ0VVxmrHn0SPihAXLvQaBqRzT/8AgAAAYRA=
-Date:   Wed, 27 Jun 2018 01:23:01 +0000
-Message-ID: <DB5PR04MB1320492352AFFEB852E74D1AF5480@DB5PR04MB1320.eurprd04.prod.outlook.com>
-References: <1529993283-32396-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5C--fpkRLfwmySFJeO2hwPdz3paxW1WMiqcqraqmbL9Mg@mail.gmail.com>
-In-Reply-To: <CAOMZO5C--fpkRLfwmySFJeO2hwPdz3paxW1WMiqcqraqmbL9Mg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB5PR04MB0869;7:5lFealYwEv8KfQ95rcDXY5lIOTxWpSNJGcOjjkXk+ZY5tQtUJVrwfA/B2/AXA9vMIsXbFpot4fnk2m7NvgsnkZqFqRJD7zyQfSdPJmap1SSlwLX1mYfLt226GRza7ifHlgN4NsypHR/CslCz+KvEFKYn5V9r6eIMehzdkxGVwBUVL03tJkgKaI2ZsKtMdPf/z/OCK5p6l3nCWpXw6WxcKBV3YJxfYQeb3d71xWE77LPmzxDH+1TIjdkCntWV73JT
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: b1136dcb-3ec4-43f1-788d-08d5dbcc867d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB0869;
-x-ms-traffictypediagnostic: DB5PR04MB0869:
-x-microsoft-antispam-prvs: <DB5PR04MB0869599F66DB516953AA9C44F5480@DB5PR04MB0869.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335)(17755550239193);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:DB5PR04MB0869;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB0869;
-x-forefront-prvs: 0716E70AB6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(396003)(39860400002)(366004)(376002)(346002)(136003)(13464003)(199004)(189003)(74316002)(102836004)(7736002)(53546011)(97736004)(5660300001)(9686003)(66066001)(76176011)(8676002)(2906002)(81156014)(7696005)(6916009)(68736007)(81166006)(6506007)(305945005)(8936002)(14454004)(33656002)(316002)(478600001)(54906003)(105586002)(53936002)(186003)(55016002)(99286004)(2900100001)(5250100002)(106356001)(3846002)(4326008)(1411001)(39060400002)(44832011)(11346002)(476003)(446003)(6246003)(6436002)(86362001)(486006)(25786009)(229853002)(256004)(26005)(6116002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB0869;H:DB5PR04MB1320.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Ad9Is7YIBav12YEW4r0XcWzx0cbQviMcJZBn5xgoQumR4LAhvPShWO0pucDHwXrgcVuXc62U+N/ibSRvycte7IORJxc2Huzj27yUxrFtFZcR7OCIj7GxnILYIpqJ2aDim83TRDXFcGDiFMXXVrmdXNrvcYCHsYe+iHaK916JW07NgovQGda1/9juLAHQR8zHrpR+KSTqqUAOF4sfT4wf7IuckS0kMk1PCwPcPPloz1wiZlSuZxW2XpSO32S701LXeZ4gMKWLfBtgOkqGya+pw7byzWu0gfBfugYHgT1VfgCnUj2d/OQfIZq0rAgotqmskvoWdssQHGVMgoWTXLpeYuXa4fR1oEpZB4u8gX63nIg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ bh=EqrHaPjN0bjWqJuepc08DVRkAKAjnihiorWhxft4WlM=;
+ b=QdkFDHHdjxG5Wkl4GgE8wJqZTfqB4Q2K0HoSbIqVHHtzRm5Zd60FvQnaVzpoRFzxOqhtwT1ovtG0wxNYnvZe3QJFhJP2ImtNCgLlKdAHZf5DmNXBWPV1dhkjrwRko5jD0/NpaYPXy2CmKjEOUomrUJv+ZnEQ0sgGmzG3DR3kSMw=
+Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
+ DB5PR04MB1319.eurprd04.prod.outlook.com (2a01:111:e400:51cb::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.20; Wed, 27 Jun
+ 2018 01:29:36 +0000
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V3] ARM: dts: imx6sll-evk: make pfuze100 sw4 always on
+Date:   Wed, 27 Jun 2018 09:25:25 +0800
+Message-Id: <1530062725-25779-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK0PR03CA0095.apcprd03.prod.outlook.com
+ (2603:1096:203:72::35) To DB5PR04MB1319.eurprd04.prod.outlook.com
+ (2a01:111:e400:51cb::13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 02b2e3d2-d717-4ddc-1cb9-08d5dbcd73e1
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1319;
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1319;3:YChAJA9nmMxPW9MS8eMZfQkt8TUEuAaPTsaoIP67j6gX1TFEEkcNpVXEPMLPTnFu4Qn5dpMGVaXnnon0BJWI4LS5dfbMWwBSJpTuBRFhcN27MXgeW/ZbkOb0Bmz8As1MPoHoKxhiC711R2cZgDhaGzoZTXYUuTCSd5E9wxSq0sQAw9eSpcFrktie1x4zdCkjDr9D6cqfF7jJglJ7IGuY8kRHEk4R2uD62017c/IQv5eO3e9qjinDR696WffSa3As;25:1tuiowL8qlUNaYIXcm3dSSQJ8W80d4VPbXk324/7A00HI15oh8MQZxKIsPaRh9SJz8ML80s9YYb4ElhYp3GBXWvM+QOaNf75Z+MboANMvEtE+AD+QD70GYg93Gkn7ufCrNwkmwIhPasWQbQxtU2P8XYjTsXjqDiXLV/Nw2ktzUGpJw/lZw3oXOg4fgVWZIYdV3Hf0xFy7kl8Z5cbiv3vGckj7fTaXeVgSsvfXdMUFFUt7TWWn6dSxnw8qXGpi5z7JQmXhh1poJRA6KOytfJEbbr9Y36Lv9S/KgY+NnbIMpSMIcUwqSSmULuRRWSs30uKODtoRkejzXF97BRMAhsfBw==;31:kFvIRqWMKoDTcNEMPLGz1jXGNSPlXbCP5A/zsd0oJsMVzpS+7k7cglPErpN/YPnCISkj5LwfeLjIYDFq21RpbD4ErMfSgZV/cBs1aufEQJspV7xuVpDSOzBciSmOgAxh3NOQuj89y74b+dbYI7Nx26UY8EBKxjyFaWCAiVewXtssv9/fxnXjg36Y/e1dwWjsqe9wGPkoh7b7rxJdgpu4jrocROAUd9xTWi5utUs6IFQ=
+X-MS-TrafficTypeDiagnostic: DB5PR04MB1319:
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1319;20:AOvJo1+ETnXFiyo3Su0IZyMfAtDRw6A7vFQjuIxN0zxTi6FeHkpPIWCX/dmjIXJX9nzWrP4eNN9HdNnprzwdSqQGd602jikxPyxjoS3Y1Tmg0BdqrYU0tx/r67FSFTobjdlbwxeL0VNs+CUibfNvUOvczYmqD9ZafiNAyXXVbSrnIuIYwUgWhSojBIxcx5FJGm/rreJ4N1A2umoAcjYH1SYt0G6e0kzZzHbFSPmBPKJDpfZ7czCJ6i8TWpGajOOhGFp8nY1oZDs9Y+Hrz3bNzB+3ZiUQKy/GHpQMN0mFMgfDicqLYUGrEVf5/dh9aDwhd6a9spvEVSB6nG8Z6BF1xGMsW+50VADflujMgcccAWyhIjp8nMouTvFEoE+AcxZQBgV81tQ+vt6OvkfCWAZR4zK8VuGZNrVGquQ0eksVdjJIHrWzeHYJIXacZelgrJon2r2k+s5YJmktwWhJ09MmtPy+2ubB+Nc7DA7gaYkJeuoktZSWF9rZW3r43biz6P8y;4:q8TSmmDrS/JCbZuRYmVP9ZPdQNJ78jdFZsCx3KC9/YjyTKHBd/pI4vkOAnevqr7I1ybEsiKzUw6MWB102M7nsRma9vTrrQwtIZcUcHtZwb34BcvGrCGgbDc1SVT8Rj1BLWKBxiNlpsYCUYHfu0lT68bSlI4VV7jTeZmHW0hM+SLOMn25eQ2cNIN7rO+dop0DrLasE28V54j2CMvWJBDBIhzQprREQnK4EOwK0sg3LGS1JjCGqzIQHTOdusZ0zvrwD1Fm5Caf9xWTFOKiV56PGw+/LFRFQiL4ZwnzZTJ5nf/gg4qAT1C3RNpdg7Hc4jS0
+X-Microsoft-Antispam-PRVS: <DB5PR04MB131908B4D30EBC91688838A3F5480@DB5PR04MB1319.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DB5PR04MB1319;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1319;
+X-Forefront-PRVS: 0716E70AB6
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(346002)(39860400002)(376002)(199004)(189003)(14444005)(6666003)(478600001)(186003)(6346003)(4326008)(16586007)(50466002)(6506007)(386003)(305945005)(53936002)(48376002)(16526019)(36756003)(50226002)(81156014)(7736002)(81166006)(486006)(25786009)(68736007)(8936002)(2616005)(97736004)(8676002)(956004)(476003)(26005)(316002)(3846002)(6116002)(105586002)(47776003)(6512007)(66066001)(52116002)(106356001)(86362001)(5660300001)(6486002)(51416003)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1319;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1319;23:b6IMf4h88huedLBOq2e3RYeVGLhsVu71/dCO/HWhk?=
+ =?us-ascii?Q?CF9Zk76BW5g0A08zW0obwkW3/1ctgtlDyr+HTr4IChGW4wuOrbz2n4zqXykQ?=
+ =?us-ascii?Q?lkrXFUg3arA1HUbGeNh6zZtTD2cdT6h26G2+YVpMOvRAozeBSYjLZ0LYETYL?=
+ =?us-ascii?Q?sYcOoCo8CcAv3ssqQ51/5CYJP8PnZJLVJDukYDeuRQNH40Lvi1fxJ0JuZ6uu?=
+ =?us-ascii?Q?d3sxu1zgukN2JrtYOk9At4c/y1808RGri4TedUBnvHUE4+VpI4WP5488Kftj?=
+ =?us-ascii?Q?C15RvJQ9m6V6s/8O3XfNtssiKG+IV50t/BPz6UhnRigxgn44UJAoljsK74uH?=
+ =?us-ascii?Q?lY64+7JmjWeogpMAjQknRIEk7RlVlsoipK+JD8pttiR2cq6o0wFE8L8L5CEz?=
+ =?us-ascii?Q?ycRy68hNx+Ls1UPhV0/YqLXu5TfJQs1B2TKfZDyN5xgZclbX9QY46sRH3R2k?=
+ =?us-ascii?Q?8JM6l6GXXH9dHeW30DoOjh5LtilI4AVJpwwmadfelEPaDj5IvU5y15tsjyxG?=
+ =?us-ascii?Q?OAKmtGGfSjyNR7g0cdmL12lM6TtyQdXS8935gjab70J/F9dsSMkUAD/pvDcf?=
+ =?us-ascii?Q?0c0VLSKQvru51knH29alfsXPyPSqp07BMVPwjQGqNfD7HB/gGLB1ToptulHi?=
+ =?us-ascii?Q?aLadSm4Gz2dqfis7BRnsRnVIUnIXnwdWcpoRjbdj9E/NFivJ6dmJfr1QghNH?=
+ =?us-ascii?Q?ee22+RfnwU08PoQswxJHvejST+BZHutV1iYCpwUu5JxDGx6k5j0S7F4Trnxa?=
+ =?us-ascii?Q?Ib2XjjykinsC4oRMN34essS576Bm2aux0+1vHDa47UbPRiZ+OiQtKatbbI6R?=
+ =?us-ascii?Q?qdFERFGpFNRKS9lObk1iQjaLqq9wB8UKGN6bVTJMu/pMODyeh2TRaH08TBhQ?=
+ =?us-ascii?Q?LaDwR4UW3G9psOx5pkYkncqaqsDy/pX662KvT0lYW2KsCc0lDGayhh9XpZzV?=
+ =?us-ascii?Q?xv8nGZvOJc8VgU3Xvvixbd4miUZbnp4LK5ecOqk8mgdyZiR7zGLN5wzh43fA?=
+ =?us-ascii?Q?hbt/+mYv3lnp+oxR35YGXjJ6yyQVCCikU5mTS1jAUG6n3V/2YAZAjtzNA9Hj?=
+ =?us-ascii?Q?fW0lKGU17ELt1iR2BwqtS2fghYcoyG331Lp7NxPlvyMlPrc3vttGdaTiEVKn?=
+ =?us-ascii?Q?mTDpZrUWTChQGUfTcGqcuWLsm8+/g3+?=
+X-Microsoft-Antispam-Message-Info: SJXxxXLg27y6a4Jx+gY2ZWqcT1xYhBYAWzrXi++nexHQ4/Hd/RBeOLrCTK9QpwWIlQcvkHMq4xs5oTFW+aOxs8pFzr4csW96lVsngdave9VjtqON/ujwzupJRDOdCia365k8BTHyLRFDQKykkOoTKdfiw5Sa6k8wIFEks3klgE7g87/N9GAsbaVTX/Bbvg+Gqa+bezLiilKnDOavA+BQco22UutQ/DHHR6Vrt0QZsRYvDIMdLiFuPj4mNJxCXQa2udfcikqVOe3ifHRdqmfeKKxn+CTBF7QTW6ueZtedvbMktPbueorFVBEIyDtTgUnf3puX6EU67UZvTUlxj0lXeawmHb9lDRonZOD9OjeiKZI=
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1319;6:0J2xXmIv0LNCmvurGBvaTEvZGqAcdRo34Qb1V5go43LfZdDDT4r8xw24RBNsFB9AKDdhAwzaugDXDkjjeo8O6gEB56EJIbqwdnLe1DOfLZPnC+gJfKph7hMRNKceY0CrqP8a8HcVL+kJo2QQ8EVVSUxLJvYbWg3k1sv/77RT8sdvWqWA4B+mK82ABlHbAepBzgq9d1PdHsJYVVqOE5O7Sx9BPjZAzQq+mu93kgE+42/8F6994ZhrUlMsx8GpQoJYab4oKykcJhad6hxoQu6Xa4ZDFQCIf0bKQSGY7WQUHnbslH2zP3bTjWyegGIXWaRLeQiMvlD0BHKLx3Q/pf5g3yDYxnw22XI/8i4xqs62cDZBztLys0koBj/90PMluByfrg1Om2CMCnFbItl/r8B5C9ldFdCWUMXgMynGTbm6svA7rcpK8wUh4Wt8pnCSuTvK0c4zHwjsqaw2y+bDN4OVIQ==;5:gpKqxTAcqzZfAHAGdl9oVR0dXPxJx880vJt6HP9nHpYuaIxlXA+hOUhNbi0EG8n73QBOOeidO+HgBfqNjEK/qKrIEl/7vpgaf1/TZz6+AB1STs16AFpqH3rDdXy/If04R+3t/YpU+qdE7pubEFpyofnOnj+cWKh0fX+njh8XQCY=;24:im1pnqq8EITfTShwLzuBJrqLuDKxcegXn7xR82N1xgwpPH96hsNPOp9EaK0Bzi1eAljQRUpDK3BFxo712cEJxk/i7X906zXmbwiREu9au2w=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1319;7:rG45os+WDSkOAr8zXzMiF9MOnYUMDEqyHP4Xqv2mclBKqQrFf6NsY6I9I4H9T2URkYkVDXWG12paZZAX2cswLJjVVfyiOJ/zkuacwc8LM5y3ieF6EYpjmaVOXg+phvazEdxJscug5e6QyGpFf4kj8VtdCwia1FjY8Ye1Q6kJHs9S/Zbbo4jR7dBY0BarLorxd7IvuMs3HHNdRZrGBwndOD0fRpijLO8rhFC5LNvMeEsvu4DKG5kZfieAZDEFesiX
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1136dcb-3ec4-43f1-788d-08d5dbcc867d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2018 01:23:01.8123
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB0869
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2018 01:29:36.2032 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02b2e3d2-d717-4ddc-1cb9-08d5dbcd73e1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1319
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1AZ21haWwuY29t
-XQ0KPiBTZW50OiBXZWRuZXNkYXksIEp1bmUgMjcsIDIwMTggOToyMSBBTQ0KPiBUbzogQW5zb24g
-SHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+DQo+IENjOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtl
-cm5lbC5vcmc+OyBTYXNjaGEgSGF1ZXINCj4gPHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU+OyBTYXNj
-aGEgSGF1ZXIgPGtlcm5lbEBwZW5ndXRyb25peC5kZT47IEZhYmlvDQo+IEVzdGV2YW0gPGZhYmlv
-LmVzdGV2YW1AbnhwLmNvbT47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+Ow0KPiBN
-YXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgZGwtbGludXgtaW14IDxsaW51eC1p
-bXhAbnhwLmNvbT47DQo+IG1vZGVyYXRlZCBsaXN0OkFSTS9GUkVFU0NBTEUgSU1YIC8gTVhDIEFS
-TSBBUkNISVRFQ1RVUkUNCj4gPGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz47
-IG9wZW4gbGlzdDpPUEVOIEZJUk1XQVJFIEFORA0KPiBGTEFUVEVORUQgREVWSUNFIFRSRUUgQklO
-RElOR1MgPGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnPjsNCj4gbGludXgta2VybmVsIDxsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBBUk06IGR0
-czogbWFrZSBwZnV6ZSBzd2l0Y2ggYWx3YXlzLW9uIGZvciBpbXggcGxhdGZvcm1zDQo+IA0KPiBP
-biBUdWUsIEp1biAyNiwgMjAxOCBhdCAzOjA4IEFNLCBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdA
-bnhwLmNvbT4NCj4gd3JvdGU6DQo+ID4gY29tbWl0ICg1ZmUxNTZmIHJlZ3VsYXRvcjogcGZ1emUx
-MDA6IGFkZCBlbmFibGUvZGlzYWJsZSBmb3Igc3dpdGNoKQ0KPiA+IHdpbGwgY2F1c2UgdGhvc2Ug
-dW5yZWZlcmVuY2VkIHN3aXRjaGVzIGJlaW5nDQo+IA0KPiBOaXQ6IFRoZSBwcm9wZXIgd2F5IHRv
-IHJlZmVyZW5jZSBhIGNvbW1pdCBpczoNCj4gDQo+IGNvbW1pdCA1ZmUxNTZmMWNhYjQgKCJyZWd1
-bGF0b3I6IHBmdXplMTAwOiBhZGQgZW5hYmxlL2Rpc2FibGUgZm9yIHN3aXRjaCIpDQo+IA0KPiAx
-MiBjaGFyIGZvciB0aGUgY29tbWl0IElEIGFuZCB0aGUgY29tbWl0IG5hbWUgaW5zaWRlICgiICIp
-Lg0KPiANCj4gPiB0dXJuZWQgb2ZmIGlmICJyZWd1bGF0b3ItYWx3YXlzLW9uIiBpcyBOT1QgcHJl
-c2VudCwgYXMgcGZ1emUgc3dpdGNoZXMNCj4gPiBhcmUgbm9ybWFsbHkgdXNlZCBieSBjcml0aWNh
-bCBtb2R1bGVzIHdoaWNoIG11c3QgYmUgYWx3YXlzIE9OIG9yDQo+ID4gc2hhcmVkIGJ5IG1hbnkg
-cGVyaXBoZXJhbHMgd2hpY2ggZG8gTk9UIGltcGxlbWVudCBwb3dlciBkb21haW4NCj4gPiBjb250
-cm9sLCBzbyBqdXN0IG1ha2Ugc3VyZSBhbGwgc3dpdGNoZXMgYWx3YXlzIE9OIHRvIGF2b2lkIGFu
-eSBzeXN0ZW0NCj4gPiBpc3N1ZSBjYXVzZWQgYnkgdW5leHBlY3RlZGx5IHR1cm5pbmcgb2ZmIHN3
-aXRjaGVzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5n
-QG54cC5jb20+DQo+IA0KPiBSZXZpZXdlZC1ieTogRmFiaW8gRXN0ZXZhbSA8ZmFiaW8uZXN0ZXZh
-bUBueHAuY29tPg0KDQpUaGFua3MsIHdpbGwgaW1wcm92ZSBpdCBhbmQgYWxzbyB0aGUgb3RoZXIg
-cGF0Y2ggZm9yIGlteDZzbGwuDQoNCkFuc29uLg0KDQoNCg==
+On i.MX6SLL EVK board, PFuze100's SW4 is supplying
+LPDDR3, it needs to be always on. This patch fixes
+Linux kernel boot up hang caused by commit 5fe156f1cab4
+("regulator: pfuze100: add enable/disable for switch"),
+because SW4 is turned off unexpectedly:
+
+[    1.693613] cfg80211: failed to load regulatory.db
+[    1.700063] SW4: disabling
+[    1.703973] SWBST: disabling
+
+Fixes: 5fe156f1cab4 ("regulator: pfuze100: add enable/disable for switch")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+changes since V2:
+	improve the way of referencing commit, and add fix tag.
+ arch/arm/boot/dts/imx6sll-evk.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-evk.dts
+index 4684ac4..2217c40 100644
+--- a/arch/arm/boot/dts/imx6sll-evk.dts
++++ b/arch/arm/boot/dts/imx6sll-evk.dts
+@@ -142,6 +142,7 @@
+ 			sw4_reg: sw4 {
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
+ 			};
+ 
+ 			swbst_reg: swbst {
+-- 
+2.7.4
+
