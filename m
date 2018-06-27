@@ -2,188 +2,114 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CC8C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38097C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E18B823D15
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E18B823D15
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id DD30E23EA2
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:01:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD30E23EA2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965484AbeF0R6m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:58:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49473 "EHLO mail.bootlin.com"
+        id S934879AbeF0SB4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 14:01:56 -0400
+Received: from mga14.intel.com ([192.55.52.115]:24946 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964929AbeF0R6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:58:40 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 41B6120741; Wed, 27 Jun 2018 19:58:38 +0200 (CEST)
-Received: from localhost (unknown [88.128.82.6])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EC365203B4;
-        Wed, 27 Jun 2018 19:58:27 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 19:58:28 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        tfiga@chromium.org, posciak@chromium.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 7/9] media: cedrus: Move IRQ maintainance to
- cedrus_dec_ops
-Message-ID: <20180627175828.hvos5hxdk2cyvare@flea>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
- <20180613140714.1686-8-maxime.ripard@bootlin.com>
- <d8e471608643a014d0961c82256753e5fd0c5060.camel@bootlin.com>
- <03f66b80b1a60c4fe62822b08eb5d97c0539aac0.camel@bootlin.com>
+        id S934333AbeF0SBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 14:01:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 11:01:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,280,1526367600"; 
+   d="scan'208";a="61936094"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.149]) ([10.7.153.149])
+  by fmsmga002.fm.intel.com with ESMTP; 27 Jun 2018 11:01:53 -0700
+Subject: Re: [PATCH] i2c: aspeed: Improve driver to support multi-master use
+ cases stably
+To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     James Feist <james.feist@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20180626165812.4141-1-jae.hyun.yoo@linux.intel.com>
+ <60d0dad1-b735-0650-47b4-40c57b1a5209@linux.intel.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <c1c361de-32a7-83b6-4d48-ad0750c6218b@linux.intel.com>
+Date:   Wed, 27 Jun 2018 11:01:53 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pjsqvp4fbnbe7rps"
-Content-Disposition: inline
-In-Reply-To: <03f66b80b1a60c4fe62822b08eb5d97c0539aac0.camel@bootlin.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <60d0dad1-b735-0650-47b4-40c57b1a5209@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jarkko,
 
---pjsqvp4fbnbe7rps
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the review. Please see my answer below.
 
-On Mon, Jun 25, 2018 at 05:49:58PM +0200, Paul Kocialkowski wrote:
-> On Mon, 2018-06-25 at 17:38 +0200, Paul Kocialkowski wrote:
-> > Hi,
-> >=20
-> > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> > > The IRQ handler up until now was hardcoding the use of the MPEG engin=
-e to
-> > > read the interrupt status, clear it and disable the interrupts.
-> > >=20
-> > > Obviously, that won't work really well with the introduction of new c=
-odecs
-> > > that use a separate engine with a separate register set.
-> > >=20
-> > > In order to make this more future proof, introduce new decodec operat=
-ions
-> > > to deal with the interrupt management. The only one missing is the on=
-e to
-> > > enable the interrupts in the first place, but that's taken care of by=
- the
-> > > trigger hook for now.
-> >=20
-> > Here's another comment about an issue I just figured out.
-> >=20
-> > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > ---
-> > >  .../sunxi/cedrus/sunxi_cedrus_common.h        |  9 +++++
-> > >  .../platform/sunxi/cedrus/sunxi_cedrus_hw.c   | 21 ++++++------
-> > >  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 33 +++++++++++++++++=
-++
-> > >  3 files changed, 53 insertions(+), 10 deletions(-)
-> > >=20
-> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.=
-h b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> > > index c2e2c92d103b..a2a507eb9fc9 100644
-> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> > > @@ -108,7 +108,16 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer=
-(const struct vb2_buffer *p)
-> > >  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
-> > >  }
-> > > =20
-> > > +enum sunxi_cedrus_irq_status {
-> > > +	SUNXI_CEDRUS_IRQ_NONE,
-> > > +	SUNXI_CEDRUS_IRQ_ERROR,
-> > > +	SUNXI_CEDRUS_IRQ_OK,
-> > > +};
-> > > +
-> > >  struct sunxi_cedrus_dec_ops {
-> > > +	void (*irq_clear)(struct sunxi_cedrus_ctx *ctx);
-> > > +	void (*irq_disable)(struct sunxi_cedrus_ctx *ctx);
-> > > +	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx =
-*ctx);
-> > >  	void (*setup)(struct sunxi_cedrus_ctx *ctx,
-> > >  		      struct sunxi_cedrus_run *run);
-> > >  	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
-> > > diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/=
-drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-> > > index bb46a01214e0..6b97cbd2834e 100644
-> > > --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-> > > +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-> > > @@ -77,27 +77,28 @@ static irqreturn_t sunxi_cedrus_ve_irq(int irq, v=
-oid *dev_id)
-> > >  	struct sunxi_cedrus_ctx *ctx;
-> > >  	struct sunxi_cedrus_buffer *src_buffer, *dst_buffer;
-> > >  	struct vb2_v4l2_buffer *src_vb, *dst_vb;
-> > > +	enum sunxi_cedrus_irq_status status;
-> > >  	unsigned long flags;
-> > > -	unsigned int value, status;
-> > > =20
-> > >  	spin_lock_irqsave(&dev->irq_lock, flags);
-> > > =20
-> > > -	/* Disable MPEG interrupts and stop the MPEG engine */
-> > > -	value =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL);
-> > > -	sunxi_cedrus_write(dev, value & (~0xf), VE_MPEG_CTRL);
-> > > -
-> > > -	status =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS);
-> > > -	sunxi_cedrus_write(dev, 0x0000c00f, VE_MPEG_STATUS);
-> > > -	sunxi_cedrus_engine_disable(dev);
-> >=20
-> > This call was dropped from the code reorganization. What it intentional?
-> >=20
-> > IMO, it should be brought back to the irq_disable ops for MPEG2 (and the
-> > same probably applies to H264).
->=20
-> Actually, this doesn't seem like the right place to put it.
->=20
-> Looking at the sunxi_engine_enable function, explicitly passing the
-> codec as an argument and calling that function from each codec's code
-> feels strange.
+On 6/27/2018 12:48 AM, Jarkko Nikula wrote:
+> Hi
+> 
+> On 06/26/2018 07:58 PM, Jae Hyun Yoo wrote:
+>> BMC firmware should support some multi-master use cases such as 
+>> multi-node,
+>> IPMB, BMC-ME link and so on but the current ASPEED I2C driver is a bit
+>> unstable for the multi-master use case. So this patch improves ASPEED I2C
+>> driver to support the multi-master use case stably.
+>>
+>> Changes:
+>> * Added XFER_MODE status register checking logic into
+>>    aspeed_i2c_master_xfer to improve the current bus busy checking logic.
+>> * Changed the order of enum aspeed_i2c_master_state and
+>>    enum aspeed_i2c_slave_state defines to make their initial values 
+>> set to
+>>    ASPEED_I2C_MASTER_INACTIVE and ASPEED_I2C_SLAVE_STOP respectively.
+>>    In case of multi-master use with previous code, if a slave data comes
+>>    ahead of the first master xfer, master_state starts from an invalid
+>>    state. This change fixed the issue.
+>> * Adjusted spin_lock scope to make it wrap the whole irq handler using
+>>    a single lock and unlock pair covers both master and slave handlers.
+>> * Added irq_status variable as a member of the struct aspeed_i2c_bus to
+>>    collect handled interrupt bits throughout the master and the slave irq
+>>    handlers.
+>> * Added control logic to put an order on calling the master and the slave
+>>    irq handlers based on their current states.
+>>
+> This does many unrelated looking changes in one patch making it more 
+> vulnerable for potential multiple regressions. For instance busy 
+> checking goes from single read to loop with 250 ms timeout in this patch 
+> while changing also spin lock logic and interrupt handling.
+> 
+> Now if there is some regression it might be difficult to find what 
+> change in this patch is causing it and more over things goes more 
+> complicated if some other kind of regressions are found pointing into 
+> the same commit.
+> 
+> I suggest splitting this into multiple smaller patches. For instance 
+> having first simple conversions patches that are unlikely to cause a 
+> regression like one patch adding '\n' to error print, another moving 
+> irq_status variable into struct aspeed_i2c_bus and so on followed by 
+> patches that change logic like busy checking, spin lock change and then 
+> patch or more for multi-master support.
+> 
 
-This isn't what this code is doing. You have three engines, each of
-them implementing a different set of codec. The JPEG engine implements
-MPEG1, MPEG2 and MPEG4, the H264 engine H264 and VP8, and the H265
-H265 and VP9.
+Yes, that makes sense and I agree with you. I'll split out this patch
+into multiple smaller patches as you suggested.
 
-So there is no direct match between a codec and an engine.
+Thanks,
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---pjsqvp4fbnbe7rps
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsz0EMACgkQ0rTAlCFN
-r3RioA/+P4ZrkoBcH4haeFThQubgzhv1kXRTrj1pcngGHFsL+7Ps1juTBYEp7JvS
-SxSBrhEMO3+bu7xwUbN0ifzzqGnWJIqO/Ng9xEuC09JfXzEl9qwslb6IgWAynW6w
-jlXNFJuhWXEdKlVu5vYsV9IzMhMi0Jy/Ta3F4QEPtv2n2kobClf26uqJJIk04XwH
-MmDrU9tu90Hi6/zP+HHGjCxOnZnLdJ8O4w4iiq97wowOnIdthoDcUCyMljAHr6w4
-UutL42+zgFQ3BuMFBVLDYTJyDyyk0XWYGrVjae/LbPYEo0DqjxLn8ngdgCMNHjdU
-bYELVvJ6uz+iOM6vZ9h8f5o7zl+wBPEgM9fBMo/Ou/wj2+d5NaGkz59AMTHKyjTN
-TJ4VfUl8FyKdYY7eOTtZk6eFqi8l3w5o3esW4bP9/yMpt3O4V6imNtDO7fIlpBey
-82BZwnRb31FmIUzfXoJU7YH1TA+78AYgAf2sQWX7/JpFmQuhv375siC/B4gDG4Z3
-vco5hFWSkVBMAySHTvJXIvphP+v3ynV/eV54JVVV/dvzQjU3sKocOwbI3YwgzJCN
-KJIyeoeGzci+hwowUx9M8W8Cj27ggByn01AbbsSuje8bRwy4CvTd/fnZRM55mr9w
-8LrHId7QwxRiBfuTbITHnqYgnthBw91B7c6x4rjccBccylI59bI=
-=OtEw
------END PGP SIGNATURE-----
-
---pjsqvp4fbnbe7rps--
+Jae
