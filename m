@@ -3,703 +3,181 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51180C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F4EC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4ABC26128
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:44:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4ABC26128
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D4E72613D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D4E72613D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964828AbeF0LoD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 07:44:03 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:8655 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S964771AbeF0Ln7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 07:43:59 -0400
-X-UUID: edd3419ffc9d44659a6a73b5477fda1c-20180627
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <houlong.wei@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 789196122; Wed, 27 Jun 2018 19:43:57 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs01n2.mediatek.inc
- (172.21.101.79) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Wed, 27 Jun
- 2018 19:43:54 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 27 Jun 2018 19:43:53 +0800
-Message-ID: <1530099833.31725.7.camel@mhfsdcap03>
-Subject: Re: [PATCH v21 4/4] soc: mediatek: Add Mediatek CMDQ helper
-From:   houlong wei <houlong.wei@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Nicolas Boichat" <drinkcat@chromium.org>,
-        Cawa Cheng =?UTF-8?Q?=28=E9=84=AD=E6=9B=84=E7=A6=A7=29?= 
-        <cawa.cheng@mediatek.com>,
-        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
-        <Bibby.Hsieh@mediatek.com>,
-        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
-        <Yt.Shen@mediatek.com>,
-        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
-        <Daoyuan.Huang@mediatek.com>,
-        Damon Chu =?UTF-8?Q?=28=E6=9C=B1=E5=B3=BB=E8=B3=A2=29?= 
-        <Damon.Chu@mediatek.com>,
-        Josh-YC Liu =?UTF-8?Q?=28=E5=8A=89=E8=82=B2=E8=AA=A0=29?= 
-        <Josh-YC.Liu@mediatek.com>,
-        Glory Hung =?UTF-8?Q?=28=E6=B4=AA=E6=99=BA=E7=91=8B=29?= 
-        <glory.hung@mediatek.com>,
-        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
-        <Jiaguang.Zhang@mediatek.com>,
-        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
-        <Dennis-YC.Hsieh@mediatek.com>,
-        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
-        <monica.wang@mediatek.com>,
-        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
-        <Hs.Liao@mediatek.com>, <houlong.wei@mediatek.com>
-Date:   Wed, 27 Jun 2018 19:43:53 +0800
-In-Reply-To: <1519200345.8716.68.camel@mtksdaap41>
-References: <1517383693-25591-1-git-send-email-houlong.wei@mediatek.com>
-         <1517383693-25591-5-git-send-email-houlong.wei@mediatek.com>
-         <1519200345.8716.68.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S964862AbeF0Lo7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 07:44:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37306 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753597AbeF0Lo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 07:44:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F041F2079D; Wed, 27 Jun 2018 13:44:55 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AACA920714;
+        Wed, 27 Jun 2018 13:44:55 +0200 (CEST)
+Date:   Wed, 27 Jun 2018 13:44:56 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH v2 1/2] ubi: provide a way to skip CRC checks
+Message-ID: <20180627134456.522a1c96@bbrezillon>
+In-Reply-To: <b94a9de06741a9a87807fa4d599504503798a835.1530099128.git-series.quentin.schulz@bootlin.com>
+References: <cover.54081a233a7b9efc0fa933bdba97c73c85b20059.1530099128.git-series.quentin.schulz@bootlin.com>
+        <b94a9de06741a9a87807fa4d599504503798a835.1530099128.git-series.quentin.schulz@bootlin.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-21 at 16:05 +0800, CK Hu wrote:
-> Hi, Houlong:
-> 
-> I've one more inline comment.
-> 
-> On Wed, 2018-01-31 at 15:28 +0800, houlong.wei@mediatek.com wrote:
-> > From: "hs.liao@mediatek.com" <hs.liao@mediatek.com>
-> > 
-> > Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
-> > 
-> > Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
-> > Signed-off-by: HS Liao <hs.liao@mediatek.com>
-> > ---
-> >  drivers/soc/mediatek/Kconfig           |   12 ++
-> >  drivers/soc/mediatek/Makefile          |    1 +
-> >  drivers/soc/mediatek/mtk-cmdq-helper.c |  322 ++++++++++++++++++++++++++++++++
-> >  include/linux/soc/mediatek/mtk-cmdq.h  |  174 +++++++++++++++++
-> >  4 files changed, 509 insertions(+)
-> >  create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
-> >  create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
-> > 
-> > diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-> > index a7d0667..e66582e 100644
-> > --- a/drivers/soc/mediatek/Kconfig
-> > +++ b/drivers/soc/mediatek/Kconfig
-> > @@ -4,6 +4,18 @@
-> >  menu "MediaTek SoC drivers"
-> >  	depends on ARCH_MEDIATEK || COMPILE_TEST
-> >  
-> > +config MTK_CMDQ
-> > +	bool "MediaTek CMDQ Support"
-> > +	depends on ARM64 && ( ARCH_MEDIATEK || COMPILE_TEST )
-> > +	select MAILBOX
-> > +	select MTK_CMDQ_MBOX
-> > +	select MTK_INFRACFG
-> > +	help
-> > +	  Say yes here to add support for the MediaTek Command Queue (CMDQ)
-> > +	  driver. The CMDQ is used to help read/write registers with critical
-> > +	  time limitation, such as updating display configuration during the
-> > +	  vblank.
-> > +
-> >  config MTK_INFRACFG
-> >  	bool "MediaTek INFRACFG Support"
-> >  	select REGMAP
-> > diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
-> > index 12998b0..64ce5ee 100644
-> > --- a/drivers/soc/mediatek/Makefile
-> > +++ b/drivers/soc/mediatek/Makefile
-> > @@ -1,3 +1,4 @@
-> > +obj-$(CONFIG_MTK_CMDQ) += mtk-cmdq-helper.o
-> >  obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
-> >  obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
-> >  obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
-> > diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> > new file mode 100644
-> > index 0000000..80d0558
-> > --- /dev/null
-> > +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> > @@ -0,0 +1,322 @@
-> > +/*
-> > + * Copyright (c) 2015 MediaTek Inc.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/completion.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/dma-mapping.h>
-> > +#include <linux/mailbox_controller.h>
-> > +#include <linux/soc/mediatek/mtk-cmdq.h>
-> > +
-> > +#define CMDQ_ARG_A_WRITE_MASK	0xffff
-> > +#define CMDQ_WRITE_ENABLE_MASK	BIT(0)
-> > +#define CMDQ_EOC_IRQ_EN		BIT(0)
-> > +#define CMDQ_EOC_CMD		((u64)((CMDQ_CODE_EOC << CMDQ_OP_CODE_SHIFT)) \
-> > +				<< 32 | CMDQ_EOC_IRQ_EN)
-> > +
-> > +struct cmdq_subsys {
-> > +	u32	base;
-> > +	int	id;
-> > +};
-> > +
-> > +static const struct cmdq_subsys gce_subsys[] = {
-> > +	{0x1400, 1},
-> > +	{0x1401, 2},
-> > +	{0x1402, 3},
-> > +};
-> > +
-> > +static int cmdq_subsys_base_to_id(u32 base)
-> > +{
-> > +	int i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(gce_subsys); i++)
-> > +		if (gce_subsys[i].base == base)
-> > +			return gce_subsys[i].id;
-> > +	return -EFAULT;
-> > +}
-> > +
-> > +static int cmdq_pkt_realloc_cmd_buffer(struct cmdq_pkt *pkt, size_t size)
-> > +{
-> > +	void *new_buf;
-> > +
-> > +	new_buf = krealloc(pkt->va_base, size, GFP_KERNEL | __GFP_ZERO);
-> > +	if (!new_buf)
-> > +		return -ENOMEM;
-> > +	pkt->va_base = new_buf;
-> > +	pkt->buf_size = size;
-> > +	return 0;
-> > +}
-> > +
-> > +struct cmdq_base *cmdq_register_device(struct device *dev)
-> > +{
-> > +	struct cmdq_base *cmdq_base;
-> > +	struct resource res;
-> > +	int subsys;
-> > +	u32 base;
-> > +
-> > +	if (of_address_to_resource(dev->of_node, 0, &res))
-> > +		return NULL;
-> > +	base = (u32)res.start;
-> > +
-> > +	subsys = cmdq_subsys_base_to_id(base >> 16);
-> > +	if (subsys < 0)
-> > +		return NULL;
-> > +
-> > +	cmdq_base = devm_kmalloc(dev, sizeof(*cmdq_base), GFP_KERNEL);
-> > +	if (!cmdq_base)
-> > +		return NULL;
-> > +	cmdq_base->subsys = subsys;
-> > +	cmdq_base->base = base;
-> > +
-> > +	return cmdq_base;
-> > +}
-> > +EXPORT_SYMBOL(cmdq_register_device);
-> > +
-> > +struct cmdq_client *cmdq_mbox_create(struct device *dev, int index)
-> > +{
-> > +	struct cmdq_client *client;
-> > +
-> > +	client = kzalloc(sizeof(*client), GFP_KERNEL);
-> > +	client->client.dev = dev;
-> > +	client->client.tx_block = false;
-> > +	client->chan = mbox_request_channel(&client->client, index);
-> > +	return client;
-> > +}
-> > +EXPORT_SYMBOL(cmdq_mbox_create);
-> > +
-> > +void cmdq_mbox_destroy(struct cmdq_client *client)
-> > +{
-> > +	mbox_free_channel(client->chan);
-> > +	kfree(client);
-> > +}
-> > +EXPORT_SYMBOL(cmdq_mbox_destroy);
-> > +
-> > +int cmdq_pkt_create(struct cmdq_pkt **pkt_ptr)
-> > +{
-> > +	struct cmdq_pkt *pkt;
-> > +	int err;
-> > +
-> > +	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
-> > +	if (!pkt)
-> > +		return -ENOMEM;
-> > +	err = cmdq_pkt_realloc_cmd_buffer(pkt, PAGE_SIZE);
-> > +	if (err < 0) {
-> > +		kfree(pkt);
-> > +		return err;
-> > +	}
-> > +	*pkt_ptr = pkt;
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL(cmdq_pkt_create);
-> > +
-> > +void cmdq_pkt_destroy(struct cmdq_pkt *pkt)
-> > +{
-> > +	kfree(pkt->va_base);
-> > +	kfree(pkt);
-> > +}
-> > +EXPORT_SYMBOL(cmdq_pkt_destroy);
-> > +
-> > +static bool cmdq_pkt_is_finalized(struct cmdq_pkt *pkt)
-> > +{
-> > +	u64 *expect_eoc;
-> > +
-> > +	if (pkt->cmd_buf_size < CMDQ_INST_SIZE << 1)
-> > +		return false;
-> > +
-> > +	expect_eoc = pkt->va_base + pkt->cmd_buf_size - (CMDQ_INST_SIZE << 1);
-> > +	if (*expect_eoc == CMDQ_EOC_CMD)
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
-> > +				   u32 arg_a, u32 arg_b)
-> > +{
-> > +	u64 *cmd_ptr;
-> > +	int err;
-> > +
-> > +	if (WARN_ON(cmdq_pkt_is_finalized(pkt)))
-> > +		return -EBUSY;
-> > +	if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) {
-> > +		err = cmdq_pkt_realloc_cmd_buffer(pkt, pkt->buf_size << 1);
-> 
-> In your design, the command buffer is frequently allocated and freed.
-> But client may not want this mechanism because it have penalty on CPU
-> loading and may have risk of allocation failure. The client may
-> pre-allocate the command buffer and reuse it. So it's better to let
-> client decide which buffer management it want. That means cmdq helper do
-> not allocate command buffer and do not reallocate it. The working flow
-> would be:
-> 
-> For client that want to pre-allocate buffer:
-> (1) Client pre-allocate a command buffer with a pre-calculated size.
-> (Programmer should make sure that all command would not exceed this
-> size)
-> (2) Client use cmdq helper function to generate command in command
-> buffer. If command buffer is full, helper still increase
-> pkt->cmd_buf_size but do not write command into command buffer.
-> (3) When client flush packet, cmdq helper could check whether
-> pkt->cmd_buf_size is greater than pkt->buf_size, if so, return error and
-> programmer should modify the pre-calculated size in step (1).
-> (4) Wait for command done.
-> (5) Set pkt->cmd_buf_size to zero and directly goto step (2) to reuse
-> this command buffer.
-> 
-> For client that want to dynamically allocate buffer:
-> (1) Client dynamically allocate a command buffer with a initial size,
-> for example, 1024 bytes.
-> (2) Client use cmdq helper function to generate command in command
-> buffer. If command buffer is full, helper still increase
-> pkt->cmd_buf_size but do not write command into command buffer.
-> (3) When client flush packet, cmdq helper could check whether
-> pkt->cmd_buf_size is greater than pkt->buf_size, if so, return error and
-> client goto step (1) and reallocate a command buffer with pkt->buf_size.
-> (4) Wait for command done.
-> (5) Free the command buffer.
-> 
-> Because the reallocation is so complicated, for client that want to
-> dynamically allocate buffer, the initial buffer size could also be
-> pre-calculated that you need not to reallocate it. Once the buffer is
-> full, programmer should also fix the accurate buffer size.
-> 
-> Regards,
-> CK
-> 
+On Wed, 27 Jun 2018 13:33:19 +0200
+Quentin Schulz <quentin.schulz@bootlin.com> wrote:
 
-Hi CK, thanks for your explanation and suggestion. Currently, the cmdq
-buffer is allocated in cmdq_pkt_create and its initial size is
-PAGE_SIZE. In most case of display scenario, PAGE_SIZE(4096) bytes are
-enough.
-
-> > +		if (err < 0)
-> > +			return err;
-> > +	}
-> > +	cmd_ptr = pkt->va_base + pkt->cmd_buf_size;
-> > +	(*cmd_ptr) = (u64)((code << CMDQ_OP_CODE_SHIFT) | arg_a) << 32 | arg_b;
-> > +	pkt->cmd_buf_size += CMDQ_INST_SIZE;
-> > +	return 0;
-> > +}
-> > +
-> > +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, struct cmdq_base *base,
-> > +		   u32 offset)
-> > +{
-> > +	u32 arg_a = ((base->base + offset) & CMDQ_ARG_A_WRITE_MASK) |
-> > +		    (base->subsys << CMDQ_SUBSYS_SHIFT);
-> > +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WRITE, arg_a, value);
-> > +}
-> > +EXPORT_SYMBOL(cmdq_pkt_write);
-> > +
-> > +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
-> > +			struct cmdq_base *base, u32 offset, u32 mask)
-> > +{
-> > +	u32 offset_mask = offset;
-> > +	int err;
-> > +
-> > +	if (mask != 0xffffffff) {
-> > +		err = cmdq_pkt_append_command(pkt, CMDQ_CODE_MASK, 0, ~mask);
-> > +		if (err < 0)
-> > +			return err;
-> > +		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
-> > +	}
-> > +	return cmdq_pkt_write(pkt, value, base, offset_mask);
-> > +}
-> > +EXPORT_SYMBOL(cmdq_pkt_write_mask);
-> > +
-> > +static const u32 cmdq_event_value[CMDQ_MAX_EVENT] = {
-> > +	/* Display start of frame(SOF) events */
-> > +	[CMDQ_EVENT_DISP_OVL0_SOF] = 11,
-> > +	[CMDQ_EVENT_DISP_OVL1_SOF] = 12,
-> > +	[CMDQ_EVENT_DISP_RDMA0_SOF] = 13,
-> > +	[CMDQ_EVENT_DISP_RDMA1_SOF] = 14,
-> > +	[CMDQ_EVENT_DISP_RDMA2_SOF] = 15,
-> > +	[CMDQ_EVENT_DISP_WDMA0_SOF] = 16,
-> > +	[CMDQ_EVENT_DISP_WDMA1_SOF] = 17,
-> > +	/* Display end of frame(EOF) events */
-> > +	[CMDQ_EVENT_DISP_OVL0_EOF] = 39,
-> > +	[CMDQ_EVENT_DISP_OVL1_EOF] = 40,
-> > +	[CMDQ_EVENT_DISP_RDMA0_EOF] = 41,
-> > +	[CMDQ_EVENT_DISP_RDMA1_EOF] = 42,
-> > +	[CMDQ_EVENT_DISP_RDMA2_EOF] = 43,
-> > +	[CMDQ_EVENT_DISP_WDMA0_EOF] = 44,
-> > +	[CMDQ_EVENT_DISP_WDMA1_EOF] = 45,
-> > +	/* Mutex end of frame(EOF) events */
-> > +	[CMDQ_EVENT_MUTEX0_STREAM_EOF] = 53,
-> > +	[CMDQ_EVENT_MUTEX1_STREAM_EOF] = 54,
-> > +	[CMDQ_EVENT_MUTEX2_STREAM_EOF] = 55,
-> > +	[CMDQ_EVENT_MUTEX3_STREAM_EOF] = 56,
-> > +	[CMDQ_EVENT_MUTEX4_STREAM_EOF] = 57,
-> > +	/* Display underrun events */
-> > +	[CMDQ_EVENT_DISP_RDMA0_UNDERRUN] = 63,
-> > +	[CMDQ_EVENT_DISP_RDMA1_UNDERRUN] = 64,
-> > +	[CMDQ_EVENT_DISP_RDMA2_UNDERRUN] = 65,
-> > +};
-> > +
-> > +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, enum cmdq_event event)
-> > +{
-> > +	u32 arg_b;
-> > +
-> > +	if (event >= CMDQ_MAX_EVENT || event < 0)
-> > +		return -EINVAL;
-> > +
-> > +	/*
-> > +	 * WFE arg_b
-> > +	 * bit 0-11: wait value
-> > +	 * bit 15: 1 - wait, 0 - no wait
-> > +	 * bit 16-27: update value
-> > +	 * bit 31: 1 - update, 0 - no update
-> > +	 */
-> > +	arg_b = CMDQ_WFE_UPDATE | CMDQ_WFE_WAIT | CMDQ_WFE_WAIT_VALUE;
-> > +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE,
-> > +			cmdq_event_value[event], arg_b);
-> > +}
-> > +EXPORT_SYMBOL(cmdq_pkt_wfe);
-> > +
-> > +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, enum cmdq_event event)
-> > +{
-> > +	if (event >= CMDQ_MAX_EVENT || event < 0)
-> > +		return -EINVAL;
-> > +
-> > +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE,
-> > +			cmdq_event_value[event], CMDQ_WFE_UPDATE);
-> > +}
-> > +EXPORT_SYMBOL(cmdq_pkt_clear_event);
-> > +
-> > +static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
-> > +{
-> > +	int err;
-> > +
-> > +	if (cmdq_pkt_is_finalized(pkt))
-> > +		return 0;
-> > +
-> > +	/* insert EOC and generate IRQ for each command iteration */
-> > +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	/* JUMP to end */
-> > +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +int cmdq_pkt_flush_async(struct cmdq_client *client, struct cmdq_pkt *pkt,
-> > +			 cmdq_async_flush_cb cb, void *data)
-> > +{
-> > +	int err;
-> > +	struct device *dev;
-> > +	dma_addr_t dma_addr;
-> > +
-> > +	err = cmdq_pkt_finalize(pkt);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	dev = client->chan->mbox->dev;
-> > +	dma_addr = dma_map_single(dev, pkt->va_base, pkt->cmd_buf_size,
-> > +		DMA_TO_DEVICE);
-> > +	if (dma_mapping_error(dev, dma_addr)) {
-> > +		dev_err(client->chan->mbox->dev, "dma map failed\n");
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> > +	pkt->pa_base = dma_addr;
-> > +	pkt->cb.cb = cb;
-> > +	pkt->cb.data = data;
-> > +
-> > +	mbox_send_message(client->chan, pkt);
-> > +	/* We can send next packet immediately, so just call txdone. */
-> > +	mbox_client_txdone(client->chan, 0);
-> > +
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL(cmdq_pkt_flush_async);
-> > +
-> > +struct cmdq_flush_completion {
-> > +	struct completion cmplt;
-> > +	bool err;
-> > +};
-> > +
-> > +static void cmdq_pkt_flush_cb(struct cmdq_cb_data data)
-> > +{
-> > +	struct cmdq_flush_completion *cmplt = data.data;
-> > +
-> > +	cmplt->err = data.err;
-> > +	complete(&cmplt->cmplt);
-> > +}
-> > +
-> > +int cmdq_pkt_flush(struct cmdq_client *client, struct cmdq_pkt *pkt)
-> > +{
-> > +	struct cmdq_flush_completion cmplt;
-> > +	int err;
-> > +
-> > +	init_completion(&cmplt.cmplt);
-> > +	err = cmdq_pkt_flush_async(client, pkt, cmdq_pkt_flush_cb, &cmplt);
-> > +	if (err < 0)
-> > +		return err;
-> > +	wait_for_completion(&cmplt.cmplt);
-> > +	return cmplt.err ? -EFAULT : 0;
-> > +}
-> > +EXPORT_SYMBOL(cmdq_pkt_flush);
-> > diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-> > new file mode 100644
-> > index 0000000..5b35d73
-> > --- /dev/null
-> > +++ b/include/linux/soc/mediatek/mtk-cmdq.h
-> > @@ -0,0 +1,174 @@
-> > +/*
-> > + * Copyright (c) 2015 MediaTek Inc.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#ifndef __MTK_CMDQ_H__
-> > +#define __MTK_CMDQ_H__
-> > +
-> > +#include <linux/mailbox_client.h>
-> > +#include <linux/mailbox/mtk-cmdq-mailbox.h>
-> > +
-> > +/* display events in command queue(CMDQ) */
-> > +enum cmdq_event {
-> > +	/* Display start of frame(SOF) events */
-> > +	CMDQ_EVENT_DISP_OVL0_SOF,
-> > +	CMDQ_EVENT_DISP_OVL1_SOF,
-> > +	CMDQ_EVENT_DISP_RDMA0_SOF,
-> > +	CMDQ_EVENT_DISP_RDMA1_SOF,
-> > +	CMDQ_EVENT_DISP_RDMA2_SOF,
-> > +	CMDQ_EVENT_DISP_WDMA0_SOF,
-> > +	CMDQ_EVENT_DISP_WDMA1_SOF,
-> > +	/* Display end of frame(EOF) events */
-> > +	CMDQ_EVENT_DISP_OVL0_EOF,
-> > +	CMDQ_EVENT_DISP_OVL1_EOF,
-> > +	CMDQ_EVENT_DISP_RDMA0_EOF,
-> > +	CMDQ_EVENT_DISP_RDMA1_EOF,
-> > +	CMDQ_EVENT_DISP_RDMA2_EOF,
-> > +	CMDQ_EVENT_DISP_WDMA0_EOF,
-> > +	CMDQ_EVENT_DISP_WDMA1_EOF,
-> > +	/* Mutex end of frame(EOF) events */
-> > +	CMDQ_EVENT_MUTEX0_STREAM_EOF,
-> > +	CMDQ_EVENT_MUTEX1_STREAM_EOF,
-> > +	CMDQ_EVENT_MUTEX2_STREAM_EOF,
-> > +	CMDQ_EVENT_MUTEX3_STREAM_EOF,
-> > +	CMDQ_EVENT_MUTEX4_STREAM_EOF,
-> > +	/* Display underrun events */
-> > +	CMDQ_EVENT_DISP_RDMA0_UNDERRUN,
-> > +	CMDQ_EVENT_DISP_RDMA1_UNDERRUN,
-> > +	CMDQ_EVENT_DISP_RDMA2_UNDERRUN,
-> > +	/* Keep this at the end */
-> > +	CMDQ_MAX_EVENT,
-> > +};
-> > +
-> > +struct cmdq_pkt;
-> > +
-> > +struct cmdq_base {
-> > +	int	subsys;
-> > +	u32	base;
-> > +};
-> > +
-> > +struct cmdq_client {
-> > +	struct mbox_client client;
-> > +	struct mbox_chan *chan;
-> > +};
-> > +
-> > +/**
-> > + * cmdq_register_device() - register device which needs CMDQ
-> > + * @dev:	device for CMDQ to access its registers
-> > + *
-> > + * Return: cmdq_base pointer or NULL for failed
-> > + */
-> > +struct cmdq_base *cmdq_register_device(struct device *dev);
-> > +
-> > +/**
-> > + * cmdq_mbox_create() - create CMDQ mailbox client and channel
-> > + * @dev:	device of CMDQ mailbox client
-> > + * @index:	index of CMDQ mailbox channel
-> > + *
-> > + * Return: CMDQ mailbox client pointer
-> > + */
-> > +struct cmdq_client *cmdq_mbox_create(struct device *dev, int index);
-> > +
-> > +/**
-> > + * cmdq_mbox_destroy() - destroy CMDQ mailbox client and channel
-> > + * @client:	the CMDQ mailbox client
-> > + */
-> > +void cmdq_mbox_destroy(struct cmdq_client *client);
-> > +
-> > +/**
-> > + * cmdq_pkt_create() - create a CMDQ packet
-> > + * @pkt_ptr:	CMDQ packet pointer to retrieve cmdq_pkt
-> > + *
-> > + * Return: 0 for success; else the error code is returned
-> > + */
-> > +int cmdq_pkt_create(struct cmdq_pkt **pkt_ptr);
-> > +
-> > +/**
-> > + * cmdq_pkt_destroy() - destroy the CMDQ packet
-> > + * @pkt:	the CMDQ packet
-> > + */
-> > +void cmdq_pkt_destroy(struct cmdq_pkt *pkt);
-> > +
-> > +/**
-> > + * cmdq_pkt_write() - append write command to the CMDQ packet
-> > + * @pkt:	the CMDQ packet
-> > + * @value:	the specified target register value
-> > + * @base:	the CMDQ base
-> > + * @offset:	register offset from module base
-> > + *
-> > + * Return: 0 for success; else the error code is returned
-> > + */
-> > +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value,
-> > +		   struct cmdq_base *base, u32 offset);
-> > +
-> > +/**
-> > + * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
-> > + * @pkt:	the CMDQ packet
-> > + * @value:	the specified target register value
-> > + * @base:	the CMDQ base
-> > + * @offset:	register offset from module base
-> > + * @mask:	the specified target register mask
-> > + *
-> > + * Return: 0 for success; else the error code is returned
-> > + */
-> > +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
-> > +			struct cmdq_base *base, u32 offset, u32 mask);
-> > +
-> > +/**
-> > + * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
-> > + * @pkt:	the CMDQ packet
-> > + * @event:	the desired event type to "wait and CLEAR"
-> > + *
-> > + * Return: 0 for success; else the error code is returned
-> > + */
-> > +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, enum cmdq_event event);
-> > +
-> > +/**
-> > + * cmdq_pkt_clear_event() - append clear event command to the CMDQ packet
-> > + * @pkt:	the CMDQ packet
-> > + * @event:	the desired event to be cleared
-> > + *
-> > + * Return: 0 for success; else the error code is returned
-> > + */
-> > +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, enum cmdq_event event);
-> > +
-> > +/**
-> > + * cmdq_pkt_flush() - trigger CMDQ to execute the CMDQ packet
-> > + * @client:	the CMDQ mailbox client
-> > + * @pkt:	the CMDQ packet
-> > + *
-> > + * Return: 0 for success; else the error code is returned
-> > + *
-> > + * Trigger CMDQ to execute the CMDQ packet. Note that this is a
-> > + * synchronous flush function. When the function returned, the recorded
-> > + * commands have been done.
-> > + */
-> > +int cmdq_pkt_flush(struct cmdq_client *client, struct cmdq_pkt *pkt);
-> > +
-> > +/**
-> > + * cmdq_pkt_flush_async() - trigger CMDQ to asynchronously execute the CMDQ
-> > + *                          packet and call back at the end of done packet
-> > + * @client:	the CMDQ mailbox client
-> > + * @pkt:	the CMDQ packet
-> > + * @cb:		called at the end of done packet
-> > + * @data:	this data will pass back to cb
-> > + *
-> > + * Return: 0 for success; else the error code is returned
-> > + *
-> > + * Trigger CMDQ to asynchronously execute the CMDQ packet and call back
-> > + * at the end of done packet. Note that this is an ASYNC function. When the
-> > + * function returned, it may or may not be finished.
-> > + */
-> > +int cmdq_pkt_flush_async(struct cmdq_client *client, struct cmdq_pkt *pkt,
-> > +			 cmdq_async_flush_cb cb, void *data);
-> > +
-> > +#endif	/* __MTK_CMDQ_H__ */
+> Some users of static UBI volumes implement their own integrity check,
+> thus making the volume CRC check done at open time useless. For
+> instance, this is the case when one use the ubiblock + dm-verity +
+> squashfs combination, where dm-verity already checks integrity of the
+> block device but this time at the block granularity instead of verifying
+> the whole volume.
 > 
+> Skipping this test drastically improves the boot-time.
 > 
+> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 
+Just a few minor comments (see below).
+
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
+> ---
+>  drivers/mtd/ubi/kapi.c      |  2 +-
+>  drivers/mtd/ubi/ubi-media.h |  6 ++++++
+>  drivers/mtd/ubi/ubi.h       |  4 ++++
+>  drivers/mtd/ubi/vmt.c       |  9 +++++++++
+>  drivers/mtd/ubi/vtbl.c      |  3 +++
+>  5 files changed, 23 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+> index d4b2e87..e9e9ecb 100644
+> --- a/drivers/mtd/ubi/kapi.c
+> +++ b/drivers/mtd/ubi/kapi.c
+> @@ -202,7 +202,7 @@ struct ubi_volume_desc *ubi_open_volume(int ubi_num, int vol_id, int mode)
+>  	desc->mode = mode;
+>  
+>  	mutex_lock(&ubi->ckvol_mutex);
+> -	if (!vol->checked) {
+> +	if (!vol->checked && !vol->skip_check) {
+>  		/* This is the first open - check the volume */
+>  		err = ubi_check_volume(ubi, vol_id);
+>  		if (err < 0) {
+> diff --git a/drivers/mtd/ubi/ubi-media.h b/drivers/mtd/ubi/ubi-media.h
+> index 195ff8c..f43a4ff 100644
+> --- a/drivers/mtd/ubi/ubi-media.h
+> +++ b/drivers/mtd/ubi/ubi-media.h
+> @@ -45,6 +45,11 @@ enum {
+>   * Volume flags used in the volume table record.
+>   *
+>   * @UBI_VTBL_AUTORESIZE_FLG: auto-resize this volume
+> + * @UBI_VTBL_SKIP_CRC_CHECK_FLG: skip the CRC check done on static volume at
+
+								      ^ volumes?
+
+> + *				 open time. Should only be set on volumes that
+> + *				 are used by upper layers doing this kind of
+> + *				 check. Main use-case for this flag is
+> + *				 boot-time reduction
+>   *
+>   * %UBI_VTBL_AUTORESIZE_FLG flag can be set only for one volume in the volume
+>   * table. UBI automatically re-sizes the volume which has this flag and makes
+> @@ -76,6 +81,7 @@ enum {
+>   */
+>  enum {
+>  	UBI_VTBL_AUTORESIZE_FLG = 0x01,
+> +	UBI_VTBL_SKIP_CRC_CHECK_FLG = 0x02,
+>  };
+>  
+>  /*
+> diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
+> index f5ba97c..429102b 100644
+> --- a/drivers/mtd/ubi/ubi.h
+> +++ b/drivers/mtd/ubi/ubi.h
+> @@ -327,6 +327,9 @@ struct ubi_eba_leb_desc {
+>   *           atomic LEB change
+>   *
+>   * @eba_tbl: EBA table of this volume (LEB->PEB mapping)
+> + * @skip_check: %1 if CRC check of static volumes should be skipped. Directly
+> + *		reflect the presence of the %UBI_VTBL_SKIP_CRC_CHECK_FLG in the
+
+		^ reflects?		    ^ %UBI_VTBL_SKIP_CRC_CHECK_FLG *flag* in
+
+> + *		vtbl entry
+>   * @checked: %1 if this static volume was checked
+>   * @corrupted: %1 if the volume is corrupted (static volumes only)
+>   * @upd_marker: %1 if the update marker is set for this volume
+> @@ -374,6 +377,7 @@ struct ubi_volume {
+>  	void *upd_buf;
+>  
+>  	struct ubi_eba_table *eba_tbl;
+> +	unsigned int skip_check:1;
+>  	unsigned int checked:1;
+>  	unsigned int corrupted:1;
+>  	unsigned int upd_marker:1;
+> diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+> index 0be5167..e2606a4 100644
+> --- a/drivers/mtd/ubi/vmt.c
+> +++ b/drivers/mtd/ubi/vmt.c
+> @@ -299,6 +299,10 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
+>  		vtbl_rec.vol_type = UBI_VID_DYNAMIC;
+>  	else
+>  		vtbl_rec.vol_type = UBI_VID_STATIC;
+> +
+> +	if (vol->skip_check)
+> +		vtbl_rec.flags |= UBI_VTBL_SKIP_CRC_CHECK_FLG;
+> +
+>  	memcpy(vtbl_rec.name, vol->name, vol->name_len);
+>  
+>  	err = ubi_change_vtbl_record(ubi, vol_id, &vtbl_rec);
+> @@ -733,6 +737,11 @@ static int self_check_volume(struct ubi_device *ubi, int vol_id)
+>  			ubi_err(ubi, "bad used_bytes");
+>  			goto fail;
+>  		}
+> +
+> +		if (vol->skip_check) {
+> +			ubi_err(ubi, "bad skip_check");
+> +			goto fail;
+> +		}
+>  	} else {
+>  		if (vol->used_ebs < 0 || vol->used_ebs > vol->reserved_pebs) {
+>  			ubi_err(ubi, "bad used_ebs");
+> diff --git a/drivers/mtd/ubi/vtbl.c b/drivers/mtd/ubi/vtbl.c
+> index 94d7a86..2c133cd 100644
+> --- a/drivers/mtd/ubi/vtbl.c
+> +++ b/drivers/mtd/ubi/vtbl.c
+> @@ -560,6 +560,9 @@ static int init_volumes(struct ubi_device *ubi,
+>  		vol->name[vol->name_len] = '\0';
+>  		vol->vol_id = i;
+>  
+> +		if (vtbl[i].flags & UBI_VTBL_SKIP_CRC_CHECK_FLG)
+> +			vol->skip_check = 1;
+> +
+>  		if (vtbl[i].flags & UBI_VTBL_AUTORESIZE_FLG) {
+>  			/* Auto re-size flag may be set only for one volume */
+>  			if (ubi->autoresize_vol_id != -1) {
 
