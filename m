@@ -6,46 +6,49 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A5AC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F3FC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59E1225394
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:09:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E1225394
+	by mail.kernel.org (Postfix) with ESMTP id 6D24825357
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:10:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D24825357
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934068AbeF0JJw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:09:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52589 "EHLO
+        id S934080AbeF0JK1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:10:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52635 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbeF0JJr (ORCPT
+        with ESMTP id S932187AbeF0JKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:09:47 -0400
+        Wed, 27 Jun 2018 05:10:24 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5R99PEi2025936
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5R9A1KM2025976
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 27 Jun 2018 02:09:25 -0700
+        Wed, 27 Jun 2018 02:10:01 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5R99OCf2025933;
-        Wed, 27 Jun 2018 02:09:24 -0700
-Date:   Wed, 27 Jun 2018 02:09:24 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5R9A1NM2025973;
+        Wed, 27 Jun 2018 02:10:01 -0700
+Date:   Wed, 27 Jun 2018 02:10:01 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-b8c1e4293a5d1dfd19ab7b0984bfce8191940500@git.kernel.org>
-Cc:     peterz@infradead.org, arnd@arndb.de, hpa@zytor.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, torvalds@linux-foundation.org
-Reply-To: torvalds@linux-foundation.org, mingo@kernel.org,
-          peterz@infradead.org, tglx@linutronix.de,
-          kirill.shutemov@linux.intel.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, arnd@arndb.de
-In-Reply-To: <20180626100341.49910-1-kirill.shutemov@linux.intel.com>
-References: <20180626100341.49910-1-kirill.shutemov@linux.intel.com>
+From:   tip-bot for Mathieu Malaterre <tipbot@zytor.com>
+Message-ID: <tip-9331510135640429711afbd0c810686100824a79@git.kernel.org>
+Cc:     namhyung@kernel.org, torvalds@linux-foundation.org,
+        peterz@infradead.org, jolsa@redhat.com, malat@debian.org,
+        alexander.shishkin@linux.intel.com, acme@kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        hpa@zytor.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, namhyung@kernel.org,
+          jolsa@redhat.com, malat@debian.org,
+          torvalds@linux-foundation.org, peterz@infradead.org,
+          acme@kernel.org, alexander.shishkin@linux.intel.com
+In-Reply-To: <20180626202301.20270-1-malat@debian.org>
+References: <20180626202301.20270-1-malat@debian.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm: Drop unneeded __always_inline for p4d page
- table helpers
-Git-Commit-ID: b8c1e4293a5d1dfd19ab7b0984bfce8191940500
+Subject: [tip:perf/urgent] perf/core: Move inline keyword at the beginning
+ of declaration
+Git-Commit-ID: 9331510135640429711afbd0c810686100824a79
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,81 +62,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b8c1e4293a5d1dfd19ab7b0984bfce8191940500
-Gitweb:     https://git.kernel.org/tip/b8c1e4293a5d1dfd19ab7b0984bfce8191940500
-Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Tue, 26 Jun 2018 13:03:41 +0300
+Commit-ID:  9331510135640429711afbd0c810686100824a79
+Gitweb:     https://git.kernel.org/tip/9331510135640429711afbd0c810686100824a79
+Author:     Mathieu Malaterre <malat@debian.org>
+AuthorDate: Tue, 26 Jun 2018 22:23:00 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 27 Jun 2018 09:55:26 +0200
+CommitDate: Wed, 27 Jun 2018 09:55:58 +0200
 
-x86/mm: Drop unneeded __always_inline for p4d page table helpers
+perf/core: Move inline keyword at the beginning of declaration
 
-This reverts the following commits:
+Fix non-fatal warning triggered during compilation with W=1:
 
-  1ea66554d3b0 ("x86/mm: Mark p4d_offset() __always_inline")
-  046c0dbec023 ("x86: Mark native_set_p4d() as __always_inline")
+  kernel/events/core.c:6106:1: warning: ‘inline’ is not at beginning of declaration [-Wold-style-declaration]
+   static void __always_inline
+   ^~~~~~
 
-p4d_offset(), native_set_p4d() and native_p4d_clear() were marked
-__always_inline in attempt to move __pgtable_l5_enabled into __initdata
-section.
-
-It was required as KASAN initialization code is a user of
-USE_EARLY_PGTABLE_L5, so all pgtable_l5_enabled() translated to
-__pgtable_l5_enabled there. This includes pgtable_l5_enabled() called
-from inline p4d helpers.
-
-If compiler would decided to not inline these p4d helpers, but leave
-them standalone, we end up with section mismatch.
-
-We don't need __always_inline here anymore. __pgtable_l5_enabled moved
-back to be __ro_after_init. See the following commit:
-
-  51be13351517 ("Revert "x86/mm: Mark __pgtable_l5_enabled __initdata"")
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180626100341.49910-1-kirill.shutemov@linux.intel.com
+Link: http://lkml.kernel.org/r/20180626202301.20270-1-malat@debian.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/pgtable.h    | 2 +-
- arch/x86/include/asm/pgtable_64.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 99ecde23c3ec..5715647fc4fe 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -898,7 +898,7 @@ static inline unsigned long pgd_page_vaddr(pgd_t pgd)
- #define pgd_page(pgd)	pfn_to_page(pgd_pfn(pgd))
- 
- /* to find an entry in a page-table-directory. */
--static __always_inline p4d_t *p4d_offset(pgd_t *pgd, unsigned long address)
-+static inline p4d_t *p4d_offset(pgd_t *pgd, unsigned long address)
- {
- 	if (!pgtable_l5_enabled())
- 		return (p4d_t *)pgd;
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 0fdcd21dadbd..3c5385f9a88f 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -216,7 +216,7 @@ static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
- }
- #endif
- 
--static __always_inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
-+static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- {
- 	pgd_t pgd;
- 
-@@ -230,7 +230,7 @@ static __always_inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- 	*p4dp = native_make_p4d(native_pgd_val(pgd));
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 80cca2b30c4f..8f0434a9951a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6482,7 +6482,7 @@ void perf_prepare_sample(struct perf_event_header *header,
+ 		data->phys_addr = perf_virt_to_phys(data->addr);
  }
  
--static __always_inline void native_p4d_clear(p4d_t *p4d)
-+static inline void native_p4d_clear(p4d_t *p4d)
- {
- 	native_set_p4d(p4d, native_make_p4d(0));
- }
+-static void __always_inline
++static __always_inline void
+ __perf_event_output(struct perf_event *event,
+ 		    struct perf_sample_data *data,
+ 		    struct pt_regs *regs,
