@@ -6,53 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E7FC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D51AC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3D926035
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:28:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD7C22147E
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:29:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P6rhwgbu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3D926035
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KUWOoh2/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD7C22147E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965391AbeF0P2f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:28:35 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38778 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934928AbeF0P21 (ORCPT
+        id S1754565AbeF0P26 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:28:58 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50302 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934954AbeF0P23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:28:27 -0400
-Received: by mail-wr0-f195.google.com with SMTP id e18-v6so2479281wrs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:28:27 -0700 (PDT)
+        Wed, 27 Jun 2018 11:28:29 -0400
+Received: by mail-wm0-f67.google.com with SMTP id e16-v6so6297284wmd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:28:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BwaBMOBtFU4AkNYUJGU1SJQFvBan9CUJEd06K8viUtI=;
-        b=P6rhwgbuCm4CedV76ALnZ8/2ni1ecRtnTq2gmN1xhJtw+1ejN3cxRO3t/qvwYVGLsz
-         fK/daponYJO12rfVjaUhVxqerK4agkyEr12JbRUAb1UBFUCZVqlsIjGvhdlNkU0wBgg4
-         V8P/zxnpMwci4UxUxQkqbTH/TjX9jx05tN6Ok=
+        bh=H7FwRrjPllm1lOYkYm0XODjFyJ1YXP3BQrRFNWmfzO4=;
+        b=KUWOoh2/535nSQyazHpvvRIdys8SOUF+dRHDaYJQnZUsgQKV3Wa0ZeoZxmU/IJF0nR
+         uCzEGU4Q64FnsAX6903isc3dr52XqMNtX2SsdbA0zpO9fQa5sj4lkUu+X8fil/2GexPb
+         oW//Cb+fCgH4V0eLjWDvf2pMsokBxOGEsbOXc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=BwaBMOBtFU4AkNYUJGU1SJQFvBan9CUJEd06K8viUtI=;
-        b=jyp3qg861QQz2C6KcxDzyCiH/Vb2xFrM1OVAKE8Pd9ZlVaqjP01XEAqE4XNSt1m1xi
-         WZ7N0g5TvVor20zxPFE8Y6VcfaiMfM0t2IoaijZns05B4gPU/rR26k13ZeLejobl/7t3
-         F/VyHHdhsw+GRD4p0gDek6GjnJ3DRXDolWRpBNQbLDz5/EcyVIhqbQr9C/QSLgQoj2xG
-         YPduVZOxT9xJyY0mNQFhDKY7Dw3kZmVpgawlu9bAEm0W45cxu/XtpM+wr5ucyLy+JO+Y
-         Ee3dv3SjMV67o6LYcGkRz1OapcTXNeRPurdIa+OnD14iYN4QELeU9oS3YsxuqhEdltB4
-         x77Q==
-X-Gm-Message-State: APt69E3NkjeTMjGVQF6fV+KbaaciAtbOAkiFzijiKJW4AmhmBX3g7oBt
-        aI0zt/JHEf0xqrQDQuln7avAfw==
-X-Google-Smtp-Source: AAOMgpcK6LH6AeKamzmt5bAJkzMvuuLtV80l+ccqCxLQZdorDhuFaJ3C0CsWHms4pzxmsRIyo86TUg==
-X-Received: by 2002:adf:9883:: with SMTP id w3-v6mr5929745wrb.9.1530113306431;
-        Wed, 27 Jun 2018 08:28:26 -0700 (PDT)
+        bh=H7FwRrjPllm1lOYkYm0XODjFyJ1YXP3BQrRFNWmfzO4=;
+        b=l19ixQwU1eWUrB3GK13QaEoheFy4io77hZimSBCCC/gacmXqWTKTNNssxb33bmteia
+         fZvjg13YoAXxTaCuqnVmIy+/ePsTKO0lkhkWZLWbKkcHNNtNBldaPF1/+eFFwxGTO1eN
+         p1rJ4QojIccyCoom0UGsqW0GylshThg452Yl7a82RHUIo9YI/M/VRGfHNjXGRdOtTYV4
+         Q1JxUCFQWxpKJoIzBBQquNt90lDUOXLlSq6AHd7WdaDbO4WkKd4ItwJ+dVjKZVMy1Gcf
+         q2m1wpEze01D/QhYgVkcbPI9ys2pt4hSF8wgcwwAisu7oorQPDjNMEmmDpa58KAfztF4
+         rwpg==
+X-Gm-Message-State: APt69E11wx6/Fwo96pHltkWRzZGHZAoRco5lEOD0iklwhcGKsbHw3Www
+        vgf/0VAE8J+bwX4QuNEXUGZC4eFtAAQ=
+X-Google-Smtp-Source: AAOMgpf91jjY/7eRP+2OTLm58DHHNuZ2tdG7uZBV5VhbrJtC/3ieAtJHEOJoRc+MEQE8EQZ6+yWaWg==
+X-Received: by 2002:a1c:78b:: with SMTP id 133-v6mr5670306wmh.59.1530113307523;
+        Wed, 27 Jun 2018 08:28:27 -0700 (PDT)
 Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id o203-v6sm2916075wmd.30.2018.06.27.08.28.25
+        by smtp.gmail.com with ESMTPSA id o203-v6sm2916075wmd.30.2018.06.27.08.28.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 08:28:25 -0700 (PDT)
+        Wed, 27 Jun 2018 08:28:27 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -61,9 +62,9 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v4 24/27] venus: helpers: move frame size calculations on common place
-Date:   Wed, 27 Jun 2018 18:27:22 +0300
-Message-Id: <20180627152725.9783-25-stanimir.varbanov@linaro.org>
+Subject: [PATCH v4 25/27] venus: implementing multi-stream support
+Date:   Wed, 27 Jun 2018 18:27:23 +0300
+Message-Id: <20180627152725.9783-26-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
 References: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
@@ -72,343 +73,525 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This move the calculations of raw and compressed buffer sizes
-on common helper and make it identical for encoder and decoder.
+This is implementing multi-stream decoder support. The multi-stream
+will be used to enable/disable the primary/secondary decoder
+outputs. Depending on formats on both decoder outputs we could
+implement downscale, dithering and supporting UBWC (universal
+bandwidth compression) formats. The UBWC compressed raw format is
+used to optimize interconnect bandwidth for bigger resolutions
+like 4K and hence we will get some power-saving benefits as well.
+
+Both decoder outputs are distinguished by buffer_type field in
+the HFI packets. For example HFI_BUFFER_OUTPUT is the buffer type
+for primary decoder output and HFI_BUFFER_OUTPUT2 is for secondary
+decoder output.
+
+Starting from Venus 4xx the DPB buffers format must be UBWC, so
+the multi-stream becomes mandatory for this Venus version. That
+means that we need to allocate internally in the driver a set of
+DPB buffers (with UBWC NV12 format) and give them to the firmware.
+The other decoder output (we called it OPB) format will be NV12
+linear format and with the same resolution (or smaller in case
+the user wants to downscale).
+
+The DPB buffers are used for decoder reference frames and those
+have to be in a specific format (UBWC). So one decoder output is
+used to fill those reference buffers while the other output is
+used to fill the userspace buffers with the user requested format.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/helpers.c | 98 +++++++++++++++++++++++++++++
- drivers/media/platform/qcom/venus/helpers.h |  2 +
- drivers/media/platform/qcom/venus/vdec.c    | 54 ++++------------
- drivers/media/platform/qcom/venus/venc.c    | 56 ++++-------------
- 4 files changed, 126 insertions(+), 84 deletions(-)
+ drivers/media/platform/qcom/venus/core.h    |   6 +
+ drivers/media/platform/qcom/venus/helpers.c | 204 +++++++++++++++++++++++++++-
+ drivers/media/platform/qcom/venus/helpers.h |   6 +
+ drivers/media/platform/qcom/venus/vdec.c    |  93 ++++++++++++-
+ drivers/media/platform/qcom/venus/venc.c    |   1 +
+ 5 files changed, 306 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index f8e4d92ff0e1..8cc49f30a363 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -215,6 +215,7 @@ struct venus_buffer {
+  * @list:	used for attach an instance to the core
+  * @lock:	instance lock
+  * @core:	a reference to the core struct
++ * @dpbbufs:	a list of decoded picture buffers
+  * @internalbufs:	a list of internal bufferes
+  * @registeredbufs:	a list of registered capture bufferes
+  * @delayed_process	a list of delayed buffers
+@@ -240,6 +241,8 @@ struct venus_buffer {
+  * @input_buf_size	holds input buffer size
+  * @output_buf_size:	holds output buffer size
+  * @output2_buf_size:	holds secondary decoder output buffer size
++ * @dpb_buftype:	decoded picture buffer type
++ * @dpb_fmt:		decoded picture buffer raw format
+  * @opb_buftype:	output picture buffer type
+  * @opb_fmt:		output picture buffer raw format
+  * @reconfig:	a flag raised by decoder when the stream resolution changed
+@@ -263,6 +266,7 @@ struct venus_inst {
+ 	struct list_head list;
+ 	struct mutex lock;
+ 	struct venus_core *core;
++	struct list_head dpbbufs;
+ 	struct list_head internalbufs;
+ 	struct list_head registeredbufs;
+ 	struct list_head delayed_process;
+@@ -292,6 +296,8 @@ struct venus_inst {
+ 	unsigned int input_buf_size;
+ 	unsigned int output_buf_size;
+ 	unsigned int output2_buf_size;
++	u32 dpb_buftype;
++	u32 dpb_fmt;
+ 	u32 opb_buftype;
+ 	u32 opb_fmt;
+ 	bool reconfig;
 diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 6b31c91528ed..a342472ae2f0 100644
+index a342472ae2f0..a0c7ef5f9125 100644
 --- a/drivers/media/platform/qcom/venus/helpers.c
 +++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -452,6 +452,104 @@ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
+@@ -85,6 +85,112 @@ bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt)
  }
- EXPORT_SYMBOL_GPL(venus_helper_get_bufreq);
+ EXPORT_SYMBOL_GPL(venus_helper_check_codec);
  
-+static u32 get_framesize_raw_nv12(u32 width, u32 height)
++static int venus_helper_queue_dpb_bufs(struct venus_inst *inst)
 +{
-+	u32 y_stride, uv_stride, y_plane;
-+	u32 y_sclines, uv_sclines, uv_plane;
-+	u32 size;
++	struct intbuf *buf;
++	int ret = 0;
 +
-+	y_stride = ALIGN(width, 128);
-+	uv_stride = ALIGN(width, 128);
-+	y_sclines = ALIGN(height, 32);
-+	uv_sclines = ALIGN(((height + 1) >> 1), 16);
-+
-+	y_plane = y_stride * y_sclines;
-+	uv_plane = uv_stride * uv_sclines + SZ_4K;
-+	size = y_plane + uv_plane + SZ_8K;
-+
-+	return ALIGN(size, SZ_4K);
-+}
-+
-+static u32 get_framesize_raw_nv12_ubwc(u32 width, u32 height)
-+{
-+	u32 y_meta_stride, y_meta_plane;
-+	u32 y_stride, y_plane;
-+	u32 uv_meta_stride, uv_meta_plane;
-+	u32 uv_stride, uv_plane;
-+	u32 extradata = SZ_16K;
-+
-+	y_meta_stride = ALIGN(DIV_ROUND_UP(width, 32), 64);
-+	y_meta_plane = y_meta_stride * ALIGN(DIV_ROUND_UP(height, 8), 16);
-+	y_meta_plane = ALIGN(y_meta_plane, SZ_4K);
-+
-+	y_stride = ALIGN(width, 128);
-+	y_plane = ALIGN(y_stride * ALIGN(height, 32), SZ_4K);
-+
-+	uv_meta_stride = ALIGN(DIV_ROUND_UP(width / 2, 16), 64);
-+	uv_meta_plane = uv_meta_stride * ALIGN(DIV_ROUND_UP(height / 2, 8), 16);
-+	uv_meta_plane = ALIGN(uv_meta_plane, SZ_4K);
-+
-+	uv_stride = ALIGN(width, 128);
-+	uv_plane = ALIGN(uv_stride * ALIGN(height / 2, 32), SZ_4K);
-+
-+	return ALIGN(y_meta_plane + y_plane + uv_meta_plane + uv_plane +
-+		     max(extradata, y_stride * 48), SZ_4K);
-+}
-+
-+u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height)
-+{
-+	switch (hfi_fmt) {
-+	case HFI_COLOR_FORMAT_NV12:
-+	case HFI_COLOR_FORMAT_NV21:
-+		return get_framesize_raw_nv12(width, height);
-+	case HFI_COLOR_FORMAT_NV12_UBWC:
-+		return get_framesize_raw_nv12_ubwc(width, height);
-+	default:
-+		return 0;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_get_framesz_raw);
-+
-+u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height)
-+{
-+	u32 hfi_fmt, sz;
-+	bool compressed;
-+
-+	switch (v4l2_fmt) {
-+	case V4L2_PIX_FMT_MPEG:
-+	case V4L2_PIX_FMT_H264:
-+	case V4L2_PIX_FMT_H264_NO_SC:
-+	case V4L2_PIX_FMT_H264_MVC:
-+	case V4L2_PIX_FMT_H263:
-+	case V4L2_PIX_FMT_MPEG1:
-+	case V4L2_PIX_FMT_MPEG2:
-+	case V4L2_PIX_FMT_MPEG4:
-+	case V4L2_PIX_FMT_XVID:
-+	case V4L2_PIX_FMT_VC1_ANNEX_G:
-+	case V4L2_PIX_FMT_VC1_ANNEX_L:
-+	case V4L2_PIX_FMT_VP8:
-+	case V4L2_PIX_FMT_VP9:
-+	case V4L2_PIX_FMT_HEVC:
-+		compressed = true;
-+		break;
-+	default:
-+		compressed = false;
-+		break;
-+	}
-+
-+	if (compressed) {
-+		sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
-+		return ALIGN(sz, SZ_4K);
-+	}
-+
-+	hfi_fmt = to_hfi_raw_fmt(v4l2_fmt);
-+	if (!hfi_fmt)
++	if (list_empty(&inst->dpbbufs))
 +		return 0;
 +
-+	return venus_helper_get_framesz_raw(hfi_fmt, width, height);
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_get_framesz);
++	list_for_each_entry(buf, &inst->dpbbufs, list) {
++		struct hfi_frame_data fdata;
 +
- int venus_helper_set_input_resolution(struct venus_inst *inst,
- 				      unsigned int width, unsigned int height)
++		memset(&fdata, 0, sizeof(fdata));
++		fdata.alloc_len = buf->size;
++		fdata.device_addr = buf->da;
++		fdata.buffer_type = buf->type;
++
++		ret = hfi_session_process_buf(inst, &fdata);
++		if (ret)
++			goto fail;
++	}
++
++fail:
++	return ret;
++}
++
++int venus_helper_free_dpb_bufs(struct venus_inst *inst)
++{
++	struct intbuf *buf, *n;
++
++	if (list_empty(&inst->dpbbufs))
++		return 0;
++
++	list_for_each_entry_safe(buf, n, &inst->dpbbufs, list) {
++		list_del_init(&buf->list);
++		dma_free_attrs(inst->core->dev, buf->size, buf->va, buf->da,
++			       buf->attrs);
++		kfree(buf);
++	}
++
++	INIT_LIST_HEAD(&inst->dpbbufs);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(venus_helper_free_dpb_bufs);
++
++int venus_helper_alloc_dpb_bufs(struct venus_inst *inst)
++{
++	struct venus_core *core = inst->core;
++	struct device *dev = core->dev;
++	enum hfi_version ver = core->res->hfi_version;
++	struct hfi_buffer_requirements bufreq;
++	u32 buftype = inst->dpb_buftype;
++	unsigned int dpb_size = 0;
++	struct intbuf *buf;
++	unsigned int i;
++	u32 count;
++	int ret;
++
++	/* no need to allocate dpb buffers */
++	if (!inst->dpb_fmt)
++		return 0;
++
++	if (inst->dpb_buftype == HFI_BUFFER_OUTPUT)
++		dpb_size = inst->output_buf_size;
++	else if (inst->dpb_buftype == HFI_BUFFER_OUTPUT2)
++		dpb_size = inst->output2_buf_size;
++
++	if (!dpb_size)
++		return 0;
++
++	ret = venus_helper_get_bufreq(inst, buftype, &bufreq);
++	if (ret)
++		return ret;
++
++	count = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
++
++	for (i = 0; i < count; i++) {
++		buf = kzalloc(sizeof(*buf), GFP_KERNEL);
++		if (!buf) {
++			ret = -ENOMEM;
++			goto fail;
++		}
++
++		buf->type = buftype;
++		buf->size = dpb_size;
++		buf->attrs = DMA_ATTR_WRITE_COMBINE |
++			     DMA_ATTR_NO_KERNEL_MAPPING;
++		buf->va = dma_alloc_attrs(dev, buf->size, &buf->da, GFP_KERNEL,
++					  buf->attrs);
++		if (!buf->va) {
++			kfree(buf);
++			ret = -ENOMEM;
++			goto fail;
++		}
++
++		list_add_tail(&buf->list, &inst->dpbbufs);
++	}
++
++	return 0;
++
++fail:
++	venus_helper_free_dpb_bufs(inst);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(venus_helper_alloc_dpb_bufs);
++
+ static int intbufs_set_buffer(struct venus_inst *inst, u32 type)
+ {
+ 	struct venus_core *core = inst->core;
+@@ -342,7 +448,10 @@ session_process_buf(struct venus_inst *inst, struct vb2_v4l2_buffer *vbuf)
+ 		if (vbuf->flags & V4L2_BUF_FLAG_LAST || !fdata.filled_len)
+ 			fdata.flags |= HFI_BUFFERFLAG_EOS;
+ 	} else if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+-		fdata.buffer_type = HFI_BUFFER_OUTPUT;
++		if (inst->session_type == VIDC_SESSION_TYPE_ENC)
++			fdata.buffer_type = HFI_BUFFER_OUTPUT;
++		else
++			fdata.buffer_type = inst->opb_buftype;
+ 		fdata.filled_len = 0;
+ 		fdata.offset = 0;
+ 	}
+@@ -672,6 +781,27 @@ int venus_helper_set_color_format(struct venus_inst *inst, u32 pixfmt)
+ }
+ EXPORT_SYMBOL_GPL(venus_helper_set_color_format);
+ 
++int venus_helper_set_multistream(struct venus_inst *inst, bool out_en,
++				 bool out2_en)
++{
++	struct hfi_multi_stream multi = {0};
++	u32 ptype = HFI_PROPERTY_PARAM_VDEC_MULTI_STREAM;
++	int ret;
++
++	multi.buffer_type = HFI_BUFFER_OUTPUT;
++	multi.enable = out_en;
++
++	ret = hfi_session_set_property(inst, ptype, &multi);
++	if (ret)
++		return ret;
++
++	multi.buffer_type = HFI_BUFFER_OUTPUT2;
++	multi.enable = out2_en;
++
++	return hfi_session_set_property(inst, ptype, &multi);
++}
++EXPORT_SYMBOL_GPL(venus_helper_set_multistream);
++
+ int venus_helper_set_dyn_bufmode(struct venus_inst *inst)
+ {
+ 	u32 ptype = HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE;
+@@ -819,9 +949,10 @@ EXPORT_SYMBOL_GPL(venus_helper_vb2_buf_init);
+ int venus_helper_vb2_buf_prepare(struct vb2_buffer *vb)
+ {
+ 	struct venus_inst *inst = vb2_get_drv_priv(vb->vb2_queue);
++	unsigned int out_buf_size = venus_helper_get_opb_size(inst);
+ 
+ 	if (vb->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
+-	    vb2_plane_size(vb, 0) < inst->output_buf_size)
++	    vb2_plane_size(vb, 0) < out_buf_size)
+ 		return -EINVAL;
+ 	if (vb->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
+ 	    vb2_plane_size(vb, 0) < inst->input_buf_size)
+@@ -891,6 +1022,8 @@ void venus_helper_vb2_stop_streaming(struct vb2_queue *q)
+ 		if (ret)
+ 			hfi_session_abort(inst);
+ 
++		venus_helper_free_dpb_bufs(inst);
++
+ 		load_scale_clocks(core);
+ 		INIT_LIST_HEAD(&inst->registeredbufs);
+ 	}
+@@ -929,8 +1062,14 @@ int venus_helper_vb2_start_streaming(struct venus_inst *inst)
+ 	if (ret)
+ 		goto err_unload_res;
+ 
++	ret = venus_helper_queue_dpb_bufs(inst);
++	if (ret)
++		goto err_session_stop;
++
+ 	return 0;
+ 
++err_session_stop:
++	hfi_session_stop(inst);
+ err_unload_res:
+ 	hfi_session_unload_res(inst);
+ err_unreg_bufs:
+@@ -984,6 +1123,67 @@ void venus_helper_init_instance(struct venus_inst *inst)
+ }
+ EXPORT_SYMBOL_GPL(venus_helper_init_instance);
+ 
++static bool find_fmt_from_caps(struct venus_caps *caps, u32 buftype, u32 fmt)
++{
++	unsigned int i;
++
++	for (i = 0; i < caps->num_fmts; i++) {
++		if (caps->fmts[i].buftype == buftype &&
++		    caps->fmts[i].fmt == fmt)
++			return true;
++	}
++
++	return false;
++}
++
++int venus_helper_get_out_fmts(struct venus_inst *inst, u32 v4l2_fmt,
++			      u32 *out_fmt, u32 *out2_fmt, bool ubwc)
++{
++	struct venus_core *core = inst->core;
++	struct venus_caps *caps;
++	u32 ubwc_fmt, fmt = to_hfi_raw_fmt(v4l2_fmt);
++	bool found, found_ubwc;
++
++	*out_fmt = *out2_fmt = 0;
++
++	if (!fmt)
++		return -EINVAL;
++
++	caps = venus_caps_by_codec(core, inst->hfi_codec, inst->session_type);
++	if (!caps)
++		return -EINVAL;
++
++	if (ubwc) {
++		ubwc_fmt = fmt | HFI_COLOR_FORMAT_UBWC_BASE;
++		found_ubwc = find_fmt_from_caps(caps, HFI_BUFFER_OUTPUT,
++						ubwc_fmt);
++		found = find_fmt_from_caps(caps, HFI_BUFFER_OUTPUT2, fmt);
++
++		if (found_ubwc && found) {
++			*out_fmt = ubwc_fmt;
++			*out2_fmt = fmt;
++			return 0;
++		}
++	}
++
++	found = find_fmt_from_caps(caps, HFI_BUFFER_OUTPUT, fmt);
++	if (found) {
++		*out_fmt = fmt;
++		*out2_fmt = 0;
++		return 0;
++	}
++
++	found = find_fmt_from_caps(caps, HFI_BUFFER_OUTPUT2, fmt);
++	if (found) {
++		*out_fmt = 0;
++		*out2_fmt = fmt;
++		return 0;
++	}
++
++	return -EINVAL;
++}
++EXPORT_SYMBOL_GPL(venus_helper_get_out_fmts);
++
+ int venus_helper_power_enable(struct venus_core *core, u32 session_type,
+ 			      bool enable)
  {
 diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 92be45894a69..92b167a47166 100644
+index 92b167a47166..2475f284f396 100644
 --- a/drivers/media/platform/qcom/venus/helpers.h
 +++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -33,6 +33,8 @@ void venus_helper_m2m_device_run(void *priv);
- void venus_helper_m2m_job_abort(void *priv);
- int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
- 			    struct hfi_buffer_requirements *req);
-+u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height);
-+u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height);
- int venus_helper_set_input_resolution(struct venus_inst *inst,
- 				      unsigned int width, unsigned int height);
- int venus_helper_set_output_resolution(struct venus_inst *inst,
+@@ -50,10 +50,16 @@ int venus_helper_set_raw_format(struct venus_inst *inst, u32 hfi_format,
+ int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
+ int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
+ int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype);
++int venus_helper_set_multistream(struct venus_inst *inst, bool out_en,
++				 bool out2_en);
+ unsigned int venus_helper_get_opb_size(struct venus_inst *inst);
+ void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
+ void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
+ void venus_helper_init_instance(struct venus_inst *inst);
++int venus_helper_get_out_fmts(struct venus_inst *inst, u32 fmt, u32 *out_fmt,
++			      u32 *out2_fmt, bool ubwc);
++int venus_helper_alloc_dpb_bufs(struct venus_inst *inst);
++int venus_helper_free_dpb_bufs(struct venus_inst *inst);
+ int venus_helper_power_enable(struct venus_core *core, u32 session_type,
+ 			      bool enable);
+ #endif
 diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 4d3f1cd7ed1d..4e8a4086e6fa 100644
+index 4e8a4086e6fa..9d509b3c1c7a 100644
 --- a/drivers/media/platform/qcom/venus/vdec.c
 +++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -29,29 +29,6 @@
- #include "helpers.h"
- #include "vdec.h"
- 
--static u32 get_framesize_uncompressed(unsigned int plane, u32 width, u32 height)
--{
--	u32 y_stride, uv_stride, y_plane;
--	u32 y_sclines, uv_sclines, uv_plane;
--	u32 size;
--
--	y_stride = ALIGN(width, 128);
--	uv_stride = ALIGN(width, 128);
--	y_sclines = ALIGN(height, 32);
--	uv_sclines = ALIGN(((height + 1) >> 1), 16);
--
--	y_plane = y_stride * y_sclines;
--	uv_plane = uv_stride * uv_sclines + SZ_4K;
--	size = y_plane + uv_plane + SZ_8K;
--
--	return ALIGN(size, SZ_4K);
--}
--
--static u32 get_framesize_compressed(unsigned int width, unsigned int height)
--{
--	return ((width * height * 3 / 2) / 2) + 128;
--}
--
- /*
-  * Three resons to keep MPLANE formats (despite that the number of planes
-  * currently is one):
-@@ -160,7 +137,6 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
- 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
- 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
- 	const struct venus_format *fmt;
--	unsigned int p;
- 
- 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
- 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
-@@ -191,18 +167,14 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
- 	pixmp->num_planes = fmt->num_planes;
- 	pixmp->flags = 0;
- 
--	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
--		for (p = 0; p < pixmp->num_planes; p++) {
--			pfmt[p].sizeimage =
--				get_framesize_uncompressed(p, pixmp->width,
--							   pixmp->height);
--			pfmt[p].bytesperline = ALIGN(pixmp->width, 128);
--		}
--	} else {
--		pfmt[0].sizeimage = get_framesize_compressed(pixmp->width,
--							     pixmp->height);
-+	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
-+						     pixmp->width,
-+						     pixmp->height);
-+
-+	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-+		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
-+	else
- 		pfmt[0].bytesperline = 0;
--	}
- 
- 	return fmt;
+@@ -531,10 +531,16 @@ static int vdec_set_properties(struct venus_inst *inst)
+ 	return 0;
  }
-@@ -647,7 +619,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 			    unsigned int sizes[], struct device *alloc_devs[])
+ 
++#define is_ubwc_fmt(fmt) (!!((fmt) & HFI_COLOR_FORMAT_UBWC_BASE))
++
+ static int vdec_output_conf(struct venus_inst *inst)
  {
- 	struct venus_inst *inst = vb2_get_drv_priv(q);
--	unsigned int p, in_num, out_num;
-+	unsigned int in_num, out_num;
+ 	struct venus_core *core = inst->core;
+ 	struct hfi_enable en = { .enable = 1 };
++	u32 width = inst->out_width;
++	u32 height = inst->out_height;
++	u32 out_fmt, out2_fmt;
++	bool ubwc = false;
+ 	u32 ptype;
+ 	int ret;
+ 
+@@ -553,6 +559,80 @@ static int vdec_output_conf(struct venus_inst *inst)
+ 			return ret;
+ 	}
+ 
++	/* Force searching UBWC formats for bigger then HD resolutions */
++	if (width > 1920 && height > ALIGN(1080, 32))
++		ubwc = true;
++
++	/* For Venus v4 UBWC format is mandatory */
++	if (IS_V4(core))
++		ubwc = true;
++
++	ret = venus_helper_get_out_fmts(inst, inst->fmt_cap->pixfmt, &out_fmt,
++					&out2_fmt, ubwc);
++	if (ret)
++		return ret;
++
++	inst->output_buf_size =
++			venus_helper_get_framesz_raw(out_fmt, width, height);
++	inst->output2_buf_size =
++			venus_helper_get_framesz_raw(out2_fmt, width, height);
++
++	if (is_ubwc_fmt(out_fmt)) {
++		inst->opb_buftype = HFI_BUFFER_OUTPUT2;
++		inst->opb_fmt = out2_fmt;
++		inst->dpb_buftype = HFI_BUFFER_OUTPUT;
++		inst->dpb_fmt = out_fmt;
++	} else if (is_ubwc_fmt(out2_fmt)) {
++		inst->opb_buftype = HFI_BUFFER_OUTPUT;
++		inst->opb_fmt = out_fmt;
++		inst->dpb_buftype = HFI_BUFFER_OUTPUT2;
++		inst->dpb_fmt = out2_fmt;
++	} else {
++		inst->opb_buftype = HFI_BUFFER_OUTPUT;
++		inst->opb_fmt = out_fmt;
++		inst->dpb_buftype = 0;
++		inst->dpb_fmt = 0;
++	}
++
++	ret = venus_helper_set_raw_format(inst, inst->opb_fmt,
++					  inst->opb_buftype);
++	if (ret)
++		return ret;
++
++	if (inst->dpb_fmt) {
++		ret = venus_helper_set_multistream(inst, false, true);
++		if (ret)
++			return ret;
++
++		ret = venus_helper_set_raw_format(inst, inst->dpb_fmt,
++						  inst->dpb_buftype);
++		if (ret)
++			return ret;
++
++		ret = venus_helper_set_output_resolution(inst, width, height,
++							 HFI_BUFFER_OUTPUT2);
++		if (ret)
++			return ret;
++	}
++
++	if (IS_V3(core) || IS_V4(core)) {
++		if (inst->output2_buf_size) {
++			ret = venus_helper_set_bufsize(inst,
++						       inst->output2_buf_size,
++						       HFI_BUFFER_OUTPUT2);
++			if (ret)
++				return ret;
++		}
++
++		if (inst->output_buf_size) {
++			ret = venus_helper_set_bufsize(inst,
++						       inst->output_buf_size,
++						       HFI_BUFFER_OUTPUT);
++			if (ret)
++				return ret;
++		}
++	}
++
+ 	ret = venus_helper_set_dyn_bufmode(inst);
+ 	if (ret)
+ 		return ret;
+@@ -623,6 +703,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
  	int ret = 0;
  
  	if (*num_planes) {
-@@ -677,7 +649,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 	switch (q->type) {
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
- 		*num_planes = inst->fmt_out->num_planes;
--		sizes[0] = get_framesize_compressed(inst->out_width,
-+		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
-+						    inst->out_width,
- 						    inst->out_height);
- 		inst->input_buf_size = sizes[0];
- 		*num_buffers = max(*num_buffers, in_num);
-@@ -686,10 +659,9 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		*num_planes = inst->fmt_cap->num_planes;
--
--		for (p = 0; p < *num_planes; p++)
--			sizes[p] = get_framesize_uncompressed(p, inst->width,
--							      inst->height);
-+		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
-+						    inst->width,
-+						    inst->height);
- 		inst->output_buf_size = sizes[0];
- 		*num_buffers = max(*num_buffers, out_num);
- 		inst->num_output_bufs = *num_buffers;
++		unsigned int output_buf_size = venus_helper_get_opb_size(inst);
++
+ 		if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
+ 		    *num_planes != inst->fmt_out->num_planes)
+ 			return -EINVAL;
+@@ -636,7 +718,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 			return -EINVAL;
+ 
+ 		if (q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
+-		    sizes[0] < inst->output_buf_size)
++		    sizes[0] < output_buf_size)
+ 			return -EINVAL;
+ 
+ 		return 0;
+@@ -745,6 +827,10 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
+ 	if (ret)
+ 		goto deinit_sess;
+ 
++	ret = venus_helper_alloc_dpb_bufs(inst);
++	if (ret)
++		goto deinit_sess;
++
+ 	ret = venus_helper_vb2_start_streaming(inst);
+ 	if (ret)
+ 		goto deinit_sess;
+@@ -796,9 +882,11 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
+ 	vbuf->field = V4L2_FIELD_NONE;
+ 
+ 	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
++		unsigned int opb_sz = venus_helper_get_opb_size(inst);
++
+ 		vb = &vbuf->vb2_buf;
+ 		vb->planes[0].bytesused =
+-			max_t(unsigned int, inst->output_buf_size, bytesused);
++			max_t(unsigned int, opb_sz, bytesused);
+ 		vb->planes[0].data_offset = data_offset;
+ 		vb->timestamp = timestamp_us * NSEC_PER_USEC;
+ 		vbuf->sequence = inst->sequence_cap++;
+@@ -936,6 +1024,7 @@ static int vdec_open(struct file *file)
+ 	if (!inst)
+ 		return -ENOMEM;
+ 
++	INIT_LIST_HEAD(&inst->dpbbufs);
+ 	INIT_LIST_HEAD(&inst->registeredbufs);
+ 	INIT_LIST_HEAD(&inst->internalbufs);
+ 	INIT_LIST_HEAD(&inst->list);
 diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index abde7d6d123f..31aafe487fa1 100644
+index 31aafe487fa1..be5dc3a2eb28 100644
 --- a/drivers/media/platform/qcom/venus/venc.c
 +++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -31,32 +31,6 @@
+@@ -1084,6 +1084,7 @@ static int venc_open(struct file *file)
+ 	if (!inst)
+ 		return -ENOMEM;
  
- #define NUM_B_FRAMES_MAX	4
- 
--static u32 get_framesize_uncompressed(unsigned int plane, u32 width, u32 height)
--{
--	u32 y_stride, uv_stride, y_plane;
--	u32 y_sclines, uv_sclines, uv_plane;
--	u32 size;
--
--	y_stride = ALIGN(width, 128);
--	uv_stride = ALIGN(width, 128);
--	y_sclines = ALIGN(height, 32);
--	uv_sclines = ALIGN(((height + 1) >> 1), 16);
--
--	y_plane = y_stride * y_sclines;
--	uv_plane = uv_stride * uv_sclines + SZ_4K;
--	size = y_plane + uv_plane + SZ_8K;
--	size = ALIGN(size, SZ_4K);
--
--	return size;
--}
--
--static u32 get_framesize_compressed(u32 width, u32 height)
--{
--	u32 sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
--
--	return ALIGN(sz, SZ_4K);
--}
--
- /*
-  * Three resons to keep MPLANE formats (despite that the number of planes
-  * currently is one):
-@@ -284,7 +258,6 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
- 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
- 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
- 	const struct venus_format *fmt;
--	unsigned int p;
- 
- 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
- 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
-@@ -318,19 +291,14 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
- 	pixmp->num_planes = fmt->num_planes;
- 	pixmp->flags = 0;
- 
--	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
--		for (p = 0; p < pixmp->num_planes; p++) {
--			pfmt[p].sizeimage =
--				get_framesize_uncompressed(p, pixmp->width,
--							   pixmp->height);
-+	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
-+						     pixmp->width,
-+						     pixmp->height);
- 
--			pfmt[p].bytesperline = ALIGN(pixmp->width, 128);
--		}
--	} else {
--		pfmt[0].sizeimage = get_framesize_compressed(pixmp->width,
--							     pixmp->height);
-+	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-+		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
-+	else
- 		pfmt[0].bytesperline = 0;
--	}
- 
- 	return fmt;
- }
-@@ -845,7 +813,7 @@ static int venc_queue_setup(struct vb2_queue *q,
- 			    unsigned int sizes[], struct device *alloc_devs[])
- {
- 	struct venus_inst *inst = vb2_get_drv_priv(q);
--	unsigned int p, num, min = 4;
-+	unsigned int num, min = 4;
- 	int ret = 0;
- 
- 	if (*num_planes) {
-@@ -880,16 +848,18 @@ static int venc_queue_setup(struct vb2_queue *q,
- 		*num_buffers = max(*num_buffers, num);
- 		inst->num_input_bufs = *num_buffers;
- 
--		for (p = 0; p < *num_planes; ++p)
--			sizes[p] = get_framesize_uncompressed(p, inst->width,
--							      inst->height);
-+		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
-+						    inst->width,
-+						    inst->height);
- 		inst->input_buf_size = sizes[0];
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		*num_planes = inst->fmt_cap->num_planes;
- 		*num_buffers = max(*num_buffers, min);
- 		inst->num_output_bufs = *num_buffers;
--		sizes[0] = get_framesize_compressed(inst->width, inst->height);
-+		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
-+						    inst->width,
-+						    inst->height);
- 		inst->output_buf_size = sizes[0];
- 		break;
- 	default:
++	INIT_LIST_HEAD(&inst->dpbbufs);
+ 	INIT_LIST_HEAD(&inst->registeredbufs);
+ 	INIT_LIST_HEAD(&inst->internalbufs);
+ 	INIT_LIST_HEAD(&inst->list);
 -- 
 2.14.1
 
