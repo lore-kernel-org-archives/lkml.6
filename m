@@ -2,154 +2,111 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4256FC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6CBC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF62726461
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:31:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF62726461
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 416A926503
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:31:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bUVMzXza"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 416A926503
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933603AbeF0JbO convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:31:14 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50080 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932193AbeF0JbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:31:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 02:31:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,278,1526367600"; 
-   d="scan'208";a="67688398"
-Received: from jnikula-mobl2.fi.intel.com (HELO localhost) ([10.237.72.62])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2018 02:31:01 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: mark expected switch fall-through
-In-Reply-To: <357b53aa-d8ce-c9db-0b81-2e8e1aa821bb@embeddedor.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180620133100.GA608@embeddedor.com> <20180620190628.GC8258@intel.com> <26740470-d7b7-0a58-0aae-fc628bd4f416@embeddedor.com> <87r2l0va65.fsf@intel.com> <357b53aa-d8ce-c9db-0b81-2e8e1aa821bb@embeddedor.com>
-Date:   Wed, 27 Jun 2018 12:30:49 +0300
-Message-ID: <87tvpotw3a.fsf@intel.com>
+        id S933939AbeF0Jbx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:31:53 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42235 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933664AbeF0Jbt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 05:31:49 -0400
+Received: by mail-wr0-f194.google.com with SMTP id p1-v6so1291381wrs.9
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 02:31:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KWSPorib+rcFS+AbGQaimDLnTgL2QfSgheTWv9cJFis=;
+        b=bUVMzXza7dhl/IiHAJl8Qj4MhK898jZVQ+LkOF9ZdNKIsou9MBa3e1B0scbLIHREHq
+         mJocMrBQbZxgm5n2J5G/1Y3pKCgIEp0Imgm2tAOuI3KujW1r6BsGSyvlXohSvqUO3qNt
+         Hr2TaO93kMEFkDr7sr9/pESlX2HxjTxvp6Xfo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KWSPorib+rcFS+AbGQaimDLnTgL2QfSgheTWv9cJFis=;
+        b=oblfzq8mGhFKyJawh+YdA5VV4h66o5xlpXrW8TtStJOtsl73hLKnHoqM+9J0m36c10
+         Q2vcZr9YxgJtfh9kOi/YdARVRHC7N89a/OIIN6UGRmW/8XL5/0hLaodWPyjwyEGs4HA6
+         ffP2YDnFcnfbu0amF+2XXox3/c98YS4AYbHKeA2E21RaIz46dkbWD9UgonE4Ow0JwJ/w
+         Cv/RjOo+TmqOKs0NkQzRU1g2/ui66ETmZ5Yb4Dpi0B3PxY6wWu20yRGqrenTGvWGWUsD
+         VZ39zS/qfYPY34t3CpOq2gMr0/h0YNo74vYeRtiTVIuxhFa18lo2q7YMLJvj/TvM6z76
+         RAwA==
+X-Gm-Message-State: APt69E03O8/xNzxbcgobr2EJpAjakE/TWeKPzhxtUWueymOYTdcHCFIe
+        9Es+ZvuVjaxWv5Z5ms525g97IQ==
+X-Google-Smtp-Source: AAOMgpemMn8X9aw9Hfs91ju1ETh7yYZLBb6lT5A3yuZaPSHFRAEysWdWc+fGGFrtB08FpJkXHRFQKA==
+X-Received: by 2002:adf:ef50:: with SMTP id c16-v6mr4181281wrp.182.1530091908052;
+        Wed, 27 Jun 2018 02:31:48 -0700 (PDT)
+Received: from [192.168.1.100] (aig34-1-88-167-228-121.fbx.proxad.net. [88.167.228.121])
+        by smtp.gmail.com with ESMTPSA id y18-v6sm4911202wrn.68.2018.06.27.02.31.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 02:31:47 -0700 (PDT)
+Subject: Re: [PATCH v10 00/14] Krait clocks + Krait CPUfreq
+To:     Sricharan R <sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+Cc:     robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@codeaurora.org,
+        linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux@arm.linux.org.uk,
+        ctatlor97@gmail.com
+From:   Thierry Escande <thierry.escande@linaro.org>
+Message-ID: <a58c2d2c-64d1-7223-dc98-8f749397375d@linaro.org>
+Date:   Wed, 27 Jun 2018 11:31:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Jun 2018, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
-> Hi Jani,
->
-> On 06/21/2018 03:03 AM, Jani Nikula wrote:
->> On Wed, 20 Jun 2018, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
->>> On 06/20/2018 02:06 PM, Rodrigo Vivi wrote:
->>>> On Wed, Jun 20, 2018 at 08:31:00AM -0500, Gustavo A. R. Silva wrote:
->>>>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->>>>> where we are expecting to fall through.
->>>>>
->>>>> Addresses-Coverity-ID: 1470102 ("Missing break in switch")
->>>>
->>>> Any other advantage besides coverity?
->>>> Can't we address it by marking as "Intentional" on the tool?
->>>>
->>>
->>> Yes. The advantage of this is that it will eventually allows to enable 
->>> -Wimplicit-fallthrough, hence, enabling the compiler to trigger a 
->>> warning, which will force us to double check if we are actually missing 
->>> a break before committing the code.
->> 
->> I applaud the efforts. Since you're doing the comment changes, do you
->> have an idea what -Wimplicit-fallthrough=N level is being considered for
->> kernel?
->> 
->
-> Currently, we are trying level 2.
->
->>>> I'm afraid there will be so many more places to add fallthrough
->>>> marks....
->>>>
->>>
->>> Oh yeah, there are around 1000 similar places in the whole codebase. 
->>> There is an ongoing effort to review each case. Months ago, it used to 
->>> be around 1500 of these cases.
->> 
->> We use our own MISSING_CASE() to indicate stuff that's not supposed to
->> happen, or to be implemented, etc. and in many cases the fallthrough is
->> normal. I wonder if we could embed __attribute__ ((fallthrough)) in
->> there to tackle all of these without a comment.
->> 
->
-> I've tried this:
->
-> diff --git a/drivers/gpu/drm/i915/i915_utils.h b/drivers/gpu/drm/i915/i915_utils.h
-> index 00165ad..829572c 100644
-> --- a/drivers/gpu/drm/i915/i915_utils.h
-> +++ b/drivers/gpu/drm/i915/i915_utils.h
-> @@ -40,8 +40,10 @@
->  #undef WARN_ON_ONCE
->  #define WARN_ON_ONCE(x) WARN_ONCE((x), "%s", "WARN_ON_ONCE(" __stringify(x) ")")
->
-> -#define MISSING_CASE(x) WARN(1, "Missing case (%s == %ld)\n", \
-> -                            __stringify(x), (long)(x))
-> +#define MISSING_CASE(x) ({ \
-> +       WARN(1, "Missing case (%s == %ld)\n", __stringify(x), (long)(x)); \
-> +       __attribute__ ((fallthrough)); \
-> +})
->
->  #if GCC_VERSION >= 70000
->  #define add_overflows(A, B) \
->
-> and I get the following warnings as a consequence:
+Hi Sricharan,
 
-Right. That's because we've used MISSING_CASE() also in if-ladders in
-addition to the switch default case. From our POV the usage is similar.
+On 19/06/2018 15:45, Sricharan R wrote:
+> Sricharan R (2):
+>    clk: qcom: Add safe switch hook for krait mux clocks
+>    dt-bindings: cpufreq: Document operating-points-v2-krait-cpu
+> 
+> Stephen Boyd (12):
+>    ARM: Add Krait L2 register accessor functions
+>    clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
+>    clk: qcom: Add HFPLL driver
+>    dt-bindings: clock: Document qcom,hfpll
+>    clk: qcom: Add MSM8960/APQ8064's HFPLLs
+>    clk: qcom: Add IPQ806X's HFPLLs
+>    clk: qcom: Add support for Krait clocks
+>    clk: qcom: Add KPSS ACC/GCC driver
+>    dt-bindings: arm: Document qcom,kpss-gcc
+>    clk: qcom: Add Krait clock controller driver
+>    dt-bindings: clock: Document qcom,krait-cc
+>    cpufreq: Add module to register cpufreq on Krait CPUs
 
-*shrug*
+Tested on apq8064 (db600c).
 
-I guess I like /* fall through */ annotations next to MISSING_CASE()
-better than having two different macros depending on where they're being
-used.
+Tested-By: Thierry Escande <thierry.escande@linaro.org>
 
-Thanks for trying it out anyway.
+Best regards,
+Thierry
 
-BR,
-Jani.
-
-
->
-> drivers/gpu/drm/i915/intel_pm.c: In function ‘intel_init_clock_gating_hooks’:
-> drivers/gpu/drm/i915/i915_utils.h:48:2: error: invalid use of attribute ‘fallthrough’
->   __attribute__ ((fallthrough)); \
->   ^
-> drivers/gpu/drm/i915/intel_pm.c:9240:3: note: in expansion of macro ‘MISSING_CASE’
->    MISSING_CASE(INTEL_DEVID(dev_priv));
->    ^~~~~~~~~~~~
-> drivers/gpu/drm/i915/intel_pm.c: In function ‘intel_read_wm_latency’:
-> drivers/gpu/drm/i915/i915_utils.h:48:2: error: invalid use of attribute ‘fallthrough’
->   __attribute__ ((fallthrough)); \
->   ^
-> drivers/gpu/drm/i915/intel_pm.c:2902:3: note: in expansion of macro ‘MISSING_CASE’
->    MISSING_CASE(INTEL_DEVID(dev_priv));
->    ^~~~~~~~~~~~
->
-> Thanks
-> --
-> Gustavo
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
