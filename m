@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3C0C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E7FC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1246126024
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3D926035
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:28:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UUd+yvxr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1246126024
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P6rhwgbu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3D926035
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934953AbeF0P22 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:28:28 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45605 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934910AbeF0P2Q (ORCPT
+        id S965391AbeF0P2f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:28:35 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38778 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934928AbeF0P21 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:28:16 -0400
-Received: by mail-wr0-f196.google.com with SMTP id u7-v6so2463809wrn.12
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:28:15 -0700 (PDT)
+        Wed, 27 Jun 2018 11:28:27 -0400
+Received: by mail-wr0-f195.google.com with SMTP id e18-v6so2479281wrs.5
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:28:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tdgb7i3pHOc18juXBnV581NGwky8g4nU20Ecgz01uNo=;
-        b=UUd+yvxrHZiApNI8YeMHvQQ41nVuNqkHvB0A4Y6e1V+tQyvkhJIqVVsyAljazzNfB3
-         knxl7Oe1VPRhS7YENKeDyYABWggiBOqOa8n7bKQ7fv996cDQmB+62vEmM1gFK2c/Aweg
-         upHmp3DwZvgCCFC3I7ns+j6ZgnmEPT1nM2apE=
+        bh=BwaBMOBtFU4AkNYUJGU1SJQFvBan9CUJEd06K8viUtI=;
+        b=P6rhwgbuCm4CedV76ALnZ8/2ni1ecRtnTq2gmN1xhJtw+1ejN3cxRO3t/qvwYVGLsz
+         fK/daponYJO12rfVjaUhVxqerK4agkyEr12JbRUAb1UBFUCZVqlsIjGvhdlNkU0wBgg4
+         V8P/zxnpMwci4UxUxQkqbTH/TjX9jx05tN6Ok=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tdgb7i3pHOc18juXBnV581NGwky8g4nU20Ecgz01uNo=;
-        b=qPnlfeQqBqxWG/iSd5Of+450Hk2LVM7KOO03Ycb7qp8FQkk8Zf5vDc+niDjttPTd0g
-         6NCCqA3xozNXlpY67ehrTMg5fsjrebuHmc6KbhfAikjdlvaPOH7uA2luKPMsqyfr6CpG
-         lm10mP1n/8QB8wE2KpmLEJ+/95rR0SAdHBki/fau7h4BWtot0g5jMKr2vP415AlDlNjZ
-         H8/sqD7wQFd0nD1jcCfWzp+SQGM+jm3W1CxTu7Z85ArgEt5EpjTL4DVXROCF32w1SXMV
-         g8VZxmDmFP2AsDcyJehLbdnv5Hu4crJIbhGzwBQfbJz9JFuKZNK0FlifCY0tGlF3OMJW
-         hsiA==
-X-Gm-Message-State: APt69E38Dkwep67HGmdjzQfKTbAXYFSlsB0HV2TRj/O01RPzbKeZ6wQ9
-        o9pmGjYZUJq4OEn5FX4GW+0LFQ==
-X-Google-Smtp-Source: AAOMgpcbA5kbTv9ulIZQ6RCEWFFHn+DlRyu9AXYYSBkRo+aO1H0KsGFWwVwgVg45yA+TNDddcfvNdw==
-X-Received: by 2002:adf:9226:: with SMTP id 35-v6mr2359316wrj.44.1530113295028;
-        Wed, 27 Jun 2018 08:28:15 -0700 (PDT)
+        bh=BwaBMOBtFU4AkNYUJGU1SJQFvBan9CUJEd06K8viUtI=;
+        b=jyp3qg861QQz2C6KcxDzyCiH/Vb2xFrM1OVAKE8Pd9ZlVaqjP01XEAqE4XNSt1m1xi
+         WZ7N0g5TvVor20zxPFE8Y6VcfaiMfM0t2IoaijZns05B4gPU/rR26k13ZeLejobl/7t3
+         F/VyHHdhsw+GRD4p0gDek6GjnJ3DRXDolWRpBNQbLDz5/EcyVIhqbQr9C/QSLgQoj2xG
+         YPduVZOxT9xJyY0mNQFhDKY7Dw3kZmVpgawlu9bAEm0W45cxu/XtpM+wr5ucyLy+JO+Y
+         Ee3dv3SjMV67o6LYcGkRz1OapcTXNeRPurdIa+OnD14iYN4QELeU9oS3YsxuqhEdltB4
+         x77Q==
+X-Gm-Message-State: APt69E3NkjeTMjGVQF6fV+KbaaciAtbOAkiFzijiKJW4AmhmBX3g7oBt
+        aI0zt/JHEf0xqrQDQuln7avAfw==
+X-Google-Smtp-Source: AAOMgpcK6LH6AeKamzmt5bAJkzMvuuLtV80l+ccqCxLQZdorDhuFaJ3C0CsWHms4pzxmsRIyo86TUg==
+X-Received: by 2002:adf:9883:: with SMTP id w3-v6mr5929745wrb.9.1530113306431;
+        Wed, 27 Jun 2018 08:28:26 -0700 (PDT)
 Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id o203-v6sm2916075wmd.30.2018.06.27.08.28.13
+        by smtp.gmail.com with ESMTPSA id o203-v6sm2916075wmd.30.2018.06.27.08.28.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 08:28:14 -0700 (PDT)
+        Wed, 27 Jun 2018 08:28:25 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -61,9 +61,9 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v4 14/27] venus: helpers: add a helper function to set dynamic buffer mode
-Date:   Wed, 27 Jun 2018 18:27:12 +0300
-Message-Id: <20180627152725.9783-15-stanimir.varbanov@linaro.org>
+Subject: [PATCH v4 24/27] venus: helpers: move frame size calculations on common place
+Date:   Wed, 27 Jun 2018 18:27:22 +0300
+Message-Id: <20180627152725.9783-25-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
 References: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
@@ -72,88 +72,343 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds a new helper function to set dynamic buffer mode if it is
-supported by current HFI version. The dynamic buffer mode is
-set unconditionally for both decoder outputs.
+This move the calculations of raw and compressed buffer sizes
+on common helper and make it identical for encoder and decoder.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/helpers.c | 22 ++++++++++++++++++++++
- drivers/media/platform/qcom/venus/helpers.h |  1 +
- drivers/media/platform/qcom/venus/vdec.c    | 15 +++------------
- 3 files changed, 26 insertions(+), 12 deletions(-)
+ drivers/media/platform/qcom/venus/helpers.c | 98 +++++++++++++++++++++++++++++
+ drivers/media/platform/qcom/venus/helpers.h |  2 +
+ drivers/media/platform/qcom/venus/vdec.c    | 54 ++++------------
+ drivers/media/platform/qcom/venus/venc.c    | 56 ++++-------------
+ 4 files changed, 126 insertions(+), 84 deletions(-)
 
 diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 03121dbb4175..e3dc2772946f 100644
+index 6b31c91528ed..a342472ae2f0 100644
 --- a/drivers/media/platform/qcom/venus/helpers.c
 +++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -519,6 +519,28 @@ int venus_helper_set_color_format(struct venus_inst *inst, u32 pixfmt)
+@@ -452,6 +452,104 @@ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
  }
- EXPORT_SYMBOL_GPL(venus_helper_set_color_format);
+ EXPORT_SYMBOL_GPL(venus_helper_get_bufreq);
  
-+int venus_helper_set_dyn_bufmode(struct venus_inst *inst)
++static u32 get_framesize_raw_nv12(u32 width, u32 height)
 +{
-+	u32 ptype = HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE;
-+	struct hfi_buffer_alloc_mode mode;
-+	int ret;
++	u32 y_stride, uv_stride, y_plane;
++	u32 y_sclines, uv_sclines, uv_plane;
++	u32 size;
 +
-+	if (!is_dynamic_bufmode(inst))
++	y_stride = ALIGN(width, 128);
++	uv_stride = ALIGN(width, 128);
++	y_sclines = ALIGN(height, 32);
++	uv_sclines = ALIGN(((height + 1) >> 1), 16);
++
++	y_plane = y_stride * y_sclines;
++	uv_plane = uv_stride * uv_sclines + SZ_4K;
++	size = y_plane + uv_plane + SZ_8K;
++
++	return ALIGN(size, SZ_4K);
++}
++
++static u32 get_framesize_raw_nv12_ubwc(u32 width, u32 height)
++{
++	u32 y_meta_stride, y_meta_plane;
++	u32 y_stride, y_plane;
++	u32 uv_meta_stride, uv_meta_plane;
++	u32 uv_stride, uv_plane;
++	u32 extradata = SZ_16K;
++
++	y_meta_stride = ALIGN(DIV_ROUND_UP(width, 32), 64);
++	y_meta_plane = y_meta_stride * ALIGN(DIV_ROUND_UP(height, 8), 16);
++	y_meta_plane = ALIGN(y_meta_plane, SZ_4K);
++
++	y_stride = ALIGN(width, 128);
++	y_plane = ALIGN(y_stride * ALIGN(height, 32), SZ_4K);
++
++	uv_meta_stride = ALIGN(DIV_ROUND_UP(width / 2, 16), 64);
++	uv_meta_plane = uv_meta_stride * ALIGN(DIV_ROUND_UP(height / 2, 8), 16);
++	uv_meta_plane = ALIGN(uv_meta_plane, SZ_4K);
++
++	uv_stride = ALIGN(width, 128);
++	uv_plane = ALIGN(uv_stride * ALIGN(height / 2, 32), SZ_4K);
++
++	return ALIGN(y_meta_plane + y_plane + uv_meta_plane + uv_plane +
++		     max(extradata, y_stride * 48), SZ_4K);
++}
++
++u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height)
++{
++	switch (hfi_fmt) {
++	case HFI_COLOR_FORMAT_NV12:
++	case HFI_COLOR_FORMAT_NV21:
++		return get_framesize_raw_nv12(width, height);
++	case HFI_COLOR_FORMAT_NV12_UBWC:
++		return get_framesize_raw_nv12_ubwc(width, height);
++	default:
++		return 0;
++	}
++}
++EXPORT_SYMBOL_GPL(venus_helper_get_framesz_raw);
++
++u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height)
++{
++	u32 hfi_fmt, sz;
++	bool compressed;
++
++	switch (v4l2_fmt) {
++	case V4L2_PIX_FMT_MPEG:
++	case V4L2_PIX_FMT_H264:
++	case V4L2_PIX_FMT_H264_NO_SC:
++	case V4L2_PIX_FMT_H264_MVC:
++	case V4L2_PIX_FMT_H263:
++	case V4L2_PIX_FMT_MPEG1:
++	case V4L2_PIX_FMT_MPEG2:
++	case V4L2_PIX_FMT_MPEG4:
++	case V4L2_PIX_FMT_XVID:
++	case V4L2_PIX_FMT_VC1_ANNEX_G:
++	case V4L2_PIX_FMT_VC1_ANNEX_L:
++	case V4L2_PIX_FMT_VP8:
++	case V4L2_PIX_FMT_VP9:
++	case V4L2_PIX_FMT_HEVC:
++		compressed = true;
++		break;
++	default:
++		compressed = false;
++		break;
++	}
++
++	if (compressed) {
++		sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
++		return ALIGN(sz, SZ_4K);
++	}
++
++	hfi_fmt = to_hfi_raw_fmt(v4l2_fmt);
++	if (!hfi_fmt)
 +		return 0;
 +
-+	mode.type = HFI_BUFFER_OUTPUT;
-+	mode.mode = HFI_BUFFER_MODE_DYNAMIC;
-+
-+	ret = hfi_session_set_property(inst, ptype, &mode);
-+	if (ret)
-+		return ret;
-+
-+	mode.type = HFI_BUFFER_OUTPUT2;
-+
-+	return hfi_session_set_property(inst, ptype, &mode);
++	return venus_helper_get_framesz_raw(hfi_fmt, width, height);
 +}
-+EXPORT_SYMBOL_GPL(venus_helper_set_dyn_bufmode);
++EXPORT_SYMBOL_GPL(venus_helper_get_framesz);
 +
- static void delayed_process_buf_func(struct work_struct *work)
+ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ 				      unsigned int width, unsigned int height)
  {
- 	struct venus_buffer *buf, *n;
 diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 0e64aa95624a..52b961ed491e 100644
+index 92be45894a69..92b167a47166 100644
 --- a/drivers/media/platform/qcom/venus/helpers.h
 +++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -40,6 +40,7 @@ int venus_helper_set_output_resolution(struct venus_inst *inst,
- int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 			      unsigned int output_bufs);
- int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
-+int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
- void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
- void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
- void venus_helper_init_instance(struct venus_inst *inst);
+@@ -33,6 +33,8 @@ void venus_helper_m2m_device_run(void *priv);
+ void venus_helper_m2m_job_abort(void *priv);
+ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
+ 			    struct hfi_buffer_requirements *req);
++u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height);
++u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height);
+ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ 				      unsigned int width, unsigned int height);
+ int venus_helper_set_output_resolution(struct venus_inst *inst,
 diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 31a240ab142b..92669a358a90 100644
+index 4d3f1cd7ed1d..4e8a4086e6fa 100644
 --- a/drivers/media/platform/qcom/venus/vdec.c
 +++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -557,18 +557,9 @@ static int vdec_set_properties(struct venus_inst *inst)
- 			return ret;
- 	}
+@@ -29,29 +29,6 @@
+ #include "helpers.h"
+ #include "vdec.h"
  
--	if (core->res->hfi_version == HFI_VERSION_3XX ||
--	    inst->cap_bufs_mode_dynamic) {
--		struct hfi_buffer_alloc_mode mode;
+-static u32 get_framesize_uncompressed(unsigned int plane, u32 width, u32 height)
+-{
+-	u32 y_stride, uv_stride, y_plane;
+-	u32 y_sclines, uv_sclines, uv_plane;
+-	u32 size;
 -
--		ptype = HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE;
--		mode.type = HFI_BUFFER_OUTPUT;
--		mode.mode = HFI_BUFFER_MODE_DYNAMIC;
+-	y_stride = ALIGN(width, 128);
+-	uv_stride = ALIGN(width, 128);
+-	y_sclines = ALIGN(height, 32);
+-	uv_sclines = ALIGN(((height + 1) >> 1), 16);
 -
--		ret = hfi_session_set_property(inst, ptype, &mode);
--		if (ret)
--			return ret;
+-	y_plane = y_stride * y_sclines;
+-	uv_plane = uv_stride * uv_sclines + SZ_4K;
+-	size = y_plane + uv_plane + SZ_8K;
+-
+-	return ALIGN(size, SZ_4K);
+-}
+-
+-static u32 get_framesize_compressed(unsigned int width, unsigned int height)
+-{
+-	return ((width * height * 3 / 2) / 2) + 128;
+-}
+-
+ /*
+  * Three resons to keep MPLANE formats (despite that the number of planes
+  * currently is one):
+@@ -160,7 +137,6 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+ 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
+ 	const struct venus_format *fmt;
+-	unsigned int p;
+ 
+ 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
+ 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+@@ -191,18 +167,14 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	pixmp->num_planes = fmt->num_planes;
+ 	pixmp->flags = 0;
+ 
+-	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+-		for (p = 0; p < pixmp->num_planes; p++) {
+-			pfmt[p].sizeimage =
+-				get_framesize_uncompressed(p, pixmp->width,
+-							   pixmp->height);
+-			pfmt[p].bytesperline = ALIGN(pixmp->width, 128);
+-		}
+-	} else {
+-		pfmt[0].sizeimage = get_framesize_compressed(pixmp->width,
+-							     pixmp->height);
++	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
++						     pixmp->width,
++						     pixmp->height);
++
++	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
++		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
++	else
+ 		pfmt[0].bytesperline = 0;
 -	}
-+	ret = venus_helper_set_dyn_bufmode(inst);
-+	if (ret)
-+		return ret;
  
- 	if (ctr->post_loop_deb_mode) {
- 		ptype = HFI_PROPERTY_CONFIG_VDEC_POST_LOOP_DEBLOCKER;
+ 	return fmt;
+ }
+@@ -647,7 +619,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 			    unsigned int sizes[], struct device *alloc_devs[])
+ {
+ 	struct venus_inst *inst = vb2_get_drv_priv(q);
+-	unsigned int p, in_num, out_num;
++	unsigned int in_num, out_num;
+ 	int ret = 0;
+ 
+ 	if (*num_planes) {
+@@ -677,7 +649,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 	switch (q->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+ 		*num_planes = inst->fmt_out->num_planes;
+-		sizes[0] = get_framesize_compressed(inst->out_width,
++		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
++						    inst->out_width,
+ 						    inst->out_height);
+ 		inst->input_buf_size = sizes[0];
+ 		*num_buffers = max(*num_buffers, in_num);
+@@ -686,10 +659,9 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 		*num_planes = inst->fmt_cap->num_planes;
+-
+-		for (p = 0; p < *num_planes; p++)
+-			sizes[p] = get_framesize_uncompressed(p, inst->width,
+-							      inst->height);
++		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
++						    inst->width,
++						    inst->height);
+ 		inst->output_buf_size = sizes[0];
+ 		*num_buffers = max(*num_buffers, out_num);
+ 		inst->num_output_bufs = *num_buffers;
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index abde7d6d123f..31aafe487fa1 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -31,32 +31,6 @@
+ 
+ #define NUM_B_FRAMES_MAX	4
+ 
+-static u32 get_framesize_uncompressed(unsigned int plane, u32 width, u32 height)
+-{
+-	u32 y_stride, uv_stride, y_plane;
+-	u32 y_sclines, uv_sclines, uv_plane;
+-	u32 size;
+-
+-	y_stride = ALIGN(width, 128);
+-	uv_stride = ALIGN(width, 128);
+-	y_sclines = ALIGN(height, 32);
+-	uv_sclines = ALIGN(((height + 1) >> 1), 16);
+-
+-	y_plane = y_stride * y_sclines;
+-	uv_plane = uv_stride * uv_sclines + SZ_4K;
+-	size = y_plane + uv_plane + SZ_8K;
+-	size = ALIGN(size, SZ_4K);
+-
+-	return size;
+-}
+-
+-static u32 get_framesize_compressed(u32 width, u32 height)
+-{
+-	u32 sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
+-
+-	return ALIGN(sz, SZ_4K);
+-}
+-
+ /*
+  * Three resons to keep MPLANE formats (despite that the number of planes
+  * currently is one):
+@@ -284,7 +258,6 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+ 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
+ 	const struct venus_format *fmt;
+-	unsigned int p;
+ 
+ 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
+ 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+@@ -318,19 +291,14 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	pixmp->num_planes = fmt->num_planes;
+ 	pixmp->flags = 0;
+ 
+-	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+-		for (p = 0; p < pixmp->num_planes; p++) {
+-			pfmt[p].sizeimage =
+-				get_framesize_uncompressed(p, pixmp->width,
+-							   pixmp->height);
++	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
++						     pixmp->width,
++						     pixmp->height);
+ 
+-			pfmt[p].bytesperline = ALIGN(pixmp->width, 128);
+-		}
+-	} else {
+-		pfmt[0].sizeimage = get_framesize_compressed(pixmp->width,
+-							     pixmp->height);
++	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
++		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
++	else
+ 		pfmt[0].bytesperline = 0;
+-	}
+ 
+ 	return fmt;
+ }
+@@ -845,7 +813,7 @@ static int venc_queue_setup(struct vb2_queue *q,
+ 			    unsigned int sizes[], struct device *alloc_devs[])
+ {
+ 	struct venus_inst *inst = vb2_get_drv_priv(q);
+-	unsigned int p, num, min = 4;
++	unsigned int num, min = 4;
+ 	int ret = 0;
+ 
+ 	if (*num_planes) {
+@@ -880,16 +848,18 @@ static int venc_queue_setup(struct vb2_queue *q,
+ 		*num_buffers = max(*num_buffers, num);
+ 		inst->num_input_bufs = *num_buffers;
+ 
+-		for (p = 0; p < *num_planes; ++p)
+-			sizes[p] = get_framesize_uncompressed(p, inst->width,
+-							      inst->height);
++		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
++						    inst->width,
++						    inst->height);
+ 		inst->input_buf_size = sizes[0];
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 		*num_planes = inst->fmt_cap->num_planes;
+ 		*num_buffers = max(*num_buffers, min);
+ 		inst->num_output_bufs = *num_buffers;
+-		sizes[0] = get_framesize_compressed(inst->width, inst->height);
++		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
++						    inst->width,
++						    inst->height);
+ 		inst->output_buf_size = sizes[0];
+ 		break;
+ 	default:
 -- 
 2.14.1
 
