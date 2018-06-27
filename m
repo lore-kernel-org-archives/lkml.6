@@ -2,104 +2,105 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE410C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B04C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A577C22555
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:23:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A577C22555
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 95CA5208A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:28:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSVw+FE0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95CA5208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966203AbeF0RXz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:23:55 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41054 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965022AbeF0RXx (ORCPT
+        id S966226AbeF0R2g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:28:36 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:37613 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933133AbeF0R2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:23:53 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0T3RjcfR_1530120220;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3RjcfR_1530120220)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 28 Jun 2018 01:23:44 +0800
-Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
- large mapping
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        ldufour@linux.vnet.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org
-References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
- <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
- <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
- <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
- <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
- <20180620071817.GJ13685@dhcp22.suse.cz>
- <263935d9-d07c-ab3e-9e42-89f73f57be1e@linux.alibaba.com>
- <20180626074344.GZ2458@hirez.programming.kicks-ass.net>
- <e54e298d-ef86-19a7-6f6b-07776f9a43e2@linux.alibaba.com>
- <20180627072432.GC32348@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <a52f0585-ebec-d098-2775-f55bde3519a4@linux.alibaba.com>
-Date:   Wed, 27 Jun 2018 10:23:39 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 27 Jun 2018 13:28:34 -0400
+Received: by mail-ua0-f193.google.com with SMTP id c2-v6so1776997uae.4;
+        Wed, 27 Jun 2018 10:28:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ATQEAyKtrdbsQgXCnnoaoHcwUQ6XoYC+G9vZ9CeK7Ak=;
+        b=HSVw+FE0dxOqarXFf3x2IXxTHajz79ok9PcZI+w4il/JeCvgCkw5pqRQNOlFiX95ae
+         UXQoM4SnKS3iRC0Goa2XfN/re13ngSmf+OVmFDp1sx4Zh85CsUKIICW+OYA7zkcXJDFu
+         nib+9DqWsYNv2SiEiY3DdrOSswG99bMSRns1uKPBpANqn8dkZ6VIAyZy70cT/Rd/8VpB
+         c+ERTZQ3gO2n3reac/nocABZbAOV0WzX7Xs2qHyrS9v7tIHrjCkyGPRI8TJ0op3Ica/w
+         7n3SEvl7hhiR2Fl2E/I9f0SJ5kckxF96BKA2Mj0OThjF0glvWvlRRjTGyxdYIL+OtXhD
+         Zwfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ATQEAyKtrdbsQgXCnnoaoHcwUQ6XoYC+G9vZ9CeK7Ak=;
+        b=nIvyKlexqlEZYgTlfTSN0gRFBh+1/70CwGDZ92z0TxVydKf8gPIO6nvDysOXkIfXl7
+         tdAUD8gUMAO5vqTedrI8bUxXPI08zT0Utxh1FJwiug6t53HE1ssCwMbG+JObojZu9oOf
+         KXZxR/xuIOctTYyuk4J2JGue+8+sNjzBVGg7fiuMAEIfz78EhBS5GXekTHEASwDlbnvP
+         maF/HdpqZvmZz+DOEbtq16jtUQPMYlNEUmk0iWX5NG9yG05TUgCFfcpLnClJnXroCXGP
+         JkkfyZaw+we/9F8YBE1XYdjGky7N3ssbhn6Y/sKjf+Cu3/HoxJWBxnZg85IqQWujsqyu
+         y4/A==
+X-Gm-Message-State: APt69E1CfG8AqzB630Yvhw7p0iDzytkFuHleWFDS0hnHHOqsio7m7tiG
+        kMEaVL7dvgwreT0F+ks69R306NL2MB4NGPvGhJQ=
+X-Google-Smtp-Source: AAOMgpedXhV6r7NqvCNrgf1IH842qrQInOMZeeEtdKAmfJdbsQI5qRcKqkEl1WDVDZ5DA1Aam3Pq/RyK4LVNrpEybpE=
+X-Received: by 2002:ab0:15ad:: with SMTP id i42-v6mr4307825uae.199.1530120513987;
+ Wed, 27 Jun 2018 10:28:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180627072432.GC32348@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 10:28:33
+ -0700 (PDT)
+In-Reply-To: <8837a9e2-e614-e2bf-ed32-6d49de4dd4ed@gmx.de>
+References: <8837a9e2-e614-e2bf-ed32-6d49de4dd4ed@gmx.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 27 Jun 2018 20:28:33 +0300
+Message-ID: <CAHp75VcQbj7trhupZB7wUnt4QWbsqZZDa-1WvFnSD8ciMCYF6A@mail.gmail.com>
+Subject: Re: small dmesg regression in kernel 4.17.3
+To:     =?UTF-8?Q?Toralf_F=C3=B6rster?= <toralf.foerster@gmx.de>,
+        erik.schmauss@intel.com
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++Cc: Erik
+
+On Tue, Jun 26, 2018 at 8:57 PM, Toralf F=C3=B6rster <toralf.foerster@gmx.d=
+e> wrote:
+> The attached dmesg contains non printable chars 0x01 33 around "ACPI BIOS=
+ Error (bug): Could not resolve" which is a new issue compared to the dmesg=
+ of 4.17.2
+>
+> System is a stable hardened Gentoo Linux at a ThinkPad T440s.
+
+I bet the below commit makes this.
+
+commit 2e78935d1e27d31955ad2dad4abe6c453cf669fd
+Author: Erik Schmauss <erik.schmauss@intel.com>
+Date:   Fri Jun 1 12:06:43 2018 -0700
+
+   ACPICA: AML parser: attempt to continue loading table after error
 
 
-On 6/27/18 12:24 AM, Michal Hocko wrote:
-> On Tue 26-06-18 18:03:34, Yang Shi wrote:
->>
->> On 6/26/18 12:43 AM, Peter Zijlstra wrote:
->>> On Mon, Jun 25, 2018 at 05:06:23PM -0700, Yang Shi wrote:
->>>> By looking this deeper, we may not be able to cover all the unmapping range
->>>> for VM_DEAD, for example, if the start addr is in the middle of a vma. We
->>>> can't set VM_DEAD to that vma since that would trigger SIGSEGV for still
->>>> mapped area.
->>>>
->>>> splitting can't be done with read mmap_sem held, so maybe just set VM_DEAD
->>>> to non-overlapped vmas. Access to overlapped vmas (first and last) will
->>>> still have undefined behavior.
->>> Acquire mmap_sem for writing, split, mark VM_DEAD, drop mmap_sem. Acquire
->>> mmap_sem for reading, madv_free drop mmap_sem. Acquire mmap_sem for
->>> writing, free everything left, drop mmap_sem.
->>>
->>> ?
->>>
->>> Sure, you acquire the lock 3 times, but both write instances should be
->>> 'short', and I suppose you can do a demote between 1 and 2 if you care.
->> Thanks, Peter. Yes, by looking the code and trying two different approaches,
->> it looks this approach is the most straight-forward one.
-> Yes, you just have to be careful about the max vma count limit.
+So, it does add leading '\n' which flushes buffers followed by
+printing the message you see. But, I'm guessing now, kernel adds a
+default level since it's going to dmesg which you can see as
+unprintable symbols.
+Personally I'm not a fan of leading '\n':s since it brings more pain
+than fixing something. It has special meaning (flushing buffers) and
+many developers forget this.
 
-Yes, we should just need copy what do_munmap does as below:
-
-if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
-             return -ENOMEM;
-
-If the mas map count limit has been reached, it will return failure 
-before zapping mappings.
-
-Thanks,
-Yang
-
-
+--=20
+With Best Regards,
+Andy Shevchenko
