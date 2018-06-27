@@ -2,111 +2,98 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C90FC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66733C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DFDA255C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:53:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FDD1255CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:53:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="c1BKz7AP";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XPY0YVPj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DFDA255C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OqbE11P9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FDD1255CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755075AbeF0VxM (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 17:53:12 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:33212 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752434AbeF0VxK (ORCPT
+        id S966081AbeF0VxZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 17:53:25 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42828 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965789AbeF0VxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 17:53:10 -0400
-Received: by mail-yw0-f193.google.com with SMTP id u124-v6so1251570ywg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 14:53:10 -0700 (PDT)
+        Wed, 27 Jun 2018 17:53:23 -0400
+Received: by mail-lf0-f67.google.com with SMTP id u202-v6so2643202lff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 14:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=6N87UKwkonvMAYI5Y2xpjfhUtlRTKGbyu8tbYZvuAgg=;
-        b=c1BKz7AP0vLbIJZF0DFSdAcoHH1o2Otk7ftNt5+rdDoicoRxTNbzdj05iu7/qikJOk
-         0PxfVkX4kZPxg+mXeklKzHZ/N/HHklWpQNG/nWWsuOldjx9WzDg8cUsT0z8UKy+b39Wc
-         816DPFBI60mP1Mhub0jyDPu+QWn+7c+0h6VaRhZRTHa5nvIABjt4iZ6t6HgoM2cRLC2c
-         cYfdB136zLCx6sS1yMIIeU4ZzRMhIwWUNS0mBCpQCdnmRTG+5hY2Elk2gVh9gmsFCEAl
-         xlNJ0Asx/AF7r4DER8I6agoFhwSwwBKYf9MabytIwagqCCHZOcLq7Bx9/yrK0pc1V6Tg
-         szDA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=6N87UKwkonvMAYI5Y2xpjfhUtlRTKGbyu8tbYZvuAgg=;
-        b=XPY0YVPjxEeiPvht6QUB+EGScRL8rL+e+a7jIYkx9Yknitm7GC9e6sDB3poI0lsW83
-         wS4CDVWOtBaOhUfm2N6CwtLGPemJDtVvbccB6YQecF/mT7RQ3rCkJosrkesU7a/stUzK
-         6k+VrCsopDF+RWMCu/UvHf5VOlnimL9UgKIYU=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=06QtmzGVSmKQGTJ8jMGHYnWBnYqopWkaYi73cz1FOdY=;
+        b=OqbE11P9Fzi9Zhet8d/3XWywvuobFm0NJAWAuefLjWpVDBXS/QGCNyO7oWguqS3hS2
+         a4DxBUWeDGTJ1037gVeWmEiboM1Z1ORdj0XuFhR9tJsgDv9j5VYNXlnPOPvAJ7U0oF1m
+         f6Yg+hDR9S/gpg4EqiADrYvjoknuRfLLVJpu8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=6N87UKwkonvMAYI5Y2xpjfhUtlRTKGbyu8tbYZvuAgg=;
-        b=neTIFJCxzrJaFN+yZmBh+t49FMdwcAHA4tnIofx8quUt5bE17nbLsu5zbp/rNqY9LA
-         Qs+oyTnsVaN11yMd/vwQB3FFKlOEQP9dVNinYNBjcZRDgcQA55q7UffmOScQzYDRR8iP
-         nW3qEoF9x62ll/EltWNIMVPAfFWcIa7VPloFN8MH6j2b97vZenAnEFBpVBVXCu6ITz4g
-         glo2FnItp4YzlIGlC7XALPtXe/mUrxEbmLY2CD+KFDyBWYoPJFFLNmKpMsRHfppqMZPV
-         PJf7klWr+fj1ENV+iowwX/IDUCDWAL26/HFIiT474Up7504GHcrjgTE/fyjm0iwPjTXs
-         6Sfw==
-X-Gm-Message-State: APt69E3IuCZMD6xsnAGniiWzNmnidldEgtMNAdNWbhFhE2Z/nnlNXi7o
-        VpJrQXQ7uq3WdHEnUc3WQzwk4XOkl59XMixCq2EwzG2J
-X-Google-Smtp-Source: AAOMgpdwzHFtERQ+1pQ1sXl690IFIfZwWxC2TdMD4W7hRNFaIHZaaNxCz6bsokVsanEd+W7VkFz6Sy9BuHJAstslj+8=
-X-Received: by 2002:a0d:d105:: with SMTP id t5-v6mr3882599ywd.53.1530136389872;
- Wed, 27 Jun 2018 14:53:09 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 14:53:09
- -0700 (PDT)
-In-Reply-To: <20180627215227.GA13549@redhat.com>
-References: <20180618175033.GA2627@beast> <CAGXu5j+Su3fObnuzntQ7Tp8W6jfMt1hc=h-3Xhidgx--Nau1Ew@mail.gmail.com>
- <20180627215227.GA13549@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 27 Jun 2018 14:53:09 -0700
-X-Google-Sender-Auth: h983SKwBvT44wTFfgU0zAf-jK64
-Message-ID: <CAGXu5jL896qy0OmztQ0Re9Z4-a7ry4jL1RMkgGncs1K85eW-Kw@mail.gmail.com>
-Subject: Re: dm: writecache: Use 2-factor allocator arguments
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alasdair Kergon <agk@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=06QtmzGVSmKQGTJ8jMGHYnWBnYqopWkaYi73cz1FOdY=;
+        b=AIq4uMTizrM8NNX6RrtyIQl1eW4aZbyt1YQDkMigj42ZGxS6FWaq28sJut6R7tE/AF
+         5ZnRq/rSntoD/6d+lNhZYRZrpyNevyJbtgseq7dcLxkkm2NFbT1wLPPtZqqTEj0aycJ7
+         yG+IC68yrQj09g9qEUjTUNyCyM0BOCzjBIDzIcNeC4leWiOSARguYjHeEjGV9zh4MPsv
+         92nFUjZnKOo3tV9j3+TIt7Ux0Xx/gBNPI7H7a702YE8cQZxc8kqGebtyj5wWT2mimZiA
+         LO8evjun34YFTG3NwFmBUmKzrqB+jLqVslb4cqyZ12fnO/z0MPzqG/OITHuV37Se6ZwH
+         FruA==
+X-Gm-Message-State: APt69E0uTYh0wvSM4OyhpCHfO0wMOQ65BGa13pko9WD5hMzCKYZaib5C
+        Uul+mj/w8AkNrYel+It9zedWAQ==
+X-Google-Smtp-Source: AAOMgpcUhsBmIpsryFuk8GsiTuKWrwXW8x0eNMawaMkkengiJrVgA8FImL7oWJ0f5eGl+cUDDOjl8Q==
+X-Received: by 2002:a19:a685:: with SMTP id p127-v6mr5005637lfe.4.1530136402370;
+        Wed, 27 Jun 2018 14:53:22 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id p5-v6sm635353lfc.19.2018.06.27.14.53.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Jun 2018 14:53:21 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] firmware: qcom: scm: add a dummy qcom_scm_assign_mem()
+Date:   Wed, 27 Jun 2018 23:53:17 +0200
+Message-Id: <20180627215319.1417-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 2:52 PM, Mike Snitzer <snitzer@redhat.com> wrote:
-> On Wed, Jun 27 2018 at  5:48pm -0400,
-> Kees Cook <keescook@chromium.org> wrote:
->
->> On Mon, Jun 18, 2018 at 10:50 AM, Kees Cook <keescook@chromium.org> wrote:
->> > This adjusts the allocator calls to use the 2-factor argument style, as
->> > already done treewide for better defense against allocator overflows.
->> > Additionally adjusts style nit to avoid assignments in test expressions.
->> >
->> > Signed-off-by: Kees Cook <keescook@chromium.org>
->>
->> Friendly ping -- I'd like to make sure this makes it into 4.18. All
->> other 2-factor allocations have been fixed in the kernel.
->
-> Yeap, I'll be sending it to Linus this week.  Already staged and ready
-> to go, please see:
-> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-4.18&id=50a7d3ba7c9ac5e0b7e03fc7f420180989361dbf
+Add a dummy qcom_scm_assign_mem() to enable building drivers when
+CONFIG_COMPILE_TEST=y && CONFIG_QCOM_SCM=n.
 
-Ah! Thank you very much! :)
+All other qcom_scm_* functions already have a dummy version.
 
--Kees
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ include/linux/qcom_scm.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
+index da63d84e1e91..06996ad4f2bc 100644
+--- a/include/linux/qcom_scm.h
++++ b/include/linux/qcom_scm.h
+@@ -89,6 +89,10 @@ static inline int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr,
+ static inline int
+ qcom_scm_pas_auth_and_reset(u32 peripheral) { return -ENODEV; }
+ static inline int qcom_scm_pas_shutdown(u32 peripheral) { return -ENODEV; }
++static inline int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
++				      unsigned int *src,
++				      struct qcom_scm_vmperm *newvm,
++				      int dest_cnt) { return -ENODEV; }
+ static inline void qcom_scm_cpu_power_down(u32 flags) {}
+ static inline u32 qcom_scm_get_version(void) { return 0; }
+ static inline u32
 -- 
-Kees Cook
-Pixel Security
+2.17.1
+
