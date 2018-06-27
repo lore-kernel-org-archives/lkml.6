@@ -2,145 +2,862 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 132CBC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64046C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB27225E61
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:21:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AcgtJBH8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB27225E61
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 126AB25EF9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:22:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 126AB25EF9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965516AbeF0PVh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:21:37 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33484 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964834AbeF0PVe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:21:34 -0400
-Received: by mail-io0-f195.google.com with SMTP id d185-v6so2269916ioe.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=OyEJcaBYlGr1pe/DUkTWY88VpPjStKt/hB5EqVgM4UQ=;
-        b=AcgtJBH8IpM8+/773zi6y8ZCZZrivD8JV2rRGpkadvbNpnyu2HwJH2v4AtB29Y/NrO
-         mlAcmn30OSRNhydo66u1ZDwUEY8WCJBGR0zakh0x+BjFucL8oi7qPQneu60Xb1WMC86a
-         lfiEu9tVK3B2vIKlXa9wcBuWdJRnjQEzyD1ow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=OyEJcaBYlGr1pe/DUkTWY88VpPjStKt/hB5EqVgM4UQ=;
-        b=rNHlKQoTMZ/4FZJV7rQVCAEfb7jj5I47/D9IR5N/P7+VI7aduhuSfEB2945HLyi3Ti
-         0Xmlu+0b1L8KKRYnaHEV6rOFBXltDGwQo+N4/jwMXci0K0G7fG+UV+FNjM9CXLOMDZDp
-         +x67eEWsaJpqdMSGtpGJhB//zzOWEt4211xGr1JGoZNoSq8pD8bSnMKFRaZ69VR4P0qJ
-         n2hnT5EtwJ3EeEHV6mxOEioj8+9LCMNaDM1LE1a24lA5pFr0rDdzoDEvyF/tcBHpL6Cu
-         tERmY7LZdC5W9Y3QUVZQuuYO9c5lCnlzeel1D2gIx73IlSNIk4grGz88XM78EUOyWQ0m
-         pupA==
-X-Gm-Message-State: APt69E1cRjT+L504gEYP6Kub0mxpmNqtGATqMAfS2hssol9o9T77Um4u
-        wQySjvLjimkdet9yH8MP+DVHod42kN4dWs8gpamlwYl2
-X-Google-Smtp-Source: AAOMgpcCo7MRiU3ueNwghGQz1Q0PMbTVa/7ftUxiR1rrWa8yrwHcUX9BKuXasjJf961oXq15Y95RIj4rII85DvFY1qc=
-X-Received: by 2002:a6b:520d:: with SMTP id g13-v6mr5603421iob.60.1530112893657;
- Wed, 27 Jun 2018 08:21:33 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 08:21:33
- -0700 (PDT)
-In-Reply-To: <20180627151339.GD30631@arm.com>
-References: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
- <20180626182802.19932-4-ard.biesheuvel@linaro.org> <20180627151339.GD30631@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 27 Jun 2018 17:21:33 +0200
-Message-ID: <CAKv+Gu8v4VGzKSQ1F6r6B_U2xhffM1EJQWCJYuf+4-xsf_hjuw@mail.gmail.com>
-Subject: Re: [PATCH v9 3/6] module: use relative references for __ksymtab entries
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Mackerras <paulus@samba.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S934776AbeF0PWA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:22:00 -0400
+Received: from mga02.intel.com ([134.134.136.20]:5408 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934152AbeF0PUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 11:20:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 08:20:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
+   d="scan'208";a="67768802"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2018 08:20:06 -0700
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Hans de Goede <hdegoede@redhat.com>, Jun Li <jun.li@nxp.com>,
+        Mats Karrman <mats.dev.list@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/8] usb: typec: Add driver for DisplayPort alternate mode
+Date:   Wed, 27 Jun 2018 18:19:51 +0300
+Message-Id: <20180627151953.30942-7-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180627151953.30942-1-heikki.krogerus@linux.intel.com>
+References: <20180627151953.30942-1-heikki.krogerus@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 June 2018 at 17:13, Will Deacon <will.deacon@arm.com> wrote:
-> Hi Ard,
->
-> On Tue, Jun 26, 2018 at 08:27:58PM +0200, Ard Biesheuvel wrote:
->> An ordinary arm64 defconfig build has ~64 KB worth of __ksymtab
->> entries, each consisting of two 64-bit fields containing absolute
->> references, to the symbol itself and to a char array containing
->> its name, respectively.
->
-> [...]
->
->> diff --git a/include/linux/export.h b/include/linux/export.h
->> index ea7df303d68d..ae072bc5aacf 100644
->> --- a/include/linux/export.h
->> +++ b/include/linux/export.h
->> @@ -18,12 +18,6 @@
->>  #define VMLINUX_SYMBOL_STR(x) __VMLINUX_SYMBOL_STR(x)
->>
->>  #ifndef __ASSEMBLY__
->> -struct kernel_symbol
->> -{
->> -     unsigned long value;
->> -     const char *name;
->> -};
->> -
->>  #ifdef MODULE
->>  extern struct module __this_module;
->>  #define THIS_MODULE (&__this_module)
->> @@ -54,17 +48,47 @@ extern struct module __this_module;
->>  #define __CRC_SYMBOL(sym, sec)
->>  #endif
->>
->> +#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->> +#include <linux/compiler.h>
->> +/*
->> + * Emit the ksymtab entry as a pair of relative references: this reduces
->> + * the size by half on 64-bit architectures, and eliminates the need for
->> + * absolute relocations that require runtime processing on relocatable
->> + * kernels.
->> + */
->> +#define __KSYMTAB_ENTRY(sym, sec)                                    \
->> +     __ADDRESSABLE(sym)                                              \
->> +     asm("   .section \"___ksymtab" sec "+" #sym "\", \"a\"  \n"     \
->> +         "   .balign 8                                       \n"     \
->
-> Can we use KSYM_ALIGN here instead of 8, or do we need the 8-byte alignment
-> even on 32-bit architectures?
->
+DisplayPort USB Type-C Alt Mode allows DisplayPort displays
+and adapters to be attached to the USB Type-C ports on the
+system.
 
-We don't *need* 8 byte alignment on any architecture, but since the
-structure itself is 8 bytes in size and we have a sizable array of
-them, it makes sense to align them to 8 bytes.
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+ .../testing/sysfs-driver-typec-displayport    |  49 ++
+ drivers/usb/typec/Kconfig                     |   2 +
+ drivers/usb/typec/Makefile                    |   1 +
+ drivers/usb/typec/altmodes/Kconfig            |  14 +
+ drivers/usb/typec/altmodes/Makefile           |   2 +
+ drivers/usb/typec/altmodes/displayport.c      | 578 ++++++++++++++++++
+ include/linux/usb/typec_dp.h                  |  95 +++
+ 7 files changed, 741 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-typec-displayport
+ create mode 100644 drivers/usb/typec/altmodes/Kconfig
+ create mode 100644 drivers/usb/typec/altmodes/Makefile
+ create mode 100644 drivers/usb/typec/altmodes/displayport.c
+ create mode 100644 include/linux/usb/typec_dp.h
+
+diff --git a/Documentation/ABI/testing/sysfs-driver-typec-displayport b/Documentation/ABI/testing/sysfs-driver-typec-displayport
+new file mode 100644
+index 000000000000..231471ad0d4b
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-driver-typec-displayport
+@@ -0,0 +1,49 @@
++What:		/sys/bus/typec/devices/.../displayport/configuration
++Date:		July 2018
++Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
++Description:
++		Shows the current DisplayPort configuration for the connector.
++		Valid values are USB, source and sink. Source means DisplayPort
++		source, and sink means DisplayPort sink.
++
++		All supported configurations are listed as space separated list
++		with the active one wrapped in square brackets.
++
++		Source example:
++
++			USB [source] sink
++
++		The configuration can be changed by writing to the file
++
++		Note. USB configuration does not equal to Exit Mode. It is
++		separate configuration defined in VESA DisplayPort Alt Mode on
++		USB Type-C Standard. Functionally it equals to the situation
++		where the mode has been exited (to exit the mode, see
++		Documentation/ABI/testing/sysfs-bus-typec, and use file
++		/sys/bus/typec/devices/.../active).
++
++What:		/sys/bus/typec/devices/.../displayport/pin_assignment
++Date:		July 2018
++Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
++Description:
++		VESA DisplayPort Alt Mode on USB Type-C Standard defines six
++		different pin assignments for USB Type-C connector that are
++		labeled A, B, C, D, E, and F. The supported pin assignments are
++		listed as space separated list with the active one wrapped in
++		square brackets.
++
++		Example:
++
++			C [D]
++
++		Pin assignment can be changed by writing to the file. It is
++		possible to set pin assignment before configuration has been
++		set, but the assignment will not be active before the
++		connector is actually configured.
++
++		Note. As of VESA DisplayPort Alt Mode on USB Type-C Standard
++		version 1.0b, pin assignments A, B, and F are deprecated. Only
++		pin assignment D can now carry simultaneously one channel of
++		USB SuperSpeed protocol. From user perspective pin assignments C
++		and E are equal, where all channels on the connector are used
++		for carrying DisplayPort protocol (allowing higher resolutions).
+diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
+index 2c8eab11a493..652d49ede8b8 100644
+--- a/drivers/usb/typec/Kconfig
++++ b/drivers/usb/typec/Kconfig
+@@ -88,4 +88,6 @@ config TYPEC_TPS6598X
+ 
+ source "drivers/usb/typec/mux/Kconfig"
+ 
++source "drivers/usb/typec/altmodes/Kconfig"
++
+ endif # TYPEC
+diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
+index 5466c62c8e97..65651ec65d19 100644
+--- a/drivers/usb/typec/Makefile
++++ b/drivers/usb/typec/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_TYPEC)		+= typec.o
+ typec-y				:= class.o mux.o bus.o
++obj-$(CONFIG_TYPEC)		+= altmodes/
+ obj-$(CONFIG_TYPEC_TCPM)	+= tcpm.o
+ obj-y				+= fusb302/
+ obj-$(CONFIG_TYPEC_WCOVE)	+= typec_wcove.o
+diff --git a/drivers/usb/typec/altmodes/Kconfig b/drivers/usb/typec/altmodes/Kconfig
+new file mode 100644
+index 000000000000..efef2a64bc51
+--- /dev/null
++++ b/drivers/usb/typec/altmodes/Kconfig
+@@ -0,0 +1,14 @@
++
++menu "USB Type-C Alternate Mode drivers"
++
++config TYPEC_DP_ALTMODE
++	tristate "DisplayPort Alternate Mode driver"
++	help
++	  DisplayPort USB Type-C Alternate Mode allows DisplayPort
++	  displays and adapters to be attached to the USB Type-C
++	  connectors on the system.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called typec_displayport.
++
++endmenu
+diff --git a/drivers/usb/typec/altmodes/Makefile b/drivers/usb/typec/altmodes/Makefile
+new file mode 100644
+index 000000000000..5caf094ef71a
+--- /dev/null
++++ b/drivers/usb/typec/altmodes/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_TYPEC_DP_ALTMODE)		+= typec_displayport.o
++typec_displayport-y			:= displayport.o
+diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
+new file mode 100644
+index 000000000000..ef12b15bd484
+--- /dev/null
++++ b/drivers/usb/typec/altmodes/displayport.c
+@@ -0,0 +1,578 @@
++// SPDX-License-Identifier: GPL-2.0
++/**
++ * USB Typec-C DisplayPort Alternate Mode driver
++ *
++ * Copyright (C) 2018 Intel Corporation
++ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
++ *
++ * DisplayPort is trademark of VESA (www.vesa.org)
++ */
++
++#include <linux/delay.h>
++#include <linux/mutex.h>
++#include <linux/module.h>
++#include <linux/usb/pd_vdo.h>
++#include <linux/usb/typec_dp.h>
++
++#define DP_HEADER(cmd)			(VDO(USB_TYPEC_DP_SID, 1, cmd) | \
++					 VDO_OPOS(USB_TYPEC_DP_MODE))
++
++enum {
++	DP_CONF_USB,
++	DP_CONF_DFP_D,
++	DP_CONF_UFP_D,
++	DP_CONF_DUAL_D,
++};
++
++/* Helper for setting/getting the pin assignement value to the configuration */
++#define DP_CONF_SET_PIN_ASSIGN(_a_)	((_a_) << 8)
++#define DP_CONF_GET_PIN_ASSIGN(_conf_)	(((_conf_) & GENMASK(15, 8)) >> 8)
++
++/* Pin assignments that use USB3.1 Gen2 signaling to carry DP protocol */
++#define DP_PIN_ASSIGN_GEN2_BR_MASK	(BIT(DP_PIN_ASSIGN_A) | \
++					 BIT(DP_PIN_ASSIGN_B))
++
++/* Pin assignments that use DP v1.3 signaling to carry DP protocol */
++#define DP_PIN_ASSIGN_DP_BR_MASK	(BIT(DP_PIN_ASSIGN_C) | \
++					 BIT(DP_PIN_ASSIGN_D) | \
++					 BIT(DP_PIN_ASSIGN_E) | \
++					 BIT(DP_PIN_ASSIGN_F))
++
++/* DP only pin assignments */
++#define DP_PIN_ASSIGN_DP_ONLY_MASK	(BIT(DP_PIN_ASSIGN_A) | \
++					 BIT(DP_PIN_ASSIGN_C) | \
++					 BIT(DP_PIN_ASSIGN_E))
++
++/* Pin assignments where one channel is for USB */
++#define DP_PIN_ASSIGN_MULTI_FUNC_MASK	(BIT(DP_PIN_ASSIGN_B) | \
++					 BIT(DP_PIN_ASSIGN_D) | \
++					 BIT(DP_PIN_ASSIGN_F))
++
++enum dp_state {
++	DP_STATE_IDLE,
++	DP_STATE_ENTER,
++	DP_STATE_UPDATE,
++	DP_STATE_CONFIGURE,
++	DP_STATE_EXIT,
++};
++
++struct dp_altmode {
++	struct typec_displayport_data data;
++
++	enum dp_state state;
++
++	struct mutex lock; /* device lock */
++	struct work_struct work;
++	struct typec_altmode *alt;
++	const struct typec_altmode *port;
++};
++
++static int dp_altmode_notify(struct dp_altmode *dp)
++{
++	u8 state = get_count_order(DP_CONF_GET_PIN_ASSIGN(dp->data.conf));
++
++	return typec_altmode_notify(dp->alt, TYPEC_MODAL_STATE(state),
++				   &dp->data);
++}
++
++static int dp_altmode_configure(struct dp_altmode *dp, u8 con)
++{
++	u32 conf = DP_CONF_SIGNALING_DP; /* Only DP signaling supported */
++	u8 pin_assign = 0;
++
++	switch (con) {
++	case DP_STATUS_CON_DISABLED:
++		return 0;
++	case DP_STATUS_CON_DFP_D:
++		conf |= DP_CONF_UFP_U_AS_DFP_D;
++		pin_assign = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo) &
++			     DP_CAP_DFP_D_PIN_ASSIGN(dp->port->vdo);
++		break;
++	case DP_STATUS_CON_UFP_D:
++	case DP_STATUS_CON_BOTH: /* NOTE: First acting as DP source */
++		conf |= DP_CONF_UFP_U_AS_UFP_D;
++		pin_assign = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo) &
++			     DP_CAP_UFP_D_PIN_ASSIGN(dp->port->vdo);
++		break;
++	default:
++		break;
++	}
++
++	/* Determining the initial pin assignment. */
++	if (!DP_CONF_GET_PIN_ASSIGN(dp->data.conf)) {
++		/* Is USB together with DP preferred */
++		if (dp->data.status & DP_STATUS_PREFER_MULTI_FUNC &&
++		    pin_assign & DP_PIN_ASSIGN_MULTI_FUNC_MASK)
++			pin_assign &= DP_PIN_ASSIGN_MULTI_FUNC_MASK;
++		else
++			pin_assign &= DP_PIN_ASSIGN_DP_ONLY_MASK;
++
++		if (!pin_assign)
++			return -EINVAL;
++
++		conf |= DP_CONF_SET_PIN_ASSIGN(pin_assign);
++	}
++
++	dp->data.conf = conf;
++
++	return 0;
++}
++
++static int dp_altmode_status_update(struct dp_altmode *dp)
++{
++	bool configured = !!DP_CONF_GET_PIN_ASSIGN(dp->data.conf);
++	u8 con = DP_STATUS_CONNECTION(dp->data.status);
++	int ret = 0;
++
++	if (configured && (dp->data.status & DP_STATUS_SWITCH_TO_USB)) {
++		dp->data.conf = 0;
++		dp->state = DP_STATE_CONFIGURE;
++	} else if (dp->data.status & DP_STATUS_EXIT_DP_MODE) {
++		dp->state = DP_STATE_EXIT;
++	} else if (!(con & DP_CONF_CURRENTLY(dp->data.conf))) {
++		ret = dp_altmode_configure(dp, con);
++		if (!ret)
++			dp->state = DP_STATE_CONFIGURE;
++	}
++
++	return ret;
++}
++
++static int dp_altmode_configured(struct dp_altmode *dp)
++{
++	int ret;
++
++	sysfs_notify(&dp->alt->dev.kobj, "displayport", "configuration");
++
++	if (!dp->data.conf)
++		return typec_altmode_notify(dp->alt, TYPEC_STATE_USB,
++					    &dp->data);
++
++	ret = dp_altmode_notify(dp);
++	if (ret)
++		return ret;
++
++	sysfs_notify(&dp->alt->dev.kobj, "displayport", "pin_assignment");
++
++	return 0;
++}
++
++static int dp_altmode_configure_vdm(struct dp_altmode *dp, u32 conf)
++{
++	u32 header = DP_HEADER(DP_CMD_CONFIGURE);
++	int ret;
++
++	ret = typec_altmode_notify(dp->alt, TYPEC_STATE_SAFE, &dp->data);
++	if (ret) {
++		dev_err(&dp->alt->dev,
++			"unable to put to connector to safe mode\n");
++		return ret;
++	}
++
++	ret = typec_altmode_vdm(dp->alt, header, &conf, 2);
++	if (ret) {
++		if (DP_CONF_GET_PIN_ASSIGN(dp->data.conf))
++			dp_altmode_notify(dp);
++		else
++			typec_altmode_notify(dp->alt, TYPEC_STATE_USB,
++					     &dp->data);
++	}
++
++	return ret;
++}
++
++static void dp_altmode_work(struct work_struct *work)
++{
++	struct dp_altmode *dp = container_of(work, struct dp_altmode, work);
++	u32 header;
++	u32 vdo;
++	int ret;
++
++	mutex_lock(&dp->lock);
++
++	switch (dp->state) {
++	case DP_STATE_ENTER:
++		ret = typec_altmode_enter(dp->alt);
++		if (ret)
++			dev_err(&dp->alt->dev, "failed to enter mode\n");
++		break;
++	case DP_STATE_UPDATE:
++		header = DP_HEADER(DP_CMD_STATUS_UPDATE);
++		vdo = 1;
++		ret = typec_altmode_vdm(dp->alt, header, &vdo, 2);
++		if (ret)
++			dev_err(&dp->alt->dev,
++				"unable to send Status Update command (%d)\n",
++				ret);
++		break;
++	case DP_STATE_CONFIGURE:
++		ret = dp_altmode_configure_vdm(dp, dp->data.conf);
++		if (ret)
++			dev_err(&dp->alt->dev,
++				"unable to send Configure command (%d)\n", ret);
++		break;
++	case DP_STATE_EXIT:
++		if (typec_altmode_exit(dp->alt))
++			dev_err(&dp->alt->dev, "Exit Mode Failed!\n");
++		break;
++	default:
++		break;
++	}
++
++	dp->state = DP_STATE_IDLE;
++
++	mutex_unlock(&dp->lock);
++}
++
++static void dp_altmode_attention(struct typec_altmode *alt, const u32 vdo)
++{
++	struct dp_altmode *dp = typec_altmode_get_drvdata(alt);
++	u8 old_state;
++
++	mutex_lock(&dp->lock);
++
++	old_state = dp->state;
++	dp->data.status = vdo;
++
++	if (old_state != DP_STATE_IDLE)
++		dev_warn(&alt->dev, "ATTENTION while processing state %d\n",
++			 old_state);
++
++	if (dp_altmode_status_update(dp))
++		dev_warn(&alt->dev, "%s: status update failed\n", __func__);
++
++	if (dp_altmode_notify(dp))
++		dev_err(&alt->dev, "%s: notification failed\n", __func__);
++
++	if (old_state == DP_STATE_IDLE && dp->state != DP_STATE_IDLE)
++		schedule_work(&dp->work);
++
++	mutex_unlock(&dp->lock);
++}
++
++static int dp_altmode_vdm(struct typec_altmode *alt,
++			  const u32 hdr, const u32 *vdo, int count)
++{
++	struct dp_altmode *dp = typec_altmode_get_drvdata(alt);
++	int cmd_type = PD_VDO_CMDT(hdr);
++	int cmd = PD_VDO_CMD(hdr);
++	int ret = 0;
++
++	mutex_lock(&dp->lock);
++
++	if (dp->state != DP_STATE_IDLE) {
++		ret = -EBUSY;
++		goto err_unlock;
++	}
++
++	switch (cmd_type) {
++	case CMDT_RSP_ACK:
++		switch (cmd) {
++		case CMD_ENTER_MODE:
++			dp->state = DP_STATE_UPDATE;
++			break;
++		case CMD_EXIT_MODE:
++			dp->data.status = 0;
++			dp->data.conf = 0;
++			break;
++		case DP_CMD_STATUS_UPDATE:
++			dp->data.status = *vdo;
++			ret = dp_altmode_status_update(dp);
++			break;
++		case DP_CMD_CONFIGURE:
++			ret = dp_altmode_configured(dp);
++			break;
++		default:
++			break;
++		}
++		break;
++	case CMDT_RSP_NAK:
++		switch (cmd) {
++		case DP_CMD_CONFIGURE:
++			dp->data.conf = 0;
++			ret = dp_altmode_configured(dp);
++			break;
++		default:
++			break;
++		}
++		break;
++	default:
++		break;
++	}
++
++	if (dp->state != DP_STATE_IDLE)
++		schedule_work(&dp->work);
++
++err_unlock:
++	mutex_unlock(&dp->lock);
++	return ret;
++}
++
++static int dp_altmode_activate(struct typec_altmode *alt, int activate)
++{
++	return activate ? typec_altmode_enter(alt) : typec_altmode_exit(alt);
++}
++
++static const struct typec_altmode_ops dp_altmode_ops = {
++	.attention = dp_altmode_attention,
++	.vdm = dp_altmode_vdm,
++	.activate = dp_altmode_activate,
++};
++
++static const char * const configurations[] = {
++	[DP_CONF_USB]	= "USB",
++	[DP_CONF_DFP_D]	= "source",
++	[DP_CONF_UFP_D]	= "sink",
++};
++
++static ssize_t
++configuration_store(struct device *dev, struct device_attribute *attr,
++		    const char *buf, size_t size)
++{
++	struct dp_altmode *dp = dev_get_drvdata(dev);
++	u32 conf;
++	u32 cap;
++	int con;
++	int ret;
++
++	con = sysfs_match_string(configurations, buf);
++	if (con < 0)
++		return con;
++
++	mutex_lock(&dp->lock);
++
++	if (dp->state != DP_STATE_IDLE) {
++		ret = -EBUSY;
++		goto err_unlock;
++	}
++
++	cap = DP_CAP_CAPABILITY(dp->alt->vdo);
++
++	if ((con == DP_CONF_DFP_D && !(cap & DP_CAP_DFP_D)) ||
++	    (con == DP_CONF_UFP_D && !(cap & DP_CAP_UFP_D)))
++		return -EINVAL;
++
++	conf = dp->data.conf & ~DP_CONF_DUAL_D;
++	conf |= con;
++
++	if (dp->alt->active) {
++		ret = dp_altmode_configure_vdm(dp, conf);
++		if (ret)
++			goto err_unlock;
++	}
++
++	dp->data.conf = conf;
++
++err_unlock:
++	mutex_unlock(&dp->lock);
++
++	return ret ? ret : size;
++}
++
++static ssize_t configuration_show(struct device *dev,
++				  struct device_attribute *attr, char *buf)
++{
++	struct dp_altmode *dp = dev_get_drvdata(dev);
++	int len;
++	u8 cap;
++	u8 cur;
++	int i;
++
++	mutex_lock(&dp->lock);
++
++	cap = DP_CAP_CAPABILITY(dp->alt->vdo);
++	cur = DP_CONF_CURRENTLY(dp->data.conf);
++
++	len = sprintf(buf, "%s ", cur ? "USB" : "[USB]");
++
++	for (i = 1; i < ARRAY_SIZE(configurations); i++) {
++		if (i == cur)
++			len += sprintf(buf + len, "[%s] ", configurations[i]);
++		else if ((i == DP_CONF_DFP_D && cap & DP_CAP_DFP_D) ||
++			 (i == DP_CONF_UFP_D && cap & DP_CAP_UFP_D))
++			len += sprintf(buf + len, "%s ", configurations[i]);
++	}
++
++	mutex_unlock(&dp->lock);
++
++	buf[len - 1] = '\n';
++	return len;
++}
++static DEVICE_ATTR_RW(configuration);
++
++static const char * const pin_assignments[] = {
++	[DP_PIN_ASSIGN_A] = "A",
++	[DP_PIN_ASSIGN_B] = "B",
++	[DP_PIN_ASSIGN_C] = "C",
++	[DP_PIN_ASSIGN_D] = "D",
++	[DP_PIN_ASSIGN_E] = "E",
++	[DP_PIN_ASSIGN_F] = "F",
++};
++
++static ssize_t
++pin_assignment_store(struct device *dev, struct device_attribute *attr,
++		     const char *buf, size_t size)
++{
++	struct dp_altmode *dp = dev_get_drvdata(dev);
++	u8 assignments;
++	u32 conf;
++	int ret;
++
++	ret = sysfs_match_string(pin_assignments, buf);
++	if (ret < 0)
++		return ret;
++
++	conf = DP_CONF_SET_PIN_ASSIGN(BIT(ret));
++	ret = 0;
++
++	mutex_lock(&dp->lock);
++
++	if (conf & dp->data.conf)
++		goto out_unlock;
++
++	if (dp->state != DP_STATE_IDLE) {
++		ret = -EBUSY;
++		goto out_unlock;
++	}
++
++	if (DP_CONF_CURRENTLY(dp->data.conf) == DP_CONF_DFP_D)
++		assignments = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo);
++	else
++		assignments = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo);
++
++	if (!(DP_CONF_GET_PIN_ASSIGN(conf) & assignments)) {
++		ret = -EINVAL;
++		goto out_unlock;
++	}
++
++	conf |= dp->data.conf & ~DP_CONF_PIN_ASSIGNEMENT_MASK;
++
++	/* Only send Configure command if a configuration has been set */
++	if (dp->alt->active && DP_CONF_CURRENTLY(dp->data.conf)) {
++		ret = dp_altmode_configure_vdm(dp, conf);
++		if (ret)
++			goto out_unlock;
++	}
++
++	dp->data.conf = conf;
++
++out_unlock:
++	mutex_unlock(&dp->lock);
++
++	return ret ? ret : size;
++}
++
++static ssize_t pin_assignment_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
++{
++	struct dp_altmode *dp = dev_get_drvdata(dev);
++	u8 assignments;
++	int len = 0;
++	u8 cur;
++	int i;
++
++	mutex_lock(&dp->lock);
++
++	cur = get_count_order(DP_CONF_GET_PIN_ASSIGN(dp->data.conf));
++
++	if (DP_CONF_CURRENTLY(dp->data.conf) == DP_CONF_DFP_D)
++		assignments = DP_CAP_UFP_D_PIN_ASSIGN(dp->alt->vdo);
++	else
++		assignments = DP_CAP_DFP_D_PIN_ASSIGN(dp->alt->vdo);
++
++	for (i = 0; assignments; assignments >>= 1, i++) {
++		if (assignments & 1) {
++			if (i == cur)
++				len += sprintf(buf + len, "[%s] ",
++					       pin_assignments[i]);
++			else
++				len += sprintf(buf + len, "%s ",
++					       pin_assignments[i]);
++		}
++	}
++
++	mutex_unlock(&dp->lock);
++
++	buf[len - 1] = '\n';
++	return len;
++}
++static DEVICE_ATTR_RW(pin_assignment);
++
++static struct attribute *dp_altmode_attrs[] = {
++	&dev_attr_configuration.attr,
++	&dev_attr_pin_assignment.attr,
++	NULL
++};
++
++static const struct attribute_group dp_altmode_group = {
++	.name = "displayport",
++	.attrs = dp_altmode_attrs,
++};
++
++static int dp_altmode_probe(struct typec_altmode *alt)
++{
++	const struct typec_altmode *port = typec_altmode_get_partner(alt);
++	struct dp_altmode *dp;
++	int ret;
++
++	/* FIXME: Port can only be DFP_U. */
++
++	/* Make sure we have compatiple pin configurations */
++	if (!(DP_CAP_DFP_D_PIN_ASSIGN(port->vdo) &
++	      DP_CAP_UFP_D_PIN_ASSIGN(alt->vdo)) &&
++	    !(DP_CAP_UFP_D_PIN_ASSIGN(port->vdo) &
++	      DP_CAP_DFP_D_PIN_ASSIGN(alt->vdo)))
++		return -ENODEV;
++
++	ret = sysfs_create_group(&alt->dev.kobj, &dp_altmode_group);
++	if (ret)
++		return ret;
++
++	dp = devm_kzalloc(&alt->dev, sizeof(*dp), GFP_KERNEL);
++	if (!dp)
++		return -ENOMEM;
++
++	INIT_WORK(&dp->work, dp_altmode_work);
++	mutex_init(&dp->lock);
++	dp->port = port;
++	dp->alt = alt;
++
++	alt->desc = "DisplayPort";
++	alt->ops = &dp_altmode_ops;
++
++	typec_altmode_set_drvdata(alt, dp);
++
++	dp->state = DP_STATE_ENTER;
++	schedule_work(&dp->work);
++
++	return 0;
++}
++
++static void dp_altmode_remove(struct typec_altmode *alt)
++{
++	struct dp_altmode *dp = typec_altmode_get_drvdata(alt);
++
++	sysfs_remove_group(&alt->dev.kobj, &dp_altmode_group);
++	cancel_work_sync(&dp->work);
++}
++
++static const struct typec_device_id dp_typec_id[] = {
++	{ USB_TYPEC_DP_SID, USB_TYPEC_DP_MODE },
++	{ },
++};
++MODULE_DEVICE_TABLE(typec, dp_typec_id);
++
++static struct typec_altmode_driver dp_altmode_driver = {
++	.id_table = dp_typec_id,
++	.probe = dp_altmode_probe,
++	.remove = dp_altmode_remove,
++	.driver = {
++		.name = "typec_displayport",
++		.owner = THIS_MODULE,
++	},
++};
++module_typec_altmode_driver(dp_altmode_driver);
++
++MODULE_AUTHOR("Heikki Krogerus <heikki.krogerus@linux.intel.com>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("DisplayPort Alternate Mode");
+diff --git a/include/linux/usb/typec_dp.h b/include/linux/usb/typec_dp.h
+new file mode 100644
+index 000000000000..55ae781d60a9
+--- /dev/null
++++ b/include/linux/usb/typec_dp.h
+@@ -0,0 +1,95 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __USB_TYPEC_DP_H
++#define __USB_TYPEC_DP_H
++
++#include <linux/usb/typec_altmode.h>
++
++#define USB_TYPEC_DP_SID	0xff01
++#define USB_TYPEC_DP_MODE	1
++
++/*
++ * Connector states matching the pin assignments in DisplayPort Alt Mode
++ * Specification.
++ *
++ * These values are meant primarily to be used by the mux drivers, but they are
++ * also used as the "value" part in the alternate mode notification chain, so
++ * receivers of those notifications will always see them.
++ *
++ * Note. DisplayPort USB Type-C Alt Mode Specification version 1.0b deprecated
++ * pin assignments A, B and F, but they are still defined here for legacy
++ * purposes.
++ */
++enum {
++	TYPEC_DP_STATE_A = TYPEC_STATE_MODAL,	/* Not supported after v1.0b */
++	TYPEC_DP_STATE_B,			/* Not supported after v1.0b */
++	TYPEC_DP_STATE_C,
++	TYPEC_DP_STATE_D,
++	TYPEC_DP_STATE_E,
++	TYPEC_DP_STATE_F,			/* Not supported after v1.0b */
++};
++
++/*
++ * struct typec_displayport_data - DisplayPort Alt Mode specific data
++ * @status: Status Update command VDO content
++ * @conf: Configure command VDO content
++ *
++ * This structure is delivered as the data part with the notifications. It
++ * contains the VDOs from the two DisplayPort Type-C alternate mode specific
++ * commands: Status Update and Configure.
++ *
++ * @status will show for example the status of the HPD signal.
++ */
++struct typec_displayport_data {
++	u32 status;
++	u32 conf;
++};
++
++enum {
++	DP_PIN_ASSIGN_A, /* Not supported after v1.0b */
++	DP_PIN_ASSIGN_B, /* Not supported after v1.0b */
++	DP_PIN_ASSIGN_C,
++	DP_PIN_ASSIGN_D,
++	DP_PIN_ASSIGN_E,
++	DP_PIN_ASSIGN_F, /* Not supported after v1.0b */
++};
++
++/* DisplayPort alt mode specific commands */
++#define DP_CMD_STATUS_UPDATE		VDO_CMD_VENDOR(0)
++#define DP_CMD_CONFIGURE		VDO_CMD_VENDOR(1)
++
++/* DisplayPort Capabilities VDO bits (returned with Discover Modes) */
++#define DP_CAP_CAPABILITY(_cap_)	((_cap_) & 3)
++#define   DP_CAP_UFP_D			1
++#define   DP_CAP_DFP_D			2
++#define   DP_CAP_DFP_D_AND_UFP_D	3
++#define DP_CAP_DP_SIGNALING		BIT(2) /* Always set */
++#define DP_CAP_GEN2			BIT(3) /* Reserved after v1.0b */
++#define DP_CAP_RECEPTACLE		BIT(6)
++#define DP_CAP_USB			BIT(7)
++#define DP_CAP_DFP_D_PIN_ASSIGN(_cap_)	(((_cap_) & GENMASK(15, 8)) >> 8)
++#define DP_CAP_UFP_D_PIN_ASSIGN(_cap_)	(((_cap_) & GENMASK(23, 16)) >> 16)
++
++/* DisplayPort Status Update VDO bits */
++#define DP_STATUS_CONNECTION(_status_)	((_status_) & 3)
++#define   DP_STATUS_CON_DISABLED	0
++#define   DP_STATUS_CON_DFP_D		1
++#define   DP_STATUS_CON_UFP_D		2
++#define   DP_STATUS_CON_BOTH		3
++#define DP_STATUS_POWER_LOW		BIT(2)
++#define DP_STATUS_ENABLED		BIT(3)
++#define DP_STATUS_PREFER_MULTI_FUNC	BIT(4)
++#define DP_STATUS_SWITCH_TO_USB		BIT(5)
++#define DP_STATUS_EXIT_DP_MODE		BIT(6)
++#define DP_STATUS_HPD_STATE		BIT(7) /* 0 = HPD_Low, 1 = HPD_High */
++#define DP_STATUS_IRQ_HPD		BIT(8)
++
++/* DisplayPort Configurations VDO bits */
++#define DP_CONF_CURRENTLY(_conf_)	((_conf_) & 3)
++#define DP_CONF_UFP_U_AS_DFP_D		BIT(0)
++#define DP_CONF_UFP_U_AS_UFP_D		BIT(1)
++#define DP_CONF_SIGNALING_DP		BIT(2)
++#define DP_CONF_SIGNALING_GEN_2		BIT(3) /* Reserved after v1.0b */
++#define DP_CONF_PIN_ASSIGNEMENT_SHIFT	8
++#define DP_CONF_PIN_ASSIGNEMENT_MASK	GENMASK(15, 8)
++
++#endif /* __USB_TYPEC_DP_H */
+-- 
+2.18.0
+
