@@ -2,183 +2,100 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB15C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B152CC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0330A2508E
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:14:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0330A2508E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 58B3F24344
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:23:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lECakIob"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B3F24344
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965891AbeF0VO5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 17:14:57 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55864 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965801AbeF0VOz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 17:14:55 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 83AB1263BFB
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@google.com>
-Subject: [RFC RESEND PATCH] drm/rockchip: update cursors asynchronously through atomic.
-Date:   Wed, 27 Jun 2018 23:14:47 +0200
-Message-Id: <20180627211447.20927-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.18.0
+        id S966032AbeF0VXp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 17:23:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37814 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965946AbeF0VXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 17:23:43 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32C302244A;
+        Wed, 27 Jun 2018 21:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530134622;
+        bh=kg0Y27VLEzNGxqr3Mej6igWB1kjN82s6dipEssk/1QQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lECakIobiZ+A+uZcCHppteJr66iJx87skjarM6mt7oaQms9EszuARbslAsI3o8dH/
+         Qi8ClTZnLtdcbzD9zwneTsTrqJm45mtdWhzt71TTLVvip9GhmNnBTBqhathotS5zaa
+         gfoKrUQc+Vc6ISs7BgJb6JUdP/7BLXOvXoiOTkvg=
+Date:   Wed, 27 Jun 2018 16:23:40 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jean Delvare <jdelvare@suse.de>
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: i801: Fix runtime PM
+Message-ID: <20180627212340.GA161569@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180626143913.7361-1-jarkko.nikula@linux.intel.com>
+ <20180627221550.0fa5f2df@endymion>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627221550.0fa5f2df@endymion>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to async updates of cursors by using the new atomic
-interface for that.
+[+cc Rafael, linux-pm, linux-kernel]
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-I am sending this as RFC because I still don't have a deep knowledge of
-the hw and I am not sure if the vop_plane_update function can be reused
-in both cases, atomic_updates and atomic_async_updates. I think that
-someone with more knowledge should take a look. The patch was tested on
-a Samsung Chromebook Plus in two ways.
+On Wed, Jun 27, 2018 at 10:15:50PM +0200, Jean Delvare wrote:
+> Hi Jarkko,
+> 
+> On Tue, 26 Jun 2018 17:39:12 +0300, Jarkko Nikula wrote:
+> > Commit 9c8088c7988 ("i2c: i801: Don't restore config registers on
+> > runtime PM") nullified the runtime PM suspend/resume callback pointers
+> > while keeping the runtime PM enabled. This causes that device stays in
+> > D0 power state and sysfs /sys/bus/pci/devices/.../power/runtime_status
+> > shows "error" when runtime PM framework attempts to autosuspend the
+> > device.
+> > 
+> > This is due PCI bus runtime PM which checks for driver runtime PM
+> > callbacks and returns with -ENOSYS if they are not set. Fix this by
+> > having a shared dummy runtime PM callback that returns with success.
+> > 
+> > Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
+> 
+> I don't want to sound like I'm trying to decline all responsibility for
+> a regression I caused, but frankly, if just using SIMPLE_DEV_PM_OPS()
+> breaks runtime PM, then it's the PM model which is broken, not the
+> i2c-i801 driver.
+> 
+> I will boldly claim that the PCI bus runtime code is simply wrong in
+> returning -ENOSYS in the absence of runtime PM callbacks, and it should
+> be changed to return 0 instead. Or whoever receives that -ENOSYS should
+> not treat it as an error - whatever makes more sense.
+> 
+> Having to add dummy functions in every PCI driver that doesn't need to
+> do anything special for runtime PM sounds plain stupid. It should be
+> pretty obvious that a whole lot of drivers are going to use
+> SIMPLE_DEV_PM_OPS() because it exists and seems to do what they want,
+> and all of them will be bugged because the PCI core is doing something
+> silly and unexpected.
+> 
+> So please let's fix it at the PCI subsystem core level. Adding Bjorn
+> and the linux-pci list to Cc.
 
-1. Running all igt kms_cursor_legacy and kms_atomic@plane_cursor_legacy
-tests and see that there is no regression after the patch.
-
-2. Running weston using the atomic API.
-
-Best regards,
-  Enric
-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 80 ++++++++++++++++-----
- 1 file changed, 64 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 53d4afe15278..1eb6bda924af 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -688,8 +688,7 @@ static void vop_plane_atomic_disable(struct drm_plane *plane,
- 	spin_unlock(&vop->reg_lock);
- }
- 
--static void vop_plane_atomic_update(struct drm_plane *plane,
--		struct drm_plane_state *old_state)
-+static void vop_plane_update(struct drm_plane *plane)
- {
- 	struct drm_plane_state *state = plane->state;
- 	struct drm_crtc *crtc = state->crtc;
-@@ -710,20 +709,6 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 	bool rb_swap;
- 	int format;
- 
--	/*
--	 * can't update plane when vop is disabled.
--	 */
--	if (WARN_ON(!crtc))
--		return;
--
--	if (WARN_ON(!vop->is_enabled))
--		return;
--
--	if (!state->visible) {
--		vop_plane_atomic_disable(plane, old_state);
--		return;
--	}
--
- 	obj = rockchip_fb_get_gem_obj(fb, 0);
- 	rk_obj = to_rockchip_obj(obj);
- 
-@@ -794,10 +779,73 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 	spin_unlock(&vop->reg_lock);
- }
- 
-+static void vop_plane_atomic_update(struct drm_plane *plane,
-+				    struct drm_plane_state *old_state)
-+{
-+	struct drm_plane_state *state = plane->state;
-+	struct vop *vop = to_vop(state->crtc);
-+
-+	/*
-+	 * can't update plane when vop is disabled.
-+	 */
-+	if (WARN_ON(!state->crtc))
-+		return;
-+
-+	if (WARN_ON(!vop->is_enabled))
-+		return;
-+
-+	if (!state->visible) {
-+		vop_plane_atomic_disable(plane, old_state);
-+		return;
-+	}
-+
-+	vop_plane_update(plane);
-+}
-+
-+static int vop_plane_atomic_async_check(struct drm_plane *plane,
-+					struct drm_plane_state *state)
-+{
-+	struct drm_crtc_state *crtc_state;
-+
-+	crtc_state = drm_atomic_get_existing_crtc_state(state->state,
-+							state->crtc);
-+	if (WARN_ON(!crtc_state))
-+		return -EINVAL;
-+
-+	if (!crtc_state->active)
-+		return -EINVAL;
-+
-+	if (plane->state->crtc != state->crtc ||
-+	    plane->state->src_w != state->src_w ||
-+	    plane->state->src_h != state->src_h ||
-+	    plane->state->crtc_w != state->crtc_w ||
-+	    plane->state->crtc_h != state->crtc_h ||
-+	    !plane->state->fb ||
-+	    plane->state->fb != state->fb)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static void vop_plane_atomic_async_update(struct drm_plane *plane,
-+					  struct drm_plane_state *new_state)
-+{
-+	plane->state->src_x = new_state->src_x;
-+	plane->state->src_y = new_state->src_y;
-+	plane->state->crtc_x = new_state->crtc_x;
-+	plane->state->crtc_y = new_state->crtc_y;
-+	plane->state->fb = new_state->fb;
-+	*plane->state = *new_state;
-+
-+	vop_plane_update(plane);
-+}
-+
- static const struct drm_plane_helper_funcs plane_helper_funcs = {
- 	.atomic_check = vop_plane_atomic_check,
- 	.atomic_update = vop_plane_atomic_update,
- 	.atomic_disable = vop_plane_atomic_disable,
-+	.atomic_async_check = vop_plane_atomic_async_check,
-+	.atomic_async_update = vop_plane_atomic_async_update,
- };
- 
- static const struct drm_plane_funcs vop_plane_funcs = {
--- 
-2.18.0
-
+Thanks Jean.  What you describe does sound broken.  I think the PM
+guys (cc'd) will have a better idea of how to deal with this.
