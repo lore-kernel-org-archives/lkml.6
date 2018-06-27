@@ -2,98 +2,143 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 831D9C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5025BC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42FFD25885
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:57:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FFD25885
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EA8AA25C42
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:03:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dUu7H0MG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA8AA25C42
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966238AbeF0V5c (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 17:57:32 -0400
-Received: from mga02.intel.com ([134.134.136.20]:22697 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965460AbeF0V5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 17:57:31 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 14:57:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,280,1526367600"; 
-   d="scan'208";a="51053395"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Jun 2018 14:57:23 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 535DBCB; Thu, 28 Jun 2018 00:57:26 +0300 (EEST)
-Date:   Thu, 28 Jun 2018 00:57:26 +0300
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv4 18/18] x86: Introduce CONFIG_X86_INTEL_MKTME
-Message-ID: <20180627215726.l5syzdcc26hgihtt@black.fi.intel.com>
-References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
- <20180626142245.82850-19-kirill.shutemov@linux.intel.com>
- <ecf92475-93b4-295c-f1fc-7efba4843d98@infradead.org>
+        id S966246AbeF0WDu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 18:03:50 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38978 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754983AbeF0WDt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 18:03:49 -0400
+Received: by mail-wr0-f193.google.com with SMTP id b8-v6so3463284wro.6
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 15:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0UNuFbxS1174MQmNhCNiONQ3bEKYR6UrAHbNguBxOtE=;
+        b=dUu7H0MGYzK0mOjeDYNCtqY9nTRNP6x+K8HNuCYV9Te7fwYVjIouxlf2Zr13mHR/RI
+         sseR7UOXxwzCBYUlh/PYDd9j4ZrWvCag21Xy83uzvbOI5gAdRM3qK9dCZXxUyAOw3/x4
+         Xov/sm+N8egGYgAZbujYUB9y1z1Pl+sqa5rPpLxYbBNnDwoKKMQwohAYSftEFbRuYzhJ
+         J+wFePm1rCrz1k0ZQH7lytKsEykl7C/4frbPjsGTIVBBpvUT+3hLpfesCr6LmEwPY8GF
+         lsHtfln8hmBzZIoyLoAVh3I86vt88BuZ+PE+QO9lboKqAkqXj1jjvO2cDJmlTCkPbfcq
+         DYoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0UNuFbxS1174MQmNhCNiONQ3bEKYR6UrAHbNguBxOtE=;
+        b=Kvx5Ilh/zw6r6NfQ3Tb2A97hF9mk7NyHYlHwuL+t+iBs7rVQmCYbN89SdEt4UVeXRR
+         VQFHzxlSedpGTf2PDWpt8d+pYqwgbvM+9fLQaIAD3X7crnlSyNxD0bkT/ZHt7+cwGam2
+         3eRI9rsUuQhH08iC2jCcDRG2qETpbahKd7krnanha2Z3sFDCZ9Bmy3KwwZgVRU2Z1Jhr
+         ry0EBwpDADg207eXSE91b6DdwptUtFUnoYroHfPnjJAGAwdLpUkgXQtsJosRcrH9eQJs
+         0Hlc2HOPI0WpxHc/hrJvPlBAyQJ6FEbOPEwwldYI5tFvXPurbetYv4OR6pgJ70Hq3oWR
+         AXQg==
+X-Gm-Message-State: APt69E1kafbnAAxJXITN/TLscvqLiLvixBBhw7P5lzsKBIZdEUZjJfEh
+        G5fi7Zz7PDEAxw4zaMUVLSVxmZgTIPOhBwSWrXQDDg==
+X-Google-Smtp-Source: AAOMgpfSgQTOtEU1jpIiYMqvwexPSmsRtkH7CDuEoM1A5HO0BNz6TomC9tFTdWBPaX1eAEmEevFulpZeKRwzh7SusV0=
+X-Received: by 2002:adf:9527:: with SMTP id 36-v6mr2106746wrs.99.1530137027557;
+ Wed, 27 Jun 2018 15:03:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ecf92475-93b4-295c-f1fc-7efba4843d98@infradead.org>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+References: <20180627204139.225988-1-shakeelb@google.com> <f08b2e2c-d4c6-7a80-10d9-104c0aab593b@gmail.com>
+In-Reply-To: <f08b2e2c-d4c6-7a80-10d9-104c0aab593b@gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 27 Jun 2018 15:03:35 -0700
+Message-ID: <CALvZod4JTY8T19L-q+E1LLFVGFso6ea1MACKdFsed8dM-3AvYQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] net, mm: account sock objects to kmemcg
+To:     eric.dumazet@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>, Roman Gushchin <guro@fb.com>,
+        davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 05:30:12PM +0000, Randy Dunlap wrote:
-> On 06/26/2018 07:22 AM, Kirill A. Shutemov wrote:
-> > Add new config option to enabled/disable Multi-Key Total Memory
-> > Encryption support.
-> > 
-> > MKTME uses MEMORY_PHYSICAL_PADDING to reserve enough space in per-KeyID
-> > direct mappings for memory hotplug.
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+On Wed, Jun 27, 2018 at 2:51 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+>
+> On 06/27/2018 01:41 PM, Shakeel Butt wrote:
+> > Currently the kernel accounts the memory for network traffic through
+> > mem_cgroup_[un]charge_skmem() interface. However the memory accounted
+> > only includes the truesize of sk_buff which does not include the size of
+> > sock objects. In our production environment, with opt-out kmem
+> > accounting, the sock kmem caches (TCP[v6], UDP[v6], RAW[v6], UNIX) are
+> > among the top most charged kmem caches and consume a significant amount
+> > of memory which can not be left as system overhead. So, this patch
+> > converts the kmem caches of more important sock objects to SLAB_ACCOUNT.
+> >
+> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
 > > ---
-> >  arch/x86/Kconfig | 19 ++++++++++++++++++-
-> >  1 file changed, 18 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index fa5e1ec09247..9a843bd63108 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -1523,6 +1523,23 @@ config ARCH_USE_MEMREMAP_PROT
-> >  	def_bool y
-> >  	depends on AMD_MEM_ENCRYPT
-> >  
-> > +config X86_INTEL_MKTME
-> > +	bool "Intel Multi-Key Total Memory Encryption"
-> > +	select DYNAMIC_PHYSICAL_MASK
-> > +	select PAGE_EXTENSION
-> > +	depends on X86_64 && CPU_SUP_INTEL
-> > +	---help---
-> > +	  Say yes to enable support for Multi-Key Total Memory Encryption.
-> > +	  This requires an Intel processor that has support of the feature.
-> > +
-> > +	  Multikey Total Memory Encryption (MKTME) is a technology that allows
-> > +	  transparent memory encryption in and upcoming Intel platforms.
-> 
-> huh?  Maybe drop the "and"?
+> >  net/ipv4/raw.c      | 1 +
+> >  net/ipv4/tcp_ipv4.c | 2 +-
+> >  net/ipv4/udp.c      | 1 +
+> >  net/ipv6/raw.c      | 1 +
+> >  net/ipv6/tcp_ipv6.c | 2 +-
+> >  net/ipv6/udp.c      | 1 +
+> >  net/unix/af_unix.c  | 1 +
+> >  7 files changed, 7 insertions(+), 2 deletions(-)
+>
+>
+> Hey, you just disclosed we do not use DCCP ;)
+>
 
-Ugh.. It has to be "an".
+Oops.
 
--- 
- Kirill A. Shutemov
+>
+> Joke aside, what about simply factorizing this stuff ?
+>
+
+This will opt-in all the sock kmem_caches which I think is better and
+much smaller change. Should I resend this or do you want to send the
+patch?
+
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index bcc41829a16d50714bdd3c25c976c0b7296fab84..b6714f8d7e9ba313723a6f619799c56230ff5fd4 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+> @@ -3243,7 +3243,8 @@ static int req_prot_init(const struct proto *prot)
+>
+>         rsk_prot->slab = kmem_cache_create(rsk_prot->slab_name,
+>                                            rsk_prot->obj_size, 0,
+> -                                          prot->slab_flags, NULL);
+> +                                          SLAB_ACCOUNT | prot->slab_flags,
+> +                                          NULL);
+>
+>         if (!rsk_prot->slab) {
+>                 pr_crit("%s: Can't create request sock SLAB cache!\n",
+> @@ -3258,7 +3259,8 @@ int proto_register(struct proto *prot, int alloc_slab)
+>         if (alloc_slab) {
+>                 prot->slab = kmem_cache_create_usercopy(prot->name,
+>                                         prot->obj_size, 0,
+> -                                       SLAB_HWCACHE_ALIGN | prot->slab_flags,
+> +                                       SLAB_HWCACHE_ALIGN | SLAB_ACCOUNT |
+> +                                       prot->slab_flags,
+>                                         prot->useroffset, prot->usersize,
+>                                         NULL);
+>
+>
+
+Shakeel
