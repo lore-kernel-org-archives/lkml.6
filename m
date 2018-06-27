@@ -6,45 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C84C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F0AC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2370926612
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:08:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2370926612
+	by mail.kernel.org (Postfix) with ESMTP id 8C53126721
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:08:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C53126721
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933970AbeF0JIP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:08:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41907 "EHLO
+        id S934003AbeF0JIY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:08:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47197 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932187AbeF0JIJ (ORCPT
+        with ESMTP id S932187AbeF0JIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:08:09 -0400
+        Wed, 27 Jun 2018 05:08:19 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5R97bOL2025705
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5R972uJ2025668
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 27 Jun 2018 02:07:37 -0700
+        Wed, 27 Jun 2018 02:07:02 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5R97bTp2025702;
-        Wed, 27 Jun 2018 02:07:37 -0700
-Date:   Wed, 27 Jun 2018 02:07:37 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5R972MS2025665;
+        Wed, 27 Jun 2018 02:07:02 -0700
+Date:   Wed, 27 Jun 2018 02:07:02 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-ec348020566009d3da9b99f07c05814d13969c78@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
-        bp@alien8.de, tglx@linutronix.de, luto@kernel.org
-Reply-To: mingo@kernel.org, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, luto@kernel.org,
-          tglx@linutronix.de, peterz@infradead.org, bp@alien8.de
-In-Reply-To: <86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org>
-References: <86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org>
+Message-ID: <tip-22cd978e598618e82c3c3348d2069184f6884182@git.kernel.org>
+Cc:     tglx@linutronix.de, luto@kernel.org, torvalds@linux-foundation.org,
+        jpoimboe@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        gregkh@linuxfoundation.org, dwmw2@infradead.org,
+        dan.j.williams@intel.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, arjan@linux.intel.com
+Reply-To: linux-kernel@vger.kernel.org, arjan@linux.intel.com,
+          bp@alien8.de, mingo@kernel.org, dave.hansen@linux.intel.com,
+          hpa@zytor.com, peterz@infradead.org, gregkh@linuxfoundation.org,
+          dan.j.williams@intel.com, dwmw2@infradead.org, luto@kernel.org,
+          tglx@linutronix.de, torvalds@linux-foundation.org,
+          jpoimboe@redhat.com
+In-Reply-To: <6012b922485401bc42676e804171ded262fc2ef2.1530078306.git.luto@kernel.org>
+References: <6012b922485401bc42676e804171ded262fc2ef2.1530078306.git.luto@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] selftests/x86/sigreturn/64: Fix spurious failures
- on AMD CPUs
-Git-Commit-ID: ec348020566009d3da9b99f07c05814d13969c78
+Subject: [tip:x86/urgent] x86/entry/64/compat: Fix "x86/entry/64/compat:
+ Preserve r8-r11 in int $0x80"
+Git-Commit-ID: 22cd978e598618e82c3c3348d2069184f6884182
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,97 +64,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ec348020566009d3da9b99f07c05814d13969c78
-Gitweb:     https://git.kernel.org/tip/ec348020566009d3da9b99f07c05814d13969c78
+Commit-ID:  22cd978e598618e82c3c3348d2069184f6884182
+Gitweb:     https://git.kernel.org/tip/22cd978e598618e82c3c3348d2069184f6884182
 Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Tue, 26 Jun 2018 22:17:17 -0700
+AuthorDate: Tue, 26 Jun 2018 22:45:52 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 27 Jun 2018 09:36:56 +0200
+CommitDate: Wed, 27 Jun 2018 09:35:40 +0200
 
-selftests/x86/sigreturn/64: Fix spurious failures on AMD CPUs
+x86/entry/64/compat: Fix "x86/entry/64/compat: Preserve r8-r11 in int $0x80"
 
-When I wrote the sigreturn test, I didn't realize that AMD's busted
-IRET behavior was different from Intel's busted IRET behavior:
+Commit:
 
-On AMD CPUs, the CPU leaks the high 32 bits of the kernel stack pointer
-to certain userspace contexts.  Gee, thanks.  There's very little
-the kernel can do about it.  Modify the test so it passes.
+  8bb2610bc496 ("x86/entry/64/compat: Preserve r8-r11 in int $0x80")
 
+was busted: my original patch had a minor conflict with
+some of the nospec changes, but "git apply" is very clever
+and silently accepted the patch by making the same changes
+to a different function in the same file.  There was obviously
+a huge offset, but "git apply" for some reason doesn't feel
+any need to say so.
+
+Move the changes to the correct function.  Now the
+test_syscall_vdso_32 selftests passes.
+
+If anyone cares to observe the original problem, try applying the
+patch at:
+
+  https://lore.kernel.org/lkml/d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org/raw
+
+to the kernel at 316d097c4cd4e7f2ef50c40cff2db266593c4ec4:
+
+ - "git am" and "git apply" accept the patch without any complaints at all
+ - "patch -p1" at least prints out a message about the huge offset.
+
+Reported-by: zhijianx.li@intel.com
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org
+Cc: stable@vger.kernel.org #v4.17+
+Fixes: 8bb2610bc496 ("x86/entry/64/compat: Preserve r8-r11 in int $0x80")
+Link: http://lkml.kernel.org/r/6012b922485401bc42676e804171ded262fc2ef2.1530078306.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/testing/selftests/x86/sigreturn.c | 46 +++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+ arch/x86/entry/entry_64_compat.S | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/sigreturn.c b/tools/testing/selftests/x86/sigreturn.c
-index 246145b84a12..2559e2c01793 100644
---- a/tools/testing/selftests/x86/sigreturn.c
-+++ b/tools/testing/selftests/x86/sigreturn.c
-@@ -612,19 +612,38 @@ static int test_valid_sigreturn(int cs_bits, bool use_16bit_ss, int force_ss)
- 		greg_t req = requested_regs[i], res = resulting_regs[i];
- 		if (i == REG_TRAPNO || i == REG_IP)
- 			continue;	/* don't care */
--		if (i == REG_SP) {
--			printf("\tSP: %llx -> %llx\n", (unsigned long long)req,
--			       (unsigned long long)res);
- 
-+		if (i == REG_SP) {
- 			/*
--			 * In many circumstances, the high 32 bits of rsp
--			 * are zeroed.  For example, we could be a real
--			 * 32-bit program, or we could hit any of a number
--			 * of poorly-documented IRET or segmented ESP
--			 * oddities.  If this happens, it's okay.
-+			 * If we were using a 16-bit stack segment, then
-+			 * the kernel is a bit stuck: IRET only restores
-+			 * the low 16 bits of ESP/RSP if SS is 16-bit.
-+			 * The kernel uses a hack to restore bits 31:16,
-+			 * but that hack doesn't help with bits 63:32.
-+			 * On Intel CPUs, bits 63:32 end up zeroed, and, on
-+			 * AMD CPUs, they leak the high bits of the kernel
-+			 * espfix64 stack pointer.  There's very little that
-+			 * the kernel can do about it.
-+			 *
-+			 * Similarly, if we are returning to a 32-bit context,
-+			 * the CPU will often lose the high 32 bits of RSP.
- 			 */
--			if (res == (req & 0xFFFFFFFF))
--				continue;  /* OK; not expected to work */
-+
-+			if (res == req)
-+				continue;
-+
-+			if (cs_bits != 64 && ((res ^ req) & 0xFFFFFFFF) == 0) {
-+				printf("[NOTE]\tSP: %llx -> %llx\n",
-+				       (unsigned long long)req,
-+				       (unsigned long long)res);
-+				continue;
-+			}
-+
-+			printf("[FAIL]\tSP mismatch: requested 0x%llx; got 0x%llx\n",
-+			       (unsigned long long)requested_regs[i],
-+			       (unsigned long long)resulting_regs[i]);
-+			nerrs++;
-+			continue;
- 		}
- 
- 		bool ignore_reg = false;
-@@ -663,13 +682,6 @@ static int test_valid_sigreturn(int cs_bits, bool use_16bit_ss, int force_ss)
- 		}
- 
- 		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
--			/*
--			 * SP is particularly interesting here.  The
--			 * usual cause of failures is that we hit the
--			 * nasty IRET case of returning to a 16-bit SS,
--			 * in which case bits 16:31 of the *kernel*
--			 * stack pointer persist in ESP.
--			 */
- 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
- 			       i, (unsigned long long)requested_regs[i],
- 			       (unsigned long long)resulting_regs[i]);
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 9de7f1e1dede..7d0df78db727 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -84,13 +84,13 @@ ENTRY(entry_SYSENTER_compat)
+ 	pushq	%rdx			/* pt_regs->dx */
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+-	pushq   %r8			/* pt_regs->r8 */
++	pushq   $0			/* pt_regs->r8  = 0 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-	pushq   %r9			/* pt_regs->r9 */
++	pushq   $0			/* pt_regs->r9  = 0 */
+ 	xorl	%r9d, %r9d		/* nospec   r9 */
+-	pushq   %r10			/* pt_regs->r10 */
++	pushq   $0			/* pt_regs->r10 = 0 */
+ 	xorl	%r10d, %r10d		/* nospec   r10 */
+-	pushq   %r11			/* pt_regs->r11 */
++	pushq   $0			/* pt_regs->r11 = 0 */
+ 	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
+@@ -374,13 +374,13 @@ ENTRY(entry_INT80_compat)
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	xorl	%ecx, %ecx		/* nospec   cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+-	pushq   $0			/* pt_regs->r8  = 0 */
++	pushq   %r8			/* pt_regs->r8 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-	pushq   $0			/* pt_regs->r9  = 0 */
++	pushq   %r9			/* pt_regs->r9 */
+ 	xorl	%r9d, %r9d		/* nospec   r9 */
+-	pushq   $0			/* pt_regs->r10 = 0 */
++	pushq   %r10			/* pt_regs->r10*/
+ 	xorl	%r10d, %r10d		/* nospec   r10 */
+-	pushq   $0			/* pt_regs->r11 = 0 */
++	pushq   %r11			/* pt_regs->r11 */
+ 	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
