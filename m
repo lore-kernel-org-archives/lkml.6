@@ -2,138 +2,121 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2416AC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2D7C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1B1225879
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Z1tr+O3l";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gMPRirt0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B1225879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id D0EF225885
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:57:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0EF225885
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965814AbeF0V4X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 17:56:23 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:43678 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754928AbeF0V4V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 17:56:21 -0400
-Received: by mail-yb0-f195.google.com with SMTP id g3-v6so1345252ybf.10
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 14:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=gDQTp0Sm8sU86irNW/iQllUIEA+d7U51SM0FHn3pr1w=;
-        b=Z1tr+O3lShaE1hpHn4AP7Oxu5a3B49WrKo7g/l6LcmetJ3ErsVCFkhWPekzcSwGlUL
-         P6bo7q376SXP9KAhmrN+fKHYvJ+WG1D00udM1N52mR53uYz9DI9FwpHwAQXnyFpkIFFO
-         LNb9bxf8+otG89lsm++j8ipOFUaVNWgTOyHsZxYA6Df9QG51QP0LPuOCnAHO0IZMBKfP
-         TvZ8m8T9McOXkZTlA8yZO2NJvC+7Y/fisBK6U/mwAV+CAV0mTitgmtgUFZA7tcJCdvkS
-         zxpIp139sI2CCkFFiTW9ajIdHfmw2ZExmIvO3xZ6Jf4isF88AnXtuAogjvtmPSPQ5ulE
-         +Klg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=gDQTp0Sm8sU86irNW/iQllUIEA+d7U51SM0FHn3pr1w=;
-        b=gMPRirt0lH/YXh6yro0aB8UfWC3iTvQRW387uaYgyA3tNEIQUA3QqjkPAvRmwWuXuH
-         daUlx6kghmOeZEgclFP4nlLxHKILwn4A+STFMje4RASuSiRcqj9nUF4fF7LcwmJvSV+o
-         kl27YQNTEVhsvwiqoBwVd+mqvsKQdwOkEuJIo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=gDQTp0Sm8sU86irNW/iQllUIEA+d7U51SM0FHn3pr1w=;
-        b=uOCiB95FnZO2M2CvN93zdwb6AEt8Doo6oIFYKdn7QZJmxFiziMRLdRgwXYdkaWYVbq
-         YGQzr5XYZpzq0KwgowF0L9VGPpRXCpUd3k2o16NJvzKQFIC0fsPq4bpaRXi14dpHx4xP
-         s+ajLwrRcLjb01i1MoiZ3xUq5ijlUdaApoQIpMC9NlLvB1oYm5rZLMW05Z+SybIHikiT
-         QTjsQH0ZlGeDe3xCFf1idLKN78HEWnUYaRF18q+ekYP/61SxkCuqWPZSngP8xlrQA6L9
-         ykoGihY2BwWP5AfZehiobnntpPZaXLkO4me8bCjOuqQ1lFHvpljddNSeQ3MJkDl44WIr
-         bunA==
-X-Gm-Message-State: APt69E0eZ/9ieEj+IEdyGjoPKVBlehXn4RxfRilXQdBbxS8PtM9Vg61X
-        C6d6c4WkPo2oU5Q9qBQvKRwWb2PWtDgsP2c4tkzdk2Sv
-X-Google-Smtp-Source: ADUXVKL1z7Cv4+4vU4R85cNz11/nlmMIb1RzGw28E5MM+Yb86CYy8GORpvlwy2aCGjpuzpTZR/KDuZ0TrmIrq9nU5x4=
-X-Received: by 2002:a5b:b4e:: with SMTP id b14-v6mr4105956ybr.463.1530136581002;
- Wed, 27 Jun 2018 14:56:21 -0700 (PDT)
+        id S966167AbeF0V5B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 17:57:01 -0400
+Received: from mga01.intel.com ([192.55.52.88]:45502 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965460AbeF0V5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 17:57:00 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 14:56:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,280,1526367600"; 
+   d="scan'208";a="52774567"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 27 Jun 2018 14:56:56 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 3D211CB; Thu, 28 Jun 2018 00:56:59 +0300 (EEST)
+Date:   Thu, 28 Jun 2018 00:56:59 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv4 17/18] x86/mm: Handle encrypted memory in
+ page_to_virt() and __pa()
+Message-ID: <20180627215658.ol5zq3o5746gizpu@black.fi.intel.com>
+References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
+ <20180626142245.82850-18-kirill.shutemov@linux.intel.com>
+ <1609f2b4-4638-8b9d-4dc7-fcb3303739cd@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 14:56:20
- -0700 (PDT)
-In-Reply-To: <20180618174549.GA1893@beast>
-References: <20180618174549.GA1893@beast>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 27 Jun 2018 14:56:20 -0700
-X-Google-Sender-Auth: 1d29yzD9OFvfhfxfhNbgrygbXAY
-Message-ID: <CAGXu5jJZH0fh_q7o2w2_tX3Xxyn2xm-55J62JcucgfWBUYkU5Q@mail.gmail.com>
-Subject: Re: [PATCH] bus: ti-sysc: Use 2-factor allocator arguments
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1609f2b4-4638-8b9d-4dc7-fcb3303739cd@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 10:45 AM, Kees Cook <keescook@chromium.org> wrote:
-> This adjusts the allocator calls to use 2-factor argument call style, as
-> done treewide already for improved defense against allocation overflows.
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Tue, Jun 26, 2018 at 04:38:23PM +0000, Dave Hansen wrote:
+> > diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
+> > index ba83fba4f9b3..dbfbd955da98 100644
+> > --- a/arch/x86/include/asm/mktme.h
+> > +++ b/arch/x86/include/asm/mktme.h
+> > @@ -29,6 +29,9 @@ void arch_free_page(struct page *page, int order);
+> >  
+> >  int sync_direct_mapping(void);
+> >  
+> > +#define page_to_virt(x) \
+> > +	(__va(PFN_PHYS(page_to_pfn(x))) + page_keyid(x) * direct_mapping_size)
+> 
+> Please put this in a generic header so that this hunk represents the
+> *default* x86 implementation that is used universally on x86.
 
-Friendly ping! :) This is the last 2-factor devm* allocation left in
-4.18 to be fixed.
+As I said, I disagree with you on the style preference.
 
-Thanks!
+If a maintainer prefers it to be done in your way, I'll move the macros.
 
--Kees
+> Then, please do
+> 
+> #ifndef CONFIG_MKTME_WHATEVER
+> #define page_keyid(x) (0)
+> #endif
 
-> ---
->  drivers/bus/ti-sysc.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-> index 1cc29629d238..80d60f43db56 100644
-> --- a/drivers/bus/ti-sysc.c
-> +++ b/drivers/bus/ti-sysc.c
-> @@ -169,9 +169,9 @@ static int sysc_get_clocks(struct sysc *ddata)
->         const char *name;
->         int nr_fck = 0, nr_ick = 0, i, error = 0;
->
-> -       ddata->clock_roles = devm_kzalloc(ddata->dev,
-> -                                         sizeof(*ddata->clock_roles) *
-> +       ddata->clock_roles = devm_kcalloc(ddata->dev,
->                                           SYSC_MAX_CLOCKS,
-> +                                         sizeof(*ddata->clock_roles),
->                                           GFP_KERNEL);
->         if (!ddata->clock_roles)
->                 return -ENOMEM;
-> @@ -200,8 +200,8 @@ static int sysc_get_clocks(struct sysc *ddata)
->                 return -EINVAL;
->         }
->
-> -       ddata->clocks = devm_kzalloc(ddata->dev,
-> -                                    sizeof(*ddata->clocks) * ddata->nr_clocks,
-> +       ddata->clocks = devm_kcalloc(ddata->dev,
-> +                                    ddata->nr_clocks, sizeof(*ddata->clocks),
->                                      GFP_KERNEL);
->         if (!ddata->clocks)
->                 return -ENOMEM;
-> --
-> 2.17.0
->
->
-> --
-> Kees Cook
-> Pixel Security
+Default page_keyid() implementation returns 0.
 
+> >  #else
+> >  #define mktme_keyid_mask	((phys_addr_t)0)
+> >  #define mktme_nr_keyids		0
+> > diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+> > index 53c32af895ab..ffad496aadad 100644
+> > --- a/arch/x86/include/asm/page_64.h
+> > +++ b/arch/x86/include/asm/page_64.h
+> > @@ -23,7 +23,7 @@ static inline unsigned long __phys_addr_nodebug(unsigned long x)
+> >  	/* use the carry flag to determine if x was < __START_KERNEL_map */
+> >  	x = y + ((x > y) ? phys_base : (__START_KERNEL_map - PAGE_OFFSET));
+> >  
+> > -	return x;
+> > +	return x % direct_mapping_size;
+> 
+> There are almost *surely* performance implications from this that affect
+> anyone with this compile option turned on.  There's now a 64-bit integer
+> division operation which is used in places like kfree().
 
+Fair point. Apparently, modern CPU is good enough to hide the overhead.
+I'll look into how to avoid division.
+
+After quick look the only way to get it cheap (near free on my CPU) is to
+have power-of-2 direct_mapping_size and mask address before returning it.
+
+If direct_mapping_size is not power-of-2, the best variant I've come up
+with so far costs a branch for non-encrypted memory.
+
+For encrypted it is branch, 32-bit division and some bit shifting and
+masking.
+
+I'll look into this more.
 
 -- 
-Kees Cook
-Pixel Security
+ Kirill A. Shutemov
