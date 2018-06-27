@@ -2,96 +2,100 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED20C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43110C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72B4A25A43
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:58:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="d4SWjT/k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B4A25A43
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id F347B248E2
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:59:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F347B248E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753273AbeF0G6t (ORCPT
+        id S1753303AbeF0G7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 02:58:49 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:53722 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752537AbeF0G6r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 02:58:47 -0400
-Received: by mail-it0-f65.google.com with SMTP id a195-v6so5947666itd.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 23:58:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=OIDx7Ajq83ssy7biP6aSeyVvyPtgnUNjKCe1dV6aXH0=;
-        b=d4SWjT/kVvocV6D5cPjF6zy7LmDJ0RmEK1VhDSu0IvoikpugX8meeAQ9bqogrhu1yP
-         DiyA8FXSKJBJ/7yDaxabldbEyYopzi0rzYK8dJ5pchdPMpOLlqYQvIpUt/VkaT1dguNA
-         8XO50OvokpH37YnxfGQESU+s8Udncd19KuThQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=OIDx7Ajq83ssy7biP6aSeyVvyPtgnUNjKCe1dV6aXH0=;
-        b=tY0+biv46Oka6gNnthHzFcrkHrShqlnaqmTV9EJ0DWfDVW8oS2KjMkD3lBvbGJuMAW
-         0gnlS7xCaz7wC1eNpJUlEXkuEKiVkdGfiwZlumz1LOloIeRKi2QtQ3aCYIjZqgt9yAkB
-         R9c0mpiFgKsLjRBZFqPQ0zHf9sfiXPjiZEnnfzFqPs6iCrxNruQAHDQydzwZRFXYP0gE
-         /OTAqz+6qswIo2HIhDXbtxVIs0L7QJOfG0Zc6+ajcBqVc8XlXhGi+dKxcXF9T3VTOaDM
-         ZF6P9By0MG9cGS74xGe3Ho9167A0rcGK2wlwfHafDi+ZZTdrBC/P4597DTHVh23jYwlL
-         nWEg==
-X-Gm-Message-State: APt69E3PX9MlASxoB9EG8sHPhV5kzKufw+obHMxf+CiUt+POL+0Z37Ph
-        EZeLWS1rKfQJdrMUtkWab3edE/bvjlzaaB3RY++xrg==
-X-Google-Smtp-Source: ADUXVKLoz8o/tCCtBaayJFJ6SpA1Tj3McQcZmOeMTB4+aH3VLnp8Bz54udYA3J7jX09j6kTYTHaLv77gqatqdf+SCrQ=
-X-Received: by 2002:a24:cf45:: with SMTP id y66-v6mr3888481itf.2.1530082726401;
- Tue, 26 Jun 2018 23:58:46 -0700 (PDT)
+        Wed, 27 Jun 2018 02:59:38 -0400
+Received: from verein.lst.de ([213.95.11.211]:49083 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752460AbeF0G7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 02:59:37 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id B962A68E45; Wed, 27 Jun 2018 09:09:40 +0200 (CEST)
+Date:   Wed, 27 Jun 2018 09:09:40 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     viro@zeniv.linux.org.uk, Chunyu Hu <chuhu@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: add proc_seq_release
+Message-ID: <20180627070940.GA9790@lst.de>
+References: <1528573884-9133-1-git-send-email-chuhu@redhat.com> <20180611062354.GA32641@lst.de> <1113263100.13594710.1530015652549.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:e48b:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 23:58:45
- -0700 (PDT)
-X-Originating-IP: [212.51.149.109]
-In-Reply-To: <bc3429d4-44e3-29dc-3588-209ba30fb2eb@lechnology.com>
-References: <20180525193623.15533-1-david@lechnology.com> <8840212b-fd46-e700-58a1-cb1b882c5771@tronnes.org>
- <d5297fc5-94f2-edcd-5a11-95d7a9dca78d@lechnology.com> <ecd75b89-14a6-12f7-0ec4-222b1f984e49@tronnes.org>
- <5a2bc4e7-c6cd-b270-61d3-61bfa5d9e90d@tronnes.org> <CAKMK7uF-hBjqnRG28fX7NXOJDc5YEWhq+G6s0M8usA+TXM1BKw@mail.gmail.com>
- <bc3429d4-44e3-29dc-3588-209ba30fb2eb@lechnology.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 27 Jun 2018 08:58:45 +0200
-X-Google-Sender-Auth: wUpl1SvUXWOzu6M-QSPt-8VMg78
-Message-ID: <CAKMK7uG5OdbiRFL26SzJ-+b0G64pfKftwtvG4CYGKpAt+rD5UQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] drm/tinydrm: new dirver for ILI9341 displays
-To:     David Lechner <david@lechnology.com>
-Cc:     =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Nitin Patil <nitin@mindsensors.com>, limor@ladyada.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1113263100.13594710.1530015652549.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 8:16 PM, David Lechner <david@lechnology.com> wrote:
-> On 06/20/2018 04:07 AM, Daniel Vetter wrote:
->
->> I acked and forwarded the account request, sorry for the delay. Next
->> time around, poking maintainers on irc helps if this stuff is stuck.
->> -Daniel
->
->
-> The account was supposedly setup, but I am not able to use it for some
-> reason. Are there any particular nicks I should ping on IRC?
+Al, can you pick up this fix from Chunyu?
 
-#freedesktop on freenode is the channel where fd.o admins hang out.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+On Tue, Jun 26, 2018 at 08:20:52AM -0400, Chunyu Hu wrote:
+> 
+> 
+> ----- Original Message -----
+> > From: "Christoph Hellwig" <hch@lst.de>
+> > To: "Chunyu Hu" <chuhu@redhat.com>
+> > Cc: viro@zeniv.linux.org.uk, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+> > Sent: Monday, June 11, 2018 2:23:54 PM
+> > Subject: Re: [PATCH] proc: add proc_seq_release
+> > 
+> > On Sun, Jun 10, 2018 at 03:51:24AM +0800, Chunyu Hu wrote:
+> > > kmemleak reported some memory leak on reading proc files. After adding
+> > > some debug lines, find that proc_seq_fops is using seq_release as
+> > > release handler, which won't handle the free of 'private' field of
+> > > seq_file, while in fact the open handler proc_seq_open could create
+> > > the private data with __seq_open_private when state_size is greater
+> > > than zero. So after reading files created with proc_create_seq_private,
+> > > such as /proc/timer_list and /proc/vmallocinfo, the private mem of a
+> > > seq_file is not freed. Fix it by adding the paired proc_seq_release
+> > > as the default release handler of proc_seq_ops instead of seq_release.
+> > 
+> > Indeed, thanks for the patch.
+> > 
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > 
+> 
+> What's our plan for this issue? We can still see the leaking in 4.18-RC2. 
+> 
+> 1) Run 'cat /proc/timer_list' then
+> 2) echo scan > /sys/kernel/debug/kmemleak
+> 3) cat /sys/kernel/debug/kmemleak
+> 
+> each time, it leaks 16 bytes.
+> 
+> unreferenced object 0xffff880017525120 (size 16):
+>   comm "cat", pid 4682, jiffies 4294964743 (age 46.880s)
+>   hex dump (first 16 bytes):
+>     04 00 00 00 01 00 00 00 42 00 96 e7 3f 00 00 00  ........B...?...
+>   backtrace:
+>     [<000000006f6b5d90>] seq_open_private+0x25/0x40
+>     [<00000000d94d91aa>] proc_seq_open+0xca/0x120
+>     [<00000000d5609077>] proc_reg_open+0x1d4/0x5b0
+>     [<0000000036a3d49c>] do_dentry_open+0x7d6/0x1010
+>     [<00000000d4fb0a82>] vfs_open+0x170/0x2b0
+>     [<00000000f3bf21b4>] path_openat+0x760/0x3750
+>     [<00000000b0d4e66c>] do_filp_open+0x1bb/0x2c0
+>     [<0000000063b53236>] do_sys_open+0x2b2/0x490
+>     [<00000000a5249c62>] do_syscall_64+0xd3/0x6e0
+>     [<000000006f9f8436>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>     [<000000001d702cb2>] 0xffffffffffffffff
+> 
+> 
+> -- 
+> Regards,
+> Chunyu Hu
+---end quoted text---
