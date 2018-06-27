@@ -2,98 +2,138 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66733C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2416AC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FDD1255CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:53:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1B1225879
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:56:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OqbE11P9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FDD1255CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Z1tr+O3l";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gMPRirt0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B1225879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966081AbeF0VxZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 17:53:25 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:42828 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965789AbeF0VxX (ORCPT
+        id S965814AbeF0V4X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 17:56:23 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:43678 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754928AbeF0V4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 17:53:23 -0400
-Received: by mail-lf0-f67.google.com with SMTP id u202-v6so2643202lff.9
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 14:53:23 -0700 (PDT)
+        Wed, 27 Jun 2018 17:56:21 -0400
+Received: by mail-yb0-f195.google.com with SMTP id g3-v6so1345252ybf.10
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 14:56:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=06QtmzGVSmKQGTJ8jMGHYnWBnYqopWkaYi73cz1FOdY=;
-        b=OqbE11P9Fzi9Zhet8d/3XWywvuobFm0NJAWAuefLjWpVDBXS/QGCNyO7oWguqS3hS2
-         a4DxBUWeDGTJ1037gVeWmEiboM1Z1ORdj0XuFhR9tJsgDv9j5VYNXlnPOPvAJ7U0oF1m
-         f6Yg+hDR9S/gpg4EqiADrYvjoknuRfLLVJpu8=
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=gDQTp0Sm8sU86irNW/iQllUIEA+d7U51SM0FHn3pr1w=;
+        b=Z1tr+O3lShaE1hpHn4AP7Oxu5a3B49WrKo7g/l6LcmetJ3ErsVCFkhWPekzcSwGlUL
+         P6bo7q376SXP9KAhmrN+fKHYvJ+WG1D00udM1N52mR53uYz9DI9FwpHwAQXnyFpkIFFO
+         LNb9bxf8+otG89lsm++j8ipOFUaVNWgTOyHsZxYA6Df9QG51QP0LPuOCnAHO0IZMBKfP
+         TvZ8m8T9McOXkZTlA8yZO2NJvC+7Y/fisBK6U/mwAV+CAV0mTitgmtgUFZA7tcJCdvkS
+         zxpIp139sI2CCkFFiTW9ajIdHfmw2ZExmIvO3xZ6Jf4isF88AnXtuAogjvtmPSPQ5ulE
+         +Klg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=gDQTp0Sm8sU86irNW/iQllUIEA+d7U51SM0FHn3pr1w=;
+        b=gMPRirt0lH/YXh6yro0aB8UfWC3iTvQRW387uaYgyA3tNEIQUA3QqjkPAvRmwWuXuH
+         daUlx6kghmOeZEgclFP4nlLxHKILwn4A+STFMje4RASuSiRcqj9nUF4fF7LcwmJvSV+o
+         kl27YQNTEVhsvwiqoBwVd+mqvsKQdwOkEuJIo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=06QtmzGVSmKQGTJ8jMGHYnWBnYqopWkaYi73cz1FOdY=;
-        b=AIq4uMTizrM8NNX6RrtyIQl1eW4aZbyt1YQDkMigj42ZGxS6FWaq28sJut6R7tE/AF
-         5ZnRq/rSntoD/6d+lNhZYRZrpyNevyJbtgseq7dcLxkkm2NFbT1wLPPtZqqTEj0aycJ7
-         yG+IC68yrQj09g9qEUjTUNyCyM0BOCzjBIDzIcNeC4leWiOSARguYjHeEjGV9zh4MPsv
-         92nFUjZnKOo3tV9j3+TIt7Ux0Xx/gBNPI7H7a702YE8cQZxc8kqGebtyj5wWT2mimZiA
-         LO8evjun34YFTG3NwFmBUmKzrqB+jLqVslb4cqyZ12fnO/z0MPzqG/OITHuV37Se6ZwH
-         FruA==
-X-Gm-Message-State: APt69E0uTYh0wvSM4OyhpCHfO0wMOQ65BGa13pko9WD5hMzCKYZaib5C
-        Uul+mj/w8AkNrYel+It9zedWAQ==
-X-Google-Smtp-Source: AAOMgpcUhsBmIpsryFuk8GsiTuKWrwXW8x0eNMawaMkkengiJrVgA8FImL7oWJ0f5eGl+cUDDOjl8Q==
-X-Received: by 2002:a19:a685:: with SMTP id p127-v6mr5005637lfe.4.1530136402370;
-        Wed, 27 Jun 2018 14:53:22 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id p5-v6sm635353lfc.19.2018.06.27.14.53.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Jun 2018 14:53:21 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] firmware: qcom: scm: add a dummy qcom_scm_assign_mem()
-Date:   Wed, 27 Jun 2018 23:53:17 +0200
-Message-Id: <20180627215319.1417-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=gDQTp0Sm8sU86irNW/iQllUIEA+d7U51SM0FHn3pr1w=;
+        b=uOCiB95FnZO2M2CvN93zdwb6AEt8Doo6oIFYKdn7QZJmxFiziMRLdRgwXYdkaWYVbq
+         YGQzr5XYZpzq0KwgowF0L9VGPpRXCpUd3k2o16NJvzKQFIC0fsPq4bpaRXi14dpHx4xP
+         s+ajLwrRcLjb01i1MoiZ3xUq5ijlUdaApoQIpMC9NlLvB1oYm5rZLMW05Z+SybIHikiT
+         QTjsQH0ZlGeDe3xCFf1idLKN78HEWnUYaRF18q+ekYP/61SxkCuqWPZSngP8xlrQA6L9
+         ykoGihY2BwWP5AfZehiobnntpPZaXLkO4me8bCjOuqQ1lFHvpljddNSeQ3MJkDl44WIr
+         bunA==
+X-Gm-Message-State: APt69E0eZ/9ieEj+IEdyGjoPKVBlehXn4RxfRilXQdBbxS8PtM9Vg61X
+        C6d6c4WkPo2oU5Q9qBQvKRwWb2PWtDgsP2c4tkzdk2Sv
+X-Google-Smtp-Source: ADUXVKL1z7Cv4+4vU4R85cNz11/nlmMIb1RzGw28E5MM+Yb86CYy8GORpvlwy2aCGjpuzpTZR/KDuZ0TrmIrq9nU5x4=
+X-Received: by 2002:a5b:b4e:: with SMTP id b14-v6mr4105956ybr.463.1530136581002;
+ Wed, 27 Jun 2018 14:56:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 14:56:20
+ -0700 (PDT)
+In-Reply-To: <20180618174549.GA1893@beast>
+References: <20180618174549.GA1893@beast>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 27 Jun 2018 14:56:20 -0700
+X-Google-Sender-Auth: 1d29yzD9OFvfhfxfhNbgrygbXAY
+Message-ID: <CAGXu5jJZH0fh_q7o2w2_tX3Xxyn2xm-55J62JcucgfWBUYkU5Q@mail.gmail.com>
+Subject: Re: [PATCH] bus: ti-sysc: Use 2-factor allocator arguments
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a dummy qcom_scm_assign_mem() to enable building drivers when
-CONFIG_COMPILE_TEST=y && CONFIG_QCOM_SCM=n.
+On Mon, Jun 18, 2018 at 10:45 AM, Kees Cook <keescook@chromium.org> wrote:
+> This adjusts the allocator calls to use 2-factor argument call style, as
+> done treewide already for improved defense against allocation overflows.
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-All other qcom_scm_* functions already have a dummy version.
+Friendly ping! :) This is the last 2-factor devm* allocation left in
+4.18 to be fixed.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- include/linux/qcom_scm.h | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks!
 
-diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
-index da63d84e1e91..06996ad4f2bc 100644
---- a/include/linux/qcom_scm.h
-+++ b/include/linux/qcom_scm.h
-@@ -89,6 +89,10 @@ static inline int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr,
- static inline int
- qcom_scm_pas_auth_and_reset(u32 peripheral) { return -ENODEV; }
- static inline int qcom_scm_pas_shutdown(u32 peripheral) { return -ENODEV; }
-+static inline int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
-+				      unsigned int *src,
-+				      struct qcom_scm_vmperm *newvm,
-+				      int dest_cnt) { return -ENODEV; }
- static inline void qcom_scm_cpu_power_down(u32 flags) {}
- static inline u32 qcom_scm_get_version(void) { return 0; }
- static inline u32
+-Kees
+
+> ---
+>  drivers/bus/ti-sysc.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+> index 1cc29629d238..80d60f43db56 100644
+> --- a/drivers/bus/ti-sysc.c
+> +++ b/drivers/bus/ti-sysc.c
+> @@ -169,9 +169,9 @@ static int sysc_get_clocks(struct sysc *ddata)
+>         const char *name;
+>         int nr_fck = 0, nr_ick = 0, i, error = 0;
+>
+> -       ddata->clock_roles = devm_kzalloc(ddata->dev,
+> -                                         sizeof(*ddata->clock_roles) *
+> +       ddata->clock_roles = devm_kcalloc(ddata->dev,
+>                                           SYSC_MAX_CLOCKS,
+> +                                         sizeof(*ddata->clock_roles),
+>                                           GFP_KERNEL);
+>         if (!ddata->clock_roles)
+>                 return -ENOMEM;
+> @@ -200,8 +200,8 @@ static int sysc_get_clocks(struct sysc *ddata)
+>                 return -EINVAL;
+>         }
+>
+> -       ddata->clocks = devm_kzalloc(ddata->dev,
+> -                                    sizeof(*ddata->clocks) * ddata->nr_clocks,
+> +       ddata->clocks = devm_kcalloc(ddata->dev,
+> +                                    ddata->nr_clocks, sizeof(*ddata->clocks),
+>                                      GFP_KERNEL);
+>         if (!ddata->clocks)
+>                 return -ENOMEM;
+> --
+> 2.17.0
+>
+>
+> --
+> Kees Cook
+> Pixel Security
+
+
+
 -- 
-2.17.1
-
+Kees Cook
+Pixel Security
