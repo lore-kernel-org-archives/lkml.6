@@ -2,135 +2,143 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E24C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFF5C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEE55214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:17:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2M8J1Jck"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE55214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1741725F62
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:23:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1741725F62
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752273AbeF0FRp (ORCPT
+        id S1751633AbeF0FX6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 01:17:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45712 "EHLO mail.kernel.org"
+        Wed, 27 Jun 2018 01:23:58 -0400
+Received: from mga01.intel.com ([192.55.52.88]:65267 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752009AbeF0FRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 01:17:21 -0400
-Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBD1D241B9;
-        Wed, 27 Jun 2018 05:17:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530076641;
-        bh=6luoUBPnW/LEAw4V6dgVuQSTSWEb77C+BCjlSb1LlVs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=2M8J1Jcku/3KoYVO/MG0ZQg3HxlYhhK+1orv/iNh3kGIb4ee/lm1QY7+Ctw9x1pQP
-         N2Gib28UysDaZ6VmJxBMlzW5hsMit5DWWvAlbajBn0rDC+Kbt12AOdX1sZnhOIO9DI
-         UOvmWUIkYnlcMPp2t9tBYPt27r6JI674MaP/KkVc=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 1/2] selftests/x86/sigreturn/64: Fix spurious failures on AMD CPUs
-Date:   Tue, 26 Jun 2018 22:17:17 -0700
-Message-Id: <86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1530076529.git.luto@kernel.org>
-References: <cover.1530076529.git.luto@kernel.org>
-In-Reply-To: <cover.1530076529.git.luto@kernel.org>
-References: <cover.1530076529.git.luto@kernel.org>
+        id S1751073AbeF0FX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 01:23:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 22:23:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,277,1526367600"; 
+   d="scan'208";a="52214145"
+Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
+  by orsmga007.jf.intel.com with ESMTP; 26 Jun 2018 22:23:53 -0700
+Message-ID: <5B33205B.2040702@intel.com>
+Date:   Wed, 27 Jun 2018 13:27:55 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+MIME-Version: 1.0
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com
+Subject: Re: [PATCH v34 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com> <1529928312-30500-3-git-send-email-wei.w.wang@intel.com> <20180626002822-mutt-send-email-mst@kernel.org> <5B31B71B.6080709@intel.com> <20180626064338-mutt-send-email-mst@kernel.org> <5B323140.1000306@intel.com> <20180626163139-mutt-send-email-mst@kernel.org> <5B32E742.8080902@intel.com> <20180627053952-mutt-send-email-mst@kernel.org> <5B32FDB5.4040506@intel.com> <20180627065637-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180627065637-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When I wrote the sigreturn test, I didn't realize that AMD's busted
-IRET behavior was different from Intel's busted IRET behavior.  On
-AMD CPUs, the CPU leaks the high 32 bits of the kernel stack pointer
-to certain userspace contexts.  Gee, thanks.  There's very little
-the kernel can do about it.  Modify the test so it passes.
+On 06/27/2018 11:58 AM, Michael S. Tsirkin wrote:
+> On Wed, Jun 27, 2018 at 11:00:05AM +0800, Wei Wang wrote:
+>> On 06/27/2018 10:41 AM, Michael S. Tsirkin wrote:
+>>> On Wed, Jun 27, 2018 at 09:24:18AM +0800, Wei Wang wrote:
+>>>> On 06/26/2018 09:34 PM, Michael S. Tsirkin wrote:
+>>>>> On Tue, Jun 26, 2018 at 08:27:44PM +0800, Wei Wang wrote:
+>>>>>> On 06/26/2018 11:56 AM, Michael S. Tsirkin wrote:
+>>>>>>> On Tue, Jun 26, 2018 at 11:46:35AM +0800, Wei Wang wrote:
+>>>>>>>
+>>>>>>>>>> +	if (!arrays)
+>>>>>>>>>> +		return NULL;
+>>>>>>>>>> +
+>>>>>>>>>> +	for (i = 0; i < max_array_num; i++) {
+>>>>>>>>> So we are getting a ton of memory here just to free it up a bit later.
+>>>>>>>>> Why doesn't get_from_free_page_list get the pages from free list for us?
+>>>>>>>>> We could also avoid the 1st allocation then - just build a list
+>>>>>>>>> of these.
+>>>>>>>> That wouldn't be a good choice for us. If we check how the regular
+>>>>>>>> allocation works, there are many many things we need to consider when pages
+>>>>>>>> are allocated to users.
+>>>>>>>> For example, we need to take care of the nr_free
+>>>>>>>> counter, we need to check the watermark and perform the related actions.
+>>>>>>>> Also the folks working on arch_alloc_page to monitor page allocation
+>>>>>>>> activities would get a surprise..if page allocation is allowed to work in
+>>>>>>>> this way.
+>>>>>>>>
+>>>>>>> mm/ code is well positioned to handle all this correctly.
+>>>>>> I'm afraid that would be a re-implementation of the alloc functions,
+>>>>> A re-factoring - you can share code. The main difference is locking.
+>>>>>
+>>>>>> and
+>>>>>> that would be much more complex than what we have. I think your idea of
+>>>>>> passing a list of pages is better.
+>>>>>>
+>>>>>> Best,
+>>>>>> Wei
+>>>>> How much memory is this allocating anyway?
+>>>>>
+>>>> For every 2TB memory that the guest has, we allocate 4MB.
+>>> Hmm I guess I'm missing something, I don't see it:
+>>>
+>>>
+>>> +       max_entries = max_free_page_blocks(ARRAY_ALLOC_ORDER);
+>>> +       entries_per_page = PAGE_SIZE / sizeof(__le64);
+>>> +       entries_per_array = entries_per_page * (1 << ARRAY_ALLOC_ORDER);
+>>> +       max_array_num = max_entries / entries_per_array +
+>>> +                       !!(max_entries % entries_per_array);
+>>>
+>>> Looks like you always allocate the max number?
+>> Yes. We allocated the max number and then free what's not used.
+>> For example, a 16TB guest, we allocate Four 4MB buffers and pass the 4
+>> buffers to get_from_free_page_list. If it uses 3, then the remaining 1 "4MB
+>> buffer" will end up being freed.
+>>
+>> For today's guests, max_array_num is usually 1.
+>>
+>> Best,
+>> Wei
+> I see, it's based on total ram pages. It's reasonable but might
+> get out of sync if memory is onlined quickly. So you want to
+> detect that there's more free memory than can fit and
+> retry the reporting.
+>
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
- tools/testing/selftests/x86/sigreturn.c | 46 ++++++++++++++++---------
- 1 file changed, 29 insertions(+), 17 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/sigreturn.c b/tools/testing/selftests/x86/sigreturn.c
-index 246145b84a12..2559e2c01793 100644
---- a/tools/testing/selftests/x86/sigreturn.c
-+++ b/tools/testing/selftests/x86/sigreturn.c
-@@ -612,19 +612,38 @@ static int test_valid_sigreturn(int cs_bits, bool use_16bit_ss, int force_ss)
- 		greg_t req = requested_regs[i], res = resulting_regs[i];
- 		if (i == REG_TRAPNO || i == REG_IP)
- 			continue;	/* don't care */
--		if (i == REG_SP) {
--			printf("\tSP: %llx -> %llx\n", (unsigned long long)req,
--			       (unsigned long long)res);
- 
-+		if (i == REG_SP) {
- 			/*
--			 * In many circumstances, the high 32 bits of rsp
--			 * are zeroed.  For example, we could be a real
--			 * 32-bit program, or we could hit any of a number
--			 * of poorly-documented IRET or segmented ESP
--			 * oddities.  If this happens, it's okay.
-+			 * If we were using a 16-bit stack segment, then
-+			 * the kernel is a bit stuck: IRET only restores
-+			 * the low 16 bits of ESP/RSP if SS is 16-bit.
-+			 * The kernel uses a hack to restore bits 31:16,
-+			 * but that hack doesn't help with bits 63:32.
-+			 * On Intel CPUs, bits 63:32 end up zeroed, and, on
-+			 * AMD CPUs, they leak the high bits of the kernel
-+			 * espfix64 stack pointer.  There's very little that
-+			 * the kernel can do about it.
-+			 *
-+			 * Similarly, if we are returning to a 32-bit context,
-+			 * the CPU will often lose the high 32 bits of RSP.
- 			 */
--			if (res == (req & 0xFFFFFFFF))
--				continue;  /* OK; not expected to work */
-+
-+			if (res == req)
-+				continue;
-+
-+			if (cs_bits != 64 && ((res ^ req) & 0xFFFFFFFF) == 0) {
-+				printf("[NOTE]\tSP: %llx -> %llx\n",
-+				       (unsigned long long)req,
-+				       (unsigned long long)res);
-+				continue;
-+			}
-+
-+			printf("[FAIL]\tSP mismatch: requested 0x%llx; got 0x%llx\n",
-+			       (unsigned long long)requested_regs[i],
-+			       (unsigned long long)resulting_regs[i]);
-+			nerrs++;
-+			continue;
- 		}
- 
- 		bool ignore_reg = false;
-@@ -663,13 +682,6 @@ static int test_valid_sigreturn(int cs_bits, bool use_16bit_ss, int force_ss)
- 		}
- 
- 		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
--			/*
--			 * SP is particularly interesting here.  The
--			 * usual cause of failures is that we hit the
--			 * nasty IRET case of returning to a 16-bit SS,
--			 * in which case bits 16:31 of the *kernel*
--			 * stack pointer persist in ESP.
--			 */
- 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
- 			       i, (unsigned long long)requested_regs[i],
- 			       (unsigned long long)resulting_regs[i]);
--- 
-2.17.1
+- AFAIK, memory hotplug isn't expected to happen during live migration 
+today. Hypervisors (e.g. QEMU) explicitly forbid this.
+
+- Allocating buffers based on total ram pages already gives some 
+headroom for newly plugged memory if that could happen in any case. 
+Also, we can think about why people plug in more memory - usually 
+because the existing memory isn't enough, which implies that the free 
+page list is very likely to be close to empty.
+
+- This method could be easily scaled if people really need more headroom 
+for hot-plugged memory. For example, calculation based on "X * 
+total_ram_pages", X could be a number passed from the hypervisor.
+
+- This is an optimization feature, and reporting less free memory in 
+that rare case doesn't hurt anything.
+
+So I think it is good to start from a fundamental implementation, which 
+doesn't confuse people, and complexities can be added when there is a 
+real need in the future.
+
+Best,
+Wei
+
 
