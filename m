@@ -2,97 +2,193 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B92C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AD5C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74C952448B
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:24:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C952448B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D1FD824445
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:25:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FD824445
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966169AbeF0VY0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 17:24:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54166 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966033AbeF0VYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 17:24:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B9D9DAB9B;
-        Wed, 27 Jun 2018 21:24:23 +0000 (UTC)
-Date:   Wed, 27 Jun 2018 23:24:21 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        JianKang Chen <chenjiankang1@huawei.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, xieyisheng1@huawei.com,
-        guohanjun@huawei.com, wangkefeng.wang@huawei.com
-Subject: Re: [PATCH] mm: drop VM_BUG_ON from __get_free_pages
-Message-ID: <20180627212421.GY32348@dhcp22.suse.cz>
-References: <20180622162841.25114-1-mhocko@kernel.org>
- <6886dee0-3ac4-ef5d-3597-073196c81d88@suse.cz>
- <20180626100416.a3ff53f5c4aac9fae954e3f6@linux-foundation.org>
- <20180627073420.GD32348@dhcp22.suse.cz>
- <e0f4426d-1b7c-e590-aae0-e8f7ae3bb948@suse.cz>
- <20180627141412.00c0b23d2eb5f9475a76d833@linux-foundation.org>
+        id S966209AbeF0VZQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 17:25:16 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55918 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965912AbeF0VZP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 17:25:15 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 15E45263BFB
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     David Airlie <airlied@linux.ie>
+Cc:     dnicoara@chromium.org, alexandros.frantzis@collabora.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        tomasz Figa <tfiga@chromium.org>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@google.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: [RFC PATCH] drm/atomic: add ASYNC_UPDATE flag to the Atomic IOCTL.
+Date:   Wed, 27 Jun 2018 23:25:06 +0200
+Message-Id: <20180627212506.24061-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627141412.00c0b23d2eb5f9475a76d833@linux-foundation.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 27-06-18 14:14:12, Andrew Morton wrote:
-> On Wed, 27 Jun 2018 09:50:01 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
-> > On 06/27/2018 09:34 AM, Michal Hocko wrote:
-> > > On Tue 26-06-18 10:04:16, Andrew Morton wrote:
-> > > 
-> > > And as I've argued before the code would be wrong regardless. We would
-> > > leak the memory or worse touch somebody's else kmap without knowing
-> > > that.  So we have a choice between a mem leak, data corruption k or a
-> > > silent fixup. I would prefer the last option. And blowing up on a BUG
-> > > is not much better on something that is easily fixable. I am not really
-> > > convinced that & ~__GFP_HIGHMEM is something to lose sleep over.
-> > 
-> > Maybe put the fixup into a "#ifdef CONFIG_HIGHMEM" block and then modern
-> > systems won't care? In that case it could even be if (WARN_ON_ONCE(...))
-> > so future cases with wrong expectations would become known.
-> > 
-> 
-> The more I think about it, the more I like the VM_BUG_ON.
-> 
-> Look, if I was reviewing code which did
-> 
-> 	page = alloc_page(__GFP_HIGHMEM);
-> 	addr = page_to_virt(page);
-> 
-> I would say "that's a bug, you forgot to kmap the page".
-> 
-> And any code which does __get_free_pages(__GFP_HIGHMEM) is just as
-> buggy: it's requesting the virtual address of a high page without
-> having kmapped it.  Core MM shouldn't be silently kludging around the
-> bug by restricting the caller to using lowmem pages.
+From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-I would argue that internal kernel APIs should trust their callers.
-Panicing with an unknown context is about the worst way to teach
-developers how to use the API properly. Because it will be end users
-seeing an outage. So I would simply not care beyond documenting the
-expectation. If we want to be more careful then fix it up. If you
-disagree then just drop the patch. I do not insist so much to spend much
-more time on something I thought was quite obvious. BUG_ON for an inpropoer
-API usage is considered harmful for quite a long time by now. I do not
-see why this would be any different.
+This flag tells core to jump ahead the queued update if the conditions
+in drm_atomic_async_check() are met. That means we are only able to do an
+async update if no modeset is pending and update for the same plane is
+not queued.
 
+It uses the already in place infrastructure for async updates.
+
+It is useful for cursor updates and async PageFlips over the atomic
+ioctl, otherwise in some cases updates may be delayed to the point the
+user will notice it.
+
+DRM_MODE_ATOMIC_ASYNC_UPDATE should be passed to the Atomic IOCTL to use
+this feature.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+Hi,
+
+This is an attempt to introduce the new ASYNC_UPDATE flag for atomic
+operations, see the commit message for a more detailed description.
+
+To test this patch we have created an IGT test that we plan to send to
+the ML but also was tested using a small program that exercises the uAPI
+for easy sanity testing. The program created by Alexandros can be found here
+[2]. To test, just build the program and use the --atomic flag to use the
+cursor plane in normal (blocking mode), and --atomic-async to use the cursor
+plane with the ASYNC_UPDATE flag.E.g.
+
+  drm_cursor --atomic
+
+or
+
+  drm_cursor --atomic-async
+
+The test worked on a Samsung Chromebook Plus on top of mainline plus
+the patch to update cursors asynchronously through atomic for the
+drm/rockchip driver [3].
+
+Alexandros also did a proof-of-concept to use this flag and draw cursors
+using atomic if possible on ozone [1].
+
+Best regards,
+ Enric
+
+[1] https://chromium-review.googlesource.com/c/chromium/src/+/1092711
+[2] https://gitlab.collabora.com/alf/drm-cursor
+[3] https://patchwork.kernel.org/patch/10492693/
+
+
+ drivers/gpu/drm/drm_atomic.c        | 6 ++++++
+ drivers/gpu/drm/drm_atomic_helper.c | 9 ++++++---
+ include/uapi/drm/drm_mode.h         | 4 +++-
+ 3 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index c825c76edc1d..15b799f46982 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -80,6 +80,7 @@ drm_atomic_state_init(struct drm_device *dev, struct drm_atomic_state *state)
+ 	 * setting this appropriately?
+ 	 */
+ 	state->allow_modeset = true;
++	state->async_update = true;
+ 
+ 	state->crtcs = kcalloc(dev->mode_config.num_crtc,
+ 			       sizeof(*state->crtcs), GFP_KERNEL);
+@@ -2320,6 +2321,10 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
+ 			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
+ 		return -EINVAL;
+ 
++	if ((arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET) &&
++			(arg->flags & DRM_MODE_ATOMIC_ASYNC_UPDATE))
++		return -EINVAL;
++
+ 	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
+ 
+ 	state = drm_atomic_state_alloc(dev);
+@@ -2328,6 +2333,7 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
+ 
+ 	state->acquire_ctx = &ctx;
+ 	state->allow_modeset = !!(arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET);
++	state->async_update = !!(arg->flags & DRM_MODE_ATOMIC_ASYNC_UPDATE);
+ 
+ retry:
+ 	plane_mask = 0;
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index c35654591c12..aeb0523d3bcf 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -891,7 +891,7 @@ int drm_atomic_helper_check(struct drm_device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (state->legacy_cursor_update)
++	if (state->async_update || state->legacy_cursor_update)
+ 		state->async_update = !drm_atomic_helper_async_check(dev, state);
+ 
+ 	return ret;
+@@ -1526,13 +1526,16 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
+ 	if (new_plane_state->fence)
+ 		return -EINVAL;
+ 
++	/* Only do an async update if there is a pending commit. */
++	if (!old_plane_state->commit)
++		return -EINVAL;
++
+ 	/*
+ 	 * Don't do an async update if there is an outstanding commit modifying
+ 	 * the plane.  This prevents our async update's changes from getting
+ 	 * overridden by a previous synchronous update's state.
+ 	 */
+-	if (old_plane_state->commit &&
+-	    !try_wait_for_completion(&old_plane_state->commit->hw_done))
++	if (!try_wait_for_completion(&old_plane_state->commit->hw_done))
+ 		return -EBUSY;
+ 
+ 	return funcs->atomic_async_check(plane, new_plane_state);
+diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+index 50bcf4214ff9..772e84f0edeb 100644
+--- a/include/uapi/drm/drm_mode.h
++++ b/include/uapi/drm/drm_mode.h
+@@ -718,13 +718,15 @@ struct drm_mode_destroy_dumb {
+ #define DRM_MODE_ATOMIC_TEST_ONLY 0x0100
+ #define DRM_MODE_ATOMIC_NONBLOCK  0x0200
+ #define DRM_MODE_ATOMIC_ALLOW_MODESET 0x0400
++#define DRM_MODE_ATOMIC_ASYNC_UPDATE  0x0800
+ 
+ #define DRM_MODE_ATOMIC_FLAGS (\
+ 		DRM_MODE_PAGE_FLIP_EVENT |\
+ 		DRM_MODE_PAGE_FLIP_ASYNC |\
+ 		DRM_MODE_ATOMIC_TEST_ONLY |\
+ 		DRM_MODE_ATOMIC_NONBLOCK |\
+-		DRM_MODE_ATOMIC_ALLOW_MODESET)
++		DRM_MODE_ATOMIC_ALLOW_MODESET |\
++		DRM_MODE_ATOMIC_ASYNC_UPDATE)
+ 
+ struct drm_mode_atomic {
+ 	__u32 flags;
 -- 
-Michal Hocko
-SUSE Labs
+2.18.0
+
