@@ -2,68 +2,84 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64508C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B178C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153FA26252
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:41:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153FA26252
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id D369D2648B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D369D2648B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964989AbeF0MlX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:41:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:57831 "EHLO ozlabs.org"
+        id S934430AbeF0Mm7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:42:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53426 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932312AbeF0MlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:41:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41G2b01jTVz9s2L;
-        Wed, 27 Jun 2018 22:41:15 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Paul Mackerras <paulus@samba.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Meelis Roos <mroos@linux.ee>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Subject: Re: [PATCH 1/3] [v2] powerpc: mac: fix rtc read/write functions
-In-Reply-To: <CAK8P3a2HwOe2D4LXgFsfhFXpeUBpHZiB5PCk0nkAwqX3NKCmFA@mail.gmail.com>
-References: <20180619140229.3615110-1-arnd@arndb.de> <87y3f06e9a.fsf@concordia.ellerman.id.au> <CAK8P3a2HwOe2D4LXgFsfhFXpeUBpHZiB5PCk0nkAwqX3NKCmFA@mail.gmail.com>
-Date:   Wed, 27 Jun 2018 22:41:13 +1000
-Message-ID: <87lgb05rme.fsf@concordia.ellerman.id.au>
+        id S932312AbeF0Mm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:42:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2DBA7AF75;
+        Wed, 27 Jun 2018 12:42:56 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7367F1E3C15; Wed, 27 Jun 2018 14:42:55 +0200 (CEST)
+Date:   Wed, 27 Jun 2018 14:42:55 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
+References: <20180618081258.GB16991@lst.de>
+ <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
+ <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
+ <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
+ <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
+ <20180626134757.GY28965@dhcp22.suse.cz>
+ <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
+ <20180627113221.GO32348@dhcp22.suse.cz>
+ <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
+ <20180627115927.GQ32348@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627115927.GQ32348@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
-> On Wed, Jun 27, 2018 at 6:32 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
->>
->> So I think I can take this patch in isolation via the powerpc tree as a
->> fix for 4.18.
->>
->> I'll leave the other two alone.
->
-> Yes, that is what I had intended with this series but should have made
-> clearer. The two m68k patches are 4.19 material.
+On Wed 27-06-18 13:59:27, Michal Hocko wrote:
+> On Wed 27-06-18 13:53:49, Jan Kara wrote:
+> > On Wed 27-06-18 13:32:21, Michal Hocko wrote:
+> [...]
+> > > Appart from that, do we really care about 32b here? Big DIO, IB users
+> > > seem to be 64b only AFAIU.
+> > 
+> > IMO it is a bad habit to leave unpriviledged-user-triggerable oops in the
+> > kernel even for uncommon platforms...
+> 
+> Absolutely agreed! I didn't mean to keep the blow up for 32b. I just
+> wanted to say that we can stay with a simple solution for 32b. I thought
+> the g-u-p-longterm has plugged the most obvious breakage already. But
+> maybe I just misunderstood.
 
-OK thanks.
+Most yes, but if you try hard enough, you can still trigger the oops e.g.
+with appropriately set up direct IO when racing with writeback / reclaim.
 
-cheers
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
