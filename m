@@ -2,201 +2,97 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E81A3C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558C7C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8944626314
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:00:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20150623.gappssmtp.com header.i=@ursulin-net.20150623.gappssmtp.com header.b="QABzltTi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8944626314
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+	by mail.kernel.org (Postfix) with ESMTP id B381A26323
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:01:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B381A26323
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iram.es
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933884AbeF0JA5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:00:57 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38667 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933529AbeF0JAq (ORCPT
+        id S933913AbeF0JBa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:01:30 -0400
+Received: from te-l1mail2-out06a.puc.rediris.es ([130.206.19.88]:15703 "EHLO
+        te-l1mail2-out06a.puc.rediris.es" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933529AbeF0JB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:00:46 -0400
-Received: by mail-wr0-f193.google.com with SMTP id e18-v6so1195406wrs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 02:00:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pBpYWuK6rmiHygTJEzunKDodCOXKughuCiCPMfoXbZ0=;
-        b=QABzltTiFYe5GEfW2/q0ht6Za2ORvAtyeOUIUI8yEuLSW7aITPq1jCm4S3NzMaYRzz
-         HisFnsIXluxcPljvRjxsQGrglp9TbspwnB7i179L0K21Mt7Rqvez5U/CeRX2zMFNWgwE
-         eJIZ9PuMwMfRzWvDducVQ5iV56WLhmYpvy4dMWgJ4CErx1uZxNRom2Qz7djl+myOsJ9R
-         t+38/TMeD0OscYcpkxGKHQ1y7Ifp5yejprB2ENg5VD0DrIJeoy1HGODh9TQwMCJzQqOU
-         j/ijxTVJX1Qiegw4ySmzUkPjZIjDP4kV6cmg48hZMff/UkOQ3Z5Yy6JPd8Mb25clBuVx
-         wMfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pBpYWuK6rmiHygTJEzunKDodCOXKughuCiCPMfoXbZ0=;
-        b=eLt/bfS0s2MTO0ztUJUV5gHiGM+kx/eu7FLp60/7RazFj//kV1eQ7PxYyClLLI5qvu
-         rDUUGRLpGaxmm4xlICGdUOwdeVxOSRo36QH5ePFlVI67aE+P35DzpU9xlWq+uHL+Ob9d
-         88e84ocCzDIdZgeQGnr4ZyrEd3GY8lG2SDvH279CpuIwsBr9B5yxz1Qg8FeqpM7GGrDY
-         uRAYaGCS6CwwgjN1E3czKjSlcYTVsu4bda9GS+YHAhTKJsUgQGHgSNWGf9mS4rW0PfBA
-         r/mLXIrTPlsoB2PX1A5osHpBZJ9tHXbu86MmG5l3J2g7oSc0gcfP9muvOxWb5tXJBPgg
-         3kGg==
-X-Gm-Message-State: APt69E0yqegsj6NsmIp9WzIvoFG3y10zRmnZkFxeGqMLzObwoRu+M1KT
-        x/+CsdeCSNmb6DhwlN0qF/ZZxQ==
-X-Google-Smtp-Source: AAOMgpfHEtaIxmzBUazUWEaelmC/R8R4LrrVKlBM6SfDyXQ+yhZ/Sp+qLX4otD6KIeFayg85mA5HHQ==
-X-Received: by 2002:adf:e644:: with SMTP id b4-v6mr4604891wrn.254.1530090045215;
-        Wed, 27 Jun 2018 02:00:45 -0700 (PDT)
-Received: from [192.168.0.197] ([95.146.151.144])
-        by smtp.googlemail.com with ESMTPSA id m3-v6sm3126559wro.27.2018.06.27.02.00.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 02:00:43 -0700 (PDT)
-Subject: Re: [RFC 1/4] perf: Move some access checks later in perf_event_open
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Wed, 27 Jun 2018 05:01:28 -0400
+X-IPAS-Result: =?us-ascii?q?A2HjAAAQUjNbly0YzoJcHAEBAQQBAQoBAYMqAQEBAQGCAYw?=
+ =?us-ascii?q?lX4tlggeVFoF6C4RsAoMXITQYAQIBAQEBAQECAgIQAQEBAQEIFgZYhTkBAgM6P?=
+ =?us-ascii?q?xALGAklD0gGgziBfwGvBYhNgRyIbYIVhB6ERoYKApkxCY8IjVWRc4EjHoILMxo?=
+ =?us-ascii?q?IMDuCaoIwjiKRfwEB?=
+X-IronPort-AV: E=Sophos;i="5.51,278,1526335200"; 
+   d="scan'208";a="246574347"
+Received: from mta-out03.sim.rediris.es ([130.206.24.45])
+  by smtpout.puc.rediris.es with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 11:00:54 +0200
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mta-out03.sim.rediris.es (Postfix) with ESMTP id ABA8999CEA;
+        Wed, 27 Jun 2018 11:00:52 +0200 (CEST)
+Received: from mta-out03.sim.rediris.es ([127.0.0.1])
+        by localhost (mta-out03.sim.rediris.es [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id uVhk20zTQkP1; Wed, 27 Jun 2018 11:00:46 +0200 (CEST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mta-out03.sim.rediris.es (Postfix) with ESMTP id 80A2C99DA0;
+        Wed, 27 Jun 2018 11:00:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at 
+Received: from mta-out03.sim.rediris.es ([127.0.0.1])
+        by localhost (mta-out03.sim.rediris.es [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id QPyQsKYi8EKL; Wed, 27 Jun 2018 11:00:46 +0200 (CEST)
+Received: from lt-gp.iram.es (dhcp-186.iram.es [150.214.224.186])
+        by mta-out03.sim.rediris.es (Postfix) with ESMTPA id 0297999CEA;
+        Wed, 27 Jun 2018 11:00:29 +0200 (CEST)
+Date:   Wed, 27 Jun 2018 11:00:22 +0200
+From:   Gabriel Paubert <paubert@iram.es>
+To:     Michael Schmitz <schmitzmic@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Finn Thain <fthain@telegraphics.com.au>, geert@linux-m68k.org,
+        linux-m68k@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Cc:     Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>, x86@kernel.org
-References: <20180626153642.5587-1-tvrtko.ursulin@linux.intel.com>
- <20180626153642.5587-2-tvrtko.ursulin@linux.intel.com>
- <861aa316-fa18-4385-af84-0e9445f261d1@linux.intel.com>
-From:   Tvrtko Ursulin <tursulin@ursulin.net>
-Message-ID: <d7264619-e9cc-08fe-6a6b-ee19a28c30df@ursulin.net>
-Date:   Wed, 27 Jun 2018 10:00:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Subject: Re: [PATCH v3 00/12] macintosh: Resolve various PMU driver problems
+Message-ID: <20180627090022.rij2owx5durbc4e6@lt-gp.iram.es>
+References: <cover.1528885172.git.fthain@telegraphics.com.au>
+ <alpine.LNX.2.21.1806242119180.34@nippy.intranet>
+ <874lhp6i4d.fsf@concordia.ellerman.id.au>
+ <cacaecac00c1ac941a78da772bbcfb05142df87d.camel@kernel.crashing.org>
+ <5d4d7ca4-1d2f-268f-e5d2-eddb213e894d@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <861aa316-fa18-4385-af84-0e9445f261d1@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d4d7ca4-1d2f-268f-e5d2-eddb213e894d@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 26/06/18 18:24, Alexey Budankov wrote:
-> Hi,
+On Wed, Jun 27, 2018 at 05:39:15PM +1200, Michael Schmitz wrote:
+> Ben,
 > 
-> On 26.06.2018 18:36, Tvrtko Ursulin wrote:
->> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
->>
->> To enable per-PMU access controls in a following patch first move all call
->> sites of perf_paranoid_kernel() to after the event has been created.
->>
->> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> Cc: Jiri Olsa <jolsa@redhat.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
->> Cc: Andi Kleen <ak@linux.intel.com>
->> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: x86@kernel.org
->> ---
->>   kernel/events/core.c | 36 ++++++++++++++++++++++--------------
->>   1 file changed, 22 insertions(+), 14 deletions(-)
->>
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index f490caca9aa4..12de95b0472e 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -10189,10 +10189,6 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
->>   			 */
->>   			attr->branch_sample_type = mask;
->>   		}
->> -		/* privileged levels capture (kernel, hv): check permissions */
->> -		if ((mask & PERF_SAMPLE_BRANCH_PERM_PLM)
->> -		    && perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
->> -			return -EACCES;
->>   	}
->>   
->>   	if (attr->sample_type & PERF_SAMPLE_REGS_USER) {
->> @@ -10409,11 +10405,6 @@ SYSCALL_DEFINE5(perf_event_open,
->>   	if (err)
->>   		return err;
->>   
->> -	if (!attr.exclude_kernel) {
->> -		if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
->> -			return -EACCES;
->> -	}
->> -
->>   	if (attr.namespaces) {
->>   		if (!capable(CAP_SYS_ADMIN))
->>   			return -EACCES;
->> @@ -10427,11 +10418,6 @@ SYSCALL_DEFINE5(perf_event_open,
->>   			return -EINVAL;
->>   	}
->>   
->> -	/* Only privileged users can get physical addresses */
->> -	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
->> -	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
->> -		return -EACCES;
->> -
->>   	/*
->>   	 * In cgroup mode, the pid argument is used to pass the fd
->>   	 * opened to the cgroup directory in cgroupfs. The cpu argument
->> @@ -10501,6 +10487,28 @@ SYSCALL_DEFINE5(perf_event_open,
->>   		goto err_cred;
->>   	}
->>   
->> +	if (!attr.exclude_kernel) {
->> +		if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
->> +			err = -EACCES;
+> Am 27.06.2018 um 15:27 schrieb Benjamin Herrenschmidt:
+> > On Wed, 2018-06-27 at 13:08 +1000, Michael Ellerman wrote:
+> > > > I will rewrite patch 10/12 after Arnd's fixes and this series have all
+> > > > made their way through both powerpc and m68k trees, and submit it
+> > > > separately.
+> > > 
+> > > drivers/macintosh is supposedly maintained by Ben, but I'm not sure this
+> > > series is high on his todo list.
+> > 
+> > We need at least to pull out a couple of powerbooks we have sitting in
+> > drawers and try it out.
 > 
-> I would separate this combined permissions check into a function e.g.
-> static bool perf_test_pmu_paranoid(const struct pmu *pmu, int *err) to avoid
-> code duplication.
+> No need to root around in drawers - I'm sitting in front of one (G3
+> Titanium) writing this. Let me know if that would help (I've forgotten most
+> of what I knew about powerpc kernels).
 
-My thinking was for this to be as mechanical (code movement) as 
-possible, but I can consider it.
+A very rare model, all G3 I've seen were plastic, all Titanium were G4 :-)
 
-Regards,
-
-Tvrtko
-
->> +			goto err_alloc;
->> +		}
->> +	}
->> +
->> +	/* Only privileged users can get physical addresses */
->> +	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
->> +	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
->> +		err = -EACCES;
->> +		goto err_alloc;
->> +	}
->> +
->> +	/* privileged levels capture (kernel, hv): check permissions */
->> +	if ((attr.sample_type & PERF_SAMPLE_BRANCH_STACK) &&
->> +	    (attr.branch_sample_type & PERF_SAMPLE_BRANCH_PERM_PLM) &&
->> +	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
->> +		err = -EACCES;
->> +		goto err_alloc;
->> +	}
->> +
->>   	if (is_sampling_event(event)) {
->>   		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
->>   			err = -EOPNOTSUPP;
->>
-> 
+	Cheers,
+	Gabriel
+	(still using my Pismo from time to time, but much less since
+	sleep was broken)
