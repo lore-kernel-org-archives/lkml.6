@@ -2,82 +2,76 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E02C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B2BC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 226DB25513
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:55:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="VJpSCV7x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226DB25513
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	by mail.kernel.org (Postfix) with ESMTP id 7957D23F8A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:59:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7957D23F8A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964992AbeF0Lzz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 07:55:55 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:35978 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753627AbeF0LzD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 07:55:03 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 4/5] pinctrl: ingenic: Implement pinmux callback .gpio_get_direction
-Date:   Wed, 27 Jun 2018 13:49:03 +0200
-Message-Id: <20180627114904.10890-5-paul@crapouillou.net>
-In-Reply-To: <20180627114904.10890-1-paul@crapouillou.net>
-References: <20180627114904.10890-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530100166; bh=lMB3Kcfp70Si2MDWAF6ZTiqsNFXanURFN68wtgxyH0A=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=VJpSCV7xLwde6xko82biiZ5uJk6FScLTFr0C5gOE+5yotIAF3+q8pbn10F1rbgvag1x+M/hMswynia5AGF2KeXhwprm8BsmGSFvljnxTKy+Gp6Qyz+dKFsa1+soosSZ976lwIYO6pW7Nu+i7PH+B4YOhit6JKDuEW575FCceo5c=
+        id S1754283AbeF0L7b (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 07:59:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46740 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753246AbeF0L7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 07:59:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 95EF4AC06;
+        Wed, 27 Jun 2018 11:59:28 +0000 (UTC)
+Date:   Wed, 27 Jun 2018 13:59:27 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180627115927.GQ32348@dhcp22.suse.cz>
+References: <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com>
+ <20180618081258.GB16991@lst.de>
+ <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
+ <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
+ <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
+ <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
+ <20180626134757.GY28965@dhcp22.suse.cz>
+ <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
+ <20180627113221.GO32348@dhcp22.suse.cz>
+ <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will allow the GPIO driver to use the previously introduced
-pinctrl_gpio_get_direction function to implement its .get_direction
-callback.
+On Wed 27-06-18 13:53:49, Jan Kara wrote:
+> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
+[...]
+> > Appart from that, do we really care about 32b here? Big DIO, IB users
+> > seem to be 64b only AFAIU.
+> 
+> IMO it is a bad habit to leave unpriviledged-user-triggerable oops in the
+> kernel even for uncommon platforms...
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/pinctrl/pinctrl-ingenic.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 6a1b6058b991..2dab52cf119b 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -543,12 +543,25 @@ static int ingenic_pinmux_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+static int ingenic_pinmux_gpio_get_direction(struct pinctrl_dev *pctldev,
-+		struct pinctrl_gpio_range *range,
-+		unsigned int pin)
-+{
-+	struct ingenic_pinctrl *jzpc = pinctrl_dev_get_drvdata(pctldev);
-+
-+	if (jzpc->version >= ID_JZ4770)
-+		return ingenic_get_pin_config(jzpc, pin, JZ4770_GPIO_PAT1);
-+	else
-+		return !ingenic_get_pin_config(jzpc, pin, JZ4740_GPIO_DIR);
-+}
-+
- static const struct pinmux_ops ingenic_pmxops = {
- 	.get_functions_count = pinmux_generic_get_function_count,
- 	.get_function_name = pinmux_generic_get_function_name,
- 	.get_function_groups = pinmux_generic_get_function_groups,
- 	.set_mux = ingenic_pinmux_set_mux,
- 	.gpio_set_direction = ingenic_pinmux_gpio_set_direction,
-+	.gpio_get_direction = ingenic_pinmux_gpio_get_direction,
- };
- 
- static int ingenic_pinconf_get(struct pinctrl_dev *pctldev,
+Absolutely agreed! I didn't mean to keep the blow up for 32b. I just
+wanted to say that we can stay with a simple solution for 32b. I thought
+the g-u-p-longterm has plugged the most obvious breakage already. But
+maybe I just misunderstood.
 -- 
-2.11.0
-
+Michal Hocko
+SUSE Labs
