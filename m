@@ -2,116 +2,108 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA59C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1A5C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D3425E67
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:02:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U24smYfm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D3425E67
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 850E2266D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:04:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850E2266D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752602AbeF0HCH (ORCPT
+        id S1752993AbeF0HEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 03:02:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752095AbeF0HBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 03:01:53 -0400
-Received: from localhost (unknown [106.201.61.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7335325791;
-        Wed, 27 Jun 2018 07:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530082913;
-        bh=DHnTsjADK66S93R77642TYs8G4jHOm/8Arr1nxj5Iz0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U24smYfmQI9ZjWlk2+JJKQIITRW06xtcrGhaxmyLEXeJts07Pqz455Wq8O3K/8Cpd
-         1qSRL5bBjmIGEprcjkYlKJez3G/kUWFj/tox7D72gVK3WcnN+XCZKK8tpjJk3/EQS+
-         QNMmqvnmHS0dfmOpzCCqzT5HbrwvekkOXOHJczAw=
-Date:   Wed, 27 Jun 2018 12:31:44 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Stephan Mueller <smueller@chronox.de>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
-Message-ID: <20180627070144.GG22377@vkoul-mobl>
-References: <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
- <52764537.cSZCttAJ1I@tauon.chronox.de>
- <20180627062701.GF22377@vkoul-mobl>
- <170012246.0U45yCEtus@tauon.chronox.de>
+        Wed, 27 Jun 2018 03:04:33 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:34204 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752106AbeF0HEb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 03:04:31 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5R6wwIl007792;
+        Wed, 27 Jun 2018 09:03:53 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2jv4ycg8jr-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 27 Jun 2018 09:03:53 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 889843A;
+        Wed, 27 Jun 2018 07:03:51 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 68FAC13CF;
+        Wed, 27 Jun 2018 07:03:51 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.50) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 27 Jun
+ 2018 09:03:50 +0200
+Subject: Re: [PATCH V5 0/5] add iwdg2 support for stm32mp157c
+To:     Ludovic Barre <ludovic.Barre@st.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <c6996e7f-2b30-6eaf-afa3-5a98b6dcaa78@st.com>
+Date:   Wed, 27 Jun 2018 09:03:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <170012246.0U45yCEtus@tauon.chronox.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_01:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephan,
+Hi Guenter
 
-Thanks for quick reply,
-
-On 27-06-18, 08:43, Stephan Mueller wrote:
-> > On 27-06-18, 08:13, Stephan Mueller wrote:
-> > > The key is:
-> > >         alg->base.cra_ctxsize   = sizeof(struct drbg_state);
-> > > 
-> > > during initialization since the kernel crypto API allocates that buffer
-> > > for
-> > > you and releases it during deallocation.
-> > 
-> > The difference here is that memory is allocated by crypto and driver has
-> > no way to pass "it's" own data while doing registration. Ideally
-> > registration should accept a pointer/long and pass that back on a
-> > callbacks
+On 06/25/2018 05:42 PM, Ludovic Barre wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
 > 
-> Looking at your code, it seems you do what makes sense: there is only one 
-> instance of the driver, if at all. Thus, having qcom_rng_dev as static makes 
-> sense. The kernel crypto API allows arbitrary instances of the RNG as well as 
-> frequent allocations and deallocations. And this is why there must be a 
-> disconnect between the one hardware-resource driver-instance data structure 
-> and the (potentially) multiple crypto API RNG instances and their data 
-> structures.
-
-For now it is true, but somehow doesn't make me happy to bank on that..
-
-> > 
-> > Currently am doing bunch of initialization in .probe (platform driver)
-> > and I think recommendation would be to move that to .cra_init, which seem
-> > plausible but I don't have pdev to read hw_resource etc.. so would still
-> > need to get that.
+> This patch series updates stm32_iwdg driver to manage pclk
+> clock by compatible. stm32mp1 requires a pclk clock.
 > 
-> It seems that your allocation during probe relates to the hardware resource 
-> where you only have one in the system. Thus, doing the allocation here makes 
-> sense. And, you do not want to perform probe or such resource allocation once 
-> per crypto API RNG instance allocation. As said, there can be multiple or even 
-> they can be allocated and deallocated frequently. This in particular applies 
-> if your driver's "stdrng" has the highest prio which means that it will be 
-> allocated and deallocated frequently.
+> v5:
+> -update stm32f429.dtsi
+> 
+> v4:
+> -dt-bindings: split and review
+> 
+> v3:
+> -remove stm32_iwdg_config structure, just assign the
+>   boolean directly to .dat
+> 
+> Ludovic Barre (5):
+>    dt-bindings: watchdog: add stm32mp1 support
+>    watchdog: stm32: add pclk feature for stm32mp1
+>    ARM: dts: stm32: add iwdg2 support for stm32mp157c
+>    ARM: dts: stm32: add iwdg2 support for stm32mp157c-ed1
+>    ARM: dts: stm32: update iwdg with lsi clock name for stm32f429
 
-Right, that is how I visualized it.
+I will take DT patches in my tree.
 
-Is there a way where we can tweak the register API to pass hw_resource
-pointer and get that back? Would that work with the security model in
-crypto.
+Thanks
+alex
 
-I do not like globals and somehow don't feel that we should do it that
-way
-
-Thanks for the quick look on the code.
-
-~Vinod
+> 
+>   .../devicetree/bindings/watchdog/st,stm32-iwdg.txt |  13 ++-
+>   arch/arm/boot/dts/stm32f429.dtsi                   |   1 +
+>   arch/arm/boot/dts/stm32mp157c-ed1.dts              |   5 +
+>   arch/arm/boot/dts/stm32mp157c.dtsi                 |   8 ++
+>   drivers/watchdog/stm32_iwdg.c                      | 116 +++++++++++++--------
+>   5 files changed, 98 insertions(+), 45 deletions(-)
+> 
