@@ -2,146 +2,94 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318EAC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97720C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB6325A2F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:42:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="igYbhEhX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB6325A2F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 4132E25A9D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:44:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4132E25A9D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935128AbeF0Tmc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 15:42:32 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35357 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935101AbeF0Tma (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 15:42:30 -0400
-Received: by mail-lf0-f66.google.com with SMTP id i15-v6so2423453lfc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:42:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/omtUHlsPvPWOdxTaiyL1MA4SRecFGeK5/NxG1cOQFU=;
-        b=igYbhEhXTY5T8ElOyWfXmm5x49IM9bRd7yzdFb8RcJlN7TBQbOCX6bDKqfUPFRPiWw
-         LsXDzEdrCZsQO7yhtocxNTK4RTaSYh4cvK6ypI1zT9efxTMZ3VkaIGD16hET2IdYxxJN
-         bppvKLifwANGtsAzSBnp2DcWvIHp84JrTPfGHxitj8ZgJCIVbbvuTa4kDnm3VUE2V7tz
-         6PKXVCEr+Y6aXWJUBIhEAYZqDSdg84Nsug3GRSXLmted31tp7haToJLKQrja+z/VyP2Y
-         //tTnZwCpC4t6tqAwIfRsR4veVXiBpGaPa0LV/eq3jeUkbfyRWXWmmKltyOLi08YZ3Ed
-         DX9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/omtUHlsPvPWOdxTaiyL1MA4SRecFGeK5/NxG1cOQFU=;
-        b=uL+vLK17saDyU1ch3BRHUSuIkK0zdAKPohHOF0hFXID8tw3e2c3OD2K70sFC7OWMuE
-         zdYSoKXWzNrntU6ZgvU0o3RioDhqDIyuUxKGc8S8dTgePl09P3RQpnwWcgYq2pbDZG4j
-         gHe2l1m2c0Ndx5zV/cNhX5ot5p2EtUg2YcbHCRu3V7lJXxS7Z+BRPPcqVudzCeyQn7ZA
-         pydJp6sT9I1gQYNhyWoPnj/r/DxenV6YKR0bC2VyHMQ/A4B0vS/uco1rpTiiMzsRTlKJ
-         0l2rXTXxW0Lfc5V8OSBP1qao7PtaMQQMZLmD++A2p4rFg/NEhb2KxlIeq8KE+qN3sizQ
-         yXyA==
-X-Gm-Message-State: APt69E3zTerkQ6RtfhaB6o0KS6Ao9PztQLTM/ygNBM6s1iJ+aHMyJTvB
-        44CLjvE/r59LIGkRqZYuLnSXzA==
-X-Google-Smtp-Source: AAOMgpeuCVVGoMNbrU8B43LFJBK3tVMWQo/qibPwnlvHkY91CCuOPlw7HVME+/MOIsKY+JI2uR6vuw==
-X-Received: by 2002:a19:d3c3:: with SMTP id k186-v6mr5272569lfg.62.1530128549370;
-        Wed, 27 Jun 2018 12:42:29 -0700 (PDT)
-Received: from Macroninja.cnexlabs.com (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id k10-v6sm812915ljh.5.2018.06.27.12.42.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 12:42:28 -0700 (PDT)
-From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH] lightnvm: pblk: fix read_bitmap for 32bit archs
-Date:   Wed, 27 Jun 2018 21:42:06 +0200
-Message-Id: <20180627194206.30384-1-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
+        id S935155AbeF0Tol (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 15:44:41 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29762 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933703AbeF0Toj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 15:44:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 12:44:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,280,1526367600"; 
+   d="scan'208";a="67832413"
+Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2018 12:44:38 -0700
+Date:   Wed, 27 Jun 2018 13:44:38 -0600
+From:   Ross Zwisler <ross.zwisler@linux.intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Message-ID: <20180627194438.GA20774@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
+ <20180619092230.GA1438@bombadil.infradead.org>
+ <20180619164037.GA6679@linux.intel.com>
+ <20180619171638.GE1438@bombadil.infradead.org>
+ <20180627110529.GA19606@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627110529.GA19606@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If using pblk on a 32bit architecture, and there is a need to
-perform a partial read, the partial read bitmap will only have
-allocated 32 entries, where as 64 are needed.
+On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
+> On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
+> > I think I see a bug.  No idea if it's the one you're hitting ;-)
+> > 
+> > I had been intending to not use the 'entry' to decide whether we were
+> > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
+> > but not before dropping the DAX_PMD flag being passed from the PMD
+> > pagefault caller.  So if I put that back ...
+> 
+> Did you get a chance to test this?
 
-Make sure that the read_bitmap is initialized to 64bits on 32bit
-architectures as well.
+With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
+hit a WARN_ON in the DAX code:
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/pblk-read.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
 
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index 6e93c489ce57..671635275d56 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -401,7 +401,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 	struct pblk_g_ctx *r_ctx;
- 	struct nvm_rq *rqd;
- 	unsigned int bio_init_idx;
--	unsigned long read_bitmap; /* Max 64 ppas per request */
-+	DECLARE_BITMAP(read_bitmap, 64); /* Max 64 ppas per request */
- 	int ret = NVM_IO_ERR;
- 
- 	/* logic error: lba out-of-bounds. Ignore read request */
-@@ -413,7 +413,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 
- 	generic_start_io_acct(q, READ, bio_sectors(bio), &pblk->disk->part0);
- 
--	bitmap_zero(&read_bitmap, nr_secs);
-+	bitmap_zero(read_bitmap, nr_secs);
- 
- 	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
- 
-@@ -444,19 +444,19 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 		rqd->ppa_list = rqd->meta_list + pblk_dma_meta_size;
- 		rqd->dma_ppa_list = rqd->dma_meta_list + pblk_dma_meta_size;
- 
--		pblk_read_ppalist_rq(pblk, rqd, bio, blba, &read_bitmap);
-+		pblk_read_ppalist_rq(pblk, rqd, bio, blba, read_bitmap);
- 	} else {
--		pblk_read_rq(pblk, rqd, bio, blba, &read_bitmap);
-+		pblk_read_rq(pblk, rqd, bio, blba, read_bitmap);
- 	}
- 
--	if (bitmap_full(&read_bitmap, nr_secs)) {
-+	if (bitmap_full(read_bitmap, nr_secs)) {
- 		atomic_inc(&pblk->inflight_io);
- 		__pblk_end_io_read(pblk, rqd, false);
- 		return NVM_IO_DONE;
- 	}
- 
- 	/* All sectors are to be read from the device */
--	if (bitmap_empty(&read_bitmap, rqd->nr_ppas)) {
-+	if (bitmap_empty(read_bitmap, rqd->nr_ppas)) {
- 		struct bio *int_bio = NULL;
- 
- 		/* Clone read bio to deal with read errors internally */
-@@ -480,7 +480,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 	/* The read bio request could be partially filled by the write buffer,
- 	 * but there are some holes that need to be read from the drive.
- 	 */
--	return pblk_partial_read(pblk, rqd, bio, bio_init_idx, &read_bitmap);
-+	return pblk_partial_read(pblk, rqd, bio, bio_init_idx, read_bitmap);
- 
- fail_rqd_free:
- 	pblk_free_rqd(pblk, rqd, PBLK_READ);
--- 
-2.11.0
-
+I don't have a lot of time this week to debug further.  The quickest path to
+victory is probably for you to get this reproducing in your test setup.  Does
+XFS + DAX + generic/340 pass for you?
