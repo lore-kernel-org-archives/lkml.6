@@ -2,131 +2,197 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A3BC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 375F5C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C02F726115
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BD7B26121
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:08:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I38ErCxc";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I38ErCxc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C02F726115
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="r8BVh9WE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BD7B26121
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934654AbeF0OHz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 10:07:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47610 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932166AbeF0OHw (ORCPT
+        id S934692AbeF0OIN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 10:08:13 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:53185 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932166AbeF0OIL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 10:07:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D63E560B1A; Wed, 27 Jun 2018 14:07:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530108471;
-        bh=Rf/F49z1Ad72rwzNS3wuVEc+hj0ojuRmX5uqUPc6334=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=I38ErCxcA+cVdGXxYSfGlZM8YJ7zHwB3cy0qjDPOh2g3WjVqC684F2LQ+7SLo4PlH
-         U2QHY0dbNt9AKwvAbQP/Zg8p4V+aWze1qyjJxIRDuE6cSwqBnn8Nc7dzipld7qhV3P
-         8vHKPZbAWQrkcwjbXf/UeEla/OK8ztD53Jrm2irI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id ED159601EA;
-        Wed, 27 Jun 2018 14:07:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530108471;
-        bh=Rf/F49z1Ad72rwzNS3wuVEc+hj0ojuRmX5uqUPc6334=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=I38ErCxcA+cVdGXxYSfGlZM8YJ7zHwB3cy0qjDPOh2g3WjVqC684F2LQ+7SLo4PlH
-         U2QHY0dbNt9AKwvAbQP/Zg8p4V+aWze1qyjJxIRDuE6cSwqBnn8Nc7dzipld7qhV3P
-         8vHKPZbAWQrkcwjbXf/UeEla/OK8ztD53Jrm2irI=
+        Wed, 27 Jun 2018 10:08:11 -0400
+Received: from mail-ua0-f174.google.com (mail-ua0-f174.google.com [209.85.217.174]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w5RE82Yf005101;
+        Wed, 27 Jun 2018 23:08:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5RE82Yf005101
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530108484;
+        bh=4tTQ/UAlhdq7BJOGvQ7ghf1e9mWu67LxJ92mf+RgWJM=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=r8BVh9WEDX5bEYEPy+0py0XdtRLhyZRlFPR1087AQutTRj/uPqlU5hAgHNu7/SwDb
+         ye8oroysgk7n5TeS/gghmKeeiO/SGHtwBLZFoEBpnOc/ClPgLcL5mmwuVEXLEEfSYq
+         NmMYw3AtF+9Glbner/6rYiG7tkhdy9C19ubzanLqMCQI+mwVH7zSq8RYWrGHp7V7ap
+         V6NA+/xLEWaNhRCIkiDJs4m8SMUH+5xvK2SuYakkAyt2Oov4M0kIfjOCIrO19uz7Py
+         g3v9um6sgsZq3jPLX0pTyC/tQww7WcnMLwrMi2CpJg0h5UKi88zWXecsKc1SJPt4uT
+         L7KF6PIwD7dNA==
+X-Nifty-SrcIP: [209.85.217.174]
+Received: by mail-ua0-f174.google.com with SMTP id r10-v6so1349287uao.1;
+        Wed, 27 Jun 2018 07:08:03 -0700 (PDT)
+X-Gm-Message-State: APt69E1GxRIR0ISY5+RCkkJcV3e5s8429tSJnqr5zsoEzahdtAgJ5ZF3
+        tdrYldVhBOoLdirpCEuACV3jkETmPmopV9CZPX0=
+X-Google-Smtp-Source: AAOMgpfxSXVMEQ60gH9rXOhQJqt/g8JnjbKnNNWVv6XNWxRnqTD8NiGxFJ0vSaFqxjXrqn9Ela2o8/0YIDSMshv525w=
+X-Received: by 2002:ab0:5061:: with SMTP id z30-v6mr3831599uaz.82.1530108482484;
+ Wed, 27 Jun 2018 07:08:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 27 Jun 2018 07:07:50 -0700
-From:   Sodagudi Prasad <psodagud@codeaurora.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     "Isaac J. Manjarres" <isaacm@codeaurora.org>, peterz@infradead.org,
-        matt@codeblueprint.co.uk, mingo@kernel.org, tglx@linutronix.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] stop_machine: Remove cpu swap from stop_two_cpus
-In-Reply-To: <20180627071527.hvrndkz436yeqwpq@linutronix.de>
-References: <1530048506-21393-1-git-send-email-isaacm@codeaurora.org>
- <20180627071527.hvrndkz436yeqwpq@linutronix.de>
-Message-ID: <d3184f0b64e877cb37968c4499aadb94@codeaurora.org>
-X-Sender: psodagud@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 07:07:21
+ -0700 (PDT)
+In-Reply-To: <20180627143705.5a1fed1c@kitsune.suse.cz>
+References: <20180627143705.5a1fed1c@kitsune.suse.cz>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 27 Jun 2018 23:07:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARVPNx_uC5xTrS_p9T4nMRTC79BO51T4Lytv2eU1c-ynw@mail.gmail.com>
+Message-ID: <CAK7LNARVPNx_uC5xTrS_p9T4nMRTC79BO51T4Lytv2eU1c-ynw@mail.gmail.com>
+Subject: Re: due to kconfig changes kernel config file is no longer sufficient
+ for configuring the kernel
+To:     =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.de>, Andreas Schwab <schwab@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Jeff Mahoney <jeffm@suse.com>,
+        "Peter Zijlstra," <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-um@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-27 00:15, Sebastian Andrzej Siewior wrote:
-> On 2018-06-26 14:28:26 [-0700], Isaac J. Manjarres wrote:
->> Remove CPU ID swapping in stop_two_cpus() so that the
->> source CPU's stopper thread is added to the wake queue last,
->> so that the source CPU's stopper thread is woken up last,
->> ensuring that all other threads that it depends on are woken
->> up before it runs.
-> 
-> You can't do that because you could deadlock while locking the stoper
-> lock.
-<Prasad> Without this change boot up issues are observed with Linux 
-4.14.52.
-One of the core is executing the stopper thread after wake_up_q() in
-cpu_stop_queue_two_works() function, without waking up other cores 
-stopper thread.
-We see this issue 100% on device boot up with Linux 4.14.52.
-
-Could you please explain bit more how the deadlock occurs?
-static int cpu_stop_queue_two_works(int cpu1, struct cpu_stop_work 
-*work1,
-                                     int cpu2, struct cpu_stop_work 
-*work2)
-{
-         struct cpu_stopper *stopper1 = per_cpu_ptr(&cpu_stopper, cpu1);
-         struct cpu_stopper *stopper2 = per_cpu_ptr(&cpu_stopper, cpu2);
-         DEFINE_WAKE_Q(wakeq);
-         int err;
-retry:
-         raw_spin_lock_irq(&stopper1->lock);
-         raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
-
-<SNIP>
-
-I think, you are suggesting to switch the locking sequence too.
-stopper2->lock and stopper1->lock.
-
-could you please share the test case to stress this code flow?
-
-> Couldn't you swap cpu1+cpu2 and work1+work2?
-<Prasad> Work1 and work2 are having same data contents.
+Hi.
 
 
-> 
->> diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
->> index f89014a..d10d633 100644
->> --- a/kernel/stop_machine.c
->> +++ b/kernel/stop_machine.c
->> @@ -307,8 +307,6 @@ int stop_two_cpus(unsigned int cpu1, unsigned int 
->> cpu2, cpu_stop_fn_t fn, void *
->>  	cpu_stop_init_done(&done, 2);
->>  	set_state(&msdata, MULTI_STOP_PREPARE);
->> 
->> -	if (cpu1 > cpu2)
->> -		swap(cpu1, cpu2);
->>  	if (cpu_stop_queue_two_works(cpu1, &work1, cpu2, &work2))
->>  		return -ENOENT;
->> 
-> 
-> Sebastian
+2018-06-27 21:37 GMT+09:00 Michal Such=C3=A1nek <msuchanek@suse.de>:
+> Hello,
+>
+> in the x86 Kconfig we have this:
+>
+> # Select 32 or 64 bit
+> config 64BIT
+>         bool "64-bit kernel" if "$(ARCH)" =3D "x86"
+>         default "$(ARCH)" !=3D "i386"
+>         ---help---
+>           Say yes to build a 64-bit kernel - formerly known as x86_64
+>           Say no to build a 32-bit kernel - formerly known as i386
+>
+> Since commit 104daea149c4 ("kconfig: reference environment variables
+> directly and remove 'option env=3D'") the value of ARCH is not saved in
+> the kernel config.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-Linux Foundation Collaborative Project
+I think this commit is unrelated.  It was just a syntax change.
+
+Unless I am missing something,
+we have never saved ARCH in the .config in the past.
+
+
+> Since commit f467c5640c29 ("kconfig: only write '#
+> CONFIG_FOO is not set' for visible symbols") the value of 64BIT is not
+> saved if the ARCH is set i386 or x86_64 because the symbol is not
+> visible.
+
+This is correct.
+
+It was discussed a few weeks ago.
+
+https://lkml.org/lkml/2018/6/5/847
+
+
+> There is a number of ways to hack this particular case to work.
+>
+> However, there is a more general problem with this. Some config options
+> may depend on the environment, may not be saved, and the environment is
+> not saved either.
+
+Which environment variables in particular are in your mind?
+
+As for ARCH, you need to pass the same ARCH as you used for building the ke=
+rnel.
+(For native building, you do not have to pass ARCH explicitly, though.)
+
+As for CC, HOSTCC, etc.
+yes, these are new 'unsaved' environments.
+
+CONFIG options now depend on the compiler.
+This is the concept suggested by Linus Torvalds.
+
+
+> So in the end all the infrastructure with symlinks
+> from module directory pointing to the kernel source and object
+> directory is useless. To interpret the config stored there you need the
+> environment and that is not saved anywhere. So if you try to build
+> out-of-tree module it might end up reconfiguring your kernel and
+> producing useless modules.
+
+No. out-of-tree module building never ever re-configures the kernel.
+
+out-of-tree modules are built with exactly the same configuration
+as used for the kernel.
+
+
+There is one more assumption here.
+
+Greg-KH said:
+  We don't ever support the system of loading a module built with anything
+  other than the _exact_ same compiler than the kernel was.
+
+(https://lkml.org/lkml/2017/10/4/496)
+
+
+
+Based on that statement,
+CONFIG options depending on 'CC' are valid for out-of-tree modules as well.
+
+
+
+
+> Is there any plan to fix this?
+>
+> Thanks
+>
+> Michal
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" i=
+n
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
