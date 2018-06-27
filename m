@@ -2,129 +2,140 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCA6C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EBBC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5104725EE3
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:05:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5104725EE3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 12DE825FC4
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:06:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f4rtUxPU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12DE825FC4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754572AbeF0PFT (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:05:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50565 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754448AbeF0PFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:05:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7F0FBADF4;
-        Wed, 27 Jun 2018 15:05:15 +0000 (UTC)
-Subject: Re: [PATCH 1/4] dt-bindings: power: Add Actions Semi S900 SPS
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        robh+dt@kernel.org, liuwei@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        amit.kucheria@linaro.org, hzhang@ucrobotics.com,
-        bdong@ucrobotics.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
-        Jeff Chen <jeff.chen@actions-semi.com>,
-        "Thomas C. Liau" <thomas.liau@actions-semi.com>
-References: <20180411164036.8046-1-manivannan.sadhasivam@linaro.org>
- <20180411164036.8046-2-manivannan.sadhasivam@linaro.org>
- <a261bae6-d2fa-a550-7232-7647ce0ac0e2@suse.de>
- <20180626164117.GA5241@Mani-XPS-13-9360>
- <20180627145713.uao2gr5kknk2cypk@holly.lan>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <71176a0c-dd23-2ca6-7698-9612e4ed6392@suse.de>
-Date:   Wed, 27 Jun 2018 17:05:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S965588AbeF0PGB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:06:01 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:46987 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965391AbeF0PF6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 11:05:58 -0400
+Received: by mail-io0-f196.google.com with SMTP id u23-v6so2197008ioc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=TePJl1h2RCmQRgrewmfbWlz5NvEyMQff5xprdx8Rzxc=;
+        b=f4rtUxPUdJTLqH2GN3ZocuEELaGtPnagDEqgWZzZYD7fGEMTtpV3JCjEkiNXT8Sp1u
+         11BRrVbkZqFSb9Rt8LJ7AgBUYHSEpUa/RsmzGZd6BqqmA03Li0dkTxjj4TSM/RGhxbF7
+         guvsQfT3+cYUTrveCPgSfHA+SlZR8LjmWwXbFBFyvdDxa1k1ZS6O/0JdJH/SpBNqj7q6
+         FbMW4SqazCWUkOVDbSSecPbZ9hhBHRrYqrFOoerynwB8s0yw9di0Gf2XCTTTa/aScRt4
+         Kidkn+MZvyuJ2W6VNcBTmN7CXe03doy5Je/dy4jB6Fg0w/GFAq2oDVr5L1gQ1ocTXXl0
+         9F1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=TePJl1h2RCmQRgrewmfbWlz5NvEyMQff5xprdx8Rzxc=;
+        b=J52LG7HA4Zefz6seNF1qXCw63nmtXOXvxDvdGkeWC6RVyldJcP4zBd3iqrhwwRkqag
+         xvBR+Sham5oJBQva7TKQ8gUxVWooCTLEUk7qx3iO/BumgqXGbw0bMAKAL89r7uhslYH9
+         GVf5Lls99CMlzkmyGyf7L0ZzdeASfoXsh8dgErTUHl3mac5OhNxwdh461yP4UYJAOM4N
+         nOmOmartVnRHXhc2qnYWZZjp+H2CNRFmSU2cmOnQpvync/0yOzye30kLZbXiQeuEAfSX
+         moqT2o2mKJcW/ehkgueWuBGMmsUIziUUCdEqghoO0u0AY1nics4qpBNxQ95D79phDSpk
+         uzHA==
+X-Gm-Message-State: APt69E3uvHcCABH7p4uHTz918w9c+bbbKp/2nY/w+/yFFyfaxhI4Yk4F
+        ARplV2Mjfp75To4Tj++AjaHGFUuN5ru7ubAnMeVZoA==
+X-Google-Smtp-Source: AAOMgpe57m9g/EDqEu7Zvf3nws/5yi6cIZiZ8waZ3JnXOdU/6oKdQOh/DFAcHPxhmBfyFY/ZE52M+ax/NDR6w0et1Sc=
+X-Received: by 2002:a6b:8495:: with SMTP id o21-v6mr5159519ioi.119.1530111957761;
+ Wed, 27 Jun 2018 08:05:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180627145713.uao2gr5kknk2cypk@holly.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:9082:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 08:05:57
+ -0700 (PDT)
+In-Reply-To: <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
+References: <cover.1529507994.git.andreyknvl@google.com> <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
+ <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 27 Jun 2018 17:05:57 +0200
+Message-ID: <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-doc@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 27.06.2018 um 16:57 schrieb Daniel Thompson:
-> On Tue, Jun 26, 2018 at 10:11:17PM +0530, Manivannan Sadhasivam wrote:
->>> Question: Should it still be GPL-2.0+ or the new GPL-2.0-or-later?
+On Tue, Jun 26, 2018 at 7:29 PM, Catalin Marinas
+<catalin.marinas@arm.com> wrote:
+> Hi Andrey,
+>
+> On Tue, Jun 26, 2018 at 02:47:50PM +0200, Andrey Konovalov wrote:
+>> On Wed, Jun 20, 2018 at 5:24 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+>> > arm64 has a feature called Top Byte Ignore, which allows to embed pointer
+>> > tags into the top byte of each pointer. Userspace programs (such as
+>> > HWASan, a memory debugging tool [1]) might use this feature and pass
+>> > tagged user pointers to the kernel through syscalls or other interfaces.
+>> >
+>> > This patch makes a few of the kernel interfaces accept tagged user
+>> > pointers. The kernel is already able to handle user faults with tagged
+>> > pointers and has the untagged_addr macro, which this patchset reuses.
+>> >
+>> > We're not trying to cover all possible ways the kernel accepts user
+>> > pointers in one patchset, so this one should be considered as a start.
+>> >
+>> > Thanks!
+>> >
+>> > [1] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
 >>
->> I think GPL-2.0+ is fine.
-> 
-> So... when I saw this I did wonder why one would knowly choose to use a
-> deprecated license identifier (https://spdx.org/licenses/ ).
-> 
-> However running `git diff v4.17..v4.18-rc1` through some filters does
-> indicate that GPL-2.0+ is the more popular choice by 256 to 0! Doesn't
-> mean you couldn't break the mould though ;-).
+>> Is there anything I should do to move forward with this?
+>>
+>> I've received zero replies to this patch set (v3 and v4) over the last
+>> month.
+>
+> The patches in this series look fine but my concern is that they are not
+> sufficient and we don't have (yet?) a way to identify where such
+> annotations are required. You even say in patch 6 that this is "some
+> initial work for supporting non-zero address tags passed to the kernel".
+> Unfortunately, merging (or relaxing) an ABI without a clear picture is
+> not really feasible.
+>
+> While I support this work, as a maintainer I'd like to understand
+> whether we'd be in a continuous chase of ABI breaks with every kernel
+> release or we have a better way to identify potential issues. Is there
+> any way to statically analyse conversions from __user ptr to long for
+> example? Or, could we get the compiler to do this for us?
 
-The kernel.org documentation does not mention the new ones yet.
 
-I checked under LICENSES/ - preferred/GPL-2.0.txt actually lists both
-identifiers, and checkpatch.pl did not complain about either.
+OK, got it, I'll try to figure out a way to find these conversions.
 
-So for my personal patches I'll be going with the new identifier, unless
-I hear of reasons not to.
-
-Cheers,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Thanks!
