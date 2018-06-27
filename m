@@ -2,107 +2,142 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BFEC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3B7C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5E2B255CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2C6725918
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:27:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="z5JoCo2r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E2B255CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BhwsKo9B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C6725918
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752231AbeF0XK2 (ORCPT
+        id S1752467AbeF0X1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 19:10:28 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42174 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751854AbeF0XK0 (ORCPT
+        Wed, 27 Jun 2018 19:27:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53882 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752413AbeF0X1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 19:10:26 -0400
-Received: by mail-pg0-f68.google.com with SMTP id c10-v6so1565920pgu.9
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 16:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:organization:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=5UFynkK03DMijjzgf7mLVpoMMuO5EBoRE0W05Ad9ZE0=;
-        b=z5JoCo2rdwhhfWGYc30GRmPU+5nJVTLxwAsqgckrzV/wGGeBMFnrI1k0CP/LA0qpGR
-         NVLu5Crwu4dgstAwy6jPvjRJMx2y+1RnYBv166WFiPUI/2Tc8icZg/y1kIJs7Bz7fpqx
-         ijpKqOZ3X1lux7XnLpd+DqxIWkItqRbrHdRE1e8KxyIf/L1AzZzgD4+RuF2L7y9nVlxN
-         OFoSw8SzxhYJkJL/9dRmx6IQoiXe5L7o2BOm2H3nfYU6S4vknYvhIiqbR8itcqoqDa4e
-         wR9NmG9Lk9w2Ert+/F3edvBPjaQcF12O93j5ULvW7yb2NYUG10PL+g0YN/kyaAJZqul2
-         ppOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:organization:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=5UFynkK03DMijjzgf7mLVpoMMuO5EBoRE0W05Ad9ZE0=;
-        b=GuSuv+lu/1fvnLtlVx6WzPdX7P0BqaBkMAZPaAg2mFedxFXFTYCliEbPWU5fLpMj3+
-         5fDubQOr7DZahewziI6g1c7J90UwPQDAN6HEJPYiUftsaKJxNUnbeFKsG8l4cnsaujXk
-         H/WMtYN5WoczOECL1t6gJENWf+RjVDD9jsPnhpgeGwxJVYdSf75AaDl2PlZspwboL1S2
-         tV1xFQA0lYovpkr9bVUkK8Dhsv2DqEuoUfgBeT9z0hFW9cdBbga6qY3zX5Xob9Y+Hy1p
-         apPbfcT2JS8MZX+1mVQdLx8voxqP5ZEFhu3MQU7/ev2qtPzOAyWZKt8O+vx99ijYeyvL
-         ARHw==
-X-Gm-Message-State: APt69E1U9FsRhRUQodANxKnidSNPComOgRjfX7ZPq3f2AHvMt6H1d+BF
-        BpfGj7181+RXNXOaVFQ0RHc8Ng==
-X-Google-Smtp-Source: ADUXVKKkT2v9yVapEizuAv3m8cLHkbuCdsl7yvRpSkQZQMPEAqMSD0q3cLcVZO2lSkQO0ysFxYu4iQ==
-X-Received: by 2002:a65:6031:: with SMTP id p17-v6mr6708354pgu.140.1530141026095;
-        Wed, 27 Jun 2018 16:10:26 -0700 (PDT)
-Received: from localhost ([98.237.141.101])
-        by smtp.googlemail.com with ESMTPSA id 14-v6sm11117707pft.10.2018.06.27.16.10.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Jun 2018 16:10:25 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM64: dts: meson-axg: fix ethernet stability issue
-Organization: BayLibre
-References: <20180625125653.3404-1-jbrunet@baylibre.com>
-        <d59a60d1-d5fc-6d89-f89b-148c8e3f3521@baylibre.com>
-Date:   Wed, 27 Jun 2018 16:10:24 -0700
-In-Reply-To: <d59a60d1-d5fc-6d89-f89b-148c8e3f3521@baylibre.com> (Neil
-        Armstrong's message of "Tue, 26 Jun 2018 10:07:26 +0200")
-Message-ID: <7h6023keqn.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 27 Jun 2018 19:27:30 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5RNNv8j152927;
+        Wed, 27 Jun 2018 23:27:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=bgtDP08hsJkdLwOozClPNHd8djWHgbf+0j2ax2MiZlM=;
+ b=BhwsKo9BvpWWT70SjmLVRSlOn9tgVCRPJo8TvD0L1d6UhqdynuAWaz8hDWDo0fxJHgXI
+ 6sHTP1bQLj1VC/OlPAR5xXO+8LzmKL61l70OUU1XsOyhXgEs4zmQLaf3n+xwe+m+3maP
+ hOxwl9Qr6N8DUVNdQLj3T33Y8tuViFyGReDA9NgIjWfz1tfgWdssDHxIN9GERSqzhKSV
+ eG5oAvIV5xPUySZG6H+l5ufie/KYhxGM2M81gu5Cjlp747YAadcrVTSc5Siufa37RXoS
+ W7nhPwszhRO0on0Pnkv5Kk/JXD/qXNIPyBiq1/YCKUhBJR+LPFpYHqZdgcK9nhj3POe8 Yw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2jukhsewpm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Jun 2018 23:27:26 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5RNRQeh017544
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Jun 2018 23:27:26 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5RNRPjW006057;
+        Wed, 27 Jun 2018 23:27:25 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Jun 2018 16:27:25 -0700
+Subject: Re: [PATCH] mm: hugetlb: yield when prepping struct pages
+To:     Cannon Matthews <cannonmatthews@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nadia Yvette Chambers <nyc@holomorphy.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        andreslc@google.com, pfeiner@google.com, gthelen@google.com
+References: <20180627214447.260804-1-cannonmatthews@google.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <89c34814-ee1a-6339-1daf-fff02ce947e5@oracle.com>
+Date:   Wed, 27 Jun 2018 16:27:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180627214447.260804-1-cannonmatthews@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8937 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806270245
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+On 06/27/2018 02:44 PM, Cannon Matthews wrote:
+> When booting with very large numbers of gigantic (i.e. 1G) pages, the
+> operations in the loop of gather_bootmem_prealloc, and specifically
+> prep_compound_gigantic_page, takes a very long time, and can cause a
+> softlockup if enough pages are requested at boot.
+> 
+> For example booting with 3844 1G pages requires prepping
 
-> On 25/06/2018 14:56, Jerome Brunet wrote:
->> Like the odroid-c2 and wetek, the s400 uses the RTL8211F and seems to
->> suffer from the kind of stability issue.
->> 
->> Doing an iperf3 download test, we can see a significant number of LPI
->> interrupts on the tx path. After a short while (5 to 15 seconds), the
->> network connection dies. If using rootfs over NFS, the connection may
->> also break during the boot sequence.
->> 
->> We still don't have a real explanation for this problem so let's disable
->> EEE once again.
->> 
->> Fixes: f6f6ac914b82 ("ARM64: dts: meson-axg: enable ethernet for A113D S400 board")
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->>  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 15 ++++++++++++++-
->>  1 file changed, 14 insertions(+), 1 deletion(-)
->> 
-> [...]
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Wow!  I wish I had a system with that much memory to test. :)
 
-Applied to v4.18/fixes (which I'll be sending upstream today.)
+> (set_compound_head, init the count) over 1 billion 4K tail pages, which
+> takes considerable time. This should also apply to reserving the same
+> amount of memory as 2M pages, as the same number of struct pages
+> are affected in either case.
 
-Kevin
+Actually, this change would not apply to 2M (on x86) pages.  The hugetlbfs
+initialization code is a bit confusing, but alloc_bootmem_huge_page and
+gather_bootmem_prealloc are only exercised in the case where huge page
+order >= MAX_ORDER.
+
+Allocation and initialization of 2M pages happens after the normal memory
+allocators are setup via the routine hugetlb_hstate_alloc_pages.  And,
+there is already a cond_resched in that loop today.
+
+Note that 'else if' in the for loop of hugetlb_hstate_alloc_pages.  This
+allows the same routine to be called for early gigantic page allocations
+using the bootmem allocator, and later normal (2M) allocations using the
+normal memory allocators.  To me, this is a source of confusion and is
+something I plan to clean up in the future.
+
+> Add a cond_resched() to the outer loop in gather_bootmem_prealloc() to
+> prevent this lockup.
+> 
+> Tested: Booted with softlockup_panic=1 hugepagesz=1G hugepages=3844 and
+> no softlockup is reported, and the hugepages are reported as
+> successfully setup.
+> 
+> Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
+
+My only suggestion would be to remove the mention of 2M pages in the
+commit message.  Thanks for adding this.
+
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+-- 
+Mike Kravetz
+
+> ---
+>  mm/hugetlb.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index a963f2034dfc..d38273c32d3b 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -2169,6 +2169,7 @@ static void __init gather_bootmem_prealloc(void)
+>  		 */
+>  		if (hstate_is_gigantic(h))
+>  			adjust_managed_page_count(page, 1 << h->order);
+> +		cond_resched();
+>  	}
+>  }
+>  
+> 
