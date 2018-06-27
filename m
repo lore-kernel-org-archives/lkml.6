@@ -3,113 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD71C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B38C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0632262E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:19:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0632262E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D17A26347
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:21:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D17A26347
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965365AbeF0NTX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 09:19:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41027 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933051AbeF0NTV (ORCPT
+        id S965366AbeF0NVk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 09:21:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53578 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S964910AbeF0NVi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 09:19:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5RDIpVx2088917
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 27 Jun 2018 06:18:51 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5RDIpaX2088914;
-        Wed, 27 Jun 2018 06:18:51 -0700
-Date:   Wed, 27 Jun 2018 06:18:51 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Dmitry Vyukov <tipbot@zytor.com>
-Message-ID: <tip-d79d0d8ad0cb3d782b41631dfeac8eb05e414bcd@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, mingo@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        joe@perches.com, dvyukov@google.com, peterz@infradead.org
-Reply-To: peterz@infradead.org, dvyukov@google.com, joe@perches.com,
-          hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          torvalds@linux-foundation.org, mingo@kernel.org
-In-Reply-To: <20180627090715.28076-1-dvyukov@gmail.com>
-References: <20180627090715.28076-1-dvyukov@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm: Clean up the printk()s in
- show_fault_oops()
-Git-Commit-ID: d79d0d8ad0cb3d782b41631dfeac8eb05e414bcd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 27 Jun 2018 09:21:38 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RDJH2b123065
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 09:21:38 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvafujyaa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 09:21:38 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Wed, 27 Jun 2018 07:21:37 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Jun 2018 07:21:33 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RDLWQv49807586
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Jun 2018 06:21:32 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9153A136055;
+        Wed, 27 Jun 2018 07:21:32 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 738DC13604F;
+        Wed, 27 Jun 2018 07:21:31 -0600 (MDT)
+Received: from [9.41.102.69] (unknown [9.41.102.69])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Jun 2018 07:21:31 -0600 (MDT)
+Subject: Re: [PATCH v10 5/7] i2c: fsi: Add transfer implementation
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        benh@kernel.crashing.org, joel@jms.id.au, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, rdunlap@infradead.org,
+        andy.shevchenko@gmail.com, peda@axentia.se
+References: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1528918579-27602-6-git-send-email-eajames@linux.vnet.ibm.com>
+ <20180626023823.i3fmdegn2sric5kx@ninjato>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Wed, 27 Jun 2018 08:21:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180626023823.i3fmdegn2sric5kx@ninjato>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18062713-0012-0000-0000-000016831DF1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009263; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01053072; UDB=6.00539911; IPR=6.00830997;
+ MB=3.00021878; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-27 13:21:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062713-0013-0000-0000-000053784E0D
+Message-Id: <6713efb9-c4c3-f648-a1e9-7918110091e4@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806270146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d79d0d8ad0cb3d782b41631dfeac8eb05e414bcd
-Gitweb:     https://git.kernel.org/tip/d79d0d8ad0cb3d782b41631dfeac8eb05e414bcd
-Author:     Dmitry Vyukov <dvyukov@google.com>
-AuthorDate: Wed, 27 Jun 2018 11:07:15 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 27 Jun 2018 14:08:11 +0200
 
-x86/mm: Clean up the printk()s in show_fault_oops()
 
-- Remove 'nx_warning' and 'smep_warning', which are just pointless obfuscation.
-- Also convert to pr_crit().
+On 06/25/2018 09:38 PM, Wolfram Sang wrote:
+> On Wed, Jun 13, 2018 at 02:36:17PM -0500, Eddie James wrote:
+>> Execute I2C transfers from the FSI-attached I2C master. Use polling
+>> instead of interrupts as we have no hardware IRQ over FSI.
+>>
+>> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+>> ---
+>>   drivers/i2c/busses/i2c-fsi.c | 195 ++++++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 193 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
+>> index 4611a0b..8c0a6cb 100644
+>> --- a/drivers/i2c/busses/i2c-fsi.c
+>> +++ b/drivers/i2c/busses/i2c-fsi.c
+>> @@ -155,6 +155,7 @@ struct fsi_i2c_port {
+>>   	struct i2c_adapter	adapter;
+>>   	struct fsi_i2c_master	*master;
+>>   	u16			port;
+>> +	u16			xfrd;
+>>   };
+>>   
+>>   static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
+>> @@ -230,6 +231,99 @@ static int fsi_i2c_set_port(struct fsi_i2c_port *port)
+>>   	return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
+>>   }
+>>   
+>> +static int fsi_i2c_start(struct fsi_i2c_port *port, struct i2c_msg *msg,
+>> +			 bool stop)
+>> +{
+>> +	struct fsi_i2c_master *i2c = port->master;
+>> +	u32 cmd = I2C_CMD_WITH_START | I2C_CMD_WITH_ADDR;
+>> +
+>> +	port->xfrd = 0;
+>> +
+>> +	if (msg->flags & I2C_M_RD)
+>> +		cmd |= I2C_CMD_READ;
+> Since you support MANGLING, I'd think you can easily support
+> I2C_M_REV_DIR_ADDR here, too?
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180627090715.28076-1-dvyukov@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/fault.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+Hm, I don't really understand the purpose of that flag. From the docs:
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index ee85766e6329..2aafa6ab6103 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -641,11 +641,6 @@ static int is_f00f_bug(struct pt_regs *regs, unsigned long address)
- 	return 0;
- }
- 
--static const char nx_warning[] = KERN_CRIT
--"kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n";
--static const char smep_warning[] = KERN_CRIT
--"unable to execute userspace code (SMEP?) (uid: %d)\n";
--
- static void
- show_fault_oops(struct pt_regs *regs, unsigned long error_code,
- 		unsigned long address)
-@@ -664,11 +659,13 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
- 		pte = lookup_address_in_pgd(pgd, address, &level);
- 
- 		if (pte && pte_present(*pte) && !pte_exec(*pte))
--			printk(nx_warning, from_kuid(&init_user_ns, current_uid()));
-+			pr_crit("kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n",
-+				from_kuid(&init_user_ns, current_uid()));
- 		if (pte && pte_present(*pte) && pte_exec(*pte) &&
- 				(pgd_flags(*pgd) & _PAGE_USER) &&
- 				(__read_cr4() & X86_CR4_SMEP))
--			printk(smep_warning, from_kuid(&init_user_ns, current_uid()));
-+			pr_crit("unable to execute userspace code (SMEP?) (uid: %d)\n",
-+				from_kuid(&init_user_ns, current_uid()));
- 	}
- 
- 	pr_alert("BUG: unable to handle kernel %s at %px\n",
+This toggles the Rd/Wr flag. That is, if you want to do a write, but
+     need to emit an Rd instead of a Wr, or vice versa, you set this
+     flag. For example:
+S Addr Rd [A] Data [A] Data [A] ... [A] Data [A] P
+
+I don't think our hardware supports this type of operation.
+
+Thanks,
+Eddie
+
+>
+
