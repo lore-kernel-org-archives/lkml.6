@@ -6,21 +6,20 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3449FC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E074C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E88DF25458
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:04:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E88DF25458
+	by mail.kernel.org (Postfix) with ESMTP id 3E55325568
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:04:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E55325568
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755040AbeF0RDj (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:03:39 -0400
-Received: from mga07.intel.com ([134.134.136.100]:19414 "EHLO mga07.intel.com"
+        id S965936AbeF0RDi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:03:38 -0400
+Received: from mga07.intel.com ([134.134.136.100]:19413 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755011AbeF0RDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755012AbeF0RDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 27 Jun 2018 13:03:35 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +27,7 @@ Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 10:03:33 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
-   d="scan'208";a="70478521"
+   d="scan'208";a="70478525"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
   by orsmga002.jf.intel.com with ESMTP; 27 Jun 2018 10:03:33 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
@@ -42,9 +41,9 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 7/8] x86/vdso: Introduce helper functions for CPU and node number
-Date:   Wed, 27 Jun 2018 10:03:12 -0700
-Message-Id: <1530118993-13466-8-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v5 8/8] x86/vdso: Move out the CPU initialization
+Date:   Wed, 27 Jun 2018 10:03:13 -0700
+Message-Id: <1530118993-13466-9-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
 References: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
@@ -53,164 +52,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CPU initialization in vDSO is now a bit cleaned up by
-the new helper functions. The helper functions will take
-care of combining CPU and node number and reading each from
-the combined value.
+The CPU and node number will be written, as early enough,
+to the segment limit of per CPU data and TSC_AUX MSR entry.
+The information has been retrieved by vgetcpu in user space
+and will be also loaded from the paranoid entry, when
+FSGSBASE enabled.
 
+The new setup function is named after the getcpu(2) system
+call, and will be called during each CPU initialization
+(before setting up IST). It makes a facility useful to both
+the kernel and userspace unconditionally available much
+sooner.
+
+The change brings a substantial code removal. The redundant
+setting of the segment in entry/vdso/vma.c and hotplug
+notifier are removed.
+
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
 Suggested-by: Andy Lutomirski <luto@kernel.org>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- arch/x86/entry/vdso/vgetcpu.c  |  9 +--------
- arch/x86/entry/vdso/vma.c      | 19 +++++++------------
- arch/x86/include/asm/segment.h | 41 +++++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/vgtod.h   | 26 --------------------------
- 4 files changed, 49 insertions(+), 46 deletions(-)
+ arch/x86/entry/vdso/vma.c    | 33 +--------------------------------
+ arch/x86/kernel/cpu/common.c | 24 ++++++++++++++++++++++++
+ 2 files changed, 25 insertions(+), 32 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
-index 8ec3d1f..de78fc9 100644
---- a/arch/x86/entry/vdso/vgetcpu.c
-+++ b/arch/x86/entry/vdso/vgetcpu.c
-@@ -13,14 +13,7 @@
- notrace long
- __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
- {
--	unsigned int p;
--
--	p = __getcpu();
--
--	if (cpu)
--		*cpu = p & VGETCPU_CPU_MASK;
--	if (node)
--		*node = p >> 12;
-+	vdso_read_cpu_node(cpu, node);
- 	return 0;
- }
- 
 diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 0b114aa..378732a 100644
+index 378732a..3f9d43f 100644
 --- a/arch/x86/entry/vdso/vma.c
 +++ b/arch/x86/entry/vdso/vma.c
-@@ -339,20 +339,15 @@ static void vgetcpu_cpu_init(void *arg)
- {
- 	int cpu = smp_processor_id();
- 	struct desc_struct d = { };
--	unsigned long node = 0;
--#ifdef CONFIG_NUMA
--	node = cpu_to_node(cpu);
--#endif
-+	unsigned long cpudata = vdso_encode_cpu_node(cpu, cpu_to_node(cpu));
-+
- 	if (static_cpu_has(X86_FEATURE_RDTSCP))
--		write_rdtscp_aux((node << 12) | cpu);
-+		write_rdtscp_aux(cpudata);
-+
-+	/* Store cpu and node number in limit */
-+	d.limit0 = cpudata;
-+	d.limit1 = cpudata >> 16;
- 
--	/*
--	 * Store cpu number in limit so that it can be loaded
--	 * quickly in user space in vgetcpu. (12 bits for the CPU
--	 * and 8 bits for the node)
--	 */
--	d.limit0 = cpu | ((node & 0xf) << 12);
--	d.limit1 = node >> 4;
- 	d.type = 5;		/* RO data, expand down, accessed */
- 	d.dpl = 3;		/* Visible to user code */
- 	d.s = 1;		/* Not a system segment */
-diff --git a/arch/x86/include/asm/segment.h b/arch/x86/include/asm/segment.h
-index e3e788ea..25a2588 100644
---- a/arch/x86/include/asm/segment.h
-+++ b/arch/x86/include/asm/segment.h
-@@ -224,6 +224,47 @@
- #define GDT_ENTRY_TLS_ENTRIES		3
- #define TLS_SIZE			(GDT_ENTRY_TLS_ENTRIES* 8)
- 
-+#ifdef CONFIG_X86_64
-+
-+/* Bit size and mask of CPU number stored in the per CPU data (and TSC_AUX) */
-+#define VDSO_CPU_SIZE			12
-+#define VDSO_CPU_MASK			0xfff
-+
-+#ifndef __ASSEMBLY__
-+
-+/* Helper functions to store/load CPU and node numbers */
-+
-+static inline unsigned long vdso_encode_cpu_node(int cpu, unsigned long node)
-+{
-+	return ((node << VDSO_CPU_SIZE) | cpu);
-+}
-+
-+static inline void vdso_read_cpu_node(unsigned *cpu, unsigned *node)
-+{
-+	unsigned int p;
-+
-+	/*
-+	 * Load CPU and node number from GDT.  LSL is faster than RDTSCP
-+	 * and works on all CPUs.  This is volatile so that it orders
-+	 * correctly wrt barrier() and to keep gcc from cleverly
-+	 * hoisting it out of the calling function.
-+	 *
-+	 * If RDPID is available, use it.
-+	 */
-+	alternative_io ("lsl %[p],%[seg]",
-+			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
-+			X86_FEATURE_RDPID,
-+			[p] "=a" (p), [seg] "r" (__CPU_NUMBER_SEG));
-+
-+	if (cpu)
-+		*cpu = (p & VDSO_CPU_MASK);
-+	if (node)
-+		*node = (p >> VDSO_CPU_SIZE);
-+}
-+
-+#endif /* !__ASSEMBLY__ */
-+#endif /* CONFIG_X86_64 */
-+
- #ifdef __KERNEL__
- 
- /*
-diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
-index dd58a2e..056a61c 100644
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -77,30 +77,4 @@ static inline void gtod_write_end(struct vsyscall_gtod_data *s)
- 	++s->seq;
+@@ -332,35 +332,6 @@ static __init int vdso_setup(char *s)
+ 	return 0;
  }
- 
+ __setup("vdso=", vdso_setup);
+-#endif
+-
 -#ifdef CONFIG_X86_64
--
--#define VGETCPU_CPU_MASK 0xfff
--
--static inline unsigned int __getcpu(void)
+-static void vgetcpu_cpu_init(void *arg)
 -{
--	unsigned int p;
+-	int cpu = smp_processor_id();
+-	struct desc_struct d = { };
+-	unsigned long cpudata = vdso_encode_cpu_node(cpu, cpu_to_node(cpu));
 -
--	/*
--	 * Load CPU (and node) number from GDT.  LSL is faster than RDTSCP
--	 * and works on all CPUs.  This is volatile so that it orders
--	 * correctly wrt barrier() and to keep gcc from cleverly
--	 * hoisting it out of the calling function.
--	 *
--	 * If RDPID is available, use it.
--	 */
--	alternative_io ("lsl %[p],%[seg]",
--			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
--			X86_FEATURE_RDPID,
--			[p] "=a" (p), [seg] "r" (__CPU_NUMBER_SEG));
+-	if (static_cpu_has(X86_FEATURE_RDTSCP))
+-		write_rdtscp_aux(cpudata);
 -
--	return p;
+-	/* Store cpu and node number in limit */
+-	d.limit0 = cpudata;
+-	d.limit1 = cpudata >> 16;
+-
+-	d.type = 5;		/* RO data, expand down, accessed */
+-	d.dpl = 3;		/* Visible to user code */
+-	d.s = 1;		/* Not a system segment */
+-	d.p = 1;		/* Present */
+-	d.d = 1;		/* 32-bit */
+-
+-	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_CPU_NUMBER, &d, DESCTYPE_S);
 -}
 -
--#endif /* CONFIG_X86_64 */
--
- #endif /* _ASM_X86_VGTOD_H */
+-static int vgetcpu_online(unsigned int cpu)
+-{
+-	return smp_call_function_single(cpu, vgetcpu_cpu_init, NULL, 1);
+-}
+ 
+ static int __init init_vdso(void)
+ {
+@@ -370,9 +341,7 @@ static int __init init_vdso(void)
+ 	init_vdso_image(&vdso_image_x32);
+ #endif
+ 
+-	/* notifier priority > KVM */
+-	return cpuhp_setup_state(CPUHP_AP_X86_VDSO_VMA_ONLINE,
+-				 "x86/vdso/vma:online", vgetcpu_online, NULL);
++	return 0;
+ }
+ subsys_initcall(init_vdso);
+ #endif /* CONFIG_X86_64 */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3e..e418e31 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1651,6 +1651,29 @@ static void wait_for_master_cpu(int cpu)
+ #endif
+ }
+ 
++#ifdef CONFIG_X86_64
++static void setup_getcpu(int cpu)
++{
++	unsigned long cpudata = vdso_encode_cpu_node(cpu, early_cpu_to_node(cpu));
++	struct desc_struct d = { };
++
++	if (static_cpu_has(X86_FEATURE_RDTSCP))
++		write_rdtscp_aux(cpudata);
++
++	/* Store cpu and node number in limit. */
++	d.limit0 = cpudata;
++	d.limit1 = cpudata >> 16;
++
++	d.type = 5;		/* RO data, expand down, accessed */
++	d.dpl = 3;		/* Visible to user code */
++	d.s = 1;		/* Not a system segment */
++	d.p = 1;		/* Present */
++	d.d = 1;		/* 32-bit */
++
++	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_CPU_NUMBER, &d, DESCTYPE_S);
++}
++#endif
++
+ /*
+  * cpu_init() initializes state that is per-CPU. Some data is already
+  * initialized (naturally) in the bootstrap process, such as the GDT
+@@ -1688,6 +1711,7 @@ void cpu_init(void)
+ 	    early_cpu_to_node(cpu) != NUMA_NO_NODE)
+ 		set_numa_node(early_cpu_to_node(cpu));
+ #endif
++	setup_getcpu(cpu);
+ 
+ 	me = current;
+ 
 -- 
 2.7.4
 
