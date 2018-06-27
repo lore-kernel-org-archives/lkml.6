@@ -2,95 +2,167 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 655C6C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06182C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2061420C0A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC3EB24561
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:24:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7v4vYXZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2061420C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xoq4U0zv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IpatoUMB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC3EB24561
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934610AbeF0OXj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 10:23:39 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35682 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934187AbeF0OXb (ORCPT
+        id S934671AbeF0OY2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 10:24:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33624 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933879AbeF0OYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 10:23:31 -0400
-Received: by mail-pl0-f67.google.com with SMTP id k1-v6so1121113plt.2;
-        Wed, 27 Jun 2018 07:23:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AlY3m0xCVe3AendWlJhX228CeN8xRB/X0Z/yE0S6oZU=;
-        b=E7v4vYXZlQFkI7WKKTn1TnDiABVoG/k6DTWIuGzPgOj8Iz++TwIeqmYBUYgnDXTtNs
-         1S1hJqdXLXr0qufZeLDVmROfnajoASEF/usP7lW0cn4ni1+bOYCVO8oM5zEnAEKYxty+
-         /Yp6um+2mQx58h/xf9goOceG+J4OFBhjlO6eJJdTLFyR/ZwNWsGdrHHipuRwuSi78chy
-         7LNlKt4116fg/ojOhSpJV4LG7f6R6Lb68hXnIZXel3Bv/5lJ8e8Ut6/9Mcle1CPi8EQ9
-         OV3VWLNEgZhPdfMsWtkUhibQl8lLEQebqM6GGxWwL9Tfbv+glSYUEivPsoFpHeefVG3S
-         iT4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AlY3m0xCVe3AendWlJhX228CeN8xRB/X0Z/yE0S6oZU=;
-        b=QDdwL0tHsHUhD6RJli+KCEdrdbGTWghr2xM2ka6ezwoGZXrhF+pMb7cyu4oEtmRGa8
-         C2Ly3cwmWk4ivvZ5wZyt/kQcOQ4CGSmCR/bvnMTzzFCXFiEGsAMJXro+8r53WR1JzMj2
-         Z+tm5W3vcN+Tzt0IX1RT29jWN8ltz01uUZ15rZ9gnW0OEbzFGcKHZvcbN5lQVQI+tGQz
-         wB5ATU4W9pvFIiInBPjH7xXJoUeIZGRliRC7/NqypKtriabuk0RAs6Ci5r44ni+LlV+X
-         G7xRT6RqEfSlqKNRIurElmijDua/0Zns8XXHjUZScNW1R4bxJj2ElKouGXZsW7ODTXiZ
-         j1rg==
-X-Gm-Message-State: APt69E18kdN2Nu5CzPljG+RRnPO3VzopXxrS4pc0wBTETJQcaTqOLzug
-        HXVrEaTnWd1GIkiKFyb6mlU=
-X-Google-Smtp-Source: ADUXVKJ8S7bCLrMM9IlIM0tS/CZg+6cgtFxswvJ/KRR5B/jIgmyiWBmgMh1BSX+bJyDuSB/L+wrkbA==
-X-Received: by 2002:a17:902:1703:: with SMTP id i3-v6mr6188384pli.263.1530109410566;
-        Wed, 27 Jun 2018 07:23:30 -0700 (PDT)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm8377704pgs.52.2018.06.27.07.23.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Jun 2018 07:23:29 -0700 (PDT)
-Date:   Wed, 27 Jun 2018 23:23:27 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] printk: Deadlock in NMI regression
-Message-ID: <20180627142327.GC477@tigerII.localdomain>
-References: <20180627140817.27764-1-pmladek@suse.com>
- <20180627141612.GA477@tigerII.localdomain>
+        Wed, 27 Jun 2018 10:24:25 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 24EEE60B19; Wed, 27 Jun 2018 14:24:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530109465;
+        bh=rHgitbQxo0395bOci3NbXswVEoLbTwItbAHH6JOkVpk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Xoq4U0zv4mZ5kliRxW11MH9vUgiQNqbpAf4mxH3DFnijVm03if89Z43EzR42JFk8g
+         ZqZIVQvdqHGOWDXcclCT8tbmLtvBfsvxsWJ51cZKrDqUblSRCV3OMyJhIpOTanwCqT
+         JULkKjO3vam0FollVsjarm05RAsAD5TXmRevJ0mw=
+Received: from [10.79.40.96] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 436326034E;
+        Wed, 27 Jun 2018 14:24:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530109464;
+        bh=rHgitbQxo0395bOci3NbXswVEoLbTwItbAHH6JOkVpk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IpatoUMBgg+YTg7CYKMToaolo9m1W+R+iY5cEw6t0eJj00VwTnmZ5cTjohQNNp5BL
+         3m+bIVNEeRqvC9VLciuU8qhHGygTxi4wBka389n73/RINeifdwzE1NReC2XguSFGO+
+         4X6vQVZnca/W/WKuLBShpJsNinBFYQn3zov6uVFE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 436326034E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [PATCH v5 1/8] dt-bindings: reset: Add AOSS reset bindings for
+ SDM845 SoCs
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>
+Cc:     p.zabel@pengutronix.de, robh+dt@kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
+        kyan@codeaurora.org, sricharan@codeaurora.org,
+        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        tsoni@codeaurora.org
+References: <20180521172714.8551-1-sibis@codeaurora.org>
+ <20180521172714.8551-2-sibis@codeaurora.org>
+ <20180623004433.GQ3402@tuxbook-pro>
+From:   Sibi S <sibis@codeaurora.org>
+Message-ID: <aa84c861-5e37-5576-cd6f-94a302750d19@codeaurora.org>
+Date:   Wed, 27 Jun 2018 19:54:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627141612.GA477@tigerII.localdomain>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180623004433.GQ3402@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/27/18 23:16), Sergey Senozhatsky wrote:
-> > Petr Mladek (3):
-> >   printk: Split the code for storing a message into the log buffer
-> >   printk: Create helper function to queue deferred console handling
-> >   printk/nmi: Prevent deadlock when accessing the main log buffer in NMI
+Hi Bjorn,
+Thanks for the review will address the comments in the next respin.
+
+On 06/23/2018 06:14 AM, Bjorn Andersson wrote:
+> On Mon 21 May 10:27 PDT 2018, Sibi Sankar wrote:
 > 
-> Patch 3/3 is not in my mailbox, somehow [I checked the spam folder].
-> I'm not Cc-ed or the message got lost somewhere before it reached my
-> gmail?
+>> Add SDM845 AOSS (always on subsystem) reset controller binding
+>>
+> 
+> I think it would be better if you made the binding represent the entire
+> clock controller, rather than only the reset-related portion of it.
+> 
+> As I can't find anything in the downstream kernel that references the
+> clock part of the hardware block I think the driver can be kept as is
+> (with updated compatible and adjust the offsets of the registers)
+> 
+> 
+> This makes the DT better represents the hardware and it makes it
+> possible to control the clocks in the future, without breaking backwards
+> compatibility with existing DTBs.
+> 
 
-UPD: 3/3 just arrived, with a 12 minutes delay.
+yup makes sense.
 
-	-ss
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   .../bindings/reset/qcom,aoss-reset.txt        | 52 +++++++++++++++++++
+>>   include/dt-bindings/reset/qcom,sdm845-aoss.h  | 17 ++++++
+>>   2 files changed, 69 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>>   create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>> new file mode 100644
+>> index 000000000000..cd5dcafb4ed7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>> @@ -0,0 +1,52 @@
+>> +Qualcomm AOSS Reset Controller
+>> +======================================
+>> +
+>> +This binding describes a reset-controller found on AOSS (always on subsystem)
+>> +for Qualcomm SDM845 SoCs.
+>> +
+>> +Required properties:
+>> +- compatible:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: must be:
+>> +		    "qcom,sdm845-aoss-reset"
+> 
+> qcom,sdm845-aoss-cc
+> 
+>> +
+>> +- reg:
+>> +	Usage: required
+>> +	Value type: <prop-encoded-array>
+>> +	Definition: must specify the base address and size of the register
+>> +	            space.
+>> +
+>> +- #reset-cells:
+>> +	Usage: required
+>> +	Value type: <uint>
+>> +	Definition: must be 1; cell entry represents the reset index.
+>> +
+>> +Example:
+>> +
+>> +aoss_reset: reset-controller@c2b0000 {
+>> +	compatible = "qcom,sdm845-aoss-reset";
+>> +	reg = <0xc2b0000 0x21000>;
+> 
+> reg = <0xc2a0000 0x31000>;
+> 
+>> +	#reset-cells = <1>;
+>> +};
+>> +
+> 
+> Apart from this the binding looks good!
+> 
+> Regards,
+> Bjorn
+> 
+
+-- 
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
