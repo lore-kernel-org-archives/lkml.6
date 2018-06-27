@@ -2,140 +2,154 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B71C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D69EFC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5981A26115
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:16:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="f3dRkncY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5981A26115
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 9959126141
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:16:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9959126141
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965466AbeF0OQD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 10:16:03 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33921 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965341AbeF0OQA (ORCPT
+        id S965511AbeF0OQU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 10:16:20 -0400
+Received: from g4t3426.houston.hpe.com ([15.241.140.75]:45096 "EHLO
+        g4t3426.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965387AbeF0OPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 10:16:00 -0400
-Received: by mail-lf0-f68.google.com with SMTP id n96-v6so1695749lfi.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 07:16:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IY3W5P1fTbs2TJllrkAsNvoxS3ZPlZJfBSo3HYJdRNo=;
-        b=f3dRkncY9iORXE3VOq3TbS+hRBYrRB564HV4amttZRm+cRo4slFcnUaRbk8omA4aN5
-         ql9YLbqPFfgaK7ABCJTmDgapsf9lWmJ6KW30uJZbgnXyciWzn5/7OCoCRuKTYV+N+0C+
-         fPayHm66D7/nFvMtdSGXp874Xb1k2rCBPNfbPYoEKxrQhK1/ETDkyTf+8FaSqICDzEpn
-         RCwF+GM3zptkHEjEbdDmOXbeWrBnKnDKGQgA+1xa0myufYfusSGVp0PRyNLnQLbKjnqB
-         msPvInLUCnIVLk6v0G4ogr8nEHZHTzfa8Aqm0nSfUuw08WpmAcFIpjNkoePjHOeCeH6h
-         NTeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IY3W5P1fTbs2TJllrkAsNvoxS3ZPlZJfBSo3HYJdRNo=;
-        b=iVTr8cGNOmln01yU5Ot1uUExxAwK7YZWgpTRND7oeObkOTKfq/uYkQGlEKImvB67NM
-         BdCJlE7bCL6VWwqvJVw+wy5UvR+HFEeyA2bIdKqrkyx31aPbtvK6aswykRFP1p0q4RhL
-         dtAr5XVpTkwS7cKz+QOIBJ/ggfogRaAj7AONy6NCI3+5PkS4GWyYVKtNTxiwLjC4atVl
-         x02PNQ3ioMJ75xqVVF4Bz2i6OgUk1SkcokZriFaCyL5/+tcQB5/MJMzDm+STUW3QfaGY
-         LsQ+wDJo2J2x5O3+gtfSqqzLzjm/6ieMJWoJGK1wXWB81KE8l7qLLY5FhSvUFRmn59OM
-         jXeg==
-X-Gm-Message-State: APt69E2uD1ZsfXxhipADp3g7FEWTm+bXWpRYPDkEdzmCBobvBHfWytXw
-        uGhUc7BezyyZ1+Ec30GRHFgT4Q==
-X-Google-Smtp-Source: AAOMgpffuPMF251sW0HnJb9PY/32FaMmWY9isdTA9xVIsUvNhMR4JqV8wOa0iZrTSskQuYN8NmTIlw==
-X-Received: by 2002:a19:6801:: with SMTP id d1-v6mr3957197lfc.138.1530108959172;
-        Wed, 27 Jun 2018 07:15:59 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm873283lfb.7.2018.06.27.07.15.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 07:15:57 -0700 (PDT)
-Date:   Wed, 27 Jun 2018 07:15:45 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] ARM: uniphier: fixes for v4.18
-Message-ID: <20180627141545.ux2nzpgqxunhdcpb@localhost>
-References: <CAK7LNARAMcUgV2K1_dDdkupaWdtLqGMz==+huurHJKyW=JVWxQ@mail.gmail.com>
- <20180626174215.spnsyfqh5wk4tzep@localhost>
- <CAK7LNATHQMSNV0HoHNm-Lnha3oz7z5fd=iUPcufC0L-AuK9BZg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATHQMSNV0HoHNm-Lnha3oz7z5fd=iUPcufC0L-AuK9BZg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 27 Jun 2018 10:15:53 -0400
+Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
+        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 31B6061;
+        Wed, 27 Jun 2018 14:15:52 +0000 (UTC)
+Received: from misato.americas.hpqcorp.net (unknown [10.34.81.122])
+        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 840FD4A;
+        Wed, 27 Jun 2018 14:15:51 +0000 (UTC)
+From:   Toshi Kani <toshi.kani@hpe.com>
+To:     mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+Cc:     cpandya@codeaurora.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Toshi Kani <toshi.kani@hpe.com>,
+        Joerg Roedel <joro@8bytes.org>, stable@vger.kernel.org
+Subject: [PATCH v4 3/3] x86/mm: add TLB purge to free pmd/pte page interfaces
+Date:   Wed, 27 Jun 2018 08:13:48 -0600
+Message-Id: <20180627141348.21777-4-toshi.kani@hpe.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180627141348.21777-1-toshi.kani@hpe.com>
+References: <20180627141348.21777-1-toshi.kani@hpe.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 12:51:43PM +0900, Masahiro Yamada wrote:
-> Hi Olof,
-> 
-> 2018-06-27 2:42 GMT+09:00 Olof Johansson <olof@lixom.net>:
-> > Hi,
-> >
-> > On Mon, Jun 25, 2018 at 11:13:04PM +0900, Masahiro Yamada wrote:
-> >> Hi Arnd, Olof,
-> >>
-> >> Please pull some fixes of ARM UniPhier platform.
-> >>
-> >>
-> >>
-> >> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-> >>
-> >>   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>   git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
-> >> tags/uniphier-fixes-v4.18
-> >>
-> >> for you to fetch changes up to 4e62893c25bd3d5758058e15958364df3ca15fbc:
-> >>
-> >>   arm64: uniphier: select RESET_CONTROLLER (2018-06-25 23:00:31 +0900)
-> >>
-> >> ----------------------------------------------------------------
-> >> UniPhier ARM SoC fixes for v4.18
-> >>
-> >>  - add missing cooling device properties for CPUS
-> >>  - fix widget name of headphone
-> >>  - select RESET_CONTROLLER
-> >
-> > It's unclear to me what the severity of these fixes are. and I think the
-> > headphone widget name is the only bug that's causing problems for someone using
-> > this kernel, is that correct?
-> 
-> Right.
-> The others are on the boundary.
-> The criteria on those is different by maintainers
-> because some pull and some do not.
-> 
-> 
-> > If so, it would also be useful to get a "Fixes:" tag for it, seems like it
-> > should be:
-> >
-> > Fixes: fb21a0acaa2b7 ("arm64: dts: uniphier: add sound node")
-> > Care to resubmit with just the bugfix? Or, if it's easier, I can cherry-pick
-> > just that fix at this end and add the Fixes line. You should queue the other
-> > patches up for 4.19 and include in those pull requests.
-> 
-> If you care to cherry-pick with Fixes: tag,
-> that would be good.
+ioremap() calls pud_free_pmd_page() / pmd_free_pte_page() when it creates
+a pud / pmd map.  The following preconditions are met at their entry.
+ - All pte entries for a target pud/pmd address range have been cleared.
+ - System-wide TLB purges have been peformed for a target pud/pmd address
+   range.
 
-Great, done now -- cherry-picked "arm64: dts: uniphier: fix widget name of
-headphone for LD11/LD20 boards" into fixes.
+The preconditions assure that there is no stale TLB entry for the range.
+Speculation may not cache TLB entries since it requires all levels of page
+entries, including ptes, to have P & A-bits set for an associated address.
+However, speculation may cache pud/pmd entries (paging-structure caches)
+when they have P-bit set.
 
+Add a system-wide TLB purge (INVLPG) to a single page after clearing
+pud/pmd entry's P-bit.
 
--Olof
+SDM 4.10.4.1, Operation that Invalidate TLBs and Paging-Structure Caches,
+states that:
+  INVLPG invalidates all paging-structure caches associated with the
+  current PCID regardless of the liner addresses to which they correspond.
 
+Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: <stable@vger.kernel.org>
+---
+ arch/x86/mm/pgtable.c |   36 ++++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index fbd14e506758..e3deefb891da 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -725,24 +725,44 @@ int pmd_clear_huge(pmd_t *pmd)
+  * @pud: Pointer to a PUD.
+  * @addr: Virtual address associated with pud.
+  *
+- * Context: The pud range has been unmaped and TLB purged.
++ * Context: The pud range has been unmapped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
++ *
++ * NOTE: Callers must allow a single page allocation.
+  */
+ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ {
+-	pmd_t *pmd;
++	pmd_t *pmd, *pmd_sv;
++	pte_t *pte;
+ 	int i;
+ 
+ 	if (pud_none(*pud))
+ 		return 1;
+ 
+ 	pmd = (pmd_t *)pud_page_vaddr(*pud);
++	pmd_sv = (pmd_t *)__get_free_page(GFP_KERNEL);
++	if (!pmd_sv)
++		return 0;
+ 
+-	for (i = 0; i < PTRS_PER_PMD; i++)
+-		if (!pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE)))
+-			return 0;
++	for (i = 0; i < PTRS_PER_PMD; i++) {
++		pmd_sv[i] = pmd[i];
++		if (!pmd_none(pmd[i]))
++			pmd_clear(&pmd[i]);
++	}
+ 
+ 	pud_clear(pud);
++
++	/* INVLPG to clear all paging-structure caches */
++	flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
++
++	for (i = 0; i < PTRS_PER_PMD; i++) {
++		if (!pmd_none(pmd_sv[i])) {
++			pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
++			free_page((unsigned long)pte);
++		}
++	}
++
++	free_page((unsigned long)pmd_sv);
+ 	free_page((unsigned long)pmd);
+ 
+ 	return 1;
+@@ -753,7 +773,7 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+  * @pmd: Pointer to a PMD.
+  * @addr: Virtual address associated with pmd.
+  *
+- * Context: The pmd range has been unmaped and TLB purged.
++ * Context: The pmd range has been unmapped and TLB purged.
+  * Return: 1 if clearing the entry succeeded. 0 otherwise.
+  */
+ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+@@ -765,6 +785,10 @@ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ 
+ 	pte = (pte_t *)pmd_page_vaddr(*pmd);
+ 	pmd_clear(pmd);
++
++	/* INVLPG to clear all paging-structure caches */
++	flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
++
+ 	free_page((unsigned long)pte);
+ 
+ 	return 1;
