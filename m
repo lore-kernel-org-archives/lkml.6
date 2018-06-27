@@ -5,58 +5,87 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D20FBC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3107C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A0A4268C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:22:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0A4268C2
+	by mail.kernel.org (Postfix) with ESMTP id 896E22672C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:24:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896E22672C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753212AbeF0HWK (ORCPT
+        id S1753273AbeF0HYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 03:22:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37828 "EHLO mx2.suse.de"
+        Wed, 27 Jun 2018 03:24:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38164 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752946AbeF0HWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 03:22:09 -0400
+        id S1751073AbeF0HYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 03:24:34 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9978BAE2A;
-        Wed, 27 Jun 2018 07:22:08 +0000 (UTC)
-Date:   Wed, 27 Jun 2018 09:22:07 +0200
+        by mx2.suse.de (Postfix) with ESMTP id 47D42AD4C;
+        Wed, 27 Jun 2018 07:24:33 +0000 (UTC)
+Date:   Wed, 27 Jun 2018 09:24:32 +0200
 From:   Michal Hocko <mhocko@kernel.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        ldufour@linux.vnet.ibm.com,
         Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
- killer.
-Message-ID: <20180627072207.GB32348@dhcp22.suse.cz>
-References: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <alpine.DEB.2.21.1806201528490.16984@chino.kir.corp.google.com>
- <20180621073142.GA10465@dhcp22.suse.cz>
- <2d8c3056-1bc2-9a32-d745-ab328fd587a1@i-love.sakura.ne.jp>
- <20180626170345.GA3593@linux.vnet.ibm.com>
+Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+Message-ID: <20180627072432.GC32348@dhcp22.suse.cz>
+References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
+ <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
+ <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
+ <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
+ <20180620071817.GJ13685@dhcp22.suse.cz>
+ <263935d9-d07c-ab3e-9e42-89f73f57be1e@linux.alibaba.com>
+ <20180626074344.GZ2458@hirez.programming.kicks-ass.net>
+ <e54e298d-ef86-19a7-6f6b-07776f9a43e2@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180626170345.GA3593@linux.vnet.ibm.com>
+In-Reply-To: <e54e298d-ef86-19a7-6f6b-07776f9a43e2@linux.alibaba.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 26-06-18 10:03:45, Paul E. McKenney wrote:
-[...]
-> 3.	Something else?
+On Tue 26-06-18 18:03:34, Yang Shi wrote:
+> 
+> 
+> On 6/26/18 12:43 AM, Peter Zijlstra wrote:
+> > On Mon, Jun 25, 2018 at 05:06:23PM -0700, Yang Shi wrote:
+> > > By looking this deeper, we may not be able to cover all the unmapping range
+> > > for VM_DEAD, for example, if the start addr is in the middle of a vma. We
+> > > can't set VM_DEAD to that vma since that would trigger SIGSEGV for still
+> > > mapped area.
+> > > 
+> > > splitting can't be done with read mmap_sem held, so maybe just set VM_DEAD
+> > > to non-overlapped vmas. Access to overlapped vmas (first and last) will
+> > > still have undefined behavior.
+> > Acquire mmap_sem for writing, split, mark VM_DEAD, drop mmap_sem. Acquire
+> > mmap_sem for reading, madv_free drop mmap_sem. Acquire mmap_sem for
+> > writing, free everything left, drop mmap_sem.
+> > 
+> > ?
+> > 
+> > Sure, you acquire the lock 3 times, but both write instances should be
+> > 'short', and I suppose you can do a demote between 1 and 2 if you care.
+> 
+> Thanks, Peter. Yes, by looking the code and trying two different approaches,
+> it looks this approach is the most straight-forward one.
 
-How hard it would be to use a different API than oom notifiers? E.g. a
-shrinker which just kicks all the pending callbacks if the reclaim
-priority reaches low values (e.g. 0)?
+Yes, you just have to be careful about the max vma count limit.
 -- 
 Michal Hocko
 SUSE Labs
