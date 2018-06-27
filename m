@@ -2,122 +2,101 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9352C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6D8C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576CA25F70
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:42:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xzqoFkuI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 576CA25F70
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 8360F25F70
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:42:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8360F25F70
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965740AbeF0Qmo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:42:44 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:57438 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965580AbeF0Qml (ORCPT
+        id S965757AbeF0Qmx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:42:53 -0400
+Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:33994 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965580AbeF0Qmv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:42:41 -0400
-Received: from mail-ua0-f172.google.com (mail-ua0-f172.google.com [209.85.217.172]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w5RGgPcU002235;
-        Thu, 28 Jun 2018 01:42:26 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5RGgPcU002235
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530117746;
-        bh=fkEGxdK/iFOV/QNrhPABJTQ7HEe6AYuAh42Uizf+lcU=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=xzqoFkuIw7pFUkyZMHB5uXJWwc+lWNpPbdtHgz26mNS8jbBkVISMCnpO3yGpGQo3X
-         IwQZ4SdSgqf+JSUBjRe6LA5Q17T0KNZZDDYSTx+iysbyz7HaHxGfQFsNkdKMHK/QPh
-         Mji/BaPWL1yKxDj72S3Q6lD1KCOu0ss5uIGZnxR420eKnwW5OWjFndw52S+KAa3W1D
-         awLhQpvDmZ4M8mhd6LGyWzRvhIfu42KoGkpifK9wa3J9o+R4nlS0bgatTR7fo3k7at
-         TiwqSXb7trvy9O3FMxwIs+hi48L1jrUWEWT2D79NCp5NXNMiA/qFmf/KHqPdDsNCgM
-         OrggwcwKdKzCw==
-X-Nifty-SrcIP: [209.85.217.172]
-Received: by mail-ua0-f172.google.com with SMTP id z16-v6so1669866uaz.10;
-        Wed, 27 Jun 2018 09:42:26 -0700 (PDT)
-X-Gm-Message-State: APt69E0Y+jR15vupfiawOAfMd9aMWHS2A8JjdwxleoEMzTSuuglWLc9z
-        GDLnw3BRl6idxzhTY0QF2Lbsgw5dgHjUAZDH+1o=
-X-Google-Smtp-Source: AAOMgpdMeMkEAiYVCrMpUqrWAkV3N09B4ifS/lZ/XKAtHrlosZBktUDazjT9tpEuLXfqNje0hyOros9eoLv0PmmeLXo=
-X-Received: by 2002:a9f:3d6e:: with SMTP id m46-v6mr4231688uai.17.1530117745334;
- Wed, 27 Jun 2018 09:42:25 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 09:41:44
- -0700 (PDT)
-In-Reply-To: <1529772111-5780-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1529772111-5780-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 28 Jun 2018 01:41:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT8qp2-mj4_miSJUojzZTty1gbh2YOOw4zAiLRBKXx0rA@mail.gmail.com>
-Message-ID: <CAK7LNAT8qp2-mj4_miSJUojzZTty1gbh2YOOw4zAiLRBKXx0rA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: reword help of LD_DEAD_CODE_DATA_ELIMINATION
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 27 Jun 2018 12:42:51 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 2DA791801C5D2;
+        Wed, 27 Jun 2018 16:42:50 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: angle37_6fe7688fe155d
+X-Filterd-Recvd-Size: 2677
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 27 Jun 2018 16:42:48 +0000 (UTC)
+Message-ID: <38f16dbee8612fc9c8115177079adeb8981276a6.camel@perches.com>
+Subject: Re: [PATCH v3 3/4] staging: rtl8723bs: use ether_addr_copy() in
+ rtw_macaddr_cfg()
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Michael Straube <straube.linux@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Wed, 27 Jun 2018 09:42:47 -0700
+In-Reply-To: <CAHp75VeEUFEn5zih+2hntU7GCxx7U5rW60DMjRBRNo2EXhSdpw@mail.gmail.com>
+References: <20180626081409.9518-1-straube.linux@gmail.com>
+         <20180626081409.9518-3-straube.linux@gmail.com>
+         <CAHp75Vc3gEyP+h_XtJV7zKZV0J++Nyr04au7Rtu3h5y0JJASXg@mail.gmail.com>
+         <37cca7e4-3c1f-b1ab-14b3-fd3dbbae8b01@gmail.com>
+         <96782a8bbc8d5a8a911447beda78ca4eed6b9f04.camel@perches.com>
+         <2a49e8e7-15ef-af4f-1039-b15ae60df11b@gmail.com>
+         <20180627083306.rk3niwazi332rqs5@mwanda>
+         <6221958a-f817-e01b-7e0f-adbbba9acde4@gmail.com>
+         <20180627131158.xttl27awxie2w6ia@mwanda>
+         <CAHp75VeEUFEn5zih+2hntU7GCxx7U5rW60DMjRBRNo2EXhSdpw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-24 1:41 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Since commit 5d20ee3192a5 ("kbuild: Allow LD_DEAD_CODE_DATA_ELIMINATION
-> to be selectable if enabled"), HAVE_LD_DEAD_CODE_DATA_ELIMINATION is
-> supposed to be selected by architectures that are capable of this
-> functionality.  LD_DEAD_CODE_DATA_ELIMINATION is now users' selection.
-> Update the help message.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
+On Wed, 2018-06-27 at 19:14 +0300, Andy Shevchenko wrote:
+> On Wed, Jun 27, 2018 at 4:11 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > On Wed, Jun 27, 2018 at 02:56:00PM +0200, Michael Straube wrote:
+> > > Should I add a thanks line to the commit message:
+> > > 
+> > >     Thanks to Dan Carpenter, Joe Perches and Andy Shevchenko.
+> > > 
+> > > Or would that be considered as too much?
+> > 
+> > You can write whatever the heck you want...  :P  No one cares.
 
-Applied to linux-kbuild/fixes.
+I hope that's true.
 
->  init/Kconfig | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/init/Kconfig b/init/Kconfig
-> index fde3d09..041f3a0 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1051,10 +1051,9 @@ config LD_DEAD_CODE_DATA_ELIMINATION
->         depends on HAVE_LD_DEAD_CODE_DATA_ELIMINATION
->         depends on EXPERT
->         help
-> -         Select this if the architecture wants to do dead code and
-> -         data elimination with the linker by compiling with
-> -         -ffunction-sections -fdata-sections, and linking with
-> -         --gc-sections.
-> +         Enable this if you want to do dead code and data elimination with
-> +         the linker by compiling with -ffunction-sections -fdata-sections,
-> +         and linking with --gc-sections.
->
->           This can reduce on disk and in-memory size of the kernel
->           code and static data, particularly for small configs and
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > When it comes to credit, I do appreciate Reported-by tags because LWN
+> > and employers do count those sometimes.
 
+Which is likely as useful as judging engineer
+productivity by LOC counts.
 
+> In some cases Suggested-by fits better.
 
--- 
-Best Regards
-Masahiro Yamada
+True, but meh.
+
+I think all the Suggested-by, Reported-by,
+Co-developed-by and such are mostly unnecessary.
+
+Who really cares for anything other than
+signed-off-by, acked-by, tested-by, and
+maybe reviewed-by ?
+
+Maybe the kernel should add a signature for
+"Co-authored-by:" instead of "Co-developed-by:"
+
+Perhaps another option would be to extend
+the git commit "Author:" attribute to allow
+multiple names and addresses.
+
