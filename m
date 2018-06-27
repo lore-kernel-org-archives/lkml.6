@@ -6,58 +6,94 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92FEC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 612CAC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ACFA263AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:35:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACFA263AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 0F9802658A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:37:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9802658A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965531AbeF0NfS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 09:35:18 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:47100 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965286AbeF0NfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 09:35:17 -0400
-X-Greylist: delayed 1499 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Jun 2018 09:35:17 EDT
-Received: from [94.134.91.246] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1fYAD8-0007iF-1Q; Wed, 27 Jun 2018 15:10:14 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Sandy Huang <hjc@rock-chips.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: vop: fixup linebuffer mode calc error
-Date:   Wed, 27 Jun 2018 15:10:12 +0200
-Message-ID: <2037317.Zy9BHlEm4Q@phil>
-In-Reply-To: <1530001004-25036-1-git-send-email-hjc@rock-chips.com>
-References: <1530001004-25036-1-git-send-email-hjc@rock-chips.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1754546AbeF0NhE (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 09:37:04 -0400
+Received: from smtprelay0237.hostedemail.com ([216.40.44.237]:47064 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752898AbeF0NhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 09:37:03 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 58BDF181D32E0;
+        Wed, 27 Jun 2018 13:37:02 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: tank86_5a2ed0527a406
+X-Filterd-Recvd-Size: 2405
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 27 Jun 2018 13:36:59 +0000 (UTC)
+Message-ID: <06bca9497a878d5f494fd97dbe2d8448caab9afd.camel@perches.com>
+Subject: Re: [PATCH v2] staging: media: omap4iss: Added SPDX license
+ identifiers
+From:   Joe Perches <joe@perches.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Graefe <daniel.graefe@fau.de>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        devel@driverdev.osuosl.org, linux-kernel@i4.cs.fau.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Roman Sommer <roman.sommer@fau.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Date:   Wed, 27 Jun 2018 06:36:58 -0700
+In-Reply-To: <20180627084013.ybnbxbgha77cdujn@mwanda>
+References: <1529932892-9036-1-git-send-email-daniel.graefe@fau.de>
+         <1530048656-4074-1-git-send-email-daniel.graefe@fau.de>
+         <20180627084013.ybnbxbgha77cdujn@mwanda>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sandy,
-
-Am Dienstag, 26. Juni 2018, 10:16:44 CEST schrieb Sandy Huang:
-> linebuffer mode should be LB_YUV_3840X5 when width is bigger
-> than 1280 in yuv mode.
-> seperate yuv and rgb case make the scl_vop_cal_lb_mode() logic
-> is clearer.
+On Wed, 2018-06-27 at 11:40 +0300, Dan Carpenter wrote:
+> On Tue, Jun 26, 2018 at 11:30:56PM +0200, Daniel Graefe wrote:
+> > Changes in v2:
+> > - replaced "GPL-2.0-or-later" with "GPL-2.0+"
 > 
-> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+> We should make checkpatch.pl complain when people use wrong tags like
+> GPL-2.0-or-later.
 
-applied to drm-misc-next
+I'd rather we use the latest version of the spdx forms.
+https://lkml.org/lkml/2018/2/2/883
+I think it's better to modify checkpatch when the kernel
+uses the latest forms.
 
+There is a separate script that validates the spdx forms.
+./scripts/spdxcheck.py
 
-Heiko
+That script, which still needs the patch below, would work
+with either style.
 
+https://patchwork.kernel.org/patch/10448573/
 
+$ python ./scripts/spdxcheck.py 
+include/dt-bindings/reset/amlogic,meson-axg-reset.h: 9:41 Invalid License ID: BSD
+
+or for more verbose output
+
+$ python ./scripts/spdxcheck.py -v
+include/dt-bindings/reset/amlogic,meson-axg-reset.h: 9:41 Invalid License ID: BSD
+
+License files:               14
+Exception files:              1
+License IDs                  19
+Exception IDs                 1
+
+Files checked:            60967
+Lines checked:           646729
+Files with SPDX:          17393
+Files with errors:            1
