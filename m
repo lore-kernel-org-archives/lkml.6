@@ -2,218 +2,140 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B920C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B71C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC7F2614B
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:15:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC7F2614B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 5981A26115
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:16:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="f3dRkncY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5981A26115
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965419AbeF0OPy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 10:15:54 -0400
-Received: from g4t3425.houston.hpe.com ([15.241.140.78]:29523 "EHLO
-        g4t3425.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965341AbeF0OPv (ORCPT
+        id S965466AbeF0OQD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 10:16:03 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33921 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965341AbeF0OQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 10:15:51 -0400
-Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
-        by g4t3425.houston.hpe.com (Postfix) with ESMTP id CC4AAAC;
-        Wed, 27 Jun 2018 14:15:50 +0000 (UTC)
-Received: from misato.americas.hpqcorp.net (unknown [10.34.81.122])
-        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id EDFAE46;
-        Wed, 27 Jun 2018 14:15:49 +0000 (UTC)
-From:   Toshi Kani <toshi.kani@hpe.com>
-To:     mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Cc:     cpandya@codeaurora.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, stable@vger.kernel.org
-Subject: [PATCH v4 2/3] ioremap: Update pgtable free interfaces with addr
-Date:   Wed, 27 Jun 2018 08:13:47 -0600
-Message-Id: <20180627141348.21777-3-toshi.kani@hpe.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180627141348.21777-1-toshi.kani@hpe.com>
-References: <20180627141348.21777-1-toshi.kani@hpe.com>
+        Wed, 27 Jun 2018 10:16:00 -0400
+Received: by mail-lf0-f68.google.com with SMTP id n96-v6so1695749lfi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 07:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IY3W5P1fTbs2TJllrkAsNvoxS3ZPlZJfBSo3HYJdRNo=;
+        b=f3dRkncY9iORXE3VOq3TbS+hRBYrRB564HV4amttZRm+cRo4slFcnUaRbk8omA4aN5
+         ql9YLbqPFfgaK7ABCJTmDgapsf9lWmJ6KW30uJZbgnXyciWzn5/7OCoCRuKTYV+N+0C+
+         fPayHm66D7/nFvMtdSGXp874Xb1k2rCBPNfbPYoEKxrQhK1/ETDkyTf+8FaSqICDzEpn
+         RCwF+GM3zptkHEjEbdDmOXbeWrBnKnDKGQgA+1xa0myufYfusSGVp0PRyNLnQLbKjnqB
+         msPvInLUCnIVLk6v0G4ogr8nEHZHTzfa8Aqm0nSfUuw08WpmAcFIpjNkoePjHOeCeH6h
+         NTeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IY3W5P1fTbs2TJllrkAsNvoxS3ZPlZJfBSo3HYJdRNo=;
+        b=iVTr8cGNOmln01yU5Ot1uUExxAwK7YZWgpTRND7oeObkOTKfq/uYkQGlEKImvB67NM
+         BdCJlE7bCL6VWwqvJVw+wy5UvR+HFEeyA2bIdKqrkyx31aPbtvK6aswykRFP1p0q4RhL
+         dtAr5XVpTkwS7cKz+QOIBJ/ggfogRaAj7AONy6NCI3+5PkS4GWyYVKtNTxiwLjC4atVl
+         x02PNQ3ioMJ75xqVVF4Bz2i6OgUk1SkcokZriFaCyL5/+tcQB5/MJMzDm+STUW3QfaGY
+         LsQ+wDJo2J2x5O3+gtfSqqzLzjm/6ieMJWoJGK1wXWB81KE8l7qLLY5FhSvUFRmn59OM
+         jXeg==
+X-Gm-Message-State: APt69E2uD1ZsfXxhipADp3g7FEWTm+bXWpRYPDkEdzmCBobvBHfWytXw
+        uGhUc7BezyyZ1+Ec30GRHFgT4Q==
+X-Google-Smtp-Source: AAOMgpffuPMF251sW0HnJb9PY/32FaMmWY9isdTA9xVIsUvNhMR4JqV8wOa0iZrTSskQuYN8NmTIlw==
+X-Received: by 2002:a19:6801:: with SMTP id d1-v6mr3957197lfc.138.1530108959172;
+        Wed, 27 Jun 2018 07:15:59 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id n9-v6sm873283lfb.7.2018.06.27.07.15.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 07:15:57 -0700 (PDT)
+Date:   Wed, 27 Jun 2018 07:15:45 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] ARM: uniphier: fixes for v4.18
+Message-ID: <20180627141545.ux2nzpgqxunhdcpb@localhost>
+References: <CAK7LNARAMcUgV2K1_dDdkupaWdtLqGMz==+huurHJKyW=JVWxQ@mail.gmail.com>
+ <20180626174215.spnsyfqh5wk4tzep@localhost>
+ <CAK7LNATHQMSNV0HoHNm-Lnha3oz7z5fd=iUPcufC0L-AuK9BZg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNATHQMSNV0HoHNm-Lnha3oz7z5fd=iUPcufC0L-AuK9BZg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chintan Pandya <cpandya@codeaurora.org>
+On Wed, Jun 27, 2018 at 12:51:43PM +0900, Masahiro Yamada wrote:
+> Hi Olof,
+> 
+> 2018-06-27 2:42 GMT+09:00 Olof Johansson <olof@lixom.net>:
+> > Hi,
+> >
+> > On Mon, Jun 25, 2018 at 11:13:04PM +0900, Masahiro Yamada wrote:
+> >> Hi Arnd, Olof,
+> >>
+> >> Please pull some fixes of ARM UniPhier platform.
+> >>
+> >>
+> >>
+> >> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+> >>
+> >>   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+> >>
+> >> are available in the git repository at:
+> >>
+> >>   git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
+> >> tags/uniphier-fixes-v4.18
+> >>
+> >> for you to fetch changes up to 4e62893c25bd3d5758058e15958364df3ca15fbc:
+> >>
+> >>   arm64: uniphier: select RESET_CONTROLLER (2018-06-25 23:00:31 +0900)
+> >>
+> >> ----------------------------------------------------------------
+> >> UniPhier ARM SoC fixes for v4.18
+> >>
+> >>  - add missing cooling device properties for CPUS
+> >>  - fix widget name of headphone
+> >>  - select RESET_CONTROLLER
+> >
+> > It's unclear to me what the severity of these fixes are. and I think the
+> > headphone widget name is the only bug that's causing problems for someone using
+> > this kernel, is that correct?
+> 
+> Right.
+> The others are on the boundary.
+> The criteria on those is different by maintainers
+> because some pull and some do not.
+> 
+> 
+> > If so, it would also be useful to get a "Fixes:" tag for it, seems like it
+> > should be:
+> >
+> > Fixes: fb21a0acaa2b7 ("arm64: dts: uniphier: add sound node")
+> > Care to resubmit with just the bugfix? Or, if it's easier, I can cherry-pick
+> > just that fix at this end and add the Fixes line. You should queue the other
+> > patches up for 4.19 and include in those pull requests.
+> 
+> If you care to cherry-pick with Fixes: tag,
+> that would be good.
 
-The following kernel panic was observed on ARM64 platform due to a stale
-TLB entry.
+Great, done now -- cherry-picked "arm64: dts: uniphier: fix widget name of
+headphone for LD11/LD20 boards" into fixes.
 
- 1. ioremap with 4K size, a valid pte page table is set.
- 2. iounmap it, its pte entry is set to 0.
- 3. ioremap the same address with 2M size, update its pmd entry with
-    a new value.
- 4. CPU may hit an exception because the old pmd entry is still in TLB,
-    which leads to a kernel panic.
 
-Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
-table") has addressed this panic by falling to pte mappings in the above
-case on ARM64.
+-Olof
 
-To support pmd mappings in all cases, TLB purge needs to be performed
-in this case on ARM64.
-
-Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
-so that TLB purge can be added later in seprate patches.
-
-[toshi.kani@hpe.com: merge changes, rewrite patch description]
-Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: <stable@vger.kernel.org>
----
- arch/arm64/mm/mmu.c           |    4 ++--
- arch/x86/mm/pgtable.c         |   12 +++++++-----
- include/asm-generic/pgtable.h |    8 ++++----
- lib/ioremap.c                 |    4 ++--
- 4 files changed, 15 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 493ff75670ff..8ae5d7ae4af3 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -977,12 +977,12 @@ int pmd_clear_huge(pmd_t *pmdp)
- 	return 1;
- }
- 
--int pud_free_pmd_page(pud_t *pud)
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	return pud_none(*pud);
- }
- 
--int pmd_free_pte_page(pmd_t *pmd)
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	return pmd_none(*pmd);
- }
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 1aeb7a5dbce5..fbd14e506758 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -723,11 +723,12 @@ int pmd_clear_huge(pmd_t *pmd)
- /**
-  * pud_free_pmd_page - Clear pud entry and free pmd page.
-  * @pud: Pointer to a PUD.
-+ * @addr: Virtual address associated with pud.
-  *
-  * Context: The pud range has been unmaped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
--int pud_free_pmd_page(pud_t *pud)
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	pmd_t *pmd;
- 	int i;
-@@ -738,7 +739,7 @@ int pud_free_pmd_page(pud_t *pud)
- 	pmd = (pmd_t *)pud_page_vaddr(*pud);
- 
- 	for (i = 0; i < PTRS_PER_PMD; i++)
--		if (!pmd_free_pte_page(&pmd[i]))
-+		if (!pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE)))
- 			return 0;
- 
- 	pud_clear(pud);
-@@ -750,11 +751,12 @@ int pud_free_pmd_page(pud_t *pud)
- /**
-  * pmd_free_pte_page - Clear pmd entry and free pte page.
-  * @pmd: Pointer to a PMD.
-+ * @addr: Virtual address associated with pmd.
-  *
-  * Context: The pmd range has been unmaped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
--int pmd_free_pte_page(pmd_t *pmd)
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	pte_t *pte;
- 
-@@ -770,7 +772,7 @@ int pmd_free_pte_page(pmd_t *pmd)
- 
- #else /* !CONFIG_X86_64 */
- 
--int pud_free_pmd_page(pud_t *pud)
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	return pud_none(*pud);
- }
-@@ -779,7 +781,7 @@ int pud_free_pmd_page(pud_t *pud)
-  * Disable free page handling on x86-PAE. This assures that ioremap()
-  * does not update sync'd pmd entries. See vmalloc_sync_one().
-  */
--int pmd_free_pte_page(pmd_t *pmd)
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	return pmd_none(*pmd);
- }
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index f59639afaa39..b081794ba135 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1019,8 +1019,8 @@ int pud_set_huge(pud_t *pud, phys_addr_t addr, pgprot_t prot);
- int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
- int pud_clear_huge(pud_t *pud);
- int pmd_clear_huge(pmd_t *pmd);
--int pud_free_pmd_page(pud_t *pud);
--int pmd_free_pte_page(pmd_t *pmd);
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr);
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr);
- #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
- static inline int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
- {
-@@ -1046,11 +1046,11 @@ static inline int pmd_clear_huge(pmd_t *pmd)
- {
- 	return 0;
- }
--static inline int pud_free_pmd_page(pud_t *pud)
-+static inline int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	return 0;
- }
--static inline int pmd_free_pte_page(pmd_t *pmd)
-+static inline int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	return 0;
- }
-diff --git a/lib/ioremap.c b/lib/ioremap.c
-index 54e5bbaa3200..517f5853ffed 100644
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -92,7 +92,7 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
- 		if (ioremap_pmd_enabled() &&
- 		    ((next - addr) == PMD_SIZE) &&
- 		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
--		    pmd_free_pte_page(pmd)) {
-+		    pmd_free_pte_page(pmd, addr)) {
- 			if (pmd_set_huge(pmd, phys_addr + addr, prot))
- 				continue;
- 		}
-@@ -119,7 +119,7 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
- 		if (ioremap_pud_enabled() &&
- 		    ((next - addr) == PUD_SIZE) &&
- 		    IS_ALIGNED(phys_addr + addr, PUD_SIZE) &&
--		    pud_free_pmd_page(pud)) {
-+		    pud_free_pmd_page(pud, addr)) {
- 			if (pud_set_huge(pud, phys_addr + addr, prot))
- 				continue;
- 		}
