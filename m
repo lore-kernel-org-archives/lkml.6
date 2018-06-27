@@ -2,212 +2,466 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6B9C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D468C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BF75265F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:41:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA6E62660D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cs+NMjyo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF75265F2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=onelaird.onmicrosoft.com header.i=@onelaird.onmicrosoft.com header.b="USv+DirJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6E62660D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=lairdtech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933651AbeF0IlL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 04:41:11 -0400
-Received: from mail-eopbgr50089.outbound.protection.outlook.com ([40.107.5.89]:35191
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        id S1753356AbeF0Im3 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 04:42:29 -0400
+Received: from mail-dm3nam03on0099.outbound.protection.outlook.com ([104.47.41.99]:56458
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932234AbeF0IlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 04:41:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1752230AbeF0ImW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 04:42:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=onelaird.onmicrosoft.com; s=selector1-lairdtech-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DhwTbNuQTMysHrzRkDBA5UWHYXq2S3eg5lTu9Uu0Fl0=;
- b=Cs+NMjyoqeJaM4Wfh54Fa8ug0vBi/iRjSHNr3QtdOQF6T3664ipEUP5jOc5x+yrEhr6S6itNn1Cr+tmAjyhYvIQruMHJhmofMiiQPfuaypLOKvsMrHwtFj1zOnFPgo+g/p1ciCu90e3DsYXzawIsQU+oqxAjhupu0OkffVxyJMU=
-Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
- DB5PR04MB1319.eurprd04.prod.outlook.com (2a01:111:e400:51cb::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.20; Wed, 27 Jun
- 2018 08:40:57 +0000
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: imx6sll-evk: enable usdhc3 slot
-Date:   Wed, 27 Jun 2018 16:36:45 +0800
-Message-Id: <1530088605-9264-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: SG2PR06CA0164.apcprd06.prod.outlook.com
- (2603:1096:1:1e::18) To DB5PR04MB1319.eurprd04.prod.outlook.com
- (2a01:111:e400:51cb::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4cc11415-de58-46db-1dd8-08d5dc09b5d1
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1319;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1319;3:HDfmlzGwO3hG1ujyF9IkLgOPDe69hrjnXdglQrNOfoDnqjx8dPQ7mHOsTE379vaFqyPrRH1fQUtOLdYQUCOtXrS519EYn5M8Eb53eX0dgbGvE24lwnATH/x9hEeZrGgp1t3EmeKfSBqiSbXpAurcHPRfDzXTXQVzR4JCnd3d147rcdSMuPzMsmYl8z5xrRswAqJAjkUVULGH3FaRMCxIQ3DOV5qvBX6UNLGOUlnDTPTWZSihKzDLGWI+aegqJpRt;25:gQBx2lxWDccmsO3aZHlenb28EomtfPuQTq89xJLMvKI43gLoPG2QKbpUqP6OUUQG6n8sAqPkvc31oUqU0czIdfROYiZJEqDK+3+IvJ8TwMJDlv2WW9nY40SZlQ8wDtQihfAANGUwg90Gj97JjHyCd6uZ6va6bI2d9wTOliYhxw5vcTL8+olfX2kIrKUHKxD4lbRn1GhGfzmYKjvA+/a5UNXJ482kmWIQi6MhkyhzbbuuDYKfRCdRf2FkcpYvJLePMVDKx9gi/KhGJ/xZwhkbBd++jYczqKnPvLTnC72nvWXlxl7Ez5ml6viOnICfkUbriPEci2EXSCDyo0Lcn0IJyQ==;31:oviqZ1YMJKYlvNd0C5nFVq8Cqc6RbYD8bV9ghgTEZgOUSRWc3FKQXC4sr9OTppzF/uovG7pug88nHdqAAwhe76hE46eSMxCy7tfuwSiEVlGaEpeBSBuk2l0gXUsFT4Mra4AVKbwwHq58++0Gm49ezdgLsk5emwjGQNadwQIBBqCW+OG4hzJdk5HwyujLNbmVpUPjB/l3TsctEkcmPyuW4mE8ctF99kNMM+W/DO3cfKE=
-X-MS-TrafficTypeDiagnostic: DB5PR04MB1319:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1319;20:7LrfY+eh+aE66N5h0EJX1sjIP82Bm6yLuUyJJQCtMMhT5XXjKdwDQb2nOx2Mk0xiL2E1DV+WmRcw29VIy+bNNLVTmSJSREihLiVm6tDwO7wvAOFeTh6CFT189CenEAEkEe/a+uOqB6UbDkzvNiiqCKk4brNaSB2DrfEMTQ9agjccOmMMiWWPQFpcAclyUjWFrJ3b8vp6ZnBxYgKNARQirl4mOSQIYEJYxz5gUXduCrEeQA9VwmNN0oCAmEOF/petW0jvBVBb6aOS05lQos9xmNVSSaA3G3JQcYK3Dq45RzH9NgXVrrdGqZMKHJYYYuRAW2wEEaPv111YzHdDx+ATnOgPpjfiCsX2DxcrK2dQ4O9uTiHKJDX1FT6mHZSMwKlnzGATmtSgxNz27Ao6kfV9a78/VXMQkmoscpTE3N+4W6pXMoswN6mA5ULrOkNcucqt06Ia6Xo95fUpp8uNu5gyxWzl+iBNzVe7NrU/5EihOugdTUlai+pxcHZyLq7Fqvwp;4:vjdQkXtpUGBwO+rQcYIz5akPpVSBalHZLvljrCsKCUSgzNX+Y9bbn8VayKRAb5wRln8d9pAWHqBPAnumAOCc5y3d1pRJTLmRBA3TZfpJoSok9on/zhMvth29o7Rer+P8ZtjNAkzWQKE9zMuafZQ9X8YHDC7qtK1aRIKiQ9jki7NlOp497lMqCTVWbnhKa6FcdN8Eo5W+GcLneUN37LSme7USidzq1IEzPyyvEDrUsXTxy1YI7paAB4a7iZ25c/hJ2sm68SgocR0SUvQ7i5z+N1wkocRv+SWH6rptG+E8/iklPAtJM60lxMiy3uEz0k3Z
-X-Microsoft-Antispam-PRVS: <DB5PR04MB1319C17EC1405BF12203D5FDF5480@DB5PR04MB1319.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DB5PR04MB1319;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1319;
-X-Forefront-PRVS: 0716E70AB6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(366004)(39860400002)(396003)(199004)(189003)(47776003)(6512007)(52116002)(106356001)(86362001)(575784001)(66066001)(316002)(105586002)(6116002)(3846002)(51416003)(2906002)(1857600001)(6486002)(5660300001)(26005)(16586007)(386003)(6506007)(50466002)(4326008)(48376002)(53936002)(16526019)(305945005)(478600001)(6666003)(186003)(6346003)(8936002)(25786009)(68736007)(97736004)(8676002)(36756003)(476003)(2616005)(956004)(50226002)(14444005)(7736002)(486006)(81166006)(81156014)(32563001)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1319;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ bh=g7d3lphuA701a2YMQEvAeiNgyVXipFr2zd8EN8zV1Gg=;
+ b=USv+DirJeHS2z9BEbkaiGQiNYZLOWD9JfBj0hNtZe1P5B8q8tmiyqyUoEuLfeAM2v+dytciJrR0niHlOX9TqskA4GXOrFYTSMFmyrceXyqIwq3Xwjzr9FAIYwRkacWhLpQKcTkwd85K8feHGzNPVCgSPEPvrwHra62taMSEiHIE=
+Received: from BY1PR02MB1114.namprd02.prod.outlook.com (10.162.108.140) by
+ BY1PR02MB1209.namprd02.prod.outlook.com (10.162.108.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.24; Wed, 27 Jun 2018 08:42:18 +0000
+Received: from BY1PR02MB1114.namprd02.prod.outlook.com
+ ([fe80::d5c4:ef81:b513:f5da]) by BY1PR02MB1114.namprd02.prod.outlook.com
+ ([fe80::d5c4:ef81:b513:f5da%3]) with mapi id 15.20.0884.024; Wed, 27 Jun 2018
+ 08:42:17 +0000
+From:   Ben Whitten <Ben.Whitten@lairdtech.com>
+To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Ben Whitten <ben.whitten@gmail.com>
+Subject: RE: [PATCH v2 4/6] arm: dts: add support for Laird WB50N cpu module
+ and DVK
+Thread-Topic: [PATCH v2 4/6] arm: dts: add support for Laird WB50N cpu module
+ and DVK
+Thread-Index: AQHUBK62KLwSSbe270qAF8A3mcrIRKRz2uGw
+Date:   Wed, 27 Jun 2018 08:42:17 +0000
+Message-ID: <BY1PR02MB1114B9B363091FC26668E454E7480@BY1PR02MB1114.namprd02.prod.outlook.com>
+References: <1529070055-18701-1-git-send-email-ben.whitten@lairdtech.com>
+ <1529070055-18701-4-git-send-email-ben.whitten@lairdtech.com>
+In-Reply-To: <1529070055-18701-4-git-send-email-ben.whitten@lairdtech.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Ben.Whitten@lairdtech.com; 
+x-originating-ip: [109.174.151.67]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY1PR02MB1209;7:fYcwu4ATRaQPqSkcHjzW/XbBxEXS3JPBGM7rCQioelw44n3GI1yVQf3lpyIzgqpPl4Tz93tHAvV6eQ7lsbyaqr11dXh8cgFiqXtOzAStUkLkCauRNQj7xJ1NL3mzP1bPZKfooGTFwn9FRmQygnOw9XXooAHlx4ubzc/Zl6l7SBxKaVegBoOC4RRk01MdGeEkDKDe4o+VVEN4MqFpbg8Jhg2hh4AerA/k2s8vHobtkw+lPP3UHeNNko2bw7EHi5FN
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 75460bb3-6457-4009-debc-08d5dc09e3c8
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:BY1PR02MB1209;
+x-ms-traffictypediagnostic: BY1PR02MB1209:
+x-microsoft-antispam-prvs: <BY1PR02MB12096EE10C0D9D0BB4FDEA0FE7480@BY1PR02MB1209.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(44402351742967);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BY1PR02MB1209;BCL:0;PCL:0;RULEID:;SRVR:BY1PR02MB1209;
+x-forefront-prvs: 0716E70AB6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(346002)(396003)(376002)(39860400002)(199004)(189003)(229853002)(72206003)(4326008)(2906002)(11346002)(2501003)(25786009)(476003)(105586002)(66066001)(446003)(966005)(486006)(6116002)(256004)(3846002)(54906003)(14444005)(99286004)(106356001)(5250100002)(81166006)(5660300001)(6436002)(316002)(68736007)(86362001)(110136005)(76176011)(6506007)(7696005)(6306002)(2900100001)(55016002)(102836004)(478600001)(97736004)(26005)(53936002)(9686003)(74316002)(186003)(39060400002)(305945005)(81156014)(7736002)(14454004)(8676002)(33656002)(8936002)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:BY1PR02MB1209;H:BY1PR02MB1114.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: lairdtech.com does not designate
  permitted sender hosts)
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1319;23:Dt63xUm9SlCxFr/pa5+eWPrbSZiQET/7z1k8s+z1P?=
- =?us-ascii?Q?yTL29TLHVgjkSsih6ACO4I25VklNCWqhFdWlWdLTRCsgUb0Kf3a9iwUtRY2G?=
- =?us-ascii?Q?iqULpuFvDDRW0AR8zxWaMUJxa9J9gHSM+p8+gfFYdv+KUYkSFyPIZyigPcW9?=
- =?us-ascii?Q?inPXssWJUZSPTFIL4UFd/NszTHpl5FlOLlLl6Nryv4/rkecJr8GaVjsR27fI?=
- =?us-ascii?Q?vbnyQLB0uuDp7PO+0G8NeJUoZaVV2Gs+otY7QCxfsnXh80VTUnTFpMxL39LH?=
- =?us-ascii?Q?orzSf87/y5C7D2t38PTuI52FfGfeVi5WpNWdUKE10+G/hM2BOT8ogbBZzX6m?=
- =?us-ascii?Q?3eKPfTbL/wAqpBZwC8+7PDynzhmHqFbCj8OcTygIn4KGOu6+jvvqPJaJoZ8g?=
- =?us-ascii?Q?wmXrEwnuFXUN/L4D5Hxdt9QY+okX/QFz1HXLbrW1s/YGCITqJ93S9pEiA/z0?=
- =?us-ascii?Q?Yd8BA/qf+ZeJNJnos39YVfM1N5HP/SQ2Ndu1H5HXHv3bOAP6cZxq9L1rGgP0?=
- =?us-ascii?Q?bNDOlyB1XjvIHPPXS11jCEsm77GHeH+cqDNOxLjQ5LdsMfyN7t3VM0UpLsoM?=
- =?us-ascii?Q?Z4Vifl3KrgHJc0wXpqJKmm3cLnA0Cm56IyftyDUrpS3A8gXA5TyzoRJHX4Rg?=
- =?us-ascii?Q?nHG0C8nm2uuR50YpNXJhtUAWRwCI+EFrXUWxw+ooYeNwcChorjZLFm8EUQ4+?=
- =?us-ascii?Q?w87XbuKZxDzQ3Dvcqg2iGOitLI//ty4f4sfPRwetujstQHTc/4EviQ95e1Rl?=
- =?us-ascii?Q?VFD92Gu08al2I73FqC4UtitN1Ekgiw8oMlVe6VOiKyUoVddhJ8YQ4C4Q5QnK?=
- =?us-ascii?Q?23JV479nO8BCpDbvgFSTU5dIQMzX2ppF2JEv3qd4EQMdKzs8pfoR36TyGP3v?=
- =?us-ascii?Q?rGrKV4mB5O93EIPmJuKUg2lKTMFmW6gr3kfSk2meKwpp05VlFMYdkJh68kzP?=
- =?us-ascii?Q?dNE1T6Y6cOeQcUr4EvXI4+JEoF5AnuCCpx2x/5u4XodNcD6RcySFddFYG8bE?=
- =?us-ascii?Q?fitKep5hr020z+pr3GYZ/7xtlCBhFd9d3jOQHe/oScX5GQW29e9jxSF7l9fp?=
- =?us-ascii?Q?mOKSNW/DotqRHLzr2EUznwbg2oKeWi9+t0GOjf9Vq+nV/QzallkR71vbcgXB?=
- =?us-ascii?Q?8UnlRyb7IL6+ho6w7FqIwHlh7e15IxizMWfTuuEeSVJDygzkORZAMjKFLMNx?=
- =?us-ascii?Q?iS0wIR+SDDTU8/P5YHcnibcnOfaBcwlLqMFHefQ5HTO2RV3PSOVADto5g=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: KMnkaWhA0sTvHSIgSszKen30dA8pPqlNLhB8kexRCMIsHvrvet/zbXAVnbFZElvO73qk2ZwijdQsFEFaslTDirV+oD7yKsMTsk90WIxNweZLPr+Gfj5DdbqaScNh7obtrbLiQwcJ/MqO4TvpxsLlCj2D9q1s4cYqK1amT1eWwsGiwz4PmfZyozKiCv4DPGtiY8KmKyCIzCrNnQY01YgwMkazJd2isq0gyriGaqnesfBXPqZRD45vs83A0Yo9auHvydqXM3LM9RtvBumnXPDBdJTPGrh64RBcPg7uxK66qHMAljbd8nLi0h1UsGBhuUuOEevKtYWWHI7y2WTDOKNoEU9AP88NsgaUIZ2iMiVLubI=
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1319;6:l7DAw89YxDWpUmnN1ihitAf5Jva4TFI4KSr3MYhzbPa3+mOGTPktQhE8NHFXm703IfBbvxHTKq+QspoPKJpFx4Q28Z/iU0W2wYtT78CmpYWjKSSdEXTEslnkMysRPn0Fw00b7M9qFUEzxYfufPJoRuecvDhiQmnKv1A2oRQFDFPZFO3WFlWQewMffMLpaziwg1+bfRUC36UPNT42K8O559oywoUzmvHKFKDjsuAshYEGLD8yt2DcbKWnwnJlsJdgbqZ4W+EG/ZdZckS96CFnRKqdPG7OFQyCrASceSCKlPQuj+ed+gELb1MqocxWEF8K71IBBztumVvRQVwKlUgjBtzGpBJDuXCxSZUz5HLL12xLl8Mz1NhgCMM9jeUXUF1BnAQamfOnwSXqGDZTfI4SHgeQOkaWrSNAWFq+2mdLXQ7RdVCiVUSS9v7ta0wOUCT3DpTMsBwkZzA/TgsuSo8XMw==;5:OnL9pM5xJO0OhdifSwyoNzbDmtaqZsXajTnvb1PMA1C34reJftcrOVb1sQVu18nLdTbxpJ+GKWn0VDiMo+EJVsiqNN7JxSUxeeAJAAUnqxZgZREIEv0m1V74rTgtDgXnwmq58u9OjVFnjKnS/WlRTdju+IGv9j+wVa3a3fOWh0I=;24:mpSyph7cBRQlCbtBiuBEWcusDW+jfazR3PY0SSrJbbAISSOJGkVKk2cTGOV9CmSCFZoLLHmQ3e2oxc2onTx79F/rpxXtMCm8CcjSEL0oHqw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1319;7:fYC86609QRiRAbPob5XfxVpIJgdM76ZN7OwRjKhxbrn4B57g8Cqt+0aB2YVh++oHe+wgbT835ZOmyMq6TwJBOaWNpC+Th2hoOAozQ+2OMhFPcV3Q3YJEK7XLBxJwBWCCKtcnNydVRjxxYiwXqO8mhpez0CGXcCvKY05iAWyxGGfMVenpdlgHEtz5NGWoLfRNtIb5Wkz7YCDqeMxFkyb5eIycXksqPxz1vL08lgIhlMBCp0aYpEOd7OSz+sGWAelN
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2018 08:40:57.3363 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4cc11415-de58-46db-1dd8-08d5dc09b5d1
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1319
+x-microsoft-antispam-message-info: xU/+WXMfh3Cci6LWoXm9eyHrt/rQOZTgjP/unm0+cMnXLC4la3sxkIsmbbvd84g3KdMQEM7mxrAsPnHvOJCJTk1wDFCS0aiC2i4ZQ3CxYPRjC+2iM8+5uVBWHSMXi3EYMQxsyPo0/r8mnFewPpLCEyk6McAJynTIegqVt62mP8+DL+wJ5CD+ILo0uH2Ku6nDv2EGRS+e7KmgoiLmuXScLPgKfwpQDBtsZi+JLl0Qy8R32Cp2aeF/EWblFa8m7nXCibvA2jt8nK3LUxw93edTl6/yda+S4uqLC3vYjr5r//QKHOFfYKFbA92D92ZQUB24whZ4Vfw+71JWQtGnrrZDCZaRpdOboPBj3uieppDS/Bk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: lairdtech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75460bb3-6457-4009-debc-08d5dc09e3c8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2018 08:42:17.6108
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c4d27a54-2db1-4088-a044-1a83c778ad1b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR02MB1209
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On i.MX6SLL EVK board, SD3 slot can be used for
-WiFi and other SD accessories, enable it.
+Hi Alexandre,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx6sll-evk.dts | 65 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+As you are planning a clock binding rework and this patch in the series
+needs a change to account for that, do you want me to re-submit after
+your series or are we good to go as is?
 
-diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-evk.dts
-index 2217c40..9013f03 100644
---- a/arch/arm/boot/dts/imx6sll-evk.dts
-+++ b/arch/arm/boot/dts/imx6sll-evk.dts
-@@ -84,6 +84,17 @@
- 		gpio = <&gpio3 30 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
-+
-+	reg_sd3_vmmc: regulator-sd3-vmmc {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_sd3_vmmc>;
-+		regulator-name = "SD3_WIFI";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		gpio = <&gpio4 4 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- };
- 
- &cpu0 {
-@@ -218,6 +229,18 @@
- 	status = "okay";
- };
- 
-+&usdhc3 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc3>;
-+	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
-+	cd-gpios = <&gpio3 22 GPIO_ACTIVE_LOW>;
-+	keep-power-in-suspend;
-+	enable-sdio-wakeup;
-+	vmmc-supply = <&reg_sd3_vmmc>;
-+	status = "okay";
-+};
-+
- &usbotg1 {
- 	vbus-supply = <&reg_usb_otg1_vbus>;
- 	pinctrl-names = "default";
-@@ -261,6 +284,12 @@
- 		>;
- 	};
- 
-+	pinctrl_reg_sd3_vmmc: sd3vmmcgrp {
-+		fsl,pins = <
-+			MX6SLL_PAD_KEY_COL6__GPIO4_IO04 0x17059
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX6SLL_PAD_UART1_TXD__UART1_DCE_TX 0x1b0b1
-@@ -301,6 +330,42 @@
- 		>;
- 	};
- 
-+	pinctrl_usdhc3: usdhc3grp {
-+		fsl,pins = <
-+			MX6SLL_PAD_SD3_CMD__SD3_CMD		0x17061
-+			MX6SLL_PAD_SD3_CLK__SD3_CLK		0x13061
-+			MX6SLL_PAD_SD3_DATA0__SD3_DATA0		0x17061
-+			MX6SLL_PAD_SD3_DATA1__SD3_DATA1		0x17061
-+			MX6SLL_PAD_SD3_DATA2__SD3_DATA2		0x17061
-+			MX6SLL_PAD_SD3_DATA3__SD3_DATA3		0x17061
-+			MX6SLL_PAD_REF_CLK_32K__GPIO3_IO22	0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_100mhz: usdhc3grp_100mhz {
-+		fsl,pins = <
-+			MX6SLL_PAD_SD3_CMD__SD3_CMD		0x170a1
-+			MX6SLL_PAD_SD3_CLK__SD3_CLK		0x130a1
-+			MX6SLL_PAD_SD3_DATA0__SD3_DATA0		0x170a1
-+			MX6SLL_PAD_SD3_DATA1__SD3_DATA1		0x170a1
-+			MX6SLL_PAD_SD3_DATA2__SD3_DATA2		0x170a1
-+			MX6SLL_PAD_SD3_DATA3__SD3_DATA3		0x170a1
-+			MX6SLL_PAD_REF_CLK_32K__GPIO3_IO22	0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_200mhz: usdhc3grp_200mhz {
-+		fsl,pins = <
-+			MX6SLL_PAD_SD3_CMD__SD3_CMD		0x170e9
-+			MX6SLL_PAD_SD3_CLK__SD3_CLK		0x130f9
-+			MX6SLL_PAD_SD3_DATA0__SD3_DATA0		0x170e9
-+			MX6SLL_PAD_SD3_DATA1__SD3_DATA1		0x170e9
-+			MX6SLL_PAD_SD3_DATA2__SD3_DATA2		0x170e9
-+			MX6SLL_PAD_SD3_DATA3__SD3_DATA3		0x170e9
-+			MX6SLL_PAD_REF_CLK_32K__GPIO3_IO22	0x17059
-+		>;
-+	};
-+
- 	pinctrl_usbotg1: usbotg1grp {
- 		fsl,pins = <
- 			MX6SLL_PAD_EPDC_PWR_COM__USB_OTG1_ID 0x17059
--- 
-2.7.4
+Thanks,
+Ben
+=20
+> This adds support for Lairds CPU module, featuring Atheros wifi, CSR
+> Bluetooth and, Atmel SAMA5D3 CPU.
+> https://www.lairdtech.com/products/wb50nbt-wi-fi-bluetooth-module
+>=20
+> Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+> ---
+>  arch/arm/boot/dts/Makefile        |   1 +
+>  arch/arm/boot/dts/at91-wb50n.dts  | 112 +++++++++++++++++++++
+>  arch/arm/boot/dts/at91-wb50n.dtsi | 198
+> ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 311 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/at91-wb50n.dts
+>  create mode 100644 arch/arm/boot/dts/at91-wb50n.dtsi
+>=20
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 04604d2..07823be 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -52,6 +52,7 @@ dtb-$(CONFIG_SOC_SAM_V7) +=3D \
+>  	at91-sama5d2_xplained.dtb \
+>  	at91-sama5d3_xplained.dtb \
+>  	at91-tse850-3.dtb \
+> +	at91-wb50n.dtb \
+>  	sama5d31ek.dtb \
+>  	sama5d33ek.dtb \
+>  	sama5d34ek.dtb \
+> diff --git a/arch/arm/boot/dts/at91-wb50n.dts b/arch/arm/boot/dts/at91-
+> wb50n.dts
+> new file mode 100644
+> index 0000000..8cecc70
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/at91-wb50n.dts
+> @@ -0,0 +1,112 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * at91-wb50n.dts - Device Tree file for wb50n evaluation board
+> + *
+> + *  Copyright (C) 2018 Laird
+> + *
+> + */
+> +
+> +/dts-v1/;
+> +#include "at91-wb50n.dtsi"
+> +
+> +/ {
+> +	model =3D "Laird Workgroup Bridge 50N - Atmel SAMA5D";
+> +	compatible =3D "laird,wb50n", "atmel,sama5d31", "atmel,sama5d3",
+> "atmel,sama5";
+> +
+> +	gpio_keys {
+> +		compatible =3D "gpio-keys";
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		btn0@10 {
+> +			reg =3D <10>;
+> +			label =3D "BTNESC";
+> +			linux,code =3D <1>; /* ESC button */
+> +			gpios =3D <&pioA 10 GPIO_ACTIVE_LOW>;
+> +			gpio-key,wakeup =3D <1>;
+> +		};
+> +
+> +		irqbtn@31 {
+> +			reg =3D <31>;
+> +			label =3D "IRQBTN";
+> +			linux,code =3D <99>; /* SysReq button */
+> +			gpios =3D <&pioE 31 GPIO_ACTIVE_LOW>;
+> +			gpio-key,wakeup =3D <1>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible =3D "gpio-leds";
+> +
+> +		led0 {
+> +			label =3D "wb50n:blue:led0";
+> +			gpios =3D <&pioA 12 GPIO_ACTIVE_LOW>;
+> +			default-state =3D "off";
+> +		};
+> +
+> +		led1 {
+> +			label =3D "wb50n:green:led1";
+> +			gpios =3D <&pioA 24 GPIO_ACTIVE_LOW>;
+> +			default-state =3D "off";
+> +		};
+> +
+> +		led2 {
+> +			label =3D "wb50n:red:led2";
+> +			gpios =3D <&pioA 26 GPIO_ACTIVE_LOW>;
+> +			default-state =3D "off";
+> +		};
+> +	};
+> +};
+> +
+> +&watchdog {
+> +	status =3D "okay";
+> +};
+> +
+> +&mmc0 {
+> +	status =3D "okay";
+> +};
+> +
+> +&macb1 {
+> +	status =3D "okay";
+> +};
+> +
+> +&dbgu {
+> +	status =3D "okay";
+> +};
+> +
+> +/* On BB40 this port is labeled UART1 */
+> +&usart0 {
+> +	status =3D "okay";
+> +};
+> +
+> +/* On BB40 this port is labeled UART0 */
+> +&usart1 {
+> +	status =3D "okay";
+> +};
+> +
+> +&i2c0 {
+> +	status =3D "okay";
+> +};
+> +
+> +&spi1 {
+> +	status =3D "okay";
+> +
+> +	spidev@0 {
+> +		compatible =3D "spidev";
+> +		reg =3D <0>;
+> +		spi-max-frequency =3D <8000000>;
+> +	};
+> +};
+> +
+> +&usb0 {
+> +	status =3D "okay";
+> +};
+> +
+> +&usb1 {
+> +	status =3D "okay";
+> +};
+> +
+> +&usb2 {
+> +	status =3D "okay";
+> +};
+> +
+> diff --git a/arch/arm/boot/dts/at91-wb50n.dtsi b/arch/arm/boot/dts/at91-
+> wb50n.dtsi
+> new file mode 100644
+> index 0000000..85692c8
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/at91-wb50n.dtsi
+> @@ -0,0 +1,198 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * at91-wb50n.dtsi - Device Tree include file for wb50n cpu module
+> + *
+> + *  Copyright (C) 2018 Laird
+> + *
+> + */
+> +
+> +#include "sama5d31.dtsi"
+> +
+> +/ {
+> +	model =3D "Laird Workgroup Bridge 50N - Atmel SAMA5D";
+> +	compatible =3D "laird,wb50n", "atmel,sama5d31", "atmel,sama5d3",
+> "atmel,sama5";
+> +
+> +	chosen {
+> +		bootargs =3D "ubi.mtd=3D6 root=3Dubi0:rootfs rootfstype=3Dubifs
+> rw";
+> +		stdout-path =3D "serial0:115200n8";
+> +	};
+> +
+> +	memory {
+> +		reg =3D <0x20000000 0x4000000>;
+> +	};
+> +};
+> +
+> +&pinctrl {
+> +	board {
+> +		pinctrl_mmc0_cd: mmc0_cd {
+> +			atmel,pins =3D <AT91_PIOC 26 AT91_PERIPH_GPIO
+> AT91_PINCTRL_PULL_UP_DEGLITCH>; /* PC26 GPIO with pullup deglitch */
+> +		};
+> +
+> +		pinctrl_usba_vbus: usba_vbus {
+> +			atmel,pins =3D <AT91_PIOB 13 AT91_PERIPH_GPIO
+> AT91_PINCTRL_DEGLITCH>; /* PB13 GPIO with deglitch */
+> +		};
+> +	};
+> +};
+> +
+> +&slow_xtal {
+> +	clock-frequency =3D <32768>;
+> +};
+> +
+> +&main_xtal {
+> +	clock-frequency =3D <12000000>;
+> +};
+> +
+> +&slow_osc {
+> +	atmel,osc-bypass;
+> +};
+> +
+> +&usart1_clk {
+> +	atmel,clk-output-range =3D <0 132000000>;
+> +};
+> +
+> +&mmc0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3
+> &pinctrl_mmc0_cd>;
+> +	cd-gpios =3D <&pioC 26 GPIO_ACTIVE_LOW>;
+> +	slot@0 {
+> +		reg =3D <0>;
+> +		bus-width =3D <4>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
+> +	status =3D "okay";
+> +	atheros@0 {
+> +		compatible =3D "atheros,ath6kl";
+> +		atheros,board-id =3D "SD32";
+> +		reg =3D <0>;
+> +		bus-width =3D <4>;
+> +	};
+> +};
+> +
+> +&macb1 {
+> +	phy-mode =3D "rmii";
+> +};
+> +
+> +&dbgu {
+> +	dmas =3D <0>, <0>;	/*  Do not use DMA for dbgu */
+> +};
+> +
+> +/* On BB40 this port is labeled UART1 */
+> +&usart0 {
+> +	atmel,use-dma-rx;
+> +	atmel,use-dma-tx;
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&pinctrl_usart0 &pinctrl_usart0_rts_cts>;
+> +};
+> +
+> +/* On BB40 this port is labeled UART0 */
+> +&usart1 {
+> +	atmel,use-dma-rx;
+> +	atmel,use-dma-tx;
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&pinctrl_usart1 &pinctrl_usart1_rts_cts>;
+> +	dtr-gpios =3D <&pioD 13 GPIO_ACTIVE_LOW>;
+> +	dsr-gpios =3D <&pioD 11 GPIO_ACTIVE_LOW>;
+> +	dcd-gpios =3D <&pioD 7 GPIO_ACTIVE_LOW>;
+> +	rng-gpios =3D <&pioD 8 GPIO_ACTIVE_LOW>;
+> +};
+> +
+> +/* USART3 is direct-connect to the Bluetooth UART on the radio SIP */
+> +&usart3 {
+> +	atmel,use-dma-rx;
+> +	atmel,use-dma-tx;
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&pinctrl_usart3 &pinctrl_usart3_rts_cts>;
+> +	status =3D "okay";
+> +};
+> +
+> +&spi1 {
+> +	cs-gpios =3D <&pioC 25 0>, <0>, <0>, <0>;
+> +};
+> +
+> +&ebi {
+> +	pinctrl-0 =3D <&pinctrl_ebi_nand_addr>;
+> +	pinctrl-names =3D "default";
+> +	status =3D "okay";
+> +};
+> +
+> +&nand_controller {
+> +	status =3D "okay";
+> +
+> +	nand: nand@3 {
+> +		reg =3D <0x3 0x0 0x2>;
+> +		atmel,rb =3D <0>;
+> +		nand-bus-width =3D <8>;
+> +		nand-ecc-mode =3D "hw";
+> +		nand-ecc-strength =3D <8>;
+> +		nand-ecc-step-size =3D <512>;
+> +		nand-on-flash-bbt;
+> +		label =3D "atmel_nand";
+> +
+> +		partitions {
+> +			compatible =3D "fixed-partitions";
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +
+> +			at91bootstrap@0 {
+> +				label =3D "at91bs";
+> +				reg =3D <0x0 0x20000>;
+> +			};
+> +
+> +			uboot@20000 {
+> +				label =3D "u-boot";
+> +				reg =3D <0x20000 0x80000>;
+> +			};
+> +
+> +			ubootenv@a0000 {
+> +				label =3D "u-boot-env";
+> +				reg =3D <0xa0000 0x20000>;
+> +			};
+> +
+> +			ubootenv@c0000 {
+> +				label =3D "u-boot-env";
+> +				reg =3D <0xc0000 0x20000>;
+> +			};
+> +
+> +			kernel-a@e0000 {
+> +				label =3D "kernel-a";
+> +				reg =3D <0xe0000 0x500000>;
+> +			};
+> +
+> +			kernel-b@5e0000 {
+> +				label =3D "kernel-b";
+> +				reg =3D <0x5e0000 0x500000>;
+> +			};
+> +
+> +			rootfs-a@ae0000 {
+> +				label =3D "rootfs-a";
+> +				reg =3D <0xae0000 0x3000000>;
+> +			};
+> +
+> +			rootfs-b@3ae0000 {
+> +				label =3D "rootfs-b";
+> +				reg =3D <0x3ae0000 0x3000000>;
+> +			};
+> +
+> +			user@6ae0000 {
+> +				label =3D "user";
+> +				reg =3D <0x6ae0000 0x14e0000>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&usb0 {
+> +	atmel,vbus-gpio =3D <&pioB 13 GPIO_ACTIVE_LOW>;
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&pinctrl_usba_vbus>;
+> +};
+> +
+> +&usb1 {
+> +	num-ports =3D <3>;
+> +	atmel,vbus-gpio =3D <&pioA 2 GPIO_ACTIVE_LOW>;
+> +	atmel,oc-gpio =3D <&pioA 4 GPIO_ACTIVE_LOW>;
+> +};
+> --
+> 2.7.4
 
