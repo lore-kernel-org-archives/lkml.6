@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 595D5C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CD0C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 182EF25FE2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182EF25FE2
+	by mail.kernel.org (Postfix) with ESMTP id E884625FFB
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E884625FFB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965175AbeF0MrY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:47:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55482 "EHLO mx1.redhat.com"
+        id S965203AbeF0Mrh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:47:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39298 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965132AbeF0MrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:47:22 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S964886AbeF0Mre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:47:34 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CA1FB70206;
-        Wed, 27 Jun 2018 12:47:21 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 20144401EF04;
+        Wed, 27 Jun 2018 12:47:34 +0000 (UTC)
 Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B140B2026D5B;
-        Wed, 27 Jun 2018 12:47:13 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 28B0111166E3;
+        Wed, 27 Jun 2018 12:47:23 +0000 (UTC)
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
         Kent Overstreet <kent.overstreet@gmail.com>
@@ -41,14 +41,14 @@ Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
         Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH V7 07/24] block: simplify bio_check_pages_dirty
-Date:   Wed, 27 Jun 2018 20:45:31 +0800
-Message-Id: <20180627124548.3456-8-ming.lei@redhat.com>
+Subject: [PATCH V7 08/24] block: bio_set_pages_dirty can't see NULL bv_page in a valid bio_vec
+Date:   Wed, 27 Jun 2018 20:45:32 +0800
+Message-Id: <20180627124548.3456-9-ming.lei@redhat.com>
 In-Reply-To: <20180627124548.3456-1-ming.lei@redhat.com>
 References: <20180627124548.3456-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 12:47:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 12:47:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:47:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:47:34 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,122 +56,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christoph Hellwig <hch@lst.de>
 
-bio_check_pages_dirty currently inviolates the invariant that bv_page of
-a bio_vec inside bi_vcnt shouldn't be zero, and that is going to become
-really annoying with multpath biovecs.  Fortunately there isn't any
-all that good reason for it - once we decide to defer freeing the bio
-to a workqueue holding onto a few additional pages isn't really an
-issue anymore.  So just check if there is a clean page that needs
-dirtying in the first path, and do a second pass to free them if there
-was none, while the cache is still hot.
-
-Also use the chance to micro-optimize bio_dirty_fn a bit by not saving
-irq state - we know we are called from a workqueue.
+So don't bother handling it.
 
 Reviewed-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/bio.c | 56 +++++++++++++++++++++-----------------------------------
- 1 file changed, 21 insertions(+), 35 deletions(-)
+ block/bio.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 43698bcff737..77f991688810 100644
+index 77f991688810..de6cbaedfb65 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -1570,19 +1570,15 @@ static void bio_release_pages(struct bio *bio)
- 	struct bio_vec *bvec;
- 	int i;
- 
--	bio_for_each_segment_all(bvec, bio, i) {
--		struct page *page = bvec->bv_page;
--
--		if (page)
--			put_page(page);
--	}
-+	bio_for_each_segment_all(bvec, bio, i)
-+		put_page(bvec->bv_page);
- }
- 
- /*
-  * bio_check_pages_dirty() will check that all the BIO's pages are still dirty.
-  * If they are, then fine.  If, however, some pages are clean then they must
-  * have been written out during the direct-IO read.  So we take another ref on
-- * the BIO and the offending pages and re-dirty the pages in process context.
-+ * the BIO and re-dirty the pages in process context.
-  *
-  * It is expected that bio_check_pages_dirty() will wholly own the BIO from
-  * here on.  It will run one put_page() against each page and will run one
-@@ -1600,52 +1596,42 @@ static struct bio *bio_dirty_list;
-  */
- static void bio_dirty_fn(struct work_struct *work)
- {
--	unsigned long flags;
--	struct bio *bio;
-+	struct bio *bio, *next;
- 
--	spin_lock_irqsave(&bio_dirty_lock, flags);
--	bio = bio_dirty_list;
-+	spin_lock_irq(&bio_dirty_lock);
-+	next = bio_dirty_list;
- 	bio_dirty_list = NULL;
--	spin_unlock_irqrestore(&bio_dirty_lock, flags);
-+	spin_unlock_irq(&bio_dirty_lock);
- 
--	while (bio) {
--		struct bio *next = bio->bi_private;
-+	while ((bio = next) != NULL) {
-+		next = bio->bi_private;
- 
- 		bio_set_pages_dirty(bio);
- 		bio_release_pages(bio);
- 		bio_put(bio);
--		bio = next;
- 	}
- }
- 
- void bio_check_pages_dirty(struct bio *bio)
- {
- 	struct bio_vec *bvec;
--	int nr_clean_pages = 0;
-+	unsigned long flags;
+@@ -1557,10 +1557,8 @@ void bio_set_pages_dirty(struct bio *bio)
  	int i;
  
  	bio_for_each_segment_all(bvec, bio, i) {
 -		struct page *page = bvec->bv_page;
 -
--		if (PageDirty(page) || PageCompound(page)) {
--			put_page(page);
--			bvec->bv_page = NULL;
--		} else {
--			nr_clean_pages++;
--		}
-+		if (!PageDirty(bvec->bv_page) && !PageCompound(bvec->bv_page))
-+			goto defer;
+-		if (page && !PageCompound(page))
+-			set_page_dirty_lock(page);
++		if (!PageCompound(bvec->bv_page))
++			set_page_dirty_lock(bvec->bv_page);
  	}
- 
--	if (nr_clean_pages) {
--		unsigned long flags;
--
--		spin_lock_irqsave(&bio_dirty_lock, flags);
--		bio->bi_private = bio_dirty_list;
--		bio_dirty_list = bio;
--		spin_unlock_irqrestore(&bio_dirty_lock, flags);
--		schedule_work(&bio_dirty_work);
--	} else {
--		bio_put(bio);
--	}
-+	bio_release_pages(bio);
-+	bio_put(bio);
-+	return;
-+defer:
-+	spin_lock_irqsave(&bio_dirty_lock, flags);
-+	bio->bi_private = bio_dirty_list;
-+	bio_dirty_list = bio;
-+	spin_unlock_irqrestore(&bio_dirty_lock, flags);
-+	schedule_work(&bio_dirty_work);
  }
- EXPORT_SYMBOL_GPL(bio_check_pages_dirty);
- 
+ EXPORT_SYMBOL_GPL(bio_set_pages_dirty);
 -- 
 2.9.5
 
