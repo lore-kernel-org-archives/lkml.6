@@ -2,117 +2,91 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CB5C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A68B6C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5A226580
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:40:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5A226580
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 47665265EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 08:41:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G9a+r12e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47665265EF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933542AbeF0IkK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 04:40:10 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34251 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933417AbeF0IkF (ORCPT
+        id S933594AbeF0Ik7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 04:40:59 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44046 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932234AbeF0Ik4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 04:40:05 -0400
-Received: by mail-lj1-f193.google.com with SMTP id l12-v6so962912lja.1;
-        Wed, 27 Jun 2018 01:40:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hmor54vYfmT/MQVY9F0IPhn69l0+u9uxhjzZK1NK4ZY=;
-        b=b06kJAiLDkb61NtQOqeTPI9BgM/9HPQwxB0RtVOZelS5QKivQn1mv47jWoc1k+/Cxz
-         6BhqQDVPhZDyH92GqAhD8a5aJJ71D+Sb2nGrRLA+LXEhs7+CdS+GSh0KHfb5aCjCyW27
-         Qwty2A+sL4dsQh6z9AI6izH/5+i35nx26sqsb4DRyTF5O4reKgwv8QUfRsfRva03Rn+Y
-         yzPr8kTSVoHz83IG1dyCP1hvYCpupP2+H+tzyfojhy94U2I/Siqam50oakZC0FsH14cL
-         eAu6qEqamICNbkzpezLIK1Qk+ftCCq6CmriBlhztU30eAcUf7HAC0KzoIs/oNN09AduB
-         4tOw==
-X-Gm-Message-State: APt69E2pKkKEULDSwAN1u9aqJCHUlgEUyMv0OmOHsblRoQsuNtMQmdAr
-        //kp8+QtMDwwzxSmZHTsvHI=
-X-Google-Smtp-Source: AAOMgpfSO+T0T9QO4bqZUwZzZKQpWTtZxz1IT87TrrZZR96YaSP9Fkz/zb8bUYmUNgqoWipl1szsfQ==
-X-Received: by 2002:a2e:1101:: with SMTP id f1-v6mr1200895lje.75.1530088804146;
-        Wed, 27 Jun 2018 01:40:04 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id b85-v6sm132036lfl.29.2018.06.27.01.40.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Jun 2018 01:40:03 -0700 (PDT)
-Date:   Wed, 27 Jun 2018 11:40:00 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>, broonie@kernel.org,
-        lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <20180627084000.GE2118@localhost.localdomain>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
- <20180612082354.GG20078@localhost.localdomain>
- <20180613130338.GH20078@localhost.localdomain>
- <152997038474.143105.3390705878521933864@swboyd.mtv.corp.google.com>
+        Wed, 27 Jun 2018 04:40:56 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5R8cWSB050892;
+        Wed, 27 Jun 2018 08:40:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=Tdg+Mm4DW4Eu1QIZ+97ekPXK/RxBSPjHWzzo6vvQS0k=;
+ b=G9a+r12eNr5ep5lcZKWmqLm4bIgMS5yEHlvRupimNiO1UAz97jvlNx6RwN1u3rUesAL4
+ cviW5DFr9ZrVCee/N7UDfOFq8vNyzPffQQ0eFuYk/3pYsSnE7V8tr3PQcX8WWA/+XX3S
+ k4RwQc3/l2HkkoWeKCyQvpYoTX9Y08LQM5N9UXROiH8hBv9q08FmXDj4ukJkmoK/i+Qn
+ qgzuBOyLYQfFqgnV1/xV4pckKW5GQXOzkxox4rsEAL3qNXaiWvT+SKPpENTBM/HPrUkx
+ ePD2xPeC0j4tDqYGdbD7Enfp6jC0pMfX2osaSzksd6muWKnvgAZgsc9fvxaeYgJKEEXI 6A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2jum0a3sdn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Jun 2018 08:40:31 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5R8eRIb022885
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Jun 2018 08:40:29 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5R8eMNI018546;
+        Wed, 27 Jun 2018 08:40:23 GMT
+Received: from mwanda (/197.157.0.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Jun 2018 01:40:22 -0700
+Date:   Wed, 27 Jun 2018 11:40:13 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Daniel Graefe <daniel.graefe@fau.de>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        devel@driverdev.osuosl.org, linux-kernel@i4.cs.fau.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Roman Sommer <roman.sommer@fau.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH v2] staging: media: omap4iss: Added SPDX license
+ identifiers
+Message-ID: <20180627084013.ybnbxbgha77cdujn@mwanda>
+References: <1529932892-9036-1-git-send-email-daniel.graefe@fau.de>
+ <1530048656-4074-1-git-send-email-daniel.graefe@fau.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152997038474.143105.3390705878521933864@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1530048656-4074-1-git-send-email-daniel.graefe@fau.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8936 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=546
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806270102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
+On Tue, Jun 26, 2018 at 11:30:56PM +0200, Daniel Graefe wrote:
+> Changes in v2:
+> - replaced "GPL-2.0-or-later" with "GPL-2.0+"
 
-On Mon, Jun 25, 2018 at 04:46:24PM -0700, Stephen Boyd wrote:
-> Quoting Matti Vaittinen (2018-06-13 06:03:38)
-> > On Tue, Jun 12, 2018 at 11:23:54AM +0300, Matti Vaittinen wrote:
-> > > 
-> > > I see. This makes sense. I need to verify from HW colleagues whether
-> > > this chip has internal oscillator or not. I originally thought we have
-> > > on-chip oscillator - but as you say, we do have XIN pin in documentation.
-> > > So now I am not sure if the test board I have contains oscillator driving
-> > > the clk on PMIC - or if the PMIC has internal oscillator. I'll clarify this.
-> > 
-> > It really turned out that the PMIC just acts as a clock buffer. So I do
-> > as you suggested and add lookup for parent clock to the driver. I
-> > planned to do it so that if no parent is found from DT - then we assume
-> > the 32.768KHz clock (as described in documentation). Eg, something along
-> > the lines:
-> > 
-> >         init.parent_names = of_clk_get_parent_name(pdev->dev.parent->of_node, 0);
-> >         if (init.parent_names) {
-> >                 init.num_parents = 1;
-> >         } else {
-> >                 /* If parent is not given from DT we assume the typical use-case with
-> >                  * 32.768 KHz oscillator for RTC (Maybe we could just error out here?)
-> >                  */
-> >                 c->rate = BD71837_CLK_RATE;
-> >                 bd71837_clk_ops.recalc_rate = &bd71837_clk_recalc_rate;
-> >         }
-> 
-> You can also add a clk directly in this driver in that case there isn't
-> one in DT with the rate and name of your choosing. Then the logic is the
-> same and we don't need a c->rate variable.
+We should make checkpatch.pl complain when people use wrong tags like
+GPL-2.0-or-later.
 
-So you mean that I should use clk_hw_register_fixed_rate and create new
-clk if parent is not found? Isn't this a bit of an overkill? Downside is
-that then we do need remove/cleanup functionality for deleting this
-parent clock - and I didn't find devm support for fixed clock. Furthermore
-I guess that since it is parent, it can't be removed before child is removed.
-
-Or did you mean something else but creating a fixed rate clock as parent
-here?
-
-Best Regards
-    Matti Vaittinen
+regards,
+dan carpenter
 
