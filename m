@@ -7,118 +7,130 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2511C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AC5C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C47C24687
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF2E820693
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:33:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8nL5kyi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C47C24687
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOA5ngrg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2E820693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965550AbeF0RdI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:33:08 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:46526 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965055AbeF0RdG (ORCPT
+        id S965760AbeF0Rdf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:33:35 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40175 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965055AbeF0Rde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:33:06 -0400
-Received: by mail-vk0-f67.google.com with SMTP id b134-v6so1650567vke.13
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 10:33:06 -0700 (PDT)
+        Wed, 27 Jun 2018 13:33:34 -0400
+Received: by mail-it0-f68.google.com with SMTP id 188-v6so8583510ita.5;
+        Wed, 27 Jun 2018 10:33:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9EaVJyNOM2Blcaa/tm2TGOUCWmXDP+G1pKMt9UlwkPo=;
-        b=P8nL5kyiKuZqi34L3TZbAiwmace3QMx2YmecQKguER/kQI58EIWWGSjAS/7jWb54a2
-         kisXj+rn5avbuKzPxh9bNb4MYAp8wZzbSa+zopTAi8lYE34SJBF0TqHXFB0yYLsJBYwI
-         m6ULLcfJK/IImwXaiKT+BRfuzMCOCx5pUyJU3jB13BPnIknWCUKkWUNHYkM1X3fxLi2M
-         UO8Z43Bhcmdj4L1mdKtrEgRUv8hJjVBNbYTla8ap4YqifidPjJp4XV90Y7dS+ZL/NjsH
-         PMmYp+Z9zeNeCyiWUoYRiuTlRZ9borpoqqwxL+293gCgs4VeC8f3NWVLilAZlLm+jNmn
-         UPOA==
+        bh=z6r0qlNlWsEUOXQR5YP03k0EXSg/TDJJAt4SQye4ALE=;
+        b=aOA5ngrg19VkFSaNF8Cv8wIcO7D/0vRQfwdd2pmbTjhf+ZMPNDj++s8nHU5xgqrKjc
+         l9e5ZR33gU7B9nHa0ypZ0XBj55/g79HYjv/sGY8l7hBv5NhMO5N1i7RzK/ipmZUTTNn4
+         85bScTU/Sb2OcFw8PaOtryF8eu2P5PsO1iVApn0vQTTTfhQHpP2q5pclLNSN31ryKKZc
+         mImqepwYpt3fb2bXLQWUAxP5t1N4t+QAkHdkf8df62kxp3bb+aaJ2/UzcGvijrArY8lI
+         HpMBe65xZOQc5C3g5yXEUPXiAKb7e4fLuqsvSaYwyn5VHesALVnjc3cRQYuyh1MHohsl
+         jSpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9EaVJyNOM2Blcaa/tm2TGOUCWmXDP+G1pKMt9UlwkPo=;
-        b=pghb5gZ+kYXMtauHDsl1jcTkIcANEb0xVRcsvAlY3TzzjPgwyrN3wowWXePBnQvdLQ
-         umjRckdvkBWcUQH5yd7BwsjwTg1dQjO4M2V08x0TO+ST1BdoLStNpR9uWgmBwxgkfMxl
-         8hdBA93rTQdHsIkcCUtQCxWjXd6oBvGcnYOkNWjV+HIs1ejILy1Pjf/TN8Wit8gr7Dp9
-         4qDfoSdsEtNb2mlQGVaAf+CDWVlSqhVHn50yPT1psnBIPfCaNy9eXbhq/txL1mNfampM
-         idF9HPpaQv59VcTw1zHY/GajlDVDocuAjh3Cn54JsZN0xXt6deL2fPQK17e1e4EJM/rS
-         Ut3w==
-X-Gm-Message-State: APt69E0/ZX2xmYBKPow+zRsGO810JNa1mC0fVrmyHYpbhfYVeenqv0hx
-        GeQc+Ud324psA/A6ErUPBCFhS3BfujNCb2LudRE=
-X-Google-Smtp-Source: AAOMgpcCCfBLWXTAFyLi9eranGaupkXPWwbWUfB5RwJCE4OSaAz/wPkzXzAnRPF3ZGSX0q0dft0VH3vu/gD6NywzMzQ=
-X-Received: by 2002:a1f:20d4:: with SMTP id g203-v6mr3203567vkg.176.1530120786071;
- Wed, 27 Jun 2018 10:33:06 -0700 (PDT)
+        bh=z6r0qlNlWsEUOXQR5YP03k0EXSg/TDJJAt4SQye4ALE=;
+        b=MfNRhJbsdplNHM55BVdZHKtRowpGaVFLZxngckPJpR/vqSxUJLz1xw6hlba+4FeLZO
+         Pbro0fN7TttPoh0MYhd4eL3vHb+oC+JaELv+vopBzkPQhAOJX/RugHKSoiNQpDkZJZf9
+         oprwtzIHUcRPxRdIrrbwYKzKCuZv9uZAbgK7Vlk4PzBOXa7aR3uGbXVha6fScMwv1pcg
+         lmwknU2YNtI0W/hK1Hax3PQwNE6xvGWucWbELNqCWaadKLzIB8P2zJfrTkrSJbql0X3a
+         /Lm6F0x5CR0Qy10z5iVJjcpmYJrRqsL7T9I/ENyG8m8io1Cw8zdh8uSUODf+HJMNxqj7
+         pijQ==
+X-Gm-Message-State: APt69E11/8KDWFU0RLSn/RjLYZQZMgE/Y6f4JrZo5VoyE9cPaxKILJZJ
+        XRXuH75A1WFp6duVS0q9hhL3QuVl99e5C/xXcUE=
+X-Google-Smtp-Source: ADUXVKLdn7GXc8U8XA/3lGo6/stpQJH2apQRcZxpRpsK/rF9CuG7JwDeEDNXXwNnxuz1hT6lpurm6xTGsgQQtKBt8jk=
+X-Received: by 2002:a24:1448:: with SMTP id 69-v6mr5633285itg.143.1530120813537;
+ Wed, 27 Jun 2018 10:33:33 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 10:33:05
- -0700 (PDT)
-In-Reply-To: <20180626193040.GO2494@hirez.programming.kicks-ass.net>
-References: <20180625105952.3756-1-mark.rutland@arm.com> <20180625105952.3756-2-mark.rutland@arm.com>
- <CAHp75Vdsu2LQtPdjaxfYhc3qT6gOe7bdGQKB==52W-WpORp-WQ@mail.gmail.com> <20180626193040.GO2494@hirez.programming.kicks-ass.net>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 27 Jun 2018 20:33:05 +0300
-Message-ID: <CAHp75VfBd8zfNqkNvL=3Q3u3zJdiMFeakBPcX9r+-_Pqz1bRPA@mail.gmail.com>
-Subject: Re: [PATCHv2 01/11] atomic/tty: Fix up atomic abuse in ldsem
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Peter Hurley <peter@hurleysoftware.com>
+References: <1529603100-31958-2-git-send-email-andrey.gusakov@cogentembedded.com>
+ <5a3490a5-ee5c-a4da-8b54-b5234b7e50d0@yandex.ru> <CAHQ1cqH0o2rsVJWccR6dBXQCnp2-mmLNTNOi0uAOO2SSdz0+xA@mail.gmail.com>
+ <72694ec0-45ee-6f57-ebbf-249d4a0b23bc@cogentembedded.com>
+In-Reply-To: <72694ec0-45ee-6f57-ebbf-249d4a0b23bc@cogentembedded.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Wed, 27 Jun 2018 10:33:22 -0700
+Message-ID: <CAHQ1cqGxXg5QYMTxbSsNDDr=ot0h0XWW98hHNVnf+SQhrjoL=g@mail.gmail.com>
+Subject: Re: [1/3] ARM: dts: imx51-zii-common: create common include dtsi
+To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc:     Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 10:30 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Tue, Jun 26, 2018 at 09:53:18PM +0300, Andy Shevchenko wrote:
->> On Mon, Jun 25, 2018 at 1:59 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->> > From: Peter Zijlstra <peterz@infradead.org>
->> >
->> > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
->> > working after making the atomic_long interface type safe.
->> >
->> > Needing casts is bad form, which made me look at the code. There are no
->> > ld_semaphore::count users outside of these functions so there is no
->> > reason why it can not be an atomic_long_t in the first place, obviating
->> > the need for this cast.
->> >
->> > That also ensures the loads use atomic_long_read(), which implies (at
->> > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
->> >
->> > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
->> > very thin (the only difference is not changing *old on success, which
->> > most callers don't seem to care about).
->> >
->> > So rework the whole thing to use atomic_long_t and its accessors
->> > directly.
->> >
->> > While there, fixup all the horrible comment styles.
->>
->>
->> > -               ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
->> > +               atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
->>
->> I suppose it's simple atomic_long_add() here?
+On Wed, Jun 27, 2018 at 9:59 AM Nikita Yushchenko
+<nikita.yoush@cogentembedded.com> wrote:
 >
-> Different ordering rules for those two. I didn't look hard enough to see
-> if that mattered here.
+> > There are three boards that share that configuration almost to a T,
+> > with the only difference is the particular GPIOs used. Putting it into
+> > a common file avoids repeating the boilerplate and makes it explicit
+> > to the reader that those settings are shared.
+>
+> I'd agree if that boilerplate was 100 lines.
+>
 
-Indeed. So, to follow semantics it would be something like
+OK, so your threshold is 100 lines, mine is 3. Agree to disagree?
 
-smp_mb__before_atomic();
-atomic_long_add_relaxed();
-smp_mb__after_atomic();
+> But here it is small, and mostly containing lines that are required for
+> any i2c-gpio definition. It does not any value of itself.
+>
+> Saving 5 lines at cost of loose of integrity is not something I agree with.
+>
 
-though I do not dare to convert that way (as I understood the simple
-atomic_long_add_return() variant might be implemented better).
+Can we maybe tone it down and not make this sound like a struggle of
+"good vs. evil"?
 
--- 
-With Best Regards,
-Andy Shevchenko
+> > There are at least two boards that use that UART2 as is. Same as above
+> > this was done to reduce boilerplate.
+>
+> Here have choice between two logical blocks - definitions of uart2 in
+> two boards that use them, and two logical blocks - definition in dtsi
+> and undo in board that does not use it.
+>
+> You trade a couple of saved dts lines against keeping things consistent.
+
+That's your POV, mine is that I save a couple of lines and things are
+still consistent.
+
+>
+> Nikita
+>
+> P.S.
+> In case of these zii boards I doubt that dtsi worths at all. Despite of
+> all being imx51 boards from ZII, these boards don't seem to have large
+> common logical blocks. Perhaos RDU1 and babbage have more in common - so
+> what, create a dtsi for them?
+
+Nope, that slippery slope doesn't exist at all. We have a clear
+boundary/decision criteria of common vendor.
+
+As I said, let's leave this decision up to the maintainers and avoid
+continuing having this argument where neither party convinces another.
+
+Thanks,
+Andrey Smirnov
