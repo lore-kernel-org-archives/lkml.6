@@ -6,79 +6,60 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 414EDC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B67C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F0026382
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5569263B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:15:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gj/qJiT5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F0026382
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="nBXosJ5h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5569263B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933640AbeF0MLv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:11:51 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:59580 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752927AbeF0MLu (ORCPT
+        id S964872AbeF0MPX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:15:23 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:54092 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753036AbeF0MPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:11:50 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5RCBTNa053296;
-        Wed, 27 Jun 2018 07:11:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530101489;
-        bh=TAe/6IEQg9avBLjL5i2fmWcp4ylKCGsXteKpBUoaxeA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=gj/qJiT5n6bYVqcTvibNUEWnzvQ/eY74jrlabRHMFopesVPUN0aU+YYOHEX2JsiNe
-         ybcyn4LqnyKkMualmbDWb3dgn7NPEu6l2Q+/q+OeDwZH7axhQ/WzDrko2Az4AX41WN
-         AL1oCRU3ZeqRMXzcuK4s3JQGibjUH6/C4k09wO90=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RCBT4j006586;
-        Wed, 27 Jun 2018 07:11:29 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 27
- Jun 2018 07:11:28 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 27 Jun 2018 07:11:28 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RCBQ7d029057;
-        Wed, 27 Jun 2018 07:11:27 -0500
-Subject: Re: [PATCH v2] ARM: dts: da850: Fix interrups property for gpio
-To:     Keerthy <j-keerthy@ti.com>
-CC:     <khilman@kernel.org>, <robh+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1528193271-10726-1-git-send-email-j-keerthy@ti.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <8572a60f-982c-9981-ff73-15d1532d5965@ti.com>
-Date:   Wed, 27 Jun 2018 17:41:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1528193271-10726-1-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 27 Jun 2018 08:15:22 -0400
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/2] clk: ingenic: Fix incorrect data for the i2s clock
+Date:   Wed, 27 Jun 2018 14:14:58 +0200
+Message-Id: <20180627121459.13987-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530101721; bh=kj95zYmaS1loJB4uJtzwSBHb9jt8iEKhgtmfXJ8xv0A=; h=From:To:Cc:Subject:Date:Message-Id; b=nBXosJ5hRQmMo+0F+qJF472eT5OXo0C1z8FMG8Q8KhiAup6tmIdbCS+xqNLHDat7QD/ZiX3pi6tA1fY/pX/bqMrKrVYRw0ePumAawENQdOr1SxgXWBSERhlOUcvkXOMYW7QHbq576I8IE07GGQ4hRRvbX+oh/3anhC5L8BUk1Hk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 05 June 2018 03:37 PM, Keerthy wrote:
-> The intc #interrupt-cells is equal to 1. Currently gpio
-> node has 2 cells per IRQ which is wrong. Remove the additional
-> cell for each of the interrupts.
-> 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> Fixes: 2e38b946dc54 ("ARM: davinci: da850: add GPIO DT node")
+The register field for configuring the divider for the i2s clock
+occupies the bits [8-0], which means 9 bits and not 8.
 
-Applied to fixes for v4.18
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/jz4740-cgu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Sekhar
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 32fcc75f6f77..bc073dd4470d 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -134,7 +134,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"i2s", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL_HALF, -1, -1 },
+ 		.mux = { CGU_REG_CPCCR, 31, 1 },
+-		.div = { CGU_REG_I2SCDR, 0, 1, 8, -1, -1, -1 },
++		.div = { CGU_REG_I2SCDR, 0, 1, 9, -1, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 6 },
+ 	},
+ 
+-- 
+2.11.0
+
