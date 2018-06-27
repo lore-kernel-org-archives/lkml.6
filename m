@@ -2,156 +2,153 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B8AC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C84C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAA9A26612
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:08:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o1PnExvu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAA9A26612
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 2370926612
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:08:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2370926612
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933933AbeF0JIF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:08:05 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43555 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932187AbeF0JID (ORCPT
+        id S933970AbeF0JIP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:08:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41907 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932187AbeF0JIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:08:03 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y8-v6so686845pfm.10
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 02:08:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=PDo6ulZ2KaGqoyxGpMhLetaDc4sWe7w4t1XdflV4QbY=;
-        b=o1PnExvuJ50uW9Xp5IILhVy9W0Kp0R4GBCY4+AZxf4EaFc9MGF7QENu02bCZEurIZ+
-         KgH2Zv3ZyLq3Xf9sXCKC2tkuVRFEKJQUY5/P2GXwSgNdLoOMhs0EYNVYUYFzXYk/TuEV
-         e+6T1i5Mi4UufwFVwq0DzNCLQAuDXjnrUhTZJ4U1kN+IQ2rS11VDfTQV4cUpdJ8d8Hd9
-         rYwkhrF//3AbNtVuRlm79wk2qMo0HJyDj/buZtNFqzo0M1MjhTs6efjylyZeZWDC9muO
-         GSEjual/W6IiusKweFN7AkXg1VJhzZbVnEyaEvKdbv4+Pm0s13nf/n6hw7FK2x8towEX
-         EuFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=PDo6ulZ2KaGqoyxGpMhLetaDc4sWe7w4t1XdflV4QbY=;
-        b=aDBZsgOFdGzLQfRXFHgTQxKJ9CFuavsY+4Ei61rgLQqOzPDxqNhiWs5iIIonC0Rp/8
-         49kXqRX3nCWPlMkiWFKribSiGIBrUxnOOJwVATGfs/Yg/ek11pMkgP1zO32bxn5fqyIB
-         ManUAosS539J8GGxUwqlTDISyUYXYjqFDfUVjlOsQCqHu9M9P8Z0pAj8g5EPlffcKQ4l
-         YUlNGRSVKJkyrynoBqjPqHgrkzFZLuWMMY7y+bz4CGocsb7qznFTTaCVzeP3c54PGUr4
-         2ECbR7/+RWiHfJ5RQeMuhSMq178ZHFJgLE/pL05/lHeDlu4PRw26UuA0MqYIzBYAOdSW
-         PJog==
-X-Gm-Message-State: APt69E22vGucVszMQhjluF5AgXTh3xwowLY0ic2dp5AKgrunmoYBz0Qd
-        CHwO/AiygR6ywpn/yRkw5ZAVZqjQC/hmSMZqGV7dbQ==
-X-Google-Smtp-Source: AAOMgpcGnNZnf4rdUXuy79jbakyhvnBqcPM9xixhPWTybde+aW6azbdfzW/kGUgriNg66NoewMNXSW7M7tx3Qkw2qHo=
-X-Received: by 2002:a62:9652:: with SMTP id c79-v6mr5102509pfe.114.1530090482232;
- Wed, 27 Jun 2018 02:08:02 -0700 (PDT)
+        Wed, 27 Jun 2018 05:08:09 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5R97bOL2025705
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 27 Jun 2018 02:07:37 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5R97bTp2025702;
+        Wed, 27 Jun 2018 02:07:37 -0700
+Date:   Wed, 27 Jun 2018 02:07:37 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-ec348020566009d3da9b99f07c05814d13969c78@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
+        bp@alien8.de, tglx@linutronix.de, luto@kernel.org
+Reply-To: mingo@kernel.org, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, luto@kernel.org,
+          tglx@linutronix.de, peterz@infradead.org, bp@alien8.de
+In-Reply-To: <86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org>
+References: <86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] selftests/x86/sigreturn/64: Fix spurious failures
+ on AMD CPUs
+Git-Commit-ID: ec348020566009d3da9b99f07c05814d13969c78
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Wed, 27 Jun 2018 02:07:41
- -0700 (PDT)
-In-Reply-To: <20180626200528.GA29307@gmail.com>
-References: <20180626072843.158906-1-dvyukov@gmail.com> <20180626200528.GA29307@gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 27 Jun 2018 11:07:41 +0200
-Message-ID: <CACT4Y+ZKmS-YnH5eRHQRwsXWn7hhoW7qan=v0Xht4gdH+SeLfg@mail.gmail.com>
-Subject: Re: [PATCH v3] arch/x86: get rid of KERN_CONT in show_fault_oops()
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Dmitry Vyukov <dvyukov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 10:05 PM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Dmitry Vyukov <dvyukov@gmail.com> wrote:
->
->> From: Dmitry Vyukov <dvyukov@google.com>
->>
->> KERN_CONT leads to split lines in kernel output
->> and complicates useful changes to printk like
->> printing context before each line.
->>
->> Only acceptable use of continuations is basically
->> boot-time testing.
->>
->> Get rid of it.
->>
->> Also tidy up code around as asked by reviewers.
->>
->> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
->> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->>
->> ---
->>
->> Changes since v1:
->>  - use pr_alert() instead of printk(KERN_ALERT)
->>
->> Changes since v2:
->>  - drop unnecessary parenthesis
->>  - remove once used nx_warning and smep_warning
->> ---
->>  arch/x86/mm/fault.c | 21 +++++++--------------
->>  1 file changed, 7 insertions(+), 14 deletions(-)
->>
->> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
->> index 9a84a0d08727..a73575cacfd9 100644
->> --- a/arch/x86/mm/fault.c
->> +++ b/arch/x86/mm/fault.c
->> @@ -641,11 +641,6 @@ static int is_f00f_bug(struct pt_regs *regs, unsigned long address)
->>       return 0;
->>  }
->>
->> -static const char nx_warning[] = KERN_CRIT
->> -"kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n";
->> -static const char smep_warning[] = KERN_CRIT
->> -"unable to execute userspace code (SMEP?) (uid: %d)\n";
->> -
->>  static void
->>  show_fault_oops(struct pt_regs *regs, unsigned long error_code,
->>               unsigned long address)
->> @@ -664,20 +659,18 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
->>               pte = lookup_address_in_pgd(pgd, address, &level);
->>
->>               if (pte && pte_present(*pte) && !pte_exec(*pte))
->> -                     printk(nx_warning, from_kuid(&init_user_ns, current_uid()));
->> +                     pr_crit("kernel tried to execute NX-protected page - exploit attempt? (uid: %d)\n",
->> +                             from_kuid(&init_user_ns, current_uid()));
->>               if (pte && pte_present(*pte) && pte_exec(*pte) &&
->>                               (pgd_flags(*pgd) & _PAGE_USER) &&
->>                               (__read_cr4() & X86_CR4_SMEP))
->> -                     printk(smep_warning, from_kuid(&init_user_ns, current_uid()));
->> +                     pr_crit("unable to execute userspace code (SMEP?) (uid: %d)\n",
->> +                             from_kuid(&init_user_ns, current_uid()));
->>       }
->>
->> -     printk(KERN_ALERT "BUG: unable to handle kernel ");
->> -     if (address < PAGE_SIZE)
->> -             printk(KERN_CONT "NULL pointer dereference");
->> -     else
->> -             printk(KERN_CONT "paging request");
->> -
->> -     printk(KERN_CONT " at %px\n", (void *) address);
->> +     pr_alert("BUG: unable to handle kernel %s at %px\n",
->> +             address < PAGE_SIZE ? "NULL pointer dereference" :
->> +             "paging request", (void *) address);
->
-> I already applied the last hunk in a bit different way - could you send the rest
-> as a separate clean-up patch please?
+Commit-ID:  ec348020566009d3da9b99f07c05814d13969c78
+Gitweb:     https://git.kernel.org/tip/ec348020566009d3da9b99f07c05814d13969c78
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Tue, 26 Jun 2018 22:17:17 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 27 Jun 2018 09:36:56 +0200
 
-Just mailed "arch/x86: cleanup show_fault_oops()".
+selftests/x86/sigreturn/64: Fix spurious failures on AMD CPUs
+
+When I wrote the sigreturn test, I didn't realize that AMD's busted
+IRET behavior was different from Intel's busted IRET behavior:
+
+On AMD CPUs, the CPU leaks the high 32 bits of the kernel stack pointer
+to certain userspace contexts.  Gee, thanks.  There's very little
+the kernel can do about it.  Modify the test so it passes.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/testing/selftests/x86/sigreturn.c | 46 +++++++++++++++++++++------------
+ 1 file changed, 29 insertions(+), 17 deletions(-)
+
+diff --git a/tools/testing/selftests/x86/sigreturn.c b/tools/testing/selftests/x86/sigreturn.c
+index 246145b84a12..2559e2c01793 100644
+--- a/tools/testing/selftests/x86/sigreturn.c
++++ b/tools/testing/selftests/x86/sigreturn.c
+@@ -612,19 +612,38 @@ static int test_valid_sigreturn(int cs_bits, bool use_16bit_ss, int force_ss)
+ 		greg_t req = requested_regs[i], res = resulting_regs[i];
+ 		if (i == REG_TRAPNO || i == REG_IP)
+ 			continue;	/* don't care */
+-		if (i == REG_SP) {
+-			printf("\tSP: %llx -> %llx\n", (unsigned long long)req,
+-			       (unsigned long long)res);
+ 
++		if (i == REG_SP) {
+ 			/*
+-			 * In many circumstances, the high 32 bits of rsp
+-			 * are zeroed.  For example, we could be a real
+-			 * 32-bit program, or we could hit any of a number
+-			 * of poorly-documented IRET or segmented ESP
+-			 * oddities.  If this happens, it's okay.
++			 * If we were using a 16-bit stack segment, then
++			 * the kernel is a bit stuck: IRET only restores
++			 * the low 16 bits of ESP/RSP if SS is 16-bit.
++			 * The kernel uses a hack to restore bits 31:16,
++			 * but that hack doesn't help with bits 63:32.
++			 * On Intel CPUs, bits 63:32 end up zeroed, and, on
++			 * AMD CPUs, they leak the high bits of the kernel
++			 * espfix64 stack pointer.  There's very little that
++			 * the kernel can do about it.
++			 *
++			 * Similarly, if we are returning to a 32-bit context,
++			 * the CPU will often lose the high 32 bits of RSP.
+ 			 */
+-			if (res == (req & 0xFFFFFFFF))
+-				continue;  /* OK; not expected to work */
++
++			if (res == req)
++				continue;
++
++			if (cs_bits != 64 && ((res ^ req) & 0xFFFFFFFF) == 0) {
++				printf("[NOTE]\tSP: %llx -> %llx\n",
++				       (unsigned long long)req,
++				       (unsigned long long)res);
++				continue;
++			}
++
++			printf("[FAIL]\tSP mismatch: requested 0x%llx; got 0x%llx\n",
++			       (unsigned long long)requested_regs[i],
++			       (unsigned long long)resulting_regs[i]);
++			nerrs++;
++			continue;
+ 		}
+ 
+ 		bool ignore_reg = false;
+@@ -663,13 +682,6 @@ static int test_valid_sigreturn(int cs_bits, bool use_16bit_ss, int force_ss)
+ 		}
+ 
+ 		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
+-			/*
+-			 * SP is particularly interesting here.  The
+-			 * usual cause of failures is that we hit the
+-			 * nasty IRET case of returning to a 16-bit SS,
+-			 * in which case bits 16:31 of the *kernel*
+-			 * stack pointer persist in ESP.
+-			 */
+ 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
+ 			       i, (unsigned long long)requested_regs[i],
+ 			       (unsigned long long)resulting_regs[i]);
