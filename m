@@ -2,166 +2,145 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CCCC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3796BC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B2625C74
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:44:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5FFD25F06
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:47:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="qvkdTIm3";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O+jRwcHP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B2625C74
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Yh9mp5wL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FFD25F06
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965971AbeF0So1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 14:44:27 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:45107 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934387AbeF0SoZ (ORCPT
+        id S965987AbeF0Sr3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 14:47:29 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:46581 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965931AbeF0Sr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 14:44:25 -0400
-Received: by mail-yb0-f196.google.com with SMTP id h127-v6so1140070ybg.12
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:44:24 -0700 (PDT)
+        Wed, 27 Jun 2018 14:47:27 -0400
+Received: by mail-qt0-f194.google.com with SMTP id h5-v6so2552696qtm.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:47:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=DwWN4D7EmN8bnJO25lh+67ZuMBwv936a5aQNt3PLnNo=;
-        b=qvkdTIm312sgneoUtbg9yYqcOboSvwV63U4em6AS/Sv2jA4WUu1rIwQCNLqwee9VJT
-         rxMj9oVZXRF9hB/Cgnd2gflI53ekGNxUQ0G8LgRO6SCD5v0XoubgsWZ+TostrN66/cnh
-         4RWlbivF3egCduOYjwrINcfPqsy9NkBpaNlYBAjGM3FSpvy94U+U6DOAPuCOCcptMuiD
-         bkUjIsVu6QwoyVAOOtVzPnoppvwYL7c6xyUpN6sPV66yz4K6FpYuzboMn2r6b/q3G/qu
-         XkBvb/qy6dxXaT40ZY2glukoFlx2InvAz478Y8cfeDSOc9WEXCF4M5spSALEKLsh5ovb
-         +UrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=DwWN4D7EmN8bnJO25lh+67ZuMBwv936a5aQNt3PLnNo=;
-        b=O+jRwcHPOqF7qagHJuyihxZrdz8EODvzWS2vviWxF57egAcvHT6o8THWP96QP1Lh4c
-         xFthR72SiTIgDzdmafo+t53D82izyVs71rLwJ+mFtZFUCq7M56Hgi27vsUk76IztBx8p
-         hpgNNU9QHEJpb5yl/wF9KpWYJWm9pXxfGjkUg=
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=H+g5O++/Ia1K2vBaVcBB4bjPX4WwIoj8nhkRpExP+9g=;
+        b=Yh9mp5wLkdihRwTVhNGkVOZbcP/mGB1kc9fVTNvqBtsVpBdH27UICkeV5bCQ/59vSv
+         AYpcNu+Da4UJEHtQHelAVdurf6+C9TrRO/WfzeF51LqYokOTZ+cGsSjtHm+tlifLOq9o
+         W4yH4HpEakVa53g6rd1ii6NeevvWFZIhyBG6w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=DwWN4D7EmN8bnJO25lh+67ZuMBwv936a5aQNt3PLnNo=;
-        b=nInPDKYugJq7EfN8xVzjpmuplj38xDOmt/wIvnTMwRzohrHLb38gYrvCXcuILfvSnT
-         7SZ/IpbEw8gYFeAxsJsVPeMh+7wUYRWby2IPm0SqfygwK81WIwUcpLSh4aeBcZxweB9y
-         MCkFbxTMMo1DMlnPULNtI9unOwOjonkbuib9F24B1BqXCmBuXaFjzoEU5oTHrObFm941
-         1VJ11qaZOjCp7YqcdK7TLObv2kWqi39/zC8OpWMctQ9Bf6wOqvljzX+sHSIUuJPB7gMJ
-         GoAySeV2WlN8g0SiafAIlDk6ufJPec1o4B9EZAEzAA8UA1UOsGGVrY2ANet4XB//ax1x
-         j2hQ==
-X-Gm-Message-State: APt69E0SWLSukq7idJvhLCbnS1X0TWmQ4/sNt/5Jluem2Cvfuj9gNDKa
-        02zku0rvJ4//vzgrQew8DePGS0qRWZPkNlhra3Q4/A==
-X-Google-Smtp-Source: ADUXVKICeOoq4pz+ZT1IhT3lSuLJa6L/eauxgY2Fzm1yMiw9Ax4aQu5ZJa4ku2ffVoAfiuNNWQAI+4D8x+h52rAq/dM=
-X-Received: by 2002:a25:a301:: with SMTP id d1-v6mr3746554ybi.193.1530125064079;
- Wed, 27 Jun 2018 11:44:24 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H+g5O++/Ia1K2vBaVcBB4bjPX4WwIoj8nhkRpExP+9g=;
+        b=XmUkW9LnY1qi9ze/BK/WTOxcpMIFfpajJnT8EyrzURGqFZuVzey1sjqYI/ozOArsAk
+         hK0v5ycBlzlsn8eDg6rd2EDiNQla/JJO1VAjcYCZ4yKwZZtNpIBS2ypZTzl4vwY2NaRo
+         XlEkrtcGUVYH6t2wXRSulMnbdsDKn3bkntvc7PwObX/5a1xFWa92LC2vtqUgF3j0ItOQ
+         FeXFbCJoVW2LWX7a0e4hCYwQypOF34LpXcLx+dBDbz6vCK+N08co//nOz549o4dLiOTV
+         CfJEj58GczoWoL6Hbl99mwMn5VsxDCkF0Uqgg9UH2MlE+9R7atzSrSR3LS5kEXxPBatb
+         q0+w==
+X-Gm-Message-State: APt69E2bQWYbrot8TApHbA1yqnN9e9gxTx7ailhMmEI7tugg01QjldMv
+        okdZG+EaaB3B2gFTtV3aib/VTa5cQjc=
+X-Google-Smtp-Source: AAOMgpfTZH8w1ntOQO6rVm/clD6DRNOq7yXuDQryLMUrU6uP7z3OP2WbTZ3hGdvPiSgooOxhC+fPhQ==
+X-Received: by 2002:aed:36e4:: with SMTP id f91-v6mr2957136qtb.268.1530125246347;
+        Wed, 27 Jun 2018 11:47:26 -0700 (PDT)
+Received: from [10.136.8.248] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id n59-v6sm3413528qte.97.2018.06.27.11.47.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 11:47:25 -0700 (PDT)
+Subject: Re: [PATCH v4 1/6] Documentation: DT: Consolidate SP805 binding docs
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Rob Herring <robh@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+References: <1527530497-10392-1-git-send-email-ray.jui@broadcom.com>
+ <1527530497-10392-2-git-send-email-ray.jui@broadcom.com>
+ <20180605194124.GA26885@rob-hp-laptop>
+ <e91c75f3-f7a4-6f51-9911-7e22d5d05084@roeck-us.net>
+ <CABGGisxEvWDy16SKE2RG-vhUHBZHSCCHyfwJsPY16B1fQS-=cA@mail.gmail.com>
+ <09c870cd-0a44-6634-58d8-f57f9fcd0cb5@broadcom.com>
+ <46ca340f-4347-94ca-6463-d38bece820e2@broadcom.com>
+ <20180627183327.GD16753@roeck-us.net>
+ <a18733e2-be06-4ea9-dbfb-1d4f756a97e7@broadcom.com>
+ <20180627184234.GA19538@roeck-us.net>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <8483f675-0c7d-4b0f-25fd-a5eff4bc7937@broadcom.com>
+Date:   Wed, 27 Jun 2018 11:47:21 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 11:44:23
- -0700 (PDT)
-In-Reply-To: <20180627181012.GM20754@mellanox.com>
-References: <20180624082353.16138-1-leon@kernel.org> <20180624082353.16138-9-leon@kernel.org>
- <CAKwiHFhgsyWYD+q+JFb2HJEphnjiiOp=o4Airv3MW031q2jx8w@mail.gmail.com>
- <20180625171157.GE5356@mellanox.com> <CAKwiHFiRYbyiJqDYCgKXKZYRr0KjCt8q9AwKwfqoCA1sT2KFyQ@mail.gmail.com>
- <20180626175435.GQ5356@mellanox.com> <CAKwiHFgchr+6HYOZ4e4e1vzL9cFabe6eonNNM8NTWZypazcuKA@mail.gmail.com>
- <20180627181012.GM20754@mellanox.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 27 Jun 2018 11:44:23 -0700
-X-Google-Sender-Auth: htpl9c3GZax0MEjueck555coYw8
-Message-ID: <CAGXu5jL-_o0mQGzWoOg5VHj0sUfrkDH-yrOg0A3BxQRe+VRmDw@mail.gmail.com>
-Subject: Re: [PATCH rdma-next 08/12] overflow.h: Add arithmetic shift helper
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Hadar Hen Zion <hadarh@mellanox.com>,
-        Matan Barak <matanb@mellanox.com>,
-        Michael J Ruhl <michael.j.ruhl@intel.com>,
-        Noa Osherovich <noaos@mellanox.com>,
-        Raed Salem <raeds@mellanox.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        linux-netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180627184234.GA19538@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 11:10 AM, Jason Gunthorpe <jgg@mellanox.com> wrote:
-> Leon? Seems like agreement, Can you work with this version?
->
-> #include <stdint.h>
-> #include <stdbool.h>
-> #include <assert.h>
->
-> #define u64 uint64_t
->
-> /*
->  * Compute *d = (a << s)
->  *
->  * Returns true if '*d' cannot hold the result or 'a << s' doesn't make sense.
->  * - 'a << s' causes bits to be lost when stored in d
->  * - 's' is garbage (eg negative) or so large that a << s is guarenteed to be 0
->  * - 'a' is negative
->  * - 'a << s' sets the sign bit, if any, in '*d'
->  * *d is not defined if false is returned.
->  */
-> #define check_shift_overflow(a, s, d)                                          \
->         ({                                                                     \
->                 typeof(a) _a = a;                                              \
->                 typeof(s) _s = s;                                              \
->                 typeof(d) _d = d;                                              \
->                 u64 _a_full = _a;                                              \
->                 unsigned int _to_shift =                                       \
->                         _s >= 0 && _s < 8 * sizeof(*d) ? _s : 0;               \
->                                                                                \
->                 *_d = (_a_full << _to_shift);                                  \
->                                                                                \
->                 (_to_shift != _s || *_d < 0 || _a < 0 ||                       \
->                  (*_d >> _to_shift) != a);                                     \
->         })
->
-> int main(int argc, const char *argv[])
-> {
->         int32_t s32;
->         uint32_t u32;
->
->         assert(check_shift_overflow(1, 0, &s32) == false && s32 == (1 << 0));
->         assert(check_shift_overflow(1, 1, &s32) == false && s32 == (1 << 1));
->         assert(check_shift_overflow(1, 30, &s32) == false && s32 == (1 << 30));
->         assert(check_shift_overflow(1, 31, &s32) == true);
->         assert(check_shift_overflow(1, 32, &s32) == true);
->         assert(check_shift_overflow(-1, 1, &s32) == true);
->         assert(check_shift_overflow(-1, 0, &s32) == true);
->
->         assert(check_shift_overflow(1, 0, &u32) == false && u32 == (1 << 0));
->         assert(check_shift_overflow(1, 1, &u32) == false && u32 == (1 << 1));
->         assert(check_shift_overflow(1, 30, &u32) == false && u32 == (1 << 30));
->         assert(check_shift_overflow(1, 31, &u32) == false && u32 == (1UL << 31));
->         assert(check_shift_overflow(1, 32, &u32) == true);
->         assert(check_shift_overflow(-1, 1, &u32) == true);
->         assert(check_shift_overflow(-1, 0, &u32) == true);
->
->         assert(check_shift_overflow(0xFFFFFFFF, 0, &u32) == false && u32 == (0xFFFFFFFFUL << 0));
->         assert(check_shift_overflow(0xFFFFFFFF, 1, &u32) == true);
->         assert(check_shift_overflow(0xFFFFFFFF, 0, &s32) == true);
->         assert(check_shift_overflow(0xFFFFFFFF, 1, &s32) == true);
-> }
 
-Oh yes, please include these tests in lib/test_overflow.c too! Nice. :)
 
--Kees
+On 6/27/2018 11:42 AM, Guenter Roeck wrote:
+> On Wed, Jun 27, 2018 at 11:38:48AM -0700, Ray Jui wrote:
+>>
+>>
+>> On 6/27/2018 11:33 AM, Guenter Roeck wrote:
+>>> On Wed, Jun 20, 2018 at 10:39:16AM -0700, Ray Jui wrote:
+>>>> Hi Guenter/Rob,
+>>>>
+>>>> Kindly let me know how you want to proceed with this?
+>>>>
+>>>
+>>> If I recall correctly, the patch series does not add a new problem
+>>> but merely exposes one. Is my recollection correct ? If so, maybe
+>>> we should just add a note somewhere indicating what might be wrong
+>>> and otherwise apply the series.
+>>>
+>>> Does this make sense ?
+>>
+>> Yes this makes a lot of sense to me. This patch series exposes potential
+>> problems in some SoCs that they might not be feeding the correct clock into
+>> WDT, at least based on clock names from their DT entries.
+>>
+>> This patch series does not change/affect how SP805 works on those systems.
+>>
+>> Where should the note be added?
+>>
+> 
+> I would suggest to add a note into the driver where the clock is used,
+> with the details discussed here.
 
--- 
-Kees Cook
-Pixel Security
+I assume you meant adding the notes to the SP805 driver where the clock 
+is used.
+
+If so, I think that makes sense. That notes deserves its own patch 
+because it really has nothing to do with any of the change in this patch 
+series.
+
+Do you want me to 1) embed that patch into this patch series and send 
+out v5; or 2) leave the patch series as it is and send out a separate 
+patch to add the notes to the driver?
+
+Thanks.
+
+> 
+> Does this make sense ?
+> 
+> Thanks,
+> Guenter
+> 
