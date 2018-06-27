@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8044AC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 02:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22847C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 02:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE3923C32
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 02:17:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B58BF266CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 02:18:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nq+HTrFv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE3923C32
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P7bgdSfK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B58BF266CE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeF0CRY (ORCPT
+        id S1753023AbeF0CSO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 22:17:24 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:36458 "EHLO
+        Tue, 26 Jun 2018 22:18:14 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:43813 "EHLO
         mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751803AbeF0CRW (ORCPT
+        with ESMTP id S1752733AbeF0CSM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 22:17:22 -0400
-Received: by mail-ot0-f194.google.com with SMTP id c15-v6so511444otl.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 19:17:21 -0700 (PDT)
+        Tue, 26 Jun 2018 22:18:12 -0400
+Received: by mail-ot0-f194.google.com with SMTP id i19-v6so495349otk.10
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 19:18:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=QdtZqjNB56cuv6P2+2qAxXejqQGAnhJV3nzPHfZAx5I=;
-        b=Nq+HTrFvoMy49GiNZLuWy27XlPQP8x29LV81mHXCGTO/hnrJRzFBIYCwbGEAxkH8pS
-         QOr+F2Wps91SVeiDHVUD+SfwpEWchbnjxPZjzlC9RkqRD/XElkQRFIdtv+oEDtyvXjuY
-         OqG2zT5G9IqC5FHh1321ixgPjs1KuM9G2vG/Y=
+        bh=Nt5oQ4t/pFP5fa76uKG2clAhLER6MHh5aTYjSMPpn/Y=;
+        b=P7bgdSfKEZTz0GAPxNRi45cW1/HPudDiJuIMeTy5954Rx9NquX7A4bUlKHgAw5/KZP
+         h+GFzThIdR33HdAbmy5NO6L4cpSCNuVrY+YU13RWs8D2xGMN51QlhwbB7fKa/edyyQAj
+         0MSaCZoh8jeyewPDuSAsaFDBH9hgfqv7Oqmw8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=QdtZqjNB56cuv6P2+2qAxXejqQGAnhJV3nzPHfZAx5I=;
-        b=M9hGAdi2+hGl+mCBQCqWs5ot051f0u+0cipCfltNZRJgmyBtpi1IpcME9T2Sz0J2Fc
-         CNLUcrKPWhcWox5nTPAIMblkQOmNv1VmLoo8ECFGeQ5HNX9+Z/2coCHND+HdLtXvYIkJ
-         IrYG/9jYcsS0mSZiOlH9kcXtTNTtT4ruBTP3decvNZKfe9xc52Zb73nTnBTwJv47uLnW
-         qsFPWI8iJeJlpPm+LMwKxgqva0IurbhguLeJNqZfeEhDnsiDEBl4rvXK2UERs6u41WXs
-         W04jbc1pSlZcLuSUasUcLjDqGpORfXPHgJKTRrN8PnTb1Y06OWkXD2cY+5dzSa5n7sbC
-         T0dw==
-X-Gm-Message-State: APt69E04JFxt5LuFUHGY6A8Drw3M9Ek69mQCIQZNadljqZlo6EBd7q9D
-        kXxlpEOazSR2Mc+AEDoUCsxNHKtA7o7RKP4JKHmYUw==
-X-Google-Smtp-Source: AAOMgpd9IVNBEf2gn2FCH5HnqcySpvABncFO3GTaex+ROX/2YddDeuCJCvuJsT/6ZJaBQN+/p1Rb3oLeMnEFDQRNMik=
-X-Received: by 2002:a9d:a66:: with SMTP id 93-v6mr2171159otg.177.1530065841636;
- Tue, 26 Jun 2018 19:17:21 -0700 (PDT)
+        bh=Nt5oQ4t/pFP5fa76uKG2clAhLER6MHh5aTYjSMPpn/Y=;
+        b=HMj7H13Dso4dBXyhHA7gA0bRoddbAJ0kFK6jSSUVzJWu72KIm+dNMMEbRAIPIgPqnO
+         KfKdRPug5vocafxtOoBWeqhvzt4WQcREGTFxN+/EN4HCVM2upPabNF8tw89BNzryj8A0
+         /r1lemkXtkyV842oupkXTv88BQ58duxs8zU1oRX2MPH+DkBINgtquS28iSgF2g5NvqRm
+         XncS04o6TqN960CMUWwnlp/FxzRONhk9H4l08CK/+ywsRPDkhV0bv051ES5YJZx6cnnY
+         RVIjlK+8oZ9AOCcYakeNAITLqa+XkOuDST0PF5pp8nLAB4yHICfOiw3lK1S/88/2pHO0
+         hO6Q==
+X-Gm-Message-State: APt69E1b6OmF8LF6B9ytfZ3UISa8TrRysek9p+cSkhTtX343VVvYiLPS
+        fKulxUf0gJPeulTbrYtKf6AJGkojqQ0RapLlDWWMjg==
+X-Google-Smtp-Source: AAOMgpfPUVBVhzunklzUJpMuEinvlUjuLglTpwgUP4jx837fGXtl0rmnS2XIISk8Aqqm2QIRDFUfIPTXCbvGYmsyHOE=
+X-Received: by 2002:a9d:2965:: with SMTP id d92-v6mr2192388otb.321.1530065891766;
+ Tue, 26 Jun 2018 19:18:11 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 19:17:21
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 19:18:11
  -0700 (PDT)
-In-Reply-To: <20180626205138.GF3206@builder>
+In-Reply-To: <20180626205438.GG3206@builder>
 References: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
- <e5f5f315a882fe5cdd161c8cb1790c9f3de0920a.1529654288.git.baolin.wang@linaro.org>
- <20180626205138.GF3206@builder>
+ <20180626205438.GG3206@builder>
 From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 27 Jun 2018 10:17:21 +0800
-Message-ID: <CAMz4kuLVFc3YuSue8AQ8brjj+bDq-k-fOTRp_3M4xV1O=aYhgg@mail.gmail.com>
-Subject: Re: [PATCH 6/8] hwspinlock: sprd: Use devm_hwspin_lock_register()
+Date:   Wed, 27 Jun 2018 10:18:11 +0800
+Message-ID: <CAMz4kuJ8OVjV+m-RHhOBDB5RchGm5gjOcXL=g0YWtvc8zbAqYw@mail.gmail.com>
+Subject: Re: [PATCH 1/8] hwspinlock: Add one new API to support getting a
+ specific hwlock by the name
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Mark Brown <broonie@kernel.org>,
         linux-spi@vger.kernel.org, linux-remoteproc@vger.kernel.org,
@@ -72,44 +72,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 June 2018 at 04:51, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
-> On Fri 22 Jun 01:09 PDT 2018, Baolin Wang wrote:
+On 27 June 2018 at 04:54, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+> On Fri 22 Jun 01:08 PDT 2018, Baolin Wang wrote:
 >
->> Use devm_hwspin_lock_register() to register the hwlock controller to
->> avoid unregistering the device explicitly.
+>> The hardware spinlock binding already supplied the 'hwlock-names' property
+>> to match and get a specific hwlock, but did not supply one API for users
+>> to get a specific hwlock by the hwlock name. So this patch introduces one
+>> API to support this requirement.
 >>
 >> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->>  drivers/hwspinlock/sprd_hwspinlock.c |    6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
->> index dc42bf5..ba5daf6 100644
->> --- a/drivers/hwspinlock/sprd_hwspinlock.c
->> +++ b/drivers/hwspinlock/sprd_hwspinlock.c
->> @@ -120,8 +120,9 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
->>       platform_set_drvdata(pdev, sprd_hwlock);
->>       pm_runtime_enable(&pdev->dev);
->>
->> -     ret = hwspin_lock_register(&sprd_hwlock->bank, &pdev->dev,
->> -                                &sprd_hwspinlock_ops, 0, SPRD_HWLOCKS_NUM);
->> +     ret = devm_hwspin_lock_register(&pdev->dev, &sprd_hwlock->bank,
->> +                                     &sprd_hwspinlock_ops, 0,
->> +                                     SPRD_HWLOCKS_NUM);
->>       if (ret) {
->>               pm_runtime_disable(&pdev->dev);
->>               clk_disable_unprepare(sprd_hwlock->clk);
->> @@ -135,7 +136,6 @@ static int sprd_hwspinlock_remove(struct platform_device *pdev)
->>  {
->>       struct sprd_hwspinlock_dev *sprd_hwlock = platform_get_drvdata(pdev);
->>
->> -     hwspin_lock_unregister(&sprd_hwlock->bank);
 >
-> Until the hwspinlock is unregistered it's possible for clients to issue
-> operations on it, so disabling power and clocks before that seems bad.
+> Thanks Baolin,
+>
+> Picked up all but patch 6 from the series; including 7 and 8 with Mark's
+> ack.
 
-Yes, you are right. So may be register some additional actions with devm
-core to call the clock disable as appropriate. Thanks.
+OK. Thanks Bjorn and Mark.
 
 -- 
 Baolin.wang
