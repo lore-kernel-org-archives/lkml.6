@@ -2,103 +2,83 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81140C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE2CC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20C6726931
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:32:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNvfXi+z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C6726931
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AB6826931
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:32:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB6826931
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755340AbeF0Bba (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 21:31:30 -0400
-Received: from mail-pl0-f45.google.com ([209.85.160.45]:34604 "EHLO
-        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751121AbeF0Bb0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 21:31:26 -0400
-Received: by mail-pl0-f45.google.com with SMTP id z9-v6so210190plo.1;
-        Tue, 26 Jun 2018 18:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=JmMqhdSGdNRzaNiXIr1WCriQw0BHGB7OYLS7BIIUa84=;
-        b=TNvfXi+zyJbwIG32I65Rlca9EN0sA5jeprr61b0fRo64JjA3dqKKKjBUbTyuwyIqle
-         3NeK+KfzBwJ2j7uFYHjqzOIxZxaH2oohvp243L6pAH/0hXMOhXP+iPz1X5id5W3Yi5fP
-         aJx6G9dOeH91JF12UtbeixwsQQ7d3aseBawheebu2FFxEFRm/vTkZtZUD3gj+/MG07+X
-         wzcApIJ9JUYqh07wfLaVAMP4eTz5kYksJ2vaVMsJaTHos+79P6I8AuGqI36hdTz84eiw
-         GgWnBTCDvU3WDIuLqVV/DV8FkFbeHFd3fGQo8bBo8ZFjDWviKVu/j7OENbbj2N4Zxnfj
-         wLOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=JmMqhdSGdNRzaNiXIr1WCriQw0BHGB7OYLS7BIIUa84=;
-        b=UzaBm9w/ydWMtYUuojxJwCtQMRlcUhJYH6bGc/VbJPJX+TB2ZSf0Sp6zDYxX+AtYC3
-         xpxsNLrAAAyrUd86pEyCn9+bgO8RXYTbYYakZwvZ0V+3cOm1Pqq9LDzSG9/4YDmelWAd
-         hIo4C0+8rL22dIePVRRYWyokJPN+mGsK2AeI0kSYUhjyAd4s6ZZMjx5OdpGWslhBLTmo
-         cGDskSL5Vb8dOrGzD9Zk/JmoaFbY5HsTsrL1D6zjWZTBhi/JQwCQPzXLSeoqUM4z1vt5
-         +1KYCsqzuHPNOckNWCSdGwSdu/b1GDm+IXm00mEVgcsSP/x5+PcR75XzcJda9PQnbqWe
-         w7nQ==
-X-Gm-Message-State: APt69E0bfjbVHZbLjHC6tqek5OEv6zvrgYBFyYUUgdNc9ZHuS/PAcyK7
-        JLBCWtBfNdxxSVB8lzeCXr0iq70j
-X-Google-Smtp-Source: ADUXVKKUyhyZnETFSEqDmUZWcGkOcSnUNvn4JCo6Aw0A2KfmbuqhLMGi9ec2Tng1u7OEIvYmo3HL6g==
-X-Received: by 2002:a17:902:7891:: with SMTP id q17-v6mr4003596pll.186.1530063086038;
-        Tue, 26 Jun 2018 18:31:26 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.70.42? ([2402:f000:1:1501:200:5efe:a66f:462a])
-        by smtp.gmail.com with ESMTPSA id p12-v6sm4697477pfi.175.2018.06.26.18.31.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 18:31:25 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] net: e100: possible data races in e100_watchdog()
-To:     jeffrey.t.kirsher@intel.com, jchapman@katalix.com
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <ecf9293b-9105-8eb1-7184-77de6dd77786@gmail.com>
-Date:   Wed, 27 Jun 2018 09:30:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S964919AbeF0BcY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 21:32:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39172 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755316AbeF0Bb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 21:31:29 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 22CB8400B455;
+        Wed, 27 Jun 2018 01:31:29 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A68C111764C;
+        Wed, 27 Jun 2018 01:31:25 +0000 (UTC)
+From:   Baoquan He <bhe@redhat.com>
+To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, pagupta@redhat.com
+Cc:     linux-mm@kvack.org, kirill.shutemov@linux.intel.com,
+        Baoquan He <bhe@redhat.com>
+Subject: [PATCH v5 1/4] mm/sparse: Add a static variable nr_present_sections
+Date:   Wed, 27 Jun 2018 09:31:13 +0800
+Message-Id: <20180627013116.12411-2-bhe@redhat.com>
+In-Reply-To: <20180627013116.12411-1-bhe@redhat.com>
+References: <20180627013116.12411-1-bhe@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 27 Jun 2018 01:31:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 27 Jun 2018 01:31:29 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call paths in Linux 4.16.7 that may raise data races are:
+It's used to record how many memory sections are marked as present
+during system boot up, and will be used in the later patch.
 
-CPU0:
-e100_set_multicast_list
-     e100_exec_cb
-         line 879: spin_lock_irqsave()
-         e100_configure
-             line 1139: nic->flags [READ]
-             line 1148: nic->flags [READ]
+Signed-off-by: Baoquan He <bhe@redhat.com>
+---
+ mm/sparse.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-CPU1:
-e100_watchdog:
-     line 1758, 1756: nic->flags [WRITE]
+diff --git a/mm/sparse.c b/mm/sparse.c
+index f13f2723950a..6314303130b0 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -200,6 +200,12 @@ static inline int next_present_section_nr(int section_nr)
+ 	      (section_nr <= __highest_present_section_nr));	\
+ 	     section_nr = next_present_section_nr(section_nr))
+ 
++/*
++ * Record how many memory sections are marked as present
++ * during system bootup.
++ */
++static int __initdata nr_present_sections;
++
+ /* Record a memory area against a node. */
+ void __init memory_present(int nid, unsigned long start, unsigned long end)
+ {
+@@ -229,6 +235,7 @@ void __init memory_present(int nid, unsigned long start, unsigned long end)
+ 			ms->section_mem_map = sparse_encode_early_nid(nid) |
+ 							SECTION_IS_ONLINE;
+ 			section_mark_present(ms);
++			nr_present_sections++;
+ 		}
+ 	}
+ }
+-- 
+2.13.6
 
-The READ operations in CPU0 are performed with holding a spinlock (line 
-879), but the WRITE operation in CPU1 is performed without holding this 
-spinlock, so it may cause data races here.
-
-A possible fix is to add spin_lock_irqsave() in e100_watchdog().
-I am not sure that whether this possible fix is correct, so I only 
-report the data races.
-
-
-Best wishes,
-Jia-Ju Bai
