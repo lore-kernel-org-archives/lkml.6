@@ -2,84 +2,82 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4102C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7663EC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A39F7260C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39F7260C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2782825FE2
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2782825FE2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965131AbeF0MrB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:47:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39240 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933879AbeF0Mq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:46:59 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 90E20401EF06;
-        Wed, 27 Jun 2018 12:46:58 +0000 (UTC)
-Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 920FE1C5B9;
-        Wed, 27 Jun 2018 12:46:48 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH V7 05/24] md: remove a bogus comment
-Date:   Wed, 27 Jun 2018 20:45:29 +0800
-Message-Id: <20180627124548.3456-6-ming.lei@redhat.com>
-In-Reply-To: <20180627124548.3456-1-ming.lei@redhat.com>
-References: <20180627124548.3456-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:46:58 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:46:58 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        id S965150AbeF0MrN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:47:13 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:52498 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965132AbeF0MrL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:47:11 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1fY9qk-0004iE-ML; Wed, 27 Jun 2018 14:47:06 +0200
+Date:   Wed, 27 Jun 2018 14:47:06 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Tejun Heo <htejun@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, "Steven J . Hill" <steven.hill@cavium.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>
+Subject: Re: [PATCH] Revert mm/vmstat.c: fix vmstat_update() preemption BUG
+Message-ID: <20180627124706.g33vlaku7xa4veqq@linutronix.de>
+References: <20180411095757.28585-1-bigeasy@linutronix.de>
+ <ef663b6d-9e9f-65c6-25ec-ffa88347c58d@suse.cz>
+ <20180411140913.GE793541@devbig577.frc2.facebook.com>
+ <20180411144221.o3v73v536tpnc6n3@linutronix.de>
+ <20180411190729.7sbmbsxtkcng7ddx@linutronix.de>
+ <20180627123657.2hb7ow4szjyhg5aj@home.goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180627123657.2hb7ow4szjyhg5aj@home.goodmis.org>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+On 2018-06-27 08:36:57 [-0400], Steven Rostedt wrote:
+> On Wed, Apr 11, 2018 at 09:07:30PM +0200, Sebastian Andrzej Siewior wrote:
+> > 
+> > This already happens:
+> > - vmstat_shepherd() does get_online_cpus() and within this block it does
+> >   queue_delayed_work_on(). So this has to wait until cpuhotplug
+> >   completed before it can schedule something and then it won't schedule
+> >   anything on the "off" CPU.
+> 
+> But can't we have something like this happen: ?
+> 
+> 	CPU0			CPU1			CPU2
+> 	----			----			----
+>  get_online_cpus()
+>  queue_work(vmstat_update, cpu1)
+>     wakeup(kworker/1)
+> 			     High prio task running
+>  put_online_cpus()
+>  						     Shutdown CPU 1
+> 			     migrate kworker/1
+>  schedule kworker/1
+>  (smp_processor_id() != 1)
 
-The function name mentioned doesn't exist, and the code next to it
-doesn't match the description either.
+I don't get CPU1 doing in here. kworker/1 should not be migrated to
+begin with. The work item should be done before CPU2 shutdowns CPU1 (or
+0) because vmstat_cpu_down_prep() cancels the work while the CPUs goes
+down so it should not be migrated. Also, the work is enqueued while
+holding the CPU HP lock.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/md/md.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 29b0cd9ec951..81f458514ac0 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -204,10 +204,6 @@ static int start_readonly;
-  */
- static bool create_on_open = true;
- 
--/* bio_clone_mddev
-- * like bio_clone_bioset, but with a local bio set
-- */
--
- struct bio *bio_alloc_mddev(gfp_t gfp_mask, int nr_iovecs,
- 			    struct mddev *mddev)
- {
--- 
-2.9.5
-
+Sebastian
