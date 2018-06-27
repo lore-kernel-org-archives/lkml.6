@@ -2,145 +2,128 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3796BC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCDEC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5FFD25F06
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E2025FEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:47:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Yh9mp5wL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FFD25F06
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BG4S2Q2g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E2025FEB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965987AbeF0Sr3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 14:47:29 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:46581 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965931AbeF0Sr1 (ORCPT
+        id S966009AbeF0Sru (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 14:47:50 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55917 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965931AbeF0Srs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 14:47:27 -0400
-Received: by mail-qt0-f194.google.com with SMTP id h5-v6so2552696qtm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:47:26 -0700 (PDT)
+        Wed, 27 Jun 2018 14:47:48 -0400
+Received: by mail-wm0-f68.google.com with SMTP id v16-v6so6961284wmv.5
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:47:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H+g5O++/Ia1K2vBaVcBB4bjPX4WwIoj8nhkRpExP+9g=;
-        b=Yh9mp5wLkdihRwTVhNGkVOZbcP/mGB1kc9fVTNvqBtsVpBdH27UICkeV5bCQ/59vSv
-         AYpcNu+Da4UJEHtQHelAVdurf6+C9TrRO/WfzeF51LqYokOTZ+cGsSjtHm+tlifLOq9o
-         W4yH4HpEakVa53g6rd1ii6NeevvWFZIhyBG6w=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ESfE27P1/ngvLPaekTjL3KLDILHKEmNa42xHJkc+2GM=;
+        b=BG4S2Q2gbyJu8SLJnsOeBVCTHkL8dX7Gb9EW7VS+6I3wOSvR4pmS6oZNwws+o2w/hi
+         dsz4VGpj0kS6UDNOSLW+x/ZNcDM/ZwYABSBQfxsmEJETZHeG2imnMR/PSy0c5vC270Ek
+         3lnmmcphseqSXx6AuNBJnFpNt3Jo5kG/L56jt9bNwkQVtRGf31UPrVpL+H/jXNWBHIy7
+         yFIX6UW5uHKAP93scanPqM9Igx9T8EThsJQXI/j4lck2NOeCeBhyDR2bzkQG5e0yGoAR
+         hpWy6dOBphtWEILfO5c5acoEPPpkHdVEn8tXharH652d79/8AF3KB9Rp+AIv+jBq4WXk
+         ayWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H+g5O++/Ia1K2vBaVcBB4bjPX4WwIoj8nhkRpExP+9g=;
-        b=XmUkW9LnY1qi9ze/BK/WTOxcpMIFfpajJnT8EyrzURGqFZuVzey1sjqYI/ozOArsAk
-         hK0v5ycBlzlsn8eDg6rd2EDiNQla/JJO1VAjcYCZ4yKwZZtNpIBS2ypZTzl4vwY2NaRo
-         XlEkrtcGUVYH6t2wXRSulMnbdsDKn3bkntvc7PwObX/5a1xFWa92LC2vtqUgF3j0ItOQ
-         FeXFbCJoVW2LWX7a0e4hCYwQypOF34LpXcLx+dBDbz6vCK+N08co//nOz549o4dLiOTV
-         CfJEj58GczoWoL6Hbl99mwMn5VsxDCkF0Uqgg9UH2MlE+9R7atzSrSR3LS5kEXxPBatb
-         q0+w==
-X-Gm-Message-State: APt69E2bQWYbrot8TApHbA1yqnN9e9gxTx7ailhMmEI7tugg01QjldMv
-        okdZG+EaaB3B2gFTtV3aib/VTa5cQjc=
-X-Google-Smtp-Source: AAOMgpfTZH8w1ntOQO6rVm/clD6DRNOq7yXuDQryLMUrU6uP7z3OP2WbTZ3hGdvPiSgooOxhC+fPhQ==
-X-Received: by 2002:aed:36e4:: with SMTP id f91-v6mr2957136qtb.268.1530125246347;
-        Wed, 27 Jun 2018 11:47:26 -0700 (PDT)
-Received: from [10.136.8.248] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id n59-v6sm3413528qte.97.2018.06.27.11.47.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ESfE27P1/ngvLPaekTjL3KLDILHKEmNa42xHJkc+2GM=;
+        b=aJJrj1eMooZi8xbqQesAHmo6sfTSFPhn20v6xo1mOF+6lQ/u5gKzpFMXyhyjoyWrFg
+         TULcCFHa9XM7xwUHDfFWmH/xaAxZfSMZpSLLU5cnNh2ef+06BW61zhzw0zJ0BJkQdfgT
+         GVF2cDhteG36CGLWDO4BSQOJ9ks/btOBbixm+BguouhzwP22p1HK27NH/Zl4R+baJNfE
+         YxhK4cnLf9OhRCv0pBenrogqneQZdexYVFob9XU8pcpOZq26irIpi+YF5WmXc6ksmaO4
+         gSOZW5ohjPegKjV7TgN1TdAL1VrtQpC1UBxbJeUjzM1Io3D0JrHonn3y1L34cu8K/2rt
+         iKKw==
+X-Gm-Message-State: APt69E1Mi4+QbK4zAuPFyrewc/0VRfAifDF2pe1YjIXl7FQqvGAPzO0H
+        /G9dMWa+SinVyqax0mF38bw=
+X-Google-Smtp-Source: AAOMgpc4LJ560oVej64epwk0mXyuliI/HztBd0Dt045Se8UtaPWyjhb3Bmyp97HpoBpt07G2pvZ8bg==
+X-Received: by 2002:a1c:4596:: with SMTP id l22-v6mr6045770wmi.33.1530125267714;
+        Wed, 27 Jun 2018 11:47:47 -0700 (PDT)
+Received: from arch.localdomain (x4db2cd79.dyn.telefonica.de. [77.178.205.121])
+        by smtp.gmail.com with ESMTPSA id 4-v6sm3880648wmh.14.2018.06.27.11.47.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 11:47:25 -0700 (PDT)
-Subject: Re: [PATCH v4 1/6] Documentation: DT: Consolidate SP805 binding docs
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Rob Herring <robh@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
-References: <1527530497-10392-1-git-send-email-ray.jui@broadcom.com>
- <1527530497-10392-2-git-send-email-ray.jui@broadcom.com>
- <20180605194124.GA26885@rob-hp-laptop>
- <e91c75f3-f7a4-6f51-9911-7e22d5d05084@roeck-us.net>
- <CABGGisxEvWDy16SKE2RG-vhUHBZHSCCHyfwJsPY16B1fQS-=cA@mail.gmail.com>
- <09c870cd-0a44-6634-58d8-f57f9fcd0cb5@broadcom.com>
- <46ca340f-4347-94ca-6463-d38bece820e2@broadcom.com>
- <20180627183327.GD16753@roeck-us.net>
- <a18733e2-be06-4ea9-dbfb-1d4f756a97e7@broadcom.com>
- <20180627184234.GA19538@roeck-us.net>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <8483f675-0c7d-4b0f-25fd-a5eff4bc7937@broadcom.com>
-Date:   Wed, 27 Jun 2018 11:47:21 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180627184234.GA19538@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Jun 2018 11:47:47 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH] staging: rtl8188eu: remove whitespace - coding style
+Date:   Wed, 27 Jun 2018 20:47:32 +0200
+Message-Id: <20180627184732.11329-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Remove unrequired whitespace in some declarations,
+fix an indentation and remove unrequired blank lines.
 
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/os_dep/recv_linux.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-On 6/27/2018 11:42 AM, Guenter Roeck wrote:
-> On Wed, Jun 27, 2018 at 11:38:48AM -0700, Ray Jui wrote:
->>
->>
->> On 6/27/2018 11:33 AM, Guenter Roeck wrote:
->>> On Wed, Jun 20, 2018 at 10:39:16AM -0700, Ray Jui wrote:
->>>> Hi Guenter/Rob,
->>>>
->>>> Kindly let me know how you want to proceed with this?
->>>>
->>>
->>> If I recall correctly, the patch series does not add a new problem
->>> but merely exposes one. Is my recollection correct ? If so, maybe
->>> we should just add a note somewhere indicating what might be wrong
->>> and otherwise apply the series.
->>>
->>> Does this make sense ?
->>
->> Yes this makes a lot of sense to me. This patch series exposes potential
->> problems in some SoCs that they might not be feeding the correct clock into
->> WDT, at least based on clock names from their DT entries.
->>
->> This patch series does not change/affect how SP805 works on those systems.
->>
->> Where should the note be added?
->>
-> 
-> I would suggest to add a note into the driver where the clock is used,
-> with the details discussed here.
+diff --git a/drivers/staging/rtl8188eu/os_dep/recv_linux.c b/drivers/staging/rtl8188eu/os_dep/recv_linux.c
+index 9f9a595191b6..deadf26ea2aa 100644
+--- a/drivers/staging/rtl8188eu/os_dep/recv_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/recv_linux.c
+@@ -28,9 +28,9 @@ int rtw_os_recvbuf_resource_alloc(struct adapter *padapter,
+ void rtw_handle_tkip_mic_err(struct adapter *padapter, u8 bgroup)
+ {
+ 	union iwreq_data wrqu;
+-	struct iw_michaelmicfailure    ev;
+-	struct mlme_priv *pmlmepriv  = &padapter->mlmepriv;
+-	struct security_priv	*psecuritypriv = &padapter->securitypriv;
++	struct iw_michaelmicfailure ev;
++	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
++	struct security_priv *psecuritypriv = &padapter->securitypriv;
+ 	u32 cur_time = 0;
+ 
+ 	if (psecuritypriv->last_mic_err_time == 0) {
+@@ -69,7 +69,6 @@ int rtw_recv_indicatepkt(struct adapter *padapter,
+ 	struct sk_buff *skb;
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+ 
+-
+ 	precvpriv = &(padapter->recvpriv);
+ 	pfree_recv_queue = &(precvpriv->free_recv_queue);
+ 
+@@ -129,7 +128,6 @@ int rtw_recv_indicatepkt(struct adapter *padapter,
+ 	RT_TRACE(_module_recv_osdep_c_, _drv_info_,
+ 		 ("\n rtw_recv_indicatepkt :after netif_rx!!!!\n"));
+ 
+-
+ 	return _SUCCESS;
+ 
+ _recv_indicatepkt_drop:
+@@ -137,12 +135,11 @@ int rtw_recv_indicatepkt(struct adapter *padapter,
+ 	 /* enqueue back to free_recv_queue */
+ 	rtw_free_recvframe(precv_frame, pfree_recv_queue);
+ 
+-	 return _FAIL;
++	return _FAIL;
+ }
+ 
+ void rtw_init_recv_timer(struct recv_reorder_ctrl *preorder_ctrl)
+ {
+-
+ 	timer_setup(&preorder_ctrl->reordering_ctrl_timer,
+ 		    rtw_reordering_ctrl_timeout_handler, 0);
+ }
+-- 
+2.18.0
 
-I assume you meant adding the notes to the SP805 driver where the clock 
-is used.
-
-If so, I think that makes sense. That notes deserves its own patch 
-because it really has nothing to do with any of the change in this patch 
-series.
-
-Do you want me to 1) embed that patch into this patch series and send 
-out v5; or 2) leave the patch series as it is and send out a separate 
-patch to add the notes to the driver?
-
-Thanks.
-
-> 
-> Does this make sense ?
-> 
-> Thanks,
-> Guenter
-> 
