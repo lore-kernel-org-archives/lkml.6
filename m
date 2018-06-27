@@ -2,102 +2,232 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1C5C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB10C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE0CC25A92
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:00:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QTD/8vSU";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jxQ7xwwx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0CC25A92
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D44425A92
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D44425A92
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934896AbeF0QAL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:00:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46228 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934246AbeF0QAK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:00:10 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7F9BC606FA; Wed, 27 Jun 2018 16:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530115209;
-        bh=9buYP9JNXr3/dDrUYfosn6t21hOfEfD4v5QN9FTmo+4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=QTD/8vSUmdjVPVhrUXW+TrdfX0JRoSpHgrJNRrsssgkpbOIH/8bmcxSmP7yzeemrp
-         N8wp7vG4f/fcldPhSCDT0poaNv+vlu/6Oq7xEwfGBRQwJEby2DG6T4aFj5Jgw2wVoH
-         ucMEf+DMVglfMnHYUViIPhn9t7Ix/PyecIyWLyUc=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A313B601EA;
-        Wed, 27 Jun 2018 16:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530115208;
-        bh=9buYP9JNXr3/dDrUYfosn6t21hOfEfD4v5QN9FTmo+4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=jxQ7xwwxRlx3Xyukus0quN8ns5b7LtG5EnXxYbziPCD0+K+ynOpeHoSZjXCZ+rJ2z
-         ORh3stOXB+Otc/xs2LGiO+6Eo6DGpzT4DA04V3h4scByHbUHeXWvdn94/0jUs8f7Vk
-         Mcf94WAk4oODn+Rx4+qaZ9rBEvriQrDQnZP7Qxz8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A313B601EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S1754933AbeF0QAm (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:00:42 -0400
+Received: from mga01.intel.com ([192.55.52.88]:28283 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752937AbeF0QAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 12:00:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 09:00:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
+   d="scan'208";a="50985185"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga008.fm.intel.com with ESMTP; 27 Jun 2018 09:00:36 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fYCs0-000Kh5-4y; Thu, 28 Jun 2018 00:00:36 +0800
+Date:   Wed, 27 Jun 2018 23:59:37 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     kbuild-all@01.org, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        David Sterba <dsterba@suse.cz>,
+        Huang Ying <ying.huang@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH V7 10/24] block: introduce multipage page bvec helpers
+Message-ID: <201806272319.0p98i2TZ%fengguang.wu@intel.com>
+References: <20180627124548.3456-11-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [v6,(resend),1/3] bitfield: fix *_encode_bits()
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180620065830.6612-2-johannes@sipsolutions.net>
-References: <20180620065830.6612-2-johannes@sipsolutions.net>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180627160009.7F9BC606FA@smtp.codeaurora.org>
-Date:   Wed, 27 Jun 2018 16:00:09 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627124548.3456-11-ming.lei@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Johannes Berg <johannes@sipsolutions.net> wrote:
+Hi Ming,
 
-> There's a bug in *_encode_bits() in using ~field_multiplier() for
-> the check whether or not the constant value fits into the field,
-> this is wrong and clearly ~field_mask() was intended. This was
-> triggering for me for both constant and non-constant values.
-> 
-> Additionally, make this case actually into an compile error.
-> Declaring the extern function that will never exist with just a
-> warning is pointless as then later we'll just get a link error.
-> 
-> While at it, also fix the indentation in those lines I'm touching.
-> 
-> Finally, as suggested by Andy Shevchenko, add some tests and for
-> that introduce also u8 helpers. The tests don't compile without
-> the fix, showing that it's necessary.
-> 
-> Fixes: 00b0c9b82663 ("Add primitives for manipulating bitfields both in host- and fixed-endian.")
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
+Thank you for the patch! Perhaps something to improve:
 
-3 patches applied to wireless-drivers-next.git, thanks.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.18-rc2]
+[cannot apply to next-20180627]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-e7d4a95da86e bitfield: fix *_encode_bits()
-37a3862e1238 bitfield: add u8 helpers
-0e2dc70e3d0d bitfield: add tests
+url:    https://github.com/0day-ci/linux/commits/Ming-Lei/block-support-multipage-bvec/20180627-214022
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
--- 
-https://patchwork.kernel.org/patch/10476545/
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+sparse warnings: (new ones prefixed by >>)
 
+   net/ceph/messenger.c:842:25: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:842:25: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:847:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:848:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:855:29: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:869:9: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:139:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:140:32: sparse: expression using sizeof(void)
+   include/linux/bvec.h:140:32: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:889:9: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+   net/ceph/messenger.c:890:47: sparse: expression using sizeof(void)
+>> net/ceph/messenger.c:890:47: sparse: too many warnings
+
+vim +890 net/ceph/messenger.c
+
+6aaa4511 Alex Elder      2013-03-06  862  
+8ae4f4f5 Alex Elder      2013-03-14  863  static bool ceph_msg_data_bio_advance(struct ceph_msg_data_cursor *cursor,
+8ae4f4f5 Alex Elder      2013-03-14  864  					size_t bytes)
+6aaa4511 Alex Elder      2013-03-06  865  {
+5359a17d Ilya Dryomov    2018-01-20  866  	struct ceph_bio_iter *it = &cursor->bio_iter;
+6aaa4511 Alex Elder      2013-03-06  867  
+5359a17d Ilya Dryomov    2018-01-20  868  	BUG_ON(bytes > cursor->resid);
+5359a17d Ilya Dryomov    2018-01-20  869  	BUG_ON(bytes > bio_iter_len(it->bio, it->iter));
+25aff7c5 Alex Elder      2013-03-11  870  	cursor->resid -= bytes;
+5359a17d Ilya Dryomov    2018-01-20  871  	bio_advance_iter(it->bio, &it->iter, bytes);
+f38a5181 Kent Overstreet 2013-08-07  872  
+5359a17d Ilya Dryomov    2018-01-20  873  	if (!cursor->resid) {
+5359a17d Ilya Dryomov    2018-01-20  874  		BUG_ON(!cursor->last_piece);
+5359a17d Ilya Dryomov    2018-01-20  875  		return false;   /* no more data */
+5359a17d Ilya Dryomov    2018-01-20  876  	}
+f38a5181 Kent Overstreet 2013-08-07  877  
+5359a17d Ilya Dryomov    2018-01-20  878  	if (!bytes || (it->iter.bi_size && it->iter.bi_bvec_done))
+6aaa4511 Alex Elder      2013-03-06  879  		return false;	/* more bytes to process in this segment */
+6aaa4511 Alex Elder      2013-03-06  880  
+5359a17d Ilya Dryomov    2018-01-20  881  	if (!it->iter.bi_size) {
+5359a17d Ilya Dryomov    2018-01-20  882  		it->bio = it->bio->bi_next;
+5359a17d Ilya Dryomov    2018-01-20  883  		it->iter = it->bio->bi_iter;
+5359a17d Ilya Dryomov    2018-01-20  884  		if (cursor->resid < it->iter.bi_size)
+5359a17d Ilya Dryomov    2018-01-20  885  			it->iter.bi_size = cursor->resid;
+25aff7c5 Alex Elder      2013-03-11  886  	}
+6aaa4511 Alex Elder      2013-03-06  887  
+5359a17d Ilya Dryomov    2018-01-20  888  	BUG_ON(cursor->last_piece);
+5359a17d Ilya Dryomov    2018-01-20  889  	BUG_ON(cursor->resid < bio_iter_len(it->bio, it->iter));
+5359a17d Ilya Dryomov    2018-01-20 @890  	cursor->last_piece = cursor->resid == bio_iter_len(it->bio, it->iter);
+6aaa4511 Alex Elder      2013-03-06  891  	return true;
+6aaa4511 Alex Elder      2013-03-06  892  }
+ea96571f Alex Elder      2013-04-05  893  #endif /* CONFIG_BLOCK */
+df6ad1f9 Alex Elder      2012-06-11  894  
+
+:::::: The code at line 890 was first introduced by commit
+:::::: 5359a17d2706b86da2af83027343d5eb256f7670 libceph, rbd: new bio handling code (aka don't clone bios)
+
+:::::: TO: Ilya Dryomov <idryomov@gmail.com>
+:::::: CC: Ilya Dryomov <idryomov@gmail.com>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
