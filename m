@@ -2,86 +2,118 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891B0C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC282C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39D4A25641
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:45:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39D4A25641
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 75D50268F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 05:45:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="arcnDB1a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D50268F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932214AbeF0FpU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 01:45:20 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:38171 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752653AbeF0Fnd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 01:43:33 -0400
-X-UUID: 231182a4b1144cca9888ba8870e187a6-20180627
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1649009835; Wed, 27 Jun 2018 13:43:29 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 27 Jun 2018 13:43:28 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 27 Jun 2018 13:43:28 +0800
-From:   <sean.wang@mediatek.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <marcel@holtmann.org>, <johan.hedberg@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v4 7/7] MAINTAINERS: add an entry for MediaTek Bluetooth driver
-Date:   Wed, 27 Jun 2018 13:43:25 +0800
-Message-ID: <bc3603d61711b9e67f378c4a96d27f7052a30f8b.1530004712.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1530004712.git.sean.wang@mediatek.com>
-References: <cover.1530004712.git.sean.wang@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S1753175AbeF0Fp5 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 01:45:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751316AbeF0Fpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 01:45:55 -0400
+Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE91E267FF;
+        Wed, 27 Jun 2018 05:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530078354;
+        bh=V6ohwXtyx/0JJfI970j3QZNpDE24Mvnj4xYCGvl5A9M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=arcnDB1a7+Bm0NOfye1Cmq5zmFU1c9AI/rDrenBurFCAo+dT2Jnh4Pv4r1h7zQ/j5
+         fVxoziAr2ebuBjkHsxy4IFlDdfawYEKXWmYt93unPWRV66LvVzEPDsoa1avjr+zK0N
+         rzmKiCvcMMBDUZacMVAPSgwW5WXRJg6ztNEL9oKQ=
+From:   Andy Lutomirski <luto@kernel.org>
+To:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>, zhijianx.li@intel.com,
+        Andy Lutomirski <luto@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH] x86/entry/64/compat: Fix "x86/entry/64/compat: Preserve r8-r11 in int $0x80"
+Date:   Tue, 26 Jun 2018 22:45:52 -0700
+Message-Id: <6012b922485401bc42676e804171ded262fc2ef2.1530078306.git.luto@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+Commit 8bb2610bc496 ("x86/entry/64/compat: Preserve r8-r11 in int
+$0x80") was busted.  My original patch had a minor conflict with
+some of the nospec changes.  git apply is very clever and silently
+accepted the patch by making the same changes to a different
+function in the same file.  There was obviously a huge offset, but
+git apply for some reason doesn't feel any need to say so.
 
-Add an entry for the MediaTek Bluetooth driver.
+Move the changes to the correct function.  Now the
+test_syscall_vdso_32 selftests passes.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+If anyone cares to observe the original problem, try applying the
+patch at
+https://lore.kernel.org/lkml/d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org/raw
+to the kernel at 316d097c4cd4e7f2ef50c40cff2db266593c4ec4.  git am and
+git apply accept the patch without any complaints at all.  patch -p1
+at least prints out a message about the huge offset.
+
+Reported-by: zhijianx.li@intel.com
+Fixes: 8bb2610bc496 ("x86/entry/64/compat: Preserve r8-r11 in int $0x80")
+Cc: stable@vger.kernel.org
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/entry/entry_64_compat.S | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9d5eeff..b06e38d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8987,6 +8987,14 @@ F:	include/uapi/linux/meye.h
- F:	include/uapi/linux/ivtv*
- F:	include/uapi/linux/uvcvideo.h
- 
-+MEDIATEK BLUETOOTH DRIVER
-+M:	Sean Wang <sean.wang@mediatek.com>
-+L:	linux-bluetooth@vger.kernel.org
-+L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-+F:	drivers/bluetooth/btmtkuart.c
-+
- MEDIATEK CIR DRIVER
- M:	Sean Wang <sean.wang@mediatek.com>
- S:	Maintained
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 9de7f1e1dede..7d0df78db727 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -84,13 +84,13 @@ ENTRY(entry_SYSENTER_compat)
+ 	pushq	%rdx			/* pt_regs->dx */
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+-	pushq   %r8			/* pt_regs->r8 */
++	pushq   $0			/* pt_regs->r8  = 0 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-	pushq   %r9			/* pt_regs->r9 */
++	pushq   $0			/* pt_regs->r9  = 0 */
+ 	xorl	%r9d, %r9d		/* nospec   r9 */
+-	pushq   %r10			/* pt_regs->r10 */
++	pushq   $0			/* pt_regs->r10 = 0 */
+ 	xorl	%r10d, %r10d		/* nospec   r10 */
+-	pushq   %r11			/* pt_regs->r11 */
++	pushq   $0			/* pt_regs->r11 = 0 */
+ 	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
+@@ -374,13 +374,13 @@ ENTRY(entry_INT80_compat)
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	xorl	%ecx, %ecx		/* nospec   cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+-	pushq   $0			/* pt_regs->r8  = 0 */
++	pushq   %r8			/* pt_regs->r8 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-	pushq   $0			/* pt_regs->r9  = 0 */
++	pushq   %r9			/* pt_regs->r9 */
+ 	xorl	%r9d, %r9d		/* nospec   r9 */
+-	pushq   $0			/* pt_regs->r10 = 0 */
++	pushq   %r10			/* pt_regs->r10*/
+ 	xorl	%r10d, %r10d		/* nospec   r10 */
+-	pushq   $0			/* pt_regs->r11 = 0 */
++	pushq   %r11			/* pt_regs->r11 */
+ 	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
 -- 
-2.7.4
+2.17.1
 
