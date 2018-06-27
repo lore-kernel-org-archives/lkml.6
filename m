@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F14EC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3902BC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A30B2585E
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:06:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D319C258B3
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:07:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r/rsWyJG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A30B2585E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sy6aaIgJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D319C258B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966516AbeF0UGT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 16:06:19 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51366 "EHLO
+        id S966531AbeF0UHO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 16:07:14 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52281 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932944AbeF0UGS (ORCPT
+        with ESMTP id S965695AbeF0UHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 16:06:18 -0400
-Received: by mail-wm0-f66.google.com with SMTP id w137-v6so7153802wmw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 13:06:17 -0700 (PDT)
+        Wed, 27 Jun 2018 16:07:13 -0400
+Received: by mail-wm0-f66.google.com with SMTP id e69-v6so4218507wme.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 13:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=Qba6x5Mo9MqNCjEHjEr3j5LON/CQ2BtILWeziqYlfh0=;
-        b=r/rsWyJGQVOtD7XiZcHYEhTJpOzmsPpK4SO60ypbWhkb9gKg6weKOQOuuS/BlMacpB
-         1/5OMfWbrzpIRHVcbdy/a5kpfcj7vJk1QF4Zsf20RAlUmPHIL4qXNjxsX/wt4pDK1hoX
-         AG5fcbr9pG+MtaCnVCwGQXJxf5fMXPfQL3P9g0aQHCylS5H4WpQqo0qnlP4D4bN8kpMj
-         bNnkFBTOZt0MylnoljM+BiKr32m+bCr3clnF4VX3V7p+KiXRiUY1WoeTdrRbUf1dp5WK
-         0X0Ukbo7vCpgfL3Do9MCmKozT20fFlyq81dNmB/D8uomPDtwcgggwTZ/CRKUE6sHfo6K
-         fi9w==
+        bh=3+ahptcnPLjqv9RbpM+7gBj5KyJMOYqs7rGDbhiIQM4=;
+        b=sy6aaIgJxFliL2ovU22p/sh7+9I1fr8QQxInV+pteaTRZNfG1oq8OZOjEs3lGgLACM
+         G8Tie6JOaqU8bAznpSFUX1j5mbzdnpZv8fxmmSbt9kUcT0Erwj/lEUo4sjk9en9nLeIm
+         QhIoTRG30u4syxRkB8HuAXB76tWsGSDjzwxUv1HNomqQfNUwYbL/Znp1oU1+aTuRQPh1
+         b1rZngWD+AHE6tq5Wb0CTOFSQO/Nof9KqfZuhQxDely5eOY4MugmNwim288GNE/6C+iK
+         cbSaIeLZ1JOQeJfIAsoZ3YGMgKlszt4HsagJFA7/3J+Lka4ThNBH8hmAbqFlBXDYAGpn
+         h7pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=Qba6x5Mo9MqNCjEHjEr3j5LON/CQ2BtILWeziqYlfh0=;
-        b=m2N3gqagc5O2Imo/ihHgdrPQ5D1JOnaZ4s/vTkxm9jlhGY0y/o3XKAPcLwRjGbncm/
-         FFAJrtkj+YCrrss0fqKZPgfdNycJ5jySNFt8TZmygC0I6xMZtxZr86GZnH6id0nuLO2O
-         ZnMTqEqFSt4lLIO3YKK/mz5Dt3w4ofnyxK5JtmHQlEMzHvV5KZa6RIturYeMPmVP80OL
-         wQGJIFm0ZF0AuZNPnV8BESfq8IJIOVHvm7hv5nA07MM9HT5+2FuctcLloJXSE/mYpl5z
-         PDsz9M8zcK06Ajyb8yNgirTxZyKWNOpt6ZetiRWzJPReCb8HDKPRAePWi0luSLt1qHDq
-         eHsw==
-X-Gm-Message-State: APt69E0QyttEoErkoKiqHST1GTViLPSsMPVfSx1PWmX99S6ldnusHOQB
-        HWHsuQpwG3S1e3nGzx1CbQ==
-X-Google-Smtp-Source: AAOMgpehsbKMwmFpI7QUSScZNEeAfi+CaLO0mtH5qlh4GFPPycruqcl1WkZCKPsG9jDTS5cLRCXO0A==
-X-Received: by 2002:a1c:9ec5:: with SMTP id h188-v6mr2424016wme.76.1530129976989;
-        Wed, 27 Jun 2018 13:06:16 -0700 (PDT)
+        bh=3+ahptcnPLjqv9RbpM+7gBj5KyJMOYqs7rGDbhiIQM4=;
+        b=S2me8M7p6L6UCTeWrCjIAnJJAuyazas1V09w8tynx8W99zx3nERvJpSOkNe8akp6mj
+         w+9PTOMLiTwAl9oBvDVzq69uoaCTJaU+91Qv1YvNS+BeYndWTpiXhV1vhaarRpWrSBSP
+         bBpNV1B+babsVs9RO4d8cdc4d0q78UqHzbdszuW5eDoVAJl8zDgw84h9a6J234BtsBAn
+         xn2lwFcImVKbPDb70dGW4XFLsIx19jWOjOuI2UF7Bj2TlVQYsY+ZpnSgg4UHXGtCA4OC
+         +Z864HO0i3Ap7U6hV+ZKb+RzyKiqpZNZQPTmjtIehrwk4B7rXDJL7ZzI927mQnuYfmKz
+         3mHg==
+X-Gm-Message-State: APt69E13WZfoyTGield/+RfXNGXILAYvgDTvXL1+vBAoCo8uz51aHweL
+        N3yMsT7lXAH7QwXLN06Ucw==
+X-Google-Smtp-Source: AAOMgpfuHPoNqqvIYdURnkbbuEmbbi7C5Q+m5Y28CnKl2zHhsknUkcjFnBo0/HlgdTRdwFfQ1cTAQQ==
+X-Received: by 2002:a1c:cb8e:: with SMTP id b136-v6mr6166140wmg.112.1530130032620;
+        Wed, 27 Jun 2018 13:07:12 -0700 (PDT)
 Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm9380812wmp.23.2018.06.27.13.06.16
+        by smtp.gmail.com with ESMTPSA id r15-v6sm4523605wro.21.2018.06.27.13.07.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 13:06:16 -0700 (PDT)
-Date:   Wed, 27 Jun 2018 23:06:14 +0300
+        Wed, 27 Jun 2018 13:07:12 -0700 (PDT)
+Date:   Wed, 27 Jun 2018 23:07:10 +0300
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] proc: spread "const" a bit
-Message-ID: <20180627200614.GB18434@avx2>
+Subject: [PATCH] proc: use "unsigned int" in /proc/stat hook
+Message-ID: <20180627200710.GC18434@avx2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -73,38 +73,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Number of CPUs is never high enough to force 64-bit arithmetic.
+Save couple of bytes on x86_64.
+
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
 
- fs/proc/internal.h      |    4 ++--
- include/linux/proc_fs.h |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ fs/proc/stat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -113,12 +113,12 @@ static inline void *__PDE_DATA(const struct inode *inode)
- 	return PDE(inode)->data;
- }
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
+@@ -183,7 +183,7 @@ static int show_stat(struct seq_file *p, void *v)
  
--static inline struct pid *proc_pid(struct inode *inode)
-+static inline struct pid *proc_pid(const struct inode *inode)
+ static int stat_open(struct inode *inode, struct file *file)
  {
- 	return PROC_I(inode)->pid;
- }
+-	size_t size = 1024 + 128 * num_online_cpus();
++	unsigned int size = 1024 + 128 * num_online_cpus();
  
--static inline struct task_struct *get_proc_task(struct inode *inode)
-+static inline struct task_struct *get_proc_task(const struct inode *inode)
- {
- 	return get_pid_task(proc_pid(inode), PIDTYPE_PID);
- }
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -129,7 +129,7 @@ int open_related_ns(struct ns_common *ns,
- 		   struct ns_common *(*get_ns)(struct ns_common *ns));
- 
- /* get the associated pid namespace for a file in procfs */
--static inline struct pid_namespace *proc_pid_ns(struct inode *inode)
-+static inline struct pid_namespace *proc_pid_ns(const struct inode *inode)
- {
- 	return inode->i_sb->s_fs_info;
- }
+ 	/* minimum size to display an interrupt count : 2 bytes */
+ 	size += 2 * nr_irqs;
