@@ -2,115 +2,107 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D7AC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF12C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6000E25F06
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:36:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PKDr1OQG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6000E25F06
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CD2625F9D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:37:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CD2625F9D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935053AbeF0SgM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 14:36:12 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:49538 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933925AbeF0SgL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 14:36:11 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5RIY3TP106362;
-        Wed, 27 Jun 2018 18:36:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=jJ00nZXa2EG2aFOgjjGWw1nLUOPJqj00AUbbrORyeRg=;
- b=PKDr1OQG0sJmmP60T6Fohd8Gw1AReljXbBV5J9GZMZghOmMFYDnQqVaZd9g7itXG1mTX
- FI+5dYy0eteJ+QFSKmlrOovYcaUEp/SjLAgowurVHlXZW/GLApafTaxMadnLYwEXT7J5
- 7TH/R3kMRaP6HGguHgAgNSMca0Rse7WFkXxPc71b5+utlU92mWLHTnkN31wTXSjf/uC7
- O4Y42LmXPIdB1mhDWw7dyycGEfSuup6INHNeTrUzfmwgqnq1U8wY6S0Jvauzpi+vB8lp
- c1h6y7YvLTMbbRzFGtqoo8QtQCkWgGQkQD2PMFlcjtCqbOlMNSwNiZxBjFgwSD6BZ5ea Ww== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2jum57x0dx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Jun 2018 18:36:03 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5RIa2P3016658
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Jun 2018 18:36:02 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5RIa20L026803;
-        Wed, 27 Jun 2018 18:36:02 GMT
-Received: from mwanda (/197.157.0.49)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 27 Jun 2018 11:36:01 -0700
-Date:   Wed, 27 Jun 2018 21:35:54 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Michael Straube <straube.linux@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/4] staging: rtl8723bs: use ether_addr_copy() in
- rtw_macaddr_cfg()
-Message-ID: <20180627183554.g4iovrrv3d73bshf@mwanda>
-References: <20180626081409.9518-3-straube.linux@gmail.com>
- <CAHp75Vc3gEyP+h_XtJV7zKZV0J++Nyr04au7Rtu3h5y0JJASXg@mail.gmail.com>
- <37cca7e4-3c1f-b1ab-14b3-fd3dbbae8b01@gmail.com>
- <96782a8bbc8d5a8a911447beda78ca4eed6b9f04.camel@perches.com>
- <2a49e8e7-15ef-af4f-1039-b15ae60df11b@gmail.com>
- <20180627083306.rk3niwazi332rqs5@mwanda>
- <6221958a-f817-e01b-7e0f-adbbba9acde4@gmail.com>
- <20180627131158.xttl27awxie2w6ia@mwanda>
- <CAHp75VeEUFEn5zih+2hntU7GCxx7U5rW60DMjRBRNo2EXhSdpw@mail.gmail.com>
- <38f16dbee8612fc9c8115177079adeb8981276a6.camel@perches.com>
+        id S965899AbeF0ShZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 14:37:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50302 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754551AbeF0ShX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 14:37:23 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 75ADE20798; Wed, 27 Jun 2018 20:37:21 +0200 (CEST)
+Received: from localhost (unknown [88.128.82.6])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 41516203B4;
+        Wed, 27 Jun 2018 20:37:21 +0200 (CEST)
+Date:   Wed, 27 Jun 2018 20:37:21 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/7] Allwinner A64 DE2 CCU support with dedicated DE2
+ bus driver
+Message-ID: <20180627183721.jmmsmp3u3mq4drvb@flea>
+References: <20180622122615.55836-1-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ps2gknofc7sl43sz"
 Content-Disposition: inline
-In-Reply-To: <38f16dbee8612fc9c8115177079adeb8981276a6.camel@perches.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8937 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=745
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806270199
+In-Reply-To: <20180622122615.55836-1-icenowy@aosc.io>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 09:42:47AM -0700, Joe Perches wrote:
-> On Wed, 2018-06-27 at 19:14 +0300, Andy Shevchenko wrote:
-> > On Wed, Jun 27, 2018 at 4:11 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > > On Wed, Jun 27, 2018 at 02:56:00PM +0200, Michael Straube wrote:
-> > > > Should I add a thanks line to the commit message:
-> > > > 
-> > > >     Thanks to Dan Carpenter, Joe Perches and Andy Shevchenko.
-> > > > 
-> > > > Or would that be considered as too much?
-> > > 
-> > > You can write whatever the heck you want...  :P  No one cares.
-> 
-> I hope that's true.
-> 
-> > > When it comes to credit, I do appreciate Reported-by tags because LWN
-> > > and employers do count those sometimes.
-> 
-> Which is likely as useful as judging engineer
-> productivity by LOC counts.
-> 
 
-What are you talking about??  Reported-by count absolutely means you're
-a Rock Star.
+--ps2gknofc7sl43sz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-regards,
-dan carpenter
+On Fri, Jun 22, 2018 at 08:26:08PM +0800, Icenowy Zheng wrote:
+> This patchset tries to implement the Allwinner A64 DE2 as a bus driver,
+> in order to model the fact that the SRAM claim controls the access to
+> the whole DE2 memory space.
+>=20
+> PATCH 1 and PATCH 4 are for the CCU part.
+>=20
+> PATCH 2 is the device tree binding for the A64 DE2 bus, and PATCH 3
+> implements the bus driver.
+>=20
+> PATCH 5 adds the DE2 CCU device tree node, with the DE2 bus node.
+>=20
+> PATCH 6 and 7 are HDMI simplefb patches for A64. They're present as a
+> test to this patchset.
 
+Applied all the patches with the minor modifications Chen-Yu and I
+suggested.
+
+The threading was broken on your serie though, so you probably want to
+check your git configuration.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ps2gknofc7sl43sz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsz2WAACgkQ0rTAlCFN
+r3Rqtg/9FNqj+55uBUWVVg6p+GWADbscDtLsWrg3KBoHk8CIzJIwkYLz9Qq6Szzn
+igI3+8w33dexvIWpcax8sRhtz/RnGRZeKOsgZI2uUQ8thANtUYiHo09A65yQUmPG
+sBWCAIUHAY+8fsfDNCyeUysY8LhnF1UVLT929SvmBee0qk6aHeE41d17ugOduZib
+0OZaITGf5SkV1LV1T60BM/ATQeRyGJ5gX4ysbxMgPacMh1F0yzu9vcwa7XKlc2iS
+Nl64ar/OG72LaYRjD45l4OJuRvfb7S30iZULFJnI9tSSyLDBGoGuFwmssQF72tvs
+KeMyXAczknLt6VmAT7ujqeP5J9h1qyNG/v97A4UbQWYqJ5orYKD/y8Q9VBrh/UfI
+LZEeGZzjgL3MwFaSYVyorNtzCBc3vUz0gN9f9heV9JAYSN20L+YkNs51vciXpJNg
+rzzOjLjQi1DJIOzkwtysg6H4XXzQwIZdIizZnTY8pL70UKzzmczAPFEVy8NnHefc
+QMV7Xt8hu1zDSlgpVQ3t3zMnF7hpHHEpsSyWRm7ttWrmTiPYXIKz7wlFCFNTd/57
+B+5LLz1ezlZ0iUabpy1cRTHxEWDPltnQPi86f2WD44p9372pJglyqyWBlm/CSAIB
+2PJA0dukM660YYDdrwlEfCxTFh3woaqCqRgPJNwrx28tq2wpM9Q=
+=G2y+
+-----END PGP SIGNATURE-----
+
+--ps2gknofc7sl43sz--
