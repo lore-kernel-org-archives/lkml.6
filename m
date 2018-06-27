@@ -2,105 +2,91 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C82C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3876C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B82026211
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:37:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B82026211
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 416582623A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:40:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="F91Wc0wz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 416582623A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ingics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934370AbeF0MhO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:37:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52940 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933884AbeF0MhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:37:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 10C1DAF75;
-        Wed, 27 Jun 2018 12:37:08 +0000 (UTC)
-Date:   Wed, 27 Jun 2018 14:37:05 +0200
-From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Andreas Schwab <schwab@suse.de>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Jeff Mahoney <jeffm@suse.com>,
-        "Peter Zijlstra," <peterz@infradead.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org,
-        Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-Subject: due to kconfig changes kernel config file is no longer sufficient
- for configuring the kernel
-Message-ID: <20180627143705.5a1fed1c@kitsune.suse.cz>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S934373AbeF0Mkq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:40:46 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41683 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932312AbeF0Mkp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:40:45 -0400
+Received: by mail-pg0-f68.google.com with SMTP id l65-v6so864961pgl.8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 05:40:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=XCwLKGSYfrvwzXamq0oRwqE/jdhzZfxZOOSDVmKqulU=;
+        b=F91Wc0wzUd/ec01hERBz2cbLYnIrapVvmW7o+LTASQbDvPJIzqaYBu/ueKrmhTJFOy
+         Lns3isV2zYx07iNZEZiaq2an2e6RDDq8dkYdnE7guHI7t+yvhnfaEUOtHXXzO2jjGEe8
+         93WETGDA9T7nrfcIV318Iz4Bq7f4mTPFD80rPhXFOLZ0m8blB0O9ItyyouD8/VGMzaUZ
+         2n1lU4JKp/el1YrqTvA9sdLN+hPdkY9gJD4t7A6lJ8yqclnN37nC9Om7vwI2Ebxhl4Qe
+         zkBy/YXP7o24qqc6EbuN36EVTY0iuyoXDx5Ok3xPsEwpQSu9FXKKRzflA3Yt9YpuBBQG
+         ZwVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XCwLKGSYfrvwzXamq0oRwqE/jdhzZfxZOOSDVmKqulU=;
+        b=DuJNMflmk/RBe78Lc6fJ9b7bNDmmhTpyXHPenvHPgUhecT1JKC0zP2YqKsSDJcRpjg
+         ajFeOerbP7ULl/PtWTmwGY4dnGzurlvAYPqsj8pA9PoozH3+RlnLES5Q+qP43HhD6yLm
+         gTXhJKqyh1Bw795CK7s13yTu4kpDeFxtmT50DrqYiBZsmJTNZGk3Bvul+A4rRxF4cK4S
+         FbuoM+/KWmxRN2SSxIqmy+z+OLU8acyf3nUkuRSMA/ItMZL2NV6KLjxu2ES/NiISgxfR
+         93Ry2TALGYiIbKUDZ0lqJH7AA90b822zIRz772BKVbSXkIlo6ZJ9B3bvdiGW/xjHCRq6
+         Sf6w==
+X-Gm-Message-State: APt69E0iCiB+EBBV13GpXcaZDz0IUQzgwOpsMUWJhNETPf3olLYaT+Yv
+        +JjzHwhocCKZq04B6z2UbFvTqGxk
+X-Google-Smtp-Source: AAOMgpe7r4XeL1DTFEHdQHYPujdlKFFMw/AMVQta++DhyXzIygVzL9RrmMvkCV+8mAPXm8pPDyuWpw==
+X-Received: by 2002:a62:9945:: with SMTP id d66-v6mr5702043pfe.192.1530103244500;
+        Wed, 27 Jun 2018 05:40:44 -0700 (PDT)
+Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
+        by smtp.gmail.com with ESMTPSA id e5-v6sm5560019pgs.59.2018.06.27.05.40.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 05:40:43 -0700 (PDT)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] regulator: bd71837: Staticize ldo_2_volts
+Date:   Wed, 27 Jun 2018 20:40:13 +0800
+Message-Id: <20180627124014.30615-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/bd71837-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-in the x86 Kconfig we have this:
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index 6eae4d0432a2..403b45de1262 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -195,7 +195,7 @@ static const struct regulator_linear_range bd71837_ldo1_voltage_ranges[] = {
+  * LDO2
+  * 0.8 or 0.9V
+  */
+-const unsigned int ldo_2_volts[] = {
++static const unsigned int ldo_2_volts[] = {
+ 	900000, 800000
+ };
+ 
+-- 
+2.14.1
 
-# Select 32 or 64 bit
-config 64BIT
-        bool "64-bit kernel" if "$(ARCH)" = "x86"
-        default "$(ARCH)" != "i386"
-        ---help---
-          Say yes to build a 64-bit kernel - formerly known as x86_64
-          Say no to build a 32-bit kernel - formerly known as i386
-
-Since commit 104daea149c4 ("kconfig: reference environment variables
-directly and remove 'option env='") the value of ARCH is not saved in
-the kernel config. Since commit f467c5640c29 ("kconfig: only write '#
-CONFIG_FOO is not set' for visible symbols") the value of 64BIT is not
-saved if the ARCH is set i386 or x86_64 because the symbol is not
-visible.
-
-There is a number of ways to hack this particular case to work.
-
-However, there is a more general problem with this. Some config options
-may depend on the environment, may not be saved, and the environment is
-not saved either. So in the end all the infrastructure with symlinks
-from module directory pointing to the kernel source and object
-directory is useless. To interpret the config stored there you need the
-environment and that is not saved anywhere. So if you try to build
-out-of-tree module it might end up reconfiguring your kernel and
-producing useless modules.
-
-Is there any plan to fix this?
-
-Thanks
-
-Michal
