@@ -2,158 +2,153 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0675EC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418A2C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6BA625B97
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:01:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="rpKwP4Cs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6BA625B97
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wavecomp.com
+	by mail.kernel.org (Postfix) with ESMTP id 04A4E25AE8
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:02:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A4E25AE8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934954AbeF0QBU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:01:20 -0400
-Received: from mail-eopbgr700111.outbound.protection.outlook.com ([40.107.70.111]:28175
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934927AbeF0QBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:01:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cm5+cUM5MiAJGQlLjJF0KuvvvswqxbRI8G5KJvzUNIM=;
- b=rpKwP4CsDrzLp0pDJ4zksDJEdVAfJms/LF7koWGFqai544NTFE0rkHhPX+ELhsaJsywY0Vj9NDhyd97ilZ6rkevLsFqs2UeTXjFnn4a2kEsj+XhlTcf337SW1DGP6X3F6o+VySJCwhOHU8hisy30UPRAp/s6khLJsSvwnRrsYcA=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-Received: from localhost (4.16.204.77) by
- BN7PR08MB4929.namprd08.prod.outlook.com (2603:10b6:408:28::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.20; Wed, 27 Jun 2018 16:01:13 +0000
-Date:   Wed, 27 Jun 2018 09:01:09 -0700
-From:   Paul Burton <pburton@wavecomp.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mips: generic: allow not building DTB in
-Message-ID: <20180627160109.hvps2lmmte4yibek@pburton-laptop>
-References: <20180626115712.11643-1-alexandre.belloni@bootlin.com>
- <20180626115712.11643-2-alexandre.belloni@bootlin.com>
- <20180626140743.GE4207@piout.net>
+        id S965627AbeF0QCS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:02:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36110 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S964786AbeF0QCQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 12:02:16 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RG1EFV081537
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:02:16 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvbcwyewn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:02:15 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 27 Jun 2018 17:02:12 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Jun 2018 17:02:10 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RG29G216646372
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Jun 2018 16:02:09 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 151D511C06C;
+        Wed, 27 Jun 2018 17:02:01 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 48BFA11C04A;
+        Wed, 27 Jun 2018 17:02:00 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.205.67])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 27 Jun 2018 17:02:00 +0100 (BST)
+Date:   Wed, 27 Jun 2018 19:02:07 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     mhocko@kernel.org, linux-mm@kvack.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: why do we still need bootmem allocator?
+References: <20180625140754.GB29102@dhcp22.suse.cz>
+ <CABGGisyVpfYCz7-5AGB-3Ld9hcuikPVk=19xPc1AwffjhsV+kg@mail.gmail.com>
+ <20180627112655.GD4291@rapoport-lnx>
+ <CAL_JsqL6dV9+tP9CQ7XoCoaf0wUO6NgHZ2-QNUyQMZx2pny+xA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180626140743.GE4207@piout.net>
-User-Agent: NeoMutt/20180622
-X-Originating-IP: [4.16.204.77]
-X-ClientProxiedBy: MWHPR22CA0030.namprd22.prod.outlook.com
- (2603:10b6:300:69::16) To BN7PR08MB4929.namprd08.prod.outlook.com
- (2603:10b6:408:28::15)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cfae748a-8c9a-4627-19c0-08d5dc473535
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(8989117)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR08MB4929;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;3:hXscOqxzdElJfUwTui0bxGbJJfEVrDyuBBWXWc17D4raFzmGkWsUa42UwxCbVeJBxKuTKB0yDYIObm6O9ZfKFtvHMCunfW9j6Ych804sSuis50It507bZaQCkjljlOPlvhQDVuz6KtIXCErULqlwWXINwsRYXYnjsspiItYPw2BsdpsYF038n9yuszZRcz1wR/gspM6v5j8a8V4uPUaa6IzmMYSGAOMQcDT2XqqCTeJVzEHe8Wr4bDoZ3MgouI3W;25:KKfBYsklG5ATrpPR3Uz9euk9D0kXhAaFX0QmkcnicLlCkkR/oyTMGZ5CLx6I3g3Xx9NpLvgGjVi+uDMDiJU9gBRczlv+8uKpgehP3dnfYlcHJ/0X7uZyhPterpZLHCrmppXGmhW9gDN49VZiiPYhg13+MoeVuteUEcd6d5Md89EEysUnxE8M/4y5SJom4eHmQpwVt0kqe2DFFkqiDMVxr7G3cmKBUvKVuetR0piJinVw0w7KgaK0g3/5kJCaCMwjbo8/vqZczsUgZRP7OemOEWzexHFt3Z0jKB2LR1ibr5h/E5/w44L5lXDuIy4wkPL/s6nvCUMRS4LhTRwwe2Ahcw==;31:CqXrSQlf9UCqjpSdJ7KPqT18yOcnct+oU66ffk0mYDo7gu3cwuHE8GZ3JQ3QjG03pkgkDKDC5BEjykwM2Hle35fXKkzqEx+rSB414Fym3xkA4OoN+pktRjWfClJhawIPvUhKkB1atyG620QAansltoiV+wRSqdbes+7QP+5VvR2T9AnNzHuG36wMqTtOdPCF5PcYz5AHSmvT6V//kofayyv1c3BjyeWAFH6jcSU4I1A=
-X-MS-TrafficTypeDiagnostic: BN7PR08MB4929:
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;20:wrn2c4+Kmo9QbCoGJBWVRG7ZlxhQI7sH9cODvfL3qYiVPTrM0VY4o9DJqLMnBRQ//XVgkItUraRMBN7mmJt0aEGWBVp+vYzh31zNbEivRaDqoo5Ih79gAOjwQiI4uOY0JGF+VrF/nsQcXO0cnVzhz5DsriHQI01QIGiBOJJEypkMCpNDSi05ZMefym0bbz5a4Q82ERDq1Y43Sq8lX5ClSZcSmxGIa6h8xSXsXqPbHN2qb/vk9hnNoIFPwofiGBU0;4:dnZvIEXBt+zg94yxee2DZlAApW5Xv6QlFE9JrFn7QlUFmmRIboWAuRRQTECQZ3d6qb7akHT1tIDpFBcvrNV0Nyo6zFzlWfXIYNLDYkZ9WixYaPKmVi+NEFfwfGv+yLbfUsmpnTjl1cKvquadF+aOUJLLC7giX+z7muqDnnSJNuOZlOXW3Ca2GHnkrhXlNf8D4sP5q630B2WMDsm66OGbupauRQA5UwhYI0mWiS+a2k1YaAZ+fWMVkUCzA3xZEx+qLKDEp/aaDw8dmsR9hQFJ2w==
-X-Microsoft-Antispam-PRVS: <BN7PR08MB492977A017A9FABC92B2DD1EC1480@BN7PR08MB4929.namprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(2016111802025)(20161123562045)(20161123560045)(20161123558120)(6072148)(6043046)(201708071742011)(7699016);SRVR:BN7PR08MB4929;BCL:0;PCL:0;RULEID:;SRVR:BN7PR08MB4929;
-X-Forefront-PRVS: 0716E70AB6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(136003)(39840400004)(396003)(376002)(366004)(346002)(199004)(189003)(8676002)(33896004)(76506005)(76176011)(4326008)(33716001)(81156014)(53936002)(105586002)(81166006)(25786009)(50466002)(8936002)(6496006)(6486002)(106356001)(52116002)(6246003)(7736002)(305945005)(386003)(476003)(956004)(5660300001)(6916009)(6666003)(446003)(11346002)(26005)(186003)(16526019)(486006)(54906003)(316002)(68736007)(58126008)(2906002)(16586007)(86362001)(6116002)(3846002)(478600001)(1076002)(23726003)(47776003)(66066001)(14444005)(229853002)(97736004)(9686003)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN7PR08MB4929;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR08MB4929;23:EpSccCpKqyl0qo39Nr5bHThnqfihUsL5bv/xfl7tz?=
- =?us-ascii?Q?R3B/HMxfR5dXlUuvoxDBS6nKxLfZBRqXRCjRmt/7uct7J9JboDbUsVK4EuXk?=
- =?us-ascii?Q?v0E3HWWxzKTg3hKlThd6Z9lLi4ykQ/XiNuuDMZ42C+9V4sQ7ux6BST+KVnwr?=
- =?us-ascii?Q?c1xMiXAciHM2WsjE2Uo3jxlQGw1zPuJp+PpjsXjrkohmQPoRNOL5EXKLNvoE?=
- =?us-ascii?Q?SjjYzyY4HjfXuAIxDDjJMy8/jRZ5IiyplVZhdzhGJMjCGKmVljkiJw0A4rWn?=
- =?us-ascii?Q?ayHPgVYvPRfFlElQBDnIC1DeojbVoImjJIsexrxuJXMAgG0iIB089nwSceTV?=
- =?us-ascii?Q?UQ0xmIRqPW5FBrPWmSRcJ/HoijHc+TJOEpzEgssOBnOphjE6YdIvgcbjmswK?=
- =?us-ascii?Q?H7BMpoYpyiq7Aa3kxz6BpH+pclCbqMC6oVz73hj7NcXJPArunOEMgGxyzx3p?=
- =?us-ascii?Q?aGQnnGyASpR+gdstF0T6Ddot2R3bCS+Pr3dt4TjMcammDax55bUpot3Z8+cS?=
- =?us-ascii?Q?OmKbt6k9MsgWTb1ajHR5siCPD4S4m/eG9vsmGNOi86TRk8n3WYLxKdqFSCeo?=
- =?us-ascii?Q?RUq7z0KvZ4eVcmOHPMzhTtv2y+ElapKrtI60JdEik73ZWDt6Qe6F2D0zay1C?=
- =?us-ascii?Q?Xg87sBRrDSmIA15F+jEhk5+zVDhzqBScyUwiLn5ehmmDas4y5Ijb6IsyUHTb?=
- =?us-ascii?Q?8fQNLR3tMrR5SnFOjVKaiqxaPMrTwXLv400nOoNWic9NZJv5wJMSDi0G2dNC?=
- =?us-ascii?Q?x/8JCPHTEYNXe1jy58m+lHduGP9MpE3Myih9EXnlUjKE4Al8BDMC/njG4EiY?=
- =?us-ascii?Q?eorA+w7nF3AzT4aAri/2MRByJHaV54lwvDHjWNv/JkcOMS6avpd0EtWBgr7o?=
- =?us-ascii?Q?2aPwR7xhov+N9zJMqHdYgpJFIftR1Gepq/L1ocjnlE6IDuW1zI8tnhtqlxQ8?=
- =?us-ascii?Q?5jPLrDJ0dvn2DUvQ6xnJuFl9P+bGbEOv8vapSrtp1uO1obGPA7KJ+HB1oLBZ?=
- =?us-ascii?Q?+fKtbdcVYHAt5NkC2vuymqGRiGCw/iHHr7vplS4WjZwKzOHx2TI7dkwW3Lpz?=
- =?us-ascii?Q?elnkawHAy1gLKuHEb57ICludJ6CG7rhIhxQ22rXNq5yqxj64c442+LICnbwQ?=
- =?us-ascii?Q?T0KGXwFLPWpn5wRli2sK17Gw8JtZ1pvkA0JSx/SlJaVzK4MXRrLpUFYNw6aI?=
- =?us-ascii?Q?tvzX8aBCMUtpgtg108BMC2/vuoaS5FJQulRdw5try0TAiouCAnMu23aFNb5B?=
- =?us-ascii?Q?mwyJrNf5A9Fw6O/uHEZ1abvEPt3m144UpIPODjgMVZikxtHiHx//n2pC5DqH?=
- =?us-ascii?Q?SFpBM1SLUi6TlWebvC4H8GP6zwbvFULCVGUC2Lvnjb4?=
-X-Microsoft-Antispam-Message-Info: 61QxaFqn/tn8XK3Omf1cnvJ1hnnAqpEpSo6eE5nfTDN4qlmxOdtEaQaa8RFPYYt0FKhbNDSycRMn39cGuBb4abZw4mzjLknu14w6OLD7xMEAVlw++yWXP1u338NT8rZJoYu7JQQxwr42TLKJ2xSCSxwYx8vmFalDqdYcgdompsboh01L69S2GQ64G3+NiWJkhTFgu7ZnLXiSg8/rsugzMTTJW4pt3PPv8JXanBapvcODXN6yriv36B2vz9CIdNcTUrFOqETFAaHH+NHRtGL4I3ESYnmHILBbhH1lLV7pnga2DAuKsvXtboO5r1MTtjtyA1/evHYC9XUCLKl1lCBjFL9Vo5zAl5cXe96mdoFaZ1s=
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;6:RsaMCp143nh+Tshr9kgvss1jOn2ErbC3x0yM+xfMgvkvHQhin3uOf9PJPGLgrslxmsPwFbAHZ4ogPBhNSx87vTNiscl6VsD3db/KLp2lnbwHVl0FH7kyBX8/7JW9PGpzHO4YRYdACJP6FCWkcuIPsOlUy8stF6KTWVfBCC+lHavGiDNNw7NYSz2cwV3/GNqMWs4m389K/uFmR1We/V0X+jEVZGu0YdLl3C36jBBUqHfj7BruZqNW7YxvlB7dAsAEzW6UqjAd9t2DAhAVAENj7Sz1tBb3EqbI3ro3FzpzR8tmtogUrizdjOfc/XzTiFLE/upxeKAM0QeS+Vs/lw58MwSZq85iKzcXKtyRuxWvcbAjdBbCJaQvLti9lhX0mz9t5q4vHoky4/LlfhqcEjaowmwOzbQ5ChHnvZFNxbvEpPPi0WowA07v8xKTIaM7RZwbsw5vhG+3ZjFVtqWgUJ9oNg==;5:md3sFg3Zp5LeAUgoKlxiCt+Joufn5qG4rdEQ3SytKrY0qWDA0hRKxmwb3cdumEdZgfpqzZrIxm4vPQjTgrqh/VZHEGF/OE66lct0t7NjFWVi+tzG6TjkCWUbmuS3EB+k7u8MAgSYKfilA8BgKwiO6u2YgI62OcDzJw8JNM+P5cE=;24:4Y5GpunjqgBo1pZhaHGmDPQgj6U0qLwJTInCtZSDgddT8KtqXkjok6YDBqpuI0bUKHvz6/lmYc8Dt2JMOXLJKYnNC/OfyDxMsrCZqPdKifY=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;7:Op+f2MDOHo4qU7W5cxPZp8qFHAc3a/J7BvK+SbuBRbOHg0mG/QE4o+Ce5TXkXhfn5VdjphpQ5ra+Q4eLxdPcTtZmjcjCZHKOO1PW9fNDcVm6gIaxp6ZXtIjEffMUPI4bdUbOe5tMMXjyiaHqY0/96w0LltwsXCNe9ADo9bpAno86CAo9fofQyT55tye3VV5ZG17TyMAhoOSFQvAejoLMbTOATUxXhJMjcdPG3oiqhjs3TPGs8AcxnqnNDTFbaf/L
-X-OriginatorOrg: wavecomp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2018 16:01:13.3910 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfae748a-8c9a-4627-19c0-08d5dc473535
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4929
+In-Reply-To: <CAL_JsqL6dV9+tP9CQ7XoCoaf0wUO6NgHZ2-QNUyQMZx2pny+xA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18062716-0028-0000-0000-000002D5939C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062716-0029-0000-0000-0000238CFC50
+Message-Id: <20180627160206.GB19182@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806270172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
-
-On Tue, Jun 26, 2018 at 04:07:43PM +0200, Alexandre Belloni wrote:
-> > diff --git a/arch/mips/generic/vmlinux.its.S b/arch/mips/generic/vmlinux.its.S
-> > index 1a08438fd893..9c954f2ae561 100644
-> > --- a/arch/mips/generic/vmlinux.its.S
-> > +++ b/arch/mips/generic/vmlinux.its.S
-> > @@ -21,6 +21,7 @@
-> >  		};
-> >  	};
-> >  
-> > +#if IS_ENABLED(CONFIG_BUILTIN_DTB)
+On Wed, Jun 27, 2018 at 07:33:55AM -0600, Rob Herring wrote:
+> On Wed, Jun 27, 2018 at 5:27 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+> >
+> > Hi,
+> >
+> > On Mon, Jun 25, 2018 at 10:09:41AM -0600, Rob Herring wrote:
+> > > On Mon, Jun 25, 2018 at 8:08 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > >
+> > > > Hi,
+> > > > I am wondering why do we still keep mm/bootmem.c when most architectures
+> > > > already moved to nobootmem. Is there any fundamental reason why others
+> > > > cannot or this is just a matter of work?
+> > >
+> > > Just because no one has done the work. I did a couple of arches
+> > > recently (sh, microblaze, and h8300) mainly because I broke them with
+> > > some DT changes.
+> >
+> > I've tried running the current upstream on h8300 gdb simulator and it
+> > failed:
 > 
-> Thinking more about that, the conf@default configuration should probably
-> not be removed if the platform is not using DT at all. Are there still
-> MIPS platforms without DT support?
+> It seems my patch[1] is still not applied. The maintainer said he applied it.
 
-There are, but not ones that are supported by the generic platform so we
-don't need to worry about those here. We basically have 2 cases to
-consider:
+I've applied it manually. Without it unflatten_and_copy_device_tree() fails
+to allocate memory. It indeed can be fixed with moving bootmem_init()
+before, as you've noted in the commit message.
 
-  1) FDT as an image within the FIT.
+I'll try to dig deeper into it.
+ 
+> > [    0.000000] BUG: Bad page state in process swapper  pfn:00004
+> > [    0.000000] page:007ed080 count:0 mapcount:-128 mapping:00000000
+> > index:0x0
+> > [    0.000000] flags: 0x0()
+> > [    0.000000] raw: 00000000 0040bdac 0040bdac 00000000 00000000 00000002
+> > ffffff7f 00000000
+> > [    0.000000] page dumped because: nonzero mapcount
+> > ---Type <return> to continue, or q <return> to quit---
+> > [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc2+ #50
+> > [    0.000000] Stack from 00401f2c:
+> > [    0.000000]   00401f2c 001116cb 007ed080 00401f40 000e20e6 00401f54
+> > 0004df14 00000000
+> > [    0.000000]   007ed080 007ed000 00401f5c 0004df8c 00401f90 0004e982
+> > 00000044 00401fd1
+> > [    0.000000]   007ed000 007ed000 00000000 00000004 00000008 00000000
+> > 00000003 00000011
+> > [    0.000000]
+> > [    0.000000] Call Trace:
+> > [    0.000000]         [<000e20e6>] [<0004df14>] [<0004df8c>] [<0004e982>]
+> > [    0.000000]         [<00051a28>] [<00001000>] [<00000100>]
+> > [    0.000000] Disabling lock debugging due to kernel taint
+> >
+> > With v4.13 I was able to get to "no valid init found".
+> >
+> > I had a quick look at h8300 memory initialization and it seems it has
+> > starting pfn set to 0 while fdt defines memory start at 4M.
+> 
+> Perhaps there's another issue.
+> 
+> Rob
+> 
+> [1] https://patchwork.kernel.org/patch/10290317/
+> 
 
-  2) FDT embedded within the kernel binary, ie. legacy boards like
-     SEAD-3 (& Malta when I get its port to generic upstreamed).
+-- 
+Sincerely yours,
+Mike.
 
-Case 2 is where conf@default is most useful, since it allows the FIT
-image to be loaded (presuming the board has a new enough bootloader)
-without the bootloader knowing anything about the FDT. Legacy boards
-with the DT built into the kernel then figure out which to use based on
-the detect function given in their struct mips_machine.
-
-So I think the most natural #ifdef here might be on
-CONFIG_LEGACY_BOARDS, since it would be a little easier to understand at
-a glance where the configuration is useful.
-
-Thanks,
-    Paul
-
-> >  	configurations {
-> >  		default = "conf@default";
-> >  
-> > @@ -29,4 +30,5 @@
-> >  			kernel = "kernel@0";
-> >  		};
-> >  	};
-> > +#endif
-> >  };
