@@ -2,92 +2,73 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F55C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F2EC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A723225EF8
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:16:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A723225EF8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D3C4E25E24
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:20:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C4E25E24
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934130AbeF0PQl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:16:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43857 "EHLO mail.bootlin.com"
+        id S934736AbeF0PUQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:20:16 -0400
+Received: from mga05.intel.com ([192.55.52.43]:43102 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753013AbeF0PQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:16:40 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AD95720702; Wed, 27 Jun 2018 17:16:37 +0200 (CEST)
-Received: from windsurf.home (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4C74C203EC;
-        Wed, 27 Jun 2018 17:16:27 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 17:16:27 +0200
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] ARM: dts: pxa: fix the rtc controller
-Message-ID: <20180627171627.592849b5@windsurf.home>
-In-Reply-To: <20180627150150.23951-2-robert.jarzmik@free.fr>
-References: <20180627150150.23951-1-robert.jarzmik@free.fr>
-        <20180627150150.23951-2-robert.jarzmik@free.fr>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S934130AbeF0PUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 11:20:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 08:20:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
+   d="scan'208";a="67768733"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2018 08:19:53 -0700
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Hans de Goede <hdegoede@redhat.com>, Jun Li <jun.li@nxp.com>,
+        Mats Karrman <mats.dev.list@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/8] usb: pd: include kernel.h
+Date:   Wed, 27 Jun 2018 18:19:46 +0300
+Message-Id: <20180627151953.30942-2-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180627151953.30942-1-heikki.krogerus@linux.intel.com>
+References: <20180627151953.30942-1-heikki.krogerus@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This makes life a bit easier for the drivers that include
+pd.h. All pd_header_*_le() inline functions defined in pd.h
+call le16_to_cpu(), and all *_LE() macros in pd.h call
+cpu_to_le16().
 
-On Wed, 27 Jun 2018 17:01:50 +0200, Robert Jarzmik wrote:
-> The RTC controller is fed by an external fixed 32kHz clock. Yet the
-> driver wants to acquire this clock, even though it doesn't make any use
-> of it, ie. doesn't get the rate to make calculation.
-> 
-> Therefore, use the exported 32.768kHz clock in the PXA clock tree to
-> make the driver happy and working.
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
-> Since v1: change the dummy clock by the actual 32.768kHz
-> ---
->  arch/arm/boot/dts/pxa25x.dtsi | 4 ++++
->  arch/arm/boot/dts/pxa27x.dtsi | 4 ++++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/pxa25x.dtsi b/arch/arm/boot/dts/pxa25x.dtsi
-> index 95d59be97213..78a413ea0e88 100644
-> --- a/arch/arm/boot/dts/pxa25x.dtsi
-> +++ b/arch/arm/boot/dts/pxa25x.dtsi
-> @@ -80,6 +80,10 @@
->  			#pwm-cells = <1>;
->  			clocks = <&clks CLK_PWM1>;
->  		};
-> +
-> +		rtc@40900000 {
-> +			clocks = <&clks CLK_OSC32k768>>;
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+ include/linux/usb/pd.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Double closing bracket, doesn't look good.
-
-Best regards,
-
-Thomas
+diff --git a/include/linux/usb/pd.h b/include/linux/usb/pd.h
+index 09b570feb297..f2162e0fe531 100644
+--- a/include/linux/usb/pd.h
++++ b/include/linux/usb/pd.h
+@@ -15,6 +15,7 @@
+ #ifndef __LINUX_USB_PD_H
+ #define __LINUX_USB_PD_H
+ 
++#include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/usb/typec.h>
+ 
 -- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.18.0
+
