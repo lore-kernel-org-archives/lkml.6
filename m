@@ -2,274 +2,169 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE20CC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8027DC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 838182657A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:47:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 838182657A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2795B2657B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:48:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UhbyG6jU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2795B2657B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934152AbeF0JrT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:47:19 -0400
-Received: from mga06.intel.com ([134.134.136.31]:27374 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932135AbeF0JrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:47:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 02:47:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,278,1526367600"; 
-   d="scan'208";a="62571561"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 27 Jun 2018 02:47:15 -0700
-Received: from [10.125.252.135] (abudanko-mobl.ccr.corp.intel.com [10.125.252.135])
-        by linux.intel.com (Postfix) with ESMTP id AE44B58011E;
-        Wed, 27 Jun 2018 02:47:12 -0700 (PDT)
-Subject: Re: [RFC 3/4] perf: Allow per PMU access control
-To:     Tvrtko Ursulin <tursulin@ursulin.net>, linux-kernel@vger.kernel.org
-Cc:     Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>, x86@kernel.org
-References: <20180626153642.5587-1-tvrtko.ursulin@linux.intel.com>
- <20180626153642.5587-4-tvrtko.ursulin@linux.intel.com>
- <e3beeb7e-fc9a-be86-0bea-92e8dd0916f2@linux.intel.com>
- <59478e35-4ac9-7be5-172a-c8301d9e11fd@ursulin.net>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Message-ID: <2d389cf9-e284-0557-159a-e70a758d357b@linux.intel.com>
-Date:   Wed, 27 Jun 2018 12:47:10 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <59478e35-4ac9-7be5-172a-c8301d9e11fd@ursulin.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S934172AbeF0Jr7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:47:59 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53793 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932135AbeF0Jr4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 05:47:56 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180627094753euoutp02a6176f74543b6398b5d50abd38f67831~7_1yorrM82666426664euoutp021;
+        Wed, 27 Jun 2018 09:47:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180627094753euoutp02a6176f74543b6398b5d50abd38f67831~7_1yorrM82666426664euoutp021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1530092873;
+        bh=EzhCh7zc/GY/ew+oVctBqslcC+Z/39YvMxvmQqNrKVc=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=UhbyG6jUFcvkwreqNqbe93IQuQXeA5UkEibkZekBm7SCgclilF4py+nepkx+IxgIr
+         sPY6uc2KOOFd4zad/hUm75AR07hQlXlHT6Li6fTZHExOEXKd4POhQc9wh4s2x+HXp9
+         SMOlKDv9hYAb74JG3xx1xptpdhkxcV/l/W+J5prc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180627094753eucas1p1655334740c0a0f0836cf46a77208ab02~7_1yCHYIL3007530075eucas1p1H;
+        Wed, 27 Jun 2018 09:47:53 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 45.FA.05700.84D533B5; Wed, 27
+        Jun 2018 10:47:52 +0100 (BST)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180627094752eucas1p16800cdbf15d769a70c158c19ed1f8528~7_1xbdVMx0934609346eucas1p1b;
+        Wed, 27 Jun 2018 09:47:52 +0000 (GMT)
+X-AuditID: cbfec7f2-1dbff70000011644-2d-5b335d48682f
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 49.7B.04178.84D533B5; Wed, 27
+        Jun 2018 10:47:52 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PAZ00H8777SUM70@eusync1.samsung.com>; Wed, 27 Jun
+        2018 10:47:52 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-fbdev@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] console/fbcon: Add support for deferred console
+ takeover
+Date:   Wed, 27 Jun 2018 11:47:51 +0200
+Message-id: <66532157.tkLS2buF0U@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180627091520.GI13978@phenom.ffwll.local>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42LZduzneV2PWONog42nzSz+b5vIbHHl63s2
+        izfHpzNZnOj7wGpxedccNov/j7+yWuzreMBksfbzY3YHDo+93xaweOycdZfdo2XfLXaP+93H
+        mTze77vK5rF+y1UWj8+b5ALYo7hsUlJzMstSi/TtErgy/k26y1JwUbhi4d121gbGDfxdjJwc
+        EgImElfWrWbuYuTiEBJYwSix+sBmNgjnM6PEj5cHWWCqLm+/xAiRWMYosWXOI3YI5zejxL1P
+        UxhBqtgErCQmtq8Cs0UElCX6N89hBSliFmhikri4u4EdJCEsECZx+N9XZhCbRUBVYuvTS2AN
+        vAJaEn8PdbGC2KICXhJb9rUzgdicAhYSe281MkHUCEr8mHwP7CRmAXmJffunskLYOhJnj60D
+        O09C4AybxPndq5gg7naRaH4zH+oHYYlXx7ewQ9gyEp0dB5kgGqYzSrz5tZQFwlnPKLHmzDGo
+        bmuJw8cvQq3gk5i0bTrQ2RxAcV6JjjYhCNNDYkuzACQodjBKXLq4h2kCo8wsJMfOQnLsLCTH
+        LmBkXsUonlpanJueWmyYl1quV5yYW1yal66XnJ+7iRGYMk7/O/5pB+PXS0mHGAU4GJV4eA2c
+        jKKFWBPLiitzDzFKcDArifD+lTKOFuJNSaysSi3Kjy8qzUktPsQozcGiJM4bp1EXJSSQnliS
+        mp2aWpBaBJNl4uCUamC00Lz7X3rfRn7hfXxfch1jZn08V3z6iEy+its2AaeaUoGr74/KR4Rq
+        nD3+8sANqU8XpnaH57rah79SMyyMzZ5+aKlRf9S/1zLse+3v/bb+rpLPK246N/nZSb0zV4si
+        Ytv5p7+yXxVY3rxe5L5YcvvtuC1lavWHb+5SMvs/9SCfWn6TbuSXXV+VWIozEg21mIuKEwEW
+        QnDVFQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsVy+t/xy7oescbRBg//S1j83zaR2eLK1/ds
+        Fm+OT2eyONH3gdXi8q45bBb/H39ltdjX8YDJYu3nx+wOHB57vy1g8dg56y67R8u+W+we97uP
+        M3m833eVzWP9lqssHp83yQWwR3HZpKTmZJalFunbJXBl/Jt0l6XgonDFwrvtrA2MG/i7GDk5
+        JARMJC5vv8TYxcjFISSwhFGiYc0zVpCEkMBfRonGNkMQm03ASmJi+ypGEFtEQFmif/McsBpm
+        gSYmiXmT00BsYYEwicP/vjKD2CwCqhJbn14Cq+cV0JL4e6gLrF5UwEtiy752JhCbU8BCYu+t
+        RiaIxTsYJd4sOcMK0SAo8WPyPRaIBfIS+/ZPhVqmJbF+53GmCYz8s5CUzUJSNgtJ2QJG5lWM
+        IqmlxbnpucWGesWJucWleel6yfm5mxiBob7t2M/NOxgvbQw+xCjAwajEw2vgZBQtxJpYVlyZ
+        e4hRgoNZSYT3r5RxtBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe8waVUUIC6YklqdmpqQWpRTBZ
+        Jg5OqQbGGZr/1RLM1Con8kcrhDGIqkcZOD5Yf9FK1rNo4rySOYeU7nkd6NY1bYy4+L9xfntp
+        hTsXL9s+Tu7bP2aVtd3syvntI9dbzPDCdYnmnkLpg/N/lIQzy4d/lzI+VqNXuDX4hd/+LQrp
+        D0v/3jycvK3cYWNxlf4i1+Yds3bfu6lwd/b8nyGCLYpKLMUZiYZazEXFiQAXEQbAcQIAAA==
+X-CMS-MailID: 20180627094752eucas1p16800cdbf15d769a70c158c19ed1f8528
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180627091530epcas1p4bcb4d5421da77cd2e262e839dd50e5dc
+References: <20180626183612.321-1-hdegoede@redhat.com>
+        <CGME20180627091530epcas1p4bcb4d5421da77cd2e262e839dd50e5dc@epcas1p4.samsung.com>
+        <20180627091520.GI13978@phenom.ffwll.local>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wednesday, June 27, 2018 11:15:20 AM Daniel Vetter wrote:
+> On Tue, Jun 26, 2018 at 08:36:09PM +0200, Hans de Goede wrote:
+> > Hi All,
+> > 
+> > Here is v4 of my patch-set, to delay fbcon taking over the console (and
+> > binding to fbdev devices) until there actually is some text output to the
+> > console. This is intended for use with the "quiet" cmdline option, in
+> > combination with a bootloader which leaves the vendor's logo /
+> > EFI bootgraphics put up by the firmware intact on the EFI framebuffer.
+> > 
+> > The end goal here is a boot where the firmware shows its boot graphics
+> > and these stay in place for a couple of seconds until the GUI loads and
+> > the GUI then smoothly takes over the framebuffer without any distruptions.
+> > 
+> > This patch-set spans 2 subsystems.
+> > 
+> > Petr, the printk subsys change is really trivial (1 line addition) can we
+> > get your Acked-by for merging all 3 patches through the fbdev tree?
+> > 
+> > Changelog:
+> > 
+> > Changes in v4:
+> > -Keep the comments about which fbcon functions need locks in place
+> > 
+> > Changes in v3:
+> > -Export is_console_locke() for use in modules (as fbcon may be built as a .ko)
+> > -Use WARN_CONSOLE_UNLOCKED() in several places in the fbcon code to assert
+> >  proper locking (requested by Daniel)
+> > -Unregister the fbcon-dummycon-output-notifier on fbcon_exit() (req. by Daniel)
+> > -Document the fbcon=nodefer commandline option (req. by Emil)
+> > 
+> > Changes in v2:
+> > -Check the whole string when checking for erases in putcs, instead of just
+> >  the first char
+> > -Make dummycon_blank return 1, so that a redraw gets triggered and any text
+> >  rendered while blanked gets output so that it can trigger a deferred
+> >  takeover if one is pending
+> 
+> Wrt merging I think it'd be best if we stuff this into drm-misc-next -
+> that will increase testing by gpu drivers a lot, instead of a suprise when
+> the fbdev pull lands in upstream.
+> 
+> Bart, is that ok with you?
 
+Not really, since there are efifb changes in the queue which depend
+on this series I would really prefer to merge all patches through
+fbdev tree.
 
-On 27.06.2018 12:15, Tvrtko Ursulin wrote:
-> 
-> On 26/06/18 18:25, Alexey Budankov wrote:
->> Hi,
->>
->> On 26.06.2018 18:36, Tvrtko Ursulin wrote:
->>> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
->>>
->>> For situations where sysadmins might want to allow different level of
->>> access control for different PMUs, we start creating per-PMU
->>> perf_event_paranoid controls in sysfs.
->>>
->>> These work in equivalent fashion as the existing perf_event_paranoid
->>> sysctl, which now becomes the parent control for each PMU.
->>>
->>> On PMU registration the global/parent value will be inherited by each PMU,
->>> as it will be propagated to all registered PMUs when the sysctl is
->>> updated.
->>>
->>> At any later point individual PMU access controls, located in
->>> <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
->>> fine grained access control.
->>>
->>> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Ingo Molnar <mingo@redhat.com>
->>> Cc: "H. Peter Anvin" <hpa@zytor.com>
->>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->>> Cc: Jiri Olsa <jolsa@redhat.com>
->>> Cc: Namhyung Kim <namhyung@kernel.org>
->>> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
->>> Cc: Andi Kleen <ak@linux.intel.com>
->>> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
->>> Cc: linux-kernel@vger.kernel.org
->>> Cc: x86@kernel.org
->>> ---
->>>   include/linux/perf_event.h | 12 ++++++--
->>>   kernel/events/core.c       | 59 ++++++++++++++++++++++++++++++++++++++
->>>   kernel/sysctl.c            |  4 ++-
->>>   3 files changed, 71 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
->>> index d7938d88c028..22e91cc2d9e1 100644
->>> --- a/include/linux/perf_event.h
->>> +++ b/include/linux/perf_event.h
->>> @@ -271,6 +271,9 @@ struct pmu {
->>>       /* number of address filters this PMU can do */
->>>       unsigned int            nr_addr_filters;
->>>   +    /* per PMU access control */
->>> +    int                perf_event_paranoid;
->>
->> It looks like it needs to be declared as atomic and atomic_read/atomic_write
->> operations need to be explicitly used below in the patch as far this
->> variable may be manipulated by different threads at the same time
->> without explicit locking.
-> 
-> It is just a write of an integer from either sysfs access or sysctl. As such I don't think going atomic would change anything. There is no RMW or increment or anything on it.
-> 
-> Unless there are architectures where int stores are not atomic? But then the existing sysctl would have the same issue. So I suspect we can indeed rely on int store being atomic.
+Also fbdev tree is pulled into -next kernels so testing coverage
+should be okay (I assume that everybody are testing -next kernels in
+addition to their own branches :-)..
 
-Yep, aligned word read/write is atomic on Intel and there is no runtime issue 
-currently, but the implementation itself is multithread and implicitly relies 
-on that atomicity so my suggestion is just explicitly code that assumption :).
-Also, as you mentioned, that makes the arch independent part of code more portable.
+> Hans, if Bart acks this you can directly push this imo.
+> -Daniel
 
-> 
-> Regards,
-> 
-> Tvrtko
-> 
->>
->>> +
->>>       /*
->>>        * Fully disable/enable this PMU, can be used to protect from the PMI
->>>        * as well as for lazy/batch writing of the MSRs.
->>> @@ -1168,6 +1171,9 @@ extern int sysctl_perf_cpu_time_max_percent;
->>>     extern void perf_sample_event_took(u64 sample_len_ns);
->>>   +extern int perf_proc_paranoid_handler(struct ctl_table *table, int write,
->>> +        void __user *buffer, size_t *lenp,
->>> +        loff_t *ppos);
->>>   extern int perf_proc_update_handler(struct ctl_table *table, int write,
->>>           void __user *buffer, size_t *lenp,
->>>           loff_t *ppos);
->>> @@ -1180,17 +1186,17 @@ int perf_event_max_stack_handler(struct ctl_table *table, int write,
->>>     static inline bool perf_paranoid_tracepoint_raw(const struct pmu *pmu)
->>>   {
->>> -    return sysctl_perf_event_paranoid > -1;
->>> +    return pmu->perf_event_paranoid > -1;
->>>   }
->>>     static inline bool perf_paranoid_cpu(const struct pmu *pmu)
->>>   {
->>> -    return sysctl_perf_event_paranoid > 0;
->>> +    return pmu->perf_event_paranoid > 0;
->>>   }
->>>     static inline bool perf_paranoid_kernel(const struct pmu *pmu)
->>>   {
->>> -    return sysctl_perf_event_paranoid > 1;
->>> +    return pmu->perf_event_paranoid > 1;
->>>   }
->>>     extern void perf_event_init(void);
->>> diff --git a/kernel/events/core.c b/kernel/events/core.c
->>> index 370c89e81722..da36317dc8dc 100644
->>> --- a/kernel/events/core.c
->>> +++ b/kernel/events/core.c
->>> @@ -432,6 +432,24 @@ static void update_perf_cpu_limits(void)
->>>     static bool perf_rotate_context(struct perf_cpu_context *cpuctx);
->>>   +int perf_proc_paranoid_handler(struct ctl_table *table, int write,
->>> +        void __user *buffer, size_t *lenp,
->>> +        loff_t *ppos)
->>> +{
->>> +    int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
->>> +    struct pmu *pmu;
->>> +
->>> +    if (ret || !write)
->>> +        return ret;
->>> +
->>> +    mutex_lock(&pmus_lock);
->>> +    list_for_each_entry(pmu, &pmus, entry)
->>> +        pmu->perf_event_paranoid = sysctl_perf_event_paranoid;
->>> +    mutex_unlock(&pmus_lock);
->>> +
->>> +    return 0;
->>> +}
->>> +
->>>   int perf_proc_update_handler(struct ctl_table *table, int write,
->>>           void __user *buffer, size_t *lenp,
->>>           loff_t *ppos)
->>> @@ -9425,6 +9443,41 @@ static void free_pmu_context(struct pmu *pmu)
->>>       mutex_unlock(&pmus_lock);
->>>   }
->>>   +/*
->>> + * Fine-grained access control:
->>> + */
->>> +static ssize_t
->>> +perf_event_paranoid_show(struct device *dev,
->>> +             struct device_attribute *attr,
->>> +             char *page)
->>> +{
->>> +    struct pmu *pmu = dev_get_drvdata(dev);
->>> +
->>> +    return snprintf(page, PAGE_SIZE - 1, "%d\n", pmu->perf_event_paranoid);
->>> +}
->>> +
->>> +static ssize_t
->>> +perf_event_paranoid_store(struct device *dev,
->>> +              struct device_attribute *attr,
->>> +              const char *buf, size_t count)
->>> +{
->>> +    struct pmu *pmu = dev_get_drvdata(dev);
->>> +    int ret, val;
->>> +
->>> +    ret = kstrtoint(buf, 0, &val);
->>> +    if (ret)
->>> +        return ret;
->>> +
->>> +    if (val < -1 || val > 2)
->>> +        return -EINVAL;
->>> +
->>> +    pmu->perf_event_paranoid = val;
->>> +
->>> +    return count;
->>> +}
->>> +
->>> +static DEVICE_ATTR_RW(perf_event_paranoid);
->>> +
->>>   /*
->>>    * Let userspace know that this PMU supports address range filtering:
->>>    */
->>> @@ -9539,6 +9592,11 @@ static int pmu_dev_alloc(struct pmu *pmu)
->>>       if (ret)
->>>           goto free_dev;
->>>   +    /* Add fine-grained access control attribute. */
->>> +    ret = device_create_file(pmu->dev, &dev_attr_perf_event_paranoid);
->>> +    if (ret)
->>> +        goto del_dev;
->>> +
->>>       /* For PMUs with address filters, throw in an extra attribute: */
->>>       if (pmu->nr_addr_filters)
->>>           ret = device_create_file(pmu->dev, &dev_attr_nr_addr_filters);
->>> @@ -9570,6 +9628,7 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
->>>       if (!pmu->pmu_disable_count)
->>>           goto unlock;
->>>   +    pmu->perf_event_paranoid = sysctl_perf_event_paranoid;
->>>       pmu->type = -1;
->>>       if (!name)
->>>           goto skip_type;
->>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
->>> index 2d9837c0aff4..7f6fccb64a30 100644
->>> --- a/kernel/sysctl.c
->>> +++ b/kernel/sysctl.c
->>> @@ -1142,7 +1142,9 @@ static struct ctl_table kern_table[] = {
->>>           .data        = &sysctl_perf_event_paranoid,
->>>           .maxlen        = sizeof(sysctl_perf_event_paranoid),
->>>           .mode        = 0644,
->>> -        .proc_handler    = proc_dointvec,
->>> +        .proc_handler   = perf_proc_paranoid_handler,
->>> +        .extra1         = &neg_one,
->>> +        .extra2         = &two,
->>>       },
->>>       {
->>>           .procname    = "perf_event_mlock_kb",
->>>
->>
-> 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
