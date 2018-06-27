@@ -2,101 +2,100 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC771C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D75C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8523D25F81
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:07:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 744AC208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:08:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrRNXokb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8523D25F81
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="li7kD+9S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 744AC208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935074AbeF0SHN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 14:07:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48018 "EHLO mail.kernel.org"
+        id S1754746AbeF0SIy (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 14:08:54 -0400
+Received: from vern.gendns.com ([206.190.152.46]:44095 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934541AbeF0SHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 14:07:12 -0400
-Received: from localhost.localdomain (cpe-24-28-70-126.austin.res.rr.com [24.28.70.126])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79E7C25F7B;
-        Wed, 27 Jun 2018 18:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530122831;
-        bh=TN1KlOHRYSM18/5JZn1lK2xqN9GKFzgUBFdpAbKdRnE=;
-        h=From:To:Subject:Date:From;
-        b=FrRNXokbeQlez3rUZaYFJR7zV3Qgv/9jPJyI23w+RIIdVW4TOR4bc/jQlPkKOnrLP
-         6DHsFLa8XejpTJ8T+6ifCR8DjfdIyrtUz35QqkEgUbPaUnAdwoit1HVd+bx5BwNjVN
-         f7fZ3TC0M+1VQtOwxda5EA8v17TjoTa4txxWfD0Q=
-From:   Timur Tabi <timur@kernel.org>
-To:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: [PATCH] MAINTAINERS: Timur has a kernel.org address
-Date:   Wed, 27 Jun 2018 13:07:07 -0500
-Message-Id: <20180627180707.16665-1-timur@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1752127AbeF0SIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 14:08:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=EFuF3C+cbddJ1faeaE08ObrBs9eqE3JLIONn9GO3h5Q=; b=li7kD+9STuUrXALkUP1gPIEFEO
+        WMr3OlZ/O5cXAF4mhDI4UB8iTwEFtj+Ki5xrtUvCtJZN3kmBLSSAutvuiIrW9OFxOoLBXB8zpSBem
+        5/QP8RYPMWR1P0CCk/EEN9loWe9bZg0clTLrC/Am7htgczLU6iyUWE7BRmU27tTKnZEupZcxM9iyU
+        sexfd7QSX1rqWch2OVZLECy6RxZWh5efz6t5r3+pZHuLCTQphkzib14zDHOmRizU79ve3tehb4wcw
+        1l3Zy2vDkAGC5h/hwvrdDsaAXmL9SmOlxzl4vMTByzkVmUDU5R/i/xnhKqJaCTOmzSk2OIQZJPJ2t
+        1kZvpEug==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:51568 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fYEs7-00B2zL-Ah; Wed, 27 Jun 2018 14:08:51 -0400
+Subject: Re: [PATCH v2 0/4] drm/tinydrm: new dirver for ILI9341 displays
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Nitin Patil <nitin@mindsensors.com>, limor@ladyada.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20180525193623.15533-1-david@lechnology.com>
+ <8840212b-fd46-e700-58a1-cb1b882c5771@tronnes.org>
+ <d5297fc5-94f2-edcd-5a11-95d7a9dca78d@lechnology.com>
+ <ecd75b89-14a6-12f7-0ec4-222b1f984e49@tronnes.org>
+ <5a2bc4e7-c6cd-b270-61d3-61bfa5d9e90d@tronnes.org>
+ <CAKMK7uF-hBjqnRG28fX7NXOJDc5YEWhq+G6s0M8usA+TXM1BKw@mail.gmail.com>
+ <bc3429d4-44e3-29dc-3588-209ba30fb2eb@lechnology.com>
+ <CAKMK7uG5OdbiRFL26SzJ-+b0G64pfKftwtvG4CYGKpAt+rD5UQ@mail.gmail.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <666284f8-6fb1-cb5c-4f20-e78d600e024a@lechnology.com>
+Date:   Wed, 27 Jun 2018 13:08:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAKMK7uG5OdbiRFL26SzJ-+b0G64pfKftwtvG4CYGKpAt+rD5UQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Timur Tabi no longer works for Qualcomm, and he now has a kernel.org
-email address, so update MAINTAINERS accordingly.
+On 06/27/2018 01:58 AM, Daniel Vetter wrote:
+> On Tue, Jun 26, 2018 at 8:16 PM, David Lechner <david@lechnology.com> wrote:
+>> On 06/20/2018 04:07 AM, Daniel Vetter wrote:
+>>
+>>> I acked and forwarded the account request, sorry for the delay. Next
+>>> time around, poking maintainers on irc helps if this stuff is stuck.
+>>> -Daniel
+>>
+>>
+>> The account was supposedly setup, but I am not able to use it for some
+>> reason. Are there any particular nicks I should ping on IRC?
+> 
+> #freedesktop on freenode is the channel where fd.o admins hang out.
 
-Signed-off-by: Timur Tabi <timur@kernel.org>
----
- MAINTAINERS | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Got that sorted out and pushed this series.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e19ec6d90a44..192e05b8a39a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5669,7 +5669,7 @@ F:	drivers/crypto/caam/
- F:	Documentation/devicetree/bindings/crypto/fsl-sec4.txt
- 
- FREESCALE DIU FRAMEBUFFER DRIVER
--M:	Timur Tabi <timur@tabi.org>
-+M:	Timur Tabi <timur@kernel.org>
- L:	linux-fbdev@vger.kernel.org
- S:	Maintained
- F:	drivers/video/fbdev/fsl-diu-fb.*
-@@ -5769,7 +5769,7 @@ S:	Maintained
- F:	drivers/net/wan/fsl_ucc_hdlc*
- 
- FREESCALE QUICC ENGINE UCC UART DRIVER
--M:	Timur Tabi <timur@tabi.org>
-+M:	Timur Tabi <timur@kernel.org>
- L:	linuxppc-dev@lists.ozlabs.org
- S:	Maintained
- F:	drivers/tty/serial/ucc_uart.c
-@@ -5793,7 +5793,7 @@ F:	drivers/net/ethernet/freescale/fs_enet/
- F:	include/linux/fs_enet_pd.h
- 
- FREESCALE SOC SOUND DRIVERS
--M:	Timur Tabi <timur@tabi.org>
-+M:	Timur Tabi <timur@kernel.org>
- M:	Nicolin Chen <nicoleotsuka@gmail.com>
- M:	Xiubo Li <Xiubo.Lee@gmail.com>
- R:	Fabio Estevam <fabio.estevam@nxp.com>
-@@ -11809,9 +11809,9 @@ F:  Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
- F:  drivers/cpufreq/qcom-cpufreq-kryo.c
- 
- QUALCOMM EMAC GIGABIT ETHERNET DRIVER
--M:	Timur Tabi <timur@codeaurora.org>
-+M:	Timur Tabi <timur@kernel.org>
- L:	netdev@vger.kernel.org
--S:	Supported
-+S:	Maintained
- F:	drivers/net/ethernet/qualcomm/emac/
- 
- QUALCOMM HEXAGON ARCHITECTURE
--- 
-2.17.1
-
+Hope I didn't break anything. :-o
