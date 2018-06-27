@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F2EC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D10C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C78A22175A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:34:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3102F24491
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:34:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IrNSIcpe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78A22175A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JnltAuit"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3102F24491
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754840AbeF0PeF (ORCPT
+        id S1754859AbeF0Pe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:34:05 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40614 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934846AbeF0P2M (ORCPT
+        Wed, 27 Jun 2018 11:34:28 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:41856 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934862AbeF0P2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:28:12 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z13-v6so5959036wma.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:28:11 -0700 (PDT)
+        Wed, 27 Jun 2018 11:28:10 -0400
+Received: by mail-wr0-f196.google.com with SMTP id h10-v6so2468380wrq.8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2uDxGwnkJEDIEjqGMUQjkdR51PtdwGqouV1zq5IG5iU=;
-        b=IrNSIcpeUPx8kAVzzs1EkgEhv1BMUv4tzCcoo7br+EZirA2DmDXnkPV93oBiwou6Cl
-         ojREDJxCFzXpqaS1YEukwMxwiqt0mRvbBbJ5vMSAg/p/D50MJaA6wpHuE34TwGth1V10
-         J9PiLAspTed3Yh24VW8dBGOfNOtHTeQjgQLeA=
+        bh=uzFPQjolv+jdPi2Rzia1jtwxKrkKgXp+JYTymg81g5w=;
+        b=JnltAuitirgIaqipM2se+1wW3dps/iJYTdkVv4qb0qWUxT1EndUm8AAoV8nbADoGrC
+         bKDbksHWCiJEGSQUbGSHGmVmlZ8ZZcO9775XaQjghcKXNOO2gR0E/DdTs+NDLSYGR2YV
+         b46pwB+RAWziqSia40I4PLO3/EPBy1uRl7bnk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2uDxGwnkJEDIEjqGMUQjkdR51PtdwGqouV1zq5IG5iU=;
-        b=rNDR/aQMHW24eFnMIelqAXd//HaKZeQABbIppPR+IxuP/haZGGQ3jn57PpdGHlYsu2
-         yM5bkjoJ2IT9ABcF4yw4tb9+m/4ZIOhdtg+TbxRBKnBcQrfeRr0PXzFqmCaZxpFg9N3N
-         ZcIkUkC3kvAf4C1ThI+CDQuYfO1LI8+RuPfKr/6k9YelSdjnyy5Iy46LwcouSsIuOuAI
-         RGIyS9Bt5ugwv9z5EFaKCs5gx2feSEnNXHMG80EJpiEcPrerivR8Qsvn/MgRt56tzuJZ
-         LfrehvIaSo/NnP/NiXufkWgqSACPmp1hTylpQ1f6K7Oaq4L3vREpKYoFP8V7risO31Ih
-         0Vfw==
-X-Gm-Message-State: APt69E3fZ+Lpthj/N0iJfIedzyv7+QQD8r/eCjl3OeKAjmC+Zvg6q9yU
-        72VzT4garZq9JJR5Z6naRu7oRA==
-X-Google-Smtp-Source: AAOMgpeYKMGTCwLJl2mrMJMm5h0kofSM1xT/XgfWrW+JQXMQy1xEVC2Sgk8YctUzoM/kGsDKwQ1A9Q==
-X-Received: by 2002:a1c:ce0c:: with SMTP id e12-v6mr5043724wmg.86.1530113290757;
-        Wed, 27 Jun 2018 08:28:10 -0700 (PDT)
+        bh=uzFPQjolv+jdPi2Rzia1jtwxKrkKgXp+JYTymg81g5w=;
+        b=I3laGMfNWm8iS+R9OliYC94YH/hvF8zS3HXpZMZRwfIavJXrcwZNeJ0iVEEfDM3w7x
+         YxAMpcapopg6l570mwnNIqcd+a7lKeakPSIDIxOvEMjp18aRBNPqqp7tCATk5P0/XNw+
+         w1XBuv0wvI/iEGrNCj1nenUQUwgCJLtjdqV4p5Ya2tPm88E8VoKvvygsyBVjmUNql3U/
+         6TT1Qs9Xv5wXluZvqfW/twDKr+/DDYXKYt1hNNE1WPCpzTwsDp2Y9x+JQ4wIRtft1zfN
+         7uB78bKn4pb4XjJsSHxtpLaoXNVXQBCyACdHulI0KCmid/dKTcQ7bnaa9c+XQeY6bb50
+         wVQg==
+X-Gm-Message-State: APt69E3FngW0L4ZvPF9d2zFMUoMPqDl1R2V+UtTDqlrShzYKoYKkOWUV
+        riwwrgpYvITfYkEUFYAcAJwl1A==
+X-Google-Smtp-Source: AAOMgpeNOiHc4AZUt2fNMauE7gOfFG2Eg1PdsUBak+1skIpQe6vOwoYu1ciXSl9z1RH366bBhAbN9w==
+X-Received: by 2002:adf:c44c:: with SMTP id a12-v6mr5854279wrg.20.1530113289340;
+        Wed, 27 Jun 2018 08:28:09 -0700 (PDT)
 Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id o203-v6sm2916075wmd.30.2018.06.27.08.28.09
+        by smtp.gmail.com with ESMTPSA id o203-v6sm2916075wmd.30.2018.06.27.08.28.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 08:28:10 -0700 (PDT)
+        Wed, 27 Jun 2018 08:28:08 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -62,9 +62,9 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v4 11/27] venus: core,helpers: add two more clocks found in Venus 4xx
-Date:   Wed, 27 Jun 2018 18:27:09 +0300
-Message-Id: <20180627152725.9783-12-stanimir.varbanov@linaro.org>
+Subject: [PATCH v4 10/27] venus: hfi_venus: add suspend functionality for Venus 4xx
+Date:   Wed, 27 Jun 2018 18:27:08 +0300
+Message-Id: <20180627152725.9783-11-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
 References: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
@@ -73,290 +73,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add two more clocks for Venus 4xx in core structure and create
-a new power enable function to handle it for 3xx/4xx versions.
+This adds suspend (power collapse) functionality by reusing
+the suspend function for Venus 3xx and also enables idle indicator
+property for Venus 4xx (where it is disabled by default).
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 ---
- drivers/media/platform/qcom/venus/core.h    |  4 +++
- drivers/media/platform/qcom/venus/helpers.c | 51 +++++++++++++++++++++++++++++
- drivers/media/platform/qcom/venus/helpers.h |  2 ++
- drivers/media/platform/qcom/venus/vdec.c    | 44 ++++++++++++++++++++-----
- drivers/media/platform/qcom/venus/venc.c    | 44 ++++++++++++++++++++-----
- 5 files changed, 129 insertions(+), 16 deletions(-)
+ drivers/media/platform/qcom/venus/hfi_venus.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index 8d3e150800c9..2bf8839784fa 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -65,6 +65,8 @@ struct venus_format {
-  * @clks:	an array of struct clk pointers
-  * @core0_clk:	a struct clk pointer for core0
-  * @core1_clk:	a struct clk pointer for core1
-+ * @core0_bus_clk: a struct clk pointer for core0 bus clock
-+ * @core1_bus_clk: a struct clk pointer for core1 bus clock
-  * @vdev_dec:	a reference to video device structure for decoder instances
-  * @vdev_enc:	a reference to video device structure for encoder instances
-  * @v4l2_dev:	a holder for v4l2 device structure
-@@ -94,6 +96,8 @@ struct venus_core {
- 	struct clk *clks[VIDC_CLKS_NUM_MAX];
- 	struct clk *core0_clk;
- 	struct clk *core1_clk;
-+	struct clk *core0_bus_clk;
-+	struct clk *core1_bus_clk;
- 	struct video_device *vdev_dec;
- 	struct video_device *vdev_enc;
- 	struct v4l2_device v4l2_dev;
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index d9065cc8a7d3..228084e72fb7 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -13,6 +13,7 @@
-  *
-  */
- #include <linux/clk.h>
-+#include <linux/iopoll.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/pm_runtime.h>
-@@ -24,6 +25,7 @@
- #include "core.h"
- #include "helpers.h"
- #include "hfi_helper.h"
-+#include "hfi_venus_io.h"
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+index 7a83e967a8ea..9366dae16b0a 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus.c
++++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+@@ -879,6 +879,14 @@ static int venus_sys_set_default_properties(struct venus_hfi_device *hdev)
+ 	if (ret)
+ 		dev_warn(dev, "setting fw debug msg ON failed (%d)\n", ret);
  
- struct intbuf {
- 	struct list_head list;
-@@ -781,3 +783,52 @@ void venus_helper_init_instance(struct venus_inst *inst)
- 	}
- }
- EXPORT_SYMBOL_GPL(venus_helper_init_instance);
++	/*
++	 * Idle indicator is disabled by default on some 4xx firmware versions,
++	 * enable it explicitly in order to make suspend functional by checking
++	 * WFI (wait-for-interrupt) bit.
++	 */
++	if (IS_V4(hdev->core))
++		venus_sys_idle_indicator = true;
 +
-+int venus_helper_power_enable(struct venus_core *core, u32 session_type,
-+			      bool enable)
-+{
-+	void __iomem *ctrl, *stat;
-+	u32 val;
-+	int ret;
-+
-+	if (!IS_V3(core) && !IS_V4(core))
-+		return 0;
-+
-+	if (IS_V3(core)) {
-+		if (session_type == VIDC_SESSION_TYPE_DEC)
-+			ctrl = core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL;
-+		else
-+			ctrl = core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL;
-+		if (enable)
-+			writel(0, ctrl);
-+		else
-+			writel(1, ctrl);
-+
-+		return 0;
-+	}
-+
-+	if (session_type == VIDC_SESSION_TYPE_DEC) {
-+		ctrl = core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
-+		stat = core->base + WRAPPER_VCODEC0_MMCC_POWER_STATUS;
-+	} else {
-+		ctrl = core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL;
-+		stat = core->base + WRAPPER_VCODEC1_MMCC_POWER_STATUS;
-+	}
-+
-+	if (enable) {
-+		writel(0, ctrl);
-+
-+		ret = readl_poll_timeout(stat, val, val & BIT(1), 1, 100);
-+		if (ret)
-+			return ret;
-+	} else {
-+		writel(1, ctrl);
-+
-+		ret = readl_poll_timeout(stat, val, !(val & BIT(1)), 1, 100);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_power_enable);
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 971392be5df5..0e64aa95624a 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -43,4 +43,6 @@ int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
- void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
- void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
- void venus_helper_init_instance(struct venus_inst *inst);
-+int venus_helper_power_enable(struct venus_core *core, u32 session_type,
-+			      bool enable);
- #endif
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 261a51adeef2..3cf243ddcdb8 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device *pdev)
- 	if (!core)
- 		return -EPROBE_DEFER;
+ 	ret = venus_sys_set_idle_message(hdev, venus_sys_idle_indicator);
+ 	if (ret)
+ 		dev_warn(dev, "setting idle response ON failed (%d)\n", ret);
+@@ -1533,7 +1541,8 @@ static int venus_suspend_3xx(struct venus_core *core)
  
--	if (core->res->hfi_version == HFI_VERSION_3XX) {
-+	if (IS_V3(core) || IS_V4(core)) {
- 		core->core0_clk = devm_clk_get(dev, "core");
- 		if (IS_ERR(core->core0_clk))
- 			return PTR_ERR(core->core0_clk);
- 	}
- 
-+	if (IS_V4(core)) {
-+		core->core0_bus_clk = devm_clk_get(dev, "bus");
-+		if (IS_ERR(core->core0_bus_clk))
-+			return PTR_ERR(core->core0_bus_clk);
-+	}
-+
- 	platform_set_drvdata(pdev, core);
- 
- 	vdev = video_device_alloc();
-@@ -1131,15 +1137,21 @@ static int vdec_remove(struct platform_device *pdev)
- static __maybe_unused int vdec_runtime_suspend(struct device *dev)
+ static int venus_suspend(struct venus_core *core)
  {
- 	struct venus_core *core = dev_get_drvdata(dev);
-+	int ret;
+-	if (core->res->hfi_version == HFI_VERSION_3XX)
++	if (core->res->hfi_version == HFI_VERSION_3XX ||
++	    core->res->hfi_version == HFI_VERSION_4XX)
+ 		return venus_suspend_3xx(core);
  
--	if (core->res->hfi_version == HFI_VERSION_1XX)
-+	if (IS_V1(core))
- 		return 0;
- 
--	writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, true);
-+
-+	if (IS_V4(core))
-+		clk_disable_unprepare(core->core0_bus_clk);
-+
- 	clk_disable_unprepare(core->core0_clk);
--	writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
- 
--	return 0;
-+	ret |= venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, false);
-+
-+	return ret;
- }
- 
- static __maybe_unused int vdec_runtime_resume(struct device *dev)
-@@ -1147,13 +1159,29 @@ static __maybe_unused int vdec_runtime_resume(struct device *dev)
- 	struct venus_core *core = dev_get_drvdata(dev);
- 	int ret;
- 
--	if (core->res->hfi_version == HFI_VERSION_1XX)
-+	if (IS_V1(core))
- 		return 0;
- 
--	writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, true);
-+	if (ret)
-+		return ret;
-+
- 	ret = clk_prepare_enable(core->core0_clk);
--	writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-+	if (ret)
-+		goto err_power_disable;
-+
-+	if (IS_V4(core))
-+		ret = clk_prepare_enable(core->core0_bus_clk);
- 
-+	if (ret)
-+		goto err_unprepare_core0;
-+
-+	return venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, false);
-+
-+err_unprepare_core0:
-+	clk_disable_unprepare(core->core0_clk);
-+err_power_disable:
-+	venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, false);
- 	return ret;
- }
- 
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index 947001170a77..2cd7b342b208 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -1225,12 +1225,18 @@ static int venc_probe(struct platform_device *pdev)
- 	if (!core)
- 		return -EPROBE_DEFER;
- 
--	if (core->res->hfi_version == HFI_VERSION_3XX) {
-+	if (IS_V3(core) || IS_V4(core)) {
- 		core->core1_clk = devm_clk_get(dev, "core");
- 		if (IS_ERR(core->core1_clk))
- 			return PTR_ERR(core->core1_clk);
- 	}
- 
-+	if (IS_V4(core)) {
-+		core->core1_bus_clk = devm_clk_get(dev, "bus");
-+		if (IS_ERR(core->core1_bus_clk))
-+			return PTR_ERR(core->core1_bus_clk);
-+	}
-+
- 	platform_set_drvdata(pdev, core);
- 
- 	vdev = video_device_alloc();
-@@ -1275,15 +1281,21 @@ static int venc_remove(struct platform_device *pdev)
- static __maybe_unused int venc_runtime_suspend(struct device *dev)
- {
- 	struct venus_core *core = dev_get_drvdata(dev);
-+	int ret;
- 
--	if (core->res->hfi_version == HFI_VERSION_1XX)
-+	if (IS_V1(core))
- 		return 0;
- 
--	writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, true);
-+
-+	if (IS_V4(core))
-+		clk_disable_unprepare(core->core1_bus_clk);
-+
- 	clk_disable_unprepare(core->core1_clk);
--	writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
- 
--	return 0;
-+	ret |= venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, false);
-+
-+	return ret;
- }
- 
- static __maybe_unused int venc_runtime_resume(struct device *dev)
-@@ -1291,13 +1303,29 @@ static __maybe_unused int venc_runtime_resume(struct device *dev)
- 	struct venus_core *core = dev_get_drvdata(dev);
- 	int ret;
- 
--	if (core->res->hfi_version == HFI_VERSION_1XX)
-+	if (IS_V1(core))
- 		return 0;
- 
--	writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, true);
-+	if (ret)
-+		return ret;
-+
- 	ret = clk_prepare_enable(core->core1_clk);
--	writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
-+	if (ret)
-+		goto err_power_disable;
-+
-+	if (IS_V4(core))
-+		ret = clk_prepare_enable(core->core1_bus_clk);
- 
-+	if (ret)
-+		goto err_unprepare_core1;
-+
-+	return venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, false);
-+
-+err_unprepare_core1:
-+	clk_disable_unprepare(core->core1_clk);
-+err_power_disable:
-+	venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, false);
- 	return ret;
- }
- 
+ 	return venus_suspend_1xx(core);
 -- 
 2.14.1
 
