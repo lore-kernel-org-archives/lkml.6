@@ -2,130 +2,131 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCFCC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 534ADC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B5425C61
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:17:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DtDdXzfP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B5425C61
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 13C0225C78
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:18:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C0225C78
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966382AbeF0WRA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 18:17:00 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38475 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965728AbeF0WQ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 18:16:58 -0400
-Received: by mail-pl0-f67.google.com with SMTP id d10-v6so1699124plo.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 15:16:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=vt/asKPxANT7pXBKJwL4AGXXdhdY3QWBTWUSJGPy7c4=;
-        b=DtDdXzfPTlUBJ8OvQXUC7BO1t4tQ+S0FtqRrh8UXgFhw6/kLRciRAxyVk74eN2lYHh
-         0GGJsLiQf3CWvDo1Q7zSF0Oaj/bQlrT+UHAvrBooE1nfXwnVefb0XhEKBNgjMrY5UQtH
-         x3v9xSdw+06n0bEbSAUObP95jBlNpLYs4fe/XjIhgkNJv39KpCTwlvoPPyb9chCsyU8C
-         9vu0ywfiAFXh/ENzkXYMLzc8MhulxjbwLuRJ39P+quovrNqGCtaeSHbMyS4FLKKK05zl
-         7vBx8ZZRe5CRYH+SNb+Iij4mMOw128QIvMXvRGolu+/CbO8r53svM+VXNkqJ+e4ErodO
-         Jo8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vt/asKPxANT7pXBKJwL4AGXXdhdY3QWBTWUSJGPy7c4=;
-        b=BLcTX3kUWjiVVzNejhHQLLm0w+cCOgl4hkS5qdLpj23WLZ6heoXZb8uumzMbVSRORH
-         8S5fE0TnZ4k1AKRS+kAr7PW+TCHzJETqEpZrA+9w+yxUHHu9aJCx2TIPKK7DTtHWDr0E
-         slQKA84/sXKOtNfRHdGPI9JIF+vma58Xe+FDCwoBl8gBNlQWj7ZLufhZgxicpiCkaBLb
-         jzWfjD2auoheT1Tk0mst5OmYxe6lc8j3gFFx/fAuPOWAsmUJARZ2xhCWcraN4FqBMUF9
-         klGIVeA0uIGTHaNQtIuX6vrB2FMmxYdX+A3UDBhkzriGUSfbnwErCJ32JMzr+yL/WxMN
-         wCWw==
-X-Gm-Message-State: APt69E3M3XGOE1W6W0yTeYDh9+bxbAxwy9Pk+P3WcXGrcb2mOQ0U5/RQ
-        Pz8ilyf93HQhS2rVSQ+JPs2goQ==
-X-Google-Smtp-Source: ADUXVKLweQw8Cm9krohFrz3NIyiTHd6LZoHL/KB/eznP7EAHY4EJdLG5DH6wPUO6PV6Y594Z1HEChg==
-X-Received: by 2002:a17:902:7782:: with SMTP id o2-v6mr7890665pll.93.1530137817932;
-        Wed, 27 Jun 2018 15:16:57 -0700 (PDT)
-Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
-        by smtp.gmail.com with ESMTPSA id r86-v6sm9641967pfi.165.2018.06.27.15.16.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 15:16:56 -0700 (PDT)
-From:   Shakeel Butt <shakeelb@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Greg Thelen <gthelen@google.com>, Roman Gushchin <guro@fb.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH v2] net, mm: account sock objects to kmemcg
-Date:   Wed, 27 Jun 2018 15:16:42 -0700
-Message-Id: <20180627221642.247448-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
+        id S966406AbeF0WSO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 18:18:14 -0400
+Received: from mga11.intel.com ([192.55.52.93]:15093 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965026AbeF0WSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 18:18:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 15:18:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,280,1526367600"; 
+   d="scan'208";a="62002185"
+Received: from ikonopko-mobl1.ger.corp.intel.com (HELO [10.79.141.52]) ([10.79.141.52])
+  by fmsmga002.fm.intel.com with ESMTP; 27 Jun 2018 15:18:11 -0700
+Subject: Re: [PATCH] lightnvm: pblk: fix read_bitmap for 32bit archs
+Cc:     =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>,
+        marcin.dziegielewski@intel.com, javier@cnexlabs.com,
+        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180627194206.30384-1-mb@lightnvm.io>
+From:   Igor Konopko <igor.j.konopko@intel.com>
+Message-ID: <c46fb234-a985-02e8-2122-c85e54f97b39@intel.com>
+Date:   Wed, 27 Jun 2018 15:18:11 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180627194206.30384-1-mb@lightnvm.io>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the kernel accounts the memory for network traffic through
-mem_cgroup_[un]charge_skmem() interface. However the memory accounted
-only includes the truesize of sk_buff which does not include the size of
-sock objects. In our production environment, with opt-out kmem
-accounting, the sock kmem caches (TCP[v6], UDP[v6], RAW[v6], UNIX) are
-among the top most charged kmem caches and consume a significant amount
-of memory which can not be left as system overhead. So, this patch
-converts the kmem caches of all sock objects to SLAB_ACCOUNT.
 
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Suggested-by: Eric Dumazet <edumazet@google.com>
----
-Changelog since v1:
-- Instead of specific sock kmem_caches, convert all sock kmem_caches to
-  use SLAB_ACCOUNT.
 
- net/core/sock.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+On 27.06.2018 12:42, Matias Bjørling wrote:
+> If using pblk on a 32bit architecture, and there is a need to
+> perform a partial read, the partial read bitmap will only have
+> allocated 32 entries, where as 64 are needed.
+> 
+> Make sure that the read_bitmap is initialized to 64bits on 32bit
+> architectures as well.
+> 
+> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+> ---
+>   drivers/lightnvm/pblk-read.c | 14 +++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+> index 6e93c489ce57..671635275d56 100644
+> --- a/drivers/lightnvm/pblk-read.c
+> +++ b/drivers/lightnvm/pblk-read.c
+> @@ -401,7 +401,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>   	struct pblk_g_ctx *r_ctx;
+>   	struct nvm_rq *rqd;
+>   	unsigned int bio_init_idx;
+> -	unsigned long read_bitmap; /* Max 64 ppas per request */
+> +	DECLARE_BITMAP(read_bitmap, 64); /* Max 64 ppas per request */
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index bcc41829a16d..9e8f65585b81 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -3243,7 +3243,8 @@ static int req_prot_init(const struct proto *prot)
- 
- 	rsk_prot->slab = kmem_cache_create(rsk_prot->slab_name,
- 					   rsk_prot->obj_size, 0,
--					   prot->slab_flags, NULL);
-+					   SLAB_ACCOUNT | prot->slab_flags,
-+					   NULL);
- 
- 	if (!rsk_prot->slab) {
- 		pr_crit("%s: Can't create request sock SLAB cache!\n",
-@@ -3258,7 +3259,8 @@ int proto_register(struct proto *prot, int alloc_slab)
- 	if (alloc_slab) {
- 		prot->slab = kmem_cache_create_usercopy(prot->name,
- 					prot->obj_size, 0,
--					SLAB_HWCACHE_ALIGN | prot->slab_flags,
-+					SLAB_HWCACHE_ALIGN | SLAB_ACCOUNT |
-+					prot->slab_flags,
- 					prot->useroffset, prot->usersize,
- 					NULL);
- 
-@@ -3281,6 +3283,7 @@ int proto_register(struct proto *prot, int alloc_slab)
- 				kmem_cache_create(prot->twsk_prot->twsk_slab_name,
- 						  prot->twsk_prot->twsk_obj_size,
- 						  0,
-+						  SLAB_ACCOUNT |
- 						  prot->slab_flags,
- 						  NULL);
- 			if (prot->twsk_prot->twsk_slab == NULL)
--- 
-2.18.0.rc2.346.g013aa6912e-goog
+Probably it would be nicer to use NVM_MAX_VLBA define instead of 
+explicit 64.
 
+>   	int ret = NVM_IO_ERR;
+>   
+>   	/* logic error: lba out-of-bounds. Ignore read request */
+> @@ -413,7 +413,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>   
+>   	generic_start_io_acct(q, READ, bio_sectors(bio), &pblk->disk->part0);
+>   
+> -	bitmap_zero(&read_bitmap, nr_secs);
+> +	bitmap_zero(read_bitmap, nr_secs);
+>   
+>   	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
+>   
+> @@ -444,19 +444,19 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>   		rqd->ppa_list = rqd->meta_list + pblk_dma_meta_size;
+>   		rqd->dma_ppa_list = rqd->dma_meta_list + pblk_dma_meta_size;
+>   
+> -		pblk_read_ppalist_rq(pblk, rqd, bio, blba, &read_bitmap);
+> +		pblk_read_ppalist_rq(pblk, rqd, bio, blba, read_bitmap >   	} else {
+> -		pblk_read_rq(pblk, rqd, bio, blba, &read_bitmap);
+> +		pblk_read_rq(pblk, rqd, bio, blba, read_bitmap);
+>   	}
+>   
+> -	if (bitmap_full(&read_bitmap, nr_secs)) {
+> +	if (bitmap_full(read_bitmap, nr_secs)) {
+>   		atomic_inc(&pblk->inflight_io);
+>   		__pblk_end_io_read(pblk, rqd, false);
+>   		return NVM_IO_DONE;
+>   	}
+>   
+>   	/* All sectors are to be read from the device */
+> -	if (bitmap_empty(&read_bitmap, rqd->nr_ppas)) {
+> +	if (bitmap_empty(read_bitmap, rqd->nr_ppas)) {
+>   		struct bio *int_bio = NULL;
+>   
+>   		/* Clone read bio to deal with read errors internally */
+> @@ -480,7 +480,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>   	/* The read bio request could be partially filled by the write buffer,
+>   	 * but there are some holes that need to be read from the drive.
+>   	 */
+> -	return pblk_partial_read(pblk, rqd, bio, bio_init_idx, &read_bitmap);
+> +	return pblk_partial_read(pblk, rqd, bio, bio_init_idx, read_bitmap);
+>   
+>   fail_rqd_free:
+>   	pblk_free_rqd(pblk, rqd, PBLK_READ);
+> 
+
+Otherwise looks good.
+
+Reviewed-by: Igor Konopko <igor.j.konopko@intel.com>
