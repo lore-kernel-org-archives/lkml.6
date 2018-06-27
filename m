@@ -2,107 +2,118 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC3DC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD7FC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B2F02495F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:54:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B2F02495F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 89AFB2499E
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:59:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89AFB2499E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751633AbeF0Wyb (ORCPT
+        id S1752051AbeF0W7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 18:54:31 -0400
-Received: from smtprelay0002.hostedemail.com ([216.40.44.2]:45418 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751391AbeF0Wy3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 18:54:29 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id E7AD3182CED34;
-        Wed, 27 Jun 2018 22:54:27 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: table68_92b5c436ce36
-X-Filterd-Recvd-Size: 3213
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 27 Jun 2018 22:54:22 +0000 (UTC)
-Message-ID: <8bf36e4025b6ec5198a668edda6bcbef3b06e97b.camel@perches.com>
-Subject: Re: [PATCH v5 09/10] gpio: Add a driver for Cadence I3C GPIO
- expander
-From:   Joe Perches <joe@perches.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Date:   Wed, 27 Jun 2018 15:54:21 -0700
-In-Reply-To: <20180627213617.51e10712@bbrezillon>
-References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
-         <20180622104930.32050-10-boris.brezillon@bootlin.com>
-         <CAHp75Vdxg49q6aQj0dDpzM4q2WnQbGoCECWR1roda7aMR+u4gg@mail.gmail.com>
-         <20180626215648.1472b96e@bbrezillon>
-         <CAHp75VcVvOzgOM87rSrwsCxh+WAK-z+zVCJifnY+Xeeu=cPFiA@mail.gmail.com>
-         <20180626234638.076fb816@bbrezillon>
-         <CAHp75VdBXj66Yd6sQHOWz19R9MUtYMSeq4j-+UidLedpfkB6mA@mail.gmail.com>
-         <20180627213617.51e10712@bbrezillon>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Jun 2018 18:59:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57824 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751668AbeF0W7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 18:59:51 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C2CA4075647;
+        Wed, 27 Jun 2018 22:59:50 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 50DE62156880;
+        Wed, 27 Jun 2018 22:59:48 +0000 (UTC)
+Date:   Thu, 28 Jun 2018 06:59:45 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, pagupta@redhat.com, linux-mm@kvack.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v5 2/4] mm/sparsemem: Defer the ms->section_mem_map
+ clearing
+Message-ID: <20180627225945.GD8970@localhost.localdomain>
+References: <20180627013116.12411-1-bhe@redhat.com>
+ <20180627013116.12411-3-bhe@redhat.com>
+ <20180627095439.GA5924@techadventures.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627095439.GA5924@techadventures.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 22:59:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 22:59:50 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-27 at 21:36 +0200, Boris Brezillon wrote:
-> I mean, kzalloc() is not deprecated AFAIK and I don't really see the
-> benefit of using kmalloc_array(), but if that makes you happy, let's go
-> for kmalloc_array().
+On 06/27/18 at 11:54am, Oscar Salvador wrote:
+> On Wed, Jun 27, 2018 at 09:31:14AM +0800, Baoquan He wrote:
+> > In sparse_init(), if CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER=y, system
+> > will allocate one continuous memory chunk for mem maps on one node and
+> > populate the relevant page tables to map memory section one by one. If
+> > fail to populate for a certain mem section, print warning and its
+> > ->section_mem_map will be cleared to cancel the marking of being present.
+> > Like this, the number of mem sections marked as present could become
+> > less during sparse_init() execution.
+> > 
+> > Here just defer the ms->section_mem_map clearing if failed to populate
+> > its page tables until the last for_each_present_section_nr() loop. This
+> > is in preparation for later optimizing the mem map allocation.
+> > 
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> >  mm/sparse-vmemmap.c |  1 -
+> >  mm/sparse.c         | 12 ++++++++----
+> >  2 files changed, 8 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> > index bd0276d5f66b..640e68f8324b 100644
+> > --- a/mm/sparse-vmemmap.c
+> > +++ b/mm/sparse-vmemmap.c
+> > @@ -303,7 +303,6 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+> >  		ms = __nr_to_section(pnum);
+> >  		pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
+> >  		       __func__);
+> > -		ms->section_mem_map = 0;
+> 
+> Since we are deferring the clearing of section_mem_map, I guess we do not need
+> 
+> struct mem_section *ms;
+> ms = __nr_to_section(pnum);
+> 
+> anymore, right?
 
-kcalloc
+Right, good catch, thanks.
 
-> I do run checkpatch --strict and fix most of the thing reported except
-> those hurting readability. I don't remember seeing checkpatch complain
-> about kzalloc() usage, and I guess it's not smart enough to detect that
-> for_each_bit_set() can be used to replace the "for() if (BIT(x) & val)"
-> pattern.
+I will post a new round to fix this.
 
-That would not an appropriate conversion suggestion in any case.
-coccinelle could at least look at whether or not x is allocated
-as a bitmap via DECLARE_BITMAP or bitmap_alloc
-
-
+> 
+> >  	}
+> >  
+> >  	if (vmemmap_buf_start) {
+> > diff --git a/mm/sparse.c b/mm/sparse.c
+> > index 6314303130b0..71ad53da2cd1 100644
+> > --- a/mm/sparse.c
+> > +++ b/mm/sparse.c
+> > @@ -451,7 +451,6 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+> >  		ms = __nr_to_section(pnum);
+> >  		pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
+> >  		       __func__);
+> > -		ms->section_mem_map = 0;
+> 
+> The same goes here.
+> 
+> 
+> 
+> -- 
+> Oscar Salvador
+> SUSE L3
