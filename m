@@ -2,224 +2,159 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6F0C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B48C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66BFA26341
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66BFA26341
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 68016260D1
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68016260D1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753498AbeF0MHj (ORCPT
+        id S1754315AbeF0MJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:07:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58306 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752828AbeF0MHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:07:38 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0CF4C77888;
-        Wed, 27 Jun 2018 12:07:38 +0000 (UTC)
-Received: from crecklin.bos.com (dhcp-17-195.bos.redhat.com [10.18.17.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 80F3C2026D5B;
-        Wed, 27 Jun 2018 12:07:37 +0000 (UTC)
-From:   Chris von Recklinghausen <crecklin@redhat.com>
-To:     keescook@chromium.org, labbott@redhat.com, pabeni@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH v3] add param that allows bootline control of hardened usercopy
-Date:   Wed, 27 Jun 2018 08:07:35 -0400
-Message-Id: <1530101255-13988-1-git-send-email-crecklin@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 27 Jun 2018 12:07:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 27 Jun 2018 12:07:38 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
+        Wed, 27 Jun 2018 08:09:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43222 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752828AbeF0MJa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:09:30 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RC6esX005091
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:09:30 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jv76vrma9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:09:30 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 27 Jun 2018 13:09:28 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Jun 2018 13:09:25 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RC9Ogq36503724
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Jun 2018 12:09:24 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C138411C050;
+        Wed, 27 Jun 2018 13:09:15 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D24711C04C;
+        Wed, 27 Jun 2018 13:09:14 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.118])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 27 Jun 2018 13:09:14 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 27 Jun 2018 15:09:21 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        linux-c6x <linux-c6x-dev@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH] c6x: switch to NO_BOOTMEM
+Date:   Wed, 27 Jun 2018 15:09:20 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18062712-0016-0000-0000-000001E0AC09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062712-0017-0000-0000-00003234EABC
+Message-Id: <1530101360-5768-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=910 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806270135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling HARDENED_USER_COPY causes measurable regressions in
- networking performance, up to 8% under UDP flood.
+The c6x is already using memblock and does most of early memory
+reservations with it, so it was only a matter of removing the bootmem
+initialization and handover of the memory from memblock to bootmem.
 
-I'm running an a small packet UDP flood using pktgen vs. a host b2b
-connected. On the receiver side the UDP packets are processed by a
-simple user space process that just reads and drops them:
-
-https://github.com/netoptimizer/network-testing/blob/master/src/udp_sink.c
-
-Not very useful from a functional PoV, but it helps to pin-point
-bottlenecks in the networking stack.
-
-When running a kernel with CONFIG_HARDENED_USERCOPY=y, I see a 5-8%
-regression in the receive tput, compared to the same kernel without
-this option enabled.
-
-With CONFIG_HARDENED_USERCOPY=y, perf shows ~6% of CPU time spent
-cumulatively in __check_object_size (~4%) and __virt_addr_valid (~2%).
-
-The call-chain is:
-
-__GI___libc_recvfrom
-entry_SYSCALL_64_after_hwframe
-do_syscall_64
-__x64_sys_recvfrom
-__sys_recvfrom
-inet_recvmsg
-udp_recvmsg
-__check_object_size
-
-udp_recvmsg() actually calls copy_to_iter() (inlined) and the latters
-calls check_copy_size() (again, inlined).
-
-A generic distro may want to enable HARDENED_USER_COPY in their default
-kernel config, but at the same time, such distro may want to be able to
-avoid the performance penalties in with the default configuration and
-disable the stricter check on a per-boot basis.
-
-This change adds a boot parameter that conditionally disables
-HARDENED_USERCOPY at boot time.
-
-v2->v3:
-	add benchmark details to commit comments
-	Don't add new item to Documentation/admin-guide/kernel-parameters.rst
-	rename boot param to "hardened_usercopy="
-	update description in Documentation/admin-guide/kernel-parameters.txt
-	static_branch_likely -> static_branch_unlikely
-	add __ro_after_init versions of DEFINE_STATIC_KEY_FALSE,
-		DEFINE_STATIC_KEY_TRUE
-	disable_huc_atboot -> enable_checks (strtobool "on" == true)
-
-v1->v2:
-	remove CONFIG_HUC_DEFAULT_OFF
-	default is now enabled, boot param disables
-	move check to __check_object_size so as to not break optimization of
-		__builtin_constant_p()
-	include linux/atomic.h before linux/jump_label.h
-
-Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- .../admin-guide/kernel-parameters.txt         | 11 ++++++++
- include/linux/jump_label.h                    |  6 +++++
- include/linux/thread_info.h                   |  5 ++++
- mm/usercopy.c                                 | 26 +++++++++++++++++++
- 4 files changed, 48 insertions(+)
+ arch/c6x/Kconfig        |  1 +
+ arch/c6x/kernel/setup.c | 26 +-------------------------
+ 2 files changed, 2 insertions(+), 25 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index efc7aa7a0670..560d4dc66f02 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -816,6 +816,17 @@
- 	disable=	[IPV6]
- 			See Documentation/networking/ipv6.txt.
+diff --git a/arch/c6x/Kconfig b/arch/c6x/Kconfig
+index bf59855628ac..054c7c963180 100644
+--- a/arch/c6x/Kconfig
++++ b/arch/c6x/Kconfig
+@@ -14,6 +14,7 @@ config C6X
+ 	select GENERIC_IRQ_SHOW
+ 	select HAVE_ARCH_TRACEHOOK
+ 	select HAVE_MEMBLOCK
++	select NO_BOOTMEM
+ 	select SPARSE_IRQ
+ 	select IRQ_DOMAIN
+ 	select OF
+diff --git a/arch/c6x/kernel/setup.c b/arch/c6x/kernel/setup.c
+index 786e36e2f61d..cc74cb9d349b 100644
+--- a/arch/c6x/kernel/setup.c
++++ b/arch/c6x/kernel/setup.c
+@@ -296,7 +296,6 @@ notrace void __init machine_init(unsigned long dt_ptr)
  
-+	hardened_usercopy=
-+                        [KNL] Under CONFIG_HARDENED_USERCOPY, whether
-+                        hardening is enabled for this boot. Hardened
-+                        usercopy checking is used to protect the kernel
-+                        from reading or writing beyond known memory
-+                        allocation boundaries as a proactive defense
-+                        against bounds-checking flaws in the kernel's
-+                        copy_to_user()/copy_from_user() interface.
-+                on      Perform hardened usercopy checks (default).
-+                off     Disable hardened usercopy checks.
-+
- 	disable_radix	[PPC]
- 			Disable RADIX MMU mode on POWER9
- 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index b46b541c67c4..1a0b6f17a5d6 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -299,12 +299,18 @@ struct static_key_false {
- #define DEFINE_STATIC_KEY_TRUE(name)	\
- 	struct static_key_true name = STATIC_KEY_TRUE_INIT
- 
-+#define DEFINE_STATIC_KEY_TRUE_RO(name)	\
-+	struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
-+
- #define DECLARE_STATIC_KEY_TRUE(name)	\
- 	extern struct static_key_true name
- 
- #define DEFINE_STATIC_KEY_FALSE(name)	\
- 	struct static_key_false name = STATIC_KEY_FALSE_INIT
- 
-+#define DEFINE_STATIC_KEY_FALSE_RO(name)	\
-+	struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
-+
- #define DECLARE_STATIC_KEY_FALSE(name)	\
- 	extern struct static_key_false name
- 
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index 8d8821b3689a..ab24fe2d3f87 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -109,6 +109,11 @@ static inline int arch_within_stack_frames(const void * const stack,
- #endif
- 
- #ifdef CONFIG_HARDENED_USERCOPY
-+#include <linux/atomic.h>
-+#include <linux/jump_label.h>
-+
-+DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
-+
- extern void __check_object_size(const void *ptr, unsigned long n,
- 					bool to_user);
- 
-diff --git a/mm/usercopy.c b/mm/usercopy.c
-index e9e9325f7638..39f8b1409618 100644
---- a/mm/usercopy.c
-+++ b/mm/usercopy.c
-@@ -20,6 +20,8 @@
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/thread_info.h>
-+#include <linux/atomic.h>
-+#include <linux/jump_label.h>
- #include <asm/sections.h>
- 
- /*
-@@ -248,6 +250,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
-  */
- void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+ void __init setup_arch(char **cmdline_p)
  {
-+	if (static_branch_unlikely(&bypass_usercopy_checks))
-+		return;
-+
- 	/* Skip all tests if size is zero. */
- 	if (!n)
- 		return;
-@@ -279,3 +284,24 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
- 	check_kernel_text_object((const unsigned long)ptr, n, to_user);
- }
- EXPORT_SYMBOL(__check_object_size);
-+
-+DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
-+EXPORT_SYMBOL(bypass_usercopy_checks);
-+
-+static bool enable_checks __initdata = true;
-+
-+static int __init parse_hardened_usercopy(char *str)
-+{
-+	return strtobool(str, &enable_checks);
-+}
-+
-+__setup("hardened_usercopy=", parse_hardened_usercopy);
-+
-+static int __init set_hardened_usercopy(void)
-+{
-+	if (enable_checks == false)
-+		static_branch_enable(&bypass_usercopy_checks);
-+	return 1;
-+}
-+
-+late_initcall(set_hardened_usercopy);
+-	int bootmap_size;
+ 	struct memblock_region *reg;
+ 
+ 	printk(KERN_INFO "Initializing kernel\n");
+@@ -353,16 +352,6 @@ void __init setup_arch(char **cmdline_p)
+ 	init_mm.end_data   = memory_start;
+ 	init_mm.brk        = memory_start;
+ 
+-	/*
+-	 * Give all the memory to the bootmap allocator,  tell it to put the
+-	 * boot mem_map at the start of memory
+-	 */
+-	bootmap_size = init_bootmem_node(NODE_DATA(0),
+-					 memory_start >> PAGE_SHIFT,
+-					 PAGE_OFFSET >> PAGE_SHIFT,
+-					 memory_end >> PAGE_SHIFT);
+-	memblock_reserve(memory_start, bootmap_size);
+-
+ 	unflatten_device_tree();
+ 
+ 	c6x_cache_init();
+@@ -397,22 +386,9 @@ void __init setup_arch(char **cmdline_p)
+ 	/* Initialize the coherent memory allocator */
+ 	coherent_mem_init(dma_start, dma_size);
+ 
+-	/*
+-	 * Free all memory as a starting point.
+-	 */
+-	free_bootmem(PAGE_OFFSET, memory_end - PAGE_OFFSET);
+-
+-	/*
+-	 * Then reserve memory which is already being used.
+-	 */
+-	for_each_memblock(reserved, reg) {
+-		pr_debug("reserved - 0x%08x-0x%08x\n",
+-			 (u32) reg->base, (u32) reg->size);
+-		reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
+-	}
+-
+ 	max_low_pfn = PFN_DOWN(memory_end);
+ 	min_low_pfn = PFN_UP(memory_start);
++	max_pfn = max_low_pfn;
+ 	max_mapnr = max_low_pfn - min_low_pfn;
+ 
+ 	/* Get kmalloc into gear */
 -- 
-2.17.0
+2.7.4
 
