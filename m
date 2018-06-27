@@ -2,107 +2,101 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151A9C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC771C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD246247DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:02:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD246247DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8523D25F81
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:07:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrRNXokb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8523D25F81
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935020AbeF0SCl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 14:02:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49606 "EHLO mail.bootlin.com"
+        id S935074AbeF0SHN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 14:07:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934333AbeF0SCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 14:02:40 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0C7A020893; Wed, 27 Jun 2018 20:02:38 +0200 (CEST)
-Received: from localhost (unknown [88.128.82.6])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8BE3320893;
-        Wed, 27 Jun 2018 20:02:15 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 20:02:15 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
-Message-ID: <20180627180215.y5kvvdqeriadxwte@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2wy3m2pbmtcl6uw2"
-Content-Disposition: inline
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180622
+        id S934541AbeF0SHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 14:07:12 -0400
+Received: from localhost.localdomain (cpe-24-28-70-126.austin.res.rr.com [24.28.70.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79E7C25F7B;
+        Wed, 27 Jun 2018 18:07:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530122831;
+        bh=TN1KlOHRYSM18/5JZn1lK2xqN9GKFzgUBFdpAbKdRnE=;
+        h=From:To:Subject:Date:From;
+        b=FrRNXokbeQlez3rUZaYFJR7zV3Qgv/9jPJyI23w+RIIdVW4TOR4bc/jQlPkKOnrLP
+         6DHsFLa8XejpTJ8T+6ifCR8DjfdIyrtUz35QqkEgUbPaUnAdwoit1HVd+bx5BwNjVN
+         f7fZ3TC0M+1VQtOwxda5EA8v17TjoTa4txxWfD0Q=
+From:   Timur Tabi <timur@kernel.org>
+To:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: [PATCH] MAINTAINERS: Timur has a kernel.org address
+Date:   Wed, 27 Jun 2018 13:07:07 -0500
+Message-Id: <20180627180707.16665-1-timur@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Timur Tabi no longer works for Qualcomm, and he now has a kernel.org
+email address, so update MAINTAINERS accordingly.
 
---2wy3m2pbmtcl6uw2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Timur Tabi <timur@kernel.org>
+---
+ MAINTAINERS | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
-> This series adds support for R40 HDMI pipeline. It is a bit special
-> than other already supported pipelines because it has additional unit
-> called TCON TOP responsible for relationship configuration between
-> mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-> and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> and TV encoders.
->=20
-> However, it seems that TCON TOP will become a norm, since newer
-> Allwinner SoCs like H6 also have this unit.
->=20
-> I tested different possible configurations:
-> - mixer0 <> TCON-TV0 <> HDMI
-> - mixer0 <> TCON-TV1 <> HDMI
-> - mixer1 <> TCON-TV0 <> HDMI
-> - mixer1 <> TCON-TV1 <> HDMI
->=20
-> Please review.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e19ec6d90a44..192e05b8a39a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5669,7 +5669,7 @@ F:	drivers/crypto/caam/
+ F:	Documentation/devicetree/bindings/crypto/fsl-sec4.txt
+ 
+ FREESCALE DIU FRAMEBUFFER DRIVER
+-M:	Timur Tabi <timur@tabi.org>
++M:	Timur Tabi <timur@kernel.org>
+ L:	linux-fbdev@vger.kernel.org
+ S:	Maintained
+ F:	drivers/video/fbdev/fsl-diu-fb.*
+@@ -5769,7 +5769,7 @@ S:	Maintained
+ F:	drivers/net/wan/fsl_ucc_hdlc*
+ 
+ FREESCALE QUICC ENGINE UCC UART DRIVER
+-M:	Timur Tabi <timur@tabi.org>
++M:	Timur Tabi <timur@kernel.org>
+ L:	linuxppc-dev@lists.ozlabs.org
+ S:	Maintained
+ F:	drivers/tty/serial/ucc_uart.c
+@@ -5793,7 +5793,7 @@ F:	drivers/net/ethernet/freescale/fs_enet/
+ F:	include/linux/fs_enet_pd.h
+ 
+ FREESCALE SOC SOUND DRIVERS
+-M:	Timur Tabi <timur@tabi.org>
++M:	Timur Tabi <timur@kernel.org>
+ M:	Nicolin Chen <nicoleotsuka@gmail.com>
+ M:	Xiubo Li <Xiubo.Lee@gmail.com>
+ R:	Fabio Estevam <fabio.estevam@nxp.com>
+@@ -11809,9 +11809,9 @@ F:  Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+ F:  drivers/cpufreq/qcom-cpufreq-kryo.c
+ 
+ QUALCOMM EMAC GIGABIT ETHERNET DRIVER
+-M:	Timur Tabi <timur@codeaurora.org>
++M:	Timur Tabi <timur@kernel.org>
+ L:	netdev@vger.kernel.org
+-S:	Supported
++S:	Maintained
+ F:	drivers/net/ethernet/qualcomm/emac/
+ 
+ QUALCOMM HEXAGON ARCHITECTURE
+-- 
+2.17.1
 
-I just applied it. It didn't apply cleanly, so please make sure it
-does next time, or at least state what the dependencies are.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---2wy3m2pbmtcl6uw2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsz0SYACgkQ0rTAlCFN
-r3SbdQ//euZyyHgI8fweXiCdyc7kUUDmnCUfKDb2K6NkxCqJ9W6HAtKlzNL9NIhr
-ixkSZCBtKgqmIfIaxuhBfL3Xc1k0haj6RS3rwVXOjrwd3eMMFz6ywvi2UkDNLYqA
-ROSGF/QyN5tPyEPYVEac4XYqxVOTdd0vweZHBWUSWHX0YuQM71QE5QJ7xnlhfv61
-bkQEsbnP9vbHQpYseH1v3UIwx8P7XnFS/wJ+OX5v2lwLNcFGl4Z4A8n1ZetVhIJs
-kTp88LXIImT5cWDnsDmONRbBfJvIiitICvJ/9hlN5tcAC86bBX8xuW58oRz2KAQR
-eTlzwvMR7DedVMZ7KWqtxztnPVcjCuy5ZLNYjE5ljhkueS4v1//2gzfM4fE46kOT
-FA+dW8YTIUt6iWn//S4vtXEtSINU7E6kDP5NcASKwg1RET7/ylw6TmOcVeyyjyIc
-R3HFC71s9Cp5eCFYO4ICgrU1Y7oNBhTJPdSK8f/NFJYlBMLUXAij0Dj7Dogqen+K
-lsZVMzYpQIZYvLIFwDqejmQEEnmUrT8MmLdx+1Ho0FkmeDae5pW+oX6UmyVBabZX
-ydyjntKnFxJQofKqm1NeDMTghrjmcto+Wqh//zMkJjaYQe1QGpU8WdOGVxEIoo+W
-9VFCRVtOQSSRNiMtc15s/tSrxAFzROMAdohn7KY5s5/JW0fi5QA=
-=MMdN
------END PGP SIGNATURE-----
-
---2wy3m2pbmtcl6uw2--
