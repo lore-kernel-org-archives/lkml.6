@@ -3,32 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CD6C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 233DCC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EF1826002
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EF1826002
+	by mail.kernel.org (Postfix) with ESMTP id CB26E26041
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:48:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB26E26041
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965232AbeF0Mrr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:47:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60826 "EHLO mx1.redhat.com"
+        id S965244AbeF0MsB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:48:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39332 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965204AbeF0Mrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:47:45 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S1753325AbeF0Mr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:47:59 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 96B508163C40;
-        Wed, 27 Jun 2018 12:47:44 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E6D0401EF04;
+        Wed, 27 Jun 2018 12:47:58 +0000 (UTC)
 Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 561242026D5B;
-        Wed, 27 Jun 2018 12:47:35 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB0961C678;
+        Wed, 27 Jun 2018 12:47:46 +0000 (UTC)
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
         Kent Overstreet <kent.overstreet@gmail.com>
@@ -40,106 +39,125 @@ Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
         Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
         Randy Dunlap <rdunlap@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH V7 09/24] block: use bio_add_page in bio_iov_iter_get_pages
-Date:   Wed, 27 Jun 2018 20:45:33 +0800
-Message-Id: <20180627124548.3456-10-ming.lei@redhat.com>
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V7 10/24] block: introduce multipage page bvec helpers
+Date:   Wed, 27 Jun 2018 20:45:34 +0800
+Message-Id: <20180627124548.3456-11-ming.lei@redhat.com>
 In-Reply-To: <20180627124548.3456-1-ming.lei@redhat.com>
 References: <20180627124548.3456-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 12:47:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 12:47:44 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:47:58 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:47:58 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+This patch introduces helpers of 'mp_bvec_iter_*' for multipage
+bvec support.
 
-Replace a nasty hack with a different nasty hack to prepare for multipage
-bio_vecs.  By moving the temporary page array as far up as possible in
-the space allocated for the bio_vec array we can iterate forward over it
-and thus use bio_add_page.  Using bio_add_page means we'll be able to
-merge physically contiguous pages once support for multipath bio_vecs is
-merged.
+The introduced interfaces treate one bvec as real multipage segment,
+for example, .bv_len is the total length of the multipage bvec.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+The existed helpers of bvec_iter_* are interfaces for supporting current
+bvec iterator which is thought as singlepage only by drivers, fs, dm and
+etc. These introduced helpers will build singlepage bvec in flight, so
+users of current bio/bvec iterator still can work well and needn't any
+change even though we store real multipage io vector into bvec table.
+
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- block/bio.c | 45 +++++++++++++++++++++------------------------
- 1 file changed, 21 insertions(+), 24 deletions(-)
+ include/linux/bvec.h | 63 +++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 60 insertions(+), 3 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index de6cbaedfb65..80ea0c8878bd 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -825,6 +825,8 @@ int bio_add_page(struct bio *bio, struct page *page,
- }
- EXPORT_SYMBOL(bio_add_page);
- 
-+#define PAGE_PTRS_PER_BVEC	(sizeof(struct bio_vec) / sizeof(struct page *))
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index fe7a22dd133b..03a12fbb90d8 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -23,6 +23,44 @@
+ #include <linux/kernel.h>
+ #include <linux/bug.h>
+ #include <linux/errno.h>
++#include <linux/mm.h>
 +
- /**
-  * bio_iov_iter_get_pages - pin user or kernel pages and add them to a bio
-  * @bio: bio to add pages to
-@@ -836,38 +838,33 @@ EXPORT_SYMBOL(bio_add_page);
- int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- {
- 	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt;
-+	unsigned short entries_left = bio->bi_max_vecs - bio->bi_vcnt;
- 	struct bio_vec *bv = bio->bi_io_vec + bio->bi_vcnt;
- 	struct page **pages = (struct page **)bv;
--	size_t offset, diff;
--	ssize_t size;
-+	ssize_t size, left;
-+	unsigned len, i;
-+	size_t offset;
++/*
++ * What is multipage bvecs?
++ *
++ * - bvec stored in bio->bi_io_vec is always multipage(mp) style
++ *
++ * - bvec(struct bio_vec) represents one physically contiguous I/O
++ *   buffer, now the buffer may include more than one pages since
++ *   multipage(mp) bvec is supported, and all these pages represented
++ *   by one bvec is physically contiguous. Before mp support, at most
++ *   one page can be included in one bvec, we call it singlepage(sp)
++ *   bvec.
++ *
++ * - .bv_page of the bvec represents the 1st page in the mp bvec
++ *
++ * - .bv_offset of the bvec represents offset of the buffer in the bvec
++ *
++ * The effect on the current drivers/filesystem/dm/bcache/...:
++ *
++ * - almost everyone supposes that one bvec only includes one single
++ *   page, so we keep the sp interface not changed, for example,
++ *   bio_for_each_segment() still returns bvec with single page
++ *
++ * - bio_for_each_segment*() will be changed to return singlepage
++ *   bvec too
++ *
++ * - during iterating, iterator variable(struct bvec_iter) is always
++ *   updated in multipage bvec style and that means bvec_iter_advance()
++ *   is kept not changed
++ *
++ * - returned(copied) singlepage bvec is generated in flight by bvec
++ *   helpers from the stored multipage bvec
++ *
++ * - In case that some components(such as iov_iter) need to support
++ *   multipage bvec, we introduce new helpers(mp_bvec_iter_*) for
++ *   them.
++ */
+ 
+ /*
+  * was unsigned short, but we might as well be ready for > 64kB I/O pages
+@@ -52,16 +90,35 @@ struct bvec_iter {
+  */
+ #define __bvec_iter_bvec(bvec, iter)	(&(bvec)[(iter).bi_idx])
+ 
+-#define bvec_iter_page(bvec, iter)				\
++#define mp_bvec_iter_page(bvec, iter)				\
+ 	(__bvec_iter_bvec((bvec), (iter))->bv_page)
+ 
+-#define bvec_iter_len(bvec, iter)				\
++#define mp_bvec_iter_len(bvec, iter)				\
+ 	min((iter).bi_size,					\
+ 	    __bvec_iter_bvec((bvec), (iter))->bv_len - (iter).bi_bvec_done)
+ 
+-#define bvec_iter_offset(bvec, iter)				\
++#define mp_bvec_iter_offset(bvec, iter)				\
+ 	(__bvec_iter_bvec((bvec), (iter))->bv_offset + (iter).bi_bvec_done)
+ 
++#define mp_bvec_iter_page_idx(bvec, iter)			\
++	(mp_bvec_iter_offset((bvec), (iter)) / PAGE_SIZE)
 +
-+	/*
-+	 * Move page array up in the allocated memory for the bio vecs as
-+	 * far as possible so that we can start filling biovecs from the
-+	 * beginning without overwriting the temporary page array.
-+	 */
-+	BUILD_BUG_ON(PAGE_PTRS_PER_BVEC < 2);
-+	pages += entries_left * (PAGE_PTRS_PER_BVEC - 1);
- 
- 	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
- 	if (unlikely(size <= 0))
- 		return size ? size : -EFAULT;
--	nr_pages = (size + offset + PAGE_SIZE - 1) / PAGE_SIZE;
- 
--	/*
--	 * Deep magic below:  We need to walk the pinned pages backwards
--	 * because we are abusing the space allocated for the bio_vecs
--	 * for the page array.  Because the bio_vecs are larger than the
--	 * page pointers by definition this will always work.  But it also
--	 * means we can't use bio_add_page, so any changes to it's semantics
--	 * need to be reflected here as well.
--	 */
--	bio->bi_iter.bi_size += size;
--	bio->bi_vcnt += nr_pages;
--
--	diff = (nr_pages * PAGE_SIZE - offset) - size;
--	while (nr_pages--) {
--		bv[nr_pages].bv_page = pages[nr_pages];
--		bv[nr_pages].bv_len = PAGE_SIZE;
--		bv[nr_pages].bv_offset = 0;
--	}
-+	for (left = size, i = 0; left > 0; left -= len, i++) {
-+		struct page *page = pages[i];
- 
--	bv[0].bv_offset += offset;
--	bv[0].bv_len -= offset;
--	if (diff)
--		bv[bio->bi_vcnt - 1].bv_len -= diff;
-+		len = min_t(size_t, PAGE_SIZE - offset, left);
-+		if (WARN_ON_ONCE(bio_add_page(bio, page, len, offset) != len))
-+			return -EINVAL;
-+		offset = 0;
-+	}
- 
- 	iov_iter_advance(iter, size);
- 	return 0;
++/*
++ * <page, offset,length> of singlepage(sp) segment.
++ *
++ * This helpers are for building sp bvec in flight.
++ */
++#define bvec_iter_offset(bvec, iter)					\
++	(mp_bvec_iter_offset((bvec), (iter)) % PAGE_SIZE)
++
++#define bvec_iter_len(bvec, iter)					\
++	min_t(unsigned, mp_bvec_iter_len((bvec), (iter)),		\
++	    (PAGE_SIZE - (bvec_iter_offset((bvec), (iter)))))
++
++#define bvec_iter_page(bvec, iter)					\
++	nth_page(mp_bvec_iter_page((bvec), (iter)),		\
++		 mp_bvec_iter_page_idx((bvec), (iter)))
++
+ #define bvec_iter_bvec(bvec, iter)				\
+ ((struct bio_vec) {						\
+ 	.bv_page	= bvec_iter_page((bvec), (iter)),	\
 -- 
 2.9.5
 
