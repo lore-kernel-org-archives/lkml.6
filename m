@@ -2,109 +2,126 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A986EC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1488C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 640E72571D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:15:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrULsVi7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640E72571D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 904132600A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:18:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 904132600A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754816AbeF0RPa (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:15:30 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41906 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965911AbeF0RMj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:12:39 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v12-v6so2232491ljj.8;
-        Wed, 27 Jun 2018 10:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FfkN2BRmaFMo/wJvnoikyZaoLnqmd1IN7BL7KjnftSU=;
-        b=VrULsVi72g9bOoDa/rGkGcSbG7IZbQFlVzmH3IrYCAiV3StIWe7UdIS58MYz4v6eTX
-         qV9LmKhbqpiVSYcXdWMs6iZFcyGhFsFHtCmjy5KJ2rr1Jzm5M+ycBaJXjmCGyU8zoK6u
-         7DPevBBbOg2VgLaBOeZPMJTsM1o4SotJV1igSrAruiWIFHxTyeQQEP+cDKPyM9cUEQlA
-         wYp1CQ7vHn/9SLLoxYCM7jHbFLTAaWGQ1gzlUDC2X+S2wPSKSgk8pQv7GOfUvpJwjfg+
-         7gupr1v3M5BWB87kkedbCyBd2zr4TFNkC1/s1apeY9Wb56IMs5A9E7RsGX3BAkpUe7Zm
-         MmNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FfkN2BRmaFMo/wJvnoikyZaoLnqmd1IN7BL7KjnftSU=;
-        b=F3tuZo6UHWKroRlX801yaH1D/3yEXBiAR2xPBC3RYtUihSyCEy3U6u3gqiZWZIF4j3
-         G25wKThXPPbWHK5ElJJ9jRtPj17QcxS8/+wFT2WoAiAsKZx3rL2jx/hxz5DXY/MjWDbd
-         CGwNy9gS181mWUwt0usiY6w9vyDlAFZNu5NHPSWkkaI/A6NHeny72OH0tWF9Rdi8qTqs
-         JNd+s9IE6xwkV6HpmRrxGnLY5S5nu5ia+GrKm/Mk/DDHqJTnInWNAodzpFQp416fUfZy
-         j4gMjq0TwaFXGZglxEa+cBRP2r4f6CCa0MvYSjZ+Eo3lbajOswbJ7hudOcwlay+osgb2
-         8MDQ==
-X-Gm-Message-State: APt69E1fJnxcq+GXc98Grx6YF4CVAjpSZszk5Yb0Tx7F76Lpa/yGqVpL
-        wBN3+8KF7UFRROxveZDwvns=
-X-Google-Smtp-Source: AAOMgpcBx9P45Vi6WDkaFnOscSSpC7uEqVoNLugXZgRF61eGhWBFxi9tjhEhyGxMfHQLkl7xlv5GOw==
-X-Received: by 2002:a2e:9809:: with SMTP id a9-v6mr4628841ljj.143.1530119558306;
-        Wed, 27 Jun 2018 10:12:38 -0700 (PDT)
-Received: from localhost.localdomain (user-94-254-170-61.play-internet.pl. [94.254.170.61])
-        by smtp.googlemail.com with ESMTPSA id n9-v6sm929344lfb.7.2018.06.27.10.12.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 27 Jun 2018 10:12:37 -0700 (PDT)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux@armlinux.org.uk
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xc-racer2@live.ca,
-        pawel.mikolaj.chmiel@gmail.com
-Subject: [PATCH v2 01/10] ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
-Date:   Wed, 27 Jun 2018 19:12:15 +0200
-Message-Id: <1530119544-30023-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-References: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+        id S965657AbeF0RSH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:18:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35084 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965051AbeF0RSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 13:18:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39EBB18A;
+        Wed, 27 Jun 2018 10:18:05 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.cambridge.arm.com [10.1.206.84])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F35983F5C0;
+        Wed, 27 Jun 2018 10:18:00 -0700 (PDT)
+Date:   Wed, 27 Jun 2018 18:17:58 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, nd <nd@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
+Message-ID: <20180627171757.amucnh5znld45cpc@armageddon.cambridge.arm.com>
+References: <cover.1529507994.git.andreyknvl@google.com>
+ <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
+ <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
+ <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
+ <0cef1643-a523-98e7-95e2-9ec595137642@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0cef1643-a523-98e7-95e2-9ec595137642@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds missing interrupt-controller property to gph2 block,
-to silence following warnings during build
-  /soc/pinctrl@e0200000/gph2: Missing interrupt-controller or interrupt-map property
+On Wed, Jun 27, 2018 at 04:08:09PM +0100, Ramana Radhakrishnan wrote:
+> On 27/06/2018 16:05, Andrey Konovalov wrote:
+> > On Tue, Jun 26, 2018 at 7:29 PM, Catalin Marinas
+> > <catalin.marinas@arm.com> wrote:
+> >> On Tue, Jun 26, 2018 at 02:47:50PM +0200, Andrey Konovalov wrote:
+> >>> On Wed, Jun 20, 2018 at 5:24 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> >>>> arm64 has a feature called Top Byte Ignore, which allows to embed pointer
+> >>>> tags into the top byte of each pointer. Userspace programs (such as
+> >>>> HWASan, a memory debugging tool [1]) might use this feature and pass
+> >>>> tagged user pointers to the kernel through syscalls or other interfaces.
+> >>>>
+> >>>> This patch makes a few of the kernel interfaces accept tagged user
+> >>>> pointers. The kernel is already able to handle user faults with tagged
+> >>>> pointers and has the untagged_addr macro, which this patchset reuses.
+> >>>>
+> >>>> We're not trying to cover all possible ways the kernel accepts user
+> >>>> pointers in one patchset, so this one should be considered as a start.
+> >>>>
+> >>>> Thanks!
+> >>>>
+> >>>> [1] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
+> >>>
+> >>> Is there anything I should do to move forward with this?
+> >>>
+> >>> I've received zero replies to this patch set (v3 and v4) over the last
+> >>> month.
+> >>
+> >> The patches in this series look fine but my concern is that they are not
+> >> sufficient and we don't have (yet?) a way to identify where such
+> >> annotations are required. You even say in patch 6 that this is "some
+> >> initial work for supporting non-zero address tags passed to the kernel".
+> >> Unfortunately, merging (or relaxing) an ABI without a clear picture is
+> >> not really feasible.
+> >>
+> >> While I support this work, as a maintainer I'd like to understand
+> >> whether we'd be in a continuous chase of ABI breaks with every kernel
+> >> release or we have a better way to identify potential issues. Is there
+> >> any way to statically analyse conversions from __user ptr to long for
+> >> example? Or, could we get the compiler to do this for us?
+> > 
+> > OK, got it, I'll try to figure out a way to find these conversions.
+> 
+> This sounds like the kind of thing we should be able to get sparse to do
+> already, no ? It's been many years since I last looked at it but I
+> thought sparse was the tool of choice in the kernel to do this kind of
+> checking.
 
-It's reguired by Samsung aries boards, an S5PV210 based
-Samsung Galaxy S (i9000) and Galaxy S 4G phones, which are added in next patches.
+sparse is indeed an option. The current implementation doesn't warn on
+an explicit cast from (void __user *) to (unsigned long) since that's a
+valid thing in the kernel. I couldn't figure out if there's any other
+__attribute__ that could be used to warn of such conversion.
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-index 3a79feab11c3..7f0c9d447871 100644
---- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-@@ -258,6 +258,8 @@
- 	gph2: gph2 {
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+
-+		interrupt-controller;
- 		#interrupt-cells = <2>;
- 	};
- 
 -- 
-2.7.4
-
+Catalin
