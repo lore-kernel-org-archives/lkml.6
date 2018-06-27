@@ -2,137 +2,125 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5075AC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 371F4C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C8D26944
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:48:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C8D26944
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CCB4A26937
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:48:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eb0LgQYo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB4A26937
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754597AbeF0BsD (ORCPT
+        id S1755316AbeF0Bsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 21:48:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43098 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753213AbeF0BsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 21:48:02 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 84A9081A8E54;
-        Wed, 27 Jun 2018 01:48:01 +0000 (UTC)
-Received: from localhost (ovpn-8-24.pek2.redhat.com [10.72.8.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8880B1C66B;
-        Wed, 27 Jun 2018 01:48:00 +0000 (UTC)
-Date:   Wed, 27 Jun 2018 09:47:57 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, pagupta@redhat.com
-Cc:     linux-mm@kvack.org, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v5 0/4] mm/sparse: Optimize memmap allocation during
- sparse_init()
-Message-ID: <20180627014757.GC8970@localhost.localdomain>
-References: <20180627013116.12411-1-bhe@redhat.com>
+        Tue, 26 Jun 2018 21:48:30 -0400
+Received: from mail-pl0-f45.google.com ([209.85.160.45]:46211 "EHLO
+        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751027AbeF0Bs3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 21:48:29 -0400
+Received: by mail-pl0-f45.google.com with SMTP id 30-v6so215970pld.13;
+        Tue, 26 Jun 2018 18:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=2jDMy2Aa92eSdF31yQy1Bhq4bdyrptsybH1UuKtnhto=;
+        b=eb0LgQYoi+yrWc5WJBP6leFINg3BDiUeVmgzXlm62jWZfBd6BbZmeO+Jl8ZpU7m5nf
+         Lmxhc6Ymjn6C0zygeU44n/wTCsgO6PSls7sTcMcCpRX1hcJIsMudcF/65bzWG9/fnsJ7
+         R5hy0vZomrchXJX9rm/OmsVMKzU/LjuLObzfjJVSQuQweGyjM+tMMxZHMKY127y2Kmo7
+         eb3drAr/AcFNSPYSv3gBT0MeHD6+0QThdzxfZl+MotPWvgUvE5sVrrcrOCseVsptCUQK
+         hpc/LlG5XHrm9mxXRhN8o+qjmQRiNIyBnGTPh9bEuSHhZ/jj4PGpLahe/4o3sJLPZRNL
+         pLwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=2jDMy2Aa92eSdF31yQy1Bhq4bdyrptsybH1UuKtnhto=;
+        b=ZS5M4eoSMyftM18S6ZgOMSbvzqDEyYrPHjA0kLsQyE/dXesF95Z8uHbP/V5dIncGJ3
+         GiTXj+/u6GWUDI1hPzDdnFeTERRFEC8c2LMzuRWGOUFBQePVKnui1ArvrwK5e0jj/EeH
+         QP8R5ltnCOiwi2Lybw8qEI4AhV0lU8A8DY7LYmoa/IRBZ++DltTF+XzTZtyv9n+vg9vE
+         7zO/V647BSqF7U66zVPkPb6aebsdB/mFA1+xE59lIQFMTyz0xRhrrSi5e41Qvs8SsZY+
+         ocyTQaAEnWfJCfowNXrYbEVI05CGT2FBrs7nMdtsYqt/IEXoS9UBG4jZsph6WelFPmQd
+         FBbQ==
+X-Gm-Message-State: APt69E0+u+ymz8e/rUS3MEB3jrx5stCKZ+bFTuGxpox5/j+BB77WtygS
+        4s28eRmqu7T+Cfg+VqRsFeBYuNxt
+X-Google-Smtp-Source: ADUXVKKyQs3OzAjZDWZG2xSluZP3LezJhT4QUw/DQMbracMb7eVMBttfC5/381OT4Peu4R0YR3xrSA==
+X-Received: by 2002:a17:902:201:: with SMTP id 1-v6mr4060956plc.310.1530064108761;
+        Tue, 26 Jun 2018 18:48:28 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.70.42? ([2402:f000:1:1501:200:5efe:a66f:462a])
+        by smtp.gmail.com with ESMTPSA id l8-v6sm4681407pfb.102.2018.06.26.18.48.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jun 2018 18:48:28 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] net: tg3: two possible data races
+To:     siva.kallam@broadcom.com, prashant@broadcom.com, mchan@broadcom.com
+Cc:     netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <c82bddf5-4ade-1a01-1587-25e8673301af@gmail.com>
+Date:   Wed, 27 Jun 2018 09:47:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627013116.12411-1-bhe@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 01:48:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 01:48:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/27/18 at 09:31am, Baoquan He wrote:
-> This is v4 post. V3 can be found here:
-> https://lkml.org/lkml/2018/2/27/928
+The call paths in Linux 4.16.7 that may raise the first data race:
 
-Sorry, forgot updating this part.
+CPU0:
+tg3_open
+     tg3_start
+         line 11611: spin_lock_bh()
+         tg3_enable_ints
+             line 1023: tp->tnapi->last_tag [READ]
 
-This is v5 post, v4 can be found here:
-http://lkml.kernel.org/r/20180521101555.25610-1-bhe@redhat.com
+CPU1:
+tg3_poll
+     line 7341: tnapi->last_tag [WRITE]
 
-> 
-> V1 can be found here:
-> https://www.spinics.net/lists/linux-mm/msg144486.html
-> 
-> In sparse_init(), two temporary pointer arrays, usemap_map and map_map
-> are allocated with the size of NR_MEM_SECTIONS. They are used to store
-> each memory section's usemap and mem map if marked as present. In
-> 5-level paging mode, this will cost 512M memory though they will be
-> released at the end of sparse_init(). System with few memory, like
-> kdump kernel which usually only has about 256M, will fail to boot
-> because of allocation failure if CONFIG_X86_5LEVEL=y.
-> 
-> In this patchset, optimize the memmap allocation code to only use
-> usemap_map and map_map with the size of nr_present_sections. This
-> makes kdump kernel boot up with normal crashkernel='' setting when
-> CONFIG_X86_5LEVEL=y.
-> 
-> Change log:
-> v4->v5:
->   Improve patch 3/4 log according to Dave's suggestion.
-> 
->   Correct the wrong copy&paste of making 'nr_consumed_maps' to
->   'alloc_usemap_and_memmap' mistakenly which is pointed out by
->   Dave in patch 4/4 code comment.
-> 
->   Otherwise, no code change in this version.
-> v3->v4:
->   Improve according to Dave's three concerns which are in patch 0004:
-> 
->   Rename variable 'idx_present' to 'nr_consumed_maps' which used to
->   index the memmap and usemap of present sections.
-> 
->   Add a check if 'nr_consumed_maps' goes beyond nr_present_sections.
-> 
->   Add code comment above the final for_each_present_section_nr() to
->   tell why 'nr_consumed_maps' need be increased in each iteration
->   whether the 'ms->section_mem_map' need cleared or out.
-> 
-> v2->v3:
->   Change nr_present_sections as __initdata and add code comment
->   according to Andrew's suggestion.
-> 
->   Change the local variable 'i' as idx_present which loops over the
->   present sections, and improve the code. These are suggested by
->   Dave and Pankaj.
-> 
->   Add a new patch 0003 which adds a new parameter 'data_unit_size'
->   to function alloc_usemap_and_memmap() in which we will update 'data'
->   to make it point at new position. However its type 'void *' can't give
->   us needed info to do that. Need pass the unit size in. So change code
->   in patch 0004 accordingly. This is a code bug fix found when tested
->   the memory deployed on multiple nodes.
-> 
-> v1-v2:
->   Split out the nr_present_sections adding as a single patch for easier
->   reviewing.
-> 
->   Rewrite patch log according to Dave's suggestion.
-> 
->   Fix code bug in patch 0002 reported by test robot.
-> 
-> Baoquan He (4):
->   mm/sparse: Add a static variable nr_present_sections
->   mm/sparsemem: Defer the ms->section_mem_map clearing
->   mm/sparse: Add a new parameter 'data_unit_size' for
->     alloc_usemap_and_memmap
->   mm/sparse: Optimize memmap allocation during sparse_init()
-> 
->  mm/sparse-vmemmap.c |  6 ++---
->  mm/sparse.c         | 72 +++++++++++++++++++++++++++++++++++++++++------------
->  2 files changed, 59 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.13.6
-> 
+The READ operation in CPU0 is performed with holding a spinlock (line 
+11611), but the WRITE operation in CPU1 is performed without holding 
+this spinlock, so it may cause a data race here.
+A possible fix may be to add spin_lock_bh() in tg3_poll().
+
+-----------------------------------------------------------------------
+
+The call paths in Linux 4.16.7 that may raise the second data race:
+
+CPU0:
+tg3_open
+     tg3_start
+         line 11611: spin_lock_bh()
+         tg3_enable_ints
+             line 1023: tp->irq_sync [WRITE]
+
+CPU1:
+tg3_interrupt_tagged
+     tg3_irq_sync
+         line 7341: tp->irq_sync [READ]
+
+The WRITE operation in CPU0 is performed with holding a spinlock (line 
+11611), but the READ operation in CPU1 is performed without holding this 
+spinlock, so it may cause a data race here.
+A possible fix may be to add spin_lock_bh() in tg3_irq_sync().
+
+I am not sure that whether the possible fixes are correct, so I only 
+report the data races.
+
+
+Best wishes,
+Jia-Ju Bai
+
+
