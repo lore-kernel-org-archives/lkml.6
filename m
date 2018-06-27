@@ -2,178 +2,187 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6913DC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB8BC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D64225115
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:05:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20150623.gappssmtp.com header.i=@ursulin-net.20150623.gappssmtp.com header.b="kBCn/UhQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D64225115
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+	by mail.kernel.org (Postfix) with ESMTP id 2E4B72619B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:05:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4B72619B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933493AbeF0KFI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 06:05:08 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34917 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752565AbeF0KFH (ORCPT
+        id S934318AbeF0KFW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 06:05:22 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56230 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932089AbeF0KFU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 06:05:07 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z137-v6so4826648wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 03:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H+5sKzy/objm/6G6pI/R9U1gohuMbfA8JrsXIUcPALc=;
-        b=kBCn/UhQ6AOE34czLiGtHpbUFEx5T90k7hkZ4YBCkkZjhLtz+Q5QVgpCwIZFEH766H
-         OirCLdSD5oo3zRNb2wnNvOxhOW0LJ1+UIjqKI2laSzZpoYJ2wP6enQquvDyyX4+0UQ7s
-         1IpaOK7W515S9hk78PG9nuD2RLep6oin+yCBbydWogzMy1Bnso3yPOE1dPxqIQfXnm7H
-         jz7x4ee6IK/7B3j9uk1DaUt1nXCj0+Lp9RxJDHlHcii3/YRvoPk7XDHBL9s/jg9Kcs9X
-         SgleqvSXcpqI+3qQYCE4OxRt3lwojdC2kcsASLoFCt63dtoFxZtKr5BO8uEpqHZ3pgyp
-         C25g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H+5sKzy/objm/6G6pI/R9U1gohuMbfA8JrsXIUcPALc=;
-        b=ZQfFrD+vpf9xTWJnwZHdT6u/gzanZv63xI4iTmVvKHOYucDhf9VXDzbuaTIpxZluHK
-         kjwtuocGZEAaQXNFqrFpfpE1+PJxx+aLlcpgVd2ietXQBTDnhtCicag3eHds8LwAhtaV
-         YyMh948zm5k5d5+wAyRPkJJQQ3r79ZzJuT16YhmjsZbzsYZSezgvp3u5WDAiKifov5O5
-         H9XtwufzWEg+w8pW1ze39x73UY48Mf9Z0IA5llCmXM8uNP9UDnc5umhtmdUruaMxTUZ7
-         HbSJxM5mnZQQ/F3umbRqTQxLLvqNCBEnd0F0rg6JOqhqptW8mdaO5U7RIP8M9kmrpaeN
-         hTGg==
-X-Gm-Message-State: APt69E0Ts3ZictHBVGYzJiigx5u+14JDYtSN91n+oIbc9S7ISD8N8Jgr
-        03i7rndPUhvBmQ1kNvH4nIJ3bQ==
-X-Google-Smtp-Source: AAOMgpcfciPZ2X252goKpLaD2IYKsx6jrYSOavbBoiMK7d4Uo4cP/hRAg+/b7m2k6GdLMvJG89ocmA==
-X-Received: by 2002:a1c:8803:: with SMTP id k3-v6mr4612171wmd.6.1530093905567;
-        Wed, 27 Jun 2018 03:05:05 -0700 (PDT)
-Received: from [192.168.0.197] ([95.146.151.144])
-        by smtp.googlemail.com with ESMTPSA id s2-v6sm5894720wrn.75.2018.06.27.03.05.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 03:05:04 -0700 (PDT)
-Subject: Re: [RFC 3/4] perf: Allow per PMU access control
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>, x86@kernel.org
-References: <20180626153642.5587-1-tvrtko.ursulin@linux.intel.com>
- <20180626153642.5587-4-tvrtko.ursulin@linux.intel.com>
- <e3beeb7e-fc9a-be86-0bea-92e8dd0916f2@linux.intel.com>
- <59478e35-4ac9-7be5-172a-c8301d9e11fd@ursulin.net>
- <2d389cf9-e284-0557-159a-e70a758d357b@linux.intel.com>
-From:   Tvrtko Ursulin <tursulin@ursulin.net>
-Message-ID: <3b774f2e-56da-3d39-6fda-a4240a195377@ursulin.net>
-Date:   Wed, 27 Jun 2018 11:05:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 27 Jun 2018 06:05:20 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5R9xI7N037429
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:05:20 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jv76w3snj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:05:20 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 27 Jun 2018 11:05:17 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Jun 2018 11:05:12 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RA5BFm32309378
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Jun 2018 10:05:11 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9645A4053;
+        Wed, 27 Jun 2018 11:05:02 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C13C4A405D;
+        Wed, 27 Jun 2018 11:05:01 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.118])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 27 Jun 2018 11:05:01 +0100 (BST)
+Date:   Wed, 27 Jun 2018 13:05:08 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Stefan Agner <stefan@agner.ch>, Joe Perches <joe@perches.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/memblock: add missing include <linux/bootmem.h>
+References: <20180622210542.2025-1-malat@debian.org>
+ <20180625171513.31845-1-malat@debian.org>
+ <20180625180717.GS28965@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <2d389cf9-e284-0557-159a-e70a758d357b@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625180717.GS28965@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18062710-0016-0000-0000-000001E0A02A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062710-0017-0000-0000-00003234DE3E
+Message-Id: <20180627100508.GB4291@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806270115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 27/06/18 10:47, Alexey Budankov wrote:
+On Mon, Jun 25, 2018 at 08:07:17PM +0200, Michal Hocko wrote:
+> On Mon 25-06-18 19:15:12, Mathieu Malaterre wrote:
+> > Commit 26f09e9b3a06 ("mm/memblock: add memblock memory allocation apis")
+> > introduced two new function definitions:
+> > 
+> >   memblock_virt_alloc_try_nid_nopanic()
+> >   memblock_virt_alloc_try_nid()
+> > 
+> > Commit ea1f5f3712af ("mm: define memblock_virt_alloc_try_nid_raw")
+> > introduced the following function definition:
+> > 
+> >   memblock_virt_alloc_try_nid_raw()
+> > 
+> > This commit adds an include of header file <linux/bootmem.h> to provide
+> > the missing function prototypes. Silence the following gcc warning
+> > (W=1):
+> > 
+> >   mm/memblock.c:1334:15: warning: no previous prototype for `memblock_virt_alloc_try_nid_raw' [-Wmissing-prototypes]
+> >   mm/memblock.c:1371:15: warning: no previous prototype for `memblock_virt_alloc_try_nid_nopanic' [-Wmissing-prototypes]
+> >   mm/memblock.c:1407:15: warning: no previous prototype for `memblock_virt_alloc_try_nid' [-Wmissing-prototypes]
+> > 
+> > It also adds #ifdef blockers to prevent compilation failure on mips/ia64
+> > where CONFIG_NO_BOOTMEM=n. Because Makefile already does:
+> > 
+> >   obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
+> > 
+> > The #ifdef has been simplified from:
+> > 
+> >   #if defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM)
+> > 
+> > to simply:
+> > 
+> >   #if defined(CONFIG_NO_BOOTMEM)
 > 
+> Well, I would apreciate an explanation why do we need NO_BOOTMEM guard
+> in the first place rather than why HAVE_MEMBLOCK is not needed.
 > 
-> On 27.06.2018 12:15, Tvrtko Ursulin wrote:
->>
->> On 26/06/18 18:25, Alexey Budankov wrote:
->>> Hi,
->>>
->>> On 26.06.2018 18:36, Tvrtko Ursulin wrote:
->>>> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
->>>>
->>>> For situations where sysadmins might want to allow different level of
->>>> access control for different PMUs, we start creating per-PMU
->>>> perf_event_paranoid controls in sysfs.
->>>>
->>>> These work in equivalent fashion as the existing perf_event_paranoid
->>>> sysctl, which now becomes the parent control for each PMU.
->>>>
->>>> On PMU registration the global/parent value will be inherited by each PMU,
->>>> as it will be propagated to all registered PMUs when the sysctl is
->>>> updated.
->>>>
->>>> At any later point individual PMU access controls, located in
->>>> <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
->>>> fine grained access control.
->>>>
->>>> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
->>>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>>> Cc: Peter Zijlstra <peterz@infradead.org>
->>>> Cc: Ingo Molnar <mingo@redhat.com>
->>>> Cc: "H. Peter Anvin" <hpa@zytor.com>
->>>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->>>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->>>> Cc: Jiri Olsa <jolsa@redhat.com>
->>>> Cc: Namhyung Kim <namhyung@kernel.org>
->>>> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
->>>> Cc: Andi Kleen <ak@linux.intel.com>
->>>> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
->>>> Cc: linux-kernel@vger.kernel.org
->>>> Cc: x86@kernel.org
->>>> ---
->>>>    include/linux/perf_event.h | 12 ++++++--
->>>>    kernel/events/core.c       | 59 ++++++++++++++++++++++++++++++++++++++
->>>>    kernel/sysctl.c            |  4 ++-
->>>>    3 files changed, 71 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
->>>> index d7938d88c028..22e91cc2d9e1 100644
->>>> --- a/include/linux/perf_event.h
->>>> +++ b/include/linux/perf_event.h
->>>> @@ -271,6 +271,9 @@ struct pmu {
->>>>        /* number of address filters this PMU can do */
->>>>        unsigned int            nr_addr_filters;
->>>>    +    /* per PMU access control */
->>>> +    int                perf_event_paranoid;
->>>
->>> It looks like it needs to be declared as atomic and atomic_read/atomic_write
->>> operations need to be explicitly used below in the patch as far this
->>> variable may be manipulated by different threads at the same time
->>> without explicit locking.
->>
->> It is just a write of an integer from either sysfs access or sysctl. As such I don't think going atomic would change anything. There is no RMW or increment or anything on it.
->>
->> Unless there are architectures where int stores are not atomic? But then the existing sysctl would have the same issue. So I suspect we can indeed rely on int store being atomic.
+> > Suggested-by: Tony Luck <tony.luck@intel.com>
+> > Suggested-by: Michal Hocko <mhocko@kernel.org>
+> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
 > 
-> Yep, aligned word read/write is atomic on Intel and there is no runtime issue
-> currently, but the implementation itself is multithread and implicitly relies
-> on that atomicity so my suggestion is just explicitly code that assumption :).
-> Also, as you mentioned, that makes the arch independent part of code more portable.
+> Anyway this looks better. I wish we can actually get rid of bootmem
+> allocator which would simplify this as well but that is another topic.
 
-Perhaps we are not on the same page, but my argument was that the 
-current sysctl (or sysctl via proc) has the same issue with multiple 
-threads potentially writing to it. As long as the end result is a valid 
-value it is not a problem. So I don't see what this patch changes in 
-that respect. Different tasks writing either of the sysctl/sysfs values 
-race, but end up with valid values everywhere. If we can rely on int 
-stores to be atomic on all architectures I don't see an effective 
-difference after changing to atomic_t, or even taking the pmu mutex over 
-the per PMU sysfs writes. So I don't see value in complicating the code 
-with either approach but am happy to be proved wrong if that is the case.
+There only 5 arches with bootmem left :)
 
-Regards,
+I've started looking into it, but it goes slow :(
+ 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> 
+> > ---
+> > v2: Simplify #ifdef
+> > 
+> >  mm/memblock.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/mm/memblock.c b/mm/memblock.c
+> > index 03d48d8835ba..611a970ac902 100644
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -20,6 +20,7 @@
+> >  #include <linux/kmemleak.h>
+> >  #include <linux/seq_file.h>
+> >  #include <linux/memblock.h>
+> > +#include <linux/bootmem.h>
+> >  
+> >  #include <asm/sections.h>
+> >  #include <linux/io.h>
+> > @@ -1224,6 +1225,7 @@ phys_addr_t __init memblock_alloc_try_nid(phys_addr_t size, phys_addr_t align, i
+> >  	return memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
+> >  }
+> >  
+> > +#if defined(CONFIG_NO_BOOTMEM)
+> >  /**
+> >   * memblock_virt_alloc_internal - allocate boot memory block
+> >   * @size: size of memory block to be allocated in bytes
+> > @@ -1431,6 +1433,7 @@ void * __init memblock_virt_alloc_try_nid(
+> >  	      (u64)max_addr);
+> >  	return NULL;
+> >  }
+> > +#endif
+> >  
+> >  /**
+> >   * __memblock_free_early - free boot memory block
+> > -- 
+> > 2.11.0
+> > 
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
 
-Tvrtko
+-- 
+Sincerely yours,
+Mike.
+
