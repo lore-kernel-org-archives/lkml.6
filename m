@@ -3,121 +3,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE013C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB5EC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740A126569
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:56:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740A126569
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 441B420882
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:58:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441B420882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934467AbeF0M45 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:56:57 -0400
-Received: from www62.your-server.de ([213.133.104.62]:58625 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932398AbeF0M4z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:56:55 -0400
-Received: from [62.203.87.61] (helo=linux.home)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fYA0A-00084d-FG; Wed, 27 Jun 2018 14:56:50 +0200
-Subject: Re: [PATCH bpf-next 2/3] bpf: btf: add btf json print functionality
-To:     Okash Khawaja <osk@fb.com>
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org
-References: <20180622205535.c6vjhdwt5er4wc32@kafai-mbp.dhcp.thefacebook.com>
- <20180622142743.2b890d0f@cakuba.netronome.com>
- <20180622225408.jor7lpvsksnwiiec@kafai-mbp.dhcp.thefacebook.com>
- <20180622163200.20564ec4@cakuba.netronome.com>
- <20180623002639.h4qxy7aakypi6t7b@kafai-mbp.dhcp.thefacebook.com>
- <20180626164820.GA12981@w1t1fb>
- <20180626133133.618af1d3@cakuba.netronome.com>
- <20180626222709.fsznwqauxojhhx7v@kafai-mbp.dhcp.thefacebook.com>
- <20180626153559.0511f709@cakuba.netronome.com>
- <23968d53-2895-f0bc-a38c-5bc99e1846ab@iogearbox.net>
- <20180627114737.GA1580@w1t1fb>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <0360a47f-1056-3117-31ec-7c3f5d6dbccb@iogearbox.net>
-Date:   Wed, 27 Jun 2018 14:56:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1754482AbeF0M6i (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:58:38 -0400
+Received: from mga12.intel.com ([192.55.52.136]:24776 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754277AbeF0M6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:58:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 05:58:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,278,1526367600"; 
+   d="scan'208";a="53312522"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 27 Jun 2018 05:58:36 -0700
+Received: from [10.125.252.135] (abudanko-mobl.ccr.corp.intel.com [10.125.252.135])
+        by linux.intel.com (Postfix) with ESMTP id 9F16F5800E9;
+        Wed, 27 Jun 2018 05:58:33 -0700 (PDT)
+Subject: Re: [RFC 3/4] perf: Allow per PMU access control
+To:     Tvrtko Ursulin <tursulin@ursulin.net>, linux-kernel@vger.kernel.org
+Cc:     Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Andi Kleen <ak@linux.intel.com>, x86@kernel.org
+References: <20180626153642.5587-1-tvrtko.ursulin@linux.intel.com>
+ <20180626153642.5587-4-tvrtko.ursulin@linux.intel.com>
+ <e3beeb7e-fc9a-be86-0bea-92e8dd0916f2@linux.intel.com>
+ <59478e35-4ac9-7be5-172a-c8301d9e11fd@ursulin.net>
+ <2d389cf9-e284-0557-159a-e70a758d357b@linux.intel.com>
+ <3b774f2e-56da-3d39-6fda-a4240a195377@ursulin.net>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Message-ID: <8351504c-022a-e0d3-581d-a6a80b42607a@linux.intel.com>
+Date:   Wed, 27 Jun 2018 15:58:32 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180627114737.GA1580@w1t1fb>
+In-Reply-To: <3b774f2e-56da-3d39-6fda-a4240a195377@ursulin.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24700/Wed Jun 27 06:38:23 2018)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/27/2018 01:47 PM, Okash Khawaja wrote:
-> On Wed, Jun 27, 2018 at 12:34:35PM +0200, Daniel Borkmann wrote:
->> On 06/27/2018 12:35 AM, Jakub Kicinski wrote:
->>> On Tue, 26 Jun 2018 15:27:09 -0700, Martin KaFai Lau wrote:
->>>> On Tue, Jun 26, 2018 at 01:31:33PM -0700, Jakub Kicinski wrote:
->> [...]
->>>>> Implementing both outputs in one series will help you structure your
->>>>> code to best suit both of the formats up front.  
->>>> hex and "formatted" are the only things missing?  As always, things
->>>> can be refactored when new use case comes up.  Lets wait for
->>>> Okash input.
->>>>
->>>> Regardless, plaintext is our current use case.  Having the current
->>>> patchset in does not stop us or others from contributing other use
->>>> cases (json, "bpftool map find"...etc),  and IMO it is actually
->>>> the opposite.  Others may help us get there faster than us alone.
->>>> We should not stop making forward progress and take this patch
->>>> as hostage because "abc" and "xyz" are not done together.
->>>
->>> Parity between JSON and plain text output is non negotiable.
+
+
+On 27.06.2018 13:05, Tvrtko Ursulin wrote:
+> 
+> On 27/06/18 10:47, Alexey Budankov wrote:
 >>
->> Longish discussion and some confusion in this thread. :-) First of all
->> thanks a lot for working on it, very useful! 
-> Thanks :)
+>>
+>> On 27.06.2018 12:15, Tvrtko Ursulin wrote:
+>>>
+>>> On 26/06/18 18:25, Alexey Budankov wrote:
+>>>> Hi,
+>>>>
+>>>> On 26.06.2018 18:36, Tvrtko Ursulin wrote:
+>>>>> From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+>>>>>
+>>>>> For situations where sysadmins might want to allow different level of
+>>>>> access control for different PMUs, we start creating per-PMU
+>>>>> perf_event_paranoid controls in sysfs.
+>>>>>
+>>>>> These work in equivalent fashion as the existing perf_event_paranoid
+>>>>> sysctl, which now becomes the parent control for each PMU.
+>>>>>
+>>>>> On PMU registration the global/parent value will be inherited by each PMU,
+>>>>> as it will be propagated to all registered PMUs when the sysctl is
+>>>>> updated.
+>>>>>
+>>>>> At any later point individual PMU access controls, located in
+>>>>> <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
+>>>>> fine grained access control.
+>>>>>
+>>>>> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+>>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>>>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>>>>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+>>>>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>>>>> Cc: Jiri Olsa <jolsa@redhat.com>
+>>>>> Cc: Namhyung Kim <namhyung@kernel.org>
+>>>>> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+>>>>> Cc: Andi Kleen <ak@linux.intel.com>
+>>>>> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+>>>>> Cc: linux-kernel@vger.kernel.org
+>>>>> Cc: x86@kernel.org
+>>>>> ---
+>>>>>    include/linux/perf_event.h | 12 ++++++--
+>>>>>    kernel/events/core.c       | 59 ++++++++++++++++++++++++++++++++++++++
+>>>>>    kernel/sysctl.c            |  4 ++-
+>>>>>    3 files changed, 71 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>>>>> index d7938d88c028..22e91cc2d9e1 100644
+>>>>> --- a/include/linux/perf_event.h
+>>>>> +++ b/include/linux/perf_event.h
+>>>>> @@ -271,6 +271,9 @@ struct pmu {
+>>>>>        /* number of address filters this PMU can do */
+>>>>>        unsigned int            nr_addr_filters;
+>>>>>    +    /* per PMU access control */
+>>>>> +    int                perf_event_paranoid;
+>>>>
+>>>> It looks like it needs to be declared as atomic and atomic_read/atomic_write
+>>>> operations need to be explicitly used below in the patch as far this
+>>>> variable may be manipulated by different threads at the same time
+>>>> without explicit locking.
+>>>
+>>> It is just a write of an integer from either sysfs access or sysctl. As such I don't think going atomic would change anything. There is no RMW or increment or anything on it.
+>>>
+>>> Unless there are architectures where int stores are not atomic? But then the existing sysctl would have the same issue. So I suspect we can indeed rely on int store being atomic.
+>>
+>> Yep, aligned word read/write is atomic on Intel and there is no runtime issue
+>> currently, but the implementation itself is multithread and implicitly relies
+>> on that atomicity so my suggestion is just explicitly code that assumption :).
+>> Also, as you mentioned, that makes the arch independent part of code more portable.
 > 
->> My $0.02 on it is that so far
->> great care has been taken in bpftool to indeed have feature parity between
->> JSON and plain text, so it would be highly desirable to keep continuing
->> this practice if the consensus is that it indeed is feasible and makes
->> sense wrt BTF data. There has been mentioned that given BTF data can be
->> dynamic depending on what the user loads via bpf(2) so a potential JSON
->> output may look different/break each time anyway. This however could all be
->> embedded under a container object that has a fixed key like 'formatted'
->> where tools like jq(1) can query into it. I think this would be fine since
->> the rest of the (non-dynamic) output is still retained as-is and then
->> wouldn't confuse or collide with existing users, and anyone programmatically
->> parsing deeper into the BTF data under such JSON container object needs
->> to have awareness of what specific data it wants to query from it; so
->> there's no conflict wrt breaking anything here. Imho, both outputs would
->> be very valuable.
-> Okay I can add "formatted" object under json output.
+> Perhaps we are not on the same page, but my argument was that the current sysctl (or sysctl via proc) has the same issue with multiple threads potentially writing to it. 
+
+Well, yes, currently the issue exists but it could be addressed in the new design.
+
+As long as the end result is a valid value it is not a problem. So I don't see what this patch changes in that respect. Different tasks writing either of the sysctl/sysfs values race, but end up with valid values everywhere. If we can rely on int stores to be atomic on all architectures I don't see an effective difference after changing to atomic_t, or even taking the pmu mutex over the per PMU sysfs writes. So I don't see value in complicating the code with either approach but am happy to be proved wrong if that is the case.
 > 
-> One thing to note here is that the fixed output will change if the map
-> itself changes. So someone writing a program that consumes that fixed
-> output will have to account for his program breaking in future, thus
-
-Yes, that aspect is fine though, any program/script parsing this would need
-to be aware of the underlying map type to make sense of it (e.g. per-cpu vs
-non per-cpu maps to name one). But that info it could query/verify already
-beforehand via bpftool as well (via normal map info dump for a given id).
-
-> breaking backward compatibility anyway as far as the developer is
-> concerned :)
+> Regards,
 > 
-> I will go ahead with work on "formatted" object.
-
-Cool, thanks,
-Daniel
+> Tvrtko
+> 
