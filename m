@@ -6,30 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E074C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F89C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E55325568
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:04:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E55325568
+	by mail.kernel.org (Postfix) with ESMTP id A8D3025568
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:05:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D3025568
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965936AbeF0RDi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:03:38 -0400
+        id S1755080AbeF0RFH (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:05:07 -0400
 Received: from mga07.intel.com ([134.134.136.100]:19413 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755012AbeF0RDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:03:35 -0400
+        id S1755002AbeF0RDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 13:03:33 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 10:03:33 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 10:03:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
-   d="scan'208";a="70478525"
+   d="scan'208";a="70478503"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga002.jf.intel.com with ESMTP; 27 Jun 2018 10:03:33 -0700
+  by orsmga002.jf.intel.com with ESMTP; 27 Jun 2018 10:03:32 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>,
@@ -41,9 +42,9 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 8/8] x86/vdso: Move out the CPU initialization
-Date:   Wed, 27 Jun 2018 10:03:13 -0700
-Message-Id: <1530118993-13466-9-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v5 2/8] x86/fsgsbase/64: Introduce FS/GS base helper functions
+Date:   Wed, 27 Jun 2018 10:03:07 -0700
+Message-Id: <1530118993-13466-3-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
 References: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
@@ -52,127 +53,291 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CPU and node number will be written, as early enough,
-to the segment limit of per CPU data and TSC_AUX MSR entry.
-The information has been retrieved by vgetcpu in user space
-and will be also loaded from the paranoid entry, when
-FSGSBASE enabled.
+With new helpers, FS/GS base access is centralized.
+Eventually, when FSGSBASE instruction enabled, it will
+be faster.
 
-The new setup function is named after the getcpu(2) system
-call, and will be called during each CPU initialization
-(before setting up IST). It makes a facility useful to both
-the kernel and userspace unconditionally available much
-sooner.
+"inactive" GS base refers to base backed up at kernel
+entries and of inactive (user) task's.
 
-The change brings a substantial code removal. The redundant
-setting of the segment in entry/vdso/vma.c and hotplug
-notifier are removed.
+task_seg_base() is moved out to kernel/process_64.c, where
+the helper functions are implemented as closely coupled.
+When next patch makes ptrace to use the helpers, it
+won't be directly accessed from ptrace.
 
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+Based-on-code-from: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- arch/x86/entry/vdso/vma.c    | 33 +--------------------------------
- arch/x86/kernel/cpu/common.c | 24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+), 32 deletions(-)
+ arch/x86/include/asm/fsgsbase.h |  49 ++++++++++++++++
+ arch/x86/kernel/process_64.c    | 123 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/ptrace.c        |  45 +--------------
+ 3 files changed, 173 insertions(+), 44 deletions(-)
+ create mode 100644 arch/x86/include/asm/fsgsbase.h
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 378732a..3f9d43f 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -332,35 +332,6 @@ static __init int vdso_setup(char *s)
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+new file mode 100644
+index 0000000..9dce8c0
+--- /dev/null
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_FSGSBASE_H
++#define _ASM_FSGSBASE_H 1
++
++#ifndef __ASSEMBLY__
++
++#ifdef CONFIG_X86_64
++
++#include <asm/msr-index.h>
++
++unsigned long task_seg_base(struct task_struct *task, unsigned short selector);
++
++/*
++ * Read/write a task's fsbase or gsbase. This returns the value that
++ * the FS/GS base would have (if the task were to be resumed). These
++ * work on current or on a different non-running task.
++ */
++unsigned long read_task_fsbase(struct task_struct *task);
++unsigned long read_task_gsbase(struct task_struct *task);
++int write_task_fsbase(struct task_struct *task, unsigned long fsbase);
++int write_task_gsbase(struct task_struct *task, unsigned long gsbase);
++
++/* Helper functions for reading/writing FS/GS base */
++
++static inline unsigned long read_fsbase(void)
++{
++	unsigned long fsbase;
++
++	rdmsrl(MSR_FS_BASE, fsbase);
++	return fsbase;
++}
++
++void write_fsbase(unsigned long fsbase);
++
++static inline unsigned long read_inactive_gsbase(void)
++{
++	unsigned long gsbase;
++
++	rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
++	return gsbase;
++}
++
++void  write_inactive_gsbase(unsigned long gsbase);
++
++#endif /* CONFIG_X86_64 */
++
++#endif /* __ASSEMBLY__ */
++
++#endif /* _ASM_FSGSBASE_H */
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 12bb445..ec76796 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -54,6 +54,7 @@
+ #include <asm/vdso.h>
+ #include <asm/intel_rdt_sched.h>
+ #include <asm/unistd.h>
++#include <asm/fsgsbase.h>
+ #ifdef CONFIG_IA32_EMULATION
+ /* Not included via unistd.h */
+ #include <asm/unistd_32_ia32.h>
+@@ -278,6 +279,128 @@ static __always_inline void load_seg_legacy(unsigned short prev_index,
+ 	}
+ }
+ 
++unsigned long task_seg_base(struct task_struct *task, unsigned short selector)
++{
++	unsigned short idx = selector >> 3;
++	unsigned long base;
++
++	if (likely((selector & SEGMENT_TI_MASK) == 0)) {
++		if (unlikely(idx >= GDT_ENTRIES))
++			return 0;
++
++		/*
++		 * There are no user segments in the GDT with nonzero bases
++		 * other than the TLS segments.
++		 */
++		if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
++			return 0;
++
++		idx -= GDT_ENTRY_TLS_MIN;
++		base = get_desc_base(&task->thread.tls_array[idx]);
++	} else {
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++		struct ldt_struct *ldt;
++
++		/*
++		 * If performance here mattered, we could protect the LDT
++		 * with RCU.  This is a slow path, though, so we can just
++		 * take the mutex.
++		 */
++		mutex_lock(&task->mm->context.lock);
++		ldt = task->mm->context.ldt;
++		if (unlikely(idx >= ldt->nr_entries))
++			base = 0;
++		else
++			base = get_desc_base(ldt->entries + idx);
++		mutex_unlock(&task->mm->context.lock);
++#else
++		base = 0;
++#endif
++	}
++
++	return base;
++}
++
++void write_fsbase(unsigned long fsbase)
++{
++	/*
++	 * set the selector to 0 as a notion, that the segment base is
++	 * overwritten, which will be checked for skipping the segment load
++	 * during context switch.
++	 */
++	loadseg(FS, 0);
++	wrmsrl(MSR_FS_BASE, fsbase);
++}
++
++void write_inactive_gsbase(unsigned long gsbase)
++{
++	/* set the selector to 0 for the same reason as %fs above. */
++	loadseg(GS, 0);
++	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
++}
++
++unsigned long read_task_fsbase(struct task_struct *task)
++{
++	unsigned long fsbase;
++
++	if (task == current)
++		fsbase = read_fsbase();
++	else if (task->thread.fsindex == 0)
++		fsbase = task->thread.fsbase;
++	else
++		fsbase = task_seg_base(task, task->thread.fsindex);
++
++	return fsbase;
++}
++
++unsigned long read_task_gsbase(struct task_struct *task)
++{
++	unsigned long gsbase;
++
++	if (task == current)
++		gsbase = read_inactive_gsbase();
++	else if (task->thread.gsindex == 0)
++		gsbase = task->thread.gsbase;
++	else
++		gsbase = task_seg_base(task, task->thread.gsindex);
++
++	return gsbase;
++}
++
++int write_task_fsbase(struct task_struct *task, unsigned long fsbase)
++{
++	/*
++	 * Not strictly needed for fs, but do it for symmetry
++	 * with gs
++	 */
++	if (unlikely(fsbase >= TASK_SIZE_MAX))
++		return -EPERM;
++
++	preempt_disable();
++	task->thread.fsbase = fsbase;
++	if (task == current)
++		write_fsbase(fsbase);
++	task->thread.fsindex = 0;
++	preempt_enable();
++
++	return 0;
++}
++
++int write_task_gsbase(struct task_struct *task, unsigned long gsbase)
++{
++	if (unlikely(gsbase >= TASK_SIZE_MAX))
++		return -EPERM;
++
++	preempt_disable();
++	task->thread.gsbase = gsbase;
++	if (task == current)
++		write_inactive_gsbase(gsbase);
++	task->thread.gsindex = 0;
++	preempt_enable();
++
++	return 0;
++}
++
+ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
+ 		unsigned long arg, struct task_struct *p, unsigned long tls)
+ {
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 3acbf45..7be53f9 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -39,7 +39,7 @@
+ #include <asm/hw_breakpoint.h>
+ #include <asm/traps.h>
+ #include <asm/syscall.h>
+-#include <asm/mmu_context.h>
++#include <asm/fsgsbase.h>
+ 
+ #include "tls.h"
+ 
+@@ -343,49 +343,6 @@ static int set_segment_reg(struct task_struct *task,
  	return 0;
  }
- __setup("vdso=", vdso_setup);
+ 
+-static unsigned long task_seg_base(struct task_struct *task,
+-				   unsigned short selector)
+-{
+-	unsigned short idx = selector >> 3;
+-	unsigned long base;
+-
+-	if (likely((selector & SEGMENT_TI_MASK) == 0)) {
+-		if (unlikely(idx >= GDT_ENTRIES))
+-			return 0;
+-
+-		/*
+-		 * There are no user segments in the GDT with nonzero bases
+-		 * other than the TLS segments.
+-		 */
+-		if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
+-			return 0;
+-
+-		idx -= GDT_ENTRY_TLS_MIN;
+-		base = get_desc_base(&task->thread.tls_array[idx]);
+-	} else {
+-#ifdef CONFIG_MODIFY_LDT_SYSCALL
+-		struct ldt_struct *ldt;
+-
+-		/*
+-		 * If performance here mattered, we could protect the LDT
+-		 * with RCU.  This is a slow path, though, so we can just
+-		 * take the mutex.
+-		 */
+-		mutex_lock(&task->mm->context.lock);
+-		ldt = task->mm->context.ldt;
+-		if (unlikely(idx >= ldt->nr_entries))
+-			base = 0;
+-		else
+-			base = get_desc_base(ldt->entries + idx);
+-		mutex_unlock(&task->mm->context.lock);
+-#else
+-		base = 0;
 -#endif
+-	}
 -
--#ifdef CONFIG_X86_64
--static void vgetcpu_cpu_init(void *arg)
--{
--	int cpu = smp_processor_id();
--	struct desc_struct d = { };
--	unsigned long cpudata = vdso_encode_cpu_node(cpu, cpu_to_node(cpu));
--
--	if (static_cpu_has(X86_FEATURE_RDTSCP))
--		write_rdtscp_aux(cpudata);
--
--	/* Store cpu and node number in limit */
--	d.limit0 = cpudata;
--	d.limit1 = cpudata >> 16;
--
--	d.type = 5;		/* RO data, expand down, accessed */
--	d.dpl = 3;		/* Visible to user code */
--	d.s = 1;		/* Not a system segment */
--	d.p = 1;		/* Present */
--	d.d = 1;		/* 32-bit */
--
--	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_CPU_NUMBER, &d, DESCTYPE_S);
+-	return base;
 -}
 -
--static int vgetcpu_online(unsigned int cpu)
--{
--	return smp_call_function_single(cpu, vgetcpu_cpu_init, NULL, 1);
--}
+ #endif	/* CONFIG_X86_32 */
  
- static int __init init_vdso(void)
- {
-@@ -370,9 +341,7 @@ static int __init init_vdso(void)
- 	init_vdso_image(&vdso_image_x32);
- #endif
- 
--	/* notifier priority > KVM */
--	return cpuhp_setup_state(CPUHP_AP_X86_VDSO_VMA_ONLINE,
--				 "x86/vdso/vma:online", vgetcpu_online, NULL);
-+	return 0;
- }
- subsys_initcall(init_vdso);
- #endif /* CONFIG_X86_64 */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index eb4cb3e..e418e31 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1651,6 +1651,29 @@ static void wait_for_master_cpu(int cpu)
- #endif
- }
- 
-+#ifdef CONFIG_X86_64
-+static void setup_getcpu(int cpu)
-+{
-+	unsigned long cpudata = vdso_encode_cpu_node(cpu, early_cpu_to_node(cpu));
-+	struct desc_struct d = { };
-+
-+	if (static_cpu_has(X86_FEATURE_RDTSCP))
-+		write_rdtscp_aux(cpudata);
-+
-+	/* Store cpu and node number in limit. */
-+	d.limit0 = cpudata;
-+	d.limit1 = cpudata >> 16;
-+
-+	d.type = 5;		/* RO data, expand down, accessed */
-+	d.dpl = 3;		/* Visible to user code */
-+	d.s = 1;		/* Not a system segment */
-+	d.p = 1;		/* Present */
-+	d.d = 1;		/* 32-bit */
-+
-+	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_CPU_NUMBER, &d, DESCTYPE_S);
-+}
-+#endif
-+
- /*
-  * cpu_init() initializes state that is per-CPU. Some data is already
-  * initialized (naturally) in the bootstrap process, such as the GDT
-@@ -1688,6 +1711,7 @@ void cpu_init(void)
- 	    early_cpu_to_node(cpu) != NUMA_NO_NODE)
- 		set_numa_node(early_cpu_to_node(cpu));
- #endif
-+	setup_getcpu(cpu);
- 
- 	me = current;
- 
+ static unsigned long get_flags(struct task_struct *task)
 -- 
 2.7.4
 
