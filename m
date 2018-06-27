@@ -2,527 +2,110 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E7CC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA623C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5599E26650
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:07:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5599E26650
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C7DD261DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:12:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7DD261DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934362AbeF0KHb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 06:07:31 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8736 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932089AbeF0KH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 06:07:29 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id EDBE296AA1811;
-        Wed, 27 Jun 2018 18:07:14 +0800 (CST)
-Received: from SZV1000284525.huawei.com (10.120.216.130) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.382.0; Wed, 27 Jun 2018 18:07:04 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to do sanity check with block address in main area
-Date:   Wed, 27 Jun 2018 18:06:24 +0800
-Message-ID: <20180627100624.124286-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1753404AbeF0KMO (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 06:12:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58864 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753238AbeF0KMM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 06:12:12 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5R9xJcJ115612
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:12:12 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jv6asxhrx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:12:06 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 27 Jun 2018 11:11:50 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Jun 2018 11:11:48 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RABldI26935460
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Jun 2018 10:11:47 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9EB2352050;
+        Wed, 27 Jun 2018 11:11:39 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.118])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 0C3F552054;
+        Wed, 27 Jun 2018 11:11:38 +0100 (BST)
+Date:   Wed, 27 Jun 2018 13:11:44 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     mhocko@kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arch@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: why do we still need bootmem allocator?
+References: <20180625140754.GB29102@dhcp22.suse.cz>
+ <CABGGisyVpfYCz7-5AGB-3Ld9hcuikPVk=19xPc1AwffjhsV+kg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABGGisyVpfYCz7-5AGB-3Ld9hcuikPVk=19xPc1AwffjhsV+kg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18062710-0020-0000-0000-0000029F76B2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062710-0021-0000-0000-000020EBF4A3
+Message-Id: <20180627101144.GC4291@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=585 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806270115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add to do sanity check with below field:
-- cp_pack_total_block_count
-- blkaddr of data/node
-- extent info
+On Mon, Jun 25, 2018 at 10:09:41AM -0600, Rob Herring wrote:
+> On Mon, Jun 25, 2018 at 8:08 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > Hi,
+> > I am wondering why do we still keep mm/bootmem.c when most architectures
+> > already moved to nobootmem. Is there any fundamental reason why others
+> > cannot or this is just a matter of work?
+> 
+> Just because no one has done the work. I did a couple of arches
+> recently (sh, microblaze, and h8300) mainly because I broke them with
+> some DT changes.
 
-- Overview
-BUG() in verify_block_addr() when writing to a corrupted f2fs image
-
-- Reproduce (4.18 upstream kernel)
-
-- POC (poc.c)
-
-static void activity(char *mpoint) {
-
-  char *foo_bar_baz;
-  int err;
-
-  static int buf[8192];
-  memset(buf, 0, sizeof(buf));
-
-  err = asprintf(&foo_bar_baz, "%s/foo/bar/baz", mpoint);
-
-  int fd = open(foo_bar_baz, O_RDWR | O_TRUNC, 0777);
-  if (fd >= 0) {
-    write(fd, (char *)buf, sizeof(buf));
-    fdatasync(fd);
-    close(fd);
-  }
-}
-
-int main(int argc, char *argv[]) {
-  activity(argv[1]);
-  return 0;
-}
-
-- Kernel message
-[  689.349473] F2FS-fs (loop0): Mounted with checkpoint version = 3
-[  699.728662] WARNING: CPU: 0 PID: 1309 at fs/f2fs/segment.c:2860 f2fs_inplace_write_data+0x232/0x240
-[  699.728670] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
-[  699.729056] CPU: 0 PID: 1309 Comm: a.out Not tainted 4.18.0-rc1+ #4
-[  699.729064] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  699.729074] RIP: 0010:f2fs_inplace_write_data+0x232/0x240
-[  699.729076] Code: ff e9 cf fe ff ff 49 8d 7d 10 e8 39 45 ad ff 4d 8b 7d 10 be 04 00 00 00 49 8d 7f 48 e8 07 49 ad ff 45 8b 7f 48 e9 fb fe ff ff <0f> 0b f0 41 80 4d 48 04 e9 65 fe ff ff 90 66 66 66 66 90 55 48 8d
-[  699.729130] RSP: 0018:ffff8801f43af568 EFLAGS: 00010202
-[  699.729139] RAX: 000000000000003f RBX: ffff8801f43af7b8 RCX: ffffffffb88c9113
-[  699.729142] RDX: 0000000000000003 RSI: dffffc0000000000 RDI: ffff8802024e5540
-[  699.729144] RBP: ffff8801f43af590 R08: 0000000000000009 R09: ffffffffffffffe8
-[  699.729147] R10: 0000000000000001 R11: ffffed0039b0596a R12: ffff8802024e5540
-[  699.729149] R13: ffff8801f0335500 R14: ffff8801e3e7a700 R15: ffff8801e1ee4450
-[  699.729154] FS:  00007f9bf97f5700(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
-[  699.729156] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  699.729159] CR2: 00007f9bf925d170 CR3: 00000001f0c34000 CR4: 00000000000006f0
-[  699.729171] Call Trace:
-[  699.729192]  f2fs_do_write_data_page+0x2e2/0xe00
-[  699.729203]  ? f2fs_should_update_outplace+0xd0/0xd0
-[  699.729238]  ? memcg_drain_all_list_lrus+0x280/0x280
-[  699.729269]  ? __radix_tree_replace+0xa3/0x120
-[  699.729276]  __write_data_page+0x5c7/0xe30
-[  699.729291]  ? kasan_check_read+0x11/0x20
-[  699.729310]  ? page_mapped+0x8a/0x110
-[  699.729321]  ? page_mkclean+0xe9/0x160
-[  699.729327]  ? f2fs_do_write_data_page+0xe00/0xe00
-[  699.729331]  ? invalid_page_referenced_vma+0x130/0x130
-[  699.729345]  ? clear_page_dirty_for_io+0x332/0x450
-[  699.729351]  f2fs_write_cache_pages+0x4ca/0x860
-[  699.729358]  ? __write_data_page+0xe30/0xe30
-[  699.729374]  ? percpu_counter_add_batch+0x22/0xa0
-[  699.729380]  ? kasan_check_write+0x14/0x20
-[  699.729391]  ? _raw_spin_lock+0x17/0x40
-[  699.729403]  ? f2fs_mark_inode_dirty_sync.part.18+0x16/0x30
-[  699.729413]  ? iov_iter_advance+0x113/0x640
-[  699.729418]  ? f2fs_write_end+0x133/0x2e0
-[  699.729423]  ? balance_dirty_pages_ratelimited+0x239/0x640
-[  699.729428]  f2fs_write_data_pages+0x329/0x520
-[  699.729433]  ? generic_perform_write+0x250/0x320
-[  699.729438]  ? f2fs_write_cache_pages+0x860/0x860
-[  699.729454]  ? current_time+0x110/0x110
-[  699.729459]  ? f2fs_preallocate_blocks+0x1ef/0x370
-[  699.729464]  do_writepages+0x37/0xb0
-[  699.729468]  ? f2fs_write_cache_pages+0x860/0x860
-[  699.729472]  ? do_writepages+0x37/0xb0
-[  699.729478]  __filemap_fdatawrite_range+0x19a/0x1f0
-[  699.729483]  ? delete_from_page_cache_batch+0x4e0/0x4e0
-[  699.729496]  ? __vfs_write+0x2b2/0x410
-[  699.729501]  file_write_and_wait_range+0x66/0xb0
-[  699.729506]  f2fs_do_sync_file+0x1f9/0xd90
-[  699.729511]  ? truncate_partial_data_page+0x290/0x290
-[  699.729521]  ? __sb_end_write+0x30/0x50
-[  699.729526]  ? vfs_write+0x20f/0x260
-[  699.729530]  f2fs_sync_file+0x9a/0xb0
-[  699.729534]  ? f2fs_do_sync_file+0xd90/0xd90
-[  699.729548]  vfs_fsync_range+0x68/0x100
-[  699.729554]  ? __fget_light+0xc9/0xe0
-[  699.729558]  do_fsync+0x3d/0x70
-[  699.729562]  __x64_sys_fdatasync+0x24/0x30
-[  699.729585]  do_syscall_64+0x78/0x170
-[  699.729595]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  699.729613] RIP: 0033:0x7f9bf930d800
-[  699.729615] Code: 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 83 3d 49 bf 2c 00 00 75 10 b8 4b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 be 78 01 00 48 89 04 24
-[  699.729668] RSP: 002b:00007ffee3606c68 EFLAGS: 00000246 ORIG_RAX: 000000000000004b
-[  699.729673] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9bf930d800
-[  699.729675] RDX: 0000000000008000 RSI: 00000000006010a0 RDI: 0000000000000003
-[  699.729678] RBP: 00007ffee3606ca0 R08: 0000000001503010 R09: 0000000000000000
-[  699.729680] R10: 00000000000002e8 R11: 0000000000000246 R12: 0000000000400610
-[  699.729683] R13: 00007ffee3606da0 R14: 0000000000000000 R15: 0000000000000000
-[  699.729687] ---[ end trace 4ce02f25ff7d3df5 ]---
-[  699.729782] ------------[ cut here ]------------
-[  699.729785] kernel BUG at fs/f2fs/segment.h:654!
-[  699.731055] invalid opcode: 0000 [#1] SMP KASAN PTI
-[  699.732104] CPU: 0 PID: 1309 Comm: a.out Tainted: G        W         4.18.0-rc1+ #4
-[  699.733684] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  699.735611] RIP: 0010:f2fs_submit_page_bio+0x29b/0x730
-[  699.736649] Code: 54 49 8d bd 18 04 00 00 e8 b2 59 af ff 41 8b 8d 18 04 00 00 8b 45 b8 41 d3 e6 44 01 f0 4c 8d 73 14 41 39 c7 0f 82 37 fe ff ff <0f> 0b 65 8b 05 2c 04 77 47 89 c0 48 0f a3 05 52 c1 d5 01 0f 92 c0
-[  699.740524] RSP: 0018:ffff8801f43af508 EFLAGS: 00010283
-[  699.741573] RAX: 0000000000000000 RBX: ffff8801f43af7b8 RCX: ffffffffb88a7cef
-[  699.743006] RDX: 0000000000000007 RSI: dffffc0000000000 RDI: ffff8801e3e7a64c
-[  699.744426] RBP: ffff8801f43af558 R08: ffffed003e066b55 R09: ffffed003e066b55
-[  699.745833] R10: 0000000000000001 R11: ffffed003e066b54 R12: ffffea0007876940
-[  699.747256] R13: ffff8801f0335500 R14: ffff8801e3e7a600 R15: 0000000000000001
-[  699.748683] FS:  00007f9bf97f5700(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
-[  699.750293] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  699.751462] CR2: 00007f9bf925d170 CR3: 00000001f0c34000 CR4: 00000000000006f0
-[  699.752874] Call Trace:
-[  699.753386]  ? f2fs_inplace_write_data+0x93/0x240
-[  699.754341]  f2fs_inplace_write_data+0xd2/0x240
-[  699.755271]  f2fs_do_write_data_page+0x2e2/0xe00
-[  699.756214]  ? f2fs_should_update_outplace+0xd0/0xd0
-[  699.757215]  ? memcg_drain_all_list_lrus+0x280/0x280
-[  699.758209]  ? __radix_tree_replace+0xa3/0x120
-[  699.759164]  __write_data_page+0x5c7/0xe30
-[  699.760002]  ? kasan_check_read+0x11/0x20
-[  699.760823]  ? page_mapped+0x8a/0x110
-[  699.761573]  ? page_mkclean+0xe9/0x160
-[  699.762345]  ? f2fs_do_write_data_page+0xe00/0xe00
-[  699.763332]  ? invalid_page_referenced_vma+0x130/0x130
-[  699.764374]  ? clear_page_dirty_for_io+0x332/0x450
-[  699.765347]  f2fs_write_cache_pages+0x4ca/0x860
-[  699.766276]  ? __write_data_page+0xe30/0xe30
-[  699.767161]  ? percpu_counter_add_batch+0x22/0xa0
-[  699.768112]  ? kasan_check_write+0x14/0x20
-[  699.768951]  ? _raw_spin_lock+0x17/0x40
-[  699.769739]  ? f2fs_mark_inode_dirty_sync.part.18+0x16/0x30
-[  699.770885]  ? iov_iter_advance+0x113/0x640
-[  699.771743]  ? f2fs_write_end+0x133/0x2e0
-[  699.772569]  ? balance_dirty_pages_ratelimited+0x239/0x640
-[  699.773680]  f2fs_write_data_pages+0x329/0x520
-[  699.774603]  ? generic_perform_write+0x250/0x320
-[  699.775544]  ? f2fs_write_cache_pages+0x860/0x860
-[  699.776510]  ? current_time+0x110/0x110
-[  699.777299]  ? f2fs_preallocate_blocks+0x1ef/0x370
-[  699.778279]  do_writepages+0x37/0xb0
-[  699.779026]  ? f2fs_write_cache_pages+0x860/0x860
-[  699.779978]  ? do_writepages+0x37/0xb0
-[  699.780755]  __filemap_fdatawrite_range+0x19a/0x1f0
-[  699.781746]  ? delete_from_page_cache_batch+0x4e0/0x4e0
-[  699.782820]  ? __vfs_write+0x2b2/0x410
-[  699.783597]  file_write_and_wait_range+0x66/0xb0
-[  699.784540]  f2fs_do_sync_file+0x1f9/0xd90
-[  699.785381]  ? truncate_partial_data_page+0x290/0x290
-[  699.786415]  ? __sb_end_write+0x30/0x50
-[  699.787204]  ? vfs_write+0x20f/0x260
-[  699.787941]  f2fs_sync_file+0x9a/0xb0
-[  699.788694]  ? f2fs_do_sync_file+0xd90/0xd90
-[  699.789572]  vfs_fsync_range+0x68/0x100
-[  699.790360]  ? __fget_light+0xc9/0xe0
-[  699.791128]  do_fsync+0x3d/0x70
-[  699.791779]  __x64_sys_fdatasync+0x24/0x30
-[  699.792614]  do_syscall_64+0x78/0x170
-[  699.793371]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  699.794406] RIP: 0033:0x7f9bf930d800
-[  699.795134] Code: 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 83 3d 49 bf 2c 00 00 75 10 b8 4b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 be 78 01 00 48 89 04 24
-[  699.798960] RSP: 002b:00007ffee3606c68 EFLAGS: 00000246 ORIG_RAX: 000000000000004b
-[  699.800483] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9bf930d800
-[  699.801923] RDX: 0000000000008000 RSI: 00000000006010a0 RDI: 0000000000000003
-[  699.803373] RBP: 00007ffee3606ca0 R08: 0000000001503010 R09: 0000000000000000
-[  699.804798] R10: 00000000000002e8 R11: 0000000000000246 R12: 0000000000400610
-[  699.806233] R13: 00007ffee3606da0 R14: 0000000000000000 R15: 0000000000000000
-[  699.807667] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
-[  699.817079] ---[ end trace 4ce02f25ff7d3df6 ]---
-[  699.818068] RIP: 0010:f2fs_submit_page_bio+0x29b/0x730
-[  699.819114] Code: 54 49 8d bd 18 04 00 00 e8 b2 59 af ff 41 8b 8d 18 04 00 00 8b 45 b8 41 d3 e6 44 01 f0 4c 8d 73 14 41 39 c7 0f 82 37 fe ff ff <0f> 0b 65 8b 05 2c 04 77 47 89 c0 48 0f a3 05 52 c1 d5 01 0f 92 c0
-[  699.822919] RSP: 0018:ffff8801f43af508 EFLAGS: 00010283
-[  699.823977] RAX: 0000000000000000 RBX: ffff8801f43af7b8 RCX: ffffffffb88a7cef
-[  699.825436] RDX: 0000000000000007 RSI: dffffc0000000000 RDI: ffff8801e3e7a64c
-[  699.826881] RBP: ffff8801f43af558 R08: ffffed003e066b55 R09: ffffed003e066b55
-[  699.828292] R10: 0000000000000001 R11: ffffed003e066b54 R12: ffffea0007876940
-[  699.829750] R13: ffff8801f0335500 R14: ffff8801e3e7a600 R15: 0000000000000001
-[  699.831192] FS:  00007f9bf97f5700(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
-[  699.832793] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  699.833981] CR2: 00007f9bf925d170 CR3: 00000001f0c34000 CR4: 00000000000006f0
-[  699.835556] ==================================================================
-[  699.837029] BUG: KASAN: stack-out-of-bounds in update_stack_state+0x38c/0x3e0
-[  699.838462] Read of size 8 at addr ffff8801f43af970 by task a.out/1309
-
-[  699.840086] CPU: 0 PID: 1309 Comm: a.out Tainted: G      D W         4.18.0-rc1+ #4
-[  699.841603] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  699.843475] Call Trace:
-[  699.843982]  dump_stack+0x7b/0xb5
-[  699.844661]  print_address_description+0x70/0x290
-[  699.845607]  kasan_report+0x291/0x390
-[  699.846351]  ? update_stack_state+0x38c/0x3e0
-[  699.853831]  __asan_load8+0x54/0x90
-[  699.854569]  update_stack_state+0x38c/0x3e0
-[  699.855428]  ? __read_once_size_nocheck.constprop.7+0x20/0x20
-[  699.856601]  ? __save_stack_trace+0x5e/0x100
-[  699.857476]  unwind_next_frame.part.5+0x18e/0x490
-[  699.858448]  ? unwind_dump+0x290/0x290
-[  699.859217]  ? clear_page_dirty_for_io+0x332/0x450
-[  699.860185]  __unwind_start+0x106/0x190
-[  699.860974]  __save_stack_trace+0x5e/0x100
-[  699.861808]  ? __save_stack_trace+0x5e/0x100
-[  699.862691]  ? unlink_anon_vmas+0xba/0x2c0
-[  699.863525]  save_stack_trace+0x1f/0x30
-[  699.864312]  save_stack+0x46/0xd0
-[  699.864993]  ? __alloc_pages_slowpath+0x1420/0x1420
-[  699.865990]  ? flush_tlb_mm_range+0x15e/0x220
-[  699.866889]  ? kasan_check_write+0x14/0x20
-[  699.867724]  ? __dec_node_state+0x92/0xb0
-[  699.868543]  ? lock_page_memcg+0x85/0xf0
-[  699.869350]  ? unlock_page_memcg+0x16/0x80
-[  699.870185]  ? page_remove_rmap+0x198/0x520
-[  699.871048]  ? mark_page_accessed+0x133/0x200
-[  699.871930]  ? _cond_resched+0x1a/0x50
-[  699.872700]  ? unmap_page_range+0xcd4/0xe50
-[  699.873551]  ? rb_next+0x58/0x80
-[  699.874217]  ? rb_next+0x58/0x80
-[  699.874895]  __kasan_slab_free+0x13c/0x1a0
-[  699.875734]  ? unlink_anon_vmas+0xba/0x2c0
-[  699.876563]  kasan_slab_free+0xe/0x10
-[  699.877315]  kmem_cache_free+0x89/0x1e0
-[  699.878095]  unlink_anon_vmas+0xba/0x2c0
-[  699.878913]  free_pgtables+0x101/0x1b0
-[  699.879677]  exit_mmap+0x146/0x2a0
-[  699.880378]  ? __ia32_sys_munmap+0x50/0x50
-[  699.881214]  ? kasan_check_read+0x11/0x20
-[  699.882052]  ? mm_update_next_owner+0x322/0x380
-[  699.882985]  mmput+0x8b/0x1d0
-[  699.883602]  do_exit+0x43a/0x1390
-[  699.884288]  ? mm_update_next_owner+0x380/0x380
-[  699.885212]  ? f2fs_sync_file+0x9a/0xb0
-[  699.885995]  ? f2fs_do_sync_file+0xd90/0xd90
-[  699.886877]  ? vfs_fsync_range+0x68/0x100
-[  699.887694]  ? __fget_light+0xc9/0xe0
-[  699.888442]  ? do_fsync+0x3d/0x70
-[  699.889118]  ? __x64_sys_fdatasync+0x24/0x30
-[  699.889996]  rewind_stack_do_exit+0x17/0x20
-[  699.890860] RIP: 0033:0x7f9bf930d800
-[  699.891585] Code: Bad RIP value.
-[  699.892268] RSP: 002b:00007ffee3606c68 EFLAGS: 00000246 ORIG_RAX: 000000000000004b
-[  699.893781] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9bf930d800
-[  699.895220] RDX: 0000000000008000 RSI: 00000000006010a0 RDI: 0000000000000003
-[  699.896643] RBP: 00007ffee3606ca0 R08: 0000000001503010 R09: 0000000000000000
-[  699.898069] R10: 00000000000002e8 R11: 0000000000000246 R12: 0000000000400610
-[  699.899505] R13: 00007ffee3606da0 R14: 0000000000000000 R15: 0000000000000000
-
-[  699.901241] The buggy address belongs to the page:
-[  699.902215] page:ffffea0007d0ebc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-[  699.903811] flags: 0x2ffff0000000000()
-[  699.904585] raw: 02ffff0000000000 0000000000000000 ffffffff07d00101 0000000000000000
-[  699.906125] raw: 0000000000000000 0000000000240000 00000000ffffffff 0000000000000000
-[  699.907673] page dumped because: kasan: bad access detected
-
-[  699.909108] Memory state around the buggy address:
-[  699.910077]  ffff8801f43af800: 00 f1 f1 f1 f1 00 f4 f4 f4 f3 f3 f3 f3 00 00 00
-[  699.911528]  ffff8801f43af880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  699.912953] >ffff8801f43af900: 00 00 00 00 00 00 00 00 f1 01 f4 f4 f4 f2 f2 f2
-[  699.914392]                                                              ^
-[  699.915758]  ffff8801f43af980: f2 00 f4 f4 00 00 00 00 f2 00 00 00 00 00 00 00
-[  699.917193]  ffff8801f43afa00: 00 00 00 00 00 00 00 00 00 f3 f3 f3 00 00 00 00
-[  699.918634] ==================================================================
-
-- Location
-https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/segment.h#L644
-
-Reported-by Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c | 20 +++++++++++++++++---
- fs/f2fs/data.c       | 22 +++++++++++++++++++++-
- fs/f2fs/f2fs.h       |  3 +++
- fs/f2fs/file.c       |  6 ++++++
- fs/f2fs/inode.c      | 15 +++++++++++++++
- fs/f2fs/node.c       |  3 +++
- fs/f2fs/segment.h    |  3 +--
- 7 files changed, 66 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 6c9e8df22f1a..4017bda8fede 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -85,8 +85,10 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 	fio.page = page;
+I have a patch for alpha nearly ready.
+That leaves m68k and ia64
  
- 	if (f2fs_submit_page_bio(&fio)) {
--		f2fs_put_page(page, 1);
--		goto repeat;
-+		memset(page_address(page), 0, PAGE_SIZE);
-+		f2fs_stop_checkpoint(sbi, false);
-+		f2fs_bug_on(sbi, 1);
-+		return page;
- 	}
- 
- 	lock_page(page);
-@@ -142,8 +144,12 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- 	case META_POR:
- 	case DATA_GENERIC:
- 		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
--			blkaddr < MAIN_BLKADDR(sbi)))
-+			blkaddr < MAIN_BLKADDR(sbi))) {
-+			if (type == DATA_GENERIC)
-+				f2fs_msg(sbi->sb, KERN_WARNING,
-+					"access invalid blkaddr:%u", blkaddr);
- 			return false;
-+		}
- 		break;
- 	case META_GENERIC:
- 		if (unlikely(blkaddr < SEG0_BLKADDR(sbi) ||
-@@ -776,6 +782,14 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
- 					&cp_page_1, version);
- 	if (err)
- 		goto invalid_cp1;
-+
-+	if (le32_to_cpu(cp_block->cp_pack_total_block_count) >
-+					sbi->log_blocks_per_seg) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"invalid cp_pack_total_block_count:%u",
-+			le32_to_cpu(cp_block->cp_pack_total_block_count));
-+		goto invalid_cp1;
-+	}
- 	pre_version = *version;
- 
- 	cp_addr += le32_to_cpu(cp_block->cp_pack_total_block_count) - 1;
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9c873ce02f22..b51026eb8e8b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -383,7 +383,10 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	struct page *page = fio->encrypted_page ?
- 			fio->encrypted_page : fio->page;
- 
--	verify_block_addr(fio, fio->new_blkaddr);
-+	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
-+			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
-+		return -EFAULT;
-+
- 	trace_f2fs_submit_page_bio(page, fio);
- 	f2fs_trace_ios(fio, 0);
- 
-@@ -983,6 +986,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- next_block:
- 	blkaddr = datablock_addr(dn.inode, dn.node_page, dn.ofs_in_node);
- 
-+	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC)) {
-+		err = -EFAULT;
-+		goto sync_out;
-+	}
-+
- 	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
- 		if (create) {
- 			if (unlikely(f2fs_cp_error(sbi))) {
-@@ -1438,6 +1446,10 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 				SetPageUptodate(page);
- 				goto confused;
- 			}
-+
-+			if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
-+								DATA_GENERIC))
-+				goto set_error_page;
- 		} else {
- 			zero_user_segment(page, 0, PAGE_SIZE);
- 			if (!PageUptodate(page))
-@@ -1640,6 +1652,10 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 			f2fs_lookup_extent_cache(inode, page->index, &ei)) {
- 		fio->old_blkaddr = ei.blk + page->index - ei.fofs;
- 
-+		if (!f2fs_is_valid_blkaddr(fio->sbi, fio->old_blkaddr,
-+							DATA_GENERIC))
-+			return -EFAULT;
-+
- 		if (is_valid_data_blkaddr(fio->sbi, fio->old_blkaddr)) {
- 			ipu_force = true;
- 			fio->need_lock = LOCK_DONE;
-@@ -1663,6 +1679,10 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 		goto out_writepage;
- 	}
- got_it:
-+	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->old_blkaddr, DATA_GENERIC)) {
-+		err = -EFAULT;
-+		goto out_writepage;
-+	}
- 	/*
- 	 * If current allocation needs SSR,
- 	 * it had better in-place writes for updated data.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f0cf682e5145..ea2e768c4f89 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2680,6 +2680,9 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
- 	spin_unlock(&sbi->iostat_lock);
- }
- 
-+#define __is_meta_io(fio) (PAGE_TYPE_OF_BIO(fio->type) == META &&	\
-+				(!is_read_io(fio->op) || fio->is_meta))
-+
- bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- 					block_t blkaddr, int type);
- void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b9c91b2688e8..27b25837f40d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -419,6 +419,12 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
- 			blkaddr = datablock_addr(dn.inode,
- 					dn.node_page, dn.ofs_in_node);
- 
-+			if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), blkaddr,
-+							DATA_GENERIC)) {
-+				f2fs_put_dnode(&dn);
-+				goto fail;
-+			}
-+
- 			if (__found_offset(F2FS_I_SB(inode), blkaddr, dirty,
- 							pgofs, whence)) {
- 				f2fs_put_dnode(&dn);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 31fde7aa06c4..54067e456610 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -209,6 +209,21 @@ static bool sanity_check_inode(struct inode *inode)
- 			__func__, inode->i_ino);
- 		return false;
- 	}
-+
-+	if (F2FS_I(inode)->extent_tree) {
-+		struct extent_info *ei = &F2FS_I(inode)->extent_tree->largest;
-+
-+		if (!f2fs_is_valid_blkaddr(sbi, ei->blk, DATA_GENERIC) ||
-+			!f2fs_is_valid_blkaddr(sbi, ei->blk + ei->len,
-+							DATA_GENERIC)) {
-+			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+			f2fs_msg(sbi->sb, KERN_WARNING,
-+				"%s: inode (ino=%lx) extent info is incorrect, "
-+				"run fsck to fix",
-+				__func__, inode->i_ino);
-+			return false;
-+		}
-+	}
- 	return true;
- }
- 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 0d2be9057e11..03a02b8d6441 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1410,6 +1410,9 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 		return 0;
- 	}
- 
-+	if (!f2fs_is_valid_blkaddr(sbi, ni.blk_addr, DATA_GENERIC))
-+		goto redirty_out;
-+
- 	if (atomic && !test_opt(sbi, NOBARRIER))
- 		fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index a7460da9af43..b5bd3287e104 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -645,8 +645,7 @@ static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
- {
- 	struct f2fs_sb_info *sbi = fio->sbi;
- 
--	if (PAGE_TYPE_OF_BIO(fio->type) == META &&
--				(!is_read_io(fio->op) || fio->is_meta))
-+	if (__is_meta_io(fio))
- 		verify_blkaddr(sbi, blk_addr, META_GENERIC);
- 	else
- 		verify_blkaddr(sbi, blk_addr, DATA_GENERIC);
+> > Btw. what really needs to be
+> > done? Btw. is there any documentation telling us what needs to be done
+> > in that regards?
+> 
+> No. The commits converting the arches are the only documentation. It's
+> a bit more complicated for platforms that have NUMA support.
+> 
+> Rob
+> 
+
 -- 
-2.18.0.rc1
+Sincerely yours,
+Mike.
 
