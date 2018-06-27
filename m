@@ -6,96 +6,64 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D017C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56284C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D9D26584
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:31:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D9D26584
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 0314B26679
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 07:33:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0314B26679
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753314AbeF0Hbu (ORCPT
+        id S1753319AbeF0Hdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 03:31:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39048 "EHLO mx2.suse.de"
+        Wed, 27 Jun 2018 03:33:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39402 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751268AbeF0Hbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 03:31:48 -0400
+        id S1751120AbeF0Hda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 03:33:30 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id ED0CEAFFC;
-        Wed, 27 Jun 2018 07:31:46 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 028BC1E3BFD; Wed, 27 Jun 2018 09:31:45 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 09:31:45 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 1/2] fs: fsnotify: account fsnotify metadata to kmemcg
-Message-ID: <20180627073145.yyviq53ntkdkfv3w@quack2.suse.cz>
-References: <20180625230659.139822-1-shakeelb@google.com>
- <20180625230659.139822-2-shakeelb@google.com>
- <CAOQ4uxiV75+X3dMLS93iXqwmSU6eKPOUocdkXiR7MQZhEjotQg@mail.gmail.com>
- <CALvZod5ARMZL+eD8-mrxeBvxJcuVPXaCwWEgUyQw85xXWxHauA@mail.gmail.com>
- <20180626185724.GA3958@cmpxchg.org>
- <CALvZod5aEHcLs3j+AiuC1FppD-AakWhdZdQhzmTSSrktn2Gu0Q@mail.gmail.com>
+        by mx2.suse.de (Postfix) with ESMTP id 4B00AAFFC;
+        Wed, 27 Jun 2018 07:33:29 +0000 (UTC)
+Date:   Wed, 27 Jun 2018 09:33:28 +0200
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     Keith Busch <keith.busch@linux.intel.com>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>
+Subject: Re: [PATCH] nvme: trace: add disk name to tracepoints
+Message-ID: <20180627073328.aws2apvc357jobge@linux-x5ow.site>
+References: <20180626135141.14088-1-jthumshirn@suse.de>
+ <20180626135141.14088-3-jthumshirn@suse.de>
+ <20180626150106.GB6628@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CALvZod5aEHcLs3j+AiuC1FppD-AakWhdZdQhzmTSSrktn2Gu0Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180626150106.GB6628@localhost.localdomain>
 User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 26-06-18 12:07:57, Shakeel Butt wrote:
-> On Tue, Jun 26, 2018 at 11:55 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > On Tue, Jun 26, 2018 at 11:00:53AM -0700, Shakeel Butt wrote:
-> > > On Mon, Jun 25, 2018 at 10:49 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >
-> > > ...
-> > > >
-> > > > The verb 'unuse' takes an argument memcg and 'uses' it - too weird.
-> > > > You can use 'override'/'revert' verbs like override_creds or just call
-> > > > memalloc_use_memcg(old_memcg) since there is no reference taken
-> > > > anyway in use_memcg and no reference released in unuse_memcg.
-> > > >
-> > > > Otherwise looks good to me.
-> > > >
-> > >
-> > > Thanks for your feedback. Just using memalloc_use_memcg(old_memcg) and
-> > > ignoring the return seems more simple. I will wait for feedback from
-> > > other before changing anything.
-> >
-> > We're not nesting calls to memalloc_use_memcg(), right? So we don't
-> > have to return old_memcg and don't have to pass anything to unuse, it
-> > can always set current->active_memcg to NULL.
-> 
-> For buffer_head, the allocation is done with GFP_NOFS. So, I think
-> there is no chance of nesting. The fsnotify uses GFP_KERNEL but based
-> on my limited understanding of fsnotify, there should not be any
-> nesting i.e. the allocation triggering reclaim which trigger fsnotify
-> events. Though I would like Amir or Jan to confirm there is no nesting
-> possible.
+On Tue, Jun 26, 2018 at 09:01:06AM -0600, Keith Busch wrote:
+> Not related to your patch, but I did notice that the req->q->id isn't
+> really useful here since that's not the hardware context identifier.
+> That's just some ida assigned software identifier. For the admin command
+> completion trace, it's actually a little confusing to see the qid in the
+> trace.
 
-You are correct. Fsnotify events are generated only as a result of some
-syscall, not due to reclaim or stuff like that.
+It was actually requested by Martin so we can easily see which request
+got dispatched/completed on which request queue.
 
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
