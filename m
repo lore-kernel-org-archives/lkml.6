@@ -2,577 +2,138 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58DF3C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D84FC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F285725DF1
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2903F25C85
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:13:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GgB/uJfO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F285725DF1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="nbRJyDLu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2903F25C85
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966424AbeF0TN3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 15:13:29 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:32862 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966339AbeF0TNC (ORCPT
+        id S966439AbeF0TNy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 15:13:54 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46912 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934985AbeF0TJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 15:13:02 -0400
-Received: by mail-pg0-f67.google.com with SMTP id e11-v6so1344461pgq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:13:02 -0700 (PDT)
+        Wed, 27 Jun 2018 15:09:50 -0400
+Received: by mail-qk0-f195.google.com with SMTP id o2-v6so1647365qkc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:09:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iMi6Yife7QAtYd8jYJDDVetMUcGCi9qRTYVhwOAtVfI=;
-        b=GgB/uJfOHwW6iN7U1mfTUdubCZo79NjWri9wl9kdj2iPvSjjqrHwl6ES9nb78TTWye
-         4Omf2cQBJsUqOwUAqzQnPOFvWuBLFQu5rUjZYacVeBu9W4OzZg6J1uZAs4soJiyDzAVZ
-         sPVyL4SMKboFLBp5ATg+fJqpygqc0et5ERKduOZS9abeFj9l1W2aA6Z+K2i9nuA3Mz9L
-         HyepP7epBYzB61oaBKuVFaur3xNa+g3JhWwPqagc8/tUgH0A37nCcEu/HS/71i6p4BhZ
-         o01FGJy+ov9jZeI6NFPqBYbGOrOOf2YVuK6I3Fpora9u7+NUJzJSD3yegvAVqDscsNd9
-         HymA==
+        bh=sWOwbpIrK9XPYUY4yEH5tX1tHsTGl4xJAX1+6iwXdZU=;
+        b=nbRJyDLumgeP/1WsbHEh1Olz6qoLNAqJsKESPZX7Dc7oqLGQmg5jF9CqnTpc+t4GoO
+         +d2MtcOO49CbOHcnp1rbyfIpTO3xMmNxFjLBzPsSb6eiqO4b3UeG7AfrI8ngkm40UaKc
+         9ZOSm7DQgPnzDlmG3l8OFshFjYOnolDIccPxBof0HAENcWyaXeRlXgk+TX9NK78rsedp
+         yTuXAe4ioR+8VLoWIIa19h3rDwimr99K/jYVUjSaCSfGxhBk7aoQseIVVX0V631fcBvE
+         pjHz0IySqXDoT77PMGE8B7Pw5+xky7YHR4u6Q9SHC/8HFYRpSby+HtZCefkI4ZIj0RfH
+         BVOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iMi6Yife7QAtYd8jYJDDVetMUcGCi9qRTYVhwOAtVfI=;
-        b=Lm4KFfjIacyu9PzxF8DficaW71mS4wiBBaUBSBKt6nf1RWkKjalyL8TU15kmGUHPHu
-         S8fqm0C+3pjgCzQ+ofiB4V+vFKaCPjBlry4Pj5B/3dkJwWyOmXeGRrQb3Q4jL2m2rRsg
-         ygJIJe8B7gT2EbQpK4KNdGWeN5iz5g6TSuAVaRKi5RwrbLeuGoEqL25LfLNbo0U0oonC
-         Tbd5qXWhFWWWg2D7NmH13I7rhKyvcwYJqFmJZ+RyaU0fwc6dYwmijm3TylwoYZc8f9jM
-         +z9i6JIxEQvDWvEtzRQENt94qdcIuT+afh0xntjj75U727D/6ywQJs40kb6llM7OI3TL
-         VToA==
-X-Gm-Message-State: APt69E0ofJRHO+JZ0TQLjpmnD0HK7gn8o0i2jkd/GsbccU/uJKRl+gr3
-        SWFMqrpmcXVBpS9uqBkcLfrYTw==
-X-Google-Smtp-Source: AAOMgpdO6f434I83ztZOoQ1k34qTrzWDIZGOTv2JIDr9ruCD1jYm3RJCXMCn9OyB5pHGXx+F1Gpv8A==
-X-Received: by 2002:a62:5843:: with SMTP id m64-v6mr7139527pfb.93.1530126781287;
-        Wed, 27 Jun 2018 12:13:01 -0700 (PDT)
-Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
-        by smtp.gmail.com with ESMTPSA id l6-v6sm8733667pfc.172.2018.06.27.12.12.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 12:12:59 -0700 (PDT)
-From:   Shakeel Butt <shakeelb@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Shakeel Butt <shakeelb@google.com>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 1/2] fs: fsnotify: account fsnotify metadata to kmemcg
-Date:   Wed, 27 Jun 2018 12:12:49 -0700
-Message-Id: <20180627191250.209150-2-shakeelb@google.com>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-In-Reply-To: <20180627191250.209150-1-shakeelb@google.com>
-References: <20180627191250.209150-1-shakeelb@google.com>
+        bh=sWOwbpIrK9XPYUY4yEH5tX1tHsTGl4xJAX1+6iwXdZU=;
+        b=TUwH4/KvcQzU2H4A10NFMDrf/P3K52v/OKZoacff/uDLeE+XBRM8S9qQWCK41F27No
+         RGDhKVzwJCSdfDnuEK4mq1Rrh+Dq7U8VA0tKB2qRWNalszwlA/9JvO+/Tcr+PFbsW8eA
+         vGNfpYbTXL2RkROMaPGnERf1AJrtGJX+zZD8ijQrj53oW7n6AKVzDp1A/tsKUinj3/Y2
+         oQCoNXoF9BHb8oB6uKTLwFKI2nH/44Nz9bUjUr3L6BEfXKTzE2TvqwRFaXGLW3KSY7ve
+         ELuJug8wwY9ELQTnpjcPWkYROTn69Mp7XlSThNrEJ4ofMRCCBFBr6zz7Pg/Hn0w07CMH
+         a41w==
+X-Gm-Message-State: APt69E3xqtwY14DBpF/5Ixcsa0xPFSoHVYLX99K2iAAZikvbCzzTDqGo
+        JGJ7JzscAQIMyiYNgO+FOGNMPg==
+X-Google-Smtp-Source: AAOMgpeBm93UBrlKhz1eNvInyIkOU9jyPMXGPnrljXvIVEnUqDlKuf/tK/lUXGaE5ffQeU3tJ8arDA==
+X-Received: by 2002:a37:4f10:: with SMTP id d16-v6mr6347909qkb.323.1530126589706;
+        Wed, 27 Jun 2018 12:09:49 -0700 (PDT)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id b14-v6sm3026210qtp.26.2018.06.27.12.09.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Jun 2018 12:09:49 -0700 (PDT)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org, kernel-team@fb.com,
+        akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Josef Bacik <jbacik@fb.com>
+Subject: [PATCH 04/14] blk: introduce REQ_SWAP
+Date:   Wed, 27 Jun 2018 15:09:30 -0400
+Message-Id: <20180627190940.4696-5-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180627190940.4696-1-josef@toxicpanda.com>
+References: <20180627190940.4696-1-josef@toxicpanda.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A lot of memory can be consumed by the events generated for the huge or
-unlimited queues if there is either no or slow listener.  This can cause
-system level memory pressure or OOMs.  So, it's better to account the
-fsnotify kmem caches to the memcg of the listener.
+From: Josef Bacik <jbacik@fb.com>
 
-However the listener can be in a different memcg than the memcg of the
-producer and these allocations happen in the context of the event
-producer. This patch introduces remote memcg charging API which the
-producer can use to charge the allocations to the memcg of the listener.
+Just like REQ_META, it's important to know the IO coming down is swap
+in order to guard against potential IO priority inversion issues with
+cgroups.  Add REQ_SWAP and use it for all swap IO, and add it to our
+bio_issue_as_root_blkg helper.
 
-There are seven fsnotify kmem caches and among them allocations from
-dnotify_struct_cache, dnotify_mark_cache, fanotify_mark_cache and
-inotify_inode_mark_cachep happens in the context of syscall from the
-listener.  So, SLAB_ACCOUNT is enough for these caches.
-
-The objects from fsnotify_mark_connector_cachep are not accounted as they
-are small compared to the notification mark or events and it is unclear
-whom to account connector to since it is shared by all events attached to
-the inode.
-
-The allocations from the event caches happen in the context of the event
-producer.  For such caches we will need to remote charge the allocations
-to the listener's memcg.  Thus we save the memcg reference in the
-fsnotify_group structure of the listener.
-
-This patch has also moved the members of fsnotify_group to keep the size
-same, at least for 64 bit build, even with additional member by filling
-the holes.
-
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Greg Thelen <gthelen@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Josef Bacik <jbacik@fb.com>
+Acked-by: Tejun Heo <tj@kernel.org>
 ---
-Changelog since v7:
-- Simplify the remote memcg charging API
-- get_mem_cgroup_from_current() returns root_mem_cgroup if
-  current->active_memcg is not NULL but css_tryget_online() fails.
+ include/linux/blk-cgroup.h | 2 +-
+ include/linux/blk_types.h  | 3 ++-
+ mm/page_io.c               | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
-Changelog since v6:
-- Removed Jan's ACK as the code has changed a lot
-- Squashed the separate remote charging API path into this one
-- Removed kmalloc* & kmem_cache_alloc* APIs and only kept the scope API
-- Changed fsnotify remote charging code to use scope API
-
-Changelog since v5:
-- None
-
-Changelog since v4:
-- Fixed the build for CONFIG_MEMCG=n
-
-Changelog since v3:
-- Rebased over Jan's patches.
-- Some cleanup based on Amir's comments.
-
-Changelog since v2:
-- None
-
-Changelog since v1:
-- no more charging fsnotify_mark_connector objects
-- Fixed the build for SLOB
-
- fs/notify/dnotify/dnotify.c          |  5 ++--
- fs/notify/fanotify/fanotify.c        | 14 ++++++++---
- fs/notify/fanotify/fanotify_user.c   |  5 +++-
- fs/notify/group.c                    |  3 +++
- fs/notify/inotify/inotify_fsnotify.c |  7 +++++-
- fs/notify/inotify/inotify_user.c     |  5 +++-
- include/linux/fsnotify_backend.h     | 12 ++++++---
- include/linux/memcontrol.h           | 10 +++++++-
- include/linux/sched.h                |  3 +++
- include/linux/sched/mm.h             | 37 ++++++++++++++++++++++++++++
- kernel/fork.c                        |  3 +++
- mm/memcontrol.c                      | 37 +++++++++++++++++++++++++---
- 12 files changed, 123 insertions(+), 18 deletions(-)
-
-diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-index e2bea2ac5dfb..a6365e6bc047 100644
---- a/fs/notify/dnotify/dnotify.c
-+++ b/fs/notify/dnotify/dnotify.c
-@@ -384,8 +384,9 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
- 
- static int __init dnotify_init(void)
- {
--	dnotify_struct_cache = KMEM_CACHE(dnotify_struct, SLAB_PANIC);
--	dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC);
-+	dnotify_struct_cache = KMEM_CACHE(dnotify_struct,
-+					  SLAB_PANIC|SLAB_ACCOUNT);
-+	dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC|SLAB_ACCOUNT);
- 
- 	dnotify_group = fsnotify_alloc_group(&dnotify_fsnotify_ops);
- 	if (IS_ERR(dnotify_group))
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index f90842efea13..6ff1f75d156d 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -11,6 +11,7 @@
- #include <linux/types.h>
- #include <linux/wait.h>
- #include <linux/audit.h>
-+#include <linux/sched/mm.h>
- 
- #include "fanotify.h"
- 
-@@ -140,8 +141,8 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
- 						 struct inode *inode, u32 mask,
- 						 const struct path *path)
- {
--	struct fanotify_event_info *event;
--	gfp_t gfp = GFP_KERNEL;
-+	struct fanotify_event_info *event = NULL;
-+	gfp_t gfp = GFP_KERNEL | __GFP_ACCOUNT;
- 
- 	/*
- 	 * For queues with unlimited length lost events are not expected and
-@@ -151,19 +152,22 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
- 	if (group->max_events == UINT_MAX)
- 		gfp |= __GFP_NOFAIL;
- 
-+	/* Whoever is interested in the event, pays for the allocation. */
-+	memalloc_use_memcg(group->memcg);
-+
- 	if (fanotify_is_perm_event(mask)) {
- 		struct fanotify_perm_event_info *pevent;
- 
- 		pevent = kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
- 		if (!pevent)
--			return NULL;
-+			goto out;
- 		event = &pevent->fae;
- 		pevent->response = 0;
- 		goto init;
- 	}
- 	event = kmem_cache_alloc(fanotify_event_cachep, gfp);
- 	if (!event)
--		return NULL;
-+		goto out;
- init: __maybe_unused
- 	fsnotify_init_event(&event->fse, inode, mask);
- 	event->tgid = get_pid(task_tgid(current));
-@@ -174,6 +178,8 @@ init: __maybe_unused
- 		event->path.mnt = NULL;
- 		event->path.dentry = NULL;
- 	}
-+out:
-+	memalloc_unuse_memcg();
- 	return event;
- }
- 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index ec4d8c59d0e3..0cf45041dc32 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -16,6 +16,7 @@
- #include <linux/uaccess.h>
- #include <linux/compat.h>
- #include <linux/sched/signal.h>
-+#include <linux/memcontrol.h>
- 
- #include <asm/ioctls.h>
- 
-@@ -756,6 +757,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 
- 	group->fanotify_data.user = user;
- 	atomic_inc(&user->fanotify_listeners);
-+	group->memcg = get_mem_cgroup_from_mm(current->mm);
- 
- 	oevent = fanotify_alloc_event(group, NULL, FS_Q_OVERFLOW, NULL);
- 	if (unlikely(!oevent)) {
-@@ -957,7 +959,8 @@ COMPAT_SYSCALL_DEFINE6(fanotify_mark,
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index b41292726c0f..a8f9ba8f33a4 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -254,7 +254,7 @@ static inline struct blkcg *bio_blkcg(struct bio *bio)
   */
- static int __init fanotify_user_setup(void)
+ static inline bool bio_issue_as_root_blkg(struct bio *bio)
  {
--	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark, SLAB_PANIC);
-+	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
-+					 SLAB_PANIC|SLAB_ACCOUNT);
- 	fanotify_event_cachep = KMEM_CACHE(fanotify_event_info, SLAB_PANIC);
- 	if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
- 		fanotify_perm_event_cachep =
-diff --git a/fs/notify/group.c b/fs/notify/group.c
-index aa5468f23e45..c03b83662876 100644
---- a/fs/notify/group.c
-+++ b/fs/notify/group.c
-@@ -22,6 +22,7 @@
- #include <linux/srcu.h>
- #include <linux/rculist.h>
- #include <linux/wait.h>
-+#include <linux/memcontrol.h>
- 
- #include <linux/fsnotify_backend.h>
- #include "fsnotify.h"
-@@ -36,6 +37,8 @@ static void fsnotify_final_destroy_group(struct fsnotify_group *group)
- 	if (group->ops->free_group_priv)
- 		group->ops->free_group_priv(group);
- 
-+	mem_cgroup_put(group->memcg);
-+
- 	kfree(group);
+-	return (bio->bi_opf & REQ_META);
++	return (bio->bi_opf & (REQ_META | REQ_SWAP)) != 0;
  }
- 
-diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-index 9ab6dde38a14..52e167d04b11 100644
---- a/fs/notify/inotify/inotify_fsnotify.c
-+++ b/fs/notify/inotify/inotify_fsnotify.c
-@@ -31,6 +31,7 @@
- #include <linux/types.h>
- #include <linux/sched.h>
- #include <linux/sched/user.h>
-+#include <linux/sched/mm.h>
- 
- #include "inotify.h"
- 
-@@ -98,7 +99,11 @@ int inotify_handle_event(struct fsnotify_group *group,
- 	i_mark = container_of(inode_mark, struct inotify_inode_mark,
- 			      fsn_mark);
- 
--	event = kmalloc(alloc_len, GFP_KERNEL);
-+	/* Whoever is interested in the event, pays for the allocation. */
-+	memalloc_use_memcg(group->memcg);
-+	event = kmalloc(alloc_len, GFP_KERNEL | __GFP_ACCOUNT);
-+	memalloc_unuse_memcg();
-+
- 	if (unlikely(!event)) {
- 		/*
- 		 * Treat lost event due to ENOMEM the same way as queue
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 1cf5b779d862..749c46ababa0 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -38,6 +38,7 @@
- #include <linux/uaccess.h>
- #include <linux/poll.h>
- #include <linux/wait.h>
-+#include <linux/memcontrol.h>
- 
- #include "inotify.h"
- #include "../fdinfo.h"
-@@ -636,6 +637,7 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
- 	oevent->name_len = 0;
- 
- 	group->max_events = max_events;
-+	group->memcg = get_mem_cgroup_from_mm(current->mm);
- 
- 	spin_lock_init(&group->inotify_data.idr_lock);
- 	idr_init(&group->inotify_data.idr);
-@@ -808,7 +810,8 @@ static int __init inotify_user_setup(void)
- 
- 	BUG_ON(hweight32(ALL_INOTIFY_BITS) != 21);
- 
--	inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark, SLAB_PANIC);
-+	inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark,
-+					       SLAB_PANIC|SLAB_ACCOUNT);
- 
- 	inotify_max_queued_events = 16384;
- 	init_user_ns.ucount_max[UCOUNT_INOTIFY_INSTANCES] = 128;
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index b38964a7a521..a0c4790c5302 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -84,6 +84,8 @@ struct fsnotify_event_private_data;
- struct fsnotify_fname;
- struct fsnotify_iter_info;
- 
-+struct mem_cgroup;
-+
- /*
-  * Each group much define these ops.  The fsnotify infrastructure will call
-  * these operations for each relevant group.
-@@ -127,6 +129,8 @@ struct fsnotify_event {
-  * everything will be cleaned up.
-  */
- struct fsnotify_group {
-+	const struct fsnotify_ops *ops;	/* how this group handles things */
-+
- 	/*
- 	 * How the refcnt is used is up to each group.  When the refcnt hits 0
- 	 * fsnotify will clean up all of the resources associated with this group.
-@@ -137,8 +141,6 @@ struct fsnotify_group {
- 	 */
- 	refcount_t refcnt;		/* things with interest in this group */
- 
--	const struct fsnotify_ops *ops;	/* how this group handles things */
--
- 	/* needed to send notification to userspace */
- 	spinlock_t notification_lock;		/* protect the notification_list */
- 	struct list_head notification_list;	/* list of event_holder this group needs to send to userspace */
-@@ -160,6 +162,8 @@ struct fsnotify_group {
- 	atomic_t num_marks;		/* 1 for each mark and 1 for not being
- 					 * past the point of no return when freeing
- 					 * a group */
-+	atomic_t user_waits;		/* Number of tasks waiting for user
-+					 * response */
- 	struct list_head marks_list;	/* all inode marks for this group */
- 
- 	struct fasync_struct *fsn_fa;    /* async notification */
-@@ -167,8 +171,8 @@ struct fsnotify_group {
- 	struct fsnotify_event *overflow_event;	/* Event we queue when the
- 						 * notification list is too
- 						 * full */
--	atomic_t user_waits;		/* Number of tasks waiting for user
--					 * response */
-+
-+	struct mem_cgroup *memcg;	/* memcg to charge allocations */
- 
- 	/* groups can define private fields here or use the void *private */
- 	union {
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 3607913032be..cb04b382c8d2 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -378,6 +378,8 @@ struct lruvec *mem_cgroup_page_lruvec(struct page *, struct pglist_data *);
- bool task_in_mem_cgroup(struct task_struct *task, struct mem_cgroup *memcg);
- struct mem_cgroup *mem_cgroup_from_task(struct task_struct *p);
- 
-+struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm);
-+
- static inline
- struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
- 	return css ? container_of(css, struct mem_cgroup, css) : NULL;
-@@ -385,7 +387,8 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
- 
- static inline void mem_cgroup_put(struct mem_cgroup *memcg)
- {
--	css_put(&memcg->css);
-+	if (memcg)
-+		css_put(&memcg->css);
- }
- 
- #define mem_cgroup_from_counter(counter, member)	\
-@@ -857,6 +860,11 @@ static inline bool task_in_mem_cgroup(struct task_struct *task,
- 	return true;
- }
- 
-+static inline struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
-+{
-+	return NULL;
-+}
-+
- static inline void mem_cgroup_put(struct mem_cgroup *memcg)
- {
- }
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 87bf02d93a27..9cba7f874443 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1149,6 +1149,9 @@ struct task_struct {
- 
- 	/* Number of pages to reclaim on returning to userland: */
- 	unsigned int			memcg_nr_pages_over_high;
-+
-+	/* Used by memcontrol for targeted memcg charge: */
-+	struct mem_cgroup		*active_memcg;
- #endif
- 
- #ifdef CONFIG_UPROBES
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 44d356f5e47c..2ac55340cb73 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -248,6 +248,43 @@ static inline void memalloc_noreclaim_restore(unsigned int flags)
- 	current->flags = (current->flags & ~PF_MEMALLOC) | flags;
- }
- 
-+#ifdef CONFIG_MEMCG
-+/**
-+ * memalloc_use_memcg - Starts the remote memcg charging scope.
-+ * @memcg: memcg to charge.
-+ *
-+ * This function marks the beginning of the remote memcg charging scope. All the
-+ * __GFP_ACCOUNT allocations till the end of the scope will be charged to the
-+ * given memcg.
-+ *
-+ * NOTE: This function is not nesting safe.
-+ */
-+static inline void memalloc_use_memcg(struct mem_cgroup *memcg)
-+{
-+	WARN_ON_ONCE(current->active_memcg);
-+	current->active_memcg = memcg;
-+}
-+
-+/**
-+ * memalloc_unuse_memcg - Ends the remote memcg charging scope.
-+ *
-+ * This function marks the end of the remote memcg charging scope started by
-+ * memalloc_use_memcg().
-+ */
-+static inline void memalloc_unuse_memcg(void)
-+{
-+	current->active_memcg = NULL;
-+}
-+#else
-+static inline void memalloc_use_memcg(struct mem_cgroup *memcg)
-+{
-+}
-+
-+static inline void memalloc_unuse_memcg(void)
-+{
-+}
-+#endif
-+
- #ifdef CONFIG_MEMBARRIER
- enum {
- 	MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY		= (1U << 0),
-diff --git a/kernel/fork.c b/kernel/fork.c
-index a64d0a19f174..0b07db6fef06 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -843,6 +843,9 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- 	tsk->fail_nth = 0;
- #endif
- 
-+#ifdef CONFIG_MEMCG
-+	tsk->active_memcg = NULL;
-+#endif
- 	return tsk;
- 
- free_stack:
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 02e77c88967a..b25ca5c13196 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -678,9 +678,20 @@ struct mem_cgroup *mem_cgroup_from_task(struct task_struct *p)
- }
- EXPORT_SYMBOL(mem_cgroup_from_task);
- 
--static struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
-+/**
-+ * get_mem_cgroup_from_mm: Obtain a reference on given mm_struct's memcg.
-+ * @mm: mm from which memcg should be extracted. It can be NULL.
-+ *
-+ * Obtain a reference on mm->memcg and returns it if successful. Otherwise
-+ * root_mem_cgroup is returned. However if mem_cgroup is disabled, NULL is
-+ * returned.
-+ */
-+struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
- {
--	struct mem_cgroup *memcg = NULL;
-+	struct mem_cgroup *memcg;
-+
-+	if (mem_cgroup_disabled())
-+		return NULL;
- 
- 	rcu_read_lock();
- 	do {
-@@ -700,6 +711,24 @@ static struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
- 	rcu_read_unlock();
- 	return memcg;
- }
-+EXPORT_SYMBOL(get_mem_cgroup_from_mm);
-+
-+/**
-+ * If current->active_memcg is non-NULL, do not fallback to current->mm->memcg.
-+ */
-+static __always_inline struct mem_cgroup *get_mem_cgroup_from_current(void)
-+{
-+	if (unlikely(current->active_memcg)) {
-+		struct mem_cgroup *memcg = root_mem_cgroup;
-+
-+		rcu_read_lock();
-+		if (css_tryget_online(&current->active_memcg->css))
-+			memcg = current->active_memcg;
-+		rcu_read_unlock();
-+		return memcg;
-+	}
-+	return get_mem_cgroup_from_mm(current->mm);
-+}
  
  /**
-  * mem_cgroup_iter - iterate over memory cgroup hierarchy
-@@ -2260,7 +2289,7 @@ struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep)
- 	if (current->memcg_kmem_skip_account)
- 		return cachep;
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index ff181df8c195..4f7ba397d37d 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -327,7 +327,7 @@ enum req_flag_bits {
  
--	memcg = get_mem_cgroup_from_mm(current->mm);
-+	memcg = get_mem_cgroup_from_current();
- 	kmemcg_id = READ_ONCE(memcg->kmemcg_id);
- 	if (kmemcg_id < 0)
+ 	/* for driver use */
+ 	__REQ_DRV,
+-
++	__REQ_SWAP,		/* swapping request. */
+ 	__REQ_NR_BITS,		/* stops here */
+ };
+ 
+@@ -349,6 +349,7 @@ enum req_flag_bits {
+ #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
+ 
+ #define REQ_DRV			(1ULL << __REQ_DRV)
++#define REQ_SWAP		(1ULL << __REQ_SWAP)
+ 
+ #define REQ_FAILFAST_MASK \
+ 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
+diff --git a/mm/page_io.c b/mm/page_io.c
+index b41cf9644585..a552cb37e220 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -338,7 +338,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
+ 		ret = -ENOMEM;
  		goto out;
-@@ -2344,7 +2373,7 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
- 	if (memcg_kmem_bypass())
- 		return 0;
- 
--	memcg = get_mem_cgroup_from_mm(current->mm);
-+	memcg = get_mem_cgroup_from_current();
- 	if (!mem_cgroup_is_root(memcg)) {
- 		ret = memcg_kmem_charge_memcg(page, gfp, order, memcg);
- 		if (!ret)
+ 	}
+-	bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
++	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
+ 	count_swpout_vm_event(page);
+ 	set_page_writeback(page);
+ 	unlock_page(page);
 -- 
-2.18.0.rc2.346.g013aa6912e-goog
+2.14.3
 
