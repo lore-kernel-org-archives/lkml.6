@@ -2,128 +2,115 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC59C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B66DC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 298A121A95
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:59:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="szkgdy8o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 298A121A95
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 098812587B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:59:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098812587B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965767AbeF0U7T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 16:59:19 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:45016 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965335AbeF0U7S (ORCPT
+        id S965789AbeF0U74 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 16:59:56 -0400
+Received: from mailoutvs16.siol.net ([185.57.226.207]:58381 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933133AbeF0U74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 16:59:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=l2GkuqEgNvIGjnj3g906AoMr4IBlb3+Zyy5DWqyyRbc=; b=szkgdy8ouwPQmr51eQRQ9XouGY
-        8sQ94kI5mL4dPlAnbFRziiT8HUCvw9ocjSpHWDzAt8gzOh8uX5AN/MctbCbDs4j3erncEy7btmSon
-        K8Yia50mXndZhs3whkgL+N4BtfgRX1Am4Gneibr1PjGvjnQ6xc1SmlUvQOOvdkG7xh5FtbNmp1eLV
-        eg8iVcgAqZBspcNpugNV98R/A76X/3pOH566ZP0GmMVYUU1nxsVKHlMfowSSWKAc25XhnT74Cxt48
-        /0lFmVcaOnacQsKELeRlrVRJuqXqm6QFt4+0zUfliflCLcnPJeSHa9a1MGtoED9HQvhTQ8F6jrOXF
-        O3yuu5Yw==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:39318 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fYHX2-001d6P-K8; Wed, 27 Jun 2018 20:59:17 +0000
-Date:   Wed, 27 Jun 2018 13:59:15 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <f4bug@amsat.org>
-Cc:     Sai Pavan Boddu <sai.pavan.boddu@xilinx.com>,
-        "Edgar E. Iglesias" <edgar.iglesias@xilinx.com>,
-        Michal Simek <monstr@monstr.eu>,
-        "Edgar E. Iglesias" <edgar.iglesias@gmail.com>,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        Alistair Francis <alistair@alistair23.me>,
-        KONRAD Frederic <frederic.konrad@adacore.com>
-Subject: Re: [Qemu-devel] Linux kernel configurations for various Microblaze
- systems
-Message-ID: <20180627205915.GA22693@roeck-us.net>
-References: <20180627185248.GA19743@roeck-us.net>
- <96809884-2f46-ed63-48fd-9fd4c5050e20@amsat.org>
+        Wed, 27 Jun 2018 16:59:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 1C87B52075C;
+        Wed, 27 Jun 2018 22:59:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 6JQYWWHNhrij; Wed, 27 Jun 2018 22:59:53 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 82380520858;
+        Wed, 27 Jun 2018 22:59:53 +0200 (CEST)
+Received: from jernej-laptop.localnet (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id DAF1552075C;
+        Wed, 27 Jun 2018 22:59:52 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     wens@csie.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, paul.kocialkowski@bootlin.com
+Subject: Re: [PATCH] drm/sun4i: Implement zpos for DE2
+Date:   Wed, 27 Jun 2018 22:58:28 +0200
+Message-ID: <8012754.crdjCMeE0H@jernej-laptop>
+In-Reply-To: <20180627182500.eanqagmcfmsgzos2@flea>
+References: <20180627164514.4777-1-jernej.skrabec@siol.net> <20180627182500.eanqagmcfmsgzos2@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <96809884-2f46-ed63-48fd-9fd4c5050e20@amsat.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 05:01:34PM -0300, Philippe Mathieu-Daudé wrote:
-> Hi Guenter,
+Dne sreda, 27. junij 2018 ob 20:25:00 CEST je Maxime Ripard napisal(a):
+> Hi!
 > 
-> On 06/27/2018 03:52 PM, Guenter Roeck wrote:
-> > Hi,
+> On Wed, Jun 27, 2018 at 06:45:14PM +0200, Jernej Skrabec wrote:
+> > Initial implementation of DE2 planes only supported fixed zpos.
 > > 
-> > I would like to add Microblaze "petalogix-ml605" and "xlnx-zynqmp-pmu"
-> > to my list of qemu boot tests of upstream and stable release kernels.
+> > Expand implementation with configurable zpos property.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 > 
-> Do you mind sharing your tests on this thread?
-> 
-Nothing secret about it. The test results are always available at
-http://kerneltests.org/. The scripts are published at
-https://github.com/groeck/linux-build-test. My qemu clone (I carry a few
-patches on top of upstream qemu) is at https://github.com/groeck/qemu.
+> Thanks for that work. I guess you should expand a bit on the exact
+> setup you're doing here.
 
-> "Who is running QEMU automated tests, and when?"
-> http://lists.nongnu.org/archive/html/qemu-devel/2018-04/msg04695.html
-> 
-> > Unfortunately I have been unable to locate working kernel configurations
-> > for the those systems, nor working qemu command lines. I found a few links,
-> > but they are all dead.
-> 
-> I got more lucky using the Xilinx downstream code from:
-> https://github.com/Xilinx
-> 
-> In particular using their downstream DeviceTree:
-> 
-> https://github.com/Xilinx/device-tree-xlnx
-> 
-> I also used those links:
-> 
-> http://www.wiki.xilinx.com/MicroBlaze
-> http://www.wiki.xilinx.com/Build%20kernel
-> 
+OK.
 
-AFAICS they are all generic, and don't reference specific boards
-(other than maybe the possibility to configure those boards). There are
-comments such as "start with mmu_defconfig and modify all parameters
-which are special on your board". That is great, but trying to do that
-for an evaluation board that I don't own and just try to get running
-under qemu is a bit difficult since I don't really know what I am doing.
+> 
+> Are the pipes working the same way on the DE2 than on DE1, ie does the
+> pipe blending applies before the alpha blending, and therefore you
+> need to make sure that there's not two planes with alpha going to the
+> same pipe?
 
-The best I was able to accomplish was to boot petalogix-ml605 without crash,
-but with no console output either. I could try to debug further, but I don't
-really want to waste my time.
+I'm not familiar with DE1 and I'm not sure what the problem is.
 
-Thanks,
-Guenter
+However, there is an issue in DE2 when alpha blending multiple planes if 
+bottom-most plane doesn't cover all screen. In this case alpha blending 
+produce weird result on screen. Fortunately, there is elegant solution. Black 
+opaque fill color is enabled for pipe 0 (always at the bottom), which covers 
+any "undefined region" and that makes alpha blending happy again.
+
+Alternatively, blending modes between planes could be tweaked or disabled, but 
+I found aforementioned solution is much simpler and you set it only once.
+
+> 
+> Also, you seem to use the pipe and channels indifferently now, why is
+> that?
+
+Why do you think so?
+
+Channel always represents HW unit, for example, on H3, mixer0, channel 0 
+always represents VI plane, channel 1, represents first UI, plane, channel 2, 
+second UI plane, etc.
+
+Pipe 0 always represent channel at the bottom, pipe 1 channel on top pipe 0, 
+etc. Initial, fixed zpos implementation really had 1:1 mapping, but now it can 
+be different.
+
+Register SUN8I_MIXER_BLEND_ROUTE holds pipe <-> channel mappings.
+Bits 3:0 represents pipe 0 and holds channel number. Bits 7:4 represents pipe 
+1, etc.
+
+Additionaly,  there can be holes, for example, pipe 3 and pipe 0 are enabled 
+and pipe 1 and 2 are disabled.
+
+I hope I answered your questions.
+
+Best regards,
+Jernej
+
+
+
