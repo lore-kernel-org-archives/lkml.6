@@ -2,84 +2,95 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B178C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983D4C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D369D2648B
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:43:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D369D2648B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 40130216E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:43:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JN2ixLKc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40130216E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934430AbeF0Mm7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:42:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53426 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932312AbeF0Mm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:42:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 2DBA7AF75;
-        Wed, 27 Jun 2018 12:42:56 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7367F1E3C15; Wed, 27 Jun 2018 14:42:55 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 14:42:55 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
-References: <20180618081258.GB16991@lst.de>
- <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
- <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
- <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
- <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
- <20180626134757.GY28965@dhcp22.suse.cz>
- <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
- <20180627113221.GO32348@dhcp22.suse.cz>
- <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
- <20180627115927.GQ32348@dhcp22.suse.cz>
+        id S934479AbeF0Mnw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:43:52 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41742 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934434AbeF0Mnu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:43:50 -0400
+X-Greylist: delayed 895 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Jun 2018 08:43:50 EDT
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5RCSkbh101746;
+        Wed, 27 Jun 2018 07:28:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530102526;
+        bh=Bq+zJspI5iXtki90MgFw3SfgywwjqPRjiXCpzJAAOC4=;
+        h=From:To:CC:Subject:Date;
+        b=JN2ixLKc2iLfVvehVdgYZR9ZuB/s1fe+sYJqCYKRLF10YIslMxcUUuGoyZSlA3WS+
+         /STE3Ai3jnwQeS3WiIo6M0IBIbci9hzStHLBuJxbCl6itcIz16f+ezgnwxbE4wcjer
+         r9QKefTZRBGusnilinKblVrihYE5HHoMMVJuK9ek=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RCSkXh000668;
+        Wed, 27 Jun 2018 07:28:46 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 27
+ Jun 2018 07:28:46 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 27 Jun 2018 07:28:46 -0500
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RCSgMr027559;
+        Wed, 27 Jun 2018 07:28:43 -0500
+From:   Vignesh R <vigneshr@ti.com>
+To:     Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Bjorn Helgaas <bhelgaas@google.com>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
+Subject: [PATCH v2 0/4] pci-dra7xx: Enable errata i870 workaround for RC mode
+Date:   Wed, 27 Jun 2018 17:59:15 +0530
+Message-ID: <20180627122919.23926-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627115927.GQ32348@dhcp22.suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 27-06-18 13:59:27, Michal Hocko wrote:
-> On Wed 27-06-18 13:53:49, Jan Kara wrote:
-> > On Wed 27-06-18 13:32:21, Michal Hocko wrote:
-> [...]
-> > > Appart from that, do we really care about 32b here? Big DIO, IB users
-> > > seem to be 64b only AFAIU.
-> > 
-> > IMO it is a bad habit to leave unpriviledged-user-triggerable oops in the
-> > kernel even for uncommon platforms...
-> 
-> Absolutely agreed! I didn't mean to keep the blow up for 32b. I just
-> wanted to say that we can stay with a simple solution for 32b. I thought
-> the g-u-p-longterm has plugged the most obvious breakage already. But
-> maybe I just misunderstood.
+Make workaround for errata i870 applicable in Host mode as
+well(previously it was enabled only for EP mode) as per errata
+documentation: http://www.ti.com/lit/er/sprz450/sprz450.pdf
 
-Most yes, but if you try hard enough, you can still trigger the oops e.g.
-with appropriately set up direct IO when racing with writeback / reclaim.
+Tested on DRA72 EVM
 
-								Honza
+Changes since v1:
+Drop IRQ handling rework (will be sent out separately)
+
+v1: https://lkml.org/lkml/2017/12/1/59
+
+Vignesh R (4):
+  dt-bindings: PCI: dra7xx: Add bindings for unaligned access in host
+    mode
+  pci: dwc: pci-dra7xx: Enable errata i870 for both EP and RC mode
+  ARM: dts: dra7: Enable workaround for errata i870 in PCIe host mode
+  ARM: dts: dra7: Fix up unaligned access setting for PCIe EP
+
+ Documentation/devicetree/bindings/pci/ti-pci.txt |  5 +++++
+ arch/arm/boot/dts/dra7.dtsi                      |  4 +++-
+ drivers/pci/controller/dwc/pci-dra7xx.c          | 12 ++++++------
+ 3 files changed, 14 insertions(+), 7 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.18.0
+
