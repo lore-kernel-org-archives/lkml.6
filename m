@@ -2,109 +2,113 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EDBC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DE1C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ABF622BC4
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ABF622BC4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D4852628A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:26:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sglFhWGq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4852628A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753585AbeF0LXG (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 07:23:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:58360 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752144AbeF0LXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 07:23:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C3D67A9;
-        Wed, 27 Jun 2018 04:23:05 -0700 (PDT)
-Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4C023F5C0;
-        Wed, 27 Jun 2018 04:23:03 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] arm64/mm: Move {tramp_pg_dir, swapper_pg_dir} to
- .rodata section
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-References: <20180625113921.21854-1-yaojun8558363@gmail.com>
- <20180625113921.21854-3-yaojun8558363@gmail.com>
- <82f3bf16-cf3a-9b2d-a7d2-789a4abb0bf2@arm.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <ceb6135a-4e4d-d597-85aa-7639a044d097@arm.com>
-Date:   Wed, 27 Jun 2018 12:23:02 +0100
+        id S933067AbeF0L0g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 07:26:36 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:32976 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750936AbeF0L0f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 07:26:35 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5RBPVxf117146;
+        Wed, 27 Jun 2018 06:25:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530098731;
+        bh=vM2toye/pXD13nvLkPzijXvmS35hp2WoDrjD6K7YFmM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=sglFhWGqgXL4VF8Xx3msOu/8GXa/oKv+phJbzdYw1wZwUeuonwX+mcaupuybKRFnt
+         /7RfxZrUEZGG0JTAkfDXymvtgZ2Bc8nPtGQliI2pDXnwTRV6Zds0XNgBGAJrPiC1Oh
+         blecHdew4/P09uW5R1XW/M1l9qZjNCxcIgBWM8OI=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RBPVWp003807;
+        Wed, 27 Jun 2018 06:25:31 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 27
+ Jun 2018 06:25:30 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 27 Jun 2018 06:25:30 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RBPR0w018516;
+        Wed, 27 Jun 2018 06:25:28 -0500
+Subject: Re: [RESEND (again) PATCH] clkdev: don't call __of_clk_get_by_name()
+ unnecessarily from clk_get()
+To:     David Lechner <david@lechnology.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Russell King <linux@armlinux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+References: <20180625160440.10537-1-brgl@bgdev.pl>
+ <5824a382-00fc-0af3-097f-519a36c2d555@lechnology.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <efeb5357-899e-acbb-22ad-6a9bc97013b5@ti.com>
+Date:   Wed, 27 Jun 2018 16:55:27 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <82f3bf16-cf3a-9b2d-a7d2-789a4abb0bf2@arm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5824a382-00fc-0af3-097f-519a36c2d555@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki, Jun,
+On Tuesday 26 June 2018 04:32 AM, David Lechner wrote:
+> On 06/25/2018 11:04 AM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> The way this function is implemented caused some confusion when
+>> converting the TI DaVinci platform to using the common clock framework.
+>>
+>> Current kernel supports booting DaVinci boards both in device tree as
+>> well as legacy, board-file mode. In the latter, we always end up
+>> calling clk_get_sys() as of_node is NULL and __of_clk_get_by_name()
+>> returns -ENOENT.
+>>
+>> It was not obvious at first glance how clk_get(dev, NULL) will work in
+>> board-file mode since we always call __of_clk_get_by_name(). Let's make
+>> it clearer by checking if of_node is NULL and skipping right to
+>> clk_get_sys().
+>>
+>> Cc: Sekhar Nori <nsekhar@ti.com>
+>> Cc: Kevin Hilman <khilman@baylibre.com>
+>> Cc: David Lechner <david@lechnology.com>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+> 
+> Reviewed-by: David Lechner <david@lechnology.com>
 
-On 27/06/18 12:07, Suzuki K Poulose wrote:
-> On 25/06/18 12:39, Jun Yao wrote:
->> When CONFIG_ARM64_VA_BITS_36/CONFIG_ARM64_VA_BITS_39/
->> CONFIG_ARM64_VA_BITS_42 are selected, a block-mapping can be
->> written to swapper_pg_dir. To defend 'KSMA', we move swapper_pg_dir
->> to .rodata section when these configurations are selected. At the
->> same time, we update swapper_pg_dir by fixmap.
+I think Russell previously said that the patch looks good to him. So you
+can probably just add it to his patch tracker.
 
->> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
->> index 2e05bcd944c8..62512ad9c310 100644
->> --- a/arch/arm64/include/asm/pgalloc.h
->> +++ b/arch/arm64/include/asm/pgalloc.h
->> @@ -49,6 +49,22 @@ static inline void __pud_populate(pud_t *pudp, phys_addr_t
->> pmdp, pudval_t prot)
->>     static inline void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t
->> *pmdp)
->>   {
->> +#ifdef CONFIG_ARM64_VA_BITS_39
-> 
-> Could we please use
-> 
-> #ifdef __PAGETABLE_PUD_FOLDED ^^
+http://www.arm.linux.org.uk/developer/patches/add.php
 
->> @@ -142,6 +158,23 @@ pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmdp,
->> pte_t *ptep)
->>       /*
->>        * The pmd must be loaded with the physical address of the PTE table
->>        */
->> +#if defined(CONFIG_ARM64_VA_BITS_42) || \
->> +    defined(CONFIG_ARM64_VA_BITS_36)
-> 
-> and
-> 
-> #ifdef __PGTABLE_PMD_FOLDED here ^^
-> 
-> 
->> +#if defined(CONFIG_ARM64_VA_BITS_39) || \
->> +    defined(CONFIG_ARM64_VA_BITS_36) || \
->> +    defined(CONFIG_ARM64_VA_BITS_42)
-> 
-> and
-> 
-> #ifdef __PGTABLE_PMD_FOLDED ^^ (as it implies
-> __PGTABLE_PUD_FOLDED )
-> 
-> instead ?
+FWIW, you can also add:
 
-Aha, I didn't know these existed. As we are only interested in matching one
-level for now, this is even clearer.
-
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
 Thanks,
-
-James
+Sekhar
