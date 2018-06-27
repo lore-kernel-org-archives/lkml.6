@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B09EC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8634EC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E168C260EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E168C260EA
+	by mail.kernel.org (Postfix) with ESMTP id 4A8A723CE4
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:03:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8A723CE4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965918AbeF0RDe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:03:34 -0400
-Received: from mga07.intel.com ([134.134.136.100]:19413 "EHLO mga07.intel.com"
+        id S965974AbeF0RDo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:03:44 -0400
+Received: from mga07.intel.com ([134.134.136.100]:19414 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753603AbeF0RDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:03:32 -0400
+        id S1753603AbeF0RDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 13:03:34 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 10:03:31 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 10:03:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
-   d="scan'208";a="70478497"
+   d="scan'208";a="70478511"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga002.jf.intel.com with ESMTP; 27 Jun 2018 10:03:31 -0700
+  by orsmga002.jf.intel.com with ESMTP; 27 Jun 2018 10:03:32 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>,
@@ -41,74 +41,63 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 0/8] x86: infrastructure to enable FSGSBASE
-Date:   Wed, 27 Jun 2018 10:03:05 -0700
-Message-Id: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v5 4/8] x86/fsgsbase/64: Use FS/GS base helpers in core dump
+Date:   Wed, 27 Jun 2018 10:03:09 -0700
+Message-Id: <1530118993-13466-5-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
+References: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given feedbacks from [1], it was suggested to separate two parts
-and to (re-)submit this patchset first.
+The open coded access is now replaced, that might prevent
+from using the enhanced FSGSBASE mechanism.
 
-To facilitate FSGSBASE, Andy's FS/GS base read fix is first
-ordered, then some helper functions and refactoring work
-are included. Cleanup for the vDSO initialization is
-for preparing per-CPU base finder that will be used in the
-paranoid entry, when FSGSBASE enabled.
+Based-on-code-from: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+---
+ arch/x86/include/asm/elf.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Changes from V4 [5]:
-* Change patch ordering; putting the fix first before introducing
-the helper functions
-* Cleanup further for vDSO CPU initialization codes
-
-Changes from V3 [4]:
-* Unify CPU number initialization
-
-Changes from V2 [3]:
-* Bisect the CPU number initialization patch
-* Drop patches for introducing i386 CPU_NUMBER and switching
-write_rdtscp_aux() to use wrmsr_safe()
-
-Changes from V1 [2]:
-* Rename the x86-64 CPU_NUMBER segment from PER_CPU
-* Add i386 CPU_NUMBER equivalent to x86-64 at GDT entry 23
-* Add additional helper function to store CPU number
-* Switch write_rdtscp_aux() to use wrmsr_safe()
-
-[1] FSGSBASE patch set V2: https://lkml.org/lkml/2018/5/31/686
-[2] infrastructure for FSGSBASE 
-    V1: https://lkml.org/lkml/2018/6/4/887
-[3] V2: https://lkml.org/lkml/2018/6/6/582
-[4] V3: https://lkml.org/lkml/2018/6/7/975
-[5] V4: https://lkml.org/lkml/2018/6/20/1045
-
-Andy Lutomirski (1):
-  x86/arch_prctl/64: Make ptrace read FS/GS base accurately
-
-Chang S. Bae (7):
-  x86/fsgsbase/64: Introduce FS/GS base helper functions
-  x86/fsgsbase/64: Make ptrace use FS/GS base helpers
-  x86/fsgsbase/64: Use FS/GS base helpers in core dump
-  x86/fsgsbase/64: Factor out load FS/GS segments from __switch_to
-  x86/segments/64: Rename PER_CPU segment to CPU_NUMBER
-  x86/vdso: Introduce helper functions for CPU and node number
-  x86/vdso: Move out the CPU initialization
-
- arch/x86/entry/vdso/vgetcpu.c   |   9 +-
- arch/x86/entry/vdso/vma.c       |  38 +--------
- arch/x86/include/asm/elf.h      |   6 +-
- arch/x86/include/asm/fsgsbase.h |  47 +++++++++++
- arch/x86/include/asm/segment.h  |  46 +++++++++-
- arch/x86/include/asm/vgtod.h    |  26 ------
- arch/x86/kernel/cpu/common.c    |  24 ++++++
- arch/x86/kernel/process_64.c    | 183 +++++++++++++++++++++++++++++++---------
- arch/x86/kernel/ptrace.c        |  28 ++----
- 9 files changed, 270 insertions(+), 137 deletions(-)
- create mode 100644 arch/x86/include/asm/fsgsbase.h
-
+diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
+index 0d157d2..49acefb 100644
+--- a/arch/x86/include/asm/elf.h
++++ b/arch/x86/include/asm/elf.h
+@@ -10,6 +10,7 @@
+ #include <asm/ptrace.h>
+ #include <asm/user.h>
+ #include <asm/auxvec.h>
++#include <asm/fsgsbase.h>
+ 
+ typedef unsigned long elf_greg_t;
+ 
+@@ -205,7 +206,6 @@ void set_personality_ia32(bool);
+ 
+ #define ELF_CORE_COPY_REGS(pr_reg, regs)			\
+ do {								\
+-	unsigned long base;					\
+ 	unsigned v;						\
+ 	(pr_reg)[0] = (regs)->r15;				\
+ 	(pr_reg)[1] = (regs)->r14;				\
+@@ -228,8 +228,8 @@ do {								\
+ 	(pr_reg)[18] = (regs)->flags;				\
+ 	(pr_reg)[19] = (regs)->sp;				\
+ 	(pr_reg)[20] = (regs)->ss;				\
+-	rdmsrl(MSR_FS_BASE, base); (pr_reg)[21] = base;		\
+-	rdmsrl(MSR_KERNEL_GS_BASE, base); (pr_reg)[22] = base;	\
++	(pr_reg)[21] = read_fsbase();				\
++	(pr_reg)[22] = read_inactive_gsbase();			\
+ 	asm("movl %%ds,%0" : "=r" (v)); (pr_reg)[23] = v;	\
+ 	asm("movl %%es,%0" : "=r" (v)); (pr_reg)[24] = v;	\
+ 	asm("movl %%fs,%0" : "=r" (v)); (pr_reg)[25] = v;	\
 -- 
 2.7.4
 
