@@ -2,198 +2,148 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13ED6C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD79C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA6B72641F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:21:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zD43EvFD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA6B72641F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 05CEF264A9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:23:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05CEF264A9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965028AbeF0MVe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:21:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964988AbeF0MVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:21:32 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC09A2640F;
-        Wed, 27 Jun 2018 12:21:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530102092;
-        bh=WJHDU4BLzumQ2Ee3raU+ghre3u7TFdCoAA7x2B7Y3dM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=zD43EvFD2T3DkRUKYsMxaRJD1y6loBnH7yZkX/Zu94DT5WmN+1XHxaABXlLzSxE2i
-         IGEgHlKrHTdExBkC+MF/AM7sE4MFj/KAAMl8UtNmAElCTC23ayWUvwxuJ4TUvjWHll
-         LsWnPBffhV8QRGwOUsxek3Byhrd/ishI7FOF+HH4=
-Date:   Wed, 27 Jun 2018 21:21:27 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v9 7/7] kselftests: Add tests for the preemptoff and
- irqsoff tracers
-Message-Id: <20180627212127.e05d66b4f5d11b20d0364375@kernel.org>
-In-Reply-To: <20180625162102.GA49367@joelaf.mtv.corp.google.com>
-References: <20180621223236.211495-1-joel@joelfernandes.org>
-        <20180621223236.211495-8-joel@joelfernandes.org>
-        <20180625221302.8507c98e500d8efc70c19d88@kernel.org>
-        <20180625162102.GA49367@joelaf.mtv.corp.google.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S965030AbeF0MXB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:23:01 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45970 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933679AbeF0MXA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:23:00 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0T3QpJQk_1530102163;
+Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T3QpJQk_1530102163)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Jun 2018 20:22:43 +0800
+Reply-To: xlpang@linux.alibaba.com
+Subject: Re: [PATCH] sched/cputime: Ensure correct utime and stime proportion
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+References: <20180622071542.61569-1-xlpang@linux.alibaba.com>
+ <b9363fa9-826f-611f-3ab3-27e50c03422a@linux.alibaba.com>
+ <20180626154908.GE2458@hirez.programming.kicks-ass.net>
+From:   Xunlei Pang <xlpang@linux.alibaba.com>
+Message-ID: <e1b69cf9-a3a7-ea67-7c0e-d67ac81f29f1@linux.alibaba.com>
+Date:   Wed, 27 Jun 2018 20:22:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180626154908.GE2458@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=gbk
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Jun 2018 09:21:02 -0700
-Joel Fernandes <joel@joelfernandes.org> wrote:
-
-
+On 6/26/18 11:49 PM, Peter Zijlstra wrote:
+> On Tue, Jun 26, 2018 at 08:19:49PM +0800, Xunlei Pang wrote:
+>> On 6/22/18 3:15 PM, Xunlei Pang wrote:
+>>> We use per-cgroup cpu usage statistics similar to "cgroup rstat",
+>>> and encountered a problem that user and sys usages are wrongly
+>>> split sometimes.
+>>>
+>>> Run tasks with some random run-sleep pattern for a long time, and
+>>> when tick-based time and scheduler sum_exec_runtime hugely drifts
+>>> apart(scheduler sum_exec_runtime is less than tick-based time),
+>>> the current implementation of cputime_adjust() will produce less
+>>> sys usage than the actual use after changing to run a different
+>>> workload pattern with high sys. This is because total tick-based
+>>> utime and stime are used to split the total sum_exec_runtime.
+>>>
+>>> Same problem exists on utime and stime from "/proc/<pid>/stat".
+>>>
+>>> [Example]
+>>> Run some random run-sleep patterns for minutes, then change to run
+>>> high sys pattern, and watch.
+>>> 1) standard "top"(which is the correct one):
+>>>    4.6 us, 94.5 sy,  0.0 ni,  0.9 id, 0.0 wa, 0.0 hi, 0.0 si, 0.0 st
+>>> 2) our tool parsing utime and stime from "/proc/<pid>/stat":
+>>>    20.5 usr, 78.4 sys
+>>> We can see "20.5 usr" displayed in 2) was incorrect, it recovers
+>>> gradually with time: 9.7 usr, 89.5 sys
+>>>
+>> High sys probably means there's something abnormal on the kernel
+>> path, it may hide issues, so we should make it fairly reliable.
+>> It can easily hit this problem with our per-cgroup statistics.
+>>
+>> Hi Peter, any comment on this patch?
 > 
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> Subject: [PATCH v9.1 7/7] kselftests: Add tests for the preemptoff and irqsoff
->  tracers
-> 
-> Here we add unit tests for the preemptoff and irqsoff tracer by using a
-> kernel module introduced previously to trigger atomic sections in the
-> kernel.
-> 
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thanks!
-
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  tools/testing/selftests/ftrace/config         |  3 +
->  .../test.d/preemptirq/irqsoff_tracer.tc       | 74 +++++++++++++++++++
->  2 files changed, 77 insertions(+)
->  create mode 100755 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
-> index b01924c71c09..29588b328345 100644
-> --- a/tools/testing/selftests/ftrace/config
-> +++ b/tools/testing/selftests/ftrace/config
-> @@ -4,3 +4,6 @@ CONFIG_FUNCTION_PROFILER=y
->  CONFIG_TRACER_SNAPSHOT=y
->  CONFIG_STACK_TRACER=y
->  CONFIG_HIST_TRIGGERS=y
-> +CONFIG_PREEMPT_TRACER=y
-> +CONFIG_IRQSOFF_TRACER=y
-> +CONFIG_TEST_ATOMIC_SECTIONS=m
-> diff --git a/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
-> new file mode 100755
-> index 000000000000..2dcd5e4cafb4
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
-> @@ -0,0 +1,74 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: test for the preemptirqsoff tracer
-> +
-> +MOD=test_atomic_sections
-> +
-> +fail() {
-> +    reset_tracer
-> +    rmmod $MOD || true
-> +    exit_fail
-> +}
-> +
-> +unsup() { #msg
-> +    reset_tracer
-> +    rmmod $MOD || true
-> +    echo $1
-> +    exit_unsupported
-> +}
-> +
-> +modprobe $MOD || unsup "$MOD module not available"
-> +rmmod $MOD
-> +
-> +grep -q "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
-> +grep -q "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
-> +
-> +reset_tracer
-> +
-> +# Simulate preemptoff section for half a second couple of times
-> +echo preemptoff > current_tracer
-> +sleep 1
-> +modprobe $MOD atomic_mode=preempt atomic_time=500000 || fail
-> +rmmod $MOD || fail
-> +modprobe $MOD atomic_mode=preempt atomic_time=500000 || fail
-> +rmmod $MOD || fail
-> +modprobe $MOD atomic_mode=preempt atomic_time=500000 || fail
-> +rmmod $MOD || fail
-> +
-> +cat trace
-> +
-> +# Confirm which tracer
-> +grep -q "tracer: preemptoff" trace || fail
-> +
-> +# Check the end of the section
-> +egrep -q "5.....us : <stack trace>" trace || fail
-> +
-> +# Check for 500ms of latency
-> +egrep -q "latency: 5..... us" trace || fail
-> +
-> +reset_tracer
-> +
-> +# Simulate irqsoff section for half a second couple of times
-> +echo irqsoff > current_tracer
-> +sleep 1
-> +modprobe $MOD atomic_mode=irq atomic_time=500000 || fail
-> +rmmod $MOD || fail
-> +modprobe $MOD atomic_mode=irq atomic_time=500000 || fail
-> +rmmod $MOD || fail
-> +modprobe $MOD atomic_mode=irq atomic_time=500000 || fail
-> +rmmod $MOD || fail
-> +
-> +cat trace
-> +
-> +# Confirm which tracer
-> +grep -q "tracer: irqsoff" trace || fail
-> +
-> +# Check the end of the section
-> +egrep -q "5.....us : <stack trace>" trace || fail
-> +
-> +# Check for 500ms of latency
-> +egrep -q "latency: 5..... us" trace || fail
-> +
-> +reset_tracer
-> +exit 0
-> +
-> -- 
-> 2.18.0.rc2.346.g013aa6912e-goog
+> Well, no, because the Changelog is incomprehensible and the patch
+> doesn't really have useful comments, so I'll have to reverse engineer
+> the entire thing, and I've just not had time for that.
 > 
 
+Let me try the best to describe it again.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+There are two types of run time for a process:
+1) task_struct::utime, task_struct::stime in ticks.
+2) scheduler task_struct::se.sum_exec_runtime(rtime) in ns.
+
+In case of no vtime accounting, the utime/stime fileds of
+/proc/pid/stat are calculated by cputime_adjust(), which
+splits the precise rtime in the proportion of tick-based
+utime and stime.
+
+However cputime_adjust() always does the split using the
+total utime/stime of the process, this may cause wrong
+splitting in some cases, e.g.
+
+A typical statistic collector accesses "/proc/pid/stat".
+1) moment t0
+After accessed /proc/pid/stat in t0:
+tick-based whole utime is utime_0, tick-based whole stime
+is stime_0, scheduler time is rtime_0. The ajusted utime
+caculated by cputime_adjust() is autime_0, ajusted stime
+is astime_0, so astime_0=rtime_0*stime_0/(utime_0+stime_0).
+
+For a long time, the process runs mainly in userspace with
+run-sleep patterns, and because two different clocks, it
+is possible to have the following condition:
+  rtime_0 < utime_0 (as with little stime_0)
+
+2) moment t1(after dt, i.e. t0+dt)
+Then the process suddenly runs 100% sys workload afterwards
+lasting "dt", when accessing /proc/pid/stat at t1="t0+dt",
+both rtime_0 and stime_0 increase "dt", thus cputime_ajust()
+does the calculation for new adjusted astime_1 as follows:
+  (rtime_0+dt)*(stime_0+dt)/(utime_0+stime_0+dt)
+= (rtime_0*stime_0+rtime_0*dt+stime_0*dt+dt*dt)/(utime_0+stime_0+dt)
+= (rtime_0*stime_0+rtime_0*dt-utime_0*dt)/(utime_0+stime_0+dt) + dt
+< rtime_0*stime_0/(utime_0+stime_0+dt) + dt (for rtime_0 < utime_0)
+< rtime_0*stime_0/(utime_0+stime_0) + dt
+< astime_0+dt
+
+The actual astime_1 should be "astime_0+dt"(as it runs 100%
+sys during dt), but the caculated figure by cputime_adjust()
+becomes much smaller, as a result the statistics collector
+shows less cpu sys usage than the actual one.
+
+That's why we occasionally observed the incorrect cpu usage
+described in the changelog:
+[Example]
+Run some random run-sleep patterns for minutes, then change
+to run high sys pattern, and watch.
+1) standard "top"(which is the correct one):
+   4.6 us, 94.5 sy,  0.0 ni,  0.9 id, 0.0 wa, 0.0 hi, 0.0 si, 0.0 st
+2) Parsing utime and stime from "/proc/<pid>/stat":
+   20.5 usr, 78.4 sys
+We can see "20.5 usr" displayed in 2) was incorrect, it recovers
+gradually with time: 9.7 usr, 89.5 sys
+
+
+Thanks,
+Xunlei
