@@ -2,153 +2,151 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 418A2C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2886C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04A4E25AE8
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:02:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A4E25AE8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 82C3525BC1
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:04:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C3525BC1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965627AbeF0QCS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:02:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36110 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964786AbeF0QCQ (ORCPT
+        id S934946AbeF0QEL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:04:11 -0400
+Received: from mail.netline.ch ([148.251.143.178]:57198 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934246AbeF0QEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:02:16 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RG1EFV081537
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:02:16 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvbcwyewn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:02:15 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 17:02:12 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 17:02:10 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RG29G216646372
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 16:02:09 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 151D511C06C;
-        Wed, 27 Jun 2018 17:02:01 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48BFA11C04A;
-        Wed, 27 Jun 2018 17:02:00 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.205.67])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 27 Jun 2018 17:02:00 +0100 (BST)
-Date:   Wed, 27 Jun 2018 19:02:07 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     mhocko@kernel.org, linux-mm@kvack.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: why do we still need bootmem allocator?
-References: <20180625140754.GB29102@dhcp22.suse.cz>
- <CABGGisyVpfYCz7-5AGB-3Ld9hcuikPVk=19xPc1AwffjhsV+kg@mail.gmail.com>
- <20180627112655.GD4291@rapoport-lnx>
- <CAL_JsqL6dV9+tP9CQ7XoCoaf0wUO6NgHZ2-QNUyQMZx2pny+xA@mail.gmail.com>
+        Wed, 27 Jun 2018 12:04:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 0D72C2A6050;
+        Wed, 27 Jun 2018 18:04:08 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id c4oEIfSx2jT7; Wed, 27 Jun 2018 18:04:07 +0200 (CEST)
+Received: from thor (252.228.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.228.252])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id D58B32A6045;
+        Wed, 27 Jun 2018 18:04:06 +0200 (CEST)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1fYCvN-0007MK-VA; Wed, 27 Jun 2018 18:04:05 +0200
+Subject: Re: [PATCH] dma-buf: Move BUG_ON from _add_shared_fence to
+ _add_shared_inplace
+To:     Chris Wilson <chris@chris-wilson.co.uk>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        linux-media@vger.kernel.org
+References: <20180626143147.14296-1-michel@daenzer.net>
+ <153010024207.8693.14587899562244751472@mail.alporthouse.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ xsDiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPM0jTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD7CXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkLOwE0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpcJGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <d38ba7df-d3b4-2c90-3482-21f40ea18a00@daenzer.net>
+Date:   Wed, 27 Jun 2018 18:04:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqL6dV9+tP9CQ7XoCoaf0wUO6NgHZ2-QNUyQMZx2pny+xA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18062716-0028-0000-0000-000002D5939C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062716-0029-0000-0000-0000238CFC50
-Message-Id: <20180627160206.GB19182@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270172
+In-Reply-To: <153010024207.8693.14587899562244751472@mail.alporthouse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 07:33:55AM -0600, Rob Herring wrote:
-> On Wed, Jun 27, 2018 at 5:27 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> >
-> > Hi,
-> >
-> > On Mon, Jun 25, 2018 at 10:09:41AM -0600, Rob Herring wrote:
-> > > On Mon, Jun 25, 2018 at 8:08 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > > >
-> > > > Hi,
-> > > > I am wondering why do we still keep mm/bootmem.c when most architectures
-> > > > already moved to nobootmem. Is there any fundamental reason why others
-> > > > cannot or this is just a matter of work?
-> > >
-> > > Just because no one has done the work. I did a couple of arches
-> > > recently (sh, microblaze, and h8300) mainly because I broke them with
-> > > some DT changes.
-> >
-> > I've tried running the current upstream on h8300 gdb simulator and it
-> > failed:
+On 2018-06-27 01:50 PM, Chris Wilson wrote:
+> Quoting Michel Dänzer (2018-06-26 15:31:47)
+>> From: Michel Dänzer <michel.daenzer@amd.com>
+>>
+>> Fixes the BUG_ON spuriously triggering under the following
+>> circumstances:
+>>
+>> * ttm_eu_reserve_buffers processes a list containing multiple BOs using
+>>   the same reservation object, so it calls
+>>   reservation_object_reserve_shared with that reservation object once
+>>   for each such BO.
+>> * In reservation_object_reserve_shared, old->shared_count ==
+>>   old->shared_max - 1, so obj->staged is freed in preparation of an
+>>   in-place update.
+>> * ttm_eu_fence_buffer_objects calls reservation_object_add_shared_fence
+>>   once for each of the BOs above, always with the same fence.
+>> * The first call adds the fence in the remaining free slot, after which
+>>   old->shared_count == old->shared_max.
+>>
+>> In the next call to reservation_object_add_shared_fence, the BUG_ON
+>> triggers. However, nothing bad would happen in
+>> reservation_object_add_shared_inplace, since the fence is already in the
+>> reservation object.
+>>
+>> Prevent this by moving the BUG_ON to where an overflow would actually
+>> happen (e.g. if a buggy caller didn't call
+>> reservation_object_reserve_shared before).
+>>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
 > 
-> It seems my patch[1] is still not applied. The maintainer said he applied it.
+> I've convinced myself (or rather have not found a valid argument
+> against) that being able to call reserve_shared + add_shared multiple
+> times for the same fence is an intended part of reservation_object API 
+> 
+> I'd double check with Christian though.
 
-I've applied it manually. Without it unflatten_and_copy_device_tree() fails
-to allocate memory. It indeed can be fixed with moving bootmem_init()
-before, as you've noted in the commit message.
+Right, I'm interested in Christian's feedback.
 
-I'll try to dig deeper into it.
- 
-> > [    0.000000] BUG: Bad page state in process swapper  pfn:00004
-> > [    0.000000] page:007ed080 count:0 mapcount:-128 mapping:00000000
-> > index:0x0
-> > [    0.000000] flags: 0x0()
-> > [    0.000000] raw: 00000000 0040bdac 0040bdac 00000000 00000000 00000002
-> > ffffff7f 00000000
-> > [    0.000000] page dumped because: nonzero mapcount
-> > ---Type <return> to continue, or q <return> to quit---
-> > [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc2+ #50
-> > [    0.000000] Stack from 00401f2c:
-> > [    0.000000]   00401f2c 001116cb 007ed080 00401f40 000e20e6 00401f54
-> > 0004df14 00000000
-> > [    0.000000]   007ed080 007ed000 00401f5c 0004df8c 00401f90 0004e982
-> > 00000044 00401fd1
-> > [    0.000000]   007ed000 007ed000 00000000 00000004 00000008 00000000
-> > 00000003 00000011
-> > [    0.000000]
-> > [    0.000000] Call Trace:
-> > [    0.000000]         [<000e20e6>] [<0004df14>] [<0004df8c>] [<0004e982>]
-> > [    0.000000]         [<00051a28>] [<00001000>] [<00000100>]
-> > [    0.000000] Disabling lock debugging due to kernel taint
-> >
-> > With v4.13 I was able to get to "no valid init found".
-> >
-> > I had a quick look at h8300 memory initialization and it seems it has
-> > starting pfn set to 0 while fdt defines memory start at 4M.
+
+> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+Thanks!
+
+
+>>  drivers/dma-buf/reservation.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/reservation.c b/drivers/dma-buf/reservation.c
+>> index 314eb1071cce..532545b9488e 100644
+>> --- a/drivers/dma-buf/reservation.c
+>> +++ b/drivers/dma-buf/reservation.c
+>> @@ -141,6 +141,7 @@ reservation_object_add_shared_inplace(struct reservation_object *obj,
+>>         if (signaled) {
+>>                 RCU_INIT_POINTER(fobj->shared[signaled_idx], fence);
+>>         } else {
+>> +               BUG_ON(fobj->shared_count >= fobj->shared_max);
 > 
-> Perhaps there's another issue.
-> 
-> Rob
-> 
-> [1] https://patchwork.kernel.org/patch/10290317/
-> 
+> Personally I would just let kasan detect this and throw away the BUG_ON
+> or at least move it behind some DMABUF_BUG_ON().
+
+Hmm. Normally, I'm not a fan of BUG(_ON) either. But in this case, it's
+clear that the caller is buggy, and proceeding to write beyond the end
+of the array could have far-reaching consequences. I'm leaving that to
+somebody else.
+
 
 -- 
-Sincerely yours,
-Mike.
-
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
