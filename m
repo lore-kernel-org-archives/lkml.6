@@ -2,103 +2,186 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD856C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 498F3C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C4724F88
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7A7E255FE
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUGBLgf0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C4724F88
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UDpKNBxJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A7E255FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934985AbeF0Udx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 16:33:53 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:34214 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754776AbeF0Udv (ORCPT
+        id S1755021AbeF0Ul6 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 16:41:58 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38823 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754820AbeF0Ul4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 16:33:51 -0400
-Received: by mail-qk0-f196.google.com with SMTP id b66-v6so1795790qkj.1;
-        Wed, 27 Jun 2018 13:33:51 -0700 (PDT)
+        Wed, 27 Jun 2018 16:41:56 -0400
+Received: by mail-pl0-f65.google.com with SMTP id d10-v6so1592953plo.5
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 13:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=EXdbWNARllK+7Bxiv1fIM3gnYt6advk1WEgKn866F2A=;
-        b=MUGBLgf0zfqTqOiInUAgYQbTpEhvKX+WxlLwNONgYOakSUuTKVZZZkUSiD3fIQNmiI
-         NpF6y5EhuZISbtmY0UAp65Df/X6RvzAckgFcxr+nwWkPLUtzsNSgQ7GcZgLvJFco5LNG
-         N+pUQ5r/VCb23F3DCqXtburOVWdh/1agXTRIgZ7Vm4oO2tV2G2rX2rv43fx9OD8dVk7h
-         1GuB+GGXA64SfwDiSAnfhjQuShQHbKMAKT/DnrqO7czNxZZyyagnlV+rwClABrmEgQBb
-         ZRuIgeh8W8asoNkwG9UhYk+0XgQP2OLUk6pJ7aU2bpFhkQIR/FT/YdTQALp52sE8R/np
-         SAAw==
+        bh=OkwLo9YxvKe085egdShSLIguaqYgQrkn5A3f36HdP0M=;
+        b=UDpKNBxJo8Bby3yBuGfbXT6sqJKi4/x3Hh7X2P+oG7lfB0Y86PbyNqAHKHW2pPzdk/
+         jUZlUU8ElB2LAgGKfo8FhWbTHGA7ifUFTMrGgkfkEElXQ2gyW4vHa5vFhAtmHQkbGHmh
+         1ZotiNqNjIodhAEw5DFgeilzFPE+SA3T3nvbyQ2PcYq/E6PEUzxwMgrWDAmkMfM0GlRV
+         2Dqr54Cj9Y799aISWf+hESuIN+hNx11MhTHmjLKovqdllMB0mooYjEJjPu00oaxMYUIV
+         kNDKhU250XQCFpOw/iWJR0LNoTS5nkXI3FxRyH0mVeHG/tVe0yir3lxh7bdimbe1me4R
+         TDlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EXdbWNARllK+7Bxiv1fIM3gnYt6advk1WEgKn866F2A=;
-        b=fCFFBuFCUAPaHDaOvg4Wl1/rOebQxSWKqOVCNHHogQWX+lS931egF3k7MlMXtGYDdx
-         xRFOLK/HL78Pb+OwTh9nhPXEJ6IP6GDlWZ1WxypPqUh/h38ijgRKNnR08sYTCyJR9aca
-         BsNElHGrzpARQJ/VaGKtw7kk8OUHcCXiURK9hc6l83l+46fwyhJ5qlQP18CKtyhC4IfA
-         F9DYOw7GghwDQHA7JjFqugKHxnAbC+eYfjyu8LxLE2biiIzlWuMlW8VdrPTPiyPgVCGy
-         IMm6CWQn4Eu2RaSCEKEBJoLUpHAhI2riNyWmRezuQMtJ/E/4khxm5SZ7jNKephedXaLu
-         tmhw==
-X-Gm-Message-State: APt69E2Qs0uGj+JgHjvm4bnO/xUsux5DBqZLf/ki8VrxqkHWnzE2TgIA
-        PoDIW19Dp2dwwITUtbFcafU=
-X-Google-Smtp-Source: AAOMgpdxVHd3IeAhMG7RHDabuuePoastEEb+6qYT+oowjLYYyGRAmII8zl97gY9MtOYwqOOpvdu+EA==
-X-Received: by 2002:a37:8c02:: with SMTP id o2-v6mr6325285qkd.322.1530131630894;
-        Wed, 27 Jun 2018 13:33:50 -0700 (PDT)
-Received: from localhost.localdomain (186-106-194-183.baf.movistar.cl. [186.106.194.183])
-        by smtp.gmail.com with ESMTPSA id q49-v6sm4276655qtc.33.2018.06.27.13.33.48
+        bh=OkwLo9YxvKe085egdShSLIguaqYgQrkn5A3f36HdP0M=;
+        b=QvfJa2H0rJjBxOenAa768kvUwjC5KDTZ3dvh70vB7MPBEyFOX3P2EbrO3180fZLSiT
+         SV2pT+6kbxjK0bACtB5aFkp8qqPjkxy9K6q0WxgMuerFkeFW2mujxA/gtAA6TYD//7Gr
+         L9/Zpq6qnVj/o1Kk2B/8S2a/CAr4K2afOHtSHcyT83kyXXq0QtNeuA17kCSQrtuBjf+j
+         jFg/ep1r0//bC4ZAri5Y4y5xTmBIHIOlJD4PkDiQuQWdvhcUmi2LhQRDJlNG91VGG2on
+         cJJFUHanK53CC51IU1Hz+tJb0/6PxS2Qs1BarV1ixoN5y3kFSsHRJhYu8WRqaUa2oYxd
+         oVIQ==
+X-Gm-Message-State: APt69E3R97i95Vy/JAgoxjFWID8O02+uoCOhHtxb3SzCHjh2dZ2GXt/D
+        lYwMd1M3qX4STdLV83Oow8+vsA==
+X-Google-Smtp-Source: ADUXVKJlpROODQro2NOMMYbIQj8mLOSSajVomC0k+pZ8i/pKjXWkOtHmcLhJFSktvBFgoAqmfWruNA==
+X-Received: by 2002:a17:902:9b98:: with SMTP id y24-v6mr7615092plp.177.1530132115486;
+        Wed, 27 Jun 2018 13:41:55 -0700 (PDT)
+Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
+        by smtp.gmail.com with ESMTPSA id t5-v6sm7977593pfh.32.2018.06.27.13.41.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 13:33:50 -0700 (PDT)
-From:   Luis Araneda <luaraneda@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Wed, 27 Jun 2018 13:41:53 -0700 (PDT)
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>, Roman Gushchin <guro@fb.com>,
         "David S . Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Araneda <luaraneda@gmail.com>
-Subject: [PATCH] dt-bindings: Add vendor prefix for AsusTek Computer Inc.
-Date:   Wed, 27 Jun 2018 16:33:15 -0400
-Message-Id: <20180627203315.348-1-luaraneda@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Eric Dumazet <edumazet@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, Shakeel Butt <shakeelb@google.com>
+Subject: [RFC PATCH] net, mm: account sock objects to kmemcg
+Date:   Wed, 27 Jun 2018 13:41:39 -0700
+Message-Id: <20180627204139.225988-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"AsusTek Computer Inc. is a Taiwanese multinational computer
-and phone hardware and electronics company headquartered
-in Beitou District, Taipei, Taiwan." - Wikipedia.org
+Currently the kernel accounts the memory for network traffic through
+mem_cgroup_[un]charge_skmem() interface. However the memory accounted
+only includes the truesize of sk_buff which does not include the size of
+sock objects. In our production environment, with opt-out kmem
+accounting, the sock kmem caches (TCP[v6], UDP[v6], RAW[v6], UNIX) are
+among the top most charged kmem caches and consume a significant amount
+of memory which can not be left as system overhead. So, this patch
+converts the kmem caches of more important sock objects to SLAB_ACCOUNT.
 
-Website: https://www.asus.com
-
-The prefix is already in use by at least 5 ARM boards
-
-Signed-off-by: Luis Araneda <luaraneda@gmail.com>
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ net/ipv4/raw.c      | 1 +
+ net/ipv4/tcp_ipv4.c | 2 +-
+ net/ipv4/udp.c      | 1 +
+ net/ipv6/raw.c      | 1 +
+ net/ipv6/tcp_ipv6.c | 2 +-
+ net/ipv6/udp.c      | 1 +
+ net/unix/af_unix.c  | 1 +
+ 7 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 7cad06619..09101914a 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -41,6 +41,7 @@ arrow	Arrow Electronics
- artesyn	Artesyn Embedded Technologies Inc.
- asahi-kasei	Asahi Kasei Corp.
- aspeed	ASPEED Technology Inc.
-+asus	AsusTek Computer Inc.
- atlas	Atlas Scientific LLC
- atmel	Atmel Corporation
- auo	AU Optronics Corporation
+diff --git a/net/ipv4/raw.c b/net/ipv4/raw.c
+index abb3c9490c55..2c4b04c6461a 100644
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -988,6 +988,7 @@ struct proto raw_prot = {
+ 	.hash		   = raw_hash_sk,
+ 	.unhash		   = raw_unhash_sk,
+ 	.obj_size	   = sizeof(struct raw_sock),
++	.slab_flags	   = SLAB_ACCOUNT,
+ 	.useroffset	   = offsetof(struct raw_sock, filter),
+ 	.usersize	   = sizeof_field(struct raw_sock, filter),
+ 	.h.raw_hash	   = &raw_v4_hashinfo,
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index fed3f1c66167..9ae31979aefa 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -2459,7 +2459,7 @@ struct proto tcp_prot = {
+ 	.sysctl_rmem_offset	= offsetof(struct net, ipv4.sysctl_tcp_rmem),
+ 	.max_header		= MAX_TCP_HEADER,
+ 	.obj_size		= sizeof(struct tcp_sock),
+-	.slab_flags		= SLAB_TYPESAFE_BY_RCU,
++	.slab_flags		= SLAB_TYPESAFE_BY_RCU | SLAB_ACCOUNT,
+ 	.twsk_prot		= &tcp_timewait_sock_ops,
+ 	.rsk_prot		= &tcp_request_sock_ops,
+ 	.h.hashinfo		= &tcp_hashinfo,
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 9bb27df4dac5..26e07b8a83cc 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -2657,6 +2657,7 @@ struct proto udp_prot = {
+ 	.sysctl_wmem_offset	= offsetof(struct net, ipv4.sysctl_udp_wmem_min),
+ 	.sysctl_rmem_offset	= offsetof(struct net, ipv4.sysctl_udp_rmem_min),
+ 	.obj_size		= sizeof(struct udp_sock),
++	.slab_flags		= SLAB_ACCOUNT,
+ 	.h.udp_table		= &udp_table,
+ #ifdef CONFIG_COMPAT
+ 	.compat_setsockopt	= compat_udp_setsockopt,
+diff --git a/net/ipv6/raw.c b/net/ipv6/raw.c
+index ce6f0d15b5dd..044ed44e7c16 100644
+--- a/net/ipv6/raw.c
++++ b/net/ipv6/raw.c
+@@ -1272,6 +1272,7 @@ struct proto rawv6_prot = {
+ 	.hash		   = raw_hash_sk,
+ 	.unhash		   = raw_unhash_sk,
+ 	.obj_size	   = sizeof(struct raw6_sock),
++	.slab_flags	   = SLAB_ACCOUNT,
+ 	.useroffset	   = offsetof(struct raw6_sock, filter),
+ 	.usersize	   = sizeof_field(struct raw6_sock, filter),
+ 	.h.raw_hash	   = &raw_v6_hashinfo,
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index b620d9b72e59..7187609ca25f 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1973,7 +1973,7 @@ struct proto tcpv6_prot = {
+ 	.sysctl_rmem_offset	= offsetof(struct net, ipv4.sysctl_tcp_rmem),
+ 	.max_header		= MAX_TCP_HEADER,
+ 	.obj_size		= sizeof(struct tcp6_sock),
+-	.slab_flags		= SLAB_TYPESAFE_BY_RCU,
++	.slab_flags		= SLAB_TYPESAFE_BY_RCU | SLAB_ACCOUNT,
+ 	.twsk_prot		= &tcp6_timewait_sock_ops,
+ 	.rsk_prot		= &tcp6_request_sock_ops,
+ 	.h.hashinfo		= &tcp_hashinfo,
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index e6645cae403e..47c9a3c74981 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -1582,6 +1582,7 @@ struct proto udpv6_prot = {
+ 	.sysctl_wmem_offset     = offsetof(struct net, ipv4.sysctl_udp_wmem_min),
+ 	.sysctl_rmem_offset     = offsetof(struct net, ipv4.sysctl_udp_rmem_min),
+ 	.obj_size		= sizeof(struct udp6_sock),
++	.slab_flags		= SLAB_ACCOUNT,
+ 	.h.udp_table		= &udp_table,
+ #ifdef CONFIG_COMPAT
+ 	.compat_setsockopt	= compat_udpv6_setsockopt,
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 95b02a71fd47..5e3e377a7269 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -742,6 +742,7 @@ static struct proto unix_proto = {
+ 	.name			= "UNIX",
+ 	.owner			= THIS_MODULE,
+ 	.obj_size		= sizeof(struct unix_sock),
++	.slab_flags		= SLAB_ACCOUNT,
+ };
+ 
+ static struct sock *unix_create1(struct net *net, struct socket *sock, int kern)
 -- 
-2.18.0
+2.18.0.rc2.346.g013aa6912e-goog
 
