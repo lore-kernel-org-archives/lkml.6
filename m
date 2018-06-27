@@ -2,140 +2,99 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14022C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BC1C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4592265C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:56:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4592265C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=who-t.net
+	by mail.kernel.org (Postfix) with ESMTP id 4A31D261C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:03:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A31D261C0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755252AbeF0A4Z (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 20:56:25 -0400
-Received: from leo.clearchain.com ([199.73.29.74]:42906 "EHLO
-        mail.clearchain.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754527AbeF0A4Y (ORCPT
+        id S934558AbeF0BDz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 21:03:55 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:50968 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932649AbeF0BDy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 20:56:24 -0400
-Received: from leo.clearchain.com (localhost [127.0.0.1])
-        by mail.clearchain.com (8.15.2/8.15.2) with ESMTPS id w5R0sDbO099095
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 27 Jun 2018 10:24:13 +0930 (CST)
-        (envelope-from peter.hutterer@who-t.net)
-X-Authentication-Warning: leo.clearchain.com: Host localhost [127.0.0.1] claimed to be leo.clearchain.com
-Received: (from whot@localhost)
-        by leo.clearchain.com (8.15.2/8.15.2/Submit) id w5R0sCBl099093;
-        Wed, 27 Jun 2018 10:24:12 +0930 (CST)
-        (envelope-from peter.hutterer@who-t.net)
-X-Authentication-Warning: leo.clearchain.com: whot set sender to peter.hutterer@who-t.net using -f
-Date:   Wed, 27 Jun 2018 10:54:08 +1000
-From:   Peter Hutterer <peter.hutterer@who-t.net>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mario.Limonciello@dell.com, linux-input@vger.kernel.org,
+        Tue, 26 Jun 2018 21:03:54 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0T3PEXoX_1530061415;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3PEXoX_1530061415)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Jun 2018 09:03:41 +0800
+Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        ldufour@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/12] input: add MT_TOOL_DIAL
-Message-ID: <20180627005408.GA25847@jelly>
-References: <20180621120908.16706-1-benjamin.tissoires@redhat.com>
- <20180621120908.16706-2-benjamin.tissoires@redhat.com>
+References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
+ <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
+ <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
+ <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
+ <20180620071817.GJ13685@dhcp22.suse.cz>
+ <263935d9-d07c-ab3e-9e42-89f73f57be1e@linux.alibaba.com>
+ <20180626074344.GZ2458@hirez.programming.kicks-ass.net>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <e54e298d-ef86-19a7-6f6b-07776f9a43e2@linux.alibaba.com>
+Date:   Tue, 26 Jun 2018 18:03:34 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621120908.16706-2-benjamin.tissoires@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.4.3 (mail.clearchain.com [127.0.0.1]); Wed, 27 Jun 2018 10:24:13 +0930 (CST)
+In-Reply-To: <20180626074344.GZ2458@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 02:08:57PM +0200, Benjamin Tissoires wrote:
-> A dial is a tool you place on a multitouch surface which reports its
-> orientation or a relative angle of rotation when rotating its knob.
-> 
-> Some examples are the Dell Totem (on the Canvas 27"), the Microsoft Dial,
-> or the Griffin Powermate, though the later can't be put on a touch surface.
-> 
-> We give some extra space to account for other types of fingers if we need
-> (MT_TOOL_THUMB)
-> 
-> Slightly change the documentation to not make it mandatory to update each
-> MT_TOOL we add.
-> 
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> 
-> ---
-> 
-> new in v2 (extracted from previous series in its own patch)
-> 
-> changes in v3:
-> - re-insert the change in include/uapi/linux/input.h
-> ---
->  Documentation/input/multi-touch-protocol.rst | 12 ++++++------
->  include/uapi/linux/input.h                   |  3 ++-
->  2 files changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/input/multi-touch-protocol.rst b/Documentation/input/multi-touch-protocol.rst
-> index b51751a0cd5d..6be70342e709 100644
-> --- a/Documentation/input/multi-touch-protocol.rst
-> +++ b/Documentation/input/multi-touch-protocol.rst
-> @@ -310,12 +310,12 @@ ABS_MT_TOOL_Y
->  ABS_MT_TOOL_TYPE
->      The type of approaching tool. A lot of kernel drivers cannot distinguish
->      between different tool types, such as a finger or a pen. In such cases, the
-> -    event should be omitted. The protocol currently supports MT_TOOL_FINGER,
-> -    MT_TOOL_PEN, and MT_TOOL_PALM [#f2]_. For type B devices, this event is
-> -    handled by input core; drivers should instead use
-> -    input_mt_report_slot_state(). A contact's ABS_MT_TOOL_TYPE may change over
-> -    time while still touching the device, because the firmware may not be able
-> -    to determine which tool is being used when it first appears.
-> +    event should be omitted. The protocol currently mainly supports
-> +    MT_TOOL_FINGER, MT_TOOL_PEN, and MT_TOOL_PALM [#f2]_.
-> +    For type B devices, this event is handled by input core; drivers should
-> +    instead use input_mt_report_slot_state(). A contact's ABS_MT_TOOL_TYPE may
-> +    change over time while still touching the device, because the firmware may
-> +    not be able to determine which tool is being used when it first appears.
->  
->  ABS_MT_BLOB_ID
->      The BLOB_ID groups several packets together into one arbitrarily shaped
-> diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
-> index 7288a7c573cc..e931b0468b6d 100644
-> --- a/include/uapi/linux/input.h
-> +++ b/include/uapi/linux/input.h
-> @@ -273,7 +273,8 @@ struct input_mask {
->  #define MT_TOOL_FINGER		0
->  #define MT_TOOL_PEN		1
->  #define MT_TOOL_PALM		2
-> -#define MT_TOOL_MAX		2
-> +#define MT_TOOL_DIAL		10
-> +#define MT_TOOL_MAX		10
 
-sorry for the late comment here: I'd prefer MAX to be greater than the 
-actually used highest value. This isn't strictly technically necessary
-because tools *should* be able to deal with FOO == MAX but there are some
-corner-cases that get more quirky. e.g. converting the string "SW_MAX" to
-value is 0xf, but 0xf to name is "SW_PEN_INSERTED". Compare that to
-"REL_MAX" -> 0xf -> "REL_MAX".
 
-I know this case needs to be handled etc but not having max as an already
-used value papers over some of the quirks needed.
+On 6/26/18 12:43 AM, Peter Zijlstra wrote:
+> On Mon, Jun 25, 2018 at 05:06:23PM -0700, Yang Shi wrote:
+>> By looking this deeper, we may not be able to cover all the unmapping range
+>> for VM_DEAD, for example, if the start addr is in the middle of a vma. We
+>> can't set VM_DEAD to that vma since that would trigger SIGSEGV for still
+>> mapped area.
+>>
+>> splitting can't be done with read mmap_sem held, so maybe just set VM_DEAD
+>> to non-overlapped vmas. Access to overlapped vmas (first and last) will
+>> still have undefined behavior.
+> Acquire mmap_sem for writing, split, mark VM_DEAD, drop mmap_sem. Acquire
+> mmap_sem for reading, madv_free drop mmap_sem. Acquire mmap_sem for
+> writing, free everything left, drop mmap_sem.
+>
+> ?
+>
+> Sure, you acquire the lock 3 times, but both write instances should be
+> 'short', and I suppose you can do a demote between 1 and 2 if you care.
 
-Either way, Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+Thanks, Peter. Yes, by looking the code and trying two different 
+approaches, it looks this approach is the most straight-forward one.
 
-Cheers,
-   Peter
+Splitting vma up-front can save a lot pain later. Holding write mmap_sem 
+for this job before zapping mappings sounds worth the cost (very short 
+write critical section).
 
->  
->  /*
->   * Values describing the status of a force-feedback effect
-> -- 
-> 2.14.3
-> 
+And, VM_DEAD can be set exclusively with write mmap_sem without racing 
+with page faults, this will give us consistent behavior for the race 
+between PF and munmap. And, we don't need care about overlapped vma 
+since it has been split before.
+
+Yang
+
+
