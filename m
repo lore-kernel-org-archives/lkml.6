@@ -2,184 +2,358 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42170C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0A1C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF53E25FFC
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:46:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr+9OOim"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF53E25FFC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D0CB926004
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:46:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CB926004
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965795AbeF0Qqs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:46:48 -0400
-Received: from mail-it0-f53.google.com ([209.85.214.53]:55466 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965137AbeF0Qqq (ORCPT
+        id S965812AbeF0Qqz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:46:55 -0400
+Received: from mailoutvs49.siol.net ([185.57.226.240]:45910 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965137AbeF0Qqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:46:46 -0400
-Received: by mail-it0-f53.google.com with SMTP id 16-v6so8504834itl.5;
-        Wed, 27 Jun 2018 09:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yEsid6e0oeVFtxzwOI+qxSTUI5G3DZYKZg8YaYtU0do=;
-        b=Dr+9OOimXMy9DfQf/dVd/3pZEhHdgl3+x9WsUfnT5Y1i68+ugS6QVQN+UAatCDYPCW
-         j2ZJtUYcM7zrmWbWNy7qxrPMD4JjZ1UmkWGGzHIc9ubk1NCtnlJ1yGdi7bc+Kx6pmwWX
-         zdqdSW43pguGCCx+j0V+HrLZzkr19hxX7h1G01ZnvzfjaFbcIhiXTvsb4WKgVRhuBlwj
-         ESyXBHrxQ0KaQZiVmRtQHqOHpPIl5ZMzgBR9rREuIaOyyBCcM7jACtC3r30fEtBnzmZa
-         YZxB8ZAZVMlWWd0jdtCmTQ6fGm45lS85oxwY2DyZIGgsRVorLt2f5KxOPAME7i9FQ9OJ
-         1Rwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yEsid6e0oeVFtxzwOI+qxSTUI5G3DZYKZg8YaYtU0do=;
-        b=XKJH2BQar8OJFivOU1EJ01/A7KJ0sXTWljrm+79egMLPxIXISdISPk7OG8TswsbUFv
-         0b1LRytzsMeVqWTrFQWD4reoKRrU8Sda+04rxjo95fPGuIKqN7O/IWH3NLx3BmZaWkXd
-         9ge/FwHfFzJmXwxBk6h5hjjXYUFtGE6DRvdMlvuyOrRpo14dbb2lOPX1+y257QHDObST
-         WqGHOa5IK4QaLF1BRwPIYnpC7gUuynaiuzdBrgKJI9smmNXNszk+gNeVDMF5ECc7+VRm
-         ubv0OWzcdKPmO8Dr7CPJfVVtui7hO3ilHvFOWoAed8uRxbXA+A6AjehU+sO1mBszx6AH
-         Gpmg==
-X-Gm-Message-State: APt69E1jAext9NuDwCW31c5L2IrbAAh0lCsRbwRgRrK3GLKq4bIgi7yH
-        v0/8R26AsSzBcBEvCHR5KWtfCSYn8z5pjpn3v5M=
-X-Google-Smtp-Source: ADUXVKIJzriyU5enRVm+ZPjUpQRgBijxjO94nOq79zsgDr60FHs5k3B3bnBNcA3uFhv+EeGzDcjYL/Eo2ndeseZRRZQ=
-X-Received: by 2002:a24:1448:: with SMTP id 69-v6mr5489386itg.143.1530118005536;
- Wed, 27 Jun 2018 09:46:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <1529603100-31958-2-git-send-email-andrey.gusakov@cogentembedded.com>
- <5a3490a5-ee5c-a4da-8b54-b5234b7e50d0@yandex.ru>
-In-Reply-To: <5a3490a5-ee5c-a4da-8b54-b5234b7e50d0@yandex.ru>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Wed, 27 Jun 2018 09:46:34 -0700
-Message-ID: <CAHQ1cqH0o2rsVJWccR6dBXQCnp2-mmLNTNOi0uAOO2SSdz0+xA@mail.gmail.com>
-Subject: Re: [1/3] ARM: dts: imx51-zii-common: create common include dtsi
-To:     nikita.yoush@yandex.ru
-Cc:     Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 27 Jun 2018 12:46:51 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 20514521FC5;
+        Wed, 27 Jun 2018 18:46:49 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id isCmzl9S1SGf; Wed, 27 Jun 2018 18:46:48 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id F2B61521CEE;
+        Wed, 27 Jun 2018 18:46:47 +0200 (CEST)
+Received: from localhost.localdomain (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id 2FCA4521E86;
+        Wed, 27 Jun 2018 18:46:45 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     maxime.ripard@bootlin.com, wens@csie.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, paul.kocialkowski@bootlin.com
+Subject: [PATCH] drm/sun4i: Implement zpos for DE2
+Date:   Wed, 27 Jun 2018 18:45:14 +0200
+Message-Id: <20180627164514.4777-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nikita:
+Initial implementation of DE2 planes only supported fixed zpos.
 
-Since you are mostly arguing against the suggestions I made to Andrey
-Gusakov in off-list review, I'll respond.
+Expand implementation with configurable zpos property.
 
-On Wed, Jun 27, 2018 at 12:11 AM Nikita Yushchenko
-<nikita.yoush@yandex.ru> wrote:
->
-> > +     i2c_gpio: i2c-gpio {
-> > +             compatible = "i2c-gpio";
-> > +             pinctrl-names = "default";
-> > +             pinctrl-0 = <&pinctrl_swi2c>;
-> > +             i2c-gpio,delay-us = <50>;
-> > +             status = "okay";
-> > +
-> > +             #address-cells = <1>;
-> > +             #size-cells = <0>;
-> > +     };
->
-> You add i2c-gpio node to dtsi file without defining gpios, with reference
-> to pinctrl not defined inside your dtsi file or it's includes, and without
-> any usage inside dtsi file.
->
-> Saving several text lines that way is a bad idea.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c    | 15 +++++++--
+ drivers/gpu/drm/sun4i/sun8i_mixer.h    |  4 +++
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 45 ++++++++++++++++----------
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 45 ++++++++++++++++----------
+ 4 files changed, 72 insertions(+), 37 deletions(-)
 
-There are three boards that share that configuration almost to a T,
-with the only difference is the particular GPIOs used. Putting it into
-a common file avoids repeating the boilerplate and makes it explicit
-to the reader that those settings are shared.
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index ee8febb25903..0747a9a69654 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -260,6 +260,17 @@ const struct de2_fmt_info *sun8i_mixer_format_info(u32 format)
+ 	return NULL;
+ }
+ 
++static void sun8i_mixer_atomic_begin(struct sunxi_engine *engine,
++				     struct drm_crtc_state *old_state)
++{
++	/*
++	 * Disable all pipes at the beginning. They will be enabled
++	 * again if needed in plane update callback.
++	 */
++	regmap_update_bits(engine->regs, SUN8I_MIXER_BLEND_PIPE_CTL,
++			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
++}
++
+ static void sun8i_mixer_commit(struct sunxi_engine *engine)
+ {
+ 	DRM_DEBUG_DRIVER("Committing changes\n");
+@@ -311,6 +322,7 @@ static struct drm_plane **sun8i_layers_init(struct drm_device *drm,
+ }
+ 
+ static const struct sunxi_engine_ops sun8i_engine_ops = {
++	.atomic_begin	= sun8i_mixer_atomic_begin,
+ 	.commit		= sun8i_mixer_commit,
+ 	.layers_init	= sun8i_layers_init,
+ };
+@@ -432,9 +444,6 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+ 	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(0),
+ 		     SUN8I_MIXER_BLEND_COLOR_BLACK);
+ 
+-	/* Fixed zpos for now */
+-	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ROUTE, 0x43210);
+-
+ 	plane_cnt = mixer->cfg->vi_num + mixer->cfg->ui_num;
+ 	for (i = 0; i < plane_cnt; i++)
+ 		regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_MODE(i),
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+index f34e70c42adf..406c42e752d7 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+@@ -44,6 +44,7 @@
+ #define SUN8I_MIXER_BLEND_CK_MIN(x)		(0x10e0 + 0x04 * (x))
+ #define SUN8I_MIXER_BLEND_OUTCTL		0x10fc
+ 
++#define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK	GENMASK(12, 8)
+ #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)	BIT(8 + pipe)
+ #define SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(pipe)	BIT(pipe)
+ /* colors are always in AARRGGBB format */
+@@ -51,6 +52,9 @@
+ /* The following numbers are some still unknown magic numbers */
+ #define SUN8I_MIXER_BLEND_MODE_DEF		0x03010301
+ 
++#define SUN8I_MIXER_BLEND_ROUTE_PIPE_MSK(n)	(0xf << ((n) << 2))
++#define SUN8I_MIXER_BLEND_ROUTE_PIPE_SHIFT(n)	((n) << 2)
++
+ #define SUN8I_MIXER_BLEND_OUTCTL_INTERLACED	BIT(1)
+ 
+ #define SUN8I_MIXER_FBFMT_ARGB8888	0
+diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+index 9a540330cb79..518e1921f47e 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+@@ -27,7 +27,7 @@
+ #include "sun8i_ui_scaler.h"
+ 
+ static void sun8i_ui_layer_enable(struct sun8i_mixer *mixer, int channel,
+-				  int overlay, bool enable)
++				  int overlay, bool enable, unsigned int zpos)
+ {
+ 	u32 val;
+ 
+@@ -43,18 +43,24 @@ static void sun8i_ui_layer_enable(struct sun8i_mixer *mixer, int channel,
+ 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(channel, overlay),
+ 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN, val);
+ 
+-	if (enable)
+-		val = SUN8I_MIXER_BLEND_PIPE_CTL_EN(channel);
+-	else
+-		val = 0;
++	if (enable) {
++		val = SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
+ 
+-	regmap_update_bits(mixer->engine.regs,
+-			   SUN8I_MIXER_BLEND_PIPE_CTL,
+-			   SUN8I_MIXER_BLEND_PIPE_CTL_EN(channel), val);
++		regmap_update_bits(mixer->engine.regs,
++				   SUN8I_MIXER_BLEND_PIPE_CTL, val, val);
++
++		val = channel << SUN8I_MIXER_BLEND_ROUTE_PIPE_SHIFT(zpos);
++
++		regmap_update_bits(mixer->engine.regs,
++				   SUN8I_MIXER_BLEND_ROUTE,
++				   SUN8I_MIXER_BLEND_ROUTE_PIPE_MSK(zpos),
++				   val);
++	}
+ }
+ 
+ static int sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+-				       int overlay, struct drm_plane *plane)
++				       int overlay, struct drm_plane *plane,
++				       unsigned int zpos)
+ {
+ 	struct drm_plane_state *state = plane->state;
+ 	u32 src_w, src_h, dst_w, dst_h;
+@@ -137,10 +143,10 @@ static int sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ 			 state->dst.x1, state->dst.y1);
+ 	DRM_DEBUG_DRIVER("Layer destination size W: %d H: %d\n", dst_w, dst_h);
+ 	regmap_write(mixer->engine.regs,
+-		     SUN8I_MIXER_BLEND_ATTR_COORD(channel),
++		     SUN8I_MIXER_BLEND_ATTR_COORD(zpos),
+ 		     SUN8I_MIXER_COORD(state->dst.x1, state->dst.y1));
+ 	regmap_write(mixer->engine.regs,
+-		     SUN8I_MIXER_BLEND_ATTR_INSIZE(channel),
++		     SUN8I_MIXER_BLEND_ATTR_INSIZE(zpos),
+ 		     outsize);
+ 
+ 	return 0;
+@@ -238,28 +244,30 @@ static void sun8i_ui_layer_atomic_disable(struct drm_plane *plane,
+ 	struct sun8i_ui_layer *layer = plane_to_sun8i_ui_layer(plane);
+ 	struct sun8i_mixer *mixer = layer->mixer;
+ 
+-	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay, false);
++	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay, false, 0);
+ }
+ 
+ static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
+ 					 struct drm_plane_state *old_state)
+ {
+ 	struct sun8i_ui_layer *layer = plane_to_sun8i_ui_layer(plane);
++	unsigned int zpos = plane->state->normalized_zpos;
+ 	struct sun8i_mixer *mixer = layer->mixer;
+ 
+ 	if (!plane->state->visible) {
+ 		sun8i_ui_layer_enable(mixer, layer->channel,
+-				      layer->overlay, false);
++				      layer->overlay, false, 0);
+ 		return;
+ 	}
+ 
+ 	sun8i_ui_layer_update_coord(mixer, layer->channel,
+-				    layer->overlay, plane);
++				    layer->overlay, plane, zpos);
+ 	sun8i_ui_layer_update_formats(mixer, layer->channel,
+ 				      layer->overlay, plane);
+ 	sun8i_ui_layer_update_buffer(mixer, layer->channel,
+ 				     layer->overlay, plane);
+-	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay, true);
++	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay,
++			      true, zpos);
+ }
+ 
+ static struct drm_plane_helper_funcs sun8i_ui_layer_helper_funcs = {
+@@ -307,6 +315,7 @@ struct sun8i_ui_layer *sun8i_ui_layer_init_one(struct drm_device *drm,
+ 	enum drm_plane_type type = DRM_PLANE_TYPE_OVERLAY;
+ 	int channel = mixer->cfg->vi_num + index;
+ 	struct sun8i_ui_layer *layer;
++	unsigned int plane_cnt;
+ 	int ret;
+ 
+ 	layer = devm_kzalloc(drm->dev, sizeof(*layer), GFP_KERNEL);
+@@ -327,8 +336,10 @@ struct sun8i_ui_layer *sun8i_ui_layer_init_one(struct drm_device *drm,
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-	/* fixed zpos for now */
+-	ret = drm_plane_create_zpos_immutable_property(&layer->plane, channel);
++	plane_cnt = mixer->cfg->ui_num + mixer->cfg->vi_num;
++
++	ret = drm_plane_create_zpos_property(&layer->plane, channel,
++					     0, plane_cnt - 1);
+ 	if (ret) {
+ 		dev_err(drm->dev, "Couldn't add zpos property\n");
+ 		return ERR_PTR(ret);
+diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+index 5877f8ef5895..17e0d00cfd8a 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+@@ -21,7 +21,7 @@
+ #include "sun8i_vi_scaler.h"
+ 
+ static void sun8i_vi_layer_enable(struct sun8i_mixer *mixer, int channel,
+-				  int overlay, bool enable)
++				  int overlay, bool enable, unsigned int zpos)
+ {
+ 	u32 val;
+ 
+@@ -37,18 +37,24 @@ static void sun8i_vi_layer_enable(struct sun8i_mixer *mixer, int channel,
+ 			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR(channel, overlay),
+ 			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR_EN, val);
+ 
+-	if (enable)
+-		val = SUN8I_MIXER_BLEND_PIPE_CTL_EN(channel);
+-	else
+-		val = 0;
++	if (enable) {
++		val = SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
+ 
+-	regmap_update_bits(mixer->engine.regs,
+-			   SUN8I_MIXER_BLEND_PIPE_CTL,
+-			   SUN8I_MIXER_BLEND_PIPE_CTL_EN(channel), val);
++		regmap_update_bits(mixer->engine.regs,
++				   SUN8I_MIXER_BLEND_PIPE_CTL, val, val);
++
++		val = channel << SUN8I_MIXER_BLEND_ROUTE_PIPE_SHIFT(zpos);
++
++		regmap_update_bits(mixer->engine.regs,
++				   SUN8I_MIXER_BLEND_ROUTE,
++				   SUN8I_MIXER_BLEND_ROUTE_PIPE_MSK(zpos),
++				   val);
++	}
+ }
+ 
+ static int sun8i_vi_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+-				       int overlay, struct drm_plane *plane)
++				       int overlay, struct drm_plane *plane,
++				       unsigned int zpos)
+ {
+ 	struct drm_plane_state *state = plane->state;
+ 	const struct drm_format_info *format = state->fb->format;
+@@ -130,10 +136,10 @@ static int sun8i_vi_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ 			 state->dst.x1, state->dst.y1);
+ 	DRM_DEBUG_DRIVER("Layer destination size W: %d H: %d\n", dst_w, dst_h);
+ 	regmap_write(mixer->engine.regs,
+-		     SUN8I_MIXER_BLEND_ATTR_COORD(channel),
++		     SUN8I_MIXER_BLEND_ATTR_COORD(zpos),
+ 		     SUN8I_MIXER_COORD(state->dst.x1, state->dst.y1));
+ 	regmap_write(mixer->engine.regs,
+-		     SUN8I_MIXER_BLEND_ATTR_INSIZE(channel),
++		     SUN8I_MIXER_BLEND_ATTR_INSIZE(zpos),
+ 		     outsize);
+ 
+ 	return 0;
+@@ -266,28 +272,30 @@ static void sun8i_vi_layer_atomic_disable(struct drm_plane *plane,
+ 	struct sun8i_vi_layer *layer = plane_to_sun8i_vi_layer(plane);
+ 	struct sun8i_mixer *mixer = layer->mixer;
+ 
+-	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay, false);
++	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay, false, 0);
+ }
+ 
+ static void sun8i_vi_layer_atomic_update(struct drm_plane *plane,
+ 					 struct drm_plane_state *old_state)
+ {
+ 	struct sun8i_vi_layer *layer = plane_to_sun8i_vi_layer(plane);
++	unsigned int zpos = plane->state->normalized_zpos;
+ 	struct sun8i_mixer *mixer = layer->mixer;
+ 
+ 	if (!plane->state->visible) {
+ 		sun8i_vi_layer_enable(mixer, layer->channel,
+-				      layer->overlay, false);
++				      layer->overlay, false, 0);
+ 		return;
+ 	}
+ 
+ 	sun8i_vi_layer_update_coord(mixer, layer->channel,
+-				    layer->overlay, plane);
++				    layer->overlay, plane, zpos);
+ 	sun8i_vi_layer_update_formats(mixer, layer->channel,
+ 				      layer->overlay, plane);
+ 	sun8i_vi_layer_update_buffer(mixer, layer->channel,
+ 				     layer->overlay, plane);
+-	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay, true);
++	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay,
++			      true, zpos);
+ }
+ 
+ static struct drm_plane_helper_funcs sun8i_vi_layer_helper_funcs = {
+@@ -351,6 +359,7 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
+ 					       int index)
+ {
+ 	struct sun8i_vi_layer *layer;
++	unsigned int plane_cnt;
+ 	int ret;
+ 
+ 	layer = devm_kzalloc(drm->dev, sizeof(*layer), GFP_KERNEL);
+@@ -368,8 +377,10 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-	/* fixed zpos for now */
+-	ret = drm_plane_create_zpos_immutable_property(&layer->plane, index);
++	plane_cnt = mixer->cfg->ui_num + mixer->cfg->vi_num;
++
++	ret = drm_plane_create_zpos_property(&layer->plane, index,
++					     0, plane_cnt - 1);
+ 	if (ret) {
+ 		dev_err(drm->dev, "Couldn't add zpos property\n");
+ 		return ERR_PTR(ret);
+-- 
+2.18.0
 
-> Please move it to where it is fully defined and used.
->
-
-We are now starting to give Andrey Gusakov conflicting
-recommendations. For the sake of moving forward, can we agree that
-this and similar comments are relatively minor and defer to the
-maintainers to make a call which way to go?
-This way Andrey has a clear way on how to move forward with this set.
-
-> > +&usb_vbus {
-> > +     regulator-always-on;
->
-> usb_vbus is regilator-fixed, what for is this?
->
-> > +&uart2 {
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&pinctrl_uart2>;
-> > +     status = "okay";
-> > +};
->
-> In your further patches you include this and then revert by marking &uart2 as
-> disabled. Better to enable it in dts for boards that have it.
->
-
-There are at least two boards that use that UART2 as is. Same as above
-this was done to reduce boilerplate.
-
-> Same with ecspi2, ipu and maybe more.
->
-
-Ditto.
-
-> > -     flash@1 {
-> > -             #address-cells = <1>;
-> > -             #size-cells = <1>;
-> > -             compatible = "atmel,at45db642d", "atmel,at45", "atmel,dataflash";
-> > -             spi-max-frequency = <25000000>;
-> > -             reg = <1>;
-> > -     };
->
-> > +     flash@1 {
-> > +             #address-cells = <1>;
-> > +             #size-cells = <1>;
-> > +             compatible = "atmel,at45", "atmel,dataflash";
-> > +             spi-max-frequency = <25000000>;
-> > +             reg = <1>;
-> > +     };
->
-> Lost a compatible key?
->
-> > -                     sysled0@3 {
-> > -                             reg = <3>;
-> > -                             label = "system:green:status";
-> > -                             linux,default-trigger = "default-on";
-> > -                     };
->
-> > +                     sysled3: led3@3 {
-> > +                             reg = <3>;
-> > +                             label = "system:red:power";
-> > +                             linux,default-trigger = "default-on";
-> > +                     };
->
-> > +&sysled3 {
-> > +     label = "system:green:status";
->
-> What for this label games?
-
-Same as above. Avoiding unnecessary repetitions.
-
-Thanks,
-Andrey Smirnov
