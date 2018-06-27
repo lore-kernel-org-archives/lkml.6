@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 511D6C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFA7C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE57924588
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 069132083B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:54:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YFW6PBRK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE57924588
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p7Vioxhc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 069132083B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966465AbeF0Txq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 15:53:46 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35387 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966412AbeF0Txm (ORCPT
+        id S966023AbeF0Tyc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 15:54:32 -0400
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:37442 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965955AbeF0Tyb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 15:53:42 -0400
-Received: by mail-wr0-f195.google.com with SMTP id c13-v6so3188759wrq.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:53:42 -0700 (PDT)
+        Wed, 27 Jun 2018 15:54:31 -0400
+Received: by mail-wm0-f51.google.com with SMTP id n17-v6so6173863wmh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=/o13KHR6wd0+0rl72f1gK/Qs+scE945pItDzEozSwuY=;
-        b=YFW6PBRKbKv3wf87HnmgYfeg3v0CKaWn6WAKJdwqgTrTrn3nLhGoM2S5J+FT1IWTZv
-         Zd78I9gqgKpoObAyTXChXot+ezG6E0aAhu9YtLBikgSDR9rOkLpOUoDdgFdf/W9RJFKL
-         6W9RL3rkSQk2vmlE6jZFCGBE2DnxwTncMFXmTSQ+trR3JeKcwapBJi1YuZ/jBrCmmQbf
-         ZeDnSCXs+7YXl08M3/t68Q1gd2vg8hGjOQX41hZxOkUSnQ7jFLwXlK87+vSg9MvUe4Mo
-         GGDRCsoOrtSQkVH3lONKBT8RuYa1si8gLny2ZhVNvD5coLMv3stjRpaw3YIiX6MkAtSG
-         AZIw==
+        bh=kjAxLXUn1nLsFkWB3kuL9d7ll+SHXW0S3SZ/AyR14O8=;
+        b=p7Vioxhcv6m5ZZrJ3OswV2g1TsveTycJYSEVUxGaQSoPPKwRkMAr/9muUlGKdq+QfA
+         Z0xTW9sY5z72+EQv03F95shTscTaUIcZUfPaIzdquJ572kgKYlki/Bc1UFsf2JLebfio
+         rDPrCk9H2cnD+64TusYt5FibGuLdJlP5H31pk+NayxtWazO9Z1iOmzxMvobohCgAPywT
+         v1ekwNoFML3IIOTKa2BvH6AolvCU9SBN2vkoz9BK895Xr8UyuyTJ9VLNCxFNB5qBtDnq
+         J2z7FOelFXaXACsjaF1jiwhZckCoHClY7AsqDx8uQ3hQeK//2zLvD7dhH8EfYp9kMm6K
+         AN1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=/o13KHR6wd0+0rl72f1gK/Qs+scE945pItDzEozSwuY=;
-        b=oT6d2QemUHRniZnqECIfzxdkoNPdZCqrS7iDvG0lzv68h32CdFUw3An61BXdNDhh1H
-         uiNEtVMTYP7g6AupIlj8+XkSIBv7VTWi1BZyw0l/wFM4lFz1jgfkR+WDzrfA9JNWtVk6
-         VtE8F6KAy/eJ/3nRGOuSp2/aRJDmY7mjj7JjGXpPiCZ7BBHvNiqt+qmuyFtWxuli73vy
-         PI5DAXwUjx4Xax2mZewPBTKqMjfSDxLnxU5FmhPZ5EApnNzTR4cFacTmD7OLFREl7VT7
-         02ZF8TrZIg2Cy9N9lSk/z8hmZuZHsBv+cioeuh27n+sg+IpkSezTcMYMlpeF6i4REZWM
-         67aQ==
-X-Gm-Message-State: APt69E05PCfTRZGPgXcIGaRfibRyrGAhhIEZbxyMXWEnRVn7hi7Sgvg+
-        YY5471s9PyWZKT2QwGO2Ug==
-X-Google-Smtp-Source: AAOMgpetE1RlfTiFPmT52QqOCuNP5TaQoDdnqMXjqKC/LujNkYtdWEFWySGvOEnLtq5vQUXfILU3xw==
-X-Received: by 2002:adf:f98a:: with SMTP id f10-v6mr6257279wrr.105.1530129221572;
-        Wed, 27 Jun 2018 12:53:41 -0700 (PDT)
+        bh=kjAxLXUn1nLsFkWB3kuL9d7ll+SHXW0S3SZ/AyR14O8=;
+        b=Chi0IGN3NQGBKBe6rrhuhpVN7jE5/Dj4ZkyOAWGrs2go/gqXaQCfWnDi/Tx0gAa78y
+         9p3rvZhwgy1twjt660d8peODD/P/6FaBMKX5ooGk+YQvTSduFX61A9mFiXQCCrFrm/c8
+         LaOrrJHcLrSykQtwMbpmKMphbjm6fLo5IbTyzLv8p/I8huunBSwL84Gl/Hta5mZu0y5i
+         M3DKR/AVar+aMdmI6/+LZJjz8Zpj9d7rZIZMFkkd4xY3fLnVzfXGn/E6iZxUdtuajuYs
+         KIZF1qI3xA2DYm00/XRmX6talZWPiMk8Ip5iuv98kXsRxEUBuWsEUZGVl7Tdf4DSxt3F
+         ucww==
+X-Gm-Message-State: APt69E0IGQCXPJ2GnyjpRf4947+XtCRMUE88mkyezLPZIpDrKTpb83gO
+        4eZOKg1oWQbDTYIaX+unhn0v
+X-Google-Smtp-Source: AAOMgpdhUYsLdzNqfysbTs01vJbEMGCWCLudZTx9m3Q9oNF9NcBjPaygxjmFbD+F1gvQ368Icod9nw==
+X-Received: by 2002:a1c:387:: with SMTP id 129-v6mr6069835wmd.53.1530129269947;
+        Wed, 27 Jun 2018 12:54:29 -0700 (PDT)
 Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id n18-v6sm11524098wrj.58.2018.06.27.12.53.40
+        by smtp.gmail.com with ESMTPSA id j131-v6sm6861387wmb.25.2018.06.27.12.54.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 12:53:40 -0700 (PDT)
-Date:   Wed, 27 Jun 2018 22:53:39 +0300
+        Wed, 27 Jun 2018 12:54:29 -0700 (PDT)
+Date:   Wed, 27 Jun 2018 22:54:27 +0300
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] proc: smaller readlock section in readdir("/proc")
-Message-ID: <20180627195339.GD18113@avx2>
+Subject: [PATCH] proc: put task earlier in /proc/*/fail-nth
+Message-ID: <20180627195427.GE18113@avx2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -73,35 +73,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Readdir context is thread local, so ->pos is thread local,
-move it out of readlock.
-
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
 
- fs/proc/generic.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/proc/base.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -286,9 +286,9 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1366,10 +1366,8 @@ static ssize_t proc_fail_nth_read(struct file *file, char __user *buf,
+ 	if (!task)
+ 		return -ESRCH;
+ 	len = snprintf(numbuf, sizeof(numbuf), "%u\n", task->fail_nth);
+-	len = simple_read_from_buffer(buf, count, ppos, numbuf, len);
+ 	put_task_struct(task);
+-
+-	return len;
++	return simple_read_from_buffer(buf, count, ppos, numbuf, len);
+ }
  
-+	i = ctx->pos - 2;
- 	read_lock(&proc_subdir_lock);
- 	de = pde_subdir_first(de);
--	i = ctx->pos - 2;
- 	for (;;) {
- 		if (!de) {
- 			read_unlock(&proc_subdir_lock);
-@@ -309,8 +309,8 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
- 			pde_put(de);
- 			return 0;
- 		}
--		read_lock(&proc_subdir_lock);
- 		ctx->pos++;
-+		read_lock(&proc_subdir_lock);
- 		next = pde_subdir_next(de);
- 		pde_put(de);
- 		de = next;
+ static const struct file_operations proc_fail_nth_operations = {
