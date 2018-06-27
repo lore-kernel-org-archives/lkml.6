@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE31C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385FFC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3671125D1C
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E60F725D27
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:37:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffX6y53Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3671125D1C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aS4eSNaK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E60F725D27
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965801AbeF0Rh1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:37:27 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35117 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965445AbeF0RhW (ORCPT
+        id S965822AbeF0Rhr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:37:47 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53886 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965537AbeF0RhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:37:22 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z137-v6so6397377wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 10:37:22 -0700 (PDT)
+        Wed, 27 Jun 2018 13:37:20 -0400
+Received: by mail-wm0-f67.google.com with SMTP id b188-v6so611641wme.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 10:37:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iso5m+Cn76weigqPX5CSZ1I7GWctee9e5DkxLDyH9VA=;
-        b=ffX6y53Z5YAAk83unBsmkkXuFamRHnqW7Bgt7aVaKiSCRMhfYF7g5g1cTh9QpwgB8M
-         hDUSI0lfUNywoZtn8INUiatoQPAtHPiG8CTqxvQVcCUkwGnY2hfkhOrWHRGYfyA+guKA
-         aIPbsO82SMRrLRi9p+tXAlzwBWgGRCW5P0wTGPT2Xq26VrXxW8n/K6g4JmBCNR3vNkWv
-         N4EEqif7WuMccfdckrpCISR0skeW5JbD2wGqJVbRgzzDOjvFCuxOVA+uMwb00dnqNV7s
-         EscX5CojKmK8HKlA9KqytD8sT5U3zqfKc5QVPkco8fWjN/dj8WE/+obxp0p9mso1t25Z
-         yzpg==
+        bh=azTkwm6uGafpvvcw/VnXF67bgltA5QbMHjEQv4NYDZQ=;
+        b=aS4eSNaKIzcw1KW05c40PfLt1T/GGhd1tRh7WMX2s45rEU9KbizyB/8+AvPAOK9Oq4
+         pmZA+Y4+wathP6IeHqWq8LssjYK2RBAT/FUgadB9R0blRA0o7egQEM+C5CyyLNti9N/t
+         lrCbkQZ84zus/K/IMm87+8Mp1a2EYS6GNZNQMaqgECJZCAgUCQGAn6nMU6nVn1wJtlhM
+         TcrtZt5/H0yvuDjxZswMm1no5Kznq82QLES6JSorQaHTeJ25sd8gdKdLoKAORwaqygp8
+         PAzI2495sdKImilEV76SBpA+/LQ11VBRgApYzs2RmlIA+1ovBsJ8r33Ucy6VCv4RQLtz
+         zQCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iso5m+Cn76weigqPX5CSZ1I7GWctee9e5DkxLDyH9VA=;
-        b=of4eb6Yz/etxgOTThgLUoxSGuUARlzlt9ERy8M9Q7DKGf5TBAUklRblFly3o9JFw2E
-         OXZ5ayrSDyIpLl7ulrZ9KKJO671uaYwbAOenHjQfTTO5eqi7F81LYq49U4P47uCeWEmU
-         VrBPIcNRMBccNgR24WEzYSj65uYcMcXhI5bQ6kTL3ogI28lnN67nqkrJPZcigdmZvfm1
-         X4YX90ATQq5+jf/u0EfWKn0bShUys2k0gtvZxPbLtj1DwcuOtAzb2Xv1FS4uVXADUEAk
-         dQApqRTvoiNYYALfSDonGQWXg6QwPKRSemWroia3/Rrar3Avo6nqm9fTgrtKgdyVv8Cz
-         UEwQ==
-X-Gm-Message-State: APt69E2MCIR1YhGAw0XGzuSBlvdAM2b0RRZ9K6M84OCupWOoQasH1Z3C
-        Nq3np2Zrb6kbX4dt7d8JGuo=
-X-Google-Smtp-Source: AAOMgpdIzpljtMtw+joNidlaYX9gE04vc511oDOWDlZLwgIc2Vg4nphgf4cxdjroXXxsuBSzBNEn0A==
-X-Received: by 2002:a1c:5d0e:: with SMTP id r14-v6mr5544014wmb.152.1530121041637;
-        Wed, 27 Jun 2018 10:37:21 -0700 (PDT)
+        bh=azTkwm6uGafpvvcw/VnXF67bgltA5QbMHjEQv4NYDZQ=;
+        b=gxgP6nCcPY2Jw02jHG69bZpUJX0+tuoJ/E0P6SA7EZReZdW1+YfRn8G/uRqB1dBI+L
+         DwgNhg9mOpU7u/2UQR779C9oLaKk8VBcdfCojJ+uosOWWXCL0gdV8udywCyarhpVRC5u
+         RI6Dj3Tg4WPbXIroni1S1ZUpc/NmKDesn29RbohjG4GeDeFcn7fnGSs1ADRgqf9ztwUw
+         sQ2dfCTELXuqR0EqRSw73oIC7f3OEJjZ9AKcGZEb43PftGojdmYde6tXbQFggO/uKxjz
+         71wjelLGjcdOUTvadqmbtfFMnTdfXPwLAIzLe2RFASqMxglmiUcDLNY0Of27OY14DfoD
+         ZZIw==
+X-Gm-Message-State: APt69E1QDtsQ40mDCTPX/mcaIxZtwH7XmkRQok5faUqhUfFgrJAbixfg
+        BBemNVcdIPkqtBDnr75HETs=
+X-Google-Smtp-Source: AAOMgpfIcVV3q/T7qIBwJ4reIK4KIDtknqLwmAW6Coru3NXdmow5F5g2jWajUBNCL2kRdRDHh66SOQ==
+X-Received: by 2002:a1c:ab02:: with SMTP id u2-v6mr5353520wme.10.1530121039561;
+        Wed, 27 Jun 2018 10:37:19 -0700 (PDT)
 Received: from arch.localdomain (x4db2cd79.dyn.telefonica.de. [77.178.205.121])
-        by smtp.gmail.com with ESMTPSA id g4-v6sm4473220wrq.32.2018.06.27.10.37.20
+        by smtp.gmail.com with ESMTPSA id g4-v6sm4473220wrq.32.2018.06.27.10.37.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 10:37:20 -0700 (PDT)
+        Wed, 27 Jun 2018 10:37:18 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         joe@perches.com, dan.carpenter@oracle.com,
         andy.shevchenko@gmail.com,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v4 4/4] staging: rtl8723bs: use mac_pton() in rtw_macaddr_cfg()
-Date:   Wed, 27 Jun 2018 19:36:49 +0200
-Message-Id: <20180627173649.4105-4-straube.linux@gmail.com>
+Subject: [PATCH v4 3/4] staging: rtl8723bs: use ether_addr_copy() in rtw_macaddr_cfg()
+Date:   Wed, 27 Jun 2018 19:36:48 +0200
+Message-Id: <20180627173649.4105-3-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180627173649.4105-1-straube.linux@gmail.com>
 References: <20180627173649.4105-1-straube.linux@gmail.com>
@@ -74,84 +74,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the mac_pton() helper to convert the mac address string.
+Use ether_addr_copy() instead of memcpy() to copy the mac address.
 
-The functions key_char2num() and key_2char2num() are not used
-anywhere else and can be removed.
-
-This also has the benefit of validating the input since mac_pton()
-returns false if the string is not valid.
-
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- .../staging/rtl8723bs/core/rtw_ieee80211.c    | 30 +++----------------
- .../staging/rtl8723bs/os_dep/ioctl_linux.c    |  3 --
- 2 files changed, 4 insertions(+), 29 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_ieee80211.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-index 8af4a89e632f..8e0025e1ff14 100644
+index 7aa00d1391f7..8af4a89e632f 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-@@ -1137,25 +1137,6 @@ ParseRes rtw_ieee802_11_parse_elems(u8 *start, uint len,
- 
- }
- 
--static u8 key_char2num(u8 ch);
--static u8 key_char2num(u8 ch)
--{
--		if ((ch >= '0') && (ch <= '9'))
--			return ch - '0';
--		else if ((ch >= 'a') && (ch <= 'f'))
--			return ch - 'a' + 10;
--		else if ((ch >= 'A') && (ch <= 'F'))
--			return ch - 'A' + 10;
--		else
--			return 0xff;
--}
--
--u8 key_2char2num(u8 hch, u8 lch);
--u8 key_2char2num(u8 hch, u8 lch)
--{
--		return ((key_char2num(hch) << 4) | key_char2num(lch));
--}
--
- void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
- {
- 	u8 mac[ETH_ALEN];
-@@ -1166,14 +1147,11 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
- 	if (!mac_addr)
- 		return;
- 
--	if (rtw_initmac) {	/* 	Users specify the mac address */
--		int jj, kk;
--
--		for (jj = 0, kk = 0; jj < ETH_ALEN; jj++, kk += 3) {
--			mac[jj] = key_2char2num(rtw_initmac[kk], rtw_initmac[kk + 1]);
--		}
-+	if (rtw_initmac && mac_pton(rtw_initmac, mac)) {
-+		/* Users specify the mac address */
- 		ether_addr_copy(mac_addr, mac);
--	} else{	/* 	Use the mac address stored in the Efuse */
-+	} else {
-+		/* Use the mac address stored in the Efuse */
- 		ether_addr_copy(mac, mac_addr);
+@@ -1172,15 +1172,15 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
+ 		for (jj = 0, kk = 0; jj < ETH_ALEN; jj++, kk += 3) {
+ 			mac[jj] = key_2char2num(rtw_initmac[kk], rtw_initmac[kk + 1]);
+ 		}
+-		memcpy(mac_addr, mac, ETH_ALEN);
++		ether_addr_copy(mac_addr, mac);
+ 	} else{	/* 	Use the mac address stored in the Efuse */
+-		memcpy(mac, mac_addr, ETH_ALEN);
++		ether_addr_copy(mac, mac_addr);
  	}
  
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 39502156f652..4eb51f45b387 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -32,9 +32,6 @@
- #define WEXT_CSCAN_HOME_DWELL_SECTION	'H'
- #define WEXT_CSCAN_TYPE_SECTION		'T'
- 
--
--extern u8 key_2char2num(u8 hch, u8 lch);
--
- static u32 rtw_rates[] = {1000000, 2000000, 5500000, 11000000,
- 	6000000, 9000000, 12000000, 18000000, 24000000, 36000000, 48000000, 54000000};
- 
+ 	if (is_broadcast_ether_addr(mac) || is_zero_ether_addr(mac)) {
+ 		if ((addr = of_get_property(np, "local-mac-address", &len)) &&
+ 		    len == ETH_ALEN) {
+-			memcpy(mac_addr, addr, ETH_ALEN);
++			ether_addr_copy(mac_addr, addr);
+ 		} else {
+ 			eth_random_addr(mac_addr);
+ 			DBG_871X("MAC Address from efuse error, assign random one !!!\n");
 -- 
 2.18.0
 
