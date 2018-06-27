@@ -2,113 +2,170 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA9FC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F98C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C512525A11
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:51:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C512525A11
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 039E625284
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:51:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jnIRv5vB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039E625284
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965955AbeF0TvA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 15:51:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51591 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965654AbeF0Tu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 15:50:58 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 840D9207F3; Wed, 27 Jun 2018 21:50:53 +0200 (CEST)
-Received: from localhost (unknown [88.128.82.6])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 44313203B4;
-        Wed, 27 Jun 2018 21:50:43 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 21:50:43 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
-Message-ID: <20180627195043.hfasvppfm2cbudx7@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180627180215.y5kvvdqeriadxwte@flea>
+        id S966118AbeF0TvK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 15:51:10 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44301 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965654AbeF0TvG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 15:51:06 -0400
+Received: by mail-wr0-f196.google.com with SMTP id p12-v6so3171221wrn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=KlcY18rCo18wSPaSXYIxo3ylA3s7nippMFpOL+uhToA=;
+        b=jnIRv5vBiP89v1Gka3OuXCxk6T5lhuE+U5BosCQQQ0+gnFHV604aEFrj+DBbefBZAi
+         EniHA02pb2tvU9LU05zON8Bzqyg3tlGluLTY4dPnWBhjPGw6ufeqf37KRE8PC7R7avl2
+         0P9f7HqnV7TXdy+/4wE5w/zb6P6Lr423N4ZFTSPLeHO4tAVDADHfVtUsQLL5ILZp8t6H
+         yZ2W5Ix7n+CtK2kF4WoXAUalxx0Jh1g4Ul70lOWF/uyTgCtCO5m6Bf0jcfjOcPxv5h87
+         5jCXnagr5ZTdNFH/klF4BkZe2DXYy32Vxj/9SbxYC/0H8ydiJOnpUK1OxzgIDSyqWjRS
+         y76A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=KlcY18rCo18wSPaSXYIxo3ylA3s7nippMFpOL+uhToA=;
+        b=CO10q6HKEKmmNIih9xKynA9W5k1KLi4PSRJGm4xUj1DZMzVO5JE8+boGpJYMatMgZT
+         Wj+n6cYl+yxAgHjEFmogzyjmZ7/plL08ntBxgaMhcHiJP6RtZXJuW6sKX5W4X+i9K9Lt
+         Jdf4Iq2aSEzjELaFIo9PKD+2LfcICImTb4E1FNv9yGeWjXlGKo9VKeglss4VrFFFmuLh
+         7SQPoVEGif/4yJT8B02yJgfQC6uJp3MrR4xnpUm8TVTARJ0aEMwi+Wp/8W580tEW8Eiw
+         yNGbRZCurl4xOIpl7bR8CyDwkt6GcpVIRBNVhzj/mFf91ifBTZv7XBPkyxpMqVAgruqJ
+         aHdA==
+X-Gm-Message-State: APt69E0KthKb81qQ8ehmTTZd6GZ+0ziXKi2M6Xb74eNgaiusRmW+2/RQ
+        QBVs4+dzlk6tVIxFhkpbxctN
+X-Google-Smtp-Source: AAOMgpc5maH7LCLggmI+YbQr1xq5VxPqDs+MRTqiHYyN5yqUW4bKh6x4J2xO6//+tjQOTPPfTkPNmg==
+X-Received: by 2002:adf:e881:: with SMTP id d1-v6mr3117236wrm.43.1530129065871;
+        Wed, 27 Jun 2018 12:51:05 -0700 (PDT)
+Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
+        by smtp.gmail.com with ESMTPSA id m185-v6sm5840342wma.36.2018.06.27.12.51.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 12:51:05 -0700 (PDT)
+Date:   Wed, 27 Jun 2018 22:51:03 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] proc: test /proc/self symlink
+Message-ID: <20180627195103.GB18113@avx2>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bezsy6kupmrzsenq"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180627180215.y5kvvdqeriadxwte@flea>
-User-Agent: NeoMutt/20180622
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There are plans to change how /proc/self result is calculated,
+for that a test is necessary.
 
---bezsy6kupmrzsenq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use direct system call because of this whole getpid caching story.
 
-1;5202;0c
-On Wed, Jun 27, 2018 at 08:02:15PM +0200, Maxime Ripard wrote:
-> On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
-> > This series adds support for R40 HDMI pipeline. It is a bit special
-> > than other already supported pipelines because it has additional unit
-> > called TCON TOP responsible for relationship configuration between
-> > mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-> > and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> > and TV encoders.
-> >=20
-> > However, it seems that TCON TOP will become a norm, since newer
-> > Allwinner SoCs like H6 also have this unit.
-> >=20
-> > I tested different possible configurations:
-> > - mixer0 <> TCON-TV0 <> HDMI
-> > - mixer0 <> TCON-TV1 <> HDMI
-> > - mixer1 <> TCON-TV0 <> HDMI
-> > - mixer1 <> TCON-TV1 <> HDMI
-> >=20
-> > Please review.
->=20
-> I just applied it. It didn't apply cleanly, so please make sure it
-> does next time, or at least state what the dependencies are.
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-And it didn't compile either, because of the compile error that was
-reported to the previous version by kbuild... Those shouldn't be
-ignored and simply fixed.
+ tools/testing/selftests/proc/.gitignore |    1 
+ tools/testing/selftests/proc/Makefile   |    2 +
+ tools/testing/selftests/proc/proc.h     |    7 +++++
+ tools/testing/selftests/proc/self.c     |   39 ++++++++++++++++++++++++++++++++
+ 4 files changed, 49 insertions(+)
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---bezsy6kupmrzsenq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsz6pIACgkQ0rTAlCFN
-r3QHyw//UA9Nx2FAEMfBfKNdc8cDdb5MMoAGgXg8uqNDSjuj5BhCPwiqE6rLZSTS
-beJSkjmLfBR0CauhVv53vwmGOveNd2Uz0saS3FZY4bO/jLAmGOpB7na0Hlq3pZYH
-sBuzFTkxollAkHohikoG1avNV2dBDfeFB+RfQ3ElcyJ9C8Bt/dphy4d0Ea4dRSMa
-NZQ9fJvjPSaKOEFWWOmT6kbvAwkaEgg4g7q3nYltdF3Mlk9tWE5ZaGTRYClXenpb
-HZoUf0hXSTEs8Ls5CsQlZJvSxmisPJ2OY1ByYxAKVjYZAw0EWMs7rg0/2lA4SvM4
-OxswQm4XhB/e0Dtn87OVn7q7Vz0nCZO23g2GBVDTIzTGsfRn8f+3Ma9glcKZsyDL
-HqdOKrJ0zROS0R6AIMa/OVu46DC+ajUn3w2/h/aBkP8KJfdaN+MqWtDEGOYmq68o
-wDiz3Dgz3WOg3YLPM8p/94fopkEfihaeRCa+7Drt35Tfo3bI0rB7KIenzLehLnmt
-Pvu7wDOk5OJiW6u4LU0TLsUoEq4Dd62xhBkyvM7cm6Stn6O13Hnhsn5imTK48hYJ
-H6QmGW4uEFkXRfYGcQx5WY4IcD7zGNGlcNuCMjhMmvegTY75U1DFgS1W6jsu8hEu
-NtOK2+L/SsRdksyyUj9rhMQXn/wJhYr45rn/a4pKAJCLvxhJa6E=
-=L764
------END PGP SIGNATURE-----
-
---bezsy6kupmrzsenq--
+--- a/tools/testing/selftests/proc/.gitignore
++++ b/tools/testing/selftests/proc/.gitignore
+@@ -9,3 +9,4 @@
+ /proc-uptime-001
+ /proc-uptime-002
+ /read
++/self
+--- a/tools/testing/selftests/proc/Makefile
++++ b/tools/testing/selftests/proc/Makefile
+@@ -1,4 +1,5 @@
+ CFLAGS += -Wall -O2 -Wno-unused-function
++CFLAGS += -D_GNU_SOURCE
+ 
+ TEST_GEN_PROGS :=
+ TEST_GEN_PROGS += fd-001-lookup
+@@ -12,5 +13,6 @@ TEST_GEN_PROGS += proc-self-wchan
+ TEST_GEN_PROGS += proc-uptime-001
+ TEST_GEN_PROGS += proc-uptime-002
+ TEST_GEN_PROGS += read
++TEST_GEN_PROGS += self
+ 
+ include ../lib.mk
+--- a/tools/testing/selftests/proc/proc.h
++++ b/tools/testing/selftests/proc/proc.h
+@@ -6,6 +6,13 @@
+ #include <stdbool.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <unistd.h>
++#include <sys/syscall.h>
++
++static inline pid_t sys_getpid(void)
++{
++	return syscall(SYS_getpid);
++}
+ 
+ static inline bool streq(const char *s1, const char *s2)
+ {
+new file mode 100644
+--- /dev/null
++++ b/tools/testing/selftests/proc/self.c
+@@ -0,0 +1,39 @@
++/*
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++// Test that /proc/self gives correct TGID.
++#undef NDEBUG
++#include <assert.h>
++#include <stdio.h>
++#include <unistd.h>
++
++#include "proc.h"
++
++int main(void)
++{
++	char buf1[64], buf2[64];
++	pid_t pid;
++	ssize_t rv;
++
++	pid = sys_getpid();
++	snprintf(buf1, sizeof(buf1), "%u", pid);
++
++	rv = readlink("/proc/self", buf2, sizeof(buf2));
++	assert(rv == strlen(buf1));
++	buf2[rv] = '\0';
++	assert(streq(buf1, buf2));
++
++	return 0;
++}
