@@ -2,187 +2,188 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB8BC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56007C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E4B72619B
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4B72619B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F40CE2664C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:07:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F40CE2664C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934318AbeF0KFW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 06:05:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56230 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932089AbeF0KFU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 06:05:20 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5R9xI7N037429
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:05:20 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jv76w3snj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:05:20 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 11:05:17 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 11:05:12 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RA5BFm32309378
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 10:05:11 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9645A4053;
-        Wed, 27 Jun 2018 11:05:02 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C13C4A405D;
-        Wed, 27 Jun 2018 11:05:01 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.118])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 27 Jun 2018 11:05:01 +0100 (BST)
-Date:   Wed, 27 Jun 2018 13:05:08 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Stefan Agner <stefan@agner.ch>, Joe Perches <joe@perches.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/memblock: add missing include <linux/bootmem.h>
-References: <20180622210542.2025-1-malat@debian.org>
- <20180625171513.31845-1-malat@debian.org>
- <20180625180717.GS28965@dhcp22.suse.cz>
+        id S934348AbeF0KHK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 06:07:10 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59340 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932089AbeF0KHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 06:07:08 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 516AF82E0C8B7;
+        Wed, 27 Jun 2018 18:07:04 +0800 (CST)
+Received: from SZV1000284525.huawei.com (10.120.216.130) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.382.0; Wed, 27 Jun 2018 18:06:34 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: fix to do sanity check with user_block_count
+Date:   Wed, 27 Jun 2018 18:05:54 +0800
+Message-ID: <20180627100554.124168-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180625180717.GS28965@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18062710-0016-0000-0000-000001E0A02A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062710-0017-0000-0000-00003234DE3E
-Message-Id: <20180627100508.GB4291@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270115
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 08:07:17PM +0200, Michal Hocko wrote:
-> On Mon 25-06-18 19:15:12, Mathieu Malaterre wrote:
-> > Commit 26f09e9b3a06 ("mm/memblock: add memblock memory allocation apis")
-> > introduced two new function definitions:
-> > 
-> >   memblock_virt_alloc_try_nid_nopanic()
-> >   memblock_virt_alloc_try_nid()
-> > 
-> > Commit ea1f5f3712af ("mm: define memblock_virt_alloc_try_nid_raw")
-> > introduced the following function definition:
-> > 
-> >   memblock_virt_alloc_try_nid_raw()
-> > 
-> > This commit adds an include of header file <linux/bootmem.h> to provide
-> > the missing function prototypes. Silence the following gcc warning
-> > (W=1):
-> > 
-> >   mm/memblock.c:1334:15: warning: no previous prototype for `memblock_virt_alloc_try_nid_raw' [-Wmissing-prototypes]
-> >   mm/memblock.c:1371:15: warning: no previous prototype for `memblock_virt_alloc_try_nid_nopanic' [-Wmissing-prototypes]
-> >   mm/memblock.c:1407:15: warning: no previous prototype for `memblock_virt_alloc_try_nid' [-Wmissing-prototypes]
-> > 
-> > It also adds #ifdef blockers to prevent compilation failure on mips/ia64
-> > where CONFIG_NO_BOOTMEM=n. Because Makefile already does:
-> > 
-> >   obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
-> > 
-> > The #ifdef has been simplified from:
-> > 
-> >   #if defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM)
-> > 
-> > to simply:
-> > 
-> >   #if defined(CONFIG_NO_BOOTMEM)
-> 
-> Well, I would apreciate an explanation why do we need NO_BOOTMEM guard
-> in the first place rather than why HAVE_MEMBLOCK is not needed.
-> 
-> > Suggested-by: Tony Luck <tony.luck@intel.com>
-> > Suggested-by: Michal Hocko <mhocko@kernel.org>
-> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> 
-> Anyway this looks better. I wish we can actually get rid of bootmem
-> allocator which would simplify this as well but that is another topic.
+This patch fixs to do sanity check with user_block_count.
 
-There only 5 arches with bootmem left :)
+- Overview
+Divide zero in utilization when mount() a corrupted f2fs image
 
-I've started looking into it, but it goes slow :(
+- Reproduce (4.18 upstream kernel)
+
+- Kernel message
+[  564.099503] F2FS-fs (loop0): invalid crc value
+[  564.101991] divide error: 0000 [#1] SMP KASAN PTI
+[  564.103103] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Not tainted 4.18.0-rc1+ #4
+[  564.104584] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  564.106624] RIP: 0010:issue_discard_thread+0x248/0x5c0
+[  564.107692] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
+[  564.111686] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
+[  564.112775] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
+[  564.114250] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
+[  564.115706] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
+[  564.117177] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
+[  564.118634] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
+[  564.120094] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+[  564.121748] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  564.122923] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
+[  564.124383] Call Trace:
+[  564.124924]  ? __issue_discard_cmd+0x480/0x480
+[  564.125882]  ? __sched_text_start+0x8/0x8
+[  564.126756]  ? __kthread_parkme+0xcb/0x100
+[  564.127620]  ? kthread_blkcg+0x70/0x70
+[  564.128412]  kthread+0x180/0x1d0
+[  564.129105]  ? __issue_discard_cmd+0x480/0x480
+[  564.130029]  ? kthread_associate_blkcg+0x150/0x150
+[  564.131033]  ret_from_fork+0x35/0x40
+[  564.131794] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
+[  564.141798] ---[ end trace 4ce02f25ff7d3df5 ]---
+[  564.142773] RIP: 0010:issue_discard_thread+0x248/0x5c0
+[  564.143885] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
+[  564.147776] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
+[  564.148856] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
+[  564.150424] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
+[  564.151906] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
+[  564.153463] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
+[  564.154915] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
+[  564.156405] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+[  564.158070] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  564.159279] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
+[  564.161043] ==================================================================
+[  564.162587] BUG: KASAN: stack-out-of-bounds in from_kuid_munged+0x1d/0x50
+[  564.163994] Read of size 4 at addr ffff8801f3117c84 by task f2fs_discard-7:/1298
+
+[  564.165852] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Tainted: G      D           4.18.0-rc1+ #4
+[  564.167593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  564.169522] Call Trace:
+[  564.170057]  dump_stack+0x7b/0xb5
+[  564.170778]  print_address_description+0x70/0x290
+[  564.171765]  kasan_report+0x291/0x390
+[  564.172540]  ? from_kuid_munged+0x1d/0x50
+[  564.173408]  __asan_load4+0x78/0x80
+[  564.174148]  from_kuid_munged+0x1d/0x50
+[  564.174962]  do_notify_parent+0x1f5/0x4f0
+[  564.175808]  ? send_sigqueue+0x390/0x390
+[  564.176639]  ? css_set_move_task+0x152/0x340
+[  564.184197]  do_exit+0x1290/0x1390
+[  564.184950]  ? __issue_discard_cmd+0x480/0x480
+[  564.185884]  ? mm_update_next_owner+0x380/0x380
+[  564.186829]  ? __sched_text_start+0x8/0x8
+[  564.187672]  ? __kthread_parkme+0xcb/0x100
+[  564.188528]  ? kthread_blkcg+0x70/0x70
+[  564.189333]  ? kthread+0x180/0x1d0
+[  564.190052]  ? __issue_discard_cmd+0x480/0x480
+[  564.190983]  rewind_stack_do_exit+0x17/0x20
+
+[  564.192190] The buggy address belongs to the page:
+[  564.193213] page:ffffea0007cc45c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+[  564.194856] flags: 0x2ffff0000000000()
+[  564.195644] raw: 02ffff0000000000 0000000000000000 dead000000000200 0000000000000000
+[  564.197247] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  564.198826] page dumped because: kasan: bad access detected
+
+[  564.200299] Memory state around the buggy address:
+[  564.201306]  ffff8801f3117b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  564.202779]  ffff8801f3117c00: 00 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3 f3
+[  564.204252] >ffff8801f3117c80: f3 f3 f3 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
+[  564.205742]                    ^
+[  564.206424]  ffff8801f3117d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  564.207908]  ffff8801f3117d80: f3 f3 f3 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
+[  564.209389] ==================================================================
+[  564.231795] F2FS-fs (loop0): Mounted with checkpoint version = 2
+
+- Location
+https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/segment.h#L586
+	return div_u64((u64)valid_user_blocks(sbi) * 100,
+					sbi->user_block_count);
+Missing checks on sbi->user_block_count.
+
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2: fix incorrectly verifying for user_block_count.
+ fs/f2fs/super.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 6884ae62a304..657757635306 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2297,6 +2297,8 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	unsigned int sit_segs, nat_segs;
+ 	unsigned int sit_bitmap_size, nat_bitmap_size;
+ 	unsigned int log_blocks_per_seg;
++	unsigned int user_block_count;
++	unsigned int segment_count_main;
+ 	int i;
  
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> > ---
-> > v2: Simplify #ifdef
-> > 
-> >  mm/memblock.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/mm/memblock.c b/mm/memblock.c
-> > index 03d48d8835ba..611a970ac902 100644
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -20,6 +20,7 @@
-> >  #include <linux/kmemleak.h>
-> >  #include <linux/seq_file.h>
-> >  #include <linux/memblock.h>
-> > +#include <linux/bootmem.h>
-> >  
-> >  #include <asm/sections.h>
-> >  #include <linux/io.h>
-> > @@ -1224,6 +1225,7 @@ phys_addr_t __init memblock_alloc_try_nid(phys_addr_t size, phys_addr_t align, i
-> >  	return memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
-> >  }
-> >  
-> > +#if defined(CONFIG_NO_BOOTMEM)
-> >  /**
-> >   * memblock_virt_alloc_internal - allocate boot memory block
-> >   * @size: size of memory block to be allocated in bytes
-> > @@ -1431,6 +1433,7 @@ void * __init memblock_virt_alloc_try_nid(
-> >  	      (u64)max_addr);
-> >  	return NULL;
-> >  }
-> > +#endif
-> >  
-> >  /**
-> >   * __memblock_free_early - free boot memory block
-> > -- 
-> > 2.11.0
-> > 
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
-
+ 	total = le32_to_cpu(raw_super->segment_count);
+@@ -2321,6 +2323,16 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		return 1;
+ 	}
+ 
++	user_block_count = le32_to_cpu(ckpt->user_block_count);
++	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
++	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
++	if (!user_block_count || user_block_count >=
++			segment_count_main << log_blocks_per_seg) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"Wrong user_block_count: %u", user_block_count);
++		return 1;
++	}
++
+ 	main_segs = le32_to_cpu(raw_super->segment_count_main);
+ 	blocks_per_seg = sbi->blocks_per_seg;
+ 
+@@ -2337,7 +2349,6 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 
+ 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
+ 	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
+-	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
+ 
+ 	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
+ 		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
 -- 
-Sincerely yours,
-Mike.
+2.18.0.rc1
 
