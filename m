@@ -1,115 +1,105 @@
 Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11076C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 713F7C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 995FE265BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:47:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F11502678E
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:49:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmiPsqB3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 995FE265BE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkyDhocs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F11502678E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934476AbeF0Ar0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 20:47:26 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43025 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752416AbeF0ArY (ORCPT
+        id S934487AbeF0At1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 20:49:27 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:41531 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752039AbeF0AtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 20:47:24 -0400
-Received: by mail-pl0-f65.google.com with SMTP id c41-v6so149705plj.10;
-        Tue, 26 Jun 2018 17:47:24 -0700 (PDT)
+        Tue, 26 Jun 2018 20:49:24 -0400
+Received: by mail-ot0-f194.google.com with SMTP id d19-v6so324148oti.8
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 17:49:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DgE5NRPFkiYJ92yGu12zQZkSQyBjvgJQ3YJF/NEK/d0=;
-        b=UmiPsqB3r91oCOtXA5/dHvbNt6QjQBjmWSol5kWevjIFzHvGsdxDV7zm42/7go4GiT
-         z3biTv6mbh3daojbuopuiSgfwFvYKQRk0fLXQW09kAsZPpo/OcyOgACjgMpl7LmbP3VI
-         w8mePZDGzwhEN49fBbmoM/85KktBDxqBcM5eN6hXm0ug9psA631OPXdwBno46q1QSPtS
-         bZvasTiHiUAHxxIRMxZdRixMWyq+nUfgtas99BAfUR4clZRL7xwBm+DaSNTSswi2Brak
-         xRQwhBYIX6igV3ZzpuhmH0Z26DZbtdYizFf3BQWExUlYk5tgv3y7GlSak6HzcWo+G59D
-         q8Sw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eWT0iF/ykrSv5vam1wDrdkYPZ0e8GpaGQ6zY5l3Aoc0=;
+        b=jkyDhocsFVgs/Pl9QJ32q0uNIb3HDy4lCuRi2q1+f5gR1YCP5nBZiy9uyzEGIXzoNw
+         lTBrmpFr/JmuXirMU10OqX6JSukRpFwn4EhO6vWYtSJu8Okt8T24mAIYm/lSvhq5onQE
+         sDgC0FpZQXnK9m1srsdIFxAsvqtC2zqvuRZIqazxDdvFxe0W490qac6DnM/8r3WeD9Bz
+         4rZij47OVdjLmI0InFMr5BlkR5Sc7ZOb7kQI/nrHCRWcXh7LIZco6b/ei2tCGVTmJrZO
+         LEcwdDTSr1cCdPXQm/ik77cPE6W25nkAKx4w/rCs0BdprwS2q/ignwiOu3yS5VmXkq4X
+         MSiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DgE5NRPFkiYJ92yGu12zQZkSQyBjvgJQ3YJF/NEK/d0=;
-        b=YF/P4+wUtGRBYizpAa0wTvVNF5M9ALzLmxB4YDdg+mbLqjxtV2c67yqgvawkWJf+65
-         OpzaL84yQq633PGhkjZsSDn94c1H8l/TuymvNYmWkiJYgCMeN21jwKmv6jROn3gBob/j
-         JZ+39XVk57DQ+o2Eyv0wON9oKGdtRw5AqHVyZH8vDmTDsuhrIuJZO9zET4TkUSmkWepb
-         IXUUq+ZqwyoqNYS2J5aHvT/4xFCdyjWk3Ev8QtLpBtUQJKO8AsPZ+Xi0+P+NizX5z+AS
-         n0wrMz54znd8wN2gtuCw0+wOAZW4aXhaST2riENbrHgEVrjjNrjuCbokg6WYz+eYDoaR
-         sozg==
-X-Gm-Message-State: APt69E0LZH8IfA1/uNAqo//uoyiPGcDASC3azbFa7YjxMne3LHodW+Kn
-        acK2gd+nwBdVXGCno9+u56UaQQ==
-X-Google-Smtp-Source: ADUXVKKvvinNhS7O4Fkl9fzTqvcBjBD6KzyrCbU6mwM9y3emY6x9X/CJ966E0YKdu919ugaiTgwi1w==
-X-Received: by 2002:a17:902:758e:: with SMTP id j14-v6mr3743129pll.160.1530060443902;
-        Tue, 26 Jun 2018 17:47:23 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id v27-v6sm4193428pfi.23.2018.06.26.17.47.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jun 2018 17:47:23 -0700 (PDT)
-Subject: Re: [PATCH V5 5/5] ARM: dts: stm32: update iwdg with lsi clock name
- for stm32f429
-To:     Ludovic Barre <ludovic.Barre@st.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1529941383-8653-1-git-send-email-ludovic.Barre@st.com>
- <1529941383-8653-6-git-send-email-ludovic.Barre@st.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <1f13d8f9-3459-c91c-6cb6-041504ac16e6@roeck-us.net>
-Date:   Tue, 26 Jun 2018 17:47:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eWT0iF/ykrSv5vam1wDrdkYPZ0e8GpaGQ6zY5l3Aoc0=;
+        b=CFWkvQWCeKm4tDEK5rnTyhEBQ5KVq55T35j3xZoC4idBjPct8E7pvM4/dpkj9cPp9a
+         sp7K+FvCWBE3/8j6e2MM6rMBzAwHui0CgDG7obI83maZBtkrw4MzqideT0znhwswNLQp
+         NIzZQu/DhL0OrrG0hnVo0GIDKQNBbTGC1FayTp3ELAFC0GoaCIVccDCwBtpNasUxWln4
+         sWNjs6tMXelV+IElKy/q0MZK5Qo+A4ep2h9YH8ovCnxNOqtyp6VaaE6h9V0nAyCzXAgK
+         FMfYaIhPpZIXO5RkRABEECUzhmBFra/ezFznqmRMYEA2cJqSPv8xk7VZQ9u1Pf5vXVrW
+         Q0cQ==
+X-Gm-Message-State: APt69E3M6o/eTMJEEcWD7orcWQuWUkz5W+xuHa5uIXQ16MNWB4+4VxbD
+        WWa38Zyek4A20cGcj9r6heScbkNqxG6fEEbqv8g=
+X-Google-Smtp-Source: AAOMgpcyu4KYlhI3J20yPUpekPqCZO7lo8O2aVuJuVuzGeuwS/F1vfPde1r1ig9I6dt6+KhsOR106bz+ySHnQsT75pM=
+X-Received: by 2002:a9d:419c:: with SMTP id p28-v6mr2361030ote.2.1530060564308;
+ Tue, 26 Jun 2018 17:49:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1529941383-8653-6-git-send-email-ludovic.Barre@st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180622170625.30688-1-vkuznets@redhat.com>
+In-Reply-To: <20180622170625.30688-1-vkuznets@redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Wed, 27 Jun 2018 08:49:08 +0800
+Message-ID: <CANRm+CwNfOkosECeSGaXXDaqTDvh1u228ztU8C5Xe95FGgNsFQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] x86/hyper-v: optimize PV IPIs
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
+        devel@linuxdriverproject.org, LKML <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Tianyu.Lan@microsoft.com,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/25/2018 08:43 AM, Ludovic Barre wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
-> 
-> This patch updates iwdg watchdog to use lsi clock name.
-> 
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Hi Vitaly, (fix my reply mess this time)
+On Sat, 23 Jun 2018 at 01:09, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>
+> When reviewing my "x86/hyper-v: use cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_
+> {LIST,SPACE} hypercalls when possible" patch Michael suggested to apply the
+> same idea to PV IPIs. Here we go!
+>
+> Despite what Hyper-V TLFS says about HVCALL_SEND_IPI hypercall, it can
+> actually be 'fast' (passing parameters through registers). Use that too.
+>
+> This series can collide with my "KVM: x86: hyperv: PV IPI support for
+> Windows guests" series as I rename ipi_arg_non_ex/ipi_arg_ex structures
+> there. Depending on which one gets in first we may need to do tiny
+> adjustments.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+As hyperv PV TLB flush has already been merged, is there any other
+obvious multicast IPIs scenarios? qemu supports interrupt remapping
+since two years ago, I think windows guest can switch to cluster mode
+after entering x2APIC, so sending IPI per cluster. In addition, you
+can also post the benchmark result for this PV IPI optimization,
+although it also fixes the bug which you mentioned above.
 
-> ---
->   arch/arm/boot/dts/stm32f429.dtsi | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-> index ede77e0..39ea13a 100644
-> --- a/arch/arm/boot/dts/stm32f429.dtsi
-> +++ b/arch/arm/boot/dts/stm32f429.dtsi
-> @@ -310,6 +310,7 @@
->   			compatible = "st,stm32-iwdg";
->   			reg = <0x40003000 0x400>;
->   			clocks = <&clk_lsi>;
-> +			clock-names = "lsi";
->   			status = "disabled";
->   		};
->   
-> 
+I can post one variant for Linux guest PV IPI if it also makes sense. :)
 
+Regards,
+Wanpeng Li
