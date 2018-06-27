@@ -2,108 +2,98 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E616AC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DF5C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA404262FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:00:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA404262FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B02D26309
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:03:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B02D26309
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934287AbeF0MAb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:00:31 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59328 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932393AbeF0MAa (ORCPT
+        id S1754309AbeF0MDZ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:03:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56254 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753611AbeF0MDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:00:30 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RBsG38055714
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:00:29 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jv8n6uw2c-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:00:29 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 13:00:26 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 13:00:24 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RC0Nvg18153582
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 12:00:23 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89023AE06C;
-        Wed, 27 Jun 2018 13:00:16 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F3F9AE057;
-        Wed, 27 Jun 2018 13:00:16 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.118])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 27 Jun 2018 13:00:15 +0100 (BST)
-Date:   Wed, 27 Jun 2018 15:00:20 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        linux-alpha <linux-alpha@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] alpha: switch to NO_BOOTMEM
-References: <1530099168-31421-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180627113851.GP32348@dhcp22.suse.cz>
+        Wed, 27 Jun 2018 08:03:23 -0400
+Received: from localhost (113x41x139x141.ap113.ftth.ucom.ne.jp [113.41.139.141])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C5102CD3;
+        Wed, 27 Jun 2018 12:03:22 +0000 (UTC)
+Date:   Wed, 27 Jun 2018 18:09:17 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michal Simek <monstr@monstr.eu>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, gnomes@lxorguk.ukuu.org.uk,
+        Alexander Graf <agraf@suse.de>, shubhraj@xilinx.com,
+        robh@kernel.org, Jiri Slaby <jslaby@suse.com>,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH v2 1/6] serial: uartps: Do not initialize field to
+ zero again
+Message-ID: <20180627100917.GA20940@kroah.com>
+References: <cover.1528288895.git.michal.simek@xilinx.com>
+ <e8b0169887855a5ef2c1a0456842f650601b451c.1528288895.git.michal.simek@xilinx.com>
+ <e7b01bd9-5763-75c0-1384-2536313f5854@monstr.eu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180627113851.GP32348@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18062712-0008-0000-0000-0000024C62EC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062712-0009-0000-0000-000021B2D7BE
-Message-Id: <20180627120020.GE4291@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=661 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270134
+In-Reply-To: <e7b01bd9-5763-75c0-1384-2536313f5854@monstr.eu>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 01:38:51PM +0200, Michal Hocko wrote:
-> On Wed 27-06-18 14:32:48, Mike Rapoport wrote:
-> > Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
-> > on most other architectures.
+On Tue, Jun 19, 2018 at 10:09:05AM +0200, Michal Simek wrote:
+> On 6.6.2018 14:41, Michal Simek wrote:
+> > Writing zero and NULLs to already initialized fields is not needed.
+> > Remove this additional writes.
 > > 
-> > The conversion does not take care of NUMA support which is marked broken
-> > for more than 10 years now.
+> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > ---
+> > 
+> > Changes in v2:
+> > - new patch - it can be sent separately too
+> > 
+> >  drivers/tty/serial/xilinx_uartps.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+> > index 8a3e34234e98..5f116f3ecd4a 100644
+> > --- a/drivers/tty/serial/xilinx_uartps.c
+> > +++ b/drivers/tty/serial/xilinx_uartps.c
+> > @@ -1510,15 +1510,12 @@ static int cdns_uart_probe(struct platform_device *pdev)
+> >  
+> >  	/* At this point, we've got an empty uart_port struct, initialize it */
+> >  	spin_lock_init(&port->lock);
+> > -	port->membase	= NULL;
+> > -	port->irq	= 0;
+> >  	port->type	= PORT_UNKNOWN;
+> >  	port->iotype	= UPIO_MEM32;
+> >  	port->flags	= UPF_BOOT_AUTOCONF;
+> >  	port->ops	= &cdns_uart_ops;
+> >  	port->fifosize	= CDNS_UART_FIFO_SIZE;
+> >  	port->line	= id;
+> > -	port->dev	= NULL;
+> >  
+> >  	/*
+> >  	 * Register the port.
+> > 
 > 
-> It would be great to describe how is the conversion done. At least on
-> high level.
+> Alan, Rob, Greg: Any comment about this RFC?
 
-It's straightforward, isn't it? :)
+I rarely review RFC patchesets as obviously you don't think it is good
+enough to be submitted "for real" :)
 
-Sure, no problem. I'll just wait for other feedback before sending v2.
+If you think this is all good, great, please resend it without the RFC
+and it will end up in my queue.
 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+thanks,
 
--- 
-Sincerely yours,
-Mike.
-
+greg k-h
