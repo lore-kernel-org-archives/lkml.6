@@ -2,96 +2,124 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EC6C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D694C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 014C1261B3
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0D6025F87
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:40:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tyesKPB8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014C1261B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jrh73ea6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0D6025F87
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753637AbeF0KhA (ORCPT
+        id S1753626AbeF0KkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 06:37:00 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40715 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753337AbeF0Kg6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 06:36:58 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a6-v6so1219653ljj.7
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 03:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=q3r807uefo6LqCgvqjsizQqGnIS0cNltwm1C9DuyTLM=;
-        b=tyesKPB8RmbWBls1MyY/QPd2VvvCxu4UVqZ/FUbnQrzUbN9ZrZGU1nRsHawjeVjDDc
-         NvrNB3UK6hNnNBkV9aRilGzNB7SECZnavkEwwfFtYBjXCsC9upwo7ZlZIKKg30KxuKDv
-         Ya92O143JuvvaVwLNsrDAO3NdG/9lteKiTGPsSKT3fPi8c7KcC1pm3o5zPcJAcALeujA
-         SlUaeNjiAxUSQ+Lfrx/B8bB1f7N4qV5zgPf485nhUjlkgzn0qH/BRxxMZUg5LC4ohmyj
-         icThabYAgJUZZqz4zZ7fpyK4nDXSfqwBA2IDTjw+oTfjsOb8fnawY9stvmZkn0fVrFog
-         Otdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=q3r807uefo6LqCgvqjsizQqGnIS0cNltwm1C9DuyTLM=;
-        b=nRAR//bcxDQR/QZ1ML3pM+cM6OVB7Nag1US2TLJQd8masQuT5ytxujG0SP2JOPFZwG
-         bFCdFBY9biPMG/jEGEoCfW09DIzVytqDmOd+lUtHEgZMS3NqNxBgAQRYZFqudTxVO2zG
-         Y5seHzPHOMiCif2HZeCieG82JOhD4YprGOTL6n2MUIWShEneTUaRYCo/pX8MiVug5Ajd
-         ZjXUcufRTalAQN2Xw51N1yhXkx35XldS/kxL9e/sFScwQtPEuUWG3psoCOQw0OwrB4o7
-         tq+yua9T4/qzLIH7+AU1us86m46W5GE/SW0GemFBOGHLrf3+Cr7lRfJPyVD9u8qogHkN
-         9SFA==
-X-Gm-Message-State: APt69E3FNLyNptZZgQI6PfRfy+ri4Xa7sOW+dl1vqLx1NRsW6X96czF3
-        a/ctR33tcpg5YhvwxP4LHvanXQfVZ2SaNcnWmdMfGg==
-X-Google-Smtp-Source: AAOMgpf8vMdXg0CWODbtsVMOMgw+aPeXrnFBCNzLmLYWdaXTBnul15IN6t+/kv9y4iNV4OBcFaGogFaPxGpRsDqKcXM=
-X-Received: by 2002:a2e:8051:: with SMTP id p17-v6mr3712729ljg.22.1530095817428;
- Wed, 27 Jun 2018 03:36:57 -0700 (PDT)
+        Wed, 27 Jun 2018 06:40:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753285AbeF0KkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 06:40:18 -0400
+Received: from localhost (LFbn-NCY-1-193-82.w83-194.abo.wanadoo.fr [83.194.41.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C141F2404E;
+        Wed, 27 Jun 2018 10:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530096018;
+        bh=jbOVdZjrcL7JXnWAztRJbUKc+m242dnMPx4S7fGUxUA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Jrh73ea6Q3mPv4TmE6Ugy5LnbplDENl+RKO19BdD6yctCUX4DY665+wB05K3vtuF8
+         iiftKeDa17w/XMWFkWEbEY5hvwof3Skddk6rjEbPNnaYVM1QTXu5oC3xm0HHo+/orp
+         x1KpNKMAN0xHE3Uev+ABvWnbbbbjKgCZcJyPYPFY=
+Date:   Wed, 27 Jun 2018 12:40:15 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: sched/core warning triggers on rcu torture test
+Message-ID: <20180627104014.GB10102@lerouge>
+References: <alpine.DEB.2.21.1806261709001.19188@somnus>
+ <20180626163255.GG2458@hirez.programming.kicks-ass.net>
+ <20180626174826.GB3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:41cf:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 03:36:56
- -0700 (PDT)
-In-Reply-To: <87y3f06e9a.fsf@concordia.ellerman.id.au>
-References: <20180619140229.3615110-1-arnd@arndb.de> <87y3f06e9a.fsf@concordia.ellerman.id.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 27 Jun 2018 12:36:56 +0200
-X-Google-Sender-Auth: KyE1IRdD8G7TPik1PowWBRMIwpA
-Message-ID: <CAK8P3a2HwOe2D4LXgFsfhFXpeUBpHZiB5PCk0nkAwqX3NKCmFA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] [v2] powerpc: mac: fix rtc read/write functions
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Paul Mackerras <paulus@samba.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Meelis Roos <mroos@linux.ee>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626174826.GB3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 6:32 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> So I think I can take this patch in isolation via the powerpc tree as a
-> fix for 4.18.
->
-> I'll leave the other two alone.
->
+On Tue, Jun 26, 2018 at 10:48:26AM -0700, Paul E. McKenney wrote:
+> On Tue, Jun 26, 2018 at 06:32:55PM +0200, Peter Zijlstra wrote:
+> > On Tue, Jun 26, 2018 at 06:16:04PM +0200, Anna-Maria Gleixner wrote:
+> > > Hi,
+> > > 
+> > > during rcu torture tests (TREE04 and TREE07) I noticed, that a
+> > > WARN_ON_ONCE() in sched core triggers on a recent 4.18-rc2 based
+> > > kernel (6f0d349d922b ("Merge
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")) as well as
+> > > on a 4.17.3.
+> 
+> First, I am very glad that I am not the only one running rcutorture!  ;-)
+> 
+> > > I'm running the tests on a machine with 144 cores:
+> > > 
+> > >   tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 144 --duration 120 --configs "9*TREE07"
+> > >   tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 144 --duration 120 --configs "18*TREE04"
+> > > 
+> > > 
+> > > The warning was introduced by commit d84b31313ef8 ("sched/isolation:
+> > > Offload residual 1Hz scheduler tick").
+> > > 
+> > > 
+> > > Output looks similar for all tests I did (this one is the output of
+> > > the 4.18-rc2 based kernel):
+> > > 
+> > > WARNING: CPU: 11 PID: 906 at kernel/sched/core.c:3138 sched_tick_remote+0xb6/0xc0
+> > 
+> > That's nohz_full stuff, is that a normal part of rcutorture? In any
+> > case, is the one housekeeping CPU getting seriously overloaded or
+> > something?
+> 
+> Yes, nohz_full is a normal part for rcutorture because RCU has to deal
+> differently with userspace execution in the nohz_full case.
+> 
+> I do see this splat (at least when I don't comment it out), but I
+> do share my system with others, so I could easily be overloading the
+> housekeeping vCPUs due to hypervisor preemption.  I was intending to
+> dig into this one once I got done consolidating RCU-bh, RCU-preempt,
+> and RCU-sched at Linus's behest.
+> 
+> On overloading the housekeeping CPU without outside load, let's look at
+> TREE04 and TREE07 separately.
+> 
+> TREE04 uses eight CPUs, and seven of them ("nohz_full=1-7") are nohz_full
+> CPUs, and rcutorture doesn't generate all that large of a callback load.
+> It looks like all 144 CPUs are used in this case (18*8), though RCU
+> enforces idle periods in order to test idle/non-idle transitions.
+> But was there anything else running on the machine at the time?
+> 
+> TREE07 uses 16 CPUs, and eight of them ("nohz_full=2-9") are nohz_full
+> CPUs.  Again, it looks like all 144 CPUs are used (9*8).
+> 
+> I sometimes see this on TASKS03 as well, which uses two CPUs, and one of
+> them ("nohz_full=1") is a nohz_full CPU.
+> 
+> If your system is otherwise idle, would it make sense to trace context
+> switches on CPU 0 to see what it is up to?  And to do an ftrace_dump()
+> and turn tracing off when the warning triggers as well?
 
-Yes, that is what I had intended with this series but should have made
-clearer. The two m68k patches are 4.19 material.
+Yeah you guys reported me this warning a few times ago. I didn't manage to reproduce
+it because I fought and failed with a high NR_CPUS machine. But apparently 8 CPUs
+are enough. Let me try that with TREE04.
 
-      Arnd
+Thanks.
