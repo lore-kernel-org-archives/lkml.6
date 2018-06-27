@@ -2,116 +2,119 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DE1C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5C0C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D23D25C5E
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07B2225CAC
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:06:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TpXxh8N3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D23D25C5E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h+ncVKpL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07B2225CAC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753203AbeF0QFy (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:05:54 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:41382 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754890AbeF0QFv (ORCPT
+        id S935037AbeF0QGK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:06:10 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55293 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934916AbeF0QGJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:05:51 -0400
-Received: by mail-io0-f196.google.com with SMTP id k16-v6so2386775ioa.8;
-        Wed, 27 Jun 2018 09:05:51 -0700 (PDT)
+        Wed, 27 Jun 2018 12:06:09 -0400
+Received: by mail-wm0-f65.google.com with SMTP id i139-v6so6416125wmf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 09:06:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oSIpjXAzNk3mnDODu/E3aumCh9wpdnU4IeGI3GrViHg=;
-        b=TpXxh8N35ayTJRZSpTeHaQ/mkWZk3LYeBWn76LWCqhzPCTcu5kf97WsZS/3ai8oiK3
-         y6nvICxnnfT+HGiP09PAIJuFhGH3RTNvqmjHF3qjfq0zVYFt8zN9JZOLhbNgCpbD/zJT
-         tc+ZokR7DzajEbPCcL4stjd5wFZws+ko6SAac=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=d07Srbly/tt/fvCsX1MMBKhoekqXeQyhFpS+MSSA/fE=;
+        b=h+ncVKpLgZIVoT/zoAtsE24msoiNglHONdMxZzbpI1BQ+XxcDh2PiyT/VO6D/Elplk
+         8xQkHSC/UO5Wb/Yk4LNtTk8XucIlCfg1gDIqSote/nBy0xa92Wxxhlga02pBGLlYgCE8
+         VyX5zPnwwOg1nWzwOBJG886N4/wWq+55K/A9w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oSIpjXAzNk3mnDODu/E3aumCh9wpdnU4IeGI3GrViHg=;
-        b=nOWnhWnKhmx3LVfHbJWtkWjS/BuHuOpzDcc2EOJlL79DPpQfcYPHCOVKrIaLfuFcPR
-         lthTnnLmXahzLrqK3weHF2assj6h1bs2Juua8l18f77bHPd5T3zNKw6Cx/zTO2OA0kqE
-         KBBeKDrCqIBNCuf+T99xOWnprkTVgQ1lkRCuiXxCqC+FfHcXm1HFV1LEw01b7F4sk2Cv
-         CzuIr9ldqbiAGK+R3dKPYqYFz962sbsDhe8MC973ZNIIGp1B5yFl3EI6QT/zyrOnjfdg
-         jzOX0jo2ynNBuYSAWWLEHUBvm0sQeMZmJvO0r/I3DDQIVgCw/yiyJXVqWJg1R17CbMQ7
-         +6eg==
-X-Gm-Message-State: APt69E0nVHAKKqM6BI1zgVP961969H2q/3SLRwnCvBzvL2yGiFz4Zupg
-        IsxxdoVrB3wCDpeLDQPEIbXgCipAU3pRRAvntI0=
-X-Google-Smtp-Source: AAOMgpcy4kHTLyP1XrYYCCyeXblB/6HyGtVf+bBGx/EuAdeSVjWA4N8bA6wp3oGmkYWfqr6emj47o8OsjKDURb8Adew=
-X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr5794187iov.203.1530115550631;
- Wed, 27 Jun 2018 09:05:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com>
- <1529037793-35521-2-git-send-email-wei.w.wang@intel.com> <CA+55aFzhuGKinEq5udPsk_uYHShkQxJYqcPO=tLCkT-oxpsgPg@mail.gmail.com>
- <20180626045118-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180626045118-mutt-send-email-mst@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 27 Jun 2018 09:05:39 -0700
-Message-ID: <CA+55aFwFpDPvfL=KPdabO-x1r0FnwpfPk5oN8+e01TKqAPNYbw@mail.gmail.com>
-Subject: Re: [PATCH v33 1/4] mm: add a function to get free page blocks
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     wei.w.wang@intel.com, virtio-dev@lists.oasis-open.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com,
-        Rik van Riel <riel@redhat.com>, peterx@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=d07Srbly/tt/fvCsX1MMBKhoekqXeQyhFpS+MSSA/fE=;
+        b=CsaCVOSxB+Bhifh6lfZS3hgEesWv8lW3pxt87OAjLvor/gtCaLPhFdGGB2yijoSnFY
+         4X68pob26mVTCUYQIeptO6+Fcoi3cIbL0Kmi4JQjCf62Spqdd+/P+5dGna/xMnghy4iE
+         uw5jZNpR5qZS0BqegwULMuozVWU3KIeGrPjP//Fg66/1C4F5Hw0lbFpKx+wm+7ORr01U
+         KFvs07DQFVWUvVB5NEbYFKln7VgLVx63BBn9KyWmde5f+PP8FQhBiMr13Oof7qAdjUfb
+         QtOeogbbSAguj5BYbfbM9tMsbzwAj7Ft6unZ836+Griu9/RUmdetxxD5ymPVBn8ZOhQt
+         Hjgg==
+X-Gm-Message-State: APt69E0y+/diDI3vNoIJDCRZMlZNvhMmdbPx2MbcnJUZQmMKDBVCKTz5
+        1L2T9nmYu/TtujyqfwQlh9iPxr7oJTo=
+X-Google-Smtp-Source: AAOMgpeSACZ0w/jO7ukwFwyslCNKlyGklCLyiHlq1CN/7rJn7MTFHJXmxzac97w0sNgLr1J3XGwX4g==
+X-Received: by 2002:a1c:8010:: with SMTP id b16-v6mr1421618wmd.41.1530115567483;
+        Wed, 27 Jun 2018 09:06:07 -0700 (PDT)
+Received: from rev02.home ([2a01:cb1d:112:6f00:4d04:66e:dea8:5b23])
+        by smtp.gmail.com with ESMTPSA id s2-v6sm7055000wrn.75.2018.06.27.09.06.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 09:06:06 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        x86@kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 0/5] add support for relative references in jump tables
+Date:   Wed, 27 Jun 2018 18:05:59 +0200
+Message-Id: <20180627160604.8154-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Sorry for slow reply, my travels have made a mess of my inbox ]
+This series implements support for emitting the data structures associated
+with jump tables as 32-bit relative references instead of absolute
+references, which take up more space on builds that target 64-bit
+architectures, or implement self relocation [or both].
 
-On Mon, Jun 25, 2018 at 6:55 PM Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> Linus, do you think it would be ok to have get_from_free_page_list
-> actually pop entries from the free list and use them as the buffer
-> to store PAs?
+This series enables it for arm64 and x86, although other architectures
+might benefit as well.
 
-Honestly, what I think the best option would be is to get rid of this
-interface *entirely*, and just have the balloon code do
+Patch #1 does some preparatory refactoring before patch #2 introduces the
+generic pieces required for using relative references.
 
-    #define GFP_MINFLAGS (__GFP_NORETRY | __GFP_NOWARN |
-__GFP_THISNODE | __GFP_NOMEMALLOC)
+Patch #3 wires everything up for arm64.
 
-    struct page *page =  alloc_pages(GFP_MINFLAGS, MAX_ORDER-1);
+For x86, patch #4 applies some preparatory changes for the arch specific
+jump label C code, which is a lot more involved than on arm64, which is
+why it is split off in this case. Patch #5 wires it up for x86 as well.
 
- which is not a new interface, and simply removes the max-order page
-from the list if at all possible.
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com> 
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 
-The above has the advantage of "just working", and not having any races.
+Ard Biesheuvel (5):
+  kernel/jump_label: abstract jump_entry member accessors
+  kernel/jump_label: implement generic support for relative references
+  arm64/kernel: jump_label: switch to relative references
+  x86: jump_label: switch to jump_entry accessors
+  x86/kernel: jump_table: use relative references
 
-Now, because you don't want to necessarily *entirely* deplete the max
-order, I'd suggest that the *one* new interface you add is just a "how
-many max-order pages are there" interface. So then you can query
-(either before or after getting the max-order page) just how many of
-them there were and whether you want to give that page back.
+ arch/Kconfig                        |  3 +
+ arch/arm64/Kconfig                  |  1 +
+ arch/arm64/include/asm/jump_label.h | 16 ++---
+ arch/arm64/kernel/jump_label.c      |  6 +-
+ arch/x86/Kconfig                    |  1 +
+ arch/x86/include/asm/jump_label.h   | 28 +++------
+ arch/x86/kernel/jump_label.c        | 43 +++++++------
+ include/linux/jump_label.h          | 64 ++++++++++++++++++++
+ kernel/jump_label.c                 | 56 ++++++++++-------
+ tools/objtool/special.c             |  4 +-
+ 10 files changed, 145 insertions(+), 77 deletions(-)
 
-Notice? No need for any page lists or physical addresses. No races. No
-complex new functions.
+-- 
+2.11.0
 
-The physical address you can just get from the "struct page" you got.
-
-And if you run out of memory because of getting a page, you get all
-the usual "hey, we ran out of memory" responses..
-
-Wouldn't the above be sufficient?
-
-            Linus
