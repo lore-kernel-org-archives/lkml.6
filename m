@@ -2,105 +2,105 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E95ACC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A81EC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A847D25EDA
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:14:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A847D25EDA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E315D25EEE
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:15:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FG/ZYNin"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E315D25EEE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752592AbeF0POf (ORCPT
+        id S1754761AbeF0PPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:14:35 -0400
-Received: from foss.arm.com ([217.140.101.70]:33138 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751002AbeF0POd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:14:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5AB718A;
-        Wed, 27 Jun 2018 08:14:33 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 76EB03F266;
-        Wed, 27 Jun 2018 08:14:33 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 5D1101AE3692; Wed, 27 Jun 2018 16:15:11 +0100 (BST)
-Date:   Wed, 27 Jun 2018 16:15:11 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Mackerras <paulus@samba.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v9 0/6] add support for relative references in special
- sections
-Message-ID: <20180627151510.GE30631@arm.com>
-References: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
+        Wed, 27 Jun 2018 11:15:13 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:53546 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752937AbeF0PPL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 11:15:11 -0400
+Received: by mail-it0-f68.google.com with SMTP id a195-v6so8070581itd.3;
+        Wed, 27 Jun 2018 08:15:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=kjHInvt4pMcn0vt9zrZIeWXIkSa/EHpxMfGYNx9H6gk=;
+        b=FG/ZYNiny8G/nqJcE9/MkmKP4nSpIhaVQdkx+TTJBtxpuSBB7VhyiFnjOCQZGmQ82s
+         I8/1jbOU6mgFt/2ZlaXzy+uYm4e6i5/1ZUv3ImdNkbmt2TNGrcI89ltyVvn1JzIHPtIp
+         UrCtqPPB8gyyidPCOeDnI2LG9jVqN+H4t4Kb6yjtf3d/SNqeRSuIski2nknuA3qw2fun
+         a7hfiurko3qTLTzrL5YK1KJI/+w7x+j9Y8Wk63QXw+9XXjOIA3mTcZqzGiAam88S+MhD
+         YhHG4J2tcjyKQr8H3mYInobJRmZIxBFnIKz23SqnQLDEpRlT6VZk3a9/94ZI5YuVFNif
+         BtxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=kjHInvt4pMcn0vt9zrZIeWXIkSa/EHpxMfGYNx9H6gk=;
+        b=Gk//zY6oFY93RNAQsdP7NyJasCJxJSQIhjunsdWy2J0rzUu1qEaGW3PawCz31Dej8L
+         5TV5OjxV4h3I7aS47NXHo8otDY8nJFbQ6eT63s16kR9ws8hWXemf4Z4/vCJvCwb/x82a
+         vupa7to7O/D+87EkEVbL7N2UgawOV+X2TBCU/ySiBbYZaOf0l+zG1+LCuLyLciXPBHji
+         bF0zZ7CAhf+V8yMXfKTgmBCxReE7fklXBIYP4/J7RV/EmJuf/ggjZXzYzRbc7nE9gdBR
+         Q76evDIt66fwKqkeIp9T6KKVvYJzRMTz0qFkh776UliLtqt2cOR+XdFV5quLDwZXX/1W
+         wlqA==
+X-Gm-Message-State: APt69E332gUFCWBHzLWX+lArxSZwx/rzGAXy/GL4KrZmHQPELq1wtXTg
+        g69+MydSRHgTzIszTbDh4fPDX20cnnVN+x4ZV1g=
+X-Google-Smtp-Source: ADUXVKIvVf8rVMyk1Vk6BuxPDA1boL4HieNAdoW/8wKtRJhXR7jMHFnYo+vrIcFxVGp2CDmlMoCHCyKteyImybVAUYo=
+X-Received: by 2002:a24:4457:: with SMTP id o84-v6mr5275706ita.142.1530112510648;
+ Wed, 27 Jun 2018 08:15:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a6b:ef03:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 08:14:30
+ -0700 (PDT)
+In-Reply-To: <c89b70f9-e70d-35a5-b9a7-7e3ed7d34edf@gmail.com>
+References: <1530100216-13070-1-git-send-email-laoar.shao@gmail.com> <c89b70f9-e70d-35a5-b9a7-7e3ed7d34edf@gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Wed, 27 Jun 2018 23:14:30 +0800
+Message-ID: <CALOAHbCdRjq2n37GpeBdorcbxXMDX2vNDLftypViJd5hRTA28A@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: replace LINUX_MIB_TCPOFODROP with
+ LINUX_MIB_TCPRMEMFULLDROP for drops due to receive buffer full
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
+On Wed, Jun 27, 2018 at 10:48 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+> On 06/27/2018 04:50 AM, Yafang Shao wrote:
+>> When sk_rmem_alloc is larger than the receive buffer and we can't
+>> schedule more memory for it, the skb will be dropped.
+>>
+>> In above situation, if this skb is put into the ofo queue,
+>> LINUX_MIB_TCPOFODROP is incremented to track it,
+>> while if this skb is put into the receive queue, there's no record.
+>>
+>> So LINUX_MIB_TCPOFODROP is replaced with LINUX_MIB_TCPRMEMFULLDROP to track
+>> this behavior.
+>
+>
+> Hi Yafang
+>
+> I do not want to remove TCPOFODrop and mix multiple causes in one single counter.
+>
+> Please take a look at commit a6df1ae9383697c to have the reasoning.
+>
 
-On Tue, Jun 26, 2018 at 08:27:55PM +0200, Ard Biesheuvel wrote:
-> This adds support for emitting special sections such as initcall arrays,
-> PCI fixups and tracepoints as relative references rather than absolute
-> references. This reduces the size by 50% on 64-bit architectures, but
-> more importantly, it removes the need for carrying relocation metadata
-> for these sections in relocatable kernels (e.g., for KASLR) that needs
-> to be fixed up at boot time. On arm64, this reduces the vmlinux footprint
-> of such a reference by 8x (8 byte absolute reference + 24 byte RELA entry
-> vs 4 byte relative reference)
-> 
-> Patch #3 was sent out before as a single patch. This series supersedes
-> the previous submission. This version makes relative ksymtab entries
-> dependent on the new Kconfig symbol HAVE_ARCH_PREL32_RELOCATIONS rather
-> than trying to infer from kbuild test robot replies for which architectures
-> it should be blacklisted.
-> 
-> Patch #1 introduces the new Kconfig symbol HAVE_ARCH_PREL32_RELOCATIONS,
-> and sets it for the main architectures that are expected to benefit the
-> most from this feature, i.e., 64-bit architectures or ones that use
-> runtime relocations.
-> 
-> Patch #2 add support for #define'ing __DISABLE_EXPORTS to get rid of
-> ksymtab/kcrctab sections in decompressor and EFI stub objects when
-> rebuilding existing C files to run in a different context.
+Got it!
 
-I had a small question on patch 3, but it's really for my understanding.
-So, for patches 1-3:
+What about introduce a new counter, i.e. TCPRcvQFullDrop ?
 
-Reviewed-by: Will Deacon <will.deacon@arm.com>
-
-Thanks,
-
-Will
+Thanks
+Yafang
