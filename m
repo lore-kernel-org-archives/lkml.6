@@ -6,127 +6,89 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8969FC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5755BC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 303F521CF9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0057723D93
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 06:10:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NoxsHWQg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303F521CF9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l1IN+bQT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0057723D93
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752438AbeF0GJQ (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 02:09:16 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46711 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750942AbeF0GJO (ORCPT
+        id S932135AbeF0GKB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 02:10:01 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35534 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751901AbeF0GKA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 02:09:14 -0400
-Received: by mail-io0-f194.google.com with SMTP id u23-v6so769125ioc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 23:09:14 -0700 (PDT)
+        Wed, 27 Jun 2018 02:10:00 -0400
+Received: by mail-oi0-f68.google.com with SMTP id e8-v6so797380oii.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 23:10:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=JuseYW54efpSu/lgMf1oo5gGl0WQN+PezM3iswx8YKo=;
-        b=NoxsHWQgffkg8DWqBw0oVBTKNzsfLOVz4w+N1n75GzhvF9P6v/F8MBR4qpg/zkZAmv
-         Yy1RxcjoIK/PVWauHJi9XrVzPxt9Fc+M3rZuJxNEGps0EeX86hjheKX25Kp+3KbTNrSi
-         5/hchtknP0izyrkX2FcaI/TGujguRgT5eNfYk=
+        bh=AqOWllTxKfSX+imZ60cQVNm+iZIL00wVmtqfZ5jpCzk=;
+        b=l1IN+bQTwbGtTtFqGto5d1OkRL2z1gFGXdvriPt4dtZ63K+WXUH0535yP+u/hm7XAO
+         eQzAojlh83pU1kimdqxlxbPiPq6QqajJTrLg+JWIgwiLyDR1feFBdzEerhHgOZekoA7W
+         VLUkH0YHCrVYrzpBbv5tsNVOfNUjt7XodfO8g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=JuseYW54efpSu/lgMf1oo5gGl0WQN+PezM3iswx8YKo=;
-        b=CUwlJrqXF5EkhdtLFWn3NC4W9/0zFUtw8HYwFjLPw+cugeb60pShoRwHxUkMHG/RDh
-         DkWbDRI3cahbL+23Z2G7968gjm8D0uRCdQ8OQrez73rrZfSFEcYcEut1WKF1jkCBLh7o
-         4AtKEjey7PRz3ghY+8DWWzyvMtz+Xu8qQS2Q15CXTjUBvAu5vlrs8rmNAgNyViihOn/Y
-         kC6/zD3tSbYvkHbWJQpsavv6mYkrHozIaazbi6OxeY48eW/vVNrsePbXdyeDFQY0hfEz
-         ywcRSxC/XsYrLM3o85Co+Cv0409g0iGhIkgYvd+TpdPH1Pyd55NuBsXgHiq+NuxP+fAf
-         j3nA==
-X-Gm-Message-State: APt69E0SI0rMta3Y3y36/HfwSOj89fEiAji8QNJyjYBYogOaZhLi+0IR
-        x96m2T8rq0A/nzHlpmg1iMkniSYkQ5+rcBx64jtfkw==
-X-Google-Smtp-Source: AAOMgpcfQdwkAulEJGwyJbAv5rg+xkvekhn45DWhVBn8CjSXyX3FIbRwFp2QIiu0Yj7U1p7Bk26lhD+Ys74wJ9UAzIo=
-X-Received: by 2002:a6b:5d09:: with SMTP id r9-v6mr3645293iob.170.1530079753994;
- Tue, 26 Jun 2018 23:09:13 -0700 (PDT)
+        bh=AqOWllTxKfSX+imZ60cQVNm+iZIL00wVmtqfZ5jpCzk=;
+        b=ChXyrqV4W5j5Qska7KfcHsbYStwldJihmiiyjrLad6IUpKrflBjxCGMT4tl/YMqEbc
+         V574S5QEqNYP4QiuoGihQvIxHwI8FIUK9v6nDg2ZYKKiLbnoR0Yv/XVY0Ch5Y150yrMD
+         NAJLCpjEFIAs1mN8Ys2nbl+efV4iYyxJtjfF04dFoT4l68EHbYopYhZekJrTz0HMQbyh
+         PCVvbL86Jm58P4Y8XgcKa8pGV+jhEmoiCP5ARi4230/aScBN7XS1WQCPSDINe892H09S
+         ixo2GbhSFpboRDs8Z62mdHFp6lFTzoTOX/DiYPqw5XP21xXgyfeuyz+nY7owk5foQTK8
+         NRBw==
+X-Gm-Message-State: APt69E3NKAec6W1EKHsozTn22xcflK/EcQiTzWMXy6qn1rPPAdMLAIn0
+        RzAse3h0RwjpTHy/cEywIzsxQnOxW6JUTwV8t1hsLw==
+X-Google-Smtp-Source: AAOMgpfegIr554KG8jGOBFV5H2QE3d4Wal+s0QCWWrSESb2uZ8XH3yaHP2/ATolQ0RY7Hycn/2sLJBYyMCOEkFWoP/g=
+X-Received: by 2002:aca:c692:: with SMTP id w140-v6mr2397418oif.284.1530079799719;
+ Tue, 26 Jun 2018 23:09:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 23:09:13
- -0700 (PDT)
-In-Reply-To: <20180627060257.GD18756@yexl-desktop>
-References: <1529980892-11833-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <201806261053.B3CmI5Dm%fengguang.wu@intel.com> <FFF73D592F13FD46B8700F0A279B802F45FD1614@ORSMSX111.amr.corp.intel.com>
- <20180627060257.GD18756@yexl-desktop>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 27 Jun 2018 08:09:13 +0200
-Message-ID: <CAKv+Gu8bQKnpHbGS2S3RwTErP_F3o8mogc4bAbtX1r7=Fyp=NA@mail.gmail.com>
-Subject: Re: [kbuild-all] [PATCH] efi: Free existing memory map before
- installing new memory map
-To:     Ye Xiaolong <xiaolong.ye@intel.com>
-Cc:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
-        lkp <lkp@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Laszlo Ersek <lersek@redhat.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        "kbuild-all@01.org" <kbuild-all@01.org>,
-        Dave Young <dyoung@redhat.com>
+Received: by 2002:a4a:79c:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 23:09:59 -0700 (PDT)
+In-Reply-To: <CAKNRAJW-7BUCRwiUneW+pDU4k4jXY6S5XNxAJCmQnE9AkP2ooA@mail.gmail.com>
+References: <20180608071146.110567-1-louiscollard@chromium.org>
+ <20180618180943.GD20697@linux.intel.com> <CAKNRAJW-7BUCRwiUneW+pDU4k4jXY6S5XNxAJCmQnE9AkP2ooA@mail.gmail.com>
+From:   Louis Collard <louiscollard@chromium.org>
+Date:   Wed, 27 Jun 2018 14:09:59 +0800
+Message-ID: <CAKNRAJU98YMzATxHR9grC7sdXxmv-cscrSZJOqKk+Laf1nV=Mg@mail.gmail.com>
+Subject: Re: [PATCH] tpm: Allow tpm_tis drivers to set hwrng quality.
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 June 2018 at 08:02, Ye Xiaolong <xiaolong.ye@intel.com> wrote:
-> Hi,
->
-> On 06/26, Prakhya, Sai Praneeth wrote:
->>>
->>> Hi Sai,
->>>
->>> Thank you for the patch! Yet something to improve:
->>>
->>> [auto build test ERROR on linus/master]
->>> [also build test ERROR on v4.18-rc2 next-20180625] [if your patch is applied to
->>> the wrong git tree, please drop us a note to help improve the system]
->>
->>Since efi_memmap_free() is a recently introduced API [1], please note that the patch
->>is based on efi tree @https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git
->
-> I noticed the official efi tree recored in MAINTAINERS is git://git.kernel.org/pub/scm/linux/kernel/git/mfleming/efi.git,
-> are they identical?
->
+Hi sorry I'm not sure I understand; I based the change on linux-next
+master, let me know if I should be using something else. The change is
+not dependent on https://patchwork.kernel.org/patch/10453893/
 
-Which version of MAINTAINERS did you look at?
-
-> EXTENSIBLE FIRMWARE INTERFACE (EFI)
-> M:      Matt Fleming <matt@codeblueprint.co.uk>
-> L:      linux-efi@vger.kernel.org
-> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/mfleming/efi.git
-> S:      Maintained
-> F:      Documentation/efi-stub.txt
-> F:      arch/ia64/kernel/efi.c
-> F:      arch/x86/boot/compressed/eboot.[ch]
-> F:      arch/x86/include/asm/efi.h
-> F:      arch/x86/platform/efi/*
-> F:      drivers/firmware/efi/*
-> F:      include/linux/efi*.h
+On Wed, Jun 27, 2018 at 1:28 PM, Louis Collard
+<louiscollard@chromium.org> wrote:
+> Hi sorry I'm not sure I understand; I based the change on linux-next master,
+> let me know if I should be using something else. The change is not dependent
+> on https://patchwork.kernel.org/patch/10453893/
 >
->
-> Thanks,
-> Xiaolong
->
+> On Tue, Jun 19, 2018 at 2:09 AM, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
 >>
->>[1] https://lkml.org/lkml/2018/6/22/39
+>> On Fri, Jun 08, 2018 at 03:11:46PM +0800, Louis Collard wrote:
+>> > Adds plumbing required for drivers based on tpm_tis to set hwrng
+>> > quality.
+>> >
+>> > Signed-off-by: Louis Collard <louiscollard@chromium.org>
 >>
->>Regards,
->>Sai
->>_______________________________________________
->>kbuild-all mailing list
->>kbuild-all@lists.01.org
->>https://lists.01.org/mailman/listinfo/kbuild-all
+>> NAK because this not connected to the current GIT tree (should probably
+>> make a patch set?).
+>>
+>> /Jarkko
+>
+>
