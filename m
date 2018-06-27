@@ -2,306 +2,329 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC57C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EA8C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAB4526671
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:00:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB4526671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DF6826676
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:01:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TdjRwkxn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF6826676
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934313AbeF0KAw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 06:00:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42112 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934289AbeF0KAt (ORCPT
+        id S934333AbeF0KBK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 06:01:10 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40014 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934289AbeF0KBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 06:00:49 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5R9xI0W063787
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:00:48 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jv8dhg46h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:00:48 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 27 Jun 2018 11:00:45 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 11:00:43 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RA0gJZ31719578
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 10:00:42 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0810A406E;
-        Wed, 27 Jun 2018 11:00:33 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 51EF2A4069;
-        Wed, 27 Jun 2018 11:00:33 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Jun 2018 11:00:33 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v3 0/8] vfio: ccw: Refactoring the VFIO CCW state machine
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <1528790210-19535-1-git-send-email-pmorel@linux.ibm.com>
- <20180613165151.056ecaec.cohuck@redhat.com>
- <bd5fb44e-3395-63bc-23a5-b9b6a8a8f1ef@linux.ibm.com>
- <20180619160045.13caf12e.cohuck@redhat.com>
- <63d1948a-3844-26e3-fc4f-0e7da7b4f515@linux.ibm.com>
- <20180626180052.7412ee79.cohuck@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Wed, 27 Jun 2018 12:00:41 +0200
+        Wed, 27 Jun 2018 06:01:07 -0400
+Received: by mail-wm0-f65.google.com with SMTP id z13-v6so4788551wma.5
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 03:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4F+vRqty9yOr4MR5geQ4CUWXZ3Le3vXUPgCr2R4pLpk=;
+        b=TdjRwkxnLVY8L4dr5ZTwNRbc7d2Pgpg61zY09QaCSPiWnr7qlLPDxXNI5I8JJxXeRT
+         d+9L2/1rz1Z4xxeozVxNB3IaAAIjUVzN+WvfUa8iapycN82tyzL8eN5rHrklBs/amw61
+         8YdpfPBAIyoyzBbnXnvfLBwxIJjKLO8qytjUQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4F+vRqty9yOr4MR5geQ4CUWXZ3Le3vXUPgCr2R4pLpk=;
+        b=X3spWLVfFwnC4wS2ZVWUSXiCTQg+iIkdCmxigTznFLxlvsteTXi/vp8/iJ4sWERHs5
+         uXsPEXOKBK6yujsJEsWVqoewqfqy6Q3piyYMjUrtXnlySZMCSDZCiYDAds0AwZiqKt7h
+         fTXD+ZX8DSD8EKEgPTogyRZQP/BP44DKMRkUqWBIIia9Z6e/WQUTLR0JcI7Ht5Bw9li4
+         3vxooY4p6QfXKw0gaPTl9UkFonjNkUzog1IUiXmwsMbIr+l0oKX4otADC2Rw4oVbgwTy
+         Wn8Ymy5DWhE9Iqrqoh5m3easbTKFVZhJRFt1ky19MDgPZFr6a18iFDI7y2rvpeTfgGUB
+         6/iA==
+X-Gm-Message-State: APt69E3rC6McgWCSO0OdyEym3BK7f/VJsw0ZpTsEZB2tW/oc7BbRMy3r
+        nJhMb5IpJO7RB1YVhEmIjzx7iQ==
+X-Google-Smtp-Source: AAOMgpdCxlBf+g4deSJOlxdQr16jSkpPj19IgBSxKMXSvwkX530cfqSNrOn1oGi5fHpFJfeMyEMXMA==
+X-Received: by 2002:a1c:58d1:: with SMTP id m200-v6mr4658761wmb.160.1530093666256;
+        Wed, 27 Jun 2018 03:01:06 -0700 (PDT)
+Received: from [192.168.8.101] ([37.170.252.174])
+        by smtp.googlemail.com with ESMTPSA id j131-v6sm6194726wmg.24.2018.06.27.03.01.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 03:01:05 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] clocksource/drivers/mtk_systimer: Add support for
+ Mediatek SoCs
+To:     Stanley Chu <stanley.chu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
+References: <1530086039-3763-1-git-send-email-stanley.chu@mediatek.com>
+ <1530086039-3763-3-git-send-email-stanley.chu@mediatek.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <8cff2306-ba78-a537-599e-14a4363ed71d@linaro.org>
+Date:   Wed, 27 Jun 2018 12:01:09 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180626180052.7412ee79.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1530086039-3763-3-git-send-email-stanley.chu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18062710-0028-0000-0000-000002D5710A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062710-0029-0000-0000-0000238CD8A1
-Message-Id: <3406a24b-1e3a-ac23-c5d0-87c9a3b5515c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270115
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/06/2018 18:00, Cornelia Huck wrote:
-> On Tue, 26 Jun 2018 13:04:12 +0200
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
->
->> On 19/06/2018 16:00, Cornelia Huck wrote:
->>> On Thu, 14 Jun 2018 10:06:31 +0200
->>> Pierre Morel<pmorel@linux.ibm.com>  wrote:
->>>   
-...snip...
->> The goal of the state machine is to describe the device driver state.
->> Not the device state which is hold by the CIO level.
-> I don't think there really is such a thing as "device driver state" (or
-> maybe I don't understand what you mean by it). The state is attached to
-> the individual device, isn't it?
-Yes but it is related to the software handling the device and not to the 
-device.
-This is a difference between QEMU, Linux VFIO driver and Hardware.
+On 27/06/2018 09:53, Stanley Chu wrote:
+> This patch adds a new clock event for the timer
+> found on the Mediatek SoCs.
+> 
+> The Mediatek System Timer has several 32-bit timers.
+> Only one timer is used by this driver as a clock event
+> supporting oneshot events.
+> 
+> The System Timer can be run with two clocks. A 13 MHz system
+> clock and the RTC clock running at 32 KHz. This implementation
+> uses the system clock with no clock source divider.
+> The interrupts are shared between the different timers.
+> We just enable one interrupt for the clock event. The clock
+> event timer is used by all cores.
+> 
+> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+> ---
+>  drivers/clocksource/Kconfig        |   13 +++-
+>  drivers/clocksource/Makefile       |    1 +
+>  drivers/clocksource/mtk_systimer.c |  132 ++++++++++++++++++++++++++++++++++++
 
-In my point of view:
+Please merge mtk_systimer.c and mtk_timer.c into a single file:
 
-QEMU                  : Emulates a device, internal state is state of 
-the device
-Linux VFIO driver: Handle the device, internal state is driver state
-Hardware            : obviously get the device state
+timer-mediatek.c
 
+Patch 1:
 
->
->> I think this has lead to some confusion since I tried to keep the old
->> naming convention.
->> So, I agree that a state named "NON_INIT" or "UNCONFIGUED" would be better
->> to distinguish it from the device state "NOT_OPERATIONAL"
->>
->>> Also, we need to be careful with the virtual machine vs. guest
->>> terminology. The only thing that has an impact from the guest is when
->>> it does I/O and when an interrupt is generated as a result (i.e., the
->>> IDLE/BUSY transitions). The other transitions are triggered by virtual
->>> machine setup.
->> Absolutely.
->>
->>>> ------------------------------------------------------------
->>>> | STANDBY          | A guest is associated but not started |
->>> This is basically "device is bound to driver, but no mdev has been set
->>> up".
->> When the device is bound to the driver, the device driver
->> is still in NOT_OPERATIONAL state.
->>
->> The transition to STANDBY is done when the virtual machine starts and
->> opens the mediated device.
->> Note that the device is still not usable until it is reseted.
-> Hm, isn't that transition happening when the mdev is created?
-No, when the mdev is created the VM is not started.
-The STANDBY state is entered when the mdev_open is called,
-this is when the VFIO framework is initialized as QEMU starts.
+ git mv mtk_timer.c timer-mediatek.c
+ Change the name in Makefile
 
-When the mdev is created the mdev_create is called but do not
-induce any state change.
+Patch 2:
 
->
-...snip...
->> Now you are talking about the driver :) This should probably be done
->>> for the other states as well.
->> Ill update the description to make clear that the state is the
->> driver state (device driver) and not the device state.
->> The device state is handled by the firmware.
-> Now you have managed to confuse me completely... isn't the firmware
-> only handling the (real) subchannel state?
+ Change function prefix name to _gpt_
 
-Yes and QEMU the virtual one.
-But the driver does not need to handle the device state
-but the driver state. Which is quite different.
+Patch 2.1 [optional but recommended] :
 
->
+ Move the gpt's init code to timer-of
 
->>> Isn't that rather "an mdev is created"?
->> No, ONLINE is triggered by VFIO_RESET, after the mdev has been created
->> and when the VM is started or restarted by QEMU.
->>
->> I see that I did not do a good job describing what triggers the events.
->> I will try again in a dedicated document.
-> It might be good to combine the two.
+Patch 3:
 
-When mdev is created the VM does not exist, it is created by the admin.
-
-The mdev_open() is called once when the VM starts.
-VFIO_RESET is called on start and every time the VM is reseted.
-
-These are three different events occuring in the life of the driver.
-mdev creation do not influence the way the driver works.
-mdev open does, and issues the INIT event
-VFIO_RESET does and issues the ONLINE event
-
->
->>>   
->>>> | |                                       |
->>>> |                  | triggered by: vfio_reset              |
->>>> |                  | action: enable SC                     |
->>>> |                  | state on success: IDLE                |
->>>> |                  | state on error  : STANDBY             |
->>> What happens if the subchannel is not operational when we try to get it
->>> ready? Can it go to NOT_OPERATIONAL in that case?
->> I think we have a confusion between the sub-channel being non operational
->> and the device driver being non operational.
->> Here, the device driver is operational, even the device may not.
-> How can something be operational if the device is not? It could be in a
-> state like the ccw device's disconnected state, but it's certainly not
-> ready for requests.
-
-The driver may be operational even the device is not.
-Depending on the protocol between device and driver it allows
-the driver to reset the device.
-We have two drivers here speaking with the device, the one in the guest
-and the VFIO driver.
-The VFIO driver works is to handle the virtualization infrastructure,
-not to handle the device. Handling the device is done by the guest
-driver.
-
->
->> For the VM perspective, if the device is not operational we send a RESET.
->>
->> For the guest perspective we can do what ever instruction we needs to
->> get the device operational, therefor we need the driver to be operational
->> to process the instruction.
-> Ah, do you mean 'subchannel enabled'? I was thinking about 'device
-> dead, we get cc 3 or somesuch'.
-
-What can we do on the host level that the guest can not do?
-If we have a way to retrieve a dead device in the host, shouldn't
-we give the guest this possibility?
-
-Speaking about sub-channel enabled:
-
-We currently have very restricted possibilities for the guest
-to manage the sub-channel or even to get real information
-on the sub-channel.
-Dong-Jia began working in this direction with his last patch series
-and I think it is a way to follow.
-My point of view is that we should not do too much in the VFIO
-driver but only take care of the virtualization of the SCHIB.
-But this is beyond the scope of this patch .
-
->
-
->>>> |                  | state on error  : IDLE                |
->>> Should there be any way to drop to NOT_OPERATIONAL as well? We'll
->>> probably get a notification from the common I/O layer if that happens,
->>> though.
->> I think this is the duty of the guest to handle this kind of thing.
->> The device driver must stay operational.
-> See above. I think we'll get a notification from the common I/O layer,
-> and it probably makes sense to inject the same notification (CRW) into
-> the guest.
-
-Absolutely, I agree 100%
-
->
->>>   
-
-...snip...
-
-  
-
->>> This is the common I/O layer's sch_event callback. That can mean
->>> different things:
->>> - Something regarding the paths to the device changed. We can translate
->>>     that to "schib updated".
->>> - Device is gone. This is a different situation; we may either try to
->>>     implement the disconnected state, or we may give up the device.
->>>
->>> Also, can't we get this event in QUIESCING or STANDBY as well?
->> I think it should be ignored in STANDBY as we did not even
->> start to use the sub-channel we have no information on it
->> at that moment.
-> As long as we do update it some time before we need the information, ok.
-
-AFAIK we currently never forward this information to the guest,
-when we do it we will need to virtualize this information.
+ Add code for syst in timer-mediatek.c
 
 
->
->> In QUIESCING we may have to handle it for internal purpose
->> to make sure to shutdown smoothly.
->> I will work on this again.
->> (Still this OFFLINE refactoring)
->>
->>>   
->>>> | |                                       |
->>>> |                  | triggered by: sch_event               |
->>>> |                  | action: Store the SCHIB in IO region  |
->>>> |                  | state on success: no change           |
->>> As said, we may want some different handling for "device gone"
->>> situations.
->>>
->>> Also, what happens if we get that event in BUSY? Is the I/O still
->>> running?
->> AFAIK yes, it is an asynchronous event.
->> It can happen during BUSY.
->> However AFAIU we still get an IRQ even we get the device gone
->> during I/O operation.
-> It depends. We either get a deferred cc 3, or a machine check (but no
-> interrupt).
 
-I understood from current code that all kind of CRW do not
-imply that the sub-channel is gone.
-I must investigate a little more.
+A couple of comments below.
 
-Anyway, the CRW should be handled and forwarded to the guest
-but I would prefer not to change too much in this series,
-shouldn't this changes be part of a next series?
+>  3 files changed, 144 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/clocksource/mtk_systimer.c
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index dec0dd8..362c110 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -442,12 +442,21 @@ config SYS_SUPPORTS_SH_CMT
+>          bool
+>  
+>  config MTK_TIMER
+> -	bool "Mediatek timer driver" if COMPILE_TEST
+> +	bool "Mediatek general purpose timer driver" if COMPILE_TEST
+>  	depends on HAS_IOMEM
+>  	select TIMER_OF
+>  	select CLKSRC_MMIO
+>  	help
+> -	  Support for Mediatek timer driver.
+> +	  Support for Mediatek General Purpose Timer (GPT) driver.
+> +
+> +config MTK_TIMER_SYSTIMER
+> +	bool "Mediatek system timer driver" if COMPILE_TEST
+> +	depends on HAS_IOMEM
+> +	select TIMER_OF
+> +	select CLKSRC_MMIO
+> +	help
+> +	  Support for Mediatek System Timer (sys_timer) driver used as
+> +	  a clock event supporting oneshot events.
+>  
+>  config SPRD_TIMER
+>  	bool "Spreadtrum timer driver" if EXPERT
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index 00caf37..cdd34b2 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -50,6 +50,7 @@ obj-$(CONFIG_FSL_FTM_TIMER)	+= fsl_ftm_timer.o
+>  obj-$(CONFIG_VF_PIT_TIMER)	+= vf_pit_timer.o
+>  obj-$(CONFIG_CLKSRC_QCOM)	+= qcom-timer.o
+>  obj-$(CONFIG_MTK_TIMER)		+= mtk_timer.o
+> +obj-$(CONFIG_MTK_TIMER_SYSTIMER)	+= mtk_systimer.o
+>  obj-$(CONFIG_CLKSRC_PISTACHIO)	+= time-pistachio.o
+>  obj-$(CONFIG_CLKSRC_TI_32K)	+= timer-ti-32k.o
+>  obj-$(CONFIG_CLKSRC_NPS)	+= timer-nps.o
+> diff --git a/drivers/clocksource/mtk_systimer.c b/drivers/clocksource/mtk_systimer.c
+> new file mode 100644
+> index 0000000..77161bb
+> --- /dev/null
+> +++ b/drivers/clocksource/mtk_systimer.c
+> @@ -0,0 +1,132 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +//  Copyright (C) 2018 MediaTek Inc.
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/irqreturn.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/clocksource.h>
+> +#include <linux/io.h>
+> +#include "timer-of.h"
+> +
+> +/* registers */
+> +#define STMR_CON                  (0x0)
+> +#define STMR_VAL                  (0x4)
+> +
+> +#define TIMER_REG_CON(to)         (timer_of_base(to) + STMR_CON)
+> +#define TIMER_REG_VAL(to)         (timer_of_base(to) + STMR_VAL)
+> +
+> +/* STMR_CON */
+> +#define STMR_CON_EN               BIT(0)
+> +#define STMR_CON_IRQ_EN           BIT(1)
+> +#define STMR_CON_IRQ_CLR          BIT(4)
+> +
+> +#define TIMER_SYNC_TICKS          3
+> +
+> +static void mtk_stmr_reset(struct timer_of *to)
+> +{
+> +	/* Clear IRQ */
+> +	writel(STMR_CON_IRQ_CLR | STMR_CON_EN, TIMER_REG_CON(to));
+> +
+> +	/* Reset counter */
+> +	writel(0, TIMER_REG_VAL(to));
+> +
+> +	/* Disable timer */
+> +	writel(0, TIMER_REG_CON(to));
 
-best regards,
+Wouldn't make sense to clear the interrupt after disabling the timer ?
 
-Pierre
+> +}
+> +
+> +static void mtk_stmr_ack_irq(struct timer_of *to)
+> +{
+> +	mtk_stmr_reset(to);
+> +}
+> +
+> +static irqreturn_t mtk_stmr_handler(int irq, void *dev_id)
+> +{
+> +	struct clock_event_device *clkevt = (struct clock_event_device *)dev_id;
+> +	struct timer_of *to = to_timer_of(clkevt);
+> +
+> +	mtk_stmr_ack_irq(to);
+> +	clkevt->event_handler(clkevt);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int mtk_stmr_clkevt_next_event(unsigned long ticks,
+> +				      struct clock_event_device *clkevt)
+> +{
+> +	struct timer_of *to = to_timer_of(clkevt);
+> +
+> +	/*
+> +	 * reset timer first because we do not expect interrupt is triggered
+> +	 * by old compare value.
+> +	 */
+> +	mtk_stmr_reset(to);
+> +
+> +	writel(STMR_CON_EN, TIMER_REG_CON(to));
+> +
+> +	writel(ticks, TIMER_REG_VAL(to));
+> +
+> +	writel(STMR_CON_EN | STMR_CON_IRQ_EN, TIMER_REG_CON(to));
+> +
+> +	return 0;
+> +}
+> +
+> +static int mtk_stmr_clkevt_shutdown(struct clock_event_device *clkevt)
+> +{
+> +	mtk_stmr_reset(to_timer_of(clkevt));
+> +
+> +	return 0;
+> +}
+> +
+> +static int mtk_stmr_clkevt_resume(struct clock_event_device *clkevt)
+> +{
+> +	return mtk_stmr_clkevt_shutdown(clkevt);
+> +}
+> +
+> +static int mtk_stmr_clkevt_oneshot(struct clock_event_device *clkevt)
+> +{
+> +	return 0;
+> +}
+> +
+> +static struct timer_of to = {
+> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
+> +
+> +	.clkevt = {
+> +		.name = "mtk-clkevt",
+> +		.rating = 300,
+> +		.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_ONESHOT,
+> +		.set_state_shutdown = mtk_stmr_clkevt_shutdown,
+> +		.set_state_oneshot = mtk_stmr_clkevt_oneshot,
+> +		.tick_resume = mtk_stmr_clkevt_resume,
+> +		.set_next_event = mtk_stmr_clkevt_next_event,
+> +		.cpumask = cpu_possible_mask,
+> +	},
+> +
+> +	.of_irq = {
+> +		.handler = mtk_stmr_handler,
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL | IRQF_TRIGGER_HIGH |
+
+Why do you need IRQF_TRIGGER_HIGH ?
+
+> +			 IRQF_PERCPU,
+
+Why IRQF_PERCPU ?
+
+> +	},
+> +};
+> +
+> +static int __init mtk_stmr_init(struct device_node *node)
+> +{
+> +	int ret;
+> +
+> +	ret = timer_of_init(node, &to);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mtk_stmr_reset(&to);
+> +
+> +	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
+> +					TIMER_SYNC_TICKS, 0xffffffff);
+> +
+> +	pr_info("mtk_stmr: irq=%d, rate=%lu, max_ns: %llu, min_ns: %llu\n",
+> +		timer_of_irq(&to), timer_of_rate(&to),
+> +		to.clkevt.max_delta_ns, to.clkevt.min_delta_ns);
+> +
+> +	return ret;
+> +}
+> +
+> +TIMER_OF_DECLARE(mtk_systimer, "mediatek,sys_timer", mtk_stmr_init);
+
+No "mediatek,sys_timer" but eg. "mediatek,mt6765", so it is consistent
+with the DT binding.
 
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
