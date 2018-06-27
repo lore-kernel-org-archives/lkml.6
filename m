@@ -2,81 +2,89 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D41C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91CCC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30699263AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:54:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BsUKJYQO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30699263AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 756C12408F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:05:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756C12408F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933635AbeF0KyK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 06:54:10 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:55330 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932257AbeF0KyJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 06:54:09 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5RArBYL040002;
-        Wed, 27 Jun 2018 05:53:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530096791;
-        bh=buQgOaZevNHCqOq7zkPuAdnaLPOgeKIGwS5W4dKb4cI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=BsUKJYQOnAHDIvKI8cRzP6ACf0cOgvHnV6I1n/2nLhFUOtToKrcf1AD0AmATEQ/IF
-         ci3zYDXoMBnoNClhZAl4wlJtjYbCzerCJ2BX9igLtIUQA1A4MBCedud9jIjySHFOLQ
-         XCV/fydZHJZLPG9frawk7CHvx7/lsoAycBPUs5Wo=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RArBg9002697;
-        Wed, 27 Jun 2018 05:53:11 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 27
- Jun 2018 05:53:11 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 27 Jun 2018 05:53:11 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RAr99V003873;
-        Wed, 27 Jun 2018 05:53:10 -0500
-Subject: Re: [PATCH] ARM: dts: da850: Add power-domains to PWM nodes
-To:     David Lechner <david@lechnology.com>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     Kevin Hilman <khilman@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180626152817.16803-1-david@lechnology.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <52fe7982-9bee-1b45-a939-59ec5cff756d@ti.com>
-Date:   Wed, 27 Jun 2018 16:23:09 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1754002AbeF0LFa (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 07:05:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40757 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753144AbeF0LF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 07:05:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 57D08AC25;
+        Wed, 27 Jun 2018 11:05:28 +0000 (UTC)
+Date:   Wed, 27 Jun 2018 13:05:27 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        JianKang Chen <chenjiankang1@huawei.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, xieyisheng1@huawei.com,
+        guohanjun@huawei.com, wangkefeng.wang@huawei.com,
+        Huaisheng Ye <yehs2007@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] mm: drop VM_BUG_ON from __get_free_pages
+Message-ID: <20180627110527.GM32348@dhcp22.suse.cz>
+References: <20180622162841.25114-1-mhocko@kernel.org>
+ <6886dee0-3ac4-ef5d-3597-073196c81d88@suse.cz>
+ <20180626100416.a3ff53f5c4aac9fae954e3f6@linux-foundation.org>
+ <20180627073420.GD32348@dhcp22.suse.cz>
+ <e0f4426d-1b7c-e590-aae0-e8f7ae3bb948@suse.cz>
+ <20180627075403.GG32348@dhcp22.suse.cz>
+ <fee289c8-fa8f-d9d6-be33-fdd20c71cbca@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180626152817.16803-1-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fee289c8-fa8f-d9d6-be33-fdd20c71cbca@suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 26 June 2018 08:58 PM, David Lechner wrote:
-> This adds the power-domains property to both the ECAP and EHRPWM PWM
-> nodes. Both have drivers that use pm_runtime to enable the clocks, so
-> they need this property in order to find and enable the clock properly.
+On Wed 27-06-18 12:47:39, Vlastimil Babka wrote:
+> On 06/27/2018 09:54 AM, Michal Hocko wrote:
+> > On Wed 27-06-18 09:50:01, Vlastimil Babka wrote:
+> >> On 06/27/2018 09:34 AM, Michal Hocko wrote:
+> >>> On Tue 26-06-18 10:04:16, Andrew Morton wrote:
+> >>>
+> >>> And as I've argued before the code would be wrong regardless. We would
+> >>> leak the memory or worse touch somebody's else kmap without knowing
+> >>> that.  So we have a choice between a mem leak, data corruption k or a
+> >>> silent fixup. I would prefer the last option. And blowing up on a BUG
+> >>> is not much better on something that is easily fixable. I am not really
+> >>> convinced that & ~__GFP_HIGHMEM is something to lose sleep over.
+> >>
+> >> Maybe put the fixup into a "#ifdef CONFIG_HIGHMEM" block and then modern
+> >> systems won't care? In that case it could even be if (WARN_ON_ONCE(...))
+> >> so future cases with wrong expectations would become known.
+> > 
+> > Yes that could be done as well. Or maybe we can make __GFP_HIGHMEM 0 for
+> > !HIGHMEM systems. Does something really rely on it being non-zero?
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
+> I guess gfp_zone() would have to be checked, dunno about the rewrite of
+> GFP_ZONE_TABLE (CCing people).
+> In general checks like "if (flags & __GFP_HIGHMEM)" would become false,
+> which probably should not be a problem, unless something expect the flag
+> to be there and errors out if it isn't.
 
-Applied for v4.19
+Well, __GFP_HIGHMEM should be basically GFP_KERNEL for !highmem systems.
+But most checks I have seen try to mask it off. Having it 0 would help
+to reduce at least some code.
 
-Thanks,
-Sekhar
+-- 
+Michal Hocko
+SUSE Labs
