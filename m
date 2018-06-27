@@ -2,214 +2,133 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7920C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F25C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA4125E7C
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:13:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA4125E7C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EB1824619
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:13:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB1824619
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934966AbeF0QNc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:13:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58106 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964884AbeF0QNb (ORCPT
+        id S935039AbeF0QNr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:13:47 -0400
+Received: from g9t5008.houston.hpe.com ([15.241.48.72]:50038 "EHLO
+        g9t5008.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934758AbeF0QNo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:13:31 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RG3cS3136494
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:13:31 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvdc3htx4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:13:30 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 12:13:29 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 12:13:25 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RGDOfR10879456
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 16:13:24 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AEA26B2065;
-        Wed, 27 Jun 2018 12:13:16 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 76603B205F;
-        Wed, 27 Jun 2018 12:13:16 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Jun 2018 12:13:16 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1692716C3E2E; Wed, 27 Jun 2018 09:15:31 -0700 (PDT)
-Date:   Wed, 27 Jun 2018 09:15:31 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 2/2] rcu: Make expedited GPs handle CPU 0
- being offline
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180625224308.GA10064@linux.vnet.ibm.com>
- <20180625224332.10596-2-paulmck@linux.vnet.ibm.com>
- <20180626093820.GG2494@hirez.programming.kicks-ass.net>
- <20180626104447.GG9125@tardis>
- <20180626114652.GH9125@tardis>
- <20180626192746.GJ3593@linux.vnet.ibm.com>
- <20180627024201.GA27704@tardis>
+        Wed, 27 Jun 2018 12:13:44 -0400
+Received: from G4W9119.americas.hpqcorp.net (exchangepmrr1.us.hpecorp.net [16.210.20.214])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g9t5008.houston.hpe.com (Postfix) with ESMTPS id 052CC7F;
+        Wed, 27 Jun 2018 16:13:41 +0000 (UTC)
+Received: from G9W8456.americas.hpqcorp.net (2002:10d8:a15f::10d8:a15f) by
+ G4W9119.americas.hpqcorp.net (2002:10d2:14d6::10d2:14d6) with Microsoft SMTP
+ Server (TLS) id 15.0.1367.3; Wed, 27 Jun 2018 16:13:25 +0000
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (15.241.52.10) by
+ G9W8456.americas.hpqcorp.net (16.216.161.95) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Wed, 27 Jun 2018 16:13:24 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.22) by
+ AT5PR8401MB1044.NAMPRD84.PROD.OUTLOOK.COM (10.169.7.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.20; Wed, 27 Jun 2018 16:13:22 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::51c9:8d4d:952d:94c8]) by AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::51c9:8d4d:952d:94c8%5]) with mapi id 15.20.0906.018; Wed, 27 Jun 2018
+ 16:13:22 +0000
+From:   "Kani, Toshi" <toshi.kani@hpe.com>
+To:     "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Hocko, Michal" <MHocko@suse.com>,
+        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 2/3] ioremap: Update pgtable free interfaces with addr
+Thread-Topic: [PATCH v4 2/3] ioremap: Update pgtable free interfaces with addr
+Thread-Index: AQHUDiFnEX50gQPXr0aGJMF/fXfE2KR0QpSAgAAEJ4A=
+Date:   Wed, 27 Jun 2018 16:13:22 +0000
+Message-ID: <1530115885.14039.295.camel@hpe.com>
+References: <20180627141348.21777-1-toshi.kani@hpe.com>
+         <20180627141348.21777-3-toshi.kani@hpe.com>
+         <20180627155632.GH30631@arm.com>
+In-Reply-To: <20180627155632.GH30631@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=toshi.kani@hpe.com; 
+x-originating-ip: [15.219.147.8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB1044;7:jnRQFctSEFaA7PUrL0s1fl25+BVtA/b5tbVIy/KKlulGIiHjQg6/0GNNlgkbB2TGki0hkElfg/h8fiI+0fdwC/tC2xwJG9L4xVW4k+RUxlku1xvNYCSIKUPwGSXb7BagdP2E8oAa0O9qM9HDUUmnjAiGILJarzELU3zdNFSlBwlprMwpda5TXb1RdVzuN5nnQm9suXMF1Zbebl7G7/Bp+cfLYDSS4ihktgMjoe2ayJC+NWtmPjR+sbX0NsVoFIoa
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: b28d698e-3410-4821-df9a-08d5dc48e7db
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB1044;
+x-ms-traffictypediagnostic: AT5PR8401MB1044:
+x-ld-processed: 105b2061-b669-4b31-92ac-24d304d195dc,ExtAddr
+x-microsoft-antispam-prvs: <AT5PR8401MB1044271AAD716494D1FD5F4082480@AT5PR8401MB1044.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AT5PR8401MB1044;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB1044;
+x-forefront-prvs: 0716E70AB6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39860400002)(346002)(376002)(366004)(189003)(199004)(86362001)(6246003)(11346002)(99286004)(446003)(486006)(3846002)(966005)(6116002)(476003)(5640700003)(14454004)(6512007)(66066001)(2616005)(6486002)(14444005)(256004)(36756003)(53936002)(4326008)(25786009)(229853002)(6306002)(6436002)(26005)(7416002)(97736004)(5660300001)(6916009)(8676002)(106356001)(8936002)(81156014)(68736007)(6506007)(76176011)(2420400007)(81166006)(186003)(102836004)(2351001)(2501003)(2900100001)(478600001)(54906003)(7736002)(15650500001)(105586002)(10710500007)(2906002)(305945005)(316002)(5250100002)(7110500001)(103116003);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB1044;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: kfdpEBR2GoreQW7TNbAhlBwfG+NYJ9Vpv91e6HH45+KjYmt6tXqSc8lFYAXld6unymC9E67AgaWDdtzd2ZbmtyTfRXciXLqxBB36sonJq5ROT6sa3w2fHSveoyFqF9o955n4W5lRqDkgXQMZY1soulY47Rc9Lja+U37iq59d+HlYtfGHql8Zp4RtCS0l/DHpY4Kp9Hz93efLsFswBnF6t5pN0qwMD3L+3MOD89vgLYTJ0YrT0kunYRTINbFsjputA4TNgoIn6VReSSqyHKAPId2AAGf4+4poEGD9p6CpvB97Qf+GdAgRgMaDvjjjCCLS6KcgM/Pz5b6gRVrWAydlHv4cxk8Jw9eQVwUGOb/v8ZQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <397C5A88CFE1164E80BA21374D6CCD34@NAMPRD84.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627024201.GA27704@tardis>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062716-2213-0000-0000-000002C0C98A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009264; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01053130; UDB=6.00539945; IPR=6.00831054;
- MB=3.00021883; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-27 16:13:29
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062716-2214-0000-0000-00005AA0A9A3
-Message-Id: <20180627161531.GB3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270173
+X-MS-Exchange-CrossTenant-Network-Message-Id: b28d698e-3410-4821-df9a-08d5dc48e7db
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2018 16:13:22.7595
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB1044
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 10:42:01AM +0800, Boqun Feng wrote:
-> On Tue, Jun 26, 2018 at 12:27:47PM -0700, Paul E. McKenney wrote:
-> > On Tue, Jun 26, 2018 at 07:46:52PM +0800, Boqun Feng wrote:
-> > > On Tue, Jun 26, 2018 at 06:44:47PM +0800, Boqun Feng wrote:
-> > > > On Tue, Jun 26, 2018 at 11:38:20AM +0200, Peter Zijlstra wrote:
-> > > > > On Mon, Jun 25, 2018 at 03:43:32PM -0700, Paul E. McKenney wrote:
-> > > > > > +		preempt_disable();
-> > > > > > +		for_each_leaf_node_possible_cpu(rnp, cpu) {
-> > > > > > +			if (cpu_is_offline(cpu)) /* Preemption disabled. */
-> > > > > > +				continue;
-> > > > > 
-> > > > > Create for_each_node_online_cpu() instead? Seems a bit pointless to
-> > > > > iterate possible mask only to then check it against the online mask.
-> > > > > Just iterate the online mask directly.
-> > > > > 
-> > > > > Or better yet, write this as:
-> > > > > 
-> > > > > 	preempt_disable();
-> > > > > 	cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
-> > > > > 	if (cpu > rnp->grphi)
-> > > > > 		cpu = WORK_CPU_UNBOUND;
-> > > > > 	queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-> > > > > 	preempt_enable();
-> > > > > 
-> > > > > Which is what it appears to be doing.
-> > > > > 
-> > > > 
-> > > > Make sense! Thanks ;-)
-> > > > 
-> > > > Applied this and running a TREE03 rcutorture. If all go well, I will
-> > > > send the updated patch.
-> > > > 
-> > > 
-> > > So the patch has passed one 30 min run for TREE03 rcutorture. Paul,
-> > > if it looks good, could you take it for your next spin or pull request
-> > > in the future? Thanks.
-> > 
-> > I ended up with the following, mostly just rewording the comment and
-> > adding a one-liner on the change.  Does this work for you?
-> 
-> Looks good to me. Only one thing I think we need to modify a little,
-> please see below:
-> 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > commit ef31fa78032536d594630d7bd315d3faf60d98ca
-> > Author: Boqun Feng <boqun.feng@gmail.com>
-> > Date:   Fri Jun 15 12:06:31 2018 -0700
-> > 
-> >     rcu: Make expedited GPs handle CPU 0 being offline
-> >     
-> >     Currently, the parallelized initialization of expedited grace periods uses
-> >     the workqueue associated with each rcu_node structure's ->grplo field.
-> >     This works fine unless that CPU is offline.  This commit therefore
-> >     uses the CPU corresponding to the lowest-numbered online CPU, or just
-> >     reports the quiescent states if there are no online CPUs on this rcu_node
-> >     structure.
-> 
-> better write "or just queue the work on WORK_CPU_UNBOUND if there are
-> no online CPUs on this rcu_node structure"? Because we currently don't
-> report the QS directly if all CPU are offline.
-> 
-> Thoughts?
-
-Any objections?  If I don't hear any by tomorrow morning (Pacific Time),
-I will make this change.
-
-							Thanx, Paul
-
-> Regards,
-> Boqun
-> 
-> >     
-> >     Note that this patch uses cpu_is_offline() instead of the usual
-> >     approach of checking bits in the rcu_node structure's ->qsmaskinitnext
-> >     field.  This is safe because preemption is disabled across both the
-> >     cpu_is_offline() check and the call to queue_work_on().
-> >     
-> >     Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> >     [ paulmck: Disable preemption to close offline race window. ]
-> >     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> >     [ paulmck: Apply Peter Zijlstra feedback on CPU selection. ]
-> > 
-> > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> > index c6385ee1af65..b3df3b770afb 100644
-> > --- a/kernel/rcu/tree_exp.h
-> > +++ b/kernel/rcu/tree_exp.h
-> > @@ -472,6 +472,7 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
-> >  static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
-> >  				     smp_call_func_t func)
-> >  {
-> > +	int cpu;
-> >  	struct rcu_node *rnp;
-> >  
-> >  	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("reset"));
-> > @@ -493,7 +494,13 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
-> >  			continue;
-> >  		}
-> >  		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
-> > -		queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
-> > +		preempt_disable();
-> > +		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
-> > +		/* If all offline, queue the work on an unbound CPU. */
-> > +		if (unlikely(cpu > rnp->grphi))
-> > +			cpu = WORK_CPU_UNBOUND;
-> > +		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-> > +		preempt_enable();
-> >  		rnp->exp_need_flush = true;
-> >  	}
-> >  
-> > 
-
-
+T24gV2VkLCAyMDE4LTA2LTI3IGF0IDE2OjU2ICswMTAwLCBXaWxsIERlYWNvbiB3cm90ZToNCj4g
+SGkgVG9zaGksDQo+IA0KPiBPbiBXZWQsIEp1biAyNywgMjAxOCBhdCAwODoxMzo0N0FNIC0wNjAw
+LCBUb3NoaSBLYW5pIHdyb3RlOg0KPiA+IEZyb206IENoaW50YW4gUGFuZHlhIDxjcGFuZHlhQGNv
+ZGVhdXJvcmEub3JnPg0KPiA+IA0KPiA+IFRoZSBmb2xsb3dpbmcga2VybmVsIHBhbmljIHdhcyBv
+YnNlcnZlZCBvbiBBUk02NCBwbGF0Zm9ybSBkdWUgdG8gYSBzdGFsZQ0KPiA+IFRMQiBlbnRyeS4N
+Cj4gPiANCj4gPiAgMS4gaW9yZW1hcCB3aXRoIDRLIHNpemUsIGEgdmFsaWQgcHRlIHBhZ2UgdGFi
+bGUgaXMgc2V0Lg0KPiA+ICAyLiBpb3VubWFwIGl0LCBpdHMgcHRlIGVudHJ5IGlzIHNldCB0byAw
+Lg0KPiA+ICAzLiBpb3JlbWFwIHRoZSBzYW1lIGFkZHJlc3Mgd2l0aCAyTSBzaXplLCB1cGRhdGUg
+aXRzIHBtZCBlbnRyeSB3aXRoDQo+ID4gICAgIGEgbmV3IHZhbHVlLg0KPiA+ICA0LiBDUFUgbWF5
+IGhpdCBhbiBleGNlcHRpb24gYmVjYXVzZSB0aGUgb2xkIHBtZCBlbnRyeSBpcyBzdGlsbCBpbiBU
+TEIsDQo+ID4gICAgIHdoaWNoIGxlYWRzIHRvIGEga2VybmVsIHBhbmljLg0KPiA+IA0KPiA+IENv
+bW1pdCBiNmJkYjc1MTdjM2QgKCJtbS92bWFsbG9jOiBhZGQgaW50ZXJmYWNlcyB0byBmcmVlIHVu
+bWFwcGVkIHBhZ2UNCj4gPiB0YWJsZSIpIGhhcyBhZGRyZXNzZWQgdGhpcyBwYW5pYyBieSBmYWxs
+aW5nIHRvIHB0ZSBtYXBwaW5ncyBpbiB0aGUgYWJvdmUNCj4gPiBjYXNlIG9uIEFSTTY0Lg0KPiA+
+IA0KPiA+IFRvIHN1cHBvcnQgcG1kIG1hcHBpbmdzIGluIGFsbCBjYXNlcywgVExCIHB1cmdlIG5l
+ZWRzIHRvIGJlIHBlcmZvcm1lZA0KPiA+IGluIHRoaXMgY2FzZSBvbiBBUk02NC4NCj4gPiANCj4g
+PiBBZGQgYSBuZXcgYXJnLCAnYWRkcicsIHRvIHB1ZF9mcmVlX3BtZF9wYWdlKCkgYW5kIHBtZF9m
+cmVlX3B0ZV9wYWdlKCkNCj4gPiBzbyB0aGF0IFRMQiBwdXJnZSBjYW4gYmUgYWRkZWQgbGF0ZXIg
+aW4gc2VwcmF0ZSBwYXRjaGVzLg0KPiANCj4gU28gSSBhY2tlZCB2MTMgb2YgQ2hpbnRhbidzIHNl
+cmllcyBwb3N0ZWQgaGVyZToNCj4gDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL3BpcGVy
+bWFpbC9saW51eC1hcm0ta2VybmVsLzIwMTgtSnVuZS81ODI5NTMuaHRtbA0KPiANCj4gYW55IGNo
+YW5jZSB0aGlzIGxvdCBjb3VsZCBhbGwgYmUgbWVyZ2VkIHRvZ2V0aGVyLCBwbGVhc2U/DQoNCkhp
+IFdpbGwsDQoNCkNoaW50YW4ncyBwYXRjaCAyLzMgYW5kIDMvMyBhcHBseSBjbGVhbmx5IG9uIHRv
+cCBvZiBteSBzZXJpZXMuIENhbiB5b3UNCnBsZWFzZSBjb29yZGluYXRlIHdpdGggVGhvbWFzIG9u
+IHRoZSBsb2dpc3RpY3M/DQoNClRoYW5rcywNCi1Ub3NoaQ0K
