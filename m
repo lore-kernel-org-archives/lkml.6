@@ -6,276 +6,64 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6960CC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64508C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD5F2624F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:41:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD5F2624F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 153FA26252
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:41:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153FA26252
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934400AbeF0MlP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:41:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60644 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932312AbeF0MlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:41:13 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S964989AbeF0MlX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:41:23 -0400
+Received: from ozlabs.org ([203.11.71.1]:57831 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932312AbeF0MlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:41:21 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5259D81A4EBC;
-        Wed, 27 Jun 2018 12:41:12 +0000 (UTC)
-Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D33741C678;
-        Wed, 27 Jun 2018 12:40:58 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V7 00/24] block: support multipage bvec
-Date:   Wed, 27 Jun 2018 20:40:17 +0800
-Message-Id: <20180627124041.2832-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 12:41:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 12:41:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        by ozlabs.org (Postfix) with ESMTPSA id 41G2b01jTVz9s2L;
+        Wed, 27 Jun 2018 22:41:15 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Paul Mackerras <paulus@samba.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Meelis Roos <mroos@linux.ee>,
+        Andreas Schwab <schwab@linux-m68k.org>
+Subject: Re: [PATCH 1/3] [v2] powerpc: mac: fix rtc read/write functions
+In-Reply-To: <CAK8P3a2HwOe2D4LXgFsfhFXpeUBpHZiB5PCk0nkAwqX3NKCmFA@mail.gmail.com>
+References: <20180619140229.3615110-1-arnd@arndb.de> <87y3f06e9a.fsf@concordia.ellerman.id.au> <CAK8P3a2HwOe2D4LXgFsfhFXpeUBpHZiB5PCk0nkAwqX3NKCmFA@mail.gmail.com>
+Date:   Wed, 27 Jun 2018 22:41:13 +1000
+Message-ID: <87lgb05rme.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Arnd Bergmann <arnd@arndb.de> writes:
+> On Wed, Jun 27, 2018 at 6:32 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>>
+>> So I think I can take this patch in isolation via the powerpc tree as a
+>> fix for 4.18.
+>>
+>> I'll leave the other two alone.
+>
+> Yes, that is what I had intended with this series but should have made
+> clearer. The two m68k patches are 4.19 material.
 
-This patchset brings multipage bvec into block layer:
+OK thanks.
 
-1) what is multipage bvec?
-
-Multipage bvecs means that one 'struct bio_bvec' can hold multiple pages
-which are physically contiguous instead of one single page used in linux
-kernel for long time.
-
-2) why is multipage bvec introduced?
-
-Kent proposed the idea[1] first. 
-
-As system's RAM becomes much bigger than before, and huge page, transparent
-huge page and memory compaction are widely used, it is a bit easy now
-to see physically contiguous pages from fs in I/O. On the other hand, from
-block layer's view, it isn't necessary to store intermediate pages into bvec,
-and it is enough to just store the physicallly contiguous 'segment' in each
-io vector.
-
-Also huge pages are being brought to filesystem and swap [2][6], we can
-do IO on a hugepage each time[3], which requires that one bio can transfer
-at least one huge page one time. Turns out it isn't flexiable to change
-BIO_MAX_PAGES simply[3][5]. Multipage bvec can fit in this case very well.
-As we saw, if CONFIG_THP_SWAP is enabled, BIO_MAX_PAGES can be configured
-as much bigger, such as 512, which requires at least two 4K pages for holding
-the bvec table.
-
-With multipage bvec:
-
-- Inside block layer, both bio splitting and sg map can become more
-efficient than before by just traversing the physically contiguous
-'segment' instead of each page.
-
-- segment handling in block layer can be improved much in future since it
-should be quite easy to convert multipage bvec into segment easily. For
-example, we might just store segment in each bvec directly in future.
-
-- bio size can be increased and it should improve some high-bandwidth IO
-case in theory[4].
-
-- there is opportunity in future to improve memory footprint of bvecs. 
-
-3) how is multipage bvec implemented in this patchset?
-
-The 1st 9 patches are prepare patches for multipage bvec, from Christoph
-and Mike.
-
-The patches of 10 ~ 22 implement multipage bvec in block layer:
-
-	- put all tricks into bvec/bio/rq iterators, and as far as
-	drivers and fs use these standard iterators, they are happy
-	with multipage bvec
-
-	- introduce bio_for_each_bvec() to iterate over multipage bvec for splitting
-	bio and mapping sg
-
-	- keep current bio_for_each_segment*() to itereate over singlepage bvec and
-	make sure current users won't be broken; especailly, convert to this
-	new helper prototype in single patch 21 given it is bascially a mechanism
-	conversion
-
-	- enalbe multipage bvec in patch 22
-
-The patch 23 redefines BIO_MAX_PAGES as 256.
-
-The patch 24 documents usages of bio iterator helpers.
-
-These patches can be found in the following git tree:
-
-	gitweb: https://github.com/ming1/linux/commits/v4.18-rc-mp-bvec-V7
-	git:  https://github.com/ming1/linux.git  #v4.18-rc-mp-bvec-V7
-
-Lots of test(blktest, xfstests, ltp io, ...) have been run with this patchset,
-and not see regression.
-
-Thanks Christoph for reviewing the early version and providing very good
-suggestions, such as: introduce bio_init_with_vec_table(), remove another
-unnecessary helpers for cleanup and so on.
-
-Any comments are welcome!
-
-V7:
-	- include Christoph and Mike's bio_clone_bioset() patches, which is
-	  actually prepare patches for multipage bvec
-	- address Christoph's comments
-
-V6:
-	- avoid to introduce lots of renaming, follow Jen's suggestion of
-	using the name of chunk for multipage io vector
-	- include Christoph's three prepare patches
-	- decrease stack usage for using bio_for_each_chunk_segment_all()
-	- address Kent's comment
-
-V5:
-	- remove some of prepare patches, which have been merged already
-	- add bio_clone_seg_bioset() to fix DM's bio clone, which
-	is introduced by 18a25da84354c6b (dm: ensure bio submission follows
-	a depth-first tree walk)
-	- rebase on the latest block for-v4.18
-
-V4:
-	- rename bio_for_each_segment*() as bio_for_each_page*(), rename
-	bio_segments() as bio_pages(), rename rq_for_each_segment() as
-	rq_for_each_pages(), because these helpers never return real
-	segment, and they always return single page bvec
-	
-	- introducing segment_for_each_page_all()
-
-	- introduce new bio_for_each_segment*()/rq_for_each_segment()/bio_segments()
-	for returning real multipage segment
-
-	- rewrite segment_last_page()
-
-	- rename bvec iterator helper as suggested by Christoph
-
-	- replace comment with applying bio helpers as suggested by Christoph
-
-	- document usage of bio iterator helpers
-
-	- redefine BIO_MAX_PAGES as 256 to make the biggest bvec table
-	accommodated in 4K page
-
-	- move bio_alloc_pages() into bcache as suggested by Christoph
-
-V3:
-	- rebase on v4.13-rc3 with for-next of block tree
-	- run more xfstests: xfs/ext4 over NVMe, Sata, DM(linear),
-	MD(raid1), and not see regressions triggered
-	- add Reviewed-by on some btrfs patches
-	- remove two MD patches because both are merged to linus tree
-	  already
-
-V2:
-	- bvec table direct access in raid has been cleaned, so NO_MP
-	flag is dropped
-	- rebase on recent Neil Brown's change on bio and bounce code
-	- reorganize the patchset
-
-V1:
-	- against v4.10-rc1 and some cleanup in V0 are in -linus already
-	- handle queue_virt_boundary() in mp bvec change and make NVMe happy
-	- further BTRFS cleanup
-	- remove QUEUE_FLAG_SPLIT_MP
-	- rename for two new helpers of bio_for_each_segment_all()
-	- fix bounce convertion
-	- address comments in V0
-
-[1], http://marc.info/?l=linux-kernel&m=141680246629547&w=2
-[2], https://patchwork.kernel.org/patch/9451523/
-[3], http://marc.info/?t=147735447100001&r=1&w=2
-[4], http://marc.info/?l=linux-mm&m=147745525801433&w=2
-[5], http://marc.info/?t=149569484500007&r=1&w=2
-[6], http://marc.info/?t=149820215300004&r=1&w=2
-
-
-Christoph Hellwig (8):
-  bcache: don't clone bio in bch_data_verify
-  exofs: use bio_clone_fast in _write_mirror
-  block: remove bio_clone_kmalloc
-  md: remove a bogus comment
-  block: unexport bio_clone_bioset
-  block: simplify bio_check_pages_dirty
-  block: bio_set_pages_dirty can't see NULL bv_page in a valid bio_vec
-  block: use bio_add_page in bio_iov_iter_get_pages
-
-Mike Snitzer (1):
-  dm: use bio_split() when splitting out the already processed bio
-
-Ming Lei (15):
-  block: introduce multipage page bvec helpers
-  block: introduce bio_for_each_bvec()
-  block: use bio_for_each_bvec() to compute multipage bvec count
-  block: use bio_for_each_bvec() to map sg
-  block: introduce bvec_last_segment()
-  fs/buffer.c: use bvec iterator to truncate the bio
-  btrfs: use bvec_last_segment to get bio's last page
-  btrfs: move bio_pages_all() to btrfs
-  block: introduce bio_bvecs()
-  block: loop: pass multipage bvec to iov_iter
-  bcache: avoid to use bio_for_each_segment_all() in
-    bch_bio_alloc_pages()
-  block: allow bio_for_each_segment_all() to iterate over multipage bvec
-  block: enable multipage bvecs
-  block: always define BIO_MAX_PAGES as 256
-  block: document usage of bio iterator helpers
-
- Documentation/block/biovecs.txt |  27 +++++
- block/bio.c                     | 232 ++++++++++++++--------------------------
- block/blk-merge.c               | 162 ++++++++++++++++++++++------
- block/blk-zoned.c               |   5 +-
- block/bounce.c                  |  75 ++++++++++++-
- drivers/block/loop.c            |  24 ++---
- drivers/md/bcache/btree.c       |   3 +-
- drivers/md/bcache/debug.c       |   6 +-
- drivers/md/bcache/util.c        |   2 +-
- drivers/md/dm-crypt.c           |   3 +-
- drivers/md/dm.c                 |   5 +-
- drivers/md/md.c                 |   4 -
- drivers/md/raid1.c              |   3 +-
- fs/block_dev.c                  |   6 +-
- fs/btrfs/compression.c          |   8 +-
- fs/btrfs/disk-io.c              |   3 +-
- fs/btrfs/extent_io.c            |  29 +++--
- fs/btrfs/inode.c                |   6 +-
- fs/btrfs/raid56.c               |   3 +-
- fs/buffer.c                     |   5 +-
- fs/crypto/bio.c                 |   3 +-
- fs/direct-io.c                  |   4 +-
- fs/exofs/ore.c                  |   7 +-
- fs/exofs/ore_raid.c             |   3 +-
- fs/ext4/page-io.c               |   3 +-
- fs/ext4/readpage.c              |   3 +-
- fs/f2fs/data.c                  |   9 +-
- fs/gfs2/lops.c                  |   6 +-
- fs/gfs2/meta_io.c               |   3 +-
- fs/iomap.c                      |   3 +-
- fs/mpage.c                      |   3 +-
- fs/xfs/xfs_aops.c               |   5 +-
- include/linux/bio.h             |  90 +++++++++++-----
- include/linux/bvec.h            | 155 +++++++++++++++++++++++++--
- 34 files changed, 626 insertions(+), 282 deletions(-)
-
--- 
-2.9.5
-
+cheers
