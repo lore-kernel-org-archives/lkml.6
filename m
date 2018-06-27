@@ -2,151 +2,337 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5766BC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5708EC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08E4424815
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E4424815
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A23024815
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:27:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A23024815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966397AbeF0W0g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 18:26:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59094 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755065AbeF0W0e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 18:26:34 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RMOuXg077898
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 18:26:34 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jvjy5gw4d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 18:26:33 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 18:26:33 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 18:26:29 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RMQSDq5243252
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 22:26:29 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CF9A4B205F;
-        Wed, 27 Jun 2018 18:26:20 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA77DB2065;
-        Wed, 27 Jun 2018 18:26:20 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Jun 2018 18:26:20 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id EF64316C1222; Wed, 27 Jun 2018 15:28:35 -0700 (PDT)
-Date:   Wed, 27 Jun 2018 15:28:35 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Simplifying our RCU models
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180305082441.4hao2z4dqn2n5on6@gmail.com>
- <87po4izj67.fsf_-_@xmission.com>
- <20180305161446.GQ3918@linux.vnet.ibm.com>
- <20180306084738.tcs4ggbby77phlbh@gmail.com>
- <20180306203906.GA3918@linux.vnet.ibm.com>
- <20180307155444.GA10367@linux.vnet.ibm.com>
- <CA+55aFzyycJWD2xuo7wSptJ=D045yiZnmO+7iY6CapDvge_uCw@mail.gmail.com>
- <20180308204524.GW3918@linux.vnet.ibm.com>
- <20180410234425.GA30784@linux.vnet.ibm.com>
- <20180608165134.GA28693@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180608165134.GA28693@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062722-0072-0000-0000-0000037625B3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009266; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01053254; UDB=6.00540020; IPR=6.00831178;
- MB=3.00021891; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-27 22:26:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062722-0073-0000-0000-00004882D3D6
-Message-Id: <20180627222835.GA9656@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270235
+        id S966435AbeF0W1f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 18:27:35 -0400
+Received: from mga14.intel.com ([192.55.52.115]:36440 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755075AbeF0W1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 18:27:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 15:27:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,280,1526367600"; 
+   d="scan'208";a="67867381"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2018 15:27:33 -0700
+Message-ID: <8ced867417ef922fe2872a6aa4ba86d25363fddf.camel@linux.intel.com>
+Subject: Re: [PATCH] platform/x86: intel-hid: Add support for Device
+ Specific Methods
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Alex Hung <alex.hung@canonical.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mario Limonciello <Mario.Limonciello@dell.com>
+Date:   Wed, 27 Jun 2018 15:27:33 -0700
+In-Reply-To: <CAHp75Vcn22DG0=TPdq+RYTErtaGFMf4POpuZyP9X78+9FrhLyA@mail.gmail.com>
+References: <20180626233454.47340-1-srinivas.pandruvada@linux.intel.com>
+         <CAHp75Vcn22DG0=TPdq+RYTErtaGFMf4POpuZyP9X78+9FrhLyA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 09:51:34AM -0700, Paul E. McKenney wrote:
-> On Tue, Apr 10, 2018 at 04:44:25PM -0700, Paul E. McKenney wrote:
-> > On Thu, Mar 08, 2018 at 12:45:24PM -0800, Paul E. McKenney wrote:
-> > > On Wed, Mar 07, 2018 at 10:48:50AM -0800, Linus Torvalds wrote:
-> > > > On Wed, Mar 7, 2018 at 7:54 AM, Paul E. McKenney
-> > > > <paulmck@linux.vnet.ibm.com> wrote:
-> > > > >
-> > > > > Ah, and any thoughts on how best to get feedback from the various people
-> > > > > who would need to reprogram their fingers?  Or is everyone already on
-> > > > > board with changing these various names?
-> > > > 
-> > > > I really would prefer to not see massive re-naming unless there is a
-> > > > really good reason for it.
-> > > > 
-> > > > I'm all for simplifying RCU from a million different versions down to
-> > > > just a few thousand, but I'm definitely not convinced we want to do
-> > > > any search-and-replace.
-> > > 
-> > > I am currently in the design (more accurately, reredesign phase) for
-> > > the simplification.  It is quite possible that there is a good reason
-> > > for at least some renaming, but in that case, I would come back later
-> > > with that as a separate proposal.
+On Thu, 2018-06-28 at 01:15 +0300, Andy Shevchenko wrote:
+> On Wed, Jun 27, 2018 at 2:34 AM, Srinivas Pandruvada
+> <srinivas.pandruvada@linux.intel.com> wrote:
+> > In some of the recent platforms, it is possible that stand alone
+> > methods
+> > for HEBC() or other methods used in this driver may not exist. In
+> > this
+> > case intel-hid driver will fail to load and power button will not
+> > be
+> > functional.
 > > 
-> > And I really am still working on this.  It is a bit tricky, but still
-> > looks doable.  More likely to be ready for 4.19 than 4.18, though.
+> > It is also possible that some quirks in this driver added for some
+> > platforms
+> > may have same issue in loading intel-hid driver.
+> > 
+> > There is an update to the ACPI details for the HID event filter
+> > driver.
+> > In the updated specification a _DSM is added, which has separate
+> > function
+> > indexes for each of the previous stand alone methods.
+> > 
+> > This change brings in support for the _DSM and allows usage of
+> > function
+> > index for corresponding stand alone methods.
+> > 
+> > Details of Device Specific Method:
+> > 
+> > Intel HID Event Filter Driver _DSM UUID:
+> > eeec56b3-4442-408f-a792-4edd4d758054
+> > 
+> > • Function index 0: Returns a buffer with a bit-field representing
+> > the
+> > supported function IDs.
+> > 
+> > Function Index  ASL Object
+> > --------------------------------
+> > 1               BTNL
+> > 2               HDMM
+> > 3               HDSM
+> > 4               HDEM
+> > 5               BTNS
+> > 6               BTNE
+> > 7               HEBC
+> > 8               VGBS
+> > 9               HEBC
+> > 
+> > One significant change is to query the supported methods
+> > implemented on
+> > the platform. So the previous HEBC() has two variants. HEBC v1 and
+> > HEBC v2. The v2 version allowed further define which of the 5-
+> > button
+> > are actually defined by the platform. HEBC v2 support is only
+> > available
+> > via new DSM.
+> > 
+> > v1 Button details:
+> > Bits [0] - Rotation Lock, Num Lock, Home, End, Page Up,
+> > Page Down
+> > Bits [1] - Wireless Radio Control
+> > Bits [2] - System Power Down
+> > Bits [3] - System Hibernate
+> > Bits [4] - System Sleep/ System Wake
+> > Bits [5] - Scan Next Track
+> > Bits [6] - Scan Previous Track
+> > Bits [7] - Stop
+> > Bits [8] - Play/Pause
+> > Bits [9] - Mute
+> > Bits [10] - Volume Increment
+> > Bits [11] - Volume Decrement
+> > Bits [12] - Display Brightness Increment
+> > Bits [13] - Display Brightness Decrement
+> > Bits [14] - Lock Tablet
+> > Bits [15] - Release Tablet
+> > Bits [16] - Toggle Bezel
+> > Bits [17] - 5 button array
+> > Bits [18-31] - reserved
+> > 
+> > v2 Buttom details:
+> > Bits [0] - Rotation Lock, Num Lock, Home, End, Page Up, Page Down
+> > Bits [1] - Wireless Radio Control
+> > Bits [2] - System Power Down
+> > Bits [3] - System Hibernate
+> > Bits [4] - System Sleep/ System Wake
+> > Bits [5] - Scan Next Track
+> > Bits [6] - Scan Previous Track
+> > Bits [7] - Stop
+> > Bits [8] - Play/Pause
+> > Bits [9] - Mute
+> > Bits [10] - Volume Increment
+> > Bits [11] - Volume Decrement
+> > Bits [12] - Display Brightness Increment
+> > Bits [13] - Display Brightness Decrement
+> > Bits [14] - Lock Tablet
+> > Bits [15] - Release Tablet
+> > Bits [16] - Toggle Bezel
+> > Bits [17] - 5 button array
+> > Bits [18] – Power Button
+> > Bits [19] - W Home Button
+> > Bits [20] - Volume Up Button
+> > Bits [21] - Volume Down Button
+> > Bits [22] – Rotation Lock Button
+> > Bits [23-31] – reserved
 > 
-> I suppose it is well past time for an update...
+> It's hard to get if they have a common part.
+> If so, perhaps in the latter drop the common part and replace it with
 > 
-> I believe I have the preparation work done (famous last words!), and I am
-> now working on making rcutorture properly test the resulting compound RCU
-> read-side critical sections.  User-level testing might be necessary (and
-> has been for some of the preparatory work).  The ink-on-paper prototype
-> is starting to look promising, and I expect to get the corresponding
-> prototype patch posted by the end of this month.
+> ... same as v1 ...
 > 
-> A bit trickier than I expected (as usual), but still looking doable.
+> or alike.
+ I am copying as is from spec, so that they can be matched.
 
-And it now passes light rcutorture testing, so I have posted an RFC
-series to LKML:
+> 
+> 
+> > +enum intel_hid_dsm_fn_codes {
+> > +       INTEL_HID_DSM_FN_INVALID,
+> > +       BTNL_FN_CODE,
+> > +       HDMM_FN_CODE,
+> > +       HDSM_FN_CODE,
+> > +       HDEM_FN_CODE,
+> > +       BTNS_FN_CODE,
+> > +       BTNE_FN_CODE,
+> > +       HEBC_V1_FN_CODE,
+> > +       VGBS_FN_CODE,
+> > +       HEBC_V2_FN_CODE,
+> > +       HEBC_MAX_FN_CODES
+> 
+> For sake of consistency I would rather name it
+> INTEL_HID_DSM_FN_MAX
+Makes sense.
 
-lkml.kernel.org/r/20180627204835.GA25456@linux.vnet.ibm.com
+> 
+> > +};
+> > +static bool intel_hid_execute_method(acpi_handle handle,
+> > +                                    enum intel_hid_dsm_fn_codes
+> > fn_index,
+> > +                                    unsigned long long arg)
+> >  {
+> > +       union acpi_object *obj, argv4, req;
+> >         acpi_status status;
+> > +       guid_t dsm_guid;
+> > +       char *method_name;
+> > 
+> > +       if (fn_index <= INTEL_HID_DSM_FN_INVALID ||
+> > +           fn_index >= HEBC_MAX_FN_CODES)
+> > +               return false;
+> > +
+> > +       method_name = (char *)intel_hid_dsm_fn_to_method[fn_index];
+> 
+> Can it be const char * in the first place?
+The array is const char *. But acpi_execute_simple_method expects
+char*.
+So either I can change the array of methods to char * or leave like
+this.
+Since array is not going to change, I prefer that to be const char *.
 
-There will be a long series of cleanups that will remove the other
-flavors and also the code that supports multiple flavors, but there are
-probably quite a few bugs to fix in this particular patch between now
-and then.  ;-)
+> 
+> > +
+> > +       if (!(intel_hid_dsm_fn_mask & fn_index))
+> > +               goto skip_dsm_exec;
+> > +
+> > +       guid_parse(HID_EVENT_FILTER_UUID, &dsm_guid);
+> 
+> Perhaps we can cache this in global variable and parse only once at
+> init / probe time?
+OK
 
-							Thanx, Paul
+> 
+> > +
+> > +       /* All methods expects a package with one integer element
+> > */
+> > +       req.type = ACPI_TYPE_INTEGER;
+> > +       req.integer.value = arg;
+> > +
+> > +       argv4.type = ACPI_TYPE_PACKAGE;
+> > +       argv4.package.count = 1;
+> > +       argv4.package.elements = &req;
+> > +
+> > +       obj = acpi_evaluate_dsm(handle, &dsm_guid, 1, fn_index,
+> > &argv4);
+> > +       if (obj) {
+> > +               pr_debug("Exec DSM Fn code: %d[%s] success\n",
+> > fn_index,
+> > +                        method_name);
+> 
+> acpi_handle_debug() ?
+OK.
 
+> 
+> > +               ACPI_FREE(obj);
+> > +               return true;
+> > +       }
+> > +
+> > +skip_dsm_exec:
+> > +       status = acpi_execute_simple_method(handle, method_name,
+> > arg);
+> > +       if (ACPI_SUCCESS(status))
+> > +               return true;
+> > +
+> > +       return false;
+> > +}
+> > +
+> > +static bool intel_hid_evaluate_method(acpi_handle handle,
+> > +                                     enum intel_hid_dsm_fn_codes
+> > fn_index,
+> > +                                     unsigned long long *result)
+> > +{
+> 
+> Same comments as per previous function.
+> 
+> > +}
+> > +static void intel_hid_init_dsm(acpi_handle handle)
+> > +{
+> 
+> Ditto.
+> 
+> > +}
+> > +
+> > +static int intel_hid_set_enable(struct device *device, bool
+> > enable)
+> > +{
+> > +
+> > +       /* Enable|disable features - power button is always enabled
+> > */
+> > +       if (!intel_hid_execute_method(ACPI_HANDLE(device),
+> > HDSM_FN_CODE,
+> > +                                     enable)) {
+> 
+> For me the temporary variable looks slightly better.
+> 
+> acpi_handle handle = ACPI_HANDLE(device);
+OK
+
+> 
+> 
+> >                 dev_warn(device, "failed to %sable hotkeys\n",
+> >                          enable ? "en" : "dis");
+> >                 return -EIO;
+> > @@ -129,9 +259,8 @@ static void intel_button_array_enable(struct
+> > device *device, bool enable)
+> >         }
+> > 
+> >         /* Enable|disable features - power button is always enabled
+> > */
+> > -       status = acpi_execute_simple_method(handle, "BTNE",
+> > -                                           enable ? button_cap :
+> > 1);
+> > -       if (ACPI_FAILURE(status))
+> > +       if (!intel_hid_execute_method(handle, BTNE_FN_CODE,
+> > +                                     enable ? button_cap : 1))
+> >                 dev_warn(device, "failed to set button
+> > capability\n");
+> >  }
+> 
+> 
+> >         if (priv->array) {
+> > +               unsigned long long results;
+> > +
+> 
+> Seems it's not used, perhaps call it dummy instead?
+> 
+OK.
+
+> >                 intel_button_array_enable(&device->dev, true);
+> > 
+> >                 /* Call button load method to enable HID power
+> > button */
+> > -               status = acpi_evaluate_object(handle, "BTNL", NULL,
+> > NULL);
+> > -               if (ACPI_FAILURE(status))
+> > +               if (!intel_hid_evaluate_method(handle,
+> > BTNL_FN_CODE,
+> > +                                              &results)) {
+> >                         dev_warn(&device->dev,
+> >                                  "failed to enable HID power
+> > button\n");
+> > +               }
+> >         }
+> 
+> 
+Thanks,
+Srinivas
