@@ -2,187 +2,116 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBD3C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 02:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAD8C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 02:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60806268FC
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 02:53:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="bIsnENVe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60806268FC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 64C7520846
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 02:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C7520846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752062AbeF0CxN (ORCPT
+        id S1752254AbeF0C4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 22:53:13 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:20323 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750986AbeF0CxL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 22:53:11 -0400
-Received: from mail-ua0-f169.google.com (mail-ua0-f169.google.com [209.85.217.169]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w5R2r3OU006410;
-        Wed, 27 Jun 2018 11:53:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5R2r3OU006410
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530067984;
-        bh=bZG5ie+Fa0rFeKccgJNQzP9/hBo/NgSgAO5lcPcg6CA=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=bIsnENVe5mgelOtpvB13WpWLKoi1MBPDknn2f5UITaP7cFszp4Lmy0++b37vhrEpP
-         bnnRQlPjyfLChMu5qinNdDjQFAOEuoXv/cm+8YAtpLbdPQgU5lDi9FMXVEO7a8h0P1
-         DF+8ybMtPHdzPbWxmg5ZYeTJtCXzsRV/IdxXizN7jIdUwVuAMP3AiJdxXOFm8KcdXO
-         +TVB0avjVQ7f9D/h0c3yGEJFwzGJW4Hws7+s505NGUI11R9F1GnGH5nMLpCX0RES7I
-         bgKyJkTAMGdkT1crqFShpLJJCVLWcgjRi/r4hSgfwHeMjVNBv3C0NhxiLCM9gmJKn5
-         IAqsdgPC1ik0w==
-X-Nifty-SrcIP: [209.85.217.169]
-Received: by mail-ua0-f169.google.com with SMTP id y8-v6so322958uan.3;
-        Tue, 26 Jun 2018 19:53:03 -0700 (PDT)
-X-Gm-Message-State: APt69E3u+cHcpOZQDPrUtkc/rKIxRJTwSxdnTUbM6SdxT26mgF0x00Ci
-        ahFE1uCp0F+v/IHAUp70Me3nabiiI0djvb0j2ro=
-X-Google-Smtp-Source: AAOMgpd8LwW8MkTKJF+h4SZQupPJVQCtvXKSExT388cflNUPiwTYuS8+8qsFNIXtsxBONyW5eNht9QGxDAouLW2+Va0=
-X-Received: by 2002:ab0:13c8:: with SMTP id n8-v6mr2587173uae.140.1530067982728;
- Tue, 26 Jun 2018 19:53:02 -0700 (PDT)
+        Tue, 26 Jun 2018 22:56:08 -0400
+Received: from mga05.intel.com ([192.55.52.43]:46941 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750962AbeF0C4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 22:56:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 19:56:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,277,1526367600"; 
+   d="scan'208";a="60445144"
+Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Jun 2018 19:56:03 -0700
+Message-ID: <5B32FDB5.4040506@intel.com>
+Date:   Wed, 27 Jun 2018 11:00:05 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 19:52:22
- -0700 (PDT)
-In-Reply-To: <20180626200928.29aca979@xps13>
-References: <20180619120719.26921-1-richard@nod.at> <CAK7LNASgPa4D0Siyo3mvK_AJ2zaECDXGaMEn-iNzQ9PFXFir+w@mail.gmail.com>
- <3320422.EJ8D6C0VHL@blindfold> <d4fdcd1d-db20-1837-a037-0982a042d357@kernel.org>
- <20180625165506.484e025f@bbrezillon> <CAK7LNATyo+7gauyQcRmNfCs8CagU1XdpHHgREMeTvf4rqxpeNQ@mail.gmail.com>
- <20180626200928.29aca979@xps13>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 27 Jun 2018 11:52:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATbmNadK=xPcaQ+seRS_YvH5ZP5SX8z74iOyYcJ0Soicw@mail.gmail.com>
-Message-ID: <CAK7LNATbmNadK=xPcaQ+seRS_YvH5ZP5SX8z74iOyYcJ0Soicw@mail.gmail.com>
-Subject: Re: [PATCH] arm: dts: socfpga: denali needs nand_x_clk too
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com
+Subject: Re: [PATCH v34 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com> <1529928312-30500-3-git-send-email-wei.w.wang@intel.com> <20180626002822-mutt-send-email-mst@kernel.org> <5B31B71B.6080709@intel.com> <20180626064338-mutt-send-email-mst@kernel.org> <5B323140.1000306@intel.com> <20180626163139-mutt-send-email-mst@kernel.org> <5B32E742.8080902@intel.com> <20180627053952-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180627053952-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-27 3:09 GMT+09:00 Miquel Raynal <miquel.raynal@bootlin.com>:
-> Hi Masahiro,
+On 06/27/2018 10:41 AM, Michael S. Tsirkin wrote:
+> On Wed, Jun 27, 2018 at 09:24:18AM +0800, Wei Wang wrote:
+>> On 06/26/2018 09:34 PM, Michael S. Tsirkin wrote:
+>>> On Tue, Jun 26, 2018 at 08:27:44PM +0800, Wei Wang wrote:
+>>>> On 06/26/2018 11:56 AM, Michael S. Tsirkin wrote:
+>>>>> On Tue, Jun 26, 2018 at 11:46:35AM +0800, Wei Wang wrote:
+>>>>>
+>>>>>>>> +	if (!arrays)
+>>>>>>>> +		return NULL;
+>>>>>>>> +
+>>>>>>>> +	for (i = 0; i < max_array_num; i++) {
+>>>>>>> So we are getting a ton of memory here just to free it up a bit later.
+>>>>>>> Why doesn't get_from_free_page_list get the pages from free list for us?
+>>>>>>> We could also avoid the 1st allocation then - just build a list
+>>>>>>> of these.
+>>>>>> That wouldn't be a good choice for us. If we check how the regular
+>>>>>> allocation works, there are many many things we need to consider when pages
+>>>>>> are allocated to users.
+>>>>>> For example, we need to take care of the nr_free
+>>>>>> counter, we need to check the watermark and perform the related actions.
+>>>>>> Also the folks working on arch_alloc_page to monitor page allocation
+>>>>>> activities would get a surprise..if page allocation is allowed to work in
+>>>>>> this way.
+>>>>>>
+>>>>> mm/ code is well positioned to handle all this correctly.
+>>>> I'm afraid that would be a re-implementation of the alloc functions,
+>>> A re-factoring - you can share code. The main difference is locking.
+>>>
+>>>> and
+>>>> that would be much more complex than what we have. I think your idea of
+>>>> passing a list of pages is better.
+>>>>
+>>>> Best,
+>>>> Wei
+>>> How much memory is this allocating anyway?
+>>>
+>> For every 2TB memory that the guest has, we allocate 4MB.
+> Hmm I guess I'm missing something, I don't see it:
 >
-> On Tue, 26 Jun 2018 11:38:21 +0900, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
 >
->> 2018-06-25 23:55 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>=
-:
->> > On Mon, 25 Jun 2018 09:50:18 -0500
->> > Dinh Nguyen <dinguyen@kernel.org> wrote:
->> >
->> >> On 06/22/2018 10:58 AM, Richard Weinberger wrote:
->> >> > Masahiro,
->> >> >
->> >> > Am Freitag, 22. Juni 2018, 16:37:21 CEST schrieb Masahiro Yamada:
->> >> >> Hi Richard,
->> >> >>
->> >> >>
->> >> >> 2018-06-19 21:07 GMT+09:00 Richard Weinberger <richard@nod.at>:
->> >> >>> The denali NAND flash controller needs at least two clocks to ope=
-rate,
->> >> >>> nand_clk and nand_x_clk.
->> >> >>> Since 1bb88666775e ("mtd: nand: denali: handle timing parameters =
-by
->> >> >>> setup_data_interface()") nand_x_clk is used to derive timing sett=
-ings.
->> >> >>>
->> >> >>> Signed-off-by: Richard Weinberger <richard@nod.at>
->> >> >>> ---
->> >> >>> Strictly speaking denali needs a ecc_clk too, but AFAIK such a cl=
-ock
->> >> >>> is not present on this SoC.
->> >> >>> But my SoCFPGA knowledge is very limited.
->> >> >>>
->> >> >>> Thanks,
->> >> >>> //richard
->> >> >>> ---
->> >> >>>  arch/arm/boot/dts/socfpga.dtsi | 3 ++-
->> >> >>>  1 file changed, 2 insertions(+), 1 deletion(-)
->> >> >>>
->> >> >>> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/s=
-ocfpga.dtsi
->> >> >>> index 486d4e7433ed..562f7b375bbd 100644
->> >> >>> --- a/arch/arm/boot/dts/socfpga.dtsi
->> >> >>> +++ b/arch/arm/boot/dts/socfpga.dtsi
->> >> >>> @@ -754,7 +754,8 @@
->> >> >>>                         reg-names =3D "nand_data", "denali_reg";
->> >> >>>                         interrupts =3D <0x0 0x90 0x4>;
->> >> >>>                         dma-mask =3D <0xffffffff>;
->> >> >>> -                       clocks =3D <&nand_clk>;
->> >> >>> +                       clocks =3D <&nand_clk>, <&nand_x_clk>;
->> >> >>> +                       clock-names =3D "nand", "nand_x";
->> >> >>
->> >> >>
->> >> >> IMHO, this should be
->> >> >>
->> >> >>                           clocks =3D <&nand_clk>, <&nand_x_clk>, <=
-&nand_x_clk>;
->> >> >>                           clock-names =3D "nand", "nand_x", "ecc";
->> >>
->> >> No, it should be just the nand_x and ecc.
->> >>
->> >> There's already a patch to use the nand_x_clk and not the nand_clk.
->>
->>
->> Different people try to fix the problem in different ways.
->>
->> I think it is due to miscommunication across sub-systems.
+> +       max_entries = max_free_page_blocks(ARRAY_ALLOC_ORDER);
+> +       entries_per_page = PAGE_SIZE / sizeof(__le64);
+> +       entries_per_array = entries_per_page * (1 << ARRAY_ALLOC_ORDER);
+> +       max_array_num = max_entries / entries_per_array +
+> +                       !!(max_entries % entries_per_array);
 >
-> Is the series named
->
->         mtd: rawnand: denali: add new clocks and improve
->                               setup_data_interface
->
-> still valid?
+> Looks like you always allocate the max number?
 
-Yes.
-I believe V4 is valid.
+Yes. We allocated the max number and then free what's not used.
+For example, a 16TB guest, we allocate Four 4MB buffers and pass the 4 
+buffers to get_from_free_page_list. If it uses 3, then the remaining 1 
+"4MB buffer" will end up being freed.
 
+For today's guests, max_array_num is usually 1.
 
-Information for Dinh Nguyen:
-
-http://patchwork.ozlabs.org/patch/933507/
-http://patchwork.ozlabs.org/patch/933487/
-http://patchwork.ozlabs.org/patch/933494/
-http://patchwork.ozlabs.org/patch/933506/
-
-
-If he is not convinced, I am open to discussion, though.
+Best,
+Wei
 
 
 
-> I am about to apply it (patches 2/5 to 5/5) but it looks like the
-> discussion is still ongoing.
->
-> Thanks,
-> Miqu=C3=A8l
->
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
 
 
-
---=20
-Best Regards
-Masahiro Yamada
