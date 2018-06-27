@@ -2,254 +2,107 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F63CC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EF7C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D8AF2450C
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:55:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D8AF2450C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B4FA244EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:55:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GuqshIcK";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D5VDYmzV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B4FA244EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934861AbeF0PzX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:55:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60144 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934767AbeF0PzW (ORCPT
+        id S934916AbeF0Pzu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:55:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43442 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934746AbeF0Pzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:55:22 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RFshdu131192
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:55:21 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvc4xvdqq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:55:21 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 11:55:20 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 11:55:15 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RFtEjU10093158
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 15:55:14 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD15CB205F;
-        Wed, 27 Jun 2018 11:55:06 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B73CB206A;
-        Wed, 27 Jun 2018 11:55:06 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Jun 2018 11:55:06 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 204B816C5EF9; Wed, 27 Jun 2018 08:57:21 -0700 (PDT)
-Date:   Wed, 27 Jun 2018 08:57:21 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
- race with CPU offline
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180626002052.GA24146@linux.vnet.ibm.com>
- <20180626171048.2181-13-paulmck@linux.vnet.ibm.com>
- <20180626175119.GL2494@hirez.programming.kicks-ass.net>
- <20180626182950.GH3593@linux.vnet.ibm.com>
- <20180626202615.GA32162@linux.vnet.ibm.com>
- <20180626203225.GT2494@hirez.programming.kicks-ass.net>
- <20180626234004.GQ3593@linux.vnet.ibm.com>
- <20180627091106.GB7184@worktop.programming.kicks-ass.net>
- <20180627094633.GG2512@hirez.programming.kicks-ass.net>
+        Wed, 27 Jun 2018 11:55:48 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0D0CF60AD8; Wed, 27 Jun 2018 15:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530114948;
+        bh=05BPjB5wztF1mDiFnUCXXoLzxc0UpHDKdbA8cBeyQOs=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=GuqshIcK5xlBFzibP93xa5ktdqBHY3NRh13pfpXzXydJXX0Rt7/M6MpzrQ+soZKp0
+         LG65ZbLtvrf/WPlpENmyjN4znjTGuQhxiNM4Z516dH+MCvvpmD1n9OU6Iis5QG2GVg
+         +urhYUbPwCTdmcJcA/ah4Hp/Xfwwyu6DA3rapJGk=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 98029606FA;
+        Wed, 27 Jun 2018 15:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530114947;
+        bh=05BPjB5wztF1mDiFnUCXXoLzxc0UpHDKdbA8cBeyQOs=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=D5VDYmzVMOCfvKr8uslOi8me/blBzeP+XX68gkUk67a+HgcBy+D1f/Ift4pHHLsis
+         LHaLkQXnHicEhpG/PFdeywhz+sc7z/quhnHcvhc16vu89Y05aUPFPwKvr48t4Am07p
+         z6N8se8VTzclt6A6W4Otkx/URQgvEuGwF45tNGsE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 98029606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627094633.GG2512@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062715-0060-0000-0000-000002834E34
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009264; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01053124; UDB=6.00539942; IPR=6.00831048;
- MB=3.00021883; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-27 15:55:19
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062715-0061-0000-0000-000045983AA0
-Message-Id: <20180627155721.GZ3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270171
+Content-Transfer-Encoding: 7bit
+Subject: Re: brcmsmac: Remove unnecessary parentheses
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180601021413.4031-1-rvarsha016@gmail.com>
+References: <20180601021413.4031-1-rvarsha016@gmail.com>
+To:     Varsha Rao <rvarsha016@gmail.com>
+Cc:     Nicholas Mc Guire <der.herr@hofr.at>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Varsha Rao <rvarsha016@gmail.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180627155548.0D0CF60AD8@smtp.codeaurora.org>
+Date:   Wed, 27 Jun 2018 15:55:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 11:46:33AM +0200, Peter Zijlstra wrote:
-> On Wed, Jun 27, 2018 at 11:11:06AM +0200, Peter Zijlstra wrote:
-> > On Tue, Jun 26, 2018 at 04:40:04PM -0700, Paul E. McKenney wrote:
-> > > The options I have considered are as follows:
-> > 
-> > > 2.	Stick with the no-failsafe approach, but rely on RCU's grace-period
-> > > 	kthread to wake up later due to its timed wait during the
-> > > 	force-quiescent-state process.  This would be a bit obnoxious,
-> > > 	as it requires passing a don't-wake flag (or some such) up the
-> > > 	quiescent-state reporting mechanism.  It would also needlessly
-> > > 	delay grace-period ends, especially on large systems (RCU scales
-> > > 	up the FQS delay on larger systems to maintain limited CPU
-> > > 	consumption per unit time).
-> > > 
-> > > 3.	Stick with the no-failsafe approach, but have the quiescent-state
-> > > 	reporting code hand back a value indicating that a wakeup is needed.
-> > > 	Also a bit obnoxious, as this value would need to be threaded up
-> > > 	the reporting code's return path.  Simple in theory, but a bit
-> > > 	of an ugly change, especially for the many places in the code that
-> > > 	currently expect quiescent-state reporting to be an unconditional
-> > > 	fire-and-forget operation.
-> > 
-> > Here's a variant on 2+3, instead of propagating the state back, we
-> > completely ignore if we needed a wakeup or not, and then unconditionally
-> > wake the GP kthread on the managing CPU's rcutree_migrate_callbacks()
-> > invocation.
-> > 
-> > Hotplug is rare (or should damn well be), doing a spurious wake of the
-> > GP thread shouldn't matter here.
-> 
-> Another variant, which simply skips the wakeup whever ran on an offline
-> CPU, relying on the wakeup from rcutree_migrate_callbacks() right after
-> the CPU really is dead.
+Varsha Rao <rvarsha016@gmail.com> wrote:
 
-Cute!  ;-)
+> This patch fixes the clang warning of extraneous parentheses, with the
+> following coccinelle script.
+> 
+> @@
+> identifier i;
+> expression e;
+> statement s;
+> @@
+> if (
+> -(i == e)
+> +i == e
+>  )
+> s
+> 
+> Suggested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
 
-And a much smaller change.
+Patch applied to wireless-drivers-next.git, thanks.
 
-However, this means that if someone indirectly and erroneously causes
-rcu_report_qs_rsp() to be invoked from an offline CPU, the result is an
-intermittent and difficult-to-debug grace-period hang.  A lockdep splat
-whose stack trace directly implicates the culprit is much better.
+eb5d2f3afc0f brcmsmac: Remove unnecessary parentheses
 
-But your point about CPU hotplug being rare is a good one.  I should
-at the very least move ->ofl_lock to sit right beside ->lock, ditching
-the ____cacheline_internodealigned_in_smp.
+-- 
+https://patchwork.kernel.org/patch/10442401/
 
-							Thanx, Paul
-
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 7832dd556490..417496a03259 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -104,7 +104,6 @@ struct rcu_state sname##_state = { \
->  	.abbr = sabbr, \
->  	.exp_mutex = __MUTEX_INITIALIZER(sname##_state.exp_mutex), \
->  	.exp_wake_mutex = __MUTEX_INITIALIZER(sname##_state.exp_wake_mutex), \
-> -	.ofl_lock = __SPIN_LOCK_UNLOCKED(sname##_state.ofl_lock), \
->  }
-> 
->  RCU_STATE_INITIALIZER(rcu_sched, 's', call_rcu_sched);
-> @@ -1928,13 +1927,11 @@ static bool rcu_gp_init(struct rcu_state *rsp)
->  	 */
->  	rsp->gp_state = RCU_GP_ONOFF;
->  	rcu_for_each_leaf_node(rsp, rnp) {
-> -		spin_lock(&rsp->ofl_lock);
->  		raw_spin_lock_irq_rcu_node(rnp);
->  		if (rnp->qsmaskinit == rnp->qsmaskinitnext &&
->  		    !rnp->wait_blkd_tasks) {
->  			/* Nothing to do on this leaf rcu_node structure. */
->  			raw_spin_unlock_irq_rcu_node(rnp);
-> -			spin_unlock(&rsp->ofl_lock);
->  			continue;
->  		}
-> 
-> @@ -1970,7 +1967,6 @@ static bool rcu_gp_init(struct rcu_state *rsp)
->  		}
-> 
->  		raw_spin_unlock_irq_rcu_node(rnp);
-> -		spin_unlock(&rsp->ofl_lock);
->  	}
->  	rcu_gp_slow(rsp, gp_preinit_delay); /* Races with CPU hotplug. */
-> 
-> @@ -2250,11 +2246,19 @@ static int __noreturn rcu_gp_kthread(void *arg)
->  static void rcu_report_qs_rsp(struct rcu_state *rsp, unsigned long flags)
->  	__releases(rcu_get_root(rsp)->lock)
->  {
-> +	int cpu = smp_processor_id();
-> +
->  	raw_lockdep_assert_held_rcu_node(rcu_get_root(rsp));
->  	WARN_ON_ONCE(!rcu_gp_in_progress(rsp));
->  	WRITE_ONCE(rsp->gp_flags, READ_ONCE(rsp->gp_flags) | RCU_GP_FLAG_FQS);
->  	raw_spin_unlock_irqrestore_rcu_node(rcu_get_root(rsp), flags);
-> -	rcu_gp_kthread_wake(rsp);
-> +
-> +	/*
-> +	 * When our @cpu is offline, we'll get a wakeup from
-> +	 * rcutree_migrate_callbacks.
-> +	 */
-> +	if (cpu_online(cpu))
-> +		rcu_gp_kthread_wake(rsp);
->  }
-> 
->  /*
-> @@ -3768,18 +3772,15 @@ static void rcu_cleanup_dying_idle_cpu(int cpu, struct rcu_state *rsp)
-> 
->  	/* Remove outgoing CPU from mask in the leaf rcu_node structure. */
->  	mask = rdp->grpmask;
-> -	spin_lock(&rsp->ofl_lock);
->  	raw_spin_lock_irqsave_rcu_node(rnp, flags); /* Enforce GP memory-order guarantee. */
->  	rdp->rcu_ofl_gp_seq = READ_ONCE(rsp->gp_seq);
->  	rdp->rcu_ofl_gp_flags = READ_ONCE(rsp->gp_flags);
-> +	rnp->qsmaskinitnext &= ~mask;
->  	if (rnp->qsmask & mask) { /* RCU waiting on outgoing CPU? */
-> -		/* Report quiescent state -before- changing ->qsmaskinitnext! */
->  		rcu_report_qs_rnp(mask, rsp, rnp, rnp->gp_seq, flags);
->  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
->  	}
-> -	rnp->qsmaskinitnext &= ~mask;
->  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> -	spin_unlock(&rsp->ofl_lock);
->  }
-> 
->  /*
-> @@ -3849,6 +3850,12 @@ void rcutree_migrate_callbacks(int cpu)
->  {
->  	struct rcu_state *rsp;
-> 
-> +	/*
-> +	 * Just in case the outgoing CPU needed to wake the GP kthread
-> +	 * do so here.
-> +	 */
-> +	rcu_gp_kthread_wake(rsp);
-> +
->  	for_each_rcu_flavor(rsp)
->  		rcu_migrate_callbacks(cpu, rsp);
->  }
-> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-> index 4e74df768c57..8dab71838141 100644
-> --- a/kernel/rcu/tree.h
-> +++ b/kernel/rcu/tree.h
-> @@ -367,10 +367,6 @@ struct rcu_state {
->  	const char *name;			/* Name of structure. */
->  	char abbr;				/* Abbreviated name. */
->  	struct list_head flavors;		/* List of RCU flavors. */
-> -
-> -	spinlock_t ofl_lock ____cacheline_internodealigned_in_smp;
-> -						/* Synchronize offline with */
-> -						/*  GP pre-initialization. */
->  };
-> 
->  /* Values for rcu_state structure's gp_flags field. */
-> 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
