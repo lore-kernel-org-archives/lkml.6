@@ -2,166 +2,128 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E09DC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D886C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D66CC2563E
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:05:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D66CC2563E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E01E123D0D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:12:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkIqkYZF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E01E123D0D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966000AbeF0RFh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:05:37 -0400
-Received: from mga07.intel.com ([134.134.136.100]:19413 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754624AbeF0RDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:03:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 10:03:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
-   d="scan'208";a="70478499"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga002.jf.intel.com with ESMTP; 27 Jun 2018 10:03:31 -0700
-From:   "Chang S. Bae" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 1/8] x86/arch_prctl/64: Make ptrace read FS/GS base accurately
-Date:   Wed, 27 Jun 2018 10:03:06 -0700
-Message-Id: <1530118993-13466-2-git-send-email-chang.seok.bae@intel.com>
+        id S966008AbeF0RMl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:12:41 -0400
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:35455 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964947AbeF0RMi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 13:12:38 -0400
+Received: by mail-lj1-f180.google.com with SMTP id i125-v6so2244561lji.2;
+        Wed, 27 Jun 2018 10:12:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oZ2WdJLfpAzuJARzAVev5tREHsVidLx5HnilW1tiyT0=;
+        b=gkIqkYZFfV0wmgVHAw5hToBacK+os8XfGsRKJu/arvl2WirYt9tSRATXHQN3NATxfk
+         9S2vedsINAme5Dnh254vfM1UFlBBPCA1b+/hip/nzG9PTJHgWDBXGzI0GUdXphbBBhio
+         6Ng1Igw5I3lmR+wW2GrE+of3zvSQ6tbRQ4St+iUZRE1MgyZjwiTL8X5OPuBAxtAieika
+         f3m8f9mXXPZ9LOvK6KvLq/R4I2gsYzvSAtyv8sgtyYMMd+JFoF4tVWwJsjPQWvjIZGRb
+         LyYEI47Ed4l9k1UpcFoVSXwRDMso40GoIE8KTByAVzBykTRgiWp7YrcGTLENdE072xLN
+         5RGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oZ2WdJLfpAzuJARzAVev5tREHsVidLx5HnilW1tiyT0=;
+        b=hwqF+NclsYmys6vCr3vAg1+mPyKFF51ppECIbM+aZHJGUD29o5TmQJL6k+RXPZzesv
+         McHcXwkiIrUNDqeljB+bQOHDK6EFv1H7e0PMKy37OQhk6Ho5DmoUacTD3jkG6XhFyIMB
+         Lk6HZUAV3fLfenuSysyMrkSSlTSbpYt7rLajw/vSeuIqFxS41su/M+Xk8eofaj8db8gs
+         i3LcQoUZV1FBaNsy5GsC/oSZk3Eizg4oSAyzouhr2UjZdDg9ivePmM8dAIsTIkcdcWpn
+         CEUdPbyYrsa34Md4yhZhsP0tMjWelSLJJjAPUBaxnF1lgtTJlBLbIJEanQF/YR2241Y5
+         MitA==
+X-Gm-Message-State: APt69E0Eq8XWJjtz8JstSCbrr1tifiOq1IUQFeDazUpcdW105uLRYuQj
+        tCcBzsRkvuMydw16QMsmhJcpAV/oSwg=
+X-Google-Smtp-Source: AAOMgpd96h24GDdFWrVtW+Oz2kGT2CAd3mewGQcUdbiqe5XY/RcDZFj2+grFXhLMM4O7s/0g1lWoDQ==
+X-Received: by 2002:a2e:934d:: with SMTP id m13-v6mr4660907ljh.78.1530119556665;
+        Wed, 27 Jun 2018 10:12:36 -0700 (PDT)
+Received: from localhost.localdomain (user-94-254-170-61.play-internet.pl. [94.254.170.61])
+        by smtp.googlemail.com with ESMTPSA id n9-v6sm929344lfb.7.2018.06.27.10.12.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 27 Jun 2018 10:12:35 -0700 (PDT)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux@armlinux.org.uk
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xc-racer2@live.ca,
+        pawel.mikolaj.chmiel@gmail.com
+Subject: [PATCH v2 00/10] Initial support for Samsung Galaxy S and Galaxy S 4G
+Date:   Wed, 27 Jun 2018 19:12:14 +0200
+Message-Id: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
-References: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+This patch series adds support for Samsung Galaxy S and Galaxy S 4G.
+Both are commercial phone based on Aries family.
 
-ptrace can read FS/GS base using the register access API
-(PTRACE_PEEKUSER, etc) or PTRACE_ARCH_PRCTL.  Make both of these
-mechanisms return the actual FS/GS base.
+Changes from v1:
+  - Removed duplicated and unneeded headers
+  - Corrected node names
+  - Formatting fixes
+  - Removed unneeded pinctrl and sorted entries
+  - Set correct interrupt type for max8998 pmic
+  - Add missing regulators
+  - Added missing commit msg
+  - Added stdout-path
+  - Added information why we hardcode bootargs
+  - Added new patch which adds information, that there are samsung boards,
+    not using exynos bases soc.
+  - Split patch updating s5pv210_defconfig into three parts.
+    First is result of make savedefconfig, second adds drivers required
+    by both devices and last adds some options, which are usefull in booting
+    typical Linux distribution.
 
-This will improve debuggability by providing the correct information
-to ptracer (GDB and etc).
+Jonathan Bakker (2):
+  ARM: dts: s5pv210: Add initial DTS for SGH-T959P phone
+  dt-bindings: samsung: Document bindings for SGH-T959P board
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-[chang: Rebase and revise patch description]
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
----
- arch/x86/kernel/ptrace.c | 62 ++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 52 insertions(+), 10 deletions(-)
+Paweł Chmiel (8):
+  ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
+  ARM: dts: s5pv210: Add initial DTS for Samsung Aries based phones
+  ARM: dts: s5pv210: Add initial DTS for Samsung Galaxy S phone
+  dt-bindings: samsung: Add S5PV210 as possible soc in Samsung boards
+  dt-bindings: samsung: Document bindings for Samsung aries boards
+  ARM: s5pv210_defconfig: Run make savedefconfig
+  ARM: s5pv210_defconfig: Enable drivers for Samsung Aries based phones
+  ARM: s5pv210_defconfig: Enable options needed to boot typical Linux
+    distro
 
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index e2ee403..3acbf45 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -39,6 +39,7 @@
- #include <asm/hw_breakpoint.h>
- #include <asm/traps.h>
- #include <asm/syscall.h>
-+#include <asm/mmu_context.h>
- 
- #include "tls.h"
- 
-@@ -342,6 +343,49 @@ static int set_segment_reg(struct task_struct *task,
- 	return 0;
- }
- 
-+static unsigned long task_seg_base(struct task_struct *task,
-+				   unsigned short selector)
-+{
-+	unsigned short idx = selector >> 3;
-+	unsigned long base;
-+
-+	if (likely((selector & SEGMENT_TI_MASK) == 0)) {
-+		if (unlikely(idx >= GDT_ENTRIES))
-+			return 0;
-+
-+		/*
-+		 * There are no user segments in the GDT with nonzero bases
-+		 * other than the TLS segments.
-+		 */
-+		if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
-+			return 0;
-+
-+		idx -= GDT_ENTRY_TLS_MIN;
-+		base = get_desc_base(&task->thread.tls_array[idx]);
-+	} else {
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+		struct ldt_struct *ldt;
-+
-+		/*
-+		 * If performance here mattered, we could protect the LDT
-+		 * with RCU.  This is a slow path, though, so we can just
-+		 * take the mutex.
-+		 */
-+		mutex_lock(&task->mm->context.lock);
-+		ldt = task->mm->context.ldt;
-+		if (unlikely(idx >= ldt->nr_entries))
-+			base = 0;
-+		else
-+			base = get_desc_base(ldt->entries + idx);
-+		mutex_unlock(&task->mm->context.lock);
-+#else
-+		base = 0;
-+#endif
-+	}
-+
-+	return base;
-+}
-+
- #endif	/* CONFIG_X86_32 */
- 
- static unsigned long get_flags(struct task_struct *task)
-@@ -435,18 +479,16 @@ static unsigned long getreg(struct task_struct *task, unsigned long offset)
- 
- #ifdef CONFIG_X86_64
- 	case offsetof(struct user_regs_struct, fs_base): {
--		/*
--		 * XXX: This will not behave as expected if called on
--		 * current or if fsindex != 0.
--		 */
--		return task->thread.fsbase;
-+		if (task->thread.fsindex == 0)
-+			return task->thread.fsbase;
-+		else
-+			return task_seg_base(task, task->thread.fsindex);
- 	}
- 	case offsetof(struct user_regs_struct, gs_base): {
--		/*
--		 * XXX: This will not behave as expected if called on
--		 * current or if fsindex != 0.
--		 */
--		return task->thread.gsbase;
-+		if (task->thread.gsindex == 0)
-+			return task->thread.gsbase;
-+		else
-+			return task_seg_base(task, task->thread.gsindex);
- 	}
- #endif
- 	}
+ .../bindings/arm/samsung/samsung-boards.txt        |   5 +-
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/s5pv210-aries.dtsi               | 413 +++++++++++++++++++++
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts          |  45 +++
+ arch/arm/boot/dts/s5pv210-galaxys.dts              |  77 ++++
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi             |   2 +
+ arch/arm/configs/s5pv210_defconfig                 |  49 ++-
+ 7 files changed, 589 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/boot/dts/s5pv210-aries.dtsi
+ create mode 100644 arch/arm/boot/dts/s5pv210-fascinate4g.dts
+ create mode 100644 arch/arm/boot/dts/s5pv210-galaxys.dts
+
 -- 
 2.7.4
 
