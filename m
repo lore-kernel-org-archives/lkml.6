@@ -3,147 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD79C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C02C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05CEF264A9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:23:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05CEF264A9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id E01CF25E17
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:28:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E01CF25E17
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965030AbeF0MXB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:23:01 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45970 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933679AbeF0MXA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:23:00 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0T3QpJQk_1530102163;
-Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T3QpJQk_1530102163)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 27 Jun 2018 20:22:43 +0800
-Reply-To: xlpang@linux.alibaba.com
-Subject: Re: [PATCH] sched/cputime: Ensure correct utime and stime proportion
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
-References: <20180622071542.61569-1-xlpang@linux.alibaba.com>
- <b9363fa9-826f-611f-3ab3-27e50c03422a@linux.alibaba.com>
- <20180626154908.GE2458@hirez.programming.kicks-ass.net>
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-Message-ID: <e1b69cf9-a3a7-ea67-7c0e-d67ac81f29f1@linux.alibaba.com>
-Date:   Wed, 27 Jun 2018 20:22:42 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S1754310AbeF0M2c (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:28:32 -0400
+Received: from mga04.intel.com ([192.55.52.120]:48214 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752897AbeF0M2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:28:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 05:28:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,278,1526367600"; 
+   d="scan'208";a="67726616"
+Received: from jnikula-mobl2.fi.intel.com (HELO localhost) ([10.237.72.62])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2018 05:28:29 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Vito Caputo <vcaputo@pengaru.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [REGRESSION] 4.18-rc2: X61s thinkpad display unusable after xlock & lid close
+In-Reply-To: <20180627000548.jdhzpgnrdebzmlsd@shells.gnugeneration.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180627000548.jdhzpgnrdebzmlsd@shells.gnugeneration.com>
+Date:   Wed, 27 Jun 2018 15:28:17 +0300
+Message-ID: <87in64tnvi.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180626154908.GE2458@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/26/18 11:49 PM, Peter Zijlstra wrote:
-> On Tue, Jun 26, 2018 at 08:19:49PM +0800, Xunlei Pang wrote:
->> On 6/22/18 3:15 PM, Xunlei Pang wrote:
->>> We use per-cgroup cpu usage statistics similar to "cgroup rstat",
->>> and encountered a problem that user and sys usages are wrongly
->>> split sometimes.
->>>
->>> Run tasks with some random run-sleep pattern for a long time, and
->>> when tick-based time and scheduler sum_exec_runtime hugely drifts
->>> apart(scheduler sum_exec_runtime is less than tick-based time),
->>> the current implementation of cputime_adjust() will produce less
->>> sys usage than the actual use after changing to run a different
->>> workload pattern with high sys. This is because total tick-based
->>> utime and stime are used to split the total sum_exec_runtime.
->>>
->>> Same problem exists on utime and stime from "/proc/<pid>/stat".
->>>
->>> [Example]
->>> Run some random run-sleep patterns for minutes, then change to run
->>> high sys pattern, and watch.
->>> 1) standard "top"(which is the correct one):
->>>    4.6 us, 94.5 sy,  0.0 ni,  0.9 id, 0.0 wa, 0.0 hi, 0.0 si, 0.0 st
->>> 2) our tool parsing utime and stime from "/proc/<pid>/stat":
->>>    20.5 usr, 78.4 sys
->>> We can see "20.5 usr" displayed in 2) was incorrect, it recovers
->>> gradually with time: 9.7 usr, 89.5 sys
->>>
->> High sys probably means there's something abnormal on the kernel
->> path, it may hide issues, so we should make it fairly reliable.
->> It can easily hit this problem with our per-cgroup statistics.
->>
->> Hi Peter, any comment on this patch?
-> 
-> Well, no, because the Changelog is incomprehensible and the patch
-> doesn't really have useful comments, so I'll have to reverse engineer
-> the entire thing, and I've just not had time for that.
-> 
+On Tue, 26 Jun 2018, Vito Caputo <vcaputo@pengaru.com> wrote:
+> Beginning with 4.18, when I lock my X server using the `xlock` command,
+> and close the lid, upon reopening the lid I am not presented with the
+> xlock UI.
 
-Let me try the best to describe it again.
+Please file a bug report at [1]. Please include Xorg.0.log and dmesg
+with drm.debug=14 reproducing the problem. For fastest results, please
+git bisect.
 
-There are two types of run time for a process:
-1) task_struct::utime, task_struct::stime in ticks.
-2) scheduler task_struct::se.sum_exec_runtime(rtime) in ns.
+BR,
+Jani.
 
-In case of no vtime accounting, the utime/stime fileds of
-/proc/pid/stat are calculated by cputime_adjust(), which
-splits the precise rtime in the proportion of tick-based
-utime and stime.
-
-However cputime_adjust() always does the split using the
-total utime/stime of the process, this may cause wrong
-splitting in some cases, e.g.
-
-A typical statistic collector accesses "/proc/pid/stat".
-1) moment t0
-After accessed /proc/pid/stat in t0:
-tick-based whole utime is utime_0, tick-based whole stime
-is stime_0, scheduler time is rtime_0. The ajusted utime
-caculated by cputime_adjust() is autime_0, ajusted stime
-is astime_0, so astime_0=rtime_0*stime_0/(utime_0+stime_0).
-
-For a long time, the process runs mainly in userspace with
-run-sleep patterns, and because two different clocks, it
-is possible to have the following condition:
-  rtime_0 < utime_0 (as with little stime_0)
-
-2) moment t1(after dt, i.e. t0+dt)
-Then the process suddenly runs 100% sys workload afterwards
-lasting "dt", when accessing /proc/pid/stat at t1="t0+dt",
-both rtime_0 and stime_0 increase "dt", thus cputime_ajust()
-does the calculation for new adjusted astime_1 as follows:
-  (rtime_0+dt)*(stime_0+dt)/(utime_0+stime_0+dt)
-= (rtime_0*stime_0+rtime_0*dt+stime_0*dt+dt*dt)/(utime_0+stime_0+dt)
-= (rtime_0*stime_0+rtime_0*dt-utime_0*dt)/(utime_0+stime_0+dt) + dt
-< rtime_0*stime_0/(utime_0+stime_0+dt) + dt (for rtime_0 < utime_0)
-< rtime_0*stime_0/(utime_0+stime_0) + dt
-< astime_0+dt
-
-The actual astime_1 should be "astime_0+dt"(as it runs 100%
-sys during dt), but the caculated figure by cputime_adjust()
-becomes much smaller, as a result the statistics collector
-shows less cpu sys usage than the actual one.
-
-That's why we occasionally observed the incorrect cpu usage
-described in the changelog:
-[Example]
-Run some random run-sleep patterns for minutes, then change
-to run high sys pattern, and watch.
-1) standard "top"(which is the correct one):
-   4.6 us, 94.5 sy,  0.0 ni,  0.9 id, 0.0 wa, 0.0 hi, 0.0 si, 0.0 st
-2) Parsing utime and stime from "/proc/<pid>/stat":
-   20.5 usr, 78.4 sys
-We can see "20.5 usr" displayed in 2) was incorrect, it recovers
-gradually with time: 9.7 usr, 89.5 sys
+[1] https://bugs.freedesktop.org/enter_bug.cgi?product=DRI&component=DRM/Intel
 
 
-Thanks,
-Xunlei
+-- 
+Jani Nikula, Intel Open Source Graphics Center
