@@ -2,134 +2,110 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA0DC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55849C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4620025C9D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:06:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="et/GJTr1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4620025C9D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 1A71825C9D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A71825C9D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966144AbeF0TGj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 15:06:39 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52267 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966048AbeF0TGf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 15:06:35 -0400
-Received: by mail-it0-f66.google.com with SMTP id p4-v6so1703987itf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 12:06:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=M0vNw8hmsAb6woA7xPJKQ//mSQledytLWdurKhmDrhs=;
-        b=et/GJTr1OakugLIieB/apoJiCY/9+S1+biKxT2o6yW/VtQxnIhjgXJlJDYs5YYFJIw
-         3B2f/bU0g7cIyLSLIDHnKDo5lpCoSjJ/qjQbbmIVMOhaYFscp3NcvpXww8r3fh8YhOmI
-         wvppK28hgyeMhziCvGP/tDS4mTd77HD/SFQogs0AU/HQ8Jv5s28YwYtpfBYzcHphNJKq
-         VumED3RFye2/vkhDaU0Xjmtmc349TDVtX11VENeMLxMDL4L0NivkNoX7lfuc1AyU/6c4
-         QzxgLLgoGqF+Tzc2zU8Y0TkQfTprEJXPgznYHLpifmol8O4pCWcolkvnw1DNv56ztxrK
-         YoEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M0vNw8hmsAb6woA7xPJKQ//mSQledytLWdurKhmDrhs=;
-        b=nW9y6RjzMxhYBuy2ItIdrrTQ9DpnDfeO7IkQ6hCwXaihdpymqoQ6Pyemt9zaUxZ3PB
-         F8hv891IDbskyNtkcliTqQboqBoUtsUc4AgktwjNLDJLQqd5rV3uqFiZSZGvBEFZsG2G
-         WWklq7lNxQgOj47t0egEbQPzTm02YI19uEfQ5kukyK5Bp0b89522ckz6jxMbARSkD1wv
-         WWHjaHHkZjf5GM7nl5/t6CdXTH7XDkWUrIDG4CWSE1GWpiP3Fd1pK10Ci58FXhbsCkIT
-         YvUoOVmIeXu3lUMynMHFCNk0Ptm9dKqJ0LoP69WB1pjhZO4dTpdYXCWG0pLuFffH7xPX
-         mKaA==
-X-Gm-Message-State: APt69E1qMTEupFEymqw0yd1lxNu/X29kTejHeywM9bY5dq6KpMQY8tbr
-        tG2Hso68cffKoS8spDrRcr45JYuNMKs=
-X-Google-Smtp-Source: AAOMgpefpFV5K2p5p4S2a7F/IevOe7f5b68pwl/lJ8sD3i1bqH4/eo8JKVK6IpALHy4hCVPPjdYexg==
-X-Received: by 2002:a24:4fd3:: with SMTP id c202-v6mr5912206itb.32.1530126394634;
-        Wed, 27 Jun 2018 12:06:34 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id l13-v6sm2155355iob.82.2018.06.27.12.06.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 12:06:33 -0700 (PDT)
-Subject: Re: [PATCH 12/15] block: introduce blk-iolatency io controller
-To:     Josef Bacik <josef@toxicpanda.com>, linux-block@vger.kernel.org,
-        kernel-team@fb.com, akpm@linux-foundation.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Josef Bacik <jbacik@fb.com>
-References: <20180625151243.2132-1-josef@toxicpanda.com>
- <20180625151243.2132-13-josef@toxicpanda.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <05a581ed-8f21-9d89-a813-a03d802d3469@kernel.dk>
-Date:   Wed, 27 Jun 2018 13:06:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S966192AbeF0THM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 15:07:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42634 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966048AbeF0THI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 15:07:08 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E9FE8D751;
+        Wed, 27 Jun 2018 19:07:07 +0000 (UTC)
+Received: from redhat.com (ovpn-122-22.rdu2.redhat.com [10.10.122.22])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 44D152156880;
+        Wed, 27 Jun 2018 19:07:05 +0000 (UTC)
+Date:   Wed, 27 Jun 2018 22:07:02 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     wei.w.wang@intel.com, virtio-dev@lists.oasis-open.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com,
+        Rik van Riel <riel@redhat.com>, peterx@redhat.com
+Subject: Re: [PATCH v33 1/4] mm: add a function to get free page blocks
+Message-ID: <20180627220402-mutt-send-email-mst@kernel.org>
+References: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com>
+ <1529037793-35521-2-git-send-email-wei.w.wang@intel.com>
+ <CA+55aFzhuGKinEq5udPsk_uYHShkQxJYqcPO=tLCkT-oxpsgPg@mail.gmail.com>
+ <20180626045118-mutt-send-email-mst@kernel.org>
+ <CA+55aFwFpDPvfL=KPdabO-x1r0FnwpfPk5oN8+e01TKqAPNYbw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180625151243.2132-13-josef@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwFpDPvfL=KPdabO-x1r0FnwpfPk5oN8+e01TKqAPNYbw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 19:07:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 19:07:07 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/25/18 9:12 AM, Josef Bacik wrote:
-> +static void __blkcg_iolatency_throttle(struct rq_qos *rqos,
-> +				       struct iolatency_grp *iolat,
-> +				       spinlock_t *lock, bool issue_as_root,
-> +				       bool use_memdelay)
-> +	__releases(lock)
-> +	__acquires(lock)
-> +{
-> +	struct rq_wait *rqw = &iolat->rq_wait;
-> +	unsigned use_delay = atomic_read(&lat_to_blkg(iolat)->use_delay);
-> +	DEFINE_WAIT(wait);
-> +	bool first_block = true;
-> +
-> +	if (use_delay)
-> +		blkcg_schedule_throttle(rqos->q, use_memdelay);
-> +
-> +	/*
-> +	 * To avoid priority inversions we want to just take a slot if we are
-> +	 * issuing as root.  If we're being killed off there's no point in
-> +	 * delaying things, we may have been killed by OOM so throttling may
-> +	 * make recovery take even longer, so just let the IO's through so the
-> +	 * task can go away.
-> +	 */
-> +	if (issue_as_root || fatal_signal_pending(current)) {
-> +		atomic_inc(&rqw->inflight);
-> +		return;
-> +	}
-> +
-> +	if (iolatency_may_queue(iolat, &wait, first_block))
-> +		return;
-> +
-> +	do {
-> +		prepare_to_wait_exclusive(&rqw->wait, &wait,
-> +					  TASK_UNINTERRUPTIBLE);
-> +
-> +		iolatency_may_queue(iolat, &wait, first_block);
-> +		first_block = false;
-> +
-> +		if (lock) {
-> +			spin_unlock_irq(lock);
-> +			io_schedule();
-> +			spin_lock_irq(lock);
-> +		} else {
-> +			io_schedule();
-> +		}
-> +	} while (1);
+On Wed, Jun 27, 2018 at 09:05:39AM -0700, Linus Torvalds wrote:
+> [ Sorry for slow reply, my travels have made a mess of my inbox ]
+> 
+> On Mon, Jun 25, 2018 at 6:55 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > Linus, do you think it would be ok to have get_from_free_page_list
+> > actually pop entries from the free list and use them as the buffer
+> > to store PAs?
+> 
+> Honestly, what I think the best option would be is to get rid of this
+> interface *entirely*, and just have the balloon code do
+> 
+>     #define GFP_MINFLAGS (__GFP_NORETRY | __GFP_NOWARN |
+> __GFP_THISNODE | __GFP_NOMEMALLOC)
+> 
+>     struct page *page =  alloc_pages(GFP_MINFLAGS, MAX_ORDER-1);
+> 
+>  which is not a new interface, and simply removes the max-order page
+> from the list if at all possible.
+> 
+> The above has the advantage of "just working", and not having any races.
+> 
+> Now, because you don't want to necessarily *entirely* deplete the max
+> order, I'd suggest that the *one* new interface you add is just a "how
+> many max-order pages are there" interface. So then you can query
+> (either before or after getting the max-order page) just how many of
+> them there were and whether you want to give that page back.
+> 
+> Notice? No need for any page lists or physical addresses. No races. No
+> complex new functions.
+> 
+> The physical address you can just get from the "struct page" you got.
+> 
+> And if you run out of memory because of getting a page, you get all
+> the usual "hey, we ran out of memory" responses..
+> 
+> Wouldn't the above be sufficient?
+> 
+>             Linus
 
-So how does this wait loop ever exit?
+I think so, thanks!
+
+Wei, to put it in balloon terms, I think there's one thing we missed: if
+you do manage to allocate a page, and you don't have a use for it, then
+hey, you can just give it to the host because you know it's free - you
+are going to return it to the free list.
 
 -- 
-Jens Axboe
-
+MST
