@@ -2,112 +2,92 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80825C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1D2C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34BCE25EDE
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:40:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="F+7z1qmM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BCE25EDE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 5316025F4B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 16:42:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5316025F4B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965471AbeF0Qke (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 12:40:34 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39272 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964784AbeF0Qkc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 12:40:32 -0400
-Received: by mail-qt0-f196.google.com with SMTP id b20-v6so1592331qtp.6
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 09:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=iW5feYO/YqMxFQgYbF6rhcKQI8eGjFXMAs6sYYPdnTY=;
-        b=F+7z1qmMXz1g0EhJ6Gpv5zUvdI5dmhvmAw+mHg0ecZ9G4DtAqT9V2wr70oLkGNPorx
-         t1evY4WY4DyqwZq2AoIw9QcSNPQq7H1zJj0iGfxLozjNBEArRF7soP0jbZPGE747Btx7
-         SHnp2ZWMifxF7Yolho+ZuKogTZ5hLiC279N+k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=iW5feYO/YqMxFQgYbF6rhcKQI8eGjFXMAs6sYYPdnTY=;
-        b=h1uF2ANlFRQJQIMzY2Ov0M83/4pkHJAmQqGAQ+2Q9jEsEUqkguL5ShL4H1lleFdPWm
-         vpDZcxWNy77+0eUJrpU/4k+mTx0jntjQjoIRCjjK0rvLtrwmb6z5Otjg9wo4gGP4fN6k
-         jAKYA2dic/2468qVMCoJ3NMZ2Qz3PbwEkKyWUxRkeGrjAqgzU7cj9hgb5SMBMXu4JGpY
-         jkhiqAGJSyMP5/JHZtDIlOmui7IMgzM1pwMmaTgXG/l2MTRfr2AVzebj7vT9QlrJAO/m
-         rADbFuyNafZowAt6PLJHOy3LXVq2tvW5qOiKfZL4Pe8Xp7jMoC0wVuy4PmkZFeno84SJ
-         qkTg==
-X-Gm-Message-State: APt69E1mx5VSO3MCG9ODh49YeEipKkNMUUe55t5QleZ1ClXfWrnp7KfT
-        G/ndoi4/QYaSdatLBjEJN2axD7jh/24=
-X-Google-Smtp-Source: AAOMgpf85GKp/gLK1iVqmwNwoWLfR7uzO64FXeEWScc3eAiIzGXwHt3J35/N63GxDVkW/NPwLJWl2A==
-X-Received: by 2002:aed:21ce:: with SMTP id m14-v6mr6240502qtc.292.1530117632175;
-        Wed, 27 Jun 2018 09:40:32 -0700 (PDT)
-Received: from [10.75.249.192] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id o71-v6sm1845879qki.55.2018.06.27.09.40.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 09:40:31 -0700 (PDT)
-Subject: Re: [PATCH v5 1/2] nvme: cache struct nvme_ctrl reference to struct
- nvme_request
-To:     Johannes Thumshirn <jthumshirn@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <keith.busch@intel.com>
-Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>
-References: <20180627125324.22064-1-jthumshirn@suse.de>
- <20180627125324.22064-2-jthumshirn@suse.de>
-From:   James Smart <james.smart@broadcom.com>
-Message-ID: <7233e4f1-eee9-9849-be44-604aa11fffb3@broadcom.com>
-Date:   Wed, 27 Jun 2018 09:40:29 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180627125324.22064-2-jthumshirn@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1754982AbeF0Qmd (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 12:42:33 -0400
+Received: from mga09.intel.com ([134.134.136.24]:43624 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754976AbeF0Qmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 12:42:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 09:42:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
+   d="scan'208";a="67791414"
+Received: from tkaikuma-mobl.ger.corp.intel.com ([10.249.254.71])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2018 09:42:26 -0700
+Message-ID: <5c50d7fa2bf495f26443bd2da2e15df34c3d23f7.camel@linux.intel.com>
+Subject: Re: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Alan Cox <alan@linux.intel.com>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
+Cc:     "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Date:   Wed, 27 Jun 2018 19:42:24 +0300
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D954923@hasmsx108.ger.corp.intel.com>
+References: <20180624205202.6597-1-tomas.winkler@intel.com>
+         <19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
+         <cb7ecb912486ee3e504de7c0918d667ebd370080.camel@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B9D954923@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2018-06-26 at 21:15 +0000, Winkler, Tomas wrote:
+> > Right now if I really put head into this I can understand the logic but it
+> > is a
+> > complete mess.
+> 
+> I think what is the mess is that we have a recursive call to tpm_transmit
+> topped with retries.  All other mess is just the result of that.
+> 
+> > I will forgot the dependencies between flags within few
+> > weeks. 
+> 
+> Hope the reasons are well documented both in code and the commit message, if
+> not let's address that. We really cannot depend on one's memory.
+> It's not like I'm not striving for simplest possible code. 
+> 
+> > A fixed requirement (so that you know) is that they must be
+> > independent.
+> 
+> The flags (hope this what you referring here to) are not independent and
+> weren't before, (RAW cannot be called alone as you will have double locking)
+> putting them under one name just should make it clear. 
+> I beg you to go over the  code one more time, don't get stuck with flags
+> names, maybe you even discover some real issue. 
+> 
+> Thanks
+> Tomas
 
+You should then find a solution where you can remove TPM_TRANSMIT_RAW
+completely and make it as a separate commit, not part of the bug fix.
+This is not in a shape that I would dare to put this in a pull request.
 
-On 6/27/2018 5:53 AM, Johannes Thumshirn wrote:
-> From: Sagi Grimberg <sagi@grimberg.me>
->
-> We will need to reference the controller in the setup and completion
-> time for tracing and future traffic based keep alive support.
->
-> Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
->
-> ---
-> Changes to v4:
-> - Move caching from nvme_setup_cmd to .init_request (Keith)
-> ---
->   drivers/nvme/host/core.c   | 1 +
->   drivers/nvme/host/fc.c     | 1 +
->   drivers/nvme/host/nvme.h   | 1 +
->   drivers/nvme/host/pci.c    | 2 ++
->   drivers/nvme/host/rdma.c   | 1 +
->   drivers/nvme/target/loop.c | 1 +
->   6 files changed, 7 insertions(+)
->
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index e541fe268bcf..99dd62c1076c 100644
->
-
-good for the fc side...
-
-Reviewed-by:  James Smart  <james.smart@broadcom.com>
-
-
+/Jarkko
