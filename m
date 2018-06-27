@@ -2,114 +2,107 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38097C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151A9C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD30E23EA2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD30E23EA2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CD246247DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:02:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD246247DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934879AbeF0SB4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 14:01:56 -0400
-Received: from mga14.intel.com ([192.55.52.115]:24946 "EHLO mga14.intel.com"
+        id S935020AbeF0SCl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 14:02:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49606 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934333AbeF0SBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 14:01:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 11:01:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,280,1526367600"; 
-   d="scan'208";a="61936094"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.149]) ([10.7.153.149])
-  by fmsmga002.fm.intel.com with ESMTP; 27 Jun 2018 11:01:53 -0700
-Subject: Re: [PATCH] i2c: aspeed: Improve driver to support multi-master use
- cases stably
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20180626165812.4141-1-jae.hyun.yoo@linux.intel.com>
- <60d0dad1-b735-0650-47b4-40c57b1a5209@linux.intel.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <c1c361de-32a7-83b6-4d48-ad0750c6218b@linux.intel.com>
-Date:   Wed, 27 Jun 2018 11:01:53 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S934333AbeF0SCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 14:02:40 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0C7A020893; Wed, 27 Jun 2018 20:02:38 +0200 (CEST)
+Received: from localhost (unknown [88.128.82.6])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8BE3320893;
+        Wed, 27 Jun 2018 20:02:15 +0200 (CEST)
+Date:   Wed, 27 Jun 2018 20:02:15 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
+Message-ID: <20180627180215.y5kvvdqeriadxwte@flea>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <60d0dad1-b735-0650-47b4-40c57b1a5209@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2wy3m2pbmtcl6uw2"
+Content-Disposition: inline
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jarkko,
 
-Thanks for the review. Please see my answer below.
+--2wy3m2pbmtcl6uw2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/27/2018 12:48 AM, Jarkko Nikula wrote:
-> Hi
-> 
-> On 06/26/2018 07:58 PM, Jae Hyun Yoo wrote:
->> BMC firmware should support some multi-master use cases such as 
->> multi-node,
->> IPMB, BMC-ME link and so on but the current ASPEED I2C driver is a bit
->> unstable for the multi-master use case. So this patch improves ASPEED I2C
->> driver to support the multi-master use case stably.
->>
->> Changes:
->> * Added XFER_MODE status register checking logic into
->>    aspeed_i2c_master_xfer to improve the current bus busy checking logic.
->> * Changed the order of enum aspeed_i2c_master_state and
->>    enum aspeed_i2c_slave_state defines to make their initial values 
->> set to
->>    ASPEED_I2C_MASTER_INACTIVE and ASPEED_I2C_SLAVE_STOP respectively.
->>    In case of multi-master use with previous code, if a slave data comes
->>    ahead of the first master xfer, master_state starts from an invalid
->>    state. This change fixed the issue.
->> * Adjusted spin_lock scope to make it wrap the whole irq handler using
->>    a single lock and unlock pair covers both master and slave handlers.
->> * Added irq_status variable as a member of the struct aspeed_i2c_bus to
->>    collect handled interrupt bits throughout the master and the slave irq
->>    handlers.
->> * Added control logic to put an order on calling the master and the slave
->>    irq handlers based on their current states.
->>
-> This does many unrelated looking changes in one patch making it more 
-> vulnerable for potential multiple regressions. For instance busy 
-> checking goes from single read to loop with 250 ms timeout in this patch 
-> while changing also spin lock logic and interrupt handling.
-> 
-> Now if there is some regression it might be difficult to find what 
-> change in this patch is causing it and more over things goes more 
-> complicated if some other kind of regressions are found pointing into 
-> the same commit.
-> 
-> I suggest splitting this into multiple smaller patches. For instance 
-> having first simple conversions patches that are unlikely to cause a 
-> regression like one patch adding '\n' to error print, another moving 
-> irq_status variable into struct aspeed_i2c_bus and so on followed by 
-> patches that change logic like busy checking, spin lock change and then 
-> patch or more for multi-master support.
-> 
+On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
+> This series adds support for R40 HDMI pipeline. It is a bit special
+> than other already supported pipelines because it has additional unit
+> called TCON TOP responsible for relationship configuration between
+> mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+> and TV TCONs, TV encoder clock settings and pin muxing between LCD
+> and TV encoders.
+>=20
+> However, it seems that TCON TOP will become a norm, since newer
+> Allwinner SoCs like H6 also have this unit.
+>=20
+> I tested different possible configurations:
+> - mixer0 <> TCON-TV0 <> HDMI
+> - mixer0 <> TCON-TV1 <> HDMI
+> - mixer1 <> TCON-TV0 <> HDMI
+> - mixer1 <> TCON-TV1 <> HDMI
+>=20
+> Please review.
 
-Yes, that makes sense and I agree with you. I'll split out this patch
-into multiple smaller patches as you suggested.
+I just applied it. It didn't apply cleanly, so please make sure it
+does next time, or at least state what the dependencies are.
 
-Thanks,
+Thanks!
+Maxime
 
-Jae
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--2wy3m2pbmtcl6uw2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsz0SYACgkQ0rTAlCFN
+r3SbdQ//euZyyHgI8fweXiCdyc7kUUDmnCUfKDb2K6NkxCqJ9W6HAtKlzNL9NIhr
+ixkSZCBtKgqmIfIaxuhBfL3Xc1k0haj6RS3rwVXOjrwd3eMMFz6ywvi2UkDNLYqA
+ROSGF/QyN5tPyEPYVEac4XYqxVOTdd0vweZHBWUSWHX0YuQM71QE5QJ7xnlhfv61
+bkQEsbnP9vbHQpYseH1v3UIwx8P7XnFS/wJ+OX5v2lwLNcFGl4Z4A8n1ZetVhIJs
+kTp88LXIImT5cWDnsDmONRbBfJvIiitICvJ/9hlN5tcAC86bBX8xuW58oRz2KAQR
+eTlzwvMR7DedVMZ7KWqtxztnPVcjCuy5ZLNYjE5ljhkueS4v1//2gzfM4fE46kOT
+FA+dW8YTIUt6iWn//S4vtXEtSINU7E6kDP5NcASKwg1RET7/ylw6TmOcVeyyjyIc
+R3HFC71s9Cp5eCFYO4ICgrU1Y7oNBhTJPdSK8f/NFJYlBMLUXAij0Dj7Dogqen+K
+lsZVMzYpQIZYvLIFwDqejmQEEnmUrT8MmLdx+1Ho0FkmeDae5pW+oX6UmyVBabZX
+ydyjntKnFxJQofKqm1NeDMTghrjmcto+Wqh//zMkJjaYQe1QGpU8WdOGVxEIoo+W
+9VFCRVtOQSSRNiMtc15s/tSrxAFzROMAdohn7KY5s5/JW0fi5QA=
+=MMdN
+-----END PGP SIGNATURE-----
+
+--2wy3m2pbmtcl6uw2--
