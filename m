@@ -2,168 +2,194 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4C7C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAD1C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA3B02634D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:26:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3B02634D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 7DEA726390
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 13:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DEA726390
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965495AbeF0N0Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 09:26:24 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54272 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965114AbeF0N0V (ORCPT
+        id S965516AbeF0N0x (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 09:26:53 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:47352 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964969AbeF0N0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 09:26:21 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 438D280521; Wed, 27 Jun 2018 15:26:19 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 15:26:18 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: v4.18-rc1 on droid 4: very bad CPU performance
-Message-ID: <20180627132618.GA32007@amd>
-References: <20180621121542.GA4836@amd>
- <20180622072005.GF112168@atomide.com>
- <20180622074936.GG112168@atomide.com>
- <20180625094949.GA17001@amd>
- <20180626061604.GK112168@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
-Content-Disposition: inline
-In-Reply-To: <20180626061604.GK112168@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 27 Jun 2018 09:26:51 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MSDwg-1fijPR0yEM-00TBds; Wed, 27 Jun 2018 15:26:31 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Faisal Latif <faisal.latif@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Henry Orosco <henry.orosco@intel.com>,
+        Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+        Mustafa Ismail <mustafa.ismail@intel.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH] [v2] infiniband: i40iw, nes: don't use wall time for TCP sequence numbers
+Date:   Wed, 27 Jun 2018 15:26:05 +0200
+Message-Id: <20180627132628.915978-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:kGuJaX4Ijbwfy5kQA226izXIBETcKwmuXeUpta8Nyl0EPC17CMG
+ /nDCzBlrulRr/zWj5ihP4EEoGeiyJXs6uCP/+YCzFnIG69vGJDjflrXUQDBlGtwJPFCixhd
+ YvBq/YoU09axHytwZJZuM0oLNRAQIhpGS8oDu+KdD+ungKy9gqGQ+e7ksTnh9qYbZqYXMPn
+ P7WDvFUPoGjsBOxBVtrsA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:58jnna7/ffE=:udBbJFph8Yi/KyzEsPPGBc
+ X6WK39fdD/O/7D2k4xOz+3lIXfxx2/XC7+x9wE0dj96AOang6AOsr6bnndYqMptNMX0MmdWFJ
+ k6rzmPvpVkbAmksMTVB8ZJ0OCxUEX278cdcbL2O7YuYb3WT0LWFsVBPJYs1aVTn7/3+adLxPm
+ MnAqmVkJOADpchk0DFz9QKTt6oJHRT+ZEgGbZBr3Q6cgSFRWDyk4Ru6n7W9jIQ1oDKj7B8lyJ
+ Gb5I+2eOZU5HZw11sRLHrhmfFW64n6rmTubt6PzDRpCTcC1LbObT2QD57tHhpxr9lIHTHg9Mh
+ jUUOoMXaxjt04+Vy8aSP14PEXmiToWZSu9sJU6qWGWDsA20/BEDJ5ROr43DKJJyO/iLVJOSKf
+ Mkb70bTI4ylqOgMffkYlWF883pKI5tke6RDP+f6GZEuuYE2kHNqbUmBpyobPh2pmrXL3IV0Vn
+ KTyB+RTk1XKV8pSefD1h0VCPM1F4xNSuRJE6pBLciptmVxSJ48t/HCjHYpyjht7CNCB/R6rtN
+ GbN6fpRiLBW2kFpDwRrat9tyRdYLDGb9SaRh3vnQ6xV/oA0edRs3vQzyqC46FnEfASQs2ByxA
+ psr4O2s1/XTtFW4qvMApZvYSTz+VLQnAxHHkIbEUgbqDzf+B3Kl+lPcNUFRxgYYyWLjxZ+m6G
+ agfByt3cGFrm89AxmbDvQ09x4+qZZYcr5Pl6xr1YgooBcHBAn5lfaK4FVERuQra0esJM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The nes infiniband driver uses current_kernel_time() to get a nanosecond
+granunarity timestamp to initialize its tcp sequence counters. This is
+one of only a few remaining users of that deprecated function, so we
+should try to get rid of it.
 
---BOKacYhQ+x31HxR3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Aside from using a deprecated API, there are several problems I see here:
 
-On Mon 2018-06-25 23:16:04, Tony Lindgren wrote:
-> * Pavel Machek <pavel@ucw.cz> [180625 09:52]:
-> > Hi!
-> >=20
-> > > > > V4.18 is slower than it should be.
-> > > > >=20
-> > > > > user@devuan:~$ time cat /dev/urandom | head -c 10000000 |  bzip2 =
--9 -
-> > > > > | wc -c
-> > > > > 10044291
-> > > > > 52.73user 2.40system 61.53 (1m1.534s) elapsed 89.60%CPU
-> > > > > user@devuan:~$ uname -a
-> > > > > Linux devuan 4.18.0-rc1-87964-gfa19934-dirty #743 SMP Sun Jun 17
-> > > > > 19:26:37 CEST 2018 armv7l GNU/Linux
-> > > > >=20
-> > > > > That bzip should take 12 seconds, not minute.
-> > > > >=20
-> > > > > Any ideas? Do you see it, too?
-> > > >=20
-> > > > I've noticed firefox is super slow.. Git bisect time?
-> > >=20
-> > > Hmm not happening for me at least on duovero and droid4,
-> > > I'm getting about 20s for v4.17 and v4.18-rc1.
-> >=20
-> > Something weird is going on here. My notes say it should be 12
-> > seconds.
-> >=20
-> > It is indeed 20 seconds for v4.17, but it is 12 seconds in v4.14.
-> >=20
-> > v4.14 is:
-> > # CONFIG_CPU_FREQ is not set
-> > CONFIG_CPU_IDLE=3Dy
-> > # CONFIG_CPU_IDLE_GOV_LADDER is not set
-> > CONFIG_CPU_IDLE_GOV_MENU=3Dy
-> > # CONFIG_ARM_CPUIDLE is not set
-> >=20
-> > In v4.18, I have:
-> >=20
-> > CONFIG_CPU_FREQ=3Dy
-> > CONFIG_CPU_FREQ_GOV_ATTR_SET=3Dy
-> > CONFIG_CPU_FREQ_GOV_COMMON=3Dy
-> > CONFIG_CPU_FREQ_STAT=3Dy
-> > CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=3Dy
-> >=20
-> > CONFIG_CPU_IDLE=3Dy
-> > CONFIG_CPU_IDLE_GOV_MENU=3Dy
-> > CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED=3Dy
->=20
-> I gave it a quick try here with v4.14 and it was 21 seconds
-> on 4430 duovero. But this was with omap2plus_defconfig.
+- Using a CLOCK_REALTIME based time source makes it predictable in
+  case the time base is synchronized.
+- Using a coarse timestamp means it only gets updated once per jiffie,
+  making it even more predictable in order to avoid having to access
+  the hardware clock source
+- The upper 2 bits are always zero because the nanoseconds are at most
+  999999999.
 
-Weird. In v4.18 I seen times from 57 seconds to 27 seconds to 20
-seconds. It seems to be consistent after boot.
+For the Linux TCP implementation, we use secure_tcp_seq(), which appears
+to be appropriate here as well, and solves all the above problems.
 
-v4.14 is fast... 12 second. v4.15 (all-v4.15 branch) -- no
-boot. all-v4.16 -- 15.7 seconds. all-v4.18 with "all" config: time
-varies (20, 24, 27, 57 seconds). all-v4.18 with "droid4" config: 20
-seconds.
+i40iw uses a variant of the same code, so I do that same thing there
+for ipv4. Unlike nes, i40e also supports ipv6, which needs to call
+secure_tcpv6_seq instead.
 
-What needs to be done to get cpufreq to work? One of my hypothesis is
-that cpu is running at wrong rate. I have it enabled in config, but no
-luck:
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: use secure_tcpv6_seq for IPv6 support as suggested by Shiraz Saleem.
+---
+ drivers/infiniband/hw/i40iw/i40iw_cm.c | 26 +++++++++++++++++++++-----
+ drivers/infiniband/hw/nes/nes_cm.c     |  8 +++++---
+ net/core/secure_seq.c                  |  1 +
+ 3 files changed, 27 insertions(+), 8 deletions(-)
 
-user@devuan:~$ zcat /proc/config.gz | grep CPU_FREQ
-CONFIG_CPU_FREQ=3Dy
-CONFIG_CPU_FREQ_GOV_ATTR_SET=3Dy
-CONFIG_CPU_FREQ_GOV_COMMON=3Dy
-CONFIG_CPU_FREQ_STAT=3Dy
-# CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is not set
-# CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE is not set
-# CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE is not set
-CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=3Dy
-# CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE is not set
-# CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not set
-CONFIG_CPU_FREQ_GOV_PERFORMANCE=3Dy
-CONFIG_CPU_FREQ_GOV_POWERSAVE=3Dy
-CONFIG_CPU_FREQ_GOV_USERSPACE=3Dy
-CONFIG_CPU_FREQ_GOV_ONDEMAND=3Dy
-CONFIG_CPU_FREQ_GOV_CONSERVATIVE=3Dy
-# CONFIG_CPU_FREQ_GOV_SCHEDUTIL is not set
-user@devuan:~$ sudo cpufreq-info
-cpufrequtils 008: cpufreq-info (C) Dominik Brodowski 2004-2009
-Report errors and bugs to cpufreq@vger.kernel.org, please.
-analyzing CPU 0:
-  no or unknown cpufreq driver is active on this CPU
-    maximum transition latency: 0.00 ms.
-    analyzing CPU 1:
- no or unknown cpufreq driver is active on this CPU
- maximum transition latency: 0.00 ms.
-user@devuan:~$
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_cm.c b/drivers/infiniband/hw/i40iw/i40iw_cm.c
+index 7b2655128b9f..e2590784b857 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_cm.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_cm.c
+@@ -57,6 +57,7 @@
+ #include <net/addrconf.h>
+ #include <net/ip6_route.h>
+ #include <net/ip_fib.h>
++#include <net/secure_seq.h>
+ #include <net/tcp.h>
+ #include <asm/checksum.h>
+ 
+@@ -2164,7 +2165,6 @@ static struct i40iw_cm_node *i40iw_make_cm_node(
+ 				   struct i40iw_cm_listener *listener)
+ {
+ 	struct i40iw_cm_node *cm_node;
+-	struct timespec ts;
+ 	int oldarpindex;
+ 	int arpindex;
+ 	struct net_device *netdev = iwdev->netdev;
+@@ -2214,10 +2214,26 @@ static struct i40iw_cm_node *i40iw_make_cm_node(
+ 	cm_node->tcp_cntxt.rcv_wscale = I40IW_CM_DEFAULT_RCV_WND_SCALE;
+ 	cm_node->tcp_cntxt.rcv_wnd =
+ 			I40IW_CM_DEFAULT_RCV_WND_SCALED >> I40IW_CM_DEFAULT_RCV_WND_SCALE;
+-	ts = current_kernel_time();
+-	cm_node->tcp_cntxt.loc_seq_num = ts.tv_nsec;
+-	cm_node->tcp_cntxt.mss = (cm_node->ipv4) ? (iwdev->vsi.mtu - I40IW_MTU_TO_MSS_IPV4) :
+-				 (iwdev->vsi.mtu - I40IW_MTU_TO_MSS_IPV6);
++	if (cm_node->ipv4) {
++		cm_node->tcp_cntxt.loc_seq_num = secure_tcp_seq(htonl(cm_node->loc_addr[0]),
++							htonl(cm_node->rem_addr[0]),
++							htons(cm_node->loc_port),
++							htons(cm_node->rem_port));
++		cm_node->tcp_cntxt.mss = iwdev->vsi.mtu - I40IW_MTU_TO_MSS_IPV4;
++	} else {
++		__be32 loc[4] = {
++			htonl(cm_node->loc_addr[0]), htonl(cm_node->loc_addr[1]),
++			htonl(cm_node->loc_addr[2]), htonl(cm_node->loc_addr[3])
++		};
++		__be32 rem[4] = {
++			htonl(cm_node->rem_addr[0]), htonl(cm_node->rem_addr[1]),
++			htonl(cm_node->rem_addr[2]), htonl(cm_node->rem_addr[3])
++		};
++		cm_node->tcp_cntxt.loc_seq_num = secure_tcpv6_seq(loc, rem,
++							htons(cm_node->loc_port),
++							htons(cm_node->rem_port));
++		cm_node->tcp_cntxt.mss = iwdev->vsi.mtu - I40IW_MTU_TO_MSS_IPV6;
++	}
+ 
+ 	cm_node->iwdev = iwdev;
+ 	cm_node->dev = &iwdev->sc_dev;
+diff --git a/drivers/infiniband/hw/nes/nes_cm.c b/drivers/infiniband/hw/nes/nes_cm.c
+index 6cdfbf8c5674..2b67ace5b614 100644
+--- a/drivers/infiniband/hw/nes/nes_cm.c
++++ b/drivers/infiniband/hw/nes/nes_cm.c
+@@ -58,6 +58,7 @@
+ #include <net/neighbour.h>
+ #include <net/route.h>
+ #include <net/ip_fib.h>
++#include <net/secure_seq.h>
+ #include <net/tcp.h>
+ #include <linux/fcntl.h>
+ 
+@@ -1445,7 +1446,6 @@ static struct nes_cm_node *make_cm_node(struct nes_cm_core *cm_core,
+ 					struct nes_cm_listener *listener)
+ {
+ 	struct nes_cm_node *cm_node;
+-	struct timespec ts;
+ 	int oldarpindex = 0;
+ 	int arpindex = 0;
+ 	struct nes_device *nesdev;
+@@ -1496,8 +1496,10 @@ static struct nes_cm_node *make_cm_node(struct nes_cm_core *cm_core,
+ 	cm_node->tcp_cntxt.rcv_wscale = NES_CM_DEFAULT_RCV_WND_SCALE;
+ 	cm_node->tcp_cntxt.rcv_wnd = NES_CM_DEFAULT_RCV_WND_SCALED >>
+ 				     NES_CM_DEFAULT_RCV_WND_SCALE;
+-	ts = current_kernel_time();
+-	cm_node->tcp_cntxt.loc_seq_num = htonl(ts.tv_nsec);
++	cm_node->tcp_cntxt.loc_seq_num = secure_tcp_seq(htonl(cm_node->loc_addr),
++							htonl(cm_node->rem_addr),
++							htons(cm_node->loc_port),
++							htons(cm_node->rem_port));
+ 	cm_node->tcp_cntxt.mss = nesvnic->max_frame_size - sizeof(struct iphdr) -
+ 				 sizeof(struct tcphdr) - ETH_HLEN - VLAN_HLEN;
+ 	cm_node->tcp_cntxt.rcv_nxt = 0;
+diff --git a/net/core/secure_seq.c b/net/core/secure_seq.c
+index 7232274de334..af6ad467ed61 100644
+--- a/net/core/secure_seq.c
++++ b/net/core/secure_seq.c
+@@ -140,6 +140,7 @@ u32 secure_tcp_seq(__be32 saddr, __be32 daddr,
+ 			    &net_secret);
+ 	return seq_scale(hash);
+ }
++EXPORT_SYMBOL_GPL(secure_tcp_seq);
+ 
+ u32 secure_ipv4_port_ephemeral(__be32 saddr, __be32 daddr, __be16 dport)
+ {
+-- 
+2.9.0
 
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---BOKacYhQ+x31HxR3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlszkHoACgkQMOfwapXb+vIbtgCdEu9IBOrqMt0u3F+8H664y4L2
-t6kAoIZ+um480sa4LZAhgRq3Xlrvj4gy
-=zpFJ
------END PGP SIGNATURE-----
-
---BOKacYhQ+x31HxR3--
