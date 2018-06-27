@@ -2,98 +2,103 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5F4C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B844C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2670254FB
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:20:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2670254FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D5F62686D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 01:20:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wr+Fr9bi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D5F62686D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934692AbeF0BUU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 21:20:20 -0400
-Received: from mga09.intel.com ([134.134.136.24]:60837 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933940AbeF0BUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 21:20:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2018 18:20:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,277,1526367600"; 
-   d="scan'208";a="66619754"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by fmsmga004.fm.intel.com with ESMTP; 26 Jun 2018 18:20:16 -0700
-Message-ID: <5B32E742.8080902@intel.com>
-Date:   Wed, 27 Jun 2018 09:24:18 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S934712AbeF0BUv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 21:20:51 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33666 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933655AbeF0BUt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 21:20:49 -0400
+Received: by mail-oi0-f68.google.com with SMTP id c6-v6so340519oiy.0;
+        Tue, 26 Jun 2018 18:20:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ixzjNlSxWCXoqImPEJo24Qf3pj++ES3Am9SqZlyzwuI=;
+        b=Wr+Fr9biEQfG6ym0HqXX3wm51AthfHKSHqt6dTm27aMfn6n/hHLQqk9FYIe5rxJxe9
+         E7Dg5V0CgjcwoGl4MmwWTyV0PCZtbzoiinTf+Q5qNFiBpt9EpNGuWAP/pkqY1FfNRgW2
+         qOKhhpQ7UWi6pVpGFAnk8ow6ZM7e0ij6zE17/m/II5Vwyhu5JHqBZ0yehashD6U/Sgh9
+         tWb20bGTbJ+Q+PahrIrzpN6sTV/jArGBPCw10zTbejmdapOYYgV/CsCOLt0SlzLJGLti
+         eT+z3UJDN1ENUwlhjlass2MILgnGcgksD+ww6dtSDG2RFYrZxXpbIT/0bFHezAzkrSXt
+         x3Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ixzjNlSxWCXoqImPEJo24Qf3pj++ES3Am9SqZlyzwuI=;
+        b=H0nhBj6gob7HAM2rt2sus6FZV35FLoZC6ZmSECXagflGe7HLmBSuiHnSgWlc9K/stC
+         lNpNWatvHAKWuW3XQ+LRKI+zqNeC9km9EtUtx/k4aFD6/f2H77cG8k0/QTVry6qHEF05
+         cut6Cw9L0NSzAa9Q+uBFN+g74eOfFN2HfqYnQ86wml2ekMxubpzRubYW4Ey9plFqG3ej
+         ygnkValsubl7NsEfgy2iCVeBHWF+wLINsAwIZneTkoiNhEqzprqMPNsMT2soCNRxkUZX
+         6khuoGBH+9TJYPaXnygtOVTpKSBHvL9rLot7eKMW8ECiTp6T4vTdgrGvSQJ2s9q2Lkie
+         Zucw==
+X-Gm-Message-State: APt69E1yn1IRkXa7Bc2cupxmJu4+Xh9rCF0DfmKM7G67sbZmgjY4GHV0
+        vOHfMM8PX5AD+d0ygZyJEtrturoYgClx/b9gx14=
+X-Google-Smtp-Source: AAOMgpeJ1KmcFFVoegov+VSK0myrAYTv68r+Cil5PiBRDPZ78OKtA68t+0rhvj4LAbrJJzvSz6gKo0OOY1K423/mozc=
+X-Received: by 2002:aca:808:: with SMTP id 8-v6mr2239133oii.198.1530062449116;
+ Tue, 26 Jun 2018 18:20:49 -0700 (PDT)
 MIME-Version: 1.0
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-Subject: Re: [PATCH v34 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com> <1529928312-30500-3-git-send-email-wei.w.wang@intel.com> <20180626002822-mutt-send-email-mst@kernel.org> <5B31B71B.6080709@intel.com> <20180626064338-mutt-send-email-mst@kernel.org> <5B323140.1000306@intel.com> <20180626163139-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180626163139-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 18:20:48
+ -0700 (PDT)
+In-Reply-To: <1529993283-32396-1-git-send-email-Anson.Huang@nxp.com>
+References: <1529993283-32396-1-git-send-email-Anson.Huang@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 26 Jun 2018 22:20:48 -0300
+Message-ID: <CAOMZO5C--fpkRLfwmySFJeO2hwPdz3paxW1WMiqcqraqmbL9Mg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: make pfuze switch always-on for imx platforms
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        NXP Linux Team <Linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/26/2018 09:34 PM, Michael S. Tsirkin wrote:
-> On Tue, Jun 26, 2018 at 08:27:44PM +0800, Wei Wang wrote:
->> On 06/26/2018 11:56 AM, Michael S. Tsirkin wrote:
->>> On Tue, Jun 26, 2018 at 11:46:35AM +0800, Wei Wang wrote:
->>>
->>>>>> +	if (!arrays)
->>>>>> +		return NULL;
->>>>>> +
->>>>>> +	for (i = 0; i < max_array_num; i++) {
->>>>> So we are getting a ton of memory here just to free it up a bit later.
->>>>> Why doesn't get_from_free_page_list get the pages from free list for us?
->>>>> We could also avoid the 1st allocation then - just build a list
->>>>> of these.
->>>> That wouldn't be a good choice for us. If we check how the regular
->>>> allocation works, there are many many things we need to consider when pages
->>>> are allocated to users.
->>>> For example, we need to take care of the nr_free
->>>> counter, we need to check the watermark and perform the related actions.
->>>> Also the folks working on arch_alloc_page to monitor page allocation
->>>> activities would get a surprise..if page allocation is allowed to work in
->>>> this way.
->>>>
->>> mm/ code is well positioned to handle all this correctly.
->> I'm afraid that would be a re-implementation of the alloc functions,
-> A re-factoring - you can share code. The main difference is locking.
+On Tue, Jun 26, 2018 at 3:08 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> commit (5fe156f regulator: pfuze100: add enable/disable
+> for switch) will cause those unreferenced switches being
+
+Nit: The proper way to reference a commit is:
+
+commit 5fe156f1cab4 ("regulator: pfuze100: add enable/disable for switch")
+
+12 char for the commit ID and the commit name inside (" ").
+
+> turned off if "regulator-always-on" is NOT present, as
+> pfuze switches are normally used by critical modules which
+> must be always ON or shared by many peripherals which
+> do NOT implement power domain control, so just make sure
+> all switches always ON to avoid any system issue caused
+> by unexpectedly turning off switches.
 >
->> and
->> that would be much more complex than what we have. I think your idea of
->> passing a list of pages is better.
->>
->> Best,
->> Wei
-> How much memory is this allocating anyway?
->
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-For every 2TB memory that the guest has, we allocate 4MB. This is the 
-same for both cases.
-For today's guests, usually there will be only one 4MB allocated and 
-passed to get_from_free_page_list.
-
-Best,
-Wei
-
-
-
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
