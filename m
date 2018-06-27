@@ -2,124 +2,120 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 206D3C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D5AC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA64D26776
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:54:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA64D26776
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 184DF2666C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:59:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gO2MK02E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 184DF2666C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964817AbeF0Jyn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:54:43 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38148 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbeF0Jyl (ORCPT
+        id S934254AbeF0J7z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 05:59:55 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44451 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934221AbeF0J7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:54:41 -0400
-Received: by mail-wr0-f196.google.com with SMTP id e18-v6so1374825wrs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 02:54:41 -0700 (PDT)
+        Wed, 27 Jun 2018 05:59:53 -0400
+Received: by mail-wr0-f193.google.com with SMTP id p12-v6so1379675wrn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 02:59:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=np70YmqXeAMOPa18W6j7V+hkMBK7+Qumnw7jCK9DUW8=;
+        b=gO2MK02EgD4DDMRiNfELRiqvVkhX0Vvt6y7tWdpfmugKbCxuKP/5CXQDJgWbSyGhhG
+         18UBQS31FzjDfDaDMkqiZJcroqRm0stECJvwWAx9n9COtVtSwN767FnSWCEGUZto3knK
+         V3VQhTpzHCONQeusPGP324I9Yz3UcFlfIVSfU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tSnyXYNMtB89PyPUvBQ9XzgMaQqobBdr1nFJkfgAOtI=;
-        b=P6AMYRdTBpJpbi1NIqe5vW7Uf2Jkylw6juOplUDbIWU16aYODBmBjOafrS6rp53Bq+
-         hReedv+YXZuAWJ4ozwXVOeHwXUo+yzCG6Kww0CGP0iIpWxx/xgG3Ar+OeISX9uK4kkCc
-         GduJqeM5bNC9VGWbS+w79uKny514ks2pEil3TQU9xG5eExs8yAdoHmSN4QbVq4nnEhbd
-         ZxEBcrZQ/+9/x+N+95nldw/6Roa5uumf03EMet3mZppqkAcd6eVQalZM8dgaMtx5o1LT
-         xZWye2UAI1QJnoXw6E2GaCDLJJM5gqF+Xz0KcalJTgpE3NZZRXQrvJ66RkaiFgJNSDML
-         /VUQ==
-X-Gm-Message-State: APt69E21l5FL67le2axbFAD+ExMjeJbAKnxYv4qb4gPdJ+z/eczgXeTO
-        4rw4RW5ErwtiTcCmm3TbsoY=
-X-Google-Smtp-Source: AAOMgpejyPqaB7A7FfW5WFCAX9Zb3INmHJsaaIbAspFBf2SJnDDZUvJTJwekH9kKf/7EYzcgQ4IXBg==
-X-Received: by 2002:adf:f342:: with SMTP id e2-v6mr4537521wrp.161.1530093280809;
-        Wed, 27 Jun 2018 02:54:40 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm5858696wrn.75.2018.06.27.02.54.39
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=np70YmqXeAMOPa18W6j7V+hkMBK7+Qumnw7jCK9DUW8=;
+        b=ANeZWeicDZn8voQVUlbISnxARjMxL/tPAioBkIawV337Leisw/glPlvi29j7GmRdxN
+         PABNgz2BNFm/p1z8Q1ec8u7oEftLuZ5Z2c64u81cnUrjxuR7NB8MPLUWHYUMK88LqV5L
+         t1RIPvS7euLDOcttnNjTCTuravLXttteQvMEolHBLVUhNdM9MNJKUYsgQHZDWLa0vhFk
+         P+q6kxqLTKYDk9FXrK4jjcS1w9ZtHNxaL/unZHIEK9WrTHPILOALMvD9O+mPJk1043hj
+         /fwQh2pUP5iQBfgXkV6fTyyjVhed8GcZ1H22S59pFax9bdldvn5CAUz1NdL1lwVI1Qfb
+         3+UQ==
+X-Gm-Message-State: APt69E2iiuC2jGb2OxitwHLJd87ggY6GpV/q8hBlIRhgP/s4iuKH4B4t
+        uLZfprPDl3Tkt9QRBRlgQWYfwsoKxDk=
+X-Google-Smtp-Source: AAOMgpcuk9cxM1ZlSt/pJsdqnF7e4POzBBmIsFSKIZsJNx4tVJkfihLZNdh/L+gv/fwcmgKXEaV+dA==
+X-Received: by 2002:adf:a54d:: with SMTP id j13-v6mr4805283wrb.155.1530093592469;
+        Wed, 27 Jun 2018 02:59:52 -0700 (PDT)
+Received: from [192.168.8.101] ([37.170.252.174])
+        by smtp.googlemail.com with ESMTPSA id o203-v6sm1649138wmd.30.2018.06.27.02.59.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 02:54:40 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 786CB123872; Wed, 27 Jun 2018 11:54:39 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 11:54:39 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v5 2/4] mm/sparsemem: Defer the ms->section_mem_map
- clearing
-Message-ID: <20180627095439.GA5924@techadventures.net>
-References: <20180627013116.12411-1-bhe@redhat.com>
- <20180627013116.12411-3-bhe@redhat.com>
+        Wed, 27 Jun 2018 02:59:51 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] clocksource/drivers/mtk_systimer: Add support for
+ Mediatek SoCs
+To:     Stanley Chu <stanley.chu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        wsd_upstream@mediatek.com
+References: <1530086039-3763-1-git-send-email-stanley.chu@mediatek.com>
+ <1530086039-3763-3-git-send-email-stanley.chu@mediatek.com>
+ <2a40ec95-7352-f0c4-b394-d7b689de98ec@linaro.org>
+ <1530093016.17448.35.camel@mtkswgap22>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <e8a7e390-789c-5c91-a9db-535adf0d7d4a@linaro.org>
+Date:   Wed, 27 Jun 2018 11:59:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627013116.12411-3-bhe@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1530093016.17448.35.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 09:31:14AM +0800, Baoquan He wrote:
-> In sparse_init(), if CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER=y, system
-> will allocate one continuous memory chunk for mem maps on one node and
-> populate the relevant page tables to map memory section one by one. If
-> fail to populate for a certain mem section, print warning and its
-> ->section_mem_map will be cleared to cancel the marking of being present.
-> Like this, the number of mem sections marked as present could become
-> less during sparse_init() execution.
+On 27/06/2018 11:50, Stanley Chu wrote:
+> On Wed, 2018-06-27 at 11:39 +0200, Daniel Lezcano wrote:
+>> On 27/06/2018 09:53, Stanley Chu wrote:
+>>> This patch adds a new clock event for the timer
+>>> found on the Mediatek SoCs.
+>>>
+>>> The Mediatek System Timer has several 32-bit timers.
+>>> Only one timer is used by this driver as a clock event
+>>> supporting oneshot events.
+>>>
+>>> The System Timer can be run with two clocks. A 13 MHz system
+>>> clock and the RTC clock running at 32 KHz. This implementation
+>>> uses the system clock with no clock source divider.
+>>
+>> Recent platforms have the arch_arm_timer and it will be always selected.
+>>
+>> What is the benefit of adding this timer ?
+>>
+>>
+> Hi Daniel,
 > 
-> Here just defer the ms->section_mem_map clearing if failed to populate
-> its page tables until the last for_each_present_section_nr() loop. This
-> is in preparation for later optimizing the mem map allocation.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  mm/sparse-vmemmap.c |  1 -
->  mm/sparse.c         | 12 ++++++++----
->  2 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> index bd0276d5f66b..640e68f8324b 100644
-> --- a/mm/sparse-vmemmap.c
-> +++ b/mm/sparse-vmemmap.c
-> @@ -303,7 +303,6 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
->  		ms = __nr_to_section(pnum);
->  		pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
->  		       __func__);
-> -		ms->section_mem_map = 0;
+> To save power as much as possible, our platform enables
+> "arch_timer_c3stop" in arch_arm_timer, and thus another always-on timer
+> is required for tick-broadcasting. System Timer is introduced for above
+> purpose
 
-Since we are deferring the clearing of section_mem_map, I guess we do not need
-
-struct mem_section *ms;
-ms = __nr_to_section(pnum);
-
-anymore, right?
-
->  	}
->  
->  	if (vmemmap_buf_start) {
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 6314303130b0..71ad53da2cd1 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -451,7 +451,6 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
->  		ms = __nr_to_section(pnum);
->  		pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
->  		       __func__);
-> -		ms->section_mem_map = 0;
-
-The same goes here.
+Obviously :)
 
 
 
 -- 
-Oscar Salvador
-SUSE L3
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
