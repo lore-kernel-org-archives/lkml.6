@@ -2,228 +2,123 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEA5C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 452D0C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:26:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6ABA24791
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9438269AC
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:26:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ix+BluW6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6ABA24791
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="mBIszP4d";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MleXalUt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9438269AC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755154AbeF0AVy (ORCPT
+        id S1755215AbeF0A0F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 20:21:54 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41292 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752335AbeF0AVv (ORCPT
+        Tue, 26 Jun 2018 20:26:05 -0400
+Received: from mail-yb0-f176.google.com ([209.85.213.176]:39671 "EHLO
+        mail-yb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751680AbeF0A0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 20:21:51 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w8-v6so124487ply.8;
-        Tue, 26 Jun 2018 17:21:51 -0700 (PDT)
+        Tue, 26 Jun 2018 20:26:03 -0400
+Received: by mail-yb0-f176.google.com with SMTP id k127-v6so96495ybk.6
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 17:26:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wXjC77i3aGXYLBCadQGJuU70nGy278Kw2MyS6NuMmtI=;
-        b=Ix+BluW6l0LfBX2pEcZr+8XWLfWJ+AKFvsXQMXMa6XceX7z6B/SdpTdxMJ829gjtOC
-         bvQmhyRfoT1KStV1rCvfyAFFuFXfHqBYzQVoQzkrH/WUsvVjhTsHtEkfvdFuXh6opfIP
-         gr7e32Ec+SBNZgAKnOv2iZHJU9mxRMIT7ek6mcNAtsPKCgTcjYj6KyM80KgSxgeqvS/u
-         FjHMk9XgkEIkfVaHP56/AY4qetpSZo5Xy7/xAW5Ukft9y5d0V/PwZEir7Ccks6I+eVCZ
-         pS86MU9C+AFVe7q4J0BOoJhuuETmU/LLGVmRtkn1KZtDgdpkMWugLy9PiCA1iHg7H9MW
-         DsGw==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=y6lxYohc24doOq4uCkFytsJeC9N6NKtK8Luo156ZlQ0=;
+        b=mBIszP4dfvNY8YK8SUJrC92fNtdAH1+Sr0PK0/JQnDQI/iXx3XFomQXpVJwN9eweDw
+         dBA+xboRASJR14dCZ//moefaROLjE5/J3jJwAFp/r3fvzeBICPKPIkpXGyVgYjLLzYbA
+         0N/LtkE/ghMUm21gcWbi/TH87YZ/YDrGxweBb3mHE0QxkyvemwQY6uBSbGKUC7/TTN6D
+         RQDLi0s5Pp4/hgJmc5dG19xo8DMo7d7SlcOtMjV/jsfEFaZZyvYSYKK3qsrxqzcVlfXT
+         r830EH0UceMsckbRfPjyxiAANG/nlGDfBVphrWb+1EoY/z5dk2NxJ0hLsbXxGo3Z6H6n
+         y6sw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=y6lxYohc24doOq4uCkFytsJeC9N6NKtK8Luo156ZlQ0=;
+        b=MleXalUtu5Hc7JohQMDaxkCe9QEdM08MMEkrSkZz8SU1PDGWmZHG2/kflaz3omYFEF
+         HD467HX+Q+Ih2HkcmfWuPV/dMQHLqQKlvIWstrPxww6vvMgZHJNmohEc5v9WQSb4pJXq
+         6t/OC7Sb/eyk/5hKp8MI64HKXe0b6bjchIGcA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wXjC77i3aGXYLBCadQGJuU70nGy278Kw2MyS6NuMmtI=;
-        b=PD1mLAGp0VM8fV+w9T2z1HlSniuc2jvtP+EeFgee7EQwOxZIBADnP4eJDm7WJzhYqY
-         1UhgMj17ZQA/N6/Rl2fliL0GhEz+4T7MNC19HUAz8StyDa87zLHBnG+YXuuIEytT6MlU
-         V4tVxr9gUds2HwOgoeNm8QQ6ynYOxmQfrmaht15OTM2Xv/TUxVTZaV0f232zmDbHu/4K
-         WSwIgu3O/ryyJHG5OoIeqjJl6Shiur/kzc8ij6ITpVSCdYlHzuDAbasZsmiTHDUhZ7VH
-         H/3cUB6J/PXUCKpc98FKdIvP4sV4X8GawBJW701yczL0e1Go72+jq1Do7z/Hp+RerwoH
-         Z5uA==
-X-Gm-Message-State: APt69E1jLHt0piEts11iB5vJG27siGuV8N//34cCFg2geIveolP8iIuj
-        t8tn5jHb2bNglnJSIq/mxl8=
-X-Google-Smtp-Source: ADUXVKJ/entI1UeDqJPL/uvZ1iRAdI6uqRf0C4niMODpbMsqiE95kpDJGwvZcGtO/IhLaTVqx1GTCA==
-X-Received: by 2002:a17:902:7009:: with SMTP id y9-v6mr3686829plk.217.1530058910434;
-        Tue, 26 Jun 2018 17:21:50 -0700 (PDT)
-Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
-        by smtp.gmail.com with ESMTPSA id u67-v6sm529082pfg.63.2018.06.26.17.21.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Jun 2018 17:21:49 -0700 (PDT)
-Date:   Tue, 26 Jun 2018 17:21:47 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-        heiko@sntech.de, gregkh@linuxfoundation.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 4/4] input/power: Add driver for BD71837/BD71847 PMIC
- power button
-Message-ID: <20180627002147.GA179416@dtor-ws>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <20180619175028.GA71788@dtor-ws>
- <20180620064316.GB28784@localhost.localdomain>
- <20180621102547.GA6076@localhost.localdomain>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=y6lxYohc24doOq4uCkFytsJeC9N6NKtK8Luo156ZlQ0=;
+        b=UoaVBgwN7QkgayW0OwQqqAjkLr+M3H7IxnCIDddjA1eh2kmZeKFH7+knyBZS+6TZ8z
+         LLTlX+Hn+JhldaLi/70MfxxmtrDJ3QVKI9DghBeVjxz9uOB2BFiW9j2NNpVaI4kE9HLL
+         WBw2sgidghRFVRaAgr2EapOohEBC3H+nVgUnV+8UhOcL65LOYvhQdyMAOnazNOMrLa2a
+         5FbUzyRQE1NqMjGhBVfdFm3Z9Yy2jgDQIqn9FhWl5ewDydJtGki6JQ66gJN2Mfuy+whT
+         Em+NRjgrcRPJJxywifIjPIhwgH0GmYfyzZ4lxluFL3J3rcQkO1QHYlL8j7M6er/A67uF
+         nveg==
+X-Gm-Message-State: APt69E3fAuCbZdbv9zdd192721M/zUy/A4SxkrbRR5jElG5/PG0Ot6n7
+        EKQnHN9pcyPYPu56GFojuPQSRuPbf34lozlW3mMIcg==
+X-Google-Smtp-Source: ADUXVKIeEKwpqKr+aMskncBU4MEmIBs8L7RYmgof2Nc5d0sCXvijh87e9O1Qk2NUvbujkxh5CX41iRfnA9NVvNoAPd4=
+X-Received: by 2002:a25:be4e:: with SMTP id d14-v6mr1918092ybm.309.1530059162260;
+ Tue, 26 Jun 2018 17:26:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621102547.GA6076@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Tue, 26 Jun 2018 17:26:01
+ -0700 (PDT)
+In-Reply-To: <b4841a84-cf65-f3fb-13b3-ea0a15f47bde@iogearbox.net>
+References: <000000000000d48c8e056f5b6c67@google.com> <alpine.DEB.2.21.1806240849150.8650@nanos.tec.linutronix.de>
+ <20180624.161411.1560796210597132716.davem@davemloft.net> <20180624100249.GA9493@gmail.com>
+ <b4841a84-cf65-f3fb-13b3-ea0a15f47bde@iogearbox.net>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 26 Jun 2018 17:26:01 -0700
+X-Google-Sender-Auth: NCQUYs85eWcEg5IrG5CBinj2OYA
+Message-ID: <CAGXu5jKndtFL7D7T00GmziYaazs7v0t4DWPp_2fdGh2tRnuuEQ@mail.gmail.com>
+Subject: Re: set_memory_* (was: Re: BUG: unable to handle kernel paging
+ request in bpf_int_jit_compile)
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Ingo Molnar <mingo@kernel.org>, David Miller <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        syzbot+a4eb8c7766952a1ca872@syzkaller.appspotmail.com,
+        Alexei Starovoitov <ast@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, X86 ML <x86@kernel.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Rik van Riel <riel@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matti,
+On Tue, Jun 26, 2018 at 3:53 PM, Daniel Borkmann <daniel@iogearbox.net> wrote:
+> In any case, for pairs like set_memory_ro() + set_memory_rw() that are also used
+> outside of bpf e.g. STRICT_MODULE_RWX and friends which are mostly default these
+> days for some archs, is the choice to not check errors from there by design or from
+> historical context that it originated from 'debugging code' in that sense (DEBUG_RODATA /
+> DEBUG_SET_MODULE_RONX) earlier? Also if no-one checks for errors (and if that would
+> infact be the recommendation it is agreed upon) should the API be changed to void,
+> or generally should actual error checking occur on these + potential rollback; but
+> then question is what about restoring part from prior set_memory_ro() via set_memory_rw()?
+> Kees/others, do you happen to have some more context on recommended use around this
+> by any chance? (Would probably also help if we add some doc around assumptions into
+> include/linux/set_memory.h for future users.)
 
-On Thu, Jun 21, 2018 at 01:25:47PM +0300, Matti Vaittinen wrote:
-> On Wed, Jun 20, 2018 at 09:43:16AM +0300, Matti Vaittinen wrote:
-> > On Tue, Jun 19, 2018 at 10:50:28AM -0700, Dmitry Torokhov wrote:
-> > > Hi Matti,
-> > > 
-> > > On Tue, Jun 19, 2018 at 01:57:09PM +0300, Matti Vaittinen wrote:
-> > > > ROHM BD71837 PMIC power button driver providing power-key press
-> > > > information to user-space.
-> > > > 
-> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > > ---
-> > > >  drivers/input/misc/Kconfig          | 10 +++++
-> > > >  drivers/input/misc/Makefile         |  1 +
-> > > >  drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
-> > > >  3 files changed, 101 insertions(+)
-> > > >  create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
-> > > > 
-> > > > +	platform_set_drvdata(pdev, pk);
-> > > > +	err = regmap_update_bits(pk->mfd->regmap,
-> > > > +				 BD71837_REG_PWRONCONFIG0,
-> > > > +				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
-> > > > +				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
-> > > 
-> > > This seems to be the only custom bit of set up in the driver, the rest I
-> > > think can easily be handled by gpio-keys.c in interrupt-only mode. Maybe
-> > > we could move this into MFD piece and drop this driver?
-> 
-> I did following in MFD driver - is this what you suggested:
-> +static struct gpio_keys_button btns[] = {
-> +       {
-> +               .code = KEY_POWER,
-> +               .gpio = -1,
-> +               .type = EV_KEY,
-> +       },
-> +};
-> +
-> +static struct gpio_keys_platform_data bd718xx_powerkey_data = {
-> +       .buttons = &btns[0],
-> +       .nbuttons = ARRAY_SIZE(btns),
-> +       .name = "bd718xx-pwrkey",
-> +};
-> +
-> +/* bd71837 multi function cells */
-> +
-> +static struct mfd_cell bd71837_mfd_cells[] = {
-> +       {
-> +               .name = "bd71837-clk",
-> +       }, {
-> +               .name = "gpio-keys",
-> +               .platform_data = &bd718xx_powerkey_data,
-> +               .pdata_size = sizeof(bd718xx_powerkey_data),
-> +       }, {
+If set_memory_* can fail, I think it needs to be __must_check, and all
+the callers need to deal with it gracefully. Those markings aren't
+"advisory": they're expected to actually do what they say.
 
-Yes, something like this should work. It will not expose the internal
-kernel structure (the fact that we are using gpio-keys dirver) to handle
-power button of this PMIC, which Rob would appreciate. And we can change
-it later if you want to create a fancier driver.
-
-> 
-> //snip
-> 
-> +static int bd71837_i2c_probe(struct i2c_client *i2c,
-> +                           const struct i2c_device_id *id)
-> +{
-> 
-> // snip
-> 
-> +       ret = regmap_add_irq_chip(bd71837->regmap, bd71837->chip_irq,
-> +               IRQF_ONESHOT, 0,
-> +               &bd71837_irq_chip, &bd71837->irq_data);
-> +       if (ret < 0) {
-> +               dev_err(bd71837->dev, "Failed to add irq_chip %d\n", ret);
-> +               goto err_out;
-> +       }
-> +       /* I think this should be done conditionally and only when pwrkey is used
-> +        * What would be the correct way to decide if we want to touch rhw button
-> +        * press detection times?
-> +        */
-> +       ret = regmap_update_bits(bd71837->regmap,
-> +                                BD71837_REG_PWRONCONFIG0,
-> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
-> +                                BD718XX_PWRBTN_SHORT_PRESS_10MS);
-> +       if (ret < 0) {
-> +               dev_err(bd71837->dev, "Failed to configure button short press timeout %d\n", ret);
-> +               goto err_out;
-> +       }
-> +       /* According to BD71847 datasheet the HW default for long press detection
-> +        * is 10ms. So letch change it to 10 sec so we can actually get the short
-> +        * push and allow gracefull shut down
-> +        */
-> +       ret = regmap_update_bits(bd71837->regmap,
-> +                                BD71837_REG_PWRONCONFIG1,
-> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
-> +                                BD718XX_PWRBTN_LONG_PRESS_10S);
-> +       if (ret < 0) {
-> +               dev_err(bd71837->dev, "Failed to configure button long press timeout %d\n", ret);
-> +               goto err_out;
-> +       }
-> +       btns[0].irq = regmap_irq_get_virq(bd71837->irq_data,
-> +                                         BD71837_INT_PWRBTN_S);
-> +
-> +       if (btns[0].irq < 0) {
-> +               ret = btns[0].irq;
-> +               goto err_out;
-> +       }
-> +
-> +       ret = mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
-> +                             bd71837_mfd_cells, ARRAY_SIZE(bd71837_mfd_cells),
-> +                             NULL, 0,
-> +                             regmap_irq_get_domain(bd71837->irq_data));
-> 
-> If looks is Ok I will send new patch with this approach at next week -
-> unless I get lost during the traditional midsummer festival here in
-> Finland.
-> 
-> > Finally, there may be cases when power button is not attached to PMIC
-> > or is needing different configuration for 'short push'. This is why I
-> > would prefer having own Kconfig option for this power-key driver. I am
-> > not sure if it is easily doable if we use gpio_keys?
-> 
-> What would be the preferred mechanism for skipping the button push duration
-> configurations (time it takes for PMIC to detect short or long push)? Or
-> setting the durations to values user(s) would prefer? To me this sounds again
-> something we could configure from DT. Would adding propereties
-> rohm,short-press-ms and rohm,long-press-ms sound reasonable? I will send
-> the first version with no option to skip/specify the configuration
-> (fixed 10ms for short press, 10 sec for long press) but I would like to add
-> support for specifying the duration as next step.
-
-This sounds OK to be but you'd need to get Rob's buy in here. The
-properties should probably be in a sub-node of the PMIC device node.
-
-Thanks.
+-Kees
 
 -- 
-Dmitry
+Kees Cook
+Pixel Security
