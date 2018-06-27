@@ -2,110 +2,127 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA623C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C629C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7DD261DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:12:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7DD261DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0015C261DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:12:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y7tb6jsE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0015C261DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeF0KMO (ORCPT
+        id S1753508AbeF0KMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 06:12:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58864 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753238AbeF0KMM (ORCPT
+        Wed, 27 Jun 2018 06:12:35 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:53012 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753406AbeF0KMd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 06:12:12 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5R9xJcJ115612
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:12:12 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jv6asxhrx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 06:12:06 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 11:11:50 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 11:11:48 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RABldI26935460
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 10:11:47 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9EB2352050;
-        Wed, 27 Jun 2018 11:11:39 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.118])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 0C3F552054;
-        Wed, 27 Jun 2018 11:11:38 +0100 (BST)
-Date:   Wed, 27 Jun 2018 13:11:44 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     mhocko@kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arch@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: why do we still need bootmem allocator?
-References: <20180625140754.GB29102@dhcp22.suse.cz>
- <CABGGisyVpfYCz7-5AGB-3Ld9hcuikPVk=19xPc1AwffjhsV+kg@mail.gmail.com>
+        Wed, 27 Jun 2018 06:12:33 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5RABUN2033026;
+        Wed, 27 Jun 2018 05:11:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530094290;
+        bh=vBGbRqIfqdQLu1yU0Nn3bra1hOwBUucZBGENRyMmwZ4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=y7tb6jsEdfzpOqyyrtyTAufcoqFDnnytQBwzWIwY9OGQFQppxDkVq2yFea3eAye4A
+         lx4LtTvns1VnoJ45tCT4Eltho81K+kOSSK98NoPcxhkPbTy5CNquFnEZBAWFcD4sOt
+         gLwForMV1kYDQ5Tvl6yTsTJmY71pk9ZPD22GYwmI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RABUAR021068;
+        Wed, 27 Jun 2018 05:11:30 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 27
+ Jun 2018 05:11:30 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 27 Jun 2018 05:11:30 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RABO9b026842;
+        Wed, 27 Jun 2018 05:11:25 -0500
+Subject: Re: [PATCH v2 06/13] ARM: davinci: omapl138-hawk: add aemif & nand
+ support
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
+ <20180626092537.6737-7-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <11b55553-435b-c363-9194-aebf47302198@ti.com>
+Date:   Wed, 27 Jun 2018 15:41:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABGGisyVpfYCz7-5AGB-3Ld9hcuikPVk=19xPc1AwffjhsV+kg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18062710-0020-0000-0000-0000029F76B2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062710-0021-0000-0000-000020EBF4A3
-Message-Id: <20180627101144.GC4291@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=585 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270115
+In-Reply-To: <20180626092537.6737-7-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 10:09:41AM -0600, Rob Herring wrote:
-> On Mon, Jun 25, 2018 at 8:08 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > Hi,
-> > I am wondering why do we still keep mm/bootmem.c when most architectures
-> > already moved to nobootmem. Is there any fundamental reason why others
-> > cannot or this is just a matter of work?
+On Tuesday 26 June 2018 02:55 PM, Bartosz Golaszewski wrote:
+>  arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++
+>  1 file changed, 132 insertions(+)
 > 
-> Just because no one has done the work. I did a couple of arches
-> recently (sh, microblaze, and h8300) mainly because I broke them with
-> some DT changes.
+> diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+> index 466e87b24e9a..8d8e3165a45c 100644
+> --- a/arch/arm/mach-davinci/board-omapl138-hawk.c
+> +++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+> @@ -16,6 +16,11 @@
+>  #include <linux/gpio.h>
+>  #include <linux/gpio/machine.h>
+>  #include <linux/platform_data/gpio-davinci.h>
+> +#include <linux/platform_data/ti-aemif.h>
+> +#include <linux/mtd/rawnand.h>
+> +#include <linux/mtd/partitions.h>
 
-I have a patch for alpha nearly ready.
-That leaves m68k and ia64
- 
-> > Btw. what really needs to be
-> > done? Btw. is there any documentation telling us what needs to be done
-> > in that regards?
-> 
-> No. The commits converting the arches are the only documentation. It's
-> a bit more complicated for platforms that have NUMA support.
-> 
-> Rob
-> 
+can you keep this (roughly) sorted by moving these above?
 
--- 
-Sincerely yours,
-Mike.
+> +#include <linux/platform_data/mtd-davinci.h>
+> +#include <linux/platform_data/mtd-davinci-aemif.h>
+>  #include <linux/regulator/machine.h>
+>  
+>  #include <asm/mach-types.h>
+> @@ -166,6 +171,129 @@ static __init void omapl138_hawk_mmc_init(void)
+>  	gpiod_remove_lookup_table(&mmc_gpios_table);
+>  }
+>  
 
+> +static struct platform_device omapl138_hawk_aemif_devices[] = {
+> +	{
+> +		.name		= "davinci_nand",
+> +		.id		= 1,
+
+This can be -1 now since you got "mtd: rawnand: davinci: stop using
+pdev->id as chipselect" merged.
+
+We cannot change for older platforms, but this is fresh support.
+
+> +		.dev		= {
+> +			.platform_data	= &omapl138_hawk_nandflash_data,
+> +		},
+> +		.resource	= omapl138_hawk_nandflash_resource,
+> +		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
+> +	}
+> +};
+
+Thanks,
+Sekhar
