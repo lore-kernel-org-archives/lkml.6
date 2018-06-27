@@ -2,82 +2,176 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7663EC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595D5C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2782825FE2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2782825FE2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 182EF25FE2
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:47:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182EF25FE2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965150AbeF0MrN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:47:13 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52498 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965132AbeF0MrL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:47:11 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fY9qk-0004iE-ML; Wed, 27 Jun 2018 14:47:06 +0200
-Date:   Wed, 27 Jun 2018 14:47:06 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Tejun Heo <htejun@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, "Steven J . Hill" <steven.hill@cavium.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>
-Subject: Re: [PATCH] Revert mm/vmstat.c: fix vmstat_update() preemption BUG
-Message-ID: <20180627124706.g33vlaku7xa4veqq@linutronix.de>
-References: <20180411095757.28585-1-bigeasy@linutronix.de>
- <ef663b6d-9e9f-65c6-25ec-ffa88347c58d@suse.cz>
- <20180411140913.GE793541@devbig577.frc2.facebook.com>
- <20180411144221.o3v73v536tpnc6n3@linutronix.de>
- <20180411190729.7sbmbsxtkcng7ddx@linutronix.de>
- <20180627123657.2hb7ow4szjyhg5aj@home.goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180627123657.2hb7ow4szjyhg5aj@home.goodmis.org>
-User-Agent: NeoMutt/20180512
+        id S965175AbeF0MrY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:47:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55482 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965132AbeF0MrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:47:22 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CA1FB70206;
+        Wed, 27 Jun 2018 12:47:21 +0000 (UTC)
+Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B140B2026D5B;
+        Wed, 27 Jun 2018 12:47:13 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH V7 07/24] block: simplify bio_check_pages_dirty
+Date:   Wed, 27 Jun 2018 20:45:31 +0800
+Message-Id: <20180627124548.3456-8-ming.lei@redhat.com>
+In-Reply-To: <20180627124548.3456-1-ming.lei@redhat.com>
+References: <20180627124548.3456-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 12:47:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 12:47:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-27 08:36:57 [-0400], Steven Rostedt wrote:
-> On Wed, Apr 11, 2018 at 09:07:30PM +0200, Sebastian Andrzej Siewior wrote:
-> > 
-> > This already happens:
-> > - vmstat_shepherd() does get_online_cpus() and within this block it does
-> >   queue_delayed_work_on(). So this has to wait until cpuhotplug
-> >   completed before it can schedule something and then it won't schedule
-> >   anything on the "off" CPU.
-> 
-> But can't we have something like this happen: ?
-> 
-> 	CPU0			CPU1			CPU2
-> 	----			----			----
->  get_online_cpus()
->  queue_work(vmstat_update, cpu1)
->     wakeup(kworker/1)
-> 			     High prio task running
->  put_online_cpus()
->  						     Shutdown CPU 1
-> 			     migrate kworker/1
->  schedule kworker/1
->  (smp_processor_id() != 1)
+From: Christoph Hellwig <hch@lst.de>
 
-I don't get CPU1 doing in here. kworker/1 should not be migrated to
-begin with. The work item should be done before CPU2 shutdowns CPU1 (or
-0) because vmstat_cpu_down_prep() cancels the work while the CPUs goes
-down so it should not be migrated. Also, the work is enqueued while
-holding the CPU HP lock.
+bio_check_pages_dirty currently inviolates the invariant that bv_page of
+a bio_vec inside bi_vcnt shouldn't be zero, and that is going to become
+really annoying with multpath biovecs.  Fortunately there isn't any
+all that good reason for it - once we decide to defer freeing the bio
+to a workqueue holding onto a few additional pages isn't really an
+issue anymore.  So just check if there is a clean page that needs
+dirtying in the first path, and do a second pass to free them if there
+was none, while the cache is still hot.
 
-Sebastian
+Also use the chance to micro-optimize bio_dirty_fn a bit by not saving
+irq state - we know we are called from a workqueue.
+
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ block/bio.c | 56 +++++++++++++++++++++-----------------------------------
+ 1 file changed, 21 insertions(+), 35 deletions(-)
+
+diff --git a/block/bio.c b/block/bio.c
+index 43698bcff737..77f991688810 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1570,19 +1570,15 @@ static void bio_release_pages(struct bio *bio)
+ 	struct bio_vec *bvec;
+ 	int i;
+ 
+-	bio_for_each_segment_all(bvec, bio, i) {
+-		struct page *page = bvec->bv_page;
+-
+-		if (page)
+-			put_page(page);
+-	}
++	bio_for_each_segment_all(bvec, bio, i)
++		put_page(bvec->bv_page);
+ }
+ 
+ /*
+  * bio_check_pages_dirty() will check that all the BIO's pages are still dirty.
+  * If they are, then fine.  If, however, some pages are clean then they must
+  * have been written out during the direct-IO read.  So we take another ref on
+- * the BIO and the offending pages and re-dirty the pages in process context.
++ * the BIO and re-dirty the pages in process context.
+  *
+  * It is expected that bio_check_pages_dirty() will wholly own the BIO from
+  * here on.  It will run one put_page() against each page and will run one
+@@ -1600,52 +1596,42 @@ static struct bio *bio_dirty_list;
+  */
+ static void bio_dirty_fn(struct work_struct *work)
+ {
+-	unsigned long flags;
+-	struct bio *bio;
++	struct bio *bio, *next;
+ 
+-	spin_lock_irqsave(&bio_dirty_lock, flags);
+-	bio = bio_dirty_list;
++	spin_lock_irq(&bio_dirty_lock);
++	next = bio_dirty_list;
+ 	bio_dirty_list = NULL;
+-	spin_unlock_irqrestore(&bio_dirty_lock, flags);
++	spin_unlock_irq(&bio_dirty_lock);
+ 
+-	while (bio) {
+-		struct bio *next = bio->bi_private;
++	while ((bio = next) != NULL) {
++		next = bio->bi_private;
+ 
+ 		bio_set_pages_dirty(bio);
+ 		bio_release_pages(bio);
+ 		bio_put(bio);
+-		bio = next;
+ 	}
+ }
+ 
+ void bio_check_pages_dirty(struct bio *bio)
+ {
+ 	struct bio_vec *bvec;
+-	int nr_clean_pages = 0;
++	unsigned long flags;
+ 	int i;
+ 
+ 	bio_for_each_segment_all(bvec, bio, i) {
+-		struct page *page = bvec->bv_page;
+-
+-		if (PageDirty(page) || PageCompound(page)) {
+-			put_page(page);
+-			bvec->bv_page = NULL;
+-		} else {
+-			nr_clean_pages++;
+-		}
++		if (!PageDirty(bvec->bv_page) && !PageCompound(bvec->bv_page))
++			goto defer;
+ 	}
+ 
+-	if (nr_clean_pages) {
+-		unsigned long flags;
+-
+-		spin_lock_irqsave(&bio_dirty_lock, flags);
+-		bio->bi_private = bio_dirty_list;
+-		bio_dirty_list = bio;
+-		spin_unlock_irqrestore(&bio_dirty_lock, flags);
+-		schedule_work(&bio_dirty_work);
+-	} else {
+-		bio_put(bio);
+-	}
++	bio_release_pages(bio);
++	bio_put(bio);
++	return;
++defer:
++	spin_lock_irqsave(&bio_dirty_lock, flags);
++	bio->bi_private = bio_dirty_list;
++	bio_dirty_list = bio;
++	spin_unlock_irqrestore(&bio_dirty_lock, flags);
++	schedule_work(&bio_dirty_work);
+ }
+ EXPORT_SYMBOL_GPL(bio_check_pages_dirty);
+ 
+-- 
+2.9.5
+
