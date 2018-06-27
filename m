@@ -2,293 +2,144 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 147E8C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318CDC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955F92641E
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:08:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="eSe7T2Qj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955F92641E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id DDF02240C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:13:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF02240C0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753175AbeF0LIG (ORCPT
+        id S1753399AbeF0LN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 07:08:06 -0400
-Received: from mail-eopbgr720078.outbound.protection.outlook.com ([40.107.72.78]:5044
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752063AbeF0LIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 07:08:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BsGPzcsOoJB4WfArhts4XHtZTkH+K/IY28fq0aK0QaU=;
- b=eSe7T2Qjam0ER7BQlnOy9I4VMCL8t5aWV8Nmpx97fDQrdoylLMQTaAgHGTl03EY+rRCZ7eRDhw5CJlLD4cNqVdcoE2756ofYh9qQ7bEpaB3qqWBqFDDialbzINWRMkET/c5OylikjH6I+xNdrc55FtJh+OfWr+2lTrqMXrzKLHU=
-Received: from MWHPR02MB2623.namprd02.prod.outlook.com (10.168.206.9) by
- MWHPR02MB3213.namprd02.prod.outlook.com (10.164.133.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.20; Wed, 27 Jun 2018 11:07:59 +0000
-Received: from MWHPR02MB2623.namprd02.prod.outlook.com
- ([fe80::fcca:2142:386d:ec1b]) by MWHPR02MB2623.namprd02.prod.outlook.com
- ([fe80::fcca:2142:386d:ec1b%8]) with mapi id 15.20.0884.025; Wed, 27 Jun 2018
- 11:07:58 +0000
-From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "mmayer@broadcom.com" <mmayer@broadcom.com>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "ladis@linux-mips.org" <ladis@linux-mips.org>,
-        "ada@thorsis.com" <ada@thorsis.com>,
-        "honghui.zhang@mediatek.com" <honghui.zhang@mediatek.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>,
-        Michal Simek <michals@xilinx.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [[LINUX PATCH v10] 1/4] Devicetree: Add pl353 smc controller
- devicetree binding information
-Thread-Topic: [[LINUX PATCH v10] 1/4] Devicetree: Add pl353 smc controller
- devicetree binding information
-Thread-Index: AQHUCSscPFU/PMrwLUOEuJ/raMMjQaRv5MQAgADNwlCAAwDugA==
-Date:   Wed, 27 Jun 2018 11:07:57 +0000
-Message-ID: <MWHPR02MB262302FDE197F631EAD3D791AF480@MWHPR02MB2623.namprd02.prod.outlook.com>
-References: <1529563351-2241-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <1529563351-2241-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <20180624224014.125cf0bc@bbrezillon>
- <MWHPR02MB2623DE62699977CB69AE0DC9AF4A0@MWHPR02MB2623.namprd02.prod.outlook.com>
-In-Reply-To: <MWHPR02MB2623DE62699977CB69AE0DC9AF4A0@MWHPR02MB2623.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nagasure@xilinx.com; 
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR02MB3213;7:30i0bjkZH1BrfcUQqf99GX92re/ANiP9HUXP0SShBkynd7TSgMV0o7cCdWq5ue2+QDv/Tg5Z8yczliygRP3JxS9WXAPPQWM32Xi6T3GkWpg/ICixzK1M2hBIfxzLFaSOsEBR+f6ETFvgYO3FWa3Fqjb7ZyVhXGCFupPrBYvgDKQOV1eVrMu9zOwVC4fJ21XidCW+9hn1+UknGvNhuquSgRtzgfecd1qynUQHeXl8HDx7mrQSsiDPJWtBHG0wANlH
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(39860400002)(376002)(366004)(189003)(199004)(13464003)(43544003)(33656002)(7416002)(2900100001)(478600001)(9686003)(486006)(229853002)(93886005)(39060400002)(110136005)(81166006)(81156014)(316002)(6306002)(54906003)(55016002)(2906002)(53936002)(5660300001)(11346002)(8676002)(446003)(6246003)(476003)(6436002)(8936002)(6506007)(5250100002)(76176011)(97736004)(74316002)(86362001)(305945005)(7696005)(3846002)(26005)(53546011)(6116002)(4326008)(68736007)(102836004)(66066001)(7736002)(14444005)(966005)(25786009)(99286004)(106356001)(256004)(105586002)(14454004)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB3213;H:MWHPR02MB2623.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: c17e5b5f-4222-49ec-d289-08d5dc1e3d68
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB3213;
-x-ms-traffictypediagnostic: MWHPR02MB3213:
-x-microsoft-antispam-prvs: <MWHPR02MB32135B36A9758BB52D7F2F7EAF480@MWHPR02MB3213.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(31051911155226)(9452136761055)(35073007944872)(85827821059158)(258649278758335)(192813158149592);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB3213;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB3213;
-x-forefront-prvs: 0716E70AB6
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: mOnMBUhEFdDvMxd8mSAKxVn5p3aRBfsOteISwL//VSYdnmSBMg3iCzUXfHmBMu3sFR0EvjTP2sTStQ75q+wNQI/Ji3/VY5e9RB6/t3Y4hSZCyeyNObmiQr41k1T32StuQB4hxLXL6JL0djPnOi8LtuNIV/WQM+d8LD8Yv9glBjU97NtCPue/Fu4g7EfcGWvWxulkd6XQq3IWq/kDoMBrGv8nH8aLYt4erDwNfAmDNcBOFLU9golW4kuqOTpzKoZgPDDMFgeo4A6k+G5O/ucsetPZROVvyEphVwdK4uG0WvJRairJEF2VemUpEuMyir0998Rpe2z63EKjmMQQOyRuuxUcD0uSF4oFQA8Sx4kTQ4U=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 27 Jun 2018 07:13:57 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42403 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753089AbeF0LNz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 07:13:55 -0400
+Received: by mail-ed1-f65.google.com with SMTP id g12-v6so2846218edi.9
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 04:13:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YUS3j8r8WhyWAKTnCxKeZ23PJXtgNlLX2Wd1sqspJ80=;
+        b=ljF3bf7XhFVrD4do9KiCFLmWfQdnO+MfDbgJVl1Dgv6qkttyqzpx/ocawqid5OoPSF
+         SSy3QHnPfp3cyaamSm5KYzQZg4b/I6N60+6wiNLe18h8is+t2Nx5TCQLwmmkrYOl8GV5
+         tPVUG6bDeCHaVsfrFROOKaDlCrTMy8f6Zkrgo+7L6BUn7ms509rB+cHkzjw9U4YFcWBw
+         HbQ2Rpm1rpARve1DbAvVro5Qf23aBGCNkpicagfmMb2CMl4BGUf52Q2ldTyKLcJX7uus
+         u/gmZDl4AYhuDgO1aWRpgwKng7fgtGqoqUr+oLv8UeL8qDH7Q2E3eqLCjvCN0oxsC3aX
+         rTOw==
+X-Gm-Message-State: APt69E1XzY1DWCzUeZrN780szP4hdlN2XKv4bMnzao910I5FTuJZQD21
+        XOsZRh72uARLdsfhqalaBsGSIzg2zuo=
+X-Google-Smtp-Source: AAOMgpezWv6mVRJB2nsuUpykDkM9RWOPrbREMOOBYGJfC22ANH31APXiQT0JkiIi0DdC4dcXvLQmuw==
+X-Received: by 2002:a50:d0d1:: with SMTP id g17-v6mr5249622edf.182.1530098034231;
+        Wed, 27 Jun 2018 04:13:54 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id c20-v6sm2362978ede.3.2018.06.27.04.13.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 04:13:53 -0700 (PDT)
+Subject: Re: [PATCH v4 0/3] console/fbcon: Add support for deferred console
+ takeover
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-fbdev@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180626183612.321-1-hdegoede@redhat.com>
+ <CGME20180627091530epcas1p4bcb4d5421da77cd2e262e839dd50e5dc@epcas1p4.samsung.com>
+ <20180627091520.GI13978@phenom.ffwll.local> <66532157.tkLS2buF0U@amdc3058>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <84977ce7-bfee-523a-852f-defc0243b520@redhat.com>
+Date:   Wed, 27 Jun 2018 13:13:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c17e5b5f-4222-49ec-d289-08d5dc1e3d68
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2018 11:07:57.8771
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB3213
+In-Reply-To: <66532157.tkLS2buF0U@amdc3058>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Hi,
 
-> -----Original Message-----
-> From: Naga Sureshkumar Relli [mailto:nagasure@xilinx.com]
-> Sent: Monday, June 25, 2018 2:30 PM
-> To: Boris Brezillon <boris.brezillon@bootlin.com>
-> Cc: richard@nod.at; dwmw2@infradead.org; computersforpeace@gmail.com;
-> marek.vasut@gmail.com; f.fainelli@gmail.com; mmayer@broadcom.com; rogerq@=
-ti.com;
-> ladis@linux-mips.org; ada@thorsis.com; honghui.zhang@mediatek.com;
-> miquel.raynal@bootlin.com; nagasureshkumarrelli@gmail.com; Michal Simek
-> <michals@xilinx.com>; linux-mtd@lists.infradead.org; linux-kernel@vger.ke=
-rnel.org
-> Subject: RE: [[LINUX PATCH v10] 1/4] Devicetree: Add pl353 smc controller=
- devicetree
-> binding information
->=20
-> Hi Boris,
->=20
->=20
-> > -----Original Message-----
-> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
-> > Sent: Monday, June 25, 2018 2:10 AM
-> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > Cc: richard@nod.at; dwmw2@infradead.org; computersforpeace@gmail.com;
-> > marek.vasut@gmail.com; f.fainelli@gmail.com; mmayer@broadcom.com;
-> > rogerq@ti.com; ladis@linux-mips.org; ada@thorsis.com;
-> > honghui.zhang@mediatek.com; miquel.raynal@bootlin.com;
-> > nagasureshkumarrelli@gmail.com; Michal Simek <michals@xilinx.com>;
-> > linux-mtd@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [[LINUX PATCH v10] 1/4] Devicetree: Add pl353 smc
-> > controller devicetree binding information
-> >
-> > Hi Naga,
-> >
-> > Subject prefix should be "dt-bindings: memory: " not "Devicetree: ".
-> Ok, I will change it.
->=20
-> >
-> > On Thu, 21 Jun 2018 12:12:28 +0530
-> > Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
-> >
-> > > Add pl353 static memory controller devicetree binding information.
-> > >
-> > > Signed-off-by: Naga Sureshkumar Relli
-> > > <naga.sureshkumar.relli@xilinx.com>
-> > > ---
-> > > Changes in v10:
-> > >  - Corrected the typos like "should be" to "Must be" and nand to NAND=
- etc..
-> > >  - Removed padding to describe size-cells and address-cells
-> > >  - Removed timing parameters from DT, and added ->setup_data_interfac=
-e() hook
-> > >    to the driver to read the SDR timings
-> > >  - Modified label name from "pl353smcc_0: pl353smcc@e000e000" to
-> > >    "smcc: memory-controller@e000e000" as suggested by Miquel Changes
-> > > in v9:
-> > >  - Addressed below comments given by Randy Dunlap and Miquel Raynal
-> > >  - Typos
-> > >  - Added extra documentation that explains the HW ECC limitation with=
- SMC
-> > >    (Comments given to v8: https://lkml.org/lkml/2018/3/22/23)
-> > > Changes in v8:
-> > >  - None
-> > > Changes in v7:
-> > >  - Corrected clocks description
-> > >  - prefixed '#' for address and size cells Changes in v6:
-> > >  - None
-> > > Changes in v5:
-> > >  - Removed timing properties
-> > > Changes in v4:
-> > >  - none
-> > > Changes in v3:
-> > >  - none
-> > > Changes in v2:
-> > >  - modified timing binding info as per onfi timing parameters
-> > >  - add suffix nano second as timing unit
-> > >  - modified the clock names as per the IP spec
-> > > ---
-> > >  .../bindings/memory-controllers/pl353-smc.txt      | 41
-> > ++++++++++++++++++++++
-> > >  1 file changed, 41 insertions(+)
-> > >  create mode 100644
-> > > Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
-> > > b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
-> > > new file mode 100644
-> > > index 0000000..8b4c65e
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/memory-controllers/pl353-smc
-> > > +++ .t
-> > > +++ xt
-> > > @@ -0,0 +1,41 @@
-> > > +Device tree bindings for ARM PL353 static memory controller
-> > > +
-> > > +PL353 static memory controller supports two kinds of memory
-> > > +interfaces.i.e NAND and SRAM/NOR interfaces.
-> > > +The actual devices are instantiated from the child nodes of pl353 sm=
-c node.
-> > > +
-> > > +Required properties:
-> > > +- compatible		: Must be "arm,pl353-smc-r2p1"
-> > > +- reg			: Controller registers map and length.
-> > > +- clock-names		: List of input clock names - "ref_clk", "aper_clk"
-> > > +			  (See clock bindings for details).
-> > > +- clocks		: Clock phandles (see clock bindings for details).
-> > > +- address-cells		: Must be 1.
-> > > +- size-cells		: Must be 1.
-> > > +
-> > > +Child nodes:
-> > > + For NAND the "arm,pl353-nand-r2p1" and for NOR the "cfi-flash"
-> > > +drivers are supported as child nodes.
-> > > +
-> > > +for NAND partition information please refer the below file
-> > > +Documentation/devicetree/bindings/mtd/partition.txt
-> > > +
-> > > +Example:
-> > > +	smcc: memory-controller@e000e000
-> > > +			compatible =3D "arm,pl353-smc-r2p1"
-> > > +			clock-names =3D "memclk", "aclk";
-> > > +			clocks =3D <&clkc 11>, <&clkc 44>;
-> > > +			reg =3D <0xe000e000 0x1000>;
-> > > +			#address-cells =3D <1>;
-> > > +			#size-cells =3D <1>;
-> > > +			ranges;
-> > > +			nand_0: flash@e1000000 {
-> > > +				compatible =3D "arm,pl353-nand-r2p1"
-> > > +				reg =3D <0xe1000000 0x1000000>;
-> > > +				(...)
-> > > +			};
-> > > +			nor0: flash@e2000000 {
-> > > +				compatible =3D "cfi-flash";
-> > > +				reg =3D <0xe2000000 0x2000000>;
-> > > +			};
-> > > +	};
-> >
-> > I had a look at the PL353 TRM, and the block diagram looks very
-> > similar to the atmel EBI/SMC one. AHB/AXI memory ranges that are used
-> > to interact with the memories are assigned CS ids, which can then be
-> > used to configure the timings (and other kind of stuff). I think you
-> > should have #address-cells =3D <2>, the first cell encoding the CS id, =
-and the second one, the
-> memory offset within the reserved range for this CS id.
-> > See the atmel,ebi binding [1].
-> >
-> To my previous patch, as per your comments, I modified reading timing par=
-ameters from dts
-> To nand_setup_data_interface() hook, But I didn't see the CS implementati=
-on as per atmel EBI
-> driver.
-> Sure, I will update like that and will send v11.
+On 27-06-18 11:47, Bartlomiej Zolnierkiewicz wrote:
+> On Wednesday, June 27, 2018 11:15:20 AM Daniel Vetter wrote:
+>> On Tue, Jun 26, 2018 at 08:36:09PM +0200, Hans de Goede wrote:
+>>> Hi All,
+>>>
+>>> Here is v4 of my patch-set, to delay fbcon taking over the console (and
+>>> binding to fbdev devices) until there actually is some text output to the
+>>> console. This is intended for use with the "quiet" cmdline option, in
+>>> combination with a bootloader which leaves the vendor's logo /
+>>> EFI bootgraphics put up by the firmware intact on the EFI framebuffer.
+>>>
+>>> The end goal here is a boot where the firmware shows its boot graphics
+>>> and these stay in place for a couple of seconds until the GUI loads and
+>>> the GUI then smoothly takes over the framebuffer without any distruptions.
+>>>
+>>> This patch-set spans 2 subsystems.
+>>>
+>>> Petr, the printk subsys change is really trivial (1 line addition) can we
+>>> get your Acked-by for merging all 3 patches through the fbdev tree?
+>>>
+>>> Changelog:
+>>>
+>>> Changes in v4:
+>>> -Keep the comments about which fbcon functions need locks in place
+>>>
+>>> Changes in v3:
+>>> -Export is_console_locke() for use in modules (as fbcon may be built as a .ko)
+>>> -Use WARN_CONSOLE_UNLOCKED() in several places in the fbcon code to assert
+>>>   proper locking (requested by Daniel)
+>>> -Unregister the fbcon-dummycon-output-notifier on fbcon_exit() (req. by Daniel)
+>>> -Document the fbcon=nodefer commandline option (req. by Emil)
+>>>
+>>> Changes in v2:
+>>> -Check the whole string when checking for erases in putcs, instead of just
+>>>   the first char
+>>> -Make dummycon_blank return 1, so that a redraw gets triggered and any text
+>>>   rendered while blanked gets output so that it can trigger a deferred
+>>>   takeover if one is pending
+>>
+>> Wrt merging I think it'd be best if we stuff this into drm-misc-next -
+>> that will increase testing by gpu drivers a lot, instead of a suprise when
+>> the fbdev pull lands in upstream.
+>>
+>> Bart, is that ok with you?
+> 
+> Not really, since there are efifb changes in the queue which depend
+> on this series I would really prefer to merge all patches through
+> fbdev tree.
+> 
+> Also fbdev tree is pulled into -next kernels so testing coverage
+> should be okay (I assume that everybody are testing -next kernels in
+> addition to their own branches :-)..
 
-I have seen the atmel-ebi driver, it is doing more compare to PL353.
-It works with=20
-drivers/mfd/
-drivers/mtd/
-drivers/memory/
-but if we compare that with PL353 SMC, then
-In nand case, we have only one CS and for NOR/SRAM we have 2 CS.
-i.e
-PL353 SMC -> NAND (1CS)
-		NOR/SRAM(2CS).
-So just asking, will there be any advantage if we do like that?
-Because, for NOR/SRAM interface, the generic cfi-probe will take care and
-For NAND, PL353 has just one NAND, hence asking.
+If you are talking about the "efifb: Copy the ACPI BGRT boot graphics to the
+framebuffer" series, I could push those to drm-misc-next too (once acked).
 
-Could you please explain a bit more?
+I think most GPU driver developers are running drm-tip and not
+-next, so putting things in drm-misc-next would give the changes somewhat
+more test-exposure on a wider range of GPUs I believe. Where as -next
+testing will likely be more server use-case oriented.
 
-Thanks,
-Naga Sureshkumar Relli
->=20
-> Thanks,
-> Naga Sureshkumar Relli
->=20
-> > Regards,
-> >
-> > Boris
-> >
-> > [1]https://elixir.bootlin.com/linux/v4.18-
-> > rc2/source/Documentation/devicetree/bindings/memory-controllers/atmel,
-> > ebi.txt
+Alternatively you could merge things in the fbdev tree, do an
+unmutable branch and then that could be merged into drm-misc-next by
+the drm-misc-next maintainers.
+
+Note either way is fine with me. This is up to you and Daniel.
+
+Regards,
+
+Hans
