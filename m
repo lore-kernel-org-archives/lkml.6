@@ -2,266 +2,228 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A74C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEA5C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE499245FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:18:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE499245FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id E6ABA24791
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 00:21:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ix+BluW6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6ABA24791
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755144AbeF0ASn (ORCPT
+        id S1755154AbeF0AVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 20:18:43 -0400
-Received: from gateway30.websitewelcome.com ([192.185.149.4]:19971 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750962AbeF0ASl (ORCPT
+        Tue, 26 Jun 2018 20:21:54 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41292 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752335AbeF0AVv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 20:18:41 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 1D30514CF3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Jun 2018 19:18:41 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Xy9yfrzPIbXuJXyAFf3aj9; Tue, 26 Jun 2018 19:18:40 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=32930 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fXy9w-000PyV-9R; Tue, 26 Jun 2018 19:18:09 -0500
-Date:   Tue, 26 Jun 2018 19:18:03 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/nouveau/nvkm: mark expected switch fall-throughs
-Message-ID: <20180627001803.GA31595@embeddedor.com>
+        Tue, 26 Jun 2018 20:21:51 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w8-v6so124487ply.8;
+        Tue, 26 Jun 2018 17:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wXjC77i3aGXYLBCadQGJuU70nGy278Kw2MyS6NuMmtI=;
+        b=Ix+BluW6l0LfBX2pEcZr+8XWLfWJ+AKFvsXQMXMa6XceX7z6B/SdpTdxMJ829gjtOC
+         bvQmhyRfoT1KStV1rCvfyAFFuFXfHqBYzQVoQzkrH/WUsvVjhTsHtEkfvdFuXh6opfIP
+         gr7e32Ec+SBNZgAKnOv2iZHJU9mxRMIT7ek6mcNAtsPKCgTcjYj6KyM80KgSxgeqvS/u
+         FjHMk9XgkEIkfVaHP56/AY4qetpSZo5Xy7/xAW5Ukft9y5d0V/PwZEir7Ccks6I+eVCZ
+         pS86MU9C+AFVe7q4J0BOoJhuuETmU/LLGVmRtkn1KZtDgdpkMWugLy9PiCA1iHg7H9MW
+         DsGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wXjC77i3aGXYLBCadQGJuU70nGy278Kw2MyS6NuMmtI=;
+        b=PD1mLAGp0VM8fV+w9T2z1HlSniuc2jvtP+EeFgee7EQwOxZIBADnP4eJDm7WJzhYqY
+         1UhgMj17ZQA/N6/Rl2fliL0GhEz+4T7MNC19HUAz8StyDa87zLHBnG+YXuuIEytT6MlU
+         V4tVxr9gUds2HwOgoeNm8QQ6ynYOxmQfrmaht15OTM2Xv/TUxVTZaV0f232zmDbHu/4K
+         WSwIgu3O/ryyJHG5OoIeqjJl6Shiur/kzc8ij6ITpVSCdYlHzuDAbasZsmiTHDUhZ7VH
+         H/3cUB6J/PXUCKpc98FKdIvP4sV4X8GawBJW701yczL0e1Go72+jq1Do7z/Hp+RerwoH
+         Z5uA==
+X-Gm-Message-State: APt69E1jLHt0piEts11iB5vJG27siGuV8N//34cCFg2geIveolP8iIuj
+        t8tn5jHb2bNglnJSIq/mxl8=
+X-Google-Smtp-Source: ADUXVKJ/entI1UeDqJPL/uvZ1iRAdI6uqRf0C4niMODpbMsqiE95kpDJGwvZcGtO/IhLaTVqx1GTCA==
+X-Received: by 2002:a17:902:7009:: with SMTP id y9-v6mr3686829plk.217.1530058910434;
+        Tue, 26 Jun 2018 17:21:50 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id u67-v6sm529082pfg.63.2018.06.26.17.21.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Jun 2018 17:21:49 -0700 (PDT)
+Date:   Tue, 26 Jun 2018 17:21:47 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
+        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+        heiko@sntech.de, gregkh@linuxfoundation.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 4/4] input/power: Add driver for BD71837/BD71847 PMIC
+ power button
+Message-ID: <20180627002147.GA179416@dtor-ws>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180619175028.GA71788@dtor-ws>
+ <20180620064316.GB28784@localhost.localdomain>
+ <20180621102547.GA6076@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fXy9w-000PyV-9R
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:32930
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180621102547.GA6076@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Hi Matti,
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c    | 17 +++++++++++++++++
- drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c |  1 +
- drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c    |  2 ++
- drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c    |  1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c    |  1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c     |  1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c     |  1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c    |  1 +
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c   |  2 ++
- drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c     |  1 +
- 10 files changed, 28 insertions(+)
+On Thu, Jun 21, 2018 at 01:25:47PM +0300, Matti Vaittinen wrote:
+> On Wed, Jun 20, 2018 at 09:43:16AM +0300, Matti Vaittinen wrote:
+> > On Tue, Jun 19, 2018 at 10:50:28AM -0700, Dmitry Torokhov wrote:
+> > > Hi Matti,
+> > > 
+> > > On Tue, Jun 19, 2018 at 01:57:09PM +0300, Matti Vaittinen wrote:
+> > > > ROHM BD71837 PMIC power button driver providing power-key press
+> > > > information to user-space.
+> > > > 
+> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > ---
+> > > >  drivers/input/misc/Kconfig          | 10 +++++
+> > > >  drivers/input/misc/Makefile         |  1 +
+> > > >  drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
+> > > >  3 files changed, 101 insertions(+)
+> > > >  create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
+> > > > 
+> > > > +	platform_set_drvdata(pdev, pk);
+> > > > +	err = regmap_update_bits(pk->mfd->regmap,
+> > > > +				 BD71837_REG_PWRONCONFIG0,
+> > > > +				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
+> > > > +				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
+> > > 
+> > > This seems to be the only custom bit of set up in the driver, the rest I
+> > > think can easily be handled by gpio-keys.c in interrupt-only mode. Maybe
+> > > we could move this into MFD piece and drop this driver?
+> 
+> I did following in MFD driver - is this what you suggested:
+> +static struct gpio_keys_button btns[] = {
+> +       {
+> +               .code = KEY_POWER,
+> +               .gpio = -1,
+> +               .type = EV_KEY,
+> +       },
+> +};
+> +
+> +static struct gpio_keys_platform_data bd718xx_powerkey_data = {
+> +       .buttons = &btns[0],
+> +       .nbuttons = ARRAY_SIZE(btns),
+> +       .name = "bd718xx-pwrkey",
+> +};
+> +
+> +/* bd71837 multi function cells */
+> +
+> +static struct mfd_cell bd71837_mfd_cells[] = {
+> +       {
+> +               .name = "bd71837-clk",
+> +       }, {
+> +               .name = "gpio-keys",
+> +               .platform_data = &bd718xx_powerkey_data,
+> +               .pdata_size = sizeof(bd718xx_powerkey_data),
+> +       }, {
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c
-index d131cca..10f2aa9 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/hdmi.c
-@@ -23,38 +23,55 @@ void pack_hdmi_infoframe(struct packed_hdmi_infoframe *packed_frame,
- 		 */
- 	case 17:
- 		subpack1_high = (raw_frame[16] << 16);
-+		/* fall through */
- 	case 16:
- 		subpack1_high |= (raw_frame[15] << 8);
-+		/* fall through */
- 	case 15:
- 		subpack1_high |= raw_frame[14];
-+		/* fall through */
- 	case 14:
- 		subpack1_low = (raw_frame[13] << 24);
-+		/* fall through */
- 	case 13:
- 		subpack1_low |= (raw_frame[12] << 16);
-+		/* fall through */
- 	case 12:
- 		subpack1_low |= (raw_frame[11] << 8);
-+		/* fall through */
- 	case 11:
- 		subpack1_low |= raw_frame[10];
-+		/* fall through */
- 	case 10:
- 		subpack0_high = (raw_frame[9] << 16);
-+		/* fall through */
- 	case 9:
- 		subpack0_high |= (raw_frame[8] << 8);
-+		/* fall through */
- 	case 8:
- 		subpack0_high |= raw_frame[7];
-+		/* fall through */
- 	case 7:
- 		subpack0_low = (raw_frame[6] << 24);
-+		/* fall through */
- 	case 6:
- 		subpack0_low |= (raw_frame[5] << 16);
-+		/* fall through */
- 	case 5:
- 		subpack0_low |= (raw_frame[4] << 8);
-+		/* fall through */
- 	case 4:
- 		subpack0_low |= raw_frame[3];
-+		/* fall through */
- 	case 3:
- 		header = (raw_frame[2] << 16);
-+		/* fall through */
- 	case 2:
- 		header |= (raw_frame[1] << 8);
-+		/* fall through */
- 	case 1:
- 		header |= raw_frame[0];
-+		/* fall through */
- 	case 0:
- 		break;
- 	}
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c b/drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c
-index 49ef7e5..7f1adab 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/dma/usernv04.c
-@@ -122,6 +122,7 @@ nv04_dmaobj_new(struct nvkm_dma *dma, const struct nvkm_oclass *oclass,
- 		break;
- 	case NV_MEM_ACCESS_WO:
- 		dmaobj->flags0 |= 0x00008000;
-+		/* fall through */
- 	case NV_MEM_ACCESS_RW:
- 		dmaobj->flags2 |= 0x00000002;
- 		break;
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c
-index ad707ff..93493b3 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv04.c
-@@ -117,8 +117,10 @@ nv04_fifo_swmthd(struct nvkm_device *device, u32 chid, u32 addr, u32 data)
- 	switch (mthd) {
- 	case 0x0000 ... 0x0000: /* subchannel's engine -> software */
- 		nvkm_wr32(device, 0x003280, (engine &= ~mask));
-+		/* fall through */
- 	case 0x0180 ... 0x01fc: /* handle -> instance */
- 		data = nvkm_rd32(device, 0x003258) & 0x0000ffff;
-+		/* fall through */
- 	case 0x0100 ... 0x017c:
- 	case 0x0200 ... 0x1ffc: /* pass method down to sw */
- 		if (!(engine & mask) && sw)
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c
-index 8c7ba32..47c1682 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/nv40.c
-@@ -81,6 +81,7 @@ nv40_fifo_init(struct nvkm_fifo *base)
- 	case 0x49:
- 	case 0x4b:
- 		nvkm_wr32(device, 0x002230, 0x00000001);
-+		/* fall through */
- 	case 0x40:
- 	case 0x41:
- 	case 0x42:
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c
-index c306835..7112992 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c
-@@ -135,6 +135,7 @@ nvbios_perfEp(struct nvkm_bios *bios, int idx,
- 		break;
- 	case 0x30:
- 		info->script   = nvbios_rd16(bios, perf + 0x02);
-+		/* fall through */
- 	case 0x35:
- 		info->fanspeed = nvbios_rd08(bios, perf + 0x06);
- 		info->voltage  = nvbios_rd08(bios, perf + 0x07);
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c
-index e6e804c..62ec3ee 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/pll.c
-@@ -134,6 +134,7 @@ pll_map(struct nvkm_bios *bios)
- 		    device->chipset == 0xaa ||
- 		    device->chipset == 0xac)
- 			return g84_pll_mapping;
-+		/* else: fall through */
- 	default:
- 		return NULL;
- 	}
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-index ba6a868..63ceab3 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-@@ -90,6 +90,7 @@ nvkm_cstate_valid(struct nvkm_clk *clk, struct nvkm_cstate *cstate,
- 			case NVKM_CLK_BOOST_NONE:
- 				if (clk->base_khz && freq > clk->base_khz)
- 					return false;
-+				/* else: fall through */
- 			case NVKM_CLK_BOOST_BIOS:
- 				if (clk->boost_khz && freq > clk->boost_khz)
- 					return false;
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c
-index 1c21b8b..4f00023 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/mcp77.c
-@@ -363,6 +363,7 @@ mcp77_clk_prog(struct nvkm_clk *base)
- 	switch (clk->vsrc) {
- 	case nv_clk_src_cclk:
- 		mast |= 0x00400000;
-+		/* fall through */
- 	default:
- 		nvkm_wr32(device, 0x4600, clk->vdiv);
- 	}
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c
-index 2b12e38..5f4c287 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramnv40.c
-@@ -131,11 +131,13 @@ nv40_ram_prog(struct nvkm_ram *base)
- 		nvkm_mask(device, 0x00402c, 0xc0771100, ram->ctrl);
- 		nvkm_wr32(device, 0x004048, ram->coef);
- 		nvkm_wr32(device, 0x004030, ram->coef);
-+		/* fall through */
- 	case 0x43:
- 	case 0x49:
- 	case 0x4b:
- 		nvkm_mask(device, 0x004038, 0xc0771100, ram->ctrl);
- 		nvkm_wr32(device, 0x00403c, ram->coef);
-+		/* fall through */
- 	default:
- 		nvkm_mask(device, 0x004020, 0xc0771100, ram->ctrl);
- 		nvkm_wr32(device, 0x004024, ram->coef);
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c b/drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c
-index 844971e..2a6150a 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/mxm/nv50.c
-@@ -159,6 +159,7 @@ mxm_dcb_sanitise_entry(struct nvkm_bios *bios, void *data, int idx, u16 pdcb)
- 		break;
- 	case 0x0e: /* eDP, falls through to DPint */
- 		ctx.outp[1] |= 0x00010000;
-+		/* fall through */
- 	case 0x07: /* DP internal, wtf is this?? HP8670w */
- 		ctx.outp[1] |= 0x00000004; /* use_power_scripts? */
- 		type = DCB_CONNECTOR_eDP;
+Yes, something like this should work. It will not expose the internal
+kernel structure (the fact that we are using gpio-keys dirver) to handle
+power button of this PMIC, which Rob would appreciate. And we can change
+it later if you want to create a fancier driver.
+
+> 
+> //snip
+> 
+> +static int bd71837_i2c_probe(struct i2c_client *i2c,
+> +                           const struct i2c_device_id *id)
+> +{
+> 
+> // snip
+> 
+> +       ret = regmap_add_irq_chip(bd71837->regmap, bd71837->chip_irq,
+> +               IRQF_ONESHOT, 0,
+> +               &bd71837_irq_chip, &bd71837->irq_data);
+> +       if (ret < 0) {
+> +               dev_err(bd71837->dev, "Failed to add irq_chip %d\n", ret);
+> +               goto err_out;
+> +       }
+> +       /* I think this should be done conditionally and only when pwrkey is used
+> +        * What would be the correct way to decide if we want to touch rhw button
+> +        * press detection times?
+> +        */
+> +       ret = regmap_update_bits(bd71837->regmap,
+> +                                BD71837_REG_PWRONCONFIG0,
+> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
+> +                                BD718XX_PWRBTN_SHORT_PRESS_10MS);
+> +       if (ret < 0) {
+> +               dev_err(bd71837->dev, "Failed to configure button short press timeout %d\n", ret);
+> +               goto err_out;
+> +       }
+> +       /* According to BD71847 datasheet the HW default for long press detection
+> +        * is 10ms. So letch change it to 10 sec so we can actually get the short
+> +        * push and allow gracefull shut down
+> +        */
+> +       ret = regmap_update_bits(bd71837->regmap,
+> +                                BD71837_REG_PWRONCONFIG1,
+> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
+> +                                BD718XX_PWRBTN_LONG_PRESS_10S);
+> +       if (ret < 0) {
+> +               dev_err(bd71837->dev, "Failed to configure button long press timeout %d\n", ret);
+> +               goto err_out;
+> +       }
+> +       btns[0].irq = regmap_irq_get_virq(bd71837->irq_data,
+> +                                         BD71837_INT_PWRBTN_S);
+> +
+> +       if (btns[0].irq < 0) {
+> +               ret = btns[0].irq;
+> +               goto err_out;
+> +       }
+> +
+> +       ret = mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
+> +                             bd71837_mfd_cells, ARRAY_SIZE(bd71837_mfd_cells),
+> +                             NULL, 0,
+> +                             regmap_irq_get_domain(bd71837->irq_data));
+> 
+> If looks is Ok I will send new patch with this approach at next week -
+> unless I get lost during the traditional midsummer festival here in
+> Finland.
+> 
+> > Finally, there may be cases when power button is not attached to PMIC
+> > or is needing different configuration for 'short push'. This is why I
+> > would prefer having own Kconfig option for this power-key driver. I am
+> > not sure if it is easily doable if we use gpio_keys?
+> 
+> What would be the preferred mechanism for skipping the button push duration
+> configurations (time it takes for PMIC to detect short or long push)? Or
+> setting the durations to values user(s) would prefer? To me this sounds again
+> something we could configure from DT. Would adding propereties
+> rohm,short-press-ms and rohm,long-press-ms sound reasonable? I will send
+> the first version with no option to skip/specify the configuration
+> (fixed 10ms for short press, 10 sec for long press) but I would like to add
+> support for specifying the duration as next step.
+
+This sounds OK to be but you'd need to get Rob's buy in here. The
+properties should probably be in a sub-node of the PMIC device node.
+
+Thanks.
+
 -- 
-2.7.4
-
+Dmitry
