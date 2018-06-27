@@ -2,189 +2,180 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EC5C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48678C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D85256A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:40:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XYatDSeR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D85256A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id E3E54259C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:44:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3E54259C0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752729AbeF0Xkt (ORCPT
+        id S1752811AbeF0XoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 19:40:49 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35945 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752460AbeF0Xkr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 19:40:47 -0400
-Received: by mail-pl0-f66.google.com with SMTP id a7-v6so1788515plp.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 16:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:organization:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=UlLcojM2OaiG0/AhHvdlxKUTAaeDpNRGOa1PI+9C+m8=;
-        b=XYatDSeRh5OP67FscXR7laHXbWv8Z25PIJ4cmAFzuK2wDFs474ykDeZFP2XNvE6NRR
-         17NhesZgCjSQAUbOItDd9fAnNf40Uv8WCANFXSxuc1+BTd/s0hgVzLuC+sj3g3NAy4AX
-         Oup7R/6/aSp5DlkX3sEiD1f1Irg/0ShfCu1faJPdofUTBGOHYXScs53Gf4vs30I2h4l0
-         u/1+nHtJzMgFavPvpluncc1Jn/Z8juIfiKeTGzhjkVl4vk7GVQQwGtoBtok2NHYXDsrN
-         Ah6FA8SPVFm8NeinI5C7kJqJ9MjWOMg93BUdIl3lmLxglwwRsAboANA+eG5S2PGXUH0w
-         jB1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:organization:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=UlLcojM2OaiG0/AhHvdlxKUTAaeDpNRGOa1PI+9C+m8=;
-        b=oYxF6Pk4utgd/7KwmA0WwgmTbHH2NRMAZtGHSiycYa+qcwtNBlKhQeSf6HKI9ScQ2n
-         sypuE69+nSdDrCnLorqGmJbLo34KkMBC3aEwe9utl0xlfMgHeZ8orS/Er5z/VTHnQHSd
-         /avdgLUFkPEa1DUNc7oAkC1QhjkQX8p8SfArsq4eyqQufmMlUCDvyUUFdAnlJmvvGE4p
-         V7JHkGZCQvSckHAHa7rHvOF0Jilc1QWLp1n9xaNwX875QO1/Xr6HkIE8xg8ocljp1mC8
-         VWd0h417lHqrzNythD/xjY37EA5UxfSavw4489SjUwjdBBjg+c8kzeIcP2ZRPikoasC1
-         skuQ==
-X-Gm-Message-State: APt69E0zSVP5JCAYGpGqlYQvnIQaOyZwv7OFXWMUX1M2jsv+1Di8RDle
-        LH8If0eYUX6ShHTtrdFf03okbg==
-X-Google-Smtp-Source: ADUXVKIQePEqMLmzETfY1/5s2s1YV7y+0VtY/MhtSGXKNepvcjCJAAYiL3CU+F20O0XMHQGVAYs8Nw==
-X-Received: by 2002:a17:902:5991:: with SMTP id p17-v6mr7940485pli.191.1530142846568;
-        Wed, 27 Jun 2018 16:40:46 -0700 (PDT)
-Received: from localhost ([98.237.141.101])
-        by smtp.googlemail.com with ESMTPSA id p12-v6sm11396319pfi.175.2018.06.27.16.40.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Jun 2018 16:40:45 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        yixun.lan@amlogic.com, linux-mtd@lists.infradead.org,
-        boris.brezillon@bootlin.com, richard@nod.at,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        devicetree@vger.kernel.org, liang.yang@amlogic.com,
-        jian.hu@amlogic.com, carlo@caione.org,
-        linux-amlogic@lists.infradead.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org, linux-arm-kernel@lists.infradead.org,
-        jbrunet@baylibre.com
-Subject: Re: [PATCH 1/2] dt-bindings: nand: meson: add Amlogic NAND controller driver
-Organization: BayLibre
-References: <20180613161314.14894-1-yixun.lan@amlogic.com>
-        <20180613161314.14894-2-yixun.lan@amlogic.com>
-        <CAFBinCBeyXf6LNaZzAw6WnsxzDAv8E=Yp2eem0xCPWMEUi6pnQ@mail.gmail.com>
-        <20180626183003.GA3019@rob-hp-laptop>
-Date:   Wed, 27 Jun 2018 16:40:45 -0700
-In-Reply-To: <20180626183003.GA3019@rob-hp-laptop> (Rob Herring's message of
-        "Tue, 26 Jun 2018 12:30:03 -0600")
-Message-ID: <7hvaa3hk76.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 27 Jun 2018 19:44:10 -0400
+Received: from mga11.intel.com ([192.55.52.93]:18418 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752461AbeF0XoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 19:44:09 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 16:44:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,281,1526367600"; 
+   d="scan'208";a="67883412"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2018 16:44:03 -0700
+Date:   Wed, 27 Jun 2018 17:43:13 -0600
+From:   Keith Busch <keith.busch@linux.intel.com>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>
+Subject: Re: [PATCH] nvme: trace: add disk name to tracepoints
+Message-ID: <20180627234313.GB10657@localhost.localdomain>
+References: <20180626135141.14088-1-jthumshirn@suse.de>
+ <20180626135141.14088-3-jthumshirn@suse.de>
+ <20180626150106.GB6628@localhost.localdomain>
+ <20180627073328.aws2apvc357jobge@linux-x5ow.site>
+ <1e7d0f93-9d20-1b99-58c4-651b1d0dedf0@grimberg.me>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1e7d0f93-9d20-1b99-58c4-651b1d0dedf0@grimberg.me>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob Herring <robh@kernel.org> writes:
+On Wed, Jun 27, 2018 at 11:06:22AM +0300, Sagi Grimberg wrote:
+> 
+> > > Not related to your patch, but I did notice that the req->q->id isn't
+> > > really useful here since that's not the hardware context identifier.
+> > > That's just some ida assigned software identifier. For the admin command
+> > > completion trace, it's actually a little confusing to see the qid in the
+> > > trace.
+> > 
+> > It was actually requested by Martin so we can easily see which request
+> > got dispatched/completed on which request queue.
+> 
+> Would be good in the future to display the hwqid, but we'll need to work
+> before we can do that.
 
-> On Sun, Jun 24, 2018 at 12:46:59AM +0200, Martin Blumenstingl wrote:
->> Hello Yixun, Hello Liang,
->> 
->> I have a few small comments inline below
->> additionally I tried to explain the reason behind
->> "amlogic,mmc-syscon", clkin0 and clkin1 so Rob (or the devicetree
->> maintainers in general) can give feedback. feel free to correct me
->> wherever I'm wrong or provide additional notes in case I missed
->> something!
->> 
->> On Wed, Jun 13, 2018 at 10:17 AM Yixun Lan <yixun.lan@amlogic.com> wrote:
->> >
->> > From: Liang Yang <liang.yang@amlogic.com>
->> >
->> > Add Amlogic NAND controller dt-bindings for Meson SoC,
->> > Current this driver support GXBB/GXL/AXG platform.
->> >
->> > Signed-off-by: Liang Yang <liang.yang@amlogic.com>
->> > Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> > ---
->> >  .../bindings/mtd/amlogic,meson-nand.txt       | 118 ++++++++++++++++++
->> >  1 file changed, 118 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
->> > new file mode 100644
->> > index 000000000000..eac9f9433d5d
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
->> > @@ -0,0 +1,118 @@
->> > +Amlogic NAND Flash Controller (NFC) for GXBB/GXL/AXG family SoCs
->> > +
->> > +This file documents the properties in addition to those available in
->> > +the MTD NAND bindings.
->> > +
->> > +Required properties:
->> > +- compatible : contains one of:
->> > +  - "amlogic,meson-gxl-nfc"
->> > +  - "amlogic,meson-axg-nfc"
->> the patch description states that GXBB/GXL/AXG are supported
->> shouldn't you add a compatible string for GXBB as well?
->> 
->> > +- clocks     :
->> > +       A list of phandle + clock-specifier pairs for the clocks listed
->> > +       in clock-names.
->> > +
->> > +- clock-names: Should contain the following:
->> > +       "core" - NFC module gate clock
->> > +       "clkin0" - Parent clock of internal mux
->> > +       "clkin1" - Other parent clock of internal mux
->> to give the devicetree maintainers some context on clkin0 and clkin1:
->> 
->> older SoCs (Meson8, Meson8b - not supported by this binding/driver
->> yet) had a dedicated NAND clock. there neither clkin0 or clkin1 would
->> be used, instead we just had a "nand" or "interface" clock (I'm not
->> aware of the actual naming in Amlogic's internal datasheets)
->> 
->> newer SoCs do NOT have a dedicated NAND "interface" clock anymore.
->> instead they are sharing the clock with the "sd_emmc_c" controller (I
->> *believe* the reason for this is because sd_emmc_c and the NAND
->> controller use the same pads on the SoC, pinctrl muxing controls where
->> these pads are routed -> NAND and sd_emmc_c cannot be used at the same
->> time, so SoC designers probably decided to re-use the clock)
->> 
->> unfortunately the sd_emmc_c clock is not provided by the "main" clock
->> controller on these newer SoCs
->> instead the clock is part of the MMC controller's register space (see
->> the SD_EMMC_CLOCK register in drivers/mmc/host/meson-gx-mmc.c)
->> even worse: the SD_EMMC_CLOCK contains more than just clock settings
->> (bit 25 enables the SDIO interrupt, which is currently not supported
->> by the meson-gx-mmc driver though)
->> 
->> the SD_EMMC_CLOCK register has a mux (CLK_SRC_MASK) to choose from
->> clkin0 and clkin1 which are passed here
->> the "amlogic,mmc-syscon" property is used to get a phandle to the
->> sd_emmc_c syscon register space
->> thus there is a bit of code duplication in the MMC and NAND drivers
->> with this binding (because both need to configure the SD_EMMC_CLOCK
->> register)
->
-> Well, that's ugly. Really, the SD controller should be modeled as a 
-> clock provider. But then you would have to always have a driver 
-> instantiated for it. Maybe you need that anyway if accessing this 
-> register is dependent on some other clock or reset to the module being 
-> enabled (which you may not hit if you only access the reg during boot)?
+I'd really like to see nvme qid, and it would allow for nice trace
+filters.  We could use a little help from blk-mq to get the hctx's
+queue_num from a struct request. I think following should get us that
+(haven't tested just yet)
 
-On some earlier rounds of off-lis review, we did consider making the
-SD/MMC controller a clock provider.  But forcing it to be instantiated
-was kinda ugly too, especailly because there are several instances of
-the MMC IP, and only one of them shares the clock with the NAND, so only
-one of them needs to be a clock provider. :(
-
-> But if you really want to do it this way, I guess that is fine.
-
-Thanks.  We did consider a few options, and found this one to be the
-least worst of a few options.
-
-Kevin
+---
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index b429d515b568..c6478833464d 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -466,6 +466,12 @@ struct request *blk_mq_alloc_request_hctx(struct request_queue *q,
+ }
+ EXPORT_SYMBOL_GPL(blk_mq_alloc_request_hctx);
+ 
++unsigned int blk_mq_request_hctx_idx(struct request *rq)
++{
++	return blk_mq_map_queue(rq->q, rq->mq_ctx->cpu)->queue_num;
++}
++EXPORT_SYMBOL_GPL(blk_mq_request_hctx_idx);
++
+ static void __blk_mq_free_request(struct request *rq)
+ {
+ 	struct request_queue *q = rq->q;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 46df030b2c3f..6a30c154aa99 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -653,7 +653,7 @@ blk_status_t nvme_setup_cmd(struct nvme_ns *ns, struct request *req,
+ 
+ 	cmd->common.command_id = req->tag;
+ 	if (ns)
+-		trace_nvme_setup_nvm_cmd(req->q->id, cmd);
++		trace_nvme_setup_nvm_cmd(req, cmd);
+ 	else
+ 		trace_nvme_setup_admin_cmd(cmd);
+ 	return ret;
+diff --git a/drivers/nvme/host/trace.h b/drivers/nvme/host/trace.h
+index 01390f0e1671..95ebe803424b 100644
+--- a/drivers/nvme/host/trace.h
++++ b/drivers/nvme/host/trace.h
+@@ -79,6 +79,7 @@ TRACE_EVENT(nvme_setup_admin_cmd,
+ 	    TP_PROTO(struct nvme_command *cmd),
+ 	    TP_ARGS(cmd),
+ 	    TP_STRUCT__entry(
++		    __field(int, qid)
+ 		    __field(u8, opcode)
+ 		    __field(u8, flags)
+ 		    __field(u16, cid)
+@@ -86,6 +87,7 @@ TRACE_EVENT(nvme_setup_admin_cmd,
+ 		    __array(u8, cdw10, 24)
+ 	    ),
+ 	    TP_fast_assign(
++		    __entry->qid = 0;
+ 		    __entry->opcode = cmd->common.opcode;
+ 		    __entry->flags = cmd->common.flags;
+ 		    __entry->cid = cmd->common.command_id;
+@@ -93,16 +95,16 @@ TRACE_EVENT(nvme_setup_admin_cmd,
+ 		    memcpy(__entry->cdw10, cmd->common.cdw10,
+ 			   sizeof(__entry->cdw10));
+ 	    ),
+-	    TP_printk(" cmdid=%u, flags=0x%x, meta=0x%llx, cmd=(%s %s)",
+-		      __entry->cid, __entry->flags, __entry->metadata,
++	    TP_printk("qid=%d, cmdid=%u, flags=0x%x, meta=0x%llx, cmd=(%s %s)",
++		      __entry->qid, __entry->cid, __entry->flags, __entry->metadata,
+ 		      show_admin_opcode_name(__entry->opcode),
+ 		      __parse_nvme_admin_cmd(__entry->opcode, __entry->cdw10))
+ );
+ 
+ 
+ TRACE_EVENT(nvme_setup_nvm_cmd,
+-	    TP_PROTO(int qid, struct nvme_command *cmd),
+-	    TP_ARGS(qid, cmd),
++	    TP_PROTO(struct request *req, struct nvme_command *cmd),
++	    TP_ARGS(req, cmd),
+ 	    TP_STRUCT__entry(
+ 		    __field(int, qid)
+ 		    __field(u8, opcode)
+@@ -113,7 +115,7 @@ TRACE_EVENT(nvme_setup_nvm_cmd,
+ 		    __array(u8, cdw10, 24)
+ 	    ),
+ 	    TP_fast_assign(
+-		    __entry->qid = qid;
++		    __entry->qid = blk_mq_request_hctx_idx(req) + !!req->rq_disk;
+ 		    __entry->opcode = cmd->common.opcode;
+ 		    __entry->flags = cmd->common.flags;
+ 		    __entry->cid = cmd->common.command_id;
+@@ -141,7 +143,7 @@ TRACE_EVENT(nvme_complete_rq,
+ 		    __field(u16, status)
+ 	    ),
+ 	    TP_fast_assign(
+-		    __entry->qid = req->q->id;
++		    __entry->qid = blk_mq_request_hctx_idx(req) + !!req->rq_disk;
+ 		    __entry->cid = req->tag;
+ 		    __entry->result = le64_to_cpu(nvme_req(req)->result.u64);
+ 		    __entry->retries = nvme_req(req)->retries;
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index e3147eb74222..af91b2d31a04 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -248,6 +248,7 @@ static inline u16 blk_mq_unique_tag_to_tag(u32 unique_tag)
+ }
+ 
+ 
++unsigned int blk_mq_request_hctx_idx(struct request *rq);
+ int blk_mq_request_started(struct request *rq);
+ void blk_mq_start_request(struct request *rq);
+ void blk_mq_end_request(struct request *rq, blk_status_t error);
+--
