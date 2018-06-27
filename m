@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26224C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 005B6C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B97DB268E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:56:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F9BA268E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="Axn6A/Y2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97DB268E0
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="CmB3K8m8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9BA268E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754012AbeF0D4w (ORCPT
+        id S1754173AbeF0D4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 23:56:52 -0400
-Received: from pb-smtp2.pobox.com ([64.147.108.71]:53214 "EHLO
-        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751073AbeF0D4s (ORCPT
+        Tue, 26 Jun 2018 23:56:53 -0400
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:64970 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbeF0D4s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Jun 2018 23:56:48 -0400
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id B2F71E7787;
-        Tue, 26 Jun 2018 23:56:46 -0400 (EDT)
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id DD5FD10A8A;
+        Tue, 26 Jun 2018 23:56:45 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
-        :subject:date:message-id; s=sasl; bh=d3LgZaE8SnHbrUb77BIW8JQoLLs
-        =; b=Axn6A/Y2OZPk1WL/SvMLfhWHYNMAxuzi/b/CiuHf14J/5xe2q9ADq9BohBm
-        AdLUOSey8esSeGpeSfSrR1iilLffzkoKJItgf3F3eDPYX3itPcJ3TfncEn6VP+xp
-        mfv3XhTGWgqk73Np4OJXjXlA6QDCXKcBPxqxiCxZhxE4HKXI=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id 9AB57E7786;
-        Tue, 26 Jun 2018 23:56:46 -0400 (EDT)
+        :subject:date:message-id:in-reply-to:references; s=sasl; bh=/k49
+        lQdQFqsLzHrd9f8VFXr0ack=; b=CmB3K8m8/A7qNnD1zbwgOKojfcgBWwz3UwhR
+        BoZL/+ke2shswBasZFP/PnCgA1NUWjJM/htyzT25OHQOVjjkjVy98oDW/04/SL/f
+        rywHJYfEzvGktnp3BJu07/rOWG8B1ac3ENiN47ZCPlIvFw2dgHYHUrr4aTnAVz2h
+        47jUkoU=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id D501F10A89;
+        Tue, 26 Jun 2018 23:56:45 -0400 (EDT)
 Received: from yoda.home (unknown [70.82.104.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 18EB4E777F;
-        Tue, 26 Jun 2018 23:56:46 -0400 (EDT)
+        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 646A910A88;
+        Tue, 26 Jun 2018 23:56:45 -0400 (EDT)
 Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTP id 483112DA00D8;
+        by yoda.home (Postfix) with ESMTP id 8AFA02DA062E;
         Tue, 26 Jun 2018 23:56:44 -0400 (EDT)
 From:   Nicolas Pitre <nicolas.pitre@linaro.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -51,84 +52,427 @@ Cc:     Dave Mielke <Dave@mielke.cc>,
         Adam Borowski <kilobyte@angband.pl>,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         linux-kernel@vger.kernel.org, linux-console@vger.kernel.org
-Subject: [PATCH v3 0/3] have the vt console preserve unicode characters
-Date:   Tue, 26 Jun 2018 23:56:39 -0400
-Message-Id: <20180627035642.8561-1-nicolas.pitre@linaro.org>
+Subject: [PATCH v3 1/3] vt: preserve unicode values corresponding to screen characters
+Date:   Tue, 26 Jun 2018 23:56:40 -0400
+Message-Id: <20180627035642.8561-2-nicolas.pitre@linaro.org>
 X-Mailer: git-send-email 2.17.1
-X-Pobox-Relay-ID: 1C5A012A-79BE-11E8-9FF5-40570C78B957-78420484!pb-smtp2.pobox.com
+In-Reply-To: <20180627035642.8561-1-nicolas.pitre@linaro.org>
+References: <20180627035642.8561-1-nicolas.pitre@linaro.org>
+X-Pobox-Relay-ID: 1BF059BE-79BE-11E8-AB4D-0DFB1A68708C-78420484!pb-smtp1.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vt code translates UTF-8 strings into glyph index values and stores 
-those glyph values in the screen buffer. Because there can only be at 
-most 512 glyphs at the moment, it is impossible to represent most 
-unicode characters, in which case a default glyph (often '?') is 
-displayed instead. The original unicode value is then lost.
+The vt code translates UTF-8 strings into glyph index values and stores
+those glyph values directly in the screen buffer. Because there can only
+be at most 512 glyphs, it is impossible to represent most unicode
+characters, in which case a default glyph (often '?') is displayed
+instead. The original unicode value is then lost.
 
-The 512-glyph limitation is inherent to text-mode VGA displays after 
-which the core console code was modelled. This also means that the 
-/dev/vcs* devices only provide user space with glyph index values, and 
-then user applications must get hold of the unicode-to-glyph table the 
-kernel is using in order to back-translate those into actual characters. 
-It is not possible to get back the original unicode value when multiple 
-unicode characters map to the same glyph, especially for the vast 
-majority that maps to the default replacement glyph.
+This patch implements the basic screen buffer handling to preserve unicode
+values alongside corresponding display glyphs.  It is not activated by
+default, meaning that people not relying on that functionality won't get
+the implied overhead.
 
-Users of /dev/vcs* shouldn't have to be restricted to a narrow unicode 
-space from lossy screen content because of that. This is especially true 
-for accessibility applications such as BRLTTY that rely on /dev/vcs to 
-render screen content onto braille terminals.
-
-It was also argued that the VGA-centric glyph buffer should eventually 
-go entirely. The current design made sense when hardware was slow and 
-managing the screen directly into the VGA memory made a difference (i.e. 
-25 years ago). Modern console display drivers no longer have to be 
-   limited to 512 glyphs.
-Quoting Alan Cox:
-
-|The only driver that it suits is the VGA text mode driver, which at 
-|2GHz+ is going to be fast enough whatever format you convert from. We 
-|have the memory, the processor power and the fact almost all our 
-|displays are bitmapped (or more complex still) all in favour of 
-|throwing away that limit.
-
-This patch series introduces unicode screen support to the core console 
-code with /dev/vcs* as a first user. Memory is allocated, and possible 
-CPU overhead introduced, only if /dev/vcsu is read at least once. For 
-now both the glyph and unicode buffers are maintained in parallel to 
-allow for a smooth transition.
-
-I'm a prime user of this new /dev/vcsu interface, as well as the BRLTTY 
-maintainer Dave Mielke who implemented support for this in BRLTTY. There 
-is therefore a vested interest in maintaining this feature as necessary. 
-And this received extensive testing as well at this point.
-
-This is also available on top of v4.18-rc2 here:
-
-  git://git.linaro.org/people/nicolas.pitre/linux vt-unicode
-
-Changes from v2:
-
-- Dropped patch #4 as it was useful only for initial debugging and it 
-  attracted all the review comments so far -- actually more than the 
-  patch is worth.
-- Added Adam Borowski's ACK.
-
-Changes from v1:
-
-- Rebased to v4.18-rc1.
-- Dropped first patch (now in mainline as commit 4b4ecd9cb8).
-- Removed a printk instance from an error path easily triggerable
-  from user space.
-- Minor cleanup.
-
-Diffstat:
-
- drivers/tty/vt/vc_screen.c     |  90 ++++++++--
- drivers/tty/vt/vt.c            | 308 +++++++++++++++++++++++++++++++--
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Tested-by: Dave Mielke <Dave@mielke.cc>
+Acked-by: Adam Borowski <kilobyte@angband.pl>
+---
+ drivers/tty/vt/vt.c            | 220 +++++++++++++++++++++++++++++++--
  include/linux/console_struct.h |   2 +
- include/linux/selection.h      |   5 +
- 4 files changed, 380 insertions(+), 25 deletions(-)
+ 2 files changed, 211 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 1eb1a376a0..7b636638b3 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -317,6 +317,171 @@ void schedule_console_callback(void)
+ 	schedule_work(&console_work);
+ }
+ 
++/*
++ * Code to manage unicode-based screen buffers
++ */
++
++#ifdef NO_VC_UNI_SCREEN
++/* this disables and optimizes related code away at compile time */
++#define get_vc_uniscr(vc) NULL
++#else
++#define get_vc_uniscr(vc) vc->vc_uni_screen
++#endif
++
++typedef uint32_t char32_t;
++
++/*
++ * Our screen buffer is preceded by an array of line pointers so that
++ * scrolling only implies some pointer shuffling.
++ */
++struct uni_screen {
++	char32_t *lines[0];
++};
++
++static struct uni_screen *vc_uniscr_alloc(unsigned int cols, unsigned int rows)
++{
++	struct uni_screen *uniscr;
++	void *p;
++	unsigned int memsize, i;
++
++	/* allocate everything in one go */
++	memsize = cols * rows * sizeof(char32_t);
++	memsize += rows * sizeof(char32_t *);
++	p = kmalloc(memsize, GFP_KERNEL);
++	if (!p)
++		return NULL;
++
++	/* initial line pointers */
++	uniscr = p;
++	p = uniscr->lines + rows;
++	for (i = 0; i < rows; i++) {
++		uniscr->lines[i] = p;
++		p += cols * sizeof(char32_t);
++	}
++	return uniscr;
++}
++
++static void vc_uniscr_set(struct vc_data *vc, struct uni_screen *new_uniscr)
++{
++	kfree(vc->vc_uni_screen);
++	vc->vc_uni_screen = new_uniscr;
++}
++
++static void vc_uniscr_putc(struct vc_data *vc, char32_t uc)
++{
++	struct uni_screen *uniscr = get_vc_uniscr(vc);
++
++	if (uniscr)
++		uniscr->lines[vc->vc_y][vc->vc_x] = uc;
++}
++
++static void vc_uniscr_insert(struct vc_data *vc, unsigned int nr)
++{
++	struct uni_screen *uniscr = get_vc_uniscr(vc);
++
++	if (uniscr) {
++		char32_t *ln = uniscr->lines[vc->vc_y];
++		unsigned int x = vc->vc_x, cols = vc->vc_cols;
++
++		memmove(&ln[x + nr], &ln[x], (cols - x - nr) * sizeof(*ln));
++		memset32(&ln[x], ' ', nr);
++	}
++}
++
++static void vc_uniscr_delete(struct vc_data *vc, unsigned int nr)
++{
++	struct uni_screen *uniscr = get_vc_uniscr(vc);
++
++	if (uniscr) {
++		char32_t *ln = uniscr->lines[vc->vc_y];
++		unsigned int x = vc->vc_x, cols = vc->vc_cols;
++
++		memcpy(&ln[x], &ln[x + nr], (cols - x - nr) * sizeof(*ln));
++		memset32(&ln[cols - nr], ' ', nr);
++	}
++}
++
++static void vc_uniscr_clear_line(struct vc_data *vc, unsigned int x,
++				 unsigned int nr)
++{
++	struct uni_screen *uniscr = get_vc_uniscr(vc);
++
++	if (uniscr) {
++		char32_t *ln = uniscr->lines[vc->vc_y];
++
++		memset32(&ln[x], ' ', nr);
++	}
++}
++
++static void vc_uniscr_clear_lines(struct vc_data *vc, unsigned int y,
++				  unsigned int nr)
++{
++	struct uni_screen *uniscr = get_vc_uniscr(vc);
++
++	if (uniscr) {
++		unsigned int cols = vc->vc_cols;
++
++		while (nr--)
++			memset32(uniscr->lines[y++], ' ', cols);
++	}
++}
++
++static void vc_uniscr_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
++			     enum con_scroll dir, unsigned int nr)
++{
++	struct uni_screen *uniscr = get_vc_uniscr(vc);
++
++	if (uniscr) {
++		unsigned int s, d, rescue, clear;
++		char32_t *save[nr];
++
++		s = clear = t;
++		d = t + nr;
++		rescue = b - nr;
++		if (dir == SM_UP) {
++			swap(s, d);
++			swap(clear, rescue);
++		}
++		memcpy(save, uniscr->lines + rescue, nr * sizeof(*save));
++		memmove(uniscr->lines + d, uniscr->lines + s,
++			(b - t - nr) * sizeof(*uniscr->lines));
++		memcpy(uniscr->lines + clear, save, nr * sizeof(*save));
++		vc_uniscr_clear_lines(vc, clear, nr);
++	}
++}
++
++static void vc_uniscr_copy_area(struct uni_screen *dst,
++				unsigned int dst_cols,
++				unsigned int dst_rows,
++				struct uni_screen *src,
++				unsigned int src_cols,
++				unsigned int src_top_row,
++				unsigned int src_bot_row)
++{
++	unsigned int dst_row = 0;
++
++	if (!dst)
++		return;
++
++	while (src_top_row < src_bot_row) {
++		char32_t *src_line = src->lines[src_top_row];
++		char32_t *dst_line = dst->lines[dst_row];
++
++		memcpy(dst_line, src_line, src_cols * sizeof(char32_t));
++		if (dst_cols - src_cols)
++			memset32(dst_line + src_cols, ' ', dst_cols - src_cols);
++		src_top_row++;
++		dst_row++;
++	}
++	while (dst_row < dst_rows) {
++		char32_t *dst_line = dst->lines[dst_row];
++
++		memset32(dst_line, ' ', dst_cols);
++		dst_row++;
++	}
++}
++
++
+ static void con_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
+ 		enum con_scroll dir, unsigned int nr)
+ {
+@@ -326,6 +491,7 @@ static void con_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
+ 		nr = b - t - 1;
+ 	if (b > vc->vc_rows || t >= b || nr < 1)
+ 		return;
++	vc_uniscr_scroll(vc, t, b, dir, nr);
+ 	if (con_is_visible(vc) && vc->vc_sw->con_scroll(vc, t, b, dir, nr))
+ 		return;
+ 
+@@ -533,6 +699,7 @@ static void insert_char(struct vc_data *vc, unsigned int nr)
+ {
+ 	unsigned short *p = (unsigned short *) vc->vc_pos;
+ 
++	vc_uniscr_insert(vc, nr);
+ 	scr_memmovew(p + nr, p, (vc->vc_cols - vc->vc_x - nr) * 2);
+ 	scr_memsetw(p, vc->vc_video_erase_char, nr * 2);
+ 	vc->vc_need_wrap = 0;
+@@ -545,6 +712,7 @@ static void delete_char(struct vc_data *vc, unsigned int nr)
+ {
+ 	unsigned short *p = (unsigned short *) vc->vc_pos;
+ 
++	vc_uniscr_delete(vc, nr);
+ 	scr_memcpyw(p, p + nr, (vc->vc_cols - vc->vc_x - nr) * 2);
+ 	scr_memsetw(p + vc->vc_cols - vc->vc_x - nr, vc->vc_video_erase_char,
+ 			nr * 2);
+@@ -845,10 +1013,11 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
+ {
+ 	unsigned long old_origin, new_origin, new_scr_end, rlth, rrem, err = 0;
+ 	unsigned long end;
+-	unsigned int old_rows, old_row_size;
++	unsigned int old_rows, old_row_size, first_copied_row;
+ 	unsigned int new_cols, new_rows, new_row_size, new_screen_size;
+ 	unsigned int user;
+ 	unsigned short *newscreen;
++	struct uni_screen *new_uniscr = NULL;
+ 
+ 	WARN_CONSOLE_UNLOCKED();
+ 
+@@ -875,6 +1044,14 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
+ 	if (!newscreen)
+ 		return -ENOMEM;
+ 
++	if (get_vc_uniscr(vc)) {
++		new_uniscr = vc_uniscr_alloc(new_cols, new_rows);
++		if (!new_uniscr) {
++			kfree(newscreen);
++			return -ENOMEM;
++		}
++	}
++
+ 	if (vc == sel_cons)
+ 		clear_selection();
+ 
+@@ -884,6 +1061,7 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
+ 	err = resize_screen(vc, new_cols, new_rows, user);
+ 	if (err) {
+ 		kfree(newscreen);
++		kfree(new_uniscr);
+ 		return err;
+ 	}
+ 
+@@ -904,18 +1082,24 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
+ 			 * Cursor near the bottom, copy contents from the
+ 			 * bottom of buffer
+ 			 */
+-			old_origin += (old_rows - new_rows) * old_row_size;
++			first_copied_row = (old_rows - new_rows);
+ 		} else {
+ 			/*
+ 			 * Cursor is in no man's land, copy 1/2 screenful
+ 			 * from the top and bottom of cursor position
+ 			 */
+-			old_origin += (vc->vc_y - new_rows/2) * old_row_size;
++			first_copied_row = (vc->vc_y - new_rows/2);
+ 		}
+-	}
+-
++		old_origin += first_copied_row * old_row_size;
++	} else
++		first_copied_row = 0;
+ 	end = old_origin + old_row_size * min(old_rows, new_rows);
+ 
++	vc_uniscr_copy_area(new_uniscr, new_cols, new_rows,
++			    get_vc_uniscr(vc), rlth/2, first_copied_row,
++			    min(old_rows, new_rows));
++	vc_uniscr_set(vc, new_uniscr);
++
+ 	update_attr(vc);
+ 
+ 	while (old_origin < end) {
+@@ -1013,6 +1197,7 @@ struct vc_data *vc_deallocate(unsigned int currcons)
+ 		vc->vc_sw->con_deinit(vc);
+ 		put_pid(vc->vt_pid);
+ 		module_put(vc->vc_sw->owner);
++		vc_uniscr_set(vc, NULL);
+ 		kfree(vc->vc_screenbuf);
+ 		vc_cons[currcons].d = NULL;
+ 	}
+@@ -1171,15 +1356,22 @@ static void csi_J(struct vc_data *vc, int vpar)
+ 
+ 	switch (vpar) {
+ 		case 0:	/* erase from cursor to end of display */
++			vc_uniscr_clear_line(vc, vc->vc_x,
++					     vc->vc_cols - vc->vc_x);
++			vc_uniscr_clear_lines(vc, vc->vc_y + 1,
++					      vc->vc_rows - vc->vc_y - 1);
+ 			count = (vc->vc_scr_end - vc->vc_pos) >> 1;
+ 			start = (unsigned short *)vc->vc_pos;
+ 			break;
+ 		case 1:	/* erase from start to cursor */
++			vc_uniscr_clear_line(vc, 0, vc->vc_x + 1);
++			vc_uniscr_clear_lines(vc, 0, vc->vc_y);
+ 			count = ((vc->vc_pos - vc->vc_origin) >> 1) + 1;
+ 			start = (unsigned short *)vc->vc_origin;
+ 			break;
+ 		case 2: /* erase whole display */
+ 		case 3: /* (and scrollback buffer later) */
++			vc_uniscr_clear_lines(vc, 0, vc->vc_rows);
+ 			count = vc->vc_cols * vc->vc_rows;
+ 			start = (unsigned short *)vc->vc_origin;
+ 			break;
+@@ -1200,25 +1392,27 @@ static void csi_J(struct vc_data *vc, int vpar)
+ static void csi_K(struct vc_data *vc, int vpar)
+ {
+ 	unsigned int count;
+-	unsigned short * start;
++	unsigned short *start = (unsigned short *)vc->vc_pos;
++	int offset;
+ 
+ 	switch (vpar) {
+ 		case 0:	/* erase from cursor to end of line */
++			offset = 0;
+ 			count = vc->vc_cols - vc->vc_x;
+-			start = (unsigned short *)vc->vc_pos;
+ 			break;
+ 		case 1:	/* erase from start of line to cursor */
+-			start = (unsigned short *)(vc->vc_pos - (vc->vc_x << 1));
++			offset = -vc->vc_x;
+ 			count = vc->vc_x + 1;
+ 			break;
+ 		case 2: /* erase whole line */
+-			start = (unsigned short *)(vc->vc_pos - (vc->vc_x << 1));
++			offset = -vc->vc_x;
+ 			count = vc->vc_cols;
+ 			break;
+ 		default:
+ 			return;
+ 	}
+-	scr_memsetw(start, vc->vc_video_erase_char, 2 * count);
++	vc_uniscr_clear_line(vc, vc->vc_x + offset, count);
++	scr_memsetw(start + offset, vc->vc_video_erase_char, 2 * count);
+ 	vc->vc_need_wrap = 0;
+ 	if (con_should_update(vc))
+ 		do_update_region(vc, (unsigned long) start, count);
+@@ -1232,6 +1426,7 @@ static void csi_X(struct vc_data *vc, int vpar) /* erase the following vpar posi
+ 		vpar++;
+ 	count = (vpar > vc->vc_cols - vc->vc_x) ? (vc->vc_cols - vc->vc_x) : vpar;
+ 
++	vc_uniscr_clear_line(vc, vc->vc_x, count);
+ 	scr_memsetw((unsigned short *)vc->vc_pos, vc->vc_video_erase_char, 2 * count);
+ 	if (con_should_update(vc))
+ 		vc->vc_sw->con_clear(vc, vc->vc_y, vc->vc_x, 1, count);
+@@ -2188,7 +2383,7 @@ static void con_flush(struct vc_data *vc, unsigned long draw_from,
+ /* acquires console_lock */
+ static int do_con_write(struct tty_struct *tty, const unsigned char *buf, int count)
+ {
+-	int c, tc, ok, n = 0, draw_x = -1;
++	int c, next_c, tc, ok, n = 0, draw_x = -1;
+ 	unsigned int currcons;
+ 	unsigned long draw_from = 0, draw_to = 0;
+ 	struct vc_data *vc;
+@@ -2382,6 +2577,7 @@ static int do_con_write(struct tty_struct *tty, const unsigned char *buf, int co
+ 				con_flush(vc, draw_from, draw_to, &draw_x);
+ 			}
+ 
++			next_c = c;
+ 			while (1) {
+ 				if (vc->vc_need_wrap || vc->vc_decim)
+ 					con_flush(vc, draw_from, draw_to,
+@@ -2392,6 +2588,7 @@ static int do_con_write(struct tty_struct *tty, const unsigned char *buf, int co
+ 				}
+ 				if (vc->vc_decim)
+ 					insert_char(vc, 1);
++				vc_uniscr_putc(vc, next_c);
+ 				scr_writew(himask ?
+ 					     ((vc_attr << 8) & ~himask) + ((tc & 0x100) ? himask : 0) + (tc & 0xff) :
+ 					     (vc_attr << 8) + tc,
+@@ -2412,6 +2609,7 @@ static int do_con_write(struct tty_struct *tty, const unsigned char *buf, int co
+ 
+ 				tc = conv_uni_to_pc(vc, ' '); /* A space is printed in the second column */
+ 				if (tc < 0) tc = ' ';
++				next_c = ' ';
+ 			}
+ 			notify_write(vc, c);
+ 
+diff --git a/include/linux/console_struct.h b/include/linux/console_struct.h
+index c0ec478ea5..2c8d323989 100644
+--- a/include/linux/console_struct.h
++++ b/include/linux/console_struct.h
+@@ -19,6 +19,7 @@
+ 
+ struct vt_struct;
+ struct uni_pagedir;
++struct uni_screen;
+ 
+ #define NPAR 16
+ 
+@@ -140,6 +141,7 @@ struct vc_data {
+ 	struct vc_data **vc_display_fg;		/* [!] Ptr to var holding fg console for this display */
+ 	struct uni_pagedir *vc_uni_pagedir;
+ 	struct uni_pagedir **vc_uni_pagedir_loc; /* [!] Location of uni_pagedir variable for this console */
++	struct uni_screen *vc_uni_screen;	/* unicode screen content */
+ 	bool vc_panic_force_write; /* when oops/panic this VC can accept forced output/blanking */
+ 	/* additional information is in vt_kern.h */
+ };
+-- 
+2.17.1
 
