@@ -6,51 +6,52 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C26C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3B3C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B81B262F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ABAA262ED
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:30:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="LrEcIeGe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B81B262F4
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="EhUmTgVx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ABAA262ED
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933668AbeF0LaW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 07:30:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34618 "EHLO
+        id S933967AbeF0Laa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 07:30:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34796 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbeF0LaU (ORCPT
+        with ESMTP id S933710AbeF0LaZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 07:30:20 -0400
+        Wed, 27 Jun 2018 07:30:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Ti+erNf3WewqAlTelSthc/BqB0RZPKrra6Cgl34Uxi8=; b=LrEcIeGexPZG
-        JPW1VVMYZ7O5CaRaZYccvRQF1HbH6ysB6mIdl7VW3d72sOiCvBovFKRuBwCSvOENIHfPF2R7TaRlX
-        bPNOXcQRZWLyP7h6clYJGXxo19Y4QLWE5CYm0I1gtHof/IKxJIGjgTwxHQfzV8Eef9Bo6C8t960EZ
-        QT0f8=;
+        List-Archive; bh=31nE6t9WXJViTXIbam0SlrHoZq2pO/AU19gC+qGf0+U=; b=EhUmTgVxL0B2
+        MESVL+wcwG9ihJDwyUrxS7+fbgTT3lph5VxR7qhWyf8rJAmfGl43/qiDnEo9m7wJvnsD9Ki/lkzxU
+        QCEQI039+9ui97Zucx64/Ov4AlQfvXKliURW71Lg7WOE7Jk3znVdpA5BhU4e0BTtJM/YqU9j8oAZw
+        gnc84=;
 Received: from 188.29.164.103.threembb.co.uk ([188.29.164.103] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fY8eP-0002vN-H5; Wed, 27 Jun 2018 11:30:17 +0000
+        id 1fY8eT-0002vX-V5; Wed, 27 Jun 2018 11:30:22 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 94D91440070; Wed, 27 Jun 2018 12:30:15 +0100 (BST)
+        id D3DC4440070; Wed, 27 Jun 2018 12:30:20 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
+        =?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
         devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: tas571x: add tas5707 compatible" to the asoc tree
-In-Reply-To:  <20180626174056.6400-2-jbrunet@baylibre.com>
-Message-Id: <20180627113015.94D91440070@finisterre.ee.mobilebroadband>
-Date:   Wed, 27 Jun 2018 12:30:15 +0100 (BST)
+Subject: Applied "ASoC: simple-amplifer: add simple-amplifier compatible" to the asoc tree
+In-Reply-To:  <20180626121128.28564-4-jbrunet@baylibre.com>
+Message-Id: <20180627113020.D3DC4440070@finisterre.ee.mobilebroadband>
+Date:   Wed, 27 Jun 2018 12:30:20 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -58,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: tas571x: add tas5707 compatible
+   ASoC: simple-amplifer: add simple-amplifier compatible
 
 has been applied to the asoc tree at
 
@@ -83,31 +84,35 @@ to this mail.
 Thanks,
 Mark
 
-From 599eb9060c7ccaf6a8f0386ab89e3cb5c1f1fea4 Mon Sep 17 00:00:00 2001
+From 8ed237e83ce9ff4b3964a6b096beb1cbd3397d5a Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 27 Jun 2018 09:39:36 +0200
-Subject: [PATCH] ASoC: tas571x: add tas5707 compatible
+Date: Tue, 26 Jun 2018 14:11:28 +0200
+Subject: [PATCH] ASoC: simple-amplifer: add simple-amplifier compatible
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add the tas5707 to the available compatibles of the tas571x driver
+Add simple-audio-amplifier to the list of available compatible
 
+Suggested-by: Nicolò Veronese <nicveronese@gmail.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/tas571x.txt | 1 +
+ sound/soc/codecs/simple-amplifier.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/tas571x.txt b/Documentation/devicetree/bindings/sound/tas571x.txt
-index b4959f10b74b..7c8fd37c2f9e 100644
---- a/Documentation/devicetree/bindings/sound/tas571x.txt
-+++ b/Documentation/devicetree/bindings/sound/tas571x.txt
-@@ -7,6 +7,7 @@ powerdown (optional).
- Required properties:
- 
- - compatible: should be one of the following:
-+  - "ti,tas5707"
-   - "ti,tas5711",
-   - "ti,tas5717",
-   - "ti,tas5719",
+diff --git a/sound/soc/codecs/simple-amplifier.c b/sound/soc/codecs/simple-amplifier.c
+index 6c27d4afaf3a..85524acf3e9c 100644
+--- a/sound/soc/codecs/simple-amplifier.c
++++ b/sound/soc/codecs/simple-amplifier.c
+@@ -101,6 +101,7 @@ static int simple_amp_probe(struct platform_device *pdev)
+ #ifdef CONFIG_OF
+ static const struct of_device_id simple_amp_ids[] = {
+ 	{ .compatible = "dioo,dio2125", },
++	{ .compatible = "simple-audio-amplifier", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, simple_amp_ids);
 -- 
 2.17.1
 
