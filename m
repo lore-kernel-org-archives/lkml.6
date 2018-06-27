@@ -2,258 +2,138 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE16FC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DB4C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 702E326530
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:52:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 702E326530
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F5692653C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 12:53:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F5692653C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934571AbeF0Mwy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 08:52:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964855AbeF0MrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 08:47:12 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6D1B3401EF04;
-        Wed, 27 Jun 2018 12:47:11 +0000 (UTC)
-Received: from localhost (ovpn-12-44.pek2.redhat.com [10.72.12.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 08CE411166E3;
-        Wed, 27 Jun 2018 12:47:00 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH V7 06/24] block: unexport bio_clone_bioset
-Date:   Wed, 27 Jun 2018 20:45:30 +0800
-Message-Id: <20180627124548.3456-7-ming.lei@redhat.com>
-In-Reply-To: <20180627124548.3456-1-ming.lei@redhat.com>
-References: <20180627124548.3456-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:47:11 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 27 Jun 2018 12:47:11 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        id S965264AbeF0Mxe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 08:53:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54453 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934187AbeF0Mx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 08:53:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B3C4EAF9E;
+        Wed, 27 Jun 2018 12:53:27 +0000 (UTC)
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <keith.busch@intel.com>,
+        James Smart <james.smart@broadcom.com>
+Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>
+Subject: [PATCH v5 1/2] nvme: cache struct nvme_ctrl reference to struct nvme_request
+Date:   Wed, 27 Jun 2018 14:53:23 +0200
+Message-Id: <20180627125324.22064-2-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180627125324.22064-1-jthumshirn@suse.de>
+References: <20180627125324.22064-1-jthumshirn@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-Now only used by the bounce code, so move it there and mark the function
-static.
+We will need to reference the controller in the setup and completion
+time for tracing and future traffic based keep alive support.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+
 ---
- block/bio.c         | 77 -----------------------------------------------------
- block/bounce.c      | 69 ++++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/bio.h |  1 -
- 3 files changed, 68 insertions(+), 79 deletions(-)
+Changes to v4:
+- Move caching from nvme_setup_cmd to .init_request (Keith)
+---
+ drivers/nvme/host/core.c   | 1 +
+ drivers/nvme/host/fc.c     | 1 +
+ drivers/nvme/host/nvme.h   | 1 +
+ drivers/nvme/host/pci.c    | 2 ++
+ drivers/nvme/host/rdma.c   | 1 +
+ drivers/nvme/target/loop.c | 1 +
+ 6 files changed, 7 insertions(+)
 
-diff --git a/block/bio.c b/block/bio.c
-index 9710e275f230..43698bcff737 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -645,83 +645,6 @@ struct bio *bio_clone_fast(struct bio *bio, gfp_t gfp_mask, struct bio_set *bs)
- EXPORT_SYMBOL(bio_clone_fast);
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index e541fe268bcf..99dd62c1076c 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -652,6 +652,7 @@ blk_status_t nvme_setup_cmd(struct nvme_ns *ns, struct request *req,
+ 	}
  
- /**
-- * 	bio_clone_bioset - clone a bio
-- * 	@bio_src: bio to clone
-- *	@gfp_mask: allocation priority
-- *	@bs: bio_set to allocate from
-- *
-- *	Clone bio. Caller will own the returned bio, but not the actual data it
-- *	points to. Reference count of returned bio will be one.
-- */
--struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
--			     struct bio_set *bs)
--{
--	struct bvec_iter iter;
--	struct bio_vec bv;
--	struct bio *bio;
--
--	/*
--	 * Pre immutable biovecs, __bio_clone() used to just do a memcpy from
--	 * bio_src->bi_io_vec to bio->bi_io_vec.
--	 *
--	 * We can't do that anymore, because:
--	 *
--	 *  - The point of cloning the biovec is to produce a bio with a biovec
--	 *    the caller can modify: bi_idx and bi_bvec_done should be 0.
--	 *
--	 *  - The original bio could've had more than BIO_MAX_PAGES biovecs; if
--	 *    we tried to clone the whole thing bio_alloc_bioset() would fail.
--	 *    But the clone should succeed as long as the number of biovecs we
--	 *    actually need to allocate is fewer than BIO_MAX_PAGES.
--	 *
--	 *  - Lastly, bi_vcnt should not be looked at or relied upon by code
--	 *    that does not own the bio - reason being drivers don't use it for
--	 *    iterating over the biovec anymore, so expecting it to be kept up
--	 *    to date (i.e. for clones that share the parent biovec) is just
--	 *    asking for trouble and would force extra work on
--	 *    __bio_clone_fast() anyways.
--	 */
--
--	bio = bio_alloc_bioset(gfp_mask, bio_segments(bio_src), bs);
--	if (!bio)
--		return NULL;
--	bio->bi_disk		= bio_src->bi_disk;
--	bio->bi_opf		= bio_src->bi_opf;
--	bio->bi_write_hint	= bio_src->bi_write_hint;
--	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
--	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
--
--	switch (bio_op(bio)) {
--	case REQ_OP_DISCARD:
--	case REQ_OP_SECURE_ERASE:
--	case REQ_OP_WRITE_ZEROES:
--		break;
--	case REQ_OP_WRITE_SAME:
--		bio->bi_io_vec[bio->bi_vcnt++] = bio_src->bi_io_vec[0];
--		break;
--	default:
--		bio_for_each_segment(bv, bio_src, iter)
--			bio->bi_io_vec[bio->bi_vcnt++] = bv;
--		break;
--	}
--
--	if (bio_integrity(bio_src)) {
--		int ret;
--
--		ret = bio_integrity_clone(bio, bio_src, gfp_mask);
--		if (ret < 0) {
--			bio_put(bio);
--			return NULL;
--		}
--	}
--
--	bio_clone_blkcg_association(bio, bio_src);
--
--	return bio;
--}
--EXPORT_SYMBOL(bio_clone_bioset);
--
--/**
-  *	bio_add_pc_page	-	attempt to add page to bio
-  *	@q: the target queue
-  *	@bio: destination bio
-diff --git a/block/bounce.c b/block/bounce.c
-index fd31347b7836..bc63b3a2d18c 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -195,6 +195,73 @@ static void bounce_end_io_read_isa(struct bio *bio)
- 	__bounce_end_io_read(bio, &isa_page_pool);
+ 	cmd->common.command_id = req->tag;
++
+ 	if (ns)
+ 		trace_nvme_setup_nvm_cmd(req->q->id, cmd);
+ 	else
+diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+index 41d45a1b5c62..9cc33752539a 100644
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -1737,6 +1737,7 @@ nvme_fc_init_request(struct blk_mq_tag_set *set, struct request *rq,
+ 	int queue_idx = (set == &ctrl->tag_set) ? hctx_idx + 1 : 0;
+ 	struct nvme_fc_queue *queue = &ctrl->queues[queue_idx];
+ 
++	nvme_req(rq)->ctrl = &ctrl->ctrl;
+ 	return __nvme_fc_init_request(ctrl, queue, op, rq, queue->rqcnt++);
  }
  
-+static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
-+		struct bio_set *bs)
-+{
-+	struct bvec_iter iter;
-+	struct bio_vec bv;
-+	struct bio *bio;
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 0c4a33df3b2f..f2249387b60d 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -102,6 +102,7 @@ struct nvme_request {
+ 	u8			retries;
+ 	u8			flags;
+ 	u16			status;
++	struct nvme_ctrl	*ctrl;
+ };
+ 
+ /*
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index ba943f211687..8dcae11bbf3a 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -418,6 +418,8 @@ static int nvme_init_request(struct blk_mq_tag_set *set, struct request *req,
+ 
+ 	BUG_ON(!nvmeq);
+ 	iod->nvmeq = nvmeq;
 +
-+	/*
-+	 * Pre immutable biovecs, __bio_clone() used to just do a memcpy from
-+	 * bio_src->bi_io_vec to bio->bi_io_vec.
-+	 *
-+	 * We can't do that anymore, because:
-+	 *
-+	 *  - The point of cloning the biovec is to produce a bio with a biovec
-+	 *    the caller can modify: bi_idx and bi_bvec_done should be 0.
-+	 *
-+	 *  - The original bio could've had more than BIO_MAX_PAGES biovecs; if
-+	 *    we tried to clone the whole thing bio_alloc_bioset() would fail.
-+	 *    But the clone should succeed as long as the number of biovecs we
-+	 *    actually need to allocate is fewer than BIO_MAX_PAGES.
-+	 *
-+	 *  - Lastly, bi_vcnt should not be looked at or relied upon by code
-+	 *    that does not own the bio - reason being drivers don't use it for
-+	 *    iterating over the biovec anymore, so expecting it to be kept up
-+	 *    to date (i.e. for clones that share the parent biovec) is just
-+	 *    asking for trouble and would force extra work on
-+	 *    __bio_clone_fast() anyways.
-+	 */
-+
-+	bio = bio_alloc_bioset(gfp_mask, bio_segments(bio_src), bs);
-+	if (!bio)
-+		return NULL;
-+	bio->bi_disk		= bio_src->bi_disk;
-+	bio->bi_opf		= bio_src->bi_opf;
-+	bio->bi_write_hint	= bio_src->bi_write_hint;
-+	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
-+	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
-+
-+	switch (bio_op(bio)) {
-+	case REQ_OP_DISCARD:
-+	case REQ_OP_SECURE_ERASE:
-+	case REQ_OP_WRITE_ZEROES:
-+		break;
-+	case REQ_OP_WRITE_SAME:
-+		bio->bi_io_vec[bio->bi_vcnt++] = bio_src->bi_io_vec[0];
-+		break;
-+	default:
-+		bio_for_each_segment(bv, bio_src, iter)
-+			bio->bi_io_vec[bio->bi_vcnt++] = bv;
-+		break;
-+	}
-+
-+	if (bio_integrity(bio_src)) {
-+		int ret;
-+
-+		ret = bio_integrity_clone(bio, bio_src, gfp_mask);
-+		if (ret < 0) {
-+			bio_put(bio);
-+			return NULL;
-+		}
-+	}
-+
-+	bio_clone_blkcg_association(bio, bio_src);
-+
-+	return bio;
-+}
-+
- static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 			       mempool_t *pool)
++	nvme_req(req)->ctrl = &dev->ctrl;
+ 	return 0;
+ }
+ 
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index 9f5fc7b7fd7f..36344710050b 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -286,6 +286,7 @@ static int nvme_rdma_init_request(struct blk_mq_tag_set *set,
+ 	struct ib_device *ibdev = dev->dev;
+ 	int ret;
+ 
++	nvme_req(rq)->ctrl = &ctrl->ctrl;
+ 	ret = nvme_rdma_alloc_qe(ibdev, &req->sqe, sizeof(struct nvme_command),
+ 			DMA_TO_DEVICE);
+ 	if (ret)
+diff --git a/drivers/nvme/target/loop.c b/drivers/nvme/target/loop.c
+index d8d91f04bd7e..af7fbf4132b0 100644
+--- a/drivers/nvme/target/loop.c
++++ b/drivers/nvme/target/loop.c
+@@ -227,6 +227,7 @@ static int nvme_loop_init_request(struct blk_mq_tag_set *set,
  {
-@@ -222,7 +289,7 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 		generic_make_request(*bio_orig);
- 		*bio_orig = bio;
- 	}
--	bio = bio_clone_bioset(*bio_orig, GFP_NOIO, passthrough ? NULL :
-+	bio = bounce_clone_bio(*bio_orig, GFP_NOIO, passthrough ? NULL :
- 			&bounce_bio_set);
+ 	struct nvme_loop_ctrl *ctrl = set->driver_data;
  
- 	bio_for_each_segment_all(to, bio, i) {
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 430807f9f44b..21d07858ddef 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -429,7 +429,6 @@ extern void bio_put(struct bio *);
- 
- extern void __bio_clone_fast(struct bio *, struct bio *);
- extern struct bio *bio_clone_fast(struct bio *, gfp_t, struct bio_set *);
--extern struct bio *bio_clone_bioset(struct bio *, gfp_t, struct bio_set *bs);
- 
- extern struct bio_set fs_bio_set;
- 
++	nvme_req(req)->ctrl = &ctrl->ctrl;
+ 	return nvme_loop_init_iod(ctrl, blk_mq_rq_to_pdu(req),
+ 			(set == &ctrl->tag_set) ? hctx_idx + 1 : 0);
+ }
 -- 
-2.9.5
+2.16.4
 
