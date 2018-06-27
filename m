@@ -2,106 +2,111 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11407C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78821C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C230E2244C
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:54:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C230E2244C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 21AFD24056
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:55:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="LSCrnSbo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AFD24056
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934215AbeF0Lx7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 07:53:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45811 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934162AbeF0Lxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 07:53:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6C33CADF5;
-        Wed, 27 Jun 2018 11:53:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DE6B61E3C15; Wed, 27 Jun 2018 13:53:49 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 13:53:49 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
-References: <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
- <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com>
- <20180618081258.GB16991@lst.de>
- <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
- <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
- <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
- <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
- <20180626134757.GY28965@dhcp22.suse.cz>
- <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
- <20180627113221.GO32348@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627113221.GO32348@dhcp22.suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S964959AbeF0LzG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 07:55:06 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:35984 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753473AbeF0LzD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 07:55:03 -0400
+X-Greylist: delayed 335 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Jun 2018 07:55:03 EDT
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 2/5] pinctrl: Add API function pinctrl_gpio_get_direction
+Date:   Wed, 27 Jun 2018 13:49:01 +0200
+Message-Id: <20180627114904.10890-3-paul@crapouillou.net>
+In-Reply-To: <20180627114904.10890-1-paul@crapouillou.net>
+References: <20180627114904.10890-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530100163; bh=d0skFGD9Ti74xKWE/T+DdvWx6QJ2f7QuM36W0LUIUvk=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=LSCrnSboywf3pEJA/NkGchL3UW1eEqkCDPANbZXxCsY74W645P/XM7UvVEV7Vx5XICMFxz8dFUV6yk7LoVRXptHa34qo+Dg7UWTa53nEkiqzYPFU5vXwy6ZcfwCjVhq5CAWIO8+Yjmnlxo+Ny0lXyD9gQHke84Ckds+N3CwTmGw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 27-06-18 13:32:21, Michal Hocko wrote:
-> On Tue 26-06-18 18:48:25, Jan Kara wrote:
-> > On Tue 26-06-18 15:47:57, Michal Hocko wrote:
-> > > On Mon 18-06-18 12:21:46, Dan Williams wrote:
-> > > [...]
-> > > > I do think we should explore a page flag for pages that are "long
-> > > > term" pinned. Michal asked for something along these lines at LSF / MM
-> > > > so that the core-mm can give up on pages that the kernel has lost
-> > > > lifetime control. Michal, did I capture your ask correctly?
-> > > 
-> > > I am sorry to be late. I didn't ask for a page flag exactly. I've asked
-> > > for a way to query for the pin to be temporal or permanent. How that is
-> > > achieved is another question. Maybe we have some more spare room after
-> > > recent struct page reorganization but I dunno, to be honest. Maybe we
-> > > can have an _count offset for these longterm pins. It is not like we are
-> > > using the whole ref count space, right?
-> > 
-> > Matthew had an interesting idea to pull pinned pages completely out from
-> > any LRU and reuse that space in struct page for pinned refcounts. From some
-> > initial investigation (read on elsewhere in this thread) it looks doable. I
-> > was considering offsetting in refcount as well but on 32-bit architectures
-> > there's not that many bits that I'd be really comfortable with that
-> > solution...
-> 
-> I am really slow at following up this discussion. The problem I would
-> see with off-lru pages is that this can quickly turn into a weird
-> reclaim behavior. Especially when we are talking about a lot of memory.
-> It is true that such pages wouldn't be reclaimable directly but could
-> poke them in some way if we see too many of them while scanning LRU.
-> 
-> Not that this is a fundamental block stopper but this is the first thing
-> that popped out when thinking about such a solution. Maybe it is a good
-> start though.
-> 
-> Appart from that, do we really care about 32b here? Big DIO, IB users
-> seem to be 64b only AFAIU.
+This function can be used to retrieve the direction (input/output) of a
+given GPIO.
 
-IMO it is a bad habit to leave unpriviledged-user-triggerable oops in the
-kernel even for uncommon platforms...
+It should *ONLY* be used from gpiolib-based GPIO drivers, as part of their
+gpio_get_direction() semantics, platforms and individual drivers shall
+*NOT* touch pin control GPIO calls.
 
-								Honza
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/pinctrl/core.c           | 31 +++++++++++++++++++++++++++++++
+ include/linux/pinctrl/consumer.h |  1 +
+ 2 files changed, 32 insertions(+)
+
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index e5a303002021..7fee8347fb51 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -849,6 +849,37 @@ int pinctrl_gpio_direction_output(unsigned gpio)
+ EXPORT_SYMBOL_GPL(pinctrl_gpio_direction_output);
+ 
+ /**
++ * pinctrl_gpio_get_direction() - Get the direction (input/output) of a GPIO pin
++ * @gpio: the GPIO pin number from the GPIO subsystem number space
++ *
++ * This function should *ONLY* be used from gpiolib-based GPIO drivers,
++ * as part of their gpio_get_direction() semantics, platforms and individual
++ * drivers shall *NOT* touch pin control GPIO calls.
++ */
++int pinctrl_gpio_get_direction(unsigned int gpio)
++{
++	struct pinctrl_dev *pctldev;
++	struct pinctrl_gpio_range *range;
++	int ret;
++	int pin;
++
++	ret = pinctrl_get_device_gpio_range(gpio, &pctldev, &range);
++	if (ret)
++		return ret;
++
++	mutex_lock(&pctldev->mutex);
++
++	/* Convert to the pin controllers number space */
++	pin = gpio_to_pin(range, gpio);
++	ret = pinmux_gpio_get_direction(pctldev, range, pin);
++
++	mutex_unlock(&pctldev->mutex);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(pinctrl_gpio_get_direction);
++
++/**
+  * pinctrl_gpio_set_config() - Apply config to given GPIO pin
+  * @gpio: the GPIO pin number from the GPIO subsystem number space
+  * @config: the configuration to apply to the GPIO
+diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
+index 0412cc9833e9..5f945c329f1c 100644
+--- a/include/linux/pinctrl/consumer.h
++++ b/include/linux/pinctrl/consumer.h
+@@ -29,6 +29,7 @@ extern int pinctrl_gpio_request(unsigned gpio);
+ extern void pinctrl_gpio_free(unsigned gpio);
+ extern int pinctrl_gpio_direction_input(unsigned gpio);
+ extern int pinctrl_gpio_direction_output(unsigned gpio);
++extern int pinctrl_gpio_get_direction(unsigned gpio);
+ extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
+ 
+ extern struct pinctrl * __must_check pinctrl_get(struct device *dev);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.11.0
+
