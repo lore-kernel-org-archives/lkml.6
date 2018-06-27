@@ -3,60 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0482C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2017C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50EDC26800
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:28:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50EDC26800
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id AD68526800
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD68526800
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752714AbeF0D2N (ORCPT
+        id S1752810AbeF0D2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 23:28:13 -0400
-Received: from gate.crashing.org ([63.228.1.57]:36894 "EHLO gate.crashing.org"
+        Tue, 26 Jun 2018 23:28:25 -0400
+Received: from ozlabs.org ([203.11.71.1]:59771 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752136AbeF0D2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 23:28:12 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5R3Rb7C002154;
-        Tue, 26 Jun 2018 22:27:39 -0500
-Message-ID: <cacaecac00c1ac941a78da772bbcfb05142df87d.camel@kernel.crashing.org>
-Subject: Re: [PATCH v3 00/12] macintosh: Resolve various PMU driver problems
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Finn Thain <fthain@telegraphics.com.au>, geert@linux-m68k.org
-Cc:     Michael Schmitz <schmitzmic@gmail.com>, linux-m68k@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date:   Wed, 27 Jun 2018 13:27:37 +1000
-In-Reply-To: <874lhp6i4d.fsf@concordia.ellerman.id.au>
-References: <cover.1528885172.git.fthain@telegraphics.com.au>
-         <alpine.LNX.2.21.1806242119180.34@nippy.intranet>
-         <874lhp6i4d.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752136AbeF0D2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 23:28:24 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41FpK24k6dz9s0n;
+        Wed, 27 Jun 2018 13:28:22 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Mathieu Malaterre <malat@debian.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] powerpc/32: Remove left over function prototypes
+In-Reply-To: <CA+7wUswdBvm+XCi6r6ewGFuSTAaV9FWmhUyV9vNKatCnurvL-A@mail.gmail.com>
+References: <20180408194821.19682-1-malat@debian.org> <20180620190038.3250-1-malat@debian.org> <87602cfkh5.fsf@concordia.ellerman.id.au> <CA+7wUswdBvm+XCi6r6ewGFuSTAaV9FWmhUyV9vNKatCnurvL-A@mail.gmail.com>
+Date:   Wed, 27 Jun 2018 13:28:22 +1000
+Message-ID: <871scs7vs9.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-27 at 13:08 +1000, Michael Ellerman wrote:
-> > I will rewrite patch 10/12 after Arnd's fixes and this series have all 
-> > made their way through both powerpc and m68k trees, and submit it 
-> > separately.
-> 
-> drivers/macintosh is supposedly maintained by Ben, but I'm not sure this
-> series is high on his todo list.
+Mathieu Malaterre <malat@debian.org> writes:
+> On Thu, Jun 21, 2018 at 1:27 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> Mathieu Malaterre <malat@debian.org> writes:
+>>
+>> > In commit 4aea909eeba3 ("powerpc: Add missing prototypes in setup_32.c")
+>>
+>> I don't have that commit ^ ?
+>>
+>> That might be because I squashed some of your fixes together or something?
+>
+> I am doing an awful lots of mistakes these days. Indeed you've changed
+> one of my patch:
+>
+> https://patchwork.kernel.org/patch/10240997/
+>
+> This one appeared after a git rebase on my side.
+>
+>> > diff --git a/arch/powerpc/kernel/setup.h b/arch/powerpc/kernel/setup.h
+>> > index 35ca309848d7..829ed66f0a40 100644
+>> > --- a/arch/powerpc/kernel/setup.h
+>> > +++ b/arch/powerpc/kernel/setup.h
+>> > @@ -19,9 +19,6 @@ void irqstack_early_init(void);
+>> >  void setup_power_save(void);
+>> >  unsigned long __init early_init(unsigned long dt_ptr);
+>> >  void __init machine_init(u64 dt_ptr);
+>> > -int __init ppc_setup_l2cr(char *str);
+>> > -int __init ppc_setup_l3cr(char *str);
+>> > -int __init ppc_init(void);
+>> >  #else
+>> >  static inline void setup_power_save(void) { };
+>> >  #endif
+>>
+>> I have:
+>>
+>> #ifdef CONFIG_PPC32
+>> void setup_power_save(void);
+>> #else
+>> static inline void setup_power_save(void) { };
+>> #endif
+>
+> Correct.
+>
+> Sorry for the noise.
 
-We need at least to pull out a couple of powerbooks we have sitting in
-drawers and try it out.
+OK, no worries. Thanks for persisting.
 
-> 
-> Should it just go in via the m68k tree?
-> 
-> Or I can create a topic branch to share it between ppc and m68k?
+cheers
