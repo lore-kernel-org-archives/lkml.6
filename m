@@ -3,465 +3,168 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF181C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C32C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89DB426439
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:33:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DB426439
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B47292247A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47292247A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964855AbeF0LdG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 07:33:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33054 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932371AbeF0LdD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 07:33:03 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5RBTQbQ103706
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 07:33:03 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jv9h18q2s-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 07:33:03 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 27 Jun 2018 12:33:01 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Jun 2018 12:32:57 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5RBWutU34996424
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Jun 2018 11:32:56 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1085B11C05C;
-        Wed, 27 Jun 2018 12:32:48 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8120011C04C;
-        Wed, 27 Jun 2018 12:32:46 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.118])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 27 Jun 2018 12:32:46 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 27 Jun 2018 14:32:54 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        linux-alpha <linux-alpha@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH] alpha: switch to NO_BOOTMEM
-Date:   Wed, 27 Jun 2018 14:32:48 +0300
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18062711-0016-0000-0000-000001E0A861
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062711-0017-0000-0000-00003234E6EB
-Message-Id: <1530099168-31421-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-27_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806270131
+        id S1753629AbeF0LeW (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 07:34:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37010 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752634AbeF0LeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 07:34:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6F94920741; Wed, 27 Jun 2018 13:34:17 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 249DF20714;
+        Wed, 27 Jun 2018 13:34:07 +0200 (CEST)
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        marek.vasut@gmail.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [PATCH v2 1/2] ubi: provide a way to skip CRC checks
+Date:   Wed, 27 Jun 2018 13:33:19 +0200
+Message-Id: <b94a9de06741a9a87807fa4d599504503798a835.1530099128.git-series.quentin.schulz@bootlin.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <cover.54081a233a7b9efc0fa933bdba97c73c85b20059.1530099128.git-series.quentin.schulz@bootlin.com>
+References: <cover.54081a233a7b9efc0fa933bdba97c73c85b20059.1530099128.git-series.quentin.schulz@bootlin.com>
+In-Reply-To: <cover.54081a233a7b9efc0fa933bdba97c73c85b20059.1530099128.git-series.quentin.schulz@bootlin.com>
+References: <cover.54081a233a7b9efc0fa933bdba97c73c85b20059.1530099128.git-series.quentin.schulz@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
-on most other architectures.
+Some users of static UBI volumes implement their own integrity check,
+thus making the volume CRC check done at open time useless. For
+instance, this is the case when one use the ubiblock + dm-verity +
+squashfs combination, where dm-verity already checks integrity of the
+block device but this time at the block granularity instead of verifying
+the whole volume.
 
-The conversion does not take care of NUMA support which is marked broken
-for more than 10 years now.
+Skipping this test drastically improves the boot-time.
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
+ drivers/mtd/ubi/kapi.c      |  2 +-
+ drivers/mtd/ubi/ubi-media.h |  6 ++++++
+ drivers/mtd/ubi/ubi.h       |  4 ++++
+ drivers/mtd/ubi/vmt.c       |  9 +++++++++
+ drivers/mtd/ubi/vtbl.c      |  3 +++
+ 5 files changed, 23 insertions(+), 1 deletion(-)
 
-Tested with qemu-system-alpha. I've added some tweaks to sys_dp264 to force
-memory split for testing with CONFIG_DISCONTIGMEM=y
-
- arch/alpha/Kconfig                |   2 +
- arch/alpha/kernel/core_irongate.c |   4 +-
- arch/alpha/kernel/setup.c         |  98 ++++-----------------------------
- arch/alpha/mm/numa.c              | 113 +++++---------------------------------
- 4 files changed, 29 insertions(+), 188 deletions(-)
-
-diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-index 04a4a138ed13..040692a8d433 100644
---- a/arch/alpha/Kconfig
-+++ b/arch/alpha/Kconfig
-@@ -30,6 +30,8 @@ config ALPHA
- 	select ODD_RT_SIGACTION
- 	select OLD_SIGSUSPEND
- 	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
-+	select HAVE_MEMBLOCK
-+	select NO_BOOTMEM
- 	help
- 	  The Alpha is a 64-bit general-purpose processor designed and
- 	  marketed by the Digital Equipment Corporation of blessed memory,
-diff --git a/arch/alpha/kernel/core_irongate.c b/arch/alpha/kernel/core_irongate.c
-index aec757250e07..f70986683fc6 100644
---- a/arch/alpha/kernel/core_irongate.c
-+++ b/arch/alpha/kernel/core_irongate.c
-@@ -21,6 +21,7 @@
- #include <linux/init.h>
- #include <linux/initrd.h>
- #include <linux/bootmem.h>
-+#include <linux/memblock.h>
+diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+index d4b2e87..e9e9ecb 100644
+--- a/drivers/mtd/ubi/kapi.c
++++ b/drivers/mtd/ubi/kapi.c
+@@ -202,7 +202,7 @@ struct ubi_volume_desc *ubi_open_volume(int ubi_num, int vol_id, int mode)
+ 	desc->mode = mode;
  
- #include <asm/ptrace.h>
- #include <asm/cacheflush.h>
-@@ -241,8 +242,7 @@ albacore_init_arch(void)
- 				       size / 1024);
- 		}
- #endif
--		reserve_bootmem_node(NODE_DATA(0), pci_mem, memtop -
--				pci_mem, BOOTMEM_DEFAULT);
-+		memblock_reserve(pci_mem, memtop - pci_mem);
- 		printk("irongate_init_arch: temporarily reserving "
- 			"region %08lx-%08lx for PCI\n", pci_mem, memtop - 1);
- 	}
-diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-index 5576f7646fb6..4f0d94471bc9 100644
---- a/arch/alpha/kernel/setup.c
-+++ b/arch/alpha/kernel/setup.c
-@@ -30,6 +30,7 @@
- #include <linux/ioport.h>
- #include <linux/platform_device.h>
- #include <linux/bootmem.h>
-+#include <linux/memblock.h>
- #include <linux/pci.h>
- #include <linux/seq_file.h>
- #include <linux/root_dev.h>
-@@ -312,9 +313,7 @@ setup_memory(void *kernel_end)
- {
- 	struct memclust_struct * cluster;
- 	struct memdesc_struct * memdesc;
--	unsigned long start_kernel_pfn, end_kernel_pfn;
--	unsigned long bootmap_size, bootmap_pages, bootmap_start;
--	unsigned long start, end;
-+	unsigned long kernel_size;
- 	unsigned long i;
+ 	mutex_lock(&ubi->ckvol_mutex);
+-	if (!vol->checked) {
++	if (!vol->checked && !vol->skip_check) {
+ 		/* This is the first open - check the volume */
+ 		err = ubi_check_volume(ubi, vol_id);
+ 		if (err < 0) {
+diff --git a/drivers/mtd/ubi/ubi-media.h b/drivers/mtd/ubi/ubi-media.h
+index 195ff8c..f43a4ff 100644
+--- a/drivers/mtd/ubi/ubi-media.h
++++ b/drivers/mtd/ubi/ubi-media.h
+@@ -45,6 +45,11 @@ enum {
+  * Volume flags used in the volume table record.
+  *
+  * @UBI_VTBL_AUTORESIZE_FLG: auto-resize this volume
++ * @UBI_VTBL_SKIP_CRC_CHECK_FLG: skip the CRC check done on static volume at
++ *				 open time. Should only be set on volumes that
++ *				 are used by upper layers doing this kind of
++ *				 check. Main use-case for this flag is
++ *				 boot-time reduction
+  *
+  * %UBI_VTBL_AUTORESIZE_FLG flag can be set only for one volume in the volume
+  * table. UBI automatically re-sizes the volume which has this flag and makes
+@@ -76,6 +81,7 @@ enum {
+  */
+ enum {
+ 	UBI_VTBL_AUTORESIZE_FLG = 0x01,
++	UBI_VTBL_SKIP_CRC_CHECK_FLG = 0x02,
+ };
  
- 	/* Find free clusters, and init and free the bootmem accordingly.  */
-@@ -322,6 +321,8 @@ setup_memory(void *kernel_end)
- 	  (hwrpb->mddt_offset + (unsigned long) hwrpb);
+ /*
+diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
+index f5ba97c..429102b 100644
+--- a/drivers/mtd/ubi/ubi.h
++++ b/drivers/mtd/ubi/ubi.h
+@@ -327,6 +327,9 @@ struct ubi_eba_leb_desc {
+  *           atomic LEB change
+  *
+  * @eba_tbl: EBA table of this volume (LEB->PEB mapping)
++ * @skip_check: %1 if CRC check of static volumes should be skipped. Directly
++ *		reflect the presence of the %UBI_VTBL_SKIP_CRC_CHECK_FLG in the
++ *		vtbl entry
+  * @checked: %1 if this static volume was checked
+  * @corrupted: %1 if the volume is corrupted (static volumes only)
+  * @upd_marker: %1 if the update marker is set for this volume
+@@ -374,6 +377,7 @@ struct ubi_volume {
+ 	void *upd_buf;
  
- 	for_each_mem_cluster(memdesc, cluster, i) {
-+		unsigned long end;
+ 	struct ubi_eba_table *eba_tbl;
++	unsigned int skip_check:1;
+ 	unsigned int checked:1;
+ 	unsigned int corrupted:1;
+ 	unsigned int upd_marker:1;
+diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+index 0be5167..e2606a4 100644
+--- a/drivers/mtd/ubi/vmt.c
++++ b/drivers/mtd/ubi/vmt.c
+@@ -299,6 +299,10 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
+ 		vtbl_rec.vol_type = UBI_VID_DYNAMIC;
+ 	else
+ 		vtbl_rec.vol_type = UBI_VID_STATIC;
 +
- 		printk("memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
- 		       i, cluster->usage, cluster->start_pfn,
- 		       cluster->start_pfn + cluster->numpages);
-@@ -335,6 +336,9 @@ setup_memory(void *kernel_end)
- 		end = cluster->start_pfn + cluster->numpages;
- 		if (end > max_low_pfn)
- 			max_low_pfn = end;
++	if (vol->skip_check)
++		vtbl_rec.flags |= UBI_VTBL_SKIP_CRC_CHECK_FLG;
 +
-+		memblock_add(PFN_PHYS(cluster->start_pfn),
-+			     cluster->numpages << PAGE_SHIFT);
- 	}
+ 	memcpy(vtbl_rec.name, vol->name, vol->name_len);
  
- 	/*
-@@ -363,87 +367,9 @@ setup_memory(void *kernel_end)
- 		max_low_pfn = mem_size_limit;
- 	}
- 
--	/* Find the bounds of kernel memory.  */
--	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
--	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
--	bootmap_start = -1;
--
-- try_again:
--	if (max_low_pfn <= end_kernel_pfn)
--		panic("not enough memory to boot");
--
--	/* We need to know how many physically contiguous pages
--	   we'll need for the bootmap.  */
--	bootmap_pages = bootmem_bootmap_pages(max_low_pfn);
--
--	/* Now find a good region where to allocate the bootmap.  */
--	for_each_mem_cluster(memdesc, cluster, i) {
--		if (cluster->usage & 3)
--			continue;
--
--		start = cluster->start_pfn;
--		end = start + cluster->numpages;
--		if (start >= max_low_pfn)
--			continue;
--		if (end > max_low_pfn)
--			end = max_low_pfn;
--		if (start < start_kernel_pfn) {
--			if (end > end_kernel_pfn
--			    && end - end_kernel_pfn >= bootmap_pages) {
--				bootmap_start = end_kernel_pfn;
--				break;
--			} else if (end > start_kernel_pfn)
--				end = start_kernel_pfn;
--		} else if (start < end_kernel_pfn)
--			start = end_kernel_pfn;
--		if (end - start >= bootmap_pages) {
--			bootmap_start = start;
--			break;
--		}
--	}
--
--	if (bootmap_start == ~0UL) {
--		max_low_pfn >>= 1;
--		goto try_again;
--	}
--
--	/* Allocate the bootmap and mark the whole MM as reserved.  */
--	bootmap_size = init_bootmem(bootmap_start, max_low_pfn);
--
--	/* Mark the free regions.  */
--	for_each_mem_cluster(memdesc, cluster, i) {
--		if (cluster->usage & 3)
--			continue;
--
--		start = cluster->start_pfn;
--		end = cluster->start_pfn + cluster->numpages;
--		if (start >= max_low_pfn)
--			continue;
--		if (end > max_low_pfn)
--			end = max_low_pfn;
--		if (start < start_kernel_pfn) {
--			if (end > end_kernel_pfn) {
--				free_bootmem(PFN_PHYS(start),
--					     (PFN_PHYS(start_kernel_pfn)
--					      - PFN_PHYS(start)));
--				printk("freeing pages %ld:%ld\n",
--				       start, start_kernel_pfn);
--				start = end_kernel_pfn;
--			} else if (end > start_kernel_pfn)
--				end = start_kernel_pfn;
--		} else if (start < end_kernel_pfn)
--			start = end_kernel_pfn;
--		if (start >= end)
--			continue;
--
--		free_bootmem(PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
--		printk("freeing pages %ld:%ld\n", start, end);
--	}
--
--	/* Reserve the bootmap memory.  */
--	reserve_bootmem(PFN_PHYS(bootmap_start), bootmap_size,
--			BOOTMEM_DEFAULT);
--	printk("reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
-+	/* Reserve the kernel memory. */
-+	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
-+	memblock_reserve(KERNEL_START_PHYS, kernel_size);
- 
- #ifdef CONFIG_BLK_DEV_INITRD
- 	initrd_start = INITRD_START;
-@@ -459,8 +385,8 @@ setup_memory(void *kernel_end)
- 				       initrd_end,
- 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
- 		} else {
--			reserve_bootmem(virt_to_phys((void *)initrd_start),
--					INITRD_SIZE, BOOTMEM_DEFAULT);
-+			memblock_reserve(virt_to_phys((void *)initrd_start),
-+					INITRD_SIZE);
+ 	err = ubi_change_vtbl_record(ubi, vol_id, &vtbl_rec);
+@@ -733,6 +737,11 @@ static int self_check_volume(struct ubi_device *ubi, int vol_id)
+ 			ubi_err(ubi, "bad used_bytes");
+ 			goto fail;
  		}
- 	}
- #endif /* CONFIG_BLK_DEV_INITRD */
-diff --git a/arch/alpha/mm/numa.c b/arch/alpha/mm/numa.c
-index a9e86475f169..26cd925d19b1 100644
---- a/arch/alpha/mm/numa.c
-+++ b/arch/alpha/mm/numa.c
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/bootmem.h>
-+#include <linux/memblock.h>
- #include <linux/swap.h>
- #include <linux/initrd.h>
- #include <linux/pfn.h>
-@@ -59,12 +60,10 @@ setup_memory_node(int nid, void *kernel_end)
- 	struct memclust_struct * cluster;
- 	struct memdesc_struct * memdesc;
- 	unsigned long start_kernel_pfn, end_kernel_pfn;
--	unsigned long bootmap_size, bootmap_pages, bootmap_start;
- 	unsigned long start, end;
- 	unsigned long node_pfn_start, node_pfn_end;
- 	unsigned long node_min_pfn, node_max_pfn;
- 	int i;
--	unsigned long node_datasz = PFN_UP(sizeof(pg_data_t));
- 	int show_init = 0;
- 
- 	/* Find the bounds of current node */
-@@ -134,24 +133,14 @@ setup_memory_node(int nid, void *kernel_end)
- 	/* Cute trick to make sure our local node data is on local memory */
- 	node_data[nid] = (pg_data_t *)(__va(node_min_pfn << PAGE_SHIFT));
- #endif
--	/* Quasi-mark the pg_data_t as in-use */
--	node_min_pfn += node_datasz;
--	if (node_min_pfn >= node_max_pfn) {
--		printk(" not enough mem to reserve NODE_DATA");
--		return;
--	}
--	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
--
- 	printk(" Detected node memory:   start %8lu, end %8lu\n",
- 	       node_min_pfn, node_max_pfn);
- 
- 	DBGDCONT(" DISCONTIG: node_data[%d]   is at 0x%p\n", nid, NODE_DATA(nid));
--	DBGDCONT(" DISCONTIG: NODE_DATA(%d)->bdata is at 0x%p\n", nid, NODE_DATA(nid)->bdata);
- 
- 	/* Find the bounds of kernel memory.  */
- 	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
- 	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
--	bootmap_start = -1;
- 
- 	if (!nid && (node_max_pfn < end_kernel_pfn || node_min_pfn > start_kernel_pfn))
- 		panic("kernel loaded out of ram");
-@@ -161,89 +150,11 @@ setup_memory_node(int nid, void *kernel_end)
- 	   has much larger alignment than 8Mb, so it's safe. */
- 	node_min_pfn &= ~((1UL << (MAX_ORDER-1))-1);
- 
--	/* We need to know how many physically contiguous pages
--	   we'll need for the bootmap.  */
--	bootmap_pages = bootmem_bootmap_pages(node_max_pfn-node_min_pfn);
--
--	/* Now find a good region where to allocate the bootmap.  */
--	for_each_mem_cluster(memdesc, cluster, i) {
--		if (cluster->usage & 3)
--			continue;
--
--		start = cluster->start_pfn;
--		end = start + cluster->numpages;
--
--		if (start >= node_max_pfn || end <= node_min_pfn)
--			continue;
--
--		if (end > node_max_pfn)
--			end = node_max_pfn;
--		if (start < node_min_pfn)
--			start = node_min_pfn;
--
--		if (start < start_kernel_pfn) {
--			if (end > end_kernel_pfn
--			    && end - end_kernel_pfn >= bootmap_pages) {
--				bootmap_start = end_kernel_pfn;
--				break;
--			} else if (end > start_kernel_pfn)
--				end = start_kernel_pfn;
--		} else if (start < end_kernel_pfn)
--			start = end_kernel_pfn;
--		if (end - start >= bootmap_pages) {
--			bootmap_start = start;
--			break;
--		}
--	}
--
--	if (bootmap_start == -1)
--		panic("couldn't find a contiguous place for the bootmap");
--
--	/* Allocate the bootmap and mark the whole MM as reserved.  */
--	bootmap_size = init_bootmem_node(NODE_DATA(nid), bootmap_start,
--					 node_min_pfn, node_max_pfn);
--	DBGDCONT(" bootmap_start %lu, bootmap_size %lu, bootmap_pages %lu\n",
--		 bootmap_start, bootmap_size, bootmap_pages);
-+	memblock_add(PFN_PHYS(node_min_pfn),
-+		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
- 
--	/* Mark the free regions.  */
--	for_each_mem_cluster(memdesc, cluster, i) {
--		if (cluster->usage & 3)
--			continue;
--
--		start = cluster->start_pfn;
--		end = cluster->start_pfn + cluster->numpages;
--
--		if (start >= node_max_pfn || end <= node_min_pfn)
--			continue;
--
--		if (end > node_max_pfn)
--			end = node_max_pfn;
--		if (start < node_min_pfn)
--			start = node_min_pfn;
--
--		if (start < start_kernel_pfn) {
--			if (end > end_kernel_pfn) {
--				free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start),
--					     (PFN_PHYS(start_kernel_pfn)
--					      - PFN_PHYS(start)));
--				printk(" freeing pages %ld:%ld\n",
--				       start, start_kernel_pfn);
--				start = end_kernel_pfn;
--			} else if (end > start_kernel_pfn)
--				end = start_kernel_pfn;
--		} else if (start < end_kernel_pfn)
--			start = end_kernel_pfn;
--		if (start >= end)
--			continue;
--
--		free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
--		printk(" freeing pages %ld:%ld\n", start, end);
--	}
--
--	/* Reserve the bootmap memory.  */
--	reserve_bootmem_node(NODE_DATA(nid), PFN_PHYS(bootmap_start),
--			bootmap_size, BOOTMEM_DEFAULT);
--	printk(" reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
-+	NODE_DATA(nid)->node_start_pfn = node_min_pfn;
-+	NODE_DATA(nid)->node_present_pages = node_max_pfn - node_min_pfn;
- 
- 	node_set_online(nid);
- }
-@@ -251,6 +162,7 @@ setup_memory_node(int nid, void *kernel_end)
- void __init
- setup_memory(void *kernel_end)
- {
-+	unsigned long kernel_size;
- 	int nid;
- 
- 	show_mem_layout();
-@@ -262,6 +174,9 @@ setup_memory(void *kernel_end)
- 	for (nid = 0; nid < MAX_NUMNODES; nid++)
- 		setup_memory_node(nid, kernel_end);
- 
-+	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
-+	memblock_reserve(KERNEL_START_PHYS, kernel_size);
 +
- #ifdef CONFIG_BLK_DEV_INITRD
- 	initrd_start = INITRD_START;
- 	if (initrd_start) {
-@@ -279,9 +194,8 @@ setup_memory(void *kernel_end)
- 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
- 		} else {
- 			nid = kvaddr_to_nid(initrd_start);
--			reserve_bootmem_node(NODE_DATA(nid),
--					     virt_to_phys((void *)initrd_start),
--					     INITRD_SIZE, BOOTMEM_DEFAULT);
-+			memblock_reserve(virt_to_phys((void *)initrd_start),
-+					 INITRD_SIZE);
- 		}
- 	}
- #endif /* CONFIG_BLK_DEV_INITRD */
-@@ -303,9 +217,8 @@ void __init paging_init(void)
- 	dma_local_pfn = virt_to_phys((char *)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
++		if (vol->skip_check) {
++			ubi_err(ubi, "bad skip_check");
++			goto fail;
++		}
+ 	} else {
+ 		if (vol->used_ebs < 0 || vol->used_ebs > vol->reserved_pebs) {
+ 			ubi_err(ubi, "bad used_ebs");
+diff --git a/drivers/mtd/ubi/vtbl.c b/drivers/mtd/ubi/vtbl.c
+index 94d7a86..2c133cd 100644
+--- a/drivers/mtd/ubi/vtbl.c
++++ b/drivers/mtd/ubi/vtbl.c
+@@ -560,6 +560,9 @@ static int init_volumes(struct ubi_device *ubi,
+ 		vol->name[vol->name_len] = '\0';
+ 		vol->vol_id = i;
  
- 	for_each_online_node(nid) {
--		bootmem_data_t *bdata = &bootmem_node_data[nid];
--		unsigned long start_pfn = bdata->node_min_pfn;
--		unsigned long end_pfn = bdata->node_low_pfn;
-+		unsigned long start_pfn = NODE_DATA(nid)->node_start_pfn;
-+		unsigned long end_pfn = start_pfn + NODE_DATA(nid)->node_present_pages;
- 
- 		if (dma_local_pfn >= end_pfn - start_pfn)
- 			zones_size[ZONE_DMA] = end_pfn - start_pfn;
++		if (vtbl[i].flags & UBI_VTBL_SKIP_CRC_CHECK_FLG)
++			vol->skip_check = 1;
++
+ 		if (vtbl[i].flags & UBI_VTBL_AUTORESIZE_FLG) {
+ 			/* Auto re-size flag may be set only for one volume */
+ 			if (ubi->autoresize_vol_id != -1) {
 -- 
-2.7.4
-
+git-series 0.9.1
