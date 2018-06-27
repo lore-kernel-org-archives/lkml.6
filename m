@@ -2,96 +2,135 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5A5C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACA8C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0897325FB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24E2526024
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:27:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0aJzp1F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0897325FB9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aLtqn75+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24E2526024
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753371AbeF0P10 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:27:26 -0400
-Received: from mail-pf0-f175.google.com ([209.85.192.175]:37578 "EHLO
-        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751107AbeF0P1Z (ORCPT
+        id S934302AbeF0P1s (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:27:48 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34095 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753483AbeF0P1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:27:25 -0400
-Received: by mail-pf0-f175.google.com with SMTP id y5-v6so1132800pfn.4;
-        Wed, 27 Jun 2018 08:27:24 -0700 (PDT)
+        Wed, 27 Jun 2018 11:27:44 -0400
+Received: by mail-wm0-f65.google.com with SMTP id l15-v6so18348255wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 08:27:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sIfRx432+dn+nBytQlqPgA8VECdYeCgneEHZNax9ryo=;
-        b=c0aJzp1FPvMzY0ikI7dNByX5lQtXXjOjG5VnZQLQTTb6O/5AdXXnORcGInKsW+BZsM
-         70nbi/Pu3okg0GIUfYA18VYu9IBPuAZxjiao01wnGzAKvJ7umi62mLOcD+QzgSFFCUdQ
-         LcfFtyAzOZJ7rCDf8xJqnlRb38Q5QfoEsvzJEri/kgY8CX8Gn4xObV5PP/qSt2KiNutK
-         Alt9pNOKdjhJKYHL94GDuMzRS98xSe8p+xX8z7XKy/rQ35neTbYq5nrvmpN3NYQa+dcb
-         XRJOPtY4dDcuaXIwUIUHH/qvQYiUb8aWxmFh2Eo5YOpvFL4y7vsyXQUfRpSNiZgiERcM
-         sWvg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=s19uCGzEfa7voWyvPVHuhU3QK17HgjxH2UZRNOcdec0=;
+        b=aLtqn75+VAecDqqvbrJ7Lcm0RrLD8sRkJ8jiFUxolIxOELbGVHDMrtx4GvcNej2TBT
+         dPq56OxDvfdW8FnzVcVDl072ZXv8RFKlneE7uJe8U2K5POzjKEhdy/D0LS+wpL1bfpLJ
+         l3d5ITIVQ6qejIHuO/YJ5sRvqOKu/gLhtm7T8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sIfRx432+dn+nBytQlqPgA8VECdYeCgneEHZNax9ryo=;
-        b=oC/8N4/UsZWysNzpVTMVyPvA1RFsjtGcppjuz5ZamcPMJE4i/p7ROlg6T6xVSBA1M+
-         v9p7K9uhOpSnfrB5gyaFg6ehfQjSQx29IdqDQvnrHfvSY7U7HxSZQW+G9xbS/oCIN+eU
-         ZP6uBAvgRrucLlkeznaNj0gCQBCOyqrTwZhgnzX39aDnVwNObIPZhlRMOAfT3hRjXMDc
-         qWqErmcPNBtS3JAssSWIFN37LuRFJ8nORv4SGEDZ1yAryB1uadg/YIBx10VJyIv16RV1
-         BJ5i4TZzHKYGbvDSWSDqiDYdg/2hcOOGzAODBNk4kY9dnXJpV2j8fFF1cxJ8l0YiMweI
-         mIcg==
-X-Gm-Message-State: APt69E03hqw5M4IFD/s2eObSn+vqf8+WVLcZonD5tTbw88PEvv+TgNF7
-        QmSPc8jHF51VCD7LmcqN5hVK1NV6
-X-Google-Smtp-Source: AAOMgpcII+C/XeBap183NgdWk7Fw55j6izTh2xIyggXde49/BHCLu0nRrKloh4QBi997QU5xfTIIxg==
-X-Received: by 2002:a62:9419:: with SMTP id m25-v6mr6325592pfe.120.1530113244301;
-        Wed, 27 Jun 2018 08:27:24 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id s14-v6sm6656161pfh.116.2018.06.27.08.27.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s19uCGzEfa7voWyvPVHuhU3QK17HgjxH2UZRNOcdec0=;
+        b=UsbPC/sMyOp6owF1aoQgFa9oOnK3oOqqsgUwdVfBdwNHnhf1PN33StAiJK+asb1bGQ
+         2O2o39OZcD2j1qEC2j4o3AR5sQ37BcflJYT0Hn6SZhuq6dXfLU2+o9fMx3x0Thk+e4lK
+         +M0v0R+gnyxo1Bf+KEgfCzbCZfZMzmnOkCrZSU3q7l7ZXYdMydJiZj5QajZNeJlWLkru
+         7/M7t6X/wv3gAL8Yo4nbYsCuhzo7+3L2oIyYLkvWNCcTTvJN4TqYuu3IrF85BryJcq35
+         8UsaykFBganR+b67oCWvBZVLEiu9twaSRkwMWIwOzKN++UILaD4spNAOt13/t3H3M376
+         nCNg==
+X-Gm-Message-State: APt69E25WFvHb/nMYz4VKApYbGm30hTdBPsl2DOaPzaWxyAe0D9fFthj
+        t1qkRcZCdl8ULJhYQllx7DyKVQ==
+X-Google-Smtp-Source: AAOMgpfpq3PovrLKbWAOvNkvKRSuzptRW1TaqQ9UI5E2z0qTTW2Q1fVGdqgI4fA5PdKA/HmnJrYXbA==
+X-Received: by 2002:a1c:ce0c:: with SMTP id e12-v6mr5042548wmg.86.1530113263606;
+        Wed, 27 Jun 2018 08:27:43 -0700 (PDT)
+Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id o203-v6sm2916075wmd.30.2018.06.27.08.27.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 08:27:23 -0700 (PDT)
-Subject: Re: [PATCH net-next] tcp: replace LINUX_MIB_TCPOFODROP with
- LINUX_MIB_TCPRMEMFULLDROP for drops due to receive buffer full
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1530100216-13070-1-git-send-email-laoar.shao@gmail.com>
- <c89b70f9-e70d-35a5-b9a7-7e3ed7d34edf@gmail.com>
- <CALOAHbCdRjq2n37GpeBdorcbxXMDX2vNDLftypViJd5hRTA28A@mail.gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <72f02552-9375-bf81-6a03-42656168b583@gmail.com>
-Date:   Wed, 27 Jun 2018 08:27:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CALOAHbCdRjq2n37GpeBdorcbxXMDX2vNDLftypViJd5hRTA28A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Jun 2018 08:27:42 -0700 (PDT)
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v4 00/27] Venus updates
+Date:   Wed, 27 Jun 2018 18:26:58 +0300
+Message-Id: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+Here is v4 with following changes:
 
-On 06/27/2018 08:14 AM, Yafang Shao wrote:
- 
-> Got it!
-> 
-> What about introduce a new counter, i.e. TCPRcvQFullDrop ?
+- fixed kbuild test robot in 12/27.
+- fixed destination of memcpy in fill_xxx functions.
 
-tcp_try_rmem_schedule() can fail for many different reasons,
-not related to how occupied the socket receive queue is.
+v3 can be found at https://lkml.org/lkml/2018/6/13/464
+
+regards,
+Stan
+
+Stanimir Varbanov (27):
+  venus: hfi_msgs: correct pointer increment
+  venus: hfi: preparation to support venus 4xx
+  venus: hfi: update sequence event to handle more properties
+  venus: hfi_cmds: add set_properties for 4xx version
+  venus: hfi: support session continue for 4xx version
+  venus: hfi: handle buffer output2 type as well
+  venus: hfi_venus: add halt AXI support for Venus 4xx
+  venus: hfi_venus: fix suspend function for venus 3xx versions
+  venus: hfi_venus: move set of default properties to core init
+  venus: hfi_venus: add suspend functionality for Venus 4xx
+  venus: core,helpers: add two more clocks found in Venus 4xx
+  venus: hfi_parser: add common capability parser
+  venus: helpers: rename a helper function and use buffer mode from caps
+  venus: helpers: add a helper function to set dynamic buffer mode
+  venus: helpers: add helper function to set actual buffer size
+  venus: core: delete not used buffer mode flags
+  venus: helpers: add buffer type argument to a helper
+  venus: helpers: add a new helper to set raw format
+  venus: helpers,vdec,venc: add helpers to set work mode and core usage
+  venus: helpers: extend set_num_bufs helper with one more argument
+  venus: helpers: add a helper to return opb buffer sizes
+  venus: vdec: get required input buffers as well
+  venus: vdec: a new function for output configuration
+  venus: helpers: move frame size calculations on common place
+  venus: implementing multi-stream support
+  venus: core: add sdm845 DT compatible and resource data
+  venus: add HEVC codec support
+
+ .../devicetree/bindings/media/qcom,venus.txt       |   1 +
+ drivers/media/platform/qcom/venus/Makefile         |   3 +-
+ drivers/media/platform/qcom/venus/core.c           | 107 ++++
+ drivers/media/platform/qcom/venus/core.h           | 100 ++--
+ drivers/media/platform/qcom/venus/helpers.c        | 555 +++++++++++++++++++--
+ drivers/media/platform/qcom/venus/helpers.h        |  23 +-
+ drivers/media/platform/qcom/venus/hfi.c            |  12 +-
+ drivers/media/platform/qcom/venus/hfi.h            |  10 +
+ drivers/media/platform/qcom/venus/hfi_cmds.c       |  62 ++-
+ drivers/media/platform/qcom/venus/hfi_helper.h     | 112 ++++-
+ drivers/media/platform/qcom/venus/hfi_msgs.c       | 399 +++------------
+ drivers/media/platform/qcom/venus/hfi_parser.c     | 278 +++++++++++
+ drivers/media/platform/qcom/venus/hfi_parser.h     |  45 ++
+ drivers/media/platform/qcom/venus/hfi_venus.c      | 109 +++-
+ drivers/media/platform/qcom/venus/hfi_venus_io.h   |  10 +
+ drivers/media/platform/qcom/venus/vdec.c           | 326 +++++++-----
+ drivers/media/platform/qcom/venus/venc.c           | 220 ++++----
+ 17 files changed, 1694 insertions(+), 678 deletions(-)
+ create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.c
+ create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.h
+
+-- 
+2.14.1
+
