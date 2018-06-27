@@ -2,516 +2,121 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C43ABC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B36C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61FAF25B1F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 587D626061
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 18:42:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TxgxadNm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FAF25B1F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="KFjtN8kf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 587D626061
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965950AbeF0Ski (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 14:40:38 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:46234 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965762AbeF0Skg (ORCPT
+        id S965961AbeF0Smi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 14:42:38 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:55516 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934387AbeF0Smg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 14:40:36 -0400
-Received: by mail-ot0-f193.google.com with SMTP id v24-v6so3281657otk.13
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g5sAYaLSJTUXVag8qrgKvMjakbsHT4bWZ29Ju/Wl9L0=;
-        b=TxgxadNmrN1B+7MvvPYsLqwSfQAYpqR2kj9I9bYvBMRSpzOJ3JAD5bJUFn5O8zTS28
-         kHhwCbwojqhOvGSED9DzT4AfUQGwVL6yk1LHUJpC9iBxGBif7cmxIqzipwCtZi8DRUfr
-         /nEmdxuTCGcd5DXm631dLk7pglHXgvt+80mNw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g5sAYaLSJTUXVag8qrgKvMjakbsHT4bWZ29Ju/Wl9L0=;
-        b=RDKObx/dLhf37N6D3v7H/z0YuLHnz5OXO411Q4PaeX5dat5CKkd2yB7casoVxawxIf
-         Bao8cTE5aFsJU/FcNELzUTb6ELvwRjPRnwTnDJ9wfF1+j6SMnzdAhpSyDzvtL/TzP8lY
-         UHlGaQQ1GpwmJeX/8BH3QDFj4EDsVHxvT1gxiryR2X9VC1mdIWdfuLFInNXlzX1ZDjjN
-         DhmzGGMBBH7hDmdsQGsHqmWV4NL8w2WvxzvxttSSSMZsmljqs78UD4e34MG0hHaXzzQk
-         jEotR8TCFN1sh7G+irzEigQ7jPEMLWHqypf7ZIoggaC8LQiZIThYs1RYuen80K+YH7JI
-         uf0A==
-X-Gm-Message-State: APt69E0EdgM5TPjo+ypqU1hSHyNIf8xhlY+IPIpRg24tyxruOuKyHgwL
-        0FO0tm0iaDCPONAJtvnoHLJmY9tj7nE=
-X-Google-Smtp-Source: AAOMgpffwqPJiFS2xDWfM6raO+EHRGHW1fbKHvv5BzP18zMc7M5vjf3cJCCKufRTbVEwfkP6kwLOXw==
-X-Received: by 2002:a9d:6449:: with SMTP id m9-v6mr3790415otl.75.1530124835140;
-        Wed, 27 Jun 2018 11:40:35 -0700 (PDT)
-Received: from mail-ot0-f176.google.com (mail-ot0-f176.google.com. [74.125.82.176])
-        by smtp.gmail.com with ESMTPSA id b21-v6sm3488616oih.5.2018.06.27.11.40.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 11:40:33 -0700 (PDT)
-Received: by mail-ot0-f176.google.com with SMTP id k3-v6so3281185otl.12
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 11:40:33 -0700 (PDT)
-X-Received: by 2002:a9d:2cf9:: with SMTP id e54-v6mr1024129otd.154.1530124832489;
- Wed, 27 Jun 2018 11:40:32 -0700 (PDT)
+        Wed, 27 Jun 2018 14:42:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=KbRdafgCt1v3qmJKS4JgXInW1YiMoGZrRhi7UjGfPN0=; b=KFjtN8kfoc6Xis/YCm5QSHIi8e
+        ukc4AODnVh2HQtz49aG1lvVa6usP6JOkAqZbjTwo2whV5V0l/74FzoHobkUy2BQOjD6yguG0waU+I
+        P5rrVdzF6I1OpErXKIouVaa9p9ULxUVYot8xdZJ24ODMJb/oErKYPGwEVgF6Z3YB07kK5QN5RnvaN
+        Fk4C99J8RXlQulwHkQ4XJ4gqAoF4Xyn4RLUQW/qfipdXMef9U5rXxiQbnyYiMfAHOC1bRID/MoN/a
+        t97gGLEraE09xQTPVY4Fk0Q4J5ISZCB7h9AcKTD/SKO/tafBmWBhmzRThrAy63dR6ssoteNZMVnw9
+        DTjh9BGg==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:38762 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fYFOl-00Fett-EC; Wed, 27 Jun 2018 18:42:35 +0000
+Date:   Wed, 27 Jun 2018 11:42:34 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH v4 1/6] Documentation: DT: Consolidate SP805 binding docs
+Message-ID: <20180627184234.GA19538@roeck-us.net>
+References: <1527530497-10392-1-git-send-email-ray.jui@broadcom.com>
+ <1527530497-10392-2-git-send-email-ray.jui@broadcom.com>
+ <20180605194124.GA26885@rob-hp-laptop>
+ <e91c75f3-f7a4-6f51-9911-7e22d5d05084@roeck-us.net>
+ <CABGGisxEvWDy16SKE2RG-vhUHBZHSCCHyfwJsPY16B1fQS-=cA@mail.gmail.com>
+ <09c870cd-0a44-6634-58d8-f57f9fcd0cb5@broadcom.com>
+ <46ca340f-4347-94ca-6463-d38bece820e2@broadcom.com>
+ <20180627183327.GD16753@roeck-us.net>
+ <a18733e2-be06-4ea9-dbfb-1d4f756a97e7@broadcom.com>
 MIME-Version: 1.0
-References: <1529985829-18689-1-git-send-email-sayalil@codeaurora.org> <1529985829-18689-4-git-send-email-sayalil@codeaurora.org>
-In-Reply-To: <1529985829-18689-4-git-send-email-sayalil@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 27 Jun 2018 11:39:56 -0700
-X-Gmail-Original-Message-ID: <CAE=gft662O3oiFJnac-LV+Ne8v7hCdFe0N6cU1rdYkhXpDyWvA@mail.gmail.com>
-Message-ID: <CAE=gft662O3oiFJnac-LV+Ne8v7hCdFe0N6cU1rdYkhXpDyWvA@mail.gmail.com>
-Subject: Re: [PATCH V4 3/3] scsi: ufs: Add configfs support for ufs provisioning
-To:     sayalil@codeaurora.org
-Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mka@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a18733e2-be06-4ea9-dbfb-1d4f756a97e7@broadcom.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sayali,
+On Wed, Jun 27, 2018 at 11:38:48AM -0700, Ray Jui wrote:
+> 
+> 
+> On 6/27/2018 11:33 AM, Guenter Roeck wrote:
+> >On Wed, Jun 20, 2018 at 10:39:16AM -0700, Ray Jui wrote:
+> >>Hi Guenter/Rob,
+> >>
+> >>Kindly let me know how you want to proceed with this?
+> >>
+> >
+> >If I recall correctly, the patch series does not add a new problem
+> >but merely exposes one. Is my recollection correct ? If so, maybe
+> >we should just add a note somewhere indicating what might be wrong
+> >and otherwise apply the series.
+> >
+> >Does this make sense ?
+> 
+> Yes this makes a lot of sense to me. This patch series exposes potential
+> problems in some SoCs that they might not be feeding the correct clock into
+> WDT, at least based on clock names from their DT entries.
+> 
+> This patch series does not change/affect how SP805 works on those systems.
+> 
+> Where should the note be added?
+> 
 
-On Mon, Jun 25, 2018 at 9:04 PM Sayali Lokhande <sayalil@codeaurora.org> wrote:
->
-> Add configfs support to provision ufs device at runtime.
-> Usage:
-> echo <desc_buf> > /config/ufshcd/ufs_provision
-> To check provisioning status:
-> cat /config/ufshcd/ufs_provision
-> 1 -> Success (Reboot device to check updated provisioning)
+I would suggest to add a note into the driver where the clock is used,
+with the details discussed here.
 
-This commit message could contain a bit more detail, including
-motivation and what goes into desc_buf. Also, the description of
-reading ufs_provision isn't really correct, is it? 1 doesn't indicate
-success, 1 just indicates bConfigDescrLock's value.
+Does this make sense ?
 
->
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  Documentation/ABI/testing/configfs-driver-ufs |  15 ++
->  drivers/scsi/ufs/Makefile                     |   1 +
->  drivers/scsi/ufs/ufs-configfs.c               | 198 ++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufs.h                        |   2 +
->  drivers/scsi/ufs/ufshcd.c                     |   2 +
->  drivers/scsi/ufs/ufshcd.h                     |  18 +++
->  6 files changed, 236 insertions(+)
->  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
->  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
->
-> diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-> new file mode 100644
-> index 0000000..f6ef38e
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/configfs-driver-ufs
-> @@ -0,0 +1,15 @@
-> +What:          /config/ufshcd/ufs_provision
-> +Date:          Jun 2018
-> +KernelVersion: 4.14
-> +Description:
-> +               This file shows the status of runtime ufs provisioning.
-> +               This can be used to provision ufs device if bConfigDescrLock is 0.
-> +               Configuration buffer needs to be written in space separated format
-> +               specificied as below:
-> +               echo <bNumberLU> <bBootEnable> <bDescrAccessEn> <bInitPowerMode>
-> +               <bHighPriorityLUN> <bSecureRemovalType> <bInitActiveICCLevel>
-> +               <wPeriodicRTCUpdate> <bConfigDescrLock> <LUNum> <bLUEnable>
-> +               <bBootLunID> <size_in_kb> <bDataReliability> <bLUWriteProtect>
-> +               <bMemoryType> <bLogicalBlockSize> <bProvisioningType>
-> +               <wContextCapabilities> <LUNtoGrow> <commit> <NumofLUNs>
-> +               > /config/ufshcd/ufs_provision
-> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-> index 918f579..d438e74 100644
-> --- a/drivers/scsi/ufs/Makefile
-> +++ b/drivers/scsi/ufs/Makefile
-> @@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
->  obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
->  obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
->  ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-> +obj-$(CONFIG_CONFIGFS_FS) += ufs-configfs.o
->  obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
->  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-> diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-> new file mode 100644
-> index 0000000..614b017
-> --- /dev/null
-> +++ b/drivers/scsi/ufs/ufs-configfs.c
-> @@ -0,0 +1,198 @@
-> +/*
-> + * Copyright (c) 2018, Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-
-I believe there's a new SPDX license identification that they prefer
-you to use, at least according to:
-https://lwn.net/Articles/739183/
-
-> +
-> +#include <linux/err.h>
-> +#include <linux/string.h>
-> +#include <asm/unaligned.h>
-> +#include <linux/configfs.h>
-
-These should be alphabetized.
-
-> +
-> +#include "ufs.h"
-> +#include "ufshcd.h"
-> +
-> +struct ufs_hba *hba;
-
-How does this work if there is more than one UFS controller in the
-system? Given that there are both UFS cards and embedded UFS chips, I
-think multiple controllers needs to be supported.
-
-> +
-> +static ssize_t ufs_provision_show(struct config_item *item, char *buf)
-> +{
-> +       return snprintf(buf, PAGE_SIZE, "provision_enabled = %x\n",
-> +               hba->provision_enabled);
-
-Why can't this show the current configuration, barring some of the
-weirder parameters like lun_to_grow, which I have comments about
-below. I'm not sure provision_enabled is very useful, given that we
-can already get at this attribute via sysfs.
-
-> +}
-> +
-> +ssize_t ufshcd_desc_configfs_store(const char *buf, size_t count)
-> +{
-> +       struct ufs_config_descr *cfg = &hba->cfgs;
-> +       char *strbuf;
-> +       char *strbuf_copy;
-> +       int desc_buf[count];
-
-I believe with configfs, "count" can be up to PAGE_SIZE, which would
-mean usermode could size this array at 16K. That's too big, especially
-since you already know the maximum number of ints you're willing to
-take in, and it's not anywhere near that.
-
-> +       int *pt;
-> +       char *token;
-> +       int i, ret;
-> +       int value, commit = 0;
-> +       int num_luns = 0;
-> +       int KB_per_block = 4;
-
-What is this? Is this really fixed across all UFS devices?
-
-> +
-> +       /* reserve one byte for null termination */
-> +       strbuf = kmalloc(count + 1, GFP_KERNEL);
-> +       if (!strbuf)
-> +               return -ENOMEM;
-> +
-> +       strbuf_copy = strbuf;
-> +       strlcpy(strbuf, buf, count + 1);
-> +       memset(desc_buf, 0, count);
-
-This is zeroing count, which represents the number of characters
-coming in, but desc_buf is an array of ints.
-
-> +
-> +       /* Just return if bConfigDescrLock is already set */
-> +       ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-> +               QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
-> +       if (ret) {
-> +               dev_err(hba->dev, "%s: Failed reading bConfigDescrLock %d, cannot re-provision device!\n",
-> +                       __func__, ret);
-> +               hba->provision_enabled = 0;
-> +               goto out;
-> +       }
-> +       if (cfg->bConfigDescrLock == 1) {
-
-This might just be my paranoia, but I generally prefer checks against
-zero, rather than checks specifically for one.
-
-> +               dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-> +               __func__, cfg->bConfigDescrLock);
-> +               hba->provision_enabled = 0;
-> +               goto out;
-> +       }
-> +
-> +       for (i = 0; i < count; i++) {
-> +               token = strsep(&strbuf, " ");
-> +               if (!token && i) {
-> +                       num_luns = desc_buf[i-1];
-> +                       dev_dbg(hba->dev, "%s: token %s, num_luns %d\n",
-> +                               __func__, token, num_luns);
-> +                       if (num_luns > 8) {
-
-This is a magic number. Please make a define for this number. Then use
-that define to come up with a maximum size for desc_buf, rather than
-"count". Then you can iterate "i" up to the appropriate number based
-on the number of luns, rather than up to the number of characters in
-the string.
-
-> +                               dev_err(hba->dev, "%s: Invalid num_luns %d\n",
-> +                               __func__, num_luns);
-> +                               hba->provision_enabled = 0;
-> +                               goto out;
-> +                       }
-
-I don't love that there's a num_luns parameter being fed in here at
-all. It would be better in my opinion if you could just faithfully
-pass along the members of the configuration descriptor directly,
-rather than having additional "features" like num_luns, commit, and
-lun_to_grow.
-
-> +                       break;
-> +               }
-> +
-> +               ret = kstrtoint(token, 0, &value);
-> +               if (ret) {
-> +                       dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
-> +                               __func__, ret, token);
-> +                       break;
-> +               }
-> +               desc_buf[i] = value;
-> +               dev_dbg(hba->dev, " desc_buf[%d] 0x%x", i, desc_buf[i]);
-> +       }
-> +
-> +       /* Fill in the descriptors with parsed configuration data */
-> +       pt = desc_buf;
-> +       cfg->bNumberLU = *pt++;
-> +       cfg->bBootEnable = *pt++;
-> +       cfg->bDescrAccessEn = *pt++;
-> +       cfg->bInitPowerMode = *pt++;
-> +       cfg->bHighPriorityLUN = *pt++;
-> +       cfg->bSecureRemovalType = *pt++;
-> +       cfg->bInitActiveICCLevel = *pt++;
-> +       cfg->wPeriodicRTCUpdate = *pt++;
-> +       cfg->bConfigDescrLock = *pt++;
-> +       dev_dbg(hba->dev, "%s: %u %u %u %u %u %u %u %u %u\n", __func__,
-> +       cfg->bNumberLU, cfg->bBootEnable, cfg->bDescrAccessEn,
-> +       cfg->bInitPowerMode, cfg->bHighPriorityLUN, cfg->bSecureRemovalType,
-> +       cfg->bInitActiveICCLevel, cfg->wPeriodicRTCUpdate,
-> +       cfg->bConfigDescrLock);
-> +
-> +       for (i = 0; i < num_luns; i++) {
-> +               cfg->unit[i].LUNum = *pt++;
-> +               cfg->unit[i].bLUEnable = *pt++;
-> +               cfg->unit[i].bBootLunID = *pt++;
-> +               /* dNumAllocUnits = size_in_kb/KB_per_block */
-> +               cfg->unit[i].dNumAllocUnits = (u32)(*pt++ / KB_per_block);
-
-It's awkward that pt is an int, since you then divide by 4. That means
-you lose two bits at the top. What if you want a size that includes
-those two bits? Also as per my comment above, if KB_per_block might be
-values other than 4, then you might lose even more bits. Perhaps this
-should just be set to *pt++ directly, rather than the mystery divide.
-It will be up to user mode to read the geometry descriptor to figure
-out how bytes correspond to allocation units.
-
-> +               cfg->unit[i].bDataReliability = *pt++;
-> +               cfg->unit[i].bLUWriteProtect = *pt++;
-> +               cfg->unit[i].bMemoryType = *pt++;
-> +               cfg->unit[i].bLogicalBlockSize = *pt++;
-> +               cfg->unit[i].bProvisioningType = *pt++;
-> +               cfg->unit[i].wContextCapabilities = *pt++;
-> +       }
-
-Do you validate that the number of ints you received corresponds to
-the number of LUNs, or does this just put uninitialized kernel stack
-in here? Oh, right, above you attempted to zero out desc_buf. What
-about cfg->unit[i] for i > num_luns?
-
-> +
-> +       cfg->lun_to_grow = *pt++;
-> +       commit = *pt++;
-> +       cfg->num_luns = *pt;
-> +       dev_dbg(hba->dev, "%s: lun_to_grow %u, commit %u num_luns %u\n",
-> +               __func__, cfg->lun_to_grow, commit, cfg->num_luns);
-> +       if (commit == 1) {
-
-Is this a common thing in configfs? Why do we need this dry run
-feature, seeing as there's no real validation going on in this
-function anyway.
-
-> +               ret = ufshcd_do_config_device(hba);
-> +               if (!ret) {
-> +                       hba->provision_enabled = 1;
-> +                       dev_err(hba->dev,
-> +                       "%s: UFS Provisioning completed,num_luns %u, reboot now !\n",
-> +                       __func__, cfg->num_luns);
-> +               }
-> +       } else
-> +               dev_err(hba->dev, "%s: Invalid commit %u\n", __func__, commit);
-> +out:
-> +       kfree(strbuf_copy);
-> +       return count;
-> +}
-> +
-> +static ssize_t ufs_provision_store(struct config_item *item,
-> +               const char *buf, size_t count)
-> +{
-> +       return ufshcd_desc_configfs_store(buf, count);
-> +}
-> +
-> +static struct configfs_attribute ufshcd_attr_provision = {
-> +       .ca_name        = "ufs_provision",
-> +       .ca_mode        = S_IRUGO | S_IWUGO,
-> +       .ca_owner       = THIS_MODULE,
-> +       .show           = ufs_provision_show,
-> +       .store          = ufs_provision_store,
-> +};
-> +
-> +static struct configfs_attribute *ufshcd_attrs[] = {
-> +       &ufshcd_attr_provision,
-> +       NULL,
-> +};
-> +
-> +static struct config_item_type ufscfg_type = {
-> +       .ct_attrs       = ufshcd_attrs,
-> +       .ct_owner       = THIS_MODULE,
-> +};
-> +
-> +static struct configfs_subsystem ufscfg_subsys = {
-> +       .su_group = {
-> +               .cg_item = {
-> +                       .ci_namebuf = "ufshcd",
-> +                       .ci_type = &ufscfg_type,
-> +               },
-> +       },
-> +};
-> +
-> +int ufshcd_configfs_init(struct ufs_hba *hba_ufs)
-> +{
-> +       int ret;
-> +       struct configfs_subsystem *subsys = &ufscfg_subsys;
-> +
-> +       hba = hba_ufs;
-> +       config_group_init(&subsys->su_group);
-> +       mutex_init(&subsys->su_mutex);
-> +       ret = configfs_register_subsystem(subsys);
-> +       if (ret) {
-> +               pr_err("Error %d while registering subsystem %s\n",
-> +                      ret,
-> +                      subsys->su_group.cg_item.ci_namebuf);
-> +       }
-> +       return ret;
-> +}
-> +
-> +void ufshcd_configfs_exit(void)
-> +{
-> +       configfs_unregister_subsystem(&ufscfg_subsys);
-> +}
-> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-> index 1f99904..0b497fc 100644
-> --- a/drivers/scsi/ufs/ufs.h
-> +++ b/drivers/scsi/ufs/ufs.h
-> @@ -427,6 +427,7 @@ enum {
->  };
->
->  struct ufs_unit_desc {
-> +       u8         LUNum;
->         u8     bLUEnable;              /* 1 for enabled LU */
->         u8     bBootLunID;             /* 0 for using this LU for boot */
->         u8     bLUWriteProtect;        /* 1 = power on WP, 2 = permanent WP */
-> @@ -451,6 +452,7 @@ struct ufs_config_descr {
->         u32    qVendorConfigCode;      /* Vendor specific configuration code */
->         struct ufs_unit_desc unit[8];
->         u8      lun_to_grow;
-> +       u8 num_luns;
->  };
-
-I don't like that these structs seem to be a blend of hardware and
-software definitions. For the most part they match the hardware spec,
-but then there are these random software accounting members sprinkled
-in that break that. It would be better if the hardware structures
-could be their own thing, and then additional structures can be
-created if software needs its own accounting. But I'm also not a fan
-of any of the software members here (num_luns, lun_to_grow, and
-LUNum), and I'm hoping we can get rid of them altogether by instead
-providing a more direct configfs interface to the config desciptor.
-
->
->  /* Task management service response */
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 370a7c6..e980d5a 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -7892,6 +7892,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
->  void ufshcd_remove(struct ufs_hba *hba)
->  {
->         ufs_sysfs_remove_nodes(hba->dev);
-> +       ufshcd_configfs_exit();
->         scsi_remove_host(hba->host);
->         /* disable interrupts */
->         ufshcd_disable_intr(hba, hba->intr_mask);
-> @@ -8145,6 +8146,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
->
->         async_schedule(ufshcd_async_scan, hba);
->         ufs_sysfs_add_nodes(hba->dev);
-> +       ufshcd_configfs_init(hba);
->
->         return 0;
->
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 0e6bf30..7d2fa89 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -41,6 +41,7 @@
->  #include <linux/kernel.h>
->  #include <linux/init.h>
->  #include <linux/interrupt.h>
-> +#include <linux/configfs.h>
->  #include <linux/io.h>
->  #include <linux/delay.h>
->  #include <linux/slab.h>
-> @@ -550,6 +551,7 @@ struct ufs_hba {
->         bool is_irq_enabled;
->         u32 dev_ref_clk_freq;
->         struct ufs_config_descr cfgs;
-> +       bool provision_enabled;
->
->         /* Interrupt aggregation support is broken */
->         #define UFSHCD_QUIRK_BROKEN_INTR_AGGR                   0x1
-> @@ -869,6 +871,22 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
->  int ufshcd_hold(struct ufs_hba *hba, bool async);
->  void ufshcd_release(struct ufs_hba *hba);
->  int ufshcd_do_config_device(struct ufs_hba *hba);
-> +/* Expose UFS configfs API's */
-> +ssize_t ufshcd_desc_configfs_store(const char *buf, size_t count);
-> +
-> +#ifdef CONFIG_CONFIGFS_FS
-> +int ufshcd_configfs_init(struct ufs_hba *hba_ufs);
-> +void ufshcd_configfs_exit(void);
-> +#else /* CONFIG_CONFIGFS_FS */
-> +int ufshcd_configfs_init(struct ufs_hba *hba_ufs)
-> +{
-> +       return 0;
-> +}
-> +
-> +void ufshcd_configfs_exit(void)
-> +{
-> +}
-> +#endif /* CONFIG_CONFIGFS_FS */
->
->  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
->         int *desc_length);
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+Thanks,
+Guenter
