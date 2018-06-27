@@ -5,71 +5,105 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D28C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E06C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EEBD25B8E
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:03:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EEBD25B8E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
+	by mail.kernel.org (Postfix) with ESMTP id 27F1924BC2
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 21:13:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F1924BC2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755015AbeF0VDU (ORCPT
+        id S1754707AbeF0VNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 17:03:20 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:51522 "EHLO mail.bugwerft.de"
+        Wed, 27 Jun 2018 17:13:48 -0400
+Received: from mga04.intel.com ([192.55.52.120]:8490 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754820AbeF0VDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 17:03:19 -0400
-Received: from [192.168.178.170] (pD95EF523.dip0.t-ipconnect.de [217.94.245.35])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id BC3DF28BDC0;
-        Wed, 27 Jun 2018 21:00:04 +0000 (UTC)
-Subject: Re: [PATCH v3 00/14] ARM: pxa: switch to DMA slave maps
-To:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        alsa-devel@alsa-project.org
-References: <20180617170217.24177-1-robert.jarzmik@free.fr>
- <20180618104159.24b9fffb@bbrezillon> <87d0wnrhqz.fsf@belgarion.home>
- <20180625130704.GQ9413@sirena.org.uk> <87r2ksl0wa.fsf@belgarion.home>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <45a4e773-aaa3-6d43-f02d-5056a2a265d4@zonque.org>
-Date:   Wed, 27 Jun 2018 23:03:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <87r2ksl0wa.fsf@belgarion.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1751986AbeF0VNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 17:13:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 14:13:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,280,1526367600"; 
+   d="scan'208";a="53420000"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga006.jf.intel.com with ESMTP; 27 Jun 2018 14:13:44 -0700
+Received: from fmsmsx114.amr.corp.intel.com (10.18.116.8) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 27 Jun 2018 14:13:44 -0700
+Received: from hasmsx112.ger.corp.intel.com (10.184.198.40) by
+ FMSMSX114.amr.corp.intel.com (10.18.116.8) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 27 Jun 2018 14:13:44 -0700
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.94]) by
+ HASMSX112.ger.corp.intel.com ([169.254.11.94]) with mapi id 14.03.0319.002;
+ Thu, 28 Jun 2018 00:13:41 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Alan Cox <alan@linux.intel.com>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>
+CC:     "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
+Thread-Topic: [PATCH v7] tpm: separate cmd_ready/go_idle from runtime_pm
+Thread-Index: AQHUC/10xIwob4M80Eit0g6kz8euiKRw97kAgAABmYCAAg95gIABGJUAgAB58yA=
+Date:   Wed, 27 Jun 2018 21:13:40 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D956753@hasmsx108.ger.corp.intel.com>
+References: <20180624205202.6597-1-tomas.winkler@intel.com>
+         <19b4282d625e04bb391f497419283a191bca610d.camel@linux.intel.com>
+         <cb7ecb912486ee3e504de7c0918d667ebd370080.camel@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B9D954923@hasmsx108.ger.corp.intel.com>
+ <5c50d7fa2bf495f26443bd2da2e15df34c3d23f7.camel@linux.intel.com>
+In-Reply-To: <5c50d7fa2bf495f26443bd2da2e15df34c3d23f7.camel@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzE4YzNhOTUtYjdiMi00MjQyLWIzYTktZGQ3NGE1NzY0MGExIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSnJqcll3dXgwNkhWb1Q4QVVhekkwbml2TnZ1WTBmV3Z6b01pK2I4QzNsYU14bklYM2dQZFFpZ09TVmlhS2dmViJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.252.30.241]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, June 27, 2018 05:11 PM, Robert Jarzmik wrote:
-> Mark Brown <broonie@kernel.org> writes:
-> 
->> On Mon, Jun 18, 2018 at 09:56:20PM +0200, Robert Jarzmik wrote:
->>
->>> I must insist on "Wednesday", as I need to have one last pass from 0-day kernel
->>> checker to be fully covered, and I'd like as well to know which tree the ASoC
->>> patch will take, ie. if Mark commits to take it, or rather wants to pull from
->>> the imutable branch.
->>
->> I'll pull the branch in (a signed tag would've been nicer but it's not
->> the end of the world).
-> Yeah, I realised that too ... late.
-> 
-> Anyways, the immutable branch doesn't contain the specific ASoC patch "ASoC:
-> pxa: remove the dmaengine compat need", and up to my better understanding
-> neither does your for-next branch.
-> 
-> So until I see it in your branch it will dwelve happily in pxa/for-next. If it
-> has to be routed through your tree, so that Daniel can work on ASoC pxa, I'd
-> like to know at -rc4 time so that I drop it from my pxa/for-next branch.
-
-Ah, yes. The series I just posted depends on that.
-
-
+DQoNCj4gT24gVHVlLCAyMDE4LTA2LTI2IGF0IDIxOjE1ICswMDAwLCBXaW5rbGVyLCBUb21hcyB3
+cm90ZToNCj4gPiA+IFJpZ2h0IG5vdyBpZiBJIHJlYWxseSBwdXQgaGVhZCBpbnRvIHRoaXMgSSBj
+YW4gdW5kZXJzdGFuZCB0aGUgbG9naWMNCj4gPiA+IGJ1dCBpdCBpcyBhIGNvbXBsZXRlIG1lc3Mu
+DQo+ID4NCj4gPiBJIHRoaW5rIHdoYXQgaXMgdGhlIG1lc3MgaXMgdGhhdCB3ZSBoYXZlIGEgcmVj
+dXJzaXZlIGNhbGwgdG8NCj4gPiB0cG1fdHJhbnNtaXQgdG9wcGVkIHdpdGggcmV0cmllcy4gIEFs
+bCBvdGhlciBtZXNzIGlzIGp1c3QgdGhlIHJlc3VsdCBvZiB0aGF0Lg0KPiA+DQo+ID4gPiBJIHdp
+bGwgZm9yZ290IHRoZSBkZXBlbmRlbmNpZXMgYmV0d2VlbiBmbGFncyB3aXRoaW4gZmV3IHdlZWtz
+Lg0KPiA+DQo+ID4gSG9wZSB0aGUgcmVhc29ucyBhcmUgd2VsbCBkb2N1bWVudGVkIGJvdGggaW4g
+Y29kZSBhbmQgdGhlIGNvbW1pdA0KPiA+IG1lc3NhZ2UsIGlmIG5vdCBsZXQncyBhZGRyZXNzIHRo
+YXQuIFdlIHJlYWxseSBjYW5ub3QgZGVwZW5kIG9uIG9uZSdzDQo+IG1lbW9yeS4NCj4gPiBJdCdz
+IG5vdCBsaWtlIEknbSBub3Qgc3RyaXZpbmcgZm9yIHNpbXBsZXN0IHBvc3NpYmxlIGNvZGUuDQo+
+ID4NCj4gPiA+IEEgZml4ZWQgcmVxdWlyZW1lbnQgKHNvIHRoYXQgeW91IGtub3cpIGlzIHRoYXQg
+dGhleSBtdXN0IGJlDQo+ID4gPiBpbmRlcGVuZGVudC4NCj4gPg0KPiA+IFRoZSBmbGFncyAoaG9w
+ZSB0aGlzIHdoYXQgeW91IHJlZmVycmluZyBoZXJlIHRvKSBhcmUgbm90IGluZGVwZW5kZW50DQo+
+ID4gYW5kIHdlcmVuJ3QgYmVmb3JlLCAoUkFXIGNhbm5vdCBiZSBjYWxsZWQgYWxvbmUgYXMgeW91
+IHdpbGwgaGF2ZQ0KPiA+IGRvdWJsZSBsb2NraW5nKSBwdXR0aW5nIHRoZW0gdW5kZXIgb25lIG5h
+bWUganVzdCBzaG91bGQgbWFrZSBpdCBjbGVhci4NCj4gPiBJIGJlZyB5b3UgdG8gZ28gb3ZlciB0
+aGUgIGNvZGUgb25lIG1vcmUgdGltZSwgZG9uJ3QgZ2V0IHN0dWNrIHdpdGgNCj4gPiBmbGFncyBu
+YW1lcywgbWF5YmUgeW91IGV2ZW4gZGlzY292ZXIgc29tZSByZWFsIGlzc3VlLg0KPiA+DQo+ID4g
+VGhhbmtzDQo+ID4gVG9tYXMNCj4gDQo+IFlvdSBzaG91bGQgdGhlbiBmaW5kIGEgc29sdXRpb24g
+d2hlcmUgeW91IGNhbiByZW1vdmUNCj4gVFBNX1RSQU5TTUlUX1JBVyBjb21wbGV0ZWx5IGFuZCBt
+YWtlIGl0IGFzIGEgc2VwYXJhdGUgY29tbWl0LCBub3QNCj4gcGFydCBvZiB0aGUgYnVnIGZpeC4N
+Cj4gVGhpcyBpcyBub3QgaW4gYSBzaGFwZSB0aGF0IEkgd291bGQgZGFyZSB0byBwdXQgdGhpcyBp
+biBhIHB1bGwgcmVxdWVzdC4NCg0KVmVyeSB3ZWxsLCBJIHdpbGwgcmVtb3ZlIHRoZSBORVNURUQg
+ZmxhZy4gIHRob3VnaCBJIGhhdmUgZmVlbGluZyB5b3UgYXJlIHNob290aW5nIGZyb20gdGhlIGhp
+cCB5b3UgZGlkbid0IHJlYWxseSByZWFkIHRoZSBjb2RlLiANClBsZWFzZSB0aGVyZSBhbnlvbmUg
+d2hvIGNhbiByZXZpZXcgdGhlIGNvZGU/DQpUb21hcw0KDQo=
