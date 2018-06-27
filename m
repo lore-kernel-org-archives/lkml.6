@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8634EC43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7EEC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A8A723CE4
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:03:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8A723CE4
+	by mail.kernel.org (Postfix) with ESMTP id 9A12023D5A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A12023D5A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965974AbeF0RDo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:03:44 -0400
-Received: from mga07.intel.com ([134.134.136.100]:19414 "EHLO mga07.intel.com"
+        id S965958AbeF0RDm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:03:42 -0400
+Received: from mga07.intel.com ([134.134.136.100]:19413 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753603AbeF0RDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753946AbeF0RDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 27 Jun 2018 13:03:34 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 10:03:32 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 10:03:33 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,279,1526367600"; 
-   d="scan'208";a="70478511"
+   d="scan'208";a="70478514"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
   by orsmga002.jf.intel.com with ESMTP; 27 Jun 2018 10:03:32 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
@@ -41,9 +41,9 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 4/8] x86/fsgsbase/64: Use FS/GS base helpers in core dump
-Date:   Wed, 27 Jun 2018 10:03:09 -0700
-Message-Id: <1530118993-13466-5-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v5 5/8] x86/fsgsbase/64: Factor out load FS/GS segments from __switch_to
+Date:   Wed, 27 Jun 2018 10:03:10 -0700
+Message-Id: <1530118993-13466-6-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
 References: <1530118993-13466-1-git-send-email-chang.seok.bae@intel.com>
@@ -52,10 +52,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The open coded access is now replaced, that might prevent
-from using the enhanced FSGSBASE mechanism.
+Instead of open coding the calls to load_seg_legacy(), add a
+load_fsgs() helper to handle fs and gs.  When FSGSBASE is enabled,
+load_fsgs() will be updated.
 
-Based-on-code-from: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Reviewed-by: Andy Lutomirski <luto@kernel.org>
@@ -64,40 +64,41 @@ Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- arch/x86/include/asm/elf.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/process_64.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
-index 0d157d2..49acefb 100644
---- a/arch/x86/include/asm/elf.h
-+++ b/arch/x86/include/asm/elf.h
-@@ -10,6 +10,7 @@
- #include <asm/ptrace.h>
- #include <asm/user.h>
- #include <asm/auxvec.h>
-+#include <asm/fsgsbase.h>
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index bf0bd5c..e014f7d 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -279,6 +279,15 @@ static __always_inline void load_seg_legacy(unsigned short prev_index,
+ 	}
+ }
  
- typedef unsigned long elf_greg_t;
++static __always_inline void load_fsgs(struct thread_struct *prev,
++				      struct thread_struct *next)
++{
++	load_seg_legacy(prev->fsindex, prev->fsbase,
++			next->fsindex, next->fsbase, FS);
++	load_seg_legacy(prev->gsindex, prev->gsbase,
++			next->gsindex, next->gsbase, GS);
++}
++
+ static unsigned long task_seg_base(struct task_struct *task,
+ 				   unsigned short selector)
+ {
+@@ -588,10 +597,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	if (unlikely(next->ds | prev->ds))
+ 		loadsegment(ds, next->ds);
  
-@@ -205,7 +206,6 @@ void set_personality_ia32(bool);
+-	load_seg_legacy(prev->fsindex, prev->fsbase,
+-			next->fsindex, next->fsbase, FS);
+-	load_seg_legacy(prev->gsindex, prev->gsbase,
+-			next->gsindex, next->gsbase, GS);
++	load_fsgs(prev, next);
  
- #define ELF_CORE_COPY_REGS(pr_reg, regs)			\
- do {								\
--	unsigned long base;					\
- 	unsigned v;						\
- 	(pr_reg)[0] = (regs)->r15;				\
- 	(pr_reg)[1] = (regs)->r14;				\
-@@ -228,8 +228,8 @@ do {								\
- 	(pr_reg)[18] = (regs)->flags;				\
- 	(pr_reg)[19] = (regs)->sp;				\
- 	(pr_reg)[20] = (regs)->ss;				\
--	rdmsrl(MSR_FS_BASE, base); (pr_reg)[21] = base;		\
--	rdmsrl(MSR_KERNEL_GS_BASE, base); (pr_reg)[22] = base;	\
-+	(pr_reg)[21] = read_fsbase();				\
-+	(pr_reg)[22] = read_inactive_gsbase();			\
- 	asm("movl %%ds,%0" : "=r" (v)); (pr_reg)[23] = v;	\
- 	asm("movl %%es,%0" : "=r" (v)); (pr_reg)[24] = v;	\
- 	asm("movl %%fs,%0" : "=r" (v)); (pr_reg)[25] = v;	\
+ 	switch_fpu_finish(next_fpu, cpu);
+ 
 -- 
 2.7.4
 
