@@ -2,133 +2,102 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268F8C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1374C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8187253F3
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:04:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8187253F3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FF8D25CB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 22:06:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VSUuw26p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF8D25CB4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966307AbeF0WEB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 18:04:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54592 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966248AbeF0WEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 18:04:00 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B399687A80;
-        Wed, 27 Jun 2018 22:03:59 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-120-92.rdu2.redhat.com [10.10.120.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 74FA21C672;
-        Wed, 27 Jun 2018 22:03:59 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Allan Xavier <allan.x.xavier@oracle.com>
-Subject: [PATCH] objtool: Support GCC 8 '-fnoreorder-functions'
-Date:   Wed, 27 Jun 2018 17:03:45 -0500
-Message-Id: <9e704c52bee651129b036be14feda317ae5606ae.1530136978.git.jpoimboe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 27 Jun 2018 22:03:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 27 Jun 2018 22:03:59 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
+        id S966443AbeF0WGR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 18:06:17 -0400
+Received: from mail-pg0-f53.google.com ([74.125.83.53]:37631 "EHLO
+        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966278AbeF0WGP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 18:06:15 -0400
+Received: by mail-pg0-f53.google.com with SMTP id o11-v6so1508897pgv.4;
+        Wed, 27 Jun 2018 15:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZKtIQnwuQ1zy2t43p8H/SxmseobXJjKavg+G2kNQV4c=;
+        b=VSUuw26pwXdmnoPyoWi3f2xEIto5+Knz/sltLji9hrT526ALZpdIEBB6qqdC978zFH
+         P8I/Tn71faarrDHtVA8ScqS2kFWF55U6d627wHmHlyq9zc/0BJ1RiA5fBCGQhpPmLki8
+         GrOeAQYLRQPn8i7SsShMh2JkjBxXOv7Tn+eBRJNO+fVpjxpMEqs8JiV/kPp3atnhOPVO
+         hO2iyAp5si1NHfZyUBPV6lBYiIvKqUnLrRyR9+RyuJaDNqnJQasv4abEk6+d1URqGZxn
+         n6Wuu2IzeeWXmUccZQC3WmFdOyoJr9IHpcbuichn8ZNIaxW+ii8Juvb0RM1MUpYJzbV6
+         k35w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZKtIQnwuQ1zy2t43p8H/SxmseobXJjKavg+G2kNQV4c=;
+        b=VD6RGuwwBztGybavsC9NAE/HjpIrLYpqdGarpz7QtXGebEN+EOnefzMEwTc3iZhlFw
+         E/2z8ki6VyI99vErM1QebkmpGzh7WpS5gDbLlpj5Yrlwp20l8jQQ6+MytUqOLF6GMnxi
+         u8U4eBqhIAzeoy3w+evngCk2mpdt28RSKobrcdyPmqlYnHk5tj1lbAbToaeMkyIBbddW
+         U2DEBWqd4ni4RsDFmF40EtyNixws5SEY87iaHBeReIx0U4RR7Hyy6S3vs8iqQVKdou1a
+         7yWqmu06PqfCAxsJSkFrmghuCMGX7u1NfS6rLpQX+kMo/2tdjpSR6sPjm52rDRu746tw
+         lYdQ==
+X-Gm-Message-State: APt69E045DPbzGFt6DdiRirWfmT2Y3jIi3bTCXDByisSlmYo2Eme9sRI
+        3o6KMpllsxWsPaIfJRYP2yCZ+MyB
+X-Google-Smtp-Source: AAOMgpeDh/umi7OCRjrheafPkmYK0DTRQgDbmRoTJIvVnhVzWlvvowjlaajvrpBK3u57DL8FjEs/tQ==
+X-Received: by 2002:a62:4695:: with SMTP id o21-v6mr1900744pfi.176.1530137175330;
+        Wed, 27 Jun 2018 15:06:15 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id b4-v6sm6777151pgq.51.2018.06.27.15.06.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 15:06:14 -0700 (PDT)
+Subject: Re: [RFC PATCH] net, mm: account sock objects to kmemcg
+To:     Shakeel Butt <shakeelb@google.com>, eric.dumazet@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>, Roman Gushchin <guro@fb.com>,
+        davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>
+References: <20180627204139.225988-1-shakeelb@google.com>
+ <f08b2e2c-d4c6-7a80-10d9-104c0aab593b@gmail.com>
+ <CALvZod4JTY8T19L-q+E1LLFVGFso6ea1MACKdFsed8dM-3AvYQ@mail.gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <a48b2c73-b3b2-8291-202b-e5a2a5ee1f2a@gmail.com>
+Date:   Wed, 27 Jun 2018 15:06:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CALvZod4JTY8T19L-q+E1LLFVGFso6ea1MACKdFsed8dM-3AvYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the following commit:
 
-  cd77849a69cf ("objtool: Fix GCC 8 cold subfunction detection for aliased functions")
 
-... if the kernel is built with EXTRA_CFLAGS='-fno-reorder-functions',
-objtool can get stuck in an infinite loop.
+On 06/27/2018 03:03 PM, Shakeel Butt wrote:
 
-That flag causes the new GCC 8 cold subfunctions to be placed in .text
-instead of .text.unlikely.  But it also has an unfortunate quirk: in the
-symbol table, the subfunction (e.g., nmi_panic.cold.7) is nested inside
-the parent (nmi_panic).
+> 
+> This will opt-in all the sock kmem_caches which I think is better and
+> much smaller change. Should I resend this or do you want to send the
+> patch?
+>
 
-That function overlap confuses objtool, and causes it to get into an
-infinite loop in next_insn_same_func().  Here's Allan's description of
-the loop:
+Please send a V2, with maybe some updated changelog ;)
 
-  "Objtool iterates through the instructions in nmi_panic using
-  next_insn_same_func. Once it reaches the end of nmi_panic at 0x534 it
-  jumps to 0x528 as that's the start of nmi_panic.cold.7. However, since
-  the instructions starting at 0x528 are still associated with nmi_panic
-  objtool will get stuck in a loop, continually jumping back to 0x528
-  after reaching 0x534."
-
-Fix it by shortening the length of the parent function so that the
-functions no longer overlap.
-
-Reported-and-analyzed-by: Allan Xavier <allan.x.xavier@oracle.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- tools/objtool/elf.c | 41 ++++++++++++++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 13 deletions(-)
-
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 4e60e105583e..0d1acb704f64 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -302,19 +302,34 @@ static int read_symbols(struct elf *elf)
- 				continue;
- 			sym->pfunc = sym->cfunc = sym;
- 			coldstr = strstr(sym->name, ".cold.");
--			if (coldstr) {
--				coldstr[0] = '\0';
--				pfunc = find_symbol_by_name(elf, sym->name);
--				coldstr[0] = '.';
--
--				if (!pfunc) {
--					WARN("%s(): can't find parent function",
--					     sym->name);
--					goto err;
--				}
--
--				sym->pfunc = pfunc;
--				pfunc->cfunc = sym;
-+			if (!coldstr)
-+				continue;
-+
-+			coldstr[0] = '\0';
-+			pfunc = find_symbol_by_name(elf, sym->name);
-+			coldstr[0] = '.';
-+
-+			if (!pfunc) {
-+				WARN("%s(): can't find parent function",
-+				     sym->name);
-+				goto err;
-+			}
-+
-+			sym->pfunc = pfunc;
-+			pfunc->cfunc = sym;
-+
-+			/*
-+			 * Unfortunately, -fnoreorder-functions puts the child
-+			 * inside the parent.  Remove the overlap so we can
-+			 * have sane assumptions.
-+			 *
-+			 * Note that pfunc->len now no longer matches
-+			 * pfunc->sym.st_size.
-+			 */
-+			if (sym->sec == pfunc->sec &&
-+			    sym->offset >= pfunc->offset &&
-+			    sym->offset + sym->len == pfunc->offset + pfunc->len) {
-+				pfunc->len -= sym->len;
- 			}
- 		}
- 	}
--- 
-2.17.0
+Thanks !
 
