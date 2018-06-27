@@ -7,100 +7,118 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B04C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2511C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95CA5208A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C47C24687
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:33:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSVw+FE0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95CA5208A1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8nL5kyi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C47C24687
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966226AbeF0R2g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:28:36 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:37613 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933133AbeF0R2e (ORCPT
+        id S965550AbeF0RdI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:33:08 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:46526 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965055AbeF0RdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:28:34 -0400
-Received: by mail-ua0-f193.google.com with SMTP id c2-v6so1776997uae.4;
-        Wed, 27 Jun 2018 10:28:34 -0700 (PDT)
+        Wed, 27 Jun 2018 13:33:06 -0400
+Received: by mail-vk0-f67.google.com with SMTP id b134-v6so1650567vke.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 10:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ATQEAyKtrdbsQgXCnnoaoHcwUQ6XoYC+G9vZ9CeK7Ak=;
-        b=HSVw+FE0dxOqarXFf3x2IXxTHajz79ok9PcZI+w4il/JeCvgCkw5pqRQNOlFiX95ae
-         UXQoM4SnKS3iRC0Goa2XfN/re13ngSmf+OVmFDp1sx4Zh85CsUKIICW+OYA7zkcXJDFu
-         nib+9DqWsYNv2SiEiY3DdrOSswG99bMSRns1uKPBpANqn8dkZ6VIAyZy70cT/Rd/8VpB
-         c+ERTZQ3gO2n3reac/nocABZbAOV0WzX7Xs2qHyrS9v7tIHrjCkyGPRI8TJ0op3Ica/w
-         7n3SEvl7hhiR2Fl2E/I9f0SJ5kckxF96BKA2Mj0OThjF0glvWvlRRjTGyxdYIL+OtXhD
-         Zwfg==
+         :cc;
+        bh=9EaVJyNOM2Blcaa/tm2TGOUCWmXDP+G1pKMt9UlwkPo=;
+        b=P8nL5kyiKuZqi34L3TZbAiwmace3QMx2YmecQKguER/kQI58EIWWGSjAS/7jWb54a2
+         kisXj+rn5avbuKzPxh9bNb4MYAp8wZzbSa+zopTAi8lYE34SJBF0TqHXFB0yYLsJBYwI
+         m6ULLcfJK/IImwXaiKT+BRfuzMCOCx5pUyJU3jB13BPnIknWCUKkWUNHYkM1X3fxLi2M
+         UO8Z43Bhcmdj4L1mdKtrEgRUv8hJjVBNbYTla8ap4YqifidPjJp4XV90Y7dS+ZL/NjsH
+         PMmYp+Z9zeNeCyiWUoYRiuTlRZ9borpoqqwxL+293gCgs4VeC8f3NWVLilAZlLm+jNmn
+         UPOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ATQEAyKtrdbsQgXCnnoaoHcwUQ6XoYC+G9vZ9CeK7Ak=;
-        b=nIvyKlexqlEZYgTlfTSN0gRFBh+1/70CwGDZ92z0TxVydKf8gPIO6nvDysOXkIfXl7
-         tdAUD8gUMAO5vqTedrI8bUxXPI08zT0Utxh1FJwiug6t53HE1ssCwMbG+JObojZu9oOf
-         KXZxR/xuIOctTYyuk4J2JGue+8+sNjzBVGg7fiuMAEIfz78EhBS5GXekTHEASwDlbnvP
-         maF/HdpqZvmZz+DOEbtq16jtUQPMYlNEUmk0iWX5NG9yG05TUgCFfcpLnClJnXroCXGP
-         JkkfyZaw+we/9F8YBE1XYdjGky7N3ssbhn6Y/sKjf+Cu3/HoxJWBxnZg85IqQWujsqyu
-         y4/A==
-X-Gm-Message-State: APt69E1CfG8AqzB630Yvhw7p0iDzytkFuHleWFDS0hnHHOqsio7m7tiG
-        kMEaVL7dvgwreT0F+ks69R306NL2MB4NGPvGhJQ=
-X-Google-Smtp-Source: AAOMgpedXhV6r7NqvCNrgf1IH842qrQInOMZeeEtdKAmfJdbsQI5qRcKqkEl1WDVDZ5DA1Aam3Pq/RyK4LVNrpEybpE=
-X-Received: by 2002:ab0:15ad:: with SMTP id i42-v6mr4307825uae.199.1530120513987;
- Wed, 27 Jun 2018 10:28:33 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=9EaVJyNOM2Blcaa/tm2TGOUCWmXDP+G1pKMt9UlwkPo=;
+        b=pghb5gZ+kYXMtauHDsl1jcTkIcANEb0xVRcsvAlY3TzzjPgwyrN3wowWXePBnQvdLQ
+         umjRckdvkBWcUQH5yd7BwsjwTg1dQjO4M2V08x0TO+ST1BdoLStNpR9uWgmBwxgkfMxl
+         8hdBA93rTQdHsIkcCUtQCxWjXd6oBvGcnYOkNWjV+HIs1ejILy1Pjf/TN8Wit8gr7Dp9
+         4qDfoSdsEtNb2mlQGVaAf+CDWVlSqhVHn50yPT1psnBIPfCaNy9eXbhq/txL1mNfampM
+         idF9HPpaQv59VcTw1zHY/GajlDVDocuAjh3Cn54JsZN0xXt6deL2fPQK17e1e4EJM/rS
+         Ut3w==
+X-Gm-Message-State: APt69E0/ZX2xmYBKPow+zRsGO810JNa1mC0fVrmyHYpbhfYVeenqv0hx
+        GeQc+Ud324psA/A6ErUPBCFhS3BfujNCb2LudRE=
+X-Google-Smtp-Source: AAOMgpcCCfBLWXTAFyLi9eranGaupkXPWwbWUfB5RwJCE4OSaAz/wPkzXzAnRPF3ZGSX0q0dft0VH3vu/gD6NywzMzQ=
+X-Received: by 2002:a1f:20d4:: with SMTP id g203-v6mr3203567vkg.176.1530120786071;
+ Wed, 27 Jun 2018 10:33:06 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 10:28:33
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 10:33:05
  -0700 (PDT)
-In-Reply-To: <8837a9e2-e614-e2bf-ed32-6d49de4dd4ed@gmx.de>
-References: <8837a9e2-e614-e2bf-ed32-6d49de4dd4ed@gmx.de>
+In-Reply-To: <20180626193040.GO2494@hirez.programming.kicks-ass.net>
+References: <20180625105952.3756-1-mark.rutland@arm.com> <20180625105952.3756-2-mark.rutland@arm.com>
+ <CAHp75Vdsu2LQtPdjaxfYhc3qT6gOe7bdGQKB==52W-WpORp-WQ@mail.gmail.com> <20180626193040.GO2494@hirez.programming.kicks-ass.net>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 27 Jun 2018 20:28:33 +0300
-Message-ID: <CAHp75VcQbj7trhupZB7wUnt4QWbsqZZDa-1WvFnSD8ciMCYF6A@mail.gmail.com>
-Subject: Re: small dmesg regression in kernel 4.17.3
-To:     =?UTF-8?Q?Toralf_F=C3=B6rster?= <toralf.foerster@gmx.de>,
-        erik.schmauss@intel.com
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
+Date:   Wed, 27 Jun 2018 20:33:05 +0300
+Message-ID: <CAHp75VfBd8zfNqkNvL=3Q3u3zJdiMFeakBPcX9r+-_Pqz1bRPA@mail.gmail.com>
+Subject: Re: [PATCHv2 01/11] atomic/tty: Fix up atomic abuse in ldsem
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Peter Hurley <peter@hurleysoftware.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Cc: Erik
-
-On Tue, Jun 26, 2018 at 8:57 PM, Toralf F=C3=B6rster <toralf.foerster@gmx.d=
-e> wrote:
-> The attached dmesg contains non printable chars 0x01 33 around "ACPI BIOS=
- Error (bug): Could not resolve" which is a new issue compared to the dmesg=
- of 4.17.2
+On Tue, Jun 26, 2018 at 10:30 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Jun 26, 2018 at 09:53:18PM +0300, Andy Shevchenko wrote:
+>> On Mon, Jun 25, 2018 at 1:59 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> > From: Peter Zijlstra <peterz@infradead.org>
+>> >
+>> > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
+>> > working after making the atomic_long interface type safe.
+>> >
+>> > Needing casts is bad form, which made me look at the code. There are no
+>> > ld_semaphore::count users outside of these functions so there is no
+>> > reason why it can not be an atomic_long_t in the first place, obviating
+>> > the need for this cast.
+>> >
+>> > That also ensures the loads use atomic_long_read(), which implies (at
+>> > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+>> >
+>> > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
+>> > very thin (the only difference is not changing *old on success, which
+>> > most callers don't seem to care about).
+>> >
+>> > So rework the whole thing to use atomic_long_t and its accessors
+>> > directly.
+>> >
+>> > While there, fixup all the horrible comment styles.
+>>
+>>
+>> > -               ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
+>> > +               atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
+>>
+>> I suppose it's simple atomic_long_add() here?
 >
-> System is a stable hardened Gentoo Linux at a ThinkPad T440s.
+> Different ordering rules for those two. I didn't look hard enough to see
+> if that mattered here.
 
-I bet the below commit makes this.
+Indeed. So, to follow semantics it would be something like
 
-commit 2e78935d1e27d31955ad2dad4abe6c453cf669fd
-Author: Erik Schmauss <erik.schmauss@intel.com>
-Date:   Fri Jun 1 12:06:43 2018 -0700
+smp_mb__before_atomic();
+atomic_long_add_relaxed();
+smp_mb__after_atomic();
 
-   ACPICA: AML parser: attempt to continue loading table after error
+though I do not dare to convert that way (as I understood the simple
+atomic_long_add_return() variant might be implemented better).
 
-
-So, it does add leading '\n' which flushes buffers followed by
-printing the message you see. But, I'm guessing now, kernel adds a
-default level since it's going to dmesg which you can see as
-unprintable symbols.
-Personally I'm not a fan of leading '\n':s since it brings more pain
-than fixing something. It has special meaning (flushing buffers) and
-many developers forget this.
-
---=20
+-- 
 With Best Regards,
 Andy Shevchenko
