@@ -6,89 +6,79 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06163C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3DCC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3F6259C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:35:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3F6259C0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CF2A256C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 23:39:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF2A256C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeF0Xfo (ORCPT
+        id S1752662AbeF0Xjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 19:35:44 -0400
-Received: from mga11.intel.com ([192.55.52.93]:18097 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752210AbeF0Xfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 19:35:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 16:35:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,281,1526367600"; 
-   d="scan'208";a="240886657"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga005.fm.intel.com with ESMTP; 27 Jun 2018 16:35:42 -0700
-Date:   Wed, 27 Jun 2018 16:35:04 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 04/16] x86/split_lock: Use non locked bit set
- instruction in set_cpu_cap
-Message-ID: <20180627233504.GJ18979@romley-ivt3.sc.intel.com>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <1527435965-202085-5-git-send-email-fenghua.yu@intel.com>
- <20180621195540.GC13636@worktop.programming.kicks-ass.net>
+        Wed, 27 Jun 2018 19:39:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51430 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752210AbeF0Xjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 19:39:41 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0D4A1BF566;
+        Wed, 27 Jun 2018 23:39:41 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0F6F32156880;
+        Wed, 27 Jun 2018 23:39:39 +0000 (UTC)
+Date:   Thu, 28 Jun 2018 07:39:36 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        dave.hansen@intel.com, pagupta@redhat.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v5 0/4] mm/sparse: Optimize memmap allocation during
+ sparse_init()
+Message-ID: <20180627233936.GE8970@localhost.localdomain>
+References: <20180627013116.12411-1-bhe@redhat.com>
+ <CAGM2reYKn80fn8Nb_AT4ybVih4c7cd8+U1nDfJ-C0fwM+DB4jw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180621195540.GC13636@worktop.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAGM2reYKn80fn8Nb_AT4ybVih4c7cd8+U1nDfJ-C0fwM+DB4jw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 23:39:41 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 27 Jun 2018 23:39:41 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 09:55:40PM +0200, Peter Zijlstra wrote:
-> On Sun, May 27, 2018 at 08:45:53AM -0700, Fenghua Yu wrote:
-> > set_bit() called by set_cpu_cap() is a locked bit set instruction for
-> > atomic operation.
-> > 
-> > Since the c->x86_capability can span two cache lines depending on kernel
-> > configuration and building evnironment, the locked bit set instruction may
-> > cause #AC exception when #AC exception for split lock is enabled.
-> 
-> That doesn't make sense. Sure the bitmap may be longer, but depending on
-> if the argument is an immediate or not we either use a byte instruction
-> (which can never cross a cacheline boundary) or a 'word' aligned BTS.
-> And the bitmap really _should_ be 'unsigned long' aligned.
-> 
-> If it is not aligned, fix that too.
-> 
-> /me looks at cpuinfo_x86 and finds x86_capability is in fact a __u32
-> array.. see that's broken and needs fixing first.
+Hi Pavel,
 
-Do you mean x86_capability's type should be changed from __u32 to unsigned
-long?
+On 06/27/18 at 01:47pm, Pavel Tatashin wrote:
+> This work made me think why do we even have
+> CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER ? This really should be the
+> default behavior for all systems. Yet, it is enabled only on x86_64.
+> We could clean up an already messy sparse.c if we removed this config,
+> and enabled its path for all arches. We would not break anything
+> because if we cannot allocate one large mmap_map we still fallback to
+> allocating a page at a time the same as what happens when
+> CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER=n.
 
-Changing x86_capability's type won't directly fix the split lock in
-set_cpu_cap(), right? BTS still may access x86_capability across cache
-line no matter x86_capability's type.
+Thanks for your idea.
 
-Thanks.
+Seems the common ARCHes all have ARCH_SPARSEMEM_ENABLE, such as x86,
+arm/64, power, s390, mips, others don't have. For them, removing
+CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER makes sense. 
 
--Fenghua
+I will make a clean up patch to do this, but I can only test it on x86.
+If test robot or other issues report issue on this clean up patch,
+Andrew can help only pick the current 4 patches after updating, then
+we can continue discussing the clean up patch. From the current code, it
+should be OK to all ARCHes.
+
+Thanks
+Baoquan
