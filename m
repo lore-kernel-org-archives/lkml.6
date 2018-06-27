@@ -2,106 +2,121 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22102C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B74C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B756F26549
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:39:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hgpjI5bK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B756F26549
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C277B26798
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 09:40:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C277B26798
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753496AbeF0Jjc (ORCPT
+        id S1753519AbeF0JkW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 05:39:32 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38611 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752592AbeF0Jjb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 05:39:31 -0400
-Received: by mail-wr0-f193.google.com with SMTP id e18-v6so1325530wrs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 02:39:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7xSy96MQNHJMpJKvcVYXnOQs4/aUwVdNCGa8Wa0O96Y=;
-        b=hgpjI5bKtE9AAZiZl0jLfrpResX29RlN1E06IuH0a9lyRE/SyfB34Cz7+wDEBXKTXh
-         8wjnLMeRCdK4cBvmrRvogEcB6f7jWGhTHd7WPB9eDVNsbpE3Kf98HFIwcYBWlWUQ7d4C
-         iUlM1t0aJFzW02NZPI5IWo/WLWE+pCKhPARy8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7xSy96MQNHJMpJKvcVYXnOQs4/aUwVdNCGa8Wa0O96Y=;
-        b=rO1dJUSl1UGl3WSt59oybJSa3fo2odetU027RAOj6DGJZGDBNtcQSWxk5TZkNV5t9s
-         ZdLaK2t+JQVlDo2fbcgmrG6YiPumHesUosw3yqOCH3WUryt4WrJwUQoklGNl26A7k8n0
-         a2TdLxxhlNlTrNc7yJKAjsAiMGynbf5stfjlVHLzAMjgNBb9Yzm1KisPeg78urgP0G4G
-         gtvZGJhDlwThQbqMrZRUkS7H0poDtlJVlZNAxIDGrdkUcfKWqTU3KFS8FX2/mJFB0NBE
-         nQCGXn4e99pQl5Poy3MsScFmSdoHAZzQFAMvgyodhD3zH78Z39ngCNxwIY2q/9S6a6Go
-         0Ibg==
-X-Gm-Message-State: APt69E03yxzoczzBMo2SXXwk79caKEEYZsOwIPf8M0kf5wdXQ8moqVf9
-        YkPdMO9tEG0DS3sPyGP4HtcO5g==
-X-Google-Smtp-Source: AAOMgpeUGtfbSRsqcYquiNzAMkE2XqkFDnM4FIbA/OoIwVhdjIyzpnaE+pQi4jy16fkzldSMTIbhyA==
-X-Received: by 2002:adf:b2f4:: with SMTP id g107-v6mr4598389wrd.53.1530092369859;
-        Wed, 27 Jun 2018 02:39:29 -0700 (PDT)
-Received: from [192.168.8.101] ([37.170.252.174])
-        by smtp.googlemail.com with ESMTPSA id 13-v6sm7133629wmi.2.2018.06.27.02.39.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 02:39:28 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] clocksource/drivers/mtk_systimer: Add support for
- Mediatek SoCs
-To:     Stanley Chu <stanley.chu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
-References: <1530086039-3763-1-git-send-email-stanley.chu@mediatek.com>
- <1530086039-3763-3-git-send-email-stanley.chu@mediatek.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <2a40ec95-7352-f0c4-b394-d7b689de98ec@linaro.org>
-Date:   Wed, 27 Jun 2018 11:39:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 27 Jun 2018 05:40:22 -0400
+Received: from mga06.intel.com ([134.134.136.31]:27152 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752592AbeF0JkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 05:40:20 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 02:40:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,278,1526367600"; 
+   d="scan'208";a="66719739"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga004.fm.intel.com with ESMTP; 27 Jun 2018 02:40:14 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id B3570205FC; Wed, 27 Jun 2018 12:40:13 +0300 (EEST)
+Date:   Wed, 27 Jun 2018 12:40:13 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     alanx.chiang@intel.com, linux-i2c <linux-i2c@vger.kernel.org>,
+        andy.yeh@intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        andriy.shevchenko@intel.com,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        tfiga@chromium.org, jcliang@chromium.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: at24: Add address-width property
+Message-ID: <20180627094013.e42crqqufo2jqra6@paasikivi.fi.intel.com>
+References: <1530078385-1546-1-git-send-email-alanx.chiang@intel.com>
+ <1530078385-1546-2-git-send-email-alanx.chiang@intel.com>
+ <CAMRc=MeowpZ+OjjWs6-67BOnY=+Nbpn4Bi_Xw3n+NLsELZaptQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1530086039-3763-3-git-send-email-stanley.chu@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeowpZ+OjjWs6-67BOnY=+Nbpn4Bi_Xw3n+NLsELZaptQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/06/2018 09:53, Stanley Chu wrote:
-> This patch adds a new clock event for the timer
-> found on the Mediatek SoCs.
+On Wed, Jun 27, 2018 at 10:19:38AM +0200, Bartosz Golaszewski wrote:
+> 2018-06-27 7:46 GMT+02:00  <alanx.chiang@intel.com>:
+> > From: Alan Chiang <alanx.chiang@intel.com>
+> >
+> > The AT24 series chips use 8-bit address by default. If some
+> > chips would like to support more than 8 bits, the at24 driver
+> > should be added the compatible field for specfic chips.
+> >
+> > Provide a flexible way to determine the addressing bits through
+> > address-width in this patch.
+> >
+> > Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
+> > Signed-off-by: Andy Yeh <andy.yeh@intel.com>
+> >
+> > ---
+> > since v1:
+> > -- Remove the address-width field in the example.
+> > since v2:
+> > -- Remove redundant space.
+> >
+> > ---
+> >  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
+> > index 61d833a..aededdb 100644
+> > --- a/Documentation/devicetree/bindings/eeprom/at24.txt
+> > +++ b/Documentation/devicetree/bindings/eeprom/at24.txt
+> > @@ -72,6 +72,8 @@ Optional properties:
+> >
+> >    - wp-gpios: GPIO to which the write-protect pin of the chip is connected.
+> >
+> > +  - address-width: number of address bits (one of 8, 16).
+> > +
+> >  Example:
+> >
+> >  eeprom@52 {
+> > --
+> > 2.7.4
+> >
 > 
-> The Mediatek System Timer has several 32-bit timers.
-> Only one timer is used by this driver as a clock event
-> supporting oneshot events.
+> Rob,
 > 
-> The System Timer can be run with two clocks. A 13 MHz system
-> clock and the RTC clock running at 32 KHz. This implementation
-> uses the system clock with no clock source divider.
+> we only have two possibilities here and the default is 8 bits.
+> 
+> What do you think about introducing a boolean property here called:
+> 'address-width-16' instead of an integer?
 
-Recent platforms have the arch_arm_timer and it will be always selected.
+I'd have thought the same, but it turns out address-width is already being
+used by the at25 bindings:
 
-What is the benefit of adding this timer ?
-
+Documentation/devicetree/bindings/eeprom/at25.txt
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Sakari Ailus
+sakari.ailus@linux.intel.com
