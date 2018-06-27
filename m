@@ -2,127 +2,114 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C629C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F15CC43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:25:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0015C261DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:12:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y7tb6jsE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0015C261DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E23826323
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 10:25:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E23826323
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeF0KMf (ORCPT
+        id S1753620AbeF0KZL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 06:12:35 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53012 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753406AbeF0KMd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 06:12:33 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5RABUN2033026;
-        Wed, 27 Jun 2018 05:11:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530094290;
-        bh=vBGbRqIfqdQLu1yU0Nn3bra1hOwBUucZBGENRyMmwZ4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=y7tb6jsEdfzpOqyyrtyTAufcoqFDnnytQBwzWIwY9OGQFQppxDkVq2yFea3eAye4A
-         lx4LtTvns1VnoJ45tCT4Eltho81K+kOSSK98NoPcxhkPbTy5CNquFnEZBAWFcD4sOt
-         gLwForMV1kYDQ5Tvl6yTsTJmY71pk9ZPD22GYwmI=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RABUAR021068;
-        Wed, 27 Jun 2018 05:11:30 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 27
- Jun 2018 05:11:30 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 27 Jun 2018 05:11:30 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5RABO9b026842;
-        Wed, 27 Jun 2018 05:11:25 -0500
-Subject: Re: [PATCH v2 06/13] ARM: davinci: omapl138-hawk: add aemif & nand
- support
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
- <20180626092537.6737-7-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <11b55553-435b-c363-9194-aebf47302198@ti.com>
-Date:   Wed, 27 Jun 2018 15:41:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 27 Jun 2018 06:25:11 -0400
+Received: from foss.arm.com ([217.140.101.70]:57820 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752565AbeF0KZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 06:25:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 970BE7A9;
+        Wed, 27 Jun 2018 03:25:09 -0700 (PDT)
+Received: from red-moon (red-moon.cambridge.arm.com [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E77123F5C0;
+        Wed, 27 Jun 2018 03:25:07 -0700 (PDT)
+Date:   Wed, 27 Jun 2018 11:26:42 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     kernel test robot <lkp@intel.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+Subject: Re: [lkp-robot] [bisect done] ef1433f717 [    7.049860] BUG: unable
+ to handle kernel NULL pointer dereference at 0000004c
+Message-ID: <20180627102620.GA7893@red-moon>
+References: <20180626011007.GI11011@yexl-desktop>
+ <20180626211501.GC181504@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180626092537.6737-7-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626211501.GC181504@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 26 June 2018 02:55 PM, Bartosz Golaszewski wrote:
->  arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++
->  1 file changed, 132 insertions(+)
+On Tue, Jun 26, 2018 at 04:15:01PM -0500, Bjorn Helgaas wrote:
+> On Tue, Jun 26, 2018 at 09:10:07AM +0800, kernel test robot wrote:
+> > 
+> > Greetings,
+> > 
+> > 0day kernel testing robot got the below dmesg and the first bad commit is
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > 
+> > commit ef1433f717a2c63747a519d86965d73ff9bd08b3
+> > Author:     Kishon Vijay Abraham I <kishon@ti.com>
+> > AuthorDate: Mon Apr 2 18:59:35 2018 +0530
+> > Commit:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > CommitDate: Fri May 18 16:40:50 2018 +0100
+> > 
+> >     PCI: endpoint: Create configfs entry for each pci_epf_device_id table entry
+> >     
+> >     In order to be able to provide correct driver_data for pci_epf device,
+> >     a separate configfs entry for each pci_epf_device_id table entry in
+> >     pci_epf_driver is required.
+> >     
+> >     Add support to create configfs entry for each pci_epf_device_id
+> >     table entry here.
+> >     
+> >     Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> >     Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> >     Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 > 
-> diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-> index 466e87b24e9a..8d8e3165a45c 100644
-> --- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-> +++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-> @@ -16,6 +16,11 @@
->  #include <linux/gpio.h>
->  #include <linux/gpio/machine.h>
->  #include <linux/platform_data/gpio-davinci.h>
-> +#include <linux/platform_data/ti-aemif.h>
-> +#include <linux/mtd/rawnand.h>
-> +#include <linux/mtd/partitions.h>
+> From the .config below:
+> 
+>   # CONFIG_PCI_ENDPOINT_CONFIGFS is not set
+> 
+> From include/linux/pci-ep-cfs.h:
+> 
+>   #ifdef CONFIG_PCI_ENDPOINT_CONFIGFS
+>   ...
+>   #else
+>   static inline struct config_group *pci_ep_cfs_add_epf_group(const char *name)
+>   {
+>         return 0;
+>   }
+> 
+> From ef1433f717a2:
+> 
+>   +       id = driver->id_table;
+>   +       while (id->name[0]) {
+>   +               group = pci_ep_cfs_add_epf_group(id->name);
+>   +               mutex_lock(&pci_epf_mutex);
+>   +               list_add_tail(&group->group_entry, &driver->epf_group);
+> 
+> Obviously group == 0 and the list_add_tail() is a NULL pointer
+> dereference.
+> 
+> Looks like we need either some sort of #ifdef CONFIG_PCI_ENDPOINT_CONFIGFS
+> in __pci_epf_register_driver() and pci_epf_unregister_driver(), or
+> higher-level interfaces and corresponding stubs that add/remove all
+> the IDs.
 
-can you keep this (roughly) sorted by moving these above?
+Yes, probably augment pci_ep_cfs_add_epf_group() to take a driver
+pointer so that adding a group is a NOP on !CONFIG_PCI_ENDPOINT_CONFIGFS.
 
-> +#include <linux/platform_data/mtd-davinci.h>
-> +#include <linux/platform_data/mtd-davinci-aemif.h>
->  #include <linux/regulator/machine.h>
->  
->  #include <asm/mach-types.h>
-> @@ -166,6 +171,129 @@ static __init void omapl138_hawk_mmc_init(void)
->  	gpiod_remove_lookup_table(&mmc_gpios_table);
->  }
->  
+Kishon can you please post a fix as soon as you can, thanks.
 
-> +static struct platform_device omapl138_hawk_aemif_devices[] = {
-> +	{
-> +		.name		= "davinci_nand",
-> +		.id		= 1,
-
-This can be -1 now since you got "mtd: rawnand: davinci: stop using
-pdev->id as chipselect" merged.
-
-We cannot change for older platforms, but this is fresh support.
-
-> +		.dev		= {
-> +			.platform_data	= &omapl138_hawk_nandflash_data,
-> +		},
-> +		.resource	= omapl138_hawk_nandflash_resource,
-> +		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
-> +	}
-> +};
-
-Thanks,
-Sekhar
+Lorenzo
