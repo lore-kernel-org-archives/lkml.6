@@ -2,123 +2,110 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF23C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9A0C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 515F62609B
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F869260B9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:01:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="qMXSvhtt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515F62609B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tYdx/pNq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F869260B9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965467AbeF0PAr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:00:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49058 "EHLO
+        id S965525AbeF0PBe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:01:34 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50358 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965405AbeF0PAq (ORCPT
+        with ESMTP id S965204AbeF0PBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:00:46 -0400
+        Wed, 27 Jun 2018 11:01:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QhUls0WuyBbTOjFOZXW00B/m0GFpSpSwo4HfJo6eGgc=; b=qMXSvhtt083d
-        PxAo6cnIIg6hAPkV4du6bWFzOtaf9zNPtQwHw9j6FU8oLuwrDpAvz5V/6u9kONMA2yl3/Up1OQ5By
-        Rl2KHC5KBxqLZ9zMw1As2QSD288ip+t+/DFK22pZ07hTAJKFA4N5sMq6yAMuMWJFV4BLhm0gh3q+j
-        Ce5KQ=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4vv+sQ9jGm3YNQayH9KoTFZRRhbVJE9kVdhUWh7yslw=; b=tYdx/pNqEPsyzecJWRf6fP+fk
+        c2kNJs53E3o+iZFU1VArlpCKVY3ZAUfAi/zJ9TbapyGoStXPWDqc0r1amXjEtS/EZtcFQn/vm8xDd
+        GkbJ8aXrhL3e4n2uLDQHnPpoOBRO6W+xsGq2kPtUQ8it1m2D8uT2FusCL6TSrnEGfSqfo=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fYBw3-0003G0-GD; Wed, 27 Jun 2018 15:00:43 +0000
+        id 1fYBwk-0003GI-Jc; Wed, 27 Jun 2018 15:01:26 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fYBw2-000662-DS; Wed, 27 Jun 2018 16:00:42 +0100
+        id 1fYBwk-0006Cj-5N; Wed, 27 Jun 2018 16:01:26 +0100
+Date:   Wed, 27 Jun 2018 16:01:26 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     David Collins <collinsd@codeaurora.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: bd71837: Simplify bd71837_set_voltage_sel_restricted implementation" to the regulator tree
-In-Reply-To:  <20180627124014.30615-2-axel.lin@ingics.com>
-Message-Id: <E1fYBw2-000662-DS@debutante>
-Date:   Wed, 27 Jun 2018 16:00:42 +0100
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v8 2/2] regulator: add QCOM RPMh regulator driver
+Message-ID: <20180627150126.GC5263@sirena.org.uk>
+References: <cover.1529712888.git.collinsd@codeaurora.org>
+ <35c4ea70cdf5caba560fb6f40e866ee8bc456d93.1529712888.git.collinsd@codeaurora.org>
+ <CAD=FV=XVEEPgjBXxR+-46RgxLOq63Xvq-jtruoaCxccmMoKUuA@mail.gmail.com>
+ <20180626120733.GD1779@sirena.org.uk>
+ <CAD=FV=X1E8Cz=L93G-zJwhM0R=N3YuBBhkvCnLvWuxMU9KJkTw@mail.gmail.com>
+ <20180626150203.GG1779@sirena.org.uk>
+ <CAD=FV=WC_XWRk-6OELOFFWGnhRq1VeoiiveqXLSy+xqsVb22pA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3siQDZowHQqNOShm"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=WC_XWRk-6OELOFFWGnhRq1VeoiiveqXLSy+xqsVb22pA@mail.gmail.com>
+X-Cookie: The horror... the horror!
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   regulator: bd71837: Simplify bd71837_set_voltage_sel_restricted implementation
+--3siQDZowHQqNOShm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-has been applied to the regulator tree at
+On Tue, Jun 26, 2018 at 11:15:14AM -0700, Doug Anderson wrote:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+> I think he's still planning on re-shuffling his tree a bit.  When he
+> does this, do you need him to put the RPMh patches somewhere you can
+> merge into your tree?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Well, I *think* there's no actual dependency here since it's a new
+driver with a Kconfig dependency.  It really just needs me to get round
+to trawling through what's a fairly large patch with a troubled history
+now you've reviewed it.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--3siQDZowHQqNOShm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlszpsUACgkQJNaLcl1U
+h9DRXAf/RSwjn9Yep/XR4J9nwQWdsAQuo9Gvn9tJjRoGglOah9oGV4HW8M3S3Jir
+RCTOixlFD8QmHXBMRkEoeY/dVPquUjJD1AvRUK54G+8Vi3oeb5G1ZvlY3bc0E7B3
+qXp9Gqp9fZ/6hWj/cmfkilgsdnbEiuaY3rWxUUWNKo1g6L8YzyXdLPMOoQ6KN9yv
+l+6GgUSct+LzxSXr6Bpas9mp1b/6xVH/3zbf/4+rp5Jod5ZMMOyHdX2YxKg7LwPZ
+qUUMFJYufubQIHGMeG8jLLFQG6ZreKG46OptHwSb5MXM46Uw40SrewGw4NMYYrt7
+JC3SzS+o9RlMhpmNBdqasAiYDQe2qw==
+=uOTE
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
-From ffdc4984100050d0c8e2f11f76a15ca36f5d9e37 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Wed, 27 Jun 2018 20:40:14 +0800
-Subject: [PATCH] regulator: bd71837: Simplify
- bd71837_set_voltage_sel_restricted implementation
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/bd71837-regulator.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
-index 403b45de1262..f57f42ed7160 100644
---- a/drivers/regulator/bd71837-regulator.c
-+++ b/drivers/regulator/bd71837-regulator.c
-@@ -73,14 +73,10 @@ static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
- static int bd71837_set_voltage_sel_restricted(struct regulator_dev *rdev,
- 						    unsigned int sel)
- {
--	int ret;
--
--	ret = regulator_is_enabled_regmap(rdev);
--	if (!ret)
--		ret = regulator_set_voltage_sel_regmap(rdev, sel);
--	else if (ret == 1)
--		ret = -EBUSY;
--	return ret;
-+	if (regulator_is_enabled_regmap(rdev))
-+		return -EBUSY;
-+
-+	return regulator_set_voltage_sel_regmap(rdev, sel);
- }
- 
- static struct regulator_ops bd71837_ldo_regulator_ops = {
--- 
-2.18.0.rc2
-
+--3siQDZowHQqNOShm--
