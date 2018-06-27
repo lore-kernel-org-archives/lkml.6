@@ -2,89 +2,120 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C91CCC43144
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A99C43145
 	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 756C12408F
+	by mail.kernel.org (Postfix) with ESMTP id A52D424476
 	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 11:05:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756C12408F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="glmVDMt4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A52D424476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754002AbeF0LFa (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 07:05:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40757 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753144AbeF0LF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 07:05:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 57D08AC25;
-        Wed, 27 Jun 2018 11:05:28 +0000 (UTC)
-Date:   Wed, 27 Jun 2018 13:05:27 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        JianKang Chen <chenjiankang1@huawei.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, xieyisheng1@huawei.com,
-        guohanjun@huawei.com, wangkefeng.wang@huawei.com,
-        Huaisheng Ye <yehs2007@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] mm: drop VM_BUG_ON from __get_free_pages
-Message-ID: <20180627110527.GM32348@dhcp22.suse.cz>
-References: <20180622162841.25114-1-mhocko@kernel.org>
- <6886dee0-3ac4-ef5d-3597-073196c81d88@suse.cz>
- <20180626100416.a3ff53f5c4aac9fae954e3f6@linux-foundation.org>
- <20180627073420.GD32348@dhcp22.suse.cz>
- <e0f4426d-1b7c-e590-aae0-e8f7ae3bb948@suse.cz>
- <20180627075403.GG32348@dhcp22.suse.cz>
- <fee289c8-fa8f-d9d6-be33-fdd20c71cbca@suse.cz>
+        id S933858AbeF0LFg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 07:05:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59578 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754017AbeF0LFd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 07:05:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AAlExSFvFVxQo8Umv+Bv+kndvRO1cNE2u5Zfi2qlroU=; b=glmVDMt45pfxpDWnWVSBQ0Aab
+        l7me4qHFaH2HJzvMynUprc/NyGAXlkyq6TyRwSroV7mu1Oczni0MCMFvDZk0dH8SX53z2IqKBi7bY
+        Qm9vbGc5L73nnJut9FAU0Lf4JH+DpQbftr76NOYx5tkH8/xPIL4146oM6/nirinxusEAKCRt8nY2Y
+        t15pQsuDof3eAq8s81IodNun/Q5kBwG4IiYSc2QOKg9aKasY6nL0gl5/zbyh4emFJNa1yCvrKZb6O
+        C5BdYobNlS1Pfdb+Hrzb2sBnQnzGebn8RCyuJ7bVmQ4XDoV5idK6ywPLpFvMs9ootG9djDhnOt3WZ
+        SMD3y2wgw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fY8GQ-0001o2-10; Wed, 27 Jun 2018 11:05:30 +0000
+Date:   Wed, 27 Jun 2018 04:05:29 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Message-ID: <20180627110529.GA19606@bombadil.infradead.org>
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
+ <20180619092230.GA1438@bombadil.infradead.org>
+ <20180619164037.GA6679@linux.intel.com>
+ <20180619171638.GE1438@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fee289c8-fa8f-d9d6-be33-fdd20c71cbca@suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180619171638.GE1438@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 27-06-18 12:47:39, Vlastimil Babka wrote:
-> On 06/27/2018 09:54 AM, Michal Hocko wrote:
-> > On Wed 27-06-18 09:50:01, Vlastimil Babka wrote:
-> >> On 06/27/2018 09:34 AM, Michal Hocko wrote:
-> >>> On Tue 26-06-18 10:04:16, Andrew Morton wrote:
-> >>>
-> >>> And as I've argued before the code would be wrong regardless. We would
-> >>> leak the memory or worse touch somebody's else kmap without knowing
-> >>> that.  So we have a choice between a mem leak, data corruption k or a
-> >>> silent fixup. I would prefer the last option. And blowing up on a BUG
-> >>> is not much better on something that is easily fixable. I am not really
-> >>> convinced that & ~__GFP_HIGHMEM is something to lose sleep over.
-> >>
-> >> Maybe put the fixup into a "#ifdef CONFIG_HIGHMEM" block and then modern
-> >> systems won't care? In that case it could even be if (WARN_ON_ONCE(...))
-> >> so future cases with wrong expectations would become known.
-> > 
-> > Yes that could be done as well. Or maybe we can make __GFP_HIGHMEM 0 for
-> > !HIGHMEM systems. Does something really rely on it being non-zero?
+On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
+> I think I see a bug.  No idea if it's the one you're hitting ;-)
 > 
-> I guess gfp_zone() would have to be checked, dunno about the rewrite of
-> GFP_ZONE_TABLE (CCing people).
-> In general checks like "if (flags & __GFP_HIGHMEM)" would become false,
-> which probably should not be a problem, unless something expect the flag
-> to be there and errors out if it isn't.
+> I had been intending to not use the 'entry' to decide whether we were
+> waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
+> but not before dropping the DAX_PMD flag being passed from the PMD
+> pagefault caller.  So if I put that back ...
 
-Well, __GFP_HIGHMEM should be basically GFP_KERNEL for !highmem systems.
-But most checks I have seen try to mask it off. Having it 0 would help
-to reduce at least some code.
+Did you get a chance to test this?
 
--- 
-Michal Hocko
-SUSE Labs
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 9919b6b545fb..75cc160d2f0b 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -367,13 +367,13 @@ static struct page *dax_busy_page(void *entry)
+>   * a VM_FAULT code, encoded as an xarray internal entry.  The ERR_PTR values
+>   * overlap with xarray value entries.
+>   */
+> -static
+> -void *grab_mapping_entry(struct xa_state *xas, struct address_space *mapping)
+> +static void *grab_mapping_entry(struct xa_state *xas,
+> +		struct address_space *mapping, unsigned long size)
+>  {
+>  	bool pmd_downgrade = false; /* splitting 2MiB entry into 4k entries? */
+>  	void *locked = dax_make_entry(pfn_to_pfn_t(0),
+> -						DAX_EMPTY | DAX_LOCKED);
+> -	void *unlocked = dax_make_entry(pfn_to_pfn_t(0), DAX_EMPTY);
+> +						size | DAX_EMPTY | DAX_LOCKED);
+> +	void *unlocked = dax_make_entry(pfn_to_pfn_t(0), size | DAX_EMPTY);
+>  	void *entry;
+>  
+>  retry:
+> @@ -1163,7 +1163,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+>  	if (write && !vmf->cow_page)
+>  		flags |= IOMAP_WRITE;
+>  
+> -	entry = grab_mapping_entry(&xas, mapping);
+> +	entry = grab_mapping_entry(&xas, mapping, 0);
+>  	if (xa_is_internal(entry)) {
+>  		ret = xa_to_internal(entry);
+>  		goto out;
+> @@ -1396,7 +1396,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+>  	 * page is already in the tree, for instance), it will return
+>  	 * VM_FAULT_FALLBACK.
+>  	 */
+> -	entry = grab_mapping_entry(&xas, mapping);
+> +	entry = grab_mapping_entry(&xas, mapping, DAX_PMD);
+>  	if (xa_is_internal(entry)) {
+>  		result = xa_to_internal(entry);
+>  		goto fallback;
+> 
