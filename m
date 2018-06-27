@@ -2,126 +2,128 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2592CC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC59C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4DF12156E
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:58:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4DF12156E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 298A121A95
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 20:59:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="szkgdy8o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 298A121A95
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965505AbeF0U6i (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 16:58:38 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40315 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965026AbeF0U6h (ORCPT
+        id S965767AbeF0U7T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 16:59:19 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:45016 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965335AbeF0U7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 16:58:37 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 40DA48057B; Wed, 27 Jun 2018 22:58:35 +0200 (CEST)
-Date:   Wed, 27 Jun 2018 22:58:34 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: v4.18-rc1 on droid 4: very bad CPU performance
-Message-ID: <20180627205834.GB29478@amd>
-References: <20180621121542.GA4836@amd>
- <20180622072005.GF112168@atomide.com>
- <20180622074936.GG112168@atomide.com>
+        Wed, 27 Jun 2018 16:59:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=l2GkuqEgNvIGjnj3g906AoMr4IBlb3+Zyy5DWqyyRbc=; b=szkgdy8ouwPQmr51eQRQ9XouGY
+        8sQ94kI5mL4dPlAnbFRziiT8HUCvw9ocjSpHWDzAt8gzOh8uX5AN/MctbCbDs4j3erncEy7btmSon
+        K8Yia50mXndZhs3whkgL+N4BtfgRX1Am4Gneibr1PjGvjnQ6xc1SmlUvQOOvdkG7xh5FtbNmp1eLV
+        eg8iVcgAqZBspcNpugNV98R/A76X/3pOH566ZP0GmMVYUU1nxsVKHlMfowSSWKAc25XhnT74Cxt48
+        /0lFmVcaOnacQsKELeRlrVRJuqXqm6QFt4+0zUfliflCLcnPJeSHa9a1MGtoED9HQvhTQ8F6jrOXF
+        O3yuu5Yw==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:39318 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fYHX2-001d6P-K8; Wed, 27 Jun 2018 20:59:17 +0000
+Date:   Wed, 27 Jun 2018 13:59:15 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <f4bug@amsat.org>
+Cc:     Sai Pavan Boddu <sai.pavan.boddu@xilinx.com>,
+        "Edgar E. Iglesias" <edgar.iglesias@xilinx.com>,
+        Michal Simek <monstr@monstr.eu>,
+        "Edgar E. Iglesias" <edgar.iglesias@gmail.com>,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        Alistair Francis <alistair@alistair23.me>,
+        KONRAD Frederic <frederic.konrad@adacore.com>
+Subject: Re: [Qemu-devel] Linux kernel configurations for various Microblaze
+ systems
+Message-ID: <20180627205915.GA22693@roeck-us.net>
+References: <20180627185248.GA19743@roeck-us.net>
+ <96809884-2f46-ed63-48fd-9fd4c5050e20@amsat.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="n/aVsWSeQ4JHkrmm"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180622074936.GG112168@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <96809884-2f46-ed63-48fd-9fd4c5050e20@amsat.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 27, 2018 at 05:01:34PM -0300, Philippe Mathieu-Daudé wrote:
+> Hi Guenter,
+> 
+> On 06/27/2018 03:52 PM, Guenter Roeck wrote:
+> > Hi,
+> > 
+> > I would like to add Microblaze "petalogix-ml605" and "xlnx-zynqmp-pmu"
+> > to my list of qemu boot tests of upstream and stable release kernels.
+> 
+> Do you mind sharing your tests on this thread?
+> 
+Nothing secret about it. The test results are always available at
+http://kerneltests.org/. The scripts are published at
+https://github.com/groeck/linux-build-test. My qemu clone (I carry a few
+patches on top of upstream qemu) is at https://github.com/groeck/qemu.
 
---n/aVsWSeQ4JHkrmm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> "Who is running QEMU automated tests, and when?"
+> http://lists.nongnu.org/archive/html/qemu-devel/2018-04/msg04695.html
+> 
+> > Unfortunately I have been unable to locate working kernel configurations
+> > for the those systems, nor working qemu command lines. I found a few links,
+> > but they are all dead.
+> 
+> I got more lucky using the Xilinx downstream code from:
+> https://github.com/Xilinx
+> 
+> In particular using their downstream DeviceTree:
+> 
+> https://github.com/Xilinx/device-tree-xlnx
+> 
+> I also used those links:
+> 
+> http://www.wiki.xilinx.com/MicroBlaze
+> http://www.wiki.xilinx.com/Build%20kernel
+> 
 
-On Fri 2018-06-22 00:49:36, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [180622 07:22]:
-> > * Pavel Machek <pavel@ucw.cz> [180621 12:18]:
-> > > Hi!
-> > >=20
-> > > V4.18 is slower than it should be.
-> > >=20
-> > > user@devuan:~$ time cat /dev/urandom | head -c 10000000 |  bzip2 -9 -
-> > > | wc -c
-> > > 10044291
-> > > 52.73user 2.40system 61.53 (1m1.534s) elapsed 89.60%CPU
-> > > user@devuan:~$ uname -a
-> > > Linux devuan 4.18.0-rc1-87964-gfa19934-dirty #743 SMP Sun Jun 17
-> > > 19:26:37 CEST 2018 armv7l GNU/Linux
-> > >=20
-> > > That bzip should take 12 seconds, not minute.
-> > >=20
-> > > Any ideas? Do you see it, too?
-> >=20
-> > I've noticed firefox is super slow.. Git bisect time?
->=20
-> Hmm not happening for me at least on duovero and droid4,
-> I'm getting about 20s for v4.17 and v4.18-rc1.
+AFAICS they are all generic, and don't reference specific boards
+(other than maybe the possibility to configure those boards). There are
+comments such as "start with mmu_defconfig and modify all parameters
+which are special on your board". That is great, but trying to do that
+for an evaluation board that I don't own and just try to get running
+under qemu is a bit difficult since I don't really know what I am doing.
 
-Okay, so I know what was wrong with my config. I had l2cache disabled
--- and this solved it:
+The best I was able to accomplish was to boot petalogix-ml605 without crash,
+but with no console output either. I could try to debug further, but I don't
+really want to waste my time.
 
-+CONFIG_OUTER_CACHE=3Dy
-+CONFIG_OUTER_CACHE_SYNC=3Dy
-+CONFIG_CACHE_L2X0=3Dy
-+CONFIG_PL310_ERRATA_588369=3Dy
-+CONFIG_PL310_ERRATA_727915=3Dy
-+CONFIG_PL310_ERRATA_753970=3Dy
-+CONFIG_PL310_ERRATA_769419=3Dy
-
-Now I'm at 12 seconds.
-
-user@devuan:~$ time cat /dev/urandom | head -c 10000000 |  bzip2 -9 - | wc =
--c
-10043993
-11.41user 0.44system 11.63 (0m11.637s) elapsed 101.97%CPU
-user@devuan:~$ uname -a
-Linux devuan 4.18.0-rc2-88315-g3452793-dirty #756 SMP Wed Jun 27 22:16:59 C=
-EST 2018 armv7l GNU/Linux
-user@devuan:~$
-
-I was about to add "facepalm" emoji here, as disabling l2 cache is
-major mistake. OTOH if you also see 20 seconds, then either there is
-another problem, or you need to enable l2 cache, too (and I don't have
-to feel too bad for misconfiguring it).
-
-Best regards,=20
-								=09
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---n/aVsWSeQ4JHkrmm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsz+noACgkQMOfwapXb+vLv9wCgvy5LVExAipJ5pCWfhIza+HhJ
-P3IAoIrEWA6dwHbqkReGap/LZU6rfT/+
-=trJd
------END PGP SIGNATURE-----
-
---n/aVsWSeQ4JHkrmm--
+Thanks,
+Guenter
