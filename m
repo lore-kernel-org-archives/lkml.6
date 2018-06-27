@@ -2,107 +2,84 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EF7C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F213C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4FA244EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:55:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GuqshIcK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D5VDYmzV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B4FA244EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 53442253D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:56:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53442253D6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934916AbeF0Pzu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:55:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43442 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934746AbeF0Pzs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:55:48 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0D0CF60AD8; Wed, 27 Jun 2018 15:55:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530114948;
-        bh=05BPjB5wztF1mDiFnUCXXoLzxc0UpHDKdbA8cBeyQOs=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=GuqshIcK5xlBFzibP93xa5ktdqBHY3NRh13pfpXzXydJXX0Rt7/M6MpzrQ+soZKp0
-         LG65ZbLtvrf/WPlpENmyjN4znjTGuQhxiNM4Z516dH+MCvvpmD1n9OU6Iis5QG2GVg
-         +urhYUbPwCTdmcJcA/ah4Hp/Xfwwyu6DA3rapJGk=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 98029606FA;
-        Wed, 27 Jun 2018 15:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530114947;
-        bh=05BPjB5wztF1mDiFnUCXXoLzxc0UpHDKdbA8cBeyQOs=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=D5VDYmzVMOCfvKr8uslOi8me/blBzeP+XX68gkUk67a+HgcBy+D1f/Ift4pHHLsis
-         LHaLkQXnHicEhpG/PFdeywhz+sc7z/quhnHcvhc16vu89Y05aUPFPwKvr48t4Am07p
-         z6N8se8VTzclt6A6W4Otkx/URQgvEuGwF45tNGsE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 98029606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S934946AbeF0Pz6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 11:55:58 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33660 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934746AbeF0Pz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 11:55:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F60018A;
+        Wed, 27 Jun 2018 08:55:55 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 603133F318;
+        Wed, 27 Jun 2018 08:55:55 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 45FC71AE3692; Wed, 27 Jun 2018 16:56:33 +0100 (BST)
+Date:   Wed, 27 Jun 2018 16:56:33 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Toshi Kani <toshi.kani@hpe.com>
+Cc:     mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, cpandya@codeaurora.org,
+        linux-mm@kvack.org, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] ioremap: Update pgtable free interfaces with addr
+Message-ID: <20180627155632.GH30631@arm.com>
+References: <20180627141348.21777-1-toshi.kani@hpe.com>
+ <20180627141348.21777-3-toshi.kani@hpe.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: brcmsmac: Remove unnecessary parentheses
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180601021413.4031-1-rvarsha016@gmail.com>
-References: <20180601021413.4031-1-rvarsha016@gmail.com>
-To:     Varsha Rao <rvarsha016@gmail.com>
-Cc:     Nicholas Mc Guire <der.herr@hofr.at>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Varsha Rao <rvarsha016@gmail.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180627155548.0D0CF60AD8@smtp.codeaurora.org>
-Date:   Wed, 27 Jun 2018 15:55:47 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627141348.21777-3-toshi.kani@hpe.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Varsha Rao <rvarsha016@gmail.com> wrote:
+Hi Toshi,
 
-> This patch fixes the clang warning of extraneous parentheses, with the
-> following coccinelle script.
+On Wed, Jun 27, 2018 at 08:13:47AM -0600, Toshi Kani wrote:
+> From: Chintan Pandya <cpandya@codeaurora.org>
 > 
-> @@
-> identifier i;
-> expression e;
-> statement s;
-> @@
-> if (
-> -(i == e)
-> +i == e
->  )
-> s
+> The following kernel panic was observed on ARM64 platform due to a stale
+> TLB entry.
 > 
-> Suggested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+>  1. ioremap with 4K size, a valid pte page table is set.
+>  2. iounmap it, its pte entry is set to 0.
+>  3. ioremap the same address with 2M size, update its pmd entry with
+>     a new value.
+>  4. CPU may hit an exception because the old pmd entry is still in TLB,
+>     which leads to a kernel panic.
+> 
+> Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
+> table") has addressed this panic by falling to pte mappings in the above
+> case on ARM64.
+> 
+> To support pmd mappings in all cases, TLB purge needs to be performed
+> in this case on ARM64.
+> 
+> Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
+> so that TLB purge can be added later in seprate patches.
 
-Patch applied to wireless-drivers-next.git, thanks.
+So I acked v13 of Chintan's series posted here:
 
-eb5d2f3afc0f brcmsmac: Remove unnecessary parentheses
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/582953.html
 
--- 
-https://patchwork.kernel.org/patch/10442401/
+any chance this lot could all be merged together, please?
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Will
