@@ -3,145 +3,324 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510D7C43142
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7040AC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 040AB24623
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:47:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 040AB24623
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3001624623
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 17:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3001624623
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934541AbeF0RrI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 13:47:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42936 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753232AbeF0RrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 13:47:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E4D0081A8E54;
-        Wed, 27 Jun 2018 17:47:05 +0000 (UTC)
-Received: from redhat.com (ovpn-120-46.rdu2.redhat.com [10.10.120.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B27C61C672;
-        Wed, 27 Jun 2018 17:47:02 +0000 (UTC)
-Date:   Wed, 27 Jun 2018 14:47:01 -0300
-From:   "Herton R. Krzesinski" <herton@redhat.com>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     mhocko@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-mm@vger.kernel.org, aquini@redhat.com, lwoodman@redhat.com,
-        n-horiguchi@ah.jp.nec.com
-Subject: Re: Kernel crash after "mm: initialize pages on demand during boot"
-Message-ID: <20180627174701.tq5rkzjh6cw2cpmb@dhcppc10>
-References: <20180626204152.fyb5wzdduif2h5sg@dhcppc10>
- <20180627071925.GA32348@dhcp22.suse.cz>
- <CAGM2reaQYYrAP1mAWw4tV9+9z1pmnu5kOJj_g-O-kadqYrkx3w@mail.gmail.com>
- <20180627133843.rqzlfrn4sabftkn4@dhcppc10>
- <CAGM2rebOhcpzzzoqmSfGNz5UdSCs4athvp8nQVm0TqdtaonCeA@mail.gmail.com>
+        id S934999AbeF0RrW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 13:47:22 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:51220 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934639AbeF0RrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 13:47:14 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fYEX7-0008Mw-PB; Wed, 27 Jun 2018 11:47:12 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fYEWq-00079F-Q8; Wed, 27 Jun 2018 11:46:52 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Wed, 27 Jun 2018 11:46:48 -0600
+Message-Id: <20180627174650.27433-2-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180627174650.27433-1-logang@deltatee.com>
+References: <20180627174650.27433-1-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGM2rebOhcpzzzoqmSfGNz5UdSCs4athvp8nQVm0TqdtaonCeA@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 17:47:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 27 Jun 2018 17:47:06 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'herton@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, willy@infradead.org, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v5 1/3] PCI: Make specifying PCI devices in kernel parameters reusable
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 11:06:14AM -0400, Pavel Tatashin wrote:
-> On Wed, Jun 27, 2018 at 10:15 AM Herton R. Krzesinski <herton@redhat.com> wrote:
-> > Thanks, I'll try it. It'll probably work since I tried memory_reserve
-> > but "hacking" it at e820__register_nosave_regions, anyway I'll confirm
-> > it here.
-> 
-> If it works, please send the new "Reserved but unavailable" value from dmesg:
-> [    0.000000] Reserved but unavailable: 103 pages
+Separate out the code to match a PCI device with a string (typically
+originating from a kernel parameter) from the
+pci_specified_resource_alignment() function into its own helper
+function.
 
-It worked, I don't see the oops with the patch. Here is the relevant
-parts of dmesg (with memblock=debug):
+While we are at it, this change fixes the kernel style of the function
+(fixing a number of long lines and extra parentheses).
 
-[    0.000000] found SMP MP-table at [mem 0x000fce40-0x000fce4f] mapped at [(____ptrval____)]
-[    0.000000] memblock_reserve: [0x00000000000fce40-0x00000000000fce4f] smp_scan_config+0xb1/0xf5
-[    0.000000] memblock_reserve: [0x00000000000fcc20-0x00000000000fcdd3] smp_scan_config+0xc8/0xf5
-[    0.000000] memblock_reserve: [0x0000000039494000-0x00000000394a0fff] setup_arch+0x5b7/0xcb0
-[    0.000000] memblock_reserve: [0x0000000000000000-0x0000000000000fff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_add: [0x0000000000001000-0x000000000009a3ff] e820__memblock_setup+0x6d/0x9d
-[    0.000000] memblock_reserve: [0x000000000009a400-0x000000000009ffff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_reserve: [0x00000000000a0000-0x00000000000dffff] e820__memblock_setup+0x44/0x9d
-[    0.000000] memblock_reserve: [0x00000000000e0000-0x00000000000fffff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_add: [0x0000000000100000-0x000000007f3e4fff] e820__memblock_setup+0x6d/0x9d
-[    0.000000] memblock_reserve: [0x000000007f3e5000-0x000000007f42cfff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_reserve: [0x000000007f42d000-0x000000007f433fff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_reserve: [0x000000007f434000-0x000000007f504fff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_reserve: [0x000000007f505000-0x000000007f50ffff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_reserve: [0x000000007f510000-0x000000007f535fff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_reserve: [0x000000007f536000-0x000000007f578fff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_add: [0x000000007f579000-0x000000007f7fffff] e820__memblock_setup+0x6d/0x9d
-[    0.000000] memblock_reserve: [0x000000007f800000-0x00000000dfffffff] e820__memblock_setup+0x44/0x9d
-[    0.000000] memblock_reserve: [0x00000000e0000000-0x00000000efffffff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_reserve: [0x00000000f0000000-0x00000000fed1bfff] e820__memblock_setup+0x44/0x9d
-[    0.000000] memblock_reserve: [0x00000000fed1c000-0x00000000fed3ffff] e820__memblock_setup+0x66/0x9d
-[    0.000000] memblock_reserve: [0x00000000fed40000-0x00000000feffffff] e820__memblock_setup+0x44/0x9d
-[    0.000000] memblock_reserve: [0x00000000ff000000-0x00000000ffffffff] e820__memblock_setup+0x66/0x9d
-[    0.000000] MEMBLOCK configuration:
-[    0.000000]  memory size = 0x000000007f605400 reserved size = 0x0000000086935c00
-[    0.000000]  memory.cnt  = 0x3
-[    0.000000]  memory[0x0]     [0x0000000000001000-0x0000000000099fff], 0x0000000000099000 bytes flags: 0x0
-[    0.000000]  memory[0x1]     [0x0000000000100000-0x000000007f3e4fff], 0x000000007f2e5000 bytes flags: 0x0
-[    0.000000]  memory[0x2]     [0x000000007f579000-0x000000007f7fffff], 0x0000000000287000 bytes flags: 0x0
-[    0.000000]  reserved.cnt  = 0x6
-[    0.000000]  reserved[0x0]   [0x0000000000000000-0x0000000000000fff], 0x0000000000001000 bytes flags: 0x0
-[    0.000000]  reserved[0x1]   [0x000000000009a400-0x00000000000fffff], 0x0000000000065c00 bytes flags: 0x0
-[    0.000000]  reserved[0x2]   [0x000000002f6bd000-0x0000000033b56fff], 0x000000000449a000 bytes flags: 0x0
-[    0.000000]  reserved[0x3]   [0x0000000037a00000-0x00000000394a0fff], 0x0000000001aa1000 bytes flags: 0x0
-[    0.000000]  reserved[0x4]   [0x000000007f3e5000-0x000000007f578fff], 0x0000000000194000 bytes flags: 0x0
-[    0.000000]  reserved[0x5]   [0x000000007f800000-0x00000000ffffffff], 0x0000000080800000 bytes flags: 0x0
-...
-[    0.000000] Zone ranges:
-[    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
-[    0.000000]   DMA32    [mem 0x0000000001000000-0x000000007f7fffff]
-[    0.000000]   Normal   empty
-[    0.000000]   Device   empty
-[    0.000000] Movable zone start for each node
-[    0.000000] Early memory node ranges
-[    0.000000]   node   0: [mem 0x0000000000001000-0x0000000000099fff]
-[    0.000000]   node   0: [mem 0x0000000000100000-0x000000007f3e4fff]
-[    0.000000]   node   0: [mem 0x000000007f579000-0x000000007f7fffff]
-[    0.000000] Initmem setup node 0 [mem 0x0000000000001000-0x000000007f7fffff]
-[    0.000000] On node 0 totalpages: 521733
-[    0.000000]   DMA zone: 64 pages used for memmap
-[    0.000000]   DMA zone: 21 pages reserved
-[    0.000000]   DMA zone: 3993 pages, LIFO batch:0
-[    0.000000]   DMA32 zone: 8096 pages used for memmap
-[    0.000000]   DMA32 zone: 517740 pages, LIFO batch:31
-[    0.000000] Reserved but unavailable: 2555 pages
+Additionally, make the analogous change to the kernel parameter
+documentation: Separating the description of how to specify a PCI device
+into it's own section at the head of the pci= parameter.
 
-> 
-> Thank you,
-> Pavel
+This patch should have no functional alterations.
 
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Stephen Bates <sbates@raithlin.com>
+Acked-by: Christian König <christian.koenig@amd.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  28 ++++-
+ drivers/pci/pci.c                               | 157 ++++++++++++++++--------
+ 2 files changed, 126 insertions(+), 59 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index efc7aa7a0670..e783bcefadac 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2994,7 +2994,26 @@
+ 			See header of drivers/block/paride/pcd.c.
+ 			See also Documentation/blockdev/paride.txt.
+ 
+-	pci=option[,option...]	[PCI] various PCI subsystem options:
++	pci=option[,option...]	[PCI] various PCI subsystem options.
++
++				Some options herein operate on a specific device
++				or a set of devices (<pci_dev>). These are
++				specified in one of the following formats:
++
++				[<domain>:]<bus>:<slot>.<func>
++				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
++
++				Note: the first format specifies a PCI
++				bus/slot/function address which may change
++				if new hardware is inserted, if motherboard
++				firmware changes, or due to changes caused
++				by other kernel parameters. If the
++				domain is left unspecified, it is
++				taken to be zero. The second format
++				selects devices using IDs from the
++				configuration space which may match multiple
++				devices in the system.
++
+ 		earlydump	[X86] dump PCI config space before the kernel
+ 				changes anything
+ 		off		[X86] don't probe for the PCI bus
+@@ -3123,11 +3142,10 @@
+ 				window. The default value is 64 megabytes.
+ 		resource_alignment=
+ 				Format:
+-				[<order of align>@][<domain>:]<bus>:<slot>.<func>[; ...]
+-				[<order of align>@]pci:<vendor>:<device>\
+-						[:<subvendor>:<subdevice>][; ...]
++				[<order of align>@]<pci_dev>[; ...]
+ 				Specifies alignment and device to reassign
+-				aligned memory resources.
++				aligned memory resources. How to
++				specify the device is described above.
+ 				If <order of align> is not specified,
+ 				PAGE_SIZE is used as alignment.
+ 				PCI-PCI bridge can be specified, if resource
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 97acba712e4e..6127155d4170 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -191,6 +191,92 @@ void __iomem *pci_ioremap_wc_bar(struct pci_dev *pdev, int bar)
+ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
+ #endif
+ 
++/**
++ * pci_dev_str_match - test if a string matches a device
++ * @dev:    the PCI device to test
++ * @p:      string to match the device against
++ * @endptr: pointer to the string after the match
++ *
++ * Test if a string (typically from a kernel parameter) matches a specified
++ * PCI device. The string may be of one of the following formats:
++ *
++ *   [<domain>:]<bus>:<slot>.<func>
++ *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
++ *
++ * The first format specifies a PCI bus/slot/function address which
++ * may change if new hardware is inserted, if motherboard firmware changes,
++ * or due to changes caused in kernel parameters. If the domain is
++ * left unspecified, it is taken to be 0.
++ *
++ * The second format matches devices using IDs in the configuration
++ * space which may match multiple devices in the system. A value of 0
++ * for any field will match all devices. (Note: this differs from
++ * in-kernel code that uses PCI_ANY_ID which is ~0; this is for
++ * legacy reasons and convenience so users don't have to specify
++ * FFFFFFFFs on the command line.)
++ *
++ * Returns 1 if the string matches the device, 0 if it does not and
++ * a negative error code if the string cannot be parsed.
++ */
++static int pci_dev_str_match(struct pci_dev *dev, const char *p,
++			     const char **endptr)
++{
++	int ret;
++	int seg, bus, slot, func, count;
++	unsigned short vendor, device, subsystem_vendor, subsystem_device;
++
++	if (strncmp(p, "pci:", 4) == 0) {
++		/* PCI vendor/device (subvendor/subdevice) ids are specified */
++		p += 4;
++		ret = sscanf(p, "%hx:%hx:%hx:%hx%n", &vendor, &device,
++			     &subsystem_vendor, &subsystem_device, &count);
++		if (ret != 4) {
++			ret = sscanf(p, "%hx:%hx%n", &vendor, &device, &count);
++			if (ret != 2)
++				return -EINVAL;
++
++			subsystem_vendor = 0;
++			subsystem_device = 0;
++		}
++
++		p += count;
++
++		if ((!vendor || vendor == dev->vendor) &&
++		    (!device || device == dev->device) &&
++		    (!subsystem_vendor ||
++			    subsystem_vendor == dev->subsystem_vendor) &&
++		    (!subsystem_device ||
++			    subsystem_device == dev->subsystem_device))
++			goto found;
++
++	} else {
++		/* PCI Bus,Slot,Function ids are specified */
++		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
++			     &func, &count);
++		if (ret != 4) {
++			seg = 0;
++			ret = sscanf(p, "%x:%x.%x%n", &bus, &slot,
++				     &func, &count);
++			if (ret != 3)
++				return -EINVAL;
++		}
++
++		p += count;
++
++		if (seg == pci_domain_nr(dev->bus) &&
++		    bus == dev->bus->number &&
++		    slot == PCI_SLOT(dev->devfn) &&
++		    func == PCI_FUNC(dev->devfn))
++			goto found;
++	}
++
++	*endptr = p;
++	return 0;
++
++found:
++	*endptr = p;
++	return 1;
++}
+ 
+ static int __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+ 				   u8 pos, int cap, int *ttl)
+@@ -5454,10 +5540,10 @@ static DEFINE_SPINLOCK(resource_alignment_lock);
+ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+ 							bool *resize)
+ {
+-	int seg, bus, slot, func, align_order, count;
+-	unsigned short vendor, device, subsystem_vendor, subsystem_device;
++	int align_order, count;
+ 	resource_size_t align = pcibios_default_alignment();
+-	char *p;
++	const char *p;
++	int ret;
+ 
+ 	spin_lock(&resource_alignment_lock);
+ 	p = resource_alignment_param;
+@@ -5477,58 +5563,21 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+ 		} else {
+ 			align_order = -1;
+ 		}
+-		if (strncmp(p, "pci:", 4) == 0) {
+-			/* PCI vendor/device (subvendor/subdevice) ids are specified */
+-			p += 4;
+-			if (sscanf(p, "%hx:%hx:%hx:%hx%n",
+-				&vendor, &device, &subsystem_vendor, &subsystem_device, &count) != 4) {
+-				if (sscanf(p, "%hx:%hx%n", &vendor, &device, &count) != 2) {
+-					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: pci:%s\n",
+-						p);
+-					break;
+-				}
+-				subsystem_vendor = subsystem_device = 0;
+-			}
+-			p += count;
+-			if ((!vendor || (vendor == dev->vendor)) &&
+-				(!device || (device == dev->device)) &&
+-				(!subsystem_vendor || (subsystem_vendor == dev->subsystem_vendor)) &&
+-				(!subsystem_device || (subsystem_device == dev->subsystem_device))) {
+-				*resize = true;
+-				if (align_order == -1)
+-					align = PAGE_SIZE;
+-				else
+-					align = 1 << align_order;
+-				/* Found */
+-				break;
+-			}
+-		}
+-		else {
+-			if (sscanf(p, "%x:%x:%x.%x%n",
+-				&seg, &bus, &slot, &func, &count) != 4) {
+-				seg = 0;
+-				if (sscanf(p, "%x:%x.%x%n",
+-						&bus, &slot, &func, &count) != 3) {
+-					/* Invalid format */
+-					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: %s\n",
+-						p);
+-					break;
+-				}
+-			}
+-			p += count;
+-			if (seg == pci_domain_nr(dev->bus) &&
+-				bus == dev->bus->number &&
+-				slot == PCI_SLOT(dev->devfn) &&
+-				func == PCI_FUNC(dev->devfn)) {
+-				*resize = true;
+-				if (align_order == -1)
+-					align = PAGE_SIZE;
+-				else
+-					align = 1 << align_order;
+-				/* Found */
+-				break;
+-			}
++
++		ret = pci_dev_str_match(dev, p, &p);
++		if (ret == 1) {
++			*resize = true;
++			if (align_order == -1)
++				align = PAGE_SIZE;
++			else
++				align = 1 << align_order;
++			break;
++		} else if (ret < 0) {
++			pr_err("PCI: Can't parse resource_alignment parameter: %s\n",
++			       p);
++			break;
+ 		}
++
+ 		if (*p != ';' && *p != ',') {
+ 			/* End of param or invalid format */
+ 			break;
 -- 
-[]'s
-Herton
+2.11.0
+
