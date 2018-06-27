@@ -2,271 +2,143 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB8FC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E34C43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBEC92432D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:20:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBEC92432D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F17124336
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 14:21:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nevxtr2i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F17124336
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965233AbeF0OUo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 10:20:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41879 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932579AbeF0OUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 10:20:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 793E3AC50;
-        Wed, 27 Jun 2018 14:20:41 +0000 (UTC)
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v2 3/3] printk/nmi: Prevent deadlock when accessing the main log buffer in NMI
-Date:   Wed, 27 Jun 2018 16:20:28 +0200
-Message-Id: <20180627142028.11259-1-pmladek@suse.com>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20180627140817.27764-1-pmladek@suse.com>
-References: <20180627140817.27764-1-pmladek@suse.com>
+        id S965351AbeF0OU6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 10:20:58 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37056 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965209AbeF0OU4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 10:20:56 -0400
+Received: by mail-pg0-f67.google.com with SMTP id o11-v6so990717pgv.4
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 07:20:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ESUSYi8ZtnKAb4t2407Qvuw8NiIBJluqwBWh6vlN2HI=;
+        b=Nevxtr2iyaMQ9crpXgQAvPurVGikgKH5J7ou2cws8CH2zus30PUU35/uyy7spmJiOd
+         ojqT9jYW/j0O5bIiJPd5vWJOx8JRIij1QMRD2pmHWPiS1X7GA+sPXeXu04JlNzCpUx3p
+         4v0XHK+4ey8VbdhW4TuGFH6Z2YZzdJEeevVTBkDhv74/KAuuEszvRwWB43rqsaY6lV1v
+         nu5EB9s3Vx3lAP2MnTGb2YdLRsv4D0q1BiV8cz/8Fu1hcRYBHbuAPmwLU6Gh0xbKWIQa
+         ZFGmKrRJTS0D7vzN//FSClq6aCGFMjhWMVI57B4BY2TfdvPQ20pgWBoC1/lFUmFnqccy
+         ruIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ESUSYi8ZtnKAb4t2407Qvuw8NiIBJluqwBWh6vlN2HI=;
+        b=V9ZMnFzjr/l0wEXk7ZIOGXkk77qOs23jNwMbUk9Ylw89V1m4Yubw9XyUELVcqfqZxc
+         oG3iADnbLQRgi4WUoyQi/WOYPpWIhHpropGMLAo8BWkZdCbYYxJM/L7McdTfVJkR77ha
+         V8PW+Q0vzYJyhYhmsAgpuRdZXfCYq6N963zlSb3G25yye/jIDKnels1x+AzKIMtj8U//
+         lT1FyAp4pQaQwgZ2MyviNK01CwDUwGQZu38GHWcu/tq/KH4/DID4xTCT1AFOph0LhiyU
+         EDZxsOSN33dn4y5QQQLFlW+FEQnZ5GR/9PUTvyK4dorLSIjG4DRfbFflSSoSn0cGyDA8
+         G8bw==
+X-Gm-Message-State: APt69E0OhAfir29OTvLRubpmxOLq2nS9MoXNTuKIGQrWj6dfswsc5Ys4
+        7mp0eJx2jLbnYeDPOqLIpEU=
+X-Google-Smtp-Source: AAOMgpfto6FQ26E2oaeLCfO1qyfm27C8imDHn2vf60geVrIrFjwa5YAfbYlp0CQkgnLVJZzuZz77Ng==
+X-Received: by 2002:a63:790b:: with SMTP id u11-v6mr3242985pgc.111.1530109256140;
+        Wed, 27 Jun 2018 07:20:56 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id n6-v6sm13789021pfk.36.2018.06.27.07.20.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Jun 2018 07:20:55 -0700 (PDT)
+Date:   Wed, 27 Jun 2018 23:20:53 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Mackerras <paulus@samba.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: Re: [PATCH v9 4/6] init: allow initcall tables to be emitted using
+ relative references
+Message-ID: <20180627142053.GB477@tigerII.localdomain>
+References: <20180626182802.19932-1-ard.biesheuvel@linaro.org>
+ <20180626182802.19932-5-ard.biesheuvel@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626182802.19932-5-ard.biesheuvel@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 719f6a7040f1bdaf96 ("printk: Use the main logbuf in NMI
-when logbuf_lock is available") brought back the possible deadlocks
-in printk() and NMI.
+On (06/26/18 20:27), Ard Biesheuvel wrote:
+>  /*
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 247808333ba4..688a27b0888c 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2772,7 +2772,8 @@ EXPORT_SYMBOL(unregister_console);
+>  void __init console_init(void)
+>  {
+>  	int ret;
+> -	initcall_t *call;
+> +	initcall_t call;
+> +	initcall_entry_t *ce;
+>  
+>  	/* Setup the default TTY line discipline. */
+>  	n_tty_init();
+> @@ -2781,13 +2782,14 @@ void __init console_init(void)
+>  	 * set up the console device so that later boot sequences can
+>  	 * inform about problems etc..
+>  	 */
+> -	call = __con_initcall_start;
+> +	ce = __con_initcall_start;
+>  	trace_initcall_level("console");
+> -	while (call < __con_initcall_end) {
+> -		trace_initcall_start((*call));
+> -		ret = (*call)();
+> -		trace_initcall_finish((*call), ret);
+> -		call++;
+> +	while (ce < __con_initcall_end) {
+> +		call = initcall_from_entry(ce);
+> +		trace_initcall_start(call);
+> +		ret = call();
+> +		trace_initcall_finish(call, ret);
+> +		ce++;
+>  	}
+>  }
 
-The check of logbuf_lock is done only in printk_nmi_enter() to prevent
-mixed output. But another CPU might take the lock later, enter NMI, and:
+printk bits look OK to me.
+The patch set works fine on my x86_64 and does reduce the size of vmlinux.
 
-      + Both NMIs might be serialized by yet another lock, for example,
-	the one in nmi_cpu_backtrace().
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-      + The other CPU might get stopped in NMI, see smp_send_stop()
-	in panic().
-
-The only safe solution is to use trylock when storing the message
-into the main log-buffer. It might cause reordering when some lines
-go to the main lock buffer directly and others are delayed via
-the per-CPU buffer. It means that it is not useful in general.
-
-This patch replaces the problematic NMI deferred context with NMI
-direct context. It can be used to mark a code that might produce
-many messages in NMI and the risk of losing them is more critical
-than problems with eventual reordering.
-
-The context is then used when dumping trace buffers on oops. It was
-the primary motivation for the original fix. Also the reordering is
-even smaller issue there because some traces have their own time stamps.
-
-Finally, nmi_cpu_backtrace() need not longer be serialized because
-it will always us the per-CPU buffers again.
-
-Fixes: 719f6a7040f1bdaf96 ("printk: Use the main logbuf in NMI when logbuf_lock is available")
-Cc: stable@vger.kernel.org
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- include/linux/printk.h      |  4 ++++
- kernel/printk/internal.h    |  9 ++++++-
- kernel/printk/printk_safe.c | 58 +++++++++++++++++++++++++++++----------------
- kernel/trace/trace.c        |  4 +++-
- lib/nmi_backtrace.c         |  3 ---
- 5 files changed, 52 insertions(+), 26 deletions(-)
-
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 6d7e800affd8..3ede9f46a494 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -148,9 +148,13 @@ void early_printk(const char *s, ...) { }
- #ifdef CONFIG_PRINTK_NMI
- extern void printk_nmi_enter(void);
- extern void printk_nmi_exit(void);
-+extern void printk_nmi_direct_enter(void);
-+extern void printk_nmi_direct_exit(void);
- #else
- static inline void printk_nmi_enter(void) { }
- static inline void printk_nmi_exit(void) { }
-+static inline void printk_nmi_direct_enter(void) { }
-+static inline void printk_nmi_direct_exit(void) { }
- #endif /* PRINTK_NMI */
- 
- #ifdef CONFIG_PRINTK
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index 2a7d04049af4..02410304c683 100644
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -19,11 +19,16 @@
- #ifdef CONFIG_PRINTK
- 
- #define PRINTK_SAFE_CONTEXT_MASK	 0x3fffffff
--#define PRINTK_NMI_DEFERRED_CONTEXT_MASK 0x40000000
-+#define PRINTK_NMI_DIRECT_CONTEXT_MASK	 0x40000000
- #define PRINTK_NMI_CONTEXT_MASK		 0x80000000
- 
- extern raw_spinlock_t logbuf_lock;
- 
-+__printf(5, 0)
-+int vprintk_store(int facility, int level,
-+		  const char *dict, size_t dictlen,
-+		  const char *fmt, va_list args);
-+
- __printf(1, 0) int vprintk_default(const char *fmt, va_list args);
- __printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
- __printf(1, 0) int vprintk_func(const char *fmt, va_list args);
-@@ -54,6 +59,8 @@ void __printk_safe_exit(void);
- 		local_irq_enable();		\
- 	} while (0)
- 
-+void defer_console(void);
-+
- #else
- 
- __printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
-diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
-index d7d091309054..6bd7b467121d 100644
---- a/kernel/printk/printk_safe.c
-+++ b/kernel/printk/printk_safe.c
-@@ -308,24 +308,33 @@ static __printf(1, 0) int vprintk_nmi(const char *fmt, va_list args)
- 
- void printk_nmi_enter(void)
- {
--	/*
--	 * The size of the extra per-CPU buffer is limited. Use it only when
--	 * the main one is locked. If this CPU is not in the safe context,
--	 * the lock must be taken on another CPU and we could wait for it.
--	 */
--	if ((this_cpu_read(printk_context) & PRINTK_SAFE_CONTEXT_MASK) &&
--	    raw_spin_is_locked(&logbuf_lock)) {
--		this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
--	} else {
--		this_cpu_or(printk_context, PRINTK_NMI_DEFERRED_CONTEXT_MASK);
--	}
-+	this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
- }
- 
- void printk_nmi_exit(void)
- {
--	this_cpu_and(printk_context,
--		     ~(PRINTK_NMI_CONTEXT_MASK |
--		       PRINTK_NMI_DEFERRED_CONTEXT_MASK));
-+	this_cpu_and(printk_context, ~PRINTK_NMI_CONTEXT_MASK);
-+}
-+
-+/*
-+ * Marks a code that might produce many messages in NMI context
-+ * and the risk of losing them is more critical than eventual
-+ * reordering.
-+ *
-+ * It has effect only when called in NMI context. Then printk()
-+ * will try to store the messages into the main logbuf directly
-+ * and use the per-CPU buffers only as a fallback when the lock
-+ * is not available.
-+ */
-+void printk_nmi_direct_enter(void)
-+{
-+	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK)
-+		this_cpu_or(printk_context, PRINTK_NMI_DIRECT_CONTEXT_MASK);
-+}
-+
-+void printk_nmi_direct_exit(void)
-+{
-+	this_cpu_and(printk_context, ~PRINTK_NMI_DIRECT_CONTEXT_MASK);
- }
- 
- #else
-@@ -363,6 +372,20 @@ void __printk_safe_exit(void)
- 
- __printf(1, 0) int vprintk_func(const char *fmt, va_list args)
- {
-+	/*
-+	 * Try to use the main logbuf even in NMI. But avoid calling console
-+	 * drivers that might have their own locks.
-+	 */
-+	if ((this_cpu_read(printk_context) & PRINTK_NMI_DIRECT_CONTEXT_MASK) &&
-+	    raw_spin_trylock(&logbuf_lock)) {
-+		int len;
-+
-+		len = vprintk_store(0, LOGLEVEL_DEFAULT, NULL, 0, fmt, args);
-+		raw_spin_unlock(&logbuf_lock);
-+		defer_console();
-+		return len;
-+	}
-+
- 	/* Use extra buffer in NMI when logbuf_lock is taken or in safe mode. */
- 	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK)
- 		return vprintk_nmi(fmt, args);
-@@ -371,13 +394,6 @@ __printf(1, 0) int vprintk_func(const char *fmt, va_list args)
- 	if (this_cpu_read(printk_context) & PRINTK_SAFE_CONTEXT_MASK)
- 		return vprintk_safe(fmt, args);
- 
--	/*
--	 * Use the main logbuf when logbuf_lock is available in NMI.
--	 * But avoid calling console drivers that might have their own locks.
--	 */
--	if (this_cpu_read(printk_context) & PRINTK_NMI_DEFERRED_CONTEXT_MASK)
--		return vprintk_deferred(fmt, args);
--
- 	/* No obstacles. */
- 	return vprintk_default(fmt, args);
- }
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 108ce3e1dc13..38b6dbe1709b 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8279,6 +8279,7 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
- 	tracing_off();
- 
- 	local_irq_save(flags);
-+	printk_nmi_direct_enter();
- 
- 	/* Simulate the iterator */
- 	trace_init_global_iter(&iter);
-@@ -8358,7 +8359,8 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
- 	for_each_tracing_cpu(cpu) {
- 		atomic_dec(&per_cpu_ptr(iter.trace_buffer->data, cpu)->disabled);
- 	}
-- 	atomic_dec(&dump_running);
-+	atomic_dec(&dump_running);
-+	printk_nmi_direct_exit();
- 	local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(ftrace_dump);
-diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
-index 61a6b5aab07e..15ca78e1c7d4 100644
---- a/lib/nmi_backtrace.c
-+++ b/lib/nmi_backtrace.c
-@@ -87,11 +87,9 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
- 
- bool nmi_cpu_backtrace(struct pt_regs *regs)
- {
--	static arch_spinlock_t lock = __ARCH_SPIN_LOCK_UNLOCKED;
- 	int cpu = smp_processor_id();
- 
- 	if (cpumask_test_cpu(cpu, to_cpumask(backtrace_mask))) {
--		arch_spin_lock(&lock);
- 		if (regs && cpu_in_idle(instruction_pointer(regs))) {
- 			pr_warn("NMI backtrace for cpu %d skipped: idling at %pS\n",
- 				cpu, (void *)instruction_pointer(regs));
-@@ -102,7 +100,6 @@ bool nmi_cpu_backtrace(struct pt_regs *regs)
- 			else
- 				dump_stack();
- 		}
--		arch_spin_unlock(&lock);
- 		cpumask_clear_cpu(cpu, to_cpumask(backtrace_mask));
- 		return true;
- 	}
--- 
-2.13.7
-
+	-ss
