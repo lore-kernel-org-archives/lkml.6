@@ -2,155 +2,109 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2038C43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F12C43142
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7044926104
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:06:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7044926104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C79C2612A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 15:07:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kGgYFMeU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C79C2612A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754626AbeF0PGp (ORCPT
+        id S1754651AbeF0PG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 11:06:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50888 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754530AbeF0PGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 11:06:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id AD9E6ADF4;
-        Wed, 27 Jun 2018 15:06:42 +0000 (UTC)
-Date:   Wed, 27 Jun 2018 17:06:41 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Namit Gupta <gupta.namit@samsung.com>,
-        linux-kernel@vger.kernel.org, pankaj.m@samsung.com,
-        a.sahrawat@samsung.com, himanshu.m@samsung.com
-Subject: Re: [PATCH] printk: remove unnecessary kmalloc() from syslog during
- clear
-Message-ID: <20180627150641.p56xyy6mdzvnfpig@pathway.suse.cz>
-References: <CGME20180620135951epcas5p3bd2a8f25ec689ca333bce861b527dba2@epcas5p3.samsung.com>
- <20180620135951epcas5p3bd2a8f25ec689ca333bce861b527dba2~54wyKcT0_3155531555epcas5p3y@epcas5p3.samsung.com>
- <20180625133705.7zsg2rkw4xtyg6ie@pathway.suse.cz>
- <20180625103704.49811ec1@gandalf.local.home>
- <20180625144407.GB443@tigerII.localdomain>
- <20180626124332.62isabqkefpgqpgk@pathway.suse.cz>
- <20180626103959.79e92a35@gandalf.local.home>
+        Wed, 27 Jun 2018 11:06:59 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:51238 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752014AbeF0PG4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 11:06:56 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5RF49GI177293;
+        Wed, 27 Jun 2018 15:06:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=94DYSWv1/45axAhWRyUQ1It+if0i4ECTkU8AEGw5xyw=;
+ b=kGgYFMeU3ZKcGiqSmAefxZPkFb8vy8xZf7sVGc1QPLvaBXuZ+dFcUWkKjByqNJ4/1P/R
+ Q0tJt6qe9hBUXhFhhgS4bqNr97C6npnyM+0it0UPaVmASo+ReLQBDriYYkH4MI2YWDto
+ 23kqZXxsipqOwbn/Y+CrDAR2RMyLCt8UFeVlSs5EfDJxKJKpFTVdoUTJIMyVvGXDTxEY
+ zu5MP4SZY6jdaJxH1wXXsVLZncFY7DueTQRY5R9lgMn2tij65HQcaUbWYjtIV0s+vlBA
+ LUHiBSouHyMv/KOZ0jyyATesNMOapMlL/MOpp9N8Wo6VKRqnE2lW5VviLkQh17ZRnIX0 LQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2jukmtwbwd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Jun 2018 15:06:55 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5RF6ppH002677
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Jun 2018 15:06:51 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5RF6pIb018640;
+        Wed, 27 Jun 2018 15:06:51 GMT
+Received: from mail-oi0-f42.google.com (/209.85.218.42)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Jun 2018 08:06:50 -0700
+Received: by mail-oi0-f42.google.com with SMTP id r16-v6so1662525oie.3;
+        Wed, 27 Jun 2018 08:06:50 -0700 (PDT)
+X-Gm-Message-State: APt69E1N80EXuwoZCT4cbS0FTjTmFuxk2RfNVlZBUQw3Yzjke8iZnWaN
+        OqyapDTn9xuCZsc1t1flg9d8k+7vnYvBbc4Myk0=
+X-Google-Smtp-Source: AAOMgpe4qf/1MSs71xDwa5OezbaumLsB27/2YvbiXGmsbpGi3kx4ura/CSqTu0ZOzF+LwMeej5Dxf4rzxy1GxOqfsUI=
+X-Received: by 2002:aca:bcd4:: with SMTP id m203-v6mr3572308oif.163.1530112010188;
+ Wed, 27 Jun 2018 08:06:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626103959.79e92a35@gandalf.local.home>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <20180626204152.fyb5wzdduif2h5sg@dhcppc10> <20180627071925.GA32348@dhcp22.suse.cz>
+ <CAGM2reaQYYrAP1mAWw4tV9+9z1pmnu5kOJj_g-O-kadqYrkx3w@mail.gmail.com> <20180627133843.rqzlfrn4sabftkn4@dhcppc10>
+In-Reply-To: <20180627133843.rqzlfrn4sabftkn4@dhcppc10>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Wed, 27 Jun 2018 11:06:14 -0400
+X-Gmail-Original-Message-ID: <CAGM2rebOhcpzzzoqmSfGNz5UdSCs4athvp8nQVm0TqdtaonCeA@mail.gmail.com>
+Message-ID: <CAGM2rebOhcpzzzoqmSfGNz5UdSCs4athvp8nQVm0TqdtaonCeA@mail.gmail.com>
+Subject: Re: Kernel crash after "mm: initialize pages on demand during boot"
+To:     herton@redhat.com
+Cc:     mhocko@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-mm@vger.kernel.org, aquini@redhat.com, lwoodman@redhat.com,
+        n-horiguchi@ah.jp.nec.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8936 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=469
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806270165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-06-26 10:39:59, Steven Rostedt wrote:
-> On Tue, 26 Jun 2018 14:43:32 +0200
-> Petr Mladek <pmladek@suse.com> wrote:
-> 
-> > On Mon 2018-06-25 23:44:07, Sergey Senozhatsky wrote:
-> > > On (06/25/18 10:37), Steven Rostedt wrote:  
-> > > > 
-> > > > Is IMHO rather ugly.  
-> > > 
-> > > Either way works for me. So I'll leave it to you and Petr to decide :)
-> > >   
-> > > > And the original patch has one more advantage. If buf and clear are
-> > > > both NULL/zero, we don't take any locks.  
-> > > 
-> > > But we never use syslog_print_all(buf = NULL, clear = false). It's either
-> > > NULL/true [move forward clear idx, do not copy to user], or !NULL/use defined
-> > > value [copy to user, move or don't move clear idx forward]  
-> > 
-> > Yup, I suggest the following version as a compromise. It has the code
-> > duplication but I agree that it is negligible. Otherwise, it looks
-> > cleaner.
-> > 
-> 
-> This looks fine. For proper history though, what I do in this case,
-> would be to make this into two patches. One with Namit's original
-> patch, and then a second that removes the code duplication (your patch).
+On Wed, Jun 27, 2018 at 10:15 AM Herton R. Krzesinski <herton@redhat.com> wrote:
+> Thanks, I'll try it. It'll probably work since I tried memory_reserve
+> but "hacking" it at e820__register_nosave_regions, anyway I'll confirm
+> it here.
 
-Makes sense. I have just pushed the original patch (with Sergey's
-formatting fixes) into printk.git, for-4.19 branch. And I propose
-the clean up patch, see below.
+If it works, please send the new "Reserved but unavailable" value from dmesg:
+[    0.000000] Reserved but unavailable: 103 pages
 
-I am sorry for the mess. It seems that nothing can be considered
-a simple obvious change. And my attempt to safe people time had
-the opposite effect.
-
-
-Proposed patch:
-
-From: Petr Mladek <pmladek@suse.com>
-Date: Wed, 27 Jun 2018 16:37:42 +0200
-Subject: [PATCH] printk: Clean up syslog_print_all()
-
-syslog_print_all() is called twice. Once with a valid buffer
-and once just to set the indexes.
-
-Both variants are already handled separately. This patch just
-makes it more obvious. It does not change the existing behavior.
-
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- kernel/printk/printk.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 16b02cc51a14..fcc1992c040a 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1356,16 +1356,6 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 	u64 seq;
- 	u32 idx;
- 
--	if (!buf) {
--		if (clear) {
--			logbuf_lock_irq();
--			clear_seq = log_next_seq;
--			clear_idx = log_next_idx;
--			logbuf_unlock_irq();
--		}
--		return 0;
--	}
--
- 	text = kmalloc(LOG_LINE_MAX + PREFIX_MAX, GFP_KERNEL);
- 	if (!text)
- 		return -ENOMEM;
-@@ -1437,6 +1427,14 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 	return len;
- }
- 
-+static void syslog_clear(void)
-+{
-+	logbuf_lock_irq();
-+	clear_seq = log_next_seq;
-+	clear_idx = log_next_idx;
-+	logbuf_unlock_irq();
-+}
-+
- int do_syslog(int type, char __user *buf, int len, int source)
- {
- 	bool clear = false;
-@@ -1481,7 +1479,7 @@ int do_syslog(int type, char __user *buf, int len, int source)
- 		break;
- 	/* Clear ring buffer */
- 	case SYSLOG_ACTION_CLEAR:
--		syslog_print_all(NULL, 0, true);
-+		syslog_clear();
- 		break;
- 	/* Disable logging to console */
- 	case SYSLOG_ACTION_CONSOLE_OFF:
--- 
-2.13.7
-
+Thank you,
+Pavel
