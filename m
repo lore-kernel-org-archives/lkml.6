@@ -2,161 +2,130 @@ Return-Path: <SRS0=G4S6=JN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C25CC43144
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488EAC43144
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D65B268EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:57:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="PYLJBPNl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D65B268EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EEDC3268ED
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 03:58:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDC3268ED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753238AbeF0D4u (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Jun 2018 23:56:50 -0400
-Received: from pb-smtp2.pobox.com ([64.147.108.71]:50274 "EHLO
-        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbeF0D4s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Jun 2018 23:56:48 -0400
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id 54FC7E7782;
-        Tue, 26 Jun 2018 23:56:46 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
-        :subject:date:message-id:in-reply-to:references; s=sasl; bh=ABWv
-        dJzh4qOnthHLY9zePogflFs=; b=PYLJBPNlfai7KssOzRHPYcJfQBVDiZhw8ixP
-        V4DlhF0kYRvQ3a+qOcJkSX8877QcPFaytdovukSsurXR47P2VIPx14OgthBY+0JD
-        StPALUs/NqF5v0hOARORmN8AesL9xaGExaJgOYm6yoBpOa+dN0PWqGIx0SMq0ldS
-        344f6jM=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id 4CC31E7780;
-        Tue, 26 Jun 2018 23:56:46 -0400 (EDT)
-Received: from yoda.home (unknown [70.82.104.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S932356AbeF0D60 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Jun 2018 23:58:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42620 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932084AbeF0D6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Jun 2018 23:58:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id A194CE777D;
-        Tue, 26 Jun 2018 23:56:45 -0400 (EDT)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTP id EA1242DA0674;
-        Tue, 26 Jun 2018 23:56:44 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dave Mielke <Dave@mielke.cc>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        linux-kernel@vger.kernel.org, linux-console@vger.kernel.org
-Subject: [PATCH v3 3/3] vt: unicode fallback for scrollback
-Date:   Tue, 26 Jun 2018 23:56:42 -0400
-Message-Id: <20180627035642.8561-4-nicolas.pitre@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180627035642.8561-1-nicolas.pitre@linaro.org>
-References: <20180627035642.8561-1-nicolas.pitre@linaro.org>
-X-Pobox-Relay-ID: 1C1620EA-79BE-11E8-8995-40570C78B957-78420484!pb-smtp2.pobox.com
+        by mx1.redhat.com (Postfix) with ESMTPS id 5B904400B45A;
+        Wed, 27 Jun 2018 03:58:24 +0000 (UTC)
+Received: from redhat.com (ovpn-122-22.rdu2.redhat.com [10.10.122.22])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 448521C66D;
+        Wed, 27 Jun 2018 03:58:19 +0000 (UTC)
+Date:   Wed, 27 Jun 2018 06:58:18 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com
+Subject: Re: [PATCH v34 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Message-ID: <20180627065637-mutt-send-email-mst@kernel.org>
+References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com>
+ <1529928312-30500-3-git-send-email-wei.w.wang@intel.com>
+ <20180626002822-mutt-send-email-mst@kernel.org>
+ <5B31B71B.6080709@intel.com>
+ <20180626064338-mutt-send-email-mst@kernel.org>
+ <5B323140.1000306@intel.com>
+ <20180626163139-mutt-send-email-mst@kernel.org>
+ <5B32E742.8080902@intel.com>
+ <20180627053952-mutt-send-email-mst@kernel.org>
+ <5B32FDB5.4040506@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B32FDB5.4040506@intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 27 Jun 2018 03:58:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 27 Jun 2018 03:58:24 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is currently no provision for scrollback content in the core code,
-leaving that to backend video drivers where this can be highly optimized.
-There is currently no common method for those drivers to tell the core
-what part of the scrollback is actually displayed and what size the
-scrollback buffer is either. Because of that, the unicode screen buffer
-has no provision for any scrollback.
+On Wed, Jun 27, 2018 at 11:00:05AM +0800, Wei Wang wrote:
+> On 06/27/2018 10:41 AM, Michael S. Tsirkin wrote:
+> > On Wed, Jun 27, 2018 at 09:24:18AM +0800, Wei Wang wrote:
+> > > On 06/26/2018 09:34 PM, Michael S. Tsirkin wrote:
+> > > > On Tue, Jun 26, 2018 at 08:27:44PM +0800, Wei Wang wrote:
+> > > > > On 06/26/2018 11:56 AM, Michael S. Tsirkin wrote:
+> > > > > > On Tue, Jun 26, 2018 at 11:46:35AM +0800, Wei Wang wrote:
+> > > > > > 
+> > > > > > > > > +	if (!arrays)
+> > > > > > > > > +		return NULL;
+> > > > > > > > > +
+> > > > > > > > > +	for (i = 0; i < max_array_num; i++) {
+> > > > > > > > So we are getting a ton of memory here just to free it up a bit later.
+> > > > > > > > Why doesn't get_from_free_page_list get the pages from free list for us?
+> > > > > > > > We could also avoid the 1st allocation then - just build a list
+> > > > > > > > of these.
+> > > > > > > That wouldn't be a good choice for us. If we check how the regular
+> > > > > > > allocation works, there are many many things we need to consider when pages
+> > > > > > > are allocated to users.
+> > > > > > > For example, we need to take care of the nr_free
+> > > > > > > counter, we need to check the watermark and perform the related actions.
+> > > > > > > Also the folks working on arch_alloc_page to monitor page allocation
+> > > > > > > activities would get a surprise..if page allocation is allowed to work in
+> > > > > > > this way.
+> > > > > > > 
+> > > > > > mm/ code is well positioned to handle all this correctly.
+> > > > > I'm afraid that would be a re-implementation of the alloc functions,
+> > > > A re-factoring - you can share code. The main difference is locking.
+> > > > 
+> > > > > and
+> > > > > that would be much more complex than what we have. I think your idea of
+> > > > > passing a list of pages is better.
+> > > > > 
+> > > > > Best,
+> > > > > Wei
+> > > > How much memory is this allocating anyway?
+> > > > 
+> > > For every 2TB memory that the guest has, we allocate 4MB.
+> > Hmm I guess I'm missing something, I don't see it:
+> > 
+> > 
+> > +       max_entries = max_free_page_blocks(ARRAY_ALLOC_ORDER);
+> > +       entries_per_page = PAGE_SIZE / sizeof(__le64);
+> > +       entries_per_array = entries_per_page * (1 << ARRAY_ALLOC_ORDER);
+> > +       max_array_num = max_entries / entries_per_array +
+> > +                       !!(max_entries % entries_per_array);
+> > 
+> > Looks like you always allocate the max number?
+> 
+> Yes. We allocated the max number and then free what's not used.
+> For example, a 16TB guest, we allocate Four 4MB buffers and pass the 4
+> buffers to get_from_free_page_list. If it uses 3, then the remaining 1 "4MB
+> buffer" will end up being freed.
+> 
+> For today's guests, max_array_num is usually 1.
+> 
+> Best,
+> Wei
 
-At least we can provide backtranslated glyph values when the scrollback
-is active which should be plenty good enough for now.
+I see, it's based on total ram pages. It's reasonable but might
+get out of sync if memory is onlined quickly. So you want to
+detect that there's more free memory than can fit and
+retry the reporting.
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Tested-by: Dave Mielke <Dave@mielke.cc>
-Acked-by: Adam Borowski <kilobyte@angband.pl>
----
- drivers/tty/vt/vc_screen.c |  3 ++-
- drivers/tty/vt/vt.c        | 31 +++++++++++++++++++++++++++++--
- include/linux/selection.h  |  2 +-
- 3 files changed, 32 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/tty/vt/vc_screen.c b/drivers/tty/vt/vc_screen.c
-index 9c44252e52..2384ea85ff 100644
---- a/drivers/tty/vt/vc_screen.c
-+++ b/drivers/tty/vt/vc_screen.c
-@@ -311,7 +311,8 @@ vcs_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
- 			do {
- 				if (nr > this_round/4)
- 					nr = this_round/4;
--				vc_uniscr_copy_line(vc, con_buf0, row, col, nr);
-+				vc_uniscr_copy_line(vc, con_buf0, viewed,
-+						    row, col, nr);
- 				con_buf0 += nr * 4;
- 				this_round -= nr * 4;
- 				row++;
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 062ce6be79..2d14bb195d 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -533,13 +533,40 @@ int vc_uniscr_check(struct vc_data *vc)
-  * This must be preceded by a successful call to vc_uniscr_check() once
-  * the console lock has been taken.
-  */
--void vc_uniscr_copy_line(struct vc_data *vc, void *dest,
-+void vc_uniscr_copy_line(struct vc_data *vc, void *dest, int viewed,
- 			 unsigned int row, unsigned int col, unsigned int nr)
- {
- 	struct uni_screen *uniscr = get_vc_uniscr(vc);
-+	int offset = row * vc->vc_size_row + col * 2;
-+	unsigned long pos;
- 
- 	BUG_ON(!uniscr);
--	memcpy(dest, &uniscr->lines[row][col], nr * sizeof(char32_t));
-+
-+	pos = (unsigned long)screenpos(vc, offset, viewed);
-+	if (pos >= vc->vc_origin && pos < vc->vc_scr_end) {
-+		/*
-+		 * Desired position falls in the main screen buffer.
-+		 * However the actual row/col might be different if
-+		 * scrollback is active.
-+		 */
-+		row = (pos - vc->vc_origin) / vc->vc_size_row;
-+		col = ((pos - vc->vc_origin) % vc->vc_size_row) / 2;
-+		memcpy(dest, &uniscr->lines[row][col], nr * sizeof(char32_t));
-+	} else {
-+		/*
-+		 * Scrollback is active. For now let's simply backtranslate
-+		 * the screen glyphs until the unicode screen buffer does
-+		 * synchronize with console display drivers for a scrollback
-+		 * buffer of its own.
-+		 */
-+		u16 *p = (u16 *)pos;
-+		int mask = vc->vc_hi_font_mask | 0xff;
-+		char32_t *uni_buf = dest;
-+		while (nr--) {
-+			u16 glyph = scr_readw(p++) & mask;
-+			*uni_buf++ = inverse_translate(vc, glyph, true);
-+		}
-+	}
- }
- 
- 
-diff --git a/include/linux/selection.h b/include/linux/selection.h
-index 2b34df9f1e..067d2e99c7 100644
---- a/include/linux/selection.h
-+++ b/include/linux/selection.h
-@@ -43,7 +43,7 @@ extern void vcs_scr_writew(struct vc_data *vc, u16 val, u16 *org);
- extern void vcs_scr_updated(struct vc_data *vc);
- 
- extern int vc_uniscr_check(struct vc_data *vc);
--extern void vc_uniscr_copy_line(struct vc_data *vc, void *dest,
-+extern void vc_uniscr_copy_line(struct vc_data *vc, void *dest, int viewed,
- 				unsigned int row, unsigned int col,
- 				unsigned int nr);
- 
--- 
-2.17.1
-
+> 
+> 
+> 
