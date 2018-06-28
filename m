@@ -2,182 +2,108 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDA6C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D50C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65D4526511
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:01:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65D4526511
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 205C3243F8
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:08:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205C3243F8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751433AbeF1EBn (ORCPT
+        id S1752090AbeF1EIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 00:01:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38796 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750802AbeF1EBl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 00:01:41 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5S3wcFM055220
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 00:01:41 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvjuqk7gs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 00:01:40 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Thu, 28 Jun 2018 05:01:37 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 28 Jun 2018 05:01:35 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5S41YfI25493668
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 28 Jun 2018 04:01:34 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 724964C05C;
-        Thu, 28 Jun 2018 05:01:24 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 68EFF4C046;
-        Thu, 28 Jun 2018 05:01:23 +0100 (BST)
-Received: from [9.124.31.233] (unknown [9.124.31.233])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 28 Jun 2018 05:01:23 +0100 (BST)
-To:     darrick.wong@oracle.com
-Cc:     lkml <linux-kernel@vger.kernel.org>, allison.henderson@oracle.com,
-        hch@lst.de, Michael Ellerman <mpe@ellerman.id.au>,
-        linux-xfs@vger.kernel.org
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: xfs: Deadlock between fs_reclaim and sb_internal
-Date:   Thu, 28 Jun 2018 09:31:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 28 Jun 2018 00:08:45 -0400
+Received: from www.zeus03.de ([194.117.254.33]:60312 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751855AbeF1EIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 00:08:43 -0400
+Received: (qmail 15353 invoked from network); 28 Jun 2018 06:08:38 +0200
+Received: by mail.zeus03.de with ESMTPSA (ECDHE-RSA-AES256-GCM-SHA384 encrypted, authenticated); 28 Jun 2018 06:08:38 +0200
+X-UD-Smtp-Session: l3s3148p1@BpDD4qtvLJggAwDPW84CAAId4P/+oMhl
+Date:   Thu, 28 Jun 2018 06:08:37 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        ext Nishanth Menon <nm@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "Nori, Sekhar" <nsekhar@ti.com>, pgaj@cadence.com
+Subject: Re: [PATCH v5 09/10] gpio: Add a driver for Cadence I3C GPIO expander
+Message-ID: <20180628040837.25fpjubloxo277ag@katana>
+References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
+ <20180622104930.32050-10-boris.brezillon@bootlin.com>
+ <CACRpkdYmR3+urDk6StG7s=W3=oYHB6eqs7ORdMV=-S31QtOAqQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18062804-0020-0000-0000-0000029FC215
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062804-0021-0000-0000-000020EC43EE
-Message-Id: <ee795573-6ab3-361a-d076-b464293bdcc4@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=835 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806280042
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a3od6fvxi7bwproo"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYmR3+urDk6StG7s=W3=oYHB6eqs7ORdMV=-S31QtOAqQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Darrick,
 
-Lockdep is reporting a deadlock with following trace. Saw this on my
-powerpc vm with 4GB of ram, running Linus/master kernel. Though, I
-don't have exact testcase to reproduce it. Is this something known?
-
-
-[ 1797.620389] ======================================================
-[ 1797.620541] WARNING: possible circular locking dependency detected
-[ 1797.620695] 4.18.0-rc2+ #2 Not tainted
-[ 1797.620791] ------------------------------------------------------
-[ 1797.620942] kswapd0/362 is trying to acquire lock:
-[ 1797.621067] 0000000001ad2774 (sb_internal){.+.+}, at: xfs_trans_alloc+0x284/0x360 [xfs]
-[ 1797.621616] 
-[ 1797.621616] but task is already holding lock:
-[ 1797.621779] 00000000bb0609ea (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x10/0x60
-[ 1797.622090] 
-[ 1797.622090] which lock already depends on the new lock.
-[ 1797.622090] 
-[ 1797.622266] 
-[ 1797.622266] the existing dependency chain (in reverse order) is:
-[ 1797.622440] 
-[ 1797.622440] -> #1 (fs_reclaim){+.+.}:
-[ 1797.622609]        fs_reclaim_acquire.part.22+0x44/0x60
-[ 1797.622764]        kmem_cache_alloc+0x60/0x500
-[ 1797.622983]        kmem_zone_alloc+0xb4/0x168 [xfs]
-[ 1797.623220]        xfs_trans_alloc+0xac/0x360 [xfs]
-[ 1797.623454]        xfs_vn_update_time+0x278/0x420 [xfs]
-[ 1797.623576]        touch_atime+0xfc/0x120
-[ 1797.623668]        generic_file_read_iter+0x95c/0xbd0
-[ 1797.623948]        xfs_file_buffered_aio_read+0x98/0x2e0 [xfs]
-[ 1797.624190]        xfs_file_read_iter+0xac/0x170 [xfs]
-[ 1797.624304]        __vfs_read+0x128/0x1d0
-[ 1797.624388]        vfs_read+0xbc/0x1b0
-[ 1797.624476]        kernel_read+0x60/0xa0
-[ 1797.624562]        prepare_binprm+0xf8/0x1f0
-[ 1797.624676]        __do_execve_file.isra.13+0x7ac/0xc80
-[ 1797.624791]        sys_execve+0x58/0x70
-[ 1797.624880]        system_call+0x5c/0x70
-[ 1797.624965] 
-[ 1797.624965] -> #0 (sb_internal){.+.+}:
-[ 1797.625119]        lock_acquire+0xec/0x310
-[ 1797.625204]        __sb_start_write+0x18c/0x290
-[ 1797.625435]        xfs_trans_alloc+0x284/0x360 [xfs]
-[ 1797.625692]        xfs_iomap_write_allocate+0x230/0x470 [xfs]
-[ 1797.625945]        xfs_map_blocks+0x1a8/0x610 [xfs]
-[ 1797.626181]        xfs_do_writepage+0x1a8/0x9e0 [xfs]
-[ 1797.626414]        xfs_vm_writepage+0x4c/0x78 [xfs]
-[ 1797.626527]        pageout.isra.17+0x180/0x680
-[ 1797.626640]        shrink_page_list+0xe0c/0x1470
-[ 1797.626758]        shrink_inactive_list+0x3a4/0x890
-[ 1797.626872]        shrink_node_memcg+0x268/0x790
-[ 1797.626986]        shrink_node+0x124/0x630
-[ 1797.627089]        balance_pgdat+0x1f0/0x550
-[ 1797.627204]        kswapd+0x214/0x8c0
-[ 1797.627301]        kthread+0x1b8/0x1c0
-[ 1797.627389]        ret_from_kernel_thread+0x5c/0x88
-[ 1797.627509] 
-[ 1797.627509] other info that might help us debug this:
-[ 1797.627509] 
-[ 1797.627684]  Possible unsafe locking scenario:
-[ 1797.627684] 
-[ 1797.627820]        CPU0                    CPU1
-[ 1797.627965]        ----                    ----
-[ 1797.628072]   lock(fs_reclaim);
-[ 1797.628166]                                lock(sb_internal);
-[ 1797.628308]                                lock(fs_reclaim);
-[ 1797.628453]   lock(sb_internal);
-[ 1797.628551] 
-[ 1797.628551]  *** DEADLOCK ***
-[ 1797.628551] 
-[ 1797.628693] 1 lock held by kswapd0/362:
-[ 1797.628779]  #0: 00000000bb0609ea (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x10/0x60
-[ 1797.628955] 
-[ 1797.628955] stack backtrace:
-[ 1797.629067] CPU: 18 PID: 362 Comm: kswapd0 Not tainted 4.18.0-rc2+ #2
-[ 1797.629199] Call Trace:
-[ 1797.629311] [c0000000f4ebaff0] [c000000000cc4414] dump_stack+0xe8/0x164 (unreliable)
-[ 1797.629473] [c0000000f4ebb040] [c0000000001a9f54] print_circular_bug.isra.17+0x284/0x3d0
-[ 1797.629639] [c0000000f4ebb0e0] [c0000000001aed58] __lock_acquire+0x1d48/0x2020
-[ 1797.629797] [c0000000f4ebb260] [c0000000001af7cc] lock_acquire+0xec/0x310
-[ 1797.629933] [c0000000f4ebb330] [c000000000454c5c] __sb_start_write+0x18c/0x290
-[ 1797.630191] [c0000000f4ebb380] [d000000009b7896c] xfs_trans_alloc+0x284/0x360 [xfs]
-[ 1797.630443] [c0000000f4ebb3e0] [d000000009b58958] xfs_iomap_write_allocate+0x230/0x470 [xfs]
-[ 1797.630710] [c0000000f4ebb560] [d000000009b2c760] xfs_map_blocks+0x1a8/0x610 [xfs]
-[ 1797.630961] [c0000000f4ebb5d0] [d000000009b2eb20] xfs_do_writepage+0x1a8/0x9e0 [xfs]
-[ 1797.631223] [c0000000f4ebb6b0] [d000000009b2f3a4] xfs_vm_writepage+0x4c/0x78 [xfs]
-[ 1797.631384] [c0000000f4ebb720] [c0000000003692e0] pageout.isra.17+0x180/0x680
-[ 1797.631557] [c0000000f4ebb800] [c00000000036ccfc] shrink_page_list+0xe0c/0x1470
-[ 1797.631730] [c0000000f4ebb920] [c00000000036e064] shrink_inactive_list+0x3a4/0x890
-[ 1797.631912] [c0000000f4ebb9f0] [c00000000036ef48] shrink_node_memcg+0x268/0x790
-[ 1797.632078] [c0000000f4ebbb00] [c00000000036f594] shrink_node+0x124/0x630
-[ 1797.632213] [c0000000f4ebbbd0] [c0000000003714e0] balance_pgdat+0x1f0/0x550
-[ 1797.632350] [c0000000f4ebbcd0] [c000000000371a54] kswapd+0x214/0x8c0
-[ 1797.632488] [c0000000f4ebbdc0] [c0000000001506b8] kthread+0x1b8/0x1c0
-[ 1797.632624] [c0000000f4ebbe30] [c00000000000c3d4] ret_from_kernel_thread+0x5c/0x88
+--a3od6fvxi7bwproo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
-Thanks,
-Ravi
+> I see there was some heat in this discussion between you
+> and Andy, and it seems to be resolved. Which is good
+> because you are both senior contributors that I value
+> a lot.
 
++1
+
+
+--a3od6fvxi7bwproo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls0X0EACgkQFA3kzBSg
+KbZGuQ/+JXDMJCo6XGuicpcQb6G3cvLv/h/jkSJnR61ElmXs4kSOX8DFsszrMy+Y
+YUV9Br988qAEvJPsfbcEexjBJ5y2K6A3hpTUMJY0un2s23hJECxN9bV0Il0SPInT
+i0WwHnV7fn8aM7qbza/fuYh9N/5CXQRXE1SNJjyj8pVWwHXIayNla8lBaSCnyfgF
+myyd0EmEAxaPze7O2r++K326YhZOFSrcVYT5ScqOIMt/EQd1S4xN91Qx9zTWwMAJ
+27uES5566WnNJEclmuHQFu5hGAMB2X3k3w9HbHzxUInTHgB7g2IQbuHHTjqV8ogT
+qPNXCKFwIJhz6bxYRxo5Lie+Y2a3J9W+Gu6CIIeeZHFgDUfs3svnvSbuog01LZ00
+S+ysTxsSqn0PG2kYYJwNMWPueF6/t2IGsqsCpkB/KK6x0pWkv8c3bQsAtYGDC/Uv
+JIMHJ2cE1JSrWtdUt/gnGn5yysnpim0mdV3mBlkSrwSm7PFsVjThUeEmML8+L1Fm
+Y2VY+zDeJcd639d87ZTp+e8+r9HCqz+41HTC3zE94qXZVX9ZddgcubOm2WTaf6pa
+O3TMQUrNzlLhH3eHnyTiW6PraobNIHCvv8HJ1BmOfWCFVPfa18ZtcA5xN93VYGXg
+28nCx2jumkugOZ9KVoUABGMNaXhtHHhAAbN9DQs4cX4IuJky4C0=
+=buoG
+-----END PGP SIGNATURE-----
+
+--a3od6fvxi7bwproo--
