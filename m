@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 033D8C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B837C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC1825E2D
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:42:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC1825E2D
+	by mail.kernel.org (Postfix) with ESMTP id 3D1E925EB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:42:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1E925EB0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752358AbeF1DmU (ORCPT
+        id S1753187AbeF1DlN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 23:42:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9181 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751107AbeF1DlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 23:41:17 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6978BAB89F740;
-        Thu, 28 Jun 2018 11:41:03 +0800 (CST)
+        Wed, 27 Jun 2018 23:41:13 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52488 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751107AbeF1DlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 23:41:07 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 83B2965CD79E7;
+        Thu, 28 Jun 2018 11:41:02 +0800 (CST)
 Received: from linux-ioko.site (10.71.200.31) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
  14.3.382.0; Thu, 28 Jun 2018 11:40:54 +0800
@@ -33,9 +33,9 @@ To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <lipeng321@huawei.com>
-Subject: [PATCH net-next 11/11] net: hns3: use lower_32_bits and upper_32_bits
-Date:   Thu, 28 Jun 2018 12:12:29 +0800
-Message-ID: <1530159149-122284-12-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 10/11] net: hns3: remove back in struct hclge_hw
+Date:   Thu, 28 Jun 2018 12:12:28 +0800
+Message-ID: <1530159149-122284-11-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1530159149-122284-1-git-send-email-lipeng321@huawei.com>
 References: <1530159149-122284-1-git-send-email-lipeng321@huawei.com>
@@ -50,43 +50,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huazhong Tan <tanhuazhong@huawei.com>
 
-MACRO lower_32_bits and upper_32_bits can help to get bits 0-31
-and bits 32-63 of a number, so just use it.
+hclge_hw is embedded in hclge_dev, so use container_of instead of
+back to get hclge_dev.
 
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c  | 4 ++--
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 1 -
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h | 1 -
+ 3 files changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index 7049d0b..383ecf0 100644
+index c36d647..7049d0b 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -123,9 +123,9 @@ static void hclge_cmd_config_regs(struct hclge_cmq_ring *ring)
+@@ -152,7 +152,7 @@ static void hclge_cmd_init_regs(struct hclge_hw *hw)
  
- 	if (ring->flag == HCLGE_TYPE_CSQ) {
- 		hclge_write_dev(hw, HCLGE_NIC_CSQ_BASEADDR_L_REG,
--				(u32)dma);
-+				lower_32_bits(dma));
- 		hclge_write_dev(hw, HCLGE_NIC_CSQ_BASEADDR_H_REG,
--				(u32)((dma >> 31) >> 1));
-+				upper_32_bits(dma));
- 		hclge_write_dev(hw, HCLGE_NIC_CSQ_DEPTH_REG,
- 				(ring->desc_num >> HCLGE_NIC_CMQ_DESC_NUM_S) |
- 				HCLGE_NIC_CMQ_ENABLE);
-@@ -133,9 +133,9 @@ static void hclge_cmd_config_regs(struct hclge_cmq_ring *ring)
- 		hclge_write_dev(hw, HCLGE_NIC_CSQ_HEAD_REG, 0);
- 	} else {
- 		hclge_write_dev(hw, HCLGE_NIC_CRQ_BASEADDR_L_REG,
--				(u32)dma);
-+				lower_32_bits(dma));
- 		hclge_write_dev(hw, HCLGE_NIC_CRQ_BASEADDR_H_REG,
--				(u32)((dma >> 31) >> 1));
-+				upper_32_bits(dma));
- 		hclge_write_dev(hw, HCLGE_NIC_CRQ_DEPTH_REG,
- 				(ring->desc_num >> HCLGE_NIC_CMQ_DESC_NUM_S) |
- 				HCLGE_NIC_CMQ_ENABLE);
+ static int hclge_cmd_csq_clean(struct hclge_hw *hw)
+ {
+-	struct hclge_dev *hdev = (struct hclge_dev *)hw->back;
++	struct hclge_dev *hdev = container_of(hw, struct hclge_dev, hw);
+ 	struct hclge_cmq_ring *csq = &hw->cmq.csq;
+ 	u16 ntc = csq->next_to_clean;
+ 	struct hclge_desc *desc;
+@@ -216,7 +216,7 @@ static bool hclge_is_special_opcode(u16 opcode)
+  **/
+ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
+ {
+-	struct hclge_dev *hdev = (struct hclge_dev *)hw->back;
++	struct hclge_dev *hdev = container_of(hw, struct hclge_dev, hw);
+ 	struct hclge_desc *desc_to_use;
+ 	bool complete = false;
+ 	u32 timeout = 0;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 805c780..14a6991 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -5537,7 +5537,6 @@ static int hclge_pci_init(struct hclge_dev *hdev)
+ 
+ 	pci_set_master(pdev);
+ 	hw = &hdev->hw;
+-	hw->back = hdev;
+ 	hw->io_base = pcim_iomap(pdev, 2, 0);
+ 	if (!hw->io_base) {
+ 		dev_err(&pdev->dev, "Can't map configuration register space\n");
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 7488534..71d38b8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -190,7 +190,6 @@ struct hclge_hw {
+ 	int num_vec;
+ 	struct hclge_cmq cmq;
+ 	struct hclge_caps caps;
+-	void *back;
+ };
+ 
+ /* TQP stats */
 -- 
 2.9.3
 
