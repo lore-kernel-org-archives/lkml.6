@@ -2,116 +2,89 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC101C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5750CC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ADD32790F
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:23:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeXNvAKS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ADD32790F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F252A2791C
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:25:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F252A2791C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966026AbeF1UXD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 16:23:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752881AbeF1UXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 16:23:01 -0400
-Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF8F327921
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 20:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530217381;
-        bh=3uR/svpXwiY3T1jMgHIraI2J27+mcsWt0eEAkXT6Ynw=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=AeXNvAKSD5SmlZ2Acd3T49BfJNQ91gE98fLa1YFNnSyCYj8OxUk6lSlSTIRqlbchg
-         4p1HPsrqdyUmBZYMnAGKrVuBORSvh75swyfKjzRo0CmZ6c0LsDRB0U/AuMfMZ8bAnn
-         c8dioRdpVKhA5I0Pb/IbysKij/QEuRB/vSuAbnYs=
-Received: by mail-wm0-f46.google.com with SMTP id z137-v6so10356620wmc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 13:23:00 -0700 (PDT)
-X-Gm-Message-State: APt69E15CC+T+CuoNKf+x7irmd1QGQqy9MtyZRVMPN2bn6Lf0zBizR9f
-        55YVDBAJlhepgQtNxecFZpdV9gckcANNE9qg5Rva/Q==
-X-Google-Smtp-Source: AAOMgpdH4Bcr+YJ+YMSRjPqM2s1XPrpXlXLU25NobWOo0N2oYjBYQvYScVHXl+wn1JDFd7gwnQNlPCcFzyUAmurPJd8=
-X-Received: by 2002:a1c:4a9d:: with SMTP id n29-v6mr8690665wmi.46.1530217379095;
- Thu, 28 Jun 2018 13:22:59 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:7e92:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 13:22:38
- -0700 (PDT)
-In-Reply-To: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 28 Jun 2018 13:22:38 -0700
-X-Gmail-Original-Message-ID: <CALCETrULo_VP4XHbXcZTevWY5d-6PdHUtrDS8DEF_OaozQOaNg@mail.gmail.com>
-Message-ID: <CALCETrULo_VP4XHbXcZTevWY5d-6PdHUtrDS8DEF_OaozQOaNg@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1754314AbeF1UZ4 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 16:25:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9136 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752642AbeF1UZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 16:25:55 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2B679D84EA5C0;
+        Fri, 29 Jun 2018 04:25:42 +0800 (CST)
+Received: from [127.0.0.1] (10.47.90.156) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Fri, 29 Jun 2018
+ 04:25:38 +0800
+Subject: Re: [PATCH] arm64: dts: hikey: Define wl1835 power capabilities
+To:     Ryan Grachek <ryan@edited.us>
+References: <20180613151305.17240-1-ryan@edited.us>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B35443B.2060903@hisilicon.com>
+Date:   Thu, 28 Jun 2018 21:25:31 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180613151305.17240-1-ryan@edited.us>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.47.90.156]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 9:23 AM, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
-> Validating the abort_ip field of rseq_cs ensures that the kernel don't
-> return to an invalid address when returning to userspace after an abort.
-> I don't fully trust each architecture code to cleanly deal with invalid
-> return addresses.
->
-> Validating the range [ start_ip, start_ip + post_commit_offset ] is an
-> extra validation step ensuring that userspace provides valid values to
-> describe the critical section.
->
-> If validation fails, the process is killed with a segmentation fault.
->
-> Change the rseq ABI so rseq_cs start_ip, post_commit_offset and abort_ip
-> fields are seen as 64-bit fields by both 32-bit and 64-bit kernels rather
-> that ignoring the 32 upper bits on 32-bit kernels. This ensures we have
-> a consistent behavior for a 32-bit binary executed on 32-bit kernels and
-> in compat mode on 64-bit kernels.
+Hi Ryan,
 
-This is okay with me for a fix outside the merge window.  Can you do a
-followup for the next merge window that fixes it better, though?  In
-particular, TASK_SIZE is generally garbage.  I think a better fix
-would be something like adding a new arch-overridable helper like:
+On 2018/6/13 16:13, Ryan Grachek wrote:
+> These properties are required for compatibility with runtime PM.
+> Without these properties, MMC host controller will not be aware
+> of power capabilities. When the wlcore driver attempts to power
+> on the device, it will erroneously fail with -EACCES.
+> 
+> Signed-off-by: Ryan Grachek <ryan@edited.us>
+> ---
 
-static inline unsigned long current_max_user_addr(void) { return TASK_SIZE; }
+Applied to hisilicon fix tree.
+Thanks!
 
-and overriding it on x86 as something like:
+Best Regards,
+Wei
 
-static inline unsigned long current_max_user_addr(void) {
-#ifdef CONFIG_IA32_EMULATION
-  return user_64bit_mode(current_pt_regs()) ? TASK_SIZE_MAX : (1UL << 32) - 1;
-#else
-  return TASK_SIZE_MAX;
-}
+>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> index 38f881955217..c5feca8cd10b 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> +++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+> @@ -323,6 +323,8 @@
+>  			bus-width = <0x4>;
+>  			cap-sd-highspeed;
+>  			non-removable;
+> +			cap-power-off-card;
+> +			keep-power-in-suspend;
+>  			vmmc-supply = <&reg_vdd_3v3>;
+>  			mmc-pwrseq = <&wl1835_pwrseq>;
+>  
+> 
 
-TASK_SIZE really needs to die.
