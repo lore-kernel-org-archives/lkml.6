@@ -4,55 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDDBC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80235C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7998227637
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3062827637
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EnY9KF/A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7998227637
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LUQuXuLi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3062827637
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935527AbeF1Pqw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:46:52 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36611 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967319AbeF1Ppb (ORCPT
+        id S1754131AbeF1Pq4 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:46:56 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36868 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967314AbeF1Ppa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:45:31 -0400
-Received: by mail-wm0-f65.google.com with SMTP id u18-v6so9602254wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:45:30 -0700 (PDT)
+        Thu, 28 Jun 2018 11:45:30 -0400
+Received: by mail-wr0-f196.google.com with SMTP id k6-v6so6009749wrp.4
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:45:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=khbfR0A1jc9cKblSJKeoc1wGMCANZRoaQHs1pMgMrS0=;
-        b=EnY9KF/AmhXIp6ruDeq4SkXzGchRIRzF1759AjT3m3rjhJPCmhGvZjOMAxaeJ2NOTx
-         FxfMOULgBvxNmmurjAiJERwozC++180LRCvJlMeNNiDIMzg1HK2J5CYbqB1F1b8iB+ge
-         kgLCNfhQHx/BzbiyaVl4lgovMS+/v/jUlet28=
+        bh=YT5me/HnRjYE9yp/0nmuxMBvwSfbkC95sqdLOxFzYCo=;
+        b=LUQuXuLinYCDUNKo+4+Q7SVtwB/719UuWQM1z0wXEsOyEU7vN7h3s5xvp4wrz6C9Mx
+         EDvrhjFaOPGXeqebieRzVOO1PERkEhSxQUxHT9QvOV+HK34Bij0VqR1zZM27hDHSoPYR
+         twIAjZb6QbBc0pdEoZyqFgUdrTBwWZv8ggJHA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=khbfR0A1jc9cKblSJKeoc1wGMCANZRoaQHs1pMgMrS0=;
-        b=OgfIt3/jnPvE12oDUEEB3K4pbjM2cvjq2Tv2TPtvsXf8XgvSpQbUgwinqR92zqhgXN
-         gZLgL2hkX676bre5BoofdgjEJf6UUtAwNQNe6DNe4Vy+Xcxt9ALCzFJRFUx1jLVG8N5E
-         3vK11qvh3IlkHlG4TZplnxKhT04lXhNTSANrD63LmJ+bekooQVtOtQduH1/MPhhrPNRi
-         qG+97quLhq7glNnKF4ZPXbtbbLb4LUzma6MR3TTV3LrbFFWRebSAkJLknJBYxy8w0Of0
-         Y6LTvq+HrFsMEyeOiE9Xt3vpfAVfIrjrk3/ssOhrHmNPosXCBRkKfwtj/XNfBsEc4Boh
-         XXww==
-X-Gm-Message-State: APt69E3lfrqlxMOuvsE/gsdZqY/znRug/c0scu1io4n01YLQAVyYtCiX
-        q/eziLi0ro3jKJutIbkq7ziRVQ==
-X-Google-Smtp-Source: AAOMgpfsffkTKRmDhGqZkArnrLqva3O4BBYQ1FCMxXJsAIRCe3hF5bYWt+sKrkdFxphj0g2tr6vVOg==
-X-Received: by 2002:a1c:afd4:: with SMTP id y203-v6mr8286102wme.55.1530200729927;
-        Thu, 28 Jun 2018 08:45:29 -0700 (PDT)
+        bh=YT5me/HnRjYE9yp/0nmuxMBvwSfbkC95sqdLOxFzYCo=;
+        b=TD5LpxKykOssMjTOZp+J/eEFc+kwAlbWn4b32ba7ci6cOq5Wsiyc7DRFZVegX1Qq3r
+         aT1t5gFikPh+5DHxpmzwqbQmS7uyLsdYbwItjnF3YSUZDrHoI/MoCiYLt3481ZU5c3tU
+         eyHLXRCqTtXCmR2jbad+SebdIBkW38Yr64DHeTWQpNC3umyPWQkCe6e92JA3e2rWtpqE
+         GbmQ5Q8P43J4d3nj2dqzzEXE3OKEsV+a0ex4j5M4W3DwMgYszzShXPcZaYKk4i86OmOo
+         HaqrC+Q8SmpMH/sc7/e+JdSgVg6NrwTDdquri65AeVKFP3VjWvqEz5ReUhAJYYY9xPUe
+         bWHg==
+X-Gm-Message-State: APt69E2l1U2tzJEC4roGE/1IJgvnVGpGl+ucCFhxUwzzaiTZit/dX2Rj
+        z2o7ezxbVbstIi7UBoHjgs2BGQ==
+X-Google-Smtp-Source: AAOMgpcFNgPawcqK9hIwkh0s3ua+//wR2P/oBmBBGTeP2FAtXoPOMCwLZ0dgMCg8v2VDv6wxK7ufwQ==
+X-Received: by 2002:adf:f708:: with SMTP id r8-v6mr4372177wrp.85.1530200728655;
+        Thu, 28 Jun 2018 08:45:28 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:21c3:ec41:bec9:c38])
-        by smtp.gmail.com with ESMTPSA id i4-v6sm6202115wrq.28.2018.06.28.08.45.28
+        by smtp.gmail.com with ESMTPSA id i4-v6sm6202115wrq.28.2018.06.28.08.45.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 28 Jun 2018 08:45:29 -0700 (PDT)
+        Thu, 28 Jun 2018 08:45:27 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     peterz@infradead.org, mingo@kernel.org,
         linux-kernel@vger.kernel.org
@@ -64,9 +65,9 @@ Cc:     rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
         claudio@evidence.eu.com,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH 06/11] sched/irq: add irq utilization tracking
-Date:   Thu, 28 Jun 2018 17:45:09 +0200
-Message-Id: <1530200714-4504-7-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH 05/11] cpufreq/schedutil: use dl utilization tracking
+Date:   Thu, 28 Jun 2018 17:45:08 +0200
+Message-Id: <1530200714-4504-6-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
 References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
@@ -75,203 +76,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-interrupt and steal time are the only remaining activities tracked by
-rt_avg. Like for sched classes, we can use PELT to track their average
-utilization of the CPU. But unlike sched class, we don't track when
-entering/leaving interrupt; Instead, we take into account the time spent
-under interrupt context when we update rqs' clock (rq_clock_task).
-This also means that we have to decay the normal context time and account
-for interrupt time during the update.
-
-That's also important to note that because
-  rq_clock == rq_clock_task + interrupt time
-and rq_clock_task is used by a sched class to compute its utilization, the
-util_avg of a sched class only reflects the utilization of the time spent
-in normal context and not of the whole time of the CPU. The utilization of
-interrupt gives an more accurate level of utilization of CPU.
-The CPU utilization is :
-  avg_irq + (1 - avg_irq / max capacity) * /Sum avg_rq
-
-Most of the time, avg_irq is small and neglictible so the use of the
-approximation CPU utilization = /Sum avg_rq was enough
+Now that we have both the dl class bandwidth requirement and the dl class
+utilization, we can detect when CPU is fully used so we should run at max.
+Otherwise, we keep using the dl bandwidth requirement to define the
+utilization of the CPU
 
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/core.c  |  4 +++-
- kernel/sched/fair.c  | 13 ++++++++++---
- kernel/sched/pelt.c  | 40 ++++++++++++++++++++++++++++++++++++++++
- kernel/sched/pelt.h  | 16 ++++++++++++++++
- kernel/sched/sched.h |  3 +++
- 5 files changed, 72 insertions(+), 4 deletions(-)
+ kernel/sched/cpufreq_schedutil.c | 23 +++++++++++++++++------
+ kernel/sched/sched.h             |  7 ++++++-
+ 2 files changed, 23 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 78d8fac..e5263a4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -18,6 +18,8 @@
- #include "../workqueue_internal.h"
- #include "../smpboot.h"
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 9c5e92e..edfbfc1 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -56,6 +56,7 @@ struct sugov_cpu {
+ 	/* The fields below are only needed when sharing a policy: */
+ 	unsigned long		util_cfs;
+ 	unsigned long		util_dl;
++	unsigned long		bw_dl;
+ 	unsigned long		util_rt;
+ 	unsigned long		max;
  
-+#include "pelt.h"
+@@ -187,6 +188,7 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
+ 	sg_cpu->util_cfs = cpu_util_cfs(rq);
+ 	sg_cpu->util_dl  = cpu_util_dl(rq);
++	sg_cpu->bw_dl    = cpu_bw_dl(rq);
+ 	sg_cpu->util_rt  = cpu_util_rt(rq);
+ }
+ 
+@@ -198,20 +200,29 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+ 	if (rq->rt.rt_nr_running)
+ 		return sg_cpu->max;
+ 
+-	util = sg_cpu->util_dl;
+-	util += sg_cpu->util_cfs;
++	util = sg_cpu->util_cfs;
+ 	util += sg_cpu->util_rt;
+ 
++	if ((util + sg_cpu->util_dl) >= sg_cpu->max)
++		return sg_cpu->max;
 +
- #define CREATE_TRACE_POINTS
- #include <trace/events/sched.h>
- 
-@@ -186,7 +188,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- 
- #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
- 	if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
--		sched_rt_avg_update(rq, irq_delta + steal);
-+		update_irq_load_avg(rq, irq_delta + steal);
- #endif
+ 	/*
+-	 * Utilization required by DEADLINE must always be granted while, for
+-	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
+-	 * gracefully reduce the frequency when no tasks show up for longer
++	 * As there is still idle time on the CPU, we need to compute the
++	 * utilization level of the CPU.
++	 *
++	 * Bandwidth required by DEADLINE must always be granted while, for
++	 * FAIR and RT, we use blocked utilization of IDLE CPUs as a mechanism
++	 * to gracefully reduce the frequency when no tasks show up for longer
+ 	 * periods of time.
+ 	 *
+ 	 * Ideally we would like to set util_dl as min/guaranteed freq and
+ 	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+ 	 * ready for such an interface. So, we only do the latter for now.
+ 	 */
++
++	/* Add DL bandwidth requirement */
++	util += sg_cpu->bw_dl;
++
+ 	return min(sg_cpu->max, util);
  }
  
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ffce4b2..d2758e3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7289,7 +7289,7 @@ static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
- 	return false;
- }
- 
--static inline bool others_rqs_have_blocked(struct rq *rq)
-+static inline bool others_have_blocked(struct rq *rq)
+@@ -367,7 +378,7 @@ static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return false; }
+  */
+ static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu, struct sugov_policy *sg_policy)
  {
- 	if (READ_ONCE(rq->avg_rt.util_avg))
- 		return true;
-@@ -7297,6 +7297,11 @@ static inline bool others_rqs_have_blocked(struct rq *rq)
- 	if (READ_ONCE(rq->avg_dl.util_avg))
- 		return true;
- 
-+#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-+	if (READ_ONCE(rq->avg_irq.util_avg))
-+		return true;
-+#endif
-+
- 	return false;
+-	if (cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl)
++	if (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_dl)
+ 		sg_policy->need_freq_update = true;
  }
- 
-@@ -7361,8 +7366,9 @@ static void update_blocked_averages(int cpu)
- 	}
- 	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
- 	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-+	update_irq_load_avg(rq, 0);
- 	/* Don't need periodic decay once load/util_avg are null */
--	if (others_rqs_have_blocked(rq))
-+	if (others_have_blocked(rq))
- 		done = false;
- 
- #ifdef CONFIG_NO_HZ_COMMON
-@@ -7431,9 +7437,10 @@ static inline void update_blocked_averages(int cpu)
- 	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
- 	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
- 	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-+	update_irq_load_avg(rq, 0);
- #ifdef CONFIG_NO_HZ_COMMON
- 	rq->last_blocked_load_update_tick = jiffies;
--	if (!cfs_rq_has_blocked(cfs_rq) && !others_rqs_have_blocked(rq))
-+	if (!cfs_rq_has_blocked(cfs_rq) && !others_have_blocked(rq))
- 		rq->has_blocked_load = 0;
- #endif
- 	rq_unlock_irqrestore(rq, &rf);
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index 8b78b63..ead6d8b 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -357,3 +357,43 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
- 
- 	return 0;
- }
-+
-+#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-+/*
-+ * irq:
-+ *
-+ *   util_sum = \Sum se->avg.util_sum but se->avg.util_sum is not tracked
-+ *   util_sum = cpu_scale * load_sum
-+ *   runnable_load_sum = load_sum
-+ *
-+ */
-+
-+int update_irq_load_avg(struct rq *rq, u64 running)
-+{
-+	int ret = 0;
-+	/*
-+	 * We know the time that has been used by interrupt since last update
-+	 * but we don't when. Let be pessimistic and assume that interrupt has
-+	 * happened just before the update. This is not so far from reality
-+	 * because interrupt will most probably wake up task and trig an update
-+	 * of rq clock during which the metric si updated.
-+	 * We start to decay with normal context time and then we add the
-+	 * interrupt context time.
-+	 * We can safely remove running from rq->clock because
-+	 * rq->clock += delta with delta >= running
-+	 */
-+	ret = ___update_load_sum(rq->clock - running, rq->cpu, &rq->avg_irq,
-+				0,
-+				0,
-+				0);
-+	ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
-+				1,
-+				1,
-+				1);
-+
-+	if (ret)
-+		___update_load_avg(&rq->avg_irq, 1, 1);
-+
-+	return ret;
-+}
-+#endif
-diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-index 0e4f912..d2894db 100644
---- a/kernel/sched/pelt.h
-+++ b/kernel/sched/pelt.h
-@@ -6,6 +6,16 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
- int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
- int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
- 
-+#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-+int update_irq_load_avg(struct rq *rq, u64 running);
-+#else
-+static inline int
-+update_irq_load_avg(struct rq *rq, u64 running)
-+{
-+	return 0;
-+}
-+#endif
-+
- /*
-  * When a task is dequeued, its estimated utilization should not be update if
-  * its util_avg has not been updated at least once.
-@@ -51,6 +61,12 @@ update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
- {
- 	return 0;
- }
-+
-+static inline int
-+update_irq_load_avg(struct rq *rq, u64 running)
-+{
-+	return 0;
-+}
- #endif
- 
  
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index ef5d6aa..377be2b 100644
+index 7d7d4f4..ef5d6aa 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -850,6 +850,9 @@ struct rq {
- 	u64			age_stamp;
- 	struct sched_avg	avg_rt;
- 	struct sched_avg	avg_dl;
-+#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-+	struct sched_avg	avg_irq;
-+#endif
- 	u64			idle_stamp;
- 	u64			avg_idle;
+@@ -2192,11 +2192,16 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+ #endif
  
+ #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+-static inline unsigned long cpu_util_dl(struct rq *rq)
++static inline unsigned long cpu_bw_dl(struct rq *rq)
+ {
+ 	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+ }
+ 
++static inline unsigned long cpu_util_dl(struct rq *rq)
++{
++	return READ_ONCE(rq->avg_dl.util_avg);
++}
++
+ static inline unsigned long cpu_util_cfs(struct rq *rq)
+ {
+ 	unsigned long util = READ_ONCE(rq->cfs.avg.util_avg);
 -- 
 2.7.4
 
