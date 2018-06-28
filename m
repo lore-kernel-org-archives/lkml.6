@@ -2,463 +2,309 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCA5C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF895C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8554D26CD9
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:16:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8554D26CD9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 7DA5226CD9
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:17:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i9lc8IzI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DA5226CD9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752888AbeF1FQu convert rfc822-to-8bit (ORCPT
+        id S1753510AbeF1FRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 01:16:50 -0400
-Received: from mailoutvs35.siol.net ([185.57.226.226]:48603 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751466AbeF1FQs (ORCPT
+        Thu, 28 Jun 2018 01:17:44 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33495 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753249AbeF1FRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 01:16:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id D438052060B;
-        Thu, 28 Jun 2018 07:16:45 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id aTn74bYr9D70; Thu, 28 Jun 2018 07:16:44 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 6BDBB5201BF;
-        Thu, 28 Jun 2018 07:16:44 +0200 (CEST)
-Received: from jernej-laptop.localnet (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 1EA8252060B;
-        Thu, 28 Jun 2018 07:16:43 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3 23/24] ARM: dts: sun8i: r40: Add HDMI pipeline
-Date:   Thu, 28 Jun 2018 07:15:18 +0200
-Message-ID: <21259128.K3MyN3b6Bq@jernej-laptop>
-In-Reply-To: <CAGb2v66d-L4+TAgOMoPfpK2WAc3LKfprLB7tiAFL4YeL3Ogoow@mail.gmail.com>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-24-jernej.skrabec@siol.net> <CAGb2v66d-L4+TAgOMoPfpK2WAc3LKfprLB7tiAFL4YeL3Ogoow@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 28 Jun 2018 01:17:42 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 6-v6so2183240plb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 22:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=1sXyGnsUoHmX0XUgMFFYCEHO/eyeQgY9L9LZQvTIMNw=;
+        b=i9lc8IzIvhRGmj9hsmd50yvrwRtAxWfCpnvP9CaNv4nzWN2ykv8UOUfw5vAA8d223W
+         dX3hKsVGcPqSvvsKtnny/QQrQnxiC2FmS13V55tbf5GhECHKcbUBzPoCttV8WxaeVAuk
+         BNXsR24B7PAESi7Bn3mn9tFVl4BUPVkFOi/mM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1sXyGnsUoHmX0XUgMFFYCEHO/eyeQgY9L9LZQvTIMNw=;
+        b=i7BPRl6HU2w0MLjVg/4E5niJZrqg74ibn3saatVv2KdIrRG4Tywq1qqFNYgrBCaI4T
+         k+CuwBHoSLJ7AIfwNkkkRBJ7vbpOIYMi1Rm50LbdTn2MESOorT7WSIvm/JlLmtOw7Fog
+         TJwWW7xXxyNUYj7koNsS7oz3Bs0hjLapJNL87e3SINNpi159DuuveF02ij26E/RLu5dJ
+         Z7tqWc/AiOQKfrTKhLW/fC33TSr2OMBkxdKRUyCFWaTVUFWGbCYRTo66TDpLBQCskSjs
+         r1CH2mrbxZLe5fp1NwfaXOKwTZRXWTVwNs7b5dUoWR1aIWQaJLDvrewwxBl3napAwJoV
+         OhsA==
+X-Gm-Message-State: APt69E2k9qeMhoS7/rbnSs81IxQlhbqcGk7nx4ttK0BpG6+97V4rSLgU
+        1eQVN4P8OxmziN5VJ6Bbkw02Tw==
+X-Google-Smtp-Source: ADUXVKLgRuOjzvaNJSoJ34q0JDEFsdnf+uTJgoqAZfDkErYyRShROwZ59SETNQj19PY1i7pSdHuO7Q==
+X-Received: by 2002:a17:902:e093:: with SMTP id cb19-v6mr9046871plb.189.1530163061873;
+        Wed, 27 Jun 2018 22:17:41 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id k71-v6sm16726798pga.62.2018.06.27.22.17.39
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 27 Jun 2018 22:17:41 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc:     bjorn.andersson@linaro.org, baolin.wang@linaro.org,
+        broonie@kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] leds: core: Introduce generic pattern interface
+Date:   Thu, 28 Jun 2018 13:16:40 +0800
+Message-Id: <03bc9a51ccae38cdc86934746aee9f75ec667cfd.1530162340.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne četrtek, 28. junij 2018 ob 04:50:09 CEST je Chen-Yu Tsai napisal(a):
-> On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Add all entries needed for HDMI to function properly.
-> > 
-> > Since R40 has highly configurable pipeline, both mixers and both TCON
-> > TVs are added. Board specific DT should then connect them together
-> > trough TCON TOP muxers to best fit the purpose of the board.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  arch/arm/boot/dts/sun8i-r40.dtsi | 269 +++++++++++++++++++++++++++++++
-> >  1 file changed, 269 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi
-> > b/arch/arm/boot/dts/sun8i-r40.dtsi index 173dcc1652d2..a2a75fb04caf
-> > 100644
-> > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
-> > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-> > @@ -42,8 +42,11 @@
-> > 
-> >   */
-> >  
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > 
-> > +#include <dt-bindings/clock/sun8i-de2.h>
-> > 
-> >  #include <dt-bindings/clock/sun8i-r40-ccu.h>
-> > 
-> > +#include <dt-bindings/clock/sun8i-tcon-top.h>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Maxime, above line breaks compilation for build robot, sorry.
+Some LED controllers have support for autonomously controlling
+brightness over time, according to some preprogrammed pattern or
+function.
 
-> > 
-> >  #include <dt-bindings/reset/sun8i-r40-ccu.h>
-> > 
-> > +#include <dt-bindings/reset/sun8i-de2.h>
-> > 
-> >  / {
-> >  
-> >         #address-cells = <1>;
-> > 
-> > @@ -99,12 +102,76 @@
-> > 
-> >                 };
-> >         
-> >         };
-> > 
-> > +       de: display-engine {
-> > +               compatible = "allwinner,sun8i-r40-display-engine",
-> > +                            "allwinner,sun8i-h3-display-engine";
-> 
-> Given that the display pipeline looks different, they should not be
-> compatible.
+This adds a new optional operator that LED class drivers can implement
+if they support such functionality as well as a new device attribute to
+configure the pattern for a given LED.
 
-Ok.
+[Baolin Wang did some minor improvements.]
 
-> 
-> > +               allwinner,pipelines = <&mixer0>, <&mixer1>;
-> > +               status = "disabled";
-> > +       };
-> > +
-> > 
-> >         soc {
-> >         
-> >                 compatible = "simple-bus";
-> >                 #address-cells = <1>;
-> >                 #size-cells = <1>;
-> >                 ranges;
-> > 
-> > +               display_clocks: clock@1000000 {
-> > +                       compatible = "allwinner,sun8i-r40-de2-clk",
-> > +                                    "allwinner,sun8i-h3-de2-clk";
-> > +                       reg = <0x01000000 0x100000>;
-> > +                       clocks = <&ccu CLK_DE>,
-> > +                                <&ccu CLK_BUS_DE>;
-> > +                       clock-names = "mod",
-> > +                                     "bus";
-> > +                       resets = <&ccu RST_BUS_DE>;
-> > +                       #clock-cells = <1>;
-> > +                       #reset-cells = <1>;
-> > +               };
-> > +
-> > +               mixer0: mixer@1100000 {
-> > +                       compatible = "allwinner,sun8i-r40-de2-mixer-0";
-> > +                       reg = <0x01100000 0x100000>;
-> > +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
-> > +                                <&display_clocks CLK_MIXER0>;
-> > +                       clock-names = "bus",
-> > +                                     "mod";
-> > +                       resets = <&display_clocks RST_MIXER0>;
-> > +
-> > +                       ports {
-> > +                               #address-cells = <1>;
-> > +                               #size-cells = <0>;
-> > +
-> > +                               mixer0_out: port@1 {
-> > +                                       reg = <1>;
-> > +                                       mixer0_out_tcon_top: endpoint {
-> > +                                               remote-endpoint =
-> > <&tcon_top_mixer0_in_mixer0>; +                                       };
-> > +                               };
-> > +                       };
-> > +               };
-> > +
-> > +               mixer1: mixer@1200000 {
-> > +                       compatible = "allwinner,sun8i-r40-de2-mixer-1";
-> > +                       reg = <0x01200000 0x100000>;
-> > +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
-> > +                                <&display_clocks CLK_MIXER1>;
-> > +                       clock-names = "bus",
-> > +                                     "mod";
-> > +                       resets = <&display_clocks RST_WB>;
-> > +
-> > +                       ports {
-> > +                               #address-cells = <1>;
-> > +                               #size-cells = <0>;
-> > +
-> > +                               mixer1_out: port@1 {
-> > +                                       reg = <1>;
-> > +                                       mixer1_out_tcon_top: endpoint {
-> > +                                               remote-endpoint =
-> > <&tcon_top_mixer1_in_mixer1>; +                                       };
-> > +                               };
-> > +                       };
-> > +               };
-> > +
-> > 
-> >                 nmi_intc: interrupt-controller@1c00030 {
-> >                 
-> >                         compatible = "allwinner,sun7i-a20-sc-nmi";
-> >                         interrupt-controller;
-> > 
-> > @@ -451,6 +518,163 @@
-> > 
-> >                         #size-cells = <0>;
-> >                 
-> >                 };
-> > 
-> > +               tcon_top: tcon-top@1c70000 {
-> > +                       compatible = "allwinner,sun8i-r40-tcon-top";
-> > +                       reg = <0x01c70000 0x1000>;
-> > +                       clocks = <&ccu CLK_BUS_TCON_TOP>,
-> > +                                <&ccu CLK_TCON_TV0>,
-> > +                                <&ccu CLK_TVE0>,
-> > +                                <&ccu CLK_TCON_TV1>,
-> > +                                <&ccu CLK_TVE1>,
-> > +                                <&ccu CLK_DSI_DPHY>;
-> > +                       clock-names = "bus",
-> > +                                     "tcon-tv0",
-> > +                                     "tve0",
-> > +                                     "tcon-tv1",
-> > +                                     "tve1",
-> > +                                     "dsi";
-> > +                       clock-output-names = "tcon-top-tv0",
-> > +                                            "tcon-top-tv1",
-> > +                                            "tcon-top-dsi";
-> > +                       resets = <&ccu RST_BUS_TCON_TOP>;
-> > +                       #clock-cells = <1>;
-> > +
-> > +                       ports {
-> > +                               #address-cells = <1>;
-> > +                               #size-cells = <0>;
-> > +
-> > +                               tcon_top_mixer0_in: port@0 {
-> > +                                       reg = <0>;
-> > +
-> > +                                       tcon_top_mixer0_in_mixer0:
-> > endpoint { +                                              
-> > remote-endpoint = <&mixer0_out_tcon_top>; +                              
-> >         };
-> > +                               };
-> > +
-> > +                               tcon_top_mixer0_out: port@1 {
-> > +                                       #address-cells = <1>;
-> > +                                       #size-cells = <0>;
-> > +                                       reg = <1>;
-> > +
-> > +                                       tcon_top_mixer0_out_tcon_lcd0:
-> > endpoint@0 { +                                               reg = <0>;
-> > +                                       };
-> > +
-> > +                                       tcon_top_mixer0_out_tcon_lcd1:
-> > endpoint@1 { +                                               reg = <1>;
-> > +                                       };
-> > +
-> > +                                       tcon_top_mixer0_out_tcon_tv0:
-> > endpoint@2 { +                                               reg = <2>;
-> > +                                       };
-> > +
-> > +                                       tcon_top_mixer0_out_tcon_tv1:
-> > endpoint@3 { +                                               reg = <3>;
-> > +                                       };
-> > +                               };
-> > +
-> > +                               tcon_top_mixer1_in: port@2 {
-> > +                                       reg = <2>;
-> > +
-> > +                                       tcon_top_mixer1_in_mixer1:
-> > endpoint { +                                              
-> > remote-endpoint = <&mixer1_out_tcon_top>; +                              
-> >         };
-> > +                               };
-> > +
-> > +                               tcon_top_mixer1_out: port@3 {
-> > +                                       #address-cells = <1>;
-> > +                                       #size-cells = <0>;
-> > +                                       reg = <3>;
-> > +
-> > +                                       tcon_top_mixer1_out_tcon_lcd0:
-> > endpoint@0 { +                                               reg = <0>;
-> > +                                       };
-> > +
-> > +                                       tcon_top_mixer1_out_tcon_lcd1:
-> > endpoint@1 { +                                               reg = <1>;
-> > +                                       };
-> > +
-> > +                                       tcon_top_mixer1_out_tcon_tv0:
-> > endpoint@2 { +                                               reg = <2>;
-> > +                                       };
-> > +
-> > +                                       tcon_top_mixer1_out_tcon_tv1:
-> > endpoint@3 { +                                               reg = <3>;
-> > +                                       };
-> > +                               };
-> > +
-> > +                               tcon_top_hdmi_in: port@4 {
-> > +                                       #address-cells = <1>;
-> > +                                       #size-cells = <0>;
-> > +                                       reg = <4>;
-> > +
-> > +                                       tcon_top_hdmi_in_tcon_tv0:
-> > endpoint@0 { +                                               reg = <0>;
-> > +                                       };
-> > +
-> > +                                       tcon_top_hdmi_in_tcon_tv1:
-> > endpoint@1 { +                                               reg = <1>;
-> > +                                       };
-> > +                               };
-> > +
-> > +                               tcon_top_hdmi_out: port@5 {
-> > +                                       reg = <5>;
-> > +
-> > +                                       tcon_top_hdmi_out_hdmi: endpoint {
-> > +                                               remote-endpoint =
-> > <&hdmi_in_tcon_top>; +                                       };
-> > +                               };
-> > +                       };
-> > +               };
-> > +
-> > +               tcon_tv0: lcd-controller@1c73000 {
-> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
-> > +                                    "allwinner,sun8i-a83t-tcon-tv";
-> > +                       reg = <0x01c73000 0x1000>;
-> > +                       interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>;
-> > +                       clock-names = "ahb", "tcon-ch1";
-> > +                       resets = <&ccu RST_BUS_TCON_TV0>;
-> > +                       reset-names = "lcd";
-> > +
-> > +                       ports {
-> > +                               #address-cells = <1>;
-> > +                               #size-cells = <0>;
-> > +
-> > +                               tcon_tv0_in: port@0 {
-> > +                                       reg = <0>;
-> > +                               };
-> > +
-> > +                               tcon_tv0_out: port@1 {
-> > +                                       reg = <1>;
-> > +                               };
-> > +                       };
-> > +               };
-> > +
-> > +               tcon_tv1: lcd-controller@1c74000 {
-> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
-> > +                                    "allwinner,sun8i-a83t-tcon-tv";
-> > +                       reg = <0x01c74000 0x1000>;
-> > +                       interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks = <&ccu CLK_BUS_TCON_TV1>, <&tcon_top 1>;
-> > +                       clock-names = "ahb", "tcon-ch1";
-> > +                       resets = <&ccu RST_BUS_TCON_TV1>;
-> > +                       reset-names = "lcd";
-> > +
-> > +                       ports {
-> > +                               #address-cells = <1>;
-> > +                               #size-cells = <0>;
-> > +
-> > +                               tcon_tv1_in: port@0 {
-> > +                                       reg = <0>;
-> > +                               };
-> > +
-> > +                               tcon_tv1_out: port@1 {
-> > +                                       reg = <1>;
-> 
-> You are missing the remote-endpoints for all the TCON-TOP <-> TCON
-> connections. Also, on the driver side, there's no code to handle
-> dynamically mapping mixers to the TCONs that are being used. In the past we
-> had simple 1:1 mappings. This is no longer the case, and it needs to be
-> dealt with.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v1:
+ - Add some comments suggested by Pavel.
+ - Change 'delta_t' can be 0.
 
-How would TCON TOP driver know how to set muxes? There are no appropriate 
-bingings for muxes, except for V4L2 subsystem, which doesn't really work here.
+Note: I removed the pattern repeat check and will get the repeat number by adding
+one extra file named 'pattern_repeat' according to previous discussion.
+---
+ Documentation/ABI/testing/sysfs-class-led |   17 ++++
+ drivers/leds/led-class.c                  |  121 +++++++++++++++++++++++++++++
+ include/linux/leds.h                      |   19 +++++
+ 3 files changed, 157 insertions(+)
 
-Additionaly, how would HDMI know which TCON belongs to it to appropriately set 
-possible_crtcs?
-
-Currently, my idea is that board DT creates wanted connections. Since there is 
-only one valid connection for each mux, driver knows eactly what to write into 
-mux register. HDMI driver can simply check which TCON connection is valid in 
-HDMI input mux and select it in possible_crtcs.
-
-Please also note that mixer0 and mixer1 don't have same capabilities and you 
-generally want mixer0 to be connected to main output. This is in contrast to 
-DE1 SoCs, where both backends and both frontends have same capability.
-
-Best regards,
-Jernej
-
-> 
-> ChenYu
-> 
-> > +                               };
-> > +                       };
-> > +               };
-> > +
-> > 
-> >                 gic: interrupt-controller@1c81000 {
-> >                 
-> >                         compatible = "arm,gic-400";
-> >                         reg = <0x01c81000 0x1000>,
-> > 
-> > @@ -461,6 +685,51 @@
-> > 
-> >                         #interrupt-cells = <3>;
-> >                         interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) |
-> >                         IRQ_TYPE_LEVEL_HIGH)>;
-> >                 
-> >                 };
-> > 
-> > +
-> > +               hdmi: hdmi@1ee0000 {
-> > +                       compatible = "allwinner,sun8i-r40-dw-hdmi",
-> > +                                    "allwinner,sun8i-a83t-dw-hdmi";
-> > +                       reg = <0x01ee0000 0x10000>;
-> > +                       reg-io-width = <1>;
-> > +                       interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks = <&ccu CLK_BUS_HDMI0>, <&ccu
-> > CLK_HDMI_SLOW>, +                                <&ccu CLK_HDMI>;
-> > +                       clock-names = "iahb", "isfr", "tmds";
-> > +                       resets = <&ccu RST_BUS_HDMI1>;
-> > +                       reset-names = "ctrl";
-> > +                       phys = <&hdmi_phy>;
-> > +                       phy-names = "hdmi-phy";
-> > +                       status = "disabled";
-> > +
-> > +                       ports {
-> > +                               #address-cells = <1>;
-> > +                               #size-cells = <0>;
-> > +
-> > +                               hdmi_in: port@0 {
-> > +                                       reg = <0>;
-> > +
-> > +                                       hdmi_in_tcon_top: endpoint {
-> > +                                               remote-endpoint =
-> > <&tcon_top_hdmi_out_hdmi>; +                                       };
-> > +                               };
-> > +
-> > +                               hdmi_out: port@1 {
-> > +                                       reg = <1>;
-> > +                               };
-> > +                       };
-> > +               };
-> > +
-> > +               hdmi_phy: hdmi-phy@1ef0000 {
-> > +                       compatible = "allwinner,sun8i-r40-hdmi-phy",
-> > +                                    "allwinner,sun50i-a64-hdmi-phy";
-> > +                       reg = <0x01ef0000 0x10000>;
-> > +                       clocks = <&ccu CLK_BUS_HDMI1>, <&ccu
-> > CLK_HDMI_SLOW>, +                                <&ccu 7>, <&ccu 16>;
-> > +                       clock-names = "bus", "mod", "pll-0", "pll-1";
-> > +                       resets = <&ccu RST_BUS_HDMI0>;
-> > +                       reset-names = "phy";
-> > +                       #phy-cells = <0>;
-> > +               };
-> > 
-> >         };
-> >         
-> >         timer {
-> > 
-> > --
-> > 2.18.0
-
-
-
+diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+index 5f67f7a..aec0284 100644
+--- a/Documentation/ABI/testing/sysfs-class-led
++++ b/Documentation/ABI/testing/sysfs-class-led
+@@ -61,3 +61,20 @@ Description:
+ 		gpio and backlight triggers. In case of the backlight trigger,
+ 		it is useful when driving a LED which is intended to indicate
+ 		a device in a standby like state.
++
++What: /sys/class/leds/<led>/pattern
++Date: June 2018
++KernelVersion: 4.18
++Description:
++	Specify a pattern for the LED, for LED hardware that support
++	altering the brightness as a function of time.
++
++	The pattern is given by a series of tuples, of brightness and
++	duration (ms). The LED is expected to traverse the series and
++	each brightness value for the specified duration. Duration of
++	0 means brightness should immediately change to new value.
++
++	As LED hardware might have different capabilities and precision
++	the requested pattern might be slighly adjusted by the driver
++	and the resulting pattern of such operation should be returned
++	when this file is read.
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 3c7e348..1c23f63 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -74,6 +74,125 @@ static ssize_t max_brightness_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(max_brightness);
+ 
++static ssize_t pattern_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct led_pattern *pattern;
++	size_t offset = 0;
++	int count, n, i;
++
++	if (!led_cdev->pattern_get)
++		return -EOPNOTSUPP;
++
++	pattern = led_cdev->pattern_get(led_cdev, &count);
++	if (IS_ERR_OR_NULL(pattern))
++		return PTR_ERR(pattern);
++
++	for (i = 0; i < count; i++) {
++		n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d",
++			     pattern[i].brightness, pattern[i].delta_t);
++
++		if (offset + n >= PAGE_SIZE)
++			goto err_nospc;
++
++		offset += n;
++
++		if (i < count - 1)
++			buf[offset++] = ' ';
++	}
++
++	buf[offset++] = '\n';
++
++	kfree(pattern);
++	return offset;
++
++err_nospc:
++	kfree(pattern);
++	return -ENOSPC;
++}
++
++static ssize_t pattern_store(struct device *dev,
++			     struct device_attribute *attr,
++			     const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct led_pattern *pattern = NULL;
++	unsigned long val;
++	char *sbegin;
++	char *elem;
++	char *s;
++	int ret, len = 0;
++	bool odd = true;
++
++	s = sbegin = kstrndup(buf, size, GFP_KERNEL);
++	if (!s)
++		return -ENOMEM;
++
++	/* Trim trailing newline */
++	s[strcspn(s, "\n")] = '\0';
++
++	/* If the remaining string is empty, clear the pattern */
++	if (!s[0]) {
++		ret = led_cdev->pattern_clear(led_cdev);
++		goto out;
++	}
++
++	pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
++	if (!pattern) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	/* Parse out the brightness & delta_t touples */
++	while ((elem = strsep(&s, " ")) != NULL) {
++		ret = kstrtoul(elem, 10, &val);
++		if (ret)
++			goto out;
++
++		if (odd) {
++			pattern[len].brightness = val;
++		} else {
++			pattern[len].delta_t = val;
++			len++;
++		}
++
++		odd = !odd;
++	}
++
++	/*
++	 * Fail if we didn't find any data points or last data point was partial
++	 */
++	if (!len || !odd) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = led_cdev->pattern_set(led_cdev, pattern, len);
++
++out:
++	kfree(pattern);
++	kfree(sbegin);
++	return ret < 0 ? ret : size;
++}
++static DEVICE_ATTR_RW(pattern);
++
++static umode_t led_class_attrs_mode(struct kobject *kobj,
++				    struct attribute *attr, int index)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++
++	if (attr == &dev_attr_brightness.attr)
++		return attr->mode;
++	if (attr == &dev_attr_max_brightness.attr)
++		return attr->mode;
++	if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
++		return attr->mode;
++
++	return 0;
++}
++
+ #ifdef CONFIG_LEDS_TRIGGERS
+ static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
+ static struct attribute *led_trigger_attrs[] = {
+@@ -88,11 +207,13 @@ static ssize_t max_brightness_show(struct device *dev,
+ static struct attribute *led_class_attrs[] = {
+ 	&dev_attr_brightness.attr,
+ 	&dev_attr_max_brightness.attr,
++	&dev_attr_pattern.attr,
+ 	NULL,
+ };
+ 
+ static const struct attribute_group led_group = {
+ 	.attrs = led_class_attrs,
++	.is_visible = led_class_attrs_mode,
+ };
+ 
+ static const struct attribute_group *led_groups[] = {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index b7e8255..acdbb2f 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -22,6 +22,7 @@
+ #include <linux/workqueue.h>
+ 
+ struct device;
++struct led_pattern;
+ /*
+  * LED Core
+  */
+@@ -88,6 +89,14 @@ struct led_classdev {
+ 				     unsigned long *delay_on,
+ 				     unsigned long *delay_off);
+ 
++	int (*pattern_set)(struct led_classdev *led_cdev,
++			   struct led_pattern *pattern, int len);
++
++	int (*pattern_clear)(struct led_classdev *led_cdev);
++
++	struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
++					   int *len);
++
+ 	struct device		*dev;
+ 	const struct attribute_group	**groups;
+ 
+@@ -446,4 +455,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+ 	struct led_classdev *led_cdev, enum led_brightness brightness) { }
+ #endif
+ 
++/**
++ * struct led_pattern - brigheness value in a pattern
++ * @delta_t: delay until next entry, in milliseconds
++ * @brightness: brightness at time = 0
++ */
++struct led_pattern {
++	int delta_t;
++	int brightness;
++};
++
+ #endif		/* __LINUX_LEDS_H_INCLUDED */
+-- 
+1.7.9.5
 
