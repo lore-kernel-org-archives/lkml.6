@@ -2,113 +2,130 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D98C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08214C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81305271F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4D2F271FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:20:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="cSV+dxlT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81305271F5
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DuOauZnU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4D2F271FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753019AbeF1KSX (ORCPT
+        id S1753159AbeF1KUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 06:18:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44540 "EHLO
+        Thu, 28 Jun 2018 06:20:34 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48280 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752775AbeF1KSU (ORCPT
+        with ESMTP id S1751043AbeF1KUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:18:20 -0400
+        Thu, 28 Jun 2018 06:20:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=izSxCo3BVpO4VqYZPhku/v+pI/ocy5eWGO0QSky3BiY=; b=cSV+dxlTY1TEoZYUnrc5tUTex
-        XS4rDpM8SPfOUacHhHjWd6SAg/lsgxSHbqyBtY7qB4jvJWXfa8O//Fa7kf0n5FWm0WIzoXvLtfJ+t
-        R6ASD2yjPIMZEVM8fgsGxCPzaSDdo0I1ZN3KvZUewYpA0HQGsxRpaAqNlA6TKvmmxwem0=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=MJuoZbSrCh39v/eJLiE087/krORNZwVyWTQSF85C5e8=; b=DuOauZnU+f9B
+        yw8zr8T6oTm+7v3VAEbDh+lvirs946wFBtbWio4TM2SsXKg3OP0GlFaipjV+GaGdeSQLZsPE3VvUx
+        blJtfOdEMud9DkoXOSSVd6zG7MTGSMDMg1TG5OafgWb07PAGXemcDaWwaA5Bjo97RHG7rdsr9Km4V
+        RIfLo=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fYU0E-0005Dw-H5; Thu, 28 Jun 2018 10:18:14 +0000
+        id 1fYU2R-0005EU-Qz; Thu, 28 Jun 2018 10:20:31 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fYU0D-0003za-I3; Thu, 28 Jun 2018 11:18:13 +0100
-Date:   Thu, 28 Jun 2018 11:18:13 +0100
+        id 1fYU2R-00046n-DA; Thu, 28 Jun 2018 11:20:31 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v8 2/2] regulator: add QCOM RPMh regulator driver
-Message-ID: <20180628101813.GD14040@sirena.org.uk>
-References: <cover.1529712888.git.collinsd@codeaurora.org>
- <35c4ea70cdf5caba560fb6f40e866ee8bc456d93.1529712888.git.collinsd@codeaurora.org>
- <CAD=FV=XVEEPgjBXxR+-46RgxLOq63Xvq-jtruoaCxccmMoKUuA@mail.gmail.com>
- <20180626120733.GD1779@sirena.org.uk>
- <CAD=FV=X1E8Cz=L93G-zJwhM0R=N3YuBBhkvCnLvWuxMU9KJkTw@mail.gmail.com>
- <20180626150203.GG1779@sirena.org.uk>
- <CAD=FV=WC_XWRk-6OELOFFWGnhRq1VeoiiveqXLSy+xqsVb22pA@mail.gmail.com>
- <20180627150126.GC5263@sirena.org.uk>
- <CAD=FV=WYcCVjAiMpzf4zyAByw5y-oDMnuabip1HXqa-mQFRt2w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bajzpZikUji1w+G9"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=WYcCVjAiMpzf4zyAByw5y-oDMnuabip1HXqa-mQFRt2w@mail.gmail.com>
-X-Cookie: Money is the root of all wealth.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: dpcm: don't merge format from invalid codec dai" to the asoc tree
+In-Reply-To:  <20180627153638.11832-1-jbrunet@baylibre.com>
+Message-Id: <E1fYU2R-00046n-DA@debutante>
+Date:   Thu, 28 Jun 2018 11:20:31 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---bajzpZikUji1w+G9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   ASoC: dpcm: don't merge format from invalid codec dai
 
-On Wed, Jun 27, 2018 at 09:28:03AM -0700, Doug Anderson wrote:
+has been applied to the asoc tree at
 
-> OK, great.  I guess I'm confused about the "|| COMPILE_TEST" causing
-> problems then?  I was worried that anyone trying to do "COMPILE_TEST"
-> on your tree (or linuxnext if RPMh isn't there) would get failures due
-> to the lack of header files.  I guess if it's a problem you could just
-> gut the "|| COMPILE_TEST" and it could be added back in later?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Ugh, yes - that'll break things.  In that case I can't apply this
-without a signed tag from Andy's tree with the dependency stuff in.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---bajzpZikUji1w+G9
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAls0teQACgkQJNaLcl1U
-h9B4TAf/ebk6w0cZmO9WqSItIKbXOeN6pTRVfdLR8OW71Ma4XHNP/NrPJgfGThwk
-6CBoSUWb5FWtzp6kkgdoRkyV/bO0f+uoZ1JREnJecYAV8SaJ8Jq5lxXyBmYWJ5/J
-1E4v/ijMfvEs8xrEJvhpoZfPGt746yt6Kh5ymlb93UaIBJZBj2bxz1sF3n4vU1JX
-sQT+XlBPipoD7sV8pb/X7YVm1N2+SWU9eKs6Cm5AUOVqcnnOTAuRhhq5HPNh1nT/
-BOVZkOztWcIo0xsA0RICgxlKMXoVevXGHg5t1dmGr6sWGXxu/T5KM7CoZlPzNBU3
-4E6tid1s+MOfqXHvu0MltEGP/vTLpQ==
-=0TTH
------END PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---bajzpZikUji1w+G9--
+Thanks,
+Mark
+
+From 4febced15ac8ddb9cf3e603edb111842e4863d9a Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 27 Jun 2018 17:36:38 +0200
+Subject: [PATCH] ASoC: dpcm: don't merge format from invalid codec dai
+
+When merging codec formats, dpcm_runtime_base_format() should skip
+the codecs which are not supporting the current stream direction.
+
+At the moment, if a BE link has more than one codec, and only one
+of these codecs has no capture DAI, it becomes impossible to start
+a capture stream because the merged format would be 0.
+
+Skipping invalid codec DAI solves the problem.
+
+Fixes: b073ed4e2126 ("ASoC: soc-pcm: DPCM cares BE format")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ sound/soc/soc-pcm.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 5e7ae47a9658..5feae9666822 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1694,6 +1694,14 @@ static u64 dpcm_runtime_base_format(struct snd_pcm_substream *substream)
+ 		int i;
+ 
+ 		for (i = 0; i < be->num_codecs; i++) {
++			/*
++			 * Skip CODECs which don't support the current stream
++			 * type. See soc_pcm_init_runtime_hw() for more details
++			 */
++			if (!snd_soc_dai_stream_valid(be->codec_dais[i],
++						      stream))
++				continue;
++
+ 			codec_dai_drv = be->codec_dais[i]->driver;
+ 			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 				codec_stream = &codec_dai_drv->playback;
+-- 
+2.18.0.rc2
+
