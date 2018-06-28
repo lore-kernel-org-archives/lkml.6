@@ -2,109 +2,126 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD50C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B26C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D90527A59
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17C1027A68
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:30:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NnAbqEyU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D90527A59
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhaSoE5a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C1027A68
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936256AbeF1XZN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 19:25:13 -0400
-Received: from mail-pl0-f54.google.com ([209.85.160.54]:44247 "EHLO
-        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933904AbeF1XZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 19:25:11 -0400
-Received: by mail-pl0-f54.google.com with SMTP id m16-v6so3490407pls.11;
-        Thu, 28 Jun 2018 16:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4DRMZy1k4x3LuKPaDgoecfOVhIU6MJmOAEbkNxAzmSg=;
-        b=NnAbqEyUI0wrW2X73ZVaLhkyqyCIbZWYgBoPe1t4DzelT8rufe2TxHgFrV3gfOkozz
-         qdqp58iY2j+0HEUr5IoBlwAf7rM4DHgY0/WRgEMsM9oLvM6IFKOn7hMsaUyhafiaCXO+
-         CHF5c6clG+fHkBmjflnkBWXSD06zhWuV5gfVEfuZR8f7wPPYU9Vifj0GmU2qzmX9kwEh
-         vWF7l8X1syqjn1R9pj3C57WyoklkI3p5r9q5pBfPglCyvh0DtOHeDeC5SuPvq0Vk0VxR
-         JMQPOrSB6LHlLxyLCVq+GDDzxtF0B9FrV1nE9Zd3K/IK6g4ajauUL7JzLjEdj7Jci6nt
-         DBLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4DRMZy1k4x3LuKPaDgoecfOVhIU6MJmOAEbkNxAzmSg=;
-        b=E0BxpcxM09i2mM6Zyq8Evf7cmUiPBHIWcYVW5Rx4d8aVnQBohVmtXFnLSmW3LSfAXK
-         pguBOM3Af6WzczXA/ffgXJa1WHCmow7CJExXPDon1HSJ8YPe7UPxbjH1uee9xOp4VMPJ
-         f324fMYXD/IPNI2IoQbXres7pXpx7Hh2FUJiZowS5lMrZelG49TuJAlof4KUamvCQyPP
-         sDbum5Zqc4bUZD5dTlTm3Z8QirGOPDEey41Z3sctJ72oPTo1GuHrxe4dwdvoa2wSAOS3
-         jPI6hlzLtObZklkb1yqQ5jdVC9Nd5F2Cwvo43jQThFazRXk3kDlFmo6aBipx7RmZzYXY
-         GPBg==
-X-Gm-Message-State: APt69E0cZq6DVjQzrHstrssEjISpuTnVnV4uyWDBH+PE9JpMBPEG+Q0e
-        XHHz26BKJriTAB8sJqanev0kMbF6gF1aAzm6mgg=
-X-Google-Smtp-Source: ADUXVKKGYgC0L+2SjJt3ffFnb+hgj8zhMRB96ijaTNQGkMjYFV8ys1/omOsGnc03xROiFFx2hdaVRNcEczqhuOtPM6A=
-X-Received: by 2002:a17:902:14b:: with SMTP id 69-v6mr12436194plb.184.1530228311018;
- Thu, 28 Jun 2018 16:25:11 -0700 (PDT)
+        id S1753967AbeF1XaU (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 19:30:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753224AbeF1XaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 19:30:18 -0400
+Received: from mail-wr0-f170.google.com (mail-wr0-f170.google.com [209.85.128.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 584AB27A64
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 23:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530228617;
+        bh=UHPcfjjF3HVJ2SeYOqaQCEBTsZgrZ/bh5l6vCRIibYI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=NhaSoE5aSX8cBEtSH2PPdzZKnMOCpk+o3w6/RuqZSc7uV2Pk8CfZP77Gw51eFryWT
+         XVfpzN9uxfmPtOEi0qe2lhIQZsbJUcO/izfmplfPQxPOxmkaMv7ZvZHNa8VJvlj8TG
+         cOZPi5Pki5XfTUei+z7YSTtUa7urP9tGvkjaiYbw=
+Received: by mail-wr0-f170.google.com with SMTP id c5-v6so7066064wrs.10
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 16:30:17 -0700 (PDT)
+X-Gm-Message-State: APt69E3IO9i5drm8VHrVo5CUb4Jedm5Fjx5e6szwF/iPnucWKivBFErh
+        yS4V8oY1BJr9akSUVKFpBiq+QUd1VTzNfipZ8irWTQ==
+X-Google-Smtp-Source: AAOMgpc2qFDrB6TkcI56wU2wwvzPCR085o9UksVldTec96mes8dxp2KrAlQkucnP0JsUTS8PYrq41rjpvqgwHlJfa20=
+X-Received: by 2002:adf:b445:: with SMTP id v5-v6mr10072993wrd.67.1530228615843;
+ Thu, 28 Jun 2018 16:30:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAH2r5msV1hBAGgqtMFh6P=OGPV3RKjVAER=5bg-6Y+vW5BEJwQ@mail.gmail.com>
- <20180628225857.GB1231@thunk.org> <CAN05THStuq+RLzb_oNiD2TvN6MjMMnTdCxNiHuYWHRueQ46=_A@mail.gmail.com>
-In-Reply-To: <CAN05THStuq+RLzb_oNiD2TvN6MjMMnTdCxNiHuYWHRueQ46=_A@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 28 Jun 2018 18:24:59 -0500
-Message-ID: <CAH2r5mui9WLBC6ne+iqVeYDGKEMKTabHPTf57STM9_aPGfM0sA@mail.gmail.com>
-Subject: Re: config files and how to have persistent Linux kernel Driver/File
- System configuration info saved
-To:     ronnie sahlberg <ronniesahlberg@gmail.com>
-Cc:     Theodore Tso <tytso@mit.edu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>
+Received: by 2002:a1c:7e92:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 16:29:55
+ -0700 (PDT)
+In-Reply-To: <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com>
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
+ <CALCETrULo_VP4XHbXcZTevWY5d-6PdHUtrDS8DEF_OaozQOaNg@mail.gmail.com> <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 28 Jun 2018 16:29:55 -0700
+X-Gmail-Original-Message-ID: <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com>
+Message-ID: <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 6:21 PM ronnie sahlberg
-<ronniesahlberg@gmail.com> wrote:
+On Thu, Jun 28, 2018 at 2:22 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, Jun 28, 2018 at 1:23 PM Andy Lutomirski <luto@kernel.org> wrote:
+>>
+>> This is okay with me for a fix outside the merge window.  Can you do a
+>> followup for the next merge window that fixes it better, though?  In
+>> particular, TASK_SIZE is generally garbage.  I think a better fix
+>> would be something like adding a new arch-overridable helper like:
+>>
+>> static inline unsigned long current_max_user_addr(void) { return TASK_SIZE; }
 >
-> On Fri, Jun 29, 2018 at 8:58 AM, Theodore Y. Ts'o via samba-technical
-> <samba-technical@lists.samba.org> wrote:
-> > On Thu, Jun 28, 2018 at 05:37:15PM -0500, Steve French wrote:
-> >> Ronnie brought up an interesting point about the problems consistently
-> >> configuring file systems (or any Linux module for that matter) so that
-> >> reboot doesn't wipe away security or performance tuning changes.
-> >
-> > In general it's considered best practice to make the file system
-> > auto-tune itself as much as possible, because the sad fact is that
-> > 99.9999% of the customers aren't going to bother to add any tuning
-> > parameters.  So there hasn't been a push to try to create something
-> > more complex, because it's generally not needed.
+> We already have that. It's called "user_addr_max()".
+
+Nah, that one is more or less equivalent to TASK_SIZE_MAX, except that
+it's different if set_fs() is used.
+
 >
-> True, but in these cases I think we are more looking at server or
-> mountpoint specific options than
-> actual fs tuning.
+> It's the limit we use for user accesses.
 >
-> For example nfsmount.conf can be used to say "only use NFSv4 when
-> accessing server abc" etc.
-> For the case of CIFS I could imagine that an administrator might want
-> to set "disable smb1 protocol globally"
+> That said, I don't see why we should even check the IP. It's not like
+> that's done by signal handling either.
 
-Or perhaps
-  "disable smb1 on " ... various public networks but allow it on
-private networks
+The idea is that, if someone screws up and sticks a number like
+0xbaadf00d00045678 into their rseq abort_ip in a 32-bit x86 program
+(when they actually mean 0x00045678), we want to something consistent.
+On a 32-bit kernel, presumably it gets cast to u32 somewhere and it
+works.  On a 64-bit kernel, we end up shoving 0xbaadf00d00045678 into
+regs->ip, and then the entry code will do, um, something.  If I had to
+guess, I would guess that at least IRET is likely to truncate if we're
+returning to a 32-bit CS.  But I really don't want to start promising
+that we won't segfault if a different path gets invoked on some future
+kernel on some future CPU of if we're on an AMD CPU using their
+utterly braindead SYSRETL microcode, etc.
 
--- 
-Thanks,
+So I think we're much better off if we either promise that rseq
+truncates the address for 32-bit users or that it segfaults if high
+bits are set for 32-bit users.
 
-Steve
+TASK_SIZE is a super shitty way to do this.  The correct thing is to
+either add some check to the exit-to-usermode slowpath that rseq can
+trigger or if we add some reasonable way for rseq to say "is this
+address a legitimate addressable virtual address for the current
+task's user space operating mode."  We don't have such a thing right
+now.
