@@ -2,93 +2,137 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6B8C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3AFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21246214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:34:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21246214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	by mail.kernel.org (Postfix) with ESMTP id E6BD02751A
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:34:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yX0Q7iIf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6BD02751A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966824AbeF1OeO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 10:34:14 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36321 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966506AbeF1OeL (ORCPT
+        id S966839AbeF1Oek (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 10:34:40 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52543 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966746AbeF1Odc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 10:34:11 -0400
-Received: by mail-wr0-f193.google.com with SMTP id f16-v6so5767306wrm.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 07:34:11 -0700 (PDT)
+        Thu, 28 Jun 2018 10:33:32 -0400
+Received: by mail-wm0-f65.google.com with SMTP id e69-v6so7064692wme.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 07:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=EMXs7v3ptxT9vNOclT7VSTCrCsz0f0HMpiip+jVy0Kw=;
+        b=yX0Q7iIfCbWyQMC9WVHiol7lQzdRciHmIuMbPnPASsd+6SsNj6MQIma7d+Ya/7I6vV
+         15rF2Pn4Uds19jgfPWQ/CQaYdMf5w6CJBq524qU7ZLRj1qukXsGcyr0uS0BkPJQf4isF
+         SntSz3c84u3MChp6O050q5nP6hD8Esi3Oqci9piSh1s2o+/irnEKoO6PROVbE2b/z4sa
+         bYM02WeSQ3B0ovXe1XTYiAv+bfFZ5XbqNAtJvinEAViH9XiZOihmb5tNN3MYVlVdRbSf
+         0vJy6FvAVMvMlKFOEyoyczd8I0MEPxJeL/4P7gmIfVSUd5aOmHb9gfnd3X1Rux4Udsbp
+         4DXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qcXB1Jp2Fjand+VeQ5L1pA/zQ7f3NzSM8pwsjYyTWTQ=;
-        b=pmUhhxsEwfXTrML59ttvjCxppe9ixWb7HWPeD4exkxpi2Wo+Gmqoa7hLIG55NUVxqO
-         /Xz1115gB2It64TEndp6i+wVU6N+RvPMhQdR74Ulz5v7EFLPr1eAqBwFIwD/DqTEwrIi
-         u1yaufEdFYwA8x3HQ/fnR6KzRPeKfpfld2pJqG/pwOOVZpaR1d86j/bWtnPU4L4MXxDs
-         dYkLhjScrik4zty6aG8sHmgzKYCM7zR0N4QEemSEvRO3U2c75DGdsTfw1o3bxKUtFp+g
-         ggfBZUagchV4m9/EcNt8wTUCQ+7uFPaURyQRdwjlM40dPQgMi3/gYq58/Xvr7bqKsAhD
-         thoA==
-X-Gm-Message-State: APt69E2Iaf+5hTaGIOXhbJlP7+m/Gu9AyB3M7/YVFekIfggO7n1mrfxx
-        WafSNbDPQtgi329P0oGZ/+o=
-X-Google-Smtp-Source: AAOMgpcg5/IjuddLOoMqZZYSG13nm9IVyLmrm9OLcMDPkbjFPPP++m9YiWUhalz6THNRuRbarTI8Ag==
-X-Received: by 2002:adf:f6c4:: with SMTP id y4-v6mr8476590wrp.4.1530196450665;
-        Thu, 28 Jun 2018 07:34:10 -0700 (PDT)
-Received: from [192.168.81.52] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id k82-v6sm13298006wmg.10.2018.06.28.07.34.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=EMXs7v3ptxT9vNOclT7VSTCrCsz0f0HMpiip+jVy0Kw=;
+        b=MwCaUh9C2chC5rzqGChEJxrVmwFUvQhNfktji7SDafwaSUy02o/Qm+5EG/NyTlY2Ql
+         +A0fgByubiTCG/M8d9T/qzOC4gBEtCcLsn2CjY5Ez0vu5oHyGOg97zYiqu8LQ/+kWbR+
+         Oeh+JhfVcurCleKRfma6zyxVfKvRj/9AZpJW+WVWzJDlYZ2l234Mfonx6Yl80JnLsR/D
+         U/U1IjxfejrKRhX6T1FP98ZVJsDTcNHk2xY37QBf+KULlS4o6u6Zut9jMSz/QYYUyfP8
+         7DLLTVpvNWsmZqAw7mR3fUZlALRpCatRyOyayaaavk/gPzrPtZ2cmPoy1+Rqqpsr5mby
+         iZmg==
+X-Gm-Message-State: APt69E1cY8HoX5EN4/bFaSLMCCIdNwKy0iTxpeNGkh9sAUy6uJWKdVG1
+        16WwKOWVlku6MbwpHSQbapGMiw==
+X-Google-Smtp-Source: AAOMgpfV+xsQN6GiZ6VrwhefVCj+hNzhxp/71FZLbJhc0sgI0GQTbf9YqTV5rpXNKIdiVq+d/YDSaA==
+X-Received: by 2002:a1c:5e95:: with SMTP id s143-v6mr8207911wmb.19.1530196410860;
+        Thu, 28 Jun 2018 07:33:30 -0700 (PDT)
+Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-87-41.w90-86.abo.wanadoo.fr. [90.86.29.41])
+        by smtp.gmail.com with ESMTPSA id 4-v6sm8037499wmh.14.2018.06.28.07.33.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 07:34:09 -0700 (PDT)
-Subject: Re: [PATCH] nvme: trace: add disk name to tracepoints
-To:     Keith Busch <keith.busch@linux.intel.com>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-References: <20180626135141.14088-1-jthumshirn@suse.de>
- <20180626135141.14088-3-jthumshirn@suse.de>
- <20180626150106.GB6628@localhost.localdomain>
- <20180627073328.aws2apvc357jobge@linux-x5ow.site>
- <1e7d0f93-9d20-1b99-58c4-651b1d0dedf0@grimberg.me>
- <20180627234313.GB10657@localhost.localdomain>
- <20180628005943.GC10657@localhost.localdomain>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <c25e48f5-ace4-5d2c-8174-11ac63316323@grimberg.me>
-Date:   Thu, 28 Jun 2018 17:34:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180628005943.GC10657@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 28 Jun 2018 07:33:30 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 17/18] ARM: davinci: sffsdr: use device properties for at24 eeprom
+Date:   Thu, 28 Jun 2018 16:32:43 +0200
+Message-Id: <20180628143244.4561-18-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180628143244.4561-1-brgl@bgdev.pl>
+References: <20180628143244.4561-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> Thinking more on this, not using the hw qid really limits the utility
-> out of using these trace events: We may not be able to match a completion
-> to the submission without it since cmdid alone isn't enough to match up
-> the two events.
-> 
-> Here's an updated proposal and actually tested. I was also able to
-> combine admin and io submissions.
+We want to work towards phasing out the at24_platform_data structure.
+There are few users and its contents can be represented using generic
+device properties. Using device properties only will allow us to
+significantly simplify the at24 configuration code.
 
-This looks good!
+Remove the at24_platform_data structure and replace it with an array
+of property entries. Drop the byte_len/size property, as the model name
+already implies the EEPROM's size.
 
-One thing that is missing is the controller id when we have multiple
-controllers/subsystems in the host like:
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-sffsdr.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-TP_printk("nvme%d: qid=%d, nsid=%u, cmdid=%u, flags=0x%x, meta=0x%llx, 
-cmd=(%s %s)",
-
-But Johannes can add it I guess.
+diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
+index f6a4d094cbc3..680e5d7628a8 100644
+--- a/arch/arm/mach-davinci/board-sffsdr.c
++++ b/arch/arm/mach-davinci/board-sffsdr.c
+@@ -26,7 +26,7 @@
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/i2c.h>
+-#include <linux/platform_data/at24.h>
++#include <linux/property.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+ #include <linux/mtd/partitions.h>
+@@ -92,16 +92,15 @@ static struct platform_device davinci_sffsdr_nandflash_device = {
+ 	.resource	= davinci_sffsdr_nandflash_resource,
+ };
+ 
+-static struct at24_platform_data eeprom_info = {
+-	.byte_len	= (64*1024) / 8,
+-	.page_size	= 32,
+-	.flags		= AT24_FLAG_ADDR16,
++static const struct property_entry eeprom_properties[] = {
++	PROPERTY_ENTRY_U32("pagesize", 32),
++	{ },
+ };
+ 
+ static struct i2c_board_info __initdata i2c_info[] =  {
+ 	{
+ 		I2C_BOARD_INFO("24c64", 0x50),
+-		.platform_data	= &eeprom_info,
++		.properties = eeprom_properties,
+ 	},
+ 	/* Other I2C devices:
+ 	 * MSP430,  addr 0x23 (not used)
+-- 
+2.17.1
 
