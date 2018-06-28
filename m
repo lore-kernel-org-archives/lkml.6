@@ -2,91 +2,153 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8640AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E8BC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F13208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:59:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F13208C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 08D4527345
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:00:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D4527345
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966395AbeF1N7e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:59:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49074 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966094AbeF1N7d (ORCPT
+        id S966478AbeF1OAl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 10:00:41 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:38987 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966369AbeF1OAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 09:59:33 -0400
-Received: from localhost (unknown [104.153.224.166])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9931B707;
-        Thu, 28 Jun 2018 13:59:30 +0000 (UTC)
-Date:   Thu, 28 Jun 2018 21:48:47 +0900
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     John Whitmore <arigead@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: Re: [PATCH v3 5/8] staging: rtl8192u: Use %s and __func__ instead of
- hardcoded string - Style
-Message-ID: <20180628124847.GA30710@kroah.com>
-References: <20180624153454.27356-1-johnfwhitmore@gmail.com>
- <20180624153454.27356-6-johnfwhitmore@gmail.com>
- <20180626035624.GA26173@kroah.com>
- <20180627202248.mvohkxjhwsv5hcn6@xux707-tw>
- <20180628073828.hur7njmsstg2jwvx@mwanda>
- <20180628123239.xqv3lb3bqos467z6@xux707-tw>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628123239.xqv3lb3bqos467z6@xux707-tw>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 28 Jun 2018 10:00:39 -0400
+Received: from cpe-2606-a000-111b-40b7-640c-26a-4e16-9225.dyn6.twc.com ([2606:a000:111b:40b7:640c:26a:4e16:9225] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1fYXTI-0002NM-ON; Thu, 28 Jun 2018 10:00:35 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     linux-rdma@vger.kernel.org
+Cc:     Neil Horman <nhorman@tuxdriver.com>,
+        Adit Ranadive <aditr@vmware.com>,
+        VMware PV-Drivers <pv-drivers@vmware.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org
+Subject: [PATCH] vmw_pvrdma: Release netdev when vmxnet3 module is removed
+Date:   Thu, 28 Jun 2018 09:59:38 -0400
+Message-Id: <20180628135938.19625-1-nhorman@tuxdriver.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 01:32:41PM +0100, John Whitmore wrote:
-> On Thu, Jun 28, 2018 at 10:38:28AM +0300, Dan Carpenter wrote:
-> > On Wed, Jun 27, 2018 at 09:22:50PM +0100, John Whitmore wrote:
-> > > On Tue, Jun 26, 2018 at 11:56:24AM +0800, Greg KH wrote:
-> > > > On Sun, Jun 24, 2018 at 04:34:51PM +0100, John Whitmore wrote:
-> > > > > Changed a number of hard coded function names to use %s and __func__
-> > > > > 
-> > > > > Mailing list response suggest that there is a better method for debugging
-> > > > > using netdev_dbg(). I can't argue with that, but for the moment this change
-> > > > > will clear the checkpatch.pl Warning.
-> > > > > 
-> > > > > Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
-> > > > > ---
-> > > > >  drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 12 ++++++------
-> > > > >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > > > 
-> > > > Did not apply :(
-> > > 
-> > > No worries, can I just ask is that because it should be changed to use
-> > > netdev_dbg as was suggested? And should that be across the whole file?
-> > 
-> > "Does not apply" means you save the raw email to email.txt then download
-> > the latest code from
-> > git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
-> > then `cat email.txt | git am` and it fails.
-> > 
-> > Probably someone else's patch was merged ahead of yours.  Fix it up and
-> > then resend.
-> > 
-> > regards,
-> > dan carpenter
-> 
-> Thank you for that. I read the sentence and filled in my own pronoun as there
-> wasn't one :( So I read it as "I did not apply" rather then "it did not
-> apply". That's great that 'it' did not apply, thought I'd done something
-> wrong. I'll have another crack at it later if I get a chance.
+On repeated module load/unload cycles, its possible for the pvrmda
+driver to encounter this crash:
 
-Ick, sorry for being terse, my fault.
+...
+297.032448] RIP: 0010:[<ffffffff839e4620>]  [<ffffffff839e4620>] netdev_walk_all_upper_dev_rcu+0x50/0xb0
+[  297.034078] RSP: 0018:ffff95087780bd08  EFLAGS: 00010286
+[  297.034986] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff95087a0c0000
+[  297.036196] RDX: ffff95087a0c0000 RSI: ffffffff839e44e0 RDI: ffff950835d0c000
+[  297.037421] RBP: ffff95087780bd40 R08: ffff95087a0e0ea0 R09: abddacd03f8e0ea0
+[  297.038636] R10: abddacd03f8e0ea0 R11: ffffef5901e9dbc0 R12: ffff95087a0c0000
+[  297.039854] R13: ffffffff839e44e0 R14: ffff95087a0c0000 R15: ffff950835d0c828
+[  297.041071] FS:  0000000000000000(0000) GS:ffff95087fc00000(0000) knlGS:0000000000000000
+[  297.042443] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  297.043429] CR2: ffffffffffffffe8 CR3: 000000007a652000 CR4: 00000000003607f0
+[  297.044674] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  297.045893] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  297.047109] Call Trace:
+[  297.047545]  [<ffffffff839e4698>] netdev_has_upper_dev_all_rcu+0x18/0x20
+[  297.048691]  [<ffffffffc05d31af>] is_eth_port_of_netdev+0x2f/0xa0 [ib_core]
+[  297.049886]  [<ffffffffc05d3180>] ? is_eth_active_slave_of_bonding_rcu+0x70/0x70 [ib_core]
+...
 
-greg k-h
+This occurs because vmw_pvrdma on probe stores a pointer to the netdev
+that exists on function 0 of the same bus/device/slot (which represents
+the vmxnet3 ethernet driver).  However, it never removes this pointer if
+the vmxnet3 module is removed, leading to crashes resulting from use
+after free dereferencing incidents like the one above.
+
+The fix is pretty straightforward.  vmw_pvrdma should listen for
+NETDEV_REGISTER and NETDEV_UNREGISTER events in its event listener code
+block, and update the stored netdev pointer accordingly.  This solution
+has been tested by myself and the reporter with successful results.
+This fix also allows the pvrdma driver to find its underlying ethernet
+device in the event that vmxnet3 is loaded after pvrdma, which it was
+not able to do before.
+
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+Reported-by: ruquin@redhat.com
+CC: Adit Ranadive <aditr@vmware.com>
+CC: VMware PV-Drivers <pv-drivers@vmware.com>
+CC: Doug Ledford <dledford@redhat.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>
+CC: linux-kernel@vger.kernel.org
+---
+ .../infiniband/hw/vmw_pvrdma/pvrdma_main.c    | 25 +++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
+index 0be33a81bbe6..5b4782078a74 100644
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
+@@ -699,8 +699,12 @@ static int pvrdma_del_gid(const struct ib_gid_attr *attr, void **context)
+ }
+ 
+ static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
++					  struct net_device *ndev,
+ 					  unsigned long event)
+ {
++	struct pci_dev *pdev_net;
++
++
+ 	switch (event) {
+ 	case NETDEV_REBOOT:
+ 	case NETDEV_DOWN:
+@@ -718,6 +722,21 @@ static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
+ 		else
+ 			pvrdma_dispatch_event(dev, 1, IB_EVENT_PORT_ACTIVE);
+ 		break;
++	case NETDEV_UNREGISTER:
++		dev_put(dev->netdev);
++		dev->netdev = NULL;
++		break;
++	case NETDEV_REGISTER:
++		/* Paired vmxnet3 will have same bus, slot. But func will be 0 */
++		pdev_net = pci_get_slot(dev->pdev->bus, PCI_DEVFN(PCI_SLOT(dev->pdev->devfn), 0));
++		if ((dev->netdev == NULL) && (pci_get_drvdata(pdev_net) == ndev)) {
++			/* this is our netdev */
++			dev->netdev = ndev;
++			dev_hold(ndev);
++		}
++		pci_dev_put(pdev_net);
++		break;
++
+ 	default:
+ 		dev_dbg(&dev->pdev->dev, "ignore netdevice event %ld on %s\n",
+ 			event, dev->ib_dev.name);
+@@ -734,8 +753,9 @@ static void pvrdma_netdevice_event_work(struct work_struct *work)
+ 
+ 	mutex_lock(&pvrdma_device_list_lock);
+ 	list_for_each_entry(dev, &pvrdma_device_list, device_link) {
+-		if (dev->netdev == netdev_work->event_netdev) {
+-			pvrdma_netdevice_event_handle(dev, netdev_work->event);
++		if ((netdev_work->event == NETDEV_REGISTER) ||
++		    (dev->netdev == netdev_work->event_netdev)) {
++			pvrdma_netdevice_event_handle(dev, netdev_work->event_netdev, netdev_work->event);
+ 			break;
+ 		}
+ 	}
+@@ -962,6 +982,7 @@ static int pvrdma_pci_probe(struct pci_dev *pdev,
+ 	}
+ 
+ 	dev->netdev = pci_get_drvdata(pdev_net);
++	dev_hold(dev->netdev);
+ 	pci_dev_put(pdev_net);
+ 	if (!dev->netdev) {
+ 		dev_err(&pdev->dev, "failed to get vmxnet3 device\n");
+-- 
+2.17.1
+
