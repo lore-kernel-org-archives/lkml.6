@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC60DC43141
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3854C43144
 	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74943275BB
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:20:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74943275BB
+	by mail.kernel.org (Postfix) with ESMTP id A8D9C275D1
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:20:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D9C275D1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967081AbeF1PUJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:20:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53335 "EHLO mail.bootlin.com"
+        id S967096AbeF1PUM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:20:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53331 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967051AbeF1PUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S967045AbeF1PUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 28 Jun 2018 11:20:06 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 76F8B20DD1; Thu, 28 Jun 2018 17:20:04 +0200 (CEST)
+        id 25A7120DCD; Thu, 28 Jun 2018 17:20:04 +0200 (CEST)
 Received: from localhost (nat.foo.tf [163.172.35.26])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 445F4203EC;
-        Thu, 28 Jun 2018 17:20:04 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id DCE2C203EC;
+        Thu, 28 Jun 2018 17:20:03 +0200 (CEST)
 From:   Antoine Tenart <antoine.tenart@bootlin.com>
 To:     herbert@gondor.apana.org.au, davem@davemloft.net,
         gregory.clement@bootlin.com, andrew@lunn.ch, jason@lakedaemon.net,
         sebastian.hesselbarth@gmail.com
-Cc:     Ofer Heifetz <oferh@marvell.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, igall@marvell.com,
-        Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH 10/14] crypto: inside-secure - adjust the TRC configuration for EIP197D
-Date:   Thu, 28 Jun 2018 17:15:40 +0200
-Message-Id: <20180628151544.22134-11-antoine.tenart@bootlin.com>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, oferh@marvell.com,
+        igall@marvell.com
+Subject: [PATCH 05/14] crypto: inside-secure - add an invalidation flag
+Date:   Thu, 28 Jun 2018 17:15:35 +0200
+Message-Id: <20180628151544.22134-6-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180628151544.22134-1-antoine.tenart@bootlin.com>
 References: <20180628151544.22134-1-antoine.tenart@bootlin.com>
@@ -46,120 +46,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ofer Heifetz <oferh@marvell.com>
+Add a flags field in the private structure, and a first flag for engines
+needing context invalidation (currently only the eip197b). The
+invalidation is needed when the engine includes a TRC cache, which will
+also be true for the upcoming addition of the eip197d engine.
 
-This patch updates the TRC configuration so that the version of the
-EIP197 engine being used is taken into account, as the configuration
-differs between the EIP197B and the EIP197D.
-
-Signed-off-by: Ofer Heifetz <oferh@marvell.com>
-[Antoine: commit message]
+Suggested-by: Ofer Heifetz <oferh@marvell.com>
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/crypto/inside-secure/safexcel.c | 30 +++++++++++++++++--------
- drivers/crypto/inside-secure/safexcel.h | 12 +++++++---
- 2 files changed, 30 insertions(+), 12 deletions(-)
+ drivers/crypto/inside-secure/safexcel.c        |  3 +++
+ drivers/crypto/inside-secure/safexcel.h        |  5 +++++
+ drivers/crypto/inside-secure/safexcel_cipher.c | 16 ++++++++--------
+ drivers/crypto/inside-secure/safexcel_hash.c   |  8 ++++----
+ 4 files changed, 20 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index 4ad1bfd77359..b70694090353 100644
+index b2749ff933c8..579e7ae2cb14 100644
 --- a/drivers/crypto/inside-secure/safexcel.c
 +++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -33,7 +33,19 @@ MODULE_PARM_DESC(max_rings, "Maximum number of rings to use.");
- static void eip197_trc_cache_init(struct safexcel_crypto_priv *priv)
- {
- 	u32 val, htable_offset;
--	int i;
-+	int i, cs_rc_max, cs_ht_wc, cs_trc_rec_wc, cs_trc_lg_rec_wc;
+@@ -927,6 +927,9 @@ static int safexcel_probe(struct platform_device *pdev)
+ 	priv->dev = dev;
+ 	priv->version = (enum safexcel_eip_version)of_device_get_match_data(dev);
+ 
++	if (priv->version == EIP197B)
++		priv->flags |= EIP197_TRC_CACHE;
 +
-+	if (priv->version == EIP197B) {
-+		cs_rc_max = EIP197B_CS_RC_MAX;
-+		cs_ht_wc = EIP197B_CS_HT_WC;
-+		cs_trc_rec_wc = EIP197B_CS_TRC_REC_WC;
-+		cs_trc_lg_rec_wc = EIP197B_CS_TRC_LG_REC_WC;
-+	} else {
-+		cs_rc_max = EIP197D_CS_RC_MAX;
-+		cs_ht_wc = EIP197D_CS_HT_WC;
-+		cs_trc_rec_wc = EIP197D_CS_TRC_REC_WC;
-+		cs_trc_lg_rec_wc = EIP197D_CS_TRC_LG_REC_WC;
-+	}
+ 	safexcel_init_register_offsets(priv);
  
- 	/* Enable the record cache memory access */
- 	val = readl(priv->base + EIP197_CS_RAM_CTRL);
-@@ -54,7 +66,7 @@ static void eip197_trc_cache_init(struct safexcel_crypto_priv *priv)
- 	writel(val, priv->base + EIP197_TRC_PARAMS);
- 
- 	/* Clear all records */
--	for (i = 0; i < EIP197_CS_RC_MAX; i++) {
-+	for (i = 0; i < cs_rc_max; i++) {
- 		u32 val, offset = EIP197_CLASSIFICATION_RAMS + i * EIP197_CS_RC_SIZE;
- 
- 		writel(EIP197_CS_RC_NEXT(EIP197_RC_NULL) |
-@@ -64,14 +76,14 @@ static void eip197_trc_cache_init(struct safexcel_crypto_priv *priv)
- 		val = EIP197_CS_RC_NEXT(i+1) | EIP197_CS_RC_PREV(i-1);
- 		if (i == 0)
- 			val |= EIP197_CS_RC_PREV(EIP197_RC_NULL);
--		else if (i == EIP197_CS_RC_MAX - 1)
-+		else if (i == cs_rc_max - 1)
- 			val |= EIP197_CS_RC_NEXT(EIP197_RC_NULL);
- 		writel(val, priv->base + offset + sizeof(u32));
- 	}
- 
- 	/* Clear the hash table entries */
--	htable_offset = EIP197_CS_RC_MAX * EIP197_CS_RC_SIZE;
--	for (i = 0; i < 64; i++)
-+	htable_offset = cs_rc_max * EIP197_CS_RC_SIZE;
-+	for (i = 0; i < cs_ht_wc; i++)
- 		writel(GENMASK(29, 0),
- 		       priv->base + EIP197_CLASSIFICATION_RAMS + htable_offset + i * sizeof(u32));
- 
-@@ -82,16 +94,16 @@ static void eip197_trc_cache_init(struct safexcel_crypto_priv *priv)
- 
- 	/* Write head and tail pointers of the record free chain */
- 	val = EIP197_TRC_FREECHAIN_HEAD_PTR(0) |
--	      EIP197_TRC_FREECHAIN_TAIL_PTR(EIP197_CS_RC_MAX - 1);
-+	      EIP197_TRC_FREECHAIN_TAIL_PTR(cs_rc_max - 1);
- 	writel(val, priv->base + EIP197_TRC_FREECHAIN);
- 
- 	/* Configure the record cache #1 */
--	val = EIP197_TRC_PARAMS2_RC_SZ_SMALL(EIP197_CS_TRC_REC_WC) |
--	      EIP197_TRC_PARAMS2_HTABLE_PTR(EIP197_CS_RC_MAX);
-+	val = EIP197_TRC_PARAMS2_RC_SZ_SMALL(cs_trc_rec_wc) |
-+	      EIP197_TRC_PARAMS2_HTABLE_PTR(cs_rc_max);
- 	writel(val, priv->base + EIP197_TRC_PARAMS2);
- 
- 	/* Configure the record cache #2 */
--	val = EIP197_TRC_PARAMS_RC_SZ_LARGE(EIP197_CS_TRC_LG_REC_WC) |
-+	val = EIP197_TRC_PARAMS_RC_SZ_LARGE(cs_trc_lg_rec_wc) |
- 	      EIP197_TRC_PARAMS_BLK_TIMER_SPEED(1) |
- 	      EIP197_TRC_PARAMS_HTABLE_SZ(2);
- 	writel(val, priv->base + EIP197_TRC_PARAMS);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
-index 46c72306ca9f..94a89664f3d0 100644
+index b79cb36b3772..f62111eba30d 100644
 --- a/drivers/crypto/inside-secure/safexcel.h
 +++ b/drivers/crypto/inside-secure/safexcel.h
-@@ -361,13 +361,19 @@ struct safexcel_context_record {
- #define EIP197_TRC_PARAMS2_RC_SZ_SMALL(n)	((n) << 18)
+@@ -546,6 +546,10 @@ struct safexcel_register_offsets {
+ 	u32 pe;
+ };
  
- /* Cache helpers */
--#define EIP197_CS_RC_MAX			52
-+#define EIP197B_CS_RC_MAX			52
-+#define EIP197D_CS_RC_MAX			96
- #define EIP197_CS_RC_SIZE			(4 * sizeof(u32))
- #define EIP197_CS_RC_NEXT(x)			(x)
- #define EIP197_CS_RC_PREV(x)			((x) << 10)
- #define EIP197_RC_NULL				0x3ff
--#define EIP197_CS_TRC_REC_WC			59
--#define EIP197_CS_TRC_LG_REC_WC			73
-+#define EIP197B_CS_TRC_REC_WC			59
-+#define EIP197D_CS_TRC_REC_WC			64
-+#define EIP197B_CS_TRC_LG_REC_WC		73
-+#define EIP197D_CS_TRC_LG_REC_WC		80
-+#define EIP197B_CS_HT_WC			64
-+#define EIP197D_CS_HT_WC			256
++enum safexcel_flags {
++	EIP197_TRC_CACHE = BIT(0),
++};
 +
+ struct safexcel_crypto_priv {
+ 	void __iomem *base;
+ 	struct device *dev;
+@@ -555,6 +559,7 @@ struct safexcel_crypto_priv {
  
- /* Result data */
- struct result_data_desc {
+ 	enum safexcel_eip_version version;
+ 	struct safexcel_register_offsets offsets;
++	u32 flags;
+ 
+ 	/* context DMA pool */
+ 	struct dma_pool *context_pool;
+diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
+index bf3de334c580..566c97223d67 100644
+--- a/drivers/crypto/inside-secure/safexcel_cipher.c
++++ b/drivers/crypto/inside-secure/safexcel_cipher.c
+@@ -145,7 +145,7 @@ static int safexcel_skcipher_aes_setkey(struct crypto_skcipher *ctfm,
+ 		return ret;
+ 	}
+ 
+-	if (priv->version == EIP197B && ctx->base.ctxr_dma) {
++	if (priv->flags & EIP197_TRC_CACHE && ctx->base.ctxr_dma) {
+ 		for (i = 0; i < len / sizeof(u32); i++) {
+ 			if (ctx->key[i] != cpu_to_le32(aes.key_enc[i])) {
+ 				ctx->base.needs_inv = true;
+@@ -179,7 +179,7 @@ static int safexcel_aead_aes_setkey(struct crypto_aead *ctfm, const u8 *key,
+ 		goto badkey;
+ 
+ 	/* Encryption key */
+-	if (priv->version == EIP197B && ctx->base.ctxr_dma &&
++	if (priv->flags & EIP197_TRC_CACHE && ctx->base.ctxr_dma &&
+ 	    memcmp(ctx->key, keys.enckey, keys.enckeylen))
+ 		ctx->base.needs_inv = true;
+ 
+@@ -218,7 +218,7 @@ static int safexcel_aead_aes_setkey(struct crypto_aead *ctfm, const u8 *key,
+ 	crypto_aead_set_flags(ctfm, crypto_aead_get_flags(ctfm) &
+ 				    CRYPTO_TFM_RES_MASK);
+ 
+-	if (priv->version == EIP197B && ctx->base.ctxr_dma &&
++	if (priv->flags & EIP197_TRC_CACHE && ctx->base.ctxr_dma &&
+ 	    (memcmp(ctx->ipad, istate.state, ctx->state_sz) ||
+ 	     memcmp(ctx->opad, ostate.state, ctx->state_sz)))
+ 		ctx->base.needs_inv = true;
+@@ -612,7 +612,7 @@ static int safexcel_skcipher_send(struct crypto_async_request *async, int ring,
+ 	struct safexcel_crypto_priv *priv = ctx->priv;
+ 	int ret;
+ 
+-	BUG_ON(priv->version == EIP97IES && sreq->needs_inv);
++	BUG_ON(!(priv->flags & EIP197_TRC_CACHE) && sreq->needs_inv);
+ 
+ 	if (sreq->needs_inv)
+ 		ret = safexcel_cipher_send_inv(async, ring, request, commands,
+@@ -635,7 +635,7 @@ static int safexcel_aead_send(struct crypto_async_request *async, int ring,
+ 	struct safexcel_crypto_priv *priv = ctx->priv;
+ 	int ret;
+ 
+-	BUG_ON(priv->version == EIP97IES && sreq->needs_inv);
++	BUG_ON(!(priv->flags & EIP197_TRC_CACHE) && sreq->needs_inv);
+ 
+ 	if (sreq->needs_inv)
+ 		ret = safexcel_cipher_send_inv(async, ring, request, commands,
+@@ -725,7 +725,7 @@ static int safexcel_aes(struct crypto_async_request *base,
+ 	ctx->mode = mode;
+ 
+ 	if (ctx->base.ctxr) {
+-		if (priv->version == EIP197B && ctx->base.needs_inv) {
++		if (priv->flags & EIP197_TRC_CACHE && ctx->base.needs_inv) {
+ 			sreq->needs_inv = true;
+ 			ctx->base.needs_inv = false;
+ 		}
+@@ -802,7 +802,7 @@ static void safexcel_skcipher_cra_exit(struct crypto_tfm *tfm)
+ 	if (safexcel_cipher_cra_exit(tfm))
+ 		return;
+ 
+-	if (priv->version == EIP197B) {
++	if (priv->flags & EIP197_TRC_CACHE) {
+ 		ret = safexcel_skcipher_exit_inv(tfm);
+ 		if (ret)
+ 			dev_warn(priv->dev, "skcipher: invalidation error %d\n",
+@@ -822,7 +822,7 @@ static void safexcel_aead_cra_exit(struct crypto_tfm *tfm)
+ 	if (safexcel_cipher_cra_exit(tfm))
+ 		return;
+ 
+-	if (priv->version == EIP197B) {
++	if (priv->flags & EIP197_TRC_CACHE) {
+ 		ret = safexcel_aead_exit_inv(tfm);
+ 		if (ret)
+ 			dev_warn(priv->dev, "aead: invalidation error %d\n",
+diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
+index 66edc1f388f1..94841df4b6bd 100644
+--- a/drivers/crypto/inside-secure/safexcel_hash.c
++++ b/drivers/crypto/inside-secure/safexcel_hash.c
+@@ -442,7 +442,7 @@ static int safexcel_handle_result(struct safexcel_crypto_priv *priv, int ring,
+ 	struct safexcel_ahash_req *req = ahash_request_ctx(areq);
+ 	int err;
+ 
+-	BUG_ON(priv->version == EIP97IES && req->needs_inv);
++	BUG_ON(!(priv->flags & EIP197_TRC_CACHE) && req->needs_inv);
+ 
+ 	if (req->needs_inv) {
+ 		req->needs_inv = false;
+@@ -575,7 +575,7 @@ static int safexcel_ahash_enqueue(struct ahash_request *areq)
+ 	req->needs_inv = false;
+ 
+ 	if (ctx->base.ctxr) {
+-		if (priv->version == EIP197B && !ctx->base.needs_inv &&
++		if (priv->flags & EIP197_TRC_CACHE && !ctx->base.needs_inv &&
+ 		    (req->processed[0] || req->processed[1]) &&
+ 		    req->digest == CONTEXT_CONTROL_DIGEST_PRECOMPUTED)
+ 			/* We're still setting needs_inv here, even though it is
+@@ -784,7 +784,7 @@ static void safexcel_ahash_cra_exit(struct crypto_tfm *tfm)
+ 	if (!ctx->base.ctxr)
+ 		return;
+ 
+-	if (priv->version == EIP197B) {
++	if (priv->flags & EIP197_TRC_CACHE) {
+ 		ret = safexcel_ahash_exit_inv(tfm);
+ 		if (ret)
+ 			dev_warn(priv->dev, "hash: invalidation error %d\n", ret);
+@@ -1005,7 +1005,7 @@ static int safexcel_hmac_alg_setkey(struct crypto_ahash *tfm, const u8 *key,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (priv->version == EIP197B && ctx->base.ctxr) {
++	if (priv->flags & EIP197_TRC_CACHE && ctx->base.ctxr) {
+ 		for (i = 0; i < state_sz / sizeof(u32); i++) {
+ 			if (ctx->ipad[i] != le32_to_cpu(istate.state[i]) ||
+ 			    ctx->opad[i] != le32_to_cpu(ostate.state[i])) {
 -- 
 2.17.1
 
