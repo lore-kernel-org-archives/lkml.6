@@ -2,127 +2,113 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 964A2C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769A1C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BACA27848
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:10:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BACA27848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FBCC2784D
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:11:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="chNAPO41"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FBCC2784D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933063AbeF1TKj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:10:39 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:60889 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932078AbeF1TKh (ORCPT
+        id S1753728AbeF1TLT (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:11:19 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:53808 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751757AbeF1TLS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:10:37 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07402;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0T3Ve8uo_1530213011;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3Ve8uo_1530213011)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 29 Jun 2018 03:10:16 +0800
-Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
- large mapping
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        ldufour@linux.vnet.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org
-References: <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
- <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
- <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
- <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
- <20180620071817.GJ13685@dhcp22.suse.cz>
- <263935d9-d07c-ab3e-9e42-89f73f57be1e@linux.alibaba.com>
- <20180626074344.GZ2458@hirez.programming.kicks-ass.net>
- <e54e298d-ef86-19a7-6f6b-07776f9a43e2@linux.alibaba.com>
- <20180627072432.GC32348@dhcp22.suse.cz>
- <a52f0585-ebec-d098-2775-f55bde3519a4@linux.alibaba.com>
- <20180628115101.GE32348@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <2ecdb667-f4de-673d-6a5f-ee50df505d0c@linux.alibaba.com>
-Date:   Thu, 28 Jun 2018 12:10:10 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Thu, 28 Jun 2018 15:11:18 -0400
+Date:   Thu, 28 Jun 2018 21:11:06 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 0/5] pinctrl_gpio_get_direction & ingenic fixes
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-Id: <1530213066.3755.0@smtp.crapouillou.net>
+In-Reply-To: <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
+References: <20180627114904.10890-1-paul@crapouillou.net>
+        <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180628115101.GE32348@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530213075; bh=mgVWQ/s9fIAZBH5KoCSkbtKGBqTkABjO7ucduGcRTHE=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=chNAPO41fZ3pBpHf85K9Y40ZE86cF5w4Uu7fFVME5kiaxGRveYykU3T1p89T9UtE+uukiwNHM7rupCDcqiwl1M1+Svy3KpQyj2ircyiWWdSBZ2q3qTO3E1K98eGqNYgFDCA3AifkBxzJx6zVltcFVKY+KczG6sTY6SXXPbo7WAs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Hi Andy,
 
-On 6/28/18 4:51 AM, Michal Hocko wrote:
-> On Wed 27-06-18 10:23:39, Yang Shi wrote:
->>
->> On 6/27/18 12:24 AM, Michal Hocko wrote:
->>> On Tue 26-06-18 18:03:34, Yang Shi wrote:
->>>> On 6/26/18 12:43 AM, Peter Zijlstra wrote:
->>>>> On Mon, Jun 25, 2018 at 05:06:23PM -0700, Yang Shi wrote:
->>>>>> By looking this deeper, we may not be able to cover all the unmapping range
->>>>>> for VM_DEAD, for example, if the start addr is in the middle of a vma. We
->>>>>> can't set VM_DEAD to that vma since that would trigger SIGSEGV for still
->>>>>> mapped area.
->>>>>>
->>>>>> splitting can't be done with read mmap_sem held, so maybe just set VM_DEAD
->>>>>> to non-overlapped vmas. Access to overlapped vmas (first and last) will
->>>>>> still have undefined behavior.
->>>>> Acquire mmap_sem for writing, split, mark VM_DEAD, drop mmap_sem. Acquire
->>>>> mmap_sem for reading, madv_free drop mmap_sem. Acquire mmap_sem for
->>>>> writing, free everything left, drop mmap_sem.
->>>>>
->>>>> ?
->>>>>
->>>>> Sure, you acquire the lock 3 times, but both write instances should be
->>>>> 'short', and I suppose you can do a demote between 1 and 2 if you care.
->>>> Thanks, Peter. Yes, by looking the code and trying two different approaches,
->>>> it looks this approach is the most straight-forward one.
->>> Yes, you just have to be careful about the max vma count limit.
->> Yes, we should just need copy what do_munmap does as below:
->>
->> if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
->>              return -ENOMEM;
->>
->> If the mas map count limit has been reached, it will return failure before
->> zapping mappings.
-> Yeah, but as soon as you drop the lock and retake it, somebody might
-> have changed the adddress space and we might get inconsistency.
->
-> So I am wondering whether we really need upgrade_read (to promote read
-> to write lock) and do the
-> 	down_write
-> 	split & set up VM_DEAD
-> 	downgrade_write
-> 	unmap
-> 	upgrade_read
-> 	zap ptes
-> 	up_write
+Le mer. 27 juin 2018 =E0 19:18, Andy Shevchenko=20
+<andy.shevchenko@gmail.com> a =E9crit :
+> On Wed, Jun 27, 2018 at 2:48 PM, Paul Cercueil <paul@crapouillou.net>=20
+> wrote:
+>>  Hi Linus,
+>>=20
+>>  Here's a set of (rather RFC) patches, to implement
+>>  pinctrl_gpio_get_direction(). I did that, because my gpio-ingenic=20
+>> driver
+>>  calls pinctrl_gpio_set_direction() within its gpio_chip's=20
+>> .set_direction
+>>  callback, but there was no corresponding function to implement the
+>>  .get_direction callback. If that's not the right way to do it,=20
+>> please
+>>  advise.
+>>=20
+>>  If not merging the whole series, patch [3/5] is a real fix that=20
+>> should
+>>  go through.
+>>=20
+>>  Note that it doesn't make checkpatch.pl happy, I wasn't sure=20
+>> whether I
+>>  should try to comply to checkpatch.pl or match the coding style in=20
+>> the
+>>  pinctrl subsystem, I chose the latter.
+>=20
+> I dunno what Linus would going to say about this, but I would like to
+> see a schematics for this piece of IP.
 
-I'm supposed address space changing just can be done by mmap, mremap, 
-mprotect. If so, we may utilize the new VM_DEAD flag. If the VM_DEAD 
-flag is set for the vma, just return failure since it is being unmapped.
+ftp://ftp.ingenic.com/SOC/JZ4780/JZ4780_pm.pdf
 
-Does it sounds reasonable?
+> Even if GPIO and pin muxing has only one set of buffers to indicate
+> input or output (same registers in use) it's a GPIO driver business to
+> get direction from GPIO part of IP.
 
-Thanks,
-Yang
+If I follow that logic it's also a GPIO driver business to set the=20
+direction
+of a GPIO, right? Truth is the pinctrl subsystem takes care of that. So=20
+why
+have "set direction" and no "get direction"?
 
->
-> looks terrible, no question about that, but we won't drop the mmap sem
-> at any time.
+> Looking into the existing code I would rather say that
+> pinctrl-ingenic.c should incorporate gpio-ingenic.c as they are
+> (partially) sharing same registers.
+> To ->get_direction() implementation it's pretty straight forward, just
+> read necessary registers in the gpio-ingenic.c directly. No need to
+> have pin control or pin muxing to be involved.
+
+Sure, it'd be pretty straightforward to do it from the GPIO driver, but=20
+I'd
+still like to hear Linus' point of view about this.
+
+As for merging pinctrl-ingenic.c and gpio-ingenic.c... I wouldn't=20
+disagree more,
+even if they share registers, they belong to different subsystems.=20
+Besides,
+your platform might need the pinctrl driver but not the GPIO one, or=20
+you might
+want to provide the GPIO driver as a loadable module, etc.
+
+Regards,
+-Paul
+=
 
