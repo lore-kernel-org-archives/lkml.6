@@ -2,101 +2,75 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2282BC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE91C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAFEC27855
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:12:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="vIANIUn4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAFEC27855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 78A4D27842
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:15:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A4D27842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754686AbeF1TMV (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:12:21 -0400
-Received: from ozlabs.org ([203.11.71.1]:37737 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752108AbeF1TMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:12:18 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S933428AbeF1TPP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:15:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753086AbeF1TPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 15:15:14 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41GqCg6Gyrz9ry1;
-        Fri, 29 Jun 2018 05:12:15 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1530213136;
-        bh=cCXDW4Tbn1M+2do8hFNjTzCyftVcjIymH8ie3x/lHfI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=vIANIUn403XyorlkbT0tFgqXpxacnnkPd8XPLIhuNmXgPP/8f6W8a8x8uyMDHulO3
-         zq8/GfMeozuEk/vEUJvn8OfU0o+FGzPkmqJTRianodupKxAHgc1zua4HAuinzc+y0D
-         UVDN5xObaRvTBRtUESHog5YUFtCC/wDMl3BgBU2kPGLAAJ/TZOAtTMGxDOCP8IN3Vf
-         /+AW5TxTUSSXIbQGlZdeJn7uLuFSfW7Omoz0ET8Ggf01DdO5WQbhnKyJEorhBErn8I
-         UW+qhr2LDMA/+FWED/AccZBUri3lOPtz59hU8DDhnXpjTLo/Zr39emYsVv6yKV8piy
-         rOvodRDPT9V7Q==
-Date:   Fri, 29 Jun 2018 05:12:09 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Daniel =?UTF-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>,
-        Eli Cohen <eli@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: linux-next: Signed-off-by missing for commits in the net tree
-Message-ID: <20180629051209.0189ce01@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sb4XTE35jmrg6xXOuhBtGyK"; protocol="application/pgp-signature"
+        by mx1.redhat.com (Postfix) with ESMTPS id 91908BF594;
+        Thu, 28 Jun 2018 19:15:13 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0CD721116717;
+        Thu, 28 Jun 2018 19:15:10 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     amd-gfx@lists.freedesktop.org
+Cc:     "Alex Deucher" <alexander.deucher@amd.com>,
+        "Monk Liu" <monk.liu@amd.com>, "David Airlie" <airlied@linux.ie>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Rex Zhu" <rex.zhu@amd.com>,
+        "Felix Kuehling" <felix.kuehling@amd.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Shaoyun Liu" <shaoyun.liu@amd.com>,
+        "David (ChunMing) Zhou" <david1.zhou@amd.com>,
+        "Jean Delvare" <jdelvare@suse.de>, "Lyude Paul" <lyude@redhat.com>,
+        "Huang Rui" <ray.huang@amd.com>,
+        "Kai-Heng Feng" <kai.heng.feng@canonical.com>,
+        "Jim Qu" <jim.qu@amd.com>,
+        "Luc Van Oostenryck" <luc.vanoostenryck@gmail.com>
+Subject: [PATCH v2 0/4] Fix HPD detection in runtime suspend
+Date:   Thu, 28 Jun 2018 15:14:51 -0400
+Message-Id: <20180628191505.10015-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 19:15:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 19:15:13 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/sb4XTE35jmrg6xXOuhBtGyK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Next version of https://patchwork.freedesktop.org/series/45371/
 
-Hi all,
+Notable changes:
+ - Added explanation on why ATIF handle sometimes lives in a different
+   namespace (thanks Alex!)
 
-Commit
+Lyude Paul (4):
+  drm/amdgpu: Make struct amdgpu_atif private to amdgpu_acpi.c
+  drm/amdgpu: s/disp_detetion_ports/disp_detection_ports/
+  drm/amdgpu: Add amdgpu_atpx_get_dhandle()
+  drm/amdgpu: Dynamically probe for ATIF handle
 
-  933e671f8cff ("selftests/net: Fix permissions for fib_tests.sh")
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h           |  46 ++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c      | 132 +++++++++++++++---
+ .../gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c  |  10 +-
+ 3 files changed, 125 insertions(+), 63 deletions(-)
 
-is missing a Signed-off-by from its author.
+-- 
+2.17.1
 
-Commit
-
-  a8d70a054a71 ("net/mlx5: E-Switch, Disallow vlan/spoofcheck setup if not =
-being esw manager")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/sb4XTE35jmrg6xXOuhBtGyK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls1MwkACgkQAVBC80lX
-0GzEkAf+KcwkMepgsf2oTSXV4MU/fQdomj3i7PBszu4QdBCw4F74aXeJ/MfI6gEs
-s7uCDfqkMPT/eXnQHDRPrTOkRD40Nllfb//MWzIT1pfLvvP9ULlBVN/2LBbeiMNM
-704cNVSKPztyJnGr6X8seNVFnBdchfGQ3SHUcKXGBmh9JOMsUh/Nk9bbTq7Jhvtf
-IoNdGyUMCgYXgh3oWNbhC5wqCc9G04Szj36sDaJNdERy+M5xYxIzMcuIkwh3d2UQ
-jjvcJpBsYXc+ESheO+2CHz4RqTf7eJ6VIpVkWVti915o93DjLxiYyDE7PtK6ymLZ
-I/HBwF1yIC1nLYuUm48E2dj9tAji9w==
-=uNqj
------END PGP SIGNATURE-----
-
---Sig_/sb4XTE35jmrg6xXOuhBtGyK--
