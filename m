@@ -6,92 +6,78 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29CAC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BE9C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5405124869
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:09:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5405124869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id E6EDD25B21
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:10:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6EDD25B21
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753043AbeF1CJR (ORCPT
+        id S1753055AbeF1CKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 22:09:17 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38541 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752780AbeF1CJP (ORCPT
+        Wed, 27 Jun 2018 22:10:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54710 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752544AbeF1CKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 22:09:15 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a5-v6so4186780edt.5;
-        Wed, 27 Jun 2018 19:09:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=edDzqeyPUksW+xM5NGS9wvWeTaaMpw47a0H05FeWUyw=;
-        b=fiy2K0NnbZx92GOx5RUMuI1ZaVGtm5KBOqicsohZedfapVxCgjf2ZbV2BYQZoFL4aq
-         dxf7qCRSlEDlzYebXGX4/+j4aQX2UO0AIxzINtrPbeJ3toybzPvcVyC+d8773LxMJcum
-         VIaDnnY7nunBPRTkQMDdkkFSECsX/w9PEZHpcADYmi1brVzxDcsedoCJ+xgMzfYWF9HM
-         s3WhpSboF0Eio9NEtDVAXwJz0kYQiSkoZ5BK5iWbQvmPeWeovejpEDkMcsiKoA96CP33
-         9jbZGVc6lkK1vMvFjjzHTGPiQ9NQdmt4CCILOcTqaXJIFr8IlY4kpVlF+opZJYY/+Nux
-         iINA==
-X-Gm-Message-State: APt69E0kfZPCQIAIVC5w3xkTUuTZ3W2Ou2Wb4nPj4yAZzXQgoT6HIJ8a
-        k9yJILXuN6e9DHSu9GeYGcWNKBNv
-X-Google-Smtp-Source: AAOMgpehUG9tip4ynYsTDvmz2txp+I0K5teJQFz8BP27jlTnX0c1PS9eVAOQEce9qcxd8wa1bW7+0w==
-X-Received: by 2002:aa7:c396:: with SMTP id k22-v6mr7645030edq.149.1530151753823;
-        Wed, 27 Jun 2018 19:09:13 -0700 (PDT)
-Received: from mail-wm0-f41.google.com (mail-wm0-f41.google.com. [74.125.82.41])
-        by smtp.gmail.com with ESMTPSA id j24-v6sm212719edr.90.2018.06.27.19.09.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 19:09:12 -0700 (PDT)
-Received: by mail-wm0-f41.google.com with SMTP id z13-v6so7312271wma.5;
-        Wed, 27 Jun 2018 19:09:12 -0700 (PDT)
-X-Received: by 2002:a1c:1bc5:: with SMTP id b188-v6mr670172wmb.143.1530151752358;
- Wed, 27 Jun 2018 19:09:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 19:08:51
- -0700 (PDT)
-In-Reply-To: <20180625120304.7543-12-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-12-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 28 Jun 2018 10:08:51 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64VJ2Mxq7jS=rtUNFwE6BccdDcHPN7MvG0dLHnKoMNJow@mail.gmail.com>
-Message-ID: <CAGb2v64VJ2Mxq7jS=rtUNFwE6BccdDcHPN7MvG0dLHnKoMNJow@mail.gmail.com>
-Subject: Re: [PATCH v3 11/24] drm/sun4i: Don't check for LVDS and RGB when
- TCON has only ch1
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 27 Jun 2018 22:10:43 -0400
+Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CABB9CA1;
+        Thu, 28 Jun 2018 02:10:42 +0000 (UTC)
+Date:   Wed, 27 Jun 2018 19:10:41 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     ufo19890607@gmail.com
+Cc:     mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, yuzhoujian@didichuxing.com
+Subject: Re: [PATCH v10 2/2] Refactor part of the oom report in dump_header
+Message-Id: <20180627191041.509893a3b43f95a27df32266@linux-foundation.org>
+In-Reply-To: <1529763171-29240-2-git-send-email-ufo19890607@gmail.com>
+References: <1529763171-29240-1-git-send-email-ufo19890607@gmail.com>
+        <1529763171-29240-2-git-send-email-ufo19890607@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> LVDS and RGB interfaces are always connected to TCONs which have channel
-> 0. It doesn't make sense to try to init them on TV TCONs.
+On Sat, 23 Jun 2018 22:12:51 +0800 ufo19890607@gmail.com wrote:
+
+> From: yuzhoujian <yuzhoujian@didichuxing.com>
+> 
+> The current system wide oom report prints information about the victim
+> and the allocation context and restrictions. It, however, doesn't
+> provide any information about memory cgroup the victim belongs to. This
+> information can be interesting for container users because they can find
+> the victim's container much more easily.
+> 
+> I follow the advices of David Rientjes and Michal Hocko, and refactor
+> part of the oom report. After this patch, users can get the memcg's
+> path from the oom report and check the certain container more quickly.
+> 
+> The oom print info after this patch:
+> oom-kill:constraint=<constraint>,nodemask=<nodemask>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<commm>,pid=<pid>,uid=<uid>
+> 
+> Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+> ---
+> Below is the part of the oom report in the dmesg
+> ...
+> [  134.873392] panic invoked oom-killer: gfp_mask=0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), nodemask=(null), order=0, oom_score_adj=0
 >
-> Add a check if TCON has channel 0 before trying to init LVDS or RGB
-> interface.
+> ...
 >
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> [  134.873480] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),task_memcg=/test/test1/test2,task=panic,pid= 8669,  uid=    0
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+We're displaying nodemask twice there.  Avoidable?
 
-Though I think at some point we could just have separate functions
-to handle channel 0 and channel 1.
+Also, the spaces after pid= and uid= don't seem useful.  Why not use
+plain old %d?
 
-ChenYu
+
