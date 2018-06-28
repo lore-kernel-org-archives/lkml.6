@@ -6,87 +6,84 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE1EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FA6C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81BC826FD9
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:34:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81BC826FD9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 60CC42710C
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:35:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60CC42710C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934887AbeF1MeC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:34:02 -0400
-Received: from foss.arm.com ([217.140.101.70]:46672 "EHLO foss.arm.com"
+        id S1753789AbeF1Mfr (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:35:47 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40768 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753549AbeF1Md5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:33:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14C231529;
-        Thu, 28 Jun 2018 05:33:57 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D416A3F5C0;
-        Thu, 28 Jun 2018 05:33:54 -0700 (PDT)
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     akiyks@gmail.com, andrea.parri@amarulasolutions.com,
-        boqun.feng@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, mark.rutland@arm.com, npiggin@gmail.com,
-        paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        stern@rowland.harvard.edu, will.deacon@arm.com
-Subject: [PATCH 1/2] tools/memory-model: remove ACCESS_ONCE() from recipes
-Date:   Thu, 28 Jun 2018 13:33:46 +0100
-Message-Id: <20180628123347.52963-2-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180628123347.52963-1-mark.rutland@arm.com>
-References: <20180628123347.52963-1-mark.rutland@arm.com>
+        id S1751380AbeF1Mfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 08:35:46 -0400
+X-Greylist: delayed 513 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Jun 2018 08:35:45 EDT
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F1CAC20015D;
+        Thu, 28 Jun 2018 14:27:11 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F03E520015C;
+        Thu, 28 Jun 2018 14:27:11 +0200 (CEST)
+Received: from fsr-fed2164-101.ea.freescale.net (fsr-fed2164-101.ea.freescale.net [10.171.82.91])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 838BF205ED;
+        Thu, 28 Jun 2018 14:27:06 +0200 (CEST)
+From:   Madalin Bucur <madalin.bucur@nxp.com>
+To:     davem@davemloft.net, netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>
+Subject: [net 1/2] fsl/fman: fix parser reporting bad checksum on short frames
+Date:   Thu, 28 Jun 2018 15:26:50 +0300
+Message-Id: <1530188811-8918-2-git-send-email-madalin.bucur@nxp.com>
+X-Mailer: git-send-email 2.1.0
+In-Reply-To: <1530188811-8918-1-git-send-email-madalin.bucur@nxp.com>
+References: <1530188811-8918-1-git-send-email-madalin.bucur@nxp.com>
+Reply-to: madalin.bucur@nxp.com
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit:
+The FMan hardware parser needs to be configured to remove the
+short frame padding from the checksum calculation, otherwise
+short UDP and TCP frames are likely to be marked as having a
+bad checksum.
 
-  b899a850431e2dd0 ("compiler.h: Remove ACCESS_ONCE()")
-
-... there has been no definition of ACCESS_ONCE() in the kernel tree,
-and it has been necessary to use READ_ONCE() or WRITE_ONCE() instead.
-
-Let's update the exmaples in recipes.txt likewise for consistency, using
-READ_ONCE() for reads.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
 ---
- tools/memory-model/Documentation/recipes.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/freescale/fman/fman_port.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
-index ee4309a87fc4..1fea8ef2b184 100644
---- a/tools/memory-model/Documentation/recipes.txt
-+++ b/tools/memory-model/Documentation/recipes.txt
-@@ -322,9 +322,9 @@ the following write-side code fragment:
- And the xlog_valid_lsn() function in fs/xfs/xfs_log_priv.h contains
- the corresponding read-side code fragment:
+diff --git a/drivers/net/ethernet/freescale/fman/fman_port.c b/drivers/net/ethernet/freescale/fman/fman_port.c
+index 4a2d960..ee82ee1 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_port.c
++++ b/drivers/net/ethernet/freescale/fman/fman_port.c
+@@ -324,6 +324,10 @@ struct fman_port_qmi_regs {
+ #define HWP_HXS_PHE_REPORT 0x00000800
+ #define HWP_HXS_PCAC_PSTAT 0x00000100
+ #define HWP_HXS_PCAC_PSTOP 0x00000001
++#define HWP_HXS_TCP_OFFSET 0xA
++#define HWP_HXS_UDP_OFFSET 0xB
++#define HWP_HXS_SH_PAD_REM 0x80000000
++
+ struct fman_port_hwp_regs {
+ 	struct {
+ 		u32 ssa; /* Soft Sequence Attachment */
+@@ -728,6 +732,10 @@ static void init_hwp(struct fman_port *port)
+ 		iowrite32be(0xffffffff, &regs->pmda[i].lcv);
+ 	}
  
--	cur_cycle = ACCESS_ONCE(log->l_curr_cycle);
-+	cur_cycle = READ_ONCE(log->l_curr_cycle);
- 	smp_rmb();
--	cur_block = ACCESS_ONCE(log->l_curr_block);
-+	cur_block = READ_ONCE(log->l_curr_block);
++	/* Short packet padding removal from checksum calculation */
++	iowrite32be(HWP_HXS_SH_PAD_REM, &regs->pmda[HWP_HXS_TCP_OFFSET].ssa);
++	iowrite32be(HWP_HXS_SH_PAD_REM, &regs->pmda[HWP_HXS_UDP_OFFSET].ssa);
++
+ 	start_port_hwp(port);
+ }
  
- Alternatively, consider the following comment in function
- perf_output_put_handle() in kernel/events/ring_buffer.c:
 -- 
-2.11.0
+2.1.0
 
