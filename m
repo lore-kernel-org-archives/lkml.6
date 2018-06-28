@@ -2,116 +2,64 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9DEC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D63C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E8E26BEB
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:29:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G9CATWeV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AXNDXngh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E8E26BEB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C0D626C1C
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:37:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0D626C1C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932183AbeF1E3Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 00:29:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38752 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbeF1E3W (ORCPT
+        id S1753295AbeF1EhW (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 00:37:22 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:45092 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753194AbeF1EhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 00:29:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5EE8E60B10; Thu, 28 Jun 2018 04:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530160161;
-        bh=oH3tVrkCh2K9U3RVXnxovw8YTaIOuNgBmc91Am+/iKI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=G9CATWeVBgd64liLTb0ewbNBSaWx4ewrxWbua2MfT6ghfFZiQfgVfglc43XFSyinH
-         LvySKIXRjetAczSyHJMbksAHHfbTloZlvhUE3gCSNFCjzJaoU5toMM6hfgH9qt2iAR
-         VDkGqNno1qFHjDgpjXmBBa2RTucaeMtoBQ8zEBJ8=
-Received: from [10.201.3.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AD5216071C;
-        Thu, 28 Jun 2018 04:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530160160;
-        bh=oH3tVrkCh2K9U3RVXnxovw8YTaIOuNgBmc91Am+/iKI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AXNDXnghfhlL3fzluz37iMnqKkhLRom7+F8yZYRUMaVMvgsJ/FeyqZcCmMBI2r2Sg
-         4EmKFZXn532aL3f4fJw3xP4wNj76Uzkb8JnsVdzuopsuBxv+L/7xMH3WE0XYqfHVnb
-         1UjEwnHKAjzxgn7UAtY8j/d479jSiqaEAZyW65Ac=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD5216071C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH v10 00/14] Krait clocks + Krait CPUfreq
-To:     Thierry Escande <thierry.escande@linaro.org>
-Cc:     robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@codeaurora.org,
-        linux@armlinux.org.uk, andy.gross@linaro.org,
-        david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux@arm.linux.org.uk,
-        ctatlor97@gmail.com
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
- <a58c2d2c-64d1-7223-dc98-8f749397375d@linaro.org>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <410263b4-9434-ed49-626d-2a14efe350f0@codeaurora.org>
-Date:   Thu, 28 Jun 2018 09:59:13 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <a58c2d2c-64d1-7223-dc98-8f749397375d@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 28 Jun 2018 00:37:20 -0400
+Received: from localhost (unknown [211.196.191.92])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1D0DA12130EBC;
+        Wed, 27 Jun 2018 21:37:15 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 13:37:13 +0900 (KST)
+Message-Id: <20180628.133713.1992787052157529632.davem@davemloft.net>
+To:     yamada.masahiro@socionext.com
+Cc:     netdev@vger.kernel.org, alexei.starovoitov@gmail.com,
+        mcroce@redhat.com, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        ast@kernel.org, linux-kernel@vger.kernel.org,
+        michal.lkml@markovi.net, daniel@iogearbox.net
+Subject: Re: [RESEND PATCH] bpfilter: check compiler capability in Kconfig
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1529985336-27522-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1529985336-27522-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 27 Jun 2018 21:37:20 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 26 Jun 2018 12:55:35 +0900
 
-On 6/27/2018 3:01 PM, Thierry Escande wrote:
-> Hi Sricharan,
+> With the brand-new syntax extension of Kconfig, we can directly
+> check the compiler capability in the configuration phase.
 > 
-> On 19/06/2018 15:45, Sricharan R wrote:
->> Sricharan R (2):
->>    clk: qcom: Add safe switch hook for krait mux clocks
->>    dt-bindings: cpufreq: Document operating-points-v2-krait-cpu
->>
->> Stephen Boyd (12):
->>    ARM: Add Krait L2 register accessor functions
->>    clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
->>    clk: qcom: Add HFPLL driver
->>    dt-bindings: clock: Document qcom,hfpll
->>    clk: qcom: Add MSM8960/APQ8064's HFPLLs
->>    clk: qcom: Add IPQ806X's HFPLLs
->>    clk: qcom: Add support for Krait clocks
->>    clk: qcom: Add KPSS ACC/GCC driver
->>    dt-bindings: arm: Document qcom,kpss-gcc
->>    clk: qcom: Add Krait clock controller driver
->>    dt-bindings: clock: Document qcom,krait-cc
->>    cpufreq: Add module to register cpufreq on Krait CPUs
+> If the cc-can-link.sh fails, the BPFILTER_UMH is automatically
+> hidden by the dependency.
 > 
-> Tested on apq8064 (db600c).
+> I also deleted 'default n', which is no-op.
 > 
-> Tested-By: Thierry Escande <thierry.escande@linaro.org>
-> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-  Thanks for testing this !!
-  I Will try to merge the kryo cpu-freq and this one if that looks neat.
-
-Regards,
- Sricharan
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Applied, thank you.
