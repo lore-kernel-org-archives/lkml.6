@@ -2,498 +2,185 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C046DC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D223FC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70CA7275B4
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:14:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70CA7275B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 88607275B4
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:15:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WK2KGGlX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88607275B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935344AbeF1POZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:14:25 -0400
-Received: from mga04.intel.com ([192.55.52.120]:8474 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932522AbeF1POX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:14:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 08:14:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,284,1526367600"; 
-   d="scan'208";a="236348906"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.43])
-  by orsmga005.jf.intel.com with ESMTP; 28 Jun 2018 08:14:19 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        Struk@vger.kernel.org, Tadeusz <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>, stable@vger.kernel.org
-Subject: [PATCH v8] tpm: separate cmd_ready/go_idle from runtime_pm
-Date:   Thu, 28 Jun 2018 18:13:33 +0300
-Message-Id: <20180628151333.14368-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.4
+        id S935428AbeF1PPj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:15:39 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37890 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935370AbeF1PPh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:15:37 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so9426519wmf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KCI4wUp6HTXkxstLJP2tblmho36dwm57fQsHSo4XaaY=;
+        b=WK2KGGlX6JrN6jrJnXLnqI2oqBIgBnmY9toILVcoddoVoxlAvOaJBEKDbeaaX690GG
+         hhSl+Kdn/GMi+KjwGdraDhI0Tp6DuxnlQvsYYhTX27FEBflfWc1zKGOXWkzQi7cc7pDo
+         ssfjsncZed8T1Q9t5Vsys243tJJaEOBIvKM+E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KCI4wUp6HTXkxstLJP2tblmho36dwm57fQsHSo4XaaY=;
+        b=tzPtPXZN8Q0rzcSxLHRE0tkA0pKhrVCEi0sO16opyqdTbViQKVIQWCh3Iy8emdETtE
+         PL9ti0B7sNjBJ5O79bJzAgTY/qIQDADmHTL8Hu4wBqtXRdtKLm+Ne65ENnSpEBr1sBiS
+         nb/DppSx7E7z3jQrWQahkxE90WmhspB+M44niFODQTL2Xn9tJqp+0giHklw2gjS4depL
+         a6T+PlIZHGt/J5yoA1hFF6iFKDszDXO52pvT4J+qkFzWvrmeAU5/WRHLgkwK223Z5Bpu
+         l28gZPCc1piyzJ8//aA7gEMjY/DQVpef3C3eYj2XK63kSISe26Jhto36fI45PKHeeJqJ
+         mLZg==
+X-Gm-Message-State: APt69E1zgxpg3iOAdfxvDAtJpyGjftNTogTi05b/97kmNF7JCPEU8REg
+        qnVjwji19WSFQe5z9fBSq5MwqZzHHuA=
+X-Google-Smtp-Source: AAOMgpdByBUVrn+fSRc1Jz3wlG9K5uDCm//qy7EHnsrQrlpiqcR5djgJAYwLQ2FI4K/PEE3+KHLcJw==
+X-Received: by 2002:a1c:ae94:: with SMTP id x142-v6mr8226059wme.22.1530198936086;
+        Thu, 28 Jun 2018 08:15:36 -0700 (PDT)
+Received: from ?IPv6:2001:41d0:fe90:b800:3923:5e2e:38ae:83dc? ([2001:41d0:fe90:b800:3923:5e2e:38ae:83dc])
+        by smtp.googlemail.com with ESMTPSA id v19-v6sm5232460wmc.9.2018.06.28.08.15.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 08:15:34 -0700 (PDT)
+Subject: Re: [PATCH v5 1/6] ARM: at91: add TCB registers definitions
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexander Dahl <ada@thorsis.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180619211929.22908-1-alexandre.belloni@bootlin.com>
+ <20180619211929.22908-2-alexandre.belloni@bootlin.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <1bc64ccb-1e22-364c-e08c-fa86692783ff@linaro.org>
+Date:   Thu, 28 Jun 2018 17:15:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180619211929.22908-2-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix tpm ptt initialization error:
-tpm tpm0: A TPM error (378) occurred get tpm pcr allocation.
+On 19/06/2018 23:19, Alexandre Belloni wrote:
+> Add registers and bits definitions for the timer counter blocks found on
+> Atmel ARM SoCs.
+> 
+> Tested-by: Alexander Dahl <ada@thorsis.com>
+> Tested-by: Andras Szemzo <szemzo.andras@gmail.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  include/soc/at91/atmel_tcb.h | 216 +++++++++++++++++++++++++++++++++++
 
-We cannot use go_idle cmd_ready commands via runtime_pm handles
-as with the introduction of localities this is no longer an optional
-feature, while runtime pm can be not enabled.
-Though cmd_ready/go_idle provides a power saving, it's also a part of
-TPM2 protocol and should be called explicitly.
-This patch exposes cmd_read/go_idle via tpm class ops and removes
-runtime pm support as it is not used by any driver.
+Is the header necessary ? Can it be moved in the .c ?
 
-When calling from nested context always use both flags:
-TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed to resolve
-tpm spaces and locality request recursive calls to tpm_transmit().
-TPM_TRANSMIT_RAW should never be used standalone as it will fail
-on double locking. While TPM_TRANSMIT_UNLOCKED standalone should be
-called from non-recursive locked contexts.
+>  1 file changed, 216 insertions(+)
+>  create mode 100644 include/soc/at91/atmel_tcb.h
+> 
+> diff --git a/include/soc/at91/atmel_tcb.h b/include/soc/at91/atmel_tcb.h
+> new file mode 100644
+> index 000000000000..3ed66031fc76
+> --- /dev/null
 
-New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
-streamline tpm_try_transmit code.
+[ ... ]
 
-tpm_crb no longer needs own power saving functions and can drop using
-tpm_pm_suspend/resume.
+> +static inline struct clk *tcb_clk_get(struct device_node *node, int channel)
+> +{
+> +	struct clk *clk;
+> +	char clk_name[] = "t0_clk";
+> +
+> +	clk_name[1] += channel;
 
-This patch cannot be really separated from the locality fix.
-Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting locality)
+clever :)
+
+> +	clk = of_clk_get_by_name(node->parent, clk_name);
+> +	if (!IS_ERR(clk))
+> +		return clk;
+> +
+> +	return of_clk_get_by_name(node->parent, "t0_clk");
+
+Why do you want to return clk from t0_clk if another channel is
+requested ? This is prone to error.
+
+I would clarify that at the caller level, if tcb_clk_get fails then try
+with channel zero.
+
+> +}
+> +
+> +static inline int tcb_irq_get(struct device_node *node, int channel)
+
+no inline
+
+> +{
+> +	int irq;
+> +
+> +	irq = of_irq_get(node->parent, channel);
+> +	if (irq > 0)
+> +		return irq;
+> +
+> +	return of_irq_get(node->parent, 0);
+
+Same comment than above.
+
+> +}
+> +
+> +static const u8 atmel_tc_divisors[5] = { 2, 8, 32, 128, 0, };
+> +
+> +struct atmel_tcb_info {
+> +	int bits;
+> +};
+> +
+> +static const struct atmel_tcb_info atmel_tcb_infos[] = {
+> +	{ .bits = 16 },
+> +	{ .bits = 32 },
+> +};
+
+Structuring the code with structure is a good practice. However, this is
+too much :)
+
+> +static const struct of_device_id atmel_tcb_dt_ids[] = {
+> +	{
+> +		.compatible = "atmel,at91rm9200-tcb",
+> +		.data = &atmel_tcb_infos[0],
+
+		.data = (void *)16;
+
+> +	}, {
+> +		.compatible = "atmel,at91sam9x5-tcb",
+> +		.data = &atmel_tcb_infos[1],
+> +	}, {
+> +		/* sentinel */
+> +	}
+> +};
+> +
 
 
-Cc: stable@vger.kernel.org
-Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting locality)
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
-V2-3:resent
-V4: 1. Use tpm_pm_suspend/resume in tpm_crb
-    2. Drop cmd_ready/go_idle around tpm_chip_register, as there is no
-       usage counter like in runtime_pm.
-V5: 1. add tpm_cmd_ready and tpm_go_idle wrappers.
-    2. Abuse TPM_TRANSMIT_UNLOCKED flag to resolve tpm space
-       recursion.
-V6: 1. Add new flags TPM_TRANSMIT_NESTED which implies
-       TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW, as not all
-       unlocked flows are recursive i.e. tpm2_unseal_trusted.
-V7: 1. Add dmesg dump.
-V8: 1. Remove TPM_TRANSMIT_NESTED. Use two flags
-       TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW.
 
- drivers/char/tpm/tpm-interface.c |  51 ++++++++++++++++----
- drivers/char/tpm/tpm.h           |  12 ++++-
- drivers/char/tpm/tpm2-space.c    |  16 ++++---
- drivers/char/tpm/tpm_crb.c       | 101 +++++++++++----------------------------
- include/linux/tpm.h              |   2 +
- 5 files changed, 90 insertions(+), 92 deletions(-)
+> +#endif /* __SOC_ATMEL_TCB_H */
+> 
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index e32f6e85dc6d..31b86e027f9d 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -29,7 +29,6 @@
- #include <linux/mutex.h>
- #include <linux/spinlock.h>
- #include <linux/freezer.h>
--#include <linux/pm_runtime.h>
- #include <linux/tpm_eventlog.h>
- 
- #include "tpm.h"
-@@ -369,10 +368,13 @@ static int tpm_validate_command(struct tpm_chip *chip,
- 	return -EINVAL;
- }
- 
--static int tpm_request_locality(struct tpm_chip *chip)
-+static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
- {
- 	int rc;
- 
-+	if (flags & TPM_TRANSMIT_RAW)
-+		return 0;
-+
- 	if (!chip->ops->request_locality)
- 		return 0;
- 
-@@ -385,10 +387,13 @@ static int tpm_request_locality(struct tpm_chip *chip)
- 	return 0;
- }
- 
--static void tpm_relinquish_locality(struct tpm_chip *chip)
-+static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
- {
- 	int rc;
- 
-+	if (flags & TPM_TRANSMIT_RAW)
-+		return;
-+
- 	if (!chip->ops->relinquish_locality)
- 		return;
- 
-@@ -399,6 +404,28 @@ static void tpm_relinquish_locality(struct tpm_chip *chip)
- 	chip->locality = -1;
- }
- 
-+static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
-+{
-+	if (flags & TPM_TRANSMIT_RAW)
-+		return 0;
-+
-+	if (!chip->ops->cmd_ready)
-+		return 0;
-+
-+	return chip->ops->cmd_ready(chip);
-+}
-+
-+static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
-+{
-+	if (flags & TPM_TRANSMIT_RAW)
-+		return 0;
-+
-+	if (!chip->ops->go_idle)
-+		return 0;
-+
-+	return chip->ops->go_idle(chip);
-+}
-+
- static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 				struct tpm_space *space,
- 				u8 *buf, size_t bufsiz,
-@@ -449,14 +476,15 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 	/* Store the decision as chip->locality will be changed. */
- 	need_locality = chip->locality == -1;
- 
--	if (!(flags & TPM_TRANSMIT_RAW) && need_locality) {
--		rc = tpm_request_locality(chip);
-+	if (need_locality) {
-+		rc = tpm_request_locality(chip, flags);
- 		if (rc < 0)
- 			goto out_no_locality;
- 	}
- 
--	if (chip->dev.parent)
--		pm_runtime_get_sync(chip->dev.parent);
-+	rc = tpm_cmd_ready(chip, flags);
-+	if (rc)
-+		goto out;
- 
- 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
- 	if (rc)
-@@ -516,13 +544,16 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 	}
- 
- 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-+	if (rc)
-+		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
- 
- out:
--	if (chip->dev.parent)
--		pm_runtime_put_sync(chip->dev.parent);
-+	rc = tpm_go_idle(chip, flags);
-+	if (rc)
-+		goto out;
- 
- 	if (need_locality)
--		tpm_relinquish_locality(chip);
-+		tpm_relinquish_locality(chip, flags);
- 
- out_no_locality:
- 	if (chip->ops->clk_enable != NULL)
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4426649e431c..5f02dcd3df97 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -511,9 +511,17 @@ extern const struct file_operations tpm_fops;
- extern const struct file_operations tpmrm_fops;
- extern struct idr dev_nums_idr;
- 
-+/**
-+ * enum tpm_transmit_flags
-+ *
-+ * @TPM_TRANSMIT_UNLOCKED: used to lock sequence of tpm_transmit calls.
-+ * @TPM_TRANSMIT_RAW: prevent recursive calls into setup steps
-+ *                    (go idle, locality,..). Always use with UNLOCKED
-+ *                    as it will fail on double locking.
-+ */
- enum tpm_transmit_flags {
--	TPM_TRANSMIT_UNLOCKED	= BIT(0),
--	TPM_TRANSMIT_RAW	= BIT(1),
-+	TPM_TRANSMIT_UNLOCKED = BIT(0),
-+	TPM_TRANSMIT_RAW      = BIT(1),
- };
- 
- ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 6122d3276f72..11c85ed8c113 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -39,7 +39,8 @@ static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
- 	for (i = 0; i < ARRAY_SIZE(space->session_tbl); i++) {
- 		if (space->session_tbl[i])
- 			tpm2_flush_context_cmd(chip, space->session_tbl[i],
--					       TPM_TRANSMIT_UNLOCKED);
-+					       TPM_TRANSMIT_UNLOCKED |
-+					       TPM_TRANSMIT_RAW);
- 	}
- }
- 
-@@ -84,7 +85,7 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
- 	tpm_buf_append(&tbuf, &buf[*offset], body_size);
- 
- 	rc = tpm_transmit_cmd(chip, NULL, tbuf.data, PAGE_SIZE, 4,
--			      TPM_TRANSMIT_UNLOCKED, NULL);
-+			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW, NULL);
- 	if (rc < 0) {
- 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
- 			 __func__, rc);
-@@ -133,7 +134,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
- 	tpm_buf_append_u32(&tbuf, handle);
- 
- 	rc = tpm_transmit_cmd(chip, NULL, tbuf.data, PAGE_SIZE, 0,
--			      TPM_TRANSMIT_UNLOCKED, NULL);
-+			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW, NULL);
- 	if (rc < 0) {
- 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
- 			 __func__, rc);
-@@ -170,7 +171,8 @@ static void tpm2_flush_space(struct tpm_chip *chip)
- 	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
- 		if (space->context_tbl[i] && ~space->context_tbl[i])
- 			tpm2_flush_context_cmd(chip, space->context_tbl[i],
--					       TPM_TRANSMIT_UNLOCKED);
-+					       TPM_TRANSMIT_UNLOCKED |
-+					       TPM_TRANSMIT_RAW);
- 
- 	tpm2_flush_sessions(chip, space);
- }
-@@ -377,7 +379,8 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
- 
- 	return 0;
- out_no_slots:
--	tpm2_flush_context_cmd(chip, phandle, TPM_TRANSMIT_UNLOCKED);
-+	tpm2_flush_context_cmd(chip, phandle,
-+			       TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW);
- 	dev_warn(&chip->dev, "%s: out of slots for 0x%08X\n", __func__,
- 		 phandle);
- 	return -ENOMEM;
-@@ -465,7 +468,8 @@ static int tpm2_save_space(struct tpm_chip *chip)
- 			return rc;
- 
- 		tpm2_flush_context_cmd(chip, space->context_tbl[i],
--				       TPM_TRANSMIT_UNLOCKED);
-+				       TPM_TRANSMIT_UNLOCKED |
-+				       TPM_TRANSMIT_RAW);
- 		space->context_tbl[i] = ~0;
- 	}
- 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 34fbc6cb097b..36952ef98f90 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -132,7 +132,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
- }
- 
- /**
-- * crb_go_idle - request tpm crb device to go the idle state
-+ * __crb_go_idle - request tpm crb device to go the idle state
-  *
-  * @dev:  crb device
-  * @priv: crb private data
-@@ -147,7 +147,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
-  *
-  * Return: 0 always
-  */
--static int crb_go_idle(struct device *dev, struct crb_priv *priv)
-+static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
- {
- 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
- 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
-@@ -163,11 +163,20 @@ static int crb_go_idle(struct device *dev, struct crb_priv *priv)
- 		dev_warn(dev, "goIdle timed out\n");
- 		return -ETIME;
- 	}
-+
- 	return 0;
- }
- 
-+static int crb_go_idle(struct tpm_chip *chip)
-+{
-+	struct device *dev = &chip->dev;
-+	struct crb_priv *priv = dev_get_drvdata(dev);
-+
-+	return __crb_go_idle(dev, priv);
-+}
-+
- /**
-- * crb_cmd_ready - request tpm crb device to enter ready state
-+ * __crb_cmd_ready - request tpm crb device to enter ready state
-  *
-  * @dev:  crb device
-  * @priv: crb private data
-@@ -181,7 +190,7 @@ static int crb_go_idle(struct device *dev, struct crb_priv *priv)
-  *
-  * Return: 0 on success -ETIME on timeout;
-  */
--static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
-+static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
- {
- 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
- 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
-@@ -200,6 +209,14 @@ static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
- 	return 0;
- }
- 
-+static int crb_cmd_ready(struct tpm_chip *chip)
-+{
-+	struct device *dev = &chip->dev;
-+	struct crb_priv *priv = dev_get_drvdata(dev);
-+
-+	return __crb_cmd_ready(dev, priv);
-+}
-+
- static int __crb_request_locality(struct device *dev,
- 				  struct crb_priv *priv, int loc)
- {
-@@ -401,6 +418,8 @@ static const struct tpm_class_ops tpm_crb = {
- 	.send = crb_send,
- 	.cancel = crb_cancel,
- 	.req_canceled = crb_req_canceled,
-+	.go_idle  = crb_go_idle,
-+	.cmd_ready = crb_cmd_ready,
- 	.request_locality = crb_request_locality,
- 	.relinquish_locality = crb_relinquish_locality,
- 	.req_complete_mask = CRB_DRV_STS_COMPLETE,
-@@ -520,7 +539,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 	 * PTT HW bug w/a: wake up the device to access
- 	 * possibly not retained registers.
- 	 */
--	ret = crb_cmd_ready(dev, priv);
-+	ret = __crb_cmd_ready(dev, priv);
- 	if (ret)
- 		goto out_relinquish_locality;
- 
-@@ -565,7 +584,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 	if (!ret)
- 		priv->cmd_size = cmd_size;
- 
--	crb_go_idle(dev, priv);
-+	__crb_go_idle(dev, priv);
- 
- out_relinquish_locality:
- 
-@@ -628,32 +647,7 @@ static int crb_acpi_add(struct acpi_device *device)
- 	chip->acpi_dev_handle = device->handle;
- 	chip->flags = TPM_CHIP_FLAG_TPM2;
- 
--	rc = __crb_request_locality(dev, priv, 0);
--	if (rc)
--		return rc;
--
--	rc  = crb_cmd_ready(dev, priv);
--	if (rc)
--		goto out;
--
--	pm_runtime_get_noresume(dev);
--	pm_runtime_set_active(dev);
--	pm_runtime_enable(dev);
--
--	rc = tpm_chip_register(chip);
--	if (rc) {
--		crb_go_idle(dev, priv);
--		pm_runtime_put_noidle(dev);
--		pm_runtime_disable(dev);
--		goto out;
--	}
--
--	pm_runtime_put_sync(dev);
--
--out:
--	__crb_relinquish_locality(dev, priv, 0);
--
--	return rc;
-+	return tpm_chip_register(chip);
- }
- 
- static int crb_acpi_remove(struct acpi_device *device)
-@@ -663,52 +657,11 @@ static int crb_acpi_remove(struct acpi_device *device)
- 
- 	tpm_chip_unregister(chip);
- 
--	pm_runtime_disable(dev);
--
- 	return 0;
- }
- 
--static int __maybe_unused crb_pm_runtime_suspend(struct device *dev)
--{
--	struct tpm_chip *chip = dev_get_drvdata(dev);
--	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
--
--	return crb_go_idle(dev, priv);
--}
--
--static int __maybe_unused crb_pm_runtime_resume(struct device *dev)
--{
--	struct tpm_chip *chip = dev_get_drvdata(dev);
--	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
--
--	return crb_cmd_ready(dev, priv);
--}
--
--static int __maybe_unused crb_pm_suspend(struct device *dev)
--{
--	int ret;
--
--	ret = tpm_pm_suspend(dev);
--	if (ret)
--		return ret;
--
--	return crb_pm_runtime_suspend(dev);
--}
--
--static int __maybe_unused crb_pm_resume(struct device *dev)
--{
--	int ret;
--
--	ret = crb_pm_runtime_resume(dev);
--	if (ret)
--		return ret;
--
--	return tpm_pm_resume(dev);
--}
--
- static const struct dev_pm_ops crb_pm = {
--	SET_SYSTEM_SLEEP_PM_OPS(crb_pm_suspend, crb_pm_resume)
--	SET_RUNTIME_PM_OPS(crb_pm_runtime_suspend, crb_pm_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(tpm_pm_suspend, tpm_pm_resume)
- };
- 
- static const struct acpi_device_id crb_device_ids[] = {
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 06639fb6ab85..8eb5e5ebe136 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -43,6 +43,8 @@ struct tpm_class_ops {
- 	u8 (*status) (struct tpm_chip *chip);
- 	bool (*update_timeouts)(struct tpm_chip *chip,
- 				unsigned long *timeout_cap);
-+	int (*go_idle)(struct tpm_chip *chip);
-+	int (*cmd_ready)(struct tpm_chip *chip);
- 	int (*request_locality)(struct tpm_chip *chip, int loc);
- 	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
- 	void (*clk_enable)(struct tpm_chip *chip, bool value);
+
 -- 
-2.14.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
