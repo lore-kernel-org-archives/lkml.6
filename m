@@ -2,298 +2,183 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A003C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7998AC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C836527144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A18327140
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:14:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="pcIGEqlG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C836527144
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gTkftz5z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A18327140
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964817AbeF1JMn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 05:12:43 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39581 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934955AbeF1JMj (ORCPT
+        id S964934AbeF1JOg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 05:14:36 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:32897 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964784AbeF1JOf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 05:12:39 -0400
-Received: by mail-pl0-f68.google.com with SMTP id s24-v6so2460353plq.6
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:12:38 -0700 (PDT)
+        Thu, 28 Jun 2018 05:14:35 -0400
+Received: by mail-io0-f193.google.com with SMTP id d185-v6so4563449ioe.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:14:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pgkMAEjFrbsEi0EmWdk7pAq+9QPZGH5uYXy4rkPzf0A=;
-        b=pcIGEqlGqCLUGLduC4YWfpRRENYZX4BDkk/HWT7a6rBws3HN5l563AZGgftRsLkIZl
-         +aqzugdeAP+I9Pb+SAHGa5H6RJoBwNa10nSG8OscZMYzcGrKvx4WOb2qgAUwh8VoaJAn
-         +P7t/XbQkZWVkqa0N6UHXQhgP8Wl0JQAshjRhN0l/28FIr8Ydc5iraxYyO8Vui6RrbhZ
-         1hS3iyRJfiTOCeyyjfYuEMN1mSpqcmoyj99KHN3jHkZ9FotsQtTbBu4BnHZ6AR/TwW7f
-         lICon41gh7IjKGzipMozamKOQvY0cp6YdoMYq+bHv/s3kZRWWAlaaKy1mXpW48OPtrCT
-         xiZA==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+b2x6NOJBsTNfvowLR9oKe4yv1rod5vlgXxyu1++zv4=;
+        b=gTkftz5zzxu7wYw+g9BQNSAwnpJZChf33asjRh3ZzEwZJrP46b6b9IeniFa2OH2OPj
+         nw3FdKp/OkusxYgFfnEz+dRAeN4AmXw5NKl5TwrfqRjdfAKrjZdHTvKMv5bx4fhaxrdd
+         aeSUTS03E+HUYehRa22V0I7oTNWcYX0HlFUnc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pgkMAEjFrbsEi0EmWdk7pAq+9QPZGH5uYXy4rkPzf0A=;
-        b=Mboh6jjOQJl7LZW814Ql1A3IRYoWeA8Yu58e46BlWR+NU4glJYgxw1k0rgSzPA6BIE
-         HTckw7AsORXyjPoacRYYnaMzaWRILlfl8l/ZdsRS4DrLK34XSon4QVpDtT1ZIn0jaqsd
-         J4unG/GoNtNBXOQkp85G3TXgMdh7mC04KHCgESSSlstxNEAQxMkHjSyK36yQGvOK5ljr
-         ef5+rwBRf96MxKkupb0fKopDXjRFA9hv5TkbcyMraoUr7CypHdYiIwc7uYeSKZ9iuvlh
-         vjdmu9zHwbJyaMa5hHSa7GxdGFG0HtbsqeiO8aw7rHB/57IPh0CqM5PJxQNPOaTVt0j2
-         A0LA==
-X-Gm-Message-State: APt69E1DvR3dmq09xIc2ahZxOyGVC7qN9PeghLrBXhSLKJinASYimW8d
-        +DjzmBx1XszVFOunHEIh8w2vOg==
-X-Google-Smtp-Source: ADUXVKLgGqhCuPquz0yWgQgehk8JMA9GMqVTEGxOTQYNZglTIYCuzXsixGq8ru4t5H/igVUrXUcw1Q==
-X-Received: by 2002:a17:902:8210:: with SMTP id x16-v6mr9620336pln.307.1530177158494;
-        Thu, 28 Jun 2018 02:12:38 -0700 (PDT)
-Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id x6-v6sm2223454pfx.185.2018.06.28.02.12.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 28 Jun 2018 02:12:37 -0700 (PDT)
-From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To:     mb@lightnvm.io
-Cc:     hans.holmberg@cnexlabs.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: recover chunk state on 1.2 devices
-Date:   Thu, 28 Jun 2018 11:12:01 +0200
-Message-Id: <1530177121-24908-2-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530177121-24908-1-git-send-email-javier@cnexlabs.com>
-References: <1530177121-24908-1-git-send-email-javier@cnexlabs.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+b2x6NOJBsTNfvowLR9oKe4yv1rod5vlgXxyu1++zv4=;
+        b=e9oJCsNZZ24QxQxedQdv2WYRwOtUbt4wAS5L8t4eGpKsp2kUbd13SNlQFOWCwxzf1H
+         aY0jf6jWbRgbQedxp0ark0uJ9lBvO74pFlKxlPOyNq7WlJMBaBU8oJdk2ag0XIc9/vgF
+         opdFX3En56AOeTYusOeI+oGvI/CKGK+rqYWeginnONLvFfod1R1H99xNYW49eEPt0awv
+         ngs70gSKN5Iuko6M9vupddgPGmqQhEWaDYiaE3txskHsYCdocIyrwq7XOzgGd/TkLfUH
+         Akn2OcjE1Rlp5XaJyZgjA1d7zS0zQsvl7gOkSffPdgYCz/XdQpfxxRC2PeXghAVGdgMg
+         hMUg==
+X-Gm-Message-State: APt69E0MEouIdPh6ZUYnODoUnHApbS0mdMgSPNYJXtc8opd2Ez84yhXK
+        kRrXwDMq4tMxQsVi6b4DXubul2vTzMyXfXom8xqzKDKl
+X-Google-Smtp-Source: AAOMgpfXSWxYka8NwRO9utSUMLzlgFU/glNL9aR6lrVaukN+q8uDXfudikBoWm05ctk37OYobc7Xt1zfq1E841CTHvI=
+X-Received: by 2002:a6b:dd0b:: with SMTP id f11-v6mr7750956ioc.173.1530177274936;
+ Thu, 28 Jun 2018 02:14:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 02:14:34
+ -0700 (PDT)
+In-Reply-To: <20180628091135.GB2494@hirez.programming.kicks-ass.net>
+References: <20180627160604.8154-1-ard.biesheuvel@linaro.org>
+ <20180627160604.8154-5-ard.biesheuvel@linaro.org> <20180628091135.GB2494@hirez.programming.kicks-ass.net>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 28 Jun 2018 11:14:34 +0200
+Message-ID: <CAKv+Gu8OuxSWEWA0o+b+DaPLW8tSx-R6K4_KfomZSBKxqSuukA@mail.gmail.com>
+Subject: Re: [PATCH 4/5] x86: jump_label: switch to jump_entry accessors
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Open-Channel 1.2 spec does not define a mechanism for the host to
-recover the block (chunk) state. As a consequence, a newly format device
-will need to reconstruct the state. Currently, pblk assumes that blocks
-are not erased, which might cause double-erases in case that the device
-does not protect itself against them (which is not specified in the spec
-either).
+On 28 June 2018 at 11:11, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Wed, Jun 27, 2018 at 06:06:03PM +0200, Ard Biesheuvel wrote:
+>> In preparation of switching x86 to use place-relative references for
+>> the code, target and key members of struct jump_entry, replace direct
+>> references to the struct members with invocations of the new accessors.
+>> This will allow us to make the switch by modifying the accessors only.
+>>
+>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>
+> That just makes horrible code worse.. can't we do something like so
+> instead?
+>
 
-This patch, reconstructs the state based on read errors. If the first
-sector of a block returns and empty page (NVM_RSP_ERR_EMPTYPAGE), then
-the block s marked free, i.e., erased and ready to be used
-(NVM_CHK_ST_FREE). Otherwise, the block is marked as closed
-(NVM_CHK_ST_CLOSED). Note that even if a block is open and not fully
-written, it has to be erased in order to be used again.
+Sure, I will incorporate that for v2.
 
-One caveat of this approach is that blocks that have been erased at a
-moment in time, will always be considered as erased. However, some media
-might become unstable if blocks are not erased before usage. Since pblk
-would follow this principle after the state of all blocks fall under
-pblk's domain, we can consider this as an initialization problem. The
-trade-off would be to fall back to the old behavior and risk premature
-media wearing.
-
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-init.c | 138 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 124 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 3b8aa4a64cac..ce25f1473d8e 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -697,47 +697,138 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
- 	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
- }
- 
-+static void pblk_state_complete(struct kref *ref)
-+{
-+	struct pblk_pad_rq *pad_rq = container_of(ref, struct pblk_pad_rq, ref);
-+
-+	complete(&pad_rq->wait);
-+}
-+
-+static void pblk_end_io_state(struct nvm_rq *rqd)
-+{
-+	struct pblk_pad_rq *pad_rq = rqd->private;
-+	struct pblk *pblk = pad_rq->pblk;
-+	struct nvm_tgt_dev *dev = pblk->dev;
-+	struct nvm_geo *geo = &dev->geo;
-+	struct pblk_line *line;
-+	struct nvm_chk_meta *chunk;
-+	int pos;
-+
-+	line = &pblk->lines[pblk_ppa_to_line(rqd->ppa_addr)];
-+	pos = pblk_ppa_to_pos(geo, rqd->ppa_addr);
-+
-+	chunk = &line->chks[pos];
-+
-+	if (rqd->error == NVM_RSP_ERR_EMPTYPAGE)
-+		chunk->state = NVM_CHK_ST_FREE;
-+	else
-+		chunk->state = NVM_CHK_ST_CLOSED;
-+
-+	bio_put(rqd->bio);
-+	pblk_free_rqd(pblk, rqd, PBLK_READ);
-+	kref_put(&pad_rq->ref, pblk_state_complete);
-+}
-+
-+static int pblk_check_chunk_state(struct pblk *pblk, struct nvm_chk_meta *chunk,
-+				struct ppa_addr ppa, struct pblk_pad_rq *pad_rq)
-+{
-+	struct nvm_rq *rqd;
-+	struct bio *bio;
-+	int ret;
-+
-+	bio = bio_alloc(GFP_KERNEL, 1);
-+
-+	if (pblk_bio_add_pages(pblk, bio, GFP_KERNEL, 1))
-+		goto fail_free_bio;
-+
-+	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
-+
-+	rqd->bio = bio;
-+	rqd->opcode = NVM_OP_PREAD;
-+	rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_SEQUENTIAL);
-+	rqd->nr_ppas = 1;
-+	rqd->ppa_addr = ppa;
-+	rqd->end_io = pblk_end_io_state;
-+	rqd->private = pad_rq;
-+
-+	kref_get(&pad_rq->ref);
-+
-+	ret = pblk_submit_io(pblk, rqd);
-+	if (ret) {
-+		pr_err("pblk: I/O submissin failed: %d\n", ret);
-+		goto fail_free_rqd;
-+	}
-+
-+	return NVM_IO_OK;
-+
-+fail_free_rqd:
-+	pblk_free_rqd(pblk, rqd, PBLK_READ);
-+	pblk_bio_free_pages(pblk, bio, 0, bio->bi_vcnt);
-+fail_free_bio:
-+	bio_put(bio);
-+
-+	return NVM_IO_ERR;
-+}
-+
- static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
- 				   void *chunk_meta)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
- 	struct pblk_line_meta *lm = &pblk->lm;
-+	struct pblk_pad_rq *pad_rq;
- 	int i, chk_per_lun, nr_bad_chks = 0;
- 
-+	pad_rq = kmalloc(sizeof(struct pblk_pad_rq), GFP_KERNEL);
-+	if (!pad_rq)
-+		return -1;
-+
-+	pad_rq->pblk = pblk;
-+	init_completion(&pad_rq->wait);
-+	kref_init(&pad_rq->ref);
-+
- 	chk_per_lun = geo->num_chk * geo->pln_mode;
- 
- 	for (i = 0; i < lm->blk_per_line; i++) {
- 		struct pblk_lun *rlun = &pblk->luns[i];
- 		struct nvm_chk_meta *chunk;
--		int pos = pblk_ppa_to_pos(geo, rlun->bppa);
-+		struct ppa_addr ppa = rlun->bppa;
-+		int pos = pblk_ppa_to_pos(geo, ppa);
- 		u8 *lun_bb_meta = chunk_meta + pos * chk_per_lun;
- 
- 		chunk = &line->chks[pos];
- 
--		/*
--		 * In 1.2 spec. chunk state is not persisted by the device. Thus
--		 * some of the values are reset each time pblk is instantiated,
--		 * so we have to assume that the block is closed.
--		 */
--		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
--			chunk->state =  NVM_CHK_ST_CLOSED;
--		else
--			chunk->state = NVM_CHK_ST_OFFLINE;
--
- 		chunk->type = NVM_CHK_TP_W_SEQ;
- 		chunk->wi = 0;
- 		chunk->slba = -1;
- 		chunk->cnlb = geo->clba;
- 		chunk->wp = 0;
- 
--		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
-+		if (lun_bb_meta[line->id] != NVM_BLK_T_FREE) {
-+			chunk->state = NVM_CHK_ST_OFFLINE;
-+			set_bit(pos, line->blk_bitmap);
-+			nr_bad_chks++;
-+
- 			continue;
-+		}
- 
--		set_bit(pos, line->blk_bitmap);
--		nr_bad_chks++;
-+		/*
-+		 * In 1.2 spec. chunk state is not persisted by the device.
-+		 * Recover the state based on media response.
-+		 */
-+		ppa.g.blk = line->id;
-+		pblk_check_chunk_state(pblk, chunk, ppa, pad_rq);
- 	}
- 
-+	kref_put(&pad_rq->ref, pblk_state_complete);
-+
-+	if (!wait_for_completion_io_timeout(&pad_rq->wait,
-+				msecs_to_jiffies(PBLK_COMMAND_TIMEOUT_MS))) {
-+		pr_err("pblk: state recovery timed out\n");
-+		return -1;
-+	}
-+
-+	kfree(pad_rq);
- 	return nr_bad_chks;
- }
- 
-@@ -1036,6 +1127,23 @@ static int pblk_line_meta_init(struct pblk *pblk)
- 	return 0;
- }
- 
-+static void check_meta(struct pblk *pblk, struct pblk_line *line)
-+{
-+	struct nvm_tgt_dev *dev = pblk->dev;
-+	struct nvm_geo *geo = &dev->geo;
-+	struct pblk_line_meta *lm = &pblk->lm;
-+	int i;
-+
-+	for (i = 0; i < lm->blk_per_line; i++) {
-+		struct pblk_lun *rlun = &pblk->luns[i];
-+		struct nvm_chk_meta *chunk;
-+		struct ppa_addr ppa = rlun->bppa;
-+		int pos = pblk_ppa_to_pos(geo, ppa);
-+
-+		chunk = &line->chks[pos];
-+	}
-+}
-+
- static int pblk_lines_init(struct pblk *pblk)
- {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
-@@ -1077,6 +1185,8 @@ static int pblk_lines_init(struct pblk *pblk)
- 			goto fail_free_lines;
- 
- 		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
-+
-+		check_meta(pblk, line);
- 	}
- 
- 	if (!nr_free_chks) {
--- 
-2.7.4
-
+>
+> --- a/arch/x86/kernel/jump_label.c
+> +++ b/arch/x86/kernel/jump_label.c
+> @@ -42,52 +42,37 @@ static void __jump_label_transform(struc
+>                                    void *(*poker)(void *, const void *, size_t),
+>                                    int init)
+>  {
+> -       union jump_code_union code;
+> +       union jump_code_union jmp = {
+> +               { .jump = 0xe9,
+> +                 .offset = jump_entry_target(entry) -
+> +                           (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE), }
+> +       };
+>         const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
+>         const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
+> +       const unsigned char *expect, *code;
+> +       int line;
+>
+>         if (type == JUMP_LABEL_JMP) {
+>                 if (init) {
+> -                       /*
+> -                        * Jump label is enabled for the first time.
+> -                        * So we expect a default_nop...
+> -                        */
+> -                       if (unlikely(memcmp((void *)entry->code, default_nop, 5)
+> -                                    != 0))
+> -                               bug_at((void *)entry->code, __LINE__);
+> +                       expect = default_nop; line = __LINE__;
+>                 } else {
+> -                       /*
+> -                        * ...otherwise expect an ideal_nop. Otherwise
+> -                        * something went horribly wrong.
+> -                        */
+> -                       if (unlikely(memcmp((void *)entry->code, ideal_nop, 5)
+> -                                    != 0))
+> -                               bug_at((void *)entry->code, __LINE__);
+> +                       expect = ideal_nop; line = __LINE__;
+>                 }
+>
+> -               code.jump = 0xe9;
+> -               code.offset = entry->target -
+> -                               (entry->code + JUMP_LABEL_NOP_SIZE);
+> +               code = &jmp.code;
+>         } else {
+> -               /*
+> -                * We are disabling this jump label. If it is not what
+> -                * we think it is, then something must have gone wrong.
+> -                * If this is the first initialization call, then we
+> -                * are converting the default nop to the ideal nop.
+> -                */
+>                 if (init) {
+> -                       if (unlikely(memcmp((void *)entry->code, default_nop, 5) != 0))
+> -                               bug_at((void *)entry->code, __LINE__);
+> +                       expect = default_nop; line = __LINE__;
+>                 } else {
+> -                       code.jump = 0xe9;
+> -                       code.offset = entry->target -
+> -                               (entry->code + JUMP_LABEL_NOP_SIZE);
+> -                       if (unlikely(memcmp((void *)entry->code, &code, 5) != 0))
+> -                               bug_at((void *)entry->code, __LINE__);
+> +                       expect = &jmp.code; line = __LINE__;
+>                 }
+> -               memcpy(&code, ideal_nops[NOP_ATOMIC5], JUMP_LABEL_NOP_SIZE);
+> +
+> +               code = ideal_nop;
+>         }
+>
+> +       if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
+> +               bug_at((void *)jump_entry_code(entry), line);
+> +
+>         /*
+>          * Make text_poke_bp() a default fallback poker.
+>          *
+> @@ -96,11 +81,13 @@ static void __jump_label_transform(struc
+>          * always nop being the 'currently valid' instruction
+>          *
+>          */
+> -       if (poker)
+> -               (*poker)((void *)entry->code, &code, JUMP_LABEL_NOP_SIZE);
+> -       else
+> -               text_poke_bp((void *)entry->code, &code, JUMP_LABEL_NOP_SIZE,
+> -                            (void *)entry->code + JUMP_LABEL_NOP_SIZE);
+> +       if (poker) {
+> +               (*poker)((void *)jump_entry_code(entry), &code, JUMP_LABEL_NOP_SIZE);
+> +               return;
+> +       }
+> +
+> +       text_poke_bp((void *)jump_entry_code(entry), &code, JUMP_LABEL_NOP_SIZE,
+> +                    (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+>  }
+>
+>  void arch_jump_label_transform(struct jump_entry *entry,
