@@ -2,128 +2,108 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB408C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA5DC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6119F25A80
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73ADD25A90
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:15:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ouqNBADL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6119F25A80
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="e5KAW29d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73ADD25A90
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752113AbeF1BOw (ORCPT
+        id S1752339AbeF1BPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 21:14:52 -0400
-Received: from mail-eopbgr70055.outbound.protection.outlook.com ([40.107.7.55]:35077
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751043AbeF1BOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 21:14:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=26Nf9U/jrKIZavdhukAh5sr9aOBlpS5YQu5pVwYxjPs=;
- b=ouqNBADLo3uuhE16MxQX7Asi2atwva/fB8YGjj6/EO/FYPY+Na2d+TkL2jm4D8+3MMLxSoh0LsSkmBTlEQINZo7rdgtycc1NYw96I7a06xE5b5T8KSBAZonyJpLH2yqpV8s7jNkAJq1AHTNtTW18wjPhduG+5AiRzNVuieCGrK8=
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com (10.163.7.13) by
- AM3PR04MB531.eurprd04.prod.outlook.com (10.242.112.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.23; Thu, 28 Jun 2018 01:14:44 +0000
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7]) by AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7%7]) with mapi id 15.20.0906.023; Thu, 28 Jun 2018
- 01:14:44 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: imx6sll-evk: enable usdhc3 slot
-Thread-Topic: [PATCH] ARM: dts: imx6sll-evk: enable usdhc3 slot
-Thread-Index: AQHUDfKUXi2sug5/y0O+R0vVRcqq46R0KyUAgACzVyA=
-Date:   Thu, 28 Jun 2018 01:14:44 +0000
-Message-ID: <AM3PR04MB1315128EA1000FD6D0903CEAF54F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1530088605-9264-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5DoRUSOfV_oh242w6s_1Zs8yAy9Kf4D+WdYym5c+6nucg@mail.gmail.com>
-In-Reply-To: <CAOMZO5DoRUSOfV_oh242w6s_1Zs8yAy9Kf4D+WdYym5c+6nucg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB531;7:VTlENkWI5jEdmztmZHYT8P2bh8tKml1W5s451NWTE5Hl8cU1fvO1WAUpvfKfMkhruMjwqBfaGteVL5qwptxGpel5oNKC9c9vIQwZbjbfUQ/Do+B4BKUQ2mS3wdTUn7ruwPbvlP2ZYIkV0f/mc4IXFZc35RZWc0F2pk+c4ZhMhxM1IGECmoJWwE8jMNi+ykik6uSQt5TXf12xGq35x60VO23FzPA7NU4FK//NtRnU8iJLyZ2wkW7jN9O1/3sPbVlM
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 1f76c2b1-73c6-4ca1-8447-08d5dc9488aa
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652034)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB531;
-x-ms-traffictypediagnostic: AM3PR04MB531:
-x-microsoft-antispam-prvs: <AM3PR04MB5314451E63BAA450F5C0507F54F0@AM3PR04MB531.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB531;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB531;
-x-forefront-prvs: 0717E25089
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(346002)(39860400002)(136003)(13464003)(189003)(199004)(52314003)(39060400002)(25786009)(4326008)(5250100002)(99286004)(33656002)(86362001)(54906003)(5660300001)(2900100001)(66066001)(53936002)(55016002)(316002)(9686003)(6436002)(7736002)(305945005)(81156014)(105586002)(256004)(6916009)(74316002)(106356001)(186003)(97736004)(478600001)(81166006)(8936002)(2906002)(14454004)(476003)(44832011)(68736007)(11346002)(6506007)(486006)(446003)(26005)(3846002)(6116002)(8676002)(7696005)(6246003)(76176011)(102836004)(229853002)(53546011)(14444005)(1411001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB531;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: G0KzQeKiU7iYOa3RXj97gK/fUrV+Hx6OLhpbiUyNHKuygN5FuirrKy1c7VYZ8qRDBJgA9v/7QrbcCFtdJ6NLAnCHJBls3cuvx8ZGpXHYGZi+ocjLCnkH/f1WxKNC26hdCyAsWuNwKMEVZrrk34kBqHrrcbOXSMflq8ilqkW0YWmoH2SMNQfgdSbI/EcZ/CkcsIlU0lidwrI4wUtrvJ2lOSUtdTM2Ez97BHNSJZUGsiEQGQbJ4D8a4f7V2UwY3AqV+/eFj3SMKCZ9kwBwEE50DGKgzHywd3LayFzlQa7eTidlUslo6sp9p53D6FBxRReGBH1xg4zrcfY7mamiYhH6Dj6eiSbU9nWJb8PBg+yzlLE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 27 Jun 2018 21:15:39 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:48330 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751155AbeF1BPh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 21:15:37 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5S19OaA178422;
+        Thu, 28 Jun 2018 01:15:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=agUdtiM8g9jNj8WgZ91GjY9HwPzHViEQzBbk2t5+Lh0=;
+ b=e5KAW29dqqN3rRrLbnayjDM4pOKj6tiK/uuqB1vOPla3wKUuu7+bNKq9XQ06Pn/c6vlU
+ pC6Y9wNdx6oPLjYa+sjQZDBb/7N7Td0REmZYUPWE0fHIZfXZEldpNAHFSHxswCp60HRY
+ 2SIDW1AA51zozH2YyL3UvTBQEJIoTUlO76ZF7h7uEa9nWfTqzAMsccfbldMA5TY5R1AP
+ K6HYo3z75g97DKpowsNYhNquyJus8ixr5P2kZG0WAN14oK5kVZm/qxVhDoySgDhY0Qqh
+ KbA9iqbcZTFrEWwKXTdVB0UtyPpkudEf/E2W1BST/9F8hExziaaq5QWItc+SMbAZaCSb mg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2jum57xyh0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 28 Jun 2018 01:15:35 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5S1FZ3K008817
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 28 Jun 2018 01:15:35 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5S1FYLZ024694;
+        Thu, 28 Jun 2018 01:15:34 GMT
+Received: from [10.182.69.179] (/10.182.69.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Jun 2018 18:15:34 -0700
+Subject: Re: [PATCH] blk-mq: use mutex_trylock to avoid lock inversion
+To:     Bart Van Assche <bart.vanassche@wdc.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+References: <1529391637-1704-1-git-send-email-jianchao.w.wang@oracle.com>
+ <2409013d789ca266879d24c815b76c2193e23fe3.camel@wdc.com>
+ <d528a730-8e44-225b-2a35-3544160761dc@oracle.com>
+ <2c2003ff1baac05688495677f67239d52f6d9527.camel@wdc.com>
+ <2a1dda06-5c7c-b75b-c1ae-75d1a2a49694@oracle.com>
+ <a0350d07-3c11-c04c-d9ba-94a5868e7d8f@oracle.com>
+ <1d4d1dc3-7014-4e2a-1ea5-e1446381b404@wdc.com>
+ <07e9e71a-723c-93a8-becb-df5d2f43b690@oracle.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <9ee9aee0-9361-b2ef-3124-aa6cab678faf@oracle.com>
+Date:   Thu, 28 Jun 2018 09:15:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f76c2b1-73c6-4ca1-8447-08d5dc9488aa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2018 01:14:44.7488
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB531
+In-Reply-To: <07e9e71a-723c-93a8-becb-df5d2f43b690@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8937 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=881
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806280010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
-Z21haWwuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIEp1bmUgMjcsIDIwMTggMTA6MzEgUE0NCj4g
-VG86IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogU2hhd24gR3VvIDxz
-aGF3bmd1b0BrZXJuZWwub3JnPjsgU2FzY2hhIEhhdWVyDQo+IDxzLmhhdWVyQHBlbmd1dHJvbml4
-LmRlPjsgU2FzY2hhIEhhdWVyIDxrZXJuZWxAcGVuZ3V0cm9uaXguZGU+OyBGYWJpbw0KPiBFc3Rl
-dmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+OyBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwu
-b3JnPjsNCj4gTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IG9wZW4gbGlzdDpP
-UEVOIEZJUk1XQVJFIEFORA0KPiBGTEFUVEVORUQgREVWSUNFIFRSRUUgQklORElOR1MgPGRldmlj
-ZXRyZWVAdmdlci5rZXJuZWwub3JnPjsNCj4gZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNv
-bT47IG1vZGVyYXRlZCBsaXN0OkFSTS9GUkVFU0NBTEUgSU1YIC8gTVhDDQo+IEFSTSBBUkNISVRF
-Q1RVUkUgPGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz47IGxpbnV4LWtlcm5l
-bA0KPiA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUmU6IFtQQVRD
-SF0gQVJNOiBkdHM6IGlteDZzbGwtZXZrOiBlbmFibGUgdXNkaGMzIHNsb3QNCj4gDQo+IEhpIEFu
-c29uLA0KPiANCj4gT24gV2VkLCBKdW4gMjcsIDIwMTggYXQgNTozNiBBTSwgQW5zb24gSHVhbmcg
-PEFuc29uLkh1YW5nQG54cC5jb20+DQo+IHdyb3RlOg0KPiANCj4gPiArJnVzZGhjMyB7DQo+ID4g
-KyAgICAgICBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiLCAic3RhdGVfMTAwbWh6IiwgInN0YXRl
-XzIwMG1oeiI7DQo+ID4gKyAgICAgICBwaW5jdHJsLTAgPSA8JnBpbmN0cmxfdXNkaGMzPjsNCj4g
-PiArICAgICAgIHBpbmN0cmwtMSA9IDwmcGluY3RybF91c2RoYzNfMTAwbWh6PjsNCj4gPiArICAg
-ICAgIHBpbmN0cmwtMiA9IDwmcGluY3RybF91c2RoYzNfMjAwbWh6PjsNCj4gPiArICAgICAgIGNk
-LWdwaW9zID0gPCZncGlvMyAyMiBHUElPX0FDVElWRV9MT1c+Ow0KPiA+ICsgICAgICAga2VlcC1w
-b3dlci1pbi1zdXNwZW5kOw0KPiA+ICsgICAgICAgZW5hYmxlLXNkaW8td2FrZXVwOw0KPiA+ICsg
-ICAgICAgdm1tYy1zdXBwbHkgPSA8JnJlZ19zZDNfdm1tYz47DQo+ID4gKyAgICAgICBzdGF0dXMg
-PSAib2theSI7DQo+ID4gK307DQo+ID4gKw0KPiA+ICAmdXNib3RnMSB7DQo+IA0KPiBQbGVhc2Ug
-a2VlcCB0aGUgbm9kZXMgc29ydGVkIGluIGFscGhhYmV0aWNhbCBvcmRlci4NCg0KVGhhbmtzLCBp
-dCBpcyBiZWNhdXNlIG9yaWdpbmFsIGNvZGUgZG9lcyBOT1QgZG8gaXQgaW4gYWxwaGFiZXRpY2Fs
-IG9yZGVyLCBzbyBJIGp1c3QgYWRkZWQNCnVzZGhjMyBhdCB0aGUgZW5kIG9mIHVzZGhjMSwgYnV0
-IEkgc2VudCBWMiBwYXRjaCB0byByZS1zb3J0IGl0IGFueXdheSwgcGxlYXNlIHJldmlldyBpdC4g
-IA0KDQpBbnNvbi4NCg0KDQo=
+
+
+On 06/28/2018 09:11 AM, jianchao.wang wrote:
+> Hi Bart
+> 
+> On 06/26/2018 11:36 PM, Bart Van Assche wrote:
+>> On 06/25/18 20:47, jianchao.wang wrote:
+>>> V2 patch has been posted, would you please take a look at on them ?
+>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dblock-26m-3D152965143412927-26w-3D2&d=DwICaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=FPLHVLVF0V8ZCvwZJx7vHy9v01iAQogJ_IbvseGhElo&s=tQ0ZiK7VrV4j-6K_WEfiWAyxogOrC8hOm6coS9nAmYI&e=
+>>
+>> Hello Jianchao,
+>>
+>> Patches 1/3 and 2/3 of that series look fine to me but I don't like the approach of patch 3/3 so please do not expect a review from me for that patch.
+>>
+> 
+> Would you please explain the defects of the patch 3/3 ?
+
+We still need some way to serialize the blk_register/unregister_queue, blk_mq_sysfs_register/unregister and sysfs queue, mq, hctx entries' show and store method. So I didn't introduce another mutex as your suggestions.
+
+> 
+> Thanks
+> Jianchao
+> 
