@@ -2,111 +2,172 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDED7C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 21:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49215C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 21:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73B7F279D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 21:12:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D03C8279D1
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 21:13:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="DsARE4rB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B7F279D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="O6AmjLcH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03C8279D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935812AbeF1VMl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 17:12:41 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:61392 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753435AbeF1VMk (ORCPT
+        id S1754723AbeF1VNU (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 17:13:20 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40520 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752637AbeF1VNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 17:12:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1530220360; x=1561756360;
-  h=subject:to:references:from:message-id:date:mime-version:
-   in-reply-to:content-transfer-encoding;
-  bh=eOZSZOs5sjxSuv8sMrGR0/p9uxUIPVJqS5W7Legm8+w=;
-  b=DsARE4rB8dEjkBGRI1WuZYLnphwG8ZB6JJoy8kTwubtE3dQLcsNc+maF
-   Ja4crTWIspohU/xJwh3n0CKpX6h5jx0ZeZJLwVuwWFKZyU6vCpppj9rvs
-   GSLKe19AHymc9PJIFOEncPnb+g94YkU+PKxB3P9yKgiS8mKy0wFm/M932
-   pQ/ahdbUyNPl2QN3wfK4ri2XUoK0iyxoUQeWrXDDRhm0uLLldpHDM7JBl
-   pT+uCRx6Hg9ctOuRE7sb0u5boa6BcCcj6P9kin+yNBE5qMcnhmqZUkeDb
-   buY+13HOnd0NCXCLG65H1Md+UuKJDMy3qR3xEJ76KqY0dHF2Qv0rN0d9i
-   w==;
-X-IronPort-AV: E=Sophos;i="5.51,284,1526313600"; 
-   d="scan'208";a="185802252"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 29 Jun 2018 05:12:39 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 28 Jun 2018 14:02:10 -0700
-Received: from thinkpad-bart.sdcorp.global.sandisk.com (HELO [10.111.67.248]) ([10.111.67.248])
-  by uls-op-cesaip02.wdc.com with ESMTP; 28 Jun 2018 14:12:40 -0700
-Subject: Re: [PATCH 1/5] blk-mq: add API to get hctx index from request
-To:     Keith Busch <keith.busch@intel.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20180628205601.13742-1-keith.busch@intel.com>
-From:   Bart Van Assche <bart.vanassche@wdc.com>
-Message-ID: <57c119c3-5704-0dcb-96dd-fede99c49511@wdc.com>
-Date:   Thu, 28 Jun 2018 14:12:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 28 Jun 2018 17:13:19 -0400
+Received: by mail-pl0-f65.google.com with SMTP id t6-v6so3356630plo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 14:13:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Lr27dvUUKVv882p2I5oyloz79KdnMfYxShhOHJpXPk8=;
+        b=O6AmjLcHwt2sFJzazIcc0ritVpX/4NFqRVzsYmsnas77iKKRVxjYwX3x4EnPRyTTl/
+         PF7FQ/Wv9X+K9ikdF5EuQ+QCpdSPusb8FXjfcmRQpAsto1RHAfpy9YTHiBn15ZHd5kNr
+         OrQhbjg9r2d+ssH901HguE6UJFs0E47tUFs/Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Lr27dvUUKVv882p2I5oyloz79KdnMfYxShhOHJpXPk8=;
+        b=Xmi9OZsyoBeu7UrjuUPJtbNbXFujU0SM1foiVeoVmPV+IyuuWK7yIMEGCw7Ry0wDEK
+         8z30xRKIVacru9fkClySELM3H9HTielmYxGtK1e1OVYgyvFBADgWdJXyyCbAg2Fr5eSN
+         NCiqwY2tdCF9UvtmmvknszO41FUU6seetvaS0tGHgKyFXKwG9FBE7JP+1wCW31Y7CjJI
+         Ufq3OGb/y/FPOox2FiixyJjLHHtyYFOT2IaWBhMCaSm0CE2+Uz6WggTsYK6KHKeZmMqI
+         WkdoDarZyf2g2tamjDHQVHTYCLqguOHJ1sEFweTS/siNchE213JV2eSiK7tkkgOlnQnb
+         mYtw==
+X-Gm-Message-State: APt69E3ok9ik3bkTG9rRnTqz2T997qnpK/DCJ+7SAwKxq+HU0KcaAvqy
+        S/uAIT4s/NpAbsQjM5TcxWKY3Q==
+X-Google-Smtp-Source: ADUXVKLootJCQkOkMSHFg3+ndLrnkeBHiSVMaciEB7OFM1Hu2peKSZcDWvAiz6mT5PAhmUAYIeqeSg==
+X-Received: by 2002:a17:902:aa98:: with SMTP id d24-v6mr12187577plr.185.1530220398766;
+        Thu, 28 Jun 2018 14:13:18 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id p127-v6sm9968311pfb.28.2018.06.28.14.13.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Jun 2018 14:13:16 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 14:13:15 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        max.byungchul.park@gmail.com,
+        Byungchul Park <byungchul.park@lge.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
+ rcu_dynticks
+Message-ID: <20180628211315.GA230720@joelaf.mtv.corp.google.com>
+References: <20180620164902.GW3593@linux.vnet.ibm.com>
+ <20180622055659.GA255098@joelaf.mtv.corp.google.com>
+ <20180622132843.GN3593@linux.vnet.ibm.com>
+ <20180622181916.GA13628@joelaf.mtv.corp.google.com>
+ <20180622205813.GV3593@linux.vnet.ibm.com>
+ <20180622170042.4adfbe21@gandalf.local.home>
+ <20180622211600.GX3593@linux.vnet.ibm.com>
+ <CALCETrUqe_1dg=3KYOswGQv5i=_5WFYpcn27Z6oa2D7-nBa+Jw@mail.gmail.com>
+ <20180623175356.GH3593@linux.vnet.ibm.com>
+ <20180628200205.GA6374@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180628205601.13742-1-keith.busch@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628200205.GA6374@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/28/18 14:03, Keith Busch wrote:
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-> ---
->   block/blk-mq.c         | 6 ++++++
->   include/linux/blk-mq.h | 1 +
->   2 files changed, 7 insertions(+)
+On Thu, Jun 28, 2018 at 01:02:05PM -0700, Paul E. McKenney wrote:
+> > > <paulmck@linux.vnet.ibm.com> wrote:
+[..]
+> > > > > > > > So why this function-call structure?  Well, you see, NMI handlers can
+> > > > > > > > take what appear to RCU to be normal interrupts...
+> > > > > > > >
+> > > > > > > > (And I just added that fun fact to Requirements.html.)
+> > > > > > >
+> > > > > > > Yes, I'll definitely go through all the interrupt requirements in the doc and
+> > > > > > > thanks for referring me to it.
+> > > > > >
+> > > > > > My concern may well be obsolete.  It would be good if it was!  ;-)
+> > > > >
+> > > > > I'd love to mandate that irq_enter() must be paired with irq_exit(). I
+> > > > > don't really see any rationale for it to be otherwise. If there is a
+> > > > > case, perhaps it needs to be fixed.
+> > > >
+> > > > Given that the usermode helpers now look to be common code using
+> > > > workqueues, kthreads, and calls to do_execve(), it might well be that
+> > > > the days of half-interrupts are behind us.
+> > > >
+> > > > But how to actually validate this?  My offer of adding a WARN_ON_ONCE()
+> > > > and waiting a few years still stands, but perhaps you have a better
+> > > > approach.
+> > > 
+> > > I think you should add a WARN_ON_ONCE().  Let's get the bugs fixed.
+> > 
+> > Or the obscure features identified, as the case may be.  ;-)
+> > 
+> > Either way, will do!
 > 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index b429d515b568..c6478833464d 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -466,6 +466,12 @@ struct request *blk_mq_alloc_request_hctx(struct request_queue *q,
->   }
->   EXPORT_SYMBOL_GPL(blk_mq_alloc_request_hctx);
->   
-> +unsigned int blk_mq_request_hctx_idx(struct request *rq)
-> +{
-> +	return blk_mq_map_queue(rq->q, rq->mq_ctx->cpu)->queue_num;
-> +}
-> +EXPORT_SYMBOL_GPL(blk_mq_request_hctx_idx);
-> +
->   static void __blk_mq_free_request(struct request *rq)
->   {
->   	struct request_queue *q = rq->q;
-> diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-> index e3147eb74222..af91b2d31a04 100644
-> --- a/include/linux/blk-mq.h
-> +++ b/include/linux/blk-mq.h
-> @@ -248,6 +248,7 @@ static inline u16 blk_mq_unique_tag_to_tag(u32 unique_tag)
->   }
+> And here is a prototype patch.
+> 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit ef544593a7bcad74628fa0537badc49dce1f2d95
+> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Date:   Thu Jun 28 12:45:23 2018 -0700
+> 
+>     rcu: Add warning to detect half-interrupts
+>     
+>     RCU's dyntick-idle code is written to tolerate half-interrupts, that it,
+>     either an interrupt that invokes rcu_irq_enter() but never invokes the
+>     corresponding rcu_irq_exit() on the one hand, or an interrupt that never
+>     invokes rcu_irq_enter() but does invoke the "corresponding" rcu_irq_exit()
+>     on the other.  These things really did happen at one time, as evidenced
+>     by this ca-2011 LKML post:
+>     
+>     http://lkml.kernel.org/r/20111014170019.GE2428@linux.vnet.ibm.com
+>     
+>     The reason why RCU tolerates half-interrupts is that usermode helpers
+>     used exceptions to invoke a system call from within the kernel such that
+>     the system call did a normal return (not a return from exception) to
+>     the calling context.  This caused rcu_irq_enter() to be invoked without
+>     a matching rcu_irq_exit().  However, usermode helpers have since been
+>     rewritten to make much more housebroken use of workqueues, kernel threads,
+>     and do_execve(), and therefore should no longer produce half-interrupts.
+>     No one knows of any other source of half-interrupts, but then again,
+>     no one seems insane enough to go audit the entire kernel to verify that
+>     half-interrupts really are a relic of the past.
+>     
+>     This commit therefore adds a pair of WARN_ON_ONCE() calls that will
+>     trigger in the presence of half interrupts, which the code will continue
+>     to handle correctly.  If neither of these WARN_ON_ONCE() trigger by
+>     mid-2021, then perhaps RCU can stop handling half-interrupts, which
+>     would be a considerable simplification.
+>     
+>     Reported-by: Steven Rostedt <rostedt@goodmis.org>
+>     Reported-by: Joel Fernandes <joel@joelfernandes.org>
+>     Reported-by: Andy Lutomirski <luto@kernel.org>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-When posting a patch series, please include a cover letter that explains 
-the purpose of the patch series.
+Looks good to me!
 
-Regarding the above patch: have you considered to use the existing 
-function blk_mq_unique_tag_to_hwq() instead of introducing this new 
-function?
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-Thanks,
+thanks,
 
-Bart.
+- Joel
+ 
