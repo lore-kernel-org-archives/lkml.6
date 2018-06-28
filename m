@@ -2,328 +2,125 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F372C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114DAC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC15027202
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:20:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tepm7AT8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC15027202
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C1EEE24B92
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:21:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1EEE24B92
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753237AbeF1KUo (ORCPT
+        id S1753269AbeF1KVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 06:20:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48470 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753160AbeF1KUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:20:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=3lKyrRvhd+LYkaD3hjubb6wD0G8JrLKJKNwm37nBstI=; b=tepm7AT8nhfJ
-        GKsVPrTjvnfqVhvU8LEYBNwPsNKR5nJlysv1rhxHeIUbAum/Q/DjxbbuwwbDVSCBOjvw08f2BKOMG
-        I9EjVf1WjFy0Oci9llSi6pv/jqq0KHxPlFaDZ0WE2l3qfe1fEhpy8cqQRxWDfhYIgAOte8QJUUwVw
-        79bvE=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fYU2Y-0005Er-Al; Thu, 28 Jun 2018 10:20:38 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fYU2X-00049u-T3; Thu, 28 Jun 2018 11:20:37 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: dpcm: improve runtime update predictability" to the asoc tree
-In-Reply-To:  <20180626100725.6016-1-jbrunet@baylibre.com>
-Message-Id: <E1fYU2X-00049u-T3@debutante>
-Date:   Thu, 28 Jun 2018 11:20:37 +0100
+        Thu, 28 Jun 2018 06:21:07 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9130 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751519AbeF1KVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 06:21:04 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 074757D8705ED;
+        Thu, 28 Jun 2018 18:20:51 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.42) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Thu, 28 Jun 2018
+ 18:20:43 +0800
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+To:     James Morse <james.morse@arm.com>
+References: <5B2A6218.3030201@hisilicon.com> <20180620144257.GB27776@arm.com>
+ <5B2A7832.4010502@hisilicon.com>
+ <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
+ <5B2A7FE1.5040607@hisilicon.com>
+ <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
+ <5B2B6DEA.2090100@hisilicon.com> <5B3274FC.7000206@hisilicon.com>
+ <20180626174746.GO23375@arm.com>
+ <942e76b6-a46a-6c5e-5ec3-67daca636d43@arm.com>
+ <5B339068.5020304@hisilicon.com>
+ <9549e15d-4ec6-8dd3-2237-b6c9b52fc816@arm.com>
+CC:     Will Deacon <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, Linuxarm <linuxarm@huawei.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>, <suzuki.poulose@arm.com>,
+        <marc.zyngier@arm.com>,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <dave.martin@arm.com>,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        <libeijian@hisilicon.com>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B34B673.20803@hisilicon.com>
+Date:   Thu, 28 Jun 2018 11:20:35 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
+MIME-Version: 1.0
+In-Reply-To: <9549e15d-4ec6-8dd3-2237-b6c9b52fc816@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.42]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi James,
 
-   ASoC: dpcm: improve runtime update predictability
+On 2018/6/28 9:45, James Morse wrote:
+> Hi Wei,
+> 
+> On 27/06/18 14:26, Wei Xu wrote:
+>> Sorry, I should highlight that I have only updated the default value
+>> of CONFIG_NR_CPUS by menuconfig in the previous mail.
+>> That is why it showed dirty.
+> 
+> (menuconfig changes don't show up like this)
 
-has been applied to the asoc tree at
+Thanks!
+Sorry, yes, you are right.
+I did not see dirty after I reset the proc.S.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> 
+> 
+> More than 64 CPUs ... Is this system running more VMs than it has VMIDs? Too-few
+> VMIDs does work with KVM, its just going to trigger rollover frequently.
+>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+No, we just ran one VM.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> Just to check, what kernel version is the host running? Does it have commit
+> f0cf47d939d0 ("KVM: arm/arm64: Close VMID generation race")
+> (looks like that went in as a fix for v4.17-rc3)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Yes, the host is runing 4.18-rc2 as the guest including above commit.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> 
+> Are you running (lots) of other VMs whenever this happens? Do they have multiple
+> vcpus? (I'm thinking of the scenario in that patch's description)
 
-Thanks,
-Mark
+No, we just ran one VM with 1 cpu.
 
-From de15d7ff5bef98746fcb76a0db7ac46de48d3560 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 26 Jun 2018 12:07:25 +0200
-Subject: [PATCH] ASoC: dpcm: improve runtime update predictability
+> 
+> Is the host system otherwise idle when this happens?
+> (If not, can you reproduce the issue without exhausting the VMIDs?)
+> 
+> 
+> It may be that writing back the page-table entries with the MMU off, and
+> changing the cache maintenance are just changing the timing of something else.
+> 
 
-As it is, dpcm_runtime_update() performs the old path and new path
-update of a frontend before going on to the next frontend DAI.
-Depending the order of the FEs within the rtd list, the result of
-the update might be different.
+Yes, maybe. Now we are debugging with the SoC guys together.
+Thanks!
 
-For example:
- * Frontend A connected to backend C, with a 48kHz playback
- * Frontend B connected to backend D, with a 44.1kHz playback
- * FE A appears before FE B in the rtd list of the card.
+Best Regards,
+Wei
 
-If we reparent BE C to FE B (disconnecting BE D):
-* old path update of FE A will run first, and BE C will get hw_free()
-  and shutdown()
-* new path update of FE B will run after and BE C, which is stopped,
-  so it will be configured at 44.1kHz, as expected
-
-If we reparent BE D to FE A (disconnecting BE C):
-* new path update of FE A will run first but since BE D is still running
-  at 44.1kHz, it won't be reconfigured (no call to startup() or
-  hw_params())
-* old path update of FE B runs after, nothing happens
-* In this case, we end up with a BE playing at 44.1kHz a stream which is
-  supposed to be played at 48Khz (too slow)
-
-To improve this situation, this patch performs all the FE old paths update
-before going on to update the new paths. With this, the result should
-no longer depend on the order of the FE within the card rtd list.
-
-Please note that there might be a small performance penalty since
-dpcm_process_paths() is called twice per stream direction.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/soc-pcm.c | 165 +++++++++++++++++++++++---------------------
- 1 file changed, 86 insertions(+), 79 deletions(-)
-
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 19ebfc958b9d..63f96cde046a 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -2597,106 +2597,113 @@ static int dpcm_run_old_update(struct snd_soc_pcm_runtime *fe, int stream)
- 	return ret;
- }
- 
--/* Called by DAPM mixer/mux changes to update audio routing between PCMs and
-- * any DAI links.
-- */
--int soc_dpcm_runtime_update(struct snd_soc_card *card)
-+static int soc_dpcm_fe_runtime_update(struct snd_soc_pcm_runtime *fe, int new)
- {
--	struct snd_soc_pcm_runtime *fe;
--	int old, new, paths;
-+	struct snd_soc_dapm_widget_list *list;
-+	int count, paths;
- 
--	mutex_lock_nested(&card->mutex, SND_SOC_CARD_CLASS_RUNTIME);
--	list_for_each_entry(fe, &card->rtd_list, list) {
--		struct snd_soc_dapm_widget_list *list;
-+	if (!fe->dai_link->dynamic)
-+		return 0;
- 
--		/* make sure link is FE */
--		if (!fe->dai_link->dynamic)
--			continue;
-+	/* only check active links */
-+	if (!fe->cpu_dai->active)
-+		return 0;
- 
--		/* only check active links */
--		if (!fe->cpu_dai->active)
--			continue;
-+	/* DAPM sync will call this to update DSP paths */
-+	dev_dbg(fe->dev, "ASoC: DPCM %s runtime update for FE %s\n",
-+		new ? "new" : "old", fe->dai_link->name);
- 
--		/* DAPM sync will call this to update DSP paths */
--		dev_dbg(fe->dev, "ASoC: DPCM runtime update for FE %s\n",
--			fe->dai_link->name);
-+	/* skip if FE doesn't have playback capability */
-+	if (!fe->cpu_dai->driver->playback.channels_min ||
-+	    !fe->codec_dai->driver->playback.channels_min)
-+		goto capture;
- 
--		/* skip if FE doesn't have playback capability */
--		if (!fe->cpu_dai->driver->playback.channels_min
--		    || !fe->codec_dai->driver->playback.channels_min)
--			goto capture;
--
--		/* skip if FE isn't currently playing */
--		if (!fe->cpu_dai->playback_active
--		    || !fe->codec_dai->playback_active)
--			goto capture;
--
--		paths = dpcm_path_get(fe, SNDRV_PCM_STREAM_PLAYBACK, &list);
--		if (paths < 0) {
--			dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
--					fe->dai_link->name,  "playback");
--			mutex_unlock(&card->mutex);
--			return paths;
--		}
-+	/* skip if FE isn't currently playing */
-+	if (!fe->cpu_dai->playback_active || !fe->codec_dai->playback_active)
-+		goto capture;
- 
--		/* update any new playback paths */
--		new = dpcm_process_paths(fe, SNDRV_PCM_STREAM_PLAYBACK, &list, 1);
--		if (new) {
--			dpcm_run_new_update(fe, SNDRV_PCM_STREAM_PLAYBACK);
--			dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_PLAYBACK);
--			dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_PLAYBACK);
--		}
-+	paths = dpcm_path_get(fe, SNDRV_PCM_STREAM_PLAYBACK, &list);
-+	if (paths < 0) {
-+		dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
-+			 fe->dai_link->name,  "playback");
-+		return paths;
-+	}
- 
--		/* update any old playback paths */
--		old = dpcm_process_paths(fe, SNDRV_PCM_STREAM_PLAYBACK, &list, 0);
--		if (old) {
-+	/* update any playback paths */
-+	count = dpcm_process_paths(fe, SNDRV_PCM_STREAM_PLAYBACK, &list, new);
-+	if (count) {
-+		if (new)
-+			dpcm_run_new_update(fe, SNDRV_PCM_STREAM_PLAYBACK);
-+		else
- 			dpcm_run_old_update(fe, SNDRV_PCM_STREAM_PLAYBACK);
--			dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_PLAYBACK);
--			dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_PLAYBACK);
--		}
- 
--		dpcm_path_put(&list);
-+		dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_PLAYBACK);
-+		dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_PLAYBACK);
-+	}
-+
-+	dpcm_path_put(&list);
-+
- capture:
--		/* skip if FE doesn't have capture capability */
--		if (!fe->cpu_dai->driver->capture.channels_min
--		    || !fe->codec_dai->driver->capture.channels_min)
--			continue;
-+	/* skip if FE doesn't have capture capability */
-+	if (!fe->cpu_dai->driver->capture.channels_min ||
-+	    !fe->codec_dai->driver->capture.channels_min)
-+		return 0;
- 
--		/* skip if FE isn't currently capturing */
--		if (!fe->cpu_dai->capture_active
--		    || !fe->codec_dai->capture_active)
--			continue;
-+	/* skip if FE isn't currently capturing */
-+	if (!fe->cpu_dai->capture_active || !fe->codec_dai->capture_active)
-+		return 0;
- 
--		paths = dpcm_path_get(fe, SNDRV_PCM_STREAM_CAPTURE, &list);
--		if (paths < 0) {
--			dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
--					fe->dai_link->name,  "capture");
--			mutex_unlock(&card->mutex);
--			return paths;
--		}
-+	paths = dpcm_path_get(fe, SNDRV_PCM_STREAM_CAPTURE, &list);
-+	if (paths < 0) {
-+		dev_warn(fe->dev, "ASoC: %s no valid %s path\n",
-+			 fe->dai_link->name,  "capture");
-+		return paths;
-+	}
- 
--		/* update any new capture paths */
--		new = dpcm_process_paths(fe, SNDRV_PCM_STREAM_CAPTURE, &list, 1);
--		if (new) {
-+	/* update any old capture paths */
-+	count = dpcm_process_paths(fe, SNDRV_PCM_STREAM_CAPTURE, &list, new);
-+	if (count) {
-+		if (new)
- 			dpcm_run_new_update(fe, SNDRV_PCM_STREAM_CAPTURE);
--			dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_CAPTURE);
--			dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_CAPTURE);
--		}
--
--		/* update any old capture paths */
--		old = dpcm_process_paths(fe, SNDRV_PCM_STREAM_CAPTURE, &list, 0);
--		if (old) {
-+		else
- 			dpcm_run_old_update(fe, SNDRV_PCM_STREAM_CAPTURE);
--			dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_CAPTURE);
--			dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_CAPTURE);
--		}
- 
--		dpcm_path_put(&list);
-+		dpcm_clear_pending_state(fe, SNDRV_PCM_STREAM_CAPTURE);
-+		dpcm_be_disconnect(fe, SNDRV_PCM_STREAM_CAPTURE);
- 	}
- 
--	mutex_unlock(&card->mutex);
-+	dpcm_path_put(&list);
-+
- 	return 0;
- }
-+
-+/* Called by DAPM mixer/mux changes to update audio routing between PCMs and
-+ * any DAI links.
-+ */
-+int soc_dpcm_runtime_update(struct snd_soc_card *card)
-+{
-+	struct snd_soc_pcm_runtime *fe;
-+	int ret = 0;
-+
-+	mutex_lock_nested(&card->mutex, SND_SOC_CARD_CLASS_RUNTIME);
-+	/* shutdown all old paths first */
-+	list_for_each_entry(fe, &card->rtd_list, list) {
-+		ret = soc_dpcm_fe_runtime_update(fe, 0);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	/* bring new paths up */
-+	list_for_each_entry(fe, &card->rtd_list, list) {
-+		ret = soc_dpcm_fe_runtime_update(fe, 1);
-+		if (ret)
-+			goto out;
-+	}
-+
-+out:
-+	mutex_unlock(&card->mutex);
-+	return ret;
-+}
- int soc_dpcm_be_digital_mute(struct snd_soc_pcm_runtime *fe, int mute)
- {
- 	struct snd_soc_dpcm *dpcm;
--- 
-2.18.0.rc2
+> 
+> Thanks,
+> 
+> James
+> 
+> .
+> 
 
