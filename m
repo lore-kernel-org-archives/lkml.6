@@ -2,429 +2,309 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F1DC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 392FBC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF0524B64
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:55:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="H7m44cR2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF0524B64
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id DBEA227040
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:55:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBEA227040
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753698AbeF1HzH (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 03:55:07 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35545 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753532AbeF1HzF (ORCPT
+        id S934332AbeF1HzM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 03:55:12 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41219 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753532AbeF1HzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 03:55:05 -0400
-Received: by mail-ed1-f67.google.com with SMTP id c1-v6so4590169edt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 00:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2jDYNatvW4AmShHAUrKboa2o/Bp7quZ6xLB8dcNb+K8=;
-        b=H7m44cR2NSrEH6ba6KWfZVgzekRLXpREfkk7xwmmkKqRsrpbJrSTTHa44h+peWRs44
-         u3XhC154hSrKO6Dfv11ZzsL3jeZoYpT/f87/yoHogV7zu6Nkb0to2ZDrSboD9pVhJ6wB
-         kq+ljSVeArEt5B51PzggFOZ4kIDyRhtigHO6M=
+        Thu, 28 Jun 2018 03:55:08 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a17-v6so597035ljd.8;
+        Thu, 28 Jun 2018 00:55:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=2jDYNatvW4AmShHAUrKboa2o/Bp7quZ6xLB8dcNb+K8=;
-        b=c+jmbkHNjYICXyEPj4CUBAE4Dm0Z1MToQ+g/tTxc7ciEOUjgUGUD9c3qGTtvcp7GAc
-         7Ef9Z181qcC4BoosNpraVfM5bj3V1vUq/t0GRb5WNntmzXlxhd/sl5AYDY921EEAoyKc
-         sIwi0poZEC40Oz4QcDndZlhknopg0osRINyKytN5Nm5/b53tQv386n2FUZoa1XStfz+I
-         JZqKfKCqIK0xryIce67lV6JBBamWqnJGXPRWeLScWU/1/1CCnuu1v2LgxXE5bVlCJY0w
-         rZ2LMhc7R72lBBKo7UOzC/oXGjtX6lRM0N0r13exHrwuj+bBsfc6dzO6c8S1MD0grr/C
-         r4ow==
-X-Gm-Message-State: APt69E0g12l0GeOHP6G+/0JkBHPWsWilWdwMpFz9pT8xsJXuh6KmQ8dZ
-        BkNkuoqGwkZkXalqmTiR7FVmAw==
-X-Google-Smtp-Source: AAOMgpf5rqs2DbwMsbOLw0pkzlV/YDqTmQHFRaT7NE6EhIrmtvvyMhXo1U5GUUQ4pKpUWNPADloH4A==
-X-Received: by 2002:a50:a743:: with SMTP id h61-v6mr8325801edc.261.1530172503556;
-        Thu, 28 Jun 2018 00:55:03 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5635:0:ee51:c8a0:8c68:b779])
-        by smtp.gmail.com with ESMTPSA id d4-v6sm2816675edk.35.2018.06.28.00.55.01
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=bq0ri43tkI1v4pJyBVVvjGBURnL+75EpmDcRjTTfbEs=;
+        b=nbeBXbIdKJc75XVvOfNcZvz3gsthK2OCgk4dPZ5ZLoul3lIgyjAgwDS6FbheIDmTVT
+         hCOZ+B7m0vBAAIWutoh/heDBp3CcyWZcRNHCdMTU4Nw96S+EXcTX3gjkv/iwEGbWhIJt
+         VGzORq+ho2Uqp4UxhQIYxVqGJxnWEUWkaWFF0Nzih5cVkyhWgXksGAKtc1Te+uKvJhAM
+         8NyJVUOgFiEHHWhN0QgwX8JmoiWuSgRvZX/S8KC8BK2NE1GRc8WAc68DG3EAl+QoP+6O
+         bEztdo9K7yyhwTr6dZsaHFsa3hDZrvFc6t2qEPhWHvNnAK9H2qK5scEnZexpnl1nxSXS
+         cXYA==
+X-Gm-Message-State: APt69E3biHDmmUnWybCiFQAqAoaW/ZAiKFPQDjw7y1yUywO/DVcrZWdu
+        CMA3jjEHWX6MJf/OipFcC4o=
+X-Google-Smtp-Source: AAOMgpfzXLh+oekNRlle4rOfpxu9xIJAH+TQgh2Mk9QqxyeRT7StJ4fRFXZOkgcEp5bXW3fUwBVUuQ==
+X-Received: by 2002:a2e:99c7:: with SMTP id l7-v6mr6717833ljj.148.1530172506417;
+        Thu, 28 Jun 2018 00:55:06 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id y5-v6sm1165862lfy.94.2018.06.28.00.55.05
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Jun 2018 00:55:02 -0700 (PDT)
-Date:   Thu, 28 Jun 2018 09:55:00 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-fbdev@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] console/fbcon: Add support for deferred console
- takeover
-Message-ID: <20180628075500.GP13978@phenom.ffwll.local>
-Mail-Followup-To: Hans de Goede <hdegoede@redhat.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-fbdev@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180626183612.321-1-hdegoede@redhat.com>
- <20180626183612.321-4-hdegoede@redhat.com>
+        Thu, 28 Jun 2018 00:55:05 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 10:54:53 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     linux@armlinux.org.uk, sboyd@codeaurora.org,
+        matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] clk: clkdev - add managed versions of lookup registrations
+Message-ID: <20180628075453.GA7793@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180626183612.321-4-hdegoede@redhat.com>
-X-Operating-System: Linux phenom 4.16.0-2-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 08:36:12PM +0200, Hans de Goede wrote:
-> Currently fbcon claims fbdevs as soon as they are registered and takes over
-> the console as soon as the first fbdev gets registered.
-> 
-> This behavior is undesirable in cases where a smooth graphical bootup is
-> desired, in such cases we typically want the contents of the framebuffer
-> (typically a vendor logo) to stay in place as is.
-> 
-> The current solution for this problem (on embedded systems) is to not
-> enable fbcon.
-> 
-> This commit adds a new FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER config option,
-> which when enabled defers fbcon taking over the console from the dummy
-> console until the first text is displayed on the console. Together with the
-> "quiet" kernel commandline option, this allows fbcon to still be used
-> together with a smooth graphical bootup, having it take over the console as
-> soon as e.g. an error message is logged.
-> 
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Add devm_clk_hw_register_clkdev, devm_clk_register_clkdev and
+devm_clk_release_clkdev as a first styep to clean up drivers which are
+leaking clkdev lookups at driver remove.
 
-A bit a late comment, and feel free to reject: Have you considered
-registering the fbcon driver, but not doing any modesets until the very
-first real message shows up?
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
 
-That would make it work with any console driver setup, even when dummy
-console is deactivated. And it would avoid the notifier layering
-violation, which still irks me a bit with this approach here.
--Daniel
+While searching for example on how clk drivers release clkdev at exit
+I found that many of those don't. Simple grep for clkdev under
+drivers/clk suggest that bunch of drivers which call clk_register_clkdev
+or clk_hw_register_clkdev never call clkdev_drop. In order to help
+cleaning this up I decided to add devm versions of clk_register_clkdev
+and clk_hw_register_clkdev. I hope this would allow simply converting
+bunch of calls to clk_register_clkdev and clk_hw_register_clkdev into
+managed versions without building further clean up logic.
 
-> ---
-> Changes in v2:
-> -Check the whole string when checking for erases in putcs, instead of just
->  the first char
-> -Make dummycon_blank return 1, so that a redraw gets triggered and any text
->  rendered while blanked gets output so that it can trigger a deferred
->  takeover if one is pending
-> 
-> Changes in v3:
-> -Call WARN_CONSOLE_UNLOCKED() from fbcon_output_notifier()
-> -Unregister the notifier on fbcon_exit()
-> -Document the fbcon=nodefer commandline option in Documentation/fb/fbcon.txt
-> ---
->  Documentation/fb/fbcon.txt       |  7 ++++
->  drivers/video/console/Kconfig    | 11 +++++
->  drivers/video/console/dummycon.c | 67 +++++++++++++++++++++++++----
->  drivers/video/fbdev/core/fbcon.c | 72 ++++++++++++++++++++++++++++++++
->  include/linux/console.h          |  5 +++
->  5 files changed, 154 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/fb/fbcon.txt b/Documentation/fb/fbcon.txt
-> index 79c22d096bbc..d4d642e1ce9c 100644
-> --- a/Documentation/fb/fbcon.txt
-> +++ b/Documentation/fb/fbcon.txt
-> @@ -155,6 +155,13 @@ C. Boot options
->  	used by text. By default, this area will be black. The 'color' value
->  	is an integer number that depends on the framebuffer driver being used.
->  
-> +6. fbcon=nodefer
-> +
-> +	If the kernel is compiled with deferred fbcon takeover support, normally
-> +	the framebuffer contents, left in place by the firmware/bootloader, will
-> +	be preserved until there actually is some text is output to the console.
-> +	This option causes fbcon to bind immediately to the fbdev device.
-> +
->  C. Attaching, Detaching and Unloading
->  
->  Before going on how to attach, detach and unload the framebuffer console, an
-> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
-> index 4110ba7d7ca9..e91edef98633 100644
-> --- a/drivers/video/console/Kconfig
-> +++ b/drivers/video/console/Kconfig
-> @@ -150,6 +150,17 @@ config FRAMEBUFFER_CONSOLE_ROTATION
->           such that other users of the framebuffer will remain normally
->           oriented.
->  
-> +config FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
-> +	bool "Framebuffer Console Deferred Takeover"
-> +	depends on FRAMEBUFFER_CONSOLE=y && DUMMY_CONSOLE=y
-> +	help
-> +	  If enabled this defers the framebuffer console taking over the
-> +	  console from the dummy console until the first text is displayed on
-> +	  the console. This is useful in combination with the "quiet" kernel
-> +	  commandline option to keep the framebuffer contents initially put up
-> +	  by the firmware in place, rather then replacing the contents with a
-> +	  black screen as soon as fbcon loads.
-> +
->  config STI_CONSOLE
->          bool "STI text console"
->  	depends on PARISC && HAS_IOMEM
-> diff --git a/drivers/video/console/dummycon.c b/drivers/video/console/dummycon.c
-> index f2eafe2ed980..45ad925ad5f8 100644
-> --- a/drivers/video/console/dummycon.c
-> +++ b/drivers/video/console/dummycon.c
-> @@ -26,6 +26,65 @@
->  #define DUMMY_ROWS	CONFIG_DUMMY_CONSOLE_ROWS
->  #endif
->  
-> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
-> +/* These are both protected by the console_lock */
-> +static RAW_NOTIFIER_HEAD(dummycon_output_nh);
-> +static bool dummycon_putc_called;
-> +
-> +void dummycon_register_output_notifier(struct notifier_block *nb)
-> +{
-> +	raw_notifier_chain_register(&dummycon_output_nh, nb);
-> +
-> +	if (dummycon_putc_called)
-> +		nb->notifier_call(nb, 0, NULL);
-> +}
-> +
-> +void dummycon_unregister_output_notifier(struct notifier_block *nb)
-> +{
-> +	raw_notifier_chain_unregister(&dummycon_output_nh, nb);
-> +}
-> +
-> +static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos)
-> +{
-> +	dummycon_putc_called = true;
-> +	raw_notifier_call_chain(&dummycon_output_nh, 0, NULL);
-> +}
-> +
-> +static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
-> +			   int count, int ypos, int xpos)
-> +{
-> +	int i;
-> +
-> +	if (!dummycon_putc_called) {
-> +		/* Ignore erases */
-> +		for (i = 0 ; i < count; i++) {
-> +			if (s[i] != vc->vc_video_erase_char)
-> +				break;
-> +		}
-> +		if (i == count)
-> +			return;
-> +
-> +		dummycon_putc_called = true;
-> +	}
-> +
-> +	raw_notifier_call_chain(&dummycon_output_nh, 0, NULL);
-> +}
-> +
-> +static int dummycon_blank(struct vc_data *vc, int blank, int mode_switch)
-> +{
-> +	/* Redraw, so that we get putc(s) for output done while blanked */
-> +	return 1;
-> +}
-> +#else
-> +static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos) { }
-> +static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
-> +			   int count, int ypos, int xpos) { }
-> +static int dummycon_blank(struct vc_data *vc, int blank, int mode_switch)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->  static const char *dummycon_startup(void)
->  {
->      return "dummy device";
-> @@ -44,9 +103,6 @@ static void dummycon_init(struct vc_data *vc, int init)
->  static void dummycon_deinit(struct vc_data *vc) { }
->  static void dummycon_clear(struct vc_data *vc, int sy, int sx, int height,
->  			   int width) { }
-> -static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos) { }
-> -static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
-> -			   int count, int ypos, int xpos) { }
->  static void dummycon_cursor(struct vc_data *vc, int mode) { }
->  
->  static bool dummycon_scroll(struct vc_data *vc, unsigned int top,
-> @@ -61,11 +117,6 @@ static int dummycon_switch(struct vc_data *vc)
->  	return 0;
->  }
->  
-> -static int dummycon_blank(struct vc_data *vc, int blank, int mode_switch)
-> -{
-> -	return 0;
-> -}
-> -
->  static int dummycon_font_set(struct vc_data *vc, struct console_font *font,
->  			     unsigned int flags)
->  {
-> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-> index cd8d52a967aa..5fb156bdcf4e 100644
-> --- a/drivers/video/fbdev/core/fbcon.c
-> +++ b/drivers/video/fbdev/core/fbcon.c
-> @@ -129,6 +129,12 @@ static inline void fbcon_map_override(void)
->  }
->  #endif /* CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY */
->  
-> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
-> +static bool deferred_takeover = true;
-> +#else
-> +#define deferred_takeover false
-> +#endif
-> +
->  /* font data */
->  static char fontname[40];
->  
-> @@ -499,6 +505,12 @@ static int __init fb_console_setup(char *this_opt)
->  				margin_color = simple_strtoul(options, &options, 0);
->  			continue;
->  		}
-> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
-> +		if (!strcmp(options, "nodefer")) {
-> +			deferred_takeover = false;
-> +			continue;
-> +		}
-> +#endif
->  	}
->  	return 1;
->  }
-> @@ -3100,6 +3112,9 @@ static int fbcon_fb_unregistered(struct fb_info *info)
->  
->  	WARN_CONSOLE_UNLOCKED();
->  
-> +	if (deferred_takeover)
-> +		return 0;
-> +
->  	idx = info->node;
->  	for (i = first_fb_vc; i <= last_fb_vc; i++) {
->  		if (con2fb_map[i] == idx)
-> @@ -3140,6 +3155,13 @@ static void fbcon_remap_all(int idx)
->  
->  	WARN_CONSOLE_UNLOCKED();
->  
-> +	if (deferred_takeover) {
-> +		for (i = first_fb_vc; i <= last_fb_vc; i++)
-> +			con2fb_map_boot[i] = idx;
-> +		fbcon_map_override();
-> +		return;
-> +	}
-> +
->  	for (i = first_fb_vc; i <= last_fb_vc; i++)
->  		set_con2fb_map(i, idx, 0);
->  
-> @@ -3191,6 +3213,11 @@ static int fbcon_fb_registered(struct fb_info *info)
->  	idx = info->node;
->  	fbcon_select_primary(info);
->  
-> +	if (deferred_takeover) {
-> +		pr_info("fbcon: Deferring console take-over\n");
-> +		return 0;
-> +	}
-> +
->  	if (info_idx == -1) {
->  		for (i = first_fb_vc; i <= last_fb_vc; i++) {
->  			if (con2fb_map_boot[i] == idx) {
-> @@ -3566,8 +3593,46 @@ static int fbcon_init_device(void)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
-> +static struct notifier_block fbcon_output_nb;
-> +
-> +static int fbcon_output_notifier(struct notifier_block *nb,
-> +				 unsigned long action, void *data)
-> +{
-> +	int i;
-> +
-> +	WARN_CONSOLE_UNLOCKED();
-> +
-> +	pr_info("fbcon: Taking over console\n");
-> +
-> +	dummycon_unregister_output_notifier(&fbcon_output_nb);
-> +	deferred_takeover = false;
-> +	logo_shown = FBCON_LOGO_DONTSHOW;
-> +
-> +	for (i = 0; i < FB_MAX; i++) {
-> +		if (registered_fb[i])
-> +			fbcon_fb_registered(registered_fb[i]);
-> +	}
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
-> +static void fbcon_register_output_notifier(void)
-> +{
-> +	fbcon_output_nb.notifier_call = fbcon_output_notifier;
-> +	dummycon_register_output_notifier(&fbcon_output_nb);
-> +}
-> +#else
-> +static inline void fbcon_register_output_notifier(void) {}
-> +#endif
-> +
->  static void fbcon_start(void)
->  {
-> +	if (deferred_takeover) {
-> +		fbcon_register_output_notifier();
-> +		return;
-> +	}
-> +
->  	if (num_registered_fb) {
->  		int i;
->  
-> @@ -3594,6 +3659,13 @@ static void fbcon_exit(void)
->  	if (fbcon_has_exited)
->  		return;
->  
-> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
-> +	if (deferred_takeover) {
-> +		dummycon_unregister_output_notifier(&fbcon_output_nb);
-> +		deferred_takeover = false;
-> +	}
-> +#endif
-> +
->  	kfree((void *)softback_buf);
->  	softback_buf = 0UL;
->  
-> diff --git a/include/linux/console.h b/include/linux/console.h
-> index dfd6b0e97855..f59f3dbca65c 100644
-> --- a/include/linux/console.h
-> +++ b/include/linux/console.h
-> @@ -21,6 +21,7 @@ struct console_font_op;
->  struct console_font;
->  struct module;
->  struct tty_struct;
-> +struct notifier_block;
->  
->  /*
->   * this is what the terminal answers to a ESC-Z or csi0c query.
-> @@ -220,4 +221,8 @@ static inline bool vgacon_text_force(void) { return false; }
->  
->  extern void console_init(void);
->  
-> +/* For deferred console takeover */
-> +void dummycon_register_output_notifier(struct notifier_block *nb);
-> +void dummycon_unregister_output_notifier(struct notifier_block *nb);
-> +
->  #endif /* _LINUX_CONSOLE_H */
-> -- 
-> 2.17.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Please review this carefully. I have only performed some simple tests
+with my BD71837 driver. And as I have only limited understanding on
+clkdev lookups I may have done mistakes. Thanks!
 
+ drivers/clk/clkdev.c   | 165 +++++++++++++++++++++++++++++++++++++++++--------
+ include/linux/clkdev.h |   8 +++
+ 2 files changed, 147 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 7513411140b6..4752a0004a6c 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -390,7 +390,7 @@ void clkdev_drop(struct clk_lookup *cl)
+ }
+ EXPORT_SYMBOL(clkdev_drop);
+ 
+-static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
++static struct clk_lookup *do_clk_register_clkdev(struct clk_hw *hw,
+ 						const char *con_id,
+ 						const char *dev_id, ...)
+ {
+@@ -404,6 +404,24 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
+ 	return cl;
+ }
+ 
++static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
++	const char *con_id, const char *dev_id)
++{
++	struct clk_lookup *cl;
++
++	/*
++	 * Since dev_id can be NULL, and NULL is handled specially, we must
++	 * pass it as either a NULL format string, or with "%s".
++	 */
++	if (dev_id)
++		cl = do_clk_register_clkdev(hw, con_id, "%s",
++					   dev_id);
++	else
++		cl = do_clk_register_clkdev(hw, con_id, NULL);
++
++	return cl;
++}
++
+ /**
+  * clk_register_clkdev - register one clock lookup for a struct clk
+  * @clk: struct clk to associate with all clk_lookups
+@@ -421,22 +439,18 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
+ int clk_register_clkdev(struct clk *clk, const char *con_id,
+ 	const char *dev_id)
+ {
+-	struct clk_lookup *cl;
+-
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	int rval = 0;
+ 
+-	/*
+-	 * Since dev_id can be NULL, and NULL is handled specially, we must
+-	 * pass it as either a NULL format string, or with "%s".
+-	 */
+-	if (dev_id)
+-		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, "%s",
+-					   dev_id);
+-	else
+-		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, NULL);
++	if (IS_ERR(clk)) {
++		rval = PTR_ERR(clk);
++	} else {
++		struct clk_lookup *cl;
+ 
+-	return cl ? 0 : -ENOMEM;
++		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, dev_id);
++		if (!cl)
++			rval = -ENOMEM;
++	}
++	return rval;
+ }
+ EXPORT_SYMBOL(clk_register_clkdev);
+ 
+@@ -456,21 +470,120 @@ EXPORT_SYMBOL(clk_register_clkdev);
+  */
+ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
+ 	const char *dev_id)
++{
++	int rval = 0;
++
++	if (IS_ERR(hw)) {
++		rval = PTR_ERR(hw);
++	} else {
++		struct clk_lookup *cl;
++
++		cl = __clk_register_clkdev(hw, con_id, dev_id);
++		if (!cl)
++			rval = -ENOMEM;
++	}
++
++	return rval;
++}
++EXPORT_SYMBOL(clk_hw_register_clkdev);
++
++static void devm_clkdev_release(struct device *dev, void *res)
++{
++	clkdev_drop(*(struct clk_lookup **)res);
++}
++
++static int devm_clk_match_clkdev(struct device *dev, void *res, void *data)
++{
++	struct clk_lookup **l = res;
++
++	if (!l || !*l) {
++		WARN_ON(!l || !*l);
++		return 0;
++	}
++
++	return *l == data;
++}
++
++/**
++ * devm_clk_release_clkdev - Resource managed clkdev lookup release
++ * @dev: device this lookup is bound
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
++ *
++ * Drop the clkdev lookup created with devm_clk_hw_register_clkdev or
++ * with devm_clk_register_clkdev. Normally this function will not need to be
++ * called and the resource management code will ensure that the resource is
++ * freed.
++ */
++void devm_clk_release_clkdev(struct device *dev, const char *con_id,
++			     const char *dev_id)
+ {
+ 	struct clk_lookup *cl;
++	int rval;
++
++	cl = clk_find(dev_id, con_id);
++	WARN_ON(!cl);
++	rval = devres_release(dev, devm_clkdev_release,
++			      &devm_clk_match_clkdev, cl);
++	WARN_ON(rval);
++}
++EXPORT_SYMBOL(devm_clk_release_clkdev);
++
++/**
++ * devm_clk_hw_register_clkdev - managed clk lookup registration for clk_hw
++ * @dev: device this lookup is bound
++ * @hw: struct clk_hw to associate with all clk_lookups
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
++ *
++ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
++ * clkdev.
++ *
++ * To make things easier for mass registration, we detect error clk_hws
++ * from a previous clk_hw_register_*() call, and return the error code for
++ * those.  This is to permit this function to be called immediately
++ * after clk_hw_register_*().
++ */
++int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
++				const char *con_id, const char *dev_id)
++{
++	struct clk_lookup **cl = NULL;
+ 
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
++	cl = devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
++	if (cl) {
++		*cl = __clk_register_clkdev(hw, con_id, dev_id);
++		if (*cl)
++			devres_add(dev, cl);
++		else
++			devres_free(cl);
++	}
++	return (cl && *cl) ? 0 : -ENOMEM;
++}
++EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
+ 
+-	/*
+-	 * Since dev_id can be NULL, and NULL is handled specially, we must
+-	 * pass it as either a NULL format string, or with "%s".
+-	 */
+-	if (dev_id)
+-		cl = __clk_register_clkdev(hw, con_id, "%s", dev_id);
+-	else
+-		cl = __clk_register_clkdev(hw, con_id, NULL);
+-
+-	return cl ? 0 : -ENOMEM;
++/**
++ * devm_clk_register_clkdev - managed clk lookup registration for a struct clk
++ * @dev: device this lookup is bound
++ * @clk: struct clk to associate with all clk_lookups
++ * @con_id: connection ID string on device
++ * @dev_id: string describing device name
++ *
++ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
++ * clkdev.
++ *
++ * To make things easier for mass registration, we detect error clks
++ * from a previous clk_register() call, and return the error code for
++ * those.  This is to permit this function to be called immediately
++ * after clk_register().
++ */
++int devm_clk_register_clkdev(struct device *dev, struct clk *clk,
++			     const char *con_id, const char *dev_id)
++{
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++	return devm_clk_hw_register_clkdev(dev, __clk_get_hw(clk), con_id,
++					   dev_id);
+ }
+-EXPORT_SYMBOL(clk_hw_register_clkdev);
++EXPORT_SYMBOL(devm_clk_register_clkdev);
+diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+index 4890ff033220..27ebeae8ae26 100644
+--- a/include/linux/clkdev.h
++++ b/include/linux/clkdev.h
+@@ -52,4 +52,12 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
+ int clk_register_clkdev(struct clk *, const char *, const char *);
+ int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
+ 
++int devm_clk_register_clkdev(struct device *dev, struct clk *clk,
++			     const char *con_id, const char *dev_id);
++int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
++				const char *con_id, const char *dev_id);
++void devm_clk_release_clkdev(struct device *dev, const char *con_id,
++			     const char *dev_id);
++
++
+ #endif
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.14.3
+
