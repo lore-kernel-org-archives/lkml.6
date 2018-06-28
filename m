@@ -2,218 +2,130 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2DFC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D6EC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75AA4278A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:33:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j4JM/Ffa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PhoiSbfo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AA4278A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 0FA45278A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:40:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA45278A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934338AbeF1TbW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:31:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53010 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933192AbeF1TbU (ORCPT
+        id S933982AbeF1Tk0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:40:26 -0400
+Received: from g2t2353.austin.hpe.com ([15.233.44.26]:51127 "EHLO
+        g2t2353.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752170AbeF1TkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:31:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A5EC360B23; Thu, 28 Jun 2018 19:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530214279;
-        bh=YeZNEXnABmo7R3nVUfX4jkEWDejJ0hHEkcgBqc0xgc4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=j4JM/FfaUM78WdqJeYO4CUFUsmU0rw3NujDneneDtRtTlTzFJfN+Q+U2qAXHOU40/
-         SF+E/zhh9NvMfMgpshmxT4gB8f10KZL5ZNs2XPqaPrCNltHIDUVMRpk6C2X055RRyT
-         6tFM17fWwaMjX+dtOjcSJ/xbuyrYlx2atGdzfASs=
-Received: from drakthul.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Thu, 28 Jun 2018 15:40:22 -0400
+X-Greylist: delayed 7052 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Jun 2018 15:40:22 EDT
+Received: from G4W9119.americas.hpqcorp.net (g4w9119.houston.hp.com [16.210.20.214])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 518CA60274;
-        Thu, 28 Jun 2018 19:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530214278;
-        bh=YeZNEXnABmo7R3nVUfX4jkEWDejJ0hHEkcgBqc0xgc4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PhoiSbfoWwcam506qx8W7NHLreiuk2Qob9CRN0tmEhSzIrHUTEZUKfJ16vyBZ3MPa
-         WiCywuDWDY7+B1OKp4unHTIu/YfbUI5szZr5Yl9kOiiS2XlDHi6kqHfuuHjI/tirQ5
-         wqkt3YyDYsVd1muGJ09HHWItb6I8KZpd2/sdAj10=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 518CA60274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From:   Sinan Kaya <okaya@codeaurora.org>
-To:     linux-pci@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V4 1/7] PCI: handle error return from pci_reset_bridge_secondary_bus()
-Date:   Thu, 28 Jun 2018 15:30:59 -0400
-Message-Id: <1530214274-21139-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        by g2t2353.austin.hpe.com (Postfix) with ESMTPS id 12A7EB4;
+        Thu, 28 Jun 2018 19:40:22 +0000 (UTC)
+Received: from G4W9120.americas.hpqcorp.net (2002:10d2:150f::10d2:150f) by
+ G4W9119.americas.hpqcorp.net (2002:10d2:14d6::10d2:14d6) with Microsoft SMTP
+ Server (TLS) id 15.0.1367.3; Thu, 28 Jun 2018 19:40:16 +0000
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (15.241.52.12) by
+ G4W9120.americas.hpqcorp.net (16.210.21.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Thu, 28 Jun 2018 19:40:16 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.22) by
+ AT5PR8401MB1282.NAMPRD84.PROD.OUTLOOK.COM (10.169.9.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.20; Thu, 28 Jun 2018 19:40:14 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::51c9:8d4d:952d:94c8]) by AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::51c9:8d4d:952d:94c8%5]) with mapi id 15.20.0906.023; Thu, 28 Jun 2018
+ 19:40:14 +0000
+From:   "Kani, Toshi" <toshi.kani@hpe.com>
+To:     "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>
+Subject: Re: [PATCH v3 1/3] pmem: only set QUEUE_FLAG_DAX for fsdax mode
+Thread-Topic: [PATCH v3 1/3] pmem: only set QUEUE_FLAG_DAX for fsdax mode
+Thread-Index: AQHUDZmxPUiSRvMdYEiEXSaB5fTEZaR18wmAgAAXawCAAAl1gA==
+Date:   Thu, 28 Jun 2018 19:40:14 +0000
+Message-ID: <1530214695.14039.316.camel@hpe.com>
+References: <CAPcyv4h6HO6fs6k7QMD77jkz2djCeWCtWomCdNb0-1Q4VKanqw@mail.gmail.com>
+         <20180626191346.GA7233@redhat.com> <1530046327.14039.273.camel@hpe.com>
+         <CAPcyv4hP_Y3xdyCa-UkYCMJ5OtnjnkwPZDS2Z2Ge8+5ymBONwQ@mail.gmail.com>
+         <1530048093.14039.286.camel@hpe.com>
+         <CAPcyv4gXAC7imJs5qfsDNLeN545Rqyd2b1M9s5kr4f9y48LXgQ@mail.gmail.com>
+         <1530048545.14039.288.camel@hpe.com>
+         <CAPcyv4ifHX95fCM9Xj87CugwNWzgq=y-4LxPQ5L6RdjX0jdctQ@mail.gmail.com>
+         <20180626220430.GA4269@linux.intel.com>
+         <1530207635.14039.308.camel@hpe.com>
+         <20180628190424.GC17758@linux.intel.com>
+In-Reply-To: <20180628190424.GC17758@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=toshi.kani@hpe.com; 
+x-originating-ip: [15.219.163.8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB1282;7:VkUty+S77+N5iimsMT79k3PjuMUhJJzxNTb5EsvHOr3wSzY6mM1/7BR/8jq2MOKDWidQPa3W1l8ipYy2f2UlQOQ1fTfM6c1FGLP0+i7CBMZHqs2D5Dxs/jAaU1rh4vtmjYdEfUNIRs3p2pueYz5D9xKBPh56291zjEVNSGrvjAxJnyt4iyhuUNfJND5OMCYOQbV6SuwiaejSStZNPz+EqrJNHJGJ+zAIi90HUhDicXMnfpOHHfIj7/B4OWwxGi63
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3ed4b62b-6462-4ed1-e0be-08d5dd2ef827
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:(222181515654134);BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB1282;
+x-ms-traffictypediagnostic: AT5PR8401MB1282:
+x-microsoft-antispam-prvs: <AT5PR8401MB1282CA8870D828FDF4659E52824F0@AT5PR8401MB1282.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(227479698468861)(222181515654134);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AT5PR8401MB1282;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB1282;
+x-forefront-prvs: 0717E25089
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39860400002)(136003)(346002)(396003)(189003)(199004)(2906002)(186003)(54906003)(6116002)(446003)(26005)(14454004)(2616005)(102836004)(76176011)(86362001)(3846002)(11346002)(68736007)(14444005)(81166006)(66066001)(8676002)(229853002)(93886005)(256004)(81156014)(8936002)(478600001)(6506007)(36756003)(6512007)(103116003)(53546011)(2900100001)(5640700003)(316002)(5660300001)(486006)(6436002)(476003)(2501003)(305945005)(2351001)(97736004)(25786009)(7736002)(99286004)(6246003)(5250100002)(4326008)(106356001)(6486002)(105586002)(6916009)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB1282;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: y+InjOouKCk9E9fVRi5PBV0XbF8mq9Dz6dHY4xfOxcu9aQrk4n7hl/b3+IRT7zSuY80bRL2dUmke+z/DAsuwmqpcq+gnTT8+XQZ2lO2JDGOeWYJYrmqa4a4qrYG6HNDYntNwGgXLNOz2+3LKNmaRJdyjpRhkuqWxMbUKzhp681oLGWSEB2eTmgGSBcYtvvV7uJRLDXbf6MlZksSuJG9QkyprA2lFxND/iLDt7ZD0qpeTAuDDxpe5KQNOSZK+8l0kgCSwihwABvi8Y0Vhfsc3kAV8MYZHGSJrYofh3obWoaryuYlSSpENxU1l5x/JnJyL8sy8ZOyXwjEfeScGkbbHUo2GQCdwC6BylSn8M/jiqFs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BD982B3FCD049F479B5BFD2D4008C2C0@NAMPRD84.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ed4b62b-6462-4ed1-e0be-08d5dd2ef827
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2018 19:40:14.2688
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB1282
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 01fd61c0b9bd ("PCI: Add a return type for
-pci_reset_bridge_secondary_bus()") added a return value to the function to
-return if a device is accessible following a reset. Callers are not
-checking the value.
-
-Pass error code up high in the stack if device is not accessible.
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/pci/hotplug/pciehp_hpc.c |  5 +++--
- drivers/pci/pci.c                | 12 ++++++------
- drivers/pci/pcie/aer.c           |  5 +++--
- drivers/pci/pcie/err.c           |  6 ++++--
- 4 files changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 718b607..bbaa211 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -728,6 +728,7 @@ int pciehp_reset_slot(struct slot *slot, int probe)
- 	struct controller *ctrl = slot->ctrl;
- 	struct pci_dev *pdev = ctrl_dev(ctrl);
- 	u16 stat_mask = 0, ctrl_mask = 0;
-+	int rc;
- 
- 	if (probe)
- 		return 0;
-@@ -745,7 +746,7 @@ int pciehp_reset_slot(struct slot *slot, int probe)
- 	if (pciehp_poll_mode)
- 		del_timer_sync(&ctrl->poll_timer);
- 
--	pci_reset_bridge_secondary_bus(ctrl->pcie->port);
-+	rc = pci_reset_bridge_secondary_bus(ctrl->pcie->port);
- 
- 	pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, stat_mask);
- 	pcie_write_cmd_nowait(ctrl, ctrl_mask, ctrl_mask);
-@@ -753,7 +754,7 @@ int pciehp_reset_slot(struct slot *slot, int probe)
- 		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, ctrl_mask);
- 	if (pciehp_poll_mode)
- 		int_poll_timeout(&ctrl->poll_timer);
--	return 0;
-+	return rc;
- }
- 
- int pcie_init_notification(struct controller *ctrl)
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 97acba7..98d1490 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4253,9 +4253,7 @@ static int pci_parent_bus_reset(struct pci_dev *dev, int probe)
- 	if (probe)
- 		return 0;
- 
--	pci_reset_bridge_secondary_bus(dev->bus->self);
--
--	return 0;
-+	return pci_reset_bridge_secondary_bus(dev->bus->self);
- }
- 
- static int pci_reset_hotplug_slot(struct hotplug_slot *hotplug, int probe)
-@@ -4850,6 +4848,8 @@ EXPORT_SYMBOL_GPL(pci_try_reset_slot);
- 
- static int pci_bus_reset(struct pci_bus *bus, int probe)
- {
-+	int ret;
-+
- 	if (!bus->self || !pci_bus_resetable(bus))
- 		return -ENOTTY;
- 
-@@ -4860,11 +4860,11 @@ static int pci_bus_reset(struct pci_bus *bus, int probe)
- 
- 	might_sleep();
- 
--	pci_reset_bridge_secondary_bus(bus->self);
-+	ret = pci_reset_bridge_secondary_bus(bus->self);
- 
- 	pci_bus_unlock(bus);
- 
--	return 0;
-+	return ret;
- }
- 
- /**
-@@ -4924,7 +4924,7 @@ int pci_try_reset_bus(struct pci_bus *bus)
- 
- 	if (pci_bus_trylock(bus)) {
- 		might_sleep();
--		pci_reset_bridge_secondary_bus(bus->self);
-+		rc = pci_reset_bridge_secondary_bus(bus->self);
- 		pci_bus_unlock(bus);
- 	} else
- 		rc = -EAGAIN;
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index a2e8838..f1d0f3e 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -1305,6 +1305,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
- {
- 	u32 reg32;
- 	int pos;
-+	int rc;
- 
- 	pos = dev->aer_cap;
- 
-@@ -1313,7 +1314,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
- 	reg32 &= ~ROOT_PORT_INTR_ON_MESG_MASK;
- 	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, reg32);
- 
--	pci_reset_bridge_secondary_bus(dev);
-+	rc = pci_reset_bridge_secondary_bus(dev);
- 	pci_printk(KERN_DEBUG, dev, "Root Port link has been reset\n");
- 
- 	/* Clear Root Error Status */
-@@ -1325,7 +1326,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
- 	reg32 |= ROOT_PORT_INTR_ON_MESG_MASK;
- 	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, reg32);
- 
--	return PCI_ERS_RESULT_RECOVERED;
-+	return !rc ? PCI_ERS_RESULT_RECOVERED : PCI_ERS_RESULT_DISCONNECT;
- }
- 
- /**
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index f7ce0cb..3a62a2e 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -175,9 +175,11 @@ static int report_resume(struct pci_dev *dev, void *data)
-  */
- static pci_ers_result_t default_reset_link(struct pci_dev *dev)
- {
--	pci_reset_bridge_secondary_bus(dev);
-+	int rc;
-+
-+	rc = pci_reset_bridge_secondary_bus(dev);
- 	pci_printk(KERN_DEBUG, dev, "downstream link has been reset\n");
--	return PCI_ERS_RESULT_RECOVERED;
-+	return !rc ? PCI_ERS_RESULT_RECOVERED : PCI_ERS_RESULT_DISCONNECT;
- }
- 
- static pci_ers_result_t reset_link(struct pci_dev *dev, u32 service)
--- 
-2.7.4
-
+T24gVGh1LCAyMDE4LTA2LTI4IGF0IDEzOjA0IC0wNjAwLCBSb3NzIFp3aXNsZXIgd3JvdGU6DQo+
+IE9uIFRodSwgSnVuIDI4LCAyMDE4IGF0IDA1OjQyOjM0UE0gKzAwMDAsIEthbmksIFRvc2hpIHdy
+b3RlOg0KPiA+IE9uIFR1ZSwgMjAxOC0wNi0yNiBhdCAxNjowNCAtMDYwMCwgUm9zcyBad2lzbGVy
+IHdyb3RlOg0KPiA+ID4gT24gVHVlLCBKdW4gMjYsIDIwMTggYXQgMDI6NTE6NTJQTSAtMDcwMCwg
+RGFuIFdpbGxpYW1zIHdyb3RlOg0KPiA+ID4gPiBPbiBUdWUsIEp1biAyNiwgMjAxOCBhdCAyOjMx
+IFBNLCBLYW5pLCBUb3NoaSA8dG9zaGkua2FuaUBocGUuY29tPiB3cm90ZToNCiA6DQo+ID4gWW91
+ciBwYXRjaGVzIGxvb2sgZ29vZC4gIEJ1dCBJIGFtIHN0aWxsIG5vdCBjbGVhciBhYm91dCB0aGUg
+Rml4ZXMgJg0KPiA+IHN0YWJsZSBoYW5kbGluZy4gIFRhbGtpbmcgYWJvdXQgdXNlciB2aXNpYmxl
+IGJlaGF2aW9yLCBJIGRvIG5vdCB0aGluayB3ZQ0KPiA+IGhhZCBhbnkgaXNzdWUgdW50aWwgZGF4
+IHN1cHBvcnQgd2FzIGRyb3BwZWQgZnJvbSByYXcgbW9kZS4gIFVudGlsIHRoZW4sDQo+ID4gdGhl
+IHBtZW0gZHJpdmVyIHN1cHBvcnRlZCBkYXggZm9yIGFsbCBtb2RlcywgYW5kIHRoZSBjaGVjayBm
+b3INCj4gPiBkaXJlY3RfYWNjZXNzIHdvcmtlZC4gICAgDQo+IA0KPiBJIGFncmVlIHRoYXQgdGhl
+IGZzZGF4ICsgcmF3IG1vZGUgZmFpbHVyZSBtb2RlIEkgbWVudGlvbmVkIGluIG15IGNvdmVyIGxl
+dHRlcg0KPiBvbmx5IHN0YXJ0ZWQgd2hlbiB3ZSByZXN0cmljdGVkIGZpbGVzeXN0ZW0gREFYIHRv
+IGhhdmluZyBzdHJ1Y3QgcGFnZSwgYnV0IEkNCj4gdGhpbmsgdGhhdCB0aGUgb3RoZXIgZmFpbHVy
+ZSBtb2RlLCBmc2RheCArIHNvbWUgcmFuZG9tIGJsb2NrIGRyaXZlciAoSSB1c2VkDQo+IGJyZCkg
+d2FzIHByZXNlbnQgaW4gRE0gZnJvbSB0aGUgYmVnaW5uaW5nLg0KDQpBaCwgSSBzZWUuDQoNCj4g
+SW4gYW55IGNhc2UsIEkgdGhpbmsgYm90aCBhcmUgZml4ZWQgd2l0aCB0aGUgcGF0Y2hlcywgYW5k
+IEkgdGhpbmsgaXQncyBmaW5lDQo+IHRoYXQgYWxsIDMgZ2V0IHRocm93biBhdCBzdGFibGUuICBU
+aGFua3MsIE1pa2UsIGZvciB0aGUgaGVscC4NCg0KWXVwLCBhZ3JlZWQuIA0KDQpUaGFua3MhDQot
+VG9zaGk=
