@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE76C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A003C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EE2927142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:12:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C836527144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:12:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="q+kf/8h4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE2927142
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="pcIGEqlG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C836527144
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935024AbeF1JMj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 05:12:39 -0400
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:38516 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932761AbeF1JMh (ORCPT
+        id S964817AbeF1JMn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 05:12:43 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:39581 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934955AbeF1JMj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 05:12:37 -0400
-Received: by mail-pf0-f169.google.com with SMTP id j17-v6so2308967pfn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:12:36 -0700 (PDT)
+        Thu, 28 Jun 2018 05:12:39 -0400
+Received: by mail-pl0-f68.google.com with SMTP id s24-v6so2460353plq.6
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uGpksren+IV0V/e2X1/wR6PBVgFKD239SV0XekVeCtY=;
-        b=q+kf/8h46QI7G9CaR5YhkspxcCemsseF1BNW3sf1F2TR/q8DLrIgmlw40fy0GbyQ+D
-         N1Nk6fvWn7pqfHSfKpdrz3dLnjgQZXpxkGpXC3t4OZ6ADgxc9BHBpH0d+TEir119qXnc
-         61kNOBw2LDKz8RlEVr3pqG4C47AEphq75TCRAsawV098KbmiZ/YWdqDJS5ojvMwmvs6R
-         kaoZA8XuFCZOqFsUAjImNdPFzBSBdVwOPUrTvSwL2te8AJgxCEFBxeXXQDJsCmhgr0O3
-         2V/gPlF51E9DvY++vg/wm2JmE4lj9/Qgf+KmCT1tOWVt74kg7wDnx5EtmXoSK47XKmRQ
-         t3fA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=pgkMAEjFrbsEi0EmWdk7pAq+9QPZGH5uYXy4rkPzf0A=;
+        b=pcIGEqlGqCLUGLduC4YWfpRRENYZX4BDkk/HWT7a6rBws3HN5l563AZGgftRsLkIZl
+         +aqzugdeAP+I9Pb+SAHGa5H6RJoBwNa10nSG8OscZMYzcGrKvx4WOb2qgAUwh8VoaJAn
+         +P7t/XbQkZWVkqa0N6UHXQhgP8Wl0JQAshjRhN0l/28FIr8Ydc5iraxYyO8Vui6RrbhZ
+         1hS3iyRJfiTOCeyyjfYuEMN1mSpqcmoyj99KHN3jHkZ9FotsQtTbBu4BnHZ6AR/TwW7f
+         lICon41gh7IjKGzipMozamKOQvY0cp6YdoMYq+bHv/s3kZRWWAlaaKy1mXpW48OPtrCT
+         xiZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uGpksren+IV0V/e2X1/wR6PBVgFKD239SV0XekVeCtY=;
-        b=qk3YUSC5lKvxGbvH4FuOr1cRUAgfARWK+lUjogMA3C8cFEw6i6wFirMHeAdoWr0LeF
-         y/XbmrQxZGjmbXG2V4bNWiWEVIOFOHQJucbutv/eWk1BnWdV9aw//nIApHjFOrFwPVMO
-         oqqcGmI0suxEfVnW36oBlbJEdkxv9kMXdm4QOosPyKTKiDtCSdJi4ld8AMxFjGlXe/kl
-         SopSka0Ly4+GyWWKTtE+cbPINjXo2daCVef3pJ8akgcin8R50pYgIannncckJk+0V6Br
-         PsjwQNr/mZYeH7AELe4ZLyvx5Z09rrLsVLpfe9usVaNipYJrjVwr4YMbFKBzjSqx8Qzr
-         LABA==
-X-Gm-Message-State: APt69E0aHpDTkTfxLvZO9GaOWzeLOiP8VVDV6QiqSfZU9cbfhrRa09Rk
-        bs/cRl9P5wFqayQJZamrxvvQdg==
-X-Google-Smtp-Source: ADUXVKIVagfXpJ9PxhefeKqyFlcx0iSUbFkYf7qLDM7fTD7aRsXVyOSlMOlRLiD+HKTtwqhEF+u+tA==
-X-Received: by 2002:a65:62ce:: with SMTP id m14-v6mr8145163pgv.407.1530177156245;
-        Thu, 28 Jun 2018 02:12:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pgkMAEjFrbsEi0EmWdk7pAq+9QPZGH5uYXy4rkPzf0A=;
+        b=Mboh6jjOQJl7LZW814Ql1A3IRYoWeA8Yu58e46BlWR+NU4glJYgxw1k0rgSzPA6BIE
+         HTckw7AsORXyjPoacRYYnaMzaWRILlfl8l/ZdsRS4DrLK34XSon4QVpDtT1ZIn0jaqsd
+         J4unG/GoNtNBXOQkp85G3TXgMdh7mC04KHCgESSSlstxNEAQxMkHjSyK36yQGvOK5ljr
+         ef5+rwBRf96MxKkupb0fKopDXjRFA9hv5TkbcyMraoUr7CypHdYiIwc7uYeSKZ9iuvlh
+         vjdmu9zHwbJyaMa5hHSa7GxdGFG0HtbsqeiO8aw7rHB/57IPh0CqM5PJxQNPOaTVt0j2
+         A0LA==
+X-Gm-Message-State: APt69E1DvR3dmq09xIc2ahZxOyGVC7qN9PeghLrBXhSLKJinASYimW8d
+        +DjzmBx1XszVFOunHEIh8w2vOg==
+X-Google-Smtp-Source: ADUXVKLgGqhCuPquz0yWgQgehk8JMA9GMqVTEGxOTQYNZglTIYCuzXsixGq8ru4t5H/igVUrXUcw1Q==
+X-Received: by 2002:a17:902:8210:: with SMTP id x16-v6mr9620336pln.307.1530177158494;
+        Thu, 28 Jun 2018 02:12:38 -0700 (PDT)
 Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id x6-v6sm2223454pfx.185.2018.06.28.02.12.34
+        by smtp.gmail.com with ESMTPSA id x6-v6sm2223454pfx.185.2018.06.28.02.12.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 28 Jun 2018 02:12:35 -0700 (PDT)
+        Thu, 28 Jun 2018 02:12:37 -0700 (PDT)
 From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To:     mb@lightnvm.io
@@ -64,9 +64,11 @@ Cc:     hans.holmberg@cnexlabs.com, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 Subject: [PATCH] lightnvm: pblk: recover chunk state on 1.2 devices
-Date:   Thu, 28 Jun 2018 11:12:00 +0200
-Message-Id: <1530177121-24908-1-git-send-email-javier@cnexlabs.com>
+Date:   Thu, 28 Jun 2018 11:12:01 +0200
+Message-Id: <1530177121-24908-2-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530177121-24908-1-git-send-email-javier@cnexlabs.com>
+References: <1530177121-24908-1-git-send-email-javier@cnexlabs.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -75,35 +77,223 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matias,
+The Open-Channel 1.2 spec does not define a mechanism for the host to
+recover the block (chunk) state. As a consequence, a newly format device
+will need to reconstruct the state. Currently, pblk assumes that blocks
+are not erased, which might cause double-erases in case that the device
+does not protect itself against them (which is not specified in the spec
+either).
 
-As discussed, here you have the patch reconstructing the state for 1.2
-devices.
+This patch, reconstructs the state based on read errors. If the first
+sector of a block returns and empty page (NVM_RSP_ERR_EMPTYPAGE), then
+the block s marked free, i.e., erased and ready to be used
+(NVM_CHK_ST_FREE). Otherwise, the block is marked as closed
+(NVM_CHK_ST_CLOSED). Note that even if a block is open and not fully
+written, it has to be erased in order to be used again.
 
-As mentioned in the patch itself, we make a tradeoff by doing this, as
-writes might fail (or be more unstable) in case that a block has been
-erased long before it is in used, and 1.2 does not have a way to
-communicate this. The only thing the device can do is force an erase on
-write when this happens, but if the device is responsible for this, one
-could argue that it could prevent double-erases - which follows better
-the predictability model we seek in Open-Channel.
+One caveat of this approach is that blocks that have been erased at a
+moment in time, will always be considered as erased. However, some media
+might become unstable if blocks are not erased before usage. Since pblk
+would follow this principle after the state of all blocks fall under
+pblk's domain, we can consider this as an initialization problem. The
+trade-off would be to fall back to the old behavior and risk premature
+media wearing.
 
-Thoughts?
-
-If we go this way, I will push a patch to the qemu 1.2 branch, as in the
-initialization, we need to match empty page reporting with the block
-metadata representing that the block is indeed erased. Ping me if you
-want this patch in advance for testing.
-
-Thanks,
-Javier
-
-Javier González (1):
-  lightnvm: pblk: recover chunk state on 1.2 devices
-
+Signed-off-by: Javier González <javier@cnexlabs.com>
+---
  drivers/lightnvm/pblk-init.c | 138 ++++++++++++++++++++++++++++++++++++++-----
  1 file changed, 124 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 3b8aa4a64cac..ce25f1473d8e 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -697,47 +697,138 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
+ 	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
+ }
+ 
++static void pblk_state_complete(struct kref *ref)
++{
++	struct pblk_pad_rq *pad_rq = container_of(ref, struct pblk_pad_rq, ref);
++
++	complete(&pad_rq->wait);
++}
++
++static void pblk_end_io_state(struct nvm_rq *rqd)
++{
++	struct pblk_pad_rq *pad_rq = rqd->private;
++	struct pblk *pblk = pad_rq->pblk;
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct pblk_line *line;
++	struct nvm_chk_meta *chunk;
++	int pos;
++
++	line = &pblk->lines[pblk_ppa_to_line(rqd->ppa_addr)];
++	pos = pblk_ppa_to_pos(geo, rqd->ppa_addr);
++
++	chunk = &line->chks[pos];
++
++	if (rqd->error == NVM_RSP_ERR_EMPTYPAGE)
++		chunk->state = NVM_CHK_ST_FREE;
++	else
++		chunk->state = NVM_CHK_ST_CLOSED;
++
++	bio_put(rqd->bio);
++	pblk_free_rqd(pblk, rqd, PBLK_READ);
++	kref_put(&pad_rq->ref, pblk_state_complete);
++}
++
++static int pblk_check_chunk_state(struct pblk *pblk, struct nvm_chk_meta *chunk,
++				struct ppa_addr ppa, struct pblk_pad_rq *pad_rq)
++{
++	struct nvm_rq *rqd;
++	struct bio *bio;
++	int ret;
++
++	bio = bio_alloc(GFP_KERNEL, 1);
++
++	if (pblk_bio_add_pages(pblk, bio, GFP_KERNEL, 1))
++		goto fail_free_bio;
++
++	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
++
++	rqd->bio = bio;
++	rqd->opcode = NVM_OP_PREAD;
++	rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_SEQUENTIAL);
++	rqd->nr_ppas = 1;
++	rqd->ppa_addr = ppa;
++	rqd->end_io = pblk_end_io_state;
++	rqd->private = pad_rq;
++
++	kref_get(&pad_rq->ref);
++
++	ret = pblk_submit_io(pblk, rqd);
++	if (ret) {
++		pr_err("pblk: I/O submissin failed: %d\n", ret);
++		goto fail_free_rqd;
++	}
++
++	return NVM_IO_OK;
++
++fail_free_rqd:
++	pblk_free_rqd(pblk, rqd, PBLK_READ);
++	pblk_bio_free_pages(pblk, bio, 0, bio->bi_vcnt);
++fail_free_bio:
++	bio_put(bio);
++
++	return NVM_IO_ERR;
++}
++
+ static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
+ 				   void *chunk_meta)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+ 	struct pblk_line_meta *lm = &pblk->lm;
++	struct pblk_pad_rq *pad_rq;
+ 	int i, chk_per_lun, nr_bad_chks = 0;
+ 
++	pad_rq = kmalloc(sizeof(struct pblk_pad_rq), GFP_KERNEL);
++	if (!pad_rq)
++		return -1;
++
++	pad_rq->pblk = pblk;
++	init_completion(&pad_rq->wait);
++	kref_init(&pad_rq->ref);
++
+ 	chk_per_lun = geo->num_chk * geo->pln_mode;
+ 
+ 	for (i = 0; i < lm->blk_per_line; i++) {
+ 		struct pblk_lun *rlun = &pblk->luns[i];
+ 		struct nvm_chk_meta *chunk;
+-		int pos = pblk_ppa_to_pos(geo, rlun->bppa);
++		struct ppa_addr ppa = rlun->bppa;
++		int pos = pblk_ppa_to_pos(geo, ppa);
+ 		u8 *lun_bb_meta = chunk_meta + pos * chk_per_lun;
+ 
+ 		chunk = &line->chks[pos];
+ 
+-		/*
+-		 * In 1.2 spec. chunk state is not persisted by the device. Thus
+-		 * some of the values are reset each time pblk is instantiated,
+-		 * so we have to assume that the block is closed.
+-		 */
+-		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
+-			chunk->state =  NVM_CHK_ST_CLOSED;
+-		else
+-			chunk->state = NVM_CHK_ST_OFFLINE;
+-
+ 		chunk->type = NVM_CHK_TP_W_SEQ;
+ 		chunk->wi = 0;
+ 		chunk->slba = -1;
+ 		chunk->cnlb = geo->clba;
+ 		chunk->wp = 0;
+ 
+-		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
++		if (lun_bb_meta[line->id] != NVM_BLK_T_FREE) {
++			chunk->state = NVM_CHK_ST_OFFLINE;
++			set_bit(pos, line->blk_bitmap);
++			nr_bad_chks++;
++
+ 			continue;
++		}
+ 
+-		set_bit(pos, line->blk_bitmap);
+-		nr_bad_chks++;
++		/*
++		 * In 1.2 spec. chunk state is not persisted by the device.
++		 * Recover the state based on media response.
++		 */
++		ppa.g.blk = line->id;
++		pblk_check_chunk_state(pblk, chunk, ppa, pad_rq);
+ 	}
+ 
++	kref_put(&pad_rq->ref, pblk_state_complete);
++
++	if (!wait_for_completion_io_timeout(&pad_rq->wait,
++				msecs_to_jiffies(PBLK_COMMAND_TIMEOUT_MS))) {
++		pr_err("pblk: state recovery timed out\n");
++		return -1;
++	}
++
++	kfree(pad_rq);
+ 	return nr_bad_chks;
+ }
+ 
+@@ -1036,6 +1127,23 @@ static int pblk_line_meta_init(struct pblk *pblk)
+ 	return 0;
+ }
+ 
++static void check_meta(struct pblk *pblk, struct pblk_line *line)
++{
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct pblk_line_meta *lm = &pblk->lm;
++	int i;
++
++	for (i = 0; i < lm->blk_per_line; i++) {
++		struct pblk_lun *rlun = &pblk->luns[i];
++		struct nvm_chk_meta *chunk;
++		struct ppa_addr ppa = rlun->bppa;
++		int pos = pblk_ppa_to_pos(geo, ppa);
++
++		chunk = &line->chks[pos];
++	}
++}
++
+ static int pblk_lines_init(struct pblk *pblk)
+ {
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+@@ -1077,6 +1185,8 @@ static int pblk_lines_init(struct pblk *pblk)
+ 			goto fail_free_lines;
+ 
+ 		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
++
++		check_meta(pblk, line);
+ 	}
+ 
+ 	if (!nr_free_chks) {
 -- 
 2.7.4
 
